@@ -10,6 +10,8 @@ const crypto = require('crypto');
 const plist = require('plist');
 const { minify } = require('terser');
 const axios = require('axios');
+const yaml = require('js-yaml');
+const sevenZip = require('7zip-min');
 const FormData = require('form-data');
 const JavaScriptObfuscator = require('javascript-obfuscator');
 const { execSync } = require('child_process');
@@ -23,6 +25,7 @@ const SRC_PATH = path.join(process.argv[1], '../src');
 const DEFAULT_DIST_PATH = path.join(process.argv[1], '../builds/latest/app.asar');
 const DEFAULT_PATCHED_DIST_PATH = path.join(process.argv[1], '../builds/patched/app.asar');
 const EXTRACTED_DIR_PATH = path.join(process.argv[1], '../extracted');
+const YM_LATEST_YML_URL = 'https://desktop.app.music.yandex.net/stable/latest.yml';
 
 const MAC_APP_PATH = '/Applications/Яндекс Музыка.app';
 const WINDOWS_APP_PATH = path.join(process.env?.LOCALAPPDATA ?? '', '/Programs/YandexMusic');
@@ -199,6 +202,257 @@ async function uploadAppAsar(
         console.error('Ошибка при выполнении загрузки app.asar на сервер:', axiosMsg);
         return null;
     }
+}
+
+async function fetchLatestYmYaml() {
+    try {
+        const response = await axios.get(YM_LATEST_YML_URL, {
+            responseType: 'text',
+            validateStatus: () => true,
+        });
+
+        if (response.status < 200 || response.status >= 300) {
+            console.error('Не удалось получить latest.yml:', response.status);
+            return null;
+        }
+
+        const parsed = yaml.load(response.data);
+        if (!parsed || typeof parsed !== 'object') {
+            console.error('Некорректный формат latest.yml');
+            return null;
+        }
+
+        return parsed;
+    } catch (error) {
+        console.error('Не удалось получить latest.yml:', error?.message ?? error);
+        return null;
+    }
+}
+
+function replaceVersionInFilename(filename, oldVersion, newVersion) {
+    if (!filename || !newVersion) return filename;
+    if (oldVersion && filename.includes(oldVersion)) {
+        return filename.split(oldVersion).join(newVersion);
+    }
+    return filename.replace(/\d+\.\d+\.\d+/, newVersion);
+}
+
+function resolveYmDownloadInfo(latestInfo, versionOverride) {
+    if (!latestInfo) return null;
+
+    const baseUrl = latestInfo?.commonConfig?.UPDATE_URL ?? 'https://desktop.app.music.yandex.net/stable/';
+    const sourceVersion = latestInfo?.version;
+    const version = versionOverride ?? sourceVersion;
+
+    if (!version) {
+        console.error('Не удалось определить версию');
+        return null;
+    }
+
+    let fileUrl = latestInfo?.files?.[0]?.url ?? latestInfo?.path;
+    if (!fileUrl) {
+        console.error('Не удалось определить URL файла');
+        return null;
+    }
+
+    if (versionOverride) {
+        fileUrl = replaceVersionInFilename(fileUrl, sourceVersion, versionOverride);
+    }
+
+    let downloadUrl;
+    try {
+        downloadUrl = new URL(fileUrl, baseUrl).toString();
+    } catch (error) {
+        console.error('Некорректный URL для загрузки:', error?.message ?? error);
+        return null;
+    }
+
+    const sha512 = versionOverride
+        ? null
+        : (latestInfo?.files?.[0]?.sha512 ?? latestInfo?.sha512 ?? null);
+    const size = versionOverride
+        ? null
+        : (latestInfo?.files?.[0]?.size ?? null);
+
+    return {
+        version,
+        downloadUrl,
+        sha512,
+        size,
+        fileName: path.basename(new URL(downloadUrl).pathname),
+    };
+}
+
+async function downloadFile(url, destPath, expectedSize = null) {
+    await fsp.mkdir(path.dirname(destPath), { recursive: true });
+    console.log('Скачивание:', url);
+
+    const response = await axios.get(url, {
+        responseType: 'stream',
+        validateStatus: () => true,
+    });
+
+    if (response.status < 200 || response.status >= 300) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    const writer = fs.createWriteStream(destPath);
+    await new Promise((resolve, reject) => {
+        response.data.on('error', reject);
+        writer.on('error', reject);
+        writer.on('finish', resolve);
+        response.data.pipe(writer);
+    });
+
+    if (expectedSize) {
+        const stat = await fsp.stat(destPath);
+        if (stat.size !== expectedSize) {
+            console.warn(`Размер файла не совпадает: ${stat.size} вместо ${expectedSize}`);
+        }
+    }
+
+    return destPath;
+}
+
+async function calcSha512Base64(filePath) {
+    const hash = crypto.createHash('sha512');
+    return new Promise((resolve, reject) => {
+        const stream = fs.createReadStream(filePath);
+        stream.on('error', reject);
+        stream.on('data', chunk => hash.update(chunk));
+        stream.on('end', () => resolve(hash.digest('base64')));
+    });
+}
+
+async function findFileRecursive(rootDir, fileName) {
+    const entries = await fsp.readdir(rootDir, { withFileTypes: true });
+    for (const entry of entries) {
+        const fullPath = path.join(rootDir, entry.name);
+        if (entry.isDirectory()) {
+            const found = await findFileRecursive(fullPath, fileName);
+            if (found) return found;
+        } else if (entry.isFile() && entry.name.toLowerCase() === fileName.toLowerCase()) {
+            return fullPath;
+        }
+    }
+    return null;
+}
+
+function findEntryByPattern(list, pattern) {
+    if (!Array.isArray(list)) return null;
+    return list.find((entry) => pattern.test(entry?.name ?? '')) ?? null;
+}
+
+async function extractEntry(archivePath, entryName, destDir) {
+    await fsp.mkdir(destDir, { recursive: true });
+    await sevenZip.cmd(['e', archivePath, `-o${destDir}`, entryName, '-y']);
+    return path.join(destDir, path.basename(entryName));
+}
+
+async function extractAsarFromNsis(exePath, workDir) {
+    await fsp.mkdir(workDir, { recursive: true });
+
+    let list = null;
+    try {
+        list = await sevenZip.list(exePath);
+    } catch (error) {
+        console.warn('Не удалось получить список файлов из установщика:', error?.message ?? error);
+    }
+
+    const directAsar = findEntryByPattern(list, /(^|[\\/])app\.asar$/i);
+    if (directAsar?.name) {
+        return await extractEntry(exePath, directAsar.name, workDir);
+    }
+
+    const nestedArchive = findEntryByPattern(list, /\.7z$/i);
+    if (nestedArchive?.name) {
+        const nestedPath = await extractEntry(exePath, nestedArchive.name, workDir);
+        let nestedList = null;
+        try {
+            nestedList = await sevenZip.list(nestedPath);
+        } catch (error) {
+            console.warn('Не удалось получить список файлов вложенного архива:', error?.message ?? error);
+        }
+
+        const nestedAsar = findEntryByPattern(nestedList, /(^|[\\/])app\.asar$/i);
+        if (nestedAsar?.name) {
+            return await extractEntry(nestedPath, nestedAsar.name, workDir);
+        }
+
+        try {
+            await sevenZip.unpack(nestedPath, workDir);
+        } catch (error) {
+            console.warn('Не удалось распаковать вложенный архив полностью:', error?.message ?? error);
+        }
+
+        const foundNested = await findFileRecursive(workDir, 'app.asar');
+        if (foundNested) return foundNested;
+    }
+
+    console.log('app.asar не найден напрямую, пробую полное извлечение установщика...');
+    try {
+        await sevenZip.unpack(exePath, workDir);
+    } catch (error) {
+        console.error('Не удалось распаковать установщик:', error?.message ?? error);
+        return null;
+    }
+
+    return await findFileRecursive(workDir, 'app.asar');
+}
+
+async function downloadAndExtractYm({ versionOverride = null, force = false }) {
+    const latestInfo = await fetchLatestYmYaml();
+    const downloadInfo = resolveYmDownloadInfo(latestInfo, versionOverride);
+    if (!downloadInfo) return null;
+
+    const { version, downloadUrl, sha512, size, fileName } = downloadInfo;
+    const targetDir = path.join(EXTRACTED_DIR_PATH, `${version}@pure`);
+
+    if (!force && fs.existsSync(targetDir)) {
+        console.log(`Папка под ${version}@pure уже существует:`, targetDir);
+        return targetDir;
+    }
+
+    await fsp.mkdir(EXTRACTED_DIR_PATH, { recursive: true });
+    const downloadsDir = path.join(TEMP_DIR, 'yandexmusic-downloads');
+    await fsp.mkdir(downloadsDir, { recursive: true });
+
+    const exePath = path.join(downloadsDir, fileName || `Yandex_Music_x64_${version}.exe`);
+
+    if (force && fs.existsSync(exePath)) {
+        await fsp.rm(exePath, { force: true });
+    }
+
+    if (!fs.existsSync(exePath)) {
+        try {
+            await downloadFile(downloadUrl, exePath, size);
+        } catch (error) {
+            console.error('Не удалось скачать установщик:', error?.message ?? error);
+            return null;
+        }
+    } else {
+        console.log('Использую уже скачанный установщик:', exePath);
+    }
+
+    if (sha512) {
+        const actualHash = await calcSha512Base64(exePath);
+        if (actualHash !== sha512) {
+            console.error('SHA512 не совпадает. Ожидалось:', sha512, 'получено:', actualHash);
+            return null;
+        }
+    } else if (versionOverride) {
+        console.warn('SHA512 пропущен: указана версия вручную.');
+    }
+
+    const workDir = path.join(TEMP_DIR, `yandexmusic-${version}`);
+    const asarPath = await extractAsarFromNsis(exePath, workDir);
+    if (!asarPath) {
+        console.error('Не удалось извлечь app.asar из установщика');
+        return null;
+    }
+
+    const extractedPath = await extractIfNotExist(`${version}@pure`, force, asarPath);
+    return extractedPath;
 }
 
 async function getLatestExtractedSrcDir(toPatched = false) {
@@ -995,6 +1249,7 @@ async function run(command, flags) {
     const withoutPure = flags.withoutPure ?? false;
     const noNativeModules = (command === 'extract' || lastExtracted ) ? true : (flags.noNativeModules ?? false);
     oldYMHashOverride = flags.oldYMHashOverride;
+    const downloadVersion = flags.version;
 
     const shouldPatch = flags.p ?? false;
 	const shouldMinify = flags.m ?? false;
@@ -1029,6 +1284,9 @@ async function run(command, flags) {
         case 'release':
             await release(dest);
             break;
+        case 'download':
+            await downloadAndExtractYm({ versionOverride: downloadVersion, force });
+            break;
 
         case 'extract':
             const { extracted } = await extractBuild(force, src, extractType, !withoutPure);
@@ -1052,11 +1310,11 @@ async function run(command, flags) {
         case 'help':
             console.log("\n================================\n");
             console.log(
-              "Команды:\n\nhelp - Отображает это сообщение\nbuild - собирает проект в asar-файл\nspoof - подменяет версию приложения в src на последнюю\nrelease - загружает asar на сервер и отправляет патчноут\nextract - извлекает новый билд из приложения\npatch - патчит извлечённый билд для разблокировки девтулзов и дев панели\nbypass-asar-integrity - обходит проверку целостности asar\nrebuild - шорткат для build -d --noNativeModules --forceOpen",
+              "Команды:\n\nhelp - Отображает это сообщение\nbuild - собирает проект в asar-файл\nspoof - подменяет версию приложения в src на последнюю\nrelease - загружает asar на сервер и отправляет патчноут\nextract - извлекает новый билд из приложения\ndownload - скачивает установщик YM и распаковывает app.asar в ./extracted/<version>@pure\npatch - патчит извлечённый билд для разблокировки девтулзов и дев панели\nbypass-asar-integrity - обходит проверку целостности asar\nrebuild - шорткат для build -d --noNativeModules --forceOpen",
             );
             console.log("\n================================\n");
             console.log(
-              "Флаги:\n\n -f - форсирует перезапись/пересборку/повторное извлечение\n --forceOpen - форсирует открытие Яндекс Музыки после выполнения команды\n --noNativeModules - пропускает сборку нативных модулей (только для build и buildDirectly)\n -m - минифицирует исходный код (только для build и buildDirectly)\n -o - обфускация исходного кода (только для build и buildDirectly)\n -r - вызывает release (только для spoof или build)\n -b - собирает проект (только для spoof)\n -d - собирает напрямую в дистрибутив Яндекс Музыки (только для build и patch)\n -p - патчит извлечённый (только для extract)\n --lastExtracted - использует последний извлечённый билд из ./extracted/ в качестве src (только для build и buildDirectly)\n --extractType [direct/extracted/src/customSrc/customAsar] - тип источника для извлечения (только для extract), по умолчанию direct\n --withoutPure - не извлекает чистую версию без патчей (только для extract)\n --src [path] - путь к исходному коду или asar-файлу, в зависимости от команды\n --dest [path] - путь к результирующему asar-файлу, в зависимости от команды\n --oldYMHashOverride [hash] - переопределяет старый хеш asar при обходе целостности (только Windows; для bypass-asar-integrity и build -d)",
+              "Флаги:\n\n -f - форсирует перезапись/пересборку/повторное извлечение\n --forceOpen - форсирует открытие Яндекс Музыки после выполнения команды\n --noNativeModules - пропускает сборку нативных модулей (только для build и buildDirectly)\n -m - минифицирует исходный код (только для build и buildDirectly)\n -o - обфускация исходного кода (только для build и buildDirectly)\n -r - вызывает release (только для spoof или build)\n -b - собирает проект (только для spoof)\n -d - собирает напрямую в дистрибутив Яндекс Музыки (только для build и patch)\n -p - патчит извлечённый (только для extract)\n --lastExtracted - использует последний извлечённый билд из ./extracted/ в качестве src (только для build и buildDirectly)\n --extractType [direct/extracted/src/customSrc/customAsar] - тип источника для извлечения (только для extract), по умолчанию direct\n --withoutPure - не извлекает чистую версию без патчей (только для extract)\n --version [semver] - использовать конкретную версию для download\n --src [path] - путь к исходному коду или asar-файлу, в зависимости от команды\n --dest [path] - путь к результирующему asar-файлу, в зависимости от команды\n --oldYMHashOverride [hash] - переопределяет старый хеш asar при обходе целостности (только Windows; для bypass-asar-integrity и build -d)",
             );
             console.log("\n================================\n");
             console.log('Флаги с аргументами указываются через =, например --oldYMHashOverride=f9cdcfb583ccebb5b23edaab0ea90165bee0479458532a0580c1b3a307d746d3');
