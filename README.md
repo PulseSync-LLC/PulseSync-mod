@@ -1,3 +1,3 @@
-# PulseSync-asar
+# PulseSync-mod
 
-кароч тегаем только когда все сделали, или удаляем релизы
+# template for readme
