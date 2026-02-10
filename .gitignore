@@ -5,6 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+.pnpm-debug.log*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -38,7 +39,6 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -56,6 +56,12 @@ web_modules/
 # Optional stylelint cache
 .stylelintcache
 
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
 # Optional REPL history
 .node_repl_history
 
@@ -67,8 +73,10 @@ web_modules/
 
 # dotenv environment variable files
 .env
-.env.*
-!.env.example
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -76,7 +84,7 @@ web_modules/
 
 # Next.js build output
 .next
-out
+/out
 
 # Nuxt.js build / generate output
 .nuxt
@@ -95,15 +103,6 @@ dist
 .temp
 .cache
 
-# Sveltekit cache directory
-.svelte-kit/
-
-# vitepress build output
-**/.vitepress/dist
-
-# vitepress cache directory
-**/.vitepress/cache
-
 # Docusaurus cache and generated files
 .docusaurus
 
@@ -116,24 +115,47 @@ dist
 # DynamoDB Local files
 .dynamodb/
 
-# Firebase cache directory
-.firebase/
-
 # TernJS port file
 .tern-port
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-# yarn v3
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
 .pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+.idea
+yarn.lock
+app.asar.bomba
+app.asar
+package-lock.json
+yamusic.exe
+build/app.asar.unpacked
 
-# Vite logs files
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+/asar
+/out
+/node_modules
+build/app.asar
+data.json
+extractedTestBuild
+temp_build
+extracted
+minified
+.DS_Store
+myVibe_bs64.js
+
+Release
+Debug
+build
+*.node
+output
+builds
+obfuscated
+src/main/lib/miniplayer/renderer/
+*.build-meta.json
+
+!src/node_modules/
+!src/node_modules/**/*

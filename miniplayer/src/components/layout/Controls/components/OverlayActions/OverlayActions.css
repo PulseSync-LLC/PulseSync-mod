@@ -1,0 +1,52 @@
+.OverlayPlayerActions {
+    padding: 15px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+
+    transition:
+        gap var(--ym-duration-transition),
+        background-color var(--ym-duration-transition),
+        opacity var(--ym-duration-transition);
+
+    @media (min-height: 550px) {
+        display: none;
+    }
+
+    @media (max-height: 380px) {
+        display: none;
+    }
+}
+
+.OverlayPlayerActions:hover {
+    opacity: 1;
+}
+
+.OverlayPlayerActions_volume_row {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.OverlayPlayerActions_sonata_row {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.OverlayPlayerActions_feedback_row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}

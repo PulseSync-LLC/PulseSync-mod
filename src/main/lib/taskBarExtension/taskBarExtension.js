@@ -1,0 +1,332 @@
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const electron_1 = require('electron');
+
+const events_js_1 = require('../../events');
+const config_js_1 = require('../../config');
+const store_js_1 = require('../store.js');
+const playerActions_js_1 = require('../../types/playerActions.js');
+const path = require('node:path');
+const Logger_js_1 = require('../../packages/logger/Logger.js');
+const thumbnailDrawner = require('./thumbnailDrawner.js');
+const taskBarExtensionLogger = new Logger_js_1.Logger('TaskBarExtension');
+
+const requireIfExists =
+    (typeof globalThis !== 'undefined' && globalThis.requireIfExists) ||
+    (typeof global !== 'undefined' && global.requireIfExists) ||
+    ((path) => {
+        try {
+            return require(path);
+        } catch (e) {
+            return false;
+        }
+    });
+let native
+try {
+    native = requireIfExists('./native_modules/set_iconic_thumbnail');
+}
+catch (e) {
+    taskBarExtensionLogger.error('Error loading native module for thumbnails:', e);
+    native = null;
+}
+
+if (!native) {
+    taskBarExtensionLogger.warn("Native module for thumbnails is not available. Thumbnail won't work.");
+}
+
+const settings = store_js_1.getModSettings()?.taskBarExtensions;
+let playerState;
+let assets = { dark: {}, light: {} };
+let systemTheme = electron_1.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+let initiated = false;
+
+const taskBarExtension = (window) => {
+    initiated = true;
+    loadAssets('dark');
+    loadAssets('light');
+    electron_1.nativeTheme.on('updated', () => {
+        systemTheme = electron_1.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+        updateTaskbarExtension(window);
+    });
+    if (native) {
+        native.getDWMIconicThumbnailInstance(window);
+    }
+};
+exports.taskBarExtension = taskBarExtension;
+
+const onPlayerStateChange = (window, newPlayerState) => {
+    if (!initiated) return;
+
+    if (!(settings?.enable ?? true)) return;
+    if (typeof newPlayerState !== 'undefined') {
+        playerState = structuredClone(newPlayerState);
+        playerState.isPaused = playerState.status === 'paused';
+    }
+    updateTaskbarExtension(window);
+};
+
+exports.onPlayerStateChange = onPlayerStateChange;
+
+const loadAssets = (variant) => {
+    taskBarExtensionLogger.log(`Loading ${variant} assets...`);
+    loadAsset('previous', variant, 'Previous');
+    loadAsset('next', variant, 'Next');
+    loadAsset('play', variant, 'Playing');
+    loadAsset('pause', variant, 'Paused');
+    loadAsset('like', variant, 'Like');
+    loadAsset('liked', variant, 'Liked');
+    loadAsset('dislike', variant, 'Dislike');
+    loadAsset('disliked', variant, 'Disliked');
+    loadAsset('shuffle', variant, 'Shuffle');
+    loadAsset('shuffled', variant, 'Shuffled');
+    loadAsset('repeat', variant, 'Repeat');
+    loadAsset('repeated', variant, 'Repeated');
+    loadAsset('one_repeated', variant, 'One repeated');
+    taskBarExtensionLogger.log('Assets loaded: ' + variant);
+};
+
+const loadAsset = (name, variant, fileName) => {
+    assets[variant][name] = electron_1.nativeImage.createFromPath(path.join(__dirname, `assets/${variant}/${fileName}.png`));
+};
+
+const getActionsAvailabilityObject = (availableActions) => {
+    return {
+        previousUnavailable: !availableActions?.moveBackward,
+        nextUnavailable: !availableActions?.moveForward,
+        repeatUnavailable: !availableActions?.repeat,
+        shuffleUnavailable: !availableActions?.shuffle,
+    };
+};
+
+const getActionsStoreObject = (actionsStore) => {
+    return {
+        repeat: actionsStore?.repeat,
+        shuffle: actionsStore?.shuffle,
+        liked: actionsStore?.isLiked,
+        disliked: actionsStore?.isDisliked,
+    };
+};
+
+const clearTaskbarExtension = (window) => {
+    taskBarExtensionLogger.log(window.setThumbarButtons([]));
+};
+
+const getTooltipString = () => {
+    let title = playerState.track?.title;
+    if (playerState?.track?.version) {
+        title = playerState.track.title + ` (${playerState.track.version})`;
+    }
+
+    return title + ' | ' + getArtist() + ' ― ' + config_js_1.config.meta.PRODUCT_NAME_LOCALIZED;
+};
+
+const getArtist = () => {
+    let artistsArray = playerState.track?.artists;
+    if (!artistsArray?.[0]) return 'loading';
+    let artistsLabel = artistsArray[0].name;
+    artistsArray.shift();
+    artistsArray.forEach((artist) => {
+        artistsLabel += ', ' + artist.name;
+    });
+    return artistsLabel;
+};
+
+const setIconicThumbnail = async (playerState) => {
+    const isGenerative = playerState.track?.id.startsWith('generative');
+
+    if (!playerState?.track?.coverUri && !isGenerative) {
+        taskBarExtensionLogger.log('No cover URI found, skipping thumbnail update.');
+        await clearIconicThumbnail();
+        return;
+    }
+
+    const coverUrl = `https://${isGenerative ? playerState.track.imageUrl : playerState.track.coverUri}`.replace('%%', '200x200');
+
+    const previousCoverUrl = playerState.previousTrack ? `https://${playerState.previousTrack.coverUri}`.replace('%%', '200x200') : undefined;
+
+    const nextCoverUrl = playerState.nextTrack ? `https://${playerState.nextTrack.coverUri}`.replace('%%', '200x200') : undefined;
+
+    try {
+        taskBarExtensionLogger.log('Setting thumbnail for cover:', coverUrl);
+        const coverImage = await fetch(coverUrl);
+        const imageBuffer = Buffer.from(await coverImage.arrayBuffer());
+        let nextImageBuffer, previousImageBuffer;
+
+        if (nextCoverUrl) {
+            const nextCoverImage = await fetch(nextCoverUrl);
+            nextImageBuffer = Buffer.from(await nextCoverImage.arrayBuffer());
+        }
+
+        if (previousCoverUrl) {
+            const previousCoverImage = await fetch(previousCoverUrl);
+            previousImageBuffer = Buffer.from(await previousCoverImage.arrayBuffer());
+        }
+
+        const store = getActionsStoreObject(playerState.actionsStore);
+
+        const isRepeatOne = store.repeat === 'one';
+
+        const width = native.getDWMIconicThumbnailInstance().maxWidth;
+        const height = native.getDWMIconicThumbnailInstance().maxHeight;
+
+        const thumbnailBuffer = await thumbnailDrawner.drawThumbnail(
+            width,
+            height,
+            isRepeatOne ? imageBuffer : previousImageBuffer,
+            imageBuffer,
+            isRepeatOne ? imageBuffer : nextImageBuffer,
+            !playerState.isPaused,
+        );
+
+        if (!thumbnailBuffer) {
+            taskBarExtensionLogger.warn('Thumbnail buffer is null fallbacking to cover image');
+        }
+
+        const result = native.getDWMIconicThumbnailInstance().setIconicThumbnail(thumbnailBuffer || imageBuffer);
+        taskBarExtensionLogger.log('Thumbnail set result:', result);
+    } catch (error) {
+        taskBarExtensionLogger.error('Error setting thumbnail:', error);
+    }
+};
+
+const clearIconicThumbnail = async () => {
+    try {
+        taskBarExtensionLogger.log('Clearing thumbnail');
+        const result = native.getDWMIconicThumbnailInstance().clearIconicThumbnail();
+        taskBarExtensionLogger.log('Thumbnail cleared result:', result);
+    } catch (error) {
+        taskBarExtensionLogger.error('Error setting thumbnail:', error);
+    }
+};
+
+const updateTaskbarExtension = (window) => {
+    if (!playerState?.availableActions) return;
+    const availability = getActionsAvailabilityObject(playerState.availableActions);
+    const store = getActionsStoreObject(playerState.actionsStore);
+
+    let repeatAsset = assets[systemTheme].repeat;
+    let nextRepeatAction = playerActions_js_1.PlayerActions.REPEAT_NONE;
+    switch (store.repeat) {
+        case 'none':
+            repeatAsset = assets[systemTheme].repeat;
+            nextRepeatAction = playerActions_js_1.PlayerActions.REPEAT_CONTEXT;
+            break;
+        case 'context':
+            repeatAsset = assets[systemTheme].repeated;
+            nextRepeatAction = playerActions_js_1.PlayerActions.REPEAT_ONE;
+            break;
+        case 'one':
+            repeatAsset = assets[systemTheme].one_repeated;
+            nextRepeatAction = playerActions_js_1.PlayerActions.REPEAT_NONE;
+            break;
+    }
+
+    const isGenerative = playerState.track?.id.startsWith('generative');
+
+    let buttons = [
+        {
+            tooltip: 'Shuffle',
+            icon: store.shuffle ? assets[systemTheme].shuffled : assets[systemTheme].shuffle,
+            flags: availability.shuffleUnavailable ? ['disabled'] : undefined,
+            click() {
+                taskBarExtensionLogger.log('Shuffle Toggled');
+                events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_SHUFFLE);
+            },
+        },
+        store_js_1.getModSettings().playerBarEnhancement.changeDislikeButtonPos
+            ? {
+                  tooltip: 'Dislike',
+                  icon: store.disliked ? assets[systemTheme].disliked : assets[systemTheme].dislike,
+                  flags: isGenerative ? ['disabled'] : undefined,
+                  click() {
+                      taskBarExtensionLogger.log('Dislike Toggled');
+                      events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_DISLIKE);
+                      if (!store.disliked)
+                          setTimeout(() => {
+                              events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.MOVE_FORWARD);
+                          }, 200);
+                  },
+              }
+            : {
+                  tooltip: 'Like',
+                  icon: store.liked ? assets[systemTheme].liked : assets[systemTheme].like,
+                  flags: isGenerative ? ['disabled'] : undefined,
+                  click() {
+                      taskBarExtensionLogger.log('Like Toggled');
+                      events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_LIKE);
+                  },
+              },
+        {
+            tooltip: 'Previous',
+            icon: assets[systemTheme].previous,
+            flags: availability.previousUnavailable ? ['disabled'] : undefined,
+            click() {
+                taskBarExtensionLogger.log('Previous');
+                events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.MOVE_BACKWARD);
+            },
+        },
+        {
+            tooltip: !playerState.isPaused ? 'Pause' : 'Play',
+            icon: !playerState.isPaused ? assets[systemTheme].pause : assets[systemTheme].play,
+            click() {
+                taskBarExtensionLogger.log('Play Toggled');
+                events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
+            },
+        },
+        {
+            tooltip: 'Next',
+            icon: assets[systemTheme].next,
+            flags: availability.nextUnavailable ? ['disabled'] : undefined,
+            click() {
+                taskBarExtensionLogger.log('Next Toggled');
+                events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.MOVE_FORWARD);
+            },
+        },
+        store_js_1.getModSettings().playerBarEnhancement.changeDislikeButtonPos
+            ? {
+                  tooltip: 'Like',
+                  icon: store.liked ? assets[systemTheme].liked : assets[systemTheme].like,
+                  flags: isGenerative ? ['disabled'] : undefined,
+                  click() {
+                      taskBarExtensionLogger.log('Like Toggled');
+                      events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_LIKE);
+                  },
+              }
+            : {
+                  tooltip: 'Dislike',
+                  icon: store.disliked ? assets[systemTheme].disliked : assets[systemTheme].dislike,
+                  flags: isGenerative ? ['disabled'] : undefined,
+                  click() {
+                      taskBarExtensionLogger.log('Dislike Toggled');
+                      events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_DISLIKE);
+                      if (!store.disliked)
+                          setTimeout(() => {
+                              events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.MOVE_FORWARD);
+                          }, 200);
+                  },
+              },
+        {
+            tooltip: 'Repeat',
+            icon: repeatAsset,
+            flags: availability.repeatUnavailable ? ['disabled'] : undefined,
+            click() {
+                taskBarExtensionLogger.log('Repeat Toggled');
+                events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_REPEAT);
+            },
+        },
+    ];
+
+    if (availability.shuffleUnavailable && availability.repeatUnavailable) {
+        buttons.shift();
+        buttons.pop();
+    }
+
+    const taskButtonStatus = window.setThumbarButtons(buttons);
+    window.setThumbnailToolTip(getTooltipString());
+
+    if ((settings?.coverAsThumbnail ?? true) && native) {
+        setIconicThumbnail(playerState);
+    }
+
+    taskBarExtensionLogger.log('ThumbarButtons set:', taskButtonStatus ? 'success' : 'failed');
+};

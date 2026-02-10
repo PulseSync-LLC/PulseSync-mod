@@ -1,0 +1,40 @@
+{
+    "name": "pulsesync-asar",
+    "version": "1.20.5",
+    "description": "Mod for Yandex Music Desktop",
+    "main": "index.js",
+    "scripts": {
+        "release": "node toolset.js release",
+        "buildMod": "node toolset.js build -d",
+        "buildModProd": "node toolset.js build -m -o",
+        "buildModTest": "node toolset.js build -m -o -d",
+        "buildMin": "node toolset.js build -d -m",
+        "downloadLatest": "node toolset.js download",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "PulseSync <contact@pulsesync.dev>",
+    "license": "GPL-3.0+",
+    "dependencies": {
+        "7zip-min": "^2.1.0",
+        "@babel/generator": "^7.28.6",
+        "@babel/parser": "^7.28.6",
+        "@babel/traverse": "^7.28.6",
+        "@electron/asar": "^4.0.1",
+        "@octokit/rest": "^22.0.1",
+        "@types/node": "^25.0.9",
+        "axios": "^1.13.2",
+        "dotenv": "^17.2.3",
+        "electron": "^39.2.7",
+        "fast-glob": "^3.3.3",
+        "form-data": "^4.0.5",
+        "javascript-obfuscator": "^5.1.0",
+        "js-yaml": "^4.1.1",
+        "minimist": "^1.2.8",
+        "node-gyp": "^12.1.0",
+        "plist": "^3.1.0",
+        "prettier": "^3.8.0",
+        "readline-sync": "^1.4.10",
+        "semver": "^7.7.3",
+        "terser": "^5.46.0"
+    }
+}

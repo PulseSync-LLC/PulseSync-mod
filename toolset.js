@@ -1,0 +1,1079 @@
+(async () => {
+require('dotenv').config()
+const asar = require('@electron/asar');
+const minimist = require('minimist');
+const fs = require('fs');
+const fsp = require('fs').promises;
+const path = require('path');
+const semver = require('semver');
+const crypto = require('crypto');
+const plist = require('plist');
+const { minify } = require('terser');
+const axios = require('axios');
+const FormData = require('form-data');
+const JavaScriptObfuscator = require('javascript-obfuscator');
+const { execSync } = require('child_process');
+const { exec, spawn } = require('child_process');
+const { promisify } = require('util');
+
+const execAsync = promisify(exec);
+const spawnAsync = promisify(spawn);
+
+const SRC_PATH = path.join(process.argv[1], '../src');
+const DEFAULT_DIST_PATH = path.join(process.argv[1], '../builds/latest/app.asar');
+const DEFAULT_PATCHED_DIST_PATH = path.join(process.argv[1], '../builds/patched/app.asar');
+const EXTRACTED_DIR_PATH = path.join(process.argv[1], '../extracted');
+
+const MAC_APP_PATH = '/Applications/Яндекс Музыка.app';
+const WINDOWS_APP_PATH = path.join(process.env?.LOCALAPPDATA ?? '', '/Programs/YandexMusic');
+const WINDOWS_EXE_PATH = path.join(WINDOWS_APP_PATH ?? '', 'Яндекс Музыка.exe');
+
+const DIRECT_DIST_PATH = process.platform === 'darwin' ? path.join(MAC_APP_PATH, '/Contents/Resources/app.asar') : path.join(WINDOWS_APP_PATH, "resources/app.asar");
+const INFO_PLIST_PATH = path.join(MAC_APP_PATH, '/Contents/Info.plist');
+
+if(process.platform === 'darwin') {
+    if(!fs.existsSync(DIRECT_DIST_PATH)) {
+        console.warn('Не удалось найти директорию с Яндекс Музыкой:', DIRECT_DIST_PATH, '\nПереопределите MAC_APP_PATH в toolset_v3.js');
+    }
+    if(!fs.existsSync(INFO_PLIST_PATH)) {
+        console.warn('Не удалось найти Info.plist:', INFO_PLIST_PATH, '\nПереопределите MAC_APP_PATH в toolset_v3.js');
+    }
+}
+if(!fs.existsSync(DIRECT_DIST_PATH)) {
+    console.warn('Не удалось найти директорию с Яндекс Музыкой:', DIRECT_DIST_PATH, '\nПереопределите WINDOWS_APP_PATH в toolset_v3.js');
+}
+
+const MINIFIED_SRC_PATH = path.join(process.argv[1], "../minified/src");
+const OBFUSCATED_SRC_PATH = path.join(process.argv[1], "../obfuscated/src");
+const TEMP_DIR = path.join(process.argv[1], "../temp");
+
+if(!fs.existsSync(TEMP_DIR)) {
+    fs.mkdirSync(TEMP_DIR, { recursive: true });
+    console.log('Создана временная директория:', TEMP_DIR);
+}
+
+const EXTRACTED_ENTITLEMENTS_PATH = path.join(TEMP_DIR, "extracted_entitlements.xml");
+
+const PATCH_NOTES_PATH = path.join(process.argv[1], "../PATCHNOTES.md");
+
+const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+const serverUrl = process.env.SERVER_URL;
+
+const patchNoteStringMD = fs.readFileSync(PATCH_NOTES_PATH, { encoding: "utf8"});
+
+let oldYMHash;
+let oldYMHashOverride;
+
+const TARGET_APP_CHUNK_ID_FOR_OBFUSCATION = ['855', 'page-7b438de97831ead4', '4078', '7443'];
+
+const OBFUSCATOR_OPTIONS = {
+    compact: true,
+    controlFlowFlattening: true,
+    controlFlowFlatteningThreshold: 0.8,
+    deadCodeInjection: true,
+    deadCodeInjectionThreshold: 0.6,
+    debugProtection: false,
+    debugProtectionInterval: 4,
+    disableConsoleOutput: false,
+    identifierNamesGenerator: 'hexadecimal',
+    log: false,
+    renameGlobals: false,
+    rotateStringArray: true,
+    selfDefending: true,
+    stringArray: true,
+    stringArrayThreshold: 0.95,
+    unicodeEscapeSequence: false,
+    simplify: true,
+};
+
+class PatchNote {
+    static forSpoofPatch(ymVersion, version, previousYmVersion) {
+        return new PatchNote(ymVersion, version, `# Что нового\n- Версия спуфнута c ${previousYmVersion} до ${ymVersion}`)
+    }
+
+    constructor(ymVersion, version, patchNoteString) {
+        this.ymVersion = ymVersion;
+        this.version = version;
+        this.patchNoteString = patchNoteString;
+    }
+
+    toDiscord(){
+        return `# Client ${this.version}\n\n${this.patchNoteString}`
+    }
+}
+
+/**
+ *
+ * @param {PatchNote} patchNote
+ * @return {Promise<void>}
+ */
+async function sendPatchNoteToDiscord(patchNote) {
+    const webhookResponse = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "content": patchNote.toDiscord(),
+        }),
+    });
+
+    if (!webhookResponse.ok) {
+        throw new Error(`Не удалось отправить webhook: ${webhookResponse.statusText}`);
+    }
+    console.log('Патчноут отправлен в Discord')
+}
+
+async function uploadAppAsar(
+    targetPath = DEFAULT_DIST_PATH,
+    modVersion,
+    musicVersion,
+    spoof,
+    changelog,
+    unpackedPath = null,
+    compressionType = 'zstd',
+    endpointPath = '/cdn/upload/asar',
+) {
+    try {
+        if (!modVersion) {
+            console.error('modVersion обязателен');
+            return;
+        }
+
+        if (!fs.existsSync(targetPath)) {
+            console.error('app.asar не найден');
+            return;
+        }
+
+        if (!['gzip', 'zstd'].includes(compressionType)) {
+            console.error('Некорректный compressionType. Допустимо: gzip | zstd');
+            return;
+        }
+
+        console.log('Загрузка app.asar на сервер...');
+
+        const url = `${serverUrl}${endpointPath}`;
+        const formData = new FormData();
+
+        formData.append('asar', fs.createReadStream(targetPath));
+        formData.append('modVersion', String(modVersion));
+        formData.append('version', String(musicVersion));
+        formData.append('spoof', String(Boolean(spoof)));
+        formData.append('type', String(compressionType));
+
+        if (changelog !== undefined && changelog !== null) {
+            const normalized = Array.isArray(changelog) ? changelog.join('\n') : String(changelog);
+            formData.append('changelog', normalized);
+        }
+
+        if (unpackedPath) {
+            if (!fs.existsSync(unpackedPath)) {
+                console.error('unpackedPath указан, но файл не найден:', unpackedPath);
+                return;
+            }
+            formData.append('unpacked', fs.createReadStream(unpackedPath));
+        }
+
+        const headers = {
+            ...formData.getHeaders(),
+            Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
+        };
+
+        const response = await axios.post(url, formData, {
+            headers,
+            maxBodyLength: Infinity,
+            maxContentLength: Infinity,
+            validateStatus: () => true,
+        });
+
+        if (response?.data?.ok) {
+            console.log('app.asar успешно загружен на сервер');
+            return response.data;
+        }
+
+        const serverMsg = response?.data?.message ?? 'UNKNOWN_ERROR';
+        console.error('Ошибка загрузки app.asar на сервер:', serverMsg);
+        return response.data;
+    } catch (error) {
+        const axiosMsg = error?.response?.data?.message || error?.response?.data || error?.message || error;
+        console.error('Ошибка при выполнении загрузки app.asar на сервер:', axiosMsg);
+        return null;
+    }
+}
+
+async function getLatestExtractedSrcDir(toPatched = false) {
+    let version = '1.0.0'
+    const versions = (await fsp.readdir(EXTRACTED_DIR_PATH, { withFileTypes: true })).filter(
+      (dirent) => {
+        return dirent.isDirectory() && dirent.name.endsWith('@pure');
+      },
+    ).map(dirstr => dirstr.name.replace('@pure',''));
+
+    versions.forEach(ver=>{if(semver.gt(ver, version)) version = ver});
+
+    if(version === '1.0.0') return console.log('Не удалось получить последний релиз из ./extracted/')
+    return path.join(EXTRACTED_DIR_PATH, `/${version}${toPatched ? '' : '@pure'}`);
+}
+
+async function getLatestYMVersion(type='direct', srcPath=undefined) {
+    let packageFileBuffer;
+    switch (type) {
+        default:
+        case 'direct':
+            packageFileBuffer = asar.extractFile(DIRECT_DIST_PATH, 'package.json').toString();
+            break;
+        case 'extracted':
+            let extractedPathDir = await getLatestExtractedSrcDir();
+            if(!extractedPathDir) return console.log('Не удалось получить последнюю версию YM')
+            packageFileBuffer = await fsp.readFile(path.join(extractedPathDir, '/package.json'), 'utf8')
+            break;
+        case 'src':
+            packageFileBuffer = await fsp.readFile(path.join(SRC_PATH, '/package.json'), 'utf8')
+            break;
+        case 'customSrc':
+            packageFileBuffer = await fsp.readFile(path.join(srcPath, '/package.json'), 'utf8')
+            break;
+        case 'customAsar':
+            packageFileBuffer = asar.extractFile(srcPath, 'package.json').toString();
+            break;
+    }
+
+    const packageFileJson = JSON.parse(packageFileBuffer);
+
+    return { version: packageFileJson.version, buildInfo: packageFileJson.buildInfo, modification: packageFileJson.modification };
+
+}
+
+function getModVersion() {
+  return require(path.join(SRC_PATH, "/main/config.js")).config.modification
+    .version;
+}
+
+async function modifyPackage({src = SRC_PATH,  version=undefined, buildInfo=undefined, modVersion=undefined, appConfig=undefined }) {
+    let packageJson = JSON.parse(await fsp.readFile(path.join(src, '/package.json'), 'utf8'));
+    const oldVersion = packageJson.version;
+
+    if (version) packageJson.version = version;
+    if (buildInfo || version) packageJson.buildInfo = buildInfo ?? { "VERSION": version, "BRANCH": "c3903938d4df76688c4639330c6834cd5ea664f2", "BUILD_TIME": "2025-11-13T15:37:20Z"}; // TODO: Поразмыслить как сделать по нормальному для сборки мейна через Роллап
+    if (modVersion) packageJson.modification.version = modVersion;
+    if (appConfig) packageJson.appConfig = {...packageJson.appConfig, ...appConfig};
+
+    await fsp.writeFile(path.join(src, '/package.json'), JSON.stringify(packageJson, null, 2), 'utf8');
+    return { oldVersion: oldVersion, newVersion: version }
+}
+
+
+async function obfuscateDir(srcDir, destDir) {
+    async function obfuscateAppChunk(appDestDir, chunkIds = TARGET_APP_CHUNK_ID_FOR_OBFUSCATION) {
+        const chunksDir = path.join(appDestDir, '_next', 'static', 'chunks');
+        const idsArray = Array.isArray(chunkIds) ? chunkIds : [chunkIds];
+
+        function escapeRegExp(str) {
+            return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        async function collectJsFilesRecursive(rootDir) {
+            const out = [];
+
+            async function walk(dir) {
+                let entries;
+                try {
+                    entries = await fsp.readdir(dir, { withFileTypes: true });
+                } catch (err) {
+                    return;
+                }
+
+                for (const entry of entries) {
+                    const fullPath = path.join(dir, entry.name);
+                    if (entry.isDirectory()) {
+                        await walk(fullPath);
+                    } else if (entry.isFile() && entry.name.endsWith('.js')) {
+                        out.push(fullPath);
+                    }
+                }
+            }
+
+            await walk(rootDir);
+            return out;
+        }
+
+        try {
+            if (!fs.existsSync(chunksDir)) {
+                console.warn(`    Директория чанков не существует: ${chunksDir}`);
+                return;
+            }
+
+            const allJsFiles = await collectJsFilesRecursive(chunksDir);
+
+            for (const chunkId of idsArray) {
+                const re = new RegExp(`^${escapeRegExp(chunkId)}(?:[.-].+)?\\.js$`);
+
+                const targets = allJsFiles.filter((fullPath) => re.test(path.basename(fullPath)));
+
+                if (targets.length === 0) {
+                    console.log(`    Чанк ${chunkId} не найден в ${chunksDir}`);
+                    continue;
+                }
+
+                for (const fullPath of targets) {
+                    try {
+                        console.time(`    Обфусцирован чанк ${chunkId}: ${fullPath}`);
+                        const code = await fsp.readFile(fullPath, 'utf8');
+                        const result = JavaScriptObfuscator.obfuscate(code, OBFUSCATOR_OPTIONS);
+                        await fsp.writeFile(fullPath, result.getObfuscatedCode(), 'utf8');
+                        console.timeEnd(`    Обфусцирован чанк ${chunkId}: ${fullPath}`);
+                    } catch (err) {
+                        console.error(`    Ошибка при обфускации чанка ${chunkId} (${fullPath}):`, err);
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn(`    Не удалось обработать директорию чанков app: ${chunksDir}.`, err?.message ?? err);
+        }
+    }
+
+    await fsp.mkdir(destDir, { recursive: true });
+    const items = await fsp.readdir(srcDir);
+
+    for (const item of items) {
+        if (item === 'node_modules' || item === 'package.json') {
+            console.log(`    Пропущена папка/файл: ${item}`);
+            await fsp.cp(path.join(srcDir, item), path.join(destDir, item), { recursive: true });
+            continue;
+        }
+
+        if (item === 'app') {
+            console.log(
+                `    Пропущена папка/файл: ${item} (кроме чанков ${TARGET_APP_CHUNK_ID_FOR_OBFUSCATION.join(', ')} в _next/static/chunks, включая вложенные директории)`,
+            );
+            const srcApp = path.join(srcDir, item);
+            const destApp = path.join(destDir, item);
+            await fsp.cp(srcApp, destApp, { recursive: true });
+            await obfuscateAppChunk(destApp);
+            continue;
+        }
+
+        const srcPath = path.join(srcDir, item);
+        const destPath = path.join(destDir, item);
+        const stat = await fsp.stat(srcPath);
+
+        if (stat.isFile() && srcPath.endsWith('.js')) {
+            try {
+                console.time(`    Обфусцирован: ${destPath}`);
+                const code = await fsp.readFile(srcPath, 'utf8');
+                const result = JavaScriptObfuscator.obfuscate(code, OBFUSCATOR_OPTIONS);
+                await fsp.writeFile(destPath, result.getObfuscatedCode(), 'utf8');
+                console.timeEnd(`    Обфусцирован: ${destPath}`);
+            } catch (err) {
+                console.error(`    Ошибка при обфускации ${destPath}:`, err);
+                await fsp.cp(srcPath, destPath, { recursive: true });
+                console.log(`    Скопирован оригинальный файл: ${destPath}`);
+            }
+        } else if (stat.isDirectory()) {
+            await obfuscateDir(srcPath, destPath);
+        } else {
+            await fsp.cp(srcPath, destPath, { recursive: true });
+            console.log(`    Скопирован: ${destPath}`);
+        }
+    }
+}
+
+async function minifyDir(srcDir, destDir) {
+    await fsp.mkdir(destDir, { recursive: true });
+    const items = await fsp.readdir(srcDir);
+    for (const item of items) {
+        const srcPath = path.join(srcDir, item);
+        const destPath = path.join(destDir, item);
+        const stat = await fsp.stat(srcPath);
+        if (stat.isFile() && srcPath.endsWith('.js')) {
+            try {
+                console.time(`    Минифицирован: ${destPath}`);
+                const code = await fsp.readFile(srcPath, 'utf8');
+                const result = await minify(code);
+                if (result.error) {
+                    console.error(`    Ошибка минификации ${destPath}:`, result.error);
+                    continue;
+                }
+                await fsp.writeFile(destPath, result.code, 'utf8');
+                console.timeEnd(`    Минифицирован: ${destPath}`);
+            } catch (err) {
+                console.warn(`    Ошибка при минификации ${destPath}:`, err);
+                await fsp.cp(srcPath, destPath, { recursive: true })
+                console.log(`    Пропущен и скопирован: ${destPath}`);
+            }
+        } else if (stat.isDirectory()) {
+            await minifyDir(srcPath, destPath);
+        } else {
+            await fsp.cp(srcPath, destPath, { recursive: true })
+            console.log(`    Скопирован: ${destPath}`);
+        }
+    }
+}
+    function hashDirFiltered(
+        dir,
+        ignore = [
+            'node_modules',
+            'dist',
+            'build',
+            '.build-meta.json',
+            '.git',
+            '.DS_Store'
+        ]
+    ) {
+        const hash = crypto.createHash('sha256');
+
+        function walk(p) {
+            const entries = fs.readdirSync(p, { withFileTypes: true });
+            for (const e of entries) {
+                if (ignore.includes(e.name)) continue;
+
+                const full = path.join(p, e.name);
+                if (e.isDirectory()) {
+                    walk(full);
+                } else {
+                    hash.update(e.name);
+                    hash.update(fs.readFileSync(full));
+                }
+            }
+        }
+
+        walk(dir);
+        return hash.digest('hex');
+    }
+
+
+
+function getNativeBuildKey(nativeDir) {
+    return crypto
+    .createHash('sha256')
+    .update(JSON.stringify({
+        sourcesHash: hashDirFiltered(nativeDir),
+        abi: process.versions.modules,
+        platform: process.platform,
+        arch: process.arch
+    }))
+    .digest('hex');
+}
+
+/**
+ * Сборка и копирование нативного модуля
+ * @param {string} moduleName - имя папки с модулем (например, setIconicThumbnail)
+ */
+async function buildNativeModule(moduleName) {
+    const nativeDir = path.join(__dirname, 'native', moduleName);
+    const gypPath = path.join(nativeDir, 'binding.gyp');
+    if (!fs.existsSync(gypPath)) throw new Error(`Не найден binding.gyp в ${nativeDir}`);
+
+    const gyp = JSON.parse(
+        fs.readFileSync(gypPath, 'utf8')
+        .replace(/\/\/.*$/mg, '')
+        .replace(/,\s*]/g, ']')
+        .replace(/,\s*}/g, '}')
+    );
+
+    const targetName = gyp.targets?.[0]?.target_name;
+    if (!targetName) throw new Error('Не удалось получить target_name');
+
+    const destDir = path.join(__dirname, 'src', 'main', 'native_modules', targetName);
+    const destNode = path.join(destDir, `${targetName}.node`);
+    const metaPath = path.join(destDir, '.build-meta.json');
+
+    const buildKey = getNativeBuildKey(nativeDir);
+
+    if (
+        fs.existsSync(destNode) &&
+        fs.existsSync(metaPath) &&
+        JSON.parse(fs.readFileSync(metaPath, 'utf8')).buildKey === buildKey
+    ) {
+        console.log(`⏩ Нативный модуль ${targetName} актуален — сборка пропущена`);
+        return;
+    }
+
+    console.log(`🔨 Сборка нативного модуля: ${targetName}`);
+    execSync('npm run build', { cwd: nativeDir, stdio: 'inherit' });
+
+    const builtNode = path.join(nativeDir, 'build', 'Release', `${targetName}.node`);
+    await fsp.mkdir(destDir, { recursive: true });
+    await fsp.copyFile(builtNode, destNode);
+
+    // JS wrapper
+    const jsDir = path.join(nativeDir, 'js');
+    if (fs.existsSync(jsDir)) {
+        for (const file of await fsp.readdir(jsDir)) {
+            await fsp.copyFile(
+                path.join(jsDir, file),
+                path.join(destDir, file)
+            );
+        }
+    }
+
+    fs.writeFileSync(metaPath, JSON.stringify({
+        buildKey,
+        builtAt: new Date().toISOString()
+    }, null, 2));
+
+    console.log(`✅ Модуль ${targetName} собран`);
+}
+
+
+
+async function buildNativeModules() {
+    console.log('Собираю нативные модули');
+    const nativeDir = path.join(__dirname, 'native');
+    const modules = (await fsp.readdir(nativeDir, {withFileTypes: true})).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
+    for (const module of modules) {
+        await buildNativeModule(module)
+    }
+}
+
+    async function buildMiniPlayer(force = false) {
+        const miniPlayerDir = path.join(__dirname, 'miniplayer');
+        const metaPath = path.join(miniPlayerDir, '.build-meta.json');
+
+        if (!fs.existsSync(miniPlayerDir)) {
+            console.log('Миниплеер не найден, сборка пропущена');
+            return;
+        }
+
+        const buildKey = crypto
+        .createHash('sha256')
+        .update(JSON.stringify({
+            sourcesHash: hashDirFiltered(miniPlayerDir),
+            node: process.version,
+            platform: process.platform,
+            arch: process.arch
+        }))
+        .digest('hex');
+
+        if (
+            !force &&
+            fs.existsSync(metaPath)
+        ) {
+            const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+            if (meta.buildKey === buildKey) {
+                console.log('⏩ Миниплеер актуален — сборка пропущена');
+                return;
+            }
+        }
+
+        console.log('🎵 Сборка миниплеера...');
+        console.time('Миниплеер собран');
+
+        execSync('npm install', {
+            cwd: miniPlayerDir,
+            stdio: 'inherit'
+        });
+
+        execSync('npm run build', {
+            cwd: miniPlayerDir,
+            stdio: 'inherit'
+        });
+
+        console.timeEnd('Миниплеер собран');
+
+        fs.writeFileSync(metaPath, JSON.stringify({
+            buildKey,
+            builtAt: new Date().toISOString()
+        }, null, 2));
+
+        console.log('✅ Миниплеер успешно собран');
+    }
+
+
+async function build(
+    { srcPath = SRC_PATH, destDir = DEFAULT_DIST_PATH, noMinify = false, obfuscate = false, noNativeModules = false } = {
+        srcPath: SRC_PATH,
+        destDir: DEFAULT_DIST_PATH,
+        noMinify: false,
+        obfuscate: false,
+    },
+) {
+
+    let workPath = srcPath;
+
+    await buildMiniPlayer();
+
+    if (!noNativeModules) await buildNativeModules();
+
+    if (!noMinify) {
+    console.log("Минификация...");
+    console.time("Минификация завершена");
+    await minifyDir(srcPath, MINIFIED_SRC_PATH);
+    console.timeEnd("Минификация завершена");
+    workPath = MINIFIED_SRC_PATH;
+  }
+
+  if (obfuscate) {
+    console.log("Обфускация...");
+    console.time("Обфускация завершена");
+    await obfuscateDir(workPath, OBFUSCATED_SRC_PATH);
+    console.timeEnd("Обфускация завершена");
+    workPath = OBFUSCATED_SRC_PATH;
+  }
+
+  console.log("Архивация из " + workPath + " в " + destDir);
+  console.time("Архивация завершена");
+  await asar.createPackageWithOptions(workPath, destDir, { unpackDir: "**/node_modules/{sharp,@img}/**/*" });
+  console.timeEnd("Архивация завершена");
+  if (!noMinify) {
+    await fsp.rm(MINIFIED_SRC_PATH, { recursive: true });
+    console.log("Минифицированный код отчищен");
+  }
+  if (obfuscate) {
+    await fsp.rm(OBFUSCATED_SRC_PATH, { recursive: true });
+    console.log("Обфусцированный код отчищен");
+  }
+}
+
+async function buildDirectly(src, noMinify=false, obfuscate=false, noNativeModules=false, forceOpen=false) {
+    if (process.platform === "darwin" && checkIfSystemIntegrityProtectionEnabled()) {
+        console.log("System Integrity Protection включён. Обход невозможен, пожалуйста, отключите SIP для File System и попробуйте снова.");
+        return false;
+    }
+    oldYMHash = calcASARHeaderHash(DIRECT_DIST_PATH).hash;
+
+    const shouldReopen = await closeYandexMusic();
+
+    await build({srcPath: src, destDir: DIRECT_DIST_PATH, noMinify: noMinify, obfuscate: obfuscate, noNativeModules: noNativeModules });
+
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Dirty delay. To make sure YM is closed
+
+    await bypassAsarIntegrity();
+
+    if( shouldReopen || forceOpen ) {
+        console.log('Запуск Яндекс Музыки...');
+        launchYandexMusic();
+        console.log('Яндекс Музыка запущена');
+    };
+}
+
+async function spoof(type='extracted', shouldRelease=false) {
+    console.log('Спуфинг...');
+    console.time('Спуфинг завершён');
+    const versions = await getLatestYMVersion(type);
+    console.log('Последняя версия ЯМ', versions);
+    const result = await modifyPackage({ version: versions.version, buildInfo: versions.buildInfo });
+
+    console.timeEnd('Спуфинг завершён');
+    console.log('Спуфнуто с', result.oldVersion, 'до', result.newVersion);
+    return result
+}
+
+async function release(dest, versions=undefined) {
+    const version = await getModVersion();
+    const {version: ymVersion} = await getLatestYMVersion();
+    const patchNote = (versions ? PatchNote.forSpoofPatch(versions.newVersion, version, versions.oldVersion) : new PatchNote(ymVersion, version, patchNoteStringMD));
+    await uploadAppAsar(dest, version, ymVersion, true, patchNote.patchNoteString, null, 'zstd', '/cdn/upload/asar');
+    await sendPatchNoteToDiscord(patchNote);
+}
+
+async function extractIfNotExist(version, force=false, src=undefined) {
+    const extractedPathDir = path.join(EXTRACTED_DIR_PATH, version);
+    if(!force && fs.existsSync(extractedPathDir)) return console.log('Папка под ' + version + ' уже существует:', extractedPathDir);
+    await fsp.mkdir(extractedPathDir, { recursive: true });
+    await asar.extractAll(src ?? DIRECT_DIST_PATH, extractedPathDir);
+    console.log('Релиз ' + version + ' успешно извлечён в', extractedPathDir);
+    return extractedPathDir;
+}
+
+async function extractBuild(force=false, src=undefined, type='direct', withPure=true) {
+    if(!fs.existsSync(EXTRACTED_DIR_PATH)) {
+        await fsp.mkdir(EXTRACTED_DIR_PATH, { recursive: true });
+    }
+    const latestYMVersion = await getLatestYMVersion(type, src);
+
+
+    const pathToExtractedBuild = await extractIfNotExist(latestYMVersion.version, force, src);
+
+    if (withPure) {
+        const pathToPureExtractedBuild = await extractIfNotExist(`${latestYMVersion.version}@pure`, force);
+
+        return { pureExtracted: pathToPureExtractedBuild, extracted: pathToExtractedBuild }
+    }
+
+    return { extracted: pathToExtractedBuild }
+}
+
+async function replaceInFilesRecursively(dir, rules) {
+    const entries = await fsp.readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            await replaceInFilesRecursively(fullPath, rules);
+        } else if (entry.isFile()) {
+            let content = await fsp.readFile(fullPath, 'utf8');
+            let newContent = content;
+            for (const { regex, replacement } of rules) {
+                newContent = newContent.replace(regex, replacement);
+            }
+            if (newContent !== content) {
+                await fsp.writeFile(fullPath, newContent, 'utf8');
+                console.log(`Вхождение найдено и заменено в: ${fullPath}`);
+            }
+        }
+    }
+}
+
+async function patchExtractedBuild(extractedPath, options = { unlockDevtools: true, unlockDevPanel: true }) {
+    console.log('Патчинг извлечённого релиза', extractedPath);
+
+    if (options.unlockDevtools) {
+
+        // Old way (Using it again because new YM version bundles all main files into main/index.js)
+        let indexJs = await fsp.readFile(path.join(extractedPath, "/index.js"),"utf8",);
+        indexJs = indexJs.replace(/const\s?webPreferences\s?=\s?\{/i, "const webPreferences = { devTools: true,",);
+        await fsp.writeFile(path.join(extractedPath, "/index.js"), indexJs, "utf8",);
+
+        // await modifyPackage({src: extractedPath, appConfig: { enableDevTools: true, enableUpdateByProbability: false } });
+        // console.log("Devtools Разблокированы", extractedPath);
+    }
+
+    if (options.unlockDevPanel) {
+        const rules = [
+            // Old way
+            // { regex: /panel: ?!1, ?allowOverwriteExperiments: ?!1/g, replacement: 'panel:!0,allowOverwriteExperiments:!0' },
+            // { regex: /exposeSonataStateInWindow: ?!1/g, replacement: 'exposeSonataStateInWindow:!0' },
+            { regex: /e\.set\(c.qV, ?![10]\), ?e\.set\(c.yc, ?![10]\), ?e\.set\(c.W4, ?![10]\)/g, replacement: 'e.set(c.qV,!0),e.set(c.yc,!0),e.set(c.W4,!0)' },
+        ]
+
+        console.log('Применяю regex патчи', extractedPath, rules);
+        await replaceInFilesRecursively(path.join(extractedPath, '/app/'), rules);
+        console.log('Regex патчи применены', extractedPath);
+    }
+}
+
+
+function calcASARHeaderHash(archivePath) {
+    const headerString = asar.getRawHeader(archivePath).headerString;
+    const hash = crypto.createHash('sha256').update(headerString).digest('hex');
+    return { algorithm: 'SHA256', hash };
+}
+
+function dumpEntitlements(appPath) {
+    try {
+        execSync(`codesign -d --entitlements :- '${appPath}' > '${EXTRACTED_ENTITLEMENTS_PATH}'`);
+        console.log(`Упакованы entitlements из ${appPath} в ${EXTRACTED_ENTITLEMENTS_PATH}`);
+    } catch (error) {
+        console.error(`Не удалось упаковать entitlements из ${appPath} в ${EXTRACTED_ENTITLEMENTS_PATH}.`, error);
+    }
+}
+
+function checkIfElectronAsarIntegrityIsUsed() {
+        try {
+            execSync(`plutil -p '${INFO_PLIST_PATH}' | grep -q ElectronAsarIntegrity`);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+function checkIfSystemIntegrityProtectionEnabled() {
+    try {
+        const response = execSync(`csrutil status`);
+        return response.includes('enabled');
+    } catch {
+        return false;
+    }
+}
+
+async function bypassWinAsarIntegrity(appPath) {
+        console.log(`Подготовка к замене хеша`);
+        try {
+            const exePath = appPath;
+
+            if (!fs.existsSync(exePath)) {
+                return console.log(`Файл не найден по пути: ${exePath}`);
+            }
+
+            // // 2) Создание резервной копии
+            // const backupPath = exePath + '.backup';
+            // if (!fs.existsSync(backupPath)) {
+            //     fs.copyFileSync(exePath, backupPath);
+            //     console.log(`Резервная копия создана: ${backupPath}`);
+            // } else {
+            //     console.log(`Резервная копия уже существует: ${backupPath}`);
+            // }
+
+            // 3) Шаблоны (ASCII‑hex)
+            const oldHexStr = oldYMHashOverride ?? oldYMHash;
+            const newHexStr = calcASARHeaderHash(DIRECT_DIST_PATH).hash;
+
+            console.log(`Хеши: ${oldHexStr} ${newHexStr} ${oldHexStr.length} ${newHexStr.length}`);
+
+            if (oldHexStr.length !== newHexStr.length) {
+                return console.log('Длины старого и нового хеша не совпадают');
+            }
+
+            if (oldHexStr === newHexStr) {
+                return console.log('Старый и новый хеши совпадают, изменения не требуется');
+            }
+
+            const oldBuf = Buffer.from(oldHexStr, 'ascii');
+            const newBuf = Buffer.from(newHexStr, 'ascii');
+
+            // 4) Чтение, замена, запись
+            const fileBuf = fs.readFileSync(exePath);
+            let count = 0;
+            let offset = 0;
+
+            while (true) {
+                const idx = fileBuf.indexOf(oldBuf, offset);
+                if (idx === -1) break;
+                newBuf.copy(fileBuf, idx);
+                count++;
+                offset = idx + oldBuf.length;
+            }
+
+            if (count === 0) {
+                console.log('Шаблон не найден, изменений не внесено.');
+            } else {
+                fs.writeFileSync(exePath, fileBuf);
+                console.log(`Успешно заменено вхождений: ${count}.`);
+            }
+
+        } catch (err) {
+            console.log('Ошибка: ' + err.message);
+        }
+
+    }
+
+async function bypassDarwinAsarIntegrity(appPath) {
+    if (process.platform !== 'darwin') {
+        console.log("Не удалось обойти asar integrity: Доступно только для macOS");
+        return false;
+    }
+
+    if (checkIfSystemIntegrityProtectionEnabled()) {
+        console.log("System Integrity Protection включён. Обход невозможен, пожалуйста, отключите SIP для File System и попробуйте снова.");
+        return false;
+    }
+
+    try {
+        if (checkIfElectronAsarIntegrityIsUsed()) {
+            console.log("Asar integrity включено. Обход");
+            const newHash = calcASARHeaderHash(DIRECT_DIST_PATH).hash;
+            console.log(`Хеш модифицированного asar: ${newHash}`);
+            console.log("Подменяю хеш в Info.plist");
+
+            const plistContent = fs.readFileSync(INFO_PLIST_PATH, 'utf8');
+            const plistData = plist.parse(plistContent);
+            plistData.ElectronAsarIntegrity["Resources/app.asar"].hash = newHash;
+            fs.writeFileSync(INFO_PLIST_PATH, plist.build(plistData));
+        }
+
+        console.log("Подменяю подпись");
+        dumpEntitlements(appPath);
+
+        execSync(`codesign --force --entitlements ${EXTRACTED_ENTITLEMENTS_PATH} --sign - '${appPath}'`);
+        fs.unlinkSync(EXTRACTED_ENTITLEMENTS_PATH);
+        console.log("Кеш очищен");
+
+        console.log("Обход asar integrity завершён");
+
+    } catch (error) {
+        console.error("Не удалось обойти asar integrity", error);
+        fs.unlinkSync(EXTRACTED_ENTITLEMENTS_PATH);
+        console.log("Кеш очищен");
+    }
+
+}
+
+async function bypassAsarIntegrity(dest=undefined) {
+    if (process.platform === "darwin") await bypassDarwinAsarIntegrity(dest ?? MAC_APP_PATH);
+    if (process.platform === "win32") await bypassWinAsarIntegrity(dest ?? WINDOWS_EXE_PATH);
+}
+
+
+// Copied from https://github.com/PulseSync-LLC/PulseSync-client/blob/dev/src/main/utils/appUtils.ts
+async function getYandexMusicProcesses() {
+    if (process.platform === "darwin") {
+        try {
+            const command = `pgrep -f "Яндекс Музыка"`
+            const { stdout } = await execAsync(command, { encoding: 'utf8' })
+            const processes = stdout.split('\n').filter(line => line.trim() !== '')
+            return processes.map(pid => ({ pid: parseInt(pid, 10) })).filter(proc => !isNaN(proc.pid))
+        } catch (error) {
+            console.error('Ошибка выявления процесса Яндекс Музыки на Mac:', error)
+            return []
+        }
+    } else if (process.platform === "linux") {
+        try {
+            const command = `pgrep -fa "yandexmusic"`
+            const { stdout } = await execAsync(command, { encoding: 'utf8' })
+            const processes = stdout.split('\n')
+            .filter(line => line.trim() !== '')
+            .filter(line => !['pgrep', 'yandexmusicmodpatcher', 'YandexMusicModPatcher'].some(keyword => line.includes(keyword)))
+            return processes.map(line => {
+                const parts = line.split(' ');
+                const pid = parseInt(parts[0], 10);
+                return { pid };
+            }).filter(proc => !isNaN(proc.pid));
+        } catch (error) {
+            console.error('Ошибка выявления процесса Яндекс Музыки на Linux:', error)
+            return []
+        }
+    } else {
+        try {
+            const command = `tasklist /FI "IMAGENAME eq Яндекс Музыка.exe" /FO CSV /NH`
+            const { stdout } = await execAsync(command, { encoding: 'utf8' })
+            const processes = stdout.split('\n').filter(line => line.trim() !== '')
+            const yandexProcesses = []
+            processes.forEach(line => {
+                const parts = line.split('","')
+                if (parts.length > 1) {
+                    const pidStr = parts[1].replace(/"/g, '').trim()
+                    const pid = parseInt(pidStr, 10)
+                    if (!isNaN(pid)) {
+                        yandexProcesses.push({ pid })
+                    }
+                }
+            })
+            return yandexProcesses
+        } catch (error) {
+            console.error('Ошибка выявления процесса Яндекс Музыки:', error)
+            return []
+        }
+    }
+}
+
+async function isYandexMusicRunning() {
+    return (await getYandexMusicProcesses())?.length > 0;
+}
+
+async function closeYandexMusic() {
+    const yandexProcesses = await getYandexMusicProcesses();
+    if (yandexProcesses.length === 0) {
+        console.log('Яндекс Музыка не запущена. Закрытие не требуется.');
+        return false;
+    }
+
+    console.log('Закрываю Яндекс Музыку...');
+
+    for (const proc of yandexProcesses) {
+        try {
+            process.kill(proc.pid)
+            console.log(`Процесс Яндекс Музыки с PID ${proc.pid} был завершён.`)
+        } catch (error) {
+            console.error(`Не удалось завершить процесс ${proc.pid}:`, error)
+        }
+    }
+
+    return true;
+}
+
+async function launchYandexMusic() {
+    return await openExternalDetached('yandexmusic://');
+}
+
+async function openExternalDetached(url) {
+    let command, args;
+
+    if (process.platform === 'win32') {
+        command = 'cmd.exe';
+        args = ['/c', 'start', '', url];
+    } else if (process.platform === 'darwin') {
+        command = 'open';
+        args = [url];
+    } else {
+        command = 'xdg-open';
+        args = [url];
+    }
+
+    (await spawnAsync(command, args, { detached: true, stdio: 'ignore', })).unref();
+}
+
+
+async function run(command, flags) {
+
+    if(command) console.time(`${command} исполнен за`);
+
+    const force = flags.f ?? false
+
+    const forceOpen = flags.forceOpen ?? false;
+    const lastExtracted = flags.lastExtracted ?? false;
+    const extractType = flags.extractType ?? 'direct';
+    const withoutPure = flags.withoutPure ?? false;
+    const noNativeModules = (command === 'extract' || lastExtracted ) ? true : (flags.noNativeModules ?? false);
+    oldYMHashOverride = flags.oldYMHashOverride;
+
+    const shouldPatch = flags.p ?? false;
+	const shouldMinify = flags.m ?? false;
+    const shouldObfuscate = flags.o ?? false;
+	const shouldBuildDirectly = flags.d ?? false;
+	const shouldRelease = flags.r ?? false;
+	const shouldBuild = flags.b ?? false;
+
+	const dest = flags.dest ?? (lastExtracted ? DEFAULT_PATCHED_DIST_PATH : DEFAULT_DIST_PATH);
+    const src = (command === 'extract' ? flags.src : (lastExtracted ? await getLatestExtractedSrcDir(true) : (flags.src ?? SRC_PATH)));
+
+
+    switch (command) {
+        case 'build':
+			if (shouldBuildDirectly) {
+        		await buildDirectly(src, !shouldMinify, shouldObfuscate, noNativeModules, forceOpen);
+				break;
+      		}
+			if (shouldRelease) {
+				await build({srcPath: src, destDir: dest, noMinify: !shouldMinify, obfuscate: shouldObfuscate, noNativeModules: noNativeModules });
+        		await release(dest);
+				break;
+      		}
+
+			await build({srcPath: src, destDir: dest, noMinify: !shouldMinify, obfuscate: shouldObfuscate, noNativeModules: noNativeModules });
+			break;
+        case 'spoof':
+			const versions = await spoof('extracted', shouldRelease);
+			if ( shouldBuild || shouldRelease) await build({destDir: dest, noMinify: !shouldMinify, obfuscate: shouldObfuscate, noNativeModules: noNativeModules })
+			if (shouldRelease) await release(dest, versions)
+			break;
+        case 'release':
+            await release(dest);
+            break;
+
+        case 'extract':
+            const { extracted } = await extractBuild(force, src, extractType, !withoutPure);
+            if (shouldPatch) await patchExtractedBuild(extracted);
+            if (shouldBuildDirectly)
+              await buildDirectly(extracted, !shouldMinify, shouldObfuscate, noNativeModules, forceOpen);
+            if (shouldBuild) await build({ srcPath: extracted, destDir: DEFAULT_PATCHED_DIST_PATH, noMinify: !shouldMinify, obfuscate: shouldObfuscate, noNativeModules: noNativeModules });
+            break;
+        case 'patch':
+            await patchExtractedBuild(src)
+            if (shouldBuildDirectly) await buildDirectly(src, !shouldMinify, shouldObfuscate, noNativeModules, forceOpen);
+            break;
+        case 'bypass-asar-integrity':
+            await bypassAsarIntegrity(dest)
+            break;
+        case 'rebuild':
+            await buildDirectly(src, true, false, true, true);
+            break;
+        default:
+            if (command) console.log('Неизвестная команда:', command, '\nИнтерпретирую как help...');
+        case 'help':
+            console.log("\n================================\n");
+            console.log(
+              "Команды:\n\nhelp - Отображает это сообщение\nbuild - собирает проект в asar-файл\nspoof - подменяет версию приложения в src на последнюю\nrelease - загружает asar на сервер и отправляет патчноут\nextract - извлекает новый билд из приложения\npatch - патчит извлечённый билд для разблокировки девтулзов и дев панели\nbypass-asar-integrity - обходит проверку целостности asar\nrebuild - шорткат для build -d --noNativeModules --forceOpen",
+            );
+            console.log("\n================================\n");
+            console.log(
+              "Флаги:\n\n -f - форсирует перезапись/пересборку/повторное извлечение\n --forceOpen - форсирует открытие Яндекс Музыки после выполнения команды\n --noNativeModules - пропускает сборку нативных модулей (только для build и buildDirectly)\n -m - минифицирует исходный код (только для build и buildDirectly)\n -o - обфускация исходного кода (только для build и buildDirectly)\n -r - вызывает release (только для spoof или build)\n -b - собирает проект (только для spoof)\n -d - собирает напрямую в дистрибутив Яндекс Музыки (только для build и patch)\n -p - патчит извлечённый (только для extract)\n --lastExtracted - использует последний извлечённый билд из ./extracted/ в качестве src (только для build и buildDirectly)\n --extractType [direct/extracted/src/customSrc/customAsar] - тип источника для извлечения (только для extract), по умолчанию direct\n --withoutPure - не извлекает чистую версию без патчей (только для extract)\n --src [path] - путь к исходному коду или asar-файлу, в зависимости от команды\n --dest [path] - путь к результирующему asar-файлу, в зависимости от команды\n --oldYMHashOverride [hash] - переопределяет старый хеш asar при обходе целостности (только Windows; для bypass-asar-integrity и build -d)",
+            );
+            console.log("\n================================\n");
+            console.log('Флаги с аргументами указываются через =, например --oldYMHashOverride=f9cdcfb583ccebb5b23edaab0ea90165bee0479458532a0580c1b3a307d746d3');
+            console.log("\n================================\n");
+            break;
+    }
+
+    const isYmRunning = await isYandexMusicRunning();
+    if (!isYmRunning && forceOpen) {
+        console.log('Запуск Яндекс Музыки...');
+        launchYandexMusic()
+        console.log('Яндекс Музыка запущена');
+    }
+
+    if (command) console.timeEnd(`${command} исполнен за`);
+}
+    const args = minimist(process.argv.slice(2));
+    console.log(args);
+    await run(args._?.[0], args);
+})()

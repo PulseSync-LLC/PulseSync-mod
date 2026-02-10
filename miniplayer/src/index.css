@@ -1,0 +1,18 @@
+* {
+    user-select: none;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.root {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    inset: 0;
+}

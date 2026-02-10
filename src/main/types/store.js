@@ -1,0 +1,27 @@
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.StoreKeys = void 0;
+var StoreKeys;
+(function (StoreKeys) {
+    StoreKeys['VERSION'] = 'version';
+    StoreKeys['HAS_RECENTLY_LAUNCHED'] = 'hasRecentlyLaunched';
+    StoreKeys['UUID'] = 'uuid';
+    StoreKeys['DEVICE_ID'] = 'deviceId';
+    StoreKeys['MOD_SETTINGS'] = 'modSettings';
+    StoreKeys['DEVICE_SOFTWARE_REVISION'] = 'deviceSoftwareRevision';
+    StoreKeys['DEVICE_CPU_REVISION'] = 'deviceCpuRevision';
+    StoreKeys['TRACKS_AVAILABILITY_UPDATED_AT'] = 'tracksAvailabilityUpdatedAt';
+    StoreKeys['WINDOW_DIMENSIONS'] = 'windowDimensions';
+    StoreKeys['WINDOW_POSITION'] = 'windowPosition';
+    StoreKeys['WINDOW_MONITOR_ID'] = 'windowMonitorId';
+    StoreKeys['DEFAULT_MUSIC_EXPERIMENT_OVERRIDES'] = 'defaultMusicExperimentOverrides';
+    StoreKeys['REPOSITORY_META_UPDATED_AT'] = 'repositoryMetaUpdatedAt';
+    StoreKeys['SEND_ANONYMIZED_METRICS'] = 'sendModAnonymizedMetrics';
+    StoreKeys['IS_DEVTOOLS_ENABLED'] = 'devMode';
+    StoreKeys['ENABLE_YNISON_REMOTE_CONTROL'] = 'enableYnisonPlayerRemoteControl';
+    StoreKeys['ENABLE_YNISON_FOR_RPC'] = 'enableSendStateFromYnison';
+    StoreKeys['YNISON_INTERCEPT_PLAYBACK'] = 'ynisonInterceptPlayback';
+    StoreKeys['DISPLAY_MAX_FPS'] = 'displayMaxFps';
+    StoreKeys['GLOBAL_SHORTCUTS'] = 'enableGlobalShortcuts';
+    StoreKeys['AUTO_UPDATES'] = 'autoUpdates';
+})(StoreKeys || (exports.StoreKeys = StoreKeys = {}));
