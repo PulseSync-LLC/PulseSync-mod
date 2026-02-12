@@ -1,4 +1,5 @@
 const { io } = require('socket.io-client');
+const net = require('net');
 const { Logger } = require('../../packages/logger/Logger');
 const store_js_1 = require('../store.js');
 const { applyCss, removeCss, applyScript, wrapThemeScript } = require('./utils/PulseSyncUtils');
@@ -32,6 +33,11 @@ class PulseSyncManager {
         this._lastPlayerState = null;
         this.hasReloadedOnTheme = false;
         this._applyInFlight = null;
+        this.reconnectDelaysMs = [5000, 15000, 30000];
+        this.maxReconnectDelayMs = 300000;
+        this.reconnectAttempt = 0;
+        this.reconnectTimer = null;
+        this.isConnecting = false;
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
         this.updateDownloadInfo = this.updateDownloadInfo.bind(this);
@@ -79,13 +85,101 @@ class PulseSyncManager {
 
     start() {
         this.connectSocket();
+        this.tryConnect();
+    }
+
+    clearReconnectTimer() {
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = null;
+        }
+    }
+
+    getReconnectDelayMs(attempt) {
+        if (attempt < this.reconnectDelaysMs.length) {
+            return this.reconnectDelaysMs[attempt];
+        }
+
+        const lastBaseDelay = this.reconnectDelaysMs[this.reconnectDelaysMs.length - 1];
+        const extraStep = attempt - this.reconnectDelaysMs.length + 1;
+        const grownDelay = lastBaseDelay * 2 ** extraStep;
+
+        return Math.min(grownDelay, this.maxReconnectDelayMs);
+    }
+
+    scheduleReconnect(reason = '') {
+        if (this.reconnectTimer) {
+            return;
+        }
+
+        const attemptNumber = this.reconnectAttempt + 1;
+        const delayMs = this.getReconnectDelayMs(this.reconnectAttempt);
+        this.reconnectAttempt += 1;
+
+        const reasonSuffix = reason ? ` (${reason})` : '';
+        this.logger.warn(`Socket reconnect attempt #${attemptNumber} scheduled in ${Math.round(delayMs / 1000)}s${reasonSuffix}`);
+
+        this.reconnectTimer = setTimeout(() => {
+            this.reconnectTimer = null;
+            this.tryConnect();
+        }, delayMs);
+    }
+
+    async isPulseSyncReachable() {
+        try {
+            const parsed = new URL(this.wsUrl);
+            const host = parsed.hostname || 'localhost';
+            const defaultPort = parsed.protocol === 'https:' || parsed.protocol === 'wss:' ? 443 : 80;
+            const port = Number(parsed.port || defaultPort);
+
+            if (!Number.isFinite(port) || port <= 0) {
+                return false;
+            }
+
+            return await new Promise((resolve) => {
+                const socket = net.createConnection({ host, port });
+
+                const finish = (result) => {
+                    socket.removeAllListeners();
+                    socket.destroy();
+                    resolve(result);
+                };
+
+                socket.setTimeout(1500);
+                socket.once('connect', () => finish(true));
+                socket.once('timeout', () => finish(false));
+                socket.once('error', () => finish(false));
+            });
+        } catch (e) {
+            this.logger.warn(`isPulseSyncReachable: invalid wsUrl (${e.message})`);
+            return false;
+        }
+    }
+
+    async tryConnect() {
+        if (!this.socket || this.socket.connected || this.isConnecting) {
+            return;
+        }
+
+        const reachable = await this.isPulseSyncReachable();
+        if (!reachable) {
+            this.scheduleReconnect('PulseSync is not running');
+            return;
+        }
+
+        this.isConnecting = true;
+        this.logger.info('Trying to connect to PulseSync socket');
+        this.socket.connect();
     }
 
     connectSocket() {
+        if (this.socket) {
+            return;
+        }
+
         this.socket = io(this.wsUrl, {
-            reconnection: true,
-            reconnectionAttempts: Infinity,
-            reconnectionDelay: 5000,
+            autoConnect: false,
+            reconnection: false,
             path: '/socket.io',
             transports: ['websocket', 'polling'],
             query: { v: '1', type: 'yaMusic' },
@@ -93,6 +187,9 @@ class PulseSyncManager {
 
         this.socket.on('connect', async () => {
             this.logger.info('Socket.IO connected');
+            this.isConnecting = false;
+            this.reconnectAttempt = 0;
+            this.clearReconnectTimer();
             this.hasReloadedOnTheme = false;
 
             if (this.isReloading) {
@@ -108,11 +205,15 @@ class PulseSyncManager {
 
         this.socket.on('disconnect', (reason) => {
             this.logger.warn(`Socket.IO disconnected: ${reason}`);
+            this.isConnecting = false;
             this.readySent = false;
+            this.scheduleReconnect(reason);
         });
 
         this.socket.on('connect_error', (err) => {
             this.logger.warn(`Socket.IO connect_error: ${err.message}`);
+            this.isConnecting = false;
+            this.scheduleReconnect(err.message);
         });
 
         this.socket.on('PING', () => {
