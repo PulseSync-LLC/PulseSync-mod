@@ -13,10 +13,10 @@
     const yaml = require('js-yaml');
     const sevenZip = require('7zip-min');
     const FormData = require('form-data');
-    const JavaScriptObfuscator = require('javascript-obfuscator');
     const { execSync } = require('child_process');
     const { exec, spawn } = require('child_process');
     const { promisify } = require('util');
+    const vm = require('vm');
 
     const execAsync = promisify(exec);
     const spawnAsync = promisify(spawn);
@@ -48,7 +48,6 @@
     }
 
     const MINIFIED_SRC_PATH = path.join(process.argv[1], '../minified/src');
-    const OBFUSCATED_SRC_PATH = path.join(process.argv[1], '../obfuscated/src');
     const TEMP_DIR = path.join(process.argv[1], '../temp');
 
     if (!fs.existsSync(TEMP_DIR)) {
@@ -67,28 +66,6 @@
 
     let oldYMHash;
     let oldYMHashOverride;
-
-    const TARGET_APP_CHUNK_ID_FOR_OBFUSCATION = ['855', 'page-7b438de97831ead4', '4078', '7443'];
-
-    const OBFUSCATOR_OPTIONS = {
-        compact: true,
-        controlFlowFlattening: true,
-        controlFlowFlatteningThreshold: 0.8,
-        deadCodeInjection: true,
-        deadCodeInjectionThreshold: 0.6,
-        debugProtection: false,
-        debugProtectionInterval: 4,
-        disableConsoleOutput: false,
-        identifierNamesGenerator: 'hexadecimal',
-        log: false,
-        renameGlobals: false,
-        rotateStringArray: true,
-        selfDefending: true,
-        stringArray: true,
-        stringArrayThreshold: 0.95,
-        unicodeEscapeSequence: false,
-        simplify: true,
-    };
 
     class PatchNote {
         static forSpoofPatch(ymVersion, version, previousYmVersion) {
@@ -447,9 +424,7 @@
             console.error('Не удалось извлечь app.asar из установщика');
             return null;
         }
-
-        const extractedPath = await extractIfNotExist(`${version}@pure`, force, asarPath);
-        return extractedPath;
+        return await extractIfNotExist(`${version}@pure`, force, asarPath);
     }
 
     async function getLatestExtractedSrcDir(toPatched = false) {
@@ -492,8 +467,45 @@
         }
 
         const packageFileJson = JSON.parse(packageFileBuffer);
+        let buildInfo = packageFileJson.buildInfo ?? null;
 
-        return { version: packageFileJson.version, buildInfo: packageFileJson.buildInfo, modification: packageFileJson.modification };
+        if (!buildInfo) {
+            try {
+                let indexBuffer = null;
+
+                if (type === 'direct') {
+                    try {
+                        indexBuffer = asar.extractFile(DIRECT_DIST_PATH, 'index.js').toString();
+                    } catch (err) {}
+                } else if (type === 'extracted') {
+                    const extractedDir = await getLatestExtractedSrcDir();
+                    if (extractedDir) {
+                        const idxPath = path.join(extractedDir, '/index.js');
+                        if (fs.existsSync(idxPath)) indexBuffer = await fsp.readFile(idxPath, 'utf8');
+                    }
+                } else if (type === 'src') {
+                    const srcIdx = path.join(SRC_PATH, '/index.js');
+                    if (fs.existsSync(srcIdx)) indexBuffer = await fsp.readFile(srcIdx, 'utf8');
+                }
+
+                if (indexBuffer) {
+                    const m = indexBuffer.match(/const\s+buildInfo\s*=\s*(\{[\s\S]*?\})\s*;/m);
+                    if (m && m[1]) {
+                        const objStr = m[1];
+                        try {
+                            const sandbox = {};
+                            const parsed = vm.runInNewContext('(' + objStr + ')', sandbox, { timeout: 50 });
+                            if (parsed && typeof parsed === 'object') buildInfo = parsed;
+                        } catch (vmErr) {
+                            console.warn('Не удалось распарсить buildInfo через vm:', vmErr.message);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Не удалось получить buildInfo из index.js:', err.message);
+            }
+        }
+        return { version: packageFileJson.version, buildInfo: buildInfo, modification: packageFileJson.modification };
     }
 
     function getModVersion() {
@@ -505,128 +517,13 @@
         const oldVersion = packageJson.version;
 
         if (version) packageJson.version = version;
-        if (buildInfo || version)
-            packageJson.buildInfo = buildInfo ?? { VERSION: version, BRANCH: 'c3903938d4df76688c4639330c6834cd5ea664f2', BUILD_TIME: '2025-11-13T15:37:20Z' }; // TODO: Поразмыслить как сделать по нормальному для сборки мейна через Роллап
+        if (buildInfo)
+            packageJson.buildInfo = buildInfo
         if (modVersion) packageJson.modification.version = modVersion;
         if (appConfig) packageJson.appConfig = { ...packageJson.appConfig, ...appConfig };
 
-        await fsp.writeFile(path.join(src, '/package.json'), JSON.stringify(packageJson, null, 2), 'utf8');
+        await fsp.writeFile(path.join(src, '/package.json'), JSON.stringify(packageJson, null, 4), 'utf8');
         return { oldVersion: oldVersion, newVersion: version };
-    }
-
-    async function obfuscateDir(srcDir, destDir) {
-        async function obfuscateAppChunk(appDestDir, chunkIds = TARGET_APP_CHUNK_ID_FOR_OBFUSCATION) {
-            const chunksDir = path.join(appDestDir, '_next', 'static', 'chunks');
-            const idsArray = Array.isArray(chunkIds) ? chunkIds : [chunkIds];
-
-            function escapeRegExp(str) {
-                return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            }
-
-            async function collectJsFilesRecursive(rootDir) {
-                const out = [];
-
-                async function walk(dir) {
-                    let entries;
-                    try {
-                        entries = await fsp.readdir(dir, { withFileTypes: true });
-                    } catch (err) {
-                        return;
-                    }
-
-                    for (const entry of entries) {
-                        const fullPath = path.join(dir, entry.name);
-                        if (entry.isDirectory()) {
-                            await walk(fullPath);
-                        } else if (entry.isFile() && entry.name.endsWith('.js')) {
-                            out.push(fullPath);
-                        }
-                    }
-                }
-
-                await walk(rootDir);
-                return out;
-            }
-
-            try {
-                if (!fs.existsSync(chunksDir)) {
-                    console.warn(`    Директория чанков не существует: ${chunksDir}`);
-                    return;
-                }
-
-                const allJsFiles = await collectJsFilesRecursive(chunksDir);
-
-                for (const chunkId of idsArray) {
-                    const re = new RegExp(`^${escapeRegExp(chunkId)}(?:[.-].+)?\\.js$`);
-
-                    const targets = allJsFiles.filter((fullPath) => re.test(path.basename(fullPath)));
-
-                    if (targets.length === 0) {
-                        console.log(`    Чанк ${chunkId} не найден в ${chunksDir}`);
-                        continue;
-                    }
-
-                    for (const fullPath of targets) {
-                        try {
-                            console.time(`    Обфусцирован чанк ${chunkId}: ${fullPath}`);
-                            const code = await fsp.readFile(fullPath, 'utf8');
-                            const result = JavaScriptObfuscator.obfuscate(code, OBFUSCATOR_OPTIONS);
-                            await fsp.writeFile(fullPath, result.getObfuscatedCode(), 'utf8');
-                            console.timeEnd(`    Обфусцирован чанк ${chunkId}: ${fullPath}`);
-                        } catch (err) {
-                            console.error(`    Ошибка при обфускации чанка ${chunkId} (${fullPath}):`, err);
-                        }
-                    }
-                }
-            } catch (err) {
-                console.warn(`    Не удалось обработать директорию чанков app: ${chunksDir}.`, err?.message ?? err);
-            }
-        }
-
-        await fsp.mkdir(destDir, { recursive: true });
-        const items = await fsp.readdir(srcDir);
-
-        for (const item of items) {
-            if (item === 'node_modules' || item === 'package.json') {
-                console.log(`    Пропущена папка/файл: ${item}`);
-                await fsp.cp(path.join(srcDir, item), path.join(destDir, item), { recursive: true });
-                continue;
-            }
-
-            if (item === 'app') {
-                console.log(
-                    `    Пропущена папка/файл: ${item} (кроме чанков ${TARGET_APP_CHUNK_ID_FOR_OBFUSCATION.join(', ')} в _next/static/chunks, включая вложенные директории)`,
-                );
-                const srcApp = path.join(srcDir, item);
-                const destApp = path.join(destDir, item);
-                await fsp.cp(srcApp, destApp, { recursive: true });
-                await obfuscateAppChunk(destApp);
-                continue;
-            }
-
-            const srcPath = path.join(srcDir, item);
-            const destPath = path.join(destDir, item);
-            const stat = await fsp.stat(srcPath);
-
-            if (stat.isFile() && srcPath.endsWith('.js')) {
-                try {
-                    console.time(`    Обфусцирован: ${destPath}`);
-                    const code = await fsp.readFile(srcPath, 'utf8');
-                    const result = JavaScriptObfuscator.obfuscate(code, OBFUSCATOR_OPTIONS);
-                    await fsp.writeFile(destPath, result.getObfuscatedCode(), 'utf8');
-                    console.timeEnd(`    Обфусцирован: ${destPath}`);
-                } catch (err) {
-                    console.error(`    Ошибка при обфускации ${destPath}:`, err);
-                    await fsp.cp(srcPath, destPath, { recursive: true });
-                    console.log(`    Скопирован оригинальный файл: ${destPath}`);
-                }
-            } else if (stat.isDirectory()) {
-                await obfuscateDir(srcPath, destPath);
-            } else {
-                await fsp.cp(srcPath, destPath, { recursive: true });
-                console.log(`    Скопирован: ${destPath}`);
-            }
-        }
     }
 
     async function minifyDir(srcDir, destDir) {
@@ -728,7 +625,7 @@
         }
 
         console.log(`🔨 Сборка нативного модуля: ${targetName}`);
-        execSync('npm run build', { cwd: nativeDir, stdio: 'inherit' });
+        execSync('yarn run build', { cwd: nativeDir, stdio: 'inherit' });
 
         const builtNode = path.join(nativeDir, 'build', 'Release', `${targetName}.node`);
         await fsp.mkdir(destDir, { recursive: true });
@@ -798,12 +695,12 @@
         console.log('🎵 Сборка миниплеера...');
         console.time('Миниплеер собран');
 
-        execSync('npm install', {
+        execSync('yarn', {
             cwd: miniPlayerDir,
             stdio: 'inherit',
         });
 
-        execSync('npm run build', {
+        execSync('yarn run build', {
             cwd: miniPlayerDir,
             stdio: 'inherit',
         });
@@ -826,11 +723,10 @@
     }
 
     async function build(
-        { srcPath = SRC_PATH, destDir = DEFAULT_DIST_PATH, noMinify = false, obfuscate = false, noNativeModules = false } = {
+        { srcPath = SRC_PATH, destDir = DEFAULT_DIST_PATH, noMinify = false, noNativeModules = false } = {
             srcPath: SRC_PATH,
             destDir: DEFAULT_DIST_PATH,
             noMinify: false,
-            obfuscate: false,
         },
     ) {
         let workPath = srcPath;
@@ -847,14 +743,6 @@
             workPath = MINIFIED_SRC_PATH;
         }
 
-        if (obfuscate) {
-            console.log('Обфускация...');
-            console.time('Обфускация завершена');
-            await obfuscateDir(workPath, OBFUSCATED_SRC_PATH);
-            console.timeEnd('Обфускация завершена');
-            workPath = OBFUSCATED_SRC_PATH;
-        }
-
         console.log('Архивация из ' + workPath + ' в ' + destDir);
         console.time('Архивация завершена');
         await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}/**/*' });
@@ -863,13 +751,9 @@
             await fsp.rm(MINIFIED_SRC_PATH, { recursive: true });
             console.log('Минифицированный код отчищен');
         }
-        if (obfuscate) {
-            await fsp.rm(OBFUSCATED_SRC_PATH, { recursive: true });
-            console.log('Обфусцированный код отчищен');
-        }
     }
 
-    async function buildDirectly(src, noMinify = false, obfuscate = false, noNativeModules = false, forceOpen = false) {
+    async function buildDirectly(src, noMinify = false, noNativeModules = false, forceOpen = false) {
         if (process.platform === 'darwin' && checkIfSystemIntegrityProtectionEnabled()) {
             console.log('System Integrity Protection включён. Обход невозможен, пожалуйста, отключите SIP для File System и попробуйте снова.');
             return false;
@@ -878,7 +762,7 @@
 
         const shouldReopen = await closeYandexMusic();
 
-        await build({ srcPath: src, destDir: DIRECT_DIST_PATH, noMinify: noMinify, obfuscate: obfuscate, noNativeModules: noNativeModules });
+        await build({ srcPath: src, destDir: DIRECT_DIST_PATH, noMinify: noMinify, noNativeModules: noNativeModules });
 
         await new Promise((resolve) => setTimeout(resolve, 1000)); // Dirty delay. To make sure YM is closed
 
@@ -1247,7 +1131,6 @@
 
         const shouldPatch = flags.p ?? false;
         const shouldMinify = flags.m ?? false;
-        const shouldObfuscate = flags.o ?? false;
         const shouldBuildDirectly = flags.d ?? false;
         const shouldRelease = flags.r ?? false;
         const shouldBuild = flags.b ?? false;
@@ -1258,20 +1141,20 @@
         switch (command) {
             case 'build':
                 if (shouldBuildDirectly) {
-                    await buildDirectly(src, !shouldMinify, shouldObfuscate, noNativeModules, forceOpen);
+                    await buildDirectly(src, !shouldMinify, noNativeModules, forceOpen);
                     break;
                 }
                 if (shouldRelease) {
-                    await build({ srcPath: src, destDir: dest, noMinify: !shouldMinify, obfuscate: shouldObfuscate, noNativeModules: noNativeModules });
+                    await build({ srcPath: src, destDir: dest, noMinify: !shouldMinify, noNativeModules: noNativeModules });
                     await release(dest);
                     break;
                 }
 
-                await build({ srcPath: src, destDir: dest, noMinify: !shouldMinify, obfuscate: shouldObfuscate, noNativeModules: noNativeModules });
+                await build({ srcPath: src, destDir: dest, noMinify: !shouldMinify, noNativeModules: noNativeModules });
                 break;
             case 'spoof':
                 const versions = await spoof('extracted', shouldRelease);
-                if (shouldBuild || shouldRelease) await build({ destDir: dest, noMinify: !shouldMinify, obfuscate: shouldObfuscate, noNativeModules: noNativeModules });
+                if (shouldBuild || shouldRelease) await build({ destDir: dest, noMinify: !shouldMinify, noNativeModules: noNativeModules });
                 if (shouldRelease) await release(dest, versions);
                 break;
             case 'release':
@@ -1284,25 +1167,24 @@
             case 'extract':
                 const { extracted } = await extractBuild(force, src, extractType, !withoutPure);
                 if (shouldPatch) await patchExtractedBuild(extracted);
-                if (shouldBuildDirectly) await buildDirectly(extracted, !shouldMinify, shouldObfuscate, noNativeModules, forceOpen);
+                if (shouldBuildDirectly) await buildDirectly(extracted, !shouldMinify, noNativeModules, forceOpen);
                 if (shouldBuild)
                     await build({
                         srcPath: extracted,
                         destDir: DEFAULT_PATCHED_DIST_PATH,
                         noMinify: !shouldMinify,
-                        obfuscate: shouldObfuscate,
                         noNativeModules: noNativeModules,
                     });
                 break;
             case 'patch':
                 await patchExtractedBuild(src);
-                if (shouldBuildDirectly) await buildDirectly(src, !shouldMinify, shouldObfuscate, noNativeModules, forceOpen);
+                if (shouldBuildDirectly) await buildDirectly(src, !shouldMinify, noNativeModules, forceOpen);
                 break;
             case 'bypass-asar-integrity':
                 await bypassAsarIntegrity(dest);
                 break;
             case 'rebuild':
-                await buildDirectly(src, true, false, true, true);
+                await buildDirectly(src, true, false, true);
                 break;
             case 'pretty':
                 await prettifyLatestPure();
