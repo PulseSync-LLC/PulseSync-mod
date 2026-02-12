@@ -11,7 +11,7 @@ const EXTRACTED = './extracted';
 function getSortedVersionList() {
     const versions = fs.readdirSync(EXTRACTED).filter(f => (fs.statSync(path.join(EXTRACTED, f)).isDirectory() && !(f.endsWith('@pure') || f.endsWith('@archive') || f.endsWith('@beta') || f.endsWith('@modded'))));
     return versions
-    .map((value) => value.replaceAll("_", "."))
+    .map((value) => value.replaceAll("_", ".").replaceAll("@pretty", ""))
     .sort((a, b) => semver.rcompare(a, b))
     //.map((value) => value.replaceAll(".", "_"));
 }
@@ -23,7 +23,7 @@ if (!versionList || !versionList.length) {
 
 console.log(`Используемые версии: ${versionList.join(', ')}`);
 
-const ROOT = process.argv[2] ?? (versionList?.[0] ? path.join(EXTRACTED, versionList?.[0]) : undefined ) ?? "./src"
+const ROOT = process.argv[2] ?? (versionList?.[0] ? path.join(EXTRACTED, versionList?.[0]).concat("@pretty") : undefined ) ?? "./src"
 const APP_CHUNKS_ROOT = path.join(ROOT, "/app/_next/static/chunks");
 const MAIN_INDEX_JS_PATH = path.join(ROOT, "/index.js");
 const OUTPUT = process.argv[3] ?? path.join(process.argv[1].replace('dataminer.js', ''), `./output/${process.argv[2]?.split('/')?.at(process.argv[2].endsWith('/') ? -2 : -1)?.replaceAll('.', '_') ?? (versionList?.[0] ? versionList?.[0].replaceAll('.', '_') : undefined ) ?? 'src'}`);
