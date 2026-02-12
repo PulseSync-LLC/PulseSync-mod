@@ -156,8 +156,9 @@ builds
 obfuscated
 src/main/lib/miniplayer/renderer/
 *.build-meta.json
+temp
 
 !src/node_modules/
 !src/node_modules/**/*
 
-/native/setIconicThumbnail/node_modules/
+/native/setIconicThumbnail/node_modules
