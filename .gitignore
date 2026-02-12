@@ -159,3 +159,5 @@ src/main/lib/miniplayer/renderer/
 
 !src/node_modules/
 !src/node_modules/**/*
+
+/native/setIconicThumbnail/node_modules/
