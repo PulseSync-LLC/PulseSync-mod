@@ -69,6 +69,16 @@ class LastFmScrobbler {
     }
     async logout() {
         this.store.delete(this.SESSION_STORE_KEY);
+        const session = electron_1.session;
+        await session.defaultSession.clearStorageData({origin: 'https://www.last.fm'})
+
+        const cookies = await session.defaultSession.cookies.get({});
+        await Promise.all(
+            cookies
+                .filter((c) => (c.domain || '').includes('last.fm'))
+                .map((c) => session.defaultSession.cookies.remove(`https://${c.domain.replace(/^\./, '')}`, c.name)),
+        );
+
         this.logger.info('Logged out');
         events_js_1.sendLastFmUserInfoUpdated(undefined, undefined);
     }
