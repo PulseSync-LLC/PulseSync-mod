@@ -90,6 +90,29 @@ function sleep(ms) {
     return new Promise((r) => setTimeout(r, ms));
 }
 
+function normalizeMetricType(metricType) {
+    return metricType === 'app' ? 'app' : 'mod';
+}
+
+function normalizeMetricsEndpoint(url, metricType) {
+    if (!url || typeof url !== 'string') return url;
+
+    try {
+        const parsed = new URL(url);
+        const type = normalizeMetricType(metricType);
+        const path = parsed.pathname.replace(/\/+$/, '') || '/';
+
+        if (path === '/' || path === '/metrics' || path === '/metrics/app' || path === '/metrics/mod') {
+            parsed.pathname = `/metrics/${type}`;
+            return parsed.toString();
+        }
+
+        return parsed.toString();
+    } catch {
+        return url;
+    }
+}
+
 function isRetryableStatus(status) {
     return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
 }
@@ -231,7 +254,7 @@ async function trySendHeartbeatOnce({ endpointUrl, fallbackUrl, apiKey, statePat
         if (!shouldSendHeartbeat(lastSentAt, heartbeatIntervalMs)) return;
 
         const payload = {
-            event: 'app_heartbeat',
+            event: 'mod_heartbeat',
             ...buildCommonPayload({ installId, appName, modVersion }),
         };
 
@@ -270,6 +293,7 @@ async function initUserCountMetric(options) {
         endpointUrl,
         fallbackUrl = 'https://pulsesync-metrics.forea-adoxid-account.workers.dev',
         apiKey = '',
+        metricType = 'mod',
         heartbeatIntervalMs = 3 * 60 * 60 * 1000,
         appName = app.getName(),
         modVersion = '',
@@ -282,6 +306,10 @@ async function initUserCountMetric(options) {
         logger.debug('Metrics endpoint URL not provided, skipping initialization');
         return;
     }
+
+    const resolvedMetricType = normalizeMetricType(metricType);
+    const resolvedEndpointUrl = normalizeMetricsEndpoint(endpointUrl, resolvedMetricType);
+    const resolvedFallbackUrl = normalizeMetricsEndpoint(fallbackUrl, resolvedMetricType);
 
     logger.info('Initializing user count metrics');
 
@@ -300,26 +328,33 @@ async function initUserCountMetric(options) {
 
     if (isNew && !state.install_event_sent) {
         const payload = {
-            event: 'app_install',
+            event: 'mod_install',
             ...buildCommonPayload({ installId, appName, modVersion }),
         };
 
         try {
-            logger.debug('Sending app install event');
-            await sendEventWithFallback({ primaryUrl: endpointUrl, fallbackUrl, apiKey, payload, timeoutMs, maxRetries });
+            logger.debug('Sending mod install event');
+            await sendEventWithFallback({
+                primaryUrl: resolvedEndpointUrl,
+                fallbackUrl: resolvedFallbackUrl,
+                apiKey,
+                payload,
+                timeoutMs,
+                maxRetries,
+            });
             const newState = { ...state, install_event_sent: true };
             await writeJsonAtomic(statePath, newState);
-            logger.info('App install event sent successfully');
+            logger.info('Mod install event sent successfully');
         } catch (error) {
-            logger.error('Failed to send app install event:', error);
+            logger.error('Failed to send mod install event:', error);
         }
     }
 
     try {
         logger.debug('Sending initial heartbeat');
         await trySendHeartbeatOnce({
-            endpointUrl,
-            fallbackUrl,
+            endpointUrl: resolvedEndpointUrl,
+            fallbackUrl: resolvedFallbackUrl,
             apiKey,
             statePath,
             installId,
@@ -337,8 +372,8 @@ async function initUserCountMetric(options) {
     if (enablePeriodicHeartbeat) {
         logger.info('Starting periodic heartbeat scheduler, interval:', heartbeatIntervalMs, 'ms');
         startHeartbeatScheduler({
-            endpointUrl,
-            fallbackUrl,
+            endpointUrl: resolvedEndpointUrl,
+            fallbackUrl: resolvedFallbackUrl,
             apiKey,
             statePath,
             installId,
