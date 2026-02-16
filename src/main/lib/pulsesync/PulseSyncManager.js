@@ -1,5 +1,6 @@
 const { io } = require('socket.io-client');
 const net = require('net');
+const EventEmitter = require('node:events');
 const { Logger } = require('../../packages/logger/Logger');
 const store_js_1 = require('../store.js');
 const { applyCss, removeCss, applyScript, wrapThemeScript } = require('./utils/PulseSyncUtils');
@@ -14,8 +15,9 @@ function sanitizeId(name) {
 
 let singletonInstance = null;
 
-class PulseSyncManager {
+class PulseSyncManager extends EventEmitter {
     constructor(window) {
+        super();
         this.window = window;
         this.webContents = window.webContents;
         this.logger = new Logger('PulseSyncManager');
@@ -188,6 +190,7 @@ class PulseSyncManager {
 
         this.socket.on('connect', async () => {
             this.logger.info('Socket.IO connected');
+            this.emit('connected');
             this.isConnecting = false;
             this.reconnectAttempt = 0;
             this.clearReconnectTimer();
@@ -208,6 +211,7 @@ class PulseSyncManager {
             this.logger.warn(`Socket.IO disconnected: ${reason}`);
             this.isConnecting = false;
             this.readySent = false;
+            this.emit('disconnected', reason);
             this.scheduleReconnect(reason);
         });
 

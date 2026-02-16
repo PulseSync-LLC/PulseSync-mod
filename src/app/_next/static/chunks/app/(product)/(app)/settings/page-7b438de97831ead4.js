@@ -769,7 +769,7 @@
                             (0, i.jsx)('li', {
                                 className: B().item,
                                 children: (0, i.jsx)(P, {
-                                    title: 'Переопределить эксперимент Глубоких ссылок',
+                                    title: 'Объединить веб и апп ссылки в одну',
                                     description: 'Уберёт ссылку открывающую приложение т.к. это сделает ссылка на сайт',
                                     onChange: onDiscordOverrideDeepLinksExperimentToggle,
                                     isChecked: isExperimentOverriden,
@@ -779,7 +779,7 @@
                             (0, i.jsx)('li', {
                                 className: B().item,
                                 children: (0, i.jsx)(P, {
-                                    title: 'Отображать кнопку на Гитхаб',
+                                    title: 'Отображать кнопку на сайт PulseSync',
                                     description: 'Отображает кнопку установки мода',
                                     onChange: onDiscordShowGitHubButtonToggle,
                                     isChecked: window.nativeSettings.get('modSettings.discordRPC.showGitHubButton'),

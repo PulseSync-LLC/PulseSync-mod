@@ -31,7 +31,7 @@ class convertableLink {
 const settings = () => store_js_1.getModSettings()?.discordRPC;
 
 const clientId = settings()?.applicationIDForRPC ?? '1270726237605855395';
-const GITHUB_LINK = 'https://pulsesync.dev';
+const WEB_LINK = 'https://pulsesync.dev';
 const SET_ACTIVITY_TIMEOUT_MS = 3000;
 const STATUS_DISPLAY_TYPES = {
     0: 0, // Name
@@ -42,7 +42,6 @@ const STATUS_DISPLAY_TYPES = {
 let rpc = undefined;
 let isReady = false;
 let isReconnecting = false;
-let isListeningType = true;
 
 let afkTimeoutId = undefined;
 let reconnectTimeoutId = undefined;
@@ -53,7 +52,7 @@ let lastActivity = undefined;
 const tryConnect = async () => {
     try {
         discordRichPresenceLogger.info('Connecting to Discord...');
-        await rpc.connect(clientId);
+        await rpc.login();
         return true;
     } catch (e) {
         discordRichPresenceLogger.error('Connect error:', e);
@@ -99,9 +98,9 @@ function startReconnectLoop() {
 }
 
 const initRPC = () => {
-    rpc = new DiscordRPC.Client({ transport: { type: 'ipc' } });
+    rpc = new DiscordRPC.Client({ clientId: clientId, transport: { type: 'ipc' } });
+
     isReady = false;
-    isListeningType = false;
 
     rpc.on('ready', () => {
         discordRichPresenceLogger.info('Ready');
@@ -123,6 +122,16 @@ const initRPC = () => {
     rpc.on('error', (e) => {
         discordRichPresenceLogger.error('Error', e);
     });
+
+    pulseSyncManager_js_1.getPulseSyncManager().on('disconnected', () => {
+        sendCurrentActivity();
+    });
+
+    pulseSyncManager_js_1.getPulseSyncManager().on('connected', () => {
+        sendCurrentActivity();
+    });
+
+
 };
 
 const states = {
@@ -132,10 +141,6 @@ const states = {
     unknown: { icon: 'logo', name: 'Unknown' },
     default: { icon: 'logo', name: 'Yandex Music' },
 };
-
-function silentTypeCheck(activity) {
-    isListeningType = activity.type === 2;
-}
 
 function string2Discord(string) {
     if (!string) return string;
@@ -221,10 +226,7 @@ const fromYnisonState = (ynisonState) => {
 
 function updateActivity(activityObject) {
     discordRichPresenceLogger.debug('Updating activity:', activityObject);
-    rpc.setActivity(activityObject)
-        .then((activity) => {
-            silentTypeCheck(activity);
-        })
+    rpc.user.setActivity(activityObject)
         .catch((e) => {
             discordRichPresenceLogger.error('updateActivity error:', e);
         });
@@ -239,7 +241,7 @@ function sendCurrentActivity() {
 
     if (!isEnabled || !canUseRpc) {
         if (lastActivity) {
-            rpc?.clearActivity();
+            rpc?.user.clearActivity();
             lastActivity = undefined;
             rpc?.destroy();
         }
@@ -257,7 +259,7 @@ function sendCurrentActivity() {
         afkTimeoutId = setTimeout(
             () => {
                 discordRichPresenceLogger.info('Clearing activity due to inactivity');
-                rpc?.clearActivity();
+                rpc?.user.clearActivity();
                 afkTimeoutId = undefined;
             },
             (settings()?.afkTimeout ?? 15) * 60 * 1000,
@@ -300,7 +302,7 @@ function buildActivityObject(playingState) {
     const shareAlbumPath = new convertableLink(playingState.track.albums?.[0]?.id ? `album/${playingState.track.albums?.[0]?.id}` : undefined);
     const shareArtistPath = new convertableLink(playingState.track.artists?.[0]?.id ? `artist/${playingState.track.artists?.[0]?.id}` : undefined);
 
-    let startTimestamp = Math.round(Date.now() - (playingState.progress ?? 0) * 1000);
+    let startTimestamp = Math.round(Date.now() - (playingState.progress.position ?? 0) * 1000);
     let endTimestamp = isGenerative ? undefined : startTimestamp + (playingState.track.durationMs ?? 0);
 
     let stateKey = states[playingState.status]?.icon;
@@ -316,7 +318,7 @@ function buildActivityObject(playingState) {
         startTimestamp = undefined;
     }
 
-    if (!isListeningType || playingState.status !== 'playing') {
+    if (playingState.status !== 'playing') {
         endTimestamp = undefined;
     }
 
@@ -328,8 +330,8 @@ function buildActivityObject(playingState) {
         state: string2Discord(artist),
         stateUrl: shareArtistPath.toWeb(),
         largeImageKey: albumArt,
-        largeImageText: `YandexMusicModClient ${config_js_1.config.modification.version}`,
-        largeImageUrl: GITHUB_LINK,
+        largeImageText: `PulseSync Mod ${config_js_1.config.modification.version}`,
+        largeImageUrl: WEB_LINK,
         startTimestamp,
         endTimestamp,
         instance: false,
@@ -365,7 +367,7 @@ function buildActivityObject(playingState) {
                 },
                 {
                     label: 'Install mod',
-                    url: GITHUB_LINK,
+                    url: WEB_LINK,
                 },
             ];
         } else {
