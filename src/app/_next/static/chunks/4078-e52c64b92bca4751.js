@@ -1477,14 +1477,14 @@
                     if (!trackName) return null;
                     let cacheKey = makeLrclibTextCacheKey({ trackName, artistName, duration: durationSec }),
                         cachedResult = readLrclibCache(lrclibTextResultCache, cacheKey);
-                    if (cachedResult) return (console.debug?.('[LRCLib] cache hit', { key: cacheKey }), cachedResult);
-                    if (readLrclibCache(lrclibTextNoResultCache, cacheKey)) return (console.debug?.('[LRCLib] cache no-result hit', { key: cacheKey }), null);
+                    if (cachedResult) return (console.debug('[LRCLib] cache hit', { key: cacheKey }), cachedResult);
+                    if (readLrclibCache(lrclibTextNoResultCache, cacheKey)) return (console.debug('[LRCLib] cache no-result hit', { key: cacheKey }), null);
                     let searchToken = ++lrclibSearchToken;
                     let checkToken = () => searchToken !== lrclibSearchToken;
 
                     try {
                         lrclibQueue.reset?.();
-                        console.debug?.('[LRCLib] reset queue', { token: searchToken });
+                        console.debug('[LRCLib] reset queue', { token: searchToken });
                         lrclibSearchControllers.forEach((e) => e.abort?.());
                         lrclibSearchControllers = [];
                     } catch (e) {}
@@ -1494,7 +1494,7 @@
                         if (useText === !1) return null;
                     } catch (e) {}
 
-                    console.debug?.('[LRCLib] search', { trackName, artistName, duration: durationSec });
+                    console.debug('[LRCLib] search', { trackName, artistName, duration: durationSec });
 
                     let allowTitleOnlyFallback = !0;
                     try {
@@ -1523,11 +1523,11 @@
                                     let response = await fetch(requestUrl, { signal: controller.signal });
                                     if (!response.ok) return { items: null, aborted: !1 };
                                     let payload = await response.json();
-                                    console.debug?.('[LRCLib] response', { count: Array.isArray(payload) ? payload.length : 0 });
+                                    console.debug('[LRCLib] response', { count: Array.isArray(payload) ? payload.length : 0 });
                                     return { items: Array.isArray(payload) && payload.length ? payload : null, aborted: !1 };
                                 } catch (error) {
                                     let aborted = error?.name === 'AbortError';
-                                    aborted ? console.debug?.('[LRCLib] request aborted') : console.debug?.('[LRCLib] request failed', error);
+                                    aborted ? console.debug('[LRCLib] request aborted') : console.debug('[LRCLib] request failed', error);
                                     return { items: null, aborted };
                                 } finally {
                                     try {
@@ -1633,7 +1633,7 @@
                             results = results.filter((e) => normalizedTitles.includes(normalizeTitle(e.trackName || e.track_name || e.title || e.name)));
                         }
 
-                        console.debug?.('[LRCLib] filtered', { count: results.length, usedArtist: !usedLooseQuery });
+                        console.debug('[LRCLib] filtered', { count: results.length, usedArtist: !usedLooseQuery });
 
                         results = results.filter((e) => !e.instrumental && (e.plainLyrics || e.syncedLyrics));
                         if (!results.length)
@@ -1665,7 +1665,7 @@
                             writeLrclibCache(lrclibTextResultCache, cacheKey, selected, LRCLIB_TEXT_CACHE_TTL_MS, LRCLIB_TEXT_CACHE_MAX_SIZE));
                         return selected;
                     } catch (e) {
-                        console.debug?.('[LRCLib] search failed', e);
+                        console.debug('[LRCLib] search failed', e);
                         return null;
                     }
                 };

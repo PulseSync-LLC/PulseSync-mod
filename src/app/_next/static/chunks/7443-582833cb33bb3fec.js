@@ -9211,6 +9211,7 @@
                 LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS = 18e5,
                 lrclibSyncSearchResultCache = new Map(),
                 lrclibSyncSearchNoResultCache = new Map(),
+                lrclibSyncSearchInFlightByKey = new Map(),
                 normalizeLrclibSyncCachePart = (e) =>
                     'string' == typeof e
                         ? e
@@ -9251,7 +9252,7 @@
                 lrclibSyncSonataStateRef = null,
                 logSyncPrefetch = (e, t) => {
                     try {
-                        console.debug?.('[LRCLib] sync prefetch '.concat(e), t);
+                        console.debug('[LRCLib] sync prefetch '.concat(e), t);
                     } catch (e) {}
                 },
                 fetchLrclibLyrics = async (e) => {
@@ -9261,8 +9262,11 @@
                         cachedResult = readLrclibSyncCache(lrclibSyncSearchResultCache, cacheKey);
                     if (cachedResult) return cachedResult;
                     if (readLrclibSyncCache(lrclibSyncSearchNoResultCache, cacheKey)) return null;
-                    let searchToken = ++lrclibSyncSearchToken;
-                    let checkToken = () => !1;
+                    let inFlightSearch = lrclibSyncSearchInFlightByKey.get(cacheKey);
+                    if (inFlightSearch) return inFlightSearch;
+                    let searchPromise = (async () => {
+                        let searchToken = ++lrclibSyncSearchToken;
+                        let checkToken = () => !1;
 
                     try {
                         let useText = 'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useText') : null;
@@ -9301,7 +9305,7 @@
                                     if (!response.ok) return { items: null, aborted: !1 };
                                     let payload = await response.json();
                                     console.debug(
-                                        'LRCLib fetch response',
+                                        '[LRCLib] fetch response',
                                         Array.isArray(payload)
                                             ? payload.map((e) => {
                                                   let t = e?.syncedLyrics ? parseLrc(e.syncedLyrics) : [];
@@ -9309,11 +9313,11 @@
                                               })
                                             : [],
                                     );
-                                    console.debug?.('[LRCLib] sync response', { count: Array.isArray(payload) ? payload.length : 0 });
+                                    console.debug('[LRCLib] sync response', { count: Array.isArray(payload) ? payload.length : 0 });
                                     return { items: Array.isArray(payload) && payload.length ? payload : null, aborted: !1 };
                                 } catch (error) {
                                     let aborted = error?.name === 'AbortError';
-                                    aborted ? console.debug?.('[LRCLib] sync request aborted') : console.debug?.('[LRCLib] sync request failed', error);
+                                    aborted ? console.debug('[LRCLib] sync request aborted') : console.debug('[LRCLib] sync request failed', error);
                                     return { items: null, aborted };
                                 } finally {
                                     try {
@@ -9443,7 +9447,7 @@
                                 null
                             );
 
-                        console.debug?.('[LRCLib] sync filtered', { count: results.length, usedArtist: !usedLooseQuery });
+                        console.debug('[LRCLib] sync filtered', { count: results.length, usedArtist: !usedLooseQuery });
 
                         let scoreSynced = (e) => {
                             if (!e || !e.syncedLyrics) return null;
@@ -9539,16 +9543,22 @@
                             );
                         (lrclibSyncSearchNoResultCache.delete(cacheKey),
                             writeLrclibSyncCache(lrclibSyncSearchResultCache, cacheKey, selected, LRCLIB_SYNC_SEARCH_CACHE_TTL_MS, LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE));
-                        console.debug?.('[LRCLib] sync selected', {
+                        console.debug('[LRCLib] sync selected', {
                             id: selected?.id,
                             duration: selected?.duration,
                             hasSynced: !!selected?.syncedLyrics,
                         });
                         return selected;
-                    } catch (e) {
-                        console.debug?.('[LRCLib] sync search failed', e);
-                        return null;
-                    }
+                        } catch (e) {
+                            console.debug('[LRCLib] sync search failed', e);
+                            return null;
+                        }
+                    })();
+                    lrclibSyncSearchInFlightByKey.set(cacheKey, searchPromise);
+                    searchPromise.finally(() => {
+                        lrclibSyncSearchInFlightByKey.get(cacheKey) === searchPromise && lrclibSyncSearchInFlightByKey.delete(cacheKey);
+                    });
+                    return searchPromise;
                 },
                 L = l.gK
                     .model('SyncLyricsLine', {
