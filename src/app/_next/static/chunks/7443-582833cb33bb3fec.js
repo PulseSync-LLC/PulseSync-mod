@@ -6927,61 +6927,61 @@
                                 { containerId: i.uQT.ERROR },
                             ),
                             _.resetShouldShowError()));
-	                    let C = (0, y.c)((e) => {
-	                        (v(e),
-	                            e &&
-	                                l &&
-	                                _.sendViews({
-	                                    trackId: l.id,
-	                                    albumId: l.albumId,
-	                                }));
-	                    });
-	                    let T = !!(_.lyrics && String(_.lyrics).trim().length > 0),
-	                        I = _.isShimmerVisible || u.isShimmerVisible || (_.isLoading && !T);
-	                    return I
-	                        ? (0, d.jsx)(D, {
-	                              isShimmerActive: _.isLoading || u.isLoading,
-	                          })
-	                        : !T
-	                          ? null
-	                        : (0, d.jsxs)('div', {
-	                              className: M().root,
-	                              ...(0, x.Am)(x.Xk.track.TRACK_PAGE_LYRICS),
-                              children: [
-                                  (0, d.jsx)(f.Heading, {
-                                      variant: 'h2',
-                                      size: 'm',
-                                      lineClamp: 1,
-                                      className: M().title,
-                                      ...(0, x.Am)(x.e8.content.TRACK_LYRICS_TITLE),
-                                      children: s({ id: 'entity-names.text' }),
-                                  }),
-                                  (0, d.jsx)(L.K, {
-                                      moreText: s({
-                                          id: 'track-modal.read-more',
-                                      }),
-                                      buttonClassName: M().button,
-                                      open: p,
-                                      onOpenChange: C,
-                                      lineClamp: 4,
-                                      withFade: !0,
-                                      children: (0, d.jsx)(f.Caption, {
-                                          variant: 'div',
-                                          className: M().lyrics,
-                                          size: 'l',
-                                          weight: 'medium',
-                                          ...(0, x.Am)(x.e8.content.TRACK_LYRICS_TEXT),
-                                          children: (0, d.jsx)(o.xe, {
-                                              lyrics: _.lyrics,
-                                              authors: _.writersNames,
-                                              source: null == (r = _.major) ? void 0 : r.prettyName,
-                                              isShimmerVisible: _.isShimmerVisible,
-                                              isShimmerActive: _.isLoading,
-                                          }),
-                                      }),
-                                  }),
-                              ],
-                          });
+                    let C = (0, y.c)((e) => {
+                        (v(e),
+                            e &&
+                                l &&
+                                _.sendViews({
+                                    trackId: l.id,
+                                    albumId: l.albumId,
+                                }));
+                    });
+                    let T = !!(_.lyrics && String(_.lyrics).trim().length > 0),
+                        I = _.isShimmerVisible || u.isShimmerVisible || (_.isLoading && !T);
+                    return I
+                        ? (0, d.jsx)(D, {
+                              isShimmerActive: _.isLoading || u.isLoading,
+                          })
+                        : !T
+                          ? null
+                          : (0, d.jsxs)('div', {
+                                className: M().root,
+                                ...(0, x.Am)(x.Xk.track.TRACK_PAGE_LYRICS),
+                                children: [
+                                    (0, d.jsx)(f.Heading, {
+                                        variant: 'h2',
+                                        size: 'm',
+                                        lineClamp: 1,
+                                        className: M().title,
+                                        ...(0, x.Am)(x.e8.content.TRACK_LYRICS_TITLE),
+                                        children: s({ id: 'entity-names.text' }),
+                                    }),
+                                    (0, d.jsx)(L.K, {
+                                        moreText: s({
+                                            id: 'track-modal.read-more',
+                                        }),
+                                        buttonClassName: M().button,
+                                        open: p,
+                                        onOpenChange: C,
+                                        lineClamp: 4,
+                                        withFade: !0,
+                                        children: (0, d.jsx)(f.Caption, {
+                                            variant: 'div',
+                                            className: M().lyrics,
+                                            size: 'l',
+                                            weight: 'medium',
+                                            ...(0, x.Am)(x.e8.content.TRACK_LYRICS_TEXT),
+                                            children: (0, d.jsx)(o.xe, {
+                                                lyrics: _.lyrics,
+                                                authors: _.writersNames,
+                                                source: null == (r = _.major) ? void 0 : r.prettyName,
+                                                isShimmerVisible: _.isShimmerVisible,
+                                                isShimmerActive: _.isLoading,
+                                            }),
+                                        }),
+                                    }),
+                                ],
+                            });
                 });
             var F = a(48509),
                 U = a(82110),
@@ -9196,7 +9196,7 @@
                         }
                         if ('number' != typeof r) return (logSyncPrefetch('next-miss', { reason: 'nextIndex' }), null);
                         let l = i[r];
-                        if (!(l && !(0, N.Re)(l) && l.entity)) return logSyncPrefetch('next-miss', { reason: 'entityAtIndex', nextIndex: r }), null;
+                        if (!(l && !(0, N.Re)(l) && l.entity)) return (logSyncPrefetch('next-miss', { reason: 'entityAtIndex', nextIndex: r }), null);
                         let o = (0, I.pE)(l.entity);
                         return (logSyncPrefetch('next-hit', { nextIndex: r, trackId: null == o ? void 0 : o.id }), o);
                     } catch (e) {
@@ -9211,17 +9211,26 @@
                 LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS = 18e5,
                 lrclibSyncSearchResultCache = new Map(),
                 lrclibSyncSearchNoResultCache = new Map(),
-                normalizeLrclibSyncCachePart = (e) => ('string' == typeof e ? e.trim().toLowerCase().replace(/[\s\W_]+/g, '') : ''),
+                normalizeLrclibSyncCachePart = (e) =>
+                    'string' == typeof e
+                        ? e
+                              .trim()
+                              .toLowerCase()
+                              .replace(/[\s\W_]+/g, '')
+                        : '',
                 makeLrclibSyncCacheKey = (e) => {
                     let t = normalizeLrclibSyncCachePart(null == e ? void 0 : e.trackName),
                         a = normalizeLrclibSyncCachePart(null == e ? void 0 : e.artistName),
                         i = null == e ? void 0 : e.duration;
-                    return ''.concat(t, '|').concat(a, '|').concat('number' == typeof i && i > 0 ? i : '');
+                    return ''
+                        .concat(t, '|')
+                        .concat(a, '|')
+                        .concat('number' == typeof i && i > 0 ? i : '');
                 },
                 readLrclibSyncCache = (e, t) => {
                     let a = e.get(t);
                     if (!a) return null;
-                    if (a.expiresAt <= Date.now()) return e.delete(t), null;
+                    if (a.expiresAt <= Date.now()) return (e.delete(t), null);
                     return (e.delete(t), e.set(t, a), a.value);
                 },
                 writeLrclibSyncCache = (e, t, a, i, n) => {
@@ -9291,7 +9300,7 @@
                                     let response = await fetch(requestUrl, { signal: controller.signal });
                                     if (!response.ok) return { items: null, aborted: !1 };
                                     let payload = await response.json();
-                                    console.log(
+                                    console.debug(
                                         'LRCLib fetch response',
                                         Array.isArray(payload)
                                             ? payload.map((e) => {
@@ -9403,13 +9412,10 @@
                             }
                         }
                         if (!results)
-                            return writeLrclibSyncCache(
-                                lrclibSyncSearchNoResultCache,
-                                cacheKey,
-                                !0,
-                                LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
-                                LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
-                            ), null;
+                            return (
+                                writeLrclibSyncCache(lrclibSyncSearchNoResultCache, cacheKey, !0, LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS, LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE),
+                                null
+                            );
 
                         if (usedLooseQuery && normalizedTitles.length > 0) {
                             results = results.filter((e) => normalizedTitles.includes(normalizeTitle(e.trackName || e.track_name || e.title || e.name)));
@@ -9432,13 +9438,10 @@
 
                         results = results.filter((e) => !e.instrumental);
                         if (!results.length)
-                            return writeLrclibSyncCache(
-                                lrclibSyncSearchNoResultCache,
-                                cacheKey,
-                                !0,
-                                LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
-                                LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
-                            ), null;
+                            return (
+                                writeLrclibSyncCache(lrclibSyncSearchNoResultCache, cacheKey, !0, LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS, LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE),
+                                null
+                            );
 
                         console.debug?.('[LRCLib] sync filtered', { count: results.length, usedArtist: !usedLooseQuery });
 
@@ -9494,13 +9497,16 @@
                             if (withDuration.length > 0) {
                                 let closeMatches = withDuration.filter((e) => Math.abs(e.duration - durationSec) <= 10);
                                 if (!closeMatches.length)
-                                    return writeLrclibSyncCache(
-                                        lrclibSyncSearchNoResultCache,
-                                        cacheKey,
-                                        !0,
-                                        LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
-                                        LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
-                                    ), null;
+                                    return (
+                                        writeLrclibSyncCache(
+                                            lrclibSyncSearchNoResultCache,
+                                            cacheKey,
+                                            !0,
+                                            LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
+                                            LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
+                                        ),
+                                        null
+                                    );
                                 results = closeMatches;
                             }
                         }
@@ -9527,21 +9533,12 @@
                         }
 
                         if (!selected || !selected.syncedLyrics)
-                            return writeLrclibSyncCache(
-                                lrclibSyncSearchNoResultCache,
-                                cacheKey,
-                                !0,
-                                LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
-                                LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
-                            ), null;
+                            return (
+                                writeLrclibSyncCache(lrclibSyncSearchNoResultCache, cacheKey, !0, LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS, LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE),
+                                null
+                            );
                         (lrclibSyncSearchNoResultCache.delete(cacheKey),
-                            writeLrclibSyncCache(
-                                lrclibSyncSearchResultCache,
-                                cacheKey,
-                                selected,
-                                LRCLIB_SYNC_SEARCH_CACHE_TTL_MS,
-                                LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
-                            ));
+                            writeLrclibSyncCache(lrclibSyncSearchResultCache, cacheKey, selected, LRCLIB_SYNC_SEARCH_CACHE_TTL_MS, LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE));
                         console.debug?.('[LRCLib] sync selected', {
                             id: selected?.id,
                             duration: selected?.duration,
@@ -9614,185 +9611,191 @@
                     .actions((e) => {
                         let isStale = (t, a) => t !== e.requestToken || String(e.currentTrackId) !== String(a),
                             t = {
-                            setVisible() {
-                                e.isVisible = !0;
-                            },
-                            setInvisible() {
-                                e.isVisible = !1;
-                            },
-                            getActiveLineIndex: (t) => {
-                                if ((e.startSec && t < e.startSec) || (e.endSec && t > e.endSec)) return null;
-                                let a = (e.lines || []).findIndex((e) => (void 0 === e.toSec ? t >= e.fromSec : !!(t >= e.fromSec) && !!(e.toSec >= t)));
-                                return a >= 0 ? a : null;
-                            },
-                            prefetchTrack: (0, l.L3)(function* (trackMeta, a = 0) {
-                                let i = ++lrclibSyncPrefetchSeq,
-                                    n = trackMeta || getNextQueueTrackMeta(lrclibSyncSonataStateRef);
-                                if (
-                                    (logSyncPrefetch('start', { prefetchId: i, retry: a, explicitTrackId: null == trackMeta ? void 0 : trackMeta.id }),
-                                    !n)
-                                ) {
-                                    if (a >= 6) return void logSyncPrefetch('stop-no-next', { prefetchId: i, retry: a });
-                                    return (
-                                        lrclibSyncPrefetchRetryTimer && clearTimeout(lrclibSyncPrefetchRetryTimer),
-                                        logSyncPrefetch('retry-scheduled', { prefetchId: i, retry: a + 1 }),
-                                        void (lrclibSyncPrefetchRetryTimer = setTimeout(() => {
-                                                lrclibSyncPrefetchRetryTimer = null;
-                                                try {
-                                                t.prefetchTrack(getNextQueueTrackMeta(lrclibSyncSonataStateRef), a + 1);
-                                                } catch (e) {}
-                                            }, 250 * (a + 1)))
-                                    );
-                                }
-                                let r = null == n ? void 0 : n.id,
-                                    o = null == r ? null : String(r);
-                                if (!o) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'track-id' });
-                                let s = !!(null != n && !0 === n.hasSyncLyrics) || !!(null != n && !0 === n.isSyncLyricsAvailable) || !!(null != n && !0 === n.isSyncLyricsAvailableWithOfflineFeature);
-                                if (s) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'native-sync-available', trackId: o });
-                                if (lrclibSyncPrefetchByTrackId.has(o)) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'cached', trackId: o });
-                                let c = lrclibSyncPrefetchNoResultByTrackId.get(o);
-                                if ('number' == typeof c) {
-                                    let e = Date.now() - c;
-                                    if (e < LRCLIB_SYNC_PREFETCH_NO_RESULT_TTL_MS)
-                                        return void logSyncPrefetch('skip', { prefetchId: i, reason: 'no-result-cached', trackId: o, ageMs: e });
-                                    lrclibSyncPrefetchNoResultByTrackId.delete(o);
-                                }
-                                if (lrclibSyncPrefetchInFlight.has(o)) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'inflight', trackId: o });
-                                if (String(o) === String(e.currentTrackId))
-                                    return void logSyncPrefetch('skip', { prefetchId: i, reason: 'current-track', trackId: o });
-                                let d = getSyncTrackLookup(n);
-                                if (!(null == d ? void 0 : d.trackName))
-                                    return void logSyncPrefetch('skip', { prefetchId: i, reason: 'lookup-missing', trackId: o });
-                                logSyncPrefetch('fetch-start', {
-                                    prefetchId: i,
-                                    trackId: o,
-                                    trackName: d.trackName,
-                                    artistName: d.artistName,
-                                    duration: d.duration,
-                                });
-                                let u = fetchLrclibLyrics(d)
-                                    .then((e) => {
-                                        let t = !!(e && e.syncedLyrics);
+                                setVisible() {
+                                    e.isVisible = !0;
+                                },
+                                setInvisible() {
+                                    e.isVisible = !1;
+                                },
+                                getActiveLineIndex: (t) => {
+                                    if ((e.startSec && t < e.startSec) || (e.endSec && t > e.endSec)) return null;
+                                    let a = (e.lines || []).findIndex((e) => (void 0 === e.toSec ? t >= e.fromSec : !!(t >= e.fromSec) && !!(e.toSec >= t)));
+                                    return a >= 0 ? a : null;
+                                },
+                                prefetchTrack: (0, l.L3)(function* (trackMeta, a = 0) {
+                                    let i = ++lrclibSyncPrefetchSeq,
+                                        n = trackMeta || getNextQueueTrackMeta(lrclibSyncSonataStateRef);
+                                    if ((logSyncPrefetch('start', { prefetchId: i, retry: a, explicitTrackId: null == trackMeta ? void 0 : trackMeta.id }), !n)) {
+                                        if (a >= 6) return void logSyncPrefetch('stop-no-next', { prefetchId: i, retry: a });
                                         return (
-                                            t ? (lrclibSyncPrefetchByTrackId.set(o, e), lrclibSyncPrefetchNoResultByTrackId.delete(o)) : lrclibSyncPrefetchNoResultByTrackId.set(o, Date.now()),
-                                            logSyncPrefetch('fetch-done', { prefetchId: i, trackId: o, hasResult: !!e, hasSynced: t }),
-                                            e
+                                            lrclibSyncPrefetchRetryTimer && clearTimeout(lrclibSyncPrefetchRetryTimer),
+                                            logSyncPrefetch('retry-scheduled', { prefetchId: i, retry: a + 1 }),
+                                            void (lrclibSyncPrefetchRetryTimer = setTimeout(
+                                                () => {
+                                                    lrclibSyncPrefetchRetryTimer = null;
+                                                    try {
+                                                        t.prefetchTrack(getNextQueueTrackMeta(lrclibSyncSonataStateRef), a + 1);
+                                                    } catch (e) {}
+                                                },
+                                                250 * (a + 1),
+                                            ))
                                         );
-                                    })
-                                    .catch((e) => (logSyncPrefetch('fetch-error', { prefetchId: i, trackId: o, error: null == e ? void 0 : e.message }), null))
-                                    .finally(() => {
-                                        lrclibSyncPrefetchInFlight.delete(o);
+                                    }
+                                    let r = null == n ? void 0 : n.id,
+                                        o = null == r ? null : String(r);
+                                    if (!o) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'track-id' });
+                                    let s =
+                                        !!(null != n && !0 === n.hasSyncLyrics) ||
+                                        !!(null != n && !0 === n.isSyncLyricsAvailable) ||
+                                        !!(null != n && !0 === n.isSyncLyricsAvailableWithOfflineFeature);
+                                    if (s) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'native-sync-available', trackId: o });
+                                    if (lrclibSyncPrefetchByTrackId.has(o)) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'cached', trackId: o });
+                                    let c = lrclibSyncPrefetchNoResultByTrackId.get(o);
+                                    if ('number' == typeof c) {
+                                        let e = Date.now() - c;
+                                        if (e < LRCLIB_SYNC_PREFETCH_NO_RESULT_TTL_MS)
+                                            return void logSyncPrefetch('skip', { prefetchId: i, reason: 'no-result-cached', trackId: o, ageMs: e });
+                                        lrclibSyncPrefetchNoResultByTrackId.delete(o);
+                                    }
+                                    if (lrclibSyncPrefetchInFlight.has(o)) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'inflight', trackId: o });
+                                    if (String(o) === String(e.currentTrackId))
+                                        return void logSyncPrefetch('skip', { prefetchId: i, reason: 'current-track', trackId: o });
+                                    let d = getSyncTrackLookup(n);
+                                    if (!(null == d ? void 0 : d.trackName)) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'lookup-missing', trackId: o });
+                                    logSyncPrefetch('fetch-start', {
+                                        prefetchId: i,
+                                        trackId: o,
+                                        trackName: d.trackName,
+                                        artistName: d.artistName,
+                                        duration: d.duration,
                                     });
-                                (lrclibSyncPrefetchInFlight.set(o, u), yield u);
-                            }),
-                            getData: (0, l.L3)(function* (a) {
-                                let { tracksResource: i, modelActionsLogger: r } = (0, l._$)(e);
-                                if (!a) return;
-                                if (e.isLoading && String(e.currentTrackId) === String(a)) return;
-                                let o = ++e.requestToken;
-                                try {
-                                    ((e.loadingState = n.GuX.PENDING), (e.currentTrackId = a), (e.hasLyricsViewed = !1), (e.lines = null));
-                                    let { sonataState: s } = (0, l.Zn)(e),
-                                        c = null == s ? void 0 : s.entityMeta;
-                                    if (null == c ? void 0 : c.hasSyncLyrics) {
-                                        let { downloadUrl: s, major: d, externalLyricId: u, lyricId: m, writers: _ } = yield i.getLyrics((0, T.h3)(a, P.o.LRC));
-                                        if (isStale(o, a)) return;
-                                        if (!s) throw new Error('Sync lyrics are not available');
-                                        let p = yield t.downloadSyncLyrics(s, o, a);
-                                        if (isStale(o, a)) return;
-                                        if (!(null == p ? void 0 : p.length)) throw new Error('Sync lyrics are not available');
-                                        return (
-                                            (e.major = (0, j.LT)(d)),
-                                            (e.externalLyricId = u),
-                                            (e.lyricId = m),
-                                            (e.writers = (0, l.wg)(null != _ ? _ : [])),
-                                            (e.lines = (0, l.wg)(p)),
-                                            logSyncPrefetch('trigger-from-getData', { reason: 'resolved-native', trackId: a }),
-                                            void (e.loadingState = n.GuX.RESOLVE)
-                                        );
-                                    }
-                                    throw new Error('Sync lyrics are not available');
-                                } catch (err) {
-                                    let { sonataState: s } = (0, l.Zn)(e),
-                                        c = null == s ? void 0 : s.entityMeta,
-                                        d = getSyncTrackLookup(c),
-                                        u = null == a ? null : String(a),
-                                        m = u && lrclibSyncPrefetchByTrackId.has(u) ? lrclibSyncPrefetchByTrackId.get(u) : null;
-                                    if (!m) {
-                                        let e = u ? lrclibSyncPrefetchNoResultByTrackId.get(u) : null;
-                                        if ('number' == typeof e) {
-                                            if (Date.now() - e < LRCLIB_SYNC_PREFETCH_NO_RESULT_TTL_MS) {
-                                                logSyncPrefetch('fallback-skip', { reason: 'no-result-cached', trackId: u });
-                                            } else lrclibSyncPrefetchNoResultByTrackId.delete(u);
-                                        }
-                                        if (!m && (null == d ? void 0 : d.trackName) && !('number' == typeof e && Date.now() - e < LRCLIB_SYNC_PREFETCH_NO_RESULT_TTL_MS))
-                                            m = yield fetchLrclibLyrics(d);
-                                    }
-                                    if (isStale(o, a)) return;
-                                    if (!m)
-                                        return void (
-                                            (e.loadingState = n.GuX.REJECT),
-                                            u && lrclibSyncPrefetchNoResultByTrackId.set(u, Date.now()),
-                                            logSyncPrefetch('trigger-from-getData', { reason: 'reject-no-fallback', trackId: a }),
-                                            r.error(err)
-                                        );
-                                    u &&
-                                        (null != m && m.syncedLyrics
-                                            ? (lrclibSyncPrefetchByTrackId.set(u, m), lrclibSyncPrefetchNoResultByTrackId.delete(u))
-                                            : lrclibSyncPrefetchNoResultByTrackId.set(u, Date.now()));
-                                    if (null != m && m.syncedLyrics) {
-                                        let i = normalizeSyncedTiming(parseLrc(m.syncedLyrics), null == d ? void 0 : d.duration);
-                                        if (i.length > 0)
+                                    let u = fetchLrclibLyrics(d)
+                                        .then((e) => {
+                                            let t = !!(e && e.syncedLyrics);
                                             return (
-                                                (e.major = (0, j.LT)({ id: 1337, name: 'LRCLIB', prettyName: 'LRCLIB' })),
-                                                (e.externalLyricId = null == m.id ? null : String(m.id)),
-                                                (e.lyricId = null),
-                                                (e.writers = (0, l.wg)((null == c ? void 0 : c.artists) ? c.artists.map((e) => e.name).filter(Boolean) : [])),
-                                                (e.hasLyricsViewed = !1),
-                                                (e.lines = (0, l.wg)(i)),
-                                                logSyncPrefetch('trigger-from-getData', { reason: 'resolved-lrclib', trackId: a }),
+                                                t
+                                                    ? (lrclibSyncPrefetchByTrackId.set(o, e), lrclibSyncPrefetchNoResultByTrackId.delete(o))
+                                                    : lrclibSyncPrefetchNoResultByTrackId.set(o, Date.now()),
+                                                logSyncPrefetch('fetch-done', { prefetchId: i, trackId: o, hasResult: !!e, hasSynced: t }),
+                                                e
+                                            );
+                                        })
+                                        .catch((e) => (logSyncPrefetch('fetch-error', { prefetchId: i, trackId: o, error: null == e ? void 0 : e.message }), null))
+                                        .finally(() => {
+                                            lrclibSyncPrefetchInFlight.delete(o);
+                                        });
+                                    (lrclibSyncPrefetchInFlight.set(o, u), yield u);
+                                }),
+                                getData: (0, l.L3)(function* (a) {
+                                    let { tracksResource: i, modelActionsLogger: r } = (0, l._$)(e);
+                                    if (!a) return;
+                                    if (e.isLoading && String(e.currentTrackId) === String(a)) return;
+                                    let o = ++e.requestToken;
+                                    try {
+                                        ((e.loadingState = n.GuX.PENDING), (e.currentTrackId = a), (e.hasLyricsViewed = !1), (e.lines = null));
+                                        let { sonataState: s } = (0, l.Zn)(e),
+                                            c = null == s ? void 0 : s.entityMeta;
+                                        if (null == c ? void 0 : c.hasSyncLyrics) {
+                                            let { downloadUrl: s, major: d, externalLyricId: u, lyricId: m, writers: _ } = yield i.getLyrics((0, T.h3)(a, P.o.LRC));
+                                            if (isStale(o, a)) return;
+                                            if (!s) throw new Error('Sync lyrics are not available');
+                                            let p = yield t.downloadSyncLyrics(s, o, a);
+                                            if (isStale(o, a)) return;
+                                            if (!(null == p ? void 0 : p.length)) throw new Error('Sync lyrics are not available');
+                                            return (
+                                                (e.major = (0, j.LT)(d)),
+                                                (e.externalLyricId = u),
+                                                (e.lyricId = m),
+                                                (e.writers = (0, l.wg)(null != _ ? _ : [])),
+                                                (e.lines = (0, l.wg)(p)),
+                                                logSyncPrefetch('trigger-from-getData', { reason: 'resolved-native', trackId: a }),
                                                 void (e.loadingState = n.GuX.RESOLVE)
                                             );
+                                        }
+                                        throw new Error('Sync lyrics are not available');
+                                    } catch (err) {
+                                        let { sonataState: s } = (0, l.Zn)(e),
+                                            c = null == s ? void 0 : s.entityMeta,
+                                            d = getSyncTrackLookup(c),
+                                            u = null == a ? null : String(a),
+                                            m = u && lrclibSyncPrefetchByTrackId.has(u) ? lrclibSyncPrefetchByTrackId.get(u) : null;
+                                        if (!m) {
+                                            let e = u ? lrclibSyncPrefetchNoResultByTrackId.get(u) : null;
+                                            if ('number' == typeof e) {
+                                                if (Date.now() - e < LRCLIB_SYNC_PREFETCH_NO_RESULT_TTL_MS) {
+                                                    logSyncPrefetch('fallback-skip', { reason: 'no-result-cached', trackId: u });
+                                                } else lrclibSyncPrefetchNoResultByTrackId.delete(u);
+                                            }
+                                            if (
+                                                !m &&
+                                                (null == d ? void 0 : d.trackName) &&
+                                                !('number' == typeof e && Date.now() - e < LRCLIB_SYNC_PREFETCH_NO_RESULT_TTL_MS)
+                                            )
+                                                m = yield fetchLrclibLyrics(d);
+                                        }
+                                        if (isStale(o, a)) return;
+                                        if (!m)
+                                            return void ((e.loadingState = n.GuX.REJECT),
+                                            u && lrclibSyncPrefetchNoResultByTrackId.set(u, Date.now()),
+                                            logSyncPrefetch('trigger-from-getData', { reason: 'reject-no-fallback', trackId: a }),
+                                            r.error(err));
+                                        u &&
+                                            (null != m && m.syncedLyrics
+                                                ? (lrclibSyncPrefetchByTrackId.set(u, m), lrclibSyncPrefetchNoResultByTrackId.delete(u))
+                                                : lrclibSyncPrefetchNoResultByTrackId.set(u, Date.now()));
+                                        if (null != m && m.syncedLyrics) {
+                                            let i = normalizeSyncedTiming(parseLrc(m.syncedLyrics), null == d ? void 0 : d.duration);
+                                            if (i.length > 0)
+                                                return (
+                                                    (e.major = (0, j.LT)({ id: 1337, name: 'LRCLIB', prettyName: 'LRCLIB' })),
+                                                    (e.externalLyricId = null == m.id ? null : String(m.id)),
+                                                    (e.lyricId = null),
+                                                    (e.writers = (0, l.wg)((null == c ? void 0 : c.artists) ? c.artists.map((e) => e.name).filter(Boolean) : [])),
+                                                    (e.hasLyricsViewed = !1),
+                                                    (e.lines = (0, l.wg)(i)),
+                                                    logSyncPrefetch('trigger-from-getData', { reason: 'resolved-lrclib', trackId: a }),
+                                                    void (e.loadingState = n.GuX.RESOLVE)
+                                                );
+                                        }
+                                        ((e.loadingState = n.GuX.REJECT),
+                                            u && lrclibSyncPrefetchNoResultByTrackId.set(u, Date.now()),
+                                            logSyncPrefetch('trigger-from-getData', { reason: 'reject-without-lines', trackId: a }),
+                                            r.error(err));
                                     }
-                                    ((e.loadingState = n.GuX.REJECT),
-                                        u && lrclibSyncPrefetchNoResultByTrackId.set(u, Date.now()),
-                                        logSyncPrefetch('trigger-from-getData', { reason: 'reject-without-lines', trackId: a }),
-                                        r.error(err));
-                                }
-                            }),
-                            downloadSyncLyrics: (0, l.L3)(function* (t, a, i) {
-                                let { prefixlessResource: n } = (0, l._$)(e),
-                                    r = yield n.getLyricsText(t);
-                                if (void 0 !== i && String(e.currentTrackId) !== String(i)) return null;
-                                if ('number' == typeof a && a !== e.requestToken) return null;
-                                return parseLrc(r);
-                            }),
-                            sendViews: (0, l.L3)(function* (t) {
-                                let { contextId: a, contextType: i } = t,
-                                    { lyricViewsResource: r, modelActionsLogger: o } = (0, l._$)(e);
-                                if (e.loadingState === n.GuX.RESOLVE)
-                                    try {
-                                        if (!e.major || !e.lyricId || !e.externalLyricId || !e.currentTrackId) return;
-                                        (yield r.sendViews({
-                                            lyricViews: [
-                                                {
-                                                    id: (0, k.A)(),
-                                                    trackId: e.currentTrackId,
-                                                    majorId: e.major.id,
-                                                    lyricId: e.lyricId,
-                                                    externalLyricId: e.externalLyricId,
-                                                    lyricFormat: P.o.LRC,
-                                                    albumId: i === f.K.Album && a ? a : void 0,
-                                                    playlistId: i === f.K.Playlist && a ? a : void 0,
-                                                },
-                                            ],
-                                        }),
-                                            (e.hasLyricsViewed = !0));
-                                    } catch (e) {
-                                        o.error(e);
-                                    }
-                            }),
-                        };
+                                }),
+                                downloadSyncLyrics: (0, l.L3)(function* (t, a, i) {
+                                    let { prefixlessResource: n } = (0, l._$)(e),
+                                        r = yield n.getLyricsText(t);
+                                    if (void 0 !== i && String(e.currentTrackId) !== String(i)) return null;
+                                    if ('number' == typeof a && a !== e.requestToken) return null;
+                                    return parseLrc(r);
+                                }),
+                                sendViews: (0, l.L3)(function* (t) {
+                                    let { contextId: a, contextType: i } = t,
+                                        { lyricViewsResource: r, modelActionsLogger: o } = (0, l._$)(e);
+                                    if (e.loadingState === n.GuX.RESOLVE)
+                                        try {
+                                            if (!e.major || !e.lyricId || !e.externalLyricId || !e.currentTrackId) return;
+                                            (yield r.sendViews({
+                                                lyricViews: [
+                                                    {
+                                                        id: (0, k.A)(),
+                                                        trackId: e.currentTrackId,
+                                                        majorId: e.major.id,
+                                                        lyricId: e.lyricId,
+                                                        externalLyricId: e.externalLyricId,
+                                                        lyricFormat: P.o.LRC,
+                                                        albumId: i === f.K.Album && a ? a : void 0,
+                                                        playlistId: i === f.K.Playlist && a ? a : void 0,
+                                                    },
+                                                ],
+                                            }),
+                                                (e.hasLyricsViewed = !0));
+                                        } catch (e) {
+                                            o.error(e);
+                                        }
+                                }),
+                            };
                         return t;
                     }),
                 M = l.gK
@@ -9834,13 +9837,10 @@
                         },
                         showSyncLyrics() {
                             var t;
-                            (e.mode = A.SYNC_LYRICS), e.syncLyrics.setVisible();
+                            ((e.mode = A.SYNC_LYRICS), e.syncLyrics.setVisible());
                             let { sonataState: a } = (0, l.Zn)(e),
                                 i = null == a || null == (t = a.entityMeta) ? void 0 : t.id;
-                            i &&
-                                !e.syncLyrics.hasLyricsForTrack(i) &&
-                                !e.syncLyrics.isLoadingForTrack(i) &&
-                                e.syncLyrics.getData(i);
+                            i && !e.syncLyrics.hasLyricsForTrack(i) && !e.syncLyrics.isLoadingForTrack(i) && e.syncLyrics.getData(i);
                             e.modal.isOpened || e.modal.open();
                         },
                         hideSyncLyrics() {
@@ -11283,10 +11283,7 @@
                     v = (0, u.useMemo)(() => {
                         let e = null == l ? void 0 : l.id,
                             t = e ? String(e) : null,
-                            i =
-                                !!(null == l ? void 0 : l.isSyncLyricsAvailable) ||
-                                !!(null == l ? void 0 : l.hasLyrics) ||
-                                (!!t && p.syncLyrics.hasLyricsForTrack(t));
+                            i = !!(null == l ? void 0 : l.isSyncLyricsAvailable) || !!(null == l ? void 0 : l.hasLyrics) || (!!t && p.syncLyrics.hasLyricsForTrack(t));
                         if (i)
                             return (0, s.jsx)(ti, {
                                 className: tr().syncLyricsButton,
