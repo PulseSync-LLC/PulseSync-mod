@@ -133,6 +133,21 @@ const init = () => {
     });
     initField(store_js_1.StoreKeys.WINDOW_MONITOR_ID, null);
     initField(store_js_1.StoreKeys.MOD_SETTINGS, {
+        discordRPC: {
+            enable: true,
+            fromYnison: false,
+            applicationIDForRPC: '1270726237605855395',
+            statusDisplayType: 0,
+            showButtons: true,
+            showSmallIcon: false,
+            showAlbum: true,
+            showVersion: true,
+            overrideDeepLinksExperiment: false,
+            showGitHubButton: true,
+            afkTimeout: 15,
+            reconnectInterval: 30,
+        },
+
         taskBarExtensions: {
             enable: true,
             coverAsThumbnail: false,

@@ -38,6 +38,7 @@ class PulseSyncManager {
         this.reconnectAttempt = 0;
         this.reconnectTimer = null;
         this.isConnecting = false;
+        this.isDiscordRpcV2Suppoorted = false;
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
         this.updateDownloadInfo = this.updateDownloadInfo.bind(this);
@@ -214,6 +215,10 @@ class PulseSyncManager {
             this.logger.warn(`Socket.IO connect_error: ${err.message}`);
             this.isConnecting = false;
             this.scheduleReconnect(err.message);
+        });
+
+        this.socket.on('DRPCV2_SUPPORTED', () => {
+            this.isDiscordRpcV2Suppoorted = true;
         });
 
         this.socket.on('PING', () => {
@@ -521,14 +526,26 @@ class PulseSyncManager {
     sendReadyEvent() {
         if (this.socket?.connected) {
             this.socket.emit('READY');
+            this.socket.emit('IS_DRPCV2_SUPPORTED');
             this.readySent = true;
         } else {
             this.logger.warn('sendReadyEvent: socket not connected, skipping');
         }
     }
+
+    get isConnected() {
+        return this.socket?.connected || false;
+    }
+
+    get isDRPCV2Supported() {
+        return this.isDiscordRpcV2Suppoorted;
+    }
 }
 
 function getPulseSyncManager(window) {
+
+    if (!window) return singletonInstance;
+
     if (!singletonInstance) {
         singletonInstance = new PulseSyncManager(window);
     } else {

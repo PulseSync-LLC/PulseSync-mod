@@ -42,6 +42,7 @@ const taskBarExtension_js_1 = require('./lib/taskBarExtension/taskBarExtension.j
 const scrobbleManager_js_1 = require('./lib/scrobble/index.js');
 const { getPulseSyncManager } = require('./lib/pulsesync/PulseSyncManager.js');
 const miniPlayer_js_1 = require('./lib/miniplayer/miniplayer.js');
+const discordRichPresence_js_1 = require('./lib/discordRichPresence.js');
 
 const playerActions_js_1 = require('./types/playerActions.js');
 const platform_js_1 = require('./types/platform.js');
@@ -414,6 +415,7 @@ const handleApplicationEvents = (window) => {
             (0, tray_js_1.updateTrayMenu)(window);
             (0, scrobbleManager_js_1.handlePlayingStateEvent)(structuredClone(data));
             (0, pulseSyncManager_js_1.updatePlayerState)(structuredClone(data));
+            (0, discordRichPresence_js_1.discordRichPresence)(structuredClone(data));
             return;
         }
 
@@ -427,8 +429,9 @@ const handleApplicationEvents = (window) => {
     });
     electron_1.ipcMain.on(events_js_1.Events.YNISON_STATE, (event, data) => {
         eventsLogger.info(`Event received`, events_js_1.Events.YNISON_STATE, data);
-        (0, scrobbleManager_js_1.handlePlayingStateEventFromYnison)(data);
-        (0, pulseSyncManager_js_1.fromYnisonState)(data);
+        (0, scrobbleManager_js_1.handlePlayingStateEventFromYnison)(structuredClone(data));
+        (0, pulseSyncManager_js_1.fromYnisonState)(structuredClone(data));
+        (0, discordRichPresence_js_1.fromYnisonState)(structuredClone(data));
     });
 
     electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_MOD_UPDATE, async (event, data) => {

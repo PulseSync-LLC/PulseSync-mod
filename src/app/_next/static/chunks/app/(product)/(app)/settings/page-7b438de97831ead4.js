@@ -576,6 +576,247 @@
                     }),
                 });
             });
+
+            let discordRpcSettings = (0, n.PA)(() => {
+                const [statusDisplayType, setStatusDisplayType] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.statusDisplayType') ?? 0);
+                const [applicationIDForRPC, setApplicationIDForRPC] = (0, d.useState)(
+                    window.nativeSettings.get('modSettings.discordRPC.applicationIDForRPC') ?? '1270726237605855395',
+                );
+
+                let { formatMessage: e } = (0, r.A)(),
+                    {
+                        modals: { discordRpcSettingsModal: t },
+                    } = (0, _.Pjs)(),
+                    { notify: j } = (0, _.lkh)(),
+                    [afkTimeout, setAfkTimeout] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.afkTimeout')),
+                    [reconnectInterval, setReconnectInterval] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.reconnectInterval')),
+                    [isExperimentOverriden, setIsExperimentOverriden] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.overrideDeepLinksExperiment')),
+                    [showButtons, setShowButtons] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.showButtons')),
+                    [isDiscordStatusEnabled, setIsDiscordStatusEnabled] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.enable')),
+                    onAfkTimeoutChange = (0, d.useCallback)(async (e) => {
+                        let value = Math.min(Math.max(e, 1), 30);
+                        setAfkTimeout(value);
+                        console.log('modSettings.discordRPC.afkTimeout changed. Value: ', value);
+
+                        window.nativeSettings.set('modSettings.discordRPC.afkTimeout', value);
+                    }, []),
+                    onReconnectIntervalChange = (0, d.useCallback)(async (e) => {
+                        let value = Math.min(Math.max(e, 0), 300);
+                        setReconnectInterval(value);
+                        console.log('modSettings.discordRPC.reconnectInterval changed. Value: ', value);
+
+                        window.nativeSettings.set('modSettings.discordRPC.reconnectInterval', value);
+                    }, []),
+                    onDiscordStatusToggle = (0, d.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.enable toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.enable', e);
+                        setIsDiscordStatusEnabled(e);
+                    }, []),
+                    onDiscordFromYnisonToggle = (0, d.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.fromYnison toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.fromYnison', e);
+                    }, []),
+                    onDiscordShowButtonsToggle = (0, d.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showButtons toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showButtons', e);
+                        setShowButtons(e);
+                    }, []),
+                    onDiscordOverrideDeepLinksExperimentToggle = (0, d.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.overrideDeepLinksExperiment toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.overrideDeepLinksExperiment', e);
+                        setIsExperimentOverriden(e);
+                    }, []),
+                    onDiscordShowGitHubButtonToggle = (0, d.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showGitHubButton toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showGitHubButton', e);
+                    }, []),
+                    onDiscordShowSmallIconToggle = (0, d.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showSmallIcon toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showSmallIcon', e);
+                    }, []),
+                    onDiscordShowAlbumToggle = (0, d.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showAlbum toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showAlbum', e);
+                    }, []),
+                    onDiscordShowVersionToggle = (0, d.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showVersion toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showVersion', e);
+                    }, []),
+                    onStatusDisplayTypeChange = (0, d.useCallback)(async (e) => {
+                        console.log('statusDisplayType changed. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.statusDisplayType', e);
+                        setStatusDisplayType(e);
+                    }, []),
+                    onApplicationIDForRPCChange = (0, d.useCallback)(
+                        async (e) => {
+                            console.log('applicationIDForRPC changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.discordRPC.applicationIDForRPC', e);
+                            setApplicationIDForRPC(e);
+                            j(
+                                (0, i.jsx)(m.hT, {
+                                    error: 'Для применения этой настройки требуется перезапуск приложения',
+                                }),
+                                { containerId: _.uQT.ERROR },
+                            );
+                        },
+                        [j],
+                    );
+                return (0, i.jsxs)(p.a, {
+                    className: H().root,
+                    style: { 'max-width': '31.25rem' },
+                    title: 'Discord RPC',
+                    headerClassName: H().modalHeader,
+                    contentClassName: H().modalContent,
+                    open: t.isOpened,
+                    onOpenChange: t.onOpenChange,
+                    onClose: t.close,
+                    size: 'fitContent',
+                    placement: 'center',
+                    labelClose: e({ id: 'interface-actions.close' }),
+                    children: (0, i.jsxs)('ul', {
+                        className: `${B().root} ${H().list}`,
+                        style: { width: '29.125rem', 'max-height': '37.5rem', gap: 0 },
+                        children: [
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: 'Включить интеграцию с Discord',
+                                    onChange: onDiscordStatusToggle,
+                                    isChecked: isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: ['Использовать Ynison', (0, i.jsx)(labeledBubble, { label: 'BETA', disabled: !isDiscordStatusEnabled })],
+                                    description: 'Использует данные о воспроизведении с других устройств',
+                                    onChange: onDiscordFromYnisonToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.fromYnison'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(settingBarWithDropdown, {
+                                    title: 'Тип отображения статуса',
+                                    description: 'Что будет отображаться в коротком статусе',
+                                    onChange: onStatusDisplayTypeChange,
+                                    value: statusDisplayType,
+                                    direction: 'bottom',
+                                    options: [
+                                        { value: 0, label: 'Платформа' },
+                                        { value: 1, label: 'Артист' },
+                                        { value: 2, label: 'Трек' },
+                                    ],
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(settingBarWithDropdown, {
+                                    title: 'Локализация платформы в статусе',
+                                    description: applicationIDForRPC === '1290778445370097674' ? 'Слушает Яндекс Музыку' : 'Listening to Yandex Music',
+                                    onChange: onApplicationIDForRPCChange,
+                                    value: applicationIDForRPC,
+                                    direction: 'bottom',
+                                    options: [
+                                        { value: '1270726237605855395', label: 'Английский' },
+                                        { value: '1290778445370097674', label: 'Русский' },
+                                    ],
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: 'Отображать Альбом',
+                                    description: 'Отображать ли название альбома в статусе',
+                                    onChange: onDiscordShowAlbumToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showAlbum'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: 'Отображать Версию трека',
+                                    description: 'Отображать ли версию трека в статусе',
+                                    onChange: onDiscordShowVersionToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showVersion'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: 'Отображать маленькую иконку',
+                                    description: 'Отображать ли иконку статуса воспроизведения (Playing, Paused)',
+                                    onChange: onDiscordShowSmallIconToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showSmallIcon'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: 'Отображать кнопки',
+                                    description: 'Отображает кнопки-ссылки в статусе',
+                                    onChange: onDiscordShowButtonsToggle,
+                                    isChecked: showButtons,
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: 'Переопределить эксперимент Глубоких ссылок',
+                                    description: 'Уберёт ссылку открывающую приложение т.к. это сделает ссылка на сайт',
+                                    onChange: onDiscordOverrideDeepLinksExperimentToggle,
+                                    isChecked: isExperimentOverriden,
+                                    disabled: !(isDiscordStatusEnabled && showButtons),
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: 'Отображать кнопку на Гитхаб',
+                                    description: 'Отображает кнопку установки мода',
+                                    onChange: onDiscordShowGitHubButtonToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showGitHubButton'),
+                                    disabled: !(isDiscordStatusEnabled && showButtons && isExperimentOverriden),
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(settingBarWithSlider, {
+                                    title: 'Таймер бездействия',
+                                    description: 'Через сколько в минутах активность автоматически отчистится',
+                                    onChange: onAfkTimeoutChange,
+                                    value: afkTimeout,
+                                    maxValue: 30,
+                                    minValue: 1,
+                                    step: 1,
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(settingBarWithSlider, {
+                                    title: 'Повторное подключение к Discord',
+                                    description: 'Интервал повторных попыток подключения к Discord при потере соединения (в секундах, 0 — отключает)',
+                                    onChange: onReconnectIntervalChange,
+                                    value: reconnectInterval,
+                                    maxValue: 300,
+                                    minValue: 0,
+                                    step: 5,
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                        ],
+                    }),
+                });
+            });
+
             let lrclibSettings = (0, n.PA)(() => {
                 let { formatMessage: e } = (0, r.A)(),
                     {
@@ -2357,6 +2598,7 @@
                             miniPlayerSettingsModal: miniPlayerSettingsModal,
                             ynisonSettingsModal: ynisonSettingsModal,
                             lrclibSettingsModal: lrclibSettingsModal,
+                            discordRpcSettingsModal: discordRpcSettingsModal,
                         },
                         experiments: a,
                         wizard: c,
@@ -2705,6 +2947,17 @@
                                         isChecked: g.isCrossFadeEnabled,
                                     }),
                                 }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: [
+                                    (0, i.jsx)(S, {
+                                        title: ['Discord RPC', (0, i.jsx)(labeledBubble, { label: 'NEW', tooltip: {title: 'Переехало из клиента в мод', description: 'Теперь для работы не требуется запущенный клиент PulseSync'} })],
+                                        description: 'Интеграция с Discord',
+                                        onClick: discordRpcSettingsModal.open,
+                                    }),
+                                    (0, i.jsx)(discordRpcSettings, {}),
+                                ],
+                            }),
                             (0, i.jsx)('li', {
                                 className: B().item,
                                 children: [

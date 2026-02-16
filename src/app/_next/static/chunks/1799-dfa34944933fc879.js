@@ -14030,6 +14030,7 @@
                     miniPlayerSettingsModal: {},
                     ynisonSettingsModal: {},
                     lrclibSettingsModal: {},
+                    discordRpcSettingsModal: {},
                 },
                 landing: { loadingState: u.GuX.IDLE, tabs: { loadingState: u.GuX.IDLE } },
                 fullscreenPlayer: { modal: {}, syncLyrics: { loadingState: u.GuX.IDLE }, playQueue: {} },
@@ -14978,6 +14979,7 @@
                 miniPlayerSettingsModal: S.qt,
                 ynisonSettingsModal: S.qt,
                 lrclibSettingsModal: S.qt,
+                discordRpcSettingsModal: S.qt,
             });
             var e6 = a(22307),
                 e8 = a(44748),
