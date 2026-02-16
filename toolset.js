@@ -733,7 +733,9 @@
 
         await buildMiniPlayer();
 
-        if (!noNativeModules) await buildNativeModules();
+        const isMac = process.platform === 'darwin';
+
+        if (!noNativeModules && !isMac) await buildNativeModules();
 
         if (!noMinify) {
             console.log('Минификация...');
