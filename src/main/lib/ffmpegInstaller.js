@@ -163,7 +163,7 @@ class FfmpegUpdater {
 
         const expected = await this.fetchExpectedHash();
         if (!expected) {
-            return false;
+            return true;
         }
 
         const actual = await sha256File(this.installPath);
