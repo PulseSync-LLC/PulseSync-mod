@@ -46,7 +46,7 @@ logger.log('Application starting...');
 
 if (store_js_1.get('sendModAnonymizedMetrics') ?? true) {
     initUserCountMetric({
-        endpointUrl: 'https://metrics.pulsesync.dev/metrics',
+        endpointUrl: 'https://ru-node-1.pulsesync.dev/api/v2/metrics',
         apiKey: 'l4lRNGW8mFQDmBBIEd0ZJSeI9ARRcgSaf_p5kkpmCvw',
         modVersion: config_js_1.config.modification.version,
     });

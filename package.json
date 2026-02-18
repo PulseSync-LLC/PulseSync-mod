@@ -1,6 +1,6 @@
 {
     "name": "pulsesync-asar",
-    "version": "1.20.6",
+    "version": "1.21.0",
     "description": "Mod for Yandex Music Desktop",
     "main": "index.js",
     "scripts": {
