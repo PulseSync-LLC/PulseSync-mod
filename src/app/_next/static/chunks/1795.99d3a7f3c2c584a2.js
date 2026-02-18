@@ -856,7 +856,7 @@
                     ).json();
                 }
                 async getTracksMeta(t, e) {
-                    return (
+                    const tracksMeta = await (
                         await this.httpClient.post(
                             'tracks',
                             this.createHttpOptions({
@@ -880,6 +880,11 @@
                             }),
                         )
                     ).json();
+
+                    tracksMeta.forEach(t => {t.substituted?.artists && t.artists ? t.artists = t.substituted.artists : undefined})
+
+                    return tracksMeta;
+
                 }
                 async getFullInfoTrack(t, e) {
                     let s = t.albumId ? ''.concat(t.trackId, ':').concat(t.albumId) : t.trackId;

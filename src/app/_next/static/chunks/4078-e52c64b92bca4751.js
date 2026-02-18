@@ -1153,7 +1153,7 @@
                 n = i(61744);
             let o = (e, t) => {
                     var i, l;
-                    let o = null == (i = e.artists) ? void 0 : i.map(s.dM),
+                    let o = null == (i = e.substituted?.artists ?? e.artists) ? void 0 : i.map(s.dM),
                         c = null == (l = e.albums) ? void 0 : l.map(r.e7);
                     return (0, a.wg)({ ...(0, n.gK)(e, t), artists: o, albums: c });
                 },
