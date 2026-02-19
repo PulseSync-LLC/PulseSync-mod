@@ -65,10 +65,15 @@ const createWindow = async () => {
             preload: node_path_1.default.join(__dirname, '..', 'preload.js'),
         },
     });
+    window.isMainWindow = true;
     window.once('ready-to-show', () => {
-        if (dimensions?.maximized ?? false) window.maximize();
+
+        const shouldShow = !(store_js_1.getModSettings()?.window?.minimizedStart ?? false)
+
+        if ((dimensions?.maximized ?? false) && shouldShow) window.maximize();
         window.setSize(dimensions?.width ?? 1280, dimensions?.height ?? 800);
-        (0, toggleWindowVisibility_js_1.toggleWindowVisibility)(window, !(store_js_1.getModSettings()?.window?.minimizedStart ?? false));
+
+        (0, toggleWindowVisibility_js_1.toggleWindowVisibility)(window, shouldShow);
     });
     return window;
 };
