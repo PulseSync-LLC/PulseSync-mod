@@ -30,7 +30,7 @@ class convertableLink {
 
 const settings = () => store_js_1.getModSettings()?.discordRPC;
 
-const clientId = settings()?.applicationIDForRPC ?? '1290778445370097674';
+const clientId = settings()?.applicationIDForRPC ?? '1124055337234858005';
 const WEB_LINK = 'https://pulsesync.dev';
 const SET_ACTIVITY_TIMEOUT_MS = 3000;
 const STATUS_DISPLAY_TYPES = {
@@ -322,7 +322,7 @@ function buildActivityObject(playingState) {
     if (playingState.status !== 'playing') {
         endTimestamp = undefined;
     }
-    
+
     let activityObject = {
         type: 2,
         statusDisplayType: STATUS_DISPLAY_TYPES[settings()?.statusDisplayType] ?? 0,

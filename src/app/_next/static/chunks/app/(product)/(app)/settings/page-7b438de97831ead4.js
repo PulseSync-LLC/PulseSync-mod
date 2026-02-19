@@ -580,7 +580,7 @@
             let discordRpcSettings = (0, n.PA)(() => {
                 const [statusDisplayType, setStatusDisplayType] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.statusDisplayType') ?? 0);
                 const [applicationIDForRPC, setApplicationIDForRPC] = (0, d.useState)(
-                    window.nativeSettings.get('modSettings.discordRPC.applicationIDForRPC') ?? '1290778445370097674',
+                    window.nativeSettings.get('modSettings.discordRPC.applicationIDForRPC') ?? '1124055337234858005',
                 );
                 const [hideBranding, setHideBranding] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.hideBranding') ?? false);
 
@@ -750,7 +750,7 @@
                                     value: applicationIDForRPC,
                                     direction: 'bottom',
                                     options: [
-                                        { value: '1290778445370097674', label: 'Английский' },
+                                        { value: '1124055337234858005', label: 'Английский' },
                                         { value: '1290778445370097674', label: 'Русский' },
                                     ],
                                     disabled: !isDiscordStatusEnabled,

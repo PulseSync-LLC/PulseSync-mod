@@ -136,7 +136,7 @@ const init = () => {
         discordRPC: {
             enable: true,
             fromYnison: false,
-            applicationIDForRPC: '1290778445370097674',
+            applicationIDForRPC: '1124055337234858005',
             statusDisplayType: 0,
             showButtons: true,
             showSmallIcon: false,
@@ -261,7 +261,7 @@ const init = () => {
         if (data) initField(store_js_1.StoreKeys.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES, data, true);
     });
     if (store.get(`${store_js_1.StoreKeys.MOD_SETTINGS}.discordRPC.applicationIDForRPC`) === "1270726237605855395") {
-        initField(`${store_js_1.StoreKeys.MOD_SETTINGS}.discordRPC.applicationIDForRPC`, '1290778445370097674', true);
+        initField(`${store_js_1.StoreKeys.MOD_SETTINGS}.discordRPC.applicationIDForRPC`, '1124055337234858005', true);
     }
 };
 exports.init = init;
