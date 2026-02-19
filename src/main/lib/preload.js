@@ -10,8 +10,11 @@ const deviceInfo = (0, deviceInfo_js_1.getDeviceInfo)();
 const store_js_1 = require('./store.js');
 const events_js_1 = require('../types/events.js');
 
-electron_1.contextBridge.exposeInMainWorld('DISPLAY_MAX_FPS', store_js_1.getDisplayMaxFps());
+electron_1.contextBridge.exposeInMainWorld('IS_PREMIUM_USER', () => electron_1.ipcRenderer.invoke("isPremiumUser"));
 electron_1.contextBridge.exposeInMainWorld('IS_DEVTOOLS_ENABLED', Boolean(store_js_1.getDevMode()));
+
+
+electron_1.contextBridge.exposeInMainWorld('DISPLAY_MAX_FPS', store_js_1.getDisplayMaxFps());
 electron_1.contextBridge.exposeInMainWorld('ENABLE_YNISON_REMOTE_CONTROL', Boolean(store_js_1.getEnableYnisonRemoteControl()));
 electron_1.contextBridge.exposeInMainWorld('YNISON_INTERCEPT_PLAYBACK', Boolean(store_js_1.getYnisonInterceptPlayback()));
 electron_1.contextBridge.exposeInMainWorld('GLOBAL_SHORTCUTS', Boolean(store_js_1.getGlobalShortcuts()));

@@ -136,7 +136,7 @@ const init = () => {
         discordRPC: {
             enable: true,
             fromYnison: false,
-            applicationIDForRPC: '1270726237605855395',
+            applicationIDForRPC: '1290778445370097674',
             statusDisplayType: 0,
             showButtons: true,
             showSmallIcon: false,
@@ -146,11 +146,12 @@ const init = () => {
             showGitHubButton: true,
             afkTimeout: 15,
             reconnectInterval: 30,
+            hideBranding: false,
         },
 
         taskBarExtensions: {
             enable: true,
-            coverAsThumbnail: false,
+            coverAsThumbnail: true,
         },
         window: {
             toTray: false,
@@ -237,7 +238,6 @@ const init = () => {
     initField(store_js_1.StoreKeys.SEND_ANONYMIZED_METRICS, true);
     initField(store_js_1.StoreKeys.ENABLE_YNISON_REMOTE_CONTROL, true);
     initField(store_js_1.StoreKeys.YNISON_INTERCEPT_PLAYBACK, false);
-    initField(store_js_1.StoreKeys.ENABLE_YNISON_FOR_RPC, false);
     initField(store_js_1.StoreKeys.DISPLAY_MAX_FPS, 60);
     fetchDefaultExperimentOverrides().then((data) => {
         if (data) initField(store_js_1.StoreKeys.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES, data, true);
@@ -260,6 +260,9 @@ const init = () => {
     fetchDefaultExperimentOverrides().then((data) => {
         if (data) initField(store_js_1.StoreKeys.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES, data, true);
     });
+    if (store.get(`${store_js_1.StoreKeys.MOD_SETTINGS}.discordRPC.applicationIDForRPC`) === "1270726237605855395") {
+        initField(`${store_js_1.StoreKeys.MOD_SETTINGS}.discordRPC.applicationIDForRPC`, '1290778445370097674', true);
+    }
 };
 exports.init = init;
 
@@ -363,11 +366,6 @@ const getYnisonInterceptPlayback = () => {
     return Boolean(getStore(store_js_1.StoreKeys.YNISON_INTERCEPT_PLAYBACK));
 };
 exports.getYnisonInterceptPlayback = getYnisonInterceptPlayback;
-
-const getEnableYnisonForRpc = () => {
-    return Boolean(getStore(store_js_1.StoreKeys.ENABLE_YNISON_FOR_RPC));
-};
-exports.getEnableYnisonForRpc = getEnableYnisonForRpc;
 
 const getDevMode = () => {
     return Boolean(getStore(store_js_1.StoreKeys.IS_DEVTOOLS_ENABLED));
@@ -486,3 +484,10 @@ const getDefaultExperimentOverrides = () => {
     return data;
 };
 exports.getDefaultExperimentOverrides = getDefaultExperimentOverrides;
+
+const ensureUserPremium = (isPremium) => {
+    if (getStore(`${store_js_1.StoreKeys.MOD_SETTINGS}`).discordRPC.hideBranding && !isPremium) {
+        setStore(`${store_js_1.StoreKeys.MOD_SETTINGS}.discordRPC.hideBranding`, false);
+    }
+}
+exports.ensureUserPremium = ensureUserPremium

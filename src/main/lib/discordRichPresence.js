@@ -30,7 +30,7 @@ class convertableLink {
 
 const settings = () => store_js_1.getModSettings()?.discordRPC;
 
-const clientId = settings()?.applicationIDForRPC ?? '1270726237605855395';
+const clientId = settings()?.applicationIDForRPC ?? '1290778445370097674';
 const WEB_LINK = 'https://pulsesync.dev';
 const SET_ACTIVITY_TIMEOUT_MS = 3000;
 const STATUS_DISPLAY_TYPES = {
@@ -238,7 +238,8 @@ function sendCurrentActivity() {
     const psm = pulseSyncManager_js_1.getPulseSyncManager();
     const isEnabled = settings()?.enable ?? true;
     const canUseRpc = !psm.isConnected || psm.isDRPCV2Supported;
-
+    discordRichPresenceLogger.log(`isPremiumUser: ${psm.isPremiumUser}`);
+    store_js_1.ensureUserPremium(psm.isPremiumUser);
     if (!isEnabled || !canUseRpc) {
         if (lastActivity) {
             rpc?.user.clearActivity();
@@ -321,7 +322,7 @@ function buildActivityObject(playingState) {
     if (playingState.status !== 'playing') {
         endTimestamp = undefined;
     }
-
+    
     let activityObject = {
         type: 2,
         statusDisplayType: STATUS_DISPLAY_TYPES[settings()?.statusDisplayType] ?? 0,
@@ -330,7 +331,7 @@ function buildActivityObject(playingState) {
         state: string2Discord(artist),
         stateUrl: shareArtistPath.toWeb(),
         largeImageKey: albumArt,
-        largeImageText: `PulseSync Mod ${config_js_1.config.modification.version}`,
+        largeImageText: !settings().hideBranding && `PulseSync Mod ${config_js_1.config.modification.version}`,
         largeImageUrl: WEB_LINK,
         startTimestamp,
         endTimestamp,

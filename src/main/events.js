@@ -285,6 +285,8 @@ const handleApplicationEvents = (window) => {
 
         (0, pulseSyncManager_js_1.readyEvent)();
         (0, deviceInfo_js_1.logHardwareInfo)();
+        (0, pulseSyncManager_js_1.validatePremium)();
+
         if (state_js_1.state.deeplink) {
             (0, handleDeeplink_js_1.navigateToDeeplink)(window, state_js_1.state.deeplink);
         }
@@ -430,7 +432,6 @@ const handleApplicationEvents = (window) => {
     electron_1.ipcMain.on(events_js_1.Events.YNISON_STATE, (event, data) => {
         eventsLogger.info(`Event received`, events_js_1.Events.YNISON_STATE, data);
         (0, scrobbleManager_js_1.handlePlayingStateEventFromYnison)(structuredClone(data));
-        (0, pulseSyncManager_js_1.fromYnisonState)(structuredClone(data));
         (0, discordRichPresence_js_1.fromYnisonState)(structuredClone(data));
     });
 
@@ -635,3 +636,8 @@ electron_1.ipcMain.handle('set-zoom-level', setZoomLevel);
 MiniPlayer.onPlayerAction((action, value) => {
     sendPlayerAction(mainWindow, action, value);
 });
+
+electron_1.ipcMain.handle('isPremiumUser', () => {
+    eventsLogger.info('Event handle', 'isPremiumUser');
+    return getPulseSyncManager().isPremiumUser;
+})

@@ -1,8 +1,9 @@
 const { io } = require('socket.io-client');
 const net = require('net');
 const EventEmitter = require('node:events');
-const { Logger } = require('../../packages/logger/Logger');
+const Logger_js_1 = require('../../packages/logger/Logger.js');
 const store_js_1 = require('../store.js');
+const store_js_2 = require('../../types/store.js');
 const { applyCss, removeCss, applyScript, wrapThemeScript } = require('./utils/PulseSyncUtils');
 const { Events } = require('../../types/events');
 const { addAllowedUrls } = require('../handlers/handleHeadersReceived/corsHandler.js');
@@ -20,7 +21,7 @@ class PulseSyncManager extends EventEmitter {
         super();
         this.window = window;
         this.webContents = window.webContents;
-        this.logger = new Logger('PulseSyncManager');
+        this.logger = new Logger_js_1.Logger('PulseSyncManager');
         this.socket = null;
         this.wsUrl = 'http://localhost:2007';
         this.prevExtensions = [];
@@ -41,14 +42,14 @@ class PulseSyncManager extends EventEmitter {
         this.reconnectTimer = null;
         this.isConnecting = false;
         this.isDiscordRpcV2Suppoorted = false;
+        this.isPremium = false;
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
         this.updateDownloadInfo = this.updateDownloadInfo.bind(this);
         this.readyEvent = this.readyEvent.bind(this);
         this.getEnabledAddons = this.getEnabledAddons.bind(this);
-        this.fromYnisonState = this.fromYnisonState.bind(this);
         this.handlePulseSyncApi = this.handlePulseSyncApi.bind(this);
-
+        this.validatePremium = this.validatePremium.bind(this);
         this.prevExtensions = mergeWithSystem([]);
     }
 
@@ -223,6 +224,28 @@ class PulseSyncManager extends EventEmitter {
 
         this.socket.on('DRPCV2_SUPPORTED', () => {
             this.isDiscordRpcV2Suppoorted = true;
+        });
+
+        this.socket.on('PREMIUM_CHECK_TOKEN', async (args) => {
+            if (!args?.token) {
+                this.logger.warn('PREMIUM_CHECK_TOKEN: missing token in payload');
+                return;
+            }
+            store_js_1.set(store_js_2.StoreKeys.PREMIUM_CHECK_TOKEN, {
+                token: args.token,
+                expiresAt: args.expiresAt,
+            });
+            const res = await fetch('https://ru-node-1.pulsesync.dev/user/subscription/validate', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${args.token}`,
+                },
+            });
+            const data = await res.json();
+            if (data.ok) {
+                this.isPremium = data.isPremium;
+            }
         });
 
         this.socket.on('PING', () => {
@@ -470,39 +493,6 @@ class PulseSyncManager extends EventEmitter {
         }
     }
 
-    fromYnisonState(rawState) {
-        if (!rawState || !store_js_1.getEnableYnisonForRpc()) {
-            return;
-        }
-        const raw = rawState.rawData;
-        const queue = raw.player_state.player_queue;
-        const cur = queue.playable_list[queue.current_playable_index];
-        if (!cur) {
-            this.logger.warn('fromYnisonState: no current Ynison track');
-            return;
-        }
-        const state = {
-            track: {
-                sourceType: 'ynison',
-                title: cur.title,
-                coverUri: cur.cover_url_optional,
-                id: cur.playable_id,
-                albums: cur.album_id_optional ? [{ id: cur.album_id_optional }] : [],
-                durationMs: parseInt(raw.player_state.status.duration_ms, 10),
-            },
-            ynisonProgress: parseInt(raw.player_state.status.progress_ms, 10),
-            status: raw.player_state.status.paused ? 'paused' : 'playing',
-            devices: raw.devices,
-            currentDevice: raw.devices.find((d) => d.info.device_id === raw.active_device_id_optional),
-        };
-        this._lastPlayerState = state;
-        if (this.socket?.connected) {
-            this.socket.emit('UPDATE_DATA', state);
-        } else {
-            this.logger.warn('fromYnisonState: socket not connected');
-        }
-    }
-
     updateDownloadInfo(downloadInfo) {
         if (!this._lastPlayerState?.track) {
             this.logger.warn('updateDownloadInfo: no track available');
@@ -531,9 +521,41 @@ class PulseSyncManager extends EventEmitter {
         if (this.socket?.connected) {
             this.socket.emit('READY');
             this.socket.emit('IS_DRPCV2_SUPPORTED');
+            this.socket.emit('IS_PREMIUM_USER');
             this.readySent = true;
         } else {
             this.logger.warn('sendReadyEvent: socket not connected, skipping');
+        }
+    }
+
+    async validatePremium() {
+        const tokenData = store_js_1.get(store_js_2.StoreKeys.PREMIUM_CHECK_TOKEN);
+        if (!tokenData?.token) {
+            this.logger.warn('validatePremium: no token available');
+            this.isPremium = false;
+            store_js_1.ensureUserPremium(false);
+            return;
+        }
+        try {
+            const res = await fetch('https://ru-node-1.pulsesync.dev/user/subscription/validate', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${tokenData.token}`,
+                },
+            });
+            const data = await res.json();
+            if (data.ok) {
+                this.isPremium = data.isPremium;
+            } else {
+                this.logger.warn(`validatePremium: validation failed (${data.message || 'no message'})`);
+                this.isPremium = false;
+                store_js_1.ensureUserPremium(false);
+            }
+        } catch (e) {
+            this.logger.warn(`validatePremium: error during validation (${e.message})`);
+            this.isPremium = false;
+            store_js_1.ensureUserPremium(false);
         }
     }
 
@@ -544,10 +566,12 @@ class PulseSyncManager extends EventEmitter {
     get isDRPCV2Supported() {
         return this.isDiscordRpcV2Suppoorted;
     }
+    get isPremiumUser() {
+        return this.isPremium;
+    }
 }
 
 function getPulseSyncManager(window) {
-
     if (!window) return singletonInstance;
 
     if (!singletonInstance) {

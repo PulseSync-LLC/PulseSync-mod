@@ -580,8 +580,9 @@
             let discordRpcSettings = (0, n.PA)(() => {
                 const [statusDisplayType, setStatusDisplayType] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.statusDisplayType') ?? 0);
                 const [applicationIDForRPC, setApplicationIDForRPC] = (0, d.useState)(
-                    window.nativeSettings.get('modSettings.discordRPC.applicationIDForRPC') ?? '1270726237605855395',
+                    window.nativeSettings.get('modSettings.discordRPC.applicationIDForRPC') ?? '1290778445370097674',
                 );
+                const [hideBranding, setHideBranding] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.hideBranding') ?? false);
 
                 let { formatMessage: e } = (0, r.A)(),
                     {
@@ -593,8 +594,14 @@
                     [isExperimentOverriden, setIsExperimentOverriden] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.overrideDeepLinksExperiment')),
                     [showButtons, setShowButtons] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.showButtons')),
                     [isDiscordStatusEnabled, setIsDiscordStatusEnabled] = (0, d.useState)(window.nativeSettings.get('modSettings.discordRPC.enable')),
-                    onAfkTimeoutChange = (0, d.useCallback)(async (e) => {
-                        let value = Math.min(Math.max(e, 1), 30);
+                    [isPremium, setIsPremium] = (0, d.useState)(false);
+
+                d.useEffect(() => {
+                    window.IS_PREMIUM_USER().then((val) => setIsPremium(val));
+                });
+
+                let onAfkTimeoutChange = (0, d.useCallback)(async (e) => {
+                        let value = Math.min(Math.max(e, 0), 30);
                         setAfkTimeout(value);
                         console.log('modSettings.discordRPC.afkTimeout changed. Value: ', value);
 
@@ -647,6 +654,11 @@
                         window.nativeSettings.set('modSettings.discordRPC.statusDisplayType', e);
                         setStatusDisplayType(e);
                     }, []),
+                    onHideBrandingChange = (0, d.useCallback)(async (e) => {
+                        console.log('hideBranding changed. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.hideBranding', e);
+                        setHideBranding(e);
+                    }, []),
                     onApplicationIDForRPCChange = (0, d.useCallback)(
                         async (e) => {
                             console.log('applicationIDForRPC changed. Value: ', e);
@@ -688,6 +700,24 @@
                             (0, i.jsx)('li', {
                                 className: B().item,
                                 children: (0, i.jsx)(P, {
+                                    title: [
+                                        'Скрыть брендинг PulseSync в статусе',
+                                        (0, i.jsx)(labeledBubble, {
+                                            label: 'Boosty',
+                                            tooltip: {
+                                                title: 'Премиум функция',
+                                                description: isPremium ? 'У вас есть подписка на Boosty' : 'Подпишитись на Boosty, чтобы разблокировать',
+                                            },
+                                        }),
+                                    ],
+                                    onChange: onHideBrandingChange,
+                                    isChecked: hideBranding,
+                                    disabled: !isDiscordStatusEnabled || !isPremium,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
                                     title: ['Использовать Ynison', (0, i.jsx)(labeledBubble, { label: 'BETA', disabled: !isDiscordStatusEnabled })],
                                     description: 'Использует данные о воспроизведении с других устройств',
                                     onChange: onDiscordFromYnisonToggle,
@@ -720,7 +750,7 @@
                                     value: applicationIDForRPC,
                                     direction: 'bottom',
                                     options: [
-                                        { value: '1270726237605855395', label: 'Английский' },
+                                        { value: '1290778445370097674', label: 'Английский' },
                                         { value: '1290778445370097674', label: 'Русский' },
                                     ],
                                     disabled: !isDiscordStatusEnabled,
@@ -794,7 +824,7 @@
                                     onChange: onAfkTimeoutChange,
                                     value: afkTimeout,
                                     maxValue: 30,
-                                    minValue: 1,
+                                    minValue: 0,
                                     step: 1,
                                     disabled: !isDiscordStatusEnabled,
                                 }),
@@ -1924,13 +1954,6 @@
                             );
                         },
                         [j],
-                    ),
-                    onFromYnisonToggle = (0, d.useCallback)(
-                        async (e) => {
-                            console.log('EnableSendStateFromYnison toggled. Value: ', e);
-                            window.nativeSettings.set('enableSendStateFromYnison', e);
-                        },
-                        [j],
                     );
                 return (0, i.jsxs)(p.a, {
                     className: H().root,
@@ -1965,15 +1988,6 @@
                                     onChange: onYnisonInterceptPlaybackToggle,
                                     isChecked: interceptYnison,
                                     disabled: !enableYnisonRemote,
-                                }),
-                            }),
-                            (0, i.jsx)('li', {
-                                className: B().item,
-                                children: (0, i.jsx)(P, {
-                                    title: ['Использовать Ynison для RPC', (0, i.jsx)(labeledBubble, { label: 'BETA' })],
-                                    description: 'Использует данные о воспроизведении треков с других устройств',
-                                    onChange: onFromYnisonToggle,
-                                    isChecked: window.nativeSettings.get('enableSendStateFromYnison'),
                                 }),
                             }),
                         ],
@@ -2951,7 +2965,16 @@
                                 className: B().item,
                                 children: [
                                     (0, i.jsx)(S, {
-                                        title: ['Discord RPC', (0, i.jsx)(labeledBubble, { label: 'NEW', tooltip: {title: 'Переехало из клиента в мод', description: 'Теперь для работы не требуется запущенный клиент PulseSync'} })],
+                                        title: [
+                                            'Discord RPC',
+                                            (0, i.jsx)(labeledBubble, {
+                                                label: 'NEW',
+                                                tooltip: {
+                                                    title: 'Переехало из клиента в мод',
+                                                    description: 'Теперь для работы не требуется запущенный клиент PulseSync',
+                                                },
+                                            }),
+                                        ],
                                         description: 'Интеграция с Discord',
                                         onClick: discordRpcSettingsModal.open,
                                     }),
