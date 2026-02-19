@@ -10,16 +10,19 @@ const trackInfo_1 = require('./utils/trackInfo');
 const LastFmApi_1 = require('./api/LastFmApi');
 const scrobblerTypeEnum_1 = require('../../constants/scrobblerTypeEnum');
 const node_path_1 = require('node:path');
+const node_fs_1 = require('node:fs');
+const env_paths_1 = require('env-paths');
 class LastFmScrobbler {
     /* #endregion */
     constructor(apiKey, sharedSecret, baseUrl) {
         this.type = scrobblerTypeEnum_1.ScrobblerTypeEnum.LastFm;
         this.logger = new Logger_1.Logger('LastFmScrobbler');
+        this.SESSION_STORE_KEY = 'session';
         this.store = new electron_store_1.default({
             name: 'lastfm',
             encryptionKey: 'lastfm-session-key',
         });
-        this.SESSION_STORE_KEY = 'session';
+        this.migrateLegacySessionStore();
         /* #region Current track state */
         this.currentTrack = null;
         this.currentTrackStartTime = null;
@@ -27,6 +30,41 @@ class LastFmScrobbler {
         this.nowPlayingLastFmTrack = null;
         this.API_KEY = apiKey;
         this.api = new LastFmApi_1.LastFmApi(this.API_KEY, sharedSecret, baseUrl, () => this.getStoredSession());
+    }
+    migrateLegacySessionStore() {
+        const currentSession = this.store.get(this.SESSION_STORE_KEY);
+        if (currentSession?.key) {
+            return;
+        }
+        const legacyStoreNames = ['lastfm', 'config'];
+        for (const legacyStoreName of legacyStoreNames) {
+            const migratedSession = this.readLegacySession(legacyStoreName);
+            if (!migratedSession?.key) {
+                continue;
+            }
+            this.store.set(this.SESSION_STORE_KEY, migratedSession);
+            this.logger.info(`Migrated Last.fm session from legacy store "${legacyStoreName}.json"`);
+            return;
+        }
+    }
+    readLegacySession(legacyStoreName) {
+        try {
+            const envPaths = env_paths_1.default || env_paths_1;
+            const legacyConfigPath = envPaths('electron-store', { suffix: 'nodejs' }).config;
+            const legacyStorePath = (0, node_path_1.join)(legacyConfigPath, `${legacyStoreName}.json`);
+            if (!(0, node_fs_1.existsSync)(legacyStorePath) || legacyStorePath === this.store.path) {
+                return undefined;
+            }
+            const legacyStore = new electron_store_1.default({
+                cwd: legacyConfigPath,
+                name: legacyStoreName,
+                encryptionKey: 'lastfm-session-key',
+            });
+            return legacyStore.get(this.SESSION_STORE_KEY);
+        } catch (error) {
+            this.logger.debug(`Failed to read legacy Last.fm store "${legacyStoreName}.json"`, error);
+            return undefined;
+        }
     }
     isEnabled() {
         let isLastFmEnabled = store_js_1.getModSettings()?.scrobblers?.lastfm.enable;
