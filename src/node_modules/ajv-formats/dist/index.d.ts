@@ -7,7 +7,7 @@ export interface FormatOptions {
     formats?: FormatName[];
     keywords?: boolean;
 }
-export declare type FormatsPluginOptions = FormatName[] | FormatOptions;
+export type FormatsPluginOptions = FormatName[] | FormatOptions;
 export interface FormatsPlugin extends Plugin<FormatsPluginOptions> {
     get: (format: FormatName, mode?: FormatMode) => Format;
 }

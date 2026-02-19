@@ -14,7 +14,7 @@ const formatsPlugin = (ajv, opts = { keywords: true }) => {
     const list = opts.formats || formats_1.formatNames;
     addFormats(ajv, list, formats, exportName);
     if (opts.keywords)
-        limit_1.default(ajv);
+        (0, limit_1.default)(ajv);
     return ajv;
 };
 formatsPlugin.get = (name, mode = "full") => {
@@ -27,7 +27,7 @@ formatsPlugin.get = (name, mode = "full") => {
 function addFormats(ajv, list, fs, exportName) {
     var _a;
     var _b;
-    (_a = (_b = ajv.opts.code).formats) !== null && _a !== void 0 ? _a : (_b.formats = codegen_1._ `require("ajv-formats/dist/formats").${exportName}`);
+    (_a = (_b = ajv.opts.code).formats) !== null && _a !== void 0 ? _a : (_b.formats = (0, codegen_1._) `require("ajv-formats/dist/formats").${exportName}`);
     for (const f of list)
         ajv.addFormat(f, fs[f]);
 }
