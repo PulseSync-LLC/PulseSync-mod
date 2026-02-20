@@ -235,6 +235,13 @@ function updateActivity(activityObject) {
 const throttledUpdateActivity = throttle(updateActivity, SET_ACTIVITY_TIMEOUT_MS);
 
 function sendCurrentActivity() {
+
+    if (lastPlayingState.status === 'paused' && settings()?.afkTimeout === 0) {
+        discordRichPresenceLogger.info('Clearing activity due to no Paused activity allowed');
+        rpc?.user.clearActivity();
+        return;
+    }
+
     const psm = pulseSyncManager_js_1.getPulseSyncManager();
     const isEnabled = settings()?.enable ?? true;
     const canUseRpc = !psm.isConnected || psm.isDRPCV2Supported;
