@@ -9,8 +9,18 @@ const hostnamePatterns_js_1 = require('../constants/hostnamePatterns.js');
 const deviceInfo = (0, deviceInfo_js_1.getDeviceInfo)();
 const store_js_1 = require('./store.js');
 const events_js_1 = require('../types/events.js');
+const shouldHidePulseSyncVersionInTitleBar = () => {
+    try {
+        const hidePulseSyncVersion = Boolean(store_js_1.getModSettings()?.window?.hidePulseSyncVersionInTitleBar);
+        const isPremium = Boolean(electron_1.ipcRenderer.sendSync('isPremiumUserSync'));
+        return hidePulseSyncVersion && isPremium;
+    } catch (error) {
+        return false;
+    }
+};
 
 electron_1.contextBridge.exposeInMainWorld('IS_PREMIUM_USER', () => electron_1.ipcRenderer.invoke("isPremiumUser"));
+electron_1.contextBridge.exposeInMainWorld('HIDE_PULSESYNC_VERSION_IN_TITLEBAR', () => shouldHidePulseSyncVersionInTitleBar());
 electron_1.contextBridge.exposeInMainWorld('IS_DEVTOOLS_ENABLED', Boolean(store_js_1.getDevMode()));
 
 

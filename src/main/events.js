@@ -452,6 +452,13 @@ const handleApplicationEvents = (window) => {
 
     electron_1.ipcMain.on(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, value);
+        if (key === 'modSettings.window.hidePulseSyncVersionInTitleBar') {
+            const isPremium = Boolean(getPulseSyncManager()?.isPremiumUser);
+            if (value && !isPremium) {
+                eventsLogger.warn('Blocked non-premium attempt to hide PulseSync version in title bar');
+                value = false;
+            }
+        }
         store_js_1.set(key, value);
         if (key === 'modSettings.globalShortcuts.enable') {
             updateGlobalShortcuts();
@@ -640,4 +647,7 @@ MiniPlayer.onPlayerAction((action, value) => {
 electron_1.ipcMain.handle('isPremiumUser', () => {
     eventsLogger.info('Event handle', 'isPremiumUser');
     return getPulseSyncManager().isPremiumUser;
-})
+});
+electron_1.ipcMain.on('isPremiumUserSync', (event) => {
+    event.returnValue = Boolean(getPulseSyncManager()?.isPremiumUser);
+});

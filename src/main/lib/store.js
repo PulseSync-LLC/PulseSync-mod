@@ -161,6 +161,7 @@ const init = () => {
             startupPage: '/',
             saveWindowDimensionsOnRestart: false,
             saveWindowPositionOnRestart: false,
+            hidePulseSyncVersionInTitleBar: false,
         },
         globalShortcuts: {
             enable: true,
@@ -486,8 +487,12 @@ const getDefaultExperimentOverrides = () => {
 exports.getDefaultExperimentOverrides = getDefaultExperimentOverrides;
 
 const ensureUserPremium = (isPremium) => {
-    if (getStore(`${store_js_1.StoreKeys.MOD_SETTINGS}`).discordRPC.hideBranding && !isPremium) {
+    const modSettings = getStore(`${store_js_1.StoreKeys.MOD_SETTINGS}`);
+    if (modSettings?.discordRPC?.hideBranding && !isPremium) {
         setStore(`${store_js_1.StoreKeys.MOD_SETTINGS}.discordRPC.hideBranding`, false);
     }
-}
-exports.ensureUserPremium = ensureUserPremium
+    if (modSettings?.window?.hidePulseSyncVersionInTitleBar && !isPremium) {
+        setStore(`${store_js_1.StoreKeys.MOD_SETTINGS}.window.hidePulseSyncVersionInTitleBar`, false);
+    }
+};
+exports.ensureUserPremium = ensureUserPremium;

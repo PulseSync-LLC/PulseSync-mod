@@ -1707,6 +1707,38 @@
                         m = (0, n.useCallback)(() => {
                             (0, d.N5)();
                         }, []);
+                    (0, n.useEffect)(() => {
+                        if (window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.()) return;
+                        const selector = `.${u().pulseText}`;
+                        const ensurePulseVersionVisible = () => {
+                            const el = window.document?.querySelector(selector);
+                            if (!el) return;
+                            const expectedText = `PulseSync ${window.PULSE_VERSION}`;
+                            if (el.textContent !== expectedText) {
+                                el.textContent = expectedText;
+                            }
+                            el.style?.setProperty?.('display', 'inline', 'important');
+                            el.style?.setProperty?.('visibility', 'visible', 'important');
+                            el.style?.setProperty?.('opacity', '1', 'important');
+                        };
+                        const observer =
+                            window.MutationObserver &&
+                            new MutationObserver(() => {
+                                ensurePulseVersionVisible();
+                            });
+                        observer?.observe(window.document?.documentElement || window.document?.body, {
+                            subtree: !0,
+                            childList: !0,
+                            attributes: !0,
+                            attributeFilter: ['style', 'class', 'hidden'],
+                        });
+                        const intervalId = window.setInterval(ensurePulseVersionVisible, 1000);
+                        ensurePulseVersionVisible();
+                        return () => {
+                            observer?.disconnect();
+                            window.clearInterval(intervalId);
+                        };
+                    }, []);
                     return (0, s.jsx)('div', {
                         className: u().root,
                         onDoubleClick: handleDivDoubleClick,
@@ -1714,10 +1746,11 @@
                             l &&
                             (0, s.jsxs)(s.Fragment, {
                                 children: [
-                                    (0, s.jsx)('span', {
-                                        className: u().pulseText,
-                                        children: `PulseSync ${window.PULSE_VERSION}`,
-                                    }),
+                                    !window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() &&
+                                        (0, s.jsx)('span', {
+                                            className: u().pulseText,
+                                            children: `PulseSync ${window.PULSE_VERSION}`,
+                                        }),
                                     (0, s.jsx)(_, {
                                         onClick: onMiniPlayerToggle,
                                         ariaLabel: 'miniplayer',

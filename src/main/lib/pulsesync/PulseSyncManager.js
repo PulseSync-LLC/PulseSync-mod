@@ -90,6 +90,7 @@ class PulseSyncManager extends EventEmitter {
     start() {
         this.connectSocket();
         this.tryConnect();
+        this.validatePremium();
     }
 
     clearReconnectTimer() {
@@ -235,16 +236,21 @@ class PulseSyncManager extends EventEmitter {
                 token: args.token,
                 expiresAt: args.expiresAt,
             });
-            const res = await fetch('https://ru-node-1.pulsesync.dev/user/subscription/validate', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${args.token}`,
-                },
-            });
-            const data = await res.json();
-            if (data.ok) {
-                this.isPremium = data.isPremium;
+            try {
+                const res = await fetch('https://ru-node-1.pulsesync.dev/user/subscription/validate', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${args.token}`,
+                    },
+                });
+                const data = await res.json();
+                this.isPremium = Boolean(data?.ok && data?.isPremium);
+                store_js_1.ensureUserPremium(this.isPremium);
+            } catch (error) {
+                this.logger.warn(`PREMIUM_CHECK_TOKEN: validation error (${error.message})`);
+                this.isPremium = false;
+                store_js_1.ensureUserPremium(false);
             }
         });
 
@@ -547,6 +553,7 @@ class PulseSyncManager extends EventEmitter {
             const data = await res.json();
             if (data.ok) {
                 this.isPremium = data.isPremium;
+                store_js_1.ensureUserPremium(this.isPremium);
             } else {
                 this.logger.warn(`validatePremium: validation failed (${data.message || 'no message'})`);
                 this.isPremium = false;

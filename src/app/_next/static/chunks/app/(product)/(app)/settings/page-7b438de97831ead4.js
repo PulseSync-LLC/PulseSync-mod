@@ -1475,7 +1475,19 @@
                             );
                         },
                         [o],
-                    );
+                    ),
+                    onHidePulseSyncVersionInTitleBarToggle = (0, d.useCallback)(async (e) => {
+                        console.log('hidePulseSyncVersionInTitleBar toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.window.hidePulseSyncVersionInTitleBar', e);
+                        setHidePulseSyncVersionInTitleBar(e);
+                    }, []);
+                const [hidePulseSyncVersionInTitleBar, setHidePulseSyncVersionInTitleBar] = (0, d.useState)(
+                    window.nativeSettings.get('modSettings.window.hidePulseSyncVersionInTitleBar') ?? false,
+                );
+                const [isPremium, setIsPremium] = (0, d.useState)(false);
+                d.useEffect(() => {
+                    window.IS_PREMIUM_USER().then((val) => setIsPremium(val));
+                }, []);
                 const [startupPage, setStartupPage] = (0, d.useState)(window.nativeSettings.get('modSettings.window.startupPage') ?? '/');
                 const onStartupPageChange = (0, d.useCallback)(async (e) => {
                     console.log('startupPage changed. Value: ', e);
@@ -1539,6 +1551,25 @@
                                     description: 'Если включено, приложение свернется в трей при закрытии.',
                                     onChange: onToTrayToggle,
                                     isChecked: window.nativeSettings.get('modSettings.window.toTray'),
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: [
+                                        'Скрывать версию PulseSync в TitleBar',
+                                        (0, i.jsx)(labeledBubble, {
+                                            label: 'Boosty',
+                                            tooltip: {
+                                                title: 'Премиум функция',
+                                                description: isPremium ? 'У вас есть подписка на Boosty' : 'Подпишитись на Boosty, чтобы разблокировать',
+                                            },
+                                        }),
+                                    ],
+                                    description: 'Скрывает подпись PulseSync в верхней панели окна.',
+                                    onChange: onHidePulseSyncVersionInTitleBarToggle,
+                                    isChecked: hidePulseSyncVersionInTitleBar,
+                                    disabled: !isPremium,
                                 }),
                             }),
                             (0, i.jsx)('li', {
