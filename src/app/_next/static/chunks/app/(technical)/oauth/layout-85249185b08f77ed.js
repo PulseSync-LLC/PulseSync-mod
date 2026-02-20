@@ -180,7 +180,7 @@
         10758: (e, t, o) => {
             'use strict';
             o.d(t, { default: () => s });
-                let l = o(53555);
+            let l = o(53555);
             let s = {
                 init: () => {
                     window.pulsesyncApi = {
@@ -1683,9 +1683,47 @@
                             if (e.target.closest('button')) return;
                             (0, a.LO)();
                         }, []),
+                        [hidePulseSyncVersionInTitleBar, setHidePulseSyncVersionInTitleBar] = (0, i.useState)(window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() ?? !1),
                         c = (0, i.useCallback)(() => {
                             (0, a.N5)();
                         }, []);
+                    (0, i.useEffect)(() => {
+                        if (window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.()) return;
+                        const selector = `.${h().pulseText}`;
+                        const ensurePulseVersionVisible = () => {
+                            const el = window.document?.querySelector(selector);
+                            if (!el) return;
+                            const expectedText = `PulseSync ${window.PULSE_VERSION}`;
+                            if (el.textContent !== expectedText) {
+                                el.textContent = expectedText;
+                            }
+                            el.style?.setProperty?.('display', 'inline', 'important');
+                            el.style?.setProperty?.('visibility', 'visible', 'important');
+                            el.style?.setProperty?.('opacity', '1', 'important');
+                        };
+                        const observer =
+                            window.MutationObserver &&
+                            new MutationObserver(() => {
+                                ensurePulseVersionVisible();
+                            });
+                        observer?.observe(window.document?.documentElement || window.document?.body, {
+                            subtree: !0,
+                            childList: !0,
+                            attributes: !0,
+                            attributeFilter: ['style', 'class', 'hidden'],
+                        });
+                        ensurePulseVersionVisible();
+                        return () => {
+                            observer?.disconnect();
+                        };
+                    }, []);
+                    (0, i.useEffect)(() => {
+                        window.desktopEvents?.on('NATIVE_STORE_UPDATE', (event, key, value) => {
+                            if (key === 'modSettings.window.hidePulseSyncVersionInTitleBar') {
+                                setHidePulseSyncVersionInTitleBar(value);
+                            }
+                        });
+                    }, []);
                     return (0, n.jsx)('div', {
                         className: h().root,
                         onDoubleClick: handleDivDoubleClick,
@@ -1693,10 +1731,11 @@
                             r &&
                             (0, n.jsxs)(n.Fragment, {
                                 children: [
-                                    (0, n.jsx)('span', {
-                                        className: h().pulseText,
-                                        children: `PulseSync ${window.PULSE_VERSION}`,
-                                    }),
+                                    !hidePulseSyncVersionInTitleBar &&
+                                        (0, n.jsx)('span', {
+                                            className: h().pulseText,
+                                            children: `PulseSync ${window.PULSE_VERSION}`,
+                                        }),
                                     (0, n.jsx)(m, {
                                         onClick: onMiniPlayerToggle,
                                         ariaLabel: 'miniplayer',

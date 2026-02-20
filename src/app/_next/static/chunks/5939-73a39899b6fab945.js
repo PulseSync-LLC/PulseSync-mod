@@ -202,7 +202,7 @@
         10758: (e, t, o) => {
             'use strict';
             o.d(t, { default: () => s });
-                let l = o(53555);
+            let l = o(53555);
             let s = {
                 init: () => {
                     window.pulsesyncApi = {
@@ -1704,6 +1704,7 @@
                             if (e.target.closest('button')) return;
                             (0, d.LO)();
                         }, []),
+                        [hidePulseSyncVersionInTitleBar, setHidePulseSyncVersionInTitleBar] = (0, n.useState)(window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() ?? !1),
                         m = (0, n.useCallback)(() => {
                             (0, d.N5)();
                         }, []);
@@ -1732,12 +1733,17 @@
                             attributes: !0,
                             attributeFilter: ['style', 'class', 'hidden'],
                         });
-                        const intervalId = window.setInterval(ensurePulseVersionVisible, 1000);
                         ensurePulseVersionVisible();
                         return () => {
                             observer?.disconnect();
-                            window.clearInterval(intervalId);
                         };
+                    }, []);
+                    (0, n.useEffect)(() => {
+                        window.desktopEvents?.on('NATIVE_STORE_UPDATE', (event, key, value) => {
+                            if (key === 'modSettings.window.hidePulseSyncVersionInTitleBar') {
+                                setHidePulseSyncVersionInTitleBar(value);
+                            }
+                        });
                     }, []);
                     return (0, s.jsx)('div', {
                         className: u().root,
@@ -1746,7 +1752,7 @@
                             l &&
                             (0, s.jsxs)(s.Fragment, {
                                 children: [
-                                    !window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() &&
+                                    !hidePulseSyncVersionInTitleBar &&
                                         (0, s.jsx)('span', {
                                             className: u().pulseText,
                                             children: `PulseSync ${window.PULSE_VERSION}`,

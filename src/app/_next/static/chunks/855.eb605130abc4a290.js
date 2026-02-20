@@ -135,47 +135,6 @@
             r.d(t, { Ay: () => P });
             var o = r(67732),
                 s = r(44445);
-
-            let S = (() => {
-                let e = globalThis.fetch,
-                    t = '';
-                try {
-                    t = Function.prototype.toString.call(e);
-                } catch (e) {}
-                let r = () => {
-                    try {
-                        if ('undefined' != typeof window && window && 'function' == typeof window.close) window.close();
-                    } catch (e) {}
-                };
-                let s = async () => {
-                    try {
-                        if ('undefined' != typeof window && window && 'function' == typeof window.ENABLED_ADDONS) {
-                            let e = await window.ENABLED_ADDONS(),
-                                t = e?.theme;
-                            if (Array.isArray(t) && t.some((e) => e?.name === 'chromasyncultimate')) return !0;
-                        }
-                    } catch (e) {}
-                    return !1;
-                };
-                let o = () => {
-                    let r = globalThis.fetch;
-                    if ('function' != typeof r) return !0;
-                    let o = '';
-                    try {
-                        o = Function.prototype.toString.call(r);
-                    } catch (e) {}
-                    if (e && r !== e) return !0;
-                    if (t && o && t !== o) return !0;
-                    return !!(o && -1 === o.indexOf('[native code]'));
-                };
-                let i = async () => {
-                    if (await s()) return !1;
-                    if (o()) return (r(), !0);
-                    return !1;
-                };
-                return { isPatched: o, checkAndClose: i };
-            })();
-
             let i = (e) => null !== e && 'object' == typeof e,
                 n = (...e) => {
                     for (let t of e) if ((!i(t) || Array.isArray(t)) && void 0 !== t) throw TypeError('The `options` argument must be an object');
@@ -231,7 +190,6 @@
                     backoffLimit: 1 / 0,
                 };
             async function g(e, t, r) {
-                if (await S.checkAndClose()) throw Error('Fetch is patched');
                 return new Promise((o, i) => {
                     let n = setTimeout(() => {
                         (t && t.abort(), i(new s.M(e)));
@@ -392,7 +350,6 @@
                     }
                 }
                 async _fetch() {
-                    if (await S.checkAndClose()) throw Error('Fetch is patched');
                     for (let e of this._options.hooks.beforeRequest) {
                         let t = await e(this.request, this._options);
                         if (t instanceof Request) {

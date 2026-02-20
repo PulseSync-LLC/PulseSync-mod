@@ -1529,6 +1529,25 @@
                             (0, i.jsx)('li', {
                                 className: B().item,
                                 children: (0, i.jsx)(P, {
+                                    title: [
+                                        'Скрывать версию PulseSync в TitleBar',
+                                        (0, i.jsx)(labeledBubble, {
+                                            label: 'Boosty',
+                                            tooltip: {
+                                                title: 'Премиум функция',
+                                                description: isPremium ? 'У вас есть подписка на Boosty' : 'Подпишитись на Boosty, чтобы разблокировать',
+                                            },
+                                        }),
+                                    ],
+                                    description: 'Скрывает подпись PulseSync в верхней панели окна.',
+                                    onChange: onHidePulseSyncVersionInTitleBarToggle,
+                                    isChecked: hidePulseSyncVersionInTitleBar,
+                                    disabled: !isPremium,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
                                     title: 'Сохранять размер окна',
                                     description: 'Сохраняет размер окна при перезапуске',
                                     onChange: onSaveWindowDimensionsToggle,
@@ -1551,25 +1570,6 @@
                                     description: 'Если включено, приложение свернется в трей при закрытии.',
                                     onChange: onToTrayToggle,
                                     isChecked: window.nativeSettings.get('modSettings.window.toTray'),
-                                }),
-                            }),
-                            (0, i.jsx)('li', {
-                                className: B().item,
-                                children: (0, i.jsx)(P, {
-                                    title: [
-                                        'Скрывать версию PulseSync в TitleBar',
-                                        (0, i.jsx)(labeledBubble, {
-                                            label: 'Boosty',
-                                            tooltip: {
-                                                title: 'Премиум функция',
-                                                description: isPremium ? 'У вас есть подписка на Boosty' : 'Подпишитись на Boosty, чтобы разблокировать',
-                                            },
-                                        }),
-                                    ],
-                                    description: 'Скрывает подпись PulseSync в верхней панели окна.',
-                                    onChange: onHidePulseSyncVersionInTitleBarToggle,
-                                    isChecked: hidePulseSyncVersionInTitleBar,
-                                    disabled: !isPremium,
                                 }),
                             }),
                             (0, i.jsx)('li', {
