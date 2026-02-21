@@ -458,7 +458,7 @@
                     { notify: j } = (0, _.lkh)(),
                     onPreventDisplaySleepToggle = (0, d.useCallback)((e) => {
                         console.log('preventDisplaySleep toggled. Value: ', e);
-                        window.nativeSettings.set('modSettings.windowBehavior.preventDisplaySleep', e);
+                        window.nativeSettings.set('modSettings.window.preventDisplaySleep', e);
                     }, []),
                     onSendAnonymizedMetricsToggle = (0, d.useCallback)(
                         (e) => {
