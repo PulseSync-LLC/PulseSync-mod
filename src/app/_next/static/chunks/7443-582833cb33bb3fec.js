@@ -11133,7 +11133,7 @@
                                     !!(null == m ? void 0 : m.hasSyncLyrics) ||
                                     !!(null == m ? void 0 : m.hasLyrics) ||
                                     (!!t && _.hasLyricsForTrack(t));
-                            if (_.isResolved) return (0, s.jsx)(e8, {});
+                            if (_.isResolved) return (0, s.jsx)(e8, { key: null == _.currentTrackId ? 'sync-lyrics-no-track' : String(_.currentTrackId) });
                             if (!a && t && _.isLoadingForTrack(t)) return null;
                             if (_.isRejected || _.hasInvalidLyrics) return null;
                             return (0, s.jsx)(eV, { className: h });
