@@ -15,6 +15,7 @@ function sanitizeId(name) {
 }
 
 let singletonInstance = null;
+const PULSE_SYNC_MANAGER_KEY = Symbol.for('pulsesync.manager.instance');
 
 class PulseSyncManager extends EventEmitter {
     constructor(window) {
@@ -571,10 +572,16 @@ class PulseSyncManager extends EventEmitter {
 }
 
 function getPulseSyncManager(window) {
+    const root = globalThis;
+    if (!singletonInstance && root[PULSE_SYNC_MANAGER_KEY]) {
+        singletonInstance = root[PULSE_SYNC_MANAGER_KEY];
+    }
+
     if (!window) return singletonInstance;
 
     if (!singletonInstance) {
         singletonInstance = new PulseSyncManager(window);
+        root[PULSE_SYNC_MANAGER_KEY] = singletonInstance;
     } else {
         singletonInstance.window = window;
         singletonInstance.webContents = window.webContents;
