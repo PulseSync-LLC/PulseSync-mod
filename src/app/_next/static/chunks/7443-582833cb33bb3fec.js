@@ -9761,7 +9761,7 @@
                                                     (e.externalLyricId = null == m.id ? null : String(m.id)),
                                                     (e.lyricId = null),
                                                     (e.writers = (0, l.wg)((null == c ? void 0 : c.artists) ? c.artists.map((e) => e.name).filter(Boolean) : [])),
-                                                    (e.hasLyricsViewed = !1),
+                                                    (e.hasLyricsViewed = !0),
                                                     (e.lines = (0, l.wg)(i)),
                                                     logSyncPrefetch('trigger-from-getData', { reason: 'resolved-lrclib', trackId: a }),
                                                     void (e.loadingState = n.GuX.RESOLVE)
