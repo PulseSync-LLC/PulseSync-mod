@@ -41,7 +41,6 @@ class PulseSyncManager extends EventEmitter {
         this.reconnectAttempt = 0;
         this.reconnectTimer = null;
         this.isConnecting = false;
-        this.isDiscordRpcV2Suppoorted = false;
         this.isPremium = false;
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
@@ -221,10 +220,6 @@ class PulseSyncManager extends EventEmitter {
             this.logger.warn(`Socket.IO connect_error: ${err.message}`);
             this.isConnecting = false;
             this.scheduleReconnect(err.message);
-        });
-
-        this.socket.on('DRPCV2_SUPPORTED', () => {
-            this.isDiscordRpcV2Suppoorted = true;
         });
 
         this.socket.on('PREMIUM_CHECK_TOKEN', async (args) => {
@@ -570,9 +565,6 @@ class PulseSyncManager extends EventEmitter {
         return this.socket?.connected || false;
     }
 
-    get isDRPCV2Supported() {
-        return this.isDiscordRpcV2Suppoorted;
-    }
     get isPremiumUser() {
         return this.isPremium;
     }

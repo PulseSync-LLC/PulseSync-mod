@@ -244,10 +244,9 @@ function sendCurrentActivity() {
 
     const psm = pulseSyncManager_js_1.getPulseSyncManager();
     const isEnabled = settings()?.enable ?? true;
-    const canUseRpc = !psm.isConnected || psm.isDRPCV2Supported;
     discordRichPresenceLogger.log(`isPremiumUser: ${psm.isPremiumUser}`);
     store_js_1.ensureUserPremium(psm.isPremiumUser);
-    if (!isEnabled || !canUseRpc) {
+    if (!isEnabled) {
         if (lastActivity) {
             rpc?.user.clearActivity();
             lastActivity = undefined;

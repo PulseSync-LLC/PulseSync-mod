@@ -794,7 +794,7 @@
         const { version: ymVersion } = await getLatestYMVersion();
         const patchNote = versions ? PatchNote.forSpoofPatch(versions.newVersion, version, versions.oldVersion) : new PatchNote(ymVersion, version, patchNoteStringMD);
         await uploadAppAsar(dest, version, ymVersion, true, patchNote.patchNoteString, null, 'zstd', '/cdn/upload/asar');
-        await sendPatchNoteToDiscord(patchNote);
+        //await sendPatchNoteToDiscord(patchNote);
     }
 
     async function extractIfNotExist(version, force = false, src = undefined) {
