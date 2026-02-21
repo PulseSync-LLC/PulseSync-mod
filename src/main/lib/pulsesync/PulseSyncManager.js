@@ -54,6 +54,10 @@ class PulseSyncManager extends EventEmitter {
     }
 
     async injectThemesAndAddons() {
+        if (process.argv.includes('--safe-mode')) {
+            this.logger.warn('Safe mode enabled: skipping theme and addon injection');
+            return;
+        }
         await this.handleExtensions(this.prevExtensions);
         if (this.currentTheme && this.currentTheme.name.toLowerCase() !== 'default') {
             await this.handleTheme(this.currentTheme);
@@ -329,6 +333,14 @@ class PulseSyncManager extends EventEmitter {
     }
 
     async handleExtensions(addons) {
+
+        this.logger.info(process.argv)
+
+        if (process.argv.includes('--safe-mode')) {
+            this.logger.warn('Safe mode enabled: skipping ddon injection');
+            return;
+        }
+
         const merged = mergeWithSystem(Array.isArray(addons) ? addons : []);
 
         const unique = [];
@@ -430,6 +442,14 @@ class PulseSyncManager extends EventEmitter {
     }
 
     async handleTheme({ css = '', name = 'theme', script = '' }) {
+
+        this.logger.info(process.argv)
+
+        if (process.argv.includes('--safe-mode')) {
+            this.logger.warn('Safe mode enabled: skipping theme injection');
+            return;
+        }
+
         this.logger.info(`Applying theme: ${name}`);
         let changed = false;
         if (await this.handleCss({ css, name })) changed = true;
@@ -522,7 +542,6 @@ class PulseSyncManager extends EventEmitter {
     sendReadyEvent() {
         if (this.socket?.connected) {
             this.socket.emit('READY');
-            this.socket.emit('IS_DRPCV2_SUPPORTED');
             this.socket.emit('IS_PREMIUM_USER');
             this.readySent = true;
         } else {

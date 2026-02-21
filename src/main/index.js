@@ -43,6 +43,7 @@ Logger_js_1.Logger.setupLogger();
 const logger = new Logger_js_1.Logger('Main');
 
 logger.log('Application starting...');
+logger.log(process.argv);
 
 if (store_js_1.get('sendModAnonymizedMetrics') ?? true) {
     initUserCountMetric({

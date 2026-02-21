@@ -2199,6 +2199,8 @@
                     (e.DOWNLOAD_TRACKS = 'DOWNLOAD_TRACKS'),
                     (e.DOWNLOAD_INFO = 'DOWNLOAD_INFO'),
                     (e.GPU_STALL = 'GPU_STALL'),
+                    (e.APP_STALL = 'APP_STALL'),
+                    (e.APP_STALL_CANCEL_RESTART = 'APP_STALL_CANCEL_RESTART'),
                     (e.MOD_UPDATE_AVAILABLE = 'MOD_UPDATE_AVAILABLE'),
                     (e.DOWNLOAD_MOD_UPDATE = 'DOWNLOAD_MOD_UPDATE'),
                     (e.INSTALL_MOD_UPDATE = 'INSTALL_MOD_UPDATE'),

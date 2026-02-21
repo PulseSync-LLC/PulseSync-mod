@@ -104,9 +104,30 @@ const updateGlobalShortcuts = () => {
     }
 };
 
+const restartApplication = (safeMode = false) => {
+    if (safeMode) {
+        electron_1.app.relaunch({ args: ['--safe-mode'] });
+    } else {
+        electron_1.app.relaunch();
+    }
+    electron_1.app.exit();
+}
+
 const handleApplicationEvents = (window) => {
     mainWindow = window;
     eventsLogger.info('Application events handler initialized');
+
+    const isSafeMode = process.argv.includes('--safe-mode');
+
+    const applicationReadyTimeOut = setTimeout(() => {
+        if (!isSafeMode) {
+            eventsLogger.error('Application ready event timeout reached. Restarting in safe mode.');
+            restartApplication(true);
+        }
+    }, 5000);
+    let playerReadyTimeout;
+    let appSafeModeRestartTimeout;
+
     const updater = (0, updater_js_1.getUpdater)();
     const trackDownloader = new trackDownloader_js_1.TrackDownloader(window);
 
@@ -204,10 +225,9 @@ const handleApplicationEvents = (window) => {
         if (type === 'GPU') mainWindow?.webContents.send(events_js_1.Events.GPU_STALL, reason);
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_RESTART, () => {
+    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_RESTART, (event, { safeMode = false }) => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_RESTART);
-        electron_1.app.relaunch();
-        electron_1.app.exit();
+        restartApplication(safeMode);
     });
 
     electron_1.ipcMain.handle('scrobble-login', () => {
@@ -278,10 +298,27 @@ const handleApplicationEvents = (window) => {
         eventsLogger.info('Event received', events_js_1.Events.INSTALL_UPDATE);
         updater.install();
     });
+    electron_1.ipcMain.on(events_js_1.Events.APP_STALL_CANCEL_RESTART, () => {
+        eventsLogger.info('Event received', events_js_1.Events.APP_STALL_CANCEL_RESTART);
+        appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
+    });
     electron_1.ipcMain.on(events_js_1.Events.APPLICATION_READY, async (event, language) => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_READY);
 
+        clearTimeout(applicationReadyTimeOut);
+
         isPlayerReady = false;
+
+        playerReadyTimeout = setTimeout(() => {
+            if (!isSafeMode) {
+                eventsLogger.error('PLAYER_READY event timeout reached. Prompt safe mode restart.');
+                mainWindow.webContents.send(events_js_1.Events.APP_STALL);
+                appSafeModeRestartTimeout = setTimeout(() => {
+                    eventsLogger.error('Safe mode restart timeout reached. Restarting in safe mode.');
+                    restartApplication(true);
+                }, 10000);
+            }
+        }, 5000);
 
         (0, pulseSyncManager_js_1.readyEvent)();
         (0, deviceInfo_js_1.logHardwareInfo)();
@@ -421,12 +458,15 @@ const handleApplicationEvents = (window) => {
             return;
         }
 
-        if (data.status === 'idle' && data.track) {
+        if (data.status === 'idle' && data.track && !isPlayerReady) {
             if (store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
                 eventsLogger.info('Auto launch enabled: toggling play');
                 exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
             }
             isPlayerReady = true;
+            playerReadyTimeout && clearTimeout(playerReadyTimeout);
+
+            if (isSafeMode) sendBasicToastCreate(window, 'safeModeNoticeToast', 'Безопасный режим. Аддоны отключены.', 'Ясно');
         }
     });
     electron_1.ipcMain.on(events_js_1.Events.YNISON_STATE, (event, data) => {

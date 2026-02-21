@@ -904,6 +904,7 @@
                         { notify: s } = (0, i.lkh)(),
                         { notify: modUpdateNotify, dismiss: modUpdateDismiss } = (0, i.lkh)(),
                         { notify: gpuStallNotify, dismiss: gpuStallDismiss } = (0, i.lkh)(),
+                        { notify: appStallNotify, dismiss: appStallDismiss } = (0, i.lkh)(),
                         { notify: basicToastNotify } = (0, i.lkh)(),
                         o = (0, t.useRef)(''),
                         l = (0, t.useCallback)(
@@ -931,7 +932,7 @@
                             [e, modUpdateNotify, modUpdateDismiss],
                         ),
                         onGPUStallFixClick = (0, t.useCallback)(() => {
-                            window.desktopEvents?.send(i.lkh.APPLICATION_RESTART);
+                            window.desktopEvents?.send(i.EE.APPLICATION_RESTART);
                         }, []),
                         onGPUStall = (0, t.useCallback)(
                             (event, reason = 'GPU_STALL', dedupeTimestamp = 0) => {
@@ -950,6 +951,28 @@
                                 );
                             },
                             [gpuStallNotify, gpuStallDismiss],
+                        ),
+                        onAppStallFixClick = (0, t.useCallback)(() => {
+                            window.desktopEvents?.send(i.EE.APP_STALL_CANCEL_RESTART);
+                        }, []),
+                        onAppStall = (0, t.useCallback)(
+                            (event, dedupeTimestamp = 0) => {
+                                if (window.onAppStallStallDedupeNonce === dedupeTimestamp) return;
+                                if (dedupeTimestamp) window.onAppStallStallDedupeNonce = dedupeTimestamp;
+                                appStallNotify(
+                                    (0, n.jsx)(toastWithProgress, {
+                                        toastID: 'safeModeRestart',
+                                        message: `Приложение запускается слишком долго и перезапустится в безопасном режиме через 10 секунд`,
+                                        buttonLabel: 'Отменить',
+                                        onButtonClick: onAppStallFixClick,
+                                        dismissOnButtonClick: true,
+                                    }),
+                                    {
+                                        containerId: i.uQT.IMPORTANT,
+                                    },
+                                );
+                            },
+                            [appStallNotify, appStallDismiss],
                         ),
                         onBasicToastCreate = (0, t.useCallback)(
                             (event, toastID, message, dismissable, dedupeTimestamp = 0) => {
@@ -989,6 +1012,16 @@
                             }
                         );
                     }, [modUpdateCallback]);
+                    (0, t.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(i.EE.APP_STALL, onAppStall),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(i.EE.APP_STALL, onAppStall);
+                            }
+                        );
+                    }, [onGPUStall]);
                     (0, t.useEffect)(() => {
                         var e;
                         return (

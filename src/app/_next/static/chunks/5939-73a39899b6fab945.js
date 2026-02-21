@@ -975,6 +975,7 @@
                         { notify: t } = (0, n.lkh)(),
                         { notify: modUpdateNotify, dismiss: modUpdateDismiss } = (0, n.lkh)(),
                         { notify: gpuStallNotify, dismiss: gpuStallDismiss } = (0, n.lkh)(),
+                        { notify: appStallNotify, dismiss: appStallDismiss } = (0, n.lkh)(),
                         { notify: basicToastNotify } = (0, n.lkh)(),
                         o = (0, a.useRef)(''),
                         r = (0, a.useCallback)(
@@ -1025,6 +1026,28 @@
                             },
                             [gpuStallNotify, gpuStallDismiss],
                         ),
+                        onAppStallFixClick = (0, a.useCallback)(() => {
+                            window.desktopEvents?.send(n.EE.APP_STALL_CANCEL_RESTART);
+                        }, []),
+                        onAppStall = (0, a.useCallback)(
+                            (event, dedupeTimestamp = 0) => {
+                                if (window.onAppStallStallDedupeNonce === dedupeTimestamp) return;
+                                if (dedupeTimestamp) window.onAppStallStallDedupeNonce = dedupeTimestamp;
+                                appStallNotify(
+                                    (0, s.jsx)(toastWithProgress, {
+                                        toastID: 'safeModeRestart',
+                                        message: `Приложение запускается слишком долго и перезапустится в безопасном режиме через 10 секунд`,
+                                        buttonLabel: 'Отменить',
+                                        onButtonClick: onAppStallFixClick,
+                                        dismissOnButtonClick: true,
+                                    }),
+                                    {
+                                        containerId: n.uQT.IMPORTANT,
+                                    },
+                                );
+                            },
+                            [appStallNotify, appStallDismiss],
+                        ),
                         onBasicToastCreate = (0, a.useCallback)(
                             (event, toastID, message, dismissable, dedupeTimestamp = 0) => {
                                 if (window[`onBasicToastCreate${toastID}`] === dedupeTimestamp) return;
@@ -1073,6 +1096,16 @@
                             }
                         );
                     }, [onGPUStall]);
+                    (0, a.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(n.EE.APP_STALL, onAppStall),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(n.EE.APP_STALL, onAppStall);
+                            }
+                        );
+                    }, [onAppStall]);
                     (0, a.useEffect)(() => {
                         var e;
                         return (
