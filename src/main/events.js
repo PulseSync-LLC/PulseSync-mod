@@ -465,6 +465,8 @@ const handleApplicationEvents = (window) => {
             }
             isPlayerReady = true;
             playerReadyTimeout && clearTimeout(playerReadyTimeout);
+            appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
+            sendBasicToastDismiss(window, 'safeModeRestart');
 
             if (isSafeMode) sendBasicToastCreate(window, 'safeModeNoticeToast', 'Безопасный режим. Аддоны отключены.', 'Ясно');
         }
