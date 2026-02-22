@@ -1288,6 +1288,7 @@
                             return e;
                         }).apply(this, arguments);
                 },
+                electronBridge = i(77575),
                 G = (function () {
                     function e(e) {
                         var t = this;
@@ -1341,10 +1342,15 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                var t = this.getMessageContext(e);
-                                if ((this.updateFullStateCompletion(t), !this.shouldIgnoreMessage(t))) {
-                                    var i = this.processMessageState(e, t);
-                                    this.stateController.updateState(i);
+                                const selfDedup = e.rawData.player_state.status.version.device_id === this.deviceConfig.info.device_id;
+                                if(!selfDedup) {
+                                    console.debug('[WSConnector] Received message from hub', e.rawData);
+                                    electronBridge.sendYnisonState({ rawData: e.rawData });
+                                }
+                                const i = this.getMessageContext(e);
+                                if ((this.updateFullStateCompletion(i), !this.shouldIgnoreMessage(i))) {
+                                    const n = this.processMessageState(e, i);
+                                    this.stateController.updateState(n);
                                 }
                             },
                         }),

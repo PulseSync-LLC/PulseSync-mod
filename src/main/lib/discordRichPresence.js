@@ -204,20 +204,24 @@ const fromYnisonState = (ynisonState) => {
         ...(currentTrackData.album_id_optional ? { albums: [{ id: currentTrackData.album_id_optional }] } : undefined),
         durationMs: parseInt(ynisonState?.rawData?.player_state?.status?.duration_ms),
     };
-    partialPlayerState.progress = parseInt(ynisonState?.rawData?.player_state?.status?.progress_ms);
+    const progressMs = parseInt(ynisonState?.rawData?.player_state?.status?.progress_ms);
     partialPlayerState.status = ynisonState?.rawData?.player_state?.status?.paused ? 'paused' : 'playing';
 
     partialPlayerState.devices = ynisonState?.rawData?.devices;
 
     let currentDevice = undefined;
 
-    ynisonState?.rawData?.devices.forEach((device) => {
+    ynisonState?.rawData?.devices?.forEach((device) => {
         if (device?.info?.device_id && device?.info?.device_id === ynisonState?.rawData?.active_device_id_optional) currentDevice = device;
     });
 
     partialPlayerState.currentDevice = currentDevice;
 
-    if (partialPlayerState.progress && partialPlayerState.progress !== 0) partialPlayerState.progress = Math.round(partialPlayerState.progress / 1000);
+    if (!Number.isNaN(progressMs)) {
+        partialPlayerState.progress = {
+            position: Math.round(progressMs / 1000),
+        };
+    }
 
     discordRichPresence(partialPlayerState);
 };

@@ -7593,7 +7593,6 @@
                         return t;
                 }
             }
-            const electronBridge = a(77575);
             window.onRemoteDeviceConnected = [];
             window.onRemoteDeviceDisconnected = [];
             class aA {
@@ -7606,11 +7605,6 @@
                     const shouldApplyState = this.variables.shouldApplyState;
                     const isDeviceMatch = e.state.active_device_id_optional === current_device_id;
                     const selfStateDuped = e.state.player_state.status.version.device_id === current_device_id;
-
-                    if (!selfStateDuped) {
-                        // Отправляем состояние Ynison в main процесс
-                        electronBridge.sendYnisonState({ rawData: e.state });
-                    }
 
                     if (
                         isRemoteControlEnabled
