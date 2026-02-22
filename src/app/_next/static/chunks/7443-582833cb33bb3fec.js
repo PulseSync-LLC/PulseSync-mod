@@ -12876,15 +12876,18 @@
                             children: [
                                 (0, s.jsx)(v.Caption, {
                                     className: tE().item_option,
+                                    style: {
+                                        width: 'unset'
+                                    },
                                     variant: 'span',
                                     size: 'l',
                                     weight: 'medium',
-                                    children: 'Нормализация громкости (r128)',
+                                    children: 'Нормализация громкости',
                                 }),
                                 (0, s.jsx)(tSwitch.l, {
                                     isChecked: r128Enabled,
                                     onChange: onR128NormalizationToggle,
-                                    'aria-label': 'Нормализация громкости (r128)',
+                                    'aria-label': 'Нормализация громкости',
                                 }),
                             ],
                         });
@@ -12928,8 +12931,8 @@
                                 ],
                         }),
                         J,
-                        q,
                         X,
+                        q,
                     ],
                 });
             });
