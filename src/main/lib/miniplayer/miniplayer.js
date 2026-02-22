@@ -61,8 +61,11 @@ class MiniPlayer {
             }
         }
 
-        const backgroundColor = hex2hsl(this.lastPlayerState.track.derivedColors.average, 20).css;
         const allowedTrackColors = !this.lastSettingsState?.playerBarEnhancement?.disablePerTrackColors;
+        const trackColor = this.lastPlayerState?.track?.derivedColors?.average;
+
+        const backgroundColor = trackColor && allowedTrackColors ? hex2hsl(trackColor, 20).css : '#141414';
+
 
         this.window = new electron.BrowserWindow({
             width: (dimensions?.width ?? 380) * scaleFactor,
@@ -70,7 +73,7 @@ class MiniPlayer {
             minWidth: 275,
             minHeight: 200,
             ...(position?.x && position?.y ? { x: position.x, y: position.y } : { center: true }),
-            backgroundColor: allowedTrackColors ? backgroundColor : '#141414',
+            backgroundColor: backgroundColor,
             frame: false,
             resizable: true,
             minimizable: false,
