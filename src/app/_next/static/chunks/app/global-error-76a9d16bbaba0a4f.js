@@ -7,14 +7,14 @@
         19077: (e, o, s) => {
             'use strict';
             var t;
-            (s.d(o, { Q: () => r, c: () => t }),
+            s.d(o, { Q: () => r, c: () => t }),
                 (function (e) {
-                    ((e[(e.ERROR = 10)] = 'ERROR'),
+                    (e[(e.ERROR = 10)] = 'ERROR'),
                         (e[(e.WARNING = 20)] = 'WARNING'),
                         (e[(e.INFO = 30)] = 'INFO'),
                         (e[(e.DEBUG = 40)] = 'DEBUG'),
-                        (e[(e.TRACE = 50)] = 'TRACE'));
-                })(t || (t = {})));
+                        (e[(e.TRACE = 50)] = 'TRACE');
+                })(t || (t = {}));
             let r = { [t.ERROR]: 'error', [t.WARNING]: 'warn', [t.INFO]: 'info', [t.DEBUG]: 'debug', [t.TRACE]: 'trace' };
         },
         51963: (e, o) => {
@@ -32,7 +32,7 @@
                     function (r, i) {
                         if (s.length > 0) {
                             var n = s.indexOf(this);
-                            (~n ? s.splice(n + 1) : s.push(this), ~n ? t.splice(n, 1 / 0, r) : t.push(r), ~s.indexOf(i) && (i = o.call(this, r, i)));
+                            ~n ? s.splice(n + 1) : s.push(this), ~n ? t.splice(n, 1 / 0, r) : t.push(r), ~s.indexOf(i) && (i = o.call(this, r, i));
                         } else s.push(i);
                         return null == e ? i : e.call(this, r, i);
                     }
@@ -69,18 +69,18 @@
                     return e;
                 }
                 constructor({ additionalData: e, maxLogLevel: o, secureFields: s }) {
-                    ((0, t._)(this, 'maxLogLevel', void 0),
+                    (0, t._)(this, 'maxLogLevel', void 0),
                         (0, t._)(this, 'secureFields', void 0),
                         (0, t._)(this, 'additionalData', void 0),
                         (this.maxLogLevel = o),
                         (this.secureFields = s),
-                        (this.additionalData = e));
+                        (this.additionalData = e);
                 }
             }
         },
         79723: (e, o, s) => {
             'use strict';
-            (s.r(o), s.d(o, { default: () => d }));
+            s.r(o), s.d(o, { default: () => d });
             var t = s(33008),
                 r = s(66268),
                 i = s(72009),
@@ -160,10 +160,10 @@
                     this.maxLogLevel >= r.c.TRACE && this.logToConsole(r.c.TRACE, e, o);
                 }
                 warn(e, o) {
-                    (this.maxLogLevel >= r.c.WARNING && this.logToConsole(r.c.WARNING, e, o), this.sendToErrorBooster(r.c.WARNING, e, o));
+                    this.maxLogLevel >= r.c.WARNING && this.logToConsole(r.c.WARNING, e, o), this.sendToErrorBooster(r.c.WARNING, e, o);
                 }
                 error(e, o) {
-                    (this.maxLogLevel >= r.c.ERROR && this.logToConsole(r.c.ERROR, e, o), this.sendToErrorBooster(r.c.ERROR, e, o));
+                    this.maxLogLevel >= r.c.ERROR && this.logToConsole(r.c.ERROR, e, o), this.sendToErrorBooster(r.c.ERROR, e, o);
                 }
                 log(e, o) {
                     this.logToConsole(r.c.INFO, e, o);
@@ -177,13 +177,13 @@
                     window.Ya.Rum.logError({ message: o, level: e, additional: { data: s ? this.obfuscateData({ ...this.additionalData, ...s }) : {} } });
                 }
                 constructor(e) {
-                    (super(e), (0, t._)(this, 'disableLogToConsole', void 0), (this.disableLogToConsole = e.disableLogToConsole));
+                    super(e), (0, t._)(this, 'disableLogToConsole', void 0), (this.disableLogToConsole = e.disableLogToConsole);
                 }
             }
         },
         98258: () => {},
     },
     (e) => {
-        (e.O(0, [7098, 8282, 3645, 9876, 1311, 7764, 6706, 996, 9169, 9902, 5598, 7358], () => e((e.s = 18875))), (_N_E = e.O()));
+        e.O(0, [7098, 8282, 3645, 9876, 1311, 7764, 6706, 996, 9169, 9902, 5598, 7358], () => e((e.s = 18875))), (_N_E = e.O());
     },
 ]);

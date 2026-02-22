@@ -72,7 +72,7 @@
                     });
             };
             var l = (function (e) {
-                return ((e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e);
+                return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
             })(l || {});
             let n = (e) => {
                 let { sonataState: sonataState } = (0, a.Pjs)(),
@@ -413,10 +413,10 @@
             let n = () => {
                 let { library: e, collection: t, experiments: o, main: n, user: r } = (0, l.Pjs)(),
                     i = (0, s.useCallback)(() => {
-                        (o.getData(),
+                        o.getData(),
                             e.getData(),
                             n.landing.isLoaded && n.landing.getSkeleton({ id: a.p.WEB_MAIN, showWizard: r.settings.showWizard }, { preloadBlocksCount: 2 }),
-                            t.landing.isLoaded && t.landing.getSkeleton({ id: a.p.WEB_COLLECTION, showWizard: r.settings.showWizard }, { preloadBlocksCount: 2 }));
+                            t.landing.isLoaded && t.landing.getSkeleton({ id: a.p.WEB_COLLECTION, showWizard: r.settings.showWizard }, { preloadBlocksCount: 2 });
                     }, [t.landing, o, e, n.landing, r.settings.showWizard]);
                 (0, s.useEffect)(() => {
                     var e;
@@ -625,7 +625,7 @@
                                 s = t[2] || '';
                             if (!o) return e;
                             let a = new URLSearchParams(s.startsWith('?') ? s.substring(1) : '');
-                            return (a.set('tab', o), '/?'.concat(a.toString()));
+                            return a.set('tab', o), '/?'.concat(a.toString());
                         },
                     ],
                     [/^\/home$/, () => n.Zyd.main.href],
@@ -704,7 +704,7 @@
                     let { version: t, formatMessage: o, closeToast: l } = e,
                         u = (0, a.useCallback)(() => {
                             var e;
-                            (null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_UPDATE), null == l || l());
+                            null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_UPDATE), null == l || l();
                         }, [l]),
                         h = (0, a.useMemo)(
                             () =>
@@ -741,7 +741,7 @@
                         [getProgress, setProgress] = (0, a.useState)(-1),
                         u = (0, a.useCallback)(() => {
                             var e;
-                            (null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_MOD_UPDATE), null == l || l());
+                            null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_MOD_UPDATE), null == l || l();
                         }, [l]),
                         callInstallModUpdate = (0, a.useCallback)(() => {
                             var e;
@@ -1131,11 +1131,11 @@
                     i = (0, s.useCallback)(
                         (e, s) => {
                             let { needToShowReleaseNotes: a, sortedDescReleaseNotesKeys: l, translationsReleaseNotes: n } = s;
-                            (o(n), r(l), a && t(!0));
+                            o(n), r(l), a && t(!0);
                         },
                         [r, o],
                     );
-                ((0, s.useEffect)(() => {
+                (0, s.useEffect)(() => {
                     e && l && (n.open(), t(!1));
                 }, [l, n, e]),
                     (0, s.useEffect)(() => {
@@ -1147,7 +1147,7 @@
                                 null == (e = window.desktopEvents) || e.off(a.EE.LOAD_RELEASE_NOTES, i);
                             }
                         );
-                    }, [i]));
+                    }, [i]);
             };
         },
         56574: (e) => {
@@ -1304,7 +1304,7 @@
                                 ? void 0
                                 : t.state.currentContext.onChange(() => {
                                       var a, l;
-                                      (null == e || e(),
+                                      null == e || e(),
                                           null == s || s(),
                                           (e =
                                               null == t || null == (a = t.state.currentContext.value)
@@ -1317,10 +1317,10 @@
                                                   ? void 0
                                                   : l.availableActions.moveForward.onChange((e) => {
                                                         sendPlayerStateDefault(t);
-                                                    })));
+                                                    }));
                                   });
                     return () => {
-                        (null == a || a(),
+                        null == a || a(),
                             null == currentContextListener || currentContextListener(),
                             null == onEntityChange || onEntityChange(),
                             null == getCurrentTrackListener || getCurrentTrackListener(),
@@ -1332,7 +1332,7 @@
                             null == onShuffleChange || onShuffleChange(),
                             null == onVolumeChange || onVolumeChange(),
                             null == s || s(),
-                            null == s || s());
+                            null == s || s();
                     };
                 }, [o, null == t ? void 0 : t.state.currentContext, null == t ? void 0 : t.state.playerState.status]);
             };
@@ -1436,10 +1436,10 @@
                 pulsesyncApi: () => playerApi.default,
             });
             let s = () => {
-                (document.addEventListener('auxclick', (e) => e.preventDefault()),
+                document.addEventListener('auxclick', (e) => e.preventDefault()),
                     document.addEventListener('click', (e) => {
                         (e.ctrlKey || e.metaKey || e.shiftKey) && e.preventDefault();
-                    }));
+                    });
             };
             var a = o(79169);
             let l = (e) => {

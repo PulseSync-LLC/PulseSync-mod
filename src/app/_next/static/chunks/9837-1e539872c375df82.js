@@ -9,19 +9,19 @@
                 s = i(7144),
                 a = i(66268),
                 o = i(73827);
-            (!(function (t) {
-                ((t.formatDate = 'FormattedDate'),
+            !(function (t) {
+                (t.formatDate = 'FormattedDate'),
                     (t.formatTime = 'FormattedTime'),
                     (t.formatNumber = 'FormattedNumber'),
                     (t.formatList = 'FormattedList'),
-                    (t.formatDisplayName = 'FormattedDisplayName'));
+                    (t.formatDisplayName = 'FormattedDisplayName');
             })(r || (r = {})),
                 (function (t) {
-                    ((t.formatDate = 'FormattedDateParts'),
+                    (t.formatDate = 'FormattedDateParts'),
                         (t.formatTime = 'FormattedTimeParts'),
                         (t.formatNumber = 'FormattedNumberParts'),
-                        (t.formatList = 'FormattedListParts'));
-                })(n || (n = {})));
+                        (t.formatList = 'FormattedListParts');
+                })(n || (n = {}));
             var l = function (t) {
                 var e = (0, o.A)(),
                     i = t.value,
@@ -38,7 +38,7 @@
                         l = 'string' == typeof r ? new Date(r || 0) : r;
                     return n('formatDate' === t ? i.formatDateToParts(l, a) : i.formatTimeToParts(l, a));
                 };
-                return ((e.displayName = n[t]), e);
+                return (e.displayName = n[t]), e;
             }
             function h(t) {
                 var e = function (e) {
@@ -51,11 +51,11 @@
                     var h = i.textComponent || a.Fragment;
                     return a.createElement(h, null, u);
                 };
-                return ((e.displayName = r[t]), e);
+                return (e.displayName = r[t]), e;
             }
-            ((l.displayName = 'FormattedNumberParts'), (l.displayName = 'FormattedNumberParts'));
+            (l.displayName = 'FormattedNumberParts'), (l.displayName = 'FormattedNumberParts');
             var d = h('formatDate');
-            (h('formatTime'), h('formatNumber'), h('formatList'), h('formatDisplayName'), u('formatDate'), u('formatTime'));
+            h('formatTime'), h('formatNumber'), h('formatList'), h('formatDisplayName'), u('formatDate'), u('formatTime');
         },
         4585: (t, e, i) => {
             'use strict';
@@ -72,7 +72,7 @@
                 n = (function () {
                     function t(t, e, i) {
                         var n = this;
-                        ((this.endVal = e),
+                        (this.endVal = e),
                             (this.options = i),
                             (this.version = '2.8.1'),
                             (this.defaults = {
@@ -102,21 +102,21 @@
                             (this.count = function (t) {
                                 n.startTime || (n.startTime = t);
                                 var e = t - n.startTime;
-                                ((n.remaining = n.duration - e),
+                                (n.remaining = n.duration - e),
                                     n.useEasing
                                         ? n.countDown
                                             ? (n.frameVal = n.startVal - n.easingFn(e, 0, n.startVal - n.endVal, n.duration))
                                             : (n.frameVal = n.easingFn(e, n.startVal, n.endVal - n.startVal, n.duration))
-                                        : (n.frameVal = n.startVal + (n.endVal - n.startVal) * (e / n.duration)));
+                                        : (n.frameVal = n.startVal + (n.endVal - n.startVal) * (e / n.duration));
                                 var i = n.countDown ? n.frameVal < n.endVal : n.frameVal > n.endVal;
-                                ((n.frameVal = i ? n.endVal : n.frameVal),
+                                (n.frameVal = i ? n.endVal : n.frameVal),
                                     (n.frameVal = Number(n.frameVal.toFixed(n.options.decimalPlaces))),
                                     n.printValue(n.frameVal),
                                     e < n.duration
                                         ? (n.rAF = requestAnimationFrame(n.count))
                                         : null !== n.finalEndVal
                                           ? n.update(n.finalEndVal)
-                                          : n.options.onCompleteCallback && n.options.onCompleteCallback());
+                                          : n.options.onCompleteCallback && n.options.onCompleteCallback();
                             }),
                             (this.formatNumber = function (t) {
                                 var e,
@@ -126,10 +126,10 @@
                                 if (((e = s[0]), (i = s.length > 1 ? n.options.decimal + s[1] : ''), n.options.useGrouping)) {
                                     r = '';
                                     for (var a = 3, o = 0, l = 0, u = e.length; l < u; ++l)
-                                        (n.options.useIndianSeparators && 4 === l && ((a = 2), (o = 1)),
+                                        n.options.useIndianSeparators && 4 === l && ((a = 2), (o = 1)),
                                             0 !== l && o % a == 0 && (r = n.options.separator + r),
                                             o++,
-                                            (r = e[u - l - 1] + r));
+                                            (r = e[u - l - 1] + r);
                                     e = r;
                                 }
                                 return (
@@ -173,7 +173,7 @@
                                               return t();
                                           });
                                       }),
-                                      this.handleScroll(this))));
+                                      this.handleScroll(this)));
                     }
                     return (
                         (t.prototype.handleScroll = function (t) {
@@ -196,8 +196,8 @@
                             if (((this.countDown = this.startVal > t), Math.abs(t - this.startVal) > this.options.smartEasingThreshold && this.options.useEasing)) {
                                 this.finalEndVal = t;
                                 var e = this.countDown ? 1 : -1;
-                                ((this.endVal = t + e * this.options.smartEasingAmount), (this.duration = this.duration / 2));
-                            } else ((this.endVal = t), (this.finalEndVal = null));
+                                (this.endVal = t + e * this.options.smartEasingAmount), (this.duration = this.duration / 2);
+                            } else (this.endVal = t), (this.finalEndVal = null);
                             null !== this.finalEndVal ? (this.useEasing = !1) : (this.useEasing = this.options.useEasing);
                         }),
                         (t.prototype.start = function (t) {
@@ -209,25 +209,25 @@
                                     : this.printValue(this.endVal));
                         }),
                         (t.prototype.pauseResume = function () {
-                            (this.paused
+                            this.paused
                                 ? ((this.startTime = null),
                                   (this.duration = this.remaining),
                                   (this.startVal = this.frameVal),
                                   this.determineDirectionAndSmartEasing(),
                                   (this.rAF = requestAnimationFrame(this.count)))
                                 : cancelAnimationFrame(this.rAF),
-                                (this.paused = !this.paused));
+                                (this.paused = !this.paused);
                         }),
                         (t.prototype.reset = function () {
-                            (cancelAnimationFrame(this.rAF),
+                            cancelAnimationFrame(this.rAF),
                                 (this.paused = !0),
                                 this.resetDuration(),
                                 (this.startVal = this.validateValue(this.options.startVal)),
                                 (this.frameVal = this.startVal),
-                                this.printValue(this.startVal));
+                                this.printValue(this.startVal);
                         }),
                         (t.prototype.update = function (t) {
-                            (cancelAnimationFrame(this.rAF),
+                            cancelAnimationFrame(this.rAF),
                                 (this.startTime = null),
                                 (this.endVal = this.validateValue(t)),
                                 this.endVal !== this.frameVal &&
@@ -235,7 +235,7 @@
                                     null == this.finalEndVal && this.resetDuration(),
                                     (this.finalEndVal = null),
                                     this.determineDirectionAndSmartEasing(),
-                                    (this.rAF = requestAnimationFrame(this.count))));
+                                    (this.rAF = requestAnimationFrame(this.count)));
                         }),
                         (t.prototype.printValue = function (t) {
                             var e;
@@ -258,7 +258,7 @@
                             return this.ensureNumber(e) ? e : ((this.error = '[CountUp] invalid start or end value: '.concat(t)), null);
                         }),
                         (t.prototype.resetDuration = function () {
-                            ((this.startTime = null), (this.duration = 1e3 * Number(this.options.duration)), (this.remaining = this.duration));
+                            (this.startTime = null), (this.duration = 1e3 * Number(this.options.duration)), (this.remaining = this.duration);
                         }),
                         t
                     );
@@ -310,13 +310,13 @@
         },
         5884: (t, e, i) => {
             'use strict';
-            (Object.defineProperty(e, '__esModule', { value: !0 }),
+            Object.defineProperty(e, '__esModule', { value: !0 }),
                 Object.defineProperty(e, 'default', {
                     enumerable: !0,
                     get: function () {
                         return n;
                     },
-                }));
+                });
             let r = i(473)._(i(16092));
             function n(t, e) {
                 var i;
@@ -335,8 +335,8 @@
             var r = i(83997),
                 n = (function () {
                     function t(t) {
-                        (Object.defineProperty(this, 'observableValue', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
-                            (this.observableValue = (0, r.vP)(t)));
+                        Object.defineProperty(this, 'observableValue', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                            (this.observableValue = (0, r.vP)(t));
                     }
                     return (
                         Object.defineProperty(t.prototype, 'value', {
@@ -362,12 +362,12 @@
                 })();
             !(function () {
                 function t(t) {
-                    (Object.defineProperty(this, 'observableValue', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                    Object.defineProperty(this, 'observableValue', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'prevValueByListener', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.observableValue = (0, r.EW)(t)),
-                        (this.prevValueByListener = new Map()));
+                        (this.prevValueByListener = new Map());
                 }
-                (Object.defineProperty(t.prototype, 'value', {
+                Object.defineProperty(t.prototype, 'value', {
                     get: function () {
                         return this.observableValue.value;
                     },
@@ -387,7 +387,7 @@
                                 })
                             );
                         },
-                    }));
+                    });
             })();
         },
         8690: (t, e, i) => {
@@ -399,7 +399,7 @@
                 prefix;
                 path;
                 constructor(t = {}) {
-                    ((this.prefix = t.prefix || 'ss_'), (this.path = t.path || '/'));
+                    (this.prefix = t.prefix || 'ss_'), (this.path = t.path || '/');
                 }
                 getItem(t) {
                     let e = `${this.prefix}${t}=`,
@@ -458,7 +458,7 @@
                             e = new s();
                         e.setItem(t, '1');
                         let i = e.getItem(t);
-                        return (e.removeItem(t), '1' === i);
+                        return e.removeItem(t), '1' === i;
                     } catch {
                         return !1;
                     }
@@ -489,7 +489,7 @@
             function o(t) {
                 let e = '__test_storage__';
                 try {
-                    return (t.setItem(e, 'test'), t.removeItem(e), !0);
+                    return t.setItem(e, 'test'), t.removeItem(e), !0;
                 } catch {
                     return !1;
                 }
@@ -589,7 +589,7 @@
                 };
             }
             let f = c(u);
-            (c(h), c(d));
+            c(h), c(d);
             var m = i(34340);
             let g = 'qwertyuiopasdfghjklzxcvbnm0123456789',
                 p =
@@ -605,13 +605,13 @@
         },
         16092: (t, e, i) => {
             'use strict';
-            (Object.defineProperty(e, '__esModule', { value: !0 }),
+            Object.defineProperty(e, '__esModule', { value: !0 }),
                 Object.defineProperty(e, 'default', {
                     enumerable: !0,
                     get: function () {
                         return l;
                     },
-                }));
+                });
             let r = i(33008),
                 n = i(66268),
                 s = i(52283);
@@ -633,7 +633,7 @@
                                 : (0, r.jsx)(s.BailoutToCSR, { reason: 'next/dynamic', children: (0, r.jsx)(i, { ...t }) });
                         return (0, r.jsx)(u, { ...(o ? { fallback: a } : {}), children: h });
                     }
-                    return ((u.displayName = 'LoadableComponent'), u);
+                    return (u.displayName = 'LoadableComponent'), u;
                 };
         },
         16811: (t, e, i) => {
@@ -673,19 +673,19 @@
                 a,
                 o,
                 l = {};
-            (i.r(l),
+            i.r(l),
                 i.d(l, { g: () => r, r: () => n }),
                 (function (t) {
-                    ((t.Start = 'Start'),
+                    (t.Start = 'Start'),
                         (t.Watched4Sec = '4SecWatched'),
                         (t.Watched10Sec = '10SecWatched'),
                         (t.Watched20Sec = '20SecWatched'),
                         (t.Heartbeat30Sec = '30SecHeartbeat'),
-                        (t.End = 'End'));
+                        (t.End = 'End');
                 })(r || (r = {})),
                 (function (t) {
-                    ((t.PLAY = 'play'), (t.PAUSE = 'pause'), (t.BUFFERING = 'buffering'), (t.END = 'end'));
-                })(n || (n = {})));
+                    (t.PLAY = 'play'), (t.PAUSE = 'pause'), (t.BUFFERING = 'buffering'), (t.END = 'end');
+                })(n || (n = {}));
             var u = i(5471);
             function h(t) {
                 return Math.floor(t / 30);
@@ -746,24 +746,24 @@
                 startTime;
                 timer;
                 constructor(t, e) {
-                    ((this.onTick = t),
+                    (this.onTick = t),
                         (this.onFlush = e),
                         (this.startTime = this.lastFlushTime = (0, y.lh)()),
                         (this.timer = window.setTimeout(() => {
-                            (this.onTick(), this.nextTick());
-                        }, 0)));
+                            this.onTick(), this.nextTick();
+                        }, 0));
                 }
                 next() {
                     this.isDestroyed || (window.clearTimeout(this.timer), this.handleFlush(), this.nextTick());
                 }
                 destroy() {
-                    (window.clearTimeout(this.timer), (this.isDestroyed = !0));
+                    window.clearTimeout(this.timer), (this.isDestroyed = !0);
                 }
                 nextTick() {
                     this.isDestroyed || (window.clearTimeout(this.timer), (this.timer = window.setTimeout(this.handleTimeout, this.getTimeout())));
                 }
                 handleTimeout = () => {
-                    (this.onTick(), this.handleFlush(), this.nextTick());
+                    this.onTick(), this.handleFlush(), this.nextTick();
                 };
                 handleFlush() {
                     this.needFlush() && (this.onFlush(), (this.lastFlushTime = this.wasFirstFlush ? (0, y.lh)() : this.startTime), (this.wasFirstFlush = !0));
@@ -786,12 +786,12 @@
                 },
                 T = NaN;
             function x(...t) {}
-            (!(function (t) {
-                ((t[(t.PLAYING = 1)] = 'PLAYING'), (t[(t.NOT_PLAYING = 2)] = 'NOT_PLAYING'));
+            !(function (t) {
+                (t[(t.PLAYING = 1)] = 'PLAYING'), (t[(t.NOT_PLAYING = 2)] = 'NOT_PLAYING');
             })(s || (s = {})),
                 (function (t) {
-                    ((t.preroll = 'preroll'), (t.midroll = 'midroll'), (t.postPauseroll = 'postPauseroll'), (t.postroll = 'postroll'), (t.inroll = 'inroll'));
-                })(a || (a = {})));
+                    (t.preroll = 'preroll'), (t.midroll = 'midroll'), (t.postPauseroll = 'postPauseroll'), (t.postroll = 'postroll'), (t.inroll = 'inroll');
+                })(a || (a = {}));
             class E {
                 props;
                 prevState = void 0;
@@ -799,22 +799,22 @@
                 timer;
                 destroyHandlers = [];
                 constructor(t) {
-                    ((this.props = t),
+                    (this.props = t),
                         (this.timer = new b(
                             () => this.writeState(),
                             () => this.flushStates(),
-                        )));
+                        ));
                 }
                 addDestroyHandler(t) {
                     this.destroyHandlers.push(t);
                 }
                 destroy() {
-                    (this.timer.destroy(),
+                    this.timer.destroy(),
                         this.flushStates(),
                         this.destroyHandlers.forEach((t) => {
                             t();
                         }),
-                        (this.destroyHandlers = []));
+                        (this.destroyHandlers = []);
                 }
                 getStates() {
                     return [...this.states];
@@ -822,26 +822,26 @@
                 flushStates() {
                     this.writeStateManually.now();
                     let t = this.getStates();
-                    (t.length > 0 && this.props.onFlushStates(t), (this.states.length = 0));
+                    t.length > 0 && this.props.onFlushStates(t), (this.states.length = 0);
                 }
                 writeStateManually = (function (t, e, i, r) {
                     3 == arguments.length && 'boolean' != typeof i && ((r = i), (i = !1));
                     let n = null,
                         s = x;
                     function a() {
-                        (null !== n && clearTimeout(n), (n = null));
+                        null !== n && clearTimeout(n), (n = null);
                     }
                     let o = function () {
                         let o = arguments;
-                        ((r = r || this),
+                        (r = r || this),
                             (s = () => {
-                                (a(), (s = x), t.apply(r, o));
+                                a(), (s = x), t.apply(r, o);
                             }),
                             i && null === n && t.apply(r, o),
                             a(),
                             (n = window.setTimeout(function () {
-                                (i || t.apply(r, o), (n = null));
-                            }, e)));
+                                i || t.apply(r, o), (n = null);
+                            }, e));
                     };
                     return (
                         (o.cancel = a),
@@ -851,7 +851,7 @@
                         o
                     );
                 })(() => {
-                    (this.writeState(), this.timer.next());
+                    this.writeState(), this.timer.next();
                 }, 0);
                 writeState() {
                     let t = this.getPlayerAliveState();
@@ -943,7 +943,7 @@
                 }
             }
             !(function (t) {
-                ((t.Init = 'Init'),
+                (t.Init = 'Init'),
                     (t.SetSource = 'SetSource'),
                     (t.Seek = 'Seek'),
                     (t.VideoTrackChange = 'VideoTrackChange'),
@@ -958,7 +958,7 @@
                     (t.AdStart = 'AdStart'),
                     (t.AdOther = 'AdOther'),
                     (t.AdBetween = 'AdBetween'),
-                    (t.AdEnd = 'AdEnd'));
+                    (t.AdEnd = 'AdEnd');
             })(o || (o = {}));
             let I = [0, 1, 4, 5],
                 F = (0, u.fP)(0),
@@ -1000,10 +1000,10 @@
                 isFirstKnock = !0;
                 count = 0;
                 constructor(t, e = new C()) {
-                    ((this.distributionFunction = t), (this.clock = e));
+                    (this.distributionFunction = t), (this.clock = e);
                 }
                 setEnabled(t) {
-                    return (t ? this.start() : this.stop(), this);
+                    return t ? this.start() : this.stop(), this;
                 }
                 stop() {
                     return (
@@ -1023,15 +1023,15 @@
                     );
                 }
                 destroy() {
-                    (this.cancelTimeout(), (this.stopped = !0), (this.destroyed = !0));
+                    this.cancelTimeout(), (this.stopped = !0), (this.destroyed = !0);
                 }
                 knock(t) {
-                    ((this.lastNow = t), (this.lastKnockTime = this.clock.now()), this.isFirstKnock ? (this.isFirstKnock = !1) : this.count++);
+                    (this.lastNow = t), (this.lastKnockTime = this.clock.now()), this.isFirstKnock ? (this.isFirstKnock = !1) : this.count++;
                     let e = (this.restTime = this.lastTimeout = this.distributionFunction({ time: t, count: this.count }));
                     this.stopped || this.destroyed || this.setTimeout(() => this.knock(t + e), e);
                 }
                 cancelTimeout() {
-                    (void 0 !== this.cancel && this.cancel(), (this.cancel = void 0));
+                    void 0 !== this.cancel && this.cancel(), (this.cancel = void 0);
                 }
                 setTimeout(t, e) {
                     this.cancelTimeout();
@@ -1058,7 +1058,7 @@
                 stalledTime = (0, u.fP)(0);
                 stalledCount = 0;
                 constructor({ getState: t, logEvent: e }) {
-                    ((this.getState = t), (this.logEvent = e));
+                    (this.getState = t), (this.logEvent = e);
                 }
                 setBuffering(t, e = (0, u.Wj)(0)) {
                     if (t !== this.isBuffering)
@@ -1076,22 +1076,22 @@
                                             !1
                                         );
                                     }
-                                    return (t.push(s), !0);
+                                    return t.push(s), !0;
                                 });
-                            (this.currentStalled && (this.stalledDurationRemainder = (0, u.gL)((0, u.Qr)(e, 1e3), this.currentStalled.duration)),
+                            this.currentStalled && (this.stalledDurationRemainder = (0, u.gL)((0, u.Qr)(e, 1e3), this.currentStalled.duration)),
                                 i.length && (i[0] = i[0] - this.stalledDurationRemainder),
                                 (this.timer = new _(({ count: e }) => {
                                     let r = this.currentStalled ? this.currentStalled.expectedStalled : this.getExpectedStalled();
                                     if (e > 0) {
                                         let i = (0, u.fP)(t[e - 1]),
                                             n = this.currentStalled ? this.currentStalled.id : this.stalledId++;
-                                        (!this.currentStalled && this.stalledCount++,
+                                        !this.currentStalled && this.stalledCount++,
                                             (this.currentStalled = { id: n, expectedStalled: r, duration: i, getElapsedTime: N() }),
-                                            this.send(!1, r, i, n));
+                                            this.send(!1, r, i, n);
                                     }
                                     return e >= i.length ? (this.destroyTimer(), 1 / 0) : 1e3 * i[e];
                                 })),
-                                this.timer.start());
+                                this.timer.start();
                         } else {
                             if (this.currentStalled) {
                                 var i;
@@ -1100,10 +1100,10 @@
                                         void 0 === (i = this.currentStalled) ? (0, u.fP)(0) : (0, u.WQ)(i.duration, (0, u.Qr)(i.getElapsedTime(), 1e3)),
                                         this.stalledDurationRemainder,
                                     );
-                                (this.send(!0, t, (0, u.WQ)(r), e),
+                                this.send(!0, t, (0, u.WQ)(r), e),
                                     (this.currentStalled = void 0),
                                     (this.stalledDurationRemainder = (0, u.fP)(0)),
-                                    (this.stalledTime = (0, u.WQ)(r, this.stalledTime)));
+                                    (this.stalledTime = (0, u.WQ)(r, this.stalledTime));
                                 let n = this.getState()?.adState?.state === s.PLAYING ? o.AdOther : o.Other;
                                 this.setExpectedStalled(V(n, void 0));
                             }
@@ -1115,7 +1115,7 @@
                     return { stalledCount: (0, u.Pn)(t), stalledTime: (0, u.PY)(e) };
                 }
                 clearStalledHistory() {
-                    ((this.stalledCount = 0), (this.stalledTime = (0, u.fP)(0)));
+                    (this.stalledCount = 0), (this.stalledTime = (0, u.fP)(0));
                 }
                 destroy() {
                     this.destroyTimer();
@@ -1155,10 +1155,10 @@
                 return i ? !t[i] : e;
             }
             let W = ['Start', '4SecWatched', '10SecWatched', '20SecWatched', '30SecHeartbeat', 'End'];
-            (RegExp(
+            RegExp(
                 `^https?:\\/\\/([^\\/]+\\.)?(${'boolean' == typeof CLOUD_BUILD && CLOUD_BUILD ? ['video\\.cloud\\.yandex\\.net'] : '(an|strm)\\.yandex\\.(ru|net)|yastatic\\.net|strm-ott\\.akamaized\\.net|cdn\\.ngenix\\.net|strm\\.yandex\\.cdnga\\.net|strm-yandex\\.gcdn\\.co|(widevine|playready|fairplay)-proxy\\.ott\\.yandex\\.ru|drm\\.yandex-team\\.ru'})\\/(?!log|perf|jstracer)`,
             ),
-                (0, u.Wj)(3e4));
+                (0, u.Wj)(3e4);
             class R {
                 lastUpdate = void 0;
                 watchedTime = (0, u.fP)(0);
@@ -1186,23 +1186,23 @@
                 intervalId = void 0;
                 watchedTimeCounter = new R();
                 constructor(t, e) {
-                    ((this.getState = t), (this.onChange = e), (this.intervalId = setInterval(this.onTick, 100)));
+                    (this.getState = t), (this.onChange = e), (this.intervalId = setInterval(this.onTick, 100));
                 }
                 onTick = () => {
                     let t = this.getState();
                     if (!t) return;
                     let { currentTime: e, playbackRate: i = 1, playingState: r, adState: a } = t,
                         o = a?.state === s.PLAYING;
-                    (this.watchedTimeCounter.calc(e, i, r === n.PLAY && !o), this.onChange?.(this.watchedTimeCounter.get()));
+                    this.watchedTimeCounter.calc(e, i, r === n.PLAY && !o), this.onChange?.(this.watchedTimeCounter.get());
                 };
                 reset() {
-                    ((this.watchedTimeCounter = new R()), this.onChange?.(this.watchedTimeCounter.get()));
+                    (this.watchedTimeCounter = new R()), this.onChange?.(this.watchedTimeCounter.get());
                 }
                 getWatchedTime() {
                     return this.watchedTimeCounter.get();
                 }
                 destroy() {
-                    (clearInterval(this.intervalId), (this.intervalId = void 0));
+                    clearInterval(this.intervalId), (this.intervalId = void 0);
                 }
             }
             var z = i(8690);
@@ -1216,7 +1216,7 @@
                 interval;
                 getTime;
                 constructor(t = y.lh) {
-                    ((this.getTime = t), (this.lastDateNow = H()), (this.lastPerformanceNow = t()), (this.interval = setInterval(this.now, 1e3)));
+                    (this.getTime = t), (this.lastDateNow = H()), (this.lastPerformanceNow = t()), (this.interval = setInterval(this.now, 1e3));
                 }
                 now = () => {
                     let t = H(),
@@ -1261,7 +1261,7 @@
                 reportNumber = 0;
                 sourceIndexes = { current: 0, last: 0 };
                 constructor({ sendLog: t, playerInfo: e, getState: i }) {
-                    ((this.playerInfo = e),
+                    (this.playerInfo = e),
                         (this.sendLog = t),
                         (this.getState = i),
                         (this.playbackTracker = new d({ onEvent: (t) => this.logEvent({ name: t }) })),
@@ -1276,7 +1276,7 @@
                         })),
                         (this.fatalTracker = new c()),
                         this.initOnVisibilityChangeHandling(),
-                        (this.timer = new U()));
+                        (this.timer = new U());
                 }
                 getLogTimestamp() {
                     return Math.round(this.timerStartTime + this.timer.now());
@@ -1291,7 +1291,7 @@
                         let r = () => {
                             e(j(t));
                         };
-                        return (t.addEventListener(i, r), () => t.removeEventListener(i, r));
+                        return t.addEventListener(i, r), () => t.removeEventListener(i, r);
                     })(document, (t) => {
                         t || this.playerAliveController.flushStates();
                     });
@@ -1304,12 +1304,12 @@
                     this.remoteProgressSavingInfo.enabled = t;
                 }
                 updateWatchedTime() {
-                    (this.useOfDeprecatedMethodIsLogged ||
+                    this.useOfDeprecatedMethodIsLogged ||
                         (this.logEvent({ name: 'DeprecatedTelemetryMethodUsed', data: { method: 'updateWatchedTime' } }), (this.useOfDeprecatedMethodIsLogged = !0)),
-                        k(Error('Deprecated method used. Method is Telemetry#updateWatchedTime(). Just remove. Telemetry calculates watchedTime itself now.')));
+                        k(Error('Deprecated method used. Method is Telemetry#updateWatchedTime(). Just remove. Telemetry calculates watchedTime itself now.'));
                 }
                 setPlayingState(t) {
-                    (this.playbackTracker.onPlayingStateChange(t), this.handleInitialBuffering(), t === n.BUFFERING ? this.setBuffering(!0) : this.setBuffering(!1));
+                    this.playbackTracker.onPlayingStateChange(t), this.handleInitialBuffering(), t === n.BUFFERING ? this.setBuffering(!0) : this.setBuffering(!1);
                 }
                 logEvent(t, e) {
                     if (this.destroyed) return;
@@ -1397,7 +1397,7 @@
                 setExpectedBuffering({ reason: t, details: e }) {
                     switch ((this.checkInitBuffering(t), t)) {
                         case o.SetSource:
-                            (this.setBuffering(!1), this.clearBufferingHistory());
+                            this.setBuffering(!1), this.clearBufferingHistory();
                             break;
                         case o.Init:
                             break;
@@ -1423,17 +1423,17 @@
                     if (this.wasInitBufferingLogged) return;
                     let e = this.initialStalledTimestamp && !this.initialStalledTimestampStop,
                         i = this.initialStalledTimestamp && this.initialStalledTimestampStop;
-                    ((this.initialStalledDuration = e
+                    (this.initialStalledDuration = e
                         ? (0, u.gL)((0, u.Wj)((0, y.lh)()), this.initialStalledTimestamp)
                         : i
                           ? (0, u.gL)(this.initialStalledTimestampStop, this.initialStalledTimestamp)
                           : (0, u.Wj)(0)),
-                        (this.externalStalledDuration = t ?? (0, u.Wj)(0)));
+                        (this.externalStalledDuration = t ?? (0, u.Wj)(0));
                     let { playingState: r } = this.getState() || {};
-                    ('pause' !== r && this.handleInitialBuffering(),
+                    'pause' !== r && this.handleInitialBuffering(),
                         (this.wasInitBufferingLogged = !0),
                         (this.initialStalledTimestamp = void 0),
-                        (this.initialStalledTimestampStop = void 0));
+                        (this.initialStalledTimestampStop = void 0);
                 }
                 handleInitialBuffering() {
                     this.wasInitBufferingHandled ||
@@ -1442,12 +1442,12 @@
                         (this.wasInitBufferingHandled = !0));
                 }
                 destroy(t) {
-                    (this.stalledController.destroy(),
+                    this.stalledController.destroy(),
                         this.playerAliveController.destroy(),
                         this.watchedTimeTracker.destroy(),
                         this.logEvent({ name: 'DestroyPlayer', data: { reason: t?.reason } }),
                         this.timer.stop(),
-                        (this.destroyed = !0));
+                        (this.destroyed = !0);
                 }
                 getExpectedStalled() {
                     return this.stalledController.getExpectedStalled();
@@ -1456,9 +1456,9 @@
                     return this.stalledController.clearStalledHistory();
                 }
                 setPreloadDetails() {
-                    (this.useOfDeprecatedMethodIsLogged ||
+                    this.useOfDeprecatedMethodIsLogged ||
                         (this.logEvent({ name: 'DeprecatedTelemetryMethodUsed', data: { method: 'setPreloadDetails' } }), (this.useOfDeprecatedMethodIsLogged = !0)),
-                        k(Error('Deprecated method used. Method is Telemetry#setPreloadDetails(). Just remove it.')));
+                        k(Error('Deprecated method used. Method is Telemetry#setPreloadDetails(). Just remove it.'));
                 }
                 writePlayerAliveStateManually() {
                     return this.playerAliveController.writeStateManually();
@@ -1479,24 +1479,24 @@
                     return ++this.sourceIndexes.last;
                 }
                 onSetSource(t, e, i) {
-                    (this.flushStates(),
+                    this.flushStates(),
                         (this.sourceIndexes.current = this.sourceIndexes.last > this.sourceIndexes.current ? this.sourceIndexes.last : ++this.sourceIndexes.last),
                         this.watchedTimeTracker.reset(),
                         i && this.setStaticParams(i),
                         this.logEvent({ name: 'SetSource', data: t }),
-                        this.setExpectedBuffering({ reason: o.SetSource, details: e }));
+                        this.setExpectedBuffering({ reason: o.SetSource, details: e });
                     let r = this.getState()?.playingState;
                     r !== n.PAUSE && r !== n.END && this.setBuffering(!0);
                 }
                 sendReportLog(t, e, i = !0) {
                     let r = e ?? this.generateReportId();
-                    return (this.logEvent({ name: 'ReportLog', data: { reportId: r, reported: i, reportData: t } }), r);
+                    return this.logEvent({ name: 'ReportLog', data: { reportId: r, reported: i, reportData: t } }), r;
                 }
                 generateReportId() {
                     return `${this.playerInfo.vsid}x${this.reportNumber++}`;
                 }
                 onExpectedBuffering({ reason: t, details: e }) {
-                    return (this.checkInitBuffering(t), this.stalledController.setExpectedStalled(V(t, e)));
+                    return this.checkInitBuffering(t), this.stalledController.setExpectedStalled(V(t, e));
                 }
                 onSeek(t) {
                     this.setExpectedBuffering({ reason: o.Seek, details: t });
@@ -1569,7 +1569,7 @@
                             null == i ? void 0 : i.key,
                         );
                     }
-                    return (null == (l = null == i ? void 0 : i.onChange) || l.call(i, r), r);
+                    return null == (l = null == i ? void 0 : i.onChange) || l.call(i, r), r;
                 }
                 return (
                     (s.updateDeps = (t) => {
@@ -1585,7 +1585,7 @@
             let o = (t, e, i) => {
                     let r;
                     return function (...n) {
-                        (t.clearTimeout(r), (r = t.setTimeout(() => e.apply(this, n), i)));
+                        t.clearTimeout(r), (r = t.setTimeout(() => e.apply(this, n), i));
                     };
                 },
                 l = (t) => {
@@ -1662,16 +1662,16 @@
                                   ),
                         a = (r) => () => {
                             let { horizontal: a, isRtl: o } = t.options;
-                            ((n = a ? i.scrollLeft * ((o && -1) || 1) : i.scrollTop), s(), e(n, r));
+                            (n = a ? i.scrollLeft * ((o && -1) || 1) : i.scrollTop), s(), e(n, r);
                         },
                         l = a(!0),
                         u = a(!1);
-                    (u(), i.addEventListener('scroll', l, c));
+                    u(), i.addEventListener('scroll', l, c);
                     let h = t.options.useScrollendEvent && m;
                     return (
                         h && i.addEventListener('scrollend', u, c),
                         () => {
-                            (i.removeEventListener('scroll', l), h && i.removeEventListener('scrollend', u));
+                            i.removeEventListener('scroll', l), h && i.removeEventListener('scrollend', u);
                         }
                     );
                 },
@@ -1692,16 +1692,16 @@
                                       t.options.isScrollingResetDelay,
                                   ),
                         a = (r) => () => {
-                            ((n = i[t.options.horizontal ? 'scrollX' : 'scrollY']), s(), e(n, r));
+                            (n = i[t.options.horizontal ? 'scrollX' : 'scrollY']), s(), e(n, r);
                         },
                         l = a(!0),
                         u = a(!1);
-                    (u(), i.addEventListener('scroll', l, c));
+                    u(), i.addEventListener('scroll', l, c);
                     let h = t.options.useScrollendEvent && m;
                     return (
                         h && i.addEventListener('scrollend', u, c),
                         () => {
-                            (i.removeEventListener('scroll', l), h && i.removeEventListener('scrollend', u));
+                            i.removeEventListener('scroll', l), h && i.removeEventListener('scrollend', u);
                         }
                     );
                 },
@@ -1722,7 +1722,7 @@
                 };
             class S {
                 constructor(t) {
-                    ((this.unsubs = []),
+                    (this.unsubs = []),
                         (this.scrollElement = null),
                         (this.targetWindow = null),
                         (this.isScrolling = !1),
@@ -1752,7 +1752,7 @@
                             return {
                                 disconnect: () => {
                                     var i;
-                                    (null == (i = e()) || i.disconnect(), (t = null));
+                                    null == (i = e()) || i.disconnect(), (t = null);
                                 },
                                 observe: (t) => {
                                     var i;
@@ -1766,7 +1766,7 @@
                         })()),
                         (this.range = null),
                         (this.setOptions = (t) => {
-                            (Object.entries(t).forEach(([e, i]) => {
+                            Object.entries(t).forEach(([e, i]) => {
                                 void 0 === i && delete t[e];
                             }),
                                 (this.options = {
@@ -1794,7 +1794,7 @@
                                     useScrollendEvent: !1,
                                     useAnimationFrameWithResizeObserver: !1,
                                     ...t,
-                                }));
+                                });
                         }),
                         (this.notify = (t) => {
                             var e, i;
@@ -1812,11 +1812,11 @@
                             },
                         )),
                         (this.cleanup = () => {
-                            (this.unsubs.filter(Boolean).forEach((t) => t()),
+                            this.unsubs.filter(Boolean).forEach((t) => t()),
                                 (this.unsubs = []),
                                 this.observer.disconnect(),
                                 (this.scrollElement = null),
-                                (this.targetWindow = null));
+                                (this.targetWindow = null);
                         }),
                         (this._didMount = () => () => {
                             this.cleanup();
@@ -1826,7 +1826,7 @@
                             let e = this.options.enabled ? this.options.getScrollElement() : null;
                             if (this.scrollElement !== e) {
                                 if ((this.cleanup(), !e)) return void this.maybeNotify();
-                                ((this.scrollElement = e),
+                                (this.scrollElement = e),
                                     this.scrollElement && 'ownerDocument' in this.scrollElement
                                         ? (this.targetWindow = this.scrollElement.ownerDocument.defaultView)
                                         : (this.targetWindow = (null == (t = this.scrollElement) ? void 0 : t.window) ?? null),
@@ -1836,18 +1836,18 @@
                                     this._scrollToOffset(this.getScrollOffset(), { adjustments: void 0, behavior: void 0 }),
                                     this.unsubs.push(
                                         this.options.observeElementRect(this, (t) => {
-                                            ((this.scrollRect = t), this.maybeNotify());
+                                            (this.scrollRect = t), this.maybeNotify();
                                         }),
                                     ),
                                     this.unsubs.push(
                                         this.options.observeElementOffset(this, (t, e) => {
-                                            ((this.scrollAdjustments = 0),
+                                            (this.scrollAdjustments = 0),
                                                 (this.scrollDirection = e ? (this.getScrollOffset() < t ? 'forward' : 'backward') : null),
                                                 (this.scrollOffset = t),
                                                 (this.isScrolling = e),
-                                                this.maybeNotify());
+                                                this.maybeNotify();
                                         }),
-                                    ));
+                                    );
                             }
                         }),
                         (this.getSize = () =>
@@ -1881,7 +1881,7 @@
                         (this.getMeasurements = s(
                             () => [this.getMeasurementOptions(), this.itemSizeCache],
                             ({ count: t, paddingStart: e, scrollMargin: i, getItemKey: r, enabled: n }, s) => {
-                                if (!n) return ((this.measurementsCache = []), this.itemSizeCache.clear(), []);
+                                if (!n) return (this.measurementsCache = []), this.itemSizeCache.clear(), [];
                                 0 === this.measurementsCache.length &&
                                     ((this.measurementsCache = this.options.initialMeasurementsCache),
                                     this.measurementsCache.forEach((t) => {
@@ -1900,7 +1900,7 @@
                                         c = a ? a.lane : n % this.options.lanes;
                                     o[n] = { index: n, start: l, size: h, end: d, key: t, lane: c };
                                 }
-                                return ((this.measurementsCache = o), o);
+                                return (this.measurementsCache = o), o;
                             },
                             { key: !1, debug: () => this.options.debug },
                         )),
@@ -1919,14 +1919,14 @@
                                                   let o = Array(r).fill(0);
                                                   for (; a < n && o.some((t) => t < i + e); ) {
                                                       let e = t[a];
-                                                      ((o[e.lane] = e.end), a++);
+                                                      (o[e.lane] = e.end), a++;
                                                   }
                                                   let l = Array(r).fill(i + e);
                                                   for (; s >= 0 && l.some((t) => t >= i); ) {
                                                       let e = t[s];
-                                                      ((l[e.lane] = e.start), s--);
+                                                      (l[e.lane] = e.start), s--;
                                                   }
-                                                  ((s = Math.max(0, s - (s % r))), (a = Math.min(n, a + (r - 1 - (a % r)))));
+                                                  (s = Math.max(0, s - (s % r))), (a = Math.min(n, a + (r - 1 - (a % r))));
                                               }
                                               return { startIndex: s, endIndex: a };
                                           })({ measurements: t, outerSize: e, scrollOffset: i, lanes: r })
@@ -1958,8 +1958,8 @@
                             if (!r) return;
                             let n = r.key,
                                 s = this.elementsCache.get(n);
-                            (s !== t && (s && this.observer.unobserve(s), this.observer.observe(t), this.elementsCache.set(n, t)),
-                                t.isConnected && this.resizeItem(i, this.options.measureElement(t, e, this)));
+                            s !== t && (s && this.observer.unobserve(s), this.observer.observe(t), this.elementsCache.set(n, t)),
+                                t.isConnected && this.resizeItem(i, this.options.measureElement(t, e, this));
                         }),
                         (this.resizeItem = (t, e) => {
                             let i = this.measurementsCache[t];
@@ -2028,18 +2028,18 @@
                                 (this.targetWindow.clearTimeout(this.scrollToIndexTimeoutId), (this.scrollToIndexTimeoutId = null));
                         }),
                         (this.scrollToOffset = (t, { align: e = 'start', behavior: i } = {}) => {
-                            (this.cancelScrollToIndex(),
+                            this.cancelScrollToIndex(),
                                 'smooth' === i && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.'),
-                                this._scrollToOffset(this.getOffsetForAlignment(t, e), { adjustments: void 0, behavior: i }));
+                                this._scrollToOffset(this.getOffsetForAlignment(t, e), { adjustments: void 0, behavior: i });
                         }),
                         (this.scrollToIndex = (t, { align: e = 'auto', behavior: i } = {}) => {
-                            ((t = Math.max(0, Math.min(t, this.options.count - 1))),
+                            (t = Math.max(0, Math.min(t, this.options.count - 1))),
                                 this.cancelScrollToIndex(),
-                                'smooth' === i && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.'));
+                                'smooth' === i && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.');
                             let r = this.getOffsetForIndex(t, e);
                             if (!r) return;
                             let [n, s] = r;
-                            (this._scrollToOffset(n, { adjustments: void 0, behavior: i }),
+                            this._scrollToOffset(n, { adjustments: void 0, behavior: i }),
                                 'smooth' !== i &&
                                     this.isDynamicMode() &&
                                     this.targetWindow &&
@@ -2050,12 +2050,12 @@
                                             let [r] = e;
                                             1 >= Math.abs(r - this.getScrollOffset()) || this.scrollToIndex(t, { align: s, behavior: i });
                                         } else this.scrollToIndex(t, { align: s, behavior: i });
-                                    })));
+                                    }));
                         }),
                         (this.scrollBy = (t, { behavior: e } = {}) => {
-                            (this.cancelScrollToIndex(),
+                            this.cancelScrollToIndex(),
                                 'smooth' === e && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.'),
-                                this._scrollToOffset(this.getScrollOffset() + t, { adjustments: void 0, behavior: e }));
+                                this._scrollToOffset(this.getScrollOffset() + t, { adjustments: void 0, behavior: e });
                         }),
                         (this.getTotalSize = () => {
                             var t;
@@ -2068,7 +2068,7 @@
                                     r = i.length - 1;
                                 for (; r >= 0 && t.some((t) => null === t); ) {
                                     let e = i[r];
-                                    (null === t[e.lane] && (t[e.lane] = e.end), r--);
+                                    null === t[e.lane] && (t[e.lane] = e.end), r--;
                                 }
                                 e = Math.max(...t.filter((t) => null !== t));
                             }
@@ -2078,9 +2078,9 @@
                             this.options.scrollToFn(t, { behavior: i, adjustments: e }, this);
                         }),
                         (this.measure = () => {
-                            ((this.itemSizeCache = new Map()), this.notify(!1));
+                            (this.itemSizeCache = new Map()), this.notify(!1);
                         }),
-                        this.setOptions(t));
+                        this.setOptions(t);
                 }
             }
             let w = (t, e, i, r) => {
@@ -2102,11 +2102,11 @@
                         ...t,
                         onChange: (i, r) => {
                             var s;
-                            (r ? (0, n.flushSync)(e) : e(), null == (s = t.onChange) || s.call(t, i, r));
+                            r ? (0, n.flushSync)(e) : e(), null == (s = t.onChange) || s.call(t, i, r);
                         },
                     },
                     [s] = r.useState(() => new S(i));
-                return (s.setOptions(i), T(() => s._didMount(), []), T(() => s._willUpdate()), s);
+                return s.setOptions(i), T(() => s._didMount(), []), T(() => s._willUpdate()), s;
             }
             function E(t) {
                 return x({ observeElementRect: d, observeElementOffset: g, scrollToFn: b, ...t });
@@ -2124,7 +2124,7 @@
         },
         29371: (t, e, i) => {
             'use strict';
-            (i.d(e, { FN: () => n, gj: () => r }), i(27224));
+            i.d(e, { FN: () => n, gj: () => r }), i(27224);
             let r = (t) => {
                     let { containerNodeRect: e, draggingNodeRect: i, transform: r } = t;
                     return i && e
@@ -2182,7 +2182,7 @@
                         function r() {
                             this.constructor = e;
                         }
-                        (t(e, i), (e.prototype = null === i ? Object.create(i) : ((r.prototype = i.prototype), new r())));
+                        t(e, i), (e.prototype = null === i ? Object.create(i) : ((r.prototype = i.prototype), new r()));
                     };
                 })(),
                 n = function (t, e) {
@@ -2215,7 +2215,7 @@
                             s
                         );
                     }
-                    return (r(e, t), e);
+                    return r(e, t), e;
                 })(Error);
         },
         43576: (t, e, i) => {
@@ -2230,12 +2230,12 @@
                 u = i(72411);
             function h(t, e) {
                 return Object.keys(t).reduce(function (i, n) {
-                    return ((i[n] = (0, r.__assign)({ timeZone: e }, t[n])), i);
+                    return (i[n] = (0, r.__assign)({ timeZone: e }, t[n])), i;
                 }, {});
             }
             function d(t, e) {
                 return Object.keys((0, r.__assign)((0, r.__assign)({}, t), e)).reduce(function (i, n) {
-                    return ((i[n] = (0, r.__assign)((0, r.__assign)({}, t[n] || {}), e[n] || {})), i);
+                    return (i[n] = (0, r.__assign)((0, r.__assign)({}, t[n] || {}), e[n] || {})), i;
                 }, {});
             }
             function c(t, e) {
@@ -2423,28 +2423,28 @@
                 void 0 === r && (r = {});
                 var n = O(t, e, i, r).reduce(function (t, e) {
                     var i = e.value;
-                    return ('string' != typeof i ? t.push(i) : 'string' == typeof t[t.length - 1] ? (t[t.length - 1] += i) : t.push(i), t);
+                    return 'string' != typeof i ? t.push(i) : 'string' == typeof t[t.length - 1] ? (t[t.length - 1] += i) : t.push(i), t;
                 }, []);
                 return 1 === n.length ? n[0] : 0 === n.length ? '' : n;
             }
             function O(t, e, i, s) {
                 var a = t.locale,
                     o = t.onError;
-                (void 0 === s && (s = {}),
+                void 0 === s && (s = {}),
                     Intl.ListFormat ||
                         o(
                             new w.IF(
                                 'Intl.ListFormat is not available in this environment.\nTry polyfilling it using "@formatjs/intl-listformat"\n',
                                 w.O4.MISSING_INTL_API,
                             ),
-                        ));
+                        );
                 var l = (0, n.J9)(s, E);
                 try {
                     var h = {},
                         d = i.map(function (t, e) {
                             if ('object' == typeof t) {
                                 var i = ''.concat(I, '_').concat(e, '_').concat(I);
-                                return ((h[i] = t), i);
+                                return (h[i] = t), i;
                             }
                             return String(t);
                         });
@@ -2513,14 +2513,14 @@
             function _(t, e, i, r) {
                 var s = t.locale,
                     a = t.onError;
-                (void 0 === r && (r = {}),
+                void 0 === r && (r = {}),
                     Intl.PluralRules ||
                         a(
                             new w.IF(
                                 'Intl.PluralRules is not available in this environment.\nTry polyfilling it using "@formatjs/intl-pluralrules"\n',
                                 w.O4.MISSING_INTL_API,
                             ),
-                        ));
+                        );
                 var o = (0, n.J9)(r, C);
                 try {
                     return e(s, o).select(i);
@@ -2531,7 +2531,7 @@
             }
             var N = ['numeric', 'style'];
             function V(t, e, i, r, s) {
-                (void 0 === s && (s = {}),
+                void 0 === s && (s = {}),
                     r || (r = 'second'),
                     Intl.RelativeTimeFormat ||
                         t.onError(
@@ -2539,7 +2539,7 @@
                                 'Intl.RelativeTimeFormat is not available in this environment.\nTry polyfilling it using "@formatjs/intl-relativetimeformat"\n',
                                 w.O4.MISSING_INTL_API,
                             ),
-                        ));
+                        );
                 try {
                     var a, o, l, h, d, c;
                     return ((a = s),
@@ -2559,7 +2559,7 @@
                 return t
                     ? Object.keys(t).reduce(function (e, i) {
                           var r = t[i];
-                          return ((e[i] = (0, A.RK)(r) ? (0, a.yU)(r) : r), e);
+                          return (e[i] = (0, A.RK)(r) ? (0, a.yU)(r) : r), e;
                       }, {})
                     : t;
             }
@@ -2670,7 +2670,7 @@
             let z = (function (t) {
                 function e() {
                     var e = (null !== t && t.apply(this, arguments)) || this;
-                    return ((e.cache = (0, n.MT)()), (e.state = { cache: e.cache, intl: W(B(e.props), e.cache), prevConfig: B(e.props) }), e);
+                    return (e.cache = (0, n.MT)()), (e.state = { cache: e.cache, intl: W(B(e.props), e.cache), prevConfig: B(e.props) }), e;
                 }
                 return (
                     (0, r.__extends)(e, t),
@@ -2681,7 +2681,7 @@
                         return (0, a.bN)(i, n) ? null : { intl: W(n, r), prevConfig: n };
                     }),
                     (e.prototype.render = function () {
-                        return ((0, a.HM)(this.state.intl), s.createElement(R.Kq, { value: this.state.intl }, this.props.children));
+                        return (0, a.HM)(this.state.intl), s.createElement(R.Kq, { value: this.state.intl }, this.props.children);
                     }),
                     (e.displayName = 'IntlProvider'),
                     (e.defaultProps = a.JF),
@@ -2697,17 +2697,17 @@
         },
         84511: (t) => {
             function e() {}
-            ((e.prototype = {
+            (e.prototype = {
                 on: function (t, e, i) {
                     var r = this.e || (this.e = {});
-                    return ((r[t] || (r[t] = [])).push({ fn: e, ctx: i }), this);
+                    return (r[t] || (r[t] = [])).push({ fn: e, ctx: i }), this;
                 },
                 once: function (t, e, i) {
                     var r = this;
                     function n() {
-                        (r.off(t, n), e.apply(i, arguments));
+                        r.off(t, n), e.apply(i, arguments);
                     }
-                    return ((n._ = e), this.on(t, n, i));
+                    return (n._ = e), this.on(t, n, i);
                 },
                 emit: function (t) {
                     for (var e = [].slice.call(arguments, 1), i = ((this.e || (this.e = {}))[t] || []).slice(), r = 0, n = i.length; r < n; r++)
@@ -2719,11 +2719,11 @@
                         r = i[t],
                         n = [];
                     if (r && e) for (var s = 0, a = r.length; s < a; s++) r[s].fn !== e && r[s].fn._ !== e && n.push(r[s]);
-                    return (n.length ? (i[t] = n) : delete i[t], this);
+                    return n.length ? (i[t] = n) : delete i[t], this;
                 },
             }),
                 (t.exports = e),
-                (t.exports.TinyEmitter = e));
+                (t.exports.TinyEmitter = e);
         },
         90108: (t, e, i) => {
             'use strict';
@@ -2764,13 +2764,13 @@
                                     return t;
                                 })(r),
                             );
-                        return ((r.state = { contextValue: { isMounting: !0 }, handleExited: n, firstRender: !0 }), r);
+                        return (r.state = { contextValue: { isMounting: !0 }, handleExited: n, firstRender: !0 }), r;
                     }
                     (0, s.A)(e, t);
                     var i = e.prototype;
                     return (
                         (i.componentDidMount = function () {
-                            ((this.mounted = !0), this.setState({ contextValue: { isMounting: !1 } }));
+                            (this.mounted = !0), this.setState({ contextValue: { isMounting: !1 } });
                         }),
                         (i.componentWillUnmount = function () {
                             this.mounted = !1;
@@ -2796,7 +2796,7 @@
                                               function i(i) {
                                                   return i in e ? e[i] : t[i];
                                               }
-                                              ((t = t || {}), (e = e || {}));
+                                              (t = t || {}), (e = e || {});
                                               var r,
                                                   n = Object.create(null),
                                                   s = [];
@@ -2846,7 +2846,7 @@
                                 this.mounted &&
                                     this.setState(function (e) {
                                         var i = (0, n.A)({}, e.children);
-                                        return (delete i[t.key], { children: i });
+                                        return delete i[t.key], { children: i };
                                     }));
                         }),
                         (i.render = function () {
@@ -2863,13 +2863,13 @@
                         e
                     );
                 })(a.Component);
-            ((d.propTypes = {}),
+            (d.propTypes = {}),
                 (d.defaultProps = {
                     component: 'div',
                     childFactory: function (t) {
                         return t;
                     },
-                }));
+                });
             let c = d;
         },
         93973: (t) => {

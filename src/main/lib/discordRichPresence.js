@@ -130,8 +130,6 @@ const initRPC = () => {
     pulseSyncManager_js_1.getPulseSyncManager().on('connected', () => {
         sendCurrentActivity();
     });
-
-
 };
 
 const states = {
@@ -226,16 +224,14 @@ const fromYnisonState = (ynisonState) => {
 
 function updateActivity(activityObject) {
     discordRichPresenceLogger.debug('Updating activity:', activityObject);
-    rpc.user.setActivity(activityObject)
-        .catch((e) => {
-            discordRichPresenceLogger.error('updateActivity error:', e);
-        });
+    rpc.user.setActivity(activityObject).catch((e) => {
+        discordRichPresenceLogger.error('updateActivity error:', e);
+    });
 }
 
 const throttledUpdateActivity = throttle(updateActivity, SET_ACTIVITY_TIMEOUT_MS);
 
 function sendCurrentActivity() {
-
     if (lastPlayingState.status === 'paused' && settings()?.afkTimeout === 0) {
         discordRichPresenceLogger.info('Clearing activity due to no Paused activity allowed');
         rpc?.user.clearActivity();

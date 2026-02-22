@@ -9,19 +9,19 @@
                 n = r(7144),
                 i = r(66268),
                 s = r(73827);
-            (!(function (e) {
-                ((e.formatDate = 'FormattedDate'),
+            !(function (e) {
+                (e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName'));
+                    (e.formatDisplayName = 'FormattedDisplayName');
             })(a || (a = {})),
                 (function (e) {
-                    ((e.formatDate = 'FormattedDateParts'),
+                    (e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts'));
-                })(o || (o = {})));
+                        (e.formatList = 'FormattedListParts');
+                })(o || (o = {}));
             var l = function (e) {
                 var t = (0, s.A)(),
                     r = e.value,
@@ -38,7 +38,7 @@
                         l = 'string' == typeof a ? new Date(a || 0) : a;
                     return o('formatDate' === e ? r.formatDateToParts(l, i) : r.formatTimeToParts(l, i));
                 };
-                return ((t.displayName = o[e]), t);
+                return (t.displayName = o[e]), t;
             }
             function d(e) {
                 var t = function (t) {
@@ -51,21 +51,21 @@
                     var d = r.textComponent || i.Fragment;
                     return i.createElement(d, null, u);
                 };
-                return ((t.displayName = a[e]), t);
+                return (t.displayName = a[e]), t;
             }
-            ((l.displayName = 'FormattedNumberParts'), (l.displayName = 'FormattedNumberParts'));
+            (l.displayName = 'FormattedNumberParts'), (l.displayName = 'FormattedNumberParts');
             var m = d('formatDate');
-            (d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), u('formatDate'), u('formatTime'));
+            d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), u('formatDate'), u('formatTime');
         },
         5884: (e, t, r) => {
             'use strict';
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'default', {
                     enumerable: !0,
                     get: function () {
                         return o;
                     },
-                }));
+                });
             let a = r(473)._(r(16092));
             function o(e, t) {
                 var r;
@@ -80,25 +80,25 @@
         },
         10250: (e, t, r) => {
             'use strict';
-            (r.r(t), r.d(t, { default: () => s }));
+            r.r(t), r.d(t, { default: () => s });
             var a = r(33008),
                 o = r(17846),
                 n = r(48301),
                 i = r(79169);
             let s = () => {
                 let e = (0, o.useSearchParams)().get('artistId');
-                return ((e && (0, i.LLJ)(e)) || (0, o.notFound)(), (0, a.jsx)(n.Sd, { artistId: e }));
+                return (e && (0, i.LLJ)(e)) || (0, o.notFound)(), (0, a.jsx)(n.Sd, { artistId: e });
             };
         },
         16092: (e, t, r) => {
             'use strict';
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'default', {
                     enumerable: !0,
                     get: function () {
                         return l;
                     },
-                }));
+                });
             let a = r(33008),
                 o = r(66268),
                 n = r(52283);
@@ -120,7 +120,7 @@
                                 : (0, a.jsx)(n.BailoutToCSR, { reason: 'next/dynamic', children: (0, a.jsx)(r, { ...e }) });
                         return (0, a.jsx)(u, { ...(s ? { fallback: i } : {}), children: d });
                     }
-                    return ((u.displayName = 'LoadableComponent'), u);
+                    return (u.displayName = 'LoadableComponent'), u;
                 };
         },
         26271: (e) => {
@@ -225,14 +225,14 @@
                 let { reason: t, children: r } = e;
                 return r;
             }
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'BailoutToCSR', {
                     enumerable: !0,
                     get: function () {
                         return a;
                     },
                 }),
-                r(32975));
+                r(32975);
         },
         54024: (e, t, r) => {
             Promise.resolve().then(r.bind(r, 10250));
@@ -249,7 +249,7 @@
                 let { moduleIds: t } = e;
                 return null;
             }
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'PreloadChunks', {
                     enumerable: !0,
                     get: function () {
@@ -259,11 +259,11 @@
                 r(33008),
                 r(17229),
                 r(6077),
-                r(74964));
+                r(74964);
         },
     },
     (e) => {
-        (e.O(
+        e.O(
             0,
             [
                 7098, 8282, 9712, 5271, 7309, 8712, 8004, 9284, 7509, 1709, 4397, 952, 9775, 9149, 9323, 1311, 7764, 6706, 2089, 2140, 996, 4236, 6728, 3949, 9152, 9169,
@@ -271,6 +271,6 @@
             ],
             () => e((e.s = 54024)),
         ),
-            (_N_E = e.O()));
+            (_N_E = e.O());
     },
 ]);

@@ -30,17 +30,17 @@
                 return (0, l.c)(async (e) => {
                     let { playlist: t, track: i, trackIndex: a, withSuccessNotification: l = !0, withFailNotification: s = !0, withPageRefresh: n = !0 } = e,
                         d = await t.changePlaylist((0, r.Mp)({ operation: r.yC.DELETE, startPosition: a, endPosition: a + 1 }));
-                    return (d === r.Y9.OK ? o({ withSuccessNotification: l, withPageRefresh: n, playlist: t, track: i }) : c({ withFailNotification: s }), d);
+                    return d === r.Y9.OK ? o({ withSuccessNotification: l, withPageRefresh: n, playlist: t, track: i }) : c({ withFailNotification: s }), d;
                 });
             };
         },
         5479: (e, t, i) => {
             'use strict';
             var a;
-            (i.d(t, { o: () => a }),
+            i.d(t, { o: () => a }),
                 (function (e) {
-                    ((e.TEXT = 'TEXT'), (e.LRC = 'LRC'), (e.RICH_JSON = 'RICH_JSON'));
-                })(a || (a = {})));
+                    (e.TEXT = 'TEXT'), (e.LRC = 'LRC'), (e.RICH_JSON = 'RICH_JSON');
+                })(a || (a = {}));
         },
         6742: (e, t, i) => {
             'use strict';
@@ -407,7 +407,7 @@
                 o = i(79169),
                 c = i(18740),
                 d = (function (e) {
-                    return ((e.TITLE = 'title'), (e.ARTIST = 'artist'), e);
+                    return (e.TITLE = 'title'), (e.ARTIST = 'artist'), e;
                 })({});
             let u = (0, l.PA)(() => {
                 let {
@@ -430,10 +430,10 @@
                                 l = null == (i = e.find((e) => e.key === d.ARTIST)) ? void 0 : i.value;
                             return { title: (a = a ? a.trim() : ''), artist: (l = l ? l.trim() : '') };
                         })(r);
-                        (e.track &&
+                        e.track &&
                             (await e.track.changeTrackInfo(s, n)) === o.FlZ.ERROR &&
                             i((0, a.jsx)(c.hT, { error: l({ id: 'ugc.editing-failed' }) }), { containerId: t.modal.isOpened ? o.uQT.FULLSCREEN_ERROR : o.uQT.ERROR }),
-                            e.close());
+                            e.close();
                     });
                 return e.modal.isOpened
                     ? (0, a.jsx)(c.$, { open: e.modal.isOpened, title: l({ id: 'entity-names.track' }), content: u, onClose: e.close, onChange: m })
@@ -584,7 +584,7 @@
                         callback: eo,
                     }),
                     ev = (0, m.c)((e) => {
-                        (Z.modal.isOpened && Z.modal.close(), ep(e));
+                        Z.modal.isOpened && Z.modal.close(), ep(e);
                     }),
                     eC = (0, T.useOnTrackLinkClick)({ track: f, withSavingQueryParams: F, entityType: x.nPY.PODCAST }),
                     ex = (0, n.useCallback)(() => {
@@ -791,7 +791,7 @@
                     ),
                     y = (0, r.useCallback)(
                         (e) => {
-                            (e.stopPropagation(), null == _ || _(i));
+                            e.stopPropagation(), null == _ || _(i);
                         },
                         [i, _],
                     ),
@@ -877,10 +877,10 @@
                         from: s.Wft[n],
                         to: a.QT.VideoScreen,
                     };
-                    (s.qG9.includes(n) && ((l.tabId = o), (l.tabPos = c), (l.isTabSelectedByDefault = d)),
+                    s.qG9.includes(n) && ((l.tabId = o), (l.tabPos = c), (l.isTabSelectedByDefault = d)),
                         u && (l.skeletonId = u),
                         v && (l.mainObjectType = v),
-                        C && (l.mainObjectId = C));
+                        C && (l.mainObjectId = C);
                     let r = (0, a.Fx)({ params: l, logger: A, context: 'useSendEventOnClipNavigated' });
                     r && e && (0, a.QS)(t.evgenInstance, r);
                 });
@@ -952,10 +952,10 @@
                         objectPosX: y,
                         objectPosY: T,
                     };
-                    (s.qG9.includes(n) && ((r.tabId = o), (r.tabPos = c), (r.isTabSelectedByDefault = d)),
+                    s.qG9.includes(n) && ((r.tabId = o), (r.tabPos = c), (r.isTabSelectedByDefault = d)),
                         A && (r.skeletonId = A),
                         p && (r.mainObjectType = p),
-                        v && (r.mainObjectId = v));
+                        v && (r.mainObjectId = v);
                     let b = (0, a.Fx)({ params: r, logger: h, context: 'useSendEventOnClipShowedOrHidden' });
                     if (b) {
                         if (l) return void (0, a.Pf)(t.evgenInstance, b);
@@ -1045,7 +1045,7 @@
                         d = await i.changePlaylist(
                             (0, r.Mp)({ operation: r.yC.INSERT, position: 0, tracks: [{ id: a.id, albumId: null == (t = a.mainAlbum) ? void 0 : t.id }] }),
                         );
-                    return (d === r.Y9.OK ? o({ withSuccessNotification: l, withPageRefresh: n, playlist: i, track: a }) : c({ withFailNotification: s }), d);
+                    return d === r.Y9.OK ? o({ withSuccessNotification: l, withPageRefresh: n, playlist: i, track: a }) : c({ withFailNotification: s }), d;
                 });
             };
         },
@@ -1066,10 +1066,10 @@
         40178: (e, t, i) => {
             'use strict';
             var a;
-            (i.d(t, { b: () => a }),
+            i.d(t, { b: () => a }),
                 (function (e) {
-                    ((e.Album = 'album'), (e.Artist = 'artist'), (e.Playlist = 'playlist'), (e.Radio = 'fm_radio'), (e.Other = 'other'), (e.Search = 'search'));
-                })(a || (a = {})));
+                    (e.Album = 'album'), (e.Artist = 'artist'), (e.Playlist = 'playlist'), (e.Radio = 'fm_radio'), (e.Other = 'other'), (e.Search = 'search');
+                })(a || (a = {}));
         },
         40265: (e, t, i) => {
             'use strict';
@@ -1198,7 +1198,7 @@
                 } catch (e) {
                     return (0, u.tfF)(e, () => ({ track: void 0, album: void 0, similarTracks: void 0, ...(0, u.Bj3)() }));
                 }
-                return ((i.track && 'not-found' !== i.track.error) || (0, _.notFound)(), i);
+                return (i.track && 'not-found' !== i.track.error) || (0, _.notFound)(), i;
             });
             let v = (e, t) => {
                 if (!t || !e) return;
@@ -1228,7 +1228,7 @@
                 } catch (e) {
                     return (0, u.tfF)(e, () => ({ track: void 0, album: void 0, ...(0, u.Bj3)() }));
                 }
-                return ((t.track && 'not-found' !== t.track.error) || (0, _.notFound)(), t);
+                return (t.track && 'not-found' !== t.track.error) || (0, _.notFound)(), t;
             });
             var C = i(6247);
             let x = (e) =>
@@ -1279,7 +1279,7 @@
                             if (e.artists.map((e) => e.name).join(', ') === i && t === e.title) return u.FlZ.OK;
                             try {
                                 var n;
-                                (yield l.changeTrack({ trackId: e.id, title: t, artist: i }), (e.title = t));
+                                yield l.changeTrack({ trackId: e.id, title: t, artist: i }), (e.title = t);
                                 let r = (null == (n = e.artists[0]) ? void 0 : n.id) || '0';
                                 if (((e.artists = (0, a.wg)([])), i)) {
                                     let t = s.PK.create({ id: r, name: i, isAvailable: !0 });
@@ -1287,7 +1287,7 @@
                                 }
                                 return u.FlZ.OK;
                             } catch (e) {
-                                return (r.error(e), u.FlZ.ERROR);
+                                return r.error(e), u.FlZ.ERROR;
                             }
                         }),
                     }))
@@ -1331,7 +1331,7 @@
                     .actions((e) => ({
                         setTrack(t) {
                             let { id: i, albumId: a, isUGC: l } = t;
-                            ((e.id = i), (e.albumId = a), (e.isUGC = l));
+                            (e.id = i), (e.albumId = a), (e.isUGC = l);
                         },
                         getFullTrack: (0, a.L3)(function* () {
                             let { tracksResource: t, modelActionsLogger: i } = (0, a._$)(e);
@@ -1340,9 +1340,9 @@
                                 e.trackLoadingState = u.GuX.PENDING;
                                 let i = yield t.getFullInfoTrack({ trackId: e.id, albumId: e.albumId });
                                 if (!i) return null;
-                                ((e.fullTrack = (0, a.wg)(o(i.track))), (e.trackLoadingState = u.GuX.RESOLVE));
+                                (e.fullTrack = (0, a.wg)(o(i.track))), (e.trackLoadingState = u.GuX.RESOLVE);
                             } catch (t) {
-                                (i.error(t), (e.trackLoadingState = u.GuX.REJECT));
+                                i.error(t), (e.trackLoadingState = u.GuX.REJECT);
                             }
                             return null;
                         }),
@@ -1353,9 +1353,9 @@
                                 e.descriptionLoadingState = u.GuX.PENDING;
                                 let i = yield t.getFullDescriptionTrack({ trackId: e.id });
                                 if (!i) return null;
-                                ((e.fullDescription = i.description), (e.descriptionLoadingState = u.GuX.RESOLVE));
+                                (e.fullDescription = i.description), (e.descriptionLoadingState = u.GuX.RESOLVE);
                             } catch (t) {
-                                (i.error(t), (e.descriptionLoadingState = u.GuX.REJECT));
+                                i.error(t), (e.descriptionLoadingState = u.GuX.REJECT);
                             }
                             return null;
                         }),
@@ -1368,7 +1368,7 @@
                                 if (!i || !i.length) return null;
                                 i[0] && ((e.fullTrack = (0, a.wg)(o(i[0]))), (e.trackLoadingState = u.GuX.RESOLVE));
                             } catch (t) {
-                                (i.error(t), (e.trackLoadingState = u.GuX.REJECT));
+                                i.error(t), (e.trackLoadingState = u.GuX.REJECT);
                             }
                             return null;
                         }),
@@ -1378,21 +1378,21 @@
                             try {
                                 e.creditsLoadingState = u.GuX.PENDING;
                                 let i = yield t.getCredits({ trackId: e.id });
-                                ((e.credits = (0, a.wg)(null == i ? void 0 : i.credits)), (e.creditsLoadingState = u.GuX.RESOLVE));
+                                (e.credits = (0, a.wg)(null == i ? void 0 : i.credits)), (e.creditsLoadingState = u.GuX.RESOLVE);
                             } catch (t) {
-                                (i.error(t), (e.creditsLoadingState = u.GuX.REJECT));
+                                i.error(t), (e.creditsLoadingState = u.GuX.REJECT);
                             }
                             return null;
                         }),
                         reset() {
-                            ((e.id = null),
+                            (e.id = null),
                                 (e.albumId = null),
                                 (e.isUGC = null),
                                 (e.trackLoadingState = u.GuX.IDLE),
                                 (e.descriptionLoadingState = u.GuX.IDLE),
                                 (e.creditsLoadingState = u.GuX.IDLE),
                                 (e.fullTrack = null),
-                                (e.credits = null));
+                                (e.credits = null);
                         },
                     }));
             var D = i(29318),
@@ -1411,13 +1411,13 @@
                                 o = i - (e - t);
                             o > 0 && (await new Promise((e) => setTimeout(e, o)));
                             if (r !== n) return;
-                            return ((t = Date.now()), a());
+                            return (t = Date.now()), a();
                         });
-                        return ((e = s.catch(() => {})), s);
+                        return (e = s.catch(() => {})), s;
                     };
                     return (
                         (a.reset = () => {
-                            ((n += 1), (t = 0), (e = Promise.resolve()));
+                            (n += 1), (t = 0), (e = Promise.resolve());
                         }),
                         a
                     );
@@ -1448,8 +1448,8 @@
                 readLrclibCache = (e, t) => {
                     let i = e.get(t);
                     if (!i) return null;
-                    if (i.expiresAt <= Date.now()) return (e.delete(t), null);
-                    return (e.delete(t), e.set(t, i), i.value);
+                    if (i.expiresAt <= Date.now()) return e.delete(t), null;
+                    return e.delete(t), e.set(t, i), i.value;
                 },
                 writeLrclibCache = (e, t, i, n, a) => {
                     let r = {
@@ -1477,8 +1477,8 @@
                     if (!trackName) return null;
                     let cacheKey = makeLrclibTextCacheKey({ trackName, artistName, duration: durationSec }),
                         cachedResult = readLrclibCache(lrclibTextResultCache, cacheKey);
-                    if (cachedResult) return (console.debug('[LRCLib] cache hit', { key: cacheKey }), cachedResult);
-                    if (readLrclibCache(lrclibTextNoResultCache, cacheKey)) return (console.debug('[LRCLib] cache no-result hit', { key: cacheKey }), null);
+                    if (cachedResult) return console.debug('[LRCLib] cache hit', { key: cacheKey }), cachedResult;
+                    if (readLrclibCache(lrclibTextNoResultCache, cacheKey)) return console.debug('[LRCLib] cache no-result hit', { key: cacheKey }), null;
                     let searchToken = ++lrclibSearchToken;
                     let checkToken = () => searchToken !== lrclibSearchToken;
 
@@ -1627,7 +1627,7 @@
                             }
                         }
 
-                        if (!results) return (writeLrclibCache(lrclibTextNoResultCache, cacheKey, !0, LRCLIB_TEXT_NO_RESULT_TTL_MS, LRCLIB_TEXT_CACHE_MAX_SIZE), null);
+                        if (!results) return writeLrclibCache(lrclibTextNoResultCache, cacheKey, !0, LRCLIB_TEXT_NO_RESULT_TTL_MS, LRCLIB_TEXT_CACHE_MAX_SIZE), null;
 
                         if (usedLooseQuery && normalizedTitles.length > 0) {
                             results = results.filter((e) => normalizedTitles.includes(normalizeTitle(e.trackName || e.track_name || e.title || e.name)));
@@ -1637,14 +1637,14 @@
 
                         results = results.filter((e) => !e.instrumental && (e.plainLyrics || e.syncedLyrics));
                         if (!results.length)
-                            return (writeLrclibCache(lrclibTextNoResultCache, cacheKey, !0, LRCLIB_TEXT_NO_RESULT_TTL_MS, LRCLIB_TEXT_CACHE_MAX_SIZE), null);
+                            return writeLrclibCache(lrclibTextNoResultCache, cacheKey, !0, LRCLIB_TEXT_NO_RESULT_TTL_MS, LRCLIB_TEXT_CACHE_MAX_SIZE), null;
 
                         if (durationSec && durationSec > 0) {
                             let withDuration = results.filter((e) => 'number' == typeof e.duration);
                             if (withDuration.length > 0) {
                                 let closeMatches = withDuration.filter((e) => Math.abs(e.duration - durationSec) <= 10);
                                 if (!closeMatches.length)
-                                    return (writeLrclibCache(lrclibTextNoResultCache, cacheKey, !0, LRCLIB_TEXT_NO_RESULT_TTL_MS, LRCLIB_TEXT_CACHE_MAX_SIZE), null);
+                                    return writeLrclibCache(lrclibTextNoResultCache, cacheKey, !0, LRCLIB_TEXT_NO_RESULT_TTL_MS, LRCLIB_TEXT_CACHE_MAX_SIZE), null;
                                 results = closeMatches;
                             }
                         }
@@ -1661,8 +1661,8 @@
                             hasPlain: !!(selected && selected.plainLyrics),
                             hasSynced: !!(selected && selected.syncedLyrics),
                         });
-                        (lrclibTextNoResultCache.delete(cacheKey),
-                            writeLrclibCache(lrclibTextResultCache, cacheKey, selected, LRCLIB_TEXT_CACHE_TTL_MS, LRCLIB_TEXT_CACHE_MAX_SIZE));
+                        lrclibTextNoResultCache.delete(cacheKey),
+                            writeLrclibCache(lrclibTextResultCache, cacheKey, selected, LRCLIB_TEXT_CACHE_TTL_MS, LRCLIB_TEXT_CACHE_MAX_SIZE);
                         return selected;
                     } catch (e) {
                         console.debug('[LRCLib] search failed', e);
@@ -1721,13 +1721,13 @@
                                     if (!i || (o && (e.isLoading || e.isResolved || e.isRejected))) return;
                                     let s = ++e.requestToken;
                                     try {
-                                        ((e.loadingState = u.GuX.PENDING),
+                                        (e.loadingState = u.GuX.PENDING),
                                             (e.currentTrackId = i),
                                             (e.lyrics = null),
                                             (e.major = null),
                                             (e.externalLyricId = null),
                                             (e.lyricId = null),
-                                            (e.writers = (0, a.wg)([])));
+                                            (e.writers = (0, a.wg)([]));
                                         let { sonataState: p } = (0, a.Zn)(e),
                                             v = null == p ? void 0 : p.entityMeta,
                                             g = e.track || v,
@@ -1773,7 +1773,7 @@
                                                 'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useText') : null;
                                             !1 === e && (_ = !1);
                                         } catch (e) {}
-                                        if (!_) return ((e.loadingState = u.GuX.REJECT), (e.hasError = !1), e.modal.isOpened && e.modal.close(), void 0);
+                                        if (!_) return (e.loadingState = u.GuX.REJECT), (e.hasError = !1), e.modal.isOpened && e.modal.close(), void 0;
                                         let C = yield lrclibSearch({ trackName: b, artistName: g, duration: h || k });
                                         if (isStale(s, i)) return;
                                         if (C && (C.plainLyrics || C.syncedLyrics)) {
@@ -1789,7 +1789,7 @@
                                             );
                                         }
                                         let F = isLyricsUnavailableError(t);
-                                        ((e.loadingState = u.GuX.REJECT), (e.hasError = !F), e.modal.isOpened && e.modal.close(), F || r.error(t));
+                                        (e.loadingState = u.GuX.REJECT), (e.hasError = !F), e.modal.isOpened && e.modal.close(), F || r.error(t);
                                     }
                                 }),
                                 downloadLyrics: (0, a.L3)(function* (t, i, n) {
@@ -1841,10 +1841,10 @@
                     .actions((e) => {
                         let t = {
                             open(t) {
-                                ((e.track = t), e.modal.open());
+                                (e.track = t), e.modal.open();
                             },
                             close() {
-                                (e.modal.close(), t.reset());
+                                e.modal.close(), t.reset();
                             },
                             reset() {
                                 e.track = null;
@@ -1970,14 +1970,14 @@
                                 null == d || d(e);
                                 return;
                             }
-                            (null == e || e.preventDefault(),
+                            null == e || e.preventDefault(),
                                 await u.getDisclaimerData({ entityId: Number(c), entityType: t, disclaimerId: o }),
                                 n && u.setType(s.YwF.UNSAFE),
                                 u.setId(k.current),
                                 u.setEntityId(c),
                                 u.setEntityType(t),
                                 (_.current = !1),
-                                m.open());
+                                m.open();
                             return;
                         }
                         null == d || d(e);
@@ -2025,9 +2025,9 @@
                                     e.loadingState = s.GuX.PENDING;
                                     let t = yield a.getDisclaimer({ artistId: i }),
                                         l = t.modal || t.foreignAgent;
-                                    (l && (e.data = u(l)), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.RESOLVE));
+                                    l && (e.data = u(l)), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.RESOLVE);
                                 } catch (t) {
-                                    (l.error(t), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.REJECT));
+                                    l.error(t), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.REJECT);
                                 }
                         }),
                         getAlbumDisclaimer: (0, c.L3)(function* (t) {
@@ -2038,9 +2038,9 @@
                                     e.loadingState = s.GuX.PENDING;
                                     let t = yield a.getDisclaimer({ albumId: i }),
                                         l = t.modal || t.foreignAgent;
-                                    (l && (e.data = u(l)), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.RESOLVE));
+                                    l && (e.data = u(l)), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.RESOLVE);
                                 } catch (t) {
-                                    (l.error(t), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.REJECT));
+                                    l.error(t), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.REJECT);
                                 }
                         }),
                         getTrackDisclaimer: (0, c.L3)(function* (t) {
@@ -2051,9 +2051,9 @@
                                     e.loadingState = s.GuX.PENDING;
                                     let t = yield a.getDisclaimer({ trackId: i }),
                                         l = t.modal || t.foreignAgent;
-                                    (l && (e.data = u(l)), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.RESOLVE));
+                                    l && (e.data = u(l)), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.RESOLVE);
                                 } catch (t) {
-                                    (l.error(t), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.REJECT));
+                                    l.error(t), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.REJECT);
                                 }
                         }),
                         getClipDisclaimer: (0, c.L3)(function* (t) {
@@ -2064,9 +2064,9 @@
                                     e.loadingState = s.GuX.PENDING;
                                     let t = yield a.getDisclaimer({ clipId: i }),
                                         l = t.modal || t.foreignAgent;
-                                    (l && (e.data = u(l)), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.RESOLVE));
+                                    l && (e.data = u(l)), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.RESOLVE);
                                 } catch (t) {
-                                    (l.error(t), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.REJECT));
+                                    l.error(t), e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.REJECT);
                                 }
                         }),
                         setId(t) {
@@ -2094,7 +2094,7 @@
                             e.onDisclaimerRejectHandler = t;
                         },
                         reset() {
-                            ((e.loadingState = s.GuX.IDLE),
+                            (e.loadingState = s.GuX.IDLE),
                                 (e.data = null),
                                 (e.id = null),
                                 (e.type = null),
@@ -2103,7 +2103,7 @@
                                 (e.isUnsafeDisclaimerConfirmed = !1),
                                 (e.shouldHistoryBack = !1),
                                 (e.shouldCloseModalOnOutsidePress = !0),
-                                (e.shouldCloseModalOnEscape = !0));
+                                (e.shouldCloseModalOnEscape = !0);
                         },
                     }))
                     .actions((e) => ({
@@ -2159,7 +2159,7 @@
                         h = (0, s.NFA)().get(s.U2_),
                         j = (0, r.c)(() => {
                             if (o) return o();
-                            (m.canBack && m.back(), p());
+                            m.canBack && m.back(), p();
                         }),
                         I = (null == d || null == (t = d.details) ? void 0 : t.url) && d.details.text,
                         N = (0, r.c)(() => {
@@ -2167,7 +2167,7 @@
                             let e = h.get(s.cYZ.ExEx),
                                 t = new Date(),
                                 i = t.setMinutes(t.getMinutes() + 15);
-                            (e
+                            e
                                 ? h.set(s.cYZ.ExEx, [...e, ''.concat(null == n ? void 0 : n.entityType, '_').concat(null == n ? void 0 : n.entityId)], {
                                       expires: new Date(i),
                                   })
@@ -2175,11 +2175,11 @@
                                       expires: new Date(i),
                                   }),
                                 null == o || o(),
-                                (null == n ? void 0 : n.onDisclaimerConfirmHandler) && n.onDisclaimerConfirmHandler());
+                                (null == n ? void 0 : n.onDisclaimerConfirmHandler) && n.onDisclaimerConfirmHandler();
                         }),
                         L = (0, r.c)(() => {
-                            ((null == n ? void 0 : n.shouldHistoryBack) ? (null == o || o(), m.canBack && m.back(), p()) : null == o || o(),
-                                (null == n ? void 0 : n.onDisclaimerRejectHandler) && n.onDisclaimerRejectHandler());
+                            (null == n ? void 0 : n.shouldHistoryBack) ? (null == o || o(), m.canBack && m.back(), p()) : null == o || o(),
+                                (null == n ? void 0 : n.onDisclaimerRejectHandler) && n.onDisclaimerRejectHandler();
                         });
                     (0, a.useEffect)(
                         () => () => {
@@ -2326,7 +2326,7 @@
                     t = (0, l.pqZ)();
                 return (0, a.c)(function (i) {
                     let a = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : 0;
-                    (e.setIds(i), e.setClipIndex(a), t((0, r.J)(i, a)), e.modal.open());
+                    e.setIds(i), e.setClipIndex(a), t((0, r.J)(i, a)), e.modal.open();
                 });
             };
         },
@@ -3009,14 +3009,14 @@
                         g = (0, C.PT7)(),
                         y = (0, C.Ftl)(),
                         N = (0, c.c)(() => {
-                            (_(!k), v(!k));
+                            _(!k), v(!k);
                         }),
                         L = (0, c.c)((e) => {
-                            (e.preventDefault(), e.stopPropagation());
+                            e.preventDefault(), e.stopPropagation();
                         }),
                         P = (0, c.c)((e) => {
                             if ((e.stopPropagation(), g())) return void e.preventDefault();
-                            (o.openTrackTrailer(t.id), y(A.ky.Track, t.id));
+                            o.openTrackTrailer(t.id), y(A.ky.Track, t.id);
                         }),
                         f = (0, d.L)(() => {
                             var e;
@@ -3118,7 +3118,7 @@
                             I.open({ trackId: h.id, albumId: h.albumId });
                         }),
                         F = (0, c.c)(() => {
-                            (P || z || (f(!0), null == R || R()), X());
+                            P || z || (f(!0), null == R || R()), X();
                         }),
                         Y = (0, _.cp)({ album: h.mainAlbum, callback: w }),
                         q = (0, g.useTrackDisclaimer)({ track: h, callback: K }),
@@ -3131,12 +3131,12 @@
                             h.hasTrackLink && V();
                         }),
                         Z = (0, c.c)(() => {
-                            (D || h.isLiked || (E(!0), null == S || S()), O());
+                            D || h.isLiked || (E(!0), null == S || S()), O();
                         }),
                         J = (0, c.c)((e) => {
                             var t;
                             if (h.hasTrackLink) {
-                                (null == M || M(), q(e));
+                                null == M || M(), q(e);
                                 return;
                             }
                             h.hasAlbumLink && (null == (t = h.mainAlbum) ? void 0 : t.url) && Y(e);
@@ -3270,11 +3270,11 @@
                         let v = { ...(0, l.HO)(e), isLiked: !e.isLiked };
                         _(!0);
                         let C = await e.toggleLike();
-                        (_(!1),
+                        _(!1),
                             u.clips.reset(),
                             C === n.f.OK
                                 ? m((0, a.jsx)(d, { clip: v }), { containerId: r })
-                                : m((0, a.jsx)(c.hT, { error: p({ id: 'error-messages.error-during-action' }) }), { containerId: s }));
+                                : m((0, a.jsx)(c.hT, { error: p({ id: 'error-messages.error-during-action' }) }), { containerId: s });
                     }, [e, t.isAuthorized, k, p, m, i.modal.isOpened, u.clips]);
                 };
         },
@@ -3374,7 +3374,7 @@
                     B = (0, u.c)(() => {
                         if (!E()) {
                             if (y) return void T();
-                            (w || L || (K(!0), null == O || O()), S(), N(!L));
+                            w || L || (K(!0), null == O || O()), S(), N(!L);
                         }
                     }),
                     U = (0, u.c)(() => {
@@ -3447,7 +3447,7 @@
             'use strict';
             i.d(t, { D: () => a });
             var a = (function (e) {
-                return ((e.ALBUM = 'album'), (e.PLAYLIST = 'playlist'), e);
+                return (e.ALBUM = 'album'), (e.PLAYLIST = 'playlist'), e;
             })({});
         },
         85201: (e) => {
@@ -3501,7 +3501,7 @@
                         { fullscreenPlayer: l } = (0, T.Pjs)(),
                         r = (0, T.ZpR)(i.url),
                         s = (0, _.c)((e) => {
-                            (r(e), l.modal.close());
+                            r(e), l.modal.close();
                         });
                     return (0, a.jsx)(v.Dr, {
                         className: t,
@@ -3656,7 +3656,7 @@
                                     return null;
                                 if ((await n({ playlist: t.meta, track: e, withPageRefresh: !1, withFailNotification: !1, withSuccessNotification: !1 })) === S.Y9.OK) {
                                     let { href: e } = (0, T.uvd)('/playlists/:playlistUuid', { params: { playlistUuid: t.meta.uuid } });
-                                    return (t.reset(), e);
+                                    return t.reset(), e;
                                 }
                                 return null;
                             });
@@ -3728,14 +3728,14 @@
                                           }
                                           return !1;
                                       });
-                            (void 0 !== e && l && (null == s || s.hide({ positions: [e] })), r.count(T.xQR.TRACK_DELETE, T.l6e));
+                            void 0 !== e && l && (null == s || s.hide({ positions: [e] })), r.count(T.xQR.TRACK_DELETE, T.l6e);
                             return;
                         }
                         if (t.isDownloading) {
                             null == (n = i.tracksController) || n.stopDownload(t.entityId);
                             return;
                         }
-                        (null == (e = i.tracksController) || e.download(t.entityId), r.count(T.xQR.TRACK_DOWNLOAD, T.l6e));
+                        null == (e = i.tracksController) || e.download(t.entityId), r.count(T.xQR.TRACK_DOWNLOAD, T.l6e);
                     }, [t.isDownloaded, t.isDownloading, t.entityId, i.tracksController, r, s, l]),
                     d = (0, n.useMemo)(
                         () =>
@@ -3876,7 +3876,7 @@
                             parentContextId: (null == (E = $.mainAlbum) ? void 0 : E.id) ? ''.concat($.mainAlbum.id, ':').concat($.id) : $.entityId,
                         }),
                         e0 = (0, _.c)(async () => {
-                            (eA || $.isLiked || (eb(!0), null == eh || eh()), await eP());
+                            eA || $.isLiked || (eb(!0), null == eh || eh()), await eP();
                         }),
                         e1 = (0, _.c)(() => {
                             if (ea && ex.isAuthorized) return void el();
@@ -3888,16 +3888,16 @@
                         }),
                         e9 = (0, _.c)(() => {
                             var e;
-                            (ec.setTrack({ id: $.id, albumId: (null == (e = $.mainAlbum) ? void 0 : e.id) || null, isUGC: $.isUGC || null }),
+                            ec.setTrack({ id: $.id, albumId: (null == (e = $.mainAlbum) ? void 0 : e.id) || null, isUGC: $.isUGC || null }),
                                 eC.isOpened && eC.close(),
-                                eI.open());
+                                eI.open();
                         }),
                         e7 = (0, _.c)(() => {
                             $.clipIds && eG((0, r.HO)($.clipIds));
                         }),
                         e8 = (0, _.c)(() => {
                             if (ea && ex.isAuthorized) return void el();
-                            (ep.setTrack($), eC.isOpened && eC.close());
+                            ep.setTrack($), eC.isOpened && eC.close();
                             let e = $.id,
                                 t = e ? String(e) : null,
                                 i = ep.currentTrackId ? String(ep.currentTrackId) : null,
@@ -3920,7 +3920,7 @@
                             eu.isSyncLyricsMode ? eu.hideSyncLyrics() : eu.showSyncLyrics();
                         }),
                         e2 = (0, _.c)(() => {
-                            (null == Z || Z(), null == F || F(!1));
+                            null == Z || Z(), null == F || F(!1);
                         }),
                         e4 = (0, _.c)(() => $.isSyncLyricsAvailable && eu.modal.isOpened && eM),
                         e5 = (0, _.c)(() => {
@@ -4207,7 +4207,7 @@
                     } = (0, s.Pjs)(),
                     L = (0, h.useTrackDisclaimer)({ track: i, callback: _ }),
                     P = (0, g.c)(() => {
-                        (L(), j(!u), null == v || v(!u));
+                        L(), j(!u), null == v || v(!u);
                     }),
                     f = (0, g.c)(() => {
                         if (u) return void p();
@@ -4358,11 +4358,11 @@
                         if ((o.modal.isOpened && o.modal.close(), null == n || n(), u)) {
                             null == e || e.preventDefault();
                             let a = (0, r.jrm)();
-                            (i && a ? m(t.getUrl(Object.fromEntries(a))) : m(t.url), d.open({ trackId: t.id, albumId: t.albumId }));
+                            i && a ? m(t.getUrl(Object.fromEntries(a))) : m(t.url), d.open({ trackId: t.id, albumId: t.albumId });
                         } else null == e || e.stopPropagation();
                     }),
                     _ = (0, a.c)((e) => {
-                        (null == n || n(), null == e || e.stopPropagation());
+                        null == n || n(), null == e || e.stopPropagation();
                     }),
                     p = { entityType: s, isLegalRejected: t.isLegalRejected, isUnsafeLegal: t.isUnsafeLegal, entityId: t.id },
                     v = (0, l.kR)({ ...p, callback: k }),
@@ -4428,7 +4428,7 @@
                     q = (0, n.c)(() => {
                         if (!O()) {
                             if (U) return void N();
-                            (F || g || (Y(!0), null == $ || $()), G(), M(!g), null == A || A(!g));
+                            F || g || (Y(!0), null == $ || $()), G(), M(!g), null == A || A(!g);
                         }
                     }),
                     V = (0, n.c)(() => {
@@ -4487,7 +4487,7 @@
                                 null == i || i(e);
                                 return;
                             }
-                            (null == e || e.preventDefault(),
+                            null == e || e.preventDefault(),
                                 await o.getDisclaimerData({ entityId: t.id, entityType: s.nPY.TRACK, disclaimerId: null == t ? void 0 : t.modalDisclaimerId }),
                                 t.isUnsafeLegal && o.setType(s.YwF.UNSAFE),
                                 n && o.setDisclaimerRejectHandler(n),
@@ -4495,7 +4495,7 @@
                                 o.setEntityId(t.id),
                                 o.setEntityType(s.nPY.TRACK),
                                 (u.current = !1),
-                                c.open());
+                                c.open();
                             return;
                         }
                         null == i || i(e);
@@ -4604,14 +4604,14 @@
                         z = (0, v.Ftl)(),
                         X = D.hasPlus,
                         $ = (0, u.c)(async () => {
-                            (M || y.isLiked || (O(!0), null == R || R()), await U(), null == j || j(y.isLiked));
+                            M || y.isLiked || (O(!0), null == R || R()), await U(), null == j || j(y.isLiked);
                         }),
                         F = (0, u.c)((e) => {
                             e.stopPropagation();
                         }),
                         Y = (0, u.c)((e) => {
                             if ((e.stopPropagation(), B())) return void e.preventDefault();
-                            (E.openTrackTrailer(y.id), z(c.ky.Track, y.id));
+                            E.openTrackTrailer(y.id), z(c.ky.Track, y.id);
                         }),
                         q = (0, s.useMemo)(() => {
                             if (!y.isRemoved && y.isAvailable)

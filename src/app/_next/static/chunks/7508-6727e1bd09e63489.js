@@ -15,7 +15,7 @@
                     r = e.containerRef,
                     n = (0, a.useRef)(null),
                     i = (0, a.useRef)(!1);
-                ((0, o.useIsomorphicLayoutEffect)(function () {
+                (0, o.useIsomorphicLayoutEffect)(function () {
                     var e = r ? r.current : null;
                     n.current !== e && (t && i.current && (c.unlock(n.current), c.lock(e)), (n.current = e));
                 }),
@@ -26,12 +26,12 @@
                                     (i.current = !0),
                                     c.lock(n.current),
                                     function () {
-                                        ((i.current = !1), c.unlock(n.current));
+                                        (i.current = !1), c.unlock(n.current);
                                     }
                                 );
                         },
                         [t],
-                    ));
+                    );
             };
         },
         7555: (e, t, r) => {
@@ -43,12 +43,12 @@
             'use strict';
             Object.defineProperty(t, '__esModule', { value: !0 });
             var n = r(7144);
-            (n.__exportStar(r(99647), t),
+            n.__exportStar(r(99647), t),
                 n.__exportStar(r(58752), t),
                 n.__exportStar(r(83520), t),
                 n.__exportStar(r(89192), t),
                 n.__exportStar(r(55831), t),
-                n.__exportStar(r(45590), t));
+                n.__exportStar(r(45590), t);
         },
         26656: (e, t, r) => {
             'use strict';
@@ -144,13 +144,13 @@
                             d = s[1],
                             f = (0, a.useCallback)(
                                 function () {
-                                    (d(!0), null == i || i());
+                                    d(!0), null == i || i();
                                 },
                                 [d, i],
                             ),
                             v = (0, a.useCallback)(
                                 function () {
-                                    (d(!1), null == l || l());
+                                    d(!1), null == l || l();
                                 },
                                 [d, l],
                             ),
@@ -165,12 +165,12 @@
                             a.createElement(t, (0, n.__assign)({}, g, { onClose: v }), a.createElement(o.U, (0, n.__assign)({}, p))),
                         );
                     };
-                return ((i.displayName = "'withUserID(" + (null != (r = e.displayName) ? r : e) + ")'"), i);
+                return (i.displayName = "'withUserID(" + (null != (r = e.displayName) ? r : e) + ")'"), i;
             }
         },
         45590: (e, t, r) => {
             'use strict';
-            (r.r(t), r.d(t, { withUserID: () => n.B }));
+            r.r(t), r.d(t, { withUserID: () => n.B });
             var n = r(44389);
         },
         52283: (e, t, r) => {
@@ -179,14 +179,14 @@
                 let { reason: t, children: r } = e;
                 return r;
             }
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'BailoutToCSR', {
                     enumerable: !0,
                     get: function () {
                         return n;
                     },
                 }),
-                r(32975));
+                r(32975);
         },
         55558: (e, t, r) => {
             'use strict';
@@ -223,29 +223,29 @@
                 ('Escape' === t || 'Esc' === t) && v(e, 'esc');
             }
             function h(e) {
-                ((u = e.target), (d = f()), v(e, 'click', 'pressdown'));
+                (u = e.target), (d = f()), v(e, 'click', 'pressdown');
             }
             function p(e) {
                 var t = u;
                 u = null;
                 var r = d;
-                ((d = null), e.button > 0 || r !== f() || (t === e.target && v(e, 'click', 'pressup')));
+                (d = null), e.button > 0 || r !== f() || (t === e.target && v(e, 'click', 'pressup'));
             }
             var g = Object.freeze({
                     count: function () {
                         return s.length;
                     },
                     addOverlay: function (e) {
-                        (0 === s.length &&
+                        0 === s.length &&
                             (document.addEventListener('keyup', m), document.addEventListener('pointerdown', h, !0), document.addEventListener('click', p, !0)),
-                            s.push(e));
+                            s.push(e);
                     },
                     removeOverlay: function (e) {
-                        (s.splice(s.indexOf(e), 1),
+                        s.splice(s.indexOf(e), 1),
                             0 === s.length &&
                                 (document.removeEventListener('keyup', m),
                                 document.removeEventListener('pointerdown', h, !0),
-                                document.removeEventListener('click', p, !0)));
+                                document.removeEventListener('click', p, !0));
                     },
                     getTopOverlayOptions: f,
                 }),
@@ -399,7 +399,7 @@
                             },
                             [t],
                         ));
-                ((0, i.N)(ef, P || (0, c.createRef)()), (ev = null != O ? O : ev), (em = null != X ? X : em));
+                (0, i.N)(ef, P || (0, c.createRef)()), (ev = null != O ? O : ev), (em = null != X ? X : em);
                 var ep = (0, o.__read)((0, c.useState)(!0), 2),
                     eg = ep[0],
                     ew = ep[1],
@@ -470,7 +470,7 @@
                     eR = (0, c.useCallback)(
                         function () {
                             var e;
-                            (null == (e = ef.current) || e.focus(), null == K || K());
+                            null == (e = ef.current) || e.focus(), null == K || K();
                         },
                         [K],
                     ),
@@ -506,7 +506,7 @@
                                 var r;
                                 switch (e.methodCall) {
                                     case 'onInit':
-                                        (Y && eN(e.params[0]), null == V || V());
+                                        Y && eN(e.params[0]), null == V || V();
                                         break;
                                     case 'onDataLoad':
                                         var n = ed.current;
@@ -516,7 +516,7 @@
                                             eB.current({ methodCall: 'onSendTimeToInteractive', params: [{ delta: a }] });
                                         }
                                     case 'updateUserHeight':
-                                        (eT(e.params[0].height), ew(!1));
+                                        eT(e.params[0].height), ew(!1);
                                         break;
                                     case 'ITEM_CLICK':
                                         var c = e.params[0];
@@ -604,7 +604,7 @@
                         [n, a],
                     ),
                     { sendMessage: f }).sendMessage;
-                ((eB.current = eH),
+                (eB.current = eH),
                     (0, c.useEffect)(
                         function () {
                             eH({ methodCall: 'updateRetpath', params: [{ retpath: eC }] });
@@ -622,7 +622,7 @@
                             eH({ methodCall: 'updateTheme', params: [{ colorScheme: U, theme: eo }] });
                         },
                         [U, eH, eo],
-                    ));
+                    );
                 var eW = (0, c.useCallback)(
                         function (e) {
                             eH({ methodCall: 'focusFirst', params: [{ fromKeyboard: e }] });
@@ -635,13 +635,13 @@
                         },
                         [eW, Z, eE, eu, eR],
                     );
-                ((h = (m = {
+                (h = (m = {
                     visible: eu,
                     onClose: eR,
                     essentialRefs: (0, c.useMemo)(
                         function () {
                             var e = [ev, ef];
-                            return (W && e.push(W), e);
+                            return W && e.push(W), e;
                         },
                         [ev, ef, W],
                     ),
@@ -671,7 +671,7 @@
                             eu && (null != (e = ed.current).start || (e.start = y()));
                         },
                         [eu],
-                    ));
+                    );
                 var eY = { colorScheme: U, height: eD, loading: eg, preload: eE, ref: em, src: ek, width: 'desktop' === eL ? 320 : '100%' },
                     eA = { className: M, colorScheme: U, platform: eL, ref: ev, visible: eu, onClose: eR, loading: eg };
                 return {
@@ -683,13 +683,13 @@
         },
         55831: (e, t, r) => {
             'use strict';
-            (r.r(t), r.d(t, { useUserID: () => n.w }));
+            r.r(t), r.d(t, { useUserID: () => n.w });
             var n = r(55558);
         },
         57544: () => {},
         58752: (e, t, r) => {
             'use strict';
-            (r.r(t), r.d(t, { Dialog: () => n.l }));
+            r.r(t), r.d(t, { Dialog: () => n.l });
             var n = r(26656);
         },
         60717: (e, t) => {
@@ -728,7 +728,7 @@
         },
         64006: (e, t, r) => {
             'use strict';
-            (r.r(t), r.d(t, { useIsomorphicLayoutEffect: () => n.E }));
+            r.r(t), r.d(t, { useIsomorphicLayoutEffect: () => n.E });
             var n = r(39235);
         },
         68228: () => {},
@@ -765,7 +765,7 @@
                 let { moduleIds: t } = e;
                 return null;
             }
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'PreloadChunks', {
                     enumerable: !0,
                     get: function () {
@@ -775,7 +775,7 @@
                 r(33008),
                 r(17229),
                 r(6077),
-                r(74964));
+                r(74964);
         },
         83520: (e, t) => {
             'use strict';
@@ -793,7 +793,7 @@
         },
         89192: (e, t, r) => {
             'use strict';
-            (r.r(t), r.d(t, { User: () => m, UserBase: () => f }));
+            r.r(t), r.d(t, { User: () => m, UserBase: () => f });
             var n = r(66268),
                 a = r(77798),
                 o = r(84991),
@@ -872,7 +872,7 @@
                         )
                     );
                 };
-            ((s.displayName = 'UserIDAvatar'), r(1876));
+            (s.displayName = 'UserIDAvatar'), r(1876);
             var u = function (e) {
                 var t = e.children,
                     r = e.fetchMail,
@@ -906,7 +906,7 @@
                     g = ['UserID-Badge-Dot', 'UserID-Badge-Dot_colorScheme_' + s, 'UserID-Badge-Dot_variant_' + l].join(' ');
                 return n.createElement('div', { className: 'UserID-Badge' }, t, p && n.createElement('div', { className: g }, 'number' === l && h));
             };
-            ((u.displayName = 'UserIDBadge'), r(2184));
+            (u.displayName = 'UserIDBadge'), r(2184);
             var d = (0, a.cn)('UserID', 'Wrapper'),
                 f = (0, n.forwardRef)(function (e, t) {
                     var r = e.tld,
@@ -974,7 +974,7 @@
         },
         89732: (e, t, r) => {
             'use strict';
-            (r.r(t), r.d(t, { lock: () => g, unlock: () => w }));
+            r.r(t), r.d(t, { lock: () => g, unlock: () => w });
             var n,
                 a = r(7555);
             function o(e) {
@@ -1001,13 +1001,13 @@
                         var t = function () {
                             return null;
                         };
-                        (window.addEventListener('testPassive', t, {
+                        window.addEventListener('testPassive', t, {
                             get passive() {
                                 e = !0;
                                 return;
                             },
                         }),
-                            window.removeEventListener('testPassive', t));
+                            window.removeEventListener('testPassive', t);
                     } catch (e) {}
                     return e;
                 })()
@@ -1036,7 +1036,7 @@
                         u = t.scrollLeft,
                         d = t.scrollWidth - t.clientWidth,
                         v = !c && ((u <= 0 && a > r) || (u >= d && a < r));
-                    (((c && ((i <= 0 && o > n) || (i >= s && o < n))) || v) && e.preventDefault(), (f.lastX = a), (f.lastY = o));
+                    ((c && ((i <= 0 && o > n) || (i >= s && o < n))) || v) && e.preventDefault(), (f.lastX = a), (f.lastY = o);
                 }
             }
             function h() {
@@ -1048,7 +1048,7 @@
             function g(e) {
                 if (a.O) {
                     var t = p(e);
-                    (!(function (e) {
+                    !(function (e) {
                         var t = e[u];
                         if (t) return t.count++;
                         var r = (function (e) {
@@ -1059,9 +1059,9 @@
                                     if ('undefined' == typeof document) return 0;
                                     if (void 0 === n) {
                                         var o = document.createElement('div');
-                                        ((o.style.width = '100%'), (o.style.height = '200px'));
+                                        (o.style.width = '100%'), (o.style.height = '200px');
                                         var c = document.createElement('div');
-                                        ((c.style.position = 'absolute'),
+                                        (c.style.position = 'absolute'),
                                             (c.style.top = '0'),
                                             (c.style.left = '0'),
                                             (c.style.pointerEvents = 'none'),
@@ -1070,11 +1070,11 @@
                                             (c.style.height = '150px'),
                                             (c.style.overflow = 'hidden'),
                                             c.appendChild(o),
-                                            document.body.appendChild(c));
+                                            document.body.appendChild(c);
                                         var i = o.offsetWidth;
                                         c.style.overflow = 'scroll';
                                         var s = o.offsetWidth;
-                                        (i === s && (s = c.clientWidth), document.body.removeChild(c), (n = i - s));
+                                        i === s && (s = c.clientWidth), document.body.removeChild(c), (n = i - s);
                                     }
                                     return n;
                                 }
@@ -1092,14 +1092,14 @@
                                 (f.scrollY = window.pageYOffset),
                                 document.addEventListener('touchstart', v, d),
                                 document.addEventListener('touchmove', m, d),
-                                document.addEventListener('touchend', h, d))));
+                                document.addEventListener('touchend', h, d)));
                 }
             }
             function w(e) {
                 if (a.O) {
                     var t = p(e),
                         r = t[u];
-                    (r && (r.count--, 0 === r.count) && (i(t, r.initialStyle), delete t[u]),
+                    r && (r.count--, 0 === r.count) && (i(t, r.initialStyle), delete t[u]),
                         c() &&
                             l(t) &&
                             0 !== f.count &&
@@ -1108,13 +1108,13 @@
                                 (document.removeEventListener('touchstart', v),
                                 document.removeEventListener('touchmove', m),
                                 document.removeEventListener('touchend', h),
-                                window.scrollTo(f.scrollX, f.scrollY))));
+                                window.scrollTo(f.scrollX, f.scrollY)));
                 }
             }
         },
         99647: (e, t, r) => {
             'use strict';
-            (r.r(t), r.d(t, { Content: () => n.U, cnUserID: () => n.K }));
+            r.r(t), r.d(t, { Content: () => n.U, cnUserID: () => n.K });
             var n = r(79246);
         },
     },

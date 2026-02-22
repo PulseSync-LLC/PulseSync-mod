@@ -427,8 +427,7 @@
     margin-block-start: var(--ym-spacer-size-xxxxl);
 }
 .PaywallBYDesktop_topSection__AS3Pv {
-    background-image:
-        url(https://avatars.mds.yandex.net/get-music-misc/34161/img.6681a8dd26b6fe1332480078/orig),
+    background-image: url(https://avatars.mds.yandex.net/get-music-misc/34161/img.6681a8dd26b6fe1332480078/orig),
         url(https://avatars.mds.yandex.net/get-music-misc/2419084/img.6681a88526b6fe1332480076/orig);
     background-position:
         100%,
@@ -441,8 +440,7 @@
 }
 @media only screen and (max-width: 1366px) {
     .PaywallBYDesktop_topSection__AS3Pv {
-        background-image:
-            url(https://avatars.mds.yandex.net/get-music-misc/34161/img.6681a8dd26b6fe1332480078/orig),
+        background-image: url(https://avatars.mds.yandex.net/get-music-misc/34161/img.6681a8dd26b6fe1332480078/orig),
             url(https://avatars.mds.yandex.net/get-music-misc/2419084/img.6681a88526b6fe1332480076/orig);
         background-size:
             48% auto,
@@ -887,8 +885,7 @@
 }
 .TopSectionMobile_root__bl_XJ {
     align-items: center;
-    background:
-        url(https://avatars.mds.yandex.net/get-music-misc/2406661/img.6681a95d26b6fe133248007c/orig),
+    background: url(https://avatars.mds.yandex.net/get-music-misc/2406661/img.6681a95d26b6fe133248007c/orig),
         url(https://avatars.mds.yandex.net/get-music-misc/2419084/img.6681a92926b6fe133248007a/orig);
     background-size: cover;
     display: flex;

@@ -62,7 +62,7 @@ class MiniPlayer {
         }
 
         const backgroundColor = hex2hsl(this.lastPlayerState.track.derivedColors.average, 20).css;
-        const allowedTrackColors = !this.lastSettingsState?.playerBarEnhancement?.disablePerTrackColors
+        const allowedTrackColors = !this.lastSettingsState?.playerBarEnhancement?.disablePerTrackColors;
 
         this.window = new electron.BrowserWindow({
             width: (dimensions?.width ?? 380) * scaleFactor,

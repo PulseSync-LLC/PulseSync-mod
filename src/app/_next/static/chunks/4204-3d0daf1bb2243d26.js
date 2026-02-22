@@ -147,12 +147,12 @@
                         h = (0, v.KX)(l),
                         [b, A] = (0, a.useState)(!1),
                         C = (0, d.c)(async () => {
-                            (b || l.isLiked || (A(!0), null == m || m()), await h());
+                            b || l.isLiked || (A(!0), null == m || m()), await h();
                         }),
                         y = (0, f.Ftl)(),
                         k = (0, d.c)((t) => {
                             if ((t.stopPropagation(), _())) return void t.preventDefault();
-                            (c.openArtistTrailer(l.id), y(s.ky.Artist, l.id));
+                            c.openArtistTrailer(l.id), y(s.ky.Artist, l.id);
                         });
                     return (0, o.jsxs)('div', {
                         className: (0, i.$)(x().root, x().controls, r, { [x().controls_disabled]: !l.isAvailable }),
@@ -208,16 +208,16 @@
                         R = (0, v.SA)({ artist: r, callback: N }),
                         O = (0, v.SA)({ artist: r, callback: K }),
                         F = (0, d.c)((t) => {
-                            (null == E || E(), B({ to: s.QT.ArtistScreen }), R(t));
+                            null == E || E(), B({ to: s.QT.ArtistScreen }), R(t);
                         }),
                         z = (0, d.c)(() => {
                             S() || (T || P || (M(!0), null == L || L()), O(), w(!P));
                         }),
                         D = (0, d.c)((t) => {
-                            ((0, _.P)(t, p.$f.ripple), F(t));
+                            (0, _.P)(t, p.$f.ripple), F(t);
                         }),
                         U = (0, d.c)((t) => {
-                            (t.stopPropagation(), F(t));
+                            t.stopPropagation(), F(t);
                         }),
                         H = (0, a.useCallback)(
                             (t) =>
@@ -283,7 +283,7 @@
                 l = r(66268),
                 a = {
                     6699: (t, e, r) => {
-                        (Object.defineProperty(e, '__esModule', { value: !0 }), (e.useDebouncedToggle = void 0));
+                        Object.defineProperty(e, '__esModule', { value: !0 }), (e.useDebouncedToggle = void 0);
                         let o = r(352),
                             i = r(810);
                         e.useDebouncedToggle = (t) => {
@@ -293,16 +293,16 @@
                                 u = (0, i.useMemo)(
                                     () =>
                                         (0, o.throttle)(() => {
-                                            (s(!r),
+                                            s(!r),
                                                 a.current && window.clearTimeout(a.current),
                                                 (a.current = window.setTimeout(() => {
                                                     s(!!r);
-                                                }, e)));
+                                                }, e));
                                         }, l),
                                     [e, r, l],
                                 ),
                                 c = (0, i.useCallback)(() => {
-                                    (s(!!r), a.current && window.clearTimeout(a.current));
+                                    s(!!r), a.current && window.clearTimeout(a.current);
                                 }, [r]);
                             return (
                                 (0, i.useEffect)(
@@ -316,14 +316,14 @@
                         };
                     },
                     361: (t, e) => {
-                        (Object.defineProperty(e, '__esModule', { value: !0 }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }),
                             (e.getElementFromRefOrElement = void 0),
                             (e.getElementFromRefOrElement = (t) => {
                                 if (void 0 !== t) {
                                     if (null === t || t instanceof HTMLElement) return t;
                                     if (null === t.current || t.current instanceof HTMLElement) return t.current;
                                 }
-                            }));
+                            });
                     },
                     352: (t) => {
                         t.exports = i;
@@ -337,11 +337,11 @@
                 var e = n[t];
                 if (void 0 !== e) return e.exports;
                 var r = (n[t] = { exports: {} });
-                return (a[t](r, r.exports, s), r.exports);
+                return a[t](r, r.exports, s), r.exports;
             }
             var u = {};
-            ((() => {
-                (Object.defineProperty(u, '__esModule', { value: !0 }), (u.useScroll = void 0));
+            (() => {
+                Object.defineProperty(u, '__esModule', { value: !0 }), (u.useScroll = void 0);
                 let t = s(810),
                     e = s(361),
                     r = s(6699);
@@ -349,7 +349,7 @@
                     let { onScroll: i, listenIsScrolling: l, elementRef: a } = o,
                         { state: n, handleDebouncedToggle: s } = (0, r.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                         u = (0, t.useCallback)(() => {
-                            (l && s(), null == i || i());
+                            l && s(), null == i || i();
                         }, [l, s, i]);
                     return (
                         (0, t.useEffect)(() => {
@@ -357,13 +357,13 @@
                             if (null === t) return;
                             let r = null != t ? t : window,
                                 o = { capture: !0, passive: !0 };
-                            return (r.addEventListener('scroll', u, o), () => r.removeEventListener('scroll', u, o));
+                            return r.addEventListener('scroll', u, o), () => r.removeEventListener('scroll', u, o);
                         }, [a, u]),
                         n
                     );
                 };
             })(),
-                u.__esModule);
+                u.__esModule;
             var c = u.useScroll;
         },
         49618: (t, e, r) => {
@@ -390,11 +390,11 @@
                                     (o && (o += ' '), (o += e));
                             return o;
                         }
-                        (r.r(e), r.d(e, { clsx: () => o, default: () => i }));
+                        r.r(e), r.d(e, { clsx: () => o, default: () => i });
                         let i = o;
                     },
                     1920: (t, e, r) => {
-                        (r.r(e), r.d(e, { default: () => o }));
+                        r.r(e), r.d(e, { default: () => o });
                         let o = {
                             contentContainer: 'JjlbHZ4FaP9EAcR_1DxF',
                             contentContainer_block: 'iOlzvyUREgDkthkrx7Sf',
@@ -461,7 +461,7 @@
                         };
                     },
                     8903: (t, e, r) => {
-                        (r.r(e), r.d(e, { default: () => o }));
+                        r.r(e), r.d(e, { default: () => o });
                         let o = {
                             root: 'BnN6sQIg6NahNBun6fkP',
                             fade: 'MM8MKXCw0gMkVvq7C1YS',
@@ -479,13 +479,13 @@
                             else o = e;
                             return { $$typeof: r, type: t, key: i, ref: void 0 !== (e = o.ref) ? e : null, props: o };
                         }
-                        ((e.Fragment = Symbol.for('react.fragment')), (e.jsx = o), (e.jsxs = o));
+                        (e.Fragment = Symbol.for('react.fragment')), (e.jsx = o), (e.jsxs = o);
                     },
                     1082: (t, e, r) => {
                         t.exports = r(7327);
                     },
                     4601: (t, e, r) => {
-                        (Object.defineProperty(e, '__esModule', { value: !0 }), (e.useToggle = void 0));
+                        Object.defineProperty(e, '__esModule', { value: !0 }), (e.useToggle = void 0);
                         let o = r(810);
                         e.useToggle = (t) => {
                             let [e, r] = (0, o.useState)(t);
@@ -505,7 +505,7 @@
                         };
                     },
                     666: (t, e, r) => {
-                        (Object.defineProperty(e, '__esModule', { value: !0 }), (e.useTruncate = void 0));
+                        Object.defineProperty(e, '__esModule', { value: !0 }), (e.useTruncate = void 0);
                         let o = r(352),
                             i = r(810),
                             l = r(4601);
@@ -540,7 +540,7 @@
                         };
                     },
                     8796: (t, e) => {
-                        (Object.defineProperty(e, '__esModule', { value: !0 }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }),
                             (e.createRipple = void 0),
                             (e.createRipple = function (t, e, r) {
                                 let o = null != r ? r : t.currentTarget,
@@ -550,27 +550,27 @@
                                     n = o.getBoundingClientRect(),
                                     s = 0 === t.clientX ? Math.round(n.width / 2) : t.clientX - n.left,
                                     u = 0 === t.clientY ? Math.round(n.height / 2) : t.clientY - n.top;
-                                ((i.style.width = ''.concat(l, 'px')),
+                                (i.style.width = ''.concat(l, 'px')),
                                     (i.style.height = ''.concat(l, 'px')),
                                     (i.style.left = 0 === t.clientX ? '0px' : ''.concat(s - a, 'px')),
                                     (i.style.top = ''.concat(u - a, 'px')),
-                                    i.classList.add(e));
+                                    i.classList.add(e);
                                 let c = o.getElementsByClassName(e)[0];
-                                (c && c.remove(), o.insertBefore(i, o.firstChild));
-                            }));
+                                c && c.remove(), o.insertBefore(i, o.firstChild);
+                            });
                     },
                     361: (t, e) => {
-                        (Object.defineProperty(e, '__esModule', { value: !0 }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }),
                             (e.getElementFromRefOrElement = void 0),
                             (e.getElementFromRefOrElement = (t) => {
                                 if (void 0 !== t) {
                                     if (null === t || t instanceof HTMLElement) return t;
                                     if (null === t.current || t.current instanceof HTMLElement) return t.current;
                                 }
-                            }));
+                            });
                     },
                     8216: (t, e, r) => {
-                        (Object.defineProperty(e, '__esModule', { value: !0 }), (e.getElementFromRefOrElement = e.createRipple = void 0));
+                        Object.defineProperty(e, '__esModule', { value: !0 }), (e.getElementFromRefOrElement = e.createRipple = void 0);
                         var o = r(8796);
                         Object.defineProperty(e, 'createRipple', {
                             enumerable: !0,
@@ -592,7 +592,7 @@
                             function (t) {
                                 return t && t.__esModule ? t : { default: t };
                             };
-                        (Object.defineProperty(e, '__esModule', { value: !0 }), (e.Button = void 0));
+                        Object.defineProperty(e, '__esModule', { value: !0 }), (e.Button = void 0);
                         let i = r(1082),
                             l = r(810),
                             a = r(5881),
@@ -694,7 +694,7 @@
                             function (t) {
                                 return t && t.__esModule ? t : { default: t };
                             };
-                        (Object.defineProperty(e, '__esModule', { value: !0 }), (e.CollapsableText = void 0));
+                        Object.defineProperty(e, '__esModule', { value: !0 }), (e.CollapsableText = void 0);
                         let i = r(1082),
                             l = r(5881),
                             a = r(810),
@@ -765,19 +765,19 @@
                 var e = n[t];
                 if (void 0 !== e) return e.exports;
                 var r = (n[t] = { exports: {} });
-                return (a[t].call(r.exports, r, r.exports, s), r.exports);
+                return a[t].call(r.exports, r, r.exports, s), r.exports;
             }
-            ((s.d = (t, e) => {
+            (s.d = (t, e) => {
                 for (var r in e) s.o(e, r) && !s.o(t, r) && Object.defineProperty(t, r, { enumerable: !0, get: e[r] });
             }),
                 (s.o = (t, e) => Object.prototype.hasOwnProperty.call(t, e)),
                 (s.r = (t) => {
-                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(t, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(t, '__esModule', { value: !0 }));
-                }));
+                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(t, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(t, '__esModule', { value: !0 });
+                });
             var u = {};
             (() => {
-                (Object.defineProperty(u, 'X', { value: !0 }), (u.f = void 0));
+                Object.defineProperty(u, 'X', { value: !0 }), (u.f = void 0);
                 var t = s(217);
                 Object.defineProperty(u, 'f', {
                     enumerable: !0,
@@ -822,7 +822,7 @@
                     n = e.slice(0, 1),
                     u = e.length - 2 + 1,
                     c = (0, b.c)((t) => () => {
-                        (l.close(), i.openImages({ images: e, initialSlideIndex: t }));
+                        l.close(), i.openImages({ images: e, initialSlideIndex: t });
                     });
                 return (0, o.jsxs)('div', {
                     className: y().root,
@@ -971,7 +971,7 @@
         },
         64143: (t, e, r) => {
             'use strict';
-            (r.d(e, { hO: () => _, jr: () => m, jp: () => v, QZ: () => i }), r(57323));
+            r.d(e, { hO: () => _, jr: () => m, jp: () => v, QZ: () => i }), r(57323);
             var o = r(66268);
             let i = (t, e, r) => {
                 let i = null != r && r;
@@ -1017,10 +1017,10 @@
                             e = n ? Number(n.offsetTop) - t : t;
                         e < 0 && (e = 0);
                         let o = (t) => {
-                            (M(t > e),
+                            M(t > e),
                                 m && w(t > 30),
                                 (null == p ? void 0 : p.current) && y(d({ element: null == p ? void 0 : p.current, scrollTop: t, isMobile: S })),
-                                (null == h ? void 0 : h.current) && j(d({ element: null == h ? void 0 : h.current, scrollTop: t, isMobile: S })));
+                                (null == h ? void 0 : h.current) && j(d({ element: null == h ? void 0 : h.current, scrollTop: t, isMobile: S }));
                         };
                         S ? o(window.scrollY) : r && o(r.scrollTop);
                     }, [_, n, S, m, p, h, r]);
@@ -1055,7 +1055,7 @@
                         s = (0, o.useRef)(null);
                     return (
                         (0, o.useEffect)(() => {
-                            ((null == s ? void 0 : s.current) && a(s), r && n(r));
+                            (null == s ? void 0 : s.current) && a(s), r && n(r);
                         }, [s, r, a, n]),
                         (0, o.useEffect)(
                             () => () => {
@@ -1072,7 +1072,7 @@
                         s = (0, o.useRef)(null);
                     return (
                         (0, o.useEffect)(() => {
-                            ((null == s ? void 0 : s.current) && a(s), r && n(r));
+                            (null == s ? void 0 : s.current) && a(s), r && n(r);
                         }, [s, r, a, n]),
                         (0, o.useEffect)(
                             () => () => {
@@ -1087,10 +1087,10 @@
         64802: (t, e, r) => {
             'use strict';
             var o;
-            (r.d(e, { U: () => o }),
+            r.d(e, { U: () => o }),
                 (function (t) {
-                    ((t.UNKNOWN = 'unknown'), (t.MALE = 'male'), (t.FEMALE = 'female'));
-                })(o || (o = {})));
+                    (t.UNKNOWN = 'unknown'), (t.MALE = 'male'), (t.FEMALE = 'female');
+                })(o || (o = {}));
         },
         68040: (t) => {
             t.exports = {
@@ -1120,10 +1120,10 @@
         75729: (t, e, r) => {
             'use strict';
             var o;
-            (r.d(e, { g: () => o }),
+            r.d(e, { g: () => o }),
                 (function (t) {
-                    ((t.RATING = 'rating'), (t.YEAR = 'year'));
-                })(o || (o = {})));
+                    (t.RATING = 'rating'), (t.YEAR = 'year');
+                })(o || (o = {}));
         },
         84324: (t) => {
             t.exports = {
@@ -1181,7 +1181,7 @@
                     V = (0, h.PT7)(),
                     tt = (0, d.c)((t) => {
                         if ((t.stopPropagation(), V())) return void t.preventDefault();
-                        (M.openArtistTrailer(e.id), $(s.ky.Artist, e.id));
+                        M.openArtistTrailer(e.id), $(s.ky.Artist, e.id);
                     }),
                     te = (0, a.useMemo)(() => {
                         let t = E({ id: 'entity-names.artist-name' }, { artistName: X }),
@@ -1194,19 +1194,19 @@
                     ti = (0, g.SA)({ artist: e, callback: J }),
                     tl = (0, g.SA)({ artist: e, callback: to }),
                     ta = (0, d.c)((t) => {
-                        (null == F || F(), D({ to: s.QT.ArtistScreen }), ti(t));
+                        null == F || F(), D({ to: s.QT.ArtistScreen }), ti(t);
                     }),
                     tn = (0, d.c)(() => {
                         V() || (L || tr || (B(!0), null == z || z()), tl(), U(!tr));
                     }),
                     ts = (0, d.c)(() => {
-                        (P || Y || (I(!0), null == O || O()), H());
+                        P || Y || (I(!0), null == O || O()), H();
                     }),
                     tu = (0, d.c)((t) => {
-                        (t.preventDefault(), t.stopPropagation());
+                        t.preventDefault(), t.stopPropagation();
                     }),
                     tc = (0, d.c)((t) => {
-                        (R(t), Q(t));
+                        R(t), Q(t);
                     }),
                     td = (0, a.useMemo)(
                         () =>
@@ -1396,7 +1396,7 @@
                 p = r(66268),
                 g = r(75729),
                 h = r(79169);
-            ((0, p.cache)(async function (t, e) {
+            (0, p.cache)(async function (t, e) {
                 let r,
                     o = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : { artistId: t, page: 0, pageSize: m, sort: { sortBy: g.g.YEAR } };
                 (0, h.LLJ)(t) || (0, f.notFound)();
@@ -1427,7 +1427,7 @@
                     return (0, h.tfF)(t, () => ({ artist: void 0, albums: void 0, ...(0, h.Bj3)() }));
                 }
                 let { artist: i } = r;
-                return (((null == i ? void 0 : i.error) === 'not-found' || (null == i ? void 0 : i.artist.error) === 'not-found') && (0, f.notFound)(), r);
+                return ((null == i ? void 0 : i.error) === 'not-found' || (null == i ? void 0 : i.artist.error) === 'not-found') && (0, f.notFound)(), r;
             }),
                 (0, p.cache)(async function (t) {
                     let e,
@@ -1449,7 +1449,7 @@
                         return (0, h.tfF)(t, () => ({ artist: void 0, clips: void 0, ...(0, h.Bj3)() }));
                     }
                     let { artist: o } = e;
-                    return (((null == o ? void 0 : o.error) === 'not-found' || (null == o ? void 0 : o.artist.error) === 'not-found') && (0, f.notFound)(), e);
+                    return ((null == o ? void 0 : o.error) === 'not-found' || (null == o ? void 0 : o.artist.error) === 'not-found') && (0, f.notFound)(), e;
                 }),
                 (0, p.cache)(async (t) => {
                     let e;
@@ -1471,7 +1471,7 @@
                         return (0, h.tfF)(t, () => ({ artist: void 0, concerts: void 0, ...(0, h.Bj3)() }));
                     }
                     let { artist: r } = e;
-                    return (((null == r ? void 0 : r.error) === 'not-found' || (null == r ? void 0 : r.artist.error) === 'not-found') && (0, f.notFound)(), e);
+                    return ((null == r ? void 0 : r.error) === 'not-found' || (null == r ? void 0 : r.artist.error) === 'not-found') && (0, f.notFound)(), e;
                 }),
                 (0, p.cache)(async (t) => {
                     let e;
@@ -1493,7 +1493,7 @@
                         return (0, h.tfF)(t, () => ({ artist: void 0, familiar: void 0, ...(0, h.Bj3)() }));
                     }
                     let { artist: r } = e;
-                    return (((null == r ? void 0 : r.error) === 'not-found' || (null == r ? void 0 : r.artist.error) === 'not-found') && (0, f.notFound)(), e);
+                    return ((null == r ? void 0 : r.error) === 'not-found' || (null == r ? void 0 : r.artist.error) === 'not-found') && (0, f.notFound)(), e;
                 }),
                 (0, p.cache)(async (t) => {
                     let e;
@@ -1520,7 +1520,7 @@
                         return (0, h.tfF)(t, () => ({ artist: void 0, ...(0, h.Bj3)() }));
                     }
                     let { artist: r } = e;
-                    return (((null == r ? void 0 : r.error) === 'not-found' || (null == r ? void 0 : r.artist.error) === 'not-found') && (0, f.notFound)(), e);
+                    return ((null == r ? void 0 : r.error) === 'not-found' || (null == r ? void 0 : r.artist.error) === 'not-found') && (0, f.notFound)(), e;
                 }),
                 (0, p.cache)(async (t) => {
                     let e;
@@ -1542,8 +1542,8 @@
                         return (0, h.tfF)(t, () => ({ artist: void 0, similarArtists: void 0, ...(0, h.Bj3)() }));
                     }
                     let { artist: r } = e;
-                    return (((null == r ? void 0 : r.error) === 'not-found' || (null == r ? void 0 : r.artist.error) === 'not-found') && (0, f.notFound)(), e);
-                }));
+                    return ((null == r ? void 0 : r.error) === 'not-found' || (null == r ? void 0 : r.artist.error) === 'not-found') && (0, f.notFound)(), e;
+                });
             var x = r(13023),
                 b = r(59615);
             let A = o.gK
@@ -1578,7 +1578,7 @@
                                         var a, n, s, u, c;
                                         t.loadingState = h.GuX.PENDING;
                                         let i = yield r.getAboutArtist({ artistId: e });
-                                        ((t.artist = (0, l.as)({ artist: i.artist })),
+                                        (t.artist = (0, l.as)({ artist: i.artist })),
                                             (t.description = null != (c = i.description) ? c : null),
                                             (t.artistType = i.artistType === x.o.COMPOSER ? x.o.COMPOSER : x.o.ARTIST),
                                             i.stats &&
@@ -1586,28 +1586,28 @@
                                                 (t.lastMonthListeners = i.stats.lastMonthListeners),
                                             i.stats &&
                                                 Number.isFinite(null == (n = i.stats) ? void 0 : n.lastMonthListenersDelta) &&
-                                                (t.lastMonthListenersDelta = i.stats.lastMonthListenersDelta));
+                                                (t.lastMonthListenersDelta = i.stats.lastMonthListenersDelta);
                                         let d = null == (s = i.covers) ? void 0 : s.map((t) => t.uri).filter((t) => !!t);
-                                        (d && (t.covers = (0, o.wg)(d)),
+                                        d && (t.covers = (0, o.wg)(d)),
                                             (t.links = (0, o.wg)(null == (u = i.links) ? void 0 : u.map(l.DZ))),
-                                            t.loadingState !== h.GuX.IDLE && (t.loadingState = h.GuX.RESOLVE));
+                                            t.loadingState !== h.GuX.IDLE && (t.loadingState = h.GuX.RESOLVE);
                                     } catch (e) {
-                                        (i.error(e), t.loadingState !== h.GuX.IDLE && (t.loadingState = h.GuX.REJECT));
+                                        i.error(e), t.loadingState !== h.GuX.IDLE && (t.loadingState = h.GuX.REJECT);
                                     }
                             }),
                             close() {
-                                (t.modal.close(), e.reset());
+                                t.modal.close(), e.reset();
                             },
                             onOpenChange(r) {
-                                (t.modal.onOpenChange(r), r || e.reset());
+                                t.modal.onOpenChange(r), r || e.reset();
                             },
                             reset() {
-                                ((t.loadingState = h.GuX.IDLE),
+                                (t.loadingState = h.GuX.IDLE),
                                     (t.description = null),
                                     (t.lastMonthListeners = null),
                                     (t.lastMonthListenersDelta = 0),
                                     (t.artistType = null),
-                                    t.destroyItems([t.artist, t.covers, t.links]));
+                                    t.destroyItems([t.artist, t.covers, t.links]);
                             },
                         };
                         return e;

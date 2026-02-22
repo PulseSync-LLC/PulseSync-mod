@@ -10,7 +10,7 @@ const isFirstInstance = electron_1.app.requestSingleInstanceLock();
 const checkForSingleInstance = () => {
     if (isFirstInstance) {
         electron_1.app.on('second-instance', (event, commandLine) => {
-            const mainWindow = electron_1.BrowserWindow.getAllWindows().find(w=>w.isMainWindow);
+            const mainWindow = electron_1.BrowserWindow.getAllWindows().find((w) => w.isMainWindow);
             if (mainWindow) {
                 if (mainWindow.isMinimized()) {
                     mainWindow.restore();

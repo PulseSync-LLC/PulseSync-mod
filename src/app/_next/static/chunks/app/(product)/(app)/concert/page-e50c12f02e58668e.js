@@ -9,7 +9,7 @@
                 a = r(66268),
                 l = {
                     6699: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0);
                         let o = r(352),
                             n = r(810);
                         t.useDebouncedToggle = (e) => {
@@ -19,16 +19,16 @@
                                 u = (0, n.useMemo)(
                                     () =>
                                         (0, o.throttle)(() => {
-                                            (i(!r),
+                                            i(!r),
                                                 l.current && window.clearTimeout(l.current),
                                                 (l.current = window.setTimeout(() => {
                                                     i(!!r);
-                                                }, t)));
+                                                }, t));
                                         }, a),
                                     [t, r, a],
                                 ),
                                 d = (0, n.useCallback)(() => {
-                                    (i(!!r), l.current && window.clearTimeout(l.current));
+                                    i(!!r), l.current && window.clearTimeout(l.current);
                                 }, [r]);
                             return (
                                 (0, n.useEffect)(
@@ -42,7 +42,7 @@
                         };
                     },
                     2767: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0);
                         let o = r(810);
                         t.useForceUpdateRef = () => {
                             let [e, t] = (0, o.useState)(null);
@@ -55,7 +55,7 @@
                         };
                     },
                     2067: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0);
                         let o = r(810),
                             n = r(361),
                             a = r(6699);
@@ -63,7 +63,7 @@
                             let { onScroll: t, listenIsScrolling: r, elementRef: l } = e,
                                 { state: s, handleDebouncedToggle: i } = (0, a.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                                 u = (0, o.useCallback)(() => {
-                                    (r && i(), null == t || t());
+                                    r && i(), null == t || t();
                                 }, [r, i, t]);
                             return (
                                 (0, o.useEffect)(() => {
@@ -71,21 +71,21 @@
                                     if (null === e) return;
                                     let t = null != e ? e : window,
                                         r = { capture: !0, passive: !0 };
-                                    return (t.addEventListener('scroll', u, r), () => t.removeEventListener('scroll', u, r));
+                                    return t.addEventListener('scroll', u, r), () => t.removeEventListener('scroll', u, r);
                                 }, [l, u]),
                                 s
                             );
                         };
                     },
                     361: (e, t) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                        Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            }));
+                            });
                     },
                     352: (e) => {
                         e.exports = n;
@@ -99,11 +99,11 @@
                 var t = s[e];
                 if (void 0 !== t) return t.exports;
                 var r = (s[e] = { exports: {} });
-                return (l[e](r, r.exports, i), r.exports);
+                return l[e](r, r.exports, i), r.exports;
             }
             var u = {};
-            ((() => {
-                (Object.defineProperty(u, '__esModule', { value: !0 }), (u.useElementOffsetY = void 0));
+            (() => {
+                Object.defineProperty(u, '__esModule', { value: !0 }), (u.useElementOffsetY = void 0);
                 let e = i(810),
                     t = i(2067),
                     r = i(2767);
@@ -114,10 +114,10 @@
                             let e = null == n ? void 0 : n.getBoundingClientRect();
                             e && s(e.y);
                         }, [n]);
-                    return ((0, e.useLayoutEffect)(i), (0, t.useScroll)({ onScroll: i, elementRef: o }), { forceUpdateRefCallback: a, offsetY: l });
+                    return (0, e.useLayoutEffect)(i), (0, t.useScroll)({ onScroll: i, elementRef: o }), { forceUpdateRefCallback: a, offsetY: l };
                 };
             })(),
-                u.__esModule);
+                u.__esModule;
             var d = u.useElementOffsetY;
         },
         2117: (e, t, r) => {
@@ -128,19 +128,19 @@
                 a = r(7144),
                 l = r(66268),
                 s = r(73827);
-            (!(function (e) {
-                ((e.formatDate = 'FormattedDate'),
+            !(function (e) {
+                (e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName'));
+                    (e.formatDisplayName = 'FormattedDisplayName');
             })(o || (o = {})),
                 (function (e) {
-                    ((e.formatDate = 'FormattedDateParts'),
+                    (e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts'));
-                })(n || (n = {})));
+                        (e.formatList = 'FormattedListParts');
+                })(n || (n = {}));
             var i = function (e) {
                 var t = (0, s.A)(),
                     r = e.value,
@@ -157,7 +157,7 @@
                         i = 'string' == typeof o ? new Date(o || 0) : o;
                     return n('formatDate' === e ? r.formatDateToParts(i, l) : r.formatTimeToParts(i, l));
                 };
-                return ((t.displayName = n[e]), t);
+                return (t.displayName = n[e]), t;
             }
             function d(e) {
                 var t = function (t) {
@@ -170,21 +170,21 @@
                     var d = r.textComponent || l.Fragment;
                     return l.createElement(d, null, u);
                 };
-                return ((t.displayName = o[e]), t);
+                return (t.displayName = o[e]), t;
             }
-            ((i.displayName = 'FormattedNumberParts'), (i.displayName = 'FormattedNumberParts'));
+            (i.displayName = 'FormattedNumberParts'), (i.displayName = 'FormattedNumberParts');
             var c = d('formatDate');
-            (d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), u('formatDate'), u('formatTime'));
+            d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), u('formatDate'), u('formatTime');
         },
         5884: (e, t, r) => {
             'use strict';
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'default', {
                     enumerable: !0,
                     get: function () {
                         return n;
                     },
-                }));
+                });
             let o = r(473)._(r(16092));
             function n(e, t) {
                 var r;
@@ -199,13 +199,13 @@
         },
         16092: (e, t, r) => {
             'use strict';
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'default', {
                     enumerable: !0,
                     get: function () {
                         return i;
                     },
-                }));
+                });
             let o = r(33008),
                 n = r(66268),
                 a = r(52283);
@@ -227,7 +227,7 @@
                                 : (0, o.jsx)(a.BailoutToCSR, { reason: 'next/dynamic', children: (0, o.jsx)(r, { ...e }) });
                         return (0, o.jsx)(u, { ...(s ? { fallback: l } : {}), children: d });
                     }
-                    return ((u.displayName = 'LoadableComponent'), u);
+                    return (u.displayName = 'LoadableComponent'), u;
                 };
         },
         18998: (e) => {
@@ -349,14 +349,14 @@
                 let { reason: t, children: r } = e;
                 return r;
             }
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'BailoutToCSR', {
                     enumerable: !0,
                     get: function () {
                         return o;
                     },
                 }),
-                r(32975));
+                r(32975);
         },
         63661: (e, t, r) => {
             'use strict';
@@ -406,20 +406,20 @@
                             try {
                                 e.loadingState = u.GuX.PENDING;
                                 let { concert: t, minPrice: a, covers: l, description: d, leadArtistId: c, artists: m } = yield n.getInfo({ concertId: r });
-                                ((e.meta = (0, i.ho)(t, a)),
+                                (e.meta = (0, i.ho)(t, a)),
                                     (e.covers = (0, o.wg)(null == l ? void 0 : l.map((e) => (0, u.pX4)(e)))),
                                     (e.description = d ? (0, o.wg)(d) : null),
                                     (e.leadArtistId = c ? (0, o.wg)(c) : null),
                                     (e.artists = (0, o.wg)(null == m ? void 0 : m.map((e) => (0, s.dM)(e)))),
-                                    (e.loadingState = u.GuX.RESOLVE));
+                                    (e.loadingState = u.GuX.RESOLVE);
                             } catch (t) {
-                                (l.error(t),
+                                l.error(t),
                                     t instanceof a.GX && (t.statusCode === a.X1.NOT_FOUND || t.statusCode === a.X1.BAD_REQUEST) && (e.errorStatusCode = a.X1.NOT_FOUND),
-                                    (e.loadingState = u.GuX.REJECT));
+                                    (e.loadingState = u.GuX.REJECT);
                             }
                     }),
                     reset() {
-                        ((e.loadingState = u.GuX.IDLE), e.landing.reset(), (e.leadArtistId = null), e.destroyItems([e.covers, e.description, e.artists]));
+                        (e.loadingState = u.GuX.IDLE), e.landing.reset(), (e.leadArtistId = null), e.destroyItems([e.covers, e.description, e.artists]);
                     },
                 }));
             var m = r(33008),
@@ -493,7 +493,7 @@
                             i.coversUri.length > 0 && d.openImages({ images: i.coversUri, sizeImage: 800, withAspectRatio: !1 });
                         }),
                         R = s.checkExperiment(u.zal.WebNextConcertPage, 'on');
-                    ((0, u.ACS)(),
+                    (0, u.ACS)(),
                         (0, g.useEffect)(
                             () => () => {
                                 i.reset();
@@ -509,7 +509,7 @@
                                 }
                             );
                         }, [c]),
-                        (0, u.Jzs)(i.isResolved));
+                        (0, u.Jzs)(i.isResolved);
                     let K = [];
                     if (
                         (i.isNeededToLoad && K.push(i.getInfo({ concertId: n })),
@@ -598,7 +598,7 @@
                 let { moduleIds: t } = e;
                 return null;
             }
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'PreloadChunks', {
                     enumerable: !0,
                     get: function () {
@@ -608,22 +608,22 @@
                 r(33008),
                 r(17229),
                 r(6077),
-                r(74964));
+                r(74964);
         },
         99019: (e, t, r) => {
             'use strict';
-            (r.r(t), r.d(t, { default: () => l }));
+            r.r(t), r.d(t, { default: () => l });
             var o = r(33008),
                 n = r(17846),
                 a = r(63661);
             let l = () => {
                 let e = (0, n.useSearchParams)().get('concertId');
-                return (e || (0, n.notFound)(), (0, o.jsx)(a.A6, { concertId: e }));
+                return e || (0, n.notFound)(), (0, o.jsx)(a.A6, { concertId: e });
             };
         },
     },
     (e) => {
-        (e.O(
+        e.O(
             0,
             [
                 7098, 8282, 9712, 5271, 7309, 8712, 8004, 9284, 7509, 1709, 4397, 9775, 9323, 952, 1311, 7764, 6706, 2089, 2140, 996, 4236, 6728, 3949, 9169, 8740, 9615,
@@ -631,6 +631,6 @@
             ],
             () => e((e.s = 26561)),
         ),
-            (_N_E = e.O()));
+            (_N_E = e.O());
     },
 ]);

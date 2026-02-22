@@ -51,7 +51,7 @@
                             e.hasError = !0;
                         },
                         reset() {
-                            ((e.type = a.h.EMPTY), (e.noAds = !1), (e.isShowBanner = !0), (e.hasError = !1));
+                            (e.type = a.h.EMPTY), (e.noAds = !1), (e.isShowBanner = !0), (e.hasError = !1);
                         },
                     })),
                 l = r.gK.model('BaseModal', { isOpened: r.gK.optional(r.gK.boolean, !1) }).actions((e) => ({
@@ -166,15 +166,15 @@
                                 try {
                                     e.loadingState = L.G.PENDING;
                                     let s = t;
-                                    (s || (s = yield i.experimentsDetails()),
+                                    s || (s = yield i.experimentsDetails()),
                                         e.experiments.clear(),
                                         Object.entries(s).forEach((t) => {
                                             let [i, s] = t;
                                             e.experiments.set(i, s);
                                         }),
-                                        (e.loadingState = L.G.RESOLVE));
+                                        (e.loadingState = L.G.RESOLVE);
                                 } catch (t) {
-                                    (s.error(t), (e.loadingState = L.G.REJECT));
+                                    s.error(t), (e.loadingState = L.G.REJECT);
                                 } finally {
                                     var a;
                                     Object.entries(null != (a = e.getOverwrittenExperiments()) ? a : {}).forEach((t) => {
@@ -243,14 +243,14 @@
                 D = i(96355);
             let C = r.gK.model('ModelDestroyManager').actions(() => ({
                     destroyItems(e) {
-                        (e.forEach((e) => {
+                        e.forEach((e) => {
                             e && (0, r.Yo)(e);
                         }),
                             queueMicrotask(() => {
                                 e.forEach((e) => {
                                     e && (0, r.zr)(e);
                                 });
-                            }));
+                            });
                     },
                 })),
                 x = r.gK.model('Pager', { page: r.gK.number, perPage: r.gK.number, total: r.gK.number });
@@ -307,17 +307,17 @@
                                             (null != (l = null == (a = e.pager) ? void 0 : a.perPage) ? l : 1),
                                     ),
                                 );
-                                (t.ensurePageStatesInitialized(o), e.pageStates && (e.pageStates[i] = s), s === L.G.REJECT && t.addLastRejectedPageToList(i));
+                                t.ensurePageStatesInitialized(o), e.pageStates && (e.pageStates[i] = s), s === L.G.REJECT && t.addLastRejectedPageToList(i);
                             },
                             setItems: (i, s) => {
                                 var a;
                                 let { page: n, pager: l, responseStatus: o } = s;
                                 if (((e.requestsCount = (null != (a = e.requestsCount) ? a : 0) + 1), o === P.F.ERROR || !i || !l))
                                     return void t.setPageState(n, L.G.REJECT);
-                                (e.pager || (e.pager = { page: l.page, perPage: l.perPage, total: l.total }),
+                                e.pager || (e.pager = { page: l.page, perPage: l.perPage, total: l.total }),
                                     t.setPageState(n, L.G.RESOLVE),
                                     e.items || (e.items = (0, r.wg)(Array.from({ length: e.pager.total }, () => null))),
-                                    e.items && (0, D.I)({ items: e.items, mappedRawItems: i, page: n, pageSize: e.pager.perPage }));
+                                    e.items && (0, D.I)({ items: e.items, mappedRawItems: i, page: n, pageSize: e.pager.perPage });
                             },
                             resetRejectedPagesState() {
                                 var t, i, s;
@@ -343,10 +343,10 @@
                                 }
                             },
                             reset() {
-                                ((e.initialRequestLoadingState = L.G.IDLE),
+                                (e.initialRequestLoadingState = L.G.IDLE),
                                     (e.requestsCount = 0),
                                     (e.lastRejectedPagesList = (0, r.wg)([])),
-                                    e.destroyItems([e.items, e.pager, e.pageStates]));
+                                    e.destroyItems([e.items, e.pager, e.pageStates]);
                             },
                         };
                         return t;
@@ -356,7 +356,7 @@
             let w = (e) => (e ? { revision: e } : { allValuesRequired: !0 });
             var M = i(59549),
                 q = (function (e) {
-                    return ((e.LIKED = '1'), (e.DISLIKED = '0'), e);
+                    return (e.LIKED = '1'), (e.DISLIKED = '0'), e;
                 })(q || {});
             let G = [M.s.LIKED_ALBUMS, M.s.LIKED_ARTISTS, M.s.LIKED_PLAYLISTS, M.s.LIKED_TRACKS, M.s.LIKED_CLIPS],
                 V = r.gK.optional(r.gK.map(r.gK.enumeration(Object.values(q))), {}),
@@ -381,20 +381,20 @@
                                     try {
                                         e.loadingState = L.G.PENDING;
                                         let s = {};
-                                        (i.includes(M.s.LIKED_ALBUMS) && (s.likedAlbums = w(e.albums.revision)),
+                                        i.includes(M.s.LIKED_ALBUMS) && (s.likedAlbums = w(e.albums.revision)),
                                             i.includes(M.s.LIKED_ARTISTS) && (s.likedArtists = w(e.artists.revision)),
                                             i.includes(M.s.LIKED_TRACKS) && (s.likedTracks = w(e.tracks.revision)),
                                             i.includes(M.s.LIKED_CLIPS) && (s.likedClips = w(e.clips.revision)),
-                                            i.includes(M.s.LIKED_PLAYLISTS) && (s.likedPlaylists = {}));
+                                            i.includes(M.s.LIKED_PLAYLISTS) && (s.likedPlaylists = {});
                                         let r = yield a.sync(s);
-                                        (t.setAlbums(r.values.likedAlbums),
+                                        t.setAlbums(r.values.likedAlbums),
                                             t.setArtists(r.values.likedArtists),
                                             t.setPlaylists(r.values.likedPlaylists),
                                             t.setTracks(r.values.likedTracks),
                                             t.setClips(r.values.likedClips),
-                                            (e.loadingState = L.G.RESOLVE));
+                                            (e.loadingState = L.G.RESOLVE);
                                     } catch (t) {
-                                        (s.error(t), (e.loadingState = L.G.REJECT));
+                                        s.error(t), (e.loadingState = L.G.REJECT);
                                     }
                             }),
                             setArtists: (i) => {
@@ -447,19 +447,19 @@
                                     }));
                             },
                             clearArtists: () => {
-                                ((e.artists.revision = null), e.artists.items.clear());
+                                (e.artists.revision = null), e.artists.items.clear();
                             },
                             clearAlbums: () => {
-                                ((e.albums.revision = null), e.albums.items.clear());
+                                (e.albums.revision = null), e.albums.items.clear();
                             },
                             clearPlaylists: () => {
-                                ((e.playlists.revision = null), e.playlists.items.clear());
+                                (e.playlists.revision = null), e.playlists.items.clear();
                             },
                             clearTracks: () => {
-                                ((e.tracks.revision = null), e.tracks.items.clear());
+                                (e.tracks.revision = null), e.tracks.items.clear();
                             },
                             clearClips: () => {
-                                ((e.clips.revision = null), e.clips.items.clear());
+                                (e.clips.revision = null), e.clips.items.clear();
                             },
                             toggleTrackLike: (0, r.L3)(function* (i) {
                                 let { usersResource: s, modelActionsLogger: a } = (0, r._$)(e),
@@ -476,7 +476,7 @@
                                         r
                                     );
                                 } catch (t) {
-                                    return (l ? e.tracks.items.set(n, l) : e.tracks.items.delete(n), a.error(t), _.f.ERROR);
+                                    return l ? e.tracks.items.set(n, l) : e.tracks.items.delete(n), a.error(t), _.f.ERROR;
                                 }
                             }),
                             toggleTrackDislike: (0, r.L3)(function* (i) {
@@ -494,7 +494,7 @@
                                         r
                                     );
                                 } catch (t) {
-                                    return (l ? e.tracks.items.set(n, l) : e.tracks.items.delete(n), a.error(t), _.f.ERROR);
+                                    return l ? e.tracks.items.set(n, l) : e.tracks.items.delete(n), a.error(t), _.f.ERROR;
                                 }
                             }),
                             toggleArtistLike: (0, r.L3)(function* (i) {
@@ -511,7 +511,7 @@
                                         r
                                     );
                                 } catch (t) {
-                                    return (l ? e.artists.items.set(n, l) : e.artists.items.delete(n), a.error(t), _.f.ERROR);
+                                    return l ? e.artists.items.set(n, l) : e.artists.items.delete(n), a.error(t), _.f.ERROR;
                                 }
                             }),
                             toggleArtistDislike: (0, r.L3)(function* (i) {
@@ -528,7 +528,7 @@
                                         r
                                     );
                                 } catch (t) {
-                                    return (l ? e.artists.items.set(n, l) : e.artists.items.delete(n), a.error(t), _.f.ERROR);
+                                    return l ? e.artists.items.set(n, l) : e.artists.items.delete(n), a.error(t), _.f.ERROR;
                                 }
                             }),
                             toggleAlbumLike: (0, r.L3)(function* (i) {
@@ -545,7 +545,7 @@
                                         r
                                     );
                                 } catch (t) {
-                                    return (l ? e.albums.items.set(n, l) : e.albums.items.delete(n), a.error(t), _.f.ERROR);
+                                    return l ? e.albums.items.set(n, l) : e.albums.items.delete(n), a.error(t), _.f.ERROR;
                                 }
                             }),
                             togglePlaylistLike: (0, r.L3)(function* (i) {
@@ -562,7 +562,7 @@
                                         r
                                     );
                                 } catch (t) {
-                                    return (l ? e.playlists.items.set(n, l) : e.playlists.items.delete(n), a.error(t), _.f.ERROR);
+                                    return l ? e.playlists.items.set(n, l) : e.playlists.items.delete(n), a.error(t), _.f.ERROR;
                                 }
                             }),
                             toggleClipLike: (0, r.L3)(function* (i) {
@@ -578,7 +578,7 @@
                                         _.f.OK
                                     );
                                 } catch (t) {
-                                    return (l ? e.clips.items.set(n, l) : e.clips.items.delete(n), a.error(t), _.f.ERROR);
+                                    return l ? e.clips.items.set(n, l) : e.clips.items.delete(n), a.error(t), _.f.ERROR;
                                 }
                             }),
                         };
@@ -718,7 +718,7 @@
                                         ...i,
                                         customTexts: Object.entries(t).reduce((e, t) => {
                                             let [i, s] = t;
-                                            return ((e[(0, Y.A)(i)] = s), e);
+                                            return (e[(0, Y.A)(i)] = s), e;
                                         }, {}),
                                     };
                                 })(s),
@@ -751,7 +751,7 @@
                     customTexts: en,
                 });
             !(function (e) {
-                ((e.COMPOSITE = 'COMPOSITE'), (e.OPTION = 'OPTION'), (e.TARIFF = 'TARIFF'));
+                (e.COMPOSITE = 'COMPOSITE'), (e.OPTION = 'OPTION'), (e.TARIFF = 'TARIFF');
             })(s || (s = {}));
             let eo = r.gK.model({ amount: r.gK.number, currency: r.gK.string }),
                 eg = r.gK.model({ typename: r.gK.literal(X.N.IntroPlan), period: r.gK.string, price: eo, repeatCount: r.gK.maybe(r.gK.number) }),
@@ -955,7 +955,7 @@
                                     try {
                                         if ((t.setLoadingState(L.G.PENDING, b), v)) {
                                             let i = {};
-                                            (o && (i.communication_id = o),
+                                            o && (i.communication_id = o),
                                                 g && (i.campaign_id = g),
                                                 (s = yield m.getOffers(b, l, { expFlags: f, eventSessionId: e.sessionId, customProperties: i, widgetServiceName: d })),
                                                 t.setAcqData(b || J.l.NO_VALUE, {
@@ -965,17 +965,17 @@
                                                     })(s),
                                                     loadingState: L.G.RESOLVE,
                                                     isLoadOffersResultSent: !1,
-                                                }));
+                                                });
                                         } else
-                                            ((s = yield c.getCompositeOffers({ uid: a, target: u || 'music' })),
+                                            (s = yield c.getCompositeOffers({ uid: a, target: u || 'music' })),
                                                 (e.data = ((e) => {
                                                     let { eventSessionId: t, batchPositionId: i, offers: s } = e;
                                                     return (0, r.wg)({ eventSessionId: t, batchPositionId: i, offers: s.map(ei) });
                                                 })(s)),
-                                                u && t.setCustomTarget(u));
+                                                u && t.setCustomTarget(u);
                                         t.setLoadingState(L.G.RESOLVE, b);
                                     } catch (e) {
-                                        (t.setLoadingState(L.G.REJECT, b), K.error(e));
+                                        t.setLoadingState(L.G.REJECT, b), K.error(e);
                                     }
                                 }
                             }),
@@ -1053,7 +1053,7 @@
                             },
                             setLiteVersionMode(t, i) {
                                 let { containerStorage: s } = (0, r._$)(e);
-                                ((e.liteVersionMode = t), i && s.set(eR.c.LiteVersionMode, { version: '2', mode: t }));
+                                (e.liteVersionMode = t), i && s.set(eR.c.LiteVersionMode, { version: '2', mode: t });
                             },
                         };
                         return t;
@@ -1062,23 +1062,23 @@
         },
         60866: (e, t, i) => {
             var s;
-            (i.d(t, { f: () => s }),
+            i.d(t, { f: () => s }),
                 (function (e) {
-                    ((e.OK = 'ok'), (e.ERROR = 'error'));
-                })(s || (s = {})));
+                    (e.OK = 'ok'), (e.ERROR = 'error');
+                })(s || (s = {}));
         },
         88063: (e, t, i) => {
             var s;
-            (i.d(t, { K: () => s }),
+            i.d(t, { K: () => s }),
                 (function (e) {
-                    ((e.EXPLICIT = 'explicit'), (e.CLEAN = 'clean'));
-                })(s || (s = {})));
+                    (e.EXPLICIT = 'explicit'), (e.CLEAN = 'clean');
+                })(s || (s = {}));
         },
         93435: (e, t, i) => {
             var s;
-            (i.d(t, { M: () => s }),
+            i.d(t, { M: () => s }),
                 (function (e) {
-                    ((e.MODAL = 'modal'),
+                    (e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
                         (e.AGE_18 = 'age18'),
@@ -1086,8 +1086,8 @@
                         (e.DESCRIPTION_TEXT = 'descriptionText'),
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
-                        (e.EXCLAMATION_ICON = 'exclamationIcon'));
-                })(s || (s = {})));
+                        (e.EXCLAMATION_ICON = 'exclamationIcon');
+                })(s || (s = {}));
         },
     },
 ]);

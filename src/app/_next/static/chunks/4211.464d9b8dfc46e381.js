@@ -7,21 +7,21 @@
                 r = '~';
             function n() {}
             function o(e, t, r) {
-                ((this.fn = e), (this.context = t), (this.once = r || !1));
+                (this.fn = e), (this.context = t), (this.once = r || !1);
             }
             function i(e, t, n, i, a) {
                 if ('function' != typeof n) throw TypeError('The listener must be a function');
                 var s = new o(n, i || e, a),
                     l = r ? r + t : t;
-                return (e._events[l] ? (e._events[l].fn ? (e._events[l] = [e._events[l], s]) : e._events[l].push(s)) : ((e._events[l] = s), e._eventsCount++), e);
+                return e._events[l] ? (e._events[l].fn ? (e._events[l] = [e._events[l], s]) : e._events[l].push(s)) : ((e._events[l] = s), e._eventsCount++), e;
             }
             function a(e, t) {
                 0 == --e._eventsCount ? (e._events = new n()) : delete e._events[t];
             }
             function s() {
-                ((this._events = new n()), (this._eventsCount = 0));
+                (this._events = new n()), (this._eventsCount = 0);
             }
-            (Object.create && ((n.prototype = Object.create(null)), new n().__proto__ || (r = !1)),
+            Object.create && ((n.prototype = Object.create(null)), new n().__proto__ || (r = !1)),
                 (s.prototype.eventNames = function () {
                     var e,
                         n,
@@ -53,17 +53,17 @@
                     if (h.fn) {
                         switch ((h.once && this.removeListener(e, h.fn, void 0, !0), c)) {
                             case 1:
-                                return (h.fn.call(h.context), !0);
+                                return h.fn.call(h.context), !0;
                             case 2:
-                                return (h.fn.call(h.context, t), !0);
+                                return h.fn.call(h.context, t), !0;
                             case 3:
-                                return (h.fn.call(h.context, t, n), !0);
+                                return h.fn.call(h.context, t, n), !0;
                             case 4:
-                                return (h.fn.call(h.context, t, n, o), !0);
+                                return h.fn.call(h.context, t, n, o), !0;
                             case 5:
-                                return (h.fn.call(h.context, t, n, o, i), !0);
+                                return h.fn.call(h.context, t, n, o, i), !0;
                             case 6:
-                                return (h.fn.call(h.context, t, n, o, i, a), !0);
+                                return h.fn.call(h.context, t, n, o, i, a), !0;
                         }
                         for (u = 1, l = Array(c - 1); u < c; u++) l[u - 1] = arguments[u];
                         h.fn.apply(h.context, l);
@@ -100,7 +100,7 @@
                 (s.prototype.removeListener = function (e, t, n, o) {
                     var i = r ? r + e : e;
                     if (!this._events[i]) return this;
-                    if (!t) return (a(this, i), this);
+                    if (!t) return a(this, i), this;
                     var s = this._events[i];
                     if (s.fn) s.fn !== t || (o && !s.once) || (n && s.context !== n) || a(this, i);
                     else {
@@ -111,16 +111,16 @@
                 }),
                 (s.prototype.removeAllListeners = function (e) {
                     var t;
-                    return (e ? ((t = r ? r + e : e), this._events[t] && a(this, t)) : ((this._events = new n()), (this._eventsCount = 0)), this);
+                    return e ? ((t = r ? r + e : e), this._events[t] && a(this, t)) : ((this._events = new n()), (this._eventsCount = 0)), this;
                 }),
                 (s.prototype.off = s.prototype.removeListener),
                 (s.prototype.addListener = s.prototype.on),
                 (s.prefixed = r),
                 (s.EventEmitter = s),
-                (e.exports = s));
+                (e.exports = s);
         },
         21971: (e, t, r) => {
-            (Object.defineProperty(t, '__esModule', { value: !0 }), (t.MemoryStorage = t.CookieStorage = t.isSupported = t.storage = void 0));
+            Object.defineProperty(t, '__esModule', { value: !0 }), (t.MemoryStorage = t.CookieStorage = t.isSupported = t.storage = void 0);
             var n = a(r(76825)),
                 o = a(r(27016)),
                 i = a(r(50455));
@@ -128,7 +128,7 @@
                 return e && e.__esModule ? e : { default: e };
             }
             var s = null;
-            ((0, n.default)('localStorage')
+            (0, n.default)('localStorage')
                 ? (t.storage = s = window.localStorage)
                 : (0, n.default)('sessionStorage')
                   ? (t.storage = s = window.sessionStorage)
@@ -139,7 +139,7 @@
                 (t.storage = s),
                 (t.isSupported = n.default),
                 (t.CookieStorage = o.default),
-                (t.MemoryStorage = i.default));
+                (t.MemoryStorage = i.default);
         },
         27016: (e, t, r) => {
             Object.defineProperty(t, '__esModule', { value: !0 });
@@ -147,11 +147,11 @@
                 function e(e, t) {
                     for (var r = 0; r < t.length; r++) {
                         var n = t[r];
-                        ((n.enumerable = n.enumerable || !1), (n.configurable = !0), 'value' in n && (n.writable = !0), Object.defineProperty(e, n.key, n));
+                        (n.enumerable = n.enumerable || !1), (n.configurable = !0), 'value' in n && (n.writable = !0), Object.defineProperty(e, n.key, n);
                     }
                 }
                 return function (t, r, n) {
-                    return (r && e(t.prototype, r), n && e(t, n), t);
+                    return r && e(t.prototype, r), n && e(t, n), t;
                 };
             })();
             t.hasCookies = function () {
@@ -160,7 +160,7 @@
                     var t = '__test';
                     e.setItem(t, '1');
                     var r = e.getItem(t);
-                    return (e.removeItem(t), '1' === r);
+                    return e.removeItem(t), '1' === r;
                 } catch (e) {
                     return !1;
                 }
@@ -173,7 +173,7 @@
                     function e() {
                         var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
                         if (!(this instanceof e)) throw TypeError('Cannot call a class as a function');
-                        ((this.cookieOptions = Object.assign({ path: '/' }, t)), (i = void 0 === t.prefix ? i : t.prefix));
+                        (this.cookieOptions = Object.assign({ path: '/' }, t)), (i = void 0 === t.prefix ? i : t.prefix);
                     }
                     return (
                         n(e, [
@@ -187,14 +187,14 @@
                             {
                                 key: 'setItem',
                                 value: function (e, t) {
-                                    return ((document.cookie = o.default.serialize(i + e, t, this.cookieOptions)), t);
+                                    return (document.cookie = o.default.serialize(i + e, t, this.cookieOptions)), t;
                                 },
                             },
                             {
                                 key: 'removeItem',
                                 value: function (e) {
                                     var t = Object.assign({}, this.cookieOptions, { maxAge: -1 });
-                                    return ((document.cookie = o.default.serialize(i + e, '', t)), null);
+                                    return (document.cookie = o.default.serialize(i + e, '', t)), null;
                                 },
                             },
                             {
@@ -212,7 +212,7 @@
             t.default = a;
         },
         34211: (e, t, r) => {
-            (r.r(t), r.d(t, { VHPlayerCoreAdapter: () => S, loadVHPlayerSdk: () => y }));
+            r.r(t), r.d(t, { VHPlayerCoreAdapter: () => S, loadVHPlayerSdk: () => y });
             var n,
                 o,
                 i = r(62205);
@@ -295,16 +295,16 @@
             let m = (0, r(63782).x)();
             async function g(e) {
                 if (p(() => m.Ya.playerSdk)?.init) return Promise.resolve();
-                (await d({ file: 'player-sdk.js', version: e?.version, checkLoad: () => !!p(() => m.Ya.playerSdk)?.preloadScripts }),
-                    await m.Ya.playerSdk.preloadScripts());
+                await d({ file: 'player-sdk.js', version: e?.version, checkLoad: () => !!p(() => m.Ya.playerSdk)?.preloadScripts }),
+                    await m.Ya.playerSdk.preloadScripts();
             }
             function y(e) {
                 return g({ version: e });
             }
             var v = r(86211),
                 C = r(83995);
-            (!(function (e) {
-                ((e.SourceChange = 'SourceChange'),
+            !(function (e) {
+                (e.SourceChange = 'SourceChange'),
                     (e.StatusChange = 'StatusChange'),
                     (e.ErrorChange = 'ErrorChange'),
                     (e.CurrentTimeChange = 'CurrentTimeChange'),
@@ -312,10 +312,10 @@
                     (e.UtcStartTimeChange = 'UtcStartTimeChange'),
                     (e.VideoTypeChange = 'VideoTypeChange'),
                     (e.MutedChange = 'MutedChange'),
-                    (e.VolumeChange = 'VolumeChange'));
+                    (e.VolumeChange = 'VolumeChange');
             })(n || (n = {})),
                 (function (e) {
-                    ((e.idle = 'idle'),
+                    (e.idle = 'idle'),
                         (e.init = 'init'),
                         (e.buffering = 'buffering'),
                         (e.play = 'play'),
@@ -326,8 +326,8 @@
                         (e.destroyed = 'destroyed'),
                         (e.cancelled = 'cancelled'),
                         (e.preparing = 'preparing'),
-                        (e.finished = 'finished'));
-                })(o || (o = {})));
+                        (e.finished = 'finished');
+                })(o || (o = {}));
             class S {
                 statusChangeHandler() {
                     let { status: e } = this.player.getState();
@@ -373,9 +373,9 @@
                 }
                 initPlayer(e) {
                     let { src: t, autoplay: r, container: n } = e;
-                    ((this.player = window.Ya.playerSdk.init({ element: n, source: t, hiddenControls: '*', autoplay: r, adConfig: this.adConfig })),
+                    (this.player = window.Ya.playerSdk.init({ element: n, source: t, hiddenControls: '*', autoplay: r, adConfig: this.adConfig })),
                         this.subscribePlayerEvents(),
-                        null !== this.storedVolume && (this.player.setVolume(this.storedVolume), (this.storedVolume = null)));
+                        null !== this.storedVolume && (this.player.setVolume(this.storedVolume), (this.storedVolume = null));
                 }
                 play(e) {
                     let { source: t } = e;
@@ -391,29 +391,29 @@
                         return this.player.setSource({ source: t.src, autoplay: r, adConfig: this.adConfig }).then(() => {
                             if (null !== this.storedVolume) {
                                 var e;
-                                (null == (e = this.player) || e.setVolume(this.storedVolume), (this.storedVolume = null));
+                                null == (e = this.player) || e.setVolume(this.storedVolume), (this.storedVolume = null);
                             }
                         });
                     try {
-                        return (this.container && this.initPlayer({ src: t.src, autoplay: r, container: this.container }), Promise.resolve());
+                        return this.container && this.initPlayer({ src: t.src, autoplay: r, container: this.container }), Promise.resolve();
                     } catch (e) {
                         return Promise.reject(e);
                     }
                 }
                 pause() {
                     var e;
-                    return (null == (e = this.player) || e.pause(), Promise.resolve());
+                    return null == (e = this.player) || e.pause(), Promise.resolve();
                 }
                 resume() {
                     return this.player ? this.player.play() : Promise.resolve();
                 }
                 setProgress(e) {
                     var t;
-                    return (null == (t = this.player) || t.seek(e), Promise.resolve(e));
+                    return null == (t = this.player) || t.seek(e), Promise.resolve(e);
                 }
                 setVolume(e) {
                     var t;
-                    return ((this.storedVolume = e), null == (t = this.player) || t.setVolume(e), Promise.resolve(e));
+                    return (this.storedVolume = e), null == (t = this.player) || t.setVolume(e), Promise.resolve(e);
                 }
                 setSpeed(e) {
                     return Promise.resolve(e);
@@ -424,7 +424,7 @@
                 destroy() {
                     return (this.unsubscribePlayerEvents(), this.player)
                         ? this.player.destroy().finally(() => {
-                              ((this.player = null), (this.container = null));
+                              (this.player = null), (this.container = null);
                           })
                         : Promise.resolve();
                 }
@@ -483,7 +483,7 @@
                 offCanplay() {}
                 offWaiting() {}
                 constructor(e) {
-                    ((0, v._)(this, 'player', null),
+                    (0, v._)(this, 'player', null),
                         (0, v._)(this, 'container', null),
                         (0, v._)(this, 'emitter', new C.b()),
                         (0, v._)(this, 'hideAds', void 0),
@@ -492,7 +492,7 @@
                         (this.statusChangeHandler = this.statusChangeHandler.bind(this)),
                         (this.currentTimeChangeHandler = this.currentTimeChangeHandler.bind(this)),
                         (this.volumeChangeHandler = this.volumeChangeHandler.bind(this)),
-                        (this.errorChangeHandler = this.errorChangeHandler.bind(this)));
+                        (this.errorChangeHandler = this.errorChangeHandler.bind(this));
                 }
             }
         },
@@ -502,11 +502,11 @@
                 function e(e, t) {
                     for (var r = 0; r < t.length; r++) {
                         var n = t[r];
-                        ((n.enumerable = n.enumerable || !1), (n.configurable = !0), 'value' in n && (n.writable = !0), Object.defineProperty(e, n.key, n));
+                        (n.enumerable = n.enumerable || !1), (n.configurable = !0), 'value' in n && (n.writable = !0), Object.defineProperty(e, n.key, n);
                     }
                 }
                 return function (t, r, n) {
-                    return (r && e(t.prototype, r), n && e(t, n), t);
+                    return r && e(t.prototype, r), n && e(t, n), t;
                 };
             })();
             t.default = (function () {
@@ -559,7 +559,7 @@
                         }
                         let a = r,
                             s = 0;
-                        (t &&
+                        t &&
                             i > 0 &&
                             (a = (e) => {
                                 if ((r(e), s > 0)) {
@@ -591,9 +591,9 @@
                                     } = t,
                                     m = i.document.createElement('script'),
                                     g = (n) => {
-                                        (l > 0 ? (u(n), e({ ...t, src: r, retries: l - 1 })) : p(n), m.parentNode?.removeChild(m));
+                                        l > 0 ? (u(n), e({ ...t, src: r, retries: l - 1 })) : p(n), m.parentNode?.removeChild(m);
                                     };
-                                ((m.type = 'text/javascript'),
+                                (m.type = 'text/javascript'),
                                     (m.async = s),
                                     (m.onload = () => (c(m) ? d() : g(Error(`checkLoad for ${r} failed`)))),
                                     (m.onerror = (e) => {
@@ -609,15 +609,15 @@
                                     (function (e) {
                                         let t = e.document,
                                             r = t.getElementsByTagName('head')[0];
-                                        return (r || ((r = t.createElement('head')), t.documentElement.appendChild(r)), r);
-                                    })(i).appendChild(m));
-                            })({ ...e, onBeforeLoad: a }));
+                                        return r || ((r = t.createElement('head')), t.documentElement.appendChild(r)), r;
+                                    })(i).appendChild(m);
+                            })({ ...e, onBeforeLoad: a });
                     })({ ...e, onLoad: t, onError: r });
                 });
             }
         },
         63564: (e, t) => {
-            ((t.parse = function (e, t) {
+            (t.parse = function (e, t) {
                 if ('string' != typeof e) throw TypeError('argument str must be a string');
                 for (var n = {}, i = e.split(o), a = (t || {}).decode || r, s = 0; s < i.length; s++) {
                     var l = i[s],
@@ -625,7 +625,7 @@
                     if (!(u < 0)) {
                         var h = l.substr(0, u).trim(),
                             c = l.substr(++u, l.length).trim();
-                        ('"' == c[0] && (c = c.slice(1, -1)),
+                        '"' == c[0] && (c = c.slice(1, -1)),
                             void 0 == n[h] &&
                                 (n[h] = (function (e, t) {
                                     try {
@@ -633,7 +633,7 @@
                                     } catch (t) {
                                         return e;
                                     }
-                                })(c, a)));
+                                })(c, a));
                     }
                 }
                 return n;
@@ -676,7 +676,7 @@
                                 throw TypeError('option sameSite is invalid');
                         }
                     return l;
-                }));
+                });
             var r = decodeURIComponent,
                 n = encodeURIComponent,
                 o = /; */,
@@ -689,7 +689,7 @@
             }
         },
         76825: (e, t, r) => {
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 (t.default = function () {
                     var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : 'localStorage',
                         t = String(e)
@@ -702,13 +702,13 @@
                     throw Error(
                         'Storage method `' + e + '` is not available.\n    Please use one of the following: localStorage, sessionStorage, cookieStorage, memoryStorage.',
                     );
-                }));
+                });
             var n = r(27016),
                 o = '__test';
             function i(e) {
                 try {
                     var t = window[e];
-                    return (t.setItem(o, '1'), t.removeItem(o), !0);
+                    return t.setItem(o, '1'), t.removeItem(o), !0;
                 } catch (e) {
                     return !1;
                 }

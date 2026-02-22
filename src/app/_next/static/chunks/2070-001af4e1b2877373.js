@@ -34,7 +34,7 @@
                 (0, b.CgZ)(a);
                 let { sendRefreshEvent: c } = (0, b.cYT)(),
                     g = (0, t.useCallback)(() => {
-                        (c(), (window.location.href = b.Zyd.main.href));
+                        c(), (window.location.href = b.Zyd.main.href);
                     }, [c]),
                     { contentRef: p } = (0, b.gKY)();
                 return (0, r.jsxs)('div', {
@@ -99,7 +99,7 @@
             var r = o(30236);
         },
         84527: (e, n, o) => {
-            (Promise.resolve().then(o.bind(o, 52283)),
+            Promise.resolve().then(o.bind(o, 52283)),
                 Promise.resolve().then(o.bind(o, 81382)),
                 Promise.resolve().then(o.bind(o, 95567)),
                 Promise.resolve().then(o.bind(o, 78016)),
@@ -451,11 +451,11 @@
                 Promise.resolve().then(o.bind(o, 59546)),
                 Promise.resolve().then(o.bind(o, 78659)),
                 Promise.resolve().then(o.bind(o, 62763)),
-                Promise.resolve().then(o.t.bind(o, 86367, 23)));
+                Promise.resolve().then(o.t.bind(o, 86367, 23));
         },
         99366: (e, n, o) => {
             'use strict';
-            (o.r(n), o.d(n, { default: () => b }));
+            o.r(n), o.d(n, { default: () => b });
             var r = o(33008),
                 s = o(85896),
                 i = o(66268),

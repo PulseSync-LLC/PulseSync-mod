@@ -9,19 +9,19 @@
                 s = r(7144),
                 t = r(66268),
                 l = r(73827);
-            (!(function (e) {
-                ((e.formatDate = 'FormattedDate'),
+            !(function (e) {
+                (e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName'));
+                    (e.formatDisplayName = 'FormattedDisplayName');
             })(o || (o = {})),
                 (function (e) {
-                    ((e.formatDate = 'FormattedDateParts'),
+                    (e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts'));
-                })(i || (i = {})));
+                        (e.formatList = 'FormattedListParts');
+                })(i || (i = {}));
             var d = function (e) {
                 var n = (0, l.A)(),
                     r = e.value,
@@ -38,7 +38,7 @@
                         d = 'string' == typeof o ? new Date(o || 0) : o;
                     return i('formatDate' === e ? r.formatDateToParts(d, t) : r.formatTimeToParts(d, t));
                 };
-                return ((n.displayName = i[e]), n);
+                return (n.displayName = i[e]), n;
             }
             function m(e) {
                 var n = function (n) {
@@ -51,21 +51,21 @@
                     var m = r.textComponent || t.Fragment;
                     return t.createElement(m, null, a);
                 };
-                return ((n.displayName = o[e]), n);
+                return (n.displayName = o[e]), n;
             }
-            ((d.displayName = 'FormattedNumberParts'), (d.displayName = 'FormattedNumberParts'));
+            (d.displayName = 'FormattedNumberParts'), (d.displayName = 'FormattedNumberParts');
             var h = m('formatDate');
-            (m('formatTime'), m('formatNumber'), m('formatList'), m('formatDisplayName'), a('formatDate'), a('formatTime'));
+            m('formatTime'), m('formatNumber'), m('formatList'), m('formatDisplayName'), a('formatDate'), a('formatTime');
         },
         5884: (e, n, r) => {
             'use strict';
-            (Object.defineProperty(n, '__esModule', { value: !0 }),
+            Object.defineProperty(n, '__esModule', { value: !0 }),
                 Object.defineProperty(n, 'default', {
                     enumerable: !0,
                     get: function () {
                         return i;
                     },
-                }));
+                });
             let o = r(473)._(r(16092));
             function i(e, n) {
                 var r;
@@ -88,13 +88,13 @@
         },
         16092: (e, n, r) => {
             'use strict';
-            (Object.defineProperty(n, '__esModule', { value: !0 }),
+            Object.defineProperty(n, '__esModule', { value: !0 }),
                 Object.defineProperty(n, 'default', {
                     enumerable: !0,
                     get: function () {
                         return d;
                     },
-                }));
+                });
             let o = r(33008),
                 i = r(66268),
                 s = r(52283);
@@ -116,7 +116,7 @@
                                 : (0, o.jsx)(s.BailoutToCSR, { reason: 'next/dynamic', children: (0, o.jsx)(r, { ...e }) });
                         return (0, o.jsx)(a, { ...(l ? { fallback: t } : {}), children: m });
                     }
-                    return ((a.displayName = 'LoadableComponent'), a);
+                    return (a.displayName = 'LoadableComponent'), a;
                 };
         },
         28430: (e) => {
@@ -152,7 +152,7 @@
                 (0, v.CgZ)(b);
                 let { sendRefreshEvent: u } = (0, v.cYT)(),
                     _ = (0, t.useCallback)(() => {
-                        (u(), (window.location.href = v.Zyd.main.href));
+                        u(), (window.location.href = v.Zyd.main.href);
                     }, [u]),
                     { contentRef: g } = (0, v.gKY)();
                 return (0, o.jsxs)('div', {
@@ -451,7 +451,7 @@
                         x = (0, m.c)(() => {
                             n.tracksController && f.getData(n.tracksController);
                         });
-                    ((0, h.L)(x),
+                    (0, h.L)(x),
                         (0, t.useEffect)(() => {
                             f.isNeededToLoad && x();
                         }, [f.isNeededToLoad, x]),
@@ -461,7 +461,7 @@
                             },
                             [f],
                         ),
-                        (0, c.Jzs)(f.isResolved));
+                        (0, c.Jzs)(f.isResolved);
                     let k = (0, t.useMemo)(
                         () => ({ Header: () => (0, o.jsx)(T, {}), Footer: () => (0, o.jsx)(u.A, { children: (0, o.jsx)(u.wi, { className: g().footer }) }) }),
                         [],
@@ -546,13 +546,13 @@
                             try {
                                 e.loadingState = l.GuX.PENDING;
                                 let o = yield n.getTracks(r);
-                                ((e.tracks = o), (e.items = (0, i.wg)(o.map((e) => (0, t.vU)(e)))), e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE));
+                                (e.tracks = o), (e.items = (0, i.wg)(o.map((e) => (0, t.vU)(e)))), e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE);
                             } catch (n) {
-                                (o.error(n), e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT));
+                                o.error(n), e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT);
                             }
                     }),
                     reset() {
-                        ((e.items = null), (e.tracks = null), (e.loadingState = l.GuX.IDLE));
+                        (e.items = null), (e.tracks = null), (e.loadingState = l.GuX.IDLE);
                     },
                 }));
         },
@@ -562,17 +562,17 @@
                 let { reason: n, children: r } = e;
                 return r;
             }
-            (Object.defineProperty(n, '__esModule', { value: !0 }),
+            Object.defineProperty(n, '__esModule', { value: !0 }),
                 Object.defineProperty(n, 'BailoutToCSR', {
                     enumerable: !0,
                     get: function () {
                         return o;
                     },
                 }),
-                r(32975));
+                r(32975);
         },
         59222: (e, n, r) => {
-            (Promise.resolve().then(r.bind(r, 95567)),
+            Promise.resolve().then(r.bind(r, 95567)),
                 Promise.resolve().then(r.bind(r, 78016)),
                 Promise.resolve().then(r.bind(r, 52756)),
                 Promise.resolve().then(r.bind(r, 41458)),
@@ -887,7 +887,7 @@
                 Promise.resolve().then(r.bind(r, 59546)),
                 Promise.resolve().then(r.bind(r, 78659)),
                 Promise.resolve().then(r.bind(r, 62763)),
-                Promise.resolve().then(r.t.bind(r, 86367, 23)));
+                Promise.resolve().then(r.t.bind(r, 86367, 23));
         },
         74375: (e, n, r) => {
             'use strict';
@@ -901,7 +901,7 @@
                 let { moduleIds: n } = e;
                 return null;
             }
-            (Object.defineProperty(n, '__esModule', { value: !0 }),
+            Object.defineProperty(n, '__esModule', { value: !0 }),
                 Object.defineProperty(n, 'PreloadChunks', {
                     enumerable: !0,
                     get: function () {
@@ -911,7 +911,7 @@
                 r(33008),
                 r(17229),
                 r(6077),
-                r(74964));
+                r(74964);
         },
         83888: (e, n, r) => {
             'use strict';
@@ -940,8 +940,7 @@
                             null == (o = r.store) || o.tracks.events.on(i.je.ENTITY_CHANGED, d),
                             () => {
                                 var n, o;
-                                (null == (n = r.store) || n.tracks.events.off(i.je.STATE_CHANGED, e),
-                                    null == (o = r.store) || o.tracks.events.off(i.je.ENTITY_CHANGED, d));
+                                null == (n = r.store) || n.tracks.events.off(i.je.STATE_CHANGED, e), null == (o = r.store) || o.tracks.events.off(i.je.ENTITY_CHANGED, d);
                             }
                         );
                     }, [e, d, null == (n = r.store) ? void 0 : n.tracks.events]);
@@ -949,7 +948,7 @@
         },
     },
     (e) => {
-        (e.O(
+        e.O(
             0,
             [
                 7098, 8282, 9712, 5271, 8004, 7309, 1709, 9284, 8712, 7509, 4397, 952, 594, 9775, 1311, 7764, 6706, 2089, 2140, 996, 4236, 6728, 3949, 9152, 9169, 8740,
@@ -957,6 +956,6 @@
             ],
             () => e((e.s = 59222)),
         ),
-            (_N_E = e.O()));
+            (_N_E = e.O());
     },
 ]);

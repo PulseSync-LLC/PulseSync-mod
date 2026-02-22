@@ -12,9 +12,9 @@
         12146: (e, t, a) => {
             'use strict';
             var i;
-            (a.d(t, { x: () => i }),
+            a.d(t, { x: () => i }),
                 (function (e) {
-                    ((e.TEXT = 'TEXT'),
+                    (e.TEXT = 'TEXT'),
                         (e.TEXT_FACT = 'TEXT_FACT'),
                         (e.STATS = 'STATS'),
                         (e.CHART = 'CHART'),
@@ -23,8 +23,8 @@
                         (e.ARTISTS = 'ARTISTS'),
                         (e.CHART_ARTIST = 'CHART_ARTIST'),
                         (e.TEXT_EXTENDED = 'TEXT_EXTENDED'),
-                        (e.THEN_NOW_COMPARISON = 'THEN_NOW_COMPARISON'));
-                })(i || (i = {})));
+                        (e.THEN_NOW_COMPARISON = 'THEN_NOW_COMPARISON');
+                })(i || (i = {}));
         },
         13002: (e) => {
             e.exports = {
@@ -121,7 +121,7 @@
                         K = (0, c.eGp)(),
                         E = (null == K ? void 0 : K.getState(c.V_r.TRAILER).playerState.status.value) === d.MT.PLAYING && x,
                         I = (0, n.useCallback)(() => setTimeout(C, 1e3 * r), [r, C]);
-                    ((0, n.useEffect)(() => {
+                    (0, n.useEffect)(() => {
                         !p && S && T();
                     }, [p, S, T]),
                         (0, n.useEffect)(() => {
@@ -132,11 +132,11 @@
                                       t
                                           .play()
                                           .then(() => {
-                                              (I(), E && (null == K || K.pause(c.V_r.TRAILER)));
+                                              I(), E && (null == K || K.pause(c.V_r.TRAILER));
                                           })
                                           .catch(I))
                                 : y.current && ((y.current.currentTime = 0), null == (a = y.current) || a.pause());
-                        }, [I, p, N, C, E, K]));
+                        }, [I, p, N, C, E, K]);
                     let f = (0, n.useMemo)(() => {
                             if (u && b.collectionHue) return { '--user-background-color': (0, c.eWZ)(b.collectionHue, 1, 0.5) };
                         }, [u, b.collectionHue]),
@@ -303,14 +303,14 @@
                 });
             };
             !(function (e) {
-                ((e.SQUARE = 'SQUARE'), (e.CIRCLE = 'CIRCLE'));
+                (e.SQUARE = 'SQUARE'), (e.CIRCLE = 'CIRCLE');
             })(i || (i = {}));
             var y = a(73635),
                 K = a.n(y),
                 E = a(97531),
                 I = a(41028);
             !(function (e) {
-                ((e.NUMBER = 'NUMBER'), (e.TEXT = 'TEXT'));
+                (e.NUMBER = 'NUMBER'), (e.TEXT = 'TEXT');
             })(l || (l = {}));
             var f = a(92159),
                 A = a.n(f);
@@ -563,7 +563,7 @@
                 });
             };
             !(function (e) {
-                ((e.SMALL = 'SMALL'), (e.BIG = 'BIG'));
+                (e.SMALL = 'SMALL'), (e.BIG = 'BIG');
             })(n || (n = {}));
             var Z = a(91290),
                 Y = a.n(Z);
@@ -741,14 +741,14 @@
             var i,
                 l = a(93967),
                 r = (function (e) {
-                    return ((e.USER = 'user'), (e.ARTIST = 'artist'), (e.PODCAST = 'podcast'), (e.SPECIAL = 'special'), e);
+                    return (e.USER = 'user'), (e.ARTIST = 'artist'), (e.PODCAST = 'podcast'), (e.SPECIAL = 'special'), e;
                 })({});
             let n = (e) =>
                 e === r.USER ? l.Jd.PersonalResults : e === r.ARTIST ? l.Jd.ArtistPersonalResults : e === r.PODCAST ? l.Jd.PodcastResults : l.Jd.PersonalResults;
             var s = a(41028),
                 o = a(79169);
             !(function (e) {
-                ((e.WAVE = 'WAVE'), (e.ACTION = 'ACTION'), (e.SHARE = 'SHARE'), (e.SIMPLE = 'SIMPLE'));
+                (e.WAVE = 'WAVE'), (e.ACTION = 'ACTION'), (e.SHARE = 'SHARE'), (e.SIMPLE = 'SIMPLE');
             })(i || (i = {}));
             var d = a(12146);
             let c = (e) => (0, s.wg)({ uri: null == e ? void 0 : e.uri, color: null == e ? void 0 : e.color, videoUrl: null == e ? void 0 : e.videoUrl }),
@@ -1090,11 +1090,11 @@
                                 try {
                                     e.userSlidesLoadingState = o.GuX.PENDING;
                                     let a = yield t.getUserSlides();
-                                    (e.userSlidesLoadingState !== o.GuX.IDLE && (e.userSlidesLoadingState = o.GuX.RESOLVE),
+                                    e.userSlidesLoadingState !== o.GuX.IDLE && (e.userSlidesLoadingState = o.GuX.RESOLVE),
                                         a.slides && ((e.consumer = r.USER), (e.userItems = (0, s.wg)(a.slides.map((e) => _(e, { logo: a.logo }))))),
-                                        (e.userSlidesLoadingState = o.GuX.RESOLVE));
+                                        (e.userSlidesLoadingState = o.GuX.RESOLVE);
                                 } catch (t) {
-                                    (a.error(t), e.userSlidesLoadingState !== o.GuX.IDLE && ((e.userSlidesLoadingState = o.GuX.REJECT), (e.userItems = (0, s.wg)([]))));
+                                    a.error(t), e.userSlidesLoadingState !== o.GuX.IDLE && ((e.userSlidesLoadingState = o.GuX.REJECT), (e.userItems = (0, s.wg)([])));
                                 }
                         }),
                         getArtistSlides: (0, s.L3)(function* (t) {
@@ -1104,12 +1104,12 @@
                                 try {
                                     e.artistSlidesLoadingState = o.GuX.PENDING;
                                     let i = yield a.getArtistSlides(t);
-                                    (e.artistSlidesLoadingState !== o.GuX.IDLE && (e.artistSlidesLoadingState = o.GuX.RESOLVE),
+                                    e.artistSlidesLoadingState !== o.GuX.IDLE && (e.artistSlidesLoadingState = o.GuX.RESOLVE),
                                         i.slides && ((e.consumer = r.ARTIST), (e.artistItems = (0, s.wg)(i.slides.map((e) => _(e, { logo: i.logo }))))),
-                                        (e.artistSlidesLoadingState = o.GuX.RESOLVE));
+                                        (e.artistSlidesLoadingState = o.GuX.RESOLVE);
                                 } catch (t) {
-                                    (i.error(t),
-                                        e.artistSlidesLoadingState !== o.GuX.IDLE && ((e.artistSlidesLoadingState = o.GuX.REJECT), (e.artistItems = (0, s.wg)([]))));
+                                    i.error(t),
+                                        e.artistSlidesLoadingState !== o.GuX.IDLE && ((e.artistSlidesLoadingState = o.GuX.REJECT), (e.artistItems = (0, s.wg)([])));
                                 }
                             }
                         }),
@@ -1120,12 +1120,12 @@
                                 try {
                                     e.podcastSlidesLoadingState = o.GuX.PENDING;
                                     let i = yield a.getPodcastSlides(t);
-                                    (e.podcastSlidesLoadingState !== o.GuX.IDLE && (e.podcastSlidesLoadingState = o.GuX.RESOLVE),
+                                    e.podcastSlidesLoadingState !== o.GuX.IDLE && (e.podcastSlidesLoadingState = o.GuX.RESOLVE),
                                         i.slides && ((e.consumer = r.PODCAST), (e.podcastItems = (0, s.wg)(i.slides.map((e) => _(e, { logo: i.logo }))))),
-                                        (e.podcastSlidesLoadingState = o.GuX.RESOLVE));
+                                        (e.podcastSlidesLoadingState = o.GuX.RESOLVE);
                                 } catch (t) {
-                                    (i.error(t),
-                                        e.podcastSlidesLoadingState !== o.GuX.IDLE && ((e.podcastSlidesLoadingState = o.GuX.REJECT), (e.podcastItems = (0, s.wg)([]))));
+                                    i.error(t),
+                                        e.podcastSlidesLoadingState !== o.GuX.IDLE && ((e.podcastSlidesLoadingState = o.GuX.REJECT), (e.podcastItems = (0, s.wg)([])));
                                 }
                             }
                         }),
@@ -1136,12 +1136,12 @@
                                 try {
                                     e.specialSlidesLoadingState = o.GuX.PENDING;
                                     let i = yield a.getSpecialSlides(t);
-                                    (e.specialSlidesLoadingState !== o.GuX.IDLE && (e.specialSlidesLoadingState = o.GuX.RESOLVE),
+                                    e.specialSlidesLoadingState !== o.GuX.IDLE && (e.specialSlidesLoadingState = o.GuX.RESOLVE),
                                         i.slides && ((e.consumer = r.SPECIAL), (e.specialItems = (0, s.wg)(i.slides.map((e) => _(e, { logo: i.logo }))))),
-                                        (e.specialSlidesLoadingState = o.GuX.RESOLVE));
+                                        (e.specialSlidesLoadingState = o.GuX.RESOLVE);
                                 } catch (t) {
-                                    (i.error(t),
-                                        e.specialSlidesLoadingState !== o.GuX.IDLE && ((e.specialSlidesLoadingState = o.GuX.REJECT), (e.specialItems = (0, s.wg)([]))));
+                                    i.error(t),
+                                        e.specialSlidesLoadingState !== o.GuX.IDLE && ((e.specialSlidesLoadingState = o.GuX.REJECT), (e.specialItems = (0, s.wg)([])));
                                 }
                             }
                         }),
@@ -1149,16 +1149,16 @@
                             e.activeSlide = t;
                         },
                         resetUser() {
-                            ((e.userSlidesLoadingState = o.GuX.IDLE), (e.userItems = (0, s.wg)([])));
+                            (e.userSlidesLoadingState = o.GuX.IDLE), (e.userItems = (0, s.wg)([]));
                         },
                         resetArtist() {
-                            ((e.artistSlidesLoadingState = o.GuX.IDLE), (e.artistItems = (0, s.wg)([])));
+                            (e.artistSlidesLoadingState = o.GuX.IDLE), (e.artistItems = (0, s.wg)([]));
                         },
                         resetPodcast() {
-                            ((e.podcastSlidesLoadingState = o.GuX.IDLE), (e.podcastItems = (0, s.wg)([])));
+                            (e.podcastSlidesLoadingState = o.GuX.IDLE), (e.podcastItems = (0, s.wg)([]));
                         },
                         resetSpecial() {
-                            ((e.specialSlidesLoadingState = o.GuX.IDLE), (e.specialItems = (0, s.wg)([])));
+                            (e.specialSlidesLoadingState = o.GuX.IDLE), (e.specialItems = (0, s.wg)([]));
                         },
                     }));
             var W = a(33008),
@@ -1282,10 +1282,10 @@
         88442: (e, t, a) => {
             'use strict';
             var i;
-            (a.d(t, { t: () => i }),
+            a.d(t, { t: () => i }),
                 (function (e) {
-                    ((e.TOP = 'TOP'), (e.CENTER = 'CENTER'), (e.BOTTOM = 'BOTTOM'));
-                })(i || (i = {})));
+                    (e.TOP = 'TOP'), (e.CENTER = 'CENTER'), (e.BOTTOM = 'BOTTOM');
+                })(i || (i = {}));
         },
         91290: (e) => {
             e.exports = {

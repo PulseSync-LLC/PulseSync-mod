@@ -134,7 +134,7 @@
                             if (e.artists.map((e) => e.name).join(', ') === i && t === e.title) return s.FlZ.OK;
                             try {
                                 var o;
-                                (yield r.changeTrack({ trackId: e.id, title: t, artist: i }), (e.title = t));
+                                yield r.changeTrack({ trackId: e.id, title: t, artist: i }), (e.title = t);
                                 let n = (null == (o = e.artists[0]) ? void 0 : o.id) || '0';
                                 if (((e.artists = (0, a.wg)([])), i)) {
                                     let t = l.PK.create({ id: n, name: i, isAvailable: !0 });
@@ -142,7 +142,7 @@
                                 }
                                 return s.FlZ.OK;
                             } catch (e) {
-                                return (n.error(e), s.FlZ.ERROR);
+                                return n.error(e), s.FlZ.ERROR;
                             }
                         }),
                     })),
@@ -205,7 +205,7 @@
                             t && ((e.volatileUnloadedEntitiesData = (0, g.A)(t)), (e.unloadedEntitiesData = (0, a.wg)(t)));
                         },
                         resetUnloadedEntitiesData: () => {
-                            ((e.volatileUnloadedEntitiesData = void 0), (e.unloadedEntitiesData = void 0));
+                            (e.volatileUnloadedEntitiesData = void 0), (e.unloadedEntitiesData = void 0);
                         },
                         setStatus: (t) => {
                             e.status = t;
@@ -276,11 +276,11 @@
                         },
                         setCrossFadeMode: (t) => {
                             let { localStorage: i } = (0, a._$)(e);
-                            (i.set(s.cYZ.CrossFadeMode, t), (e.isCrossFadeEnabled = t));
+                            i.set(s.cYZ.CrossFadeMode, t), (e.isCrossFadeEnabled = t);
                         },
                     }))
                     .named('SonataState');
-            (i(75797), i(1199));
+            i(75797), i(1199);
             var E = i(61646),
                 L = i(57526),
                 j = i(67950),
@@ -310,7 +310,7 @@
                 (0, p.NBO)(i);
                 let K = (0, c.KX)(_),
                     k = (0, o.c)(() => {
-                        (x.setClipId(_.clipId), x.modal.open());
+                        x.setClipId(_.clipId), x.modal.open();
                     }),
                     N = { variant: p.Yxq.CLIP, id: _.clipId, title: _.title, path: A };
                 return (0, a.jsxs)(u.W1, {
@@ -385,7 +385,7 @@
                     { state: _, handleDebouncedToggle: b, reset: x } = (0, d.F)({ delay: 1e4, throttleTimeout: 0 }),
                     { state: y, handleDebouncedToggle: h, reset: I } = (0, d.F)({ delay: 1e4, throttleTimeout: 0 }),
                     f = (0, o.c)(() => {
-                        (x(), I());
+                        x(), I();
                     });
                 (0, r.useEffect)(() => {
                     (null == e ? void 0 : e.id) && f();
@@ -404,18 +404,18 @@
                         try {
                             switch (r) {
                                 case n.Q.TimestampLike:
-                                    (I(), b());
+                                    I(), b();
                                     break;
                                 case n.Q.TimestampDislike:
-                                    (x(), h());
+                                    x(), h();
                             }
                             let t = l.currentContext.value.restartsCount;
-                            (l.queueState.entityList.value.find((t) => {
+                            l.queueState.entityList.value.find((t) => {
                                 var i, a;
                                 let { entity: r } = t;
                                 return (null == (a = r.data) || null == (i = a.meta) ? void 0 : i.id) === e.id;
                             }) && (await l.currentContext.value.sendFeedback(r, o)),
-                                l.currentContext.value.restartsCount > t && f());
+                                l.currentContext.value.restartsCount > t && f();
                         } catch (t) {
                             f();
                             let e = i.modal.isOpened ? u.uQT.FULLSCREEN_ERROR : u.uQT.ERROR;
@@ -946,9 +946,9 @@
                                     e.clipLoadingState = d.GuX.PENDING;
                                     let [i] = yield t.getClip({ clipIds: [e.id] });
                                     if (!i) return;
-                                    ((e.clip = o(i)), (e.clipLoadingState = d.GuX.RESOLVE));
+                                    (e.clip = o(i)), (e.clipLoadingState = d.GuX.RESOLVE);
                                 } catch (t) {
-                                    (i.error(t), (e.clipLoadingState = d.GuX.REJECT));
+                                    i.error(t), (e.clipLoadingState = d.GuX.REJECT);
                                 }
                         }),
                         getCreditsInfo: (0, s.L3)(function* () {
@@ -957,14 +957,14 @@
                             try {
                                 e.creditsLoadingState = d.GuX.PENDING;
                                 let i = yield t.getCredits({ clipId: e.id });
-                                ((e.credits = (0, s.wg)(null == i ? void 0 : i.credits)), (e.creditsLoadingState = d.GuX.RESOLVE));
+                                (e.credits = (0, s.wg)(null == i ? void 0 : i.credits)), (e.creditsLoadingState = d.GuX.RESOLVE);
                             } catch (t) {
-                                (i.error(t), (e.creditsLoadingState = d.GuX.REJECT));
+                                i.error(t), (e.creditsLoadingState = d.GuX.REJECT);
                             }
                             return null;
                         }),
                         reset() {
-                            ((e.id = null), (e.clip = null), (e.clipLoadingState = d.GuX.IDLE), (e.creditsLoadingState = d.GuX.IDLE), (e.credits = null));
+                            (e.id = null), (e.clip = null), (e.clipLoadingState = d.GuX.IDLE), (e.creditsLoadingState = d.GuX.IDLE), (e.credits = null);
                         },
                     }));
             var _ = i(29663),
@@ -1006,11 +1006,11 @@
                 var t = n[e];
                 if (void 0 !== t) return t.exports;
                 var i = (n[e] = { exports: {} });
-                return (s[e](i, i.exports, o), i.exports);
+                return s[e](i, i.exports, o), i.exports;
             }
             var d = {};
-            ((() => {
-                (Object.defineProperty(d, '__esModule', { value: !0 }), (d.useDebouncedToggle = void 0));
+            (() => {
+                Object.defineProperty(d, '__esModule', { value: !0 }), (d.useDebouncedToggle = void 0);
                 let e = o(352),
                     t = o(810);
                 d.useDebouncedToggle = (i) => {
@@ -1020,16 +1020,16 @@
                         d = (0, t.useMemo)(
                             () =>
                                 (0, e.throttle)(() => {
-                                    (o(!r),
+                                    o(!r),
                                         s.current && window.clearTimeout(s.current),
                                         (s.current = window.setTimeout(() => {
                                             o(!!r);
-                                        }, a)));
+                                        }, a));
                                 }, l),
                             [a, r, l],
                         ),
                         u = (0, t.useCallback)(() => {
-                            (o(!!r), s.current && window.clearTimeout(s.current));
+                            o(!!r), s.current && window.clearTimeout(s.current);
                         }, [r]);
                     return (
                         (0, t.useEffect)(
@@ -1042,16 +1042,16 @@
                     );
                 };
             })(),
-                d.__esModule);
+                d.__esModule;
             var u = d.useDebouncedToggle;
         },
         77205: (e, t, i) => {
             'use strict';
             var a;
-            (i.d(t, { Q: () => a }),
+            i.d(t, { Q: () => a }),
                 (function (e) {
-                    ((e.StreamPause = 'streamPause'), (e.StreamPlay = 'streamPlay'), (e.TimestampLike = 'timestampLike'), (e.TimestampDislike = 'timestampDislike'));
-                })(a || (a = {})));
+                    (e.StreamPause = 'streamPause'), (e.StreamPlay = 'streamPlay'), (e.TimestampLike = 'timestampLike'), (e.TimestampDislike = 'timestampDislike');
+                })(a || (a = {}));
         },
         77898: (e, t, i) => {
             'use strict';
@@ -1090,7 +1090,7 @@
                     [u, c] = (0, n.useState)(!1),
                     [m, C] = (0, n.useState)(!1),
                     v = (0, p.c)(() => {
-                        (u || i.isLiked || (c(!0), null == o || o()), d());
+                        u || i.isLiked || (c(!0), null == o || o()), d();
                     });
                 return (0, a.jsx)('div', {
                     className: (0, r.$)(N().root, N().controls, t, { [N().controls_disabled]: !i.isAvailable }),
@@ -1158,11 +1158,11 @@
                         playbackId: y.V_r.CLIP,
                     }),
                     q = (0, p.c)(() => {
-                        (V([i.clipId]), U || Y || (F(!0), null == G || G()), null == z || z(), T());
+                        V([i.clipId]), U || Y || (F(!0), null == G || G()), null == z || z(), T();
                     }),
                     Z = (0, I.useClipDisclaimer)({ clip: i, callback: q }),
                     W = (0, p.c)((e) => {
-                        ((0, C.P)(e, h.$f.ripple), Z(e));
+                        (0, C.P)(e, h.$f.ripple), Z(e);
                     }),
                     J = (0, m.L)(() =>
                         (0, a.jsx)(_.Caption, {
@@ -1292,7 +1292,7 @@
                             return;
                         }
                         if ((null == t ? void 0 : t.isLegalRejected) || (null == t ? void 0 : t.isUnsafeLegal)) {
-                            (null == e || e.preventDefault(),
+                            null == e || e.preventDefault(),
                                 await o.getDisclaimerData({ entityId: t.clipId, entityType: s.nPY.CLIP, disclaimerId: null == t ? void 0 : t.modalDisclaimerId }),
                                 t.isUnsafeLegal && o.setType(s.YwF.UNSAFE),
                                 n && o.setDisclaimerRejectHandler(n),
@@ -1302,10 +1302,10 @@
                                 o.setShouldCloseModalOnOutsidePress(!1),
                                 o.setShouldCloseModalOnEscape(!1),
                                 (c.current = !1),
-                                d.open());
+                                d.open();
                             return;
                         }
-                        (null == e || e.preventDefault(), null == i || i(e));
+                        null == e || e.preventDefault(), null == i || i(e);
                     })
                 );
             };

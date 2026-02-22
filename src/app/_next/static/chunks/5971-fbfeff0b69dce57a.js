@@ -25,7 +25,7 @@
             'use strict';
             a.d(t, { O: () => i });
             var i = (function (e) {
-                return ((e.ABOUT = 'about'), (e.TRACKS = 'track-list'), e);
+                return (e.ABOUT = 'about'), (e.TRACKS = 'track-list'), e;
             })({});
         },
         10972: (e, t, a) => {
@@ -49,7 +49,7 @@
                             let l = (null == (e = t.meta) ? void 0 : e.isPodcast)
                                 ? d({ id: 'podcast-errors.error-during-loading-podcast' })
                                 : d({ id: 'album-errors.error-during-loading-album' });
-                            (r((0, i.jsx)(o.hT, { error: l }), { containerId: s.uQT.ERROR }), a.current++);
+                            r((0, i.jsx)(o.hT, { error: l }), { containerId: s.uQT.ERROR }), a.current++;
                         }
                     },
                     [t.isLoading, t.isNotFound, t.isRejected, t.meta, d, r],
@@ -165,7 +165,7 @@
                 r = a(85896),
                 d = a(18740),
                 u = (function (e) {
-                    return ((e.TRACK = 'TRACK'), (e.TEXT = 'TEXT'), e);
+                    return (e.TRACK = 'TRACK'), (e.TEXT = 'TEXT'), e;
                 })({}),
                 c = a(24753),
                 m = a.n(c);
@@ -452,7 +452,7 @@
                 N = a(26784),
                 y = a(32168),
                 P = (function (e) {
-                    return ((e.TOP = 'TOP'), (e.BOTTOM = 'BOTTOM'), e);
+                    return (e.TOP = 'TOP'), (e.BOTTOM = 'BOTTOM'), e;
                 })({}),
                 O = a(42213);
             let E = {
@@ -721,7 +721,7 @@
                     { ref: n, intersectionPropertyId: s } = (0, v.nMI)({ callback: l, withViewUuid: !0 }),
                     o = (0, v.ZpR)(t),
                     r = (0, R.c)((e) => {
-                        (a(k.QT.Link, t), o(e));
+                        a(k.QT.Link, t), o(e);
                     });
                 return (0, i.jsx)(P.vK, { onClick: r, ref: n, 'data-intersection-property-id': s });
             });
@@ -735,10 +735,10 @@
                         r = (0, v.ZpR)(n),
                         d = (0, v.ZpR)(t.artist.url),
                         u = (0, R.c)((e) => {
-                            (a(k.QT.ArtistScreen), d(e));
+                            a(k.QT.ArtistScreen), d(e);
                         }),
                         c = (0, R.c)(() => {
-                            (a(k.QT.Link, n), r());
+                            a(k.QT.Link, n), r();
                         }),
                         m = (0, M.SA)({ artist: t.artist, callback: u });
                     return (0, i.jsx)(P.Xx, {
@@ -838,7 +838,7 @@
                         s = (0, P.CC)(),
                         { ref: o, intersectionPropertyId: r } = (0, v.nMI)({ callback: s, withViewUuid: !0 }),
                         d = (0, R.c)(() => {
-                            (n(), l());
+                            n(), l();
                         });
                     return (0, i.jsxs)(
                         K.Dr,
@@ -993,7 +993,7 @@
                     ee = G && U,
                     { showBuySubscriptionModal: ea } = (0, v.qBP)(),
                     ei = j.isPlusCPAPlayerBarEnabled(A.id, null == (e = A.meta) ? void 0 : e.isNonMusic) && U;
-                ((0, s.useEffect)(
+                (0, s.useEffect)(
                     () => () => {
                         m.current = 0;
                     },
@@ -1006,12 +1006,12 @@
                         var e, t;
                         if ((null == (e = A.otherArtistAlbums) ? void 0 : e.isRejected) || (null == (t = A.latestGenreAlbums) ? void 0 : t.isRejected)) {
                             if (!m || m.current > 0) return;
-                            (x((0, i.jsx)(g.hT, { error: F({ id: 'album-errors.error-during-loading-similar-albums' }) }), { containerId: v.uQT.ERROR }), m.current++);
+                            x((0, i.jsx)(g.hT, { error: F({ id: 'album-errors.error-during-loading-similar-albums' }) }), { containerId: v.uQT.ERROR }), m.current++;
                         }
                     }, [null == (t = A.latestGenreAlbums) ? void 0 : t.isRejected, null == (a = A.otherArtistAlbums) ? void 0 : a.isRejected, F, x]),
                     (0, s.useEffect)(() => {
                         A.isResolved && A.hasOtherAlbumVersions && z(!0);
-                    }, [A.hasOtherAlbumVersions, A.isResolved]));
+                    }, [A.hasOtherAlbumVersions, A.isResolved]);
                 let el = (0, s.useCallback)(() => {
                         let e = c.current;
                         null == e || e.scrollIntoView({ behavior: 'smooth' });
@@ -1192,7 +1192,7 @@
                         $ = (0, L.c)({ album: A });
                     (0, s.useEffect)(
                         () => () => {
-                            ((p.current = 0), I.resetPodcast());
+                            (p.current = 0), I.resetPodcast();
                         },
                         [A, I],
                     );
@@ -1390,7 +1390,7 @@
                         }),
                         X = (0, b.cp)({ album: E.meta, shouldHistoryBack: !0 }),
                         z = !!(null == (j = E.meta) ? void 0 : j.isNonMusic);
-                    ((0, v.ACS)(),
+                    (0, v.ACS)(),
                         ((e) => {
                             var t;
                             let { albumId: a, trackId: i, isNonMusic: l } = e,
@@ -1429,13 +1429,13 @@
                             () => (
                                 E.id && E.id !== Number(k) && (E.reset(R), D()),
                                 () => {
-                                    (E.reset(R), D());
+                                    E.reset(R), D();
                                 }
                             ),
                             [E, k, R, D, B],
                         ),
                         (0, v.Jzs)(E.isResolved),
-                        (0, h.h)(E, S.isOpened, T));
+                        (0, h.h)(E, S.isOpened, T);
                     let Q = (0, r.L)(() => (z ? (0, i.jsx)(ec, {}) : (0, i.jsx)(ea, {})));
                     if (k && E.isNeededToLoad) {
                         let e = Promise.allSettled([
@@ -1490,7 +1490,7 @@
                 let { albumId: t, deprecationTargetAlbumId: a, trackId: l, realId: n, searchParams: s } = e,
                     o = Number(t),
                     r = new URLSearchParams(s);
-                (r.delete('albumId'), r.delete('trackId'));
+                r.delete('albumId'), r.delete('trackId');
                 let d = Object.fromEntries(r);
                 if ('number' == typeof a && a !== o) {
                     if (l) {

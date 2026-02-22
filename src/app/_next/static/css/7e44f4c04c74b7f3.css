@@ -92,8 +92,7 @@
     text-decoration: underline;
 }
 .PlusModal_root__RA4rI {
-    background-image:
-        url(https://avatars.mds.yandex.net/get-music-misc/70850/img.6724913b3c0f014022130e5d/orig),
+    background-image: url(https://avatars.mds.yandex.net/get-music-misc/70850/img.6724913b3c0f014022130e5d/orig),
         url(https://avatars.mds.yandex.net/get-music-misc/70850/img.672491383c0f014022130e5b/orig);
     background-image: -webkit-image-set(
         url('https://avatars.mds.yandex.net/get-music-misc/70850/img.6724913b3c0f014022130e5d/orig') 1x,

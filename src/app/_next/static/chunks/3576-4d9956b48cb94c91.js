@@ -13,12 +13,12 @@
                 m = r(72411);
             function u(t, e) {
                 return Object.keys(t).reduce(function (r, a) {
-                    return ((r[a] = (0, n.__assign)({ timeZone: e }, t[a])), r);
+                    return (r[a] = (0, n.__assign)({ timeZone: e }, t[a])), r;
                 }, {});
             }
             function c(t, e) {
                 return Object.keys((0, n.__assign)((0, n.__assign)({}, t), e)).reduce(function (r, a) {
-                    return ((r[a] = (0, n.__assign)((0, n.__assign)({}, t[a] || {}), e[a] || {})), r);
+                    return (r[a] = (0, n.__assign)((0, n.__assign)({}, t[a] || {}), e[a] || {})), r;
                 }, {});
             }
             function f(t, e) {
@@ -206,28 +206,28 @@
                 void 0 === n && (n = {});
                 var a = D(t, e, r, n).reduce(function (t, e) {
                     var r = e.value;
-                    return ('string' != typeof r ? t.push(r) : 'string' == typeof t[t.length - 1] ? (t[t.length - 1] += r) : t.push(r), t);
+                    return 'string' != typeof r ? t.push(r) : 'string' == typeof t[t.length - 1] ? (t[t.length - 1] += r) : t.push(r), t;
                 }, []);
                 return 1 === a.length ? a[0] : 0 === a.length ? '' : a;
             }
             function D(t, e, r, o) {
                 var i = t.locale,
                     s = t.onError;
-                (void 0 === o && (o = {}),
+                void 0 === o && (o = {}),
                     Intl.ListFormat ||
                         s(
                             new E.IF(
                                 'Intl.ListFormat is not available in this environment.\nTry polyfilling it using "@formatjs/intl-listformat"\n',
                                 E.O4.MISSING_INTL_API,
                             ),
-                        ));
+                        );
                 var l = (0, a.J9)(o, w);
                 try {
                     var u = {},
                         c = r.map(function (t, e) {
                             if ('object' == typeof t) {
                                 var r = ''.concat(I, '_').concat(e, '_').concat(I);
-                                return ((u[r] = t), r);
+                                return (u[r] = t), r;
                             }
                             return String(t);
                         });
@@ -296,14 +296,14 @@
             function L(t, e, r, n) {
                 var o = t.locale,
                     i = t.onError;
-                (void 0 === n && (n = {}),
+                void 0 === n && (n = {}),
                     Intl.PluralRules ||
                         i(
                             new E.IF(
                                 'Intl.PluralRules is not available in this environment.\nTry polyfilling it using "@formatjs/intl-pluralrules"\n',
                                 E.O4.MISSING_INTL_API,
                             ),
-                        ));
+                        );
                 var s = (0, a.J9)(n, k);
                 try {
                     return e(o, s).select(r);
@@ -314,7 +314,7 @@
             }
             var O = ['numeric', 'style'];
             function x(t, e, r, n, o) {
-                (void 0 === o && (o = {}),
+                void 0 === o && (o = {}),
                     n || (n = 'second'),
                     Intl.RelativeTimeFormat ||
                         t.onError(
@@ -322,7 +322,7 @@
                                 'Intl.RelativeTimeFormat is not available in this environment.\nTry polyfilling it using "@formatjs/intl-relativetimeformat"\n',
                                 E.O4.MISSING_INTL_API,
                             ),
-                        ));
+                        );
                 try {
                     var i, s, l, u, c, f;
                     return ((i = o),
@@ -342,7 +342,7 @@
                 return t
                     ? Object.keys(t).reduce(function (e, r) {
                           var n = t[r];
-                          return ((e[r] = (0, M.RK)(n) ? (0, i.yU)(n) : n), e);
+                          return (e[r] = (0, M.RK)(n) ? (0, i.yU)(n) : n), e;
                       }, {})
                     : t;
             }
@@ -453,7 +453,7 @@
             let H = (function (t) {
                 function e() {
                     var e = (null !== t && t.apply(this, arguments)) || this;
-                    return ((e.cache = (0, a.MT)()), (e.state = { cache: e.cache, intl: Z(G(e.props), e.cache), prevConfig: G(e.props) }), e);
+                    return (e.cache = (0, a.MT)()), (e.state = { cache: e.cache, intl: Z(G(e.props), e.cache), prevConfig: G(e.props) }), e;
                 }
                 return (
                     (0, n.__extends)(e, t),
@@ -464,7 +464,7 @@
                         return (0, i.bN)(r, a) ? null : { intl: Z(a, n), prevConfig: a };
                     }),
                     (e.prototype.render = function () {
-                        return ((0, i.HM)(this.state.intl), o.createElement(J.Kq, { value: this.state.intl }, this.props.children));
+                        return (0, i.HM)(this.state.intl), o.createElement(J.Kq, { value: this.state.intl }, this.props.children);
                     }),
                     (e.displayName = 'IntlProvider'),
                     (e.defaultProps = i.JF),

@@ -15,8 +15,8 @@ function calculateArrayDiff(oldList, newList) {
     const oldSet = new Set(oldList);
     const newSet = new Set(newList);
 
-    const added = newList.filter(item => !oldSet.has(item));
-    const removed = oldList.filter(item => !newSet.has(item));
+    const added = newList.filter((item) => !oldSet.has(item));
+    const removed = oldList.filter((item) => !newSet.has(item));
 
     return { added, removed };
 }
@@ -27,26 +27,20 @@ function calculateObjectDiff(oldObj, newObj) {
     const changed = [];
 
     for (const key in newObj) {
-        const newVal = typeof newObj[key] === 'object' && newObj[key] !== null
-        ? JSON.stringify(newObj[key], null, 2)
-        : newObj[key];
-        const oldVal = typeof oldObj[key] === 'object' && oldObj[key] !== null
-        ? JSON.stringify(oldObj[key], null, 2)
-        : oldObj[key];
+        const newVal = typeof newObj[key] === 'object' && newObj[key] !== null ? JSON.stringify(newObj[key], null, 2) : newObj[key];
+        const oldVal = typeof oldObj[key] === 'object' && oldObj[key] !== null ? JSON.stringify(oldObj[key], null, 2) : oldObj[key];
 
         if (!(key in oldObj)) {
-            added.push({key, value: newVal});
+            added.push({ key, value: newVal });
         } else if (oldVal !== newVal) {
-            changed.push({key, oldValue: oldVal, newValue: newVal});
+            changed.push({ key, oldValue: oldVal, newValue: newVal });
         }
     }
 
     for (const key in oldObj) {
         if (!(key in newObj)) {
-            const oldVal = typeof oldObj[key] === 'object' && oldObj[key] !== null
-            ? JSON.stringify(oldObj[key], null, 2)
-            : oldObj[key];
-            removed.push({key, value: oldVal});
+            const oldVal = typeof oldObj[key] === 'object' && oldObj[key] !== null ? JSON.stringify(oldObj[key], null, 2) : oldObj[key];
+            removed.push({ key, value: oldVal });
         }
     }
 
@@ -54,39 +48,39 @@ function calculateObjectDiff(oldObj, newObj) {
 }
 
 function wrapDiffMarkdown(diff) {
-  return `\`\`\`diff\n${diff}\n\`\`\`\n`;
+    return `\`\`\`diff\n${diff}\n\`\`\`\n`;
 }
 
 function formatDiff(diff) {
     let message = '';
 
     if (diff.added.length > 0) {
-        message += `## Добавлено\n${wrapDiffMarkdown(diff.added.map(item => `+ ${item.key ?? item}${item.value ? `: ${item.value.replace(/(?<!\\)\n/g, "\n+ ")}` : ''}`).join('\n'))}`;
+        message += `## Добавлено\n${wrapDiffMarkdown(diff.added.map((item) => `+ ${item.key ?? item}${item.value ? `: ${item.value.replace(/(?<!\\)\n/g, '\n+ ')}` : ''}`).join('\n'))}`;
     }
     if (diff.changed && diff.changed.length > 0) {
-        message += `## Изменено\n${wrapDiffMarkdown(diff.changed.map(item => `- ${item.key}: ${item.oldValue.replace(/(?<!\\)\n/g, "\n- ")}\n+ ${item.key}: ${item.newValue.replace(/(?<!\\)\n/g, "\n+ ")}`).join('\n\n'))}`;
+        message += `## Изменено\n${wrapDiffMarkdown(diff.changed.map((item) => `- ${item.key}: ${item.oldValue.replace(/(?<!\\)\n/g, '\n- ')}\n+ ${item.key}: ${item.newValue.replace(/(?<!\\)\n/g, '\n+ ')}`).join('\n\n'))}`;
     }
     if (diff.removed.length > 0) {
-        message += `## Удалено\n${wrapDiffMarkdown(diff.removed.map(item => `- ${item.key ?? item}${item.value ? `: ${item.value.replace(/(?<!\\)\n/g, "\n- ")}` : ''}`).join('\n'))}`;
+        message += `## Удалено\n${wrapDiffMarkdown(diff.removed.map((item) => `- ${item.key ?? item}${item.value ? `: ${item.value.replace(/(?<!\\)\n/g, '\n- ')}` : ''}`).join('\n'))}`;
     }
     return message || undefined;
 }
 
-async function sendDiscordMessage(message, withComponents=true) {
+async function sendDiscordMessage(message, withComponents = true) {
     const webhookResponse = await fetch(`${webhookUrl}?with_components=${!!withComponents}`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            ...message
+            ...message,
         }),
     });
 
     if (!webhookResponse.ok) {
         throw new Error(`Не удалось отправить webhook: ${webhookResponse.statusText}`);
     }
-    console.log('Diff отправлен в Discord')
+    console.log('Diff отправлен в Discord');
 }
 
 function readJson(filePath) {
@@ -120,39 +114,38 @@ function getRuLocalizationDiff(oldFolder, newFolder) {
 
 function getDiffTemplate(title, description, color = 0x378584) {
     return {
-        "flags": 32768,
-        "components": [
+        flags: 32768,
+        components: [
             {
-                "type": 17,  // ComponentType.CONTAINER
-                "accent_color": color,
-                "components": [
+                type: 17, // ComponentType.CONTAINER
+                accent_color: color,
+                components: [
                     {
-                        "type": 10,  // ComponentType.TEXT_DISPLAY
-                        "content": `## ${title}`
+                        type: 10, // ComponentType.TEXT_DISPLAY
+                        content: `## ${title}`,
                     },
                     {
-                        "type": 14,  // ComponentType.SEPARATOR
-                        "divider": true,
-                        "spacing": 2
+                        type: 14, // ComponentType.SEPARATOR
+                        divider: true,
+                        spacing: 2,
                     },
                     {
-                        "type": 10,  // ComponentType.TEXT_DISPLAY
-                        "content": description
+                        type: 10, // ComponentType.TEXT_DISPLAY
+                        content: description,
                     },
-                ]
+                ],
             },
         ],
     };
 }
 
 function getSortedVersionList() {
-    const versions = fs.readdirSync(OUTPUT).filter(f => (fs.statSync(path.join(OUTPUT, f)).isDirectory() && (f !== 'src')));
+    const versions = fs.readdirSync(OUTPUT).filter((f) => fs.statSync(path.join(OUTPUT, f)).isDirectory() && f !== 'src');
     return versions
-      .map((value) => value.replaceAll("_", "."))
-      .sort((a, b) => semver.rcompare(a, b))
-      .map((value) => value.replaceAll(".", "_"));
+        .map((value) => value.replaceAll('_', '.'))
+        .sort((a, b) => semver.rcompare(a, b))
+        .map((value) => value.replaceAll('.', '_'));
 }
-
 
 async function run(command, options) {
     if (command) console.time(`${command} исполнен за`);
@@ -170,7 +163,7 @@ async function run(command, options) {
     }
 
     function getVersionsString() {
-        return `${oldVersion.replaceAll('_', '.')} → ${newVersion.replaceAll('_', '.')}`
+        return `${oldVersion.replaceAll('_', '.')} → ${newVersion.replaceAll('_', '.')}`;
     }
 
     const oldFolder = path.join(OUTPUT, oldVersion);
@@ -180,7 +173,6 @@ async function run(command, options) {
     if (!fs.existsSync(newFolder)) throw new Error(`Папка с данными для новой версии не найдена: ${newFolder}`);
 
     switch (command) {
-
         case 'diff':
             console.log(`Вычисление diff между версиями ${oldVersion.replaceAll('_', '.')} и ${newVersion.replaceAll('_', '.')}...`);
             console.log(`oldFolder ${oldFolder}\nnewFolder ${newFolder}...`);
@@ -211,33 +203,19 @@ async function run(command, options) {
 
             if (shouldSend) {
                 if (routesDiffMessage) {
-                    await sendDiscordMessage(
-                    {
-                        ...getDiffTemplate(
-                            `Эндпоинты изменились ${getVersionsString()}`,
-                            routesDiffMessage
-                        )
+                    await sendDiscordMessage({
+                        ...getDiffTemplate(`Эндпоинты изменились ${getVersionsString()}`, routesDiffMessage),
                     });
                 }
                 if (experimentsDiffMessage) {
-                    await sendDiscordMessage(
-                    {
-                        ...getDiffTemplate(
-                            `Эксперименты изменились ${getVersionsString()}`,
-                            experimentsDiffMessage,
-                        ),
-                    }
-                    );
+                    await sendDiscordMessage({
+                        ...getDiffTemplate(`Эксперименты изменились ${getVersionsString()}`, experimentsDiffMessage),
+                    });
                 }
                 if (ruLocalizationDiffMessage) {
-                    await sendDiscordMessage(
-                    {
-                        ...getDiffTemplate(
-                        `Локализация изменилась ${getVersionsString()}`,
-                        ruLocalizationDiffMessage,
-                        ),
-                    }
-                    );
+                    await sendDiscordMessage({
+                        ...getDiffTemplate(`Локализация изменилась ${getVersionsString()}`, ruLocalizationDiffMessage),
+                    });
                 }
             }
 
@@ -245,21 +223,21 @@ async function run(command, options) {
         default:
             if (command) console.log('Неизвестная команда:', command, '\nИнтерпретирую как help...');
         case 'help':
-            console.log("\n================================");
-            console.log("Dataminer Diff Calculator");
+            console.log('\n================================');
+            console.log('Dataminer Diff Calculator');
             console.log(`
 Команды:
 help - Отображает это сообщение
             `);
-            console.log("================================");
+            console.log('================================');
             console.log(`
 Флаги:
             `);
-            console.log("================================");
+            console.log('================================');
             console.log(`
 Флаги с аргументами указываются через =, например --oldYMHashOverride=f9cdcfb583ccebb5b23edaab0ea90165bee0479458532a0580c1b3a307d746d3
             `);
-            console.log("================================");
+            console.log('================================');
             break;
     }
 
@@ -269,4 +247,6 @@ help - Отображает это сообщение
 const args = minimist(process.argv.slice(2));
 console.log(args);
 
-(async () => {await run(args._?.[0], args)})();
+(async () => {
+    await run(args._?.[0], args);
+})();

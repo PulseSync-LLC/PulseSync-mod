@@ -9,7 +9,7 @@
                 s = i(66268),
                 o = {
                     6699: (e, t, i) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0);
                         let r = i(352),
                             n = i(810);
                         t.useDebouncedToggle = (e) => {
@@ -19,16 +19,16 @@
                                 d = (0, n.useMemo)(
                                     () =>
                                         (0, r.throttle)(() => {
-                                            (a(!i),
+                                            a(!i),
                                                 o.current && window.clearTimeout(o.current),
                                                 (o.current = window.setTimeout(() => {
                                                     a(!!i);
-                                                }, t)));
+                                                }, t));
                                         }, s),
                                     [t, i, s],
                                 ),
                                 m = (0, n.useCallback)(() => {
-                                    (a(!!i), o.current && window.clearTimeout(o.current));
+                                    a(!!i), o.current && window.clearTimeout(o.current);
                                 }, [i]);
                             return (
                                 (0, n.useEffect)(
@@ -42,7 +42,7 @@
                         };
                     },
                     2767: (e, t, i) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0);
                         let r = i(810);
                         t.useForceUpdateRef = () => {
                             let [e, t] = (0, r.useState)(null);
@@ -55,7 +55,7 @@
                         };
                     },
                     2067: (e, t, i) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0);
                         let r = i(810),
                             n = i(361),
                             s = i(6699);
@@ -63,7 +63,7 @@
                             let { onScroll: t, listenIsScrolling: i, elementRef: o } = e,
                                 { state: l, handleDebouncedToggle: a } = (0, s.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                                 d = (0, r.useCallback)(() => {
-                                    (i && a(), null == t || t());
+                                    i && a(), null == t || t();
                                 }, [i, a, t]);
                             return (
                                 (0, r.useEffect)(() => {
@@ -71,21 +71,21 @@
                                     if (null === e) return;
                                     let t = null != e ? e : window,
                                         i = { capture: !0, passive: !0 };
-                                    return (t.addEventListener('scroll', d, i), () => t.removeEventListener('scroll', d, i));
+                                    return t.addEventListener('scroll', d, i), () => t.removeEventListener('scroll', d, i);
                                 }, [o, d]),
                                 l
                             );
                         };
                     },
                     361: (e, t) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                        Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            }));
+                            });
                     },
                     352: (e) => {
                         e.exports = n;
@@ -99,11 +99,11 @@
                 var t = l[e];
                 if (void 0 !== t) return t.exports;
                 var i = (l[e] = { exports: {} });
-                return (o[e](i, i.exports, a), i.exports);
+                return o[e](i, i.exports, a), i.exports;
             }
             var d = {};
-            ((() => {
-                (Object.defineProperty(d, '__esModule', { value: !0 }), (d.useElementOffsetY = void 0));
+            (() => {
+                Object.defineProperty(d, '__esModule', { value: !0 }), (d.useElementOffsetY = void 0);
                 let e = a(810),
                     t = a(2067),
                     i = a(2767);
@@ -114,10 +114,10 @@
                             let e = null == n ? void 0 : n.getBoundingClientRect();
                             e && l(e.y);
                         }, [n]);
-                    return ((0, e.useLayoutEffect)(a), (0, t.useScroll)({ onScroll: a, elementRef: r }), { forceUpdateRefCallback: s, offsetY: o });
+                    return (0, e.useLayoutEffect)(a), (0, t.useScroll)({ onScroll: a, elementRef: r }), { forceUpdateRefCallback: s, offsetY: o };
                 };
             })(),
-                d.__esModule);
+                d.__esModule;
             var m = d.useElementOffsetY;
         },
         2117: (e, t, i) => {
@@ -128,19 +128,19 @@
                 s = i(7144),
                 o = i(66268),
                 l = i(73827);
-            (!(function (e) {
-                ((e.formatDate = 'FormattedDate'),
+            !(function (e) {
+                (e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName'));
+                    (e.formatDisplayName = 'FormattedDisplayName');
             })(r || (r = {})),
                 (function (e) {
-                    ((e.formatDate = 'FormattedDateParts'),
+                    (e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts'));
-                })(n || (n = {})));
+                        (e.formatList = 'FormattedListParts');
+                })(n || (n = {}));
             var a = function (e) {
                 var t = (0, l.A)(),
                     i = e.value,
@@ -157,7 +157,7 @@
                         a = 'string' == typeof r ? new Date(r || 0) : r;
                     return n('formatDate' === e ? i.formatDateToParts(a, o) : i.formatTimeToParts(a, o));
                 };
-                return ((t.displayName = n[e]), t);
+                return (t.displayName = n[e]), t;
             }
             function m(e) {
                 var t = function (t) {
@@ -170,11 +170,11 @@
                     var m = i.textComponent || o.Fragment;
                     return o.createElement(m, null, d);
                 };
-                return ((t.displayName = r[e]), t);
+                return (t.displayName = r[e]), t;
             }
-            ((a.displayName = 'FormattedNumberParts'), (a.displayName = 'FormattedNumberParts'));
+            (a.displayName = 'FormattedNumberParts'), (a.displayName = 'FormattedNumberParts');
             var u = m('formatDate');
-            (m('formatTime'), m('formatNumber'), m('formatList'), m('formatDisplayName'), d('formatDate'), d('formatTime'));
+            m('formatTime'), m('formatNumber'), m('formatList'), m('formatDisplayName'), d('formatDate'), d('formatTime');
         },
         2865: (e, t, i) => {
             'use strict';
@@ -309,7 +309,7 @@
                             if (e.artists.map((e) => e.name).join(', ') === i && t === e.title) return o.FlZ.OK;
                             try {
                                 var a;
-                                (yield n.changeTrack({ trackId: e.id, title: t, artist: i }), (e.title = t));
+                                yield n.changeTrack({ trackId: e.id, title: t, artist: i }), (e.title = t);
                                 let l = (null == (a = e.artists[0]) ? void 0 : a.id) || '0';
                                 if (((e.artists = (0, r.wg)([])), i)) {
                                     let t = s.PK.create({ id: l, name: i, isAvailable: !0 });
@@ -317,7 +317,7 @@
                                 }
                                 return o.FlZ.OK;
                             } catch (e) {
-                                return (l.error(e), o.FlZ.ERROR);
+                                return l.error(e), o.FlZ.ERROR;
                             }
                         }),
                     })),
@@ -380,7 +380,7 @@
                             t && ((e.volatileUnloadedEntitiesData = (0, P.A)(t)), (e.unloadedEntitiesData = (0, r.wg)(t)));
                         },
                         resetUnloadedEntitiesData: () => {
-                            ((e.volatileUnloadedEntitiesData = void 0), (e.unloadedEntitiesData = void 0));
+                            (e.volatileUnloadedEntitiesData = void 0), (e.unloadedEntitiesData = void 0);
                         },
                         setStatus: (t) => {
                             e.status = t;
@@ -451,11 +451,11 @@
                         },
                         setCrossFadeMode: (t) => {
                             let { localStorage: i } = (0, r._$)(e);
-                            (i.set(o.cYZ.CrossFadeMode, t), (e.isCrossFadeEnabled = t));
+                            i.set(o.cYZ.CrossFadeMode, t), (e.isCrossFadeEnabled = t);
                         },
                     }))
                     .named('SonataState');
-            (i(75797), i(1199));
+            i(75797), i(1199);
             var L = i(61646),
                 F = i(57526),
                 T = i(67950),
@@ -623,7 +623,7 @@
         },
         29371: (e, t, i) => {
             'use strict';
-            (i.d(t, { FN: () => n, gj: () => r }), i(27224));
+            i.d(t, { FN: () => n, gj: () => r }), i(27224);
             let r = (e) => {
                     let { containerNodeRect: t, draggingNodeRect: i, transform: r } = e;
                     return i && t
@@ -693,7 +693,7 @@
             };
             var o = i(17846),
                 l = i(66268);
-            ((0, l.cache)(async (e, t) => {
+            (0, l.cache)(async (e, t) => {
                 var i;
                 let r;
                 try {
@@ -711,7 +711,7 @@
                 } catch (e) {
                     return (0, n.tfF)(e, () => ({ playlist: void 0, ...(0, n.Bj3)() }));
                 }
-                return ((null == (i = r.playlist) ? void 0 : i.error) === 'not-found' && (0, o.notFound)(), r);
+                return (null == (i = r.playlist) ? void 0 : i.error) === 'not-found' && (0, o.notFound)(), r;
             }),
                 (0, l.cache)(async (e) => {
                     var t;
@@ -732,8 +732,8 @@
                     } catch (e) {
                         return (0, n.tfF)(e, () => ({ playlist: void 0, ...(0, n.Bj3)() }));
                     }
-                    return ((null == (t = i.playlist) ? void 0 : t.error) === 'not-found' && (0, o.notFound)(), i);
-                }));
+                    return (null == (t = i.playlist) ? void 0 : t.error) === 'not-found' && (0, o.notFound)(), i;
+                });
             var a = i(25911);
             let d = (e) => ({ uid: e.uid, login: e.login, name: e.name, sex: e.sex, verified: e.verified }),
                 m = (e) =>
@@ -798,9 +798,9 @@
                                 e.description = t;
                                 try {
                                     let r = yield i.changePlaylistDescription({ description: t, userId: e.uid, playlistKind: e.kind });
-                                    return ((e.description = r.description), n.FlZ.OK);
+                                    return (e.description = r.description), n.FlZ.OK;
                                 } catch (t) {
-                                    ((e.description = r), s.error(t));
+                                    (e.description = r), s.error(t);
                                 }
                             }
                             return n.FlZ.ERROR;
@@ -810,7 +810,7 @@
                             let { usersResource: i, modelActionsLogger: s } = (0, r._$)(e);
                             try {
                                 let r = yield i.uploadPlaylistCover({ userId: e.uid, formData: t, playlistKind: e.kind });
-                                return ((e.coverUri = r.cover.uri), n.FlZ.OK);
+                                return (e.coverUri = r.cover.uri), n.FlZ.OK;
                             } catch (e) {
                                 s.error(e);
                             }
@@ -956,29 +956,29 @@
                     V = (0, g.PT7)(),
                     W = (0, u.c)((e) => {
                         if ((e.stopPropagation(), V())) return void e.preventDefault();
-                        (j.setUtmLink(T), j.openPlaylistTrailer(i.id), Q(a.ky.Playlist, i.id));
+                        j.setUtmLink(T), j.openPlaylistTrailer(i.id), Q(a.ky.Playlist, i.id);
                     }),
                     [X, G] = (0, o.useState)(!1),
                     { isPlaying: J, togglePlay: ee } = (0, g.Dx4)({
                         playContextParams: { contextData: { type: m.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: F, utmLink: T }, loadContextMeta: !0 },
                     }),
                     et = (0, u.c)(() => {
-                        (H({ to: a.QT.PlaylistScreen }), null == S || S());
+                        H({ to: a.QT.PlaylistScreen }), null == S || S();
                     }),
                     ei = (0, u.c)((e) => {
-                        (et(), q(e));
+                        et(), q(e);
                     }),
                     er = (0, u.c)(() => {
                         V() || (B || J || (R(!0), null == M || M()), ee(), Z(!J));
                     }),
                     en = (0, u.c)(() => {
-                        (I || i.isLiked || (O(!0), null == E || E()), $());
+                        I || i.isLiked || (O(!0), null == E || E()), $();
                     }),
                     es = (0, u.c)((e) => {
-                        (e.preventDefault(), e.stopPropagation());
+                        e.preventDefault(), e.stopPropagation();
                     }),
                     eo = (0, u.c)((e) => {
-                        (D(e), G(e));
+                        D(e), G(e);
                     }),
                     el = (0, o.useMemo)(() => {
                         var e;
@@ -1134,7 +1134,7 @@
             };
         },
         63541: (e, t, i) => {
-            (Promise.resolve().then(i.bind(i, 52756)),
+            Promise.resolve().then(i.bind(i, 52756)),
                 Promise.resolve().then(i.bind(i, 41458)),
                 Promise.resolve().then(i.bind(i, 80922)),
                 Promise.resolve().then(i.bind(i, 54487)),
@@ -1410,7 +1410,7 @@
                 Promise.resolve().then(i.bind(i, 45228)),
                 Promise.resolve().then(i.bind(i, 75651)),
                 Promise.resolve().then(i.bind(i, 88233)),
-                Promise.resolve().then(i.bind(i, 94615)));
+                Promise.resolve().then(i.bind(i, 94615));
         },
         75658: (e, t, i) => {
             'use strict';
@@ -1443,12 +1443,12 @@
                     h = (0, g.KX)(s),
                     [y, _] = (0, o.useState)(!1),
                     C = (0, v.c)(async () => {
-                        (y || s.isLiked || (_(!0), null == c || c()), await h());
+                        y || s.isLiked || (_(!0), null == c || c()), await h();
                     }),
                     x = (0, P.Ftl)(),
                     k = (0, v.c)((e) => {
                         if ((e.stopPropagation(), u())) return void e.preventDefault();
-                        (m.openPlaylistTrailer(s.id), x(d.ky.Playlist, s.id));
+                        m.openPlaylistTrailer(s.id), x(d.ky.Playlist, s.id);
                     });
                 return (0, r.jsxs)('div', {
                     className: (0, n.$)(f().root, f().controls, i, { [f().controls_disabled]: !s.isAvailable }),
@@ -1506,16 +1506,16 @@
                     } = (0, P.Dx4)({ playContextParams: { contextData: { type: u.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: N }, loadContextMeta: !0 } }),
                     D = (0, P.ZpR)(i.url),
                     U = (0, v.c)((e) => {
-                        (null == M || M(), R({ to: d.QT.PlaylistScreen }), e.preventDefault(), D(e));
+                        null == M || M(), R({ to: d.QT.PlaylistScreen }), e.preventDefault(), D(e);
                     }),
                     $ = (0, v.c)(() => {
                         S() || (A || I || (j(!0), null == B || B()), z(), L(!I));
                     }),
                     Y = (0, v.c)((e) => {
-                        ((0, c.P)(e, p.$f.ripple), U(e));
+                        (0, c.P)(e, p.$f.ripple), U(e);
                     }),
                     H = (0, v.c)((e) => {
-                        (e.stopPropagation(), U(e));
+                        e.stopPropagation(), U(e);
                     }),
                     Z = (0, o.useCallback)(
                         (e) =>

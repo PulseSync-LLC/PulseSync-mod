@@ -333,8 +333,7 @@ class PulseSyncManager extends EventEmitter {
     }
 
     async handleExtensions(addons) {
-
-        this.logger.info(process.argv)
+        this.logger.info(process.argv);
 
         if (process.argv.includes('--safe-mode')) {
             this.logger.warn('Safe mode enabled: skipping ddon injection');
@@ -442,8 +441,7 @@ class PulseSyncManager extends EventEmitter {
     }
 
     async handleTheme({ css = '', name = 'theme', script = '' }) {
-
-        this.logger.info(process.argv)
+        this.logger.info(process.argv);
 
         if (process.argv.includes('--safe-mode')) {
             this.logger.warn('Safe mode enabled: skipping theme injection');

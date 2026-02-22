@@ -147,7 +147,7 @@
                         for (var a = arguments, i = -1, c = o(a.length - t, 0), s = Array(c); ++i < c; ) s[i] = a[t + i];
                         i = -1;
                         for (var l = Array(t + 1); ++i < t; ) l[i] = a[i];
-                        return ((l[t] = n(s)), (0, r.A)(e, this, l));
+                        return (l[t] = n(s)), (0, r.A)(e, this, l);
                     }
                 );
             };
@@ -188,7 +188,7 @@
                     var C = (0, p.A)(x),
                         k = !C && (0, v.A)(x),
                         w = !C && !k && (0, b.A)(x);
-                    ((P = x),
+                    (P = x),
                         C || k || w
                             ? (0, p.A)(E)
                                 ? (P = E)
@@ -201,9 +201,9 @@
                                       : (P = [])
                             : (0, y.A)(x) || (0, f.A)(x)
                               ? ((P = E), (0, f.A)(E) ? (P = (0, S.A)(E)) : (!(0, h.A)(E) || (0, m.A)(E)) && (P = (0, d.A)(x)))
-                              : (O = !1));
+                              : (O = !1);
                 }
-                (O && (c.set(x, P), o(P, x, r, a, c), c.delete(x)), i(e, n, P));
+                O && (c.set(x, P), o(P, x, r, a, c), c.delete(x)), i(e, n, P);
             };
             var x = n(25677);
             let _ = function e(t, n, o, a, s) {
@@ -214,7 +214,7 @@
                             if ((s || (s = new r.A()), (0, h.A)(c))) E(t, n, l, o, e, a, s);
                             else {
                                 var u = a ? a(g(t, l), c, l + '', t, n, s) : void 0;
-                                (void 0 === u && (u = c), i(t, l, u));
+                                void 0 === u && (u = c), i(t, l, u);
                             }
                         },
                         x.A,

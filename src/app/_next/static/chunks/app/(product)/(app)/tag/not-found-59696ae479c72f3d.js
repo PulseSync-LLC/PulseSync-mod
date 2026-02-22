@@ -115,7 +115,7 @@
                 (0, v.CgZ)(c);
                 let { sendRefreshEvent: P } = (0, v.cYT)(),
                     _ = (0, i.useCallback)(() => {
-                        (P(), (window.location.href = v.Zyd.main.href));
+                        P(), (window.location.href = v.Zyd.main.href);
                     }, [P]),
                     { contentRef: g } = (0, v.gKY)();
                 return (0, o.jsxs)('div', {
@@ -197,7 +197,7 @@
                 s = n(66268),
                 i = {
                     6699: (e, t, n) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0);
                         let o = n(352),
                             r = n(810);
                         t.useDebouncedToggle = (e) => {
@@ -207,16 +207,16 @@
                                 d = (0, r.useMemo)(
                                     () =>
                                         (0, o.throttle)(() => {
-                                            (a(!n),
+                                            a(!n),
                                                 i.current && window.clearTimeout(i.current),
                                                 (i.current = window.setTimeout(() => {
                                                     a(!!n);
-                                                }, t)));
+                                                }, t));
                                         }, s),
                                     [t, n, s],
                                 ),
                                 m = (0, r.useCallback)(() => {
-                                    (a(!!n), i.current && window.clearTimeout(i.current));
+                                    a(!!n), i.current && window.clearTimeout(i.current);
                                 }, [n]);
                             return (
                                 (0, r.useEffect)(
@@ -230,14 +230,14 @@
                         };
                     },
                     361: (e, t) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                        Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            }));
+                            });
                     },
                     352: (e) => {
                         e.exports = r;
@@ -251,11 +251,11 @@
                 var t = l[e];
                 if (void 0 !== t) return t.exports;
                 var n = (l[e] = { exports: {} });
-                return (i[e](n, n.exports, a), n.exports);
+                return i[e](n, n.exports, a), n.exports;
             }
             var d = {};
-            ((() => {
-                (Object.defineProperty(d, '__esModule', { value: !0 }), (d.useScroll = void 0));
+            (() => {
+                Object.defineProperty(d, '__esModule', { value: !0 }), (d.useScroll = void 0);
                 let e = a(810),
                     t = a(361),
                     n = a(6699);
@@ -263,7 +263,7 @@
                     let { onScroll: r, listenIsScrolling: s, elementRef: i } = o,
                         { state: l, handleDebouncedToggle: a } = (0, n.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                         d = (0, e.useCallback)(() => {
-                            (s && a(), null == r || r());
+                            s && a(), null == r || r();
                         }, [s, a, r]);
                     return (
                         (0, e.useEffect)(() => {
@@ -271,17 +271,17 @@
                             if (null === e) return;
                             let n = null != e ? e : window,
                                 o = { capture: !0, passive: !0 };
-                            return (n.addEventListener('scroll', d, o), () => n.removeEventListener('scroll', d, o));
+                            return n.addEventListener('scroll', d, o), () => n.removeEventListener('scroll', d, o);
                         }, [i, d]),
                         l
                     );
                 };
             })(),
-                d.__esModule);
+                d.__esModule;
             var m = d.useScroll;
         },
         50781: (e, t, n) => {
-            (Promise.resolve().then(n.bind(n, 41458)),
+            Promise.resolve().then(n.bind(n, 41458)),
                 Promise.resolve().then(n.bind(n, 80922)),
                 Promise.resolve().then(n.bind(n, 31679)),
                 Promise.resolve().then(n.bind(n, 46595)),
@@ -384,11 +384,11 @@
                 Promise.resolve().then(n.bind(n, 95007)),
                 Promise.resolve().then(n.bind(n, 86067)),
                 Promise.resolve().then(n.bind(n, 67556)),
-                Promise.resolve().then(n.bind(n, 5572)));
+                Promise.resolve().then(n.bind(n, 5572));
         },
         64143: (e, t, n) => {
             'use strict';
-            (n.d(t, { hO: () => v, jr: () => h, jp: () => c, QZ: () => r }), n(57323));
+            n.d(t, { hO: () => v, jr: () => h, jp: () => c, QZ: () => r }), n(57323);
             var o = n(66268);
             let r = (e, t, n) => {
                 let r = null != n && n;
@@ -434,10 +434,10 @@
                             t = l ? Number(l.offsetTop) - e : e;
                         t < 0 && (t = 0);
                         let o = (e) => {
-                            (S(e > t),
+                            S(e > t),
                                 h && E(e > 30),
                                 (null == P ? void 0 : P.current) && j(u({ element: null == P ? void 0 : P.current, scrollTop: e, isMobile: y })),
-                                (null == g ? void 0 : g.current) && k(u({ element: null == g ? void 0 : g.current, scrollTop: e, isMobile: y })));
+                                (null == g ? void 0 : g.current) && k(u({ element: null == g ? void 0 : g.current, scrollTop: e, isMobile: y }));
                         };
                         y ? o(window.scrollY) : n && o(n.scrollTop);
                     }, [v, l, y, h, P, g, n]);
@@ -472,7 +472,7 @@
                         a = (0, o.useRef)(null);
                     return (
                         (0, o.useEffect)(() => {
-                            ((null == a ? void 0 : a.current) && i(a), n && l(n));
+                            (null == a ? void 0 : a.current) && i(a), n && l(n);
                         }, [a, n, i, l]),
                         (0, o.useEffect)(
                             () => () => {
@@ -489,7 +489,7 @@
                         a = (0, o.useRef)(null);
                     return (
                         (0, o.useEffect)(() => {
-                            ((null == a ? void 0 : a.current) && i(a), n && l(n));
+                            (null == a ? void 0 : a.current) && i(a), n && l(n);
                         }, [a, n, i, l]),
                         (0, o.useEffect)(
                             () => () => {
@@ -504,10 +504,10 @@
         64802: (e, t, n) => {
             'use strict';
             var o;
-            (n.d(t, { U: () => o }),
+            n.d(t, { U: () => o }),
                 (function (e) {
-                    ((e.UNKNOWN = 'unknown'), (e.MALE = 'male'), (e.FEMALE = 'female'));
-                })(o || (o = {})));
+                    (e.UNKNOWN = 'unknown'), (e.MALE = 'male'), (e.FEMALE = 'female');
+                })(o || (o = {}));
         },
         83888: (e, t, n) => {
             'use strict';
@@ -556,13 +556,13 @@
                     },
                     [_],
                 );
-                (_.isNotFound && (0, i.notFound)(),
+                _.isNotFound && (0, i.notFound)(),
                     (0, l.useEffect)(
                         () => () => {
                             _.reset();
                         },
                         [_],
-                    ));
+                    );
                 let w = (0, l.useMemo)(() => ({ Footer: () => (0, o.jsx)(c.A, { children: (0, o.jsx)(c.wi, { className: P().footer }) }) }), []);
                 return ((0, h.Jzs)(_.isResolved), _.isNeededToLoad && (0, l.use)(_.getTag({ id: b, page: 0, pageSize: 20 })), _.isSomethingWrong)
                     ? (0, o.jsx)(m.w, {})
@@ -608,9 +608,9 @@
         },
     },
     (e) => {
-        (e.O(0, [7098, 8282, 9712, 5271, 9775, 952, 7309, 8400, 1311, 7764, 6706, 996, 4236, 9169, 8740, 9615, 3588, 1744, 5242, 9902, 5598, 7358], () =>
+        e.O(0, [7098, 8282, 9712, 5271, 9775, 952, 7309, 8400, 1311, 7764, 6706, 996, 4236, 9169, 8740, 9615, 3588, 1744, 5242, 9902, 5598, 7358], () =>
             e((e.s = 50781)),
         ),
-            (_N_E = e.O()));
+            (_N_E = e.O());
     },
 ]);

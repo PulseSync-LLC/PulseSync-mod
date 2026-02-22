@@ -102,9 +102,9 @@
                                 if (!o) break;
                                 let s = o[0],
                                     n = o.index;
-                                ((r += a.pathname.slice(t, n).replace(/\/{2,}/g, '/')), (r += s), (t = n + s.length));
+                                (r += a.pathname.slice(t, n).replace(/\/{2,}/g, '/')), (r += s), (t = n + s.length);
                             }
-                            ((r += a.pathname.slice(t, a.pathname.length).replace(/\/{2,}/g, '/')), (a.pathname = r));
+                            (r += a.pathname.slice(t, a.pathname.length).replace(/\/{2,}/g, '/')), (a.pathname = r);
                         }
                         if (a.pathname)
                             try {
@@ -135,7 +135,7 @@
                                 a.search = decodeURIComponent(a.search);
                             } catch {}
                         }
-                        (t.removeTrailingSlash && (a.pathname = a.pathname.replace(/\/$/, '')), t.removeExplicitPort && a.port && (a.port = ''));
+                        t.removeTrailingSlash && (a.pathname = a.pathname.replace(/\/$/, '')), t.removeExplicitPort && a.port && (a.port = '');
                         let o = e;
                         return (
                             (e = a.toString()),
@@ -157,7 +157,7 @@
                                     e.startsWith('#') && (e = e.slice(1)),
                                     e.split('&').reduce((e, t) => {
                                         let [r = '', a = ''] = t.split('=');
-                                        return ((e[r] = a), e);
+                                        return (e[r] = a), e;
                                     }, {})
                                 ))(e);
                                 if (r.expires_in && r.access_token && r.state) {
@@ -177,6 +177,6 @@
         },
     },
     (e) => {
-        (e.O(0, [7098, 8282, 9712, 5271, 1311, 7764, 6706, 996, 4236, 9169, 8740, 9902, 5598, 7358], () => e((e.s = 22548))), (_N_E = e.O()));
+        e.O(0, [7098, 8282, 9712, 5271, 1311, 7764, 6706, 996, 4236, 9169, 8740, 9902, 5598, 7358], () => e((e.s = 22548))), (_N_E = e.O());
     },
 ]);

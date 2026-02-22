@@ -261,7 +261,7 @@ const init = () => {
     fetchDefaultExperimentOverrides().then((data) => {
         if (data) initField(store_js_1.StoreKeys.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES, data, true);
     });
-    if (store.get(`${store_js_1.StoreKeys.MOD_SETTINGS}.discordRPC.applicationIDForRPC`) === "1270726237605855395") {
+    if (store.get(`${store_js_1.StoreKeys.MOD_SETTINGS}.discordRPC.applicationIDForRPC`) === '1270726237605855395') {
         initField(`${store_js_1.StoreKeys.MOD_SETTINGS}.discordRPC.applicationIDForRPC`, '1124055337234858005', true);
     }
 };

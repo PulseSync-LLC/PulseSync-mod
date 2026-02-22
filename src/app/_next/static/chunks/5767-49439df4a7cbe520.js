@@ -29,7 +29,7 @@
                 s = a(17846),
                 r = a(66268),
                 i = a(79169);
-            ((0, r.cache)(async function (e, t) {
+            (0, r.cache)(async function (e, t) {
                 var a;
                 let l,
                     r = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : { labelId: Number(e), page: 0, pageSize: 20, sortBy: t };
@@ -45,7 +45,7 @@
                 } catch (e) {
                     return (0, i.tfF)(e, () => ({ label: void 0, albums: void 0, ...(0, i.Bj3)() }));
                 }
-                return ((null == (a = l.label) ? void 0 : a.error) === 'not-found' && (0, s.notFound)(), l);
+                return (null == (a = l.label) ? void 0 : a.error) === 'not-found' && (0, s.notFound)(), l;
             }),
                 (0, r.cache)(async (e, t) => {
                     var a;
@@ -62,7 +62,7 @@
                     } catch (e) {
                         return (0, i.tfF)(e, () => ({ label: void 0, artists: void 0, ...(0, i.Bj3)() }));
                     }
-                    return ((null == (a = l.label) ? void 0 : a.error) === 'not-found' && (0, s.notFound)(), l);
+                    return (null == (a = l.label) ? void 0 : a.error) === 'not-found' && (0, s.notFound)(), l;
                 }),
                 (0, r.cache)(async (e) => {
                     var t;
@@ -76,15 +76,15 @@
                     } catch (e) {
                         return (0, i.tfF)(e, () => ({ label: void 0, ...(0, i.Bj3)() }));
                     }
-                    return ((null == (t = a.label) ? void 0 : t.error) === 'not-found' && (0, s.notFound)(), a);
+                    return (null == (t = a.label) ? void 0 : t.error) === 'not-found' && (0, s.notFound)(), a;
                 }),
                 a(68811),
                 a(62175),
-                a(74295));
+                a(74295);
             var o = a(41028),
                 n = a(61979);
             !(function (e) {
-                ((e.MUSICAL = 'musical'), (e.PUBLISHER = 'publisher'));
+                (e.MUSICAL = 'musical'), (e.PUBLISHER = 'publisher');
             })(l || (l = {}));
             var u = a(52732),
                 d = a(70879),
@@ -131,13 +131,13 @@
                                     let o = t.albums.map(u.pp);
                                     e.pagesLoader.setItems(o, { page: l, pager: t.pager });
                                 } catch (t) {
-                                    (c.error(t),
+                                    c.error(t),
                                         t instanceof n.GX && t.statusCode === n.X1.NOT_FOUND && (e.errorStatusCode = n.X1.NOT_FOUND),
-                                        e.pagesLoader.setItems(null, { responseStatus: i.FlZ.ERROR, page: l }));
+                                        e.pagesLoader.setItems(null, { responseStatus: i.FlZ.ERROR, page: l });
                                 }
                         }),
                         reset() {
-                            (e.pagesLoader.reset(), (e.errorStatusCode = null));
+                            e.pagesLoader.reset(), (e.errorStatusCode = null);
                         },
                     })),
                 b = o.gK
@@ -181,13 +181,13 @@
                                     let o = t.artists.map(d.dM);
                                     e.pagesLoader.setItems(o, { page: l, pager: t.pager });
                                 } catch (t) {
-                                    (m.error(t),
+                                    m.error(t),
                                         t instanceof n.GX && t.statusCode === n.X1.NOT_FOUND && (e.errorStatusCode = n.X1.NOT_FOUND),
-                                        e.pagesLoader.setItems(null, { responseStatus: i.FlZ.ERROR, page: l }));
+                                        e.pagesLoader.setItems(null, { responseStatus: i.FlZ.ERROR, page: l });
                                 }
                         }),
                         reset() {
-                            (e.pagesLoader.reset(), (e.errorStatusCode = null));
+                            e.pagesLoader.reset(), (e.errorStatusCode = null);
                         },
                     })),
                 p = o.gK
@@ -249,7 +249,7 @@
                                     let l = yield a.getAlbums(t);
                                     e.albums = (0, o.wg)(l.albums.map(u.pp));
                                 } catch (t) {
-                                    (l.error(t), t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = n.X1.NOT_FOUND));
+                                    l.error(t), t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = n.X1.NOT_FOUND);
                                 }
                             }),
                             getArtists: (0, o.L3)(function* (t) {
@@ -258,7 +258,7 @@
                                     let l = yield a.getArtists(t);
                                     e.artists = (0, o.wg)(l.artists.map(d.dM));
                                 } catch (t) {
-                                    (l.error(t), t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = n.X1.NOT_FOUND));
+                                    l.error(t), t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = n.X1.NOT_FOUND);
                                 }
                             }),
                             getData: (0, o.L3)(function* (a) {
@@ -268,25 +268,25 @@
                                     try {
                                         e.loadingState = i.GuX.PENDING;
                                         let a = s;
-                                        (a || (a = yield u.getData({ labelId: l })),
+                                        a || (a = yield u.getData({ labelId: l })),
                                             (e.id = String(a.id)),
                                             (e.name = a.name),
                                             (e.type = a.type),
                                             r && (yield t.getAlbums({ labelId: l, pageSize: 8 }), yield t.getArtists({ labelId: l, pageSize: 8 })),
-                                            (e.loadingState = i.GuX.RESOLVE));
+                                            (e.loadingState = i.GuX.RESOLVE);
                                     } catch (t) {
-                                        (d.error(t),
+                                        d.error(t),
                                             t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = t.statusCode),
-                                            e.loadingState !== i.GuX.IDLE && (e.loadingState = i.GuX.REJECT));
+                                            e.loadingState !== i.GuX.IDLE && (e.loadingState = i.GuX.REJECT);
                                     }
                             }),
                             reset() {
-                                ((e.loadingState = i.GuX.IDLE),
+                                (e.loadingState = i.GuX.IDLE),
                                     (e.id = null),
                                     (e.name = null),
                                     (e.type = null),
                                     (e.errorStatusCode = null),
-                                    e.destroyItems([e.albums, e.artists]));
+                                    e.destroyItems([e.albums, e.artists]);
                             },
                         };
                         return t;
@@ -348,8 +348,8 @@
                     U = (0, o.useRef)(0);
                 (0, x.Q)({ id: Number(T.id), name: null != (r = T.name) ? r : '', type: null != (f = T.type) ? f : '' }, x.T.ROOT);
                 let k = (0, m.c)(async () => {
-                        (await window.navigator.clipboard.writeText(B),
-                            X((0, l.jsx)(A.Do, { entityVariant: S.Yxq.LABEL, entityTitle: T.name || '' }), { containerId: S.uQT.INFO }));
+                        await window.navigator.clipboard.writeText(B),
+                            X((0, l.jsx)(A.Do, { entityVariant: S.Yxq.LABEL, entityTitle: T.name || '' }), { containerId: S.uQT.INFO });
                     }),
                     F = (0, o.useMemo)(
                         () =>
@@ -461,7 +461,7 @@
                 i = a(62175),
                 o = a(74295),
                 n = (function (e) {
-                    return ((e.ROOT = 'root'), (e.ALBUMS = 'albums'), (e.ARTISTS = 'artists'), e);
+                    return (e.ROOT = 'root'), (e.ALBUMS = 'albums'), (e.ARTISTS = 'artists'), e;
                 })({});
             let u = (e, t) => {
                 (0, l.useEffect)(() => {
@@ -641,19 +641,19 @@
                         f.getData({ labelId: Number(t), page: e, pageSize: 20, sortBy: null != (a = f.sort.sortBy) ? a : y });
                     }),
                     U = (0, d.c)(() => {
-                        (f.reset(), O(0));
+                        f.reset(), O(0);
                     });
-                ((0, p.y8)({ sortModel: f.sort }),
+                (0, p.y8)({ sortModel: f.sort }),
                     (0, L.XcE)(f.pagesLoader, O),
                     (0, o.useEffect)(
                         () => () => {
-                            (v(), f.reset());
+                            v(), f.reset();
                         },
                         [v, f],
                     ),
                     (f.isNotFound || !j.checkExperiment(L.zal.WebNextLabelPage, 'on')) && (0, i.notFound)(),
                     (0, h.Q)({ id: Number(S), name: null != x ? x : '', type: null != A ? A : '' }, h.T.ALBUMS),
-                    (0, L.Jzs)(f.isResolved));
+                    (0, L.Jzs)(f.isResolved);
                 let k = (0, o.useMemo)(() => ({ Footer: () => (0, l.jsx)(N.A, { children: (0, l.jsx)(N.wi, { className: _().footer }) }) }), []),
                     F = R({ id: 'entity-names.label-albums-list' }),
                     D = [];
@@ -748,16 +748,16 @@
                     w = (0, d.c)((e) => {
                         A.getData({ labelId: Number(t), page: e, pageSize: 20 });
                     });
-                ((0, p.XcE)(A.pagesLoader, w),
+                (0, p.XcE)(A.pagesLoader, w),
                     (0, o.useEffect)(
                         () => () => {
-                            (x(), A.reset());
+                            x(), A.reset();
                         },
                         [x, A],
                     ),
                     (A.isNotFound || !P.checkExperiment(p.zal.WebNextLabelPage, 'on')) && (0, i.notFound)(),
                     (0, N.Q)({ id: Number(h), name: null != _ ? _ : '', type: null != S ? S : '' }, N.T.ARTISTS),
-                    (0, p.Jzs)(A.isResolved));
+                    (0, p.Jzs)(A.isResolved);
                 let X = (0, o.useMemo)(() => ({ Footer: () => (0, l.jsx)(L.A, { children: (0, l.jsx)(L.wi, { className: y().footer }) }) }), []),
                     B = T({ id: 'entity-names.label-artists-list' }),
                     O = [];

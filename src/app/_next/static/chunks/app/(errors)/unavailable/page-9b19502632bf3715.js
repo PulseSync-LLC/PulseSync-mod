@@ -27,7 +27,7 @@
                 (0, h.CgZ)(d);
                 let { sendRefreshEvent: W } = (0, h.cYT)(),
                     x = (0, r.useCallback)(() => {
-                        (W(), (window.location.href = h.Zyd.main.href));
+                        W(), (window.location.href = h.Zyd.main.href);
                     }, [W]),
                     { contentRef: k } = (0, h.gKY)();
                 return (0, o.jsxs)('div', {
@@ -88,6 +88,6 @@
         },
     },
     (t) => {
-        (t.O(0, [7098, 8282, 9712, 5271, 952, 1311, 7764, 6706, 996, 4236, 9169, 8740, 9902, 5598, 7358], () => t((t.s = 13635))), (_N_E = t.O()));
+        t.O(0, [7098, 8282, 9712, 5271, 952, 1311, 7764, 6706, 996, 4236, 9169, 8740, 9902, 5598, 7358], () => t((t.s = 13635))), (_N_E = t.O());
     },
 ]);

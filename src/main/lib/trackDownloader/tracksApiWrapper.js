@@ -65,11 +65,11 @@ class TracksApiWrapper {
                 fd = new FormData();
                 Object.getOwnPropertyNames(formData).forEach((i) => {
                     let s = formData[i];
-                    (('number' == typeof s || 'string' == typeof s || 'boolean' == typeof s) && fd.append(i, String(s)),
+                    ('number' == typeof s || 'string' == typeof s || 'boolean' == typeof s) && fd.append(i, String(s)),
                         Array.isArray(s) &&
                             s.forEach((t) => {
                                 ('number' == typeof t || 'string' == typeof t || 'boolean' == typeof t) && fd.append(i, String(t));
-                            }));
+                            });
                 });
             }
 

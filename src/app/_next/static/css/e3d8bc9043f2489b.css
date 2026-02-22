@@ -75,8 +75,7 @@
 }
 .BlockPage_root__crGK_ {
     align-items: center;
-    background:
-        radial-gradient(circle farthest-corner at 50% 0, rgba(221, 85, 255, 0.08) 0, transparent 50%, transparent 100%),
+    background: radial-gradient(circle farthest-corner at 50% 0, rgba(221, 85, 255, 0.08) 0, transparent 50%, transparent 100%),
         linear-gradient(0deg, hsla(0, 0%, 78%, 0.04) 0, transparent 17%, transparent 100%), var(--ym-background-color-primary-enabled-content);
     display: flex;
     height: 100vh;

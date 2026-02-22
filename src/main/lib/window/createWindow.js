@@ -67,8 +67,7 @@ const createWindow = async () => {
     });
     window.isMainWindow = true;
     window.once('ready-to-show', () => {
-
-        const shouldShow = !(store_js_1.getModSettings()?.window?.minimizedStart ?? false)
+        const shouldShow = !(store_js_1.getModSettings()?.window?.minimizedStart ?? false);
 
         if ((dimensions?.maximized ?? false) && shouldShow) window.maximize();
         window.setSize(dimensions?.width ?? 1280, dimensions?.height ?? 800);

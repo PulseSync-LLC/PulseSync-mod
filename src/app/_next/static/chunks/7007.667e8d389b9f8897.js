@@ -3,7 +3,7 @@
     {
         532: (e, t, n) => {
             'use strict';
-            (n.r(t), n.d(t, { VibeFallbackAnimation: () => m, VibeFallbackAnimationComponent: () => v }));
+            n.r(t), n.d(t, { VibeFallbackAnimation: () => m, VibeFallbackAnimationComponent: () => v });
             var i = n(33008),
                 r = n(85896),
                 l = n(97531),
@@ -74,7 +74,7 @@
         },
         17007: (e, t, n) => {
             'use strict';
-            (n.r(t), n.d(t, { VibeAnimation: () => B }));
+            n.r(t), n.d(t, { VibeAnimation: () => B });
             var i,
                 r,
                 l = n(33008),
@@ -87,7 +87,7 @@
                 f = function (e, t, n) {
                     return function () {
                         var i;
-                        (e.props[t] && (i = e.props)[t].apply(i, arguments), n());
+                        e.props[t] && (i = e.props)[t].apply(i, arguments), n();
                     };
                 },
                 v =
@@ -149,7 +149,7 @@
                             ((t = e.call.apply(e, [this].concat(i)) || this).state = { status: u._K, current: null }),
                             (t.appeared = !1),
                             (t.changeState = function (e, n) {
-                                (void 0 === n && (n = t.state.current), t.setState({ status: e, current: n }));
+                                void 0 === n && (n = t.state.current), t.setState({ status: e, current: n });
                             }),
                             t
                         );
@@ -196,7 +196,7 @@
                         t
                     );
                 })(o.Component);
-            ((_.propTypes = {}), (_.defaultProps = { mode: d.out }));
+            (_.propTypes = {}), (_.defaultProps = { mode: d.out });
             var p = n(95273),
                 b = n(42213),
                 h = n(42314),
@@ -300,8 +300,8 @@
                         (0, o.useEffect)(() => {
                             if (l.contextType === D.K.Vibe) {
                                 var t, n, a, o;
-                                (i.id === (null == (t = l.entityMeta) ? void 0 : t.id) && !i.isLiked && (null == (o = l.entityMeta) ? void 0 : o.isLiked) && e(),
-                                    r({ id: null == (n = l.entityMeta) ? void 0 : n.id, isLiked: null == (a = l.entityMeta) ? void 0 : a.isLiked }));
+                                i.id === (null == (t = l.entityMeta) ? void 0 : t.id) && !i.isLiked && (null == (o = l.entityMeta) ? void 0 : o.isLiked) && e(),
+                                    r({ id: null == (n = l.entityMeta) ? void 0 : n.id, isLiked: null == (a = l.entityMeta) ? void 0 : a.isLiked });
                             }
                         }, [l.contextType, null == (t = l.entityMeta) ? void 0 : t.id, null == (n = l.entityMeta) ? void 0 : n.isLiked, i.id, i.isLiked, e]);
                     })(
@@ -351,13 +351,13 @@
                                 onMessage: F,
                                 onError: U,
                             });
-                        (p(i), k(new x.Rv(x.p4, O)));
+                        p(i), k(new x.Rv(x.p4, O));
                         let r = null == (t = j.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
                             l = P.collectionHue;
                         i.applySettings({ hue: r, collectionHue: l });
                     }, [y, h, U, F, k, p, null == (n = j.entityMeta) || null == (t = n.trackParameters) ? void 0 : t.hue, O, P.collectionHue, d, _]);
                     let H = (0, b.c)(() => {
-                        (null == _ || _.destroy(), p(null), null == y || y.stop(), k(null));
+                        null == _ || _.destroy(), p(null), null == y || y.stop(), k(null);
                     });
                     return ((0, o.useEffect)(
                         () => () => {
@@ -570,7 +570,7 @@
                                     }
                                     if ((n.current++, !(n.current < 3))) {
                                         if (((n.current = 0), c !== x.IU.LITE)) {
-                                            (d(x.IU.LITE), i.count('liteAnimation', L));
+                                            d(x.IU.LITE), i.count('liteAnimation', L);
                                             return;
                                         }
                                         s ||

@@ -94,10 +94,10 @@
         19964: (e, s, t) => {
             'use strict';
             var i;
-            (t.d(s, { x: () => i }),
+            t.d(s, { x: () => i }),
                 (function (e) {
-                    ((e.ASC = 'asc'), (e.DESC = 'desc'));
-                })(i || (i = {})));
+                    (e.ASC = 'asc'), (e.DESC = 'desc');
+                })(i || (i = {}));
         },
         25585: (e, s, t) => {
             'use strict';
@@ -207,7 +207,7 @@
             };
         },
         31813: (e, s, t) => {
-            (Promise.resolve().then(t.bind(t, 52756)),
+            Promise.resolve().then(t.bind(t, 52756)),
                 Promise.resolve().then(t.bind(t, 41458)),
                 Promise.resolve().then(t.bind(t, 80922)),
                 Promise.resolve().then(t.bind(t, 54487)),
@@ -422,7 +422,7 @@
                 Promise.resolve().then(t.bind(t, 31922)),
                 Promise.resolve().then(t.bind(t, 51886)),
                 Promise.resolve().then(t.bind(t, 43701)),
-                Promise.resolve().then(t.bind(t, 45228)));
+                Promise.resolve().then(t.bind(t, 45228));
         },
         35233: (e, s, t) => {
             'use strict';
@@ -471,8 +471,8 @@
                     z = (0, l.useRef)(0);
                 (0, j.Q)({ id: Number(w.id), name: null != (r = w.name) ? r : '', type: null != (A = w.type) ? A : '' }, j.T.ROOT);
                 let O = (0, b.c)(async () => {
-                        (await window.navigator.clipboard.writeText(F),
-                            R((0, i.jsx)(y.Do, { entityVariant: N.Yxq.LABEL, entityTitle: w.name || '' }), { containerId: N.uQT.INFO }));
+                        await window.navigator.clipboard.writeText(F),
+                            R((0, i.jsx)(y.Do, { entityVariant: N.Yxq.LABEL, entityTitle: w.name || '' }), { containerId: N.uQT.INFO });
                     }),
                     U = (0, l.useMemo)(
                         () =>
@@ -584,7 +584,7 @@
                 n = t(62175),
                 l = t(74295),
                 a = (function (e) {
-                    return ((e.ROOT = 'root'), (e.ALBUMS = 'albums'), (e.ARTISTS = 'artists'), e);
+                    return (e.ROOT = 'root'), (e.ALBUMS = 'albums'), (e.ARTISTS = 'artists'), e;
                 })({});
             let d = (e, s) => {
                 (0, i.useEffect)(() => {
@@ -764,19 +764,19 @@
                         A.getData({ labelId: Number(s), page: e, pageSize: 20, sortBy: null != (t = A.sort.sortBy) ? t : _ });
                     }),
                     z = (0, m.c)(() => {
-                        (A.reset(), I(0));
+                        A.reset(), I(0);
                     });
-                ((0, P.y8)({ sortModel: A.sort }),
+                (0, P.y8)({ sortModel: A.sort }),
                     (0, c.XcE)(A.pagesLoader, I),
                     (0, l.useEffect)(
                         () => () => {
-                            (L(), A.reset());
+                            L(), A.reset();
                         },
                         [L, A],
                     ),
                     (A.isNotFound || !C.checkExperiment(c.zal.WebNextLabelPage, 'on')) && (0, n.notFound)(),
                     (0, x.Q)({ id: Number(N), name: null != j ? j : '', type: null != y ? y : '' }, x.T.ALBUMS),
-                    (0, c.Jzs)(A.isResolved));
+                    (0, c.Jzs)(A.isResolved);
                 let O = (0, l.useMemo)(() => ({ Footer: () => (0, i.jsx)(p.A, { children: (0, i.jsx)(p.wi, { className: g().footer }) }) }), []),
                     U = T({ id: 'entity-names.label-albums-list' }),
                     W = [];
@@ -871,16 +871,16 @@
                     E = (0, m.c)((e) => {
                         y.getData({ labelId: Number(s), page: e, pageSize: 20 });
                     });
-                ((0, P.XcE)(y.pagesLoader, E),
+                (0, P.XcE)(y.pagesLoader, E),
                     (0, l.useEffect)(
                         () => () => {
-                            (j(), y.reset());
+                            j(), y.reset();
                         },
                         [j, y],
                     ),
                     (y.isNotFound || !S.checkExperiment(P.zal.WebNextLabelPage, 'on')) && (0, n.notFound)(),
                     (0, p.Q)({ id: Number(x), name: null != g ? g : '', type: null != N ? N : '' }, p.T.ARTISTS),
-                    (0, P.Jzs)(y.isResolved));
+                    (0, P.Jzs)(y.isResolved);
                 let R = (0, l.useMemo)(() => ({ Footer: () => (0, i.jsx)(c.A, { children: (0, i.jsx)(c.wi, { className: _().footer }) }) }), []),
                     F = w({ id: 'entity-names.label-artists-list' }),
                     I = [];
@@ -945,7 +945,7 @@
             let l = (e) => {
                 let { sortModel: s } = e,
                     t = (0, r.XJ9)();
-                ((0, i.useLayoutEffect)(() => {
+                (0, i.useLayoutEffect)(() => {
                     let e = new URL(window.location.href).searchParams.get(r.K3F.SORT);
                     e && (0, n.W)(e) ? s.setSortBy(e) : s.setSortBy(o.g.YEAR);
                 }, [s]),
@@ -954,7 +954,7 @@
                             let e = (0, r.bJ)(r.K3F.SORT, s.sortBy);
                             e && t(e);
                         }
-                    }, [t, s.sortBy]));
+                    }, [t, s.sortBy]);
             };
         },
     },

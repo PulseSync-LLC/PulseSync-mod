@@ -517,8 +517,7 @@
         const oldVersion = packageJson.version;
 
         if (version) packageJson.version = version;
-        if (buildInfo)
-            packageJson.buildInfo = buildInfo
+        if (buildInfo) packageJson.buildInfo = buildInfo;
         if (modVersion) packageJson.modification.version = modVersion;
         if (appConfig) packageJson.appConfig = { ...packageJson.appConfig, ...appConfig };
 

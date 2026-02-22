@@ -10,7 +10,7 @@
 !(function (e, r) {
     var n = { client: ['690.2354', 1e3, 100, 0], uncaught: ['690.2361', 100, 10, 0], external: ['690.2854', 100, 10, 0], script: ['690.2609', 100, 10, 0] },
         t = {};
-    ((r.ERROR_LEVEL = { INFO: 'info', DEBUG: 'debug', WARN: 'warn', ERROR: 'error', FATAL: 'fatal' }),
+    (r.ERROR_LEVEL = { INFO: 'info', DEBUG: 'debug', WARN: 'warn', ERROR: 'error', FATAL: 'fatal' }),
         (r._errorSettings = {
             clck: 'https://yandex.ru/clck/click',
             beacon: !0,
@@ -40,23 +40,23 @@
             filters: {},
             pageMaxAge: 864e6,
             initTimestamp: +new Date(),
-        }));
+        });
     var o = !1;
     function a(e, r) {
         for (var n in r) r.hasOwnProperty(n) && (e[n] = r[n]);
         return e;
     }
     function i(e) {
-        return ('boolean' == typeof e && (e = +e), 'number' == typeof e ? e + '' : null);
+        return 'boolean' == typeof e && (e = +e), 'number' == typeof e ? e + '' : null;
     }
-    ((r.initErrors = function (n) {
+    (r.initErrors = function (n) {
         var t = a(r._errorSettings, n);
         o ||
             (t.uncaughtException &&
                 (function () {
                     var n = r._errorSettings;
                     if (e.addEventListener)
-                        (e.addEventListener('error', s),
+                        e.addEventListener('error', s),
                             n.resourceFails && e.addEventListener('error', l, !0),
                             'Promise' in e &&
                                 n.unhandledRejection &&
@@ -73,11 +73,11 @@
                                               '[object Event]' === n ? (n = 'event.type: ' + o.type) : '[object Object]' === n && (a.unhandledObject = o)),
                                         o.target && o.target.src && (a.src = o.target.src),
                                         s({ message: 'Unhandled rejection: ' + n, stack: t, additional: a }));
-                                }));
+                                });
                     else {
                         var t = e.onerror;
                         e.onerror = function (e, r, n, o, a) {
-                            (s({ error: a || new Error(e || 'Empty error'), message: e, lineno: n, colno: o, filename: r }), t && t.apply(this, arguments));
+                            s({ error: a || new Error(e || 'Empty error'), message: e, lineno: n, colno: o, filename: r }), t && t.apply(this, arguments);
                         };
                     }
                 })(),
@@ -94,9 +94,9 @@
             var s,
                 l,
                 c = r._errorSettings;
-            if ((c.preventError && e.preventDefault && e.preventDefault(), o)) ((s = e), (l = 'client'));
+            if ((c.preventError && e.preventDefault && e.preventDefault(), o)) (s = e), (l = 'client');
             else {
-                ((s = r._normalizeError(e)), (l = s.type));
+                (s = r._normalizeError(e)), (l = s.type);
                 var d = c.onError;
                 'function' == typeof d && d(s);
                 var u = c.transform;
@@ -116,12 +116,12 @@
                     s.path = n[l][0];
                     var E = r._getErrorData(s, { silent: h < v || -1 === v ? 'no' : 'yes', isCustom: Boolean(o) }, a(a({}, c), i)),
                         _ = function (e) {
-                            ((t[s.message] = !1), r._sendError(e.path, e.vars), n[l][3]++);
+                            (t[s.message] = !1), r._sendError(e.path, e.vars), n[l][3]++;
                         }.bind(this, E);
                     if (void 0 === c.throttleSend) _();
                     else {
                         if (t[s.message]) return;
-                        ((t[s.message] = !0), setTimeout(_, c.throttleSend));
+                        (t[s.message] = !0), setTimeout(_, c.throttleSend);
                     }
                 }
             }
@@ -185,7 +185,7 @@
                     '-ts': +new Date(),
                     '-init-ts': o.initTimestamp,
                 };
-            return (o.debug && e.console && console[console[n.level] ? n.level : 'error']('[error-counter] ' + n.message, l, n.stack), { path: n.path, vars: l });
+            return o.debug && e.console && console[console[n.level] ? n.level : 'error']('[error-counter] ' + n.message, l, n.stack), { path: n.path, vars: l };
         }),
         (r._baseNormalizeError = function (e) {
             var r = (e = e || {}).error,
@@ -216,7 +216,7 @@
         }),
         (r._sendError = function (e, n) {
             r.send(null, e, r._createVarsString(n), null, null, null, null);
-        }));
+        });
     var s = function (e) {
             r._handleError(e, !1);
         },
@@ -269,7 +269,7 @@
             for (var o in r)
                 if (r.hasOwnProperty(o)) {
                     var i = r[o];
-                    ('string' == typeof i && (i = new RegExp(i)), i instanceof RegExp && i.test(e) && n.push(o));
+                    'string' == typeof i && (i = new RegExp(i)), i instanceof RegExp && i.test(e) && n.push(o);
                 }
             return n.join('_');
         }
@@ -293,10 +293,10 @@
     'use strict';
     var e;
     (e = Ya.Rum).logError = function (r, o, s) {
-        ((r = r || {}), ('string' != typeof o && void 0 !== o) || ((o = new Error(o)).justCreated = !0));
+        (r = r || {}), ('string' != typeof o && void 0 !== o) || ((o = new Error(o)).justCreated = !0);
         var a = r.message || '',
             t = e._baseNormalizeError(o);
-        (t.message && !r.ignoreErrorMessage && (a && (a += '; '), (a += t.message)), (t.message = a || 'Empty error'));
+        t.message && !r.ignoreErrorMessage && (a && (a += '; '), (a += t.message)), (t.message = a || 'Empty error');
         for (var g = ['service', 'source', 'type', 'block', 'additional', 'level', 'page', 'method', 'sourceMethod', 'coordinates_gp'], i = 0; i < g.length; i++) {
             var n = g[i];
             r[n] ? (t[n] = r[n]) : o && o[n] && (t[n] = o[n]);

@@ -274,16 +274,16 @@
         61475: (e, t, a) => {
             'use strict';
             var i;
-            (a.d(t, { D: () => i }),
+            a.d(t, { D: () => i }),
                 (function (e) {
-                    ((e.TRACK = 'track'),
+                    (e.TRACK = 'track'),
                         (e.WAVE = 'wave'),
                         (e.ARTIST = 'artist'),
                         (e.PLAYLIST = 'playlist'),
                         (e.ALBUM = 'album'),
                         (e.OTHER = 'other'),
-                        (e.SEARCH = 'search'));
-                })(i || (i = {})));
+                        (e.SEARCH = 'search');
+                })(i || (i = {}));
         },
         64552: (e) => {
             e.exports = {
@@ -352,10 +352,10 @@
                             var i;
                             let r = () => {
                                 var e;
-                                (a(), null == (e = t.current) || e.removeEventListener('scrollend', r));
+                                a(), null == (e = t.current) || e.removeEventListener('scrollend', r);
                             };
-                            (null == (i = t.current) || i.addEventListener('scrollend', r), e.scrollIntoView({ behavior: 'smooth' }));
-                        } else (e.scrollIntoView({ behavior: 'smooth' }), window.setTimeout(a, 1e3));
+                            null == (i = t.current) || i.addEventListener('scrollend', r), e.scrollIntoView({ behavior: 'smooth' });
+                        } else e.scrollIntoView({ behavior: 'smooth' }), window.setTimeout(a, 1e3);
                     });
             var b = a(91907),
                 p = a.n(b),
@@ -398,9 +398,9 @@
                                 t(!0);
                                 let r = a.dates[e];
                                 if (!r) return;
-                                (null == (i = b.onTabChange) || i.call(b, e), (S.current = !0));
+                                null == (i = b.onTabChange) || i.call(b, e), (S.current = !0);
                                 let l = document.querySelector('[data-date-anchor="'.concat(r, '"]'));
-                                (l && ((I.current = s), await x(l, I)), (S.current = !1));
+                                l && ((I.current = s), await x(l, I)), (S.current = !1);
                             },
                             [a.dates, b, s],
                         ),
@@ -412,7 +412,7 @@
                                 null == (t = b.onTabChange) || t.call(b, e);
                             }
                         }, [a.dates, a.datesMap, b]);
-                    ((0, l.useEffect)(() => () => a.reset(), [a]), (0, y.Jzs)(a.isResolved));
+                    (0, l.useEffect)(() => () => a.reset(), [a]), (0, y.Jzs)(a.isResolved);
                     let M = (0, l.useMemo)(() => {
                             var t;
                             return a.isRejected
@@ -547,7 +547,7 @@
                                     elementId: n,
                                     index: s,
                                     onShow() {
-                                        (l.getItems(this.index), u(n));
+                                        l.getItems(this.index), u(n);
                                     },
                                 });
                         }, [i, t, n, l, m, a, r, u]),
@@ -991,10 +991,10 @@
                             elementRef: g,
                             index: 0,
                             onShow: () => {
-                                (y.setDatesMap(t.date, !0), r());
+                                y.setDatesMap(t.date, !0), r();
                             },
                             onHide: () => {
-                                (y.setDatesMap(t.date, !1), r());
+                                y.setDatesMap(t.date, !1), r();
                             },
                         });
                     }, [y, y.datesMap, x, r, t.date]),
@@ -1033,7 +1033,7 @@
                         let i = !(arguments.length > 1) || void 0 === arguments[1] || arguments[1],
                             r = new Date(a),
                             s = new Date();
-                        (r.setHours(0, 0, 0, 0), s.setHours(0, 0, 0, 0));
+                        r.setHours(0, 0, 0, 0), s.setHours(0, 0, 0, 0);
                         let l = (r.getTime() - s.getTime()) / 864e5,
                             n = t(l, 'day', { numeric: 'auto' }),
                             o = e(a, { day: 'numeric', month: 'long' });

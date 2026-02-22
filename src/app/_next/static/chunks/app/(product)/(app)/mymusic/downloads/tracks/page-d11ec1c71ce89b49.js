@@ -9,19 +9,19 @@
                 s = t(7144),
                 o = t(66268),
                 l = t(73827);
-            (!(function (e) {
-                ((e.formatDate = 'FormattedDate'),
+            !(function (e) {
+                (e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName'));
+                    (e.formatDisplayName = 'FormattedDisplayName');
             })(i || (i = {})),
                 (function (e) {
-                    ((e.formatDate = 'FormattedDateParts'),
+                    (e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts'));
-                })(n || (n = {})));
+                        (e.formatList = 'FormattedListParts');
+                })(n || (n = {}));
             var a = function (e) {
                 var r = (0, l.A)(),
                     t = e.value,
@@ -38,7 +38,7 @@
                         a = 'string' == typeof i ? new Date(i || 0) : i;
                     return n('formatDate' === e ? t.formatDateToParts(a, o) : t.formatTimeToParts(a, o));
                 };
-                return ((r.displayName = n[e]), r);
+                return (r.displayName = n[e]), r;
             }
             function m(e) {
                 var r = function (r) {
@@ -51,11 +51,11 @@
                     var m = t.textComponent || o.Fragment;
                     return o.createElement(m, null, d);
                 };
-                return ((r.displayName = i[e]), r);
+                return (r.displayName = i[e]), r;
             }
-            ((a.displayName = 'FormattedNumberParts'), (a.displayName = 'FormattedNumberParts'));
+            (a.displayName = 'FormattedNumberParts'), (a.displayName = 'FormattedNumberParts');
             var u = m('formatDate');
-            (m('formatTime'), m('formatNumber'), m('formatList'), m('formatDisplayName'), d('formatDate'), d('formatTime'));
+            m('formatTime'), m('formatNumber'), m('formatList'), m('formatDisplayName'), d('formatDate'), d('formatTime');
         },
         2202: (e, r, t) => {
             'use strict';
@@ -93,10 +93,10 @@
                         let s = { ...(0, n.HO)(e), url: e.url, isPinned: !e.isPinned };
                         c(!0);
                         let o = await e.togglePin();
-                        (c(!1),
+                        c(!1),
                             o
                                 ? t((0, i.jsx)(u, { album: s }), { containerId: l.uQT.INFO })
-                                : t((0, i.jsx)(a.hT, { error: d({ id: 'error-messages.error-during-action' }) }), { containerId: l.uQT.ERROR }));
+                                : t((0, i.jsx)(a.hT, { error: d({ id: 'error-messages.error-during-action' }) }), { containerId: l.uQT.ERROR });
                     }, [e, d, t, m, r.isAuthorized]);
                 };
         },
@@ -139,10 +139,10 @@
         15029: (e, r, t) => {
             'use strict';
             var i;
-            (t.d(r, { E: () => i }),
+            t.d(r, { E: () => i }),
                 (function (e) {
-                    ((e.KIDS = 'kids'), (e.BOOKMATE = 'bookmate'));
-                })(i || (i = {})));
+                    (e.KIDS = 'kids'), (e.BOOKMATE = 'bookmate');
+                })(i || (i = {}));
         },
         16285: (e, r, t) => {
             'use strict';
@@ -200,11 +200,11 @@
                         let h = { ...(0, n.HO)(o), url: o.url, isLiked: !o.isLiked };
                         t(!0);
                         let b = await o.toggleLike();
-                        (t(!1),
+                        t(!1),
                             c &&
                                 (b === l.f.OK
                                     ? e((0, i.jsx)(v, { withLink: a, album: h }), { containerId: d.uQT.INFO })
-                                    : e((0, i.jsx)(m.hT, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: d.uQT.ERROR })));
+                                    : e((0, i.jsx)(m.hT, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: d.uQT.ERROR }));
                     });
                 };
         },
@@ -231,7 +231,7 @@
                 (0, c.CgZ)(h);
                 let { sendRefreshEvent: P } = (0, c.cYT)(),
                     g = (0, o.useCallback)(() => {
-                        (P(), (window.location.href = c.Zyd.main.href));
+                        P(), (window.location.href = c.Zyd.main.href);
                     }, [P]),
                     { contentRef: _ } = (0, c.gKY)();
                 return (0, i.jsxs)('div', {
@@ -530,7 +530,7 @@
                         A = (0, m.c)(() => {
                             r.tracksController && p.getData(r.tracksController);
                         });
-                    ((0, u.L)(A),
+                    (0, u.L)(A),
                         (0, o.useEffect)(() => {
                             p.isNeededToLoad && A();
                         }, [p.isNeededToLoad, A]),
@@ -540,7 +540,7 @@
                             },
                             [p],
                         ),
-                        (0, b.Jzs)(p.isResolved));
+                        (0, b.Jzs)(p.isResolved);
                     let k = (0, o.useMemo)(
                         () => ({ Header: () => (0, i.jsx)(O, {}), Footer: () => (0, i.jsx)(P.A, { children: (0, i.jsx)(P.wi, { className: _().footer }) }) }),
                         [],
@@ -601,7 +601,7 @@
                 s = t(66268),
                 o = {
                     6699: (e, r, t) => {
-                        (Object.defineProperty(r, '__esModule', { value: !0 }), (r.useDebouncedToggle = void 0));
+                        Object.defineProperty(r, '__esModule', { value: !0 }), (r.useDebouncedToggle = void 0);
                         let i = t(352),
                             n = t(810);
                         r.useDebouncedToggle = (e) => {
@@ -611,16 +611,16 @@
                                 d = (0, n.useMemo)(
                                     () =>
                                         (0, i.throttle)(() => {
-                                            (a(!t),
+                                            a(!t),
                                                 o.current && window.clearTimeout(o.current),
                                                 (o.current = window.setTimeout(() => {
                                                     a(!!t);
-                                                }, r)));
+                                                }, r));
                                         }, s),
                                     [r, t, s],
                                 ),
                                 m = (0, n.useCallback)(() => {
-                                    (a(!!t), o.current && window.clearTimeout(o.current));
+                                    a(!!t), o.current && window.clearTimeout(o.current);
                                 }, [t]);
                             return (
                                 (0, n.useEffect)(
@@ -634,14 +634,14 @@
                         };
                     },
                     361: (e, r) => {
-                        (Object.defineProperty(r, '__esModule', { value: !0 }),
+                        Object.defineProperty(r, '__esModule', { value: !0 }),
                             (r.getElementFromRefOrElement = void 0),
                             (r.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            }));
+                            });
                     },
                     352: (e) => {
                         e.exports = n;
@@ -655,11 +655,11 @@
                 var r = l[e];
                 if (void 0 !== r) return r.exports;
                 var t = (l[e] = { exports: {} });
-                return (o[e](t, t.exports, a), t.exports);
+                return o[e](t, t.exports, a), t.exports;
             }
             var d = {};
-            ((() => {
-                (Object.defineProperty(d, '__esModule', { value: !0 }), (d.useScroll = void 0));
+            (() => {
+                Object.defineProperty(d, '__esModule', { value: !0 }), (d.useScroll = void 0);
                 let e = a(810),
                     r = a(361),
                     t = a(6699);
@@ -667,7 +667,7 @@
                     let { onScroll: n, listenIsScrolling: s, elementRef: o } = i,
                         { state: l, handleDebouncedToggle: a } = (0, t.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                         d = (0, e.useCallback)(() => {
-                            (s && a(), null == n || n());
+                            s && a(), null == n || n();
                         }, [s, a, n]);
                     return (
                         (0, e.useEffect)(() => {
@@ -675,13 +675,13 @@
                             if (null === e) return;
                             let t = null != e ? e : window,
                                 i = { capture: !0, passive: !0 };
-                            return (t.addEventListener('scroll', d, i), () => t.removeEventListener('scroll', d, i));
+                            return t.addEventListener('scroll', d, i), () => t.removeEventListener('scroll', d, i);
                         }, [o, d]),
                         l
                     );
                 };
             })(),
-                d.__esModule);
+                d.__esModule;
             var m = d.useScroll;
         },
         47407: (e, r, t) => {
@@ -795,23 +795,23 @@
                             try {
                                 e.loadingState = l.GuX.PENDING;
                                 let i = yield r.getTracks(t);
-                                ((e.tracks = i), (e.items = (0, n.wg)(i.map((e) => (0, o.vU)(e)))), e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE));
+                                (e.tracks = i), (e.items = (0, n.wg)(i.map((e) => (0, o.vU)(e)))), e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE);
                             } catch (r) {
-                                (i.error(r), e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT));
+                                i.error(r), e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT);
                             }
                     }),
                     reset() {
-                        ((e.items = null), (e.tracks = null), (e.loadingState = l.GuX.IDLE));
+                        (e.items = null), (e.tracks = null), (e.loadingState = l.GuX.IDLE);
                     },
                 }));
         },
         56312: (e, r, t) => {
             'use strict';
             var i;
-            (t.d(r, { J: () => i }),
+            t.d(r, { J: () => i }),
                 (function (e) {
-                    ((e.OK = 'ok'), (e.ERROR = 'error'));
-                })(i || (i = {})));
+                    (e.OK = 'ok'), (e.ERROR = 'error');
+                })(i || (i = {}));
         },
         57609: (e, r, t) => {
             'use strict';
@@ -847,7 +847,7 @@
                             return;
                         }
                         if ((null == r ? void 0 : r.isLegalRejected) || (null == r ? void 0 : r.isUnsafeLegal)) {
-                            (null == e || e.preventDefault(),
+                            null == e || e.preventDefault(),
                                 await a.getDisclaimerData({ entityId: r.id, entityType: r.isPodcast ? o.nPY.PODCAST : o.nPY.ALBUM, disclaimerId: r.modalDisclaimerId }),
                                 r.isUnsafeLegal && a.setType(o.YwF.UNSAFE),
                                 a.setId(m.current),
@@ -855,10 +855,10 @@
                                 r.isPodcast ? a.setEntityType(o.nPY.PODCAST) : a.setEntityType(o.nPY.ALBUM),
                                 a.setShouldHistoryBack(!!l),
                                 (u.current = !1),
-                                d.open());
+                                d.open();
                             return;
                         }
-                        (null == e || e.preventDefault(), null == t || t(e));
+                        null == e || e.preventDefault(), null == t || t(e);
                     })
                 );
             };
@@ -948,7 +948,7 @@
         },
         64143: (e, r, t) => {
             'use strict';
-            (t.d(r, { hO: () => c, jr: () => v, jp: () => h, QZ: () => n }), t(57323));
+            t.d(r, { hO: () => c, jr: () => v, jp: () => h, QZ: () => n }), t(57323);
             var i = t(66268);
             let n = (e, r, t) => {
                 let n = null != t && t;
@@ -994,10 +994,10 @@
                             r = l ? Number(l.offsetTop) - e : e;
                         r < 0 && (r = 0);
                         let i = (e) => {
-                            (O(e > r),
+                            O(e > r),
                                 v && M(e > 30),
                                 (null == P ? void 0 : P.current) && k(u({ element: null == P ? void 0 : P.current, scrollTop: e, isMobile: E })),
-                                (null == _ ? void 0 : _.current) && x(u({ element: null == _ ? void 0 : _.current, scrollTop: e, isMobile: E })));
+                                (null == _ ? void 0 : _.current) && x(u({ element: null == _ ? void 0 : _.current, scrollTop: e, isMobile: E }));
                         };
                         E ? i(window.scrollY) : t && i(t.scrollTop);
                     }, [c, l, E, v, P, _, t]);
@@ -1032,7 +1032,7 @@
                         a = (0, i.useRef)(null);
                     return (
                         (0, i.useEffect)(() => {
-                            ((null == a ? void 0 : a.current) && o(a), t && l(t));
+                            (null == a ? void 0 : a.current) && o(a), t && l(t);
                         }, [a, t, o, l]),
                         (0, i.useEffect)(
                             () => () => {
@@ -1049,7 +1049,7 @@
                         a = (0, i.useRef)(null);
                     return (
                         (0, i.useEffect)(() => {
-                            ((null == a ? void 0 : a.current) && o(a), t && l(t));
+                            (null == a ? void 0 : a.current) && o(a), t && l(t);
                         }, [a, t, o, l]),
                         (0, i.useEffect)(
                             () => () => {
@@ -1062,7 +1062,7 @@
                 };
         },
         72210: (e, r, t) => {
-            (Promise.resolve().then(t.bind(t, 52283)),
+            Promise.resolve().then(t.bind(t, 52283)),
                 Promise.resolve().then(t.bind(t, 81382)),
                 Promise.resolve().then(t.bind(t, 52756)),
                 Promise.resolve().then(t.bind(t, 41458)),
@@ -1323,15 +1323,15 @@
                 Promise.resolve().then(t.bind(t, 43701)),
                 Promise.resolve().then(t.bind(t, 45228)),
                 Promise.resolve().then(t.bind(t, 88075)),
-                Promise.resolve().then(t.bind(t, 27618)));
+                Promise.resolve().then(t.bind(t, 27618));
         },
         77059: (e, r, t) => {
             'use strict';
             var i;
-            (t.d(r, { _: () => i }),
+            t.d(r, { _: () => i }),
                 (function (e) {
-                    ((e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new'));
-                })(i || (i = {})));
+                    (e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new');
+                })(i || (i = {}));
         },
         80810: (e, r, t) => {
             'use strict';
@@ -1358,7 +1358,7 @@
                 n = t(73827),
                 s = t(15479),
                 o = (function (e) {
-                    return ((e.PIN = 'pin'), e);
+                    return (e.PIN = 'pin'), e;
                 })({});
             let l = (e, r) => {
                 let { formatMessage: t } = (0, n.A)();
@@ -1406,8 +1406,7 @@
                             null == (i = t.store) || i.tracks.events.on(n.je.ENTITY_CHANGED, a),
                             () => {
                                 var r, i;
-                                (null == (r = t.store) || r.tracks.events.off(n.je.STATE_CHANGED, e),
-                                    null == (i = t.store) || i.tracks.events.off(n.je.ENTITY_CHANGED, a));
+                                null == (r = t.store) || r.tracks.events.off(n.je.STATE_CHANGED, e), null == (i = t.store) || i.tracks.events.off(n.je.ENTITY_CHANGED, a);
                             }
                         );
                     }, [e, a, null == (r = t.store) ? void 0 : r.tracks.events]);
@@ -1439,10 +1438,10 @@
                         let s = { ...(0, n.HO)(e), isPresave: !e.isPresave };
                         c(!0);
                         let o = await e.toggleLike();
-                        (c(!1),
+                        c(!1),
                             o === l.J.OK
                                 ? t((0, i.jsx)(m, { upcomingAlbum: s }), { containerId: a.uQT.INFO })
-                                : t((0, i.jsx)(d.hT, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: a.uQT.ERROR }));
+                                : t((0, i.jsx)(d.hT, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: a.uQT.ERROR });
                     }, [r.isAuthorized, u, e, t, v]);
                 };
         },
@@ -1461,7 +1460,7 @@
                         return;
                     }
                     if (l(r)) {
-                        (null == e || e.preventDefault(), a(o(r, t)));
+                        null == e || e.preventDefault(), a(o(r, t));
                         return;
                     }
                     null == s || s(e);
@@ -1545,7 +1544,7 @@
                     return (0, i.wg)({ id: e.id, disclaimers: t, isPresave: r, title: e.title, type: e.type, coverUri: e.coverUri, releaseDate: e.releaseDate });
                 };
             var l = (function (e) {
-                    return ((e.TRACK = 'track'), (e.TEXT = 'text'), e);
+                    return (e.TRACK = 'track'), (e.TEXT = 'text'), e;
                 })({}),
                 a = t(80810),
                 d = t(57609),
@@ -1689,7 +1688,7 @@
                             let { library: r, user: t } = (0, i.Zn)(e);
                             if (t.isAuthorized) {
                                 let n = yield r.toggleAlbumLike({ entityId: e.id, userId: t.account.data.uid });
-                                return ((0, i._n)(e) && n === f.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), n);
+                                return (0, i._n)(e) && n === f.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), n;
                             }
                         }),
                         togglePin: (0, i.L3)(function* () {
@@ -1723,9 +1722,9 @@
                             try {
                                 e.isPresave = !0;
                                 let i = yield t.presaveAlbum(r);
-                                return (i === x.J.ERROR && (e.isPresave = !1), i);
+                                return i === x.J.ERROR && (e.isPresave = !1), i;
                             } catch (r) {
-                                return ((e.isPresave = !1), n.error(r), x.J.ERROR);
+                                return (e.isPresave = !1), n.error(r), x.J.ERROR;
                             }
                         }),
                         removePresaveAlbum: (0, i.L3)(function* (r) {
@@ -1733,9 +1732,9 @@
                             try {
                                 e.isPresave = !1;
                                 let i = yield t.removePresaveAlbum(r);
-                                return (i === x.J.ERROR && (e.isPresave = !0), i);
+                                return i === x.J.ERROR && (e.isPresave = !0), i;
                             } catch (r) {
-                                return ((e.isPresave = !0), n.error(r), x.J.ERROR);
+                                return (e.isPresave = !0), n.error(r), x.J.ERROR;
                             }
                         }),
                         toggleLike: (0, i.L3)(function* () {
@@ -1758,7 +1757,7 @@
         },
         99366: (e, r, t) => {
             'use strict';
-            (t.r(r), t.d(r, { default: () => c }));
+            t.r(r), t.d(r, { default: () => c });
             var i = t(33008),
                 n = t(85896),
                 s = t(66268),
@@ -1809,7 +1808,7 @@
         },
     },
     (e) => {
-        (e.O(
+        e.O(
             0,
             [
                 9712, 7098, 8282, 5271, 6071, 7245, 8387, 7309, 8712, 952, 9775, 1311, 7764, 6706, 2089, 996, 4236, 6728, 7508, 9152, 3576, 9169, 8740, 9615, 3588, 1744,
@@ -1817,6 +1816,6 @@
             ],
             () => e((e.s = 72210)),
         ),
-            (_N_E = e.O()));
+            (_N_E = e.O());
     },
 ]);

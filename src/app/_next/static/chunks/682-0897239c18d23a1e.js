@@ -3,7 +3,7 @@
     [682],
     {
         48301: (t, e, a) => {
-            (a.d(e, {
+            a.d(e, {
                 rJ: () => F.ArtistAlbumsPage,
                 GH: () => B.ArtistClipsPage,
                 cC: () => J.ArtistConcertsPage,
@@ -21,7 +21,7 @@
                 a(1022),
                 a(99325),
                 a(76764),
-                a(35449));
+                a(35449);
             var r,
                 i = a(41028),
                 s = a(61979),
@@ -38,7 +38,7 @@
                 N = a(79169),
                 E = a(59615);
             !(function (t) {
-                ((t.DEFAULT = 'default'), (t.DONATION = 'donation'), (t.REWIND = 'year-rewind'));
+                (t.DEFAULT = 'default'), (t.DONATION = 'donation'), (t.REWIND = 'year-rewind');
             })(r || (r = {}));
             let v = /^https:\/\/tips\.yandex\.ru\//,
                 b = (t) => v.test(null != t ? t : ''),
@@ -91,7 +91,7 @@
                                 'number' == typeof r && t.alreadyRequestedPages.set(''.concat(r), r);
                                 try {
                                     var c;
-                                    ((t.loadingState = N.GuX.PENDING), t.pendingPages.set(''.concat(r), r));
+                                    (t.loadingState = N.GuX.PENDING), t.pendingPages.set(''.concat(r), r);
                                     let e = { artistId: a, page: r, pageSize: l, sort: { sortBy: null == o ? void 0 : o.sortBy } },
                                         s = n;
                                     if (!s)
@@ -108,28 +108,28 @@
                                     let g = { page: r, perPage: l, total: s.pager.total };
                                     0 === t.items.length && (t.items = (0, i.wg)(Array.from({ length: g.total }, () => null)));
                                     let m = s.albums.map(u.pp);
-                                    ((0, N.Iyy)({ items: t.items, mappedRawItems: m, page: r, pageSize: l }),
+                                    (0, N.Iyy)({ items: t.items, mappedRawItems: m, page: r, pageSize: l }),
                                         (t.pager = g),
                                         (t.requests = (null != (c = t.requests) ? c : 0) + 1),
-                                        (t.loadingState = N.GuX.RESOLVE));
+                                        (t.loadingState = N.GuX.RESOLVE);
                                 } catch (e) {
-                                    (g.error(e),
+                                    g.error(e),
                                         e instanceof s.GX &&
                                             (e.statusCode === s.X1.NOT_FOUND || e.statusCode === s.X1.BAD_REQUEST) &&
                                             (t.errorStatusCode = s.X1.NOT_FOUND),
-                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT));
+                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT);
                                 } finally {
                                     t.pendingPages.delete(''.concat(r));
                                 }
                             }
                         }),
                         reset() {
-                            ((t.loadingState = N.GuX.IDLE),
+                            (t.loadingState = N.GuX.IDLE),
                                 t.pendingPages.clear(),
                                 (t.variant = null),
                                 t.alreadyRequestedPages.clear(),
                                 (t.errorStatusCode = null),
-                                t.destroyItems([t.pager, t.items]));
+                                t.destroyItems([t.pager, t.items]);
                         },
                     })),
                 C = i.gK
@@ -173,15 +173,15 @@
                                     let i = e.items.map((t) => (0, g.SZ)({ clip: t.data.clip, artists: t.data.artists }));
                                     t.pagesLoader.setItems(i, { page: r, pager: e.pager });
                                 } catch (e) {
-                                    (u.error(e),
+                                    u.error(e),
                                         t.pagesLoader.setItems(null, { responseStatus: N.FlZ.ERROR, page: r }),
                                         e instanceof s.GX &&
                                             (e.statusCode === s.X1.NOT_FOUND || e.statusCode === s.X1.BAD_REQUEST) &&
-                                            (t.errorStatusCode = s.X1.NOT_FOUND));
+                                            (t.errorStatusCode = s.X1.NOT_FOUND);
                                 }
                         }),
                         reset() {
-                            (t.pagesLoader.reset(), (t.errorStatusCode = null));
+                            t.pagesLoader.reset(), (t.errorStatusCode = null);
                         },
                     })),
                 G = i.gK
@@ -205,17 +205,17 @@
                                 try {
                                     t.loadingState = N.GuX.PENDING;
                                     let e = null == r ? void 0 : r.concerts;
-                                    (e || (e = (yield l.getConcerts({ artistId: a })).concerts), (t.concerts = (0, i.wg)(e.map(S.oP))), (t.loadingState = N.GuX.RESOLVE));
+                                    e || (e = (yield l.getConcerts({ artistId: a })).concerts), (t.concerts = (0, i.wg)(e.map(S.oP))), (t.loadingState = N.GuX.RESOLVE);
                                 } catch (e) {
-                                    (o.error(e),
+                                    o.error(e),
                                         e instanceof s.GX &&
                                             (e.statusCode === s.X1.NOT_FOUND || e.statusCode === s.X1.BAD_REQUEST) &&
                                             (t.errorStatusCode = s.X1.NOT_FOUND),
-                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT));
+                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            ((t.loadingState = N.GuX.IDLE), (t.errorStatusCode = null), t.destroyItems([t.concerts]));
+                            (t.loadingState = N.GuX.IDLE), (t.errorStatusCode = null), t.destroyItems([t.concerts]);
                         },
                     })),
                 L = (t) => (0, i.wg)({ ...(0, u.sK)({ album: t, artists: t.artists }), version: t.version }),
@@ -277,21 +277,21 @@
                                     var n, u, d, g, c, p;
                                     t.loadingState = N.GuX.PENDING;
                                     let e = r;
-                                    (e || (e = yield l.getFamiliarYou({ artistId: a, waveTracksLimit: 100, collectionTracksLimit: 100, collectionAlbumsLimit: 20 })),
+                                    e || (e = yield l.getFamiliarYou({ artistId: a, waveTracksLimit: 100, collectionTracksLimit: 100, collectionAlbumsLimit: 20 })),
                                         (t.vibeTracks = (0, i.wg)(null == (u = e.wave) || null == (n = u.tracks) ? void 0 : n.map((t) => (0, m.vU)(t)))),
                                         (t.collectionTracks = (0, i.wg)(null == (g = e.collection) || null == (d = g.tracks) ? void 0 : d.map((t) => (0, m.vU)(t)))),
                                         (t.collectionAlbums = (0, i.wg)(null == (p = e.collection) || null == (c = p.albums) ? void 0 : c.map(L))),
-                                        (t.loadingState = N.GuX.RESOLVE));
+                                        (t.loadingState = N.GuX.RESOLVE);
                                 } catch (e) {
-                                    (o.error(e),
+                                    o.error(e),
                                         e instanceof s.GX &&
                                             (e.statusCode === s.X1.NOT_FOUND || e.statusCode === s.X1.BAD_REQUEST) &&
                                             (t.errorStatusCode = s.X1.NOT_FOUND),
-                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT));
+                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            ((t.loadingState = N.GuX.IDLE), (t.errorStatusCode = null), t.destroyItems([t.vibeTracks, t.collectionTracks]));
+                            (t.loadingState = N.GuX.IDLE), (t.errorStatusCode = null), t.destroyItems([t.vibeTracks, t.collectionTracks]);
                         },
                     }));
             var f = a(25911);
@@ -320,17 +320,17 @@
                             try {
                                 t.loadingState = N.GuX.PENDING;
                                 let e = r;
-                                (e || (e = yield l.getSimilarArtists({ artistId: a })),
+                                e || (e = yield l.getSimilarArtists({ artistId: a })),
                                     (t.similarArtists = (0, i.wg)(e.similarArtists.map(p.dM))),
-                                    t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE));
+                                    t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE);
                             } catch (e) {
-                                (o.error(e),
+                                o.error(e),
                                     e instanceof s.GX && (e.statusCode === s.X1.NOT_FOUND || e.statusCode === s.X1.BAD_REQUEST) && (t.errorStatusCode = s.X1.NOT_FOUND),
-                                    t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT));
+                                    t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT);
                             }
                         }),
                         reset() {
-                            ((t.loadingState = N.GuX.IDLE), (t.errorStatusCode = null), t.destroyItems([t.similarArtists]));
+                            (t.loadingState = N.GuX.IDLE), (t.errorStatusCode = null), t.destroyItems([t.similarArtists]);
                         },
                     })),
                 h = i.gK.model('CommonSubPage', { artistName: i.gK.maybeNull(i.gK.string) }),
@@ -384,15 +384,15 @@
                                 try {
                                     t.loadingState = N.GuX.PENDING;
                                     let e = yield r.getFamiliarYouInfo({ artistId: a, withWaveInfo: !0, withCollectionInfo: !0 });
-                                    (e.collection && ((t.collectionTrackCount = e.collection.trackCount), (t.collectionAlbumCount = e.collection.albumCount)),
+                                    e.collection && ((t.collectionTrackCount = e.collection.trackCount), (t.collectionAlbumCount = e.collection.albumCount)),
                                         e.wave && (t.vibeTrackCount = e.wave.trackCount),
-                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE));
+                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE);
                                 } catch (e) {
-                                    (s.error(e), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT));
+                                    s.error(e), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            ((t.loadingState = N.GuX.IDLE), (t.vibeTrackCount = 0), (t.collectionTrackCount = 0), (t.collectionAlbumCount = 0));
+                            (t.loadingState = N.GuX.IDLE), (t.vibeTrackCount = 0), (t.collectionTrackCount = 0), (t.collectionAlbumCount = 0);
                         },
                     }));
             var k = a(2865);
@@ -427,13 +427,13 @@
                             t.loadingState = N.GuX.PENDING;
                             let e = yield r.getArtistTrackIds({ artistId: a }),
                                 { sonataState: s } = (0, i.Zn)(t);
-                            (s.setUnloadedEntitiesData(e.map((t) => (0, k.li)(t))),
+                            s.setUnloadedEntitiesData(e.map((t) => (0, k.li)(t))),
                                 (t.ids = (0, i.wg)(e)),
-                                t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE));
+                                t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE);
                         } catch (e) {
-                            (l.error(e),
+                            l.error(e),
                                 e instanceof s.GX && (e.statusCode === s.X1.NOT_FOUND || e.statusCode === s.X1.BAD_REQUEST) && (t.errorStatusCode = s.X1.NOT_FOUND),
-                                t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT));
+                                t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT);
                         }
                     }),
                     getTracks: (0, i.L3)(function* (e) {
@@ -448,7 +448,7 @@
                     }),
                     reset() {
                         let { sonataState: e } = (0, i.Zn)(t);
-                        (e.resetUnloadedEntitiesData(), (t.loadingState = N.GuX.IDLE), t.destroyItems([t.tracks, t.ids]));
+                        e.resetUnloadedEntitiesData(), (t.loadingState = N.GuX.IDLE), t.destroyItems([t.tracks, t.ids]);
                     },
                 }));
             var P = a(47416);
@@ -459,13 +459,13 @@
                             try {
                                 t.loadingState = N.GuX.PENDING;
                                 let r = yield a.getArtistTrackIdsByUser(e);
-                                ((t.ids = (0, i.wg)(r)), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE));
+                                (t.ids = (0, i.wg)(r)), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE);
                             } catch (e) {
-                                (r.error(e), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT));
+                                r.error(e), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT);
                             }
                     }),
                     reset() {
-                        ((t.loadingState = N.GuX.IDLE), t.destroyItems([t.ids]));
+                        (t.loadingState = N.GuX.IDLE), t.destroyItems([t.ids]);
                     },
                 })),
                 _ = i.gK
@@ -487,14 +487,14 @@
                                 try {
                                     t.loadingState = N.GuX.PENDING;
                                     let r = yield a.getArtist(e);
-                                    (r && (t.meta = (0, i.wg)({ artist: (0, p.dM)(r) })), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE));
+                                    r && (t.meta = (0, i.wg)({ artist: (0, p.dM)(r) })), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE);
                                 } catch (e) {
-                                    (r.error(e), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT));
+                                    r.error(e), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT);
                                 }
                             }
                         }),
                         reset() {
-                            ((t.id = null), (t.loadingState = N.GuX.IDLE), t.trackIds.reset(), t.downloadedTracks.reset(), t.destroyItems([t.meta]));
+                            (t.id = null), (t.loadingState = N.GuX.IDLE), t.trackIds.reset(), t.downloadedTracks.reset(), t.destroyItems([t.meta]);
                         },
                     })),
                 w = i.gK
@@ -661,14 +661,14 @@
                                         allCovers: B,
                                     } = e;
                                     if ('not-found' === D || (null == f ? void 0 : f.error) === 'not-found') {
-                                        ((t.errorStatusCode = s.X1.NOT_FOUND), (t.loadingState = N.GuX.REJECT));
+                                        (t.errorStatusCode = s.X1.NOT_FOUND), (t.loadingState = N.GuX.REJECT);
                                         return;
                                     }
                                     if (null == (X = f.deprecation) ? void 0 : X.targetArtistId) {
-                                        ((t.deprecationTargetArtistId = f.deprecation.targetArtistId), (t.loadingState = N.GuX.RESOLVE));
+                                        (t.deprecationTargetArtistId = f.deprecation.targetArtistId), (t.loadingState = N.GuX.RESOLVE);
                                         return;
                                     }
-                                    ((t.commonSubPage.artistName = f.name),
+                                    (t.commonSubPage.artistName = f.name),
                                         g.checkExperiment(N.zal.WebNextArtistSkeletonHeader, 'on') ||
                                             (t.meta = (0, i.wg)(
                                                 ((t, e, a) => {
@@ -681,7 +681,7 @@
                                                         covers: null == a ? void 0 : a.map((t) => t.uri),
                                                     });
                                                 })(f, K, B),
-                                            )));
+                                            ));
                                     let J = (null != (C = f.disclaimers) ? C : []).includes(l.M.MODAL),
                                         M = (null != (G = f.disclaimers) ? G : []).includes(l.M.FOREIGN_AGENT),
                                         j = ((0, N.bRW)(null != (L = f.disclaimers) ? L : [], l.M.FOREIGN_AGENT) || [])[0];
@@ -693,7 +693,7 @@
                                         let e = O[0];
                                         e && A && A.length > 1 && (t.lastRelease = (0, i.wg)((0, u.pp)(e)));
                                     }
-                                    (U && (t.upcomingAlbum = (0, i.wg)((0, u.lO)(U))),
+                                    U && (t.upcomingAlbum = (0, i.wg)((0, u.lO)(U))),
                                         P && (t.concerts = (0, i.wg)(P.map(S.oP))),
                                         I && I.length > 0 && (t.popularTracks = (0, i.wg)(I.slice(0, d.xx).map((t) => (0, m.vU)(t)))),
                                         k && k.length > 0 && (t.similarArtists = (0, i.wg)(k.slice(0, d.dg).map(p.dM))),
@@ -708,11 +708,9 @@
                                             })(w)),
                                         F && (t.clips = (0, i.wg)(F.map(y).slice(0, d.eS))),
                                         n.resetArtist(),
-                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE));
+                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.RESOLVE);
                                 } catch (e) {
-                                    (I.error(e),
-                                        e instanceof s.GX && (t.errorStatusCode = e.statusCode),
-                                        t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT));
+                                    I.error(e), e instanceof s.GX && (t.errorStatusCode = e.statusCode), t.loadingState !== N.GuX.IDLE && (t.loadingState = N.GuX.REJECT);
                                 }
                         }),
                         getInfo: (0, i.L3)(function* (e) {
@@ -727,10 +725,10 @@
                                     let e = yield n.getInfo({ artistId: a }),
                                         { artist: r, deprecation: s } = e;
                                     if (null == s ? void 0 : s.targetArtistId) {
-                                        ((t.deprecationTargetArtistId = s.targetArtistId), (t.loadingState = N.GuX.RESOLVE));
+                                        (t.deprecationTargetArtistId = s.targetArtistId), (t.loadingState = N.GuX.RESOLVE);
                                         return;
                                     }
-                                    ((t.commonSubPage.artistName = r.name),
+                                    (t.commonSubPage.artistName = r.name),
                                         (t.meta = (0, i.wg)(
                                             (0, i.wg)({
                                                 artist: (0, p.as)({ artist: e.artist, trailer: e.trailer, isComposer: e.artistType === I.o.COMPOSER }),
@@ -745,22 +743,22 @@
                                                               return null != (e = t.uri) ? e : '';
                                                           }),
                                             }),
-                                        )));
+                                        ));
                                     let { disclaimers: u, available: y } = null != (c = r.contentRestrictions) ? c : {},
                                         T = (null != u ? u : []).includes(l.M.MODAL),
                                         X = (null != u ? u : []).includes(l.M.FOREIGN_AGENT),
                                         C = ((0, N.bRW)(null != u ? u : [], l.M.FOREIGN_AGENT) || [])[0];
-                                    (((!y && T) || (g && X) || C) &&
+                                    ((!y && T) || (g && X) || C) &&
                                         (yield o.getDisclaimerData({ entityId: a, entityType: N.nPY.ARTIST, disclaimerId: null == C ? void 0 : C.id })),
-                                        t.infoLoadingState.loadingState !== N.GuX.IDLE && (t.infoLoadingState.loadingState = N.GuX.RESOLVE));
+                                        t.infoLoadingState.loadingState !== N.GuX.IDLE && (t.infoLoadingState.loadingState = N.GuX.RESOLVE);
                                 } catch (e) {
-                                    (u.error(e),
+                                    u.error(e),
                                         e instanceof s.GX && (t.infoErrorStatusCode = e.statusCode),
-                                        t.infoLoadingState.loadingState !== N.GuX.IDLE && (t.infoLoadingState.loadingState = N.GuX.REJECT));
+                                        t.infoLoadingState.loadingState !== N.GuX.IDLE && (t.infoLoadingState.loadingState = N.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            ((t.loadingState = N.GuX.IDLE),
+                            (t.loadingState = N.GuX.IDLE),
                                 (t.infoLoadingState.loadingState = N.GuX.IDLE),
                                 t.landing.reset(),
                                 (t.id = null),
@@ -779,7 +777,7 @@
                                     t.upcomingAlbum,
                                     t.concerts,
                                     t.artistPick,
-                                ]));
+                                ]);
                         },
                     }));
             var F = a(50214),

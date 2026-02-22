@@ -12,7 +12,7 @@ exports.config = {
     buildInfo: package_json_1.default.buildInfo,
     meta: package_json_1.default.meta,
     common: package_json_1.default.common,
-    modification:  package_json_1.default.modification,
+    modification: package_json_1.default.modification,
 };
 const applyCommonConfig = (commonConfig) => {
     Object.assign(exports.config.common, commonConfig ?? {});

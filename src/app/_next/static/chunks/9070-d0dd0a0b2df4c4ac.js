@@ -22,19 +22,19 @@
                 o = r(7144),
                 i = r(66268),
                 l = r(73827);
-            (!(function (e) {
-                ((e.formatDate = 'FormattedDate'),
+            !(function (e) {
+                (e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName'));
+                    (e.formatDisplayName = 'FormattedDisplayName');
             })(n || (n = {})),
                 (function (e) {
-                    ((e.formatDate = 'FormattedDateParts'),
+                    (e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts'));
-                })(a || (a = {})));
+                        (e.formatList = 'FormattedListParts');
+                })(a || (a = {}));
             var s = function (e) {
                 var t = (0, l.A)(),
                     r = e.value,
@@ -51,7 +51,7 @@
                         s = 'string' == typeof n ? new Date(n || 0) : n;
                     return a('formatDate' === e ? r.formatDateToParts(s, i) : r.formatTimeToParts(s, i));
                 };
-                return ((t.displayName = a[e]), t);
+                return (t.displayName = a[e]), t;
             }
             function c(e) {
                 var t = function (t) {
@@ -64,21 +64,21 @@
                     var c = r.textComponent || i.Fragment;
                     return i.createElement(c, null, d);
                 };
-                return ((t.displayName = n[e]), t);
+                return (t.displayName = n[e]), t;
             }
-            ((s.displayName = 'FormattedNumberParts'), (s.displayName = 'FormattedNumberParts'));
+            (s.displayName = 'FormattedNumberParts'), (s.displayName = 'FormattedNumberParts');
             var u = c('formatDate');
-            (c('formatTime'), c('formatNumber'), c('formatList'), c('formatDisplayName'), d('formatDate'), d('formatTime'));
+            c('formatTime'), c('formatNumber'), c('formatList'), c('formatDisplayName'), d('formatDate'), d('formatTime');
         },
         5884: (e, t, r) => {
             'use strict';
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'default', {
                     enumerable: !0,
                     get: function () {
                         return a;
                     },
-                }));
+                });
             let n = r(473)._(r(16092));
             function a(e, t) {
                 var r;
@@ -96,13 +96,13 @@
         },
         16092: (e, t, r) => {
             'use strict';
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'default', {
                     enumerable: !0,
                     get: function () {
                         return s;
                     },
-                }));
+                });
             let n = r(33008),
                 a = r(66268),
                 o = r(52283);
@@ -124,7 +124,7 @@
                                 : (0, n.jsx)(o.BailoutToCSR, { reason: 'next/dynamic', children: (0, n.jsx)(r, { ...e }) });
                         return (0, n.jsx)(d, { ...(l ? { fallback: i } : {}), children: c });
                     }
-                    return ((d.displayName = 'LoadableComponent'), d);
+                    return (d.displayName = 'LoadableComponent'), d;
                 };
         },
         20138: (e) => {
@@ -178,7 +178,7 @@
         },
         29371: (e, t, r) => {
             'use strict';
-            (r.d(t, { FN: () => a, gj: () => n }), r(27224));
+            r.d(t, { FN: () => a, gj: () => n }), r(27224);
             let n = (e) => {
                     let { containerNodeRect: t, draggingNodeRect: r, transform: n } = e;
                     return r && t
@@ -232,7 +232,7 @@
                         t = (0, h.useRouter)(),
                         r = (0, p.NFA)().get(p.QGx),
                         o = (0, s.c)(() => {
-                            (e.close(), r.authorizationUrl && t.push(r.authorizationUrl));
+                            e.close(), r.authorizationUrl && t.push(r.authorizationUrl);
                         });
                     return (0, n.jsx)(v.Button, {
                         className: (0, a.$)(j().button, j().important),
@@ -364,7 +364,7 @@
                             fullscreenVideoPlayer: x,
                         } = (0, o.Pjs)(),
                         { modal: h, clip: v } = a;
-                    (!v && a.isClipIdle && a.getClip(), !a.credits && a.isCreditsIdle && a.getCreditsInfo());
+                    !v && a.isClipIdle && a.getClip(), !a.credits && a.isCreditsIdle && a.getCreditsInfo();
                     let f = null == v ? void 0 : v.title,
                         j = null == v ? void 0 : v.explicitDisclaimer,
                         b = (0, l.useMemo)(
@@ -389,17 +389,17 @@
                         );
                     (0, l.useEffect)(
                         () => () => {
-                            (h.close(), a.reset());
+                            h.close(), a.reset();
                         },
                         [a, h],
                     );
                     let y = (0, l.useCallback)(() => {
-                            (h.close(), a.reset());
+                            h.close(), a.reset();
                         }, [a, h]),
                         A = (0, l.useCallback)(
                             (e) => {
                                 var t;
-                                (e || a.reset(), null == (t = h.onOpenChange) || t.call(h, e));
+                                e || a.reset(), null == (t = h.onOpenChange) || t.call(h, e);
                             },
                             [a, h],
                         );
@@ -435,15 +435,15 @@
                     } = (0, o.Pjs)();
                     return e ? null : (0, n.jsx)(p, {});
                 });
-            (r(90108), r(95273));
+            r(90108), r(95273);
             var h = r(42213),
                 v = r(42314),
                 f = r(74230),
                 j = r(24426),
                 b = r.n(j);
-            (b().secondaryEnter, b().secondaryEnterActive);
+            b().secondaryEnter, b().secondaryEnterActive;
             var y = (function (e) {
-                    return ((e.LARGE = 'large'), (e.SMALL = 'small'), e);
+                    return (e.LARGE = 'large'), (e.SMALL = 'small'), e;
                 })({}),
                 A = r(17846);
             let C = ['album', 'users', 'artist', 'chart'],
@@ -575,24 +575,24 @@
                         { modal: A } = h,
                         C = h.isUGC,
                         g = y.checkExperiment(o.zal.WebEditorsFeatures, 'on');
-                    (C && h.isTrackIdle && h.getTrackMeta(),
+                    C && h.isTrackIdle && h.getTrackMeta(),
                         h.fullTrack || !h.isTrackIdle || C || h.getFullTrack(),
                         !h.credits && h.isCreditsIdle && h.getCreditsInfo(),
                         ((null == (e = h.fullTrack) ? void 0 : e.isTrackPodcast) || (null == (r = h.fullTrack) || null == (t = r.mainAlbum) ? void 0 : t.isPodcast)) &&
                             h.getFullDescription(),
                         (0, l.useEffect)(
                             () => () => {
-                                (A.close(), h.reset());
+                                A.close(), h.reset();
                             },
                             [h, A],
-                        ));
+                        );
                     let k = (0, l.useCallback)(() => {
-                            (A.close(), h.reset());
+                            A.close(), h.reset();
                         }, [h, A]),
                         T = (0, l.useCallback)(
                             (e) => {
                                 var t;
-                                (e || h.reset(), null == (t = A.onOpenChange) || t.call(A, e));
+                                e || h.reset(), null == (t = A.onOpenChange) || t.call(A, e);
                             },
                             [h, A],
                         );
@@ -692,12 +692,12 @@
                     } = (0, o.Pjs)(),
                     { modal: p, track: x } = c,
                     h = null == x ? void 0 : x.explicitDisclaimer;
-                ((0, l.useEffect)(() => {
+                (0, l.useEffect)(() => {
                     x && x.isLyricsAvailable && c.modal.isOpened && c.getLyrics(x.id);
                 }, [x, c, c.modal.isOpened]),
                     (0, l.useEffect)(() => {
                         p.isOpened && x && c.isResolved && c.sendViews({ trackId: x.id, albumId: x.albumId });
-                    }, [x, c, c.isResolved, p.isOpened]));
+                    }, [x, c, c.isResolved, p.isOpened]);
                 let v = (0, l.useCallback)(
                     (e) => {
                         var t;
@@ -772,7 +772,7 @@
             let i = (0, n.PA)((e) => {
                 let { children: t } = e,
                     { experiments: r } = (0, o.Pjs)();
-                return (r.checkExperiment(o.zal.WebNextDisableNonMusic, 'on') && (0, a.redirect)(o.Zyd.main.href), t);
+                return r.checkExperiment(o.zal.WebNextDisableNonMusic, 'on') && (0, a.redirect)(o.Zyd.main.href), t;
             });
         },
         44903: (e, t, r) => {
@@ -784,7 +784,7 @@
             let i = (0, n.PA)((e) => {
                 let { children: t } = e,
                     { experiments: r } = (0, o.Pjs)();
-                return (r.checkExperiment(o.zal.WebNextDisableKids, 'on') && (0, a.redirect)(o.Zyd.main.href), t);
+                return r.checkExperiment(o.zal.WebNextDisableKids, 'on') && (0, a.redirect)(o.Zyd.main.href), t;
             });
         },
         56140: (e) => {
@@ -815,7 +815,7 @@
             let i = (0, n.PA)((e) => {
                 let { children: t } = e,
                     { experiments: r } = (0, o.Pjs)();
-                return (r.checkExperiment(o.zal.WebNextDisableCollection, 'on') && (0, a.redirect)(o.Zyd.main.href), t);
+                return r.checkExperiment(o.zal.WebNextDisableCollection, 'on') && (0, a.redirect)(o.Zyd.main.href), t;
             });
         },
         63426: (e, t, r) => {
@@ -911,7 +911,7 @@
                         } = (0, j.Pjs)(),
                         { formatMessage: s } = (0, U.A)(),
                         d = (0, Y.c)((e) => {
-                            (void 0 !== e && l.setType(e), o());
+                            void 0 !== e && l.setType(e), o();
                         });
                     return (0, n.jsx)('section', {
                         ref: r,
@@ -947,10 +947,10 @@
                         b = v.isMobile && (f.checkExperiment(j.zal.WebNextTouchAds, 'small_banner') || f.checkExperiment(j.zal.WebNextTouchAds, 'large_banner')),
                         y = (!h.isAuthorized || x) && !(null == (t = v.browserInfo) ? void 0 : t.isTouch) && !b,
                         A = (0, l.useCallback)(() => {
-                            (d(!1), i(!0));
+                            d(!1), i(!0);
                         }, [d, i]),
                         C = (0, l.useCallback)(() => {
-                            (d(!0), i(!1));
+                            d(!0), i(!1);
                         }, [d, i]),
                         g = (0, l.useCallback)(() => {
                             u(!1);
@@ -970,7 +970,7 @@
                                 r = m.clientHeight + ((null == (e = p.current) ? void 0 : e.offsetHeight) || 0) < _.scrollHeight;
                             if ((r ? d(!0) : !r && t && d(!1), !s || (!t && c))) return;
                             let n = !t;
-                            (i(n), n && u(!0));
+                            i(n), n && u(!0);
                         }, [m, _, k, s, c, i, d, u]);
                     (0, l.useEffect)(() => {
                         T();
@@ -1226,13 +1226,13 @@
                                     return e;
                                 })(n),
                             );
-                        return ((n.state = { contextValue: { isMounting: !0 }, handleExited: a, firstRender: !0 }), n);
+                        return (n.state = { contextValue: { isMounting: !0 }, handleExited: a, firstRender: !0 }), n;
                     }
                     (0, o.A)(t, e);
                     var r = t.prototype;
                     return (
                         (r.componentDidMount = function () {
-                            ((this.mounted = !0), this.setState({ contextValue: { isMounting: !1 } }));
+                            (this.mounted = !0), this.setState({ contextValue: { isMounting: !1 } });
                         }),
                         (r.componentWillUnmount = function () {
                             this.mounted = !1;
@@ -1258,7 +1258,7 @@
                                               function r(r) {
                                                   return r in t ? t[r] : e[r];
                                               }
-                                              ((e = e || {}), (t = t || {}));
+                                              (e = e || {}), (t = t || {});
                                               var n,
                                                   a = Object.create(null),
                                                   o = [];
@@ -1308,7 +1308,7 @@
                                 this.mounted &&
                                     this.setState(function (t) {
                                         var r = (0, a.A)({}, t.children);
-                                        return (delete r[e.key], { children: r });
+                                        return delete r[e.key], { children: r };
                                     }));
                         }),
                         (r.render = function () {
@@ -1325,13 +1325,13 @@
                         t
                     );
                 })(i.Component);
-            ((u.propTypes = {}),
+            (u.propTypes = {}),
                 (u.defaultProps = {
                     component: 'div',
                     childFactory: function (e) {
                         return e;
                     },
-                }));
+                });
             let m = u;
         },
         91731: (e) => {
@@ -1369,7 +1369,7 @@
             let i = (0, n.PA)((e) => {
                 let { children: t } = e,
                     { experiments: r } = (0, o.Pjs)();
-                return (r.checkExperiment(o.zal.WebNextDisableConcertsTab, 'on') && (0, a.redirect)('/'), t);
+                return r.checkExperiment(o.zal.WebNextDisableConcertsTab, 'on') && (0, a.redirect)('/'), t;
             });
         },
         98701: (e) => {

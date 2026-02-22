@@ -295,10 +295,10 @@
                         );
                     }, [s]),
                     S = (0, g.useCallback)(() => {
-                        (s.modalItem &&
+                        s.modalItem &&
                             s.modalItem.content.closeActionId &&
                             d.action(s.modalItem.anchorId, s.modalItem.screenId, s.modalItem.content.closeActionId, s.modalItem.feedbackToken),
-                            s.close());
+                            s.close();
                     }, [s, d]),
                     P = (0, g.useMemo)(() => {
                         var e;
@@ -472,19 +472,19 @@
                 .actions((e) => ({
                     openImages(t) {
                         let { images: a, initialSlideIndex: r, sizeImage: l, withAspectRatio: o } = t;
-                        ((e.images = (0, n.wg)((0, i.HO)(a))),
+                        (e.images = (0, n.wg)((0, i.HO)(a))),
                             (e.sizeImage = null != l ? l : 1e3),
                             (e.withAspectRatio = null == o || o),
                             r && (e.initialSlideIndex = r),
-                            e.modal.open());
+                            e.modal.open();
                     },
                     setImageIsLoaded(t) {
                         var a, i;
-                        (e.loadedImages || (e.loadedImages = (0, n.wg)([])),
-                            !t || (null == (a = e.loadedImages) ? void 0 : a.includes(t)) || null == (i = e.loadedImages) || i.push(t));
+                        e.loadedImages || (e.loadedImages = (0, n.wg)([])),
+                            !t || (null == (a = e.loadedImages) ? void 0 : a.includes(t)) || null == (i = e.loadedImages) || i.push(t);
                     },
                     close() {
-                        ((e.images = null), (e.initialSlideIndex = 0), (e.loadedImages = null), e.modal.close());
+                        (e.images = null), (e.initialSlideIndex = 0), (e.loadedImages = null), e.modal.close();
                     },
                 }));
             var o = a(33008),
@@ -527,7 +527,7 @@
                         null == (e = N.current) || e.swiper.slidePrev();
                     }),
                     M = (0, v.c)((e) => {
-                        (S(e.isBeginning), P(e.isEnd), j(e.activeIndex));
+                        S(e.isBeginning), P(e.isEnd), j(e.activeIndex);
                     });
                 return (
                     (0, d.useEffect)(() => {
@@ -557,12 +557,12 @@
                                     r.modal.isOpened && r.close();
                                 }),
                             () => {
-                                (null == A || A.removeShortcutsListener(C.Mo.IMAGE_SLIDER, C.lbr.CLOSE),
+                                null == A || A.removeShortcutsListener(C.Mo.IMAGE_SLIDER, C.lbr.CLOSE),
                                     null == A || A.disable(C.Mo.IMAGE_SLIDER, C.lbr.CLOSE),
                                     null == A || A.enable(C.Mo.MAIN, C.lbr.CLOSE),
                                     null == A || A.enable(C.Mo.MAIN, C.lbr.SLIDE_BACKWARD),
                                     null == A || A.enable(C.Mo.MAIN, C.lbr.SLIDE_FORWARD),
-                                    r.close());
+                                    r.close();
                             }
                         ),
                         [A, r],
@@ -792,17 +792,17 @@
                                 l = ((e) => {
                                     let { id: t, likedArtists: a, unlikedArtists: i, savedLikedArtists: n } = e,
                                         r = {};
-                                    if (a.includes(t)) return ((r.likedArtists = a.filter((e) => e !== t)), r);
+                                    if (a.includes(t)) return (r.likedArtists = a.filter((e) => e !== t)), r;
                                     let l = n.includes(t),
                                         o = i.includes(t);
-                                    return (((r.unlikedArtists = i.filter((e) => e !== t)), l && !o) ? r.unlikedArtists.push(t) : (r.likedArtists = [...a, t]), r);
+                                    return ((r.unlikedArtists = i.filter((e) => e !== t)), l && !o) ? r.unlikedArtists.push(t) : (r.likedArtists = [...a, t]), r;
                                 })({
                                     id: t,
                                     likedArtists: a,
                                     unlikedArtists: n,
                                     savedLikedArtists: r,
                                 });
-                            (l.likedArtists && (e.likedArtists = (0, i.wg)(l.likedArtists)), l.unlikedArtists && (e.unlikedArtists = (0, i.wg)(l.unlikedArtists)));
+                            l.likedArtists && (e.likedArtists = (0, i.wg)(l.likedArtists)), l.unlikedArtists && (e.unlikedArtists = (0, i.wg)(l.unlikedArtists));
                         },
                         setFilter: (t) => {
                             e.filter = t;
@@ -824,7 +824,7 @@
                                         !a.length)
                                     )
                                         throw Error("The wizard's genre array is empty");
-                                    ((e.filter = null == (n = a[0]) ? void 0 : n.id),
+                                    (e.filter = null == (n = a[0]) ? void 0 : n.id),
                                         (e.artistsByGenres = (0, i.wg)(
                                             ((e) => {
                                                 let t = new Map();
@@ -840,9 +840,9 @@
                                                 );
                                             })(a),
                                         )),
-                                        e.loadingState !== r.GuX.IDLE && (e.loadingState = r.GuX.RESOLVE));
+                                        e.loadingState !== r.GuX.IDLE && (e.loadingState = r.GuX.RESOLVE);
                                 } catch (t) {
-                                    (a.error(t), e.loadingState !== r.GuX.IDLE && (e.loadingState = r.GuX.REJECT));
+                                    a.error(t), e.loadingState !== r.GuX.IDLE && (e.loadingState = r.GuX.REJECT);
                                 }
                         }),
                         getArtists: (0, i.L3)(function* (t) {
@@ -861,16 +861,16 @@
                                         }),
                                         c = l.map((e) => (0, n.as)({ artist: e })),
                                         d = l.map((e) => e.id);
-                                    (e.artistsByGenres.set(e.filter, {
+                                    e.artistsByGenres.set(e.filter, {
                                         artists: [...o.artists, ...c],
                                         showedArtists: [...o.showedArtists, ...d],
                                         loadingState: r.GuX.RESOLVE,
                                     }),
                                         (e.savedLikedArtists = (0, i.wg)(s.map((e) => String(e)))),
                                         (e.likedArtists = (0, i.wg)([])),
-                                        (e.unlikedArtists = (0, i.wg)([])));
+                                        (e.unlikedArtists = (0, i.wg)([]));
                                 } catch (e) {
-                                    (l.error(e), (o.loadingState = r.GuX.REJECT));
+                                    l.error(e), (o.loadingState = r.GuX.REJECT);
                                 }
                         }),
                         finish: (0, i.L3)(function* () {
@@ -886,7 +886,7 @@
                                     r.FlZ.OK
                                 );
                             } catch (e) {
-                                return (a.error(e), r.FlZ.ERROR);
+                                return a.error(e), r.FlZ.ERROR;
                             }
                         }),
                     }));
@@ -1000,7 +1000,7 @@
                                 if (!N.onTabChange || e === N.value) return;
                                 N.onTabChange(e);
                                 let i = null == (a = t.genres[e]) ? void 0 : a.id;
-                                (t.setFilter(i), null == c || c.scrollTo({ top: 0 }));
+                                t.setFilter(i), null == c || c.scrollTo({ top: 0 });
                             },
                             [t, N, c],
                         ),
@@ -1055,9 +1055,9 @@
                         t.filter && P();
                     }, [t.filter, P]);
                     let j = (0, _.useCallback)(async () => {
-                        (await t.getGenres(), P());
+                        await t.getGenres(), P();
                     }, [t, P]);
-                    ((0, _.useEffect)(() => {
+                    (0, _.useEffect)(() => {
                         t.modal.isOpened && j();
                     }, [t, t.modal.isOpened, j]),
                         (0, _.useEffect)(() => {
@@ -1071,7 +1071,7 @@
                                     }),
                                     { containerId: r.uQT.ERROR },
                                 ));
-                        }, [t, t.getGenres, t.loadingState, e, o]));
+                        }, [t, t.getGenres, t.loadingState, e, o]);
                     let w = (0, _.useMemo)(
                             () =>
                                 (0, d.jsx)(C.Heading, {
@@ -1086,7 +1086,7 @@
                             [],
                         ),
                         M = (0, _.useCallback)(async () => {
-                            (t.selectedArtistsCounter < 3 ? t.getArtists() : (await t.finish()) === r.FlZ.OK && (await l.getSettings(), f()), t.modal.close());
+                            t.selectedArtistsCounter < 3 ? t.getArtists() : (await t.finish()) === r.FlZ.OK && (await l.getSettings(), f()), t.modal.close();
                         }, [f, l, t]);
                     return (
                         (0, _.useEffect)(
@@ -1205,7 +1205,7 @@
             var i = a(41028),
                 n = a(59615),
                 r = (function (e) {
-                    return ((e.IDLE = 'idle'), (e.SUCCESS = 'success'), (e.ERROR = 'error'), e);
+                    return (e.IDLE = 'idle'), (e.SUCCESS = 'success'), (e.ERROR = 'error'), e;
                 })({});
             let l = i.gK
                 .model({
@@ -1249,10 +1249,10 @@
                         e.status = t;
                     },
                     reset() {
-                        ((e.target = ''), (e.tariffOfferName = ''), (e.offersBatchId = ''), (e.offersPositionIds = ''), (e.serviceSessionId = ''), (e.status = r.IDLE));
+                        (e.target = ''), (e.tariffOfferName = ''), (e.offersBatchId = ''), (e.offersPositionIds = ''), (e.serviceSessionId = ''), (e.status = r.IDLE);
                     },
                     onModalOpenChange(t) {
-                        (e.modal.onOpenChange(t), e.status === r.SUCCESS && window.location.reload());
+                        e.modal.onOpenChange(t), e.status === r.SUCCESS && window.location.reload();
                     },
                 }));
             var o = a(33008),
@@ -1332,7 +1332,7 @@
                                     isTarifficator: !0,
                                 },
                                 m = await b();
-                            (null !== m && (u.clid = m), g.send({ type: 'open', options: u }));
+                            null !== m && (u.clid = m), g.send({ type: 'open', options: u });
                         }, [x, y, a, i, r, n, l, s, C, A, N, f, b]);
                     return (
                         (0, d.useEffect)(
@@ -1360,10 +1360,10 @@
                     [e],
                 );
                 let l = (0, d.useCallback)(() => {
-                        (e.setStatus(r.SUCCESS), n.track({ label: 'WCvtCKnr84oYEPnRuvUo' }));
+                        e.setStatus(r.SUCCESS), n.track({ label: 'WCvtCKnr84oYEPnRuvUo' });
                     }, [e, n]),
                     c = (0, d.useCallback)(() => {
-                        (e.modal.close(), e.isSuccess && window.location.reload(), e.reset());
+                        e.modal.close(), e.isSuccess && window.location.reload(), e.reset();
                     }, [e]),
                     v = (0, d.useCallback)(() => {
                         e.setStatus(r.ERROR);
@@ -1431,7 +1431,7 @@
                 });
             };
             !(function (e) {
-                ((e.CLOSE = 'close'), (e.LINK = 'link'), (e.PAYWALL = 'paywall'));
+                (e.CLOSE = 'close'), (e.LINK = 'link'), (e.PAYWALL = 'paywall');
             })(i || (i = {}));
             let o = r.gK.model('CommunicationButtonAction', {
                 id: r.gK.maybeNull(r.gK.string),
@@ -1440,7 +1440,7 @@
                 communicationId: r.gK.maybeNull(r.gK.string),
             });
             !(function (e) {
-                ((e.PRIMARY = 'primary'), (e.SECONDARY = 'secondary'), (e.PLUS = 'plus'));
+                (e.PRIMARY = 'primary'), (e.SECONDARY = 'secondary'), (e.PLUS = 'plus');
             })(n || (n = {}));
             let s = r.gK.model('CommunicationButton', {
                 text: r.gK.maybeNull(r.gK.string),
@@ -1481,7 +1481,7 @@
                         if (s.action)
                             switch ((l && o && s.action.id && I.action(l, o, s.action.id, f), s.action.type)) {
                                 case i.PAYWALL:
-                                    (k(), null == N || N());
+                                    k(), null == N || N();
                                     return;
                                 case i.LINK:
                                     s.action.value && (T(e), null == N || N());
@@ -1642,7 +1642,7 @@
                         let t = {
                             deletePin(t) {
                                 var a;
-                                ((e.items = (0, _.wg)(null == (a = e.items) ? void 0 : a.filter((e) => e.data.pinId !== t))), e.index.delete(t));
+                                (e.items = (0, _.wg)(null == (a = e.items) ? void 0 : a.filter((e) => e.data.pinId !== t))), e.index.delete(t);
                             },
                             addPin(t) {
                                 var a, i, n, r;
@@ -1661,14 +1661,14 @@
                                         var i;
                                         e.loadingState = N.GuX.PENDING;
                                         let a = yield t.getPins();
-                                        ((e.items = (0, _.wg)(a.pins.map(P))),
+                                        (e.items = (0, _.wg)(a.pins.map(P))),
                                             null == (i = e.items) ||
                                                 i.forEach((t) => {
                                                     e.index.set(t.data.pinId, !0);
                                                 }),
-                                            (e.loadingState = N.GuX.RESOLVE));
+                                            (e.loadingState = N.GuX.RESOLVE);
                                     } catch (t) {
-                                        ((e.loadingState = N.GuX.REJECT), a.error(t));
+                                        (e.loadingState = N.GuX.REJECT), a.error(t);
                                     }
                             }),
                             toggleAlbumPin: (0, _.L3)(function* (a, i) {
@@ -1676,8 +1676,8 @@
                                 if (e.loadingState !== N.GuX.PENDING)
                                     try {
                                         let r;
-                                        if (e.isPinned(i)) return ((r = yield n.unpinAlbum(a)), t.deletePin(i), r);
-                                        return ((r = yield n.pinAlbum(a)), I(r) && t.addPin(r), r);
+                                        if (e.isPinned(i)) return (r = yield n.unpinAlbum(a)), t.deletePin(i), r;
+                                        return (r = yield n.pinAlbum(a)), I(r) && t.addPin(r), r;
                                     } catch (e) {
                                         r.error(e);
                                         return;
@@ -1688,8 +1688,8 @@
                                 if (e.loadingState !== N.GuX.PENDING)
                                     try {
                                         let r;
-                                        if (e.isPinned(i)) return ((r = yield n.unpinArtist(a)), t.deletePin(i), r);
-                                        return ((r = yield n.pinArtist(a)), I(r) && t.addPin(r), r);
+                                        if (e.isPinned(i)) return (r = yield n.unpinArtist(a)), t.deletePin(i), r;
+                                        return (r = yield n.pinArtist(a)), I(r) && t.addPin(r), r;
                                     } catch (e) {
                                         r.error(e);
                                         return;
@@ -1700,8 +1700,8 @@
                                 if (e.loadingState !== N.GuX.PENDING)
                                     try {
                                         let r;
-                                        if (e.isPinned(i)) return ((r = yield n.unpinPlaylist(a)), t.deletePin(i), r);
-                                        return ((r = yield n.pinPlaylist(a)), I(r) && t.addPin(r), r);
+                                        if (e.isPinned(i)) return (r = yield n.unpinPlaylist(a)), t.deletePin(i), r;
+                                        return (r = yield n.pinPlaylist(a)), I(r) && t.addPin(r), r;
                                     } catch (e) {
                                         r.error(e);
                                         return;
@@ -1712,8 +1712,8 @@
                                 if (e.loadingState !== N.GuX.PENDING)
                                     try {
                                         let r;
-                                        if (e.isPinned(i)) return ((r = yield n.unpinWave(a)), t.deletePin(i), r);
-                                        return ((r = yield n.pinWave(a)), I(r) && t.addPin(r), r);
+                                        if (e.isPinned(i)) return (r = yield n.unpinWave(a)), t.deletePin(i), r;
+                                        return (r = yield n.pinWave(a)), I(r) && t.addPin(r), r;
                                     } catch (e) {
                                         r.error(e);
                                         return;
@@ -1794,11 +1794,11 @@
                                     (i && (i += ' '), (i += t));
                             return i;
                         }
-                        (a.r(t), a.d(t, { clsx: () => i, default: () => n }));
+                        a.r(t), a.d(t, { clsx: () => i, default: () => n });
                         let n = i;
                     },
                     2408: (e, t, a) => {
-                        (a.r(t), a.d(t, { default: () => i }));
+                        a.r(t), a.d(t, { default: () => i });
                         let i = {
                             root: 'NGdj0oZ2Bt8qdZhP2Tzt',
                             root_collapsed: 'rece5errcONnjJeX0YW8',
@@ -1807,7 +1807,7 @@
                         };
                     },
                     1308: (e, t, a) => {
-                        (a.r(t), a.d(t, { default: () => i }));
+                        a.r(t), a.d(t, { default: () => i });
                         let i = {
                             root: 'yuyI2hMAT7qyL1N14MAQ',
                             root_direction_vertical: 'xfFtKQpgAYvC2jI1tBtS',
@@ -1815,7 +1815,7 @@
                         };
                     },
                     2056: (e, t, a) => {
-                        (a.r(t), a.d(t, { default: () => i }));
+                        a.r(t), a.d(t, { default: () => i });
                         let i = {
                             root: 'Bp1d3U6W8Nrbqi3MRQS_',
                             root_direction_vertical: 'hYfgO_Y8c4rrQsZJWTDZ',
@@ -1850,13 +1850,13 @@
                                 props: i,
                             };
                         }
-                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i));
+                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i);
                     },
                     1082: (e, t, a) => {
                         e.exports = a(7327);
                     },
                     8796: (e, t) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                        Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.createRipple = void 0),
                             (t.createRipple = function (e, t, a) {
                                 let i = null != a ? a : e.currentTarget,
@@ -1866,27 +1866,27 @@
                                     o = i.getBoundingClientRect(),
                                     s = 0 === e.clientX ? Math.round(o.width / 2) : e.clientX - o.left,
                                     c = 0 === e.clientY ? Math.round(o.height / 2) : e.clientY - o.top;
-                                ((n.style.width = ''.concat(r, 'px')),
+                                (n.style.width = ''.concat(r, 'px')),
                                     (n.style.height = ''.concat(r, 'px')),
                                     (n.style.left = 0 === e.clientX ? '0px' : ''.concat(s - l, 'px')),
                                     (n.style.top = ''.concat(c - l, 'px')),
-                                    n.classList.add(t));
+                                    n.classList.add(t);
                                 let d = i.getElementsByClassName(t)[0];
-                                (d && d.remove(), i.insertBefore(n, i.firstChild));
-                            }));
+                                d && d.remove(), i.insertBefore(n, i.firstChild);
+                            });
                     },
                     361: (e, t) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                        Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            }));
+                            });
                     },
                     8216: (e, t, a) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.getElementFromRefOrElement = t.createRipple = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.getElementFromRefOrElement = t.createRipple = void 0);
                         var i = a(8796);
                         Object.defineProperty(t, 'createRipple', {
                             enumerable: !0,
@@ -1908,7 +1908,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Navigation = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Navigation = void 0);
                         let n = a(1082),
                             r = a(5881),
                             l = a(7786),
@@ -1928,10 +1928,10 @@
                         };
                     },
                     7786: (e, t, a) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationProvider = t.NavigationContext = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationProvider = t.NavigationContext = void 0);
                         let i = a(1082),
                             n = a(810);
-                        ((t.NavigationContext = (0, n.createContext)({
+                        (t.NavigationContext = (0, n.createContext)({
                             collapsed: !1,
                             direction: 'vertical',
                         })),
@@ -1939,7 +1939,7 @@
                                 let { collapsed: a, direction: r, children: l } = e,
                                     o = (0, n.useMemo)(() => ({ collapsed: a, direction: r }), [a, r]);
                                 return (0, i.jsx)(t.NavigationContext.Provider, { value: o, children: l });
-                            }));
+                            });
                     },
                     8106: function (e, t, a) {
                         var i =
@@ -1947,7 +1947,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationGroup = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationGroup = void 0);
                         let n = a(1082),
                             r = a(810),
                             l = a(5881),
@@ -1971,7 +1971,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationItem = t.NavigationItemComponent = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationItem = t.NavigationItemComponent = void 0);
                         let n = a(1082),
                             r = a(810),
                             l = a(5881),
@@ -2045,7 +2045,7 @@
                                 children: C,
                             });
                         }
-                        ((t.NavigationItemComponent = d), (t.NavigationItem = (0, r.forwardRef)((e, t) => (0, n.jsx)(d, { forwardRef: t, ...e }))));
+                        (t.NavigationItemComponent = d), (t.NavigationItem = (0, r.forwardRef)((e, t) => (0, n.jsx)(d, { forwardRef: t, ...e })));
                     },
                     810: (e) => {
                         e.exports = M;
@@ -2056,9 +2056,9 @@
                 var t = X[e];
                 if (void 0 !== t) return t.exports;
                 var a = (X[e] = { exports: {} });
-                return (H[e].call(a.exports, a, a.exports, Z), a.exports);
+                return H[e].call(a.exports, a, a.exports, Z), a.exports;
             }
-            ((Z.d = (e, t) => {
+            (Z.d = (e, t) => {
                 for (var a in t)
                     Z.o(t, a) &&
                         !Z.o(e, a) &&
@@ -2069,16 +2069,16 @@
             }),
                 (Z.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (Z.r = (e) => {
-                    ('undefined' != typeof Symbol &&
+                    'undefined' != typeof Symbol &&
                         Symbol.toStringTag &&
                         Object.defineProperty(e, Symbol.toStringTag, {
                             value: 'Module',
                         }),
-                        Object.defineProperty(e, '__esModule', { value: !0 }));
-                }));
+                        Object.defineProperty(e, '__esModule', { value: !0 });
+                });
             var J = {};
             (() => {
-                (Object.defineProperty(J, 'X$', { value: !0 }), (J.Dx = J.KB = J.W_ = void 0));
+                Object.defineProperty(J, 'X$', { value: !0 }), (J.Dx = J.KB = J.W_ = void 0);
                 var e = Z(19);
                 Object.defineProperty(J, 'W_', {
                     enumerable: !0,
@@ -2190,7 +2190,7 @@
                         c = (0, N.zzi)({ id: t.id, ref: o }),
                         [d, u] = (0, w.useState)(c && t.isEnabled),
                         m = (0, R.c)((e) => {
-                            (null == e || e.stopPropagation(), u(!1), l(!1));
+                            null == e || e.stopPropagation(), u(!1), l(!1);
                         }),
                         _ = (0, R.c)((e) => {
                             e || m();
@@ -2389,7 +2389,7 @@
                                 pageId: O.QT.Sidebar,
                                 sidebarSize: l || i ? O.JQ.Small : O.JQ.Medium,
                             };
-                            (o && (c.mainObjectType = o), s && (c.mainObjectId = s));
+                            o && (c.mainObjectType = o), s && (c.mainObjectId = s);
                             let d = (0, O.Fx)({
                                 params: c,
                                 logger: a,
@@ -2407,14 +2407,14 @@
                         [r, l] = (0, w.useState)(!1),
                         o = ej(),
                         s = (0, w.useCallback)((e) => {
-                            (e.preventDefault(), e.stopPropagation());
+                            e.preventDefault(), e.stopPropagation();
                         }, []),
                         c = (0, w.useCallback)(() => {
-                            (t(),
+                            t(),
                                 o({
                                     actionType: O.X2.Unpin,
                                     isCollapsed: null != n && n,
-                                }));
+                                });
                         }, [n, t, o]);
                     return (
                         (0, N.NBO)(r),
@@ -2461,7 +2461,7 @@
                         }),
                         g = (0, v.cp)({ album: i, callback: p }),
                         h = (0, R.c)((e) => {
-                            (u(null != o && o, m), g(e));
+                            u(null != o && o, m), g(e);
                         }),
                         x = (0, w.useMemo)(
                             () =>
@@ -2524,7 +2524,7 @@
                         u = (0, N.ZpR)(i.url),
                         m = (0, g.SA)({ artist: i, callback: u }),
                         _ = (0, R.c)((e) => {
-                            (d(null != o && o, O.QT.ArtistScreen), m(e));
+                            d(null != o && o, O.QT.ArtistScreen), m(e);
                         }),
                         p = (0, w.useMemo)(
                             () =>
@@ -3086,7 +3086,7 @@
             var e8 = a(6522),
                 e4 = a.n(e8),
                 e5 = (function (e) {
-                    return ((e.WINDOWS = 'WINDOWS'), (e.MACOS = 'MACOS'), (e.UNKNOWN = 'UNKNOWN'), e);
+                    return (e.WINDOWS = 'WINDOWS'), (e.MACOS = 'MACOS'), (e.UNKNOWN = 'UNKNOWN'), e;
                 })({}),
                 e6 = a(75863),
                 e3 = a.n(e6);
@@ -3352,13 +3352,13 @@
                         }, [null == (t = i.browserInfo) ? void 0 : t.OSFamily]),
                         u = (0, N._lF)(l.downloadDesktop.url),
                         m = (0, w.useCallback)(() => {
-                            (c(), window.open(u, '_blank', 'noreferrer noopener'));
+                            c(), window.open(u, '_blank', 'noreferrer noopener');
                         }, [c, u]),
                         _ = (0, w.useCallback)(() => {
-                            (r.set(N.cYZ.NavbarDownloadBarIsHidden, !0, {
+                            r.set(N.cYZ.NavbarDownloadBarIsHidden, !0, {
                                 expires: 30,
                             }),
-                                s(!0));
+                                s(!0);
                         }, [r]);
                     return o
                         ? null
@@ -4213,13 +4213,13 @@
                         })(),
                         u = (0, w.useMemo)(() => (r ? tE : tP), [r]),
                         m = (0, R.c)((e) => {
-                            (e.stopPropagation(),
+                            e.stopPropagation(),
                                 e.preventDefault(),
                                 i.set(N.cYZ.NavbarCollapsed, !l, {
                                     expires: 180,
                                 }),
                                 o(!l),
-                                c(!0));
+                                c(!0);
                         });
                     return (
                         (0, w.useEffect)(() => {
@@ -4241,7 +4241,7 @@
             'use strict';
             a.d(t, { r: () => y, q: () => i });
             var i = (function (e) {
-                    return ((e.VERTICAL = 'vertical'), (e.HORIZONTAL = 'horizontal'), e);
+                    return (e.VERTICAL = 'vertical'), (e.HORIZONTAL = 'horizontal'), e;
                 })({}),
                 n = a(33008),
                 r = a(85896),
@@ -4284,14 +4284,14 @@
                     M = (0, d.c)((e) => {
                         null == I || I.setExponentVolume(e, y);
                     });
-                ((0, o.useEffect)(() => {
+                (0, o.useEffect)(() => {
                     S.isAdvertShown && w(L);
                 }, [S.isAdvertShown, L, null == k ? void 0 : k.audioAdvertPlayback, w]),
                     (0, o.useEffect)(() => {
                         S.isAdvertShown || M(L);
-                    }, [S.isAdvertShown, L, I, y, M]));
+                    }, [S.isAdvertShown, L, I, y, M]);
                 let B = (0, d.c)((e) => {
-                        (M(e), E.set(g.cYZ.YmPlayerVolume, e, { expires: 365 }), S.isAdvertShown && (w(e), C(e)));
+                        M(e), E.set(g.cYZ.YmPlayerVolume, e, { expires: 365 }), S.isAdvertShown && (w(e), C(e));
                     }),
                     R = (0, d.c)(async () => {
                         await b(L);
@@ -4466,7 +4466,7 @@
             };
             var p = a(22884),
                 v = (function (e) {
-                    return ((e.PLAYER = 'branded_player'), e);
+                    return (e.PLAYER = 'branded_player'), e;
                 })({});
             let g = (0, c.PA)(() => {
                 let {
@@ -4649,7 +4649,7 @@
                 return (0, n.wg)({ ...a });
             };
             var p = (function (e) {
-                return ((e.ALBUM = 'album'), (e.ARTIST = 'artist'), (e.PLAYLIST = 'playlist'), (e.TRACK = 'track'), e);
+                return (e.ALBUM = 'album'), (e.ARTIST = 'artist'), (e.PLAYLIST = 'playlist'), (e.TRACK = 'track'), e;
             })({});
             let v = n.gK
                 .model('TrailerMeta', {
@@ -4815,7 +4815,7 @@
                                     try {
                                         e.loadingState = s.GuX.PENDING;
                                         let { artist: t, trailer: r } = yield i.getTrailer({ artistId: a });
-                                        (r.tracks &&
+                                        r.tracks &&
                                             (e.tracks = (0, n.wg)(
                                                 r.tracks.map((e) =>
                                                     _(e, {
@@ -4840,7 +4840,7 @@
                                                         averageColor: null == (a = e.cover) ? void 0 : a.color,
                                                     });
                                                 })(t)),
-                                            (e.loadingState = s.GuX.RESOLVE));
+                                            (e.loadingState = s.GuX.RESOLVE);
                                     } catch (e) {
                                         t.handleError(e);
                                     }
@@ -4851,7 +4851,7 @@
                                     try {
                                         e.loadingState = s.GuX.PENDING;
                                         let { album: t, artists: r, trailer: l } = yield i.getTrailer({ albumId: a });
-                                        (l.tracks &&
+                                        l.tracks &&
                                             (e.tracks = (0, n.wg)(
                                                 l.tracks.map((e) =>
                                                     _(e, {
@@ -4887,7 +4887,7 @@
                                                         albumType: e.albumType,
                                                     });
                                                 })(t, r)),
-                                            (e.loadingState = s.GuX.RESOLVE));
+                                            (e.loadingState = s.GuX.RESOLVE);
                                     } catch (e) {
                                         t.handleError(e);
                                     }
@@ -4911,7 +4911,7 @@
                                             userId: t,
                                             playlistKind: Number(r),
                                         });
-                                        (c.tracks &&
+                                        c.tracks &&
                                             (e.tracks = (0, n.wg)(
                                                 c.tracks.map((e) =>
                                                     _(e, {
@@ -4939,7 +4939,7 @@
                                                         averageColor: null == (a = e.cover) ? void 0 : a.color,
                                                     });
                                                 })(o)),
-                                            (e.loadingState = s.GuX.RESOLVE));
+                                            (e.loadingState = s.GuX.RESOLVE);
                                     } catch (e) {
                                         t.handleError(e);
                                     }
@@ -4952,14 +4952,14 @@
                                         let { track: t, title: c } = yield i.getTrailer({ trackId: a });
                                         if ((c && (e.title = c), t)) {
                                             var r, l, o;
-                                            ((e.tracks = (0, n.wg)([_(t, { isSmartPreview: !0 })])),
+                                            (e.tracks = (0, n.wg)([_(t, { isSmartPreview: !0 })])),
                                                 (e.meta = (0, n.wg)({
                                                     id: String(t.id),
                                                     url: (0, u.$O)(t.id, null == (l = t.albums) || null == (r = l[0]) ? void 0 : r.id),
                                                     title: t.title,
                                                     coverUri: t.coverUri,
                                                     averageColor: null == (o = t.derivedColors) ? void 0 : o.average,
-                                                })));
+                                                }));
                                         }
                                         e.loadingState = s.GuX.RESOLVE;
                                     } catch (e) {
@@ -4968,12 +4968,12 @@
                             }),
                             handleError(t) {
                                 let { modelActionsLogger: a } = (0, n._$)(e);
-                                (a.error(t),
+                                a.error(t),
                                     t instanceof r.GX && (t.statusCode === r.X1.NOT_FOUND || t.statusCode === r.X1.BAD_REQUEST) && (e.errorStatusCode = r.X1.NOT_FOUND),
-                                    e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.REJECT));
+                                    e.loadingState !== s.GuX.IDLE && (e.loadingState = s.GuX.REJECT);
                             },
                             reset() {
-                                ((e.loadingState = s.GuX.IDLE),
+                                (e.loadingState = s.GuX.IDLE),
                                     (e.errorStatusCode = null),
                                     (e.variant = null),
                                     (e.id = null),
@@ -4986,7 +4986,7 @@
                                     (e.isManuallyPaused = !0),
                                     (e.title = null),
                                     (e.shareable = null),
-                                    (e.personalColor = null));
+                                    (e.personalColor = null);
                             },
                         };
                         return t;
@@ -5329,7 +5329,7 @@
                             null == v || null == (a = v.playbackController.activePlayback.value) || null == (t = a.state) || null == (e = t.currentContext.value)
                                 ? void 0
                                 : e.utmLink;
-                        (null == v || v.stop(s.V_r.TRAILER), _(), u.close(), y(m), w && N());
+                        null == v || v.stop(s.V_r.TRAILER), _(), u.close(), y(m), w && N();
                         let l =
                                 c.status !== o.MT.PLAYING || i === p.ALBUM
                                     ? { index: 0 }
@@ -5574,7 +5574,7 @@
                         query: { [s.K3F.OPEN_TRAILER]: 'true' },
                     }),
                     ea = (0, f.useCallback)(async () => {
-                        (await window.navigator.clipboard.writeText(ee),
+                        await window.navigator.clipboard.writeText(ee),
                             N(
                                 (0, C.jsx)(M.Do, {
                                     entityTitle: null == l ? void 0 : l.title,
@@ -5592,7 +5592,7 @@
                                     })(a),
                                 }),
                                 { containerId: s.uQT.INFO },
-                            ));
+                            );
                     }, [ee, N, null == l ? void 0 : l.title, a]);
                 return (0, C.jsxs)('div', {
                     className: (0, L.$)(et().root, r),
@@ -5686,7 +5686,7 @@
                                               let e,
                                                   a = i.getState(s.V_r.TRAILER).playerState,
                                                   n = a.progress.value;
-                                              ((e = t ? t / 1e3 : n.duration), c || l(0), a.status.value === o.MT.PLAYING && c && l((n.position / e) * 100));
+                                              (e = t ? t / 1e3 : n.duration), c || l(0), a.status.value === o.MT.PLAYING && c && l((n.position / e) * 100);
                                           });
                                 return () => {
                                     null == e || e();
@@ -5936,7 +5936,7 @@
                         sonataState: a.state,
                         playbackId: s.V_r.TRAILER,
                     });
-                ((0, f.useEffect)(() => {
+                (0, f.useEffect)(() => {
                     _.isOpened &&
                         (null == o ? void 0 : o.id) &&
                         d &&
@@ -5964,7 +5964,7 @@
                 }, [h, null == o ? void 0 : o.id, null == o ? void 0 : o.uuid, _.isOpened, x, y, u, d, g, c.status, a.objectId, t, v, S]),
                     (0, f.useEffect)(() => {
                         b && (S ? (y(a.objectId), A(!1)) : i(!0));
-                    }, [b, S, y, a.objectId, i]));
+                    }, [b, S, y, a.objectId, i]);
                 let k = (0, f.useCallback)(
                         (e) => ({
                             contextData: O({
@@ -6066,13 +6066,13 @@
                     { contentRef: r } = (0, s.gKY)(),
                     { formatMessage: l } = (0, N.A)(),
                     c = E();
-                ((() => {
+                (() => {
                     let { trailer: e } = (0, s.Pjs)(),
                         t = (0, s.eGp)(),
                         a = (0, s.zwV)(),
                         i = (0, u.KX)(e.state.entityMeta),
                         n = (0, u.mW)(e.state.entityMeta);
-                    ((0, f.useEffect)(() => {
+                    (0, f.useEffect)(() => {
                         e.modal.isOpened
                             ? (null == a || a.disable(s.Mo.MAIN),
                               null == a || a.enable(s.Mo.MAIN, s.lbr.TOGGLE_MUTE),
@@ -6113,17 +6113,17 @@
                                             (await (null == t ? void 0 : t.slideBackward(1, s.V_r.TRAILER)));
                                     }),
                                 () => {
-                                    (null == a || a.removeShortcutsListener(s.Mo.TRAILER, s.lbr.TOGGLE_PLAY),
+                                    null == a || a.removeShortcutsListener(s.Mo.TRAILER, s.lbr.TOGGLE_PLAY),
                                         null == a || a.removeShortcutsListener(s.Mo.TRAILER, s.lbr.LIKE),
                                         null == a || a.removeShortcutsListener(s.Mo.TRAILER, s.lbr.DISLIKE),
                                         null == a || a.removeShortcutsListener(s.Mo.TRAILER, s.lbr.MOVE_FORWARD),
                                         null == a || a.removeShortcutsListener(s.Mo.TRAILER, s.lbr.MOVE_BACKWARD),
                                         null == a || a.removeShortcutsListener(s.Mo.TRAILER, s.lbr.SLIDE_FORWARD),
-                                        null == a || a.removeShortcutsListener(s.Mo.TRAILER, s.lbr.SLIDE_BACKWARD));
+                                        null == a || a.removeShortcutsListener(s.Mo.TRAILER, s.lbr.SLIDE_BACKWARD);
                                 }
                             ),
                             [n, i, a, t],
-                        ));
+                        );
                 })(),
                     (0, f.useEffect)(() => {
                         let e =
@@ -6133,9 +6133,9 @@
                                           var a;
                                           let i = null == e ? void 0 : e.context.data.type,
                                               n = null == e ? void 0 : e.context.data.meta.id;
-                                          (t.state.setEntityMeta(null != (a = null == e ? void 0 : e.entity) ? a : null),
+                                          t.state.setEntityMeta(null != (a = null == e ? void 0 : e.entity) ? a : null),
                                               i && t.state.setContextType(i),
-                                              n && t.state.setContextId(n));
+                                              n && t.state.setContextId(n);
                                       }),
                             a =
                                 null == n
@@ -6144,22 +6144,22 @@
                                           e && t.state.setStatus(e);
                                       });
                         return () => {
-                            (null == e || e(), null == a || a());
+                            null == e || e(), null == a || a();
                         };
-                    }, [n, t.state]));
+                    }, [n, t.state]);
                 let d = (0, f.useCallback)(() => {
                         null == n ||
                             n.stop(s.V_r.TRAILER).finally(() => {
-                                (t.sonataStatusBeforeTrailerStart !== o.MT.PLAYING || t.isManuallyPaused || null == n || n.resume(),
+                                t.sonataStatusBeforeTrailerStart !== o.MT.PLAYING || t.isManuallyPaused || null == n || n.resume(),
                                     t.setAnimationState(!0),
                                     t.resetUtmLink(),
                                     t.modal.close(),
-                                    c(t.objectId));
+                                    c(t.objectId);
                             });
                     }, [c, n, t]),
                     m = (0, f.useCallback)(
                         (e) => {
-                            (t.modal.onOpenChange(e), e || d());
+                            t.modal.onOpenChange(e), e || d();
                         },
                         [d, t.modal],
                     );
@@ -6473,7 +6473,7 @@
                     [l, o] = (0, I.useState)(null),
                     c = (0, I.useRef)(null),
                     u = (0, I.useRef)(null);
-                ((0, I.useEffect)(() => {
+                (0, I.useEffect)(() => {
                     l && (l.setUseFrameInterpolation(!1), l.setRenderConfig({ devicePixelRatio: 0.1 }));
                 }, [l]),
                     (0, I.useEffect)(() => {
@@ -6484,15 +6484,15 @@
                             u.current && clearTimeout(u.current);
                         },
                         [],
-                    ));
+                    );
                 let p = (0, m.c)(() => {
-                        (u.current && (clearTimeout(u.current), (u.current = null)), n.open());
+                        u.current && (clearTimeout(u.current), (u.current = null)), n.open();
                     }),
                     v = (0, m.c)(() => {
-                        (u.current && clearTimeout(u.current),
+                        u.current && clearTimeout(u.current),
                             (u.current = setTimeout(() => {
-                                (n.open(), (u.current = null));
-                            }, 800)));
+                                n.open(), (u.current = null);
+                            }, 800));
                     }),
                     g = (0, m.c)(() => {
                         u.current && (clearTimeout(u.current), (u.current = null));
@@ -6719,19 +6719,19 @@
                             let { tracksResource: a, modelActionsLogger: n } = (0, r._$)(e);
                             if (!e.trackId || e.loadingState === i.GuX.PENDING || e.shouldReloadMeta) return null;
                             try {
-                                ((e.loadingState = i.GuX.PENDING), (e.meta = null));
+                                (e.loadingState = i.GuX.PENDING), (e.meta = null);
                                 let n = yield a.getFullInfoTrack({
                                     trackId: e.trackId,
                                     albumId: e.albumId,
                                 });
-                                if (!n) return ((e.loadingState = i.GuX.REJECT), null);
-                                ((e.meta = (0, o.vU)(n.track)),
+                                if (!n) return (e.loadingState = i.GuX.REJECT), null;
+                                (e.meta = (0, o.vU)(n.track)),
                                     (e.similarTracks = (0, r.wg)(n.similarTracks.map((e) => (0, o.vU)(e)))),
                                     (e.prevEntityId = n.track.id),
                                     t.setShouldSendEventOnPlusButtonShowed(!0),
-                                    (e.loadingState = i.GuX.RESOLVE));
+                                    (e.loadingState = i.GuX.RESOLVE);
                             } catch (t) {
-                                (n.error(t), (e.loadingState = i.GuX.REJECT));
+                                n.error(t), (e.loadingState = i.GuX.REJECT);
                             }
                             return null;
                         }),
@@ -6740,7 +6740,7 @@
                             a && i && ((e.trackId = a), (e.albumId = i), (e.isOpened = !0));
                         },
                         reset() {
-                            ((e.loadingState = i.GuX.IDLE), (e.shouldSendEventOnPlusButtonShowed = !0));
+                            (e.loadingState = i.GuX.IDLE), (e.shouldSendEventOnPlusButtonShowed = !0);
                         },
                     };
                     return t;
@@ -6809,7 +6809,7 @@
                             fullscreenPlayer: o,
                         } = (0, i.Pjs)(),
                         s = (0, y.c)(() => {
-                            (o.modal.isOpened && o.modal.close(), r && a());
+                            o.modal.isOpened && o.modal.close(), r && a();
                         }),
                         c = null == (t = l.meta) ? void 0 : t.mainAlbum,
                         u = (0, m.useMemo)(() => {
@@ -6893,7 +6893,7 @@
                         { state: p, setState: v } = (0, E.e)(!1),
                         g = _.currentTrackId !== (null == l ? void 0 : l.id),
                         b = null == l ? void 0 : l.isLyricsAvailable;
-                    ((0, m.useEffect)(() => {
+                    (0, m.useEffect)(() => {
                         let e = null == l ? void 0 : l.id;
                         e && b && g && (_.setTrack(l), _.getLyrics(e));
                     }, [g, b, _, null == (n = l) ? void 0 : n.id]),
@@ -6926,15 +6926,15 @@
                                 }),
                                 { containerId: i.uQT.ERROR },
                             ),
-                            _.resetShouldShowError()));
+                            _.resetShouldShowError());
                     let C = (0, y.c)((e) => {
-                        (v(e),
+                        v(e),
                             e &&
                                 l &&
                                 _.sendViews({
                                     trackId: l.id,
                                     albumId: l.albumId,
-                                }));
+                                });
                     });
                     let T = !!(_.lyrics && String(_.lyrics).trim().length > 0),
                         I = _.isShimmerVisible || u.isShimmerVisible || (_.isLoading && !T);
@@ -7136,7 +7136,7 @@
                     D = (0, y.c)(() => {
                         if (!k()) {
                             if (l && !T) return void s();
-                            (O(), N(!M));
+                            O(), N(!M);
                         }
                     }),
                     K = (0, Y.KX)(r),
@@ -7319,7 +7319,7 @@
                         ),
                         f = _.similarTracks && _.similarTracks.length > 0 && (null == (r = _.meta) ? void 0 : r.isTrackMusic) && !v,
                         N = (0, y.c)(() => {
-                            (_.setAnimationState(!0), _.close(), _.reset());
+                            _.setAnimationState(!0), _.close(), _.reset();
                         }),
                         I = (0, o.wf)({
                             track: _.meta,
@@ -7396,7 +7396,7 @@
                             track: a,
                             settings: { isMobile: r },
                         } = (0, i.Pjs)();
-                    (a.trackId && a.albumId && a.isOpened && a.getData(),
+                    a.trackId && a.albumId && a.isOpened && a.getData(),
                         (0, m.useEffect)(
                             () => () => {
                                 a.reset();
@@ -7420,7 +7420,7 @@
                                     (0, i.jxB)(e);
                                 });
                             }, [e, null == e ? void 0 : e.title, t, null == t ? void 0 : t.title]);
-                        })(t.meta, a.meta));
+                        })(t.meta, a.meta);
                     let l = (0, m.useCallback)(
                         (e) => {
                             var t;
@@ -7448,7 +7448,7 @@
             (0, u.PA)((e) => {
                 let { albumId: t, trackId: a, preloadedTrack: n, preloadedSimilarTracks: r } = e,
                     { track: l } = (0, i.Pjs)();
-                return (n && l.setTrackInfo({ track: n, similarTracks: r }), l.setIsTrackPage(!0), l.open({ trackId: a, albumId: Number(t) }), null);
+                return n && l.setTrackInfo({ track: n, similarTracks: r }), l.setIsTrackPage(!0), l.open({ trackId: a, albumId: Number(t) }), null;
             });
         },
         38123: (e) => {
@@ -7485,10 +7485,10 @@
         40238: (e, t, a) => {
             'use strict';
             var i;
-            (a.d(t, { v: () => i }),
+            a.d(t, { v: () => i }),
                 (function (e) {
-                    ((e.ON_START_BAR_BELOW = 'music-web-on-start-bar-bellow'), (e.ON_START_FULLSCREEN = 'music-web-on-start-fullscreen'));
-                })(i || (i = {})));
+                    (e.ON_START_BAR_BELOW = 'music-web-on-start-bar-bellow'), (e.ON_START_FULLSCREEN = 'music-web-on-start-fullscreen');
+                })(i || (i = {}));
         },
         40967: (e) => {
             e.exports = {
@@ -7537,13 +7537,13 @@
                         var t;
                         let { localStorage: a, sessionStorage: r } = (0, i._$)(e);
                         if (!(null == (t = a.get(n.cYZ.DownloadMobileApp)) ? void 0 : t.shown)) {
-                            (e.modal.open(), a.set(n.cYZ.DownloadMobileApp, { shown: !0 }), r.set(n.cYZ.DownloadMobileApp, { shown: !0 }));
+                            e.modal.open(), a.set(n.cYZ.DownloadMobileApp, { shown: !0 }), r.set(n.cYZ.DownloadMobileApp, { shown: !0 });
                             return;
                         }
-                        (setTimeout(() => {
+                        setTimeout(() => {
                             e.modal.open();
                         }, 5e3),
-                            r.set(n.cYZ.DownloadMobileApp, { shown: !0 }));
+                            r.set(n.cYZ.DownloadMobileApp, { shown: !0 });
                     },
                 }));
             var o = a(33008),
@@ -7813,7 +7813,7 @@
                         let a = null == D || null == (e = D.audioAdvertPlayback) ? void 0 : e.state.playerState.progress.onChange(Q),
                             i = null == F || null == (t = F.playerState) ? void 0 : t.progress.onChange(Q);
                         return () => {
-                            (null == i || i(), null == a || a());
+                            null == i || i(), null == a || a();
                         };
                     }, [
                         null == D || null == (t = D.audioAdvertPlayback) ? void 0 : t.state.playerState.progress,
@@ -7957,7 +7957,7 @@
                         { state: F, toggleTrue: U, toggleFalse: z } = (0, C.e)(!1),
                         { state: V, toggleTrue: W, toggleFalse: G } = (0, C.e)(!1),
                         Q = !!(S.isVisible && (null == (t = S.payload) ? void 0 : t.thumb.href));
-                    ((0, r.useEffect)(() => {
+                    (0, r.useEffect)(() => {
                         (null == x ? void 0 : x.state.playerState.status.value) === A.MT.PLAYING && G();
                     }, [G, null == x ? void 0 : x.state.playerState.status.value]),
                         (0, r.useEffect)(() => {
@@ -7968,14 +7968,14 @@
                                     null == e || e();
                                 }
                             );
-                        }, [W, G, null == x ? void 0 : x.state.queueState.currentEntity]));
+                        }, [W, G, null == x ? void 0 : x.state.queueState.currentEntity]);
                     let Y = (0, s.c)((e, t) => {
                             b.isAdvertShown || ((y.current = !t), t ? null == x || x.setProgress(e) : E(e));
                         }),
                         q = (0, s.c)((e, t) => {
                             null !== e && null !== t && (e === 1 / 0 ? (w(0), E(0)) : (w(e), y.current || E(t)));
                         });
-                    ((0, r.useEffect)(() => {
+                    (0, r.useEffect)(() => {
                         q(N.duration, N.position);
                     }, [N.duration, N.position, q]),
                         (0, r.useEffect)(() => {
@@ -7989,7 +7989,7 @@
                             return () => {
                                 null == t || t();
                             };
-                        }, [null == T || null == (a = T.audioAdvertPlayback) ? void 0 : a.state.playerState.progress, q, b.isAdvertShown]));
+                        }, [null == T || null == (a = T.audioAdvertPlayback) ? void 0 : a.state.playerState.progress, q, b.isAdvertShown]);
                     let $ = (B / 100) * O - 6;
                     (0, r.useEffect)(() => {
                         let e = new ResizeObserver(() => {
@@ -8333,7 +8333,7 @@
                 f = i.gK.model({ entity: i.gK.maybeNull(A), modal: r.qt }).actions((e) => ({
                     openModal(t) {
                         let { settings: a } = (0, i.Zn)(e);
-                        ((e.entity = ((e, t) => {
+                        (e.entity = ((e, t) => {
                             if (e.variant === o.Yxq.TRACK)
                                 return ((e) => {
                                     let t,
@@ -8391,10 +8391,10 @@
                             },
                             a.isMobile,
                         )),
-                            e.modal.open());
+                            e.modal.open();
                     },
                     closeModal() {
-                        (e.modal.close(), (e.entity = null));
+                        e.modal.close(), (e.entity = null);
                     },
                 }));
             var N = a(33008),
@@ -8472,7 +8472,7 @@
                     u = t.iframeUri.replace(_, i),
                     m = t.iframeCode.replace(_, i),
                     v = (0, E.c)(async () => {
-                        (await window.navigator.clipboard.writeText(m), n((0, N.jsx)(F, {}), { containerId: o.uQT.INFO }));
+                        await window.navigator.clipboard.writeText(m), n((0, N.jsx)(F, {}), { containerId: o.uQT.INFO });
                     });
                 return (0, N.jsxs)('div', {
                     className: z().root,
@@ -8761,7 +8761,7 @@
                 so: () => i,
             });
             var i = (function (e) {
-                    return ((e.VIDEO = 'video-ad-player'), (e.SLOT = 'video-ad-container'), e);
+                    return (e.VIDEO = 'video-ad-player'), (e.SLOT = 'video-ad-container'), e;
                 })({}),
                 n = a(79169);
             let r = (e) => {
@@ -8938,12 +8938,12 @@
                             e.isAdvertPlaybackCreated = t;
                         },
                         reset: () => {
-                            ((e.data = null), (e.isAdvertPlaying = !0), (e.isAdvertShown = !1), (e.type = null));
+                            (e.data = null), (e.isAdvertPlaying = !0), (e.isAdvertShown = !1), (e.type = null);
                         },
                     }));
             var C = a(59615),
                 A = (function (e) {
-                    return ((e.SYNC_LYRICS = 'syncLyrics'), (e.PLAY_QUEUE = 'playQueue'), e);
+                    return (e.SYNC_LYRICS = 'syncLyrics'), (e.PLAY_QUEUE = 'playQueue'), e;
                 })({}),
                 f = a(48509),
                 N = a(53555),
@@ -8996,10 +8996,10 @@
                                 e.isVisible = !1;
                             },
                             updateTracks(e, t, i, n) {
-                                (a.setCurrentTrackId(e, t), a.setBeforeTracksIds(e, i), a.setAfterTracksIds(e, i, n), a.setHiddenTrackIds(e));
+                                a.setCurrentTrackId(e, t), a.setBeforeTracksIds(e, i), a.setAfterTracksIds(e, i, n), a.setHiddenTrackIds(e);
                             },
                             setCurrentTrackId(a, i) {
-                                ((e.currentIndex = i), t(a, i));
+                                (e.currentIndex = i), t(a, i);
                             },
                             setBeforeTracksIds(a, i) {
                                 let n = Math.max(0, e.currentIndex - 125) - 1,
@@ -9032,7 +9032,7 @@
                                 e.hiddenTrackIds = (0, l.wg)(a);
                             },
                             reset() {
-                                (e.destroyItems([e.beforeTracksIds, e.afterTracksIds, e.hiddenTrackIds]), e.trackMap.clear());
+                                e.destroyItems([e.beforeTracksIds, e.afterTracksIds, e.hiddenTrackIds]), e.trackMap.clear();
                             },
                         };
                     return a;
@@ -9064,13 +9064,13 @@
                                     if (a && !1 === i.test(a)) n.push(a);
                                     else break;
                                 }
-                                (n.reduce((e, t) => {
+                                n.reduce((e, t) => {
                                     let a = t.trim().slice(1, -1).split(': '),
                                         i = a[0],
                                         n = a[1];
-                                    return (void 0 !== i && (e[i] = n), e);
+                                    return void 0 !== i && (e[i] = n), e;
                                 }, l),
-                                    t.splice(0, n.length));
+                                    t.splice(0, n.length);
                                 let s = 0;
                                 let c = l.offset;
                                 if (!c) {
@@ -9106,7 +9106,7 @@
                                         }
                                     }
                                 }
-                                return ((l.scripts = r), l);
+                                return (l.scripts = r), l;
                             })(e).scripts || []
                         ).map((e) => {
                             let { start: t, end: a, text: i } = e;
@@ -9147,13 +9147,13 @@
                                 o = a - (e - t);
                             o > 0 && (await new Promise((e) => setTimeout(e, o)));
                             if (r !== n) return;
-                            return ((t = Date.now()), i());
+                            return (t = Date.now()), i();
                         });
-                        return ((e = s.catch(() => {})), s);
+                        return (e = s.catch(() => {})), s;
                     };
                     return (
                         (i.reset = () => {
-                            ((n += 1), (t = 0), (e = Promise.resolve()));
+                            (n += 1), (t = 0), (e = Promise.resolve());
                         }),
                         i
                     );
@@ -9184,21 +9184,21 @@
                 },
                 getNextQueueTrackMeta = (e) => {
                     try {
-                        if (!(null == e ? void 0 : e.state)) return (logSyncPrefetch('next-miss', { reason: 'sonata-state' }), null);
+                        if (!(null == e ? void 0 : e.state)) return logSyncPrefetch('next-miss', { reason: 'sonata-state' }), null;
                         let t = null == e ? void 0 : e.state.queueState.index.value,
                             a = null == e ? void 0 : e.state.queueState.order.value,
                             i = null == e ? void 0 : e.state.queueState.entityList.value;
-                        if (!Array.isArray(i)) return (logSyncPrefetch('next-miss', { reason: 'entityList' }), null);
+                        if (!Array.isArray(i)) return logSyncPrefetch('next-miss', { reason: 'entityList' }), null;
                         let r = null;
                         if (Array.isArray(a) && 'number' == typeof t) {
                             r = a[t + 1];
                             logSyncPrefetch('next-from-order', { queueIndex: t, nextIndex: r });
                         }
-                        if ('number' != typeof r) return (logSyncPrefetch('next-miss', { reason: 'nextIndex' }), null);
+                        if ('number' != typeof r) return logSyncPrefetch('next-miss', { reason: 'nextIndex' }), null;
                         let l = i[r];
-                        if (!(l && !(0, N.Re)(l) && l.entity)) return (logSyncPrefetch('next-miss', { reason: 'entityAtIndex', nextIndex: r }), null);
+                        if (!(l && !(0, N.Re)(l) && l.entity)) return logSyncPrefetch('next-miss', { reason: 'entityAtIndex', nextIndex: r }), null;
                         let o = (0, I.pE)(l.entity);
-                        return (logSyncPrefetch('next-hit', { nextIndex: r, trackId: null == o ? void 0 : o.id }), o);
+                        return logSyncPrefetch('next-hit', { nextIndex: r, trackId: null == o ? void 0 : o.id }), o;
                     } catch (e) {
                         logSyncPrefetch('next-error', { error: null == e ? void 0 : e.message });
                         return null;
@@ -9231,8 +9231,8 @@
                 readLrclibSyncCache = (e, t) => {
                     let a = e.get(t);
                     if (!a) return null;
-                    if (a.expiresAt <= Date.now()) return (e.delete(t), null);
-                    return (e.delete(t), e.set(t, a), a.value);
+                    if (a.expiresAt <= Date.now()) return e.delete(t), null;
+                    return e.delete(t), e.set(t, a), a.value;
                 },
                 writeLrclibSyncCache = (e, t, a, i, n) => {
                     let r = {
@@ -9268,287 +9268,308 @@
                         let searchToken = ++lrclibSyncSearchToken;
                         let checkToken = () => !1;
 
-                    try {
-                        let useText = 'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useText') : null;
-                        if (useText === !1) return null;
-                    } catch (e) {}
+                        try {
+                            let useText = 'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useText') : null;
+                            if (useText === !1) return null;
+                        } catch (e) {}
 
-                    try {
-                        console.debug('[LRCLib] sync search', { trackName: trackName, artistName: artistName, duration: durationSec });
-                    } catch (e) {}
+                        try {
+                            console.debug('[LRCLib] sync search', { trackName: trackName, artistName: artistName, duration: durationSec });
+                        } catch (e) {}
 
-                    let allowTitleOnlyFallback = !0;
-                    try {
-                        let setting = 'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useTitleOnlyFallback') : null;
-                        if ('boolean' == typeof setting) allowTitleOnlyFallback = setting;
-                    } catch (e) {}
+                        let allowTitleOnlyFallback = !0;
+                        try {
+                            let setting =
+                                'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useTitleOnlyFallback') : null;
+                            if ('boolean' == typeof setting) allowTitleOnlyFallback = setting;
+                        } catch (e) {}
 
-                    let retryIfAborted = async (attempt, ...args) => {
-                        if (attempt && attempt.aborted && checkToken() === !1) {
-                            let retry = await fetchResults(...args);
-                            return retry || attempt;
-                        }
-                        return attempt;
-                    };
-
-                    let fetchResults = async (trackQuery, artistQuery) => {
-                            let requestUrl = 'https://lrclib.net/api/search?track_name='.concat(encodeURIComponent(trackQuery));
-                            if (artistQuery) requestUrl = requestUrl.concat('&artist_name=', encodeURIComponent(artistQuery));
-                            return lrclibQueue(async () => {
-                                let controller = new AbortController(),
-                                    timeoutId = setTimeout(() => controller.abort(), 1e4);
-                                try {
-                                    lrclibSyncControllers.push(controller);
-                                } catch (e) {}
-                                try {
-                                    let response = await fetch(requestUrl, { signal: controller.signal });
-                                    if (!response.ok) return { items: null, aborted: !1 };
-                                    let payload = await response.json();
-                                    console.debug(
-                                        '[LRCLib] fetch response',
-                                        Array.isArray(payload)
-                                            ? payload.map((e) => {
-                                                  let t = e?.syncedLyrics ? parseLrc(e.syncedLyrics) : [];
-                                                  return t.find((e) => 'number' == typeof e.fromSec)?.fromSec ?? null;
-                                              })
-                                            : [],
-                                    );
-                                    console.debug('[LRCLib] sync response', { count: Array.isArray(payload) ? payload.length : 0 });
-                                    return { items: Array.isArray(payload) && payload.length ? payload : null, aborted: !1 };
-                                } catch (error) {
-                                    let aborted = error?.name === 'AbortError';
-                                    aborted ? console.debug('[LRCLib] sync request aborted') : console.debug('[LRCLib] sync request failed', error);
-                                    return { items: null, aborted };
-                                } finally {
-                                    try {
-                                        lrclibSyncControllers = lrclibSyncControllers.filter((e) => e !== controller);
-                                    } catch (e) {}
-                                    clearTimeout(timeoutId);
-                                }
-                            });
-                        },
-                        normalizeTitle = (e) => ('string' != typeof e ? '' : e.toLowerCase().replace(/[\s\W_]+/g, '')),
-                        splitTrackTitle = (e) => {
-                            if ('string' != typeof e) return null;
-                            let separators = [' - ', ' — ', ' – '];
-                            for (let sep of separators) {
-                                if (e.includes(sep)) {
-                                    let parts = e.split(sep),
-                                        left = parts[0]?.trim() || '',
-                                        right = parts.slice(1).join(sep).trim();
-                                    if (left && right) return { left, right };
-                                }
+                        let retryIfAborted = async (attempt, ...args) => {
+                            if (attempt && attempt.aborted && checkToken() === !1) {
+                                let retry = await fetchResults(...args);
+                                return retry || attempt;
                             }
-                            return null;
-                        },
-                        getTitleVariants = (e) => {
-                            let t = [];
-                            if ('string' == typeof e) {
-                                let a = e.trim();
-                                if (a) {
-                                    t.push(a);
-                                    let split = splitTrackTitle(a);
-                                    if (split) {
-                                        split.left && t.push(split.left);
-                                        split.right && t.push(split.right);
+                            return attempt;
+                        };
+
+                        let fetchResults = async (trackQuery, artistQuery) => {
+                                let requestUrl = 'https://lrclib.net/api/search?track_name='.concat(encodeURIComponent(trackQuery));
+                                if (artistQuery) requestUrl = requestUrl.concat('&artist_name=', encodeURIComponent(artistQuery));
+                                return lrclibQueue(async () => {
+                                    let controller = new AbortController(),
+                                        timeoutId = setTimeout(() => controller.abort(), 1e4);
+                                    try {
+                                        lrclibSyncControllers.push(controller);
+                                    } catch (e) {}
+                                    try {
+                                        let response = await fetch(requestUrl, { signal: controller.signal });
+                                        if (!response.ok) return { items: null, aborted: !1 };
+                                        let payload = await response.json();
+                                        console.debug(
+                                            '[LRCLib] fetch response',
+                                            Array.isArray(payload)
+                                                ? payload.map((e) => {
+                                                      let t = e?.syncedLyrics ? parseLrc(e.syncedLyrics) : [];
+                                                      return t.find((e) => 'number' == typeof e.fromSec)?.fromSec ?? null;
+                                                  })
+                                                : [],
+                                        );
+                                        console.debug('[LRCLib] sync response', { count: Array.isArray(payload) ? payload.length : 0 });
+                                        return { items: Array.isArray(payload) && payload.length ? payload : null, aborted: !1 };
+                                    } catch (error) {
+                                        let aborted = error?.name === 'AbortError';
+                                        aborted ? console.debug('[LRCLib] sync request aborted') : console.debug('[LRCLib] sync request failed', error);
+                                        return { items: null, aborted };
+                                    } finally {
+                                        try {
+                                            lrclibSyncControllers = lrclibSyncControllers.filter((e) => e !== controller);
+                                        } catch (e) {}
+                                        clearTimeout(timeoutId);
+                                    }
+                                });
+                            },
+                            normalizeTitle = (e) => ('string' != typeof e ? '' : e.toLowerCase().replace(/[\s\W_]+/g, '')),
+                            splitTrackTitle = (e) => {
+                                if ('string' != typeof e) return null;
+                                let separators = [' - ', ' — ', ' – '];
+                                for (let sep of separators) {
+                                    if (e.includes(sep)) {
+                                        let parts = e.split(sep),
+                                            left = parts[0]?.trim() || '',
+                                            right = parts.slice(1).join(sep).trim();
+                                        if (left && right) return { left, right };
+                                    }
+                                }
+                                return null;
+                            },
+                            getTitleVariants = (e) => {
+                                let t = [];
+                                if ('string' == typeof e) {
+                                    let a = e.trim();
+                                    if (a) {
+                                        t.push(a);
+                                        let split = splitTrackTitle(a);
+                                        if (split) {
+                                            split.left && t.push(split.left);
+                                            split.right && t.push(split.right);
+                                        }
+                                    }
+                                }
+                                return t;
+                            };
+                        let normalizedTitles = allowTitleOnlyFallback ? getTitleVariants(trackName).map(normalizeTitle).filter(Boolean) : [];
+
+                        let baseTrackName = trackName,
+                            baseArtistName = artistName;
+
+                        try {
+                            let artistAttempt = baseTrackName && baseArtistName ? await fetchResults(baseTrackName, baseArtistName) : null;
+                            if (checkToken()) return null;
+                            artistAttempt = await retryIfAborted(artistAttempt, baseTrackName, baseArtistName);
+                            if (checkToken()) return null;
+
+                            let resultsWithArtist = artistAttempt && artistAttempt.items ? artistAttempt.items : null;
+                            let usedLooseQuery = !1;
+                            let fallbackAttempt = resultsWithArtist || !baseTrackName || !allowTitleOnlyFallback ? null : await fetchResults(baseTrackName);
+                            if (checkToken()) return null;
+                            fallbackAttempt = await retryIfAborted(fallbackAttempt, baseTrackName);
+                            if (checkToken()) return null;
+
+                            let results = resultsWithArtist || (fallbackAttempt && fallbackAttempt.items ? fallbackAttempt.items : null);
+                            if (checkToken()) return null;
+                            if (!resultsWithArtist && fallbackAttempt && fallbackAttempt.items) usedLooseQuery = !0;
+
+                            if (!results && trackName) {
+                                let splitInfo = splitTrackTitle(trackName);
+                                if (splitInfo) {
+                                    if (!results && splitInfo.right && splitInfo.left) {
+                                        let splitAttempt = await fetchResults(splitInfo.right, splitInfo.left);
+                                        if (checkToken()) return null;
+                                        splitAttempt = await retryIfAborted(splitAttempt, splitInfo.right, splitInfo.left);
+                                        if (checkToken()) return null;
+                                        results = splitAttempt && splitAttempt.items ? splitAttempt.items : null;
+                                    }
+
+                                    if (!results && splitInfo.right && allowTitleOnlyFallback) {
+                                        let splitFallback = await fetchResults(splitInfo.right);
+                                        if (checkToken()) return null;
+                                        splitFallback = await retryIfAborted(splitFallback, splitInfo.right);
+                                        if (checkToken()) return null;
+                                        results = splitFallback && splitFallback.items ? splitFallback.items : null;
+                                    }
+
+                                    if (!results && splitInfo.left && splitInfo.right) {
+                                        let reverseAttempt = await fetchResults(splitInfo.left, splitInfo.right);
+                                        if (checkToken()) return null;
+                                        reverseAttempt = await retryIfAborted(reverseAttempt, splitInfo.left, splitInfo.right);
+                                        if (checkToken()) return null;
+                                        results = reverseAttempt && reverseAttempt.items ? reverseAttempt.items : null;
+                                    }
+
+                                    if (!results && splitInfo.left && allowTitleOnlyFallback) {
+                                        let reverseFallback = await fetchResults(splitInfo.left);
+                                        if (checkToken()) return null;
+                                        reverseFallback = await retryIfAborted(reverseFallback, splitInfo.left);
+                                        if (checkToken()) return null;
+                                        results = reverseFallback && reverseFallback.items ? reverseFallback.items : null;
+                                        if (results) usedLooseQuery = !0;
                                     }
                                 }
                             }
-                            return t;
-                        };
-                    let normalizedTitles = allowTitleOnlyFallback ? getTitleVariants(trackName).map(normalizeTitle).filter(Boolean) : [];
-
-                    let baseTrackName = trackName,
-                        baseArtistName = artistName;
-
-                    try {
-                        let artistAttempt = baseTrackName && baseArtistName ? await fetchResults(baseTrackName, baseArtistName) : null;
-                        if (checkToken()) return null;
-                        artistAttempt = await retryIfAborted(artistAttempt, baseTrackName, baseArtistName);
-                        if (checkToken()) return null;
-
-                        let resultsWithArtist = artistAttempt && artistAttempt.items ? artistAttempt.items : null;
-                        let usedLooseQuery = !1;
-                        let fallbackAttempt = resultsWithArtist || !baseTrackName || !allowTitleOnlyFallback ? null : await fetchResults(baseTrackName);
-                        if (checkToken()) return null;
-                        fallbackAttempt = await retryIfAborted(fallbackAttempt, baseTrackName);
-                        if (checkToken()) return null;
-
-                        let results = resultsWithArtist || (fallbackAttempt && fallbackAttempt.items ? fallbackAttempt.items : null);
-                        if (checkToken()) return null;
-                        if (!resultsWithArtist && fallbackAttempt && fallbackAttempt.items) usedLooseQuery = !0;
-
-                        if (!results && trackName) {
-                            let splitInfo = splitTrackTitle(trackName);
-                            if (splitInfo) {
-                                if (!results && splitInfo.right && splitInfo.left) {
-                                    let splitAttempt = await fetchResults(splitInfo.right, splitInfo.left);
-                                    if (checkToken()) return null;
-                                    splitAttempt = await retryIfAborted(splitAttempt, splitInfo.right, splitInfo.left);
-                                    if (checkToken()) return null;
-                                    results = splitAttempt && splitAttempt.items ? splitAttempt.items : null;
-                                }
-
-                                if (!results && splitInfo.right && allowTitleOnlyFallback) {
-                                    let splitFallback = await fetchResults(splitInfo.right);
-                                    if (checkToken()) return null;
-                                    splitFallback = await retryIfAborted(splitFallback, splitInfo.right);
-                                    if (checkToken()) return null;
-                                    results = splitFallback && splitFallback.items ? splitFallback.items : null;
-                                }
-
-                                if (!results && splitInfo.left && splitInfo.right) {
-                                    let reverseAttempt = await fetchResults(splitInfo.left, splitInfo.right);
-                                    if (checkToken()) return null;
-                                    reverseAttempt = await retryIfAborted(reverseAttempt, splitInfo.left, splitInfo.right);
-                                    if (checkToken()) return null;
-                                    results = reverseAttempt && reverseAttempt.items ? reverseAttempt.items : null;
-                                }
-
-                                if (!results && splitInfo.left && allowTitleOnlyFallback) {
-                                    let reverseFallback = await fetchResults(splitInfo.left);
-                                    if (checkToken()) return null;
-                                    reverseFallback = await retryIfAborted(reverseFallback, splitInfo.left);
-                                    if (checkToken()) return null;
-                                    results = reverseFallback && reverseFallback.items ? reverseFallback.items : null;
-                                    if (results) usedLooseQuery = !0;
-                                }
-                            }
-                        }
-                        if (!results)
-                            return (
-                                writeLrclibSyncCache(lrclibSyncSearchNoResultCache, cacheKey, !0, LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS, LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE),
-                                null
-                            );
-
-                        if (usedLooseQuery && normalizedTitles.length > 0) {
-                            results = results.filter((e) => normalizedTitles.includes(normalizeTitle(e.trackName || e.track_name || e.title || e.name)));
-                        }
-
-                        if (usedLooseQuery && baseArtistName) {
-                            let normalizeArtist = (e) => ('string' != typeof e ? '' : e.toLowerCase().replace(/[\s\W_]+/g, ''));
-                            let expectedArtist = normalizeArtist(baseArtistName);
-                            let artistMatches = results.filter((e) => {
-                                let artistStr =
-                                    e.artistName || e.artist_name || e.artist || (Array.isArray(e.artists) ? e.artists.map((e) => e?.name || '').join(' ') : '');
-                                let normalizedArtist = normalizeArtist(artistStr);
+                            if (!results)
                                 return (
-                                    normalizedArtist &&
-                                    (normalizedArtist === expectedArtist || normalizedArtist.includes(expectedArtist) || expectedArtist.includes(normalizedArtist))
+                                    writeLrclibSyncCache(
+                                        lrclibSyncSearchNoResultCache,
+                                        cacheKey,
+                                        !0,
+                                        LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
+                                        LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
+                                    ),
+                                    null
                                 );
-                            });
-                            if (artistMatches.length > 0) results = artistMatches;
-                        }
 
-                        results = results.filter((e) => !e.instrumental);
-                        if (!results.length)
-                            return (
-                                writeLrclibSyncCache(lrclibSyncSearchNoResultCache, cacheKey, !0, LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS, LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE),
-                                null
-                            );
-
-                        console.debug('[LRCLib] sync filtered', { count: results.length, usedArtist: !usedLooseQuery });
-
-                        let scoreSynced = (e) => {
-                            if (!e || !e.syncedLyrics) return null;
-                            let lines = parseLrc(e.syncedLyrics);
-                            if (!lines.length) return null;
-                            let textLines = lines.filter((e) => e && e.text && e.text.trim().length > 0);
-                            let activeLines = textLines.length ? textLines : lines;
-                            let startSec = activeLines[0] && activeLines[0].fromSec ? activeLines[0].fromSec : null;
-                            let endInfo = activeLines.length > 0 ? activeLines[activeLines.length - 1] : null;
-                            let endSec = endInfo && endInfo.toSec ? endInfo.toSec : endInfo && endInfo.fromSec ? endInfo.fromSec : null;
-                            if ('number' != typeof startSec || 'number' != typeof endSec) return null;
-
-                            let score = 0;
-                            if (durationSec && durationSec > 0) {
-                                let lyricsRange = Math.max(0, endSec - startSec);
-                                let coverage = Math.min(1, lyricsRange / durationSec);
-                                let endPenalty = Math.abs(durationSec - endSec);
-                                let startPenalty = startSec < 0 ? Math.min(30, Math.abs(startSec)) : startSec > 20 ? Math.min(10, (startSec - 20) / 2) : 0;
-                                let overflowPenalty = endSec > durationSec ? Math.min(30, endSec - durationSec) : 0;
-                                score += 120 * coverage - endPenalty - startPenalty - overflowPenalty;
-                                if (coverage < 0.6) score -= 20 * (0.6 - coverage);
+                            if (usedLooseQuery && normalizedTitles.length > 0) {
+                                results = results.filter((e) => normalizedTitles.includes(normalizeTitle(e.trackName || e.track_name || e.title || e.name)));
                             }
-                            if (startSec >= 0) {
-                                let startBonus = Math.max(0, 20 - 4 * startSec);
-                                if (startSec > 2) startBonus -= Math.min(10, 2 * (startSec - 2));
-                                score += startBonus;
-                            }
-                            if (activeLines.length > 1) {
-                                let intervals = activeLines
-                                    .slice(1)
-                                    .map((e, i) => e.fromSec - activeLines[i].fromSec)
-                                    .filter((i) => i >= 0);
-                                if (intervals.length) {
-                                    let avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-                                    if (avgInterval > 8) score -= Math.min(20, avgInterval);
-                                }
-                            }
-                            return score + Math.min(30, activeLines.length / 2);
-                        };
 
-                        let pickBestSynced = (items) => {
-                            let scored = items
-                                .map((e) => ({ item: e, score: scoreSynced(e) }))
-                                .filter((e) => e.score != null)
-                                .sort((a, b) => b.score - a.score);
-                            return scored[0] && scored[0].item ? scored[0].item : null;
-                        };
-
-                        if (durationSec && durationSec > 0) {
-                            let withDuration = results.filter((e) => 'number' == typeof e.duration);
-                            if (withDuration.length > 0) {
-                                let closeMatches = withDuration.filter((e) => Math.abs(e.duration - durationSec) <= 10);
-                                if (!closeMatches.length)
+                            if (usedLooseQuery && baseArtistName) {
+                                let normalizeArtist = (e) => ('string' != typeof e ? '' : e.toLowerCase().replace(/[\s\W_]+/g, ''));
+                                let expectedArtist = normalizeArtist(baseArtistName);
+                                let artistMatches = results.filter((e) => {
+                                    let artistStr =
+                                        e.artistName || e.artist_name || e.artist || (Array.isArray(e.artists) ? e.artists.map((e) => e?.name || '').join(' ') : '');
+                                    let normalizedArtist = normalizeArtist(artistStr);
                                     return (
-                                        writeLrclibSyncCache(
-                                            lrclibSyncSearchNoResultCache,
-                                            cacheKey,
-                                            !0,
-                                            LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
-                                            LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
-                                        ),
-                                        null
+                                        normalizedArtist &&
+                                        (normalizedArtist === expectedArtist || normalizedArtist.includes(expectedArtist) || expectedArtist.includes(normalizedArtist))
                                     );
-                                results = closeMatches;
+                                });
+                                if (artistMatches.length > 0) results = artistMatches;
                             }
-                        }
 
-                        let selected = pickBestSynced(results) || results[0];
+                            results = results.filter((e) => !e.instrumental);
+                            if (!results.length)
+                                return (
+                                    writeLrclibSyncCache(
+                                        lrclibSyncSearchNoResultCache,
+                                        cacheKey,
+                                        !0,
+                                        LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
+                                        LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
+                                    ),
+                                    null
+                                );
 
-                        if (durationSec && durationSec > 0) {
-                            let exactMatches = results.filter((e) => e.duration == durationSec);
-                            if (exactMatches.length > 0) {
-                                selected = pickBestSynced(exactMatches) || exactMatches[0];
-                            }
-                        }
+                            console.debug('[LRCLib] sync filtered', { count: results.length, usedArtist: !usedLooseQuery });
 
-                        if (!selected || !selected.syncedLyrics) {
-                            let syncedOptions = results.filter((e) => e && e.syncedLyrics);
-                            if (syncedOptions.length > 0) {
-                                let finalBest = syncedOptions[0];
+                            let scoreSynced = (e) => {
+                                if (!e || !e.syncedLyrics) return null;
+                                let lines = parseLrc(e.syncedLyrics);
+                                if (!lines.length) return null;
+                                let textLines = lines.filter((e) => e && e.text && e.text.trim().length > 0);
+                                let activeLines = textLines.length ? textLines : lines;
+                                let startSec = activeLines[0] && activeLines[0].fromSec ? activeLines[0].fromSec : null;
+                                let endInfo = activeLines.length > 0 ? activeLines[activeLines.length - 1] : null;
+                                let endSec = endInfo && endInfo.toSec ? endInfo.toSec : endInfo && endInfo.fromSec ? endInfo.fromSec : null;
+                                if ('number' != typeof startSec || 'number' != typeof endSec) return null;
+
+                                let score = 0;
                                 if (durationSec && durationSec > 0) {
-                                    let byDuration = syncedOptions.map((e) => ({ item: e, delta: Math.abs(e.duration - durationSec) })).sort((a, b) => a.delta - b.delta);
-                                    finalBest = byDuration[0] && byDuration[0].item ? byDuration[0].item : finalBest;
+                                    let lyricsRange = Math.max(0, endSec - startSec);
+                                    let coverage = Math.min(1, lyricsRange / durationSec);
+                                    let endPenalty = Math.abs(durationSec - endSec);
+                                    let startPenalty = startSec < 0 ? Math.min(30, Math.abs(startSec)) : startSec > 20 ? Math.min(10, (startSec - 20) / 2) : 0;
+                                    let overflowPenalty = endSec > durationSec ? Math.min(30, endSec - durationSec) : 0;
+                                    score += 120 * coverage - endPenalty - startPenalty - overflowPenalty;
+                                    if (coverage < 0.6) score -= 20 * (0.6 - coverage);
                                 }
-                                selected = finalBest;
-                            }
-                        }
+                                if (startSec >= 0) {
+                                    let startBonus = Math.max(0, 20 - 4 * startSec);
+                                    if (startSec > 2) startBonus -= Math.min(10, 2 * (startSec - 2));
+                                    score += startBonus;
+                                }
+                                if (activeLines.length > 1) {
+                                    let intervals = activeLines
+                                        .slice(1)
+                                        .map((e, i) => e.fromSec - activeLines[i].fromSec)
+                                        .filter((i) => i >= 0);
+                                    if (intervals.length) {
+                                        let avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+                                        if (avgInterval > 8) score -= Math.min(20, avgInterval);
+                                    }
+                                }
+                                return score + Math.min(30, activeLines.length / 2);
+                            };
 
-                        if (!selected || !selected.syncedLyrics)
-                            return (
-                                writeLrclibSyncCache(lrclibSyncSearchNoResultCache, cacheKey, !0, LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS, LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE),
-                                null
-                            );
-                        (lrclibSyncSearchNoResultCache.delete(cacheKey),
-                            writeLrclibSyncCache(lrclibSyncSearchResultCache, cacheKey, selected, LRCLIB_SYNC_SEARCH_CACHE_TTL_MS, LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE));
-                        console.debug('[LRCLib] sync selected', {
-                            id: selected?.id,
-                            duration: selected?.duration,
-                            hasSynced: !!selected?.syncedLyrics,
-                        });
-                        return selected;
+                            let pickBestSynced = (items) => {
+                                let scored = items
+                                    .map((e) => ({ item: e, score: scoreSynced(e) }))
+                                    .filter((e) => e.score != null)
+                                    .sort((a, b) => b.score - a.score);
+                                return scored[0] && scored[0].item ? scored[0].item : null;
+                            };
+
+                            if (durationSec && durationSec > 0) {
+                                let withDuration = results.filter((e) => 'number' == typeof e.duration);
+                                if (withDuration.length > 0) {
+                                    let closeMatches = withDuration.filter((e) => Math.abs(e.duration - durationSec) <= 10);
+                                    if (!closeMatches.length)
+                                        return (
+                                            writeLrclibSyncCache(
+                                                lrclibSyncSearchNoResultCache,
+                                                cacheKey,
+                                                !0,
+                                                LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
+                                                LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
+                                            ),
+                                            null
+                                        );
+                                    results = closeMatches;
+                                }
+                            }
+
+                            let selected = pickBestSynced(results) || results[0];
+
+                            if (durationSec && durationSec > 0) {
+                                let exactMatches = results.filter((e) => e.duration == durationSec);
+                                if (exactMatches.length > 0) {
+                                    selected = pickBestSynced(exactMatches) || exactMatches[0];
+                                }
+                            }
+
+                            if (!selected || !selected.syncedLyrics) {
+                                let syncedOptions = results.filter((e) => e && e.syncedLyrics);
+                                if (syncedOptions.length > 0) {
+                                    let finalBest = syncedOptions[0];
+                                    if (durationSec && durationSec > 0) {
+                                        let byDuration = syncedOptions
+                                            .map((e) => ({ item: e, delta: Math.abs(e.duration - durationSec) }))
+                                            .sort((a, b) => a.delta - b.delta);
+                                        finalBest = byDuration[0] && byDuration[0].item ? byDuration[0].item : finalBest;
+                                    }
+                                    selected = finalBest;
+                                }
+                            }
+
+                            if (!selected || !selected.syncedLyrics)
+                                return (
+                                    writeLrclibSyncCache(
+                                        lrclibSyncSearchNoResultCache,
+                                        cacheKey,
+                                        !0,
+                                        LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
+                                        LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
+                                    ),
+                                    null
+                                );
+                            lrclibSyncSearchNoResultCache.delete(cacheKey),
+                                writeLrclibSyncCache(lrclibSyncSearchResultCache, cacheKey, selected, LRCLIB_SYNC_SEARCH_CACHE_TTL_MS, LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE);
+                            console.debug('[LRCLib] sync selected', {
+                                id: selected?.id,
+                                duration: selected?.duration,
+                                hasSynced: !!selected?.syncedLyrics,
+                            });
+                            return selected;
                         } catch (e) {
                             console.debug('[LRCLib] sync search failed', e);
                             return null;
@@ -9694,7 +9715,7 @@
                                         .finally(() => {
                                             lrclibSyncPrefetchInFlight.delete(o);
                                         });
-                                    (lrclibSyncPrefetchInFlight.set(o, u), yield u);
+                                    lrclibSyncPrefetchInFlight.set(o, u), yield u;
                                 }),
                                 getData: (0, l.L3)(function* (a) {
                                     let { tracksResource: i, modelActionsLogger: r } = (0, l._$)(e);
@@ -9702,7 +9723,7 @@
                                     if (e.isLoading && String(e.currentTrackId) === String(a)) return;
                                     let o = ++e.requestToken;
                                     try {
-                                        ((e.loadingState = n.GuX.PENDING), (e.currentTrackId = a), (e.hasLyricsViewed = !1), (e.lines = null));
+                                        (e.loadingState = n.GuX.PENDING), (e.currentTrackId = a), (e.hasLyricsViewed = !1), (e.lines = null);
                                         let { sonataState: s } = (0, l.Zn)(e),
                                             c = null == s ? void 0 : s.entityMeta;
                                         if (null == c ? void 0 : c.hasSyncLyrics) {
@@ -9767,10 +9788,10 @@
                                                     void (e.loadingState = n.GuX.RESOLVE)
                                                 );
                                         }
-                                        ((e.loadingState = n.GuX.REJECT),
+                                        (e.loadingState = n.GuX.REJECT),
                                             u && lrclibSyncPrefetchNoResultByTrackId.set(u, Date.now()),
                                             logSyncPrefetch('trigger-from-getData', { reason: 'reject-without-lines', trackId: a }),
-                                            r.error(err));
+                                            r.error(err);
                                     }
                                 }),
                                 downloadSyncLyrics: (0, l.L3)(function* (t, a, i) {
@@ -9786,7 +9807,7 @@
                                     if (e.loadingState === n.GuX.RESOLVE)
                                         try {
                                             if (!e.major || !e.lyricId || !e.externalLyricId || !e.currentTrackId) return;
-                                            (yield r.sendViews({
+                                            yield r.sendViews({
                                                 lyricViews: [
                                                     {
                                                         id: (0, k.A)(),
@@ -9800,7 +9821,7 @@
                                                     },
                                                 ],
                                             }),
-                                                (e.hasLyricsViewed = !0));
+                                                (e.hasLyricsViewed = !0);
                                         } catch (e) {
                                             o.error(e);
                                         }
@@ -9830,14 +9851,7 @@
                                 s = null == a || null == (t = a.entityMeta) ? void 0 : t.hasSyncLyrics,
                                 c = null == a || null == (t = a.entityMeta) ? void 0 : t.isSyncLyricsAvailableWithOfflineFeature,
                                 d = !!(n && e.syncLyrics.hasLyricsForTrack(n));
-                            return (
-                                e.mode === A.SYNC_LYRICS &&
-                                (!!(null == a || null == (t = a.entityMeta) ? void 0 : t.isSyncLyricsAvailable) ||
-                                    !!c ||
-                                    !!s ||
-                                    !!o ||
-                                    d)
-                            );
+                            return e.mode === A.SYNC_LYRICS && (!!(null == a || null == (t = a.entityMeta) ? void 0 : t.isSyncLyricsAvailable) || !!c || !!s || !!o || d);
                         },
                         get isPlayQueueMode() {
                             return e.mode === A.PLAY_QUEUE;
@@ -9848,22 +9862,22 @@
                             e.mode = t;
                         },
                         showFullscreenPlayerModal() {
-                            (e.syncLyrics.setInvisible(), e.modal.open());
+                            e.syncLyrics.setInvisible(), e.modal.open();
                         },
                         showSyncLyrics() {
                             var t;
-                            ((e.mode = A.SYNC_LYRICS), (e.shouldRestoreSyncLyrics = !0), (e.lastAutoHiddenSyncTrackId = null), e.syncLyrics.setVisible());
+                            (e.mode = A.SYNC_LYRICS), (e.shouldRestoreSyncLyrics = !0), (e.lastAutoHiddenSyncTrackId = null), e.syncLyrics.setVisible();
                             let { sonataState: a } = (0, l.Zn)(e),
                                 i = null == a || null == (t = a.entityMeta) ? void 0 : t.id;
                             i && !e.syncLyrics.hasLyricsForTrack(i) && !e.syncLyrics.isLoadingForTrack(i) && e.syncLyrics.getData(i);
                             e.modal.isOpened || e.modal.open();
                         },
                         hideSyncLyrics() {
-                            ((e.mode = null), (e.shouldRestoreSyncLyrics = !1), (e.lastAutoHiddenSyncTrackId = null), e.syncLyrics.setInvisible());
+                            (e.mode = null), (e.shouldRestoreSyncLyrics = !1), (e.lastAutoHiddenSyncTrackId = null), e.syncLyrics.setInvisible();
                         },
                         autoHideSyncLyrics(t) {
                             let a = null != t ? t : e.syncLyrics.currentTrackId;
-                            ((e.mode = null), (e.shouldRestoreSyncLyrics = !0), (e.lastAutoHiddenSyncTrackId = null == a ? null : a), e.syncLyrics.setInvisible());
+                            (e.mode = null), (e.shouldRestoreSyncLyrics = !0), (e.lastAutoHiddenSyncTrackId = null == a ? null : a), e.syncLyrics.setInvisible();
                         },
                         maybeRestoreSyncLyrics(t) {
                             var a;
@@ -9874,7 +9888,7 @@
                                 n = null == i || null == (a = i.entityMeta) ? void 0 : a.id,
                                 r = n ? String(n) : null,
                                 o = String(t),
-                                s = r && r === o ? null == i ? void 0 : i.entityMeta : null,
+                                s = r && r === o ? (null == i ? void 0 : i.entityMeta) : null,
                                 c =
                                     !!(null == s ? void 0 : s.hasSyncLyrics) ||
                                     !!(null == s ? void 0 : s.isSyncLyricsAvailable) ||
@@ -9885,18 +9899,18 @@
                                 !e.syncLyrics.isLoadingForTrack(t) && e.syncLyrics.getData(t);
                                 return;
                             }
-                            ((e.mode = A.SYNC_LYRICS), e.syncLyrics.setVisible());
+                            (e.mode = A.SYNC_LYRICS), e.syncLyrics.setVisible();
                             !d && !e.syncLyrics.isLoadingForTrack(t) && e.syncLyrics.getData(t);
                         },
                         showPlayQueue() {
-                            ((e.mode = A.PLAY_QUEUE), e.playQueue.setVisible(), e.modal.isOpened || e.modal.open());
+                            (e.mode = A.PLAY_QUEUE), e.playQueue.setVisible(), e.modal.isOpened || e.modal.open();
                         },
                         hidePlayQueue() {
-                            ((e.mode = null), e.playQueue.setInvisible());
+                            (e.mode = null), e.playQueue.setInvisible();
                         },
                         isModeActive: (t) => e.mode === t,
                         reset() {
-                            ((e.mode = null), (e.shouldRestoreSyncLyrics = !1), (e.lastAutoHiddenSyncTrackId = null));
+                            (e.mode = null), (e.shouldRestoreSyncLyrics = !1), (e.lastAutoHiddenSyncTrackId = null);
                         },
                     })),
                 B = l.gK.model('QualitySettings', { modal: C.qt });
@@ -9943,7 +9957,7 @@
                             { isDragging: l, listeners: o, setNodeRef: d, transform: m, transition: _, attributes: p } = (0, X.gl)({ id: String(i) }),
                             v = (0, u.useCallback)(
                                 (e) => {
-                                    (d(e), 'function' == typeof t && t(e));
+                                    d(e), 'function' == typeof t && t(e);
                                 },
                                 [t, d],
                             ),
@@ -9982,7 +9996,7 @@
                         p = null == m ? void 0 : m.playContextParams,
                         v = (0, j.iQ)(null != _ ? _ : null, j.NM.HIDE, d),
                         g = (0, Q.c)(() => {
-                            (v(), (null == i ? void 0 : i.current) && i.current.focus());
+                            v(), (null == i ? void 0 : i.current) && i.current.focus();
                         }),
                         h = (0, J.L)(() =>
                             _ && p
@@ -10008,7 +10022,7 @@
                 eu = a(56016);
             let em = (e) => !!(e && 'object' == typeof e && ('playlistUuid' in e || 'playlistTitle' in e));
             var e_ = (function (e) {
-                return ((e.Artist = 'artist'), (e.Playlist = 'playlist'), (e.Album = 'album'), (e.Track = 'track'), e);
+                return (e.Artist = 'artist'), (e.Playlist = 'playlist'), (e.Album = 'album'), (e.Track = 'track'), e;
             })({});
             let ep = () => {
                     let { formatMessage: e } = (0, R.A)(),
@@ -10271,7 +10285,7 @@
                         { vibeBlockTitle: a, vibeBlockSubTitle: i, vibeBlockAgent: r } = ep(),
                         l = (0, u.useCallback)(
                             (e) => {
-                                ((0, el.P)(e, eh().ripple), null == t || t.moveForward());
+                                (0, el.P)(e, eh().ripple), null == t || t.moveForward();
                             },
                             [t],
                         ),
@@ -10671,14 +10685,14 @@
                                             d = 1 === Math.abs(i) ? i : i + e;
                                         i > 0 || o ? (m(), l(o ? 1 : d)) : i < 0 && (p(), l(d));
                                     }
-                                    ((o.current = t), (s.current = n));
+                                    (o.current = t), (s.current = n);
                                 });
-                            ((0, u.useEffect)(() => {
+                            (0, u.useEffect)(() => {
                                 let e =
                                     null == i
                                         ? void 0
                                         : i.state.queueState.index.onChange(() => {
-                                              (v(), g());
+                                              v(), g();
                                           });
                                 return () => {
                                     null == e || e();
@@ -10689,7 +10703,7 @@
                                         t = null == i ? void 0 : i.state.queueState.entityList.onChange(v),
                                         a = null == i ? void 0 : i.state.queueState.order.onChange(v);
                                     return () => {
-                                        (null == e || e(), null == t || t(), null == a || a());
+                                        null == e || e(), null == t || t(), null == a || a();
                                     };
                                 }, [
                                     v,
@@ -10697,7 +10711,7 @@
                                     null == i ? void 0 : i.state.queueState.index,
                                     null == i ? void 0 : i.state.queueState.order,
                                     null == i ? void 0 : i.state.queueState.shuffle,
-                                ]));
+                                ]);
                             let h = (0, u.useMemo)(() => {
                                     let e = 56 * (r || 1);
                                     return {
@@ -10815,7 +10829,7 @@
             var eW = a(19391),
                 eG = a(8461),
                 eQ = (function (e) {
-                    return ((e.INTRO = 'intro'), (e.PREPARE = 'prepare'), (e.PLAYING = 'playing'), (e.OUTRO = 'outro'), e);
+                    return (e.INTRO = 'intro'), (e.PREPARE = 'prepare'), (e.PLAYING = 'playing'), (e.OUTRO = 'outro'), e;
                 })({}),
                 eY = a(50342),
                 eq = a.n(eY);
@@ -10990,7 +11004,7 @@
                             v || _();
                         }, [_, v]),
                         y = (0, u.useCallback)(() => {
-                            (m && p(), g());
+                            m && p(), g();
                         }, [g, p, m]),
                         b = (0, u.useCallback)(
                             (e) => {
@@ -11106,7 +11120,7 @@
                             i = e && _.currentTrackId !== e && (t || a || !!(null == m ? void 0 : m.hasLyrics) || 'UGC' === n),
                             r = getNextQueueTrackMeta(sonataRuntimeState);
                         lrclibSyncSonataStateRef = sonataRuntimeState;
-                        (i && _.getData(e), _.prefetchTrack(r));
+                        i && _.getData(e), _.prefetchTrack(r);
                     }, [
                         null == m ? void 0 : m.hasSyncLyrics,
                         null == m ? void 0 : m.hasLyrics,
@@ -11610,7 +11624,7 @@
                         }, [r.isSplitMode, r.mode, o]),
                         (0, u.useEffect)(
                             () => () => {
-                                (r.reset(), r.playQueue.reset());
+                                r.reset(), r.playQueue.reset();
                             },
                             [r],
                         ),
@@ -11780,7 +11794,7 @@
                 let { closeToast: t, onOpenQualitySettingsMenu: a, message: i, isMobile: n } = e,
                     { formatMessage: r } = (0, R.A)(),
                     l = (0, u.useCallback)(() => {
-                        (a(), null == t || t());
+                        a(), null == t || t();
                     }, [t, a]),
                     o = (0, u.useMemo)(
                         () =>
@@ -11883,12 +11897,12 @@
                         }, [t]),
                         j = (0, u.useCallback)(
                             (e) => {
-                                (S(e, b.quality),
+                                S(e, b.quality),
                                     b.setQuality(e),
                                     null == I || I.setQuality(e),
                                     y.set(n.cYZ.YmPlayerQuality, e, {
                                         expires: 365,
-                                    }));
+                                    });
                             },
                             [I, b, y, S],
                         ),
@@ -12197,7 +12211,15 @@
                         [r, l] = (0, u.useState)(!1),
                         { state: o, handleDebouncedToggle: d, reset: m } = (0, V.F)({ delay: 7e3, throttleTimeout: 0 }),
                         {
-                            fullscreenPlayer: { isSplitMode: _, isSyncLyricsMode: p, showSyncLyrics: v, hideSyncLyrics: h, maybeRestoreSyncLyrics: J, isPlayQueueMode: x, syncLyrics: y },
+                            fullscreenPlayer: {
+                                isSplitMode: _,
+                                isSyncLyricsMode: p,
+                                showSyncLyrics: v,
+                                hideSyncLyrics: h,
+                                maybeRestoreSyncLyrics: J,
+                                isPlayQueueMode: x,
+                                syncLyrics: y,
+                            },
                             sonataState: { entityMeta: b },
                             settings: { isLandscape: C },
                         } = (0, n.Pjs)(),
@@ -12411,7 +12433,7 @@
                         { url: i, title: r, subTitle: l } = ep(),
                         { fullscreenPlayer: o } = (0, n.Pjs)(),
                         d = (0, Q.c)((e) => {
-                            (e.stopPropagation(), o.modal.isOpened && o.modal.close());
+                            e.stopPropagation(), o.modal.isOpened && o.modal.close();
                         }),
                         m = (0, u.useMemo)(() => {
                             let e = (0, s.jsx)(v.Caption, {
@@ -12685,12 +12707,12 @@
                     b = tS(),
                     C = (0, u.useCallback)(
                         (e) => {
-                            (b(e, t.quality),
+                            b(e, t.quality),
                                 t.setQuality(e),
                                 null == x || x.setQuality(e),
                                 y.set(n.cYZ.YmPlayerQuality, e, {
                                     expires: 365,
-                                }));
+                                });
                         },
                         [x, t, y, b],
                     ),
@@ -12707,7 +12729,7 @@
                     L = (0, u.useCallback)(
                         (e, a) => () => {
                             if (t.quality === e) return;
-                            (i.modal.close(), C(e));
+                            i.modal.close(), C(e);
                             let r = M(a);
                             p(
                                 (0, s.jsx)(tT, {
@@ -12951,7 +12973,7 @@
                     V = (0, Q.c)((e) => {
                         if (!h.isGenerativeContext && i) {
                             if (((0, el.P)(e, aa().ripple), 2 === e.detail)) {
-                                (C.close(), z(e));
+                                C.close(), z(e);
                                 return;
                             }
                             1 === e.detail && (null == i ? void 0 : i.hasTrackLink) && !x.modal.isOpened && B();
@@ -12964,7 +12986,7 @@
                             n = e && x.syncLyrics.currentTrackId !== e && (t || 'UGC' === a),
                             r = getNextQueueTrackMeta(sonataRuntimeState);
                         lrclibSyncSonataStateRef = sonataRuntimeState;
-                        (n && x.syncLyrics.getData(e), x.syncLyrics.prefetchTrack(r));
+                        n && x.syncLyrics.getData(e), x.syncLyrics.prefetchTrack(r);
                     }, [null == i ? void 0 : i.id, null == i ? void 0 : i.hasSyncLyrics, null == i ? void 0 : i.trackSource, x.syncLyrics, sonataRuntimeState]),
                     ee = (0, u.useMemo)(() => {
                         let e = null == i ? void 0 : i.id,
@@ -13692,9 +13714,9 @@
                                     null == _ || _.addShortcutsListener(n.Mo.MAIN, n.lbr.LIKE, o),
                                     null == _ || _.addShortcutsListener(n.Mo.MAIN, n.lbr.DISLIKE, m),
                                     () => {
-                                        (null == _ || _.removeShortcutsListener(n.Mo.MAIN, n.lbr.TOGGLE_FULLSCREEN_PLAYER),
+                                        null == _ || _.removeShortcutsListener(n.Mo.MAIN, n.lbr.TOGGLE_FULLSCREEN_PLAYER),
                                             null == _ || _.removeShortcutsListener(n.Mo.MAIN, n.lbr.LIKE),
-                                            null == _ || _.removeShortcutsListener(n.Mo.MAIN, n.lbr.DISLIKE));
+                                            null == _ || _.removeShortcutsListener(n.Mo.MAIN, n.lbr.DISLIKE);
                                     }
                                 );
                         }, [m, o, _, i.isGenerativeContext, i.entityMeta, p]),
@@ -13937,7 +13959,7 @@
                     A = (0, u.useRef)(null),
                     f = (0, u.useCallback)(
                         (e) => {
-                            (e.stopPropagation(), e.preventDefault(), l.open(), C(!0), null == x || x.pauseVideoAdvert(), d());
+                            e.stopPropagation(), e.preventDefault(), l.open(), C(!0), null == x || x.pauseVideoAdvert(), d();
                         },
                         [x, d, l],
                     );
@@ -14087,7 +14109,7 @@
             'use strict';
             a.d(t, { x8: () => Q, J4: () => _, _n: () => i, hj: () => o });
             var i = (function (e) {
-                    return ((e.INFO = 'INFO'), (e.SUCCESS = 'SUCCESS'), e);
+                    return (e.INFO = 'INFO'), (e.SUCCESS = 'SUCCESS'), e;
                 })({}),
                 n = a(66268),
                 r = a(79169);
@@ -14106,9 +14128,9 @@
                         o = (0, n.useCallback)(() => {
                             let e = (0, r.jrm)();
                             if (null === e) return;
-                            (e.delete(l.INVITE_ID), e.delete(l.UTM_MEDIUM));
+                            e.delete(l.INVITE_ID), e.delete(l.UTM_MEDIUM);
                             let a = new URL(window.location.href);
-                            ((a.search = e.toString()), t(a.toString()));
+                            (a.search = e.toString()), t(a.toString());
                         }, [t]);
                     return {
                         inviteId: a,
@@ -14161,10 +14183,10 @@
                     .actions((e) => {
                         let t = {
                             start(a) {
-                                (t.setInviteId(a), e.modal.open(), t.getInviteInfo());
+                                t.setInviteId(a), e.modal.open(), t.getInviteInfo();
                             },
                             retry: (0, s.L3)(function* () {
-                                (t.setError(null), t.toggleStepInfo(), e.info.loadingState !== r.GuX.RESOLVE && (yield t.getInviteInfo()));
+                                t.setError(null), t.toggleStepInfo(), e.info.loadingState !== r.GuX.RESOLVE && (yield t.getInviteInfo());
                             }),
                             getInviteInfo: (0, s.L3)(function* () {
                                 let { familyResource: a, modelActionsLogger: i } = (0, s._$)(e);
@@ -14174,17 +14196,17 @@
                                         let i = { inviteId: e.inviteId },
                                             n = yield a.getInviteInfo(i);
                                         if (!n.hasPlus) {
-                                            (t.setError(u.SUBSCRIPTION_IS_NOT_AVAILABLE), (e.info.loadingState = r.GuX.RESOLVE));
+                                            t.setError(u.SUBSCRIPTION_IS_NOT_AVAILABLE), (e.info.loadingState = r.GuX.RESOLVE);
                                             return;
                                         }
-                                        ((e.info.data = ((e) => {
+                                        (e.info.data = ((e) => {
                                             let { name: t, avatarUrl: a } = e;
                                             return (0, s.wg)({
                                                 name: t,
                                                 avatarUrl: a,
                                             });
                                         })(n)),
-                                            (e.info.loadingState = r.GuX.RESOLVE));
+                                            (e.info.loadingState = r.GuX.RESOLVE);
                                     } catch (a) {
                                         if (((e.info.loadingState = r.GuX.REJECT), i.error(a), a instanceof c.GX && a.statusCode === c.X1.BAD_REQUEST))
                                             return void t.setError(u.INVITATION_IS_INVALID);
@@ -14197,7 +14219,7 @@
                                     try {
                                         e.acceptanceLoadingState = r.GuX.PENDING;
                                         let i = { inviteId: e.inviteId };
-                                        (yield a.acceptInvite(i), (e.acceptanceLoadingState = r.GuX.RESOLVE), t.toggleStateSuccessTrue());
+                                        yield a.acceptInvite(i), (e.acceptanceLoadingState = r.GuX.RESOLVE), t.toggleStateSuccessTrue();
                                     } catch (a) {
                                         if (((e.acceptanceLoadingState = r.GuX.REJECT), i.error(a), a instanceof c.GX && a.statusCode === c.X1.BAD_REQUEST))
                                             return void t.setError(u.INVITATION_IS_INVALID);
@@ -14217,16 +14239,16 @@
                                 e.inviteId = t;
                             },
                             toggleStateSuccessTrue() {
-                                (t.toggleStepSuccess(), (e.isSuccess = !0));
+                                t.toggleStepSuccess(), (e.isSuccess = !0);
                             },
                             reset() {
-                                ((e.acceptanceLoadingState = r.GuX.IDLE),
+                                (e.acceptanceLoadingState = r.GuX.IDLE),
                                     (e.error = null),
                                     (e.info.loadingState = r.GuX.IDLE),
                                     (e.info.data = null),
                                     (e.inviteId = null),
                                     (e.step = i.INFO),
-                                    (e.isSuccess = !1));
+                                    (e.isSuccess = !1);
                             },
                         };
                         return t;
@@ -14305,7 +14327,7 @@
                         } = (0, r.Pjs)(),
                         i = x(),
                         l = (0, n.useCallback)(() => {
-                            (i(), a.open());
+                            i(), a.open();
                         }, [i, a]);
                     return (0, p.jsxs)(p.Fragment, {
                         children: [
@@ -14689,7 +14711,7 @@
                         i = x(),
                         l = (0, n.useCallback)(
                             (t) => {
-                                (t || i(), e.onOpenChange(t));
+                                t || i(), e.onOpenChange(t);
                             },
                             [i, e],
                         ),
@@ -14931,7 +14953,7 @@
                             e.activeIndex = t;
                         },
                         setOpenedFromMain() {
-                            ((e.isOpenedFromMain = !0), (e.withAnimation = !1));
+                            (e.isOpenedFromMain = !0), (e.withAnimation = !1);
                         },
                         setAnimationState(t) {
                             e.withAnimation = t;
@@ -14946,24 +14968,22 @@
                                 try {
                                     e.loadingState = i.GuX.PENDING;
                                     let a = yield t.getClip({ clipIds: e.ids });
-                                    ((e.ids = (0, o.wg)(a.map((e) => e.clipId))),
+                                    (e.ids = (0, o.wg)(a.map((e) => e.clipId))),
                                         (e.clips = (0, o.wg)(a.map(l.i$))),
                                         (e.activeIndex = (0, u.z4)(e.ids, e.activeIndex)),
-                                        e.loadingState !== i.GuX.IDLE && (e.loadingState = i.GuX.RESOLVE));
+                                        e.loadingState !== i.GuX.IDLE && (e.loadingState = i.GuX.RESOLVE);
                                 } catch (t) {
-                                    (a.error(t),
-                                        t instanceof s.GX && (e.errorStatusCode = t.statusCode),
-                                        e.loadingState !== i.GuX.IDLE && (e.loadingState = i.GuX.REJECT));
+                                    a.error(t), t instanceof s.GX && (e.errorStatusCode = t.statusCode), e.loadingState !== i.GuX.IDLE && (e.loadingState = i.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            ((e.loadingState = i.GuX.IDLE),
+                            (e.loadingState = i.GuX.IDLE),
                                 (e.activeIndex = null),
                                 (e.errorStatusCode = null),
                                 (e.isOpenedFromMain = null),
                                 (e.withAnimation = !0),
                                 (e.sonataStatusBeforeClipStart = d.MT.IDLE),
-                                e.destroyItems([e.ids, e.clips]));
+                                e.destroyItems([e.ids, e.clips]);
                         },
                     }));
             var h = a(33008),
@@ -15191,7 +15211,7 @@
                         f = (0, r.useMemo)(
                             () =>
                                 (0, P.A)(() => {
-                                    (n(), c());
+                                    n(), c();
                                 }, 1500),
                             [c, n],
                         ),
@@ -15203,24 +15223,24 @@
                             [c],
                         ),
                         I = (0, A.c)(() => {
-                            (N.cancel(), s(), m());
+                            N.cancel(), s(), m();
                         }),
                         S = (0, A.c)(() => {
-                            (N(), _());
+                            N(), _();
                         }),
                         j = (0, A.c)(() => {
                             v || x || f();
                         }),
                         E = (0, A.c)((e) => {
-                            (e.stopPropagation(), f.cancel(), N.cancel(), a(), s(), f());
+                            e.stopPropagation(), f.cancel(), N.cancel(), a(), s(), f();
                         }),
                         L = (0, A.c)((e) => {
-                            (e.stopPropagation(), f.cancel(), N.cancel(), a(), f());
+                            e.stopPropagation(), f.cancel(), N.cancel(), a(), f();
                         }),
                         w = (0, A.c)(() => {
-                            (t ? f.cancel() : a(), f());
+                            t ? f.cancel() : a(), f();
                         });
-                    ((0, r.useEffect)(
+                    (0, r.useEffect)(
                         () => (
                             window.addEventListener('mousemove', w),
                             () => {
@@ -15231,7 +15251,7 @@
                     ),
                         (0, r.useEffect)(() => {
                             t || c();
-                        }, [c, t]));
+                        }, [c, t]);
                     let M = e.state.status !== d.MT.PLAYING,
                         B = (0, r.useMemo)(
                             () =>
@@ -15342,7 +15362,7 @@
                         let e, t, r;
                         if (a.current && n && o) {
                             let l, o;
-                            (s.setSonataStatusBeforeClipStart(),
+                            s.setSonataStatusBeforeClipStart(),
                                 n.setVideoCoreContainer({
                                     container: a.current,
                                     playbackId: i.V_r.CLIP,
@@ -15367,26 +15387,26 @@
                                     )
                                     .then(() => {
                                         c.isAdvertShown || b();
-                                    }));
+                                    });
                             let d = n.getState(i.V_r.CLIP);
-                            ((e = d.queueState.currentEntity.onChange((e) => {
+                            (e = d.queueState.currentEntity.onChange((e) => {
                                 var t;
                                 let a = null == e ? void 0 : e.context.data.type,
                                     i = null == e ? void 0 : e.context.data.meta.id,
                                     n = null == e ? void 0 : e.entity.data.meta.id;
                                 if (n) {
                                     let e = (0, u.z4)(s.ids, s.ids.indexOf(Number(n)));
-                                    (s.setClipIndex(e), p((0, u.JL)(s.ids, e)));
+                                    s.setClipIndex(e), p((0, u.JL)(s.ids, e));
                                 }
-                                (s.state.setEntityMeta(null != (t = null == e ? void 0 : e.entity) ? t : null),
+                                s.state.setEntityMeta(null != (t = null == e ? void 0 : e.entity) ? t : null),
                                     a && s.state.setContextType(a),
-                                    i && s.state.setContextId(i));
+                                    i && s.state.setContextId(i);
                             })),
                                 (t = d.playerState.status.onChange((e) => {
                                     e && s.state.setStatus(e);
                                 })),
                                 (r = d.currentContext.onChange((e) => {
-                                    (null == l || l(),
+                                    null == l || l(),
                                         null == o || o(),
                                         (l =
                                             null == e
@@ -15399,15 +15419,15 @@
                                                 ? void 0
                                                 : e.availableActions.moveForward.onChange((e) => {
                                                       s.state.setCanMoveForward(!!e);
-                                                  })));
-                                })));
+                                                  }));
+                                }));
                         }
                         return () => {
-                            (null == n || n.destroyVideoCore(i.V_r.CLIP),
+                            null == n || n.destroyVideoCore(i.V_r.CLIP),
                                 s.isPlayingSonataStatusBeforeClipStart && (null == n || n.resume()),
                                 null == e || e(),
                                 null == t || t(),
-                                null == r || r());
+                                null == r || r();
                         };
                     }, [n, o, s, m, p, x, b, c.isAdvertShown]),
                     (0, r.useEffect)(() => {
@@ -15466,7 +15486,7 @@
                         T = (0, A.c)(() => {
                             if (a.modal.isOpened && !o.isOpened) {
                                 if ((a.setAnimationState(!0), x && g(String(x)), a.isOpenedFromMain)) {
-                                    (d(i.Zyd.main.href),
+                                    d(i.Zyd.main.href),
                                         (0, i.Zgt)({
                                             fullUrl: null,
                                             locale: null,
@@ -15477,13 +15497,13 @@
                                             (0, i.jxB)(e);
                                         }),
                                         a.modal.close(),
-                                        a.reset());
+                                        a.reset();
                                     return;
                                 }
                                 c();
                             }
                         });
-                    (((e) => {
+                    ((e) => {
                         let { fullscreenVideoPlayer: t, advert: a } = (0, i.Pjs)(),
                             n = (0, i.eGp)(),
                             l = (0, i.zwV)(),
@@ -15531,13 +15551,13 @@
                                         (null == s ? void 0 : s.playerState.progress.value.duration) && (await (null == n ? void 0 : n.slideBackward(1, i.V_r.CLIP)));
                                     }),
                                 () => {
-                                    (null == l || l.removeShortcutsListener(i.Mo.VIDEO_PLAYER, i.lbr.CLOSE),
+                                    null == l || l.removeShortcutsListener(i.Mo.VIDEO_PLAYER, i.lbr.CLOSE),
                                         null == l || l.removeShortcutsListener(i.Mo.VIDEO_PLAYER, i.lbr.TOGGLE_PLAY),
                                         null == l || l.removeShortcutsListener(i.Mo.VIDEO_PLAYER, i.lbr.LIKE),
                                         null == l || l.removeShortcutsListener(i.Mo.VIDEO_PLAYER, i.lbr.MOVE_FORWARD),
                                         null == l || l.removeShortcutsListener(i.Mo.VIDEO_PLAYER, i.lbr.MOVE_BACKWARD),
                                         null == l || l.removeShortcutsListener(i.Mo.VIDEO_PLAYER, i.lbr.SLIDE_FORWARD),
-                                        null == l || l.removeShortcutsListener(i.Mo.VIDEO_PLAYER, i.lbr.SLIDE_BACKWARD));
+                                        null == l || l.removeShortcutsListener(i.Mo.VIDEO_PLAYER, i.lbr.SLIDE_BACKWARD);
                                 }
                             ),
                             [l, t.ids, e, o, n, s, a.isAdvertShown],
@@ -15546,15 +15566,15 @@
                         0 === a.ids.length && T(),
                         (0, r.useEffect)(
                             () => () => {
-                                (a.reset(), t.setIsShowBanner(!0));
+                                a.reset(), t.setIsShowBanner(!0);
                             },
                             [a, t, t.setIsShowBanner],
                         ),
                         (0, r.useEffect)(() => {
                             a.modal.isOpened ? t.setIsShowBanner(!1) : t.setIsShowBanner(!0);
-                        }, [a.modal.isOpened, t, t.setIsShowBanner]));
+                        }, [a.modal.isOpened, t, t.setIsShowBanner]);
                     let j = (0, A.c)(() => {
-                        (a.setAnimationState(!0), x && g(String(x)), d(i.Zyd.main.href), a.modal.close(), a.reset());
+                        a.setAnimationState(!0), x && g(String(x)), d(i.Zyd.main.href), a.modal.close(), a.reset();
                     });
                     return (
                         (0, r.useEffect)(() => {

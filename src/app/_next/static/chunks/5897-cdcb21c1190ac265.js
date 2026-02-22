@@ -4,10 +4,10 @@
     {
         493: (t, e, r) => {
             var i;
-            (r.d(e, { e: () => i }),
+            r.d(e, { e: () => i }),
                 (function (t) {
-                    ((t.LOSSLESS = 'lossless'), (t.HQ = 'hq'), (t.NQ = 'nq'), (t.LQ = 'lq'), (t.PREVIEW = 'preview'), (t.SMART_PREVIEW = 'smart_preview'));
-                })(i || (i = {})));
+                    (t.LOSSLESS = 'lossless'), (t.HQ = 'hq'), (t.NQ = 'nq'), (t.LQ = 'lq'), (t.PREVIEW = 'preview'), (t.SMART_PREVIEW = 'smart_preview');
+                })(i || (i = {}));
         },
         2257: (t, e, r) => {
             r.d(e, { h: () => y });
@@ -25,7 +25,7 @@
                     return this.cursor[Symbol.asyncIterator]();
                 }
                 constructor(t) {
-                    (Object.defineProperty(this, 'cursor', { enumerable: !0, configurable: !0, writable: !0, value: t }),
+                    Object.defineProperty(this, 'cursor', { enumerable: !0, configurable: !0, writable: !0, value: t }),
                         Object.defineProperty(this, 'key', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'direction', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'request', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -39,7 +39,7 @@
                         (this.key = t.key),
                         (this.advance = t.advance.bind(t)),
                         (this.continue = t.continue.bind(t)),
-                        (this.continuePrimaryKey = t.continuePrimaryKey.bind(t)));
+                        (this.continuePrimaryKey = t.continuePrimaryKey.bind(t));
                 }
             }
             class n extends a {
@@ -47,10 +47,10 @@
                     return this.cursor[Symbol.asyncIterator]();
                 }
                 constructor(t) {
-                    (super(t),
+                    super(t),
                         Object.defineProperty(this, 'cursor', { enumerable: !0, configurable: !0, writable: !0, value: t }),
                         Object.defineProperty(this, 'value', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
-                        (this.value = t.value));
+                        (this.value = t.value);
                 }
             }
             var s = function (t, e, r, i) {
@@ -128,7 +128,7 @@
                     return this.index.iterate(t, e);
                 }
                 constructor(t) {
-                    (Object.defineProperty(this, 'index', { enumerable: !0, configurable: !0, writable: !0, value: t }),
+                    Object.defineProperty(this, 'index', { enumerable: !0, configurable: !0, writable: !0, value: t }),
                         Object.defineProperty(this, 'keyPath', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'multiEntry', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'name', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -136,7 +136,7 @@
                         (this.keyPath = t.keyPath),
                         (this.multiEntry = t.multiEntry),
                         (this.name = t.name),
-                        (this.unique = t.unique));
+                        (this.unique = t.unique);
                 }
             }
             var c = function (t, e, r, i) {
@@ -242,13 +242,13 @@
                     return this.objectStore[Symbol.asyncIterator]();
                 }
                 constructor(t) {
-                    (Object.defineProperty(this, 'objectStore', { enumerable: !0, configurable: !0, writable: !0, value: t }),
+                    Object.defineProperty(this, 'objectStore', { enumerable: !0, configurable: !0, writable: !0, value: t }),
                         Object.defineProperty(this, 'autoIncrement', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'keyPath', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'name', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.autoIncrement = t.autoIncrement),
                         (this.keyPath = t.keyPath),
-                        (this.name = t.name));
+                        (this.name = t.name);
                 }
             }
             class h {
@@ -286,13 +286,13 @@
                     return this.transaction.dispatchEvent(t);
                 }
                 constructor(t) {
-                    (Object.defineProperty(this, 'transaction', { enumerable: !0, configurable: !0, writable: !0, value: t }),
+                    Object.defineProperty(this, 'transaction', { enumerable: !0, configurable: !0, writable: !0, value: t }),
                         Object.defineProperty(this, 'durability', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'mode', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'objectStoreNames', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.durability = t.durability),
                         (this.mode = t.mode),
-                        (this.objectStoreNames = t.objectStoreNames));
+                        (this.objectStoreNames = t.objectStoreNames);
                 }
             }
             var u = function (t, e, r, i) {
@@ -433,11 +433,11 @@
                     return this.database.dispatchEvent(t);
                 }
                 constructor(t) {
-                    (Object.defineProperty(this, 'database', { enumerable: !0, configurable: !0, writable: !0, value: t }),
+                    Object.defineProperty(this, 'database', { enumerable: !0, configurable: !0, writable: !0, value: t }),
                         Object.defineProperty(this, 'version', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'name', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.version = t.version),
-                        (this.name = t.name));
+                        (this.name = t.name);
                 }
             }
             var g = function (t, e, r, i) {
@@ -520,7 +520,7 @@
                 o = r(38230);
             class c extends o.t {
                 constructor(t = 'Landing resource error', e = {}) {
-                    (super(t, e), (0, i._)(this, 'name', 'LandingResourceException'), Object.setPrototypeOf(this, c.prototype));
+                    super(t, e), (0, i._)(this, 'name', 'LandingResourceException'), Object.setPrototypeOf(this, c.prototype);
                 }
             }
             class l extends n.X {
@@ -569,7 +569,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -614,7 +614,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -624,38 +624,38 @@
                 a = r(38230);
             class n extends a.t {
                 constructor(t = 'Internal error', { code: e = 'E_CONTAINER', ...r } = {}) {
-                    (super(t, { code: e, ...r }), (0, i._)(this, 'name', 'ContainerException'), Object.setPrototypeOf(this, n.prototype));
+                    super(t, { code: e, ...r }), (0, i._)(this, 'name', 'ContainerException'), Object.setPrototypeOf(this, n.prototype);
                 }
             }
             class s extends n {
                 constructor(t) {
-                    (super("A binding with the name '".concat(t.toString(), "' already exists in the container"), { code: 'E_CONTAINER_ALREADY_EXISTS' }),
+                    super("A binding with the name '".concat(t.toString(), "' already exists in the container"), { code: 'E_CONTAINER_ALREADY_EXISTS' }),
                         (0, i._)(this, 'name', 'AlreadyExistsContainerException'),
-                        Object.setPrototypeOf(this, s.prototype));
+                        Object.setPrototypeOf(this, s.prototype);
                 }
             }
             class o extends n {
                 constructor(t) {
-                    (super("No entry with the name '".concat(t.toString(), "' was found in the container"), { code: 'E_CONTAINER_NOT_FOUND' }),
+                    super("No entry with the name '".concat(t.toString(), "' was found in the container"), { code: 'E_CONTAINER_NOT_FOUND' }),
                         (0, i._)(this, 'name', 'NotFoundContainerException'),
-                        Object.setPrototypeOf(this, o.prototype));
+                        Object.setPrototypeOf(this, o.prototype);
                 }
             }
             class c {
                 register(t, e) {
                     if (this.has(t)) throw new s(t);
-                    return ((this.bindings = { ...this.bindings, [t]: e }), this);
+                    return (this.bindings = { ...this.bindings, [t]: e }), this;
                 }
                 registerMany(t) {
                     for (let e in t) if (this.has(e)) throw new s(e);
-                    return ((this.bindings = { ...this.bindings, ...t }), this);
+                    return (this.bindings = { ...this.bindings, ...t }), this;
                 }
                 get(t) {
                     if (this.shared.has(t)) return this.shared.get(t);
                     let e = this.bindings[t];
                     if (void 0 === e) throw new o(t);
                     let r = this.create(e);
-                    return (e.isShared && this.shared.set(t, r), r);
+                    return e.isShared && this.shared.set(t, r), r;
                 }
                 has(t) {
                     return t in this.bindings;
@@ -664,7 +664,7 @@
                     return t.creator(this);
                 }
                 constructor() {
-                    ((0, i._)(this, 'bindings', {}), (0, i._)(this, 'shared', new Map()));
+                    (0, i._)(this, 'bindings', {}), (0, i._)(this, 'shared', new Map());
                 }
             }
             function l(t) {
@@ -715,7 +715,7 @@
                 C = Symbol('CONTAINER_HOOKS_TOKEN'),
                 I = Symbol('CONTAINER_TRACK_DOWNLOAD_TASK_PARAMS_TOKEN');
             !(function (t) {
-                ((t.TRACK_META_RECEIVED = 'track_meta_received'),
+                (t.TRACK_META_RECEIVED = 'track_meta_received'),
                     (t.TRACK_DECRYPT_KEY_RECEIVED = 'track_decrypt_key_received'),
                     (t.CHUNK_MEDIA_FILE_RECEIVED = 'chunk_media_file_received'),
                     (t.MEDIA_FILE_RECEIVED = 'media_file_received'),
@@ -723,14 +723,14 @@
                     (t.TRACK_IMAGE_RECEIVED = 'track_image_received'),
                     (t.TRACK_DOWNLOAD_FINISHED = 'track_download_finished'),
                     (t.TRACK_DOWNLOAD_STOPPED = 'track_download_stopped'),
-                    (t.TRACK_DOWNLOAD_FAILED = 'track_download_failed'));
+                    (t.TRACK_DOWNLOAD_FAILED = 'track_download_failed');
             })(i || (i = {}));
             var S = r(38230);
             class _ extends S.t {
                 constructor(t, { code: e = 'E_ARTISTS_CONTROLLER', ...r } = {}) {
-                    (super(''.concat('[ArtistsController]', ' ').concat(t), { code: e, ...r }),
+                    super(''.concat('[ArtistsController]', ' ').concat(t), { code: e, ...r }),
                         (0, h._)(this, 'name', 'ArtistsControllerException'),
-                        Object.setPrototypeOf(this, _.prototype));
+                        Object.setPrototypeOf(this, _.prototype);
                 }
             }
             let A = (t) => 'images/artists/'.concat(t);
@@ -739,7 +739,7 @@
                     try {
                         return await this.artistManager.getArtist(t);
                     } catch (e) {
-                        return (this.hooks.afterError.promise(new _('Failed to get artist', { cause: e, data: { id: t } })), null);
+                        return this.hooks.afterError.promise(new _('Failed to get artist', { cause: e, data: { id: t } })), null;
                     }
                 }
                 async getArtistTrackIdsByUser(t) {
@@ -754,7 +754,7 @@
                         });
                 }
                 constructor(t) {
-                    ((0, h._)(this, 'hooks', void 0),
+                    (0, h._)(this, 'hooks', void 0),
                         (0, h._)(this, 'downloader', void 0),
                         (0, h._)(this, 'fileStorage', void 0),
                         (0, h._)(this, 'artistManager', void 0),
@@ -762,28 +762,28 @@
                         (this.downloader = t.container.get(T)),
                         (this.fileStorage = t.container.get(p)),
                         (this.artistManager = t.container.get(E)),
-                        this.downloader.events.on(i.ARTIST_IMAGE_RECEIVED, this.onArtistImageReceived.bind(this)));
+                        this.downloader.events.on(i.ARTIST_IMAGE_RECEIVED, this.onArtistImageReceived.bind(this));
                 }
             }
             var O = r(64520),
                 D = r(61979);
             class x extends S.t {
                 constructor(t, { code: e = 'E_CACHE_CONTROLLER', ...r } = {}) {
-                    (super(''.concat('[CacheController]', ' ').concat(t), { code: e, ...r }),
+                    super(''.concat('[CacheController]', ' ').concat(t), { code: e, ...r }),
                         (0, h._)(this, 'name', 'CacheControllerException'),
-                        Object.setPrototypeOf(this, x.prototype));
+                        Object.setPrototypeOf(this, x.prototype);
                 }
             }
             var N = r(2257);
             !(function (t) {
-                ((t.RESPONSE_CACHE = 'response_cache'),
+                (t.RESPONSE_CACHE = 'response_cache'),
                     (t.TRACKS = 'tracks'),
                     (t.ALBUMS = 'albums'),
                     (t.ALBUMS_TRACKS = 'albums_tracks'),
                     (t.ARTISTS = 'artists'),
                     (t.ARTISTS_TRACKS = 'artists_tracks'),
                     (t.USERS = 'users'),
-                    (t.USERS_TRACKS = 'users_tracks'));
+                    (t.USERS_TRACKS = 'users_tracks');
             })(a || (a = {}));
             let P = { name: a.ALBUMS, version: 1, restrictions: { attemptsCount: 3, count: 100 } },
                 L = { name: a.ALBUMS_TRACKS, version: 1, restrictions: { attemptsCount: 3 } },
@@ -791,12 +791,12 @@
                 K = { name: a.ARTISTS_TRACKS, version: 1, restrictions: { attemptsCount: 3 } },
                 j = { name: a.RESPONSE_CACHE, version: 1, restrictions: { attemptsCount: 3, count: 100 } };
             !(function (t) {
-                ((t[(t.LOW = 1)] = 'LOW'), (t[(t.MEDIUM = 2)] = 'MEDIUM'), (t[(t.HIGH = 3)] = 'HIGH'));
+                (t[(t.LOW = 1)] = 'LOW'), (t[(t.MEDIUM = 2)] = 'MEDIUM'), (t[(t.HIGH = 3)] = 'HIGH');
             })(n || (n = {}));
             let M = { name: a.TRACKS, version: 1, restrictions: { attemptsCount: 3, count: 100 } },
                 U = { name: a.USERS, version: 1, restrictions: { attemptsCount: 3, count: 100 } };
             !(function (t) {
-                ((t.TRACK = 'track'), (t.ENTITY = 'entity'));
+                (t.TRACK = 'track'), (t.ENTITY = 'entity');
             })(s || (s = {}));
             let B = { name: a.USERS_TRACKS, version: 1, restrictions: { attemptsCount: 3 } };
             class G {
@@ -810,7 +810,7 @@
                     null == (e = this.repositoryContainer.responseCacheRepository) || e.put({ uid: r, requestId: i, priority: null != a ? a : n.LOW, response: s });
                 }
                 constructor(t) {
-                    ((0, h._)(this, 'repositoryContainer', void 0), (this.repositoryContainer = t.repositoryContainer));
+                    (0, h._)(this, 'repositoryContainer', void 0), (this.repositoryContainer = t.repositoryContainer);
                 }
             }
             let W = [D.X1.REQUEST_TIMEOUT, D.X1.TEAPOT];
@@ -841,10 +841,10 @@
                     throw t;
                 }
                 constructor(t) {
-                    ((0, h._)(this, 'cacheManager', void 0),
+                    (0, h._)(this, 'cacheManager', void 0),
                         (0, h._)(this, 'variables', void 0),
                         (this.cacheManager = new G({ repositoryContainer: t.repositoryContainer })),
-                        (this.variables = t.variables));
+                        (this.variables = t.variables);
                 }
             }
             var H = r(2913);
@@ -854,16 +854,16 @@
                     return this.variables.getQuality();
                 }
                 injectTask(t) {
-                    (this.queue.push(t), this.startNextDownload());
+                    this.queue.push(t), this.startNextDownload();
                 }
                 removeTask(t) {
-                    (this.removeTaskFromQueue(t), this.removeTaskFromActiveDownloads(t));
+                    this.removeTaskFromQueue(t), this.removeTaskFromActiveDownloads(t);
                 }
                 startTask(t) {
-                    (this.activeTasks.push(t),
+                    this.activeTasks.push(t),
                         t.start().finally(() => {
-                            (this.removeTaskFromActiveDownloads(t.id), this.startNextDownload());
-                        }));
+                            this.removeTaskFromActiveDownloads(t.id), this.startNextDownload();
+                        });
                 }
                 startNextDownload() {
                     let t = this.activeTasks.length,
@@ -877,11 +877,11 @@
                     this.activeTasks = this.activeTasks.filter(V(t));
                 }
                 constructor(t) {
-                    ((0, h._)(this, 'variables', void 0),
+                    (0, h._)(this, 'variables', void 0),
                         (0, h._)(this, 'events', new H.v()),
                         (0, h._)(this, 'queue', []),
                         (0, h._)(this, 'activeTasks', []),
-                        (this.variables = t.variables));
+                        (this.variables = t.variables);
                 }
             }
             class X {
@@ -901,7 +901,7 @@
                     });
                 }
                 constructor(t) {
-                    ((0, h._)(this, 'trackManager', void 0), (this.trackManager = t.container.get(m)));
+                    (0, h._)(this, 'trackManager', void 0), (this.trackManager = t.container.get(m));
                 }
             }
             class z {
@@ -966,38 +966,38 @@
                         .catch(() => []);
                 }
                 constructor(t) {
-                    ((0, h._)(this, 'userConfig', void 0),
+                    (0, h._)(this, 'userConfig', void 0),
                         (0, h._)(this, 'repositoryContainer', void 0),
                         (0, h._)(this, 'fileStorage', void 0),
                         (this.userConfig = t.container.get(u)),
                         (this.repositoryContainer = t.container.get(v)),
-                        (this.fileStorage = t.container.get(p)));
+                        (this.fileStorage = t.container.get(p));
                 }
             }
             let $ = { afterError: new (r(61934).AsyncSeriesHook)(['error']) };
             !(function (t) {
-                ((t.STATE_CHANGED = 'STATE_CHANGED'), (t.ENTITY_CHANGED = 'ENTITY_CHANGED'));
+                (t.STATE_CHANGED = 'STATE_CHANGED'), (t.ENTITY_CHANGED = 'ENTITY_CHANGED');
             })(o || (o = {}));
             class tt {
                 get state() {
                     return this.loadingState;
                 }
                 set state(t) {
-                    ((this.loadingState = t), this.events.emit(o.STATE_CHANGED, this.state));
+                    (this.loadingState = t), this.events.emit(o.STATE_CHANGED, this.state);
                 }
                 setEntityState(t, e) {
-                    ((this.loadingState[t] = e), this.events.emit(o.ENTITY_CHANGED, { id: t, state: e }));
+                    (this.loadingState[t] = e), this.events.emit(o.ENTITY_CHANGED, { id: t, state: e });
                 }
                 clear() {
                     this.state = {};
                 }
                 constructor() {
-                    ((0, h._)(this, 'loadingState', {}), (0, h._)(this, 'events', new H.v()));
+                    (0, h._)(this, 'loadingState', {}), (0, h._)(this, 'events', new H.v());
                 }
             }
             class te {
                 constructor() {
-                    ((0, h._)(this, 'tracks', void 0), (this.tracks = new tt()));
+                    (0, h._)(this, 'tracks', void 0), (this.tracks = new tt());
                 }
             }
             var tr = r(71221),
@@ -1006,9 +1006,9 @@
                 tn = r(55845);
             class ts extends S.t {
                 constructor(t, { code: e = 'E_DOWNLOADER', ...r } = {}) {
-                    (super(''.concat('[Downloader]', ' ').concat(t), { code: e, ...r }),
+                    super(''.concat('[Downloader]', ' ').concat(t), { code: e, ...r }),
                         (0, h._)(this, 'name', 'DownloaderException'),
-                        Object.setPrototypeOf(this, ts.prototype));
+                        Object.setPrototypeOf(this, ts.prototype);
                 }
             }
             class to {
@@ -1042,7 +1042,7 @@
                         let [e] = await this.tracksResource.getTracksMeta({ trackIds: [this.id] });
                         if (!e || !e.available) return void this.handleDownloadError('Track is not defined or is not available');
                         let r = String(e.id);
-                        (this.events.emit(i.TRACK_META_RECEIVED, e),
+                        this.events.emit(i.TRACK_META_RECEIVED, e),
                             e.coverUri &&
                                 this.getImage(e.coverUri, (t) => {
                                     this.events.emit(i.TRACK_IMAGE_RECEIVED, this.id, t);
@@ -1054,7 +1054,7 @@
                                         this.getImage(t.cover.uri, (e) => {
                                             this.events.emit(i.ARTIST_IMAGE_RECEIVED, t.id, e);
                                         });
-                                }));
+                                });
                         let { downloadInfo: a } = await this.getFileInfo(r, this.quality);
                         if ('error' in a || a.transport !== tn.o.ENCRAW) return void this.handleDownloadError('Erorr in download info or transport is not encraw');
                         this.events.emit(i.TRACK_DECRYPT_KEY_RECEIVED, r, a.key);
@@ -1068,16 +1068,16 @@
                             let t = 0;
                             null === n || s + this.variables.chunkSize < n ? (t = s + this.variables.chunkSize - 1) : s + this.variables.chunkSize >= n && (t = n);
                             let { contentLength: e, data: r, contentRange: a } = await this.getFileInfoResource.getByteRange({ srcUrl: c, start: s, end: t });
-                            ((s += e),
+                            (s += e),
                                 (n = Number(a.split('/')[1])),
                                 o.push(r),
                                 this.events.emit(i.CHUNK_MEDIA_FILE_RECEIVED, this.id, Math.floor((s / n) * 100)),
-                                null !== n && s < n && (await l()));
+                                null !== n && s < n && (await l());
                         };
-                        (await l(),
+                        await l(),
                             s === n
                                 ? (this.events.emit(i.MEDIA_FILE_RECEIVED, this.id, new Blob(o)), this.events.emit(i.TRACK_DOWNLOAD_FINISHED, this.id))
-                                : this.events.emit(i.TRACK_DOWNLOAD_STOPPED, this.id));
+                                : this.events.emit(i.TRACK_DOWNLOAD_STOPPED, this.id);
                     } catch (t) {
                         this.handleDownloadError(String(t));
                     }
@@ -1086,11 +1086,11 @@
                     this.isStopped = !0;
                 }
                 handleDownloadError(t) {
-                    (this.hooks.afterError.promise(new ts('Error when downloading track', { cause: t, data: { id: this.id } })),
-                        this.events.emit(i.TRACK_DOWNLOAD_FAILED, this.id));
+                    this.hooks.afterError.promise(new ts('Error when downloading track', { cause: t, data: { id: this.id } })),
+                        this.events.emit(i.TRACK_DOWNLOAD_FAILED, this.id);
                 }
                 constructor(t, e, r) {
-                    ((0, h._)(this, 'id', void 0),
+                    (0, h._)(this, 'id', void 0),
                         (0, h._)(this, 'isStopped', !1),
                         (0, h._)(this, 'tracksResource', void 0),
                         (0, h._)(this, 'getFileInfoResource', void 0),
@@ -1108,11 +1108,11 @@
                         (this.variables = e.variables),
                         (this.events = e.events),
                         (this.hooks = e.hooks),
-                        (this.quality = r));
+                        (this.quality = r);
                 }
             }
             !(function (t) {
-                ((t.IDLE = 'IDLE'), (t.DOWNLOADING = 'DOWNLOADING'), (t.DOWNLOADED = 'DOWNLOADED'), (t.DOWNLOAD_FAILED = 'DOWNLOAD_FAILED'), (t.REMOVING = 'REMOVING'));
+                (t.IDLE = 'IDLE'), (t.DOWNLOADING = 'DOWNLOADING'), (t.DOWNLOADED = 'DOWNLOADED'), (t.DOWNLOAD_FAILED = 'DOWNLOAD_FAILED'), (t.REMOVING = 'REMOVING');
             })(c || (c = {}));
             let tc = (t) => 'images/tracks/'.concat(t),
                 tl = (t) => 'tracks/'.concat(t),
@@ -1120,14 +1120,14 @@
                 tu = [c.IDLE, c.DOWNLOADING];
             class td {
                 initDownloaderEvents() {
-                    (this.downloader.events.on(i.TRACK_META_RECEIVED, this.saveTrack.bind(this)),
+                    this.downloader.events.on(i.TRACK_META_RECEIVED, this.saveTrack.bind(this)),
                         this.downloader.events.on(i.TRACK_DECRYPT_KEY_RECEIVED, this.putDecryptKey.bind(this)),
                         this.downloader.events.on(i.CHUNK_MEDIA_FILE_RECEIVED, this.onChunkMediaFileReceived.bind(this)),
                         this.downloader.events.on(i.TRACK_IMAGE_RECEIVED, this.onTrackImageReceived.bind(this)),
                         this.downloader.events.on(i.TRACK_DOWNLOAD_FINISHED, this.onTrackDownloadFinished.bind(this)),
                         this.downloader.events.on(i.TRACK_DOWNLOAD_STOPPED, this.onTrackDownloadStopped.bind(this)),
                         this.downloader.events.on(i.TRACK_DOWNLOAD_FAILED, this.onTrackDownloadFailed.bind(this)),
-                        this.downloader.events.on(i.MEDIA_FILE_RECEIVED, this.onMediaFileReceived.bind(this)));
+                        this.downloader.events.on(i.MEDIA_FILE_RECEIVED, this.onMediaFileReceived.bind(this));
                 }
                 async putTrackArtists(t) {
                     let e = 0;
@@ -1136,7 +1136,7 @@
                     return (
                         t.artists.forEach((i) => {
                             let { decomposed: a, ...n } = i;
-                            (r.push({ artistMeta: n, artistTrack: { artistId: String(i.id), trackId: String(t.id), artistIndex: e } }), e++);
+                            r.push({ artistMeta: n, artistTrack: { artistId: String(i.id), trackId: String(t.id), artistIndex: e } }), e++;
                             let s = '';
                             a &&
                                 a.length > 0 &&
@@ -1145,9 +1145,9 @@
                                         s = i;
                                         return;
                                     }
-                                    (r.push({ artistMeta: i, artistTrack: { artistId: String(i.id), trackId: String(t.id), artistIndex: e, decomposed: !0, prefix: s } }),
+                                    r.push({ artistMeta: i, artistTrack: { artistId: String(i.id), trackId: String(t.id), artistIndex: e, decomposed: !0, prefix: s } }),
                                         e++,
-                                        (s = ''));
+                                        (s = '');
                                 });
                         }),
                         Promise.all(
@@ -1195,7 +1195,7 @@
                                 o = a[e];
                             if (o) {
                                 if (!i && 'object' == typeof o && 'id' in o) {
-                                    ((r = o), n.push(o));
+                                    (r = o), n.push(o);
                                     return;
                                 }
                                 r && (void 0 === r.decomposed && (r.decomposed = []), s && r.decomposed.push(s), r.decomposed.push(o));
@@ -1301,14 +1301,14 @@
                         0 !== (await this.usersTracksManager.getCountByTrackId(t)))
                     )
                         return void this.changeState(t, { loadingState: c.DOWNLOADED });
-                    (await Promise.all([
+                    await Promise.all([
                         null == (r = this.repositoryContainer.fileStorage) ? void 0 : r.deleteFile(tl(t)),
                         null == (i = this.repositoryContainer.fileStorage) ? void 0 : i.deleteFile(tc(String((0, J.V)(t, e)))),
                         null == (a = this.repositoryContainer.tracksRepository) ? void 0 : a.delete(t),
                         this.deleteTrackAlbums(t),
                         this.deleteTrackArtists(t),
                     ]),
-                        this.changeState(t, { loadingState: c.IDLE }));
+                        this.changeState(t, { loadingState: c.IDLE });
                 }
                 download(t) {
                     var e;
@@ -1344,7 +1344,7 @@
                     let i = tc(t);
                     null == (r = this.fileStorage) ||
                         r.writeFile(i, e).catch(() => {
-                            (this.hooks.afterError.promise(Error('Error in tracks manager')), this.stopDownload(t), this.onTrackDownloadFailed(t));
+                            this.hooks.afterError.promise(Error('Error in tracks manager')), this.stopDownload(t), this.onTrackDownloadFailed(t);
                         });
                 }
                 onChunkMediaFileReceived(t, e) {
@@ -1361,14 +1361,14 @@
                     let n = tl(a);
                     null == (i = this.fileStorage) ||
                         i.writeFile(n, e).catch(() => {
-                            (this.hooks.afterError.promise(Error('Error in tracks manager')), this.stopDownload(t), this.onTrackDownloadFailed(t));
+                            this.hooks.afterError.promise(Error('Error in tracks manager')), this.stopDownload(t), this.onTrackDownloadFailed(t);
                         });
                 }
                 changeState(t, e) {
                     this.store.tracks.setEntityState(t, e);
                 }
                 constructor(t) {
-                    ((0, h._)(this, 'userConfig', void 0),
+                    (0, h._)(this, 'userConfig', void 0),
                         (0, h._)(this, 'store', void 0),
                         (0, h._)(this, 'hooks', void 0),
                         (0, h._)(this, 'downloader', void 0),
@@ -1384,15 +1384,15 @@
                         (this.hooks = t.container.get(C)),
                         (this.trackDownloadTaskParams = t.container.get(I)),
                         (this.usersTracksManager = t.container.get(w)),
-                        this.initDownloaderEvents());
+                        this.initDownloaderEvents();
                 }
             }
             var tg = r(60332);
             class ty extends S.t {
                 constructor(t, { code: e = 'E_TRACKS_CONTROLLER', ...r } = {}) {
-                    (super(''.concat('[TracksController]', ' ').concat(t), { code: e, ...r }),
+                    super(''.concat('[TracksController]', ' ').concat(t), { code: e, ...r }),
                         (0, h._)(this, 'name', 'TracksControllerException'),
-                        Object.setPrototypeOf(this, ty.prototype));
+                        Object.setPrototypeOf(this, ty.prototype);
                 }
             }
             class tv {
@@ -1402,7 +1402,7 @@
                         (null == t ? void 0 : t.length) &&
                             (this.store.tracks.state = t.reduce((t, e) => {
                                 let [r] = (0, J.d)(e);
-                                return (r && (t[r] = { loadingState: c.DOWNLOADED }), t);
+                                return r && (t[r] = { loadingState: c.DOWNLOADED }), t;
                             }, {}));
                     } catch (t) {
                         this.hooks.afterError.promise(new ty('Failed to init tracks state', { cause: t }));
@@ -1411,11 +1411,11 @@
                 async clearAll() {
                     try {
                         let t = await this.usersTracksManager.getTracksByUid(this.userConfig.uid);
-                        (null == t ||
+                        null == t ||
                             t.forEach((t) => {
                                 this.deleteTrack(t);
                             }),
-                            this.store.tracks.clear());
+                            this.store.tracks.clear();
                     } catch (t) {
                         this.hooks.afterError.promise(new ty('Failed to clear all tracks', { cause: t }));
                     }
@@ -1453,7 +1453,7 @@
                     try {
                         return await this.trackManager.getTrack(t);
                     } catch (e) {
-                        return (this.hooks.afterError.promise(new ty('Failed to get track', { cause: e, data: { id: t } })), null);
+                        return this.hooks.afterError.promise(new ty('Failed to get track', { cause: e, data: { id: t } })), null;
                     }
                 }
                 async deleteTrack(t) {
@@ -1502,25 +1502,25 @@
                         if (!i) return;
                         let a = null == (r = t.albums) || null == (e = r[0]) ? void 0 : e.id;
                         if ((void 0 === i.albumId && void 0 === a) || i.albumId === String(a)) {
-                            (await this.trackManager.deleteTrackArtists(String(t.id)), this.trackManager.saveTrack(t));
+                            await this.trackManager.deleteTrackArtists(String(t.id)), this.trackManager.saveTrack(t);
                             return;
                         }
-                        (await this.deleteTrack(String((0, J.V)(i.trackId, i.albumId))), this.download(String((0, J.V)(t.id, a))));
+                        await this.deleteTrack(String((0, J.V)(i.trackId, i.albumId))), this.download(String((0, J.V)(t.id, a)));
                     } catch (e) {
                         this.hooks.afterError.promise(new ty('Failed to update track meta', { cause: e, data: { id: t.id } }));
                     }
                 }
                 constructor(t) {
-                    ((0, h._)(this, 'userConfig', void 0),
+                    (0, h._)(this, 'userConfig', void 0),
                         (0, h._)(this, 'hooks', void 0),
                         (0, h._)(this, 'store', void 0),
                         (0, h._)(this, 'tracksResource', void 0),
                         (0, h._)(this, 'availabilityResource', void 0),
                         (0, h._)(this, 'trackManager', void 0),
                         (0, h._)(this, 'usersTracksManager', void 0),
-                        (0, h._)(this, 'variables', void 0));
+                        (0, h._)(this, 'variables', void 0);
                     let { availabilityResource: e, tracksResource: r } = t.container.get(y);
-                    ((this.userConfig = t.container.get(u)),
+                    (this.userConfig = t.container.get(u)),
                         (this.hooks = t.container.get(C)),
                         (this.store = t.container.get(g)),
                         (this.availabilityResource = e),
@@ -1528,7 +1528,7 @@
                         (this.variables = t.variables),
                         (this.trackManager = t.container.get(m)),
                         (this.usersTracksManager = t.container.get(w)),
-                        this.validateTracks());
+                        this.validateTracks();
                 }
             }
             class tp {
@@ -1557,21 +1557,21 @@
                     await (null == (r = this.repositoryContainer.usersTracksRepository) ? void 0 : r.delete(t, e));
                 }
                 constructor(t) {
-                    ((0, h._)(this, 'repositoryContainer', void 0), (this.repositoryContainer = t.container.get(v)));
+                    (0, h._)(this, 'repositoryContainer', void 0), (this.repositoryContainer = t.container.get(v));
                 }
             }
             let tm = () => ('undefined' == typeof navigator ? { isOffline: !1 } : { isOffline: !navigator.onLine });
             class tw {
                 updateStatus(t) {
-                    ((this.status = tm()), t(this.status));
+                    (this.status = tm()), t(this.status);
                 }
                 subscribe(t) {
-                    (this.updateStatus(t),
+                    this.updateStatus(t),
                         window.addEventListener('online', this.updateStatus.bind(this, t)),
-                        window.addEventListener('offline', this.updateStatus.bind(this, t)));
+                        window.addEventListener('offline', this.updateStatus.bind(this, t));
                 }
                 unsubscribe(t) {
-                    (window.removeEventListener('online', this.updateStatus.bind(this, t)), window.removeEventListener('offline', this.updateStatus.bind(this, t)));
+                    window.removeEventListener('online', this.updateStatus.bind(this, t)), window.removeEventListener('offline', this.updateStatus.bind(this, t));
                 }
                 constructor() {
                     (0, h._)(this, 'status', tm());
@@ -1579,9 +1579,9 @@
             }
             class tE extends S.t {
                 constructor(t, { code: e = 'E_FILE_STORAGE', ...r } = {}) {
-                    (super(''.concat('[FileStorage]', ' ').concat(t), { code: e, ...r }),
+                    super(''.concat('[FileStorage]', ' ').concat(t), { code: e, ...r }),
                         (0, h._)(this, 'name', 'FileStorageException'),
-                        Object.setPrototypeOf(this, tE.prototype));
+                        Object.setPrototypeOf(this, tE.prototype);
                 }
             }
             class tf {
@@ -1617,7 +1617,7 @@
                 }
                 async isFileExisting(t) {
                     try {
-                        return (await this.getFile(t), !0);
+                        return await this.getFile(t), !0;
                     } catch (t) {
                         return !1;
                     }
@@ -1626,7 +1626,7 @@
                     try {
                         let r = await this.getFile(t, { create: !0 }),
                             i = await r.createWritable();
-                        (await i.write(e), await i.close());
+                        await i.write(e), await i.close();
                     } catch (e) {
                         throw this.generateError('Error when trying to write file', e, { path: t });
                     }
@@ -1666,17 +1666,17 @@
                     return new tE(t, { cause: e instanceof Error ? e.message : String(e), data: { errorMeta: { estimate: this.estimate }, ...r } });
                 }
                 constructor() {
-                    ((0, h._)(this, 'rootDir', void 0),
+                    (0, h._)(this, 'rootDir', void 0),
                         (0, h._)(this, 'isAvailable', !0),
                         (0, h._)(this, 'estimate', {}),
                         (this.rootDir = window.navigator.storage.getDirectory()),
                         this.getEstimate().then((t) => {
                             this.estimate = t;
-                        }));
+                        });
                 }
             }
             !(function (t) {
-                ((t.WRITE = 'WRITE'), (t.READ = 'READ'), (t.DELETE = 'DELETE'), (t.CREATE_URL = 'CREATE_URL'), (t.IS_EXISTING = 'IS_EXISTING'));
+                (t.WRITE = 'WRITE'), (t.READ = 'READ'), (t.DELETE = 'DELETE'), (t.CREATE_URL = 'CREATE_URL'), (t.IS_EXISTING = 'IS_EXISTING');
             })(l || (l = {}));
             class tb {
                 async executeWithLock(t, e) {
@@ -1721,14 +1721,14 @@
                     return Array.from(this.operationsInProgress.keys());
                 }
                 constructor(t = new tf()) {
-                    ((0, h._)(this, 'storage', void 0), (0, h._)(this, 'operationsInProgress', new Map()), (this.storage = t));
+                    (0, h._)(this, 'storage', void 0), (0, h._)(this, 'operationsInProgress', new Map()), (this.storage = t);
                 }
             }
             class tk extends S.t {
                 constructor(t, { code: e = 'E_IDB_REPOSITORY', ...r } = {}) {
-                    (super(''.concat('[IndexedDB]', ' ').concat(t), { code: e, ...r }),
+                    super(''.concat('[IndexedDB]', ' ').concat(t), { code: e, ...r }),
                         (0, h._)(this, 'name', 'IdbRepositoryException'),
-                        Object.setPrototypeOf(this, tk.prototype));
+                        Object.setPrototypeOf(this, tk.prototype);
                 }
             }
             class tT {
@@ -1747,15 +1747,15 @@
                     return new N.h(''.concat('music_slam', '_').concat(this.config.name)).openDB(this.config.version, {
                         onBlocked: (t, e, r) => {
                             var i, a;
-                            (this.onError(), null == (a = this.handlers) || null == (i = a.onBlocked) || i.call(a, t, e, r));
+                            this.onError(), null == (a = this.handlers) || null == (i = a.onBlocked) || i.call(a, t, e, r);
                         },
                         onBlocking: (t, e, r) => {
                             var i, a;
-                            (this.onError(), null == (a = this.handlers) || null == (i = a.onBlocking) || i.call(a, t, e, r));
+                            this.onError(), null == (a = this.handlers) || null == (i = a.onBlocking) || i.call(a, t, e, r);
                         },
                         onTerminated: () => {
                             var t, e;
-                            (this.onError(), null == (e = this.handlers) || null == (t = e.onTerminated) || t.call(e));
+                            this.onError(), null == (e = this.handlers) || null == (t = e.onTerminated) || t.call(e);
                         },
                         onUpgrade: (t, e, r, i, a) => {
                             var n, s;
@@ -1785,7 +1785,7 @@
                     });
                 }
                 constructor({ config: t, handlers: e }) {
-                    ((0, h._)(this, 'idb', void 0),
+                    (0, h._)(this, 'idb', void 0),
                         (0, h._)(this, 'config', void 0),
                         (0, h._)(this, 'handlers', void 0),
                         (0, h._)(this, 'attemptsConnection', 0),
@@ -1796,7 +1796,7 @@
                         (this.idb = this.openIdb()),
                         this.getEstimate().then((t) => {
                             this.estimate = t;
-                        }));
+                        });
                 }
             }
             class tC extends tT {
@@ -1879,7 +1879,7 @@
                         handlers: {
                             onUpgrade: (t) => {
                                 let e = t.createObjectStore(L.name);
-                                (e.createIndex(tI, 'albumId'), e.createIndex(tS, 'trackId'));
+                                e.createIndex(tI, 'albumId'), e.createIndex(tS, 'trackId');
                             },
                         },
                     });
@@ -1966,7 +1966,7 @@
                         handlers: {
                             onUpgrade: (t) => {
                                 let e = t.createObjectStore(K.name);
-                                (e.createIndex(tD, 'trackId'), e.createIndex(tO, 'artistId'));
+                                e.createIndex(tD, 'trackId'), e.createIndex(tO, 'artistId');
                             },
                         },
                     });
@@ -1984,7 +1984,7 @@
                             o = null != (a = null == n ? void 0 : n.createdAt) ? a : s,
                             c = { ...t, updatedAt: s, createdAt: o },
                             l = await i.count(j.name);
-                        return (n || l < Number(j.restrictions.count) || (await this.deleteResponseByLowPriority()), i.put(j.name, c, tL(e, r)));
+                        return n || l < Number(j.restrictions.count) || (await this.deleteResponseByLowPriority()), i.put(j.name, c, tL(e, r));
                     }).catch((t) => {
                         throw this.generateError('Error when trying to put data', t, { uid: e, requestId: r });
                     });
@@ -2195,7 +2195,7 @@
                         handlers: {
                             onUpgrade: (t) => {
                                 let e = t.createObjectStore(B.name);
-                                (e.createIndex('uid', 'uid'), e.createIndex(tM, 'trackId'));
+                                e.createIndex('uid', 'uid'), e.createIndex(tM, 'trackId');
                             },
                         },
                     });
@@ -2219,7 +2219,7 @@
                 }
                 init(t) {
                     var e, r;
-                    (this.container ||
+                    this.container ||
                         (this.container = (function (t) {
                             let {
                                 repositoryContainer: e,
@@ -2268,14 +2268,14 @@
                                 }),
                             });
                         })({ repositoryContainer: this.repositoryContainer, ...t })),
-                        null == (r = this.repositoryContainer) || null == (e = r.usersRepository) || e.put({ uid: t.userConfig.uid }));
+                        null == (r = this.repositoryContainer) || null == (e = r.usersRepository) || e.put({ uid: t.userConfig.uid });
                 }
                 async clearAll() {
                     var t;
                     return Promise.all([null == (t = this.tracksController) ? void 0 : t.clearAll()]);
                 }
                 constructor({ config: t, plugins: e }) {
-                    ((0, h._)(this, 'hooks', $),
+                    (0, h._)(this, 'hooks', $),
                         (0, h._)(this, 'container', null),
                         (0, h._)(this, 'network', new tw()),
                         (0, h._)(this, 'repositoryContainer', void 0),
@@ -2297,7 +2297,7 @@
                                 a
                             );
                         })(t)),
-                        null == e || e.forEach((t) => t.apply({ hooks: this.hooks })));
+                        null == e || e.forEach((t) => t.apply({ hooks: this.hooks }));
                 }
             }
             var tW = r(25536);
@@ -2307,7 +2307,7 @@
                     if (this.cacheController.shouldGetCache) return this.cacheController.get(r, 6048e5);
                     try {
                         let i = await super.about(t, e);
-                        return (this.cacheController.put({ requestId: r, response: i, uid: i.uid, priority: n.MEDIUM }), i);
+                        return this.cacheController.put({ requestId: r, response: i, uid: i.uid, priority: n.MEDIUM }), i;
                     } catch (t) {
                         return this.cacheController.handleError(t, r, 6048e5);
                     }
@@ -2317,7 +2317,7 @@
                     if (this.cacheController.shouldGetCache) return this.cacheController.get(r, 6048e5);
                     try {
                         let i = await super.settings(t, e);
-                        return (this.cacheController.put({ requestId: r, response: i, priority: n.MEDIUM }), i);
+                        return this.cacheController.put({ requestId: r, response: i, priority: n.MEDIUM }), i;
                     } catch (t) {
                         return this.cacheController.handleError(t, r, 6048e5);
                     }
@@ -2327,7 +2327,7 @@
                     if (this.cacheController.shouldGetCache) return this.cacheController.get(r, 6048e5);
                     try {
                         let i = await super.experiments(t, e);
-                        return (this.cacheController.put({ requestId: r, response: i, priority: n.MEDIUM }), i);
+                        return this.cacheController.put({ requestId: r, response: i, priority: n.MEDIUM }), i;
                     } catch (t) {
                         return this.cacheController.handleError(t, r, 6048e5);
                     }
@@ -2337,19 +2337,19 @@
                     if (this.cacheController.shouldGetCache) return this.cacheController.get(r, 6048e5);
                     try {
                         let i = await super.experimentsDetails(t, e);
-                        return (this.cacheController.put({ requestId: r, response: i, priority: n.MEDIUM }), i);
+                        return this.cacheController.put({ requestId: r, response: i, priority: n.MEDIUM }), i;
                     } catch (t) {
                         return this.cacheController.handleError(t, r, 6048e5);
                     }
                 }
                 constructor(t, e, r) {
-                    (super(t, e),
+                    super(t, e),
                         (0, h._)(this, 'httpClient', void 0),
                         (0, h._)(this, 'config', void 0),
                         (0, h._)(this, 'cacheController', void 0),
                         (this.httpClient = t),
                         (this.config = e),
-                        (this.cacheController = r.cacheController));
+                        (this.cacheController = r.cacheController);
                 }
             }
             let tH = (t) => {
@@ -2378,7 +2378,7 @@
                                   if (r.shouldGetCache) return r.get(u, s);
                                   try {
                                       let e = await a.apply(t, c);
-                                      return (r.put({ requestId: u, response: e, priority: o }), e);
+                                      return r.put({ requestId: u, response: e, priority: o }), e;
                                   } catch (t) {
                                       return r.handleError(t, u, s);
                                   }
@@ -2390,9 +2390,9 @@
             var tV = r(91628);
             class tY extends S.t {
                 constructor(t, { code: e = 'E_RESOURCE_PROXY', ...r } = {}) {
-                    (super(''.concat('[ResourceProxy]', ' ').concat(t), { code: e, ...r }),
+                    super(''.concat('[ResourceProxy]', ' ').concat(t), { code: e, ...r }),
                         (0, h._)(this, 'name', 'ResourceProxyException'),
-                        Object.setPrototypeOf(this, tY.prototype));
+                        Object.setPrototypeOf(this, tY.prototype);
                 }
             }
             var tX = r(493);
@@ -2409,7 +2409,7 @@
                             (n = ((t) => {
                                 let e = t,
                                     r = new Uint8Array(16);
-                                for (let t = 0; t < 16; ++t) ((r[r.length - 1 - t] = 255 & e), (e >>= 8));
+                                for (let t = 0; t < 16; ++t) (r[r.length - 1 - t] = 255 & e), (e >>= 8);
                                 return r;
                             })(i / 16)),
                         crypto.subtle.decrypt({ name: 'AES-CTR', counter: n, length: 128 }, a, r)
@@ -2421,7 +2421,7 @@
                     try {
                         return !!(await this.usersTracksRepository.get(this.variables.uid, t));
                     } catch (e) {
-                        return (this.hooks.afterError.promise(new tY('Can not determine if track was downloaded', { cause: e, data: { trackId: t } })), !1);
+                        return this.hooks.afterError.promise(new tY('Can not determine if track was downloaded', { cause: e, data: { trackId: t } })), !1;
                     }
                 }
                 async getLocalFileDownloadInfo(t) {
@@ -2438,7 +2438,7 @@
                     try {
                         return { downloadInfo: await this.getLocalFileDownloadInfo(String(t.trackId)) };
                     } catch (r) {
-                        return (this.hooks.afterError.promise(new tY('Can not get a local file', { cause: r, data: { trackId: t.trackId } })), super.getFileInfo(t, e));
+                        return this.hooks.afterError.promise(new tY('Can not get a local file', { cause: r, data: { trackId: t.trackId } })), super.getFileInfo(t, e);
                     }
                 }
                 async getSign(t, e, r, i) {
@@ -2455,7 +2455,7 @@
                         n = [],
                         s = [];
                     r.forEach((t, e) => {
-                        ((a[t] = e), i[e] ? s.push(t) : n.push(t));
+                        (a[t] = e), i[e] ? s.push(t) : n.push(t);
                     });
                     let o = await Promise.allSettled(s.map(this.getLocalFileDownloadInfo.bind(this))),
                         c = [];
@@ -2492,7 +2492,7 @@
                     );
                 }
                 constructor(t, e, r) {
-                    (super(t, e),
+                    super(t, e),
                         (0, h._)(this, 'httpClient', void 0),
                         (0, h._)(this, 'config', void 0),
                         (0, h._)(this, 'fileStorage', void 0),
@@ -2501,9 +2501,9 @@
                         (0, h._)(this, 'hooks', void 0),
                         (0, h._)(this, 'variables', void 0),
                         (this.httpClient = t),
-                        (this.config = e));
+                        (this.config = e);
                     let { fileStorage: i, tracksRepository: a, usersTracksRepository: n, hooks: s, variables: o } = r;
-                    ((this.fileStorage = i), (this.tracksRepository = a), (this.usersTracksRepository = n), (this.hooks = s), (this.variables = o));
+                    (this.fileStorage = i), (this.tracksRepository = a), (this.usersTracksRepository = n), (this.hooks = s), (this.variables = o);
                 }
             }
             let tZ = D.X1.TEAPOT,
@@ -2529,7 +2529,7 @@
                     try {
                         return { tracks: await this.variables.tracksController.getTracks() };
                     } catch (e) {
-                        return (this.hooks.afterError.promise(new tY('Can not get collection downloaded tracks', { cause: e })), t);
+                        return this.hooks.afterError.promise(new tY('Can not get collection downloaded tracks', { cause: e })), t;
                     }
                 }
                 async getBlock(t, e) {
@@ -2542,7 +2542,7 @@
                         if (this.variables.cacheController.shouldGetCache) return this.variables.cacheController.get(r, 6048e5);
                         try {
                             let i = await super.getSkeleton(t, e);
-                            return (this.variables.cacheController.put({ requestId: r, response: i, priority: n.MEDIUM }), i);
+                            return this.variables.cacheController.put({ requestId: r, response: i, priority: n.MEDIUM }), i;
                         } catch (t) {
                             return this.variables.cacheController.handleError(t, r, 6048e5);
                         }
@@ -2550,7 +2550,7 @@
                     return super.getSkeleton(t, e);
                 }
                 constructor(t, e, r) {
-                    (super(t, e),
+                    super(t, e),
                         (0, h._)(this, 'httpClient', void 0),
                         (0, h._)(this, 'config', void 0),
                         (0, h._)(this, 'hooks', void 0),
@@ -2558,7 +2558,7 @@
                         (this.httpClient = t),
                         (this.config = e),
                         (this.hooks = r.hooks),
-                        (this.variables = r.variables));
+                        (this.variables = r.variables);
                 }
             }
         },
@@ -2628,7 +2628,7 @@
                     return { data: i, contentLength: Number(r.headers['content-length']), contentRange: r.headers['content-range'] };
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2637,7 +2637,7 @@
             var i = r(86211);
             class a {
                 constructor(t) {
-                    ((0, i._)(this, 'httpClient', void 0), (this.httpClient = t));
+                    (0, i._)(this, 'httpClient', void 0), (this.httpClient = t);
                 }
             }
             class n extends a {
@@ -2710,7 +2710,7 @@
                     return { config: this.config.retryPolicyConfig };
                 }
                 constructor(t, e) {
-                    (super(t), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },

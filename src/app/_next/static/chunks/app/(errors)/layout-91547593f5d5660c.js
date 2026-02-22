@@ -50,7 +50,7 @@
                     });
             };
             var r = (function (e) {
-                return ((e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e);
+                return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
             })(r || {});
             let i = (e) => {
                 let { sonataState: sonataState } = (0, t.Pjs)(),
@@ -390,10 +390,10 @@
             let i = () => {
                 let { library: e, collection: s, experiments: o, main: i, user: l } = (0, r.Pjs)(),
                     d = (0, n.useCallback)(() => {
-                        (o.getData(),
+                        o.getData(),
                             e.getData(),
                             i.landing.isLoaded && i.landing.getSkeleton({ id: t.p.WEB_MAIN, showWizard: l.settings.showWizard }, { preloadBlocksCount: 2 }),
-                            s.landing.isLoaded && s.landing.getSkeleton({ id: t.p.WEB_COLLECTION, showWizard: l.settings.showWizard }, { preloadBlocksCount: 2 }));
+                            s.landing.isLoaded && s.landing.getSkeleton({ id: t.p.WEB_COLLECTION, showWizard: l.settings.showWizard }, { preloadBlocksCount: 2 });
                     }, [s.landing, o, e, i.landing, l.settings.showWizard]);
                 (0, n.useEffect)(() => {
                     var e;
@@ -552,7 +552,7 @@
                                 n = s[2] || '';
                             if (!o) return e;
                             let t = new URLSearchParams(n.startsWith('?') ? n.substring(1) : '');
-                            return (t.set('tab', o), '/?'.concat(t.toString()));
+                            return t.set('tab', o), '/?'.concat(t.toString());
                         },
                     ],
                     [/^\/home$/, () => i.Zyd.main.href],
@@ -616,7 +616,7 @@
         },
         41121: (e, s, o) => {
             'use strict';
-            (o.d(s, { ClientConfigInitializer: () => n }), o(33008));
+            o.d(s, { ClientConfigInitializer: () => n }), o(33008);
             let n = (e) => {
                 let { env: s, nonce: o } = e;
                 return null;
@@ -639,7 +639,7 @@
                     let { version: s, formatMessage: o, closeToast: r } = e,
                         h = (0, t.useCallback)(() => {
                             var e;
-                            (null == (e = window.desktopEvents) || e.send(i.EE.INSTALL_UPDATE), null == r || r());
+                            null == (e = window.desktopEvents) || e.send(i.EE.INSTALL_UPDATE), null == r || r();
                         }, [r]),
                         b = (0, t.useMemo)(
                             () =>
@@ -676,7 +676,7 @@
                         [getProgress, setProgress] = (0, t.useState)(-1),
                         h = (0, t.useCallback)(() => {
                             var e;
-                            (null == (e = window.desktopEvents) || e.send(i.EE.INSTALL_MOD_UPDATE), null == r || r());
+                            null == (e = window.desktopEvents) || e.send(i.EE.INSTALL_MOD_UPDATE), null == r || r();
                         }, [r]),
                         callInstallModUpdate = (0, t.useCallback)(() => {
                             var e;
@@ -1057,11 +1057,11 @@
                     d = (0, n.useCallback)(
                         (e, n) => {
                             let { needToShowReleaseNotes: t, sortedDescReleaseNotesKeys: r, translationsReleaseNotes: i } = n;
-                            (o(i), l(r), t && s(!0));
+                            o(i), l(r), t && s(!0);
                         },
                         [l, o],
                     );
-                ((0, n.useEffect)(() => {
+                (0, n.useEffect)(() => {
                     e && r && (i.open(), s(!1));
                 }, [r, i, e]),
                     (0, n.useEffect)(() => {
@@ -1073,7 +1073,7 @@
                                 null == (e = window.desktopEvents) || e.off(t.EE.LOAD_RELEASE_NOTES, d);
                             }
                         );
-                    }, [d]));
+                    }, [d]);
             };
         },
         58290: (e, s, o) => {
@@ -1227,7 +1227,7 @@
                                 ? void 0
                                 : s.state.currentContext.onChange(() => {
                                       var t, r;
-                                      (null == e || e(),
+                                      null == e || e(),
                                           null == n || n(),
                                           (e =
                                               null == s || null == (t = s.state.currentContext.value)
@@ -1240,10 +1240,10 @@
                                                   ? void 0
                                                   : r.availableActions.moveForward.onChange((e) => {
                                                         sendPlayerStateDefault(s);
-                                                    })));
+                                                    }));
                                   });
                     return () => {
-                        (null == t || t(),
+                        null == t || t(),
                             null == currentContextListener || currentContextListener(),
                             null == onEntityChange || onEntityChange(),
                             null == getCurrentTrackListener || getCurrentTrackListener(),
@@ -1255,7 +1255,7 @@
                             null == onShuffleChange || onShuffleChange(),
                             null == onVolumeChange || onVolumeChange(),
                             null == n || n(),
-                            null == n || n());
+                            null == n || n();
                     };
                 }, [o, null == s ? void 0 : s.state.currentContext, null == s ? void 0 : s.state.playerState.status]);
             };
@@ -1278,7 +1278,7 @@
             };
         },
         76555: (e, s, o) => {
-            (Promise.resolve().then(o.bind(o, 52756)),
+            Promise.resolve().then(o.bind(o, 52756)),
                 Promise.resolve().then(o.bind(o, 41458)),
                 Promise.resolve().then(o.bind(o, 80922)),
                 Promise.resolve().then(o.bind(o, 54487)),
@@ -1530,7 +1530,7 @@
                 Promise.resolve().then(o.bind(o, 51886)),
                 Promise.resolve().then(o.bind(o, 43701)),
                 Promise.resolve().then(o.bind(o, 45228)),
-                Promise.resolve().then(o.bind(o, 30236)));
+                Promise.resolve().then(o.bind(o, 30236));
         },
         76865: (e, s, o) => {
             'use strict';
@@ -1582,10 +1582,10 @@
                 pulsesyncApi: () => playerApi.default,
             });
             let n = () => {
-                (document.addEventListener('auxclick', (e) => e.preventDefault()),
+                document.addEventListener('auxclick', (e) => e.preventDefault()),
                     document.addEventListener('click', (e) => {
                         (e.ctrlKey || e.metaKey || e.shiftKey) && e.preventDefault();
-                    }));
+                    });
             };
             var t = o(79169);
             let r = (e) => {
@@ -1996,7 +1996,7 @@
         98258: () => {},
     },
     (e) => {
-        (e.O(
+        e.O(
             0,
             [
                 3645, 9876, 7098, 8282, 9712, 5271, 6071, 7309, 8712, 2866, 9765, 6451, 8004, 9284, 7509, 1709, 4397, 2621, 952, 9775, 9323, 9814, 9149, 8065, 594, 7313,
@@ -2006,6 +2006,6 @@
             ],
             () => e((e.s = 76555)),
         ),
-            (_N_E = e.O()));
+            (_N_E = e.O());
     },
 ]);

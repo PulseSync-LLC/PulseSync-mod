@@ -183,7 +183,7 @@
                                 null == S || S.addShortcutsListener(r.Mo.MAIN, r.lbr.LIKE, b),
                                 null == S || S.addShortcutsListener(r.Mo.MAIN, r.lbr.DISLIKE, E),
                                 () => {
-                                    (null == S || S.removeShortcutsListener(r.Mo.MAIN, r.lbr.LIKE), null == S || S.removeShortcutsListener(r.Mo.MAIN, r.lbr.DISLIKE));
+                                    null == S || S.removeShortcutsListener(r.Mo.MAIN, r.lbr.LIKE), null == S || S.removeShortcutsListener(r.Mo.MAIN, r.lbr.DISLIKE);
                                 }
                             );
                     }, [E, b, S, M.isGenerativeContext]);
@@ -353,10 +353,10 @@
                                 null == w || w.addShortcutsListener(r.Mo.MAIN, r.lbr.TOGGLE_REPEAT, V),
                                 null == w || w.addShortcutsListener(r.Mo.MAIN, r.lbr.TOGGLE_SHUFFLE, Y),
                                 () => {
-                                    (null == w || w.removeShortcutsListener(r.Mo.MAIN, r.lbr.TOGGLE_PLAY),
+                                    null == w || w.removeShortcutsListener(r.Mo.MAIN, r.lbr.TOGGLE_PLAY),
                                         M.isAdvertShown ||
                                             (null == w || w.removeShortcutsListener(r.Mo.MAIN, r.lbr.TOGGLE_SHUFFLE),
-                                            null == w || w.removeShortcutsListener(r.Mo.MAIN, r.lbr.TOGGLE_REPEAT)));
+                                            null == w || w.removeShortcutsListener(r.Mo.MAIN, r.lbr.TOGGLE_REPEAT));
                                 }
                             );
                     }, [N, g, V, Y, w, M.isAdvertShown]);
@@ -461,17 +461,17 @@
                     l = (0, s.rs2)(),
                     i = (0, n.c)(async (o) => {
                         let { sonataState: n, volume: i, playbackId: r } = o;
-                        (await (null == t ? void 0 : t.setExponentVolume(i, r)),
+                        await (null == t ? void 0 : t.setExponentVolume(i, r)),
                             e.set(s.cYZ.YmPlayerVolume, i, { expires: 365 }),
-                            a.isAdvertShown && (null == l || l.audioAdvertPlayback.setExponentVolume(i), n.setVolume(i)));
+                            a.isAdvertShown && (null == l || l.audioAdvertPlayback.setExponentVolume(i), n.setVolume(i));
                     });
                 return (0, o.useCallback)(
                     async (t, a, o) => {
-                        if (0 !== a) (e.set(s.cYZ.YmPlayerPrevVolume, a, { expires: 365 }), await i({ sonataState: t, volume: 0, playbackId: o }));
+                        if (0 !== a) e.set(s.cYZ.YmPlayerPrevVolume, a, { expires: 365 }), await i({ sonataState: t, volume: 0, playbackId: o });
                         else {
                             var n;
                             let a = null != (n = e.get(s.cYZ.YmPlayerPrevVolume)) ? n : 1;
-                            (e.remove(s.cYZ.YmPlayerPrevVolume), await i({ sonataState: t, volume: a, playbackId: o }));
+                            e.remove(s.cYZ.YmPlayerPrevVolume), await i({ sonataState: t, volume: a, playbackId: o });
                         }
                     },
                     [e, i],
@@ -559,8 +559,8 @@
                                 c = n.pM.ONE;
                         }
                     }
-                    (null == a || a.setRepeatMode(c, r),
-                        e((0, o.jsx)(i.NotificationRepeat, { repeatMode: c }), { containerId: t.modal.isOpened ? l.uQT.FULLSCREEN_INFO : l.uQT.INFO }));
+                    null == a || a.setRepeatMode(c, r),
+                        e((0, o.jsx)(i.NotificationRepeat, { repeatMode: c }), { containerId: t.modal.isOpened ? l.uQT.FULLSCREEN_INFO : l.uQT.INFO });
                 });
             };
         },
@@ -603,7 +603,7 @@
                                   : { id: 'player-actions.repeat-context' },
                         ))(a, m, t),
                     M = (0, r.c)((e) => {
-                        (null == v || v(), e.stopPropagation());
+                        null == v || v(), e.stopPropagation();
                     });
                 return (0, o.jsx)(c.Button, {
                     className: d,
@@ -831,9 +831,9 @@
                             null == m || m.addShortcutsListener(r.Mo.PROMO_LANDING, r.lbr.TOGGLE_REPEAT, k),
                             null == m || m.addShortcutsListener(r.Mo.PROMO_LANDING, r.lbr.TOGGLE_SHUFFLE, P),
                             () => {
-                                (null == m || m.removeShortcutsListener(r.Mo.PROMO_LANDING, r.lbr.TOGGLE_PLAY),
+                                null == m || m.removeShortcutsListener(r.Mo.PROMO_LANDING, r.lbr.TOGGLE_PLAY),
                                     null == m || m.removeShortcutsListener(r.Mo.PROMO_LANDING, r.lbr.TOGGLE_SHUFFLE),
-                                    null == m || m.removeShortcutsListener(r.Mo.PROMO_LANDING, r.lbr.TOGGLE_REPEAT));
+                                    null == m || m.removeShortcutsListener(r.Mo.PROMO_LANDING, r.lbr.TOGGLE_REPEAT);
                             }
                         ),
                         [B, k, P, m],
@@ -994,7 +994,7 @@
                 let { isDisabled: t, shuffle: a, className: u, size: p = 'xxxs', variant: _ = 'default', iconSize: f = 'xs', color: x, onClick: N } = e,
                     { formatMessage: h } = (0, s.A)(),
                     v = (0, i.c)((e) => {
-                        (null == N || N(), e.stopPropagation());
+                        null == N || N(), e.stopPropagation();
                     });
                 return (0, o.jsx)(r.Button, {
                     className: u,

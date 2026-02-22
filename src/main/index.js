@@ -1,6 +1,6 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
-global.requireIfExists = (path) =>{
+global.requireIfExists = (path) => {
     try {
         return require(path);
     } catch (e) {

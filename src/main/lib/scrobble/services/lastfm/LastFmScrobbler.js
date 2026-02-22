@@ -108,7 +108,7 @@ class LastFmScrobbler {
     async logout() {
         this.store.delete(this.SESSION_STORE_KEY);
         const session = electron_1.session;
-        await session.defaultSession.clearStorageData({origin: 'https://www.last.fm'})
+        await session.defaultSession.clearStorageData({ origin: 'https://www.last.fm' });
 
         const cookies = await session.defaultSession.cookies.get({});
         await Promise.all(

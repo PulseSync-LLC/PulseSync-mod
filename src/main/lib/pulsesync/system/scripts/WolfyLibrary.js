@@ -439,15 +439,13 @@
             for (const id in this.actions) {
                 if (this.actions[id]) {
                     try {
-
-
-                    this.actions[id]({
-                        setting: this.settingsManager.get(id),
-                        changed: this.settingsManager.hasChanged(id),
-                        styles: this.stylesManager,
-                        settings: this.settingsManager,
-                        state: this.player.state,
-                    });
+                        this.actions[id]({
+                            setting: this.settingsManager.get(id),
+                            changed: this.settingsManager.hasChanged(id),
+                            styles: this.stylesManager,
+                            settings: this.settingsManager,
+                            state: this.player.state,
+                        });
                     } catch (e) {
                         console.error(`Error executing action for setting "${id}":`, e);
                     }

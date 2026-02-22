@@ -147,10 +147,10 @@
                         let s = { ...(0, a.HO)(e), url: e.url, isPinned: !e.isPinned };
                         m(!0);
                         let l = await e.togglePin();
-                        (m(!1),
+                        m(!1),
                             l
                                 ? t((0, r.jsx)(d, { album: s }), { containerId: n.uQT.INFO })
-                                : t((0, r.jsx)(o.hT, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: n.uQT.ERROR }));
+                                : t((0, r.jsx)(o.hT, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: n.uQT.ERROR });
                     }, [e, u, t, c, i.isAuthorized]);
                 };
         },
@@ -190,10 +190,10 @@
         15029: (e, i, t) => {
             'use strict';
             var r;
-            (t.d(i, { E: () => r }),
+            t.d(i, { E: () => r }),
                 (function (e) {
-                    ((e.KIDS = 'kids'), (e.BOOKMATE = 'bookmate'));
-                })(r || (r = {})));
+                    (e.KIDS = 'kids'), (e.BOOKMATE = 'bookmate');
+                })(r || (r = {}));
         },
         16285: (e, i, t) => {
             'use strict';
@@ -241,11 +241,11 @@
                         let b = { ...(0, a.HO)(l), url: l.url, isLiked: !l.isLiked };
                         t(!0);
                         let p = await l.toggleLike();
-                        (t(!1),
+                        t(!1),
                             m &&
                                 (p === n.f.OK
                                     ? e((0, r.jsx)(v, { withLink: o, album: b }), { containerId: u.uQT.INFO })
-                                    : e((0, r.jsx)(c.hT, { error: d({ id: 'error-messages.error-during-action' }) }), { containerId: u.uQT.ERROR })));
+                                    : e((0, r.jsx)(c.hT, { error: d({ id: 'error-messages.error-during-action' }) }), { containerId: u.uQT.ERROR }));
                     });
                 };
         },
@@ -572,7 +572,7 @@
                 };
             var p = t(17846),
                 _ = t(66268);
-            ((0, _.cache)(async (e) => {
+            (0, _.cache)(async (e) => {
                 var i;
                 let t;
                 (0, d.LLJ)(e) || (0, p.notFound)();
@@ -589,7 +589,7 @@
                 } catch (e) {
                     return (0, d.tfF)(e, () => ({ album: void 0, ...(0, d.Bj3)() }));
                 }
-                return ((null == (i = t.album) ? void 0 : i.error) === 'not-found' && (0, p.notFound)(), t);
+                return (null == (i = t.album) ? void 0 : i.error) === 'not-found' && (0, p.notFound)(), t;
             }),
                 (0, _.cache)(async (e) => {
                     var i;
@@ -612,8 +612,8 @@
                     } catch (e) {
                         return (0, d.tfF)(e, () => ({ album: void 0, isActive: !1, ...(0, d.Bj3)() }));
                     }
-                    return ((null == (i = t.album) ? void 0 : i.error) === 'not-found' && (0, p.notFound)(), t);
-                }));
+                    return (null == (i = t.album) ? void 0 : i.error) === 'not-found' && (0, p.notFound)(), t;
+                });
             let A = (e) => {
                     var i;
                     let t = null == (i = e.artists) ? void 0 : i.map((e) => (0, a.as)({ artist: e }));
@@ -692,10 +692,10 @@
         56312: (e, i, t) => {
             'use strict';
             var r;
-            (t.d(i, { J: () => r }),
+            t.d(i, { J: () => r }),
                 (function (e) {
-                    ((e.OK = 'ok'), (e.ERROR = 'error'));
-                })(r || (r = {})));
+                    (e.OK = 'ok'), (e.ERROR = 'error');
+                })(r || (r = {}));
         },
         57176: (e, i, t) => {
             'use strict';
@@ -727,12 +727,12 @@
                         p = (0, b.KX)(s),
                         [C, h] = (0, l.useState)(!1),
                         k = (0, c.c)(async () => {
-                            (C || s.isLiked || (h(!0), null == v || v()), await p());
+                            C || s.isLiked || (h(!0), null == v || v()), await p();
                         }),
                         x = (0, _.Ftl)(),
                         P = (0, c.c)((e) => {
                             if ((e.stopPropagation(), m())) return void e.preventDefault();
-                            (d.openAlbumTrailer(s.id), x(n.ky.Album, String(s.id)));
+                            d.openAlbumTrailer(s.id), x(n.ky.Album, String(s.id));
                         });
                     return (0, r.jsxs)('div', {
                         className: (0, a.$)(y().root, y().controls, t, { [y().controls_disabled]: !s.isAvailable }),
@@ -788,16 +788,16 @@
                         D = (0, b.cp)({ album: t, callback: K }),
                         S = (0, b.cp)({ album: t, callback: E }),
                         z = (0, c.c)((e) => {
-                            (null == j || j(), B({ to: n.QT.AlbumScreen }), D(e));
+                            null == j || j(), B({ to: n.QT.AlbumScreen }), D(e);
                         }),
                         F = (0, c.c)(() => {
                             M() || (O || w || (I(!0), null == U || U()), S(), T(!w));
                         }),
                         $ = (0, c.c)((e) => {
-                            ((0, m.P)(e, A.$f.ripple), z(e));
+                            (0, m.P)(e, A.$f.ripple), z(e);
                         }),
                         G = (0, c.c)((e) => {
-                            (e.stopPropagation(), z(e));
+                            e.stopPropagation(), z(e);
                         }),
                         Q = (0, l.useCallback)(
                             (e) =>
@@ -897,7 +897,7 @@
                             return;
                         }
                         if ((null == i ? void 0 : i.isLegalRejected) || (null == i ? void 0 : i.isUnsafeLegal)) {
-                            (null == e || e.preventDefault(),
+                            null == e || e.preventDefault(),
                                 await o.getDisclaimerData({ entityId: i.id, entityType: i.isPodcast ? l.nPY.PODCAST : l.nPY.ALBUM, disclaimerId: i.modalDisclaimerId }),
                                 i.isUnsafeLegal && o.setType(l.YwF.UNSAFE),
                                 o.setId(c.current),
@@ -905,10 +905,10 @@
                                 i.isPodcast ? o.setEntityType(l.nPY.PODCAST) : o.setEntityType(l.nPY.ALBUM),
                                 o.setShouldHistoryBack(!!n),
                                 (d.current = !1),
-                                u.open());
+                                u.open();
                             return;
                         }
-                        (null == e || e.preventDefault(), null == t || t(e));
+                        null == e || e.preventDefault(), null == t || t(e);
                     })
                 );
             };
@@ -1012,16 +1012,16 @@
             'use strict';
             t.d(i, { z: () => r });
             var r = (function (e) {
-                return ((e.PAGE = 'PAGE'), (e.CARD = 'CARD'), e);
+                return (e.PAGE = 'PAGE'), (e.CARD = 'CARD'), e;
             })({});
         },
         77059: (e, i, t) => {
             'use strict';
             var r;
-            (t.d(i, { _: () => r }),
+            t.d(i, { _: () => r }),
                 (function (e) {
-                    ((e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new'));
-                })(r || (r = {})));
+                    (e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new');
+                })(r || (r = {}));
         },
         79836: (e) => {
             e.exports = {
@@ -1075,7 +1075,7 @@
                 a = t(73827),
                 s = t(15479),
                 l = (function (e) {
-                    return ((e.PIN = 'pin'), e);
+                    return (e.PIN = 'pin'), e;
                 })({});
             let n = (e, i) => {
                 let { formatMessage: t } = (0, a.A)();
@@ -1098,7 +1098,7 @@
         },
         86335: (e, i, t) => {
             'use strict';
-            (t.r(i), t.d(i, { AlbumCard: () => T }));
+            t.r(i), t.d(i, { AlbumCard: () => T });
             var r = t(33008),
                 a = t(85896),
                 s = t(97531),
@@ -1170,7 +1170,7 @@
                     eg = (0, k.ZpR)('https://music.yandex.ru/promo/lt-pay-promo/?get-plus=1&utm_source=music&utm_medium=non_music_tab&utm_campaign=web_music_birthday'),
                     eC = (0, m.c)((e) => {
                         if ((e.stopPropagation(), ed())) return void e.preventDefault();
-                        (E.openAlbumTrailer(s.id), eo(o.ky.Album, String(s.id)));
+                        E.openAlbumTrailer(s.id), eo(o.ky.Album, String(s.id));
                     }),
                     ey = s.type === d._.SINGLE ? G({ id: 'entity-names.single' }) : void 0,
                     eh = s.releaseDate ? Q(s.releaseDate, U()) : void 0,
@@ -1191,16 +1191,16 @@
                     eL = (0, C.cp)({ album: s, callback: es }),
                     eO = (0, C.cp)({ album: s, callback: eN }),
                     eI = (0, m.c)((e) => {
-                        (ei({ to: o.QT.AlbumScreen }), null == W || W(), eL(e));
+                        ei({ to: o.QT.AlbumScreen }), null == W || W(), eL(e);
                     }),
                     eT = (0, m.c)(() => {
                         ed() || (Z || ef || (J(!0), null == Y || Y()), eO(), et(!ef));
                     }),
                     eK = (0, m.c)(() => {
-                        (H || s.isLiked || (V(!0), null == q || q()), er());
+                        H || s.isLiked || (V(!0), null == q || q()), er();
                     }),
                     eM = (0, m.c)((e) => {
-                        (ee(e), en(e));
+                        ee(e), en(e);
                     }),
                     ej = (0, l.useMemo)(() => {
                         var e;
@@ -1471,10 +1471,10 @@
                         let s = { ...(0, a.HO)(e), isPresave: !e.isPresave };
                         m(!0);
                         let l = await e.toggleLike();
-                        (m(!1),
+                        m(!1),
                             l === n.J.OK
                                 ? t((0, r.jsx)(c, { upcomingAlbum: s }), { containerId: o.uQT.INFO })
-                                : t((0, r.jsx)(u.hT, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: o.uQT.ERROR }));
+                                : t((0, r.jsx)(u.hT, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: o.uQT.ERROR });
                     }, [i.isAuthorized, d, e, t, v]);
                 };
         },
@@ -1493,7 +1493,7 @@
                         return;
                     }
                     if (n(i)) {
-                        (null == e || e.preventDefault(), o(l(i, t)));
+                        null == e || e.preventDefault(), o(l(i, t));
                         return;
                     }
                     null == s || s(e);
@@ -1577,7 +1577,7 @@
                     return (0, r.wg)({ id: e.id, disclaimers: t, isPresave: i, title: e.title, type: e.type, coverUri: e.coverUri, releaseDate: e.releaseDate });
                 };
             var n = (function (e) {
-                    return ((e.TRACK = 'track'), (e.TEXT = 'text'), e);
+                    return (e.TRACK = 'track'), (e.TEXT = 'text'), e;
                 })({}),
                 o = t(80810),
                 u = t(57609),
@@ -1721,7 +1721,7 @@
                             let { library: i, user: t } = (0, r.Zn)(e);
                             if (t.isAuthorized) {
                                 let a = yield i.toggleAlbumLike({ entityId: e.id, userId: t.account.data.uid });
-                                return ((0, r._n)(e) && a === h.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), a);
+                                return (0, r._n)(e) && a === h.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), a;
                             }
                         }),
                         togglePin: (0, r.L3)(function* () {
@@ -1755,9 +1755,9 @@
                             try {
                                 e.isPresave = !0;
                                 let r = yield t.presaveAlbum(i);
-                                return (r === f.J.ERROR && (e.isPresave = !1), r);
+                                return r === f.J.ERROR && (e.isPresave = !1), r;
                             } catch (i) {
-                                return ((e.isPresave = !1), a.error(i), f.J.ERROR);
+                                return (e.isPresave = !1), a.error(i), f.J.ERROR;
                             }
                         }),
                         removePresaveAlbum: (0, r.L3)(function* (i) {
@@ -1765,9 +1765,9 @@
                             try {
                                 e.isPresave = !1;
                                 let r = yield t.removePresaveAlbum(i);
-                                return (r === f.J.ERROR && (e.isPresave = !0), r);
+                                return r === f.J.ERROR && (e.isPresave = !0), r;
                             } catch (i) {
-                                return ((e.isPresave = !0), a.error(i), f.J.ERROR);
+                                return (e.isPresave = !0), a.error(i), f.J.ERROR;
                             }
                         }),
                         toggleLike: (0, r.L3)(function* () {
