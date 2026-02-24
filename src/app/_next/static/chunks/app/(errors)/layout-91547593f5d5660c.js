@@ -962,7 +962,7 @@
                                 appStallNotify(
                                     (0, n.jsx)(toastWithProgress, {
                                         toastID: 'safeModeRestart',
-                                        message: `Приложение запускается слишком долго и перезапустится в безопасном режиме через 10 секунд`,
+                                        message: 'Плеер запускается слишком долго. Перезагрузка в безопасном режиме через #s',
                                         buttonLabel: 'Отменить',
                                         onButtonClick: onAppStallFixClick,
                                         dismissOnButtonClick: true,
