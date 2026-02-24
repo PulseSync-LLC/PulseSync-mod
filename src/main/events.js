@@ -313,8 +313,14 @@ const handleApplicationEvents = (window) => {
             if (!isSafeMode) {
                 eventsLogger.error('PLAYER_READY event timeout reached. Prompt safe mode restart.');
                 mainWindow.webContents.send(events_js_1.Events.APP_STALL);
+                let progress = 0,
+                    interval = setInterval(() => {
+                        sendProgressBarChange(window, 'safeModeRestart', progress, `${Math.round(10 - progress / 10)} сек`);
+                        progress += 1;
+                    }, 100);
                 appSafeModeRestartTimeout = setTimeout(() => {
                     eventsLogger.error('Safe mode restart timeout reached. Restarting in safe mode.');
+                    clearInterval(interval);
                     restartApplication(true);
                 }, 10000);
             }
