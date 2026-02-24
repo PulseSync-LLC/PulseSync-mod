@@ -42,6 +42,7 @@ const taskBarExtension_js_1 = require('./lib/taskBarExtension/taskBarExtension.j
 const scrobbleManager_js_1 = require('./lib/scrobble/index.js');
 const { getPulseSyncManager } = require('./lib/pulsesync/PulseSyncManager.js');
 const miniPlayer_js_1 = require('./lib/miniplayer/miniplayer.js');
+const discordRichPresence_js_1 = require('./lib/discordRichPresence.js');
 
 const playerActions_js_1 = require('./types/playerActions.js');
 const platform_js_1 = require('./types/platform.js');
@@ -103,9 +104,30 @@ const updateGlobalShortcuts = () => {
     }
 };
 
+const restartApplication = (safeMode = false) => {
+    if (safeMode) {
+        electron_1.app.relaunch({ args: ['--safe-mode'] });
+    } else {
+        electron_1.app.relaunch();
+    }
+    electron_1.app.exit();
+};
+
 const handleApplicationEvents = (window) => {
     mainWindow = window;
     eventsLogger.info('Application events handler initialized');
+
+    const isSafeMode = process.argv.includes('--safe-mode');
+
+    const applicationReadyTimeOut = setTimeout(() => {
+        if (!isSafeMode) {
+            eventsLogger.error('Application ready event timeout reached. Restarting in safe mode.');
+            restartApplication(true);
+        }
+    }, 5000);
+    let playerReadyTimeout;
+    let appSafeModeRestartTimeout;
+
     const updater = (0, updater_js_1.getUpdater)();
     const trackDownloader = new trackDownloader_js_1.TrackDownloader(window);
 
@@ -203,10 +225,9 @@ const handleApplicationEvents = (window) => {
         if (type === 'GPU') mainWindow?.webContents.send(events_js_1.Events.GPU_STALL, reason);
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_RESTART, () => {
+    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_RESTART, (event, { safeMode = false }) => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_RESTART);
-        electron_1.app.relaunch();
-        electron_1.app.exit();
+        restartApplication(safeMode);
     });
 
     electron_1.ipcMain.handle('scrobble-login', () => {
@@ -277,13 +298,32 @@ const handleApplicationEvents = (window) => {
         eventsLogger.info('Event received', events_js_1.Events.INSTALL_UPDATE);
         updater.install();
     });
+    electron_1.ipcMain.on(events_js_1.Events.APP_STALL_CANCEL_RESTART, () => {
+        eventsLogger.info('Event received', events_js_1.Events.APP_STALL_CANCEL_RESTART);
+        appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
+    });
     electron_1.ipcMain.on(events_js_1.Events.APPLICATION_READY, async (event, language) => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_READY);
 
+        clearTimeout(applicationReadyTimeOut);
+
         isPlayerReady = false;
+
+        playerReadyTimeout = setTimeout(() => {
+            if (!isSafeMode) {
+                eventsLogger.error('PLAYER_READY event timeout reached. Prompt safe mode restart.');
+                mainWindow.webContents.send(events_js_1.Events.APP_STALL);
+                appSafeModeRestartTimeout = setTimeout(() => {
+                    eventsLogger.error('Safe mode restart timeout reached. Restarting in safe mode.');
+                    restartApplication(true);
+                }, 10000);
+            }
+        }, 5000);
 
         (0, pulseSyncManager_js_1.readyEvent)();
         (0, deviceInfo_js_1.logHardwareInfo)();
+        (0, pulseSyncManager_js_1.validatePremium)();
+
         if (state_js_1.state.deeplink) {
             (0, handleDeeplink_js_1.navigateToDeeplink)(window, state_js_1.state.deeplink);
         }
@@ -348,8 +388,18 @@ const handleApplicationEvents = (window) => {
                 sendProgressBarChange(window, 'ffmpeg', progressRenderer * 100);
                 window.setProgressBar(progressWindow);
             };
-            await ffmpegInstaller.ensureInstalled(throttle(callback, PROGRESS_BAR_THROTTLE_MS));
-            sendBasicToastDismiss(window, 'ffmpeg');
+            ffmpegInstaller
+                .ensureInstalled(throttle(callback, PROGRESS_BAR_THROTTLE_MS))
+                .then(() => {
+                    sendBasicToastDismiss(window, 'ffmpeg');
+                })
+                .catch((err) => {
+                    sendProgressBarChange(window, 'ffmpeg', -1);
+                    eventsLogger.error(err);
+                    setTimeout(() => {
+                        sendBasicToastDismiss(window, 'ffmpeg');
+                    }, 2500);
+                });
         } else {
         }
 
@@ -414,21 +464,27 @@ const handleApplicationEvents = (window) => {
             (0, tray_js_1.updateTrayMenu)(window);
             (0, scrobbleManager_js_1.handlePlayingStateEvent)(structuredClone(data));
             (0, pulseSyncManager_js_1.updatePlayerState)(structuredClone(data));
+            (0, discordRichPresence_js_1.discordRichPresence)(structuredClone(data));
             return;
         }
 
-        if (data.status === 'idle' && data.track) {
+        if (data.status === 'idle' && data.track && !isPlayerReady) {
             if (store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
                 eventsLogger.info('Auto launch enabled: toggling play');
                 exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
             }
             isPlayerReady = true;
+            playerReadyTimeout && clearTimeout(playerReadyTimeout);
+            appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
+            sendBasicToastDismiss(window, 'safeModeRestart');
+
+            if (isSafeMode) sendBasicToastCreate(window, 'safeModeNoticeToast', 'Безопасный режим. Аддоны отключены.', 'Ясно');
         }
     });
     electron_1.ipcMain.on(events_js_1.Events.YNISON_STATE, (event, data) => {
         eventsLogger.info(`Event received`, events_js_1.Events.YNISON_STATE, data);
-        (0, scrobbleManager_js_1.handlePlayingStateEventFromYnison)(data);
-        (0, pulseSyncManager_js_1.fromYnisonState)(data);
+        (0, scrobbleManager_js_1.handlePlayingStateEventFromYnison)(structuredClone(data));
+        (0, discordRichPresence_js_1.fromYnisonState)(structuredClone(data));
     });
 
     electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_MOD_UPDATE, async (event, data) => {
@@ -448,6 +504,13 @@ const handleApplicationEvents = (window) => {
 
     electron_1.ipcMain.on(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, value);
+        if (key === 'modSettings.window.hidePulseSyncVersionInTitleBar') {
+            const isPremium = Boolean(getPulseSyncManager()?.isPremiumUser);
+            if (value && !isPremium) {
+                eventsLogger.warn('Blocked non-premium attempt to hide PulseSync version in title bar');
+                value = false;
+            }
+        }
         store_js_1.set(key, value);
         if (key === 'modSettings.globalShortcuts.enable') {
             updateGlobalShortcuts();
@@ -631,4 +694,12 @@ electron_1.ipcMain.handle('set-zoom-level', setZoomLevel);
 
 MiniPlayer.onPlayerAction((action, value) => {
     sendPlayerAction(mainWindow, action, value);
+});
+
+electron_1.ipcMain.handle('isPremiumUser', () => {
+    eventsLogger.info('Event handle', 'isPremiumUser');
+    return getPulseSyncManager().isPremiumUser;
+});
+electron_1.ipcMain.on('isPremiumUserSync', (event) => {
+    event.returnValue = Boolean(getPulseSyncManager()?.isPremiumUser);
 });

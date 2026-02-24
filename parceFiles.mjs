@@ -5,7 +5,7 @@ import readline from 'readline';
 async function prompt(question) {
     const rl = readline.createInterface({
         input: process.stdin,
-        output: process.stdout
+        output: process.stdout,
     });
 
     return new Promise((resolve) => {
@@ -25,9 +25,7 @@ async function copyFiles(version, fileIds) {
 
         const files = await fs.readdir(sourceDir);
 
-        const filesToCopy = files.filter(file =>
-            fileIds.some(id => file.startsWith(id))
-        );
+        const filesToCopy = files.filter((file) => fileIds.some((id) => file.startsWith(id)));
 
         for (const file of filesToCopy) {
             const sourcePath = path.join(sourceDir, file);
@@ -47,7 +45,7 @@ async function copyFiles(version, fileIds) {
     try {
         const version = await prompt('Введите версию: ');
         const fileIdsInput = await prompt('Введите ID файлов через запятую: ');
-        const fileIds = fileIdsInput.split(',').map(id => id.trim());
+        const fileIds = fileIdsInput.split(',').map((id) => id.trim());
 
         if (!version || fileIds.length === 0) {
             console.error('Ошибка: версия или список ID файлов не указаны.');

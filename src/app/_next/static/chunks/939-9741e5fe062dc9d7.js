@@ -41,7 +41,7 @@
                 r = a(66268),
                 l = {
                     6699: (e, t, a) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0);
                         let i = a(352),
                             s = a(810);
                         t.useDebouncedToggle = (e) => {
@@ -51,16 +51,16 @@
                                 c = (0, s.useMemo)(
                                     () =>
                                         (0, i.throttle)(() => {
-                                            (o(!a),
+                                            o(!a),
                                                 l.current && window.clearTimeout(l.current),
                                                 (l.current = window.setTimeout(() => {
                                                     o(!!a);
-                                                }, t)));
+                                                }, t));
                                         }, r),
                                     [t, a, r],
                                 ),
                                 d = (0, s.useCallback)(() => {
-                                    (o(!!a), l.current && window.clearTimeout(l.current));
+                                    o(!!a), l.current && window.clearTimeout(l.current);
                                 }, [a]);
                             return (
                                 (0, s.useEffect)(
@@ -74,7 +74,7 @@
                         };
                     },
                     2767: (e, t, a) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0);
                         let i = a(810);
                         t.useForceUpdateRef = () => {
                             let [e, t] = (0, i.useState)(null);
@@ -87,7 +87,7 @@
                         };
                     },
                     2067: (e, t, a) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0);
                         let i = a(810),
                             s = a(361),
                             r = a(6699);
@@ -95,7 +95,7 @@
                             let { onScroll: t, listenIsScrolling: a, elementRef: l } = e,
                                 { state: n, handleDebouncedToggle: o } = (0, r.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                                 c = (0, i.useCallback)(() => {
-                                    (a && o(), null == t || t());
+                                    a && o(), null == t || t();
                                 }, [a, o, t]);
                             return (
                                 (0, i.useEffect)(() => {
@@ -103,21 +103,21 @@
                                     if (null === e) return;
                                     let t = null != e ? e : window,
                                         a = { capture: !0, passive: !0 };
-                                    return (t.addEventListener('scroll', c, a), () => t.removeEventListener('scroll', c, a));
+                                    return t.addEventListener('scroll', c, a), () => t.removeEventListener('scroll', c, a);
                                 }, [l, c]),
                                 n
                             );
                         };
                     },
                     361: (e, t) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                        Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            }));
+                            });
                     },
                     352: (e) => {
                         e.exports = s;
@@ -131,11 +131,11 @@
                 var t = n[e];
                 if (void 0 !== t) return t.exports;
                 var a = (n[e] = { exports: {} });
-                return (l[e](a, a.exports, o), a.exports);
+                return l[e](a, a.exports, o), a.exports;
             }
             var c = {};
-            ((() => {
-                (Object.defineProperty(c, '__esModule', { value: !0 }), (c.useElementOffsetY = void 0));
+            (() => {
+                Object.defineProperty(c, '__esModule', { value: !0 }), (c.useElementOffsetY = void 0);
                 let e = o(810),
                     t = o(2067),
                     a = o(2767);
@@ -146,10 +146,10 @@
                             let e = null == s ? void 0 : s.getBoundingClientRect();
                             e && n(e.y);
                         }, [s]);
-                    return ((0, e.useLayoutEffect)(o), (0, t.useScroll)({ onScroll: o, elementRef: i }), { forceUpdateRefCallback: r, offsetY: l });
+                    return (0, e.useLayoutEffect)(o), (0, t.useScroll)({ onScroll: o, elementRef: i }), { forceUpdateRefCallback: r, offsetY: l };
                 };
             })(),
-                c.__esModule);
+                c.__esModule;
             var d = c.useElementOffsetY;
         },
         2662: (e, t, a) => {
@@ -193,7 +193,7 @@
                     w = (0, d.c)((e) => {
                         N.clipsSubpage.getData({ artistId: a, page: e, pageSize: p.EV });
                     });
-                ((0, _.XcE)(N.clipsSubpage.pagesLoader, w),
+                (0, _.XcE)(N.clipsSubpage.pagesLoader, w),
                     (0, C.G)(a),
                     (0, S._)(N, a),
                     (0, n.useEffect)(
@@ -211,7 +211,7 @@
                                 (0, _.jxB)(e);
                             });
                         }, [null == e ? void 0 : e.meta, null == e ? void 0 : e.isLoading]);
-                    })(N));
+                    })(N);
                 let B = N.clipsSubpage.isShimmerVisible ? 20 : N.clipsSubpage.items.length,
                     M = (0, n.useMemo)(() => ({ Footer: () => (0, i.jsx)(b.A, { children: (0, i.jsx)(b.wi, { className: j().footer }) }) }), []),
                     U = (0, n.useMemo)(() => L({ id: 'page.artist-clips-header' }, { artistName: N.commonSubPage.artistName }), [N.commonSubPage.artistName, L]),
@@ -391,7 +391,7 @@
                     [U, M],
                 );
                 let O = (0, h.SA)({ artist: null == (t = L.meta) ? void 0 : t.artist, shouldHistoryBack: !0 });
-                ((0, x.G)(j),
+                (0, x.G)(j),
                     (0, l.useEffect)(() => {
                         var e;
                         (null == (e = L.meta) ? void 0 : e.artist.isUnsafeLegal) && O();
@@ -404,7 +404,7 @@
                         [L],
                     ),
                     (0, _.Jzs)(L.concertsSubpage.isResolved),
-                    L.concertsSubpage.isNotFound && (0, r.notFound)());
+                    L.concertsSubpage.isNotFound && (0, r.notFound)();
                 let F = (0, l.useMemo)(() => {
                         var e;
                         return L.concertsSubpage.isLoading
@@ -638,7 +638,7 @@
                     w = (0, d.c)(() => {
                         s.tracksController && _.ids && k.getData(s.tracksController, _.ids);
                     });
-                ((0, N.L)(w),
+                (0, N.L)(w),
                     (0, l.useEffect)(() => {
                         A.meta && k.isResolved && k.items && A.setTracksCount(k.items.length);
                     }, [A, A.meta, k.isResolved, k.items]),
@@ -651,7 +651,7 @@
                         },
                         [A, t],
                     ),
-                    (0, b.Jzs)(A.isResolved));
+                    (0, b.Jzs)(A.isResolved);
                 let B = (0, l.useMemo)(
                         () =>
                             A.isLoading || !A.meta
@@ -1164,7 +1164,7 @@
                         { topColorStyle: Y, headerStyle: X } = (0, f.QZ)(W, $, L),
                         K = null == (s = y.meta) ? void 0 : s.hasCovers,
                         Q = (0, r.useSearchParams)();
-                    ((0, C.G)(T),
+                    (0, C.G)(T),
                         (0, b.ACS)(),
                         (0, l.useEffect)(() => {
                             let e = Q.get(b.K3F.BLOCK);
@@ -1181,9 +1181,9 @@
                                         a.scrollTo({ top: t - 10, behavior: 'smooth' });
                                     }
                                 })({ blockId: e, scrollRef: H, headerRef: z });
-                        }, [y.isResolved, y.familiarInfo.isResolved, H, Q]));
+                        }, [y.isResolved, y.familiarInfo.isResolved, H, Q]);
                     let q = (0, A.SA)({ artist: null == (x = y.meta) ? void 0 : x.artist, shouldHistoryBack: !0 });
-                    ((0, l.useEffect)(() => {
+                    (0, l.useEffect)(() => {
                         var e;
                         (null == (e = y.meta) ? void 0 : e.artist.isUnsafeLegal) && q();
                     }, [null == (j = y.meta) ? void 0 : j.artist.isUnsafeLegal, q]),
@@ -1193,7 +1193,7 @@
                                 M.isAuthorized && y.familiarInfo.reset();
                             },
                             [y, T, M.isAuthorized],
-                        ));
+                        );
                     let J = (0, d.c)(() => {
                         var e;
                         (null == (e = y.meta) ? void 0 : e.hasCovers) && y.meta.covers && O.openImages({ images: y.meta.covers });
@@ -1203,7 +1203,7 @@
                         let { href: e } = (0, b.uvd)('/artist/:artistId', { params: { artistId: y.deprecationTargetArtistId } });
                         (0, r.redirect)(e);
                     }
-                    ((0, l.useMemo)(
+                    (0, l.useMemo)(
                         () => () => {
                             (y.isRejected || (!y.meta && !y.isLoading)) &&
                                 D &&
@@ -1223,7 +1223,7 @@
                                     (0, b.jxB)(e);
                                 });
                             }, [null == e ? void 0 : e.meta, null == e ? void 0 : e.isLoading]);
-                        })(y));
+                        })(y);
                     let Z = w.checkExperiment(b.zal.WebNextArtistSkeletonHeader, 'on'),
                         ee = w.checkExperiment(b.zal.WebNextArtistSkeleton, 'on'),
                         et = !Z || !ee,
@@ -1347,13 +1347,13 @@
                             try {
                                 e.loadingState = n.GuX.PENDING;
                                 let i = yield t.getTracks(a);
-                                ((e.tracks = i), (e.items = (0, s.wg)(i.map((e) => (0, l.vU)(e)))), e.loadingState !== n.GuX.IDLE && (e.loadingState = n.GuX.RESOLVE));
+                                (e.tracks = i), (e.items = (0, s.wg)(i.map((e) => (0, l.vU)(e)))), e.loadingState !== n.GuX.IDLE && (e.loadingState = n.GuX.RESOLVE);
                             } catch (t) {
-                                (i.error(t), e.loadingState !== n.GuX.IDLE && (e.loadingState = n.GuX.REJECT));
+                                i.error(t), e.loadingState !== n.GuX.IDLE && (e.loadingState = n.GuX.REJECT);
                             }
                     }),
                     reset() {
-                        ((e.items = null), (e.tracks = null), (e.loadingState = n.GuX.IDLE));
+                        (e.items = null), (e.tracks = null), (e.loadingState = n.GuX.IDLE);
                     },
                 }));
         },
@@ -1400,7 +1400,7 @@
                         B.albumsSubpage.getData({ artistId: E, page: e, pageSize: h.r3, sort: { sortBy: d.g.YEAR } });
                     }),
                     V = (0, A.SA)({ artist: null == (t = B.meta) ? void 0 : t.artist, shouldHistoryBack: !0 });
-                ((0, j.G)(E),
+                (0, j.G)(E),
                     (0, n.useEffect)(() => {
                         var e;
                         (null == (e = B.meta) ? void 0 : e.artist.isUnsafeLegal) && V();
@@ -1435,7 +1435,7 @@
                                     });
                             }
                         }, [null == e ? void 0 : e.meta, null == e ? void 0 : e.isLoading, t]);
-                    })(B, R));
+                    })(B, R);
                 let $ = (0, n.useMemo)(() => ({ Footer: () => (0, i.jsx)(v.A, { children: (0, i.jsx)(v.wi, { className: T().footer }) }) }), []),
                     z = (0, n.useMemo)(() => {
                         switch (R) {
@@ -1564,7 +1564,7 @@
                     F = (0, b.W6M)(),
                     D = (0, b.wZZ)(),
                     H = (0, A.SA)({ artist: null == (t = P.meta) ? void 0 : t.artist, shouldHistoryBack: !0 });
-                ((0, C.G)(I),
+                (0, C.G)(I),
                     (0, n.useEffect)(() => {
                         var e;
                         (null == (e = P.meta) ? void 0 : e.artist.isUnsafeLegal) && H();
@@ -1577,7 +1577,7 @@
                         [P],
                     ),
                     P.fullTracksListSubpage.isNotFound && (0, l.notFound)(),
-                    (0, b.Jzs)(P.fullTracksListSubpage.isResolved));
+                    (0, b.Jzs)(P.fullTracksListSubpage.isResolved);
                 let G = (0, n.useMemo)(() => ({ Footer: () => (0, i.jsx)(v.A, { children: (0, i.jsx)(v.wi, { className: j().footer }) }) }), []),
                     V = (0, m.c)((e) => {
                         let t = [];
@@ -1821,8 +1821,7 @@
                             null == (i = a.store) || i.tracks.events.on(s.je.ENTITY_CHANGED, o),
                             () => {
                                 var t, i;
-                                (null == (t = a.store) || t.tracks.events.off(s.je.STATE_CHANGED, e),
-                                    null == (i = a.store) || i.tracks.events.off(s.je.ENTITY_CHANGED, o));
+                                null == (t = a.store) || t.tracks.events.off(s.je.STATE_CHANGED, e), null == (i = a.store) || i.tracks.events.off(s.je.ENTITY_CHANGED, o);
                             }
                         );
                     }, [e, o, null == (t = a.store) ? void 0 : t.tracks.events]);
@@ -1860,7 +1859,7 @@
                     { contentScrollRef: P, setContentScrollRef: E } = (0, A.gKY)(),
                     R = (0, A.W6M)(),
                     y = (0, h.SA)({ artist: null == (t = T.meta) ? void 0 : t.artist, shouldHistoryBack: !0 });
-                ((0, k.G)(x),
+                (0, k.G)(x),
                     (0, l.useEffect)(() => {
                         var e;
                         (null == (e = T.meta) ? void 0 : e.artist.isUnsafeLegal) && y();
@@ -1873,7 +1872,7 @@
                         [T],
                     ),
                     T.similarArtistsSubPage.isNotFound && (0, r.notFound)(),
-                    (0, A.Jzs)(T.similarArtistsSubPage.isResolved));
+                    (0, A.Jzs)(T.similarArtistsSubPage.isResolved);
                 let w = (0, l.useMemo)(() => {
                         if (T.similarArtistsSubPage.isResolved) {
                             var e;
@@ -2000,7 +1999,7 @@
                 p = a(79169),
                 g = a(1022),
                 h = (function (e) {
-                    return ((e[(e.COLLECTION = 0)] = 'COLLECTION'), (e[(e.VIBE = 1)] = 'VIBE'), e);
+                    return (e[(e.COLLECTION = 0)] = 'COLLECTION'), (e[(e.VIBE = 1)] = 'VIBE'), e;
                 })({}),
                 f = a(98738),
                 A = a(87132),
@@ -2026,10 +2025,10 @@
                     let r = new URLSearchParams(a);
                     switch ((null == (s = e.onTabChange) || s.call(e, i), i)) {
                         case h.COLLECTION:
-                            (r.set(p.K3F.TAB, p.JCK.COLLECTION), t((0, p.Cvn)(window.location.pathname, r)));
+                            r.set(p.K3F.TAB, p.JCK.COLLECTION), t((0, p.Cvn)(window.location.pathname, r));
                             break;
                         case h.VIBE:
-                            (r.set(p.K3F.TAB, p.JCK.VIBE), t((0, p.Cvn)(window.location.pathname, r)));
+                            r.set(p.K3F.TAB, p.JCK.VIBE), t((0, p.Cvn)(window.location.pathname, r));
                     }
                 });
             };
@@ -2304,7 +2303,7 @@
                         }, [S]),
                         L = (0, o.useTabsState)(I),
                         P = (0, u.SA)({ artist: null == (t = C.meta) ? void 0 : t.artist, shouldHistoryBack: !0 });
-                    ((0, A.G)(_),
+                    (0, A.G)(_),
                         (0, l.useEffect)(() => {
                             var e;
                             (null == (e = C.meta) ? void 0 : e.artist.isUnsafeLegal) && P();
@@ -2317,7 +2316,7 @@
                             [C],
                         ),
                         (0, p.Jzs)(C.familiarSubpage.isResolved),
-                        C.familiarSubpage.isNotFound && (0, r.notFound)());
+                        C.familiarSubpage.isNotFound && (0, r.notFound)();
                     let E = (0, l.useMemo)(() => {
                             switch (L.value) {
                                 case h.COLLECTION:

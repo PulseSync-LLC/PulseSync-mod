@@ -9,19 +9,19 @@
                 s = o(7144),
                 t = o(66268),
                 l = o(73827);
-            (!(function (e) {
-                ((e.formatDate = 'FormattedDate'),
+            !(function (e) {
+                (e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName'));
+                    (e.formatDisplayName = 'FormattedDisplayName');
             })(n || (n = {})),
                 (function (e) {
-                    ((e.formatDate = 'FormattedDateParts'),
+                    (e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts'));
-                })(i || (i = {})));
+                        (e.formatList = 'FormattedListParts');
+                })(i || (i = {}));
             var d = function (e) {
                 var r = (0, l.A)(),
                     o = e.value,
@@ -38,7 +38,7 @@
                         d = 'string' == typeof n ? new Date(n || 0) : n;
                     return i('formatDate' === e ? o.formatDateToParts(d, t) : o.formatTimeToParts(d, t));
                 };
-                return ((r.displayName = i[e]), r);
+                return (r.displayName = i[e]), r;
             }
             function v(e) {
                 var r = function (r) {
@@ -51,11 +51,11 @@
                     var v = o.textComponent || t.Fragment;
                     return t.createElement(v, null, m);
                 };
-                return ((r.displayName = n[e]), r);
+                return (r.displayName = n[e]), r;
             }
-            ((d.displayName = 'FormattedNumberParts'), (d.displayName = 'FormattedNumberParts'));
+            (d.displayName = 'FormattedNumberParts'), (d.displayName = 'FormattedNumberParts');
             var h = v('formatDate');
-            (v('formatTime'), v('formatNumber'), v('formatList'), v('formatDisplayName'), m('formatDate'), m('formatTime'));
+            v('formatTime'), v('formatNumber'), v('formatList'), v('formatDisplayName'), m('formatDate'), m('formatTime');
         },
         26271: (e) => {
             e.exports = {
@@ -157,7 +157,7 @@
             var n = o(27618);
         },
         60119: (e, r, o) => {
-            (Promise.resolve().then(o.bind(o, 52756)),
+            Promise.resolve().then(o.bind(o, 52756)),
                 Promise.resolve().then(o.bind(o, 41458)),
                 Promise.resolve().then(o.bind(o, 80922)),
                 Promise.resolve().then(o.bind(o, 54487)),
@@ -438,7 +438,7 @@
                 Promise.resolve().then(o.bind(o, 43701)),
                 Promise.resolve().then(o.bind(o, 45228)),
                 Promise.resolve().then(o.bind(o, 20508)),
-                Promise.resolve().then(o.bind(o, 64715)));
+                Promise.resolve().then(o.bind(o, 64715));
         },
         83080: (e) => {
             e.exports = { root: 'VirtualGridRow_root___UfbI' };
@@ -488,14 +488,14 @@
                             P.current ||
                                 (P.current = new ResizeObserver((e) => {
                                     let r = !1;
-                                    (e.forEach((e) => {
+                                    e.forEach((e) => {
                                         let o = e.target.getAttribute('data-index');
                                         if (e.target && o) {
                                             let n = e.contentRect.height;
                                             n && n !== b.current.get(o) && (b.current.set(o, e.contentRect.height), (r = !0));
                                         }
                                     }),
-                                        r && _());
+                                        r && _();
                                 }));
                         }, [_]),
                         { virtualizer: f, resizeObserver: P.current }

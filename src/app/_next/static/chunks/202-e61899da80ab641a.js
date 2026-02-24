@@ -16,7 +16,7 @@
                 a = (function () {
                     function t(t, e, i) {
                         var a = this;
-                        ((this.endVal = e),
+                        (this.endVal = e),
                             (this.options = i),
                             (this.version = '2.8.1'),
                             (this.defaults = {
@@ -46,21 +46,21 @@
                             (this.count = function (t) {
                                 a.startTime || (a.startTime = t);
                                 var e = t - a.startTime;
-                                ((a.remaining = a.duration - e),
+                                (a.remaining = a.duration - e),
                                     a.useEasing
                                         ? a.countDown
                                             ? (a.frameVal = a.startVal - a.easingFn(e, 0, a.startVal - a.endVal, a.duration))
                                             : (a.frameVal = a.easingFn(e, a.startVal, a.endVal - a.startVal, a.duration))
-                                        : (a.frameVal = a.startVal + (a.endVal - a.startVal) * (e / a.duration)));
+                                        : (a.frameVal = a.startVal + (a.endVal - a.startVal) * (e / a.duration));
                                 var i = a.countDown ? a.frameVal < a.endVal : a.frameVal > a.endVal;
-                                ((a.frameVal = i ? a.endVal : a.frameVal),
+                                (a.frameVal = i ? a.endVal : a.frameVal),
                                     (a.frameVal = Number(a.frameVal.toFixed(a.options.decimalPlaces))),
                                     a.printValue(a.frameVal),
                                     e < a.duration
                                         ? (a.rAF = requestAnimationFrame(a.count))
                                         : null !== a.finalEndVal
                                           ? a.update(a.finalEndVal)
-                                          : a.options.onCompleteCallback && a.options.onCompleteCallback());
+                                          : a.options.onCompleteCallback && a.options.onCompleteCallback();
                             }),
                             (this.formatNumber = function (t) {
                                 var e,
@@ -70,10 +70,10 @@
                                 if (((e = n[0]), (i = n.length > 1 ? a.options.decimal + n[1] : ''), a.options.useGrouping)) {
                                     s = '';
                                     for (var o = 3, r = 0, l = 0, d = e.length; l < d; ++l)
-                                        (a.options.useIndianSeparators && 4 === l && ((o = 2), (r = 1)),
+                                        a.options.useIndianSeparators && 4 === l && ((o = 2), (r = 1)),
                                             0 !== l && r % o == 0 && (s = a.options.separator + s),
                                             r++,
-                                            (s = e[d - l - 1] + s));
+                                            (s = e[d - l - 1] + s);
                                     e = s;
                                 }
                                 return (
@@ -117,7 +117,7 @@
                                               return t();
                                           });
                                       }),
-                                      this.handleScroll(this))));
+                                      this.handleScroll(this)));
                     }
                     return (
                         (t.prototype.handleScroll = function (t) {
@@ -140,8 +140,8 @@
                             if (((this.countDown = this.startVal > t), Math.abs(t - this.startVal) > this.options.smartEasingThreshold && this.options.useEasing)) {
                                 this.finalEndVal = t;
                                 var e = this.countDown ? 1 : -1;
-                                ((this.endVal = t + e * this.options.smartEasingAmount), (this.duration = this.duration / 2));
-                            } else ((this.endVal = t), (this.finalEndVal = null));
+                                (this.endVal = t + e * this.options.smartEasingAmount), (this.duration = this.duration / 2);
+                            } else (this.endVal = t), (this.finalEndVal = null);
                             null !== this.finalEndVal ? (this.useEasing = !1) : (this.useEasing = this.options.useEasing);
                         }),
                         (t.prototype.start = function (t) {
@@ -153,25 +153,25 @@
                                     : this.printValue(this.endVal));
                         }),
                         (t.prototype.pauseResume = function () {
-                            (this.paused
+                            this.paused
                                 ? ((this.startTime = null),
                                   (this.duration = this.remaining),
                                   (this.startVal = this.frameVal),
                                   this.determineDirectionAndSmartEasing(),
                                   (this.rAF = requestAnimationFrame(this.count)))
                                 : cancelAnimationFrame(this.rAF),
-                                (this.paused = !this.paused));
+                                (this.paused = !this.paused);
                         }),
                         (t.prototype.reset = function () {
-                            (cancelAnimationFrame(this.rAF),
+                            cancelAnimationFrame(this.rAF),
                                 (this.paused = !0),
                                 this.resetDuration(),
                                 (this.startVal = this.validateValue(this.options.startVal)),
                                 (this.frameVal = this.startVal),
-                                this.printValue(this.startVal));
+                                this.printValue(this.startVal);
                         }),
                         (t.prototype.update = function (t) {
-                            (cancelAnimationFrame(this.rAF),
+                            cancelAnimationFrame(this.rAF),
                                 (this.startTime = null),
                                 (this.endVal = this.validateValue(t)),
                                 this.endVal !== this.frameVal &&
@@ -179,7 +179,7 @@
                                     null == this.finalEndVal && this.resetDuration(),
                                     (this.finalEndVal = null),
                                     this.determineDirectionAndSmartEasing(),
-                                    (this.rAF = requestAnimationFrame(this.count))));
+                                    (this.rAF = requestAnimationFrame(this.count)));
                         }),
                         (t.prototype.printValue = function (t) {
                             var e;
@@ -202,7 +202,7 @@
                             return this.ensureNumber(e) ? e : ((this.error = '[CountUp] invalid start or end value: '.concat(t)), null);
                         }),
                         (t.prototype.resetDuration = function () {
-                            ((this.startTime = null), (this.duration = 1e3 * Number(this.options.duration)), (this.remaining = this.duration));
+                            (this.startTime = null), (this.duration = 1e3 * Number(this.options.duration)), (this.remaining = this.duration);
                         }),
                         t
                     );
@@ -300,7 +300,7 @@
             });
         },
         32048: (t, e, i) => {
-            (Promise.resolve().then(i.t.bind(i, 96798, 23)), Promise.resolve().then(i.bind(i, 91396)), Promise.resolve().then(i.bind(i, 27618)));
+            Promise.resolve().then(i.t.bind(i, 96798, 23)), Promise.resolve().then(i.bind(i, 91396)), Promise.resolve().then(i.bind(i, 27618));
         },
         34965: (t) => {
             t.exports = { root: 'SliderControls_root__v_ofj', control: 'SliderControls_control__E3joM', top: 'SliderControls_top__HN5gZ' };
@@ -308,10 +308,10 @@
         40178: (t, e, i) => {
             'use strict';
             var s;
-            (i.d(e, { b: () => s }),
+            i.d(e, { b: () => s }),
                 (function (t) {
-                    ((t.Album = 'album'), (t.Artist = 'artist'), (t.Playlist = 'playlist'), (t.Radio = 'fm_radio'), (t.Other = 'other'), (t.Search = 'search'));
-                })(s || (s = {})));
+                    (t.Album = 'album'), (t.Artist = 'artist'), (t.Playlist = 'playlist'), (t.Radio = 'fm_radio'), (t.Other = 'other'), (t.Search = 'search');
+                })(s || (s = {}));
         },
         67220: (t) => {
             t.exports = {
@@ -332,17 +332,17 @@
         75305: (t, e, i) => {
             'use strict';
             var s;
-            (i.d(e, { R: () => s }),
+            i.d(e, { R: () => s }),
                 (function (t) {
-                    ((t.Music = 'music'),
+                    (t.Music = 'music'),
                         (t.DownloadedMusic = 'downloadedMusic'),
                         (t.VibeTrack = 'vibeTrack'),
                         (t.Generative = 'generative'),
                         (t.Unknown = 'unknown'),
                         (t.SmartPreview = 'smartPreview'),
                         (t.Clip = 'clip'),
-                        (t.Radio = 'fm_radio'));
-                })(s || (s = {})));
+                        (t.Radio = 'fm_radio');
+                })(s || (s = {}));
         },
         90720: (t) => {
             t.exports = { root: 'Slider_root__T7EOX', root_visible: 'Slider_root_visible__b3Kqx', fade: 'Slider_fade__V7FGV', container: 'Slider_container__tZ0VH' };
@@ -476,14 +476,14 @@
                     () => (
                         u(),
                         () => {
-                            (null == c || c.slideTo(0), n.setActiveSlide(0));
+                            null == c || c.slideTo(0), n.setActiveSlide(0);
                         }
                     ),
                     [u, c, n],
                 );
                 let v = (0, r.useCallback)(
                     (t) => {
-                        (p(t.isBeginning), g(t.isEnd), n.setActiveSlide(t.activeIndex));
+                        p(t.isBeginning), g(t.isEnd), n.setActiveSlide(t.activeIndex);
                     },
                     [n],
                 );
@@ -541,12 +541,12 @@
                         null == w || w.setExponentVolume(t, V.V_r.TRAILER);
                     });
                 (0, r.useEffect)(() => {
-                    (k(1), b.setIsMuted(!1));
+                    k(1), b.setIsMuted(!1);
                 }, [k, b, w]);
                 let { moveBack: C } = (0, V.JD0)(V.Zyd.main.href);
-                ((0, r.useEffect)(
+                (0, r.useEffect)(
                     () => () => {
-                        (b.resetUser(), b.resetArtist(), b.resetPodcast(), b.resetSpecial(), null == w || w.pause(V.V_r.TRAILER));
+                        b.resetUser(), b.resetArtist(), b.resetPodcast(), b.resetSpecial(), null == w || w.pause(V.V_r.TRAILER);
                     },
                     [b, w],
                 ),
@@ -555,7 +555,7 @@
                     (0, V.Ocn)({ isLoaded: b.isLoaded, slidesType: (0, x.tS)(i) }),
                     (0, r.useEffect)(() => {
                         A.status === v.MT.PLAYING && (null == w || w.togglePause());
-                    }, [w, A.status]));
+                    }, [w, A.status]);
                 let j = (0, r.useMemo)(() => {
                     switch (i) {
                         case x.z6.USER:
@@ -568,7 +568,7 @@
                             return b.specialItems;
                     }
                 }, [b.artistItems, b.podcastItems, b.specialItems, b.userItems, i]);
-                ((0, r.useEffect)(() => {
+                (0, r.useEffect)(() => {
                     if (N)
                         switch (i) {
                             case x.z6.USER:
@@ -585,7 +585,7 @@
                         }
                     else (0, o.notFound)();
                 }, [E, N, j, j.length, b.artistSlidesLoadingState, b.podcastSlidesLoadingState, b.userSlidesLoadingState, b.specialSlidesLoadingState, i]),
-                    (0, V.NBO)(!0));
+                    (0, V.NBO)(!0);
                 let T = (0, r.useMemo)(() => {
                         var t;
                         let e,
@@ -597,7 +597,7 @@
                         return { '--card-color-enabled_variant': i, '--card-color-enabled': e, '--logo-color': i };
                     }, [j, j.length, b.activeSlide]),
                     D = (0, r.useCallback)(() => {
-                        (b.toggleMute(), (null == F ? void 0 : F.playerState.exponentVolume.value) !== 0 ? k(0) : k(1));
+                        b.toggleMute(), (null == F ? void 0 : F.playerState.exponentVolume.value) !== 0 ? k(0) : k(1);
                     }, [k, b, null == F ? void 0 : F.playerState.exponentVolume.value]),
                     B = b.isMuted ? 'volumeOff' : 'volume',
                     z = S(b.isMuted ? { id: 'player-actions.volume-off' } : { id: 'player-actions.volume-on' });

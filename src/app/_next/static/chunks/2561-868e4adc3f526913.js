@@ -25,11 +25,11 @@
                                     (s && (s += ' '), (s += t));
                             return s;
                         }
-                        (r.r(t), r.d(t, { clsx: () => s, default: () => n }));
+                        r.r(t), r.d(t, { clsx: () => s, default: () => n });
                         let n = s;
                     },
                     1920: (e, t, r) => {
-                        (r.r(t), r.d(t, { default: () => s }));
+                        r.r(t), r.d(t, { default: () => s });
                         let s = {
                             contentContainer: 'JjlbHZ4FaP9EAcR_1DxF',
                             contentContainer_block: 'iOlzvyUREgDkthkrx7Sf',
@@ -96,7 +96,7 @@
                         };
                     },
                     2964: (e, t, r) => {
-                        (r.r(t), r.d(t, { default: () => s }));
+                        r.r(t), r.d(t, { default: () => s });
                         let s = {
                             root_size_xxxs: 'Rkdd2vKC_3xa1eUdRdHP',
                             root_size_xxs: 'l3tE1hAMmBj2aoPPwU08',
@@ -110,7 +110,7 @@
                         };
                     },
                     9160: (e, t, r) => {
-                        (r.r(t), r.d(t, { default: () => s }));
+                        r.r(t), r.d(t, { default: () => s });
                         let s = {
                             root: 'kAYDswAvA1AJoAzRV4rY',
                             root_disabled: 'vkAwJpSGxne16yE82eHh',
@@ -123,7 +123,7 @@
                         };
                     },
                     8532: (e, t, r) => {
-                        (r.r(t), r.d(t, { default: () => s }));
+                        r.r(t), r.d(t, { default: () => s });
                         let s = {
                             searchIcon: 'LoJPNHBhYAkQh7hBQYIP',
                             searchIcon_disabled: 'U1fHaoo5ZnRY0W6P1cXz',
@@ -134,7 +134,7 @@
                         };
                     },
                     7672: (e, t, r) => {
-                        (r.r(t), r.d(t, { DOWN: () => l, LEFT: () => n, RIGHT: () => a, UP: () => i, useSwipeable: () => d }));
+                        r.r(t), r.d(t, { DOWN: () => l, LEFT: () => n, RIGHT: () => a, UP: () => i, useSwipeable: () => d });
                         var s = r(810);
                         let n = 'Left',
                             a = 'Right',
@@ -213,7 +213,7 @@
                                                         velocity: w,
                                                         vxvy: O,
                                                     };
-                                                    (h.first && r.onSwipeStart && r.onSwipeStart(h), r.onSwiping && r.onSwiping(h));
+                                                    h.first && r.onSwipeStart && r.onSwipeStart(h), r.onSwiping && r.onSwiping(h);
                                                     let H = !1;
                                                     return (
                                                         (r.onSwiping || r.onSwiped || r['onSwiped'.concat(R)]) && (H = !0),
@@ -227,7 +227,7 @@
                                                     let s;
                                                     if (e.swiping && e.eventData) {
                                                         if (t.timeStamp - e.start < r.swipeDuration) {
-                                                            ((s = Object.assign(Object.assign({}, e.eventData), { event: t })), r.onSwiped && r.onSwiped(s));
+                                                            (s = Object.assign(Object.assign({}, e.eventData), { event: t })), r.onSwiped && r.onSwiped(s);
                                                             let n = r['onSwiped'.concat(s.dir)];
                                                             n && n(s);
                                                         }
@@ -239,7 +239,7 @@
                                                 });
                                             },
                                             _ = (e) => {
-                                                (document.removeEventListener(u, s), document.removeEventListener(f, _), d(e));
+                                                document.removeEventListener(u, s), document.removeEventListener(f, _), d(e);
                                             },
                                             p = (e, t) => {
                                                 let n = () => {};
@@ -250,7 +250,7 @@
                                                             ['touchmove', s, Object.assign(Object.assign({}, a), t.preventScrollOnSwipe ? { passive: !1 } : {})],
                                                             ['touchend', d, a],
                                                         ];
-                                                    (i.forEach((t) => {
+                                                    i.forEach((t) => {
                                                         let [r, s, n] = t;
                                                         return e.addEventListener(r, s, n);
                                                     }),
@@ -258,7 +258,7 @@
                                                             i.forEach((t) => {
                                                                 let [r, s] = t;
                                                                 return e.removeEventListener(r, s);
-                                                            })));
+                                                            }));
                                                 }
                                                 return n;
                                             },
@@ -276,7 +276,7 @@
                                                         });
                                                 },
                                             };
-                                        return (t.trackMouse && (v.onMouseDown = r), [v, p]);
+                                        return t.trackMouse && (v.onMouseDown = r), [v, p];
                                     })((e) => (v.current = e(v.current, g.current)), { trackMouse: p }),
                                 [p],
                             );
@@ -305,7 +305,7 @@
                             else s = t;
                             return { $$typeof: r, type: e, key: n, ref: void 0 !== (t = s.ref) ? t : null, props: s };
                         }
-                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = s), (t.jsxs = s));
+                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = s), (t.jsxs = s);
                     },
                     1082: (e, t, r) => {
                         e.exports = r(7327);
@@ -2079,7 +2079,7 @@
                         });
                     },
                     9110: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                        Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.usePopoverSwipeable =
                                 t.useReturnValue =
                                 t.useCallbackRef =
@@ -2094,7 +2094,7 @@
                                 t.useKeyboardNavigation =
                                 t.useScroll =
                                 t.useForwardRef =
-                                    void 0));
+                                    void 0);
                         var s = r(245);
                         Object.defineProperty(t, 'useForwardRef', {
                             enumerable: !0,
@@ -2117,7 +2117,7 @@
                             },
                         });
                         var i = r(5663);
-                        (Object.defineProperty(t, 'useIntersectionObserver', {
+                        Object.defineProperty(t, 'useIntersectionObserver', {
                             enumerable: !0,
                             get: function () {
                                 return i.useIntersectionObserver;
@@ -2134,7 +2134,7 @@
                                 get: function () {
                                     return i.getElementNameByDataAttribute;
                                 },
-                            }));
+                            });
                         var l = r(2101);
                         Object.defineProperty(t, 'useElementOffsetY', {
                             enumerable: !0,
@@ -2193,7 +2193,7 @@
                         });
                     },
                     8691: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useCallbackRef = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useCallbackRef = void 0);
                         let s = r(810);
                         t.useCallbackRef = function (e) {
                             let t = (0, s.useRef)({
@@ -2213,11 +2213,11 @@
                     },
                     1381: (e, t, r) => {
                         var s;
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useComponentSwipeable = t.SwipeablePlacement = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useComponentSwipeable = t.SwipeablePlacement = void 0);
                         let n = r(7672),
                             a = r(8691);
                         !(function (e) {
-                            ((e.TOP = 'top'), (e.BOTTOM = 'bottom'), (e.RIGHT = 'right'), (e.LEFT = 'left'));
+                            (e.TOP = 'top'), (e.BOTTOM = 'bottom'), (e.RIGHT = 'right'), (e.LEFT = 'left');
                         })(s || (t.SwipeablePlacement = s = {}));
                         let i = (e) => {
                                 let { ref: t, deltaY: r, deltaX: n, placement: a } = e;
@@ -2281,7 +2281,7 @@
                         };
                     },
                     6699: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0);
                         let s = r(352),
                             n = r(810);
                         t.useDebouncedToggle = (e) => {
@@ -2291,16 +2291,16 @@
                                 c = (0, n.useMemo)(
                                     () =>
                                         (0, s.throttle)(() => {
-                                            (o(!r),
+                                            o(!r),
                                                 i.current && window.clearTimeout(i.current),
                                                 (i.current = window.setTimeout(() => {
                                                     o(!!r);
-                                                }, t)));
+                                                }, t));
                                         }, a),
                                     [t, r, a],
                                 ),
                                 u = (0, n.useCallback)(() => {
-                                    (o(!!r), i.current && window.clearTimeout(i.current));
+                                    o(!!r), i.current && window.clearTimeout(i.current);
                                 }, [r]);
                             return (
                                 (0, n.useEffect)(
@@ -2314,7 +2314,7 @@
                         };
                     },
                     2101: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useElementOffsetY = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useElementOffsetY = void 0);
                         let s = r(810),
                             n = r(2067),
                             a = r(2767);
@@ -2325,11 +2325,11 @@
                                     let e = null == t ? void 0 : t.getBoundingClientRect();
                                     e && l(e.y);
                                 }, [t]);
-                            return ((0, s.useLayoutEffect)(o), (0, n.useScroll)({ onScroll: o, elementRef: e }), { forceUpdateRefCallback: r, offsetY: i });
+                            return (0, s.useLayoutEffect)(o), (0, n.useScroll)({ onScroll: o, elementRef: e }), { forceUpdateRefCallback: r, offsetY: i };
                         };
                     },
                     2767: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0);
                         let s = r(810);
                         t.useForceUpdateRef = () => {
                             let [e, t] = (0, s.useState)(null);
@@ -2342,7 +2342,7 @@
                         };
                     },
                     245: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForwardRef = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForwardRef = void 0);
                         let s = r(810);
                         t.useForwardRef = function (e, t) {
                             let r = (0, s.useRef)(t);
@@ -2355,8 +2355,8 @@
                         };
                     },
                     5663: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }),
-                            (t.useIntersectionObserver = t.createIntersectionObserver = t.getElementNameByDataAttribute = t.isInViewportNow = t.defaultOptions = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                            (t.useIntersectionObserver = t.createIntersectionObserver = t.getElementNameByDataAttribute = t.isInViewportNow = t.defaultOptions = void 0);
                         let s = r(810),
                             { innerWidth: n = 0, innerHeight: a = 0 } = window;
                         function i(e) {
@@ -2376,7 +2376,7 @@
                             }, t);
                             return r;
                         }
-                        ((t.defaultOptions = { threshold: 0, preflightCheck: !0 }),
+                        (t.defaultOptions = { threshold: 0, preflightCheck: !0 }),
                             (t.isInViewportNow = i),
                             (t.getElementNameByDataAttribute = l),
                             (t.createIntersectionObserver = o),
@@ -2393,8 +2393,8 @@
                                                       let t = l(e.target);
                                                       if (t && p) {
                                                           if (_.current.has(t)) return;
-                                                          (d((r) => ({ ...r, [t]: { isIntersecting: e.isIntersecting } })),
-                                                              a && e.isIntersecting && (_.current.add(t), p.unobserve(e.target)));
+                                                          d((r) => ({ ...r, [t]: { isIntersecting: e.isIntersecting } })),
+                                                              a && e.isIntersecting && (_.current.add(t), p.unobserve(e.target));
                                                       }
                                                   }, u),
                                         [f],
@@ -2422,15 +2422,15 @@
                                     ),
                                     x
                                 );
-                            }));
+                            });
                     },
                     9019: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useIsomorphicEffect = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useIsomorphicEffect = void 0);
                         let s = r(810);
                         t.useIsomorphicEffect = 'undefined' != typeof document ? s.useLayoutEffect : s.useEffect;
                     },
                     5188: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useKeyboardNavigation = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useKeyboardNavigation = void 0);
                         let s = r(810);
                         function n(e, t) {
                             return e.current ? Array.from(t ? e.current.querySelectorAll(t) : e.current.children) : [];
@@ -2467,19 +2467,19 @@
                                     },
                                     [r, e],
                                 );
-                            ((0, s.useEffect)(() => {
+                            (0, s.useEffect)(() => {
                                 let t = e.current;
-                                return (null == t || t.addEventListener('keydown', i), () => (null == t ? void 0 : t.removeEventListener('keydown', i)));
+                                return null == t || t.addEventListener('keydown', i), () => (null == t ? void 0 : t.removeEventListener('keydown', i));
                             }, [e, i]),
                                 (0, s.useEffect)(() => {
                                     n(e, r).forEach((e) => {
                                         e.hasAttribute(a) && ('true' === e.getAttribute(a) ? (e.tabIndex = 0) : (e.tabIndex = -1));
                                     });
-                                }));
+                                });
                         };
                     },
                     4395: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.usePopoverSwipeable = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.usePopoverSwipeable = void 0);
                         let s = r(810),
                             n = r(1381);
                         t.usePopoverSwipeable = (e) => {
@@ -2506,7 +2506,7 @@
                         };
                     },
                     2947: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useResize = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useResize = void 0);
                         let s = r(810),
                             n = r(361);
                         t.useResize = (e, t) => {
@@ -2515,15 +2515,15 @@
                                 if (null === r) return;
                                 let s = null != r ? r : document.documentElement,
                                     a = new ResizeObserver(e);
-                                return (a.observe(s), () => a.disconnect());
+                                return a.observe(s), () => a.disconnect();
                             }, [t, e]);
                         };
                     },
                     998: (e, t) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useReturnValue = void 0), (t.useReturnValue = (e) => e()));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useReturnValue = void 0), (t.useReturnValue = (e) => e());
                     },
                     2067: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0);
                         let s = r(810),
                             n = r(361),
                             a = r(6699);
@@ -2531,7 +2531,7 @@
                             let { onScroll: t, listenIsScrolling: r, elementRef: i } = e,
                                 { state: l, handleDebouncedToggle: o } = (0, a.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                                 c = (0, s.useCallback)(() => {
-                                    (r && o(), null == t || t());
+                                    r && o(), null == t || t();
                                 }, [r, o, t]);
                             return (
                                 (0, s.useEffect)(() => {
@@ -2539,14 +2539,14 @@
                                     if (null === e) return;
                                     let t = null != e ? e : window,
                                         r = { capture: !0, passive: !0 };
-                                    return (t.addEventListener('scroll', c, r), () => t.removeEventListener('scroll', c, r));
+                                    return t.addEventListener('scroll', c, r), () => t.removeEventListener('scroll', c, r);
                                 }, [i, c]),
                                 l
                             );
                         };
                     },
                     8796: (e, t) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                        Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.createRipple = void 0),
                             (t.createRipple = function (e, t, r) {
                                 let s = null != r ? r : e.currentTarget,
@@ -2556,27 +2556,27 @@
                                     l = s.getBoundingClientRect(),
                                     o = 0 === e.clientX ? Math.round(l.width / 2) : e.clientX - l.left,
                                     c = 0 === e.clientY ? Math.round(l.height / 2) : e.clientY - l.top;
-                                ((n.style.width = ''.concat(a, 'px')),
+                                (n.style.width = ''.concat(a, 'px')),
                                     (n.style.height = ''.concat(a, 'px')),
                                     (n.style.left = 0 === e.clientX ? '0px' : ''.concat(o - i, 'px')),
                                     (n.style.top = ''.concat(c - i, 'px')),
-                                    n.classList.add(t));
+                                    n.classList.add(t);
                                 let u = s.getElementsByClassName(t)[0];
-                                (u && u.remove(), s.insertBefore(n, s.firstChild));
-                            }));
+                                u && u.remove(), s.insertBefore(n, s.firstChild);
+                            });
                     },
                     361: (e, t) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                        Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            }));
+                            });
                     },
                     8216: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.getElementFromRefOrElement = t.createRipple = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.getElementFromRefOrElement = t.createRipple = void 0);
                         var s = r(8796);
                         Object.defineProperty(t, 'createRipple', {
                             enumerable: !0,
@@ -2598,7 +2598,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Button = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Button = void 0);
                         let n = r(1082),
                             a = r(810),
                             i = r(5881),
@@ -2695,7 +2695,7 @@
                         t.Button = (0, a.forwardRef)((e, t) => (0, n.jsx)(c, { forwardRef: t, ...e }));
                     },
                     5928: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Button = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Button = void 0);
                         var s = r(8119);
                         Object.defineProperty(t, 'Button', {
                             enumerable: !0,
@@ -2710,13 +2710,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Icon = t.IconComponent = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Icon = t.IconComponent = void 0);
                         let n = r(1082),
                             a = r(810),
                             i = r(5881),
                             l = r(5151),
                             o = s(r(2964));
-                        ((t.IconComponent = (e) => {
+                        (t.IconComponent = (e) => {
                             let { 'aria-label': t, className: r, focusable: s = !1, variant: a, size: c, forwardRef: u, ...f } = e,
                                 x = c ? ''.concat(a, '_').concat(c) : a,
                                 d = l.iconsCollection[x];
@@ -2731,7 +2731,7 @@
                                   })
                                 : null;
                         }),
-                            (t.Icon = (0, a.forwardRef)((e, r) => (0, n.jsx)(t.IconComponent, { forwardRef: r, ...e }))));
+                            (t.Icon = (0, a.forwardRef)((e, r) => (0, n.jsx)(t.IconComponent, { forwardRef: r, ...e })));
                     },
                     5151: function (e, t, r) {
                         var s =
@@ -2739,7 +2739,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.iconsCollection = t.iconsCollectionBySize = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.iconsCollection = t.iconsCollectionBySize = void 0);
                         let n = s(r(4656)),
                             a = s(r(8170)),
                             i = s(r(5565)),
@@ -2961,7 +2961,7 @@
                             rz = s(r(5760)),
                             rU = s(r(5667)),
                             rN = s(r(2639));
-                        ((t.iconsCollectionBySize = {
+                        (t.iconsCollectionBySize = {
                             xxxs: ['adult', 'arrowRight', 'check', 'close', 'donation', 'exclamation', 'explicit', 'listen', 'play', 'reset', 'ruble', 'users'],
                             xxs: [
                                 'add',
@@ -3393,10 +3393,10 @@
                                 yandexPayRu: rz.default,
                                 yandexPlusEn: rU.default,
                                 yandexPlusRu: rN.default,
-                            }));
+                            });
                     },
                     7066: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Icon = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Icon = void 0);
                         var s = r(5189);
                         Object.defineProperty(t, 'Icon', {
                             enumerable: !0,
@@ -3411,7 +3411,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Input = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Input = void 0);
                         let n = r(1082),
                             a = r(5881),
                             i = r(810),
@@ -3459,7 +3459,7 @@
                         t.Input = (0, i.forwardRef)((e, t) => (0, n.jsx)(c, { forwardRef: t, ...e }));
                     },
                     3126: (e, t, r) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Input = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Input = void 0);
                         var s = r(3642);
                         Object.defineProperty(t, 'Input', {
                             enumerable: !0,
@@ -3474,7 +3474,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.SearchInput = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.SearchInput = void 0);
                         let n = r(1082),
                             a = r(5881),
                             i = r(810),
@@ -3513,7 +3513,7 @@
                             let P = (0, i.useCallback)(
                                     (e) => {
                                         let r = e.length > 0;
-                                        (O(e), H(e), r ? (H(e), j(!0)) : (t(e), j(!1)));
+                                        O(e), H(e), r ? (H(e), j(!0)) : (t(e), j(!1));
                                     },
                                     [H, t],
                                 ),
@@ -3526,12 +3526,12 @@
                             (0, i.useEffect)(() => {
                                 if (x) {
                                     var e;
-                                    (P(x), null == (e = h.current) || e.focus());
+                                    P(x), null == (e = h.current) || e.focus();
                                 }
                             }, [P, x]);
                             let L = (0, i.useCallback)(() => {
                                     var e;
-                                    (O(''), t(''), j(!1), null == m || m(), null == (e = h.current) || e.focus());
+                                    O(''), t(''), j(!1), null == m || m(), null == (e = h.current) || e.focus();
                                 }, [t, m]),
                                 S = (0, i.useMemo)(
                                     () =>
@@ -3585,19 +3585,19 @@
                 var t = l[e];
                 if (void 0 !== t) return t.exports;
                 var r = (l[e] = { exports: {} });
-                return (i[e].call(r.exports, r, r.exports, o), r.exports);
+                return i[e].call(r.exports, r, r.exports, o), r.exports;
             }
-            ((o.d = (e, t) => {
+            (o.d = (e, t) => {
                 for (var r in t) o.o(t, r) && !o.o(e, r) && Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
             }),
                 (o.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (o.r = (e) => {
-                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 }));
-                }));
+                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 });
+                });
             var c = {};
             (() => {
-                (Object.defineProperty(c, 'X', { value: !0 }), (c.M = void 0));
+                Object.defineProperty(c, 'X', { value: !0 }), (c.M = void 0);
                 var e = o(3906);
                 Object.defineProperty(c, 'M', {
                     enumerable: !0,

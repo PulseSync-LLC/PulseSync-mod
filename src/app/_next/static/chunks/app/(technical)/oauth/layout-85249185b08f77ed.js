@@ -50,7 +50,7 @@
                     });
             };
             var r = (function (e) {
-                return ((e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e);
+                return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
             })(r || {});
             let i = (e) => {
                 let { sonataState: sonataState } = (0, t.Pjs)(),
@@ -180,7 +180,7 @@
         10758: (e, t, o) => {
             'use strict';
             o.d(t, { default: () => s });
-                let l = o(53555);
+            let l = o(53555);
             let s = {
                 init: () => {
                     window.pulsesyncApi = {
@@ -390,10 +390,10 @@
             let i = () => {
                 let { library: e, collection: s, experiments: o, main: i, user: l } = (0, r.Pjs)(),
                     d = (0, n.useCallback)(() => {
-                        (o.getData(),
+                        o.getData(),
                             e.getData(),
                             i.landing.isLoaded && i.landing.getSkeleton({ id: t.p.WEB_MAIN, showWizard: l.settings.showWizard }, { preloadBlocksCount: 2 }),
-                            s.landing.isLoaded && s.landing.getSkeleton({ id: t.p.WEB_COLLECTION, showWizard: l.settings.showWizard }, { preloadBlocksCount: 2 }));
+                            s.landing.isLoaded && s.landing.getSkeleton({ id: t.p.WEB_COLLECTION, showWizard: l.settings.showWizard }, { preloadBlocksCount: 2 });
                     }, [s.landing, o, e, i.landing, l.settings.showWizard]);
                 (0, n.useEffect)(() => {
                     var e;
@@ -552,7 +552,7 @@
                                 n = s[2] || '';
                             if (!o) return e;
                             let t = new URLSearchParams(n.startsWith('?') ? n.substring(1) : '');
-                            return (t.set('tab', o), '/?'.concat(t.toString()));
+                            return t.set('tab', o), '/?'.concat(t.toString());
                         },
                     ],
                     [/^\/home$/, () => i.Zyd.main.href],
@@ -616,7 +616,7 @@
         },
         41121: (e, s, o) => {
             'use strict';
-            (o.d(s, { ClientConfigInitializer: () => n }), o(33008));
+            o.d(s, { ClientConfigInitializer: () => n }), o(33008);
             let n = (e) => {
                 let { env: s, nonce: o } = e;
                 return null;
@@ -639,7 +639,7 @@
                     let { version: s, formatMessage: o, closeToast: r } = e,
                         h = (0, t.useCallback)(() => {
                             var e;
-                            (null == (e = window.desktopEvents) || e.send(i.EE.INSTALL_UPDATE), null == r || r());
+                            null == (e = window.desktopEvents) || e.send(i.EE.INSTALL_UPDATE), null == r || r();
                         }, [r]),
                         b = (0, t.useMemo)(
                             () =>
@@ -676,7 +676,7 @@
                         [getProgress, setProgress] = (0, t.useState)(-1),
                         h = (0, t.useCallback)(() => {
                             var e;
-                            (null == (e = window.desktopEvents) || e.send(i.EE.INSTALL_MOD_UPDATE), null == r || r());
+                            null == (e = window.desktopEvents) || e.send(i.EE.INSTALL_MOD_UPDATE), null == r || r();
                         }, [r]),
                         callInstallModUpdate = (0, t.useCallback)(() => {
                             var e;
@@ -904,6 +904,7 @@
                         { notify: s } = (0, i.lkh)(),
                         { notify: modUpdateNotify, dismiss: modUpdateDismiss } = (0, i.lkh)(),
                         { notify: gpuStallNotify, dismiss: gpuStallDismiss } = (0, i.lkh)(),
+                        { notify: appStallNotify, dismiss: appStallDismiss } = (0, i.lkh)(),
                         { notify: basicToastNotify } = (0, i.lkh)(),
                         o = (0, t.useRef)(''),
                         l = (0, t.useCallback)(
@@ -931,7 +932,7 @@
                             [e, modUpdateNotify, modUpdateDismiss],
                         ),
                         onGPUStallFixClick = (0, t.useCallback)(() => {
-                            window.desktopEvents?.send(i.lkh.APPLICATION_RESTART);
+                            window.desktopEvents?.send(i.EE.APPLICATION_RESTART);
                         }, []),
                         onGPUStall = (0, t.useCallback)(
                             (event, reason = 'GPU_STALL', dedupeTimestamp = 0) => {
@@ -950,6 +951,28 @@
                                 );
                             },
                             [gpuStallNotify, gpuStallDismiss],
+                        ),
+                        onAppStallFixClick = (0, t.useCallback)(() => {
+                            window.desktopEvents?.send(i.EE.APP_STALL_CANCEL_RESTART);
+                        }, []),
+                        onAppStall = (0, t.useCallback)(
+                            (event, dedupeTimestamp = 0) => {
+                                if (window.onAppStallStallDedupeNonce === dedupeTimestamp) return;
+                                if (dedupeTimestamp) window.onAppStallStallDedupeNonce = dedupeTimestamp;
+                                appStallNotify(
+                                    (0, n.jsx)(toastWithProgress, {
+                                        toastID: 'safeModeRestart',
+                                        message: `Приложение запускается слишком долго и перезапустится в безопасном режиме через 10 секунд`,
+                                        buttonLabel: 'Отменить',
+                                        onButtonClick: onAppStallFixClick,
+                                        dismissOnButtonClick: true,
+                                    }),
+                                    {
+                                        containerId: i.uQT.IMPORTANT,
+                                    },
+                                );
+                            },
+                            [appStallNotify, appStallDismiss],
                         ),
                         onBasicToastCreate = (0, t.useCallback)(
                             (event, toastID, message, dismissable, dedupeTimestamp = 0) => {
@@ -992,6 +1015,16 @@
                     (0, t.useEffect)(() => {
                         var e;
                         return (
+                            null == (e = window.desktopEvents) || e.on(i.EE.APP_STALL, onAppStall),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(i.EE.APP_STALL, onAppStall);
+                            }
+                        );
+                    }, [onGPUStall]);
+                    (0, t.useEffect)(() => {
+                        var e;
+                        return (
                             null == (e = window.desktopEvents) || e.on(i.EE.GPU_STALL, onGPUStall),
                             () => {
                                 var e;
@@ -1024,11 +1057,11 @@
                     d = (0, n.useCallback)(
                         (e, n) => {
                             let { needToShowReleaseNotes: t, sortedDescReleaseNotesKeys: r, translationsReleaseNotes: i } = n;
-                            (o(i), l(r), t && s(!0));
+                            o(i), l(r), t && s(!0);
                         },
                         [l, o],
                     );
-                ((0, n.useEffect)(() => {
+                (0, n.useEffect)(() => {
                     e && r && (i.open(), s(!1));
                 }, [r, i, e]),
                     (0, n.useEffect)(() => {
@@ -1040,7 +1073,7 @@
                                 null == (e = window.desktopEvents) || e.off(t.EE.LOAD_RELEASE_NOTES, d);
                             }
                         );
-                    }, [d]));
+                    }, [d]);
             };
         },
         58290: (e, s, o) => {
@@ -1194,7 +1227,7 @@
                                 ? void 0
                                 : s.state.currentContext.onChange(() => {
                                       var t, r;
-                                      (null == e || e(),
+                                      null == e || e(),
                                           null == n || n(),
                                           (e =
                                               null == s || null == (t = s.state.currentContext.value)
@@ -1207,10 +1240,10 @@
                                                   ? void 0
                                                   : r.availableActions.moveForward.onChange((e) => {
                                                         sendPlayerStateDefault(s);
-                                                    })));
+                                                    }));
                                   });
                     return () => {
-                        (null == t || t(),
+                        null == t || t(),
                             null == currentContextListener || currentContextListener(),
                             null == onEntityChange || onEntityChange(),
                             null == getCurrentTrackListener || getCurrentTrackListener(),
@@ -1222,7 +1255,7 @@
                             null == onShuffleChange || onShuffleChange(),
                             null == onVolumeChange || onVolumeChange(),
                             null == n || n(),
-                            null == n || n());
+                            null == n || n();
                     };
                 }, [o, null == s ? void 0 : s.state.currentContext, null == s ? void 0 : s.state.playerState.status]);
             };
@@ -1294,10 +1327,10 @@
                 pulsesyncApi: () => playerApi.default,
             });
             let n = () => {
-                (document.addEventListener('auxclick', (e) => e.preventDefault()),
+                document.addEventListener('auxclick', (e) => e.preventDefault()),
                     document.addEventListener('click', (e) => {
                         (e.ctrlKey || e.metaKey || e.shiftKey) && e.preventDefault();
-                    }));
+                    });
             };
             var t = o(79169);
             let r = (e) => {
@@ -1390,7 +1423,7 @@
                 N = o(81785);
         },
         77864: (e, s, o) => {
-            (Promise.resolve().then(o.bind(o, 52756)),
+            Promise.resolve().then(o.bind(o, 52756)),
                 Promise.resolve().then(o.bind(o, 41458)),
                 Promise.resolve().then(o.bind(o, 80922)),
                 Promise.resolve().then(o.bind(o, 54487)),
@@ -1641,7 +1674,7 @@
                 Promise.resolve().then(o.bind(o, 51886)),
                 Promise.resolve().then(o.bind(o, 43701)),
                 Promise.resolve().then(o.bind(o, 45228)),
-                Promise.resolve().then(o.bind(o, 30236)));
+                Promise.resolve().then(o.bind(o, 30236));
         },
         81785: (e, s, o) => {
             'use strict';
@@ -1683,9 +1716,47 @@
                             if (e.target.closest('button')) return;
                             (0, a.LO)();
                         }, []),
+                        [hidePulseSyncVersionInTitleBar, setHidePulseSyncVersionInTitleBar] = (0, i.useState)(window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() ?? !1),
                         c = (0, i.useCallback)(() => {
                             (0, a.N5)();
                         }, []);
+                    (0, i.useEffect)(() => {
+                        if (window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.()) return;
+                        const selector = `.${h().pulseText}`;
+                        const ensurePulseVersionVisible = () => {
+                            const el = window.document?.querySelector(selector);
+                            if (!el) return;
+                            const expectedText = `PulseSync ${window.PULSE_VERSION}`;
+                            if (el.textContent !== expectedText) {
+                                el.textContent = expectedText;
+                            }
+                            el.style?.setProperty?.('display', 'inline', 'important');
+                            el.style?.setProperty?.('visibility', 'visible', 'important');
+                            el.style?.setProperty?.('opacity', '1', 'important');
+                        };
+                        const observer =
+                            window.MutationObserver &&
+                            new MutationObserver(() => {
+                                ensurePulseVersionVisible();
+                            });
+                        observer?.observe(window.document?.documentElement || window.document?.body, {
+                            subtree: !0,
+                            childList: !0,
+                            attributes: !0,
+                            attributeFilter: ['style', 'class', 'hidden'],
+                        });
+                        ensurePulseVersionVisible();
+                        return () => {
+                            observer?.disconnect();
+                        };
+                    }, []);
+                    (0, i.useEffect)(() => {
+                        window.desktopEvents?.on('NATIVE_STORE_UPDATE', (event, key, value) => {
+                            if (key === 'modSettings.window.hidePulseSyncVersionInTitleBar') {
+                                setHidePulseSyncVersionInTitleBar(value);
+                            }
+                        });
+                    }, []);
                     return (0, n.jsx)('div', {
                         className: h().root,
                         onDoubleClick: handleDivDoubleClick,
@@ -1693,10 +1764,11 @@
                             r &&
                             (0, n.jsxs)(n.Fragment, {
                                 children: [
-                                    (0, n.jsx)('span', {
-                                        className: h().pulseText,
-                                        children: `PulseSync ${window.PULSE_VERSION}`,
-                                    }),
+                                    !hidePulseSyncVersionInTitleBar &&
+                                        (0, n.jsx)('span', {
+                                            className: h().pulseText,
+                                            children: `PulseSync ${window.PULSE_VERSION}`,
+                                        }),
                                     (0, n.jsx)(m, {
                                         onClick: onMiniPlayerToggle,
                                         ariaLabel: 'miniplayer',
@@ -1923,7 +1995,7 @@
         },
     },
     (e) => {
-        (e.O(
+        e.O(
             0,
             [
                 7098, 8282, 9712, 5271, 6071, 7309, 8712, 2866, 9765, 6451, 8004, 9284, 7509, 1709, 4397, 2621, 952, 9775, 9323, 9814, 9149, 8065, 594, 7313, 1020, 8400,
@@ -1933,6 +2005,6 @@
             ],
             () => e((e.s = 77864)),
         ),
-            (_N_E = e.O()));
+            (_N_E = e.O());
     },
 ]);

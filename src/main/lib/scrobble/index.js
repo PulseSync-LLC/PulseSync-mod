@@ -15,7 +15,7 @@ scrobblerManager.registerScrobbler(
         config_1.config.modification.lastfm.apikey,
         config_1.config.modification.lastfm.sharedSecret,
         config_1.config.modification.lastfm.baseUrl,
-    )
+    ),
 );
 /**
  * Handle a playing state event from Yandex Music
@@ -29,7 +29,5 @@ function handlePlayingStateEventFromYnison(ynisonState) {
     scrobblerManager.handlePlayingStateFromYnison(ynisonState);
 }
 function handleRegisterPulseSyncScrobbler(manager) {
-  scrobblerManager.registerScrobbler(
-      new PulseSyncScrobbler_1.PulseSyncScrobbler(manager)
-  )
+    scrobblerManager.registerScrobbler(new PulseSyncScrobbler_1.PulseSyncScrobbler(manager));
 }

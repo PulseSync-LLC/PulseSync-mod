@@ -118,7 +118,7 @@
                 (0, _.CgZ)(m);
                 let { sendRefreshEvent: x } = (0, _.cYT)(),
                     p = (0, a.useCallback)(() => {
-                        (x(), (window.location.href = _.Zyd.main.href));
+                        x(), (window.location.href = _.Zyd.main.href);
                     }, [x]),
                     { contentRef: v } = (0, _.gKY)();
                 return (0, r.jsxs)('div', {
@@ -187,13 +187,13 @@
         },
         45201: (t, e, n) => {
             'use strict';
-            (n.r(e), n.d(e, { default: () => a }));
+            n.r(e), n.d(e, { default: () => a });
             var r = n(33008),
                 o = n(17846),
                 i = n(97410);
             let a = () => {
                 let t = (0, o.useSearchParams)().get('metatagId');
-                return (t || (0, o.notFound)(), (0, r.jsx)(i.P0, { metatagId: t }));
+                return t || (0, o.notFound)(), (0, r.jsx)(i.P0, { metatagId: t });
             };
         },
         83080: (t) => {
@@ -249,14 +249,14 @@
                             g.current ||
                                 (g.current = new ResizeObserver((t) => {
                                     let e = !1;
-                                    (t.forEach((t) => {
+                                    t.forEach((t) => {
                                         let n = t.target.getAttribute('data-index');
                                         if (t.target && n) {
                                             let r = t.contentRect.height;
                                             r && r !== _.current.get(n) && (_.current.set(n, t.contentRect.height), (e = !0));
                                         }
                                     }),
-                                        e && v());
+                                        e && v();
                                 }));
                         }, [v]),
                         { virtualizer: p, resizeObserver: g.current }
@@ -388,7 +388,7 @@
         },
     },
     (t) => {
-        (t.O(
+        t.O(
             0,
             [
                 7098, 8282, 9712, 5271, 7309, 952, 8065, 1709, 9775, 1311, 7764, 6706, 996, 4236, 3949, 9169, 8740, 9615, 3588, 2732, 1744, 4204, 7747, 5242, 7410, 9902,
@@ -396,6 +396,6 @@
             ],
             () => t((t.s = 44721)),
         ),
-            (_N_E = t.O()));
+            (_N_E = t.O());
     },
 ]);

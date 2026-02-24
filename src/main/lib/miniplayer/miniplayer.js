@@ -2,6 +2,7 @@ const electron = require('electron');
 const path = require('path');
 const fs = require('fs');
 const store_js_1 = require('../store.js');
+const hex2hsl = require('./hex2hsl.js');
 
 const IS_DEV = false;
 
@@ -60,13 +61,19 @@ class MiniPlayer {
             }
         }
 
+        const allowedTrackColors = !this.lastSettingsState?.playerBarEnhancement?.disablePerTrackColors;
+        const trackColor = this.lastPlayerState?.track?.derivedColors?.average;
+
+        const backgroundColor = trackColor && allowedTrackColors ? hex2hsl(trackColor, 20).css : '#141414';
+
+
         this.window = new electron.BrowserWindow({
             width: (dimensions?.width ?? 380) * scaleFactor,
             height: (dimensions?.height ?? 590) * scaleFactor,
             minWidth: 275,
             minHeight: 200,
             ...(position?.x && position?.y ? { x: position.x, y: position.y } : { center: true }),
-            backgroundColor: '#141414',
+            backgroundColor: backgroundColor,
             frame: false,
             resizable: true,
             minimizable: false,

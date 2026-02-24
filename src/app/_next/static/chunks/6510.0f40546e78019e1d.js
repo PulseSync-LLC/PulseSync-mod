@@ -82,7 +82,7 @@
                     } else window.location.reload();
                 }
                 constructor(e, t) {
-                    ((0, eU._)(this, 'tld', void 0), (0, eU._)(this, 'token', void 0), (this.tld = e), (this.token = t));
+                    (0, eU._)(this, 'tld', void 0), (0, eU._)(this, 'token', void 0), (this.tld = e), (this.token = t);
                 }
             }
             var ef = r(32100),
@@ -139,7 +139,7 @@
                     return this.beforeRequest.bind(this);
                 }
                 constructor(e) {
-                    ((0, eU._)(this, 'logger', void 0), (this.logger = e));
+                    (0, eU._)(this, 'logger', void 0), (this.logger = e);
                 }
             }
             var e_ = r(49502),

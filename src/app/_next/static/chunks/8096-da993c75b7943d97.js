@@ -78,7 +78,7 @@
             'use strict';
             a.d(t, { Q1: () => l, AI: () => g.PlaylistFilters, S9: () => m, PZ: () => u, Qy: () => s, rb: () => r.useSetPlaylistFilters });
             var l = (function (e) {
-                    return ((e.ALL = 'all'), e);
+                    return (e.ALL = 'all'), e;
                 })({}),
                 i = a(53555);
             let s = (e) => {
@@ -242,7 +242,7 @@
                         } = (0, f.gl)({ id: String(null == (a = d.items[r]) ? void 0 : a.key) }),
                         v = (0, n.useCallback)(
                             (e) => {
-                                (m(e), 'function' == typeof t && t(e));
+                                m(e), 'function' == typeof t && t(e);
                             },
                             [t, m],
                         ),
@@ -559,9 +559,9 @@
                         () =>
                             (0, G.A)((e) => {
                                 let t = e.trim();
-                                (f.setText(t),
+                                f.setText(t),
                                     t && (null == _ ? void 0 : _.meta) && (f.reset(), f.getTracks({ uid: _.meta.uid, kind: _.meta.kind })),
-                                    (t && 0 !== t.length) || (S && (N(!1), _.refreshTracks()), f.setIdleState()));
+                                    (t && 0 !== t.length) || (S && (N(!1), _.refreshTracks()), f.setIdleState());
                             }, 100),
                         [f, _, S],
                     ),
@@ -701,7 +701,7 @@
                     d = { objectId: a.uuid },
                     c = (0, p.s4Q)(a.analyticsParams),
                     u = (0, p.QUC)(d);
-                ((0, n.useEffect)(() => {
+                (0, n.useEffect)(() => {
                     var e;
                     a.filters.shouldSendEventOnTabOpened && (null == (e = a.filters.items) ? void 0 : e.length) && (c(), a.filters.setShouldSendEventOnTabOpened(!1));
                 }, [null == (t = a.filters.items) ? void 0 : t.length, a.filters, c]),
@@ -717,15 +717,15 @@
                     }, [u, a.filters.items, a.filters.shouldSendEventOnTabLoaded, a.filters.setShouldSendEventOnTabLoaded, a.filters]),
                     (0, n.useEffect)(() => {
                         a.isResolved && a.filters.getFilters();
-                    }, [a, a.loadingState]));
+                    }, [a, a.loadingState]);
                 let g = (0, et.c)((e) => {
                     var t;
                     if (!r.onTabChange || e === r.value) return;
-                    (setTimeout(() => {
+                    setTimeout(() => {
                         var t, a, l;
                         null == (l = o.current) || null == (a = l.children[e]) || null == (t = a.focus) || t.call(a);
                     }),
-                        r.onTabChange(e));
+                        r.onTabChange(e);
                     let l = null == (t = a.filters.items) ? void 0 : t[e];
                     l && a.filters.handleFilterClick(l);
                 });
@@ -813,7 +813,7 @@
                                 : B;
                         }, [N.isRewind2024Playlist, null == (a = N.meta) ? void 0 : a.personalColor, B]),
                         { topColorStyle: K, headerStyle: M } = (0, m.QZ)(R, D, S);
-                    (((e) => {
+                    ((e) => {
                         var t;
                         let { setDeeplink: a } = null != (t = (0, p.P7Q)()) ? t : {};
                         (0, n.useEffect)(() => {
@@ -868,11 +868,11 @@
                             () => (
                                 E(),
                                 () => {
-                                    (N.reset(), w());
+                                    N.reset(), w();
                                 }
                             ),
                             [N, b, x, k],
-                        ));
+                        );
                     let Y = (0, n.useMemo)(
                             () => ({
                                 Header: () => (0, l.jsx)(eg, { playlistHeaderRef: F }),

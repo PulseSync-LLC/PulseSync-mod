@@ -1,18 +1,20 @@
-const fs = require("fs");
-const path = require("path");
-const fg = require("fast-glob");
-const parser = require("@babel/parser");
+const fs = require('fs');
+const path = require('path');
+const fg = require('fast-glob');
+const parser = require('@babel/parser');
 const semver = require('semver');
-const traverse = require("@babel/traverse").default;
-const generate = require("@babel/generator").default;
+const traverse = require('@babel/traverse').default;
+const generate = require('@babel/generator').default;
 
 const EXTRACTED = './extracted';
 
 function getSortedVersionList() {
-    const versions = fs.readdirSync(EXTRACTED).filter(f => (fs.statSync(path.join(EXTRACTED, f)).isDirectory() && !(f.endsWith('@pure') || f.endsWith('@archive') || f.endsWith('@beta') || f.endsWith('@modded'))));
-    return versions
-    .map((value) => value.replaceAll("_", "."))
-    .sort((a, b) => semver.rcompare(a, b))
+    const versions = fs
+        .readdirSync(EXTRACTED)
+        .filter(
+            (f) => fs.statSync(path.join(EXTRACTED, f)).isDirectory() && !(f.endsWith('@pure') || f.endsWith('@archive') || f.endsWith('@beta') || f.endsWith('@modded')),
+        );
+    return versions.map((value) => value.replaceAll('_', '.').replaceAll('@pretty', '')).sort((a, b) => semver.rcompare(a, b));
     //.map((value) => value.replaceAll(".", "_"));
 }
 
@@ -23,45 +25,51 @@ if (!versionList || !versionList.length) {
 
 console.log(`Используемые версии: ${versionList.join(', ')}`);
 
-const ROOT = process.argv[2] ?? (versionList?.[0] ? path.join(EXTRACTED, versionList?.[0]) : undefined ) ?? "./src"
-const APP_CHUNKS_ROOT = path.join(ROOT, "/app/_next/static/chunks");
-const MAIN_INDEX_JS_PATH = path.join(ROOT, "/index.js");
-const OUTPUT = process.argv[3] ?? path.join(process.argv[1].replace('dataminer.js', ''), `./output/${process.argv[2]?.split('/')?.at(process.argv[2].endsWith('/') ? -2 : -1)?.replaceAll('.', '_') ?? (versionList?.[0] ? versionList?.[0].replaceAll('.', '_') : undefined ) ?? 'src'}`);
+const ROOT = process.argv[2] ?? (versionList?.[0] ? path.join(EXTRACTED, versionList?.[0]).concat('@pretty') : undefined) ?? './src';
+const APP_CHUNKS_ROOT = path.join(ROOT, '/app/_next/static/chunks');
+const MAIN_INDEX_JS_PATH = path.join(ROOT, '/index.js');
+const OUTPUT =
+    process.argv[3] ??
+    path.join(
+        process.argv[1].replace('dataminer.js', ''),
+        `./output/${
+            process.argv[2]
+                ?.split('/')
+                ?.at(process.argv[2].endsWith('/') ? -2 : -1)
+                ?.replaceAll('.', '_') ??
+            (versionList?.[0] ? versionList?.[0].replaceAll('.', '_') : undefined) ??
+            'src'
+        }`,
+    );
 
-const HTTP_METHODS = ["get", "post", "put", "delete", "patch", "head", "options"];
+const HTTP_METHODS = ['get', 'post', 'put', 'delete', 'patch', 'head', 'options'];
 
 // === experiments ===
 const experiments = [];
 
 function isHttpMethodCallee(node) {
-    if (node?.type !== "MemberExpression") return false;
+    if (node?.type !== 'MemberExpression') return false;
 
     const isTargetMethod =
-    (!node.computed &&
-    node.property?.type === "Identifier" &&
-    HTTP_METHODS.includes(node.property.name)) ||
-    (node.computed &&
-    node.property?.type === "StringLiteral" &&
-    HTTP_METHODS.includes(node.property.value));
+        (!node.computed && node.property?.type === 'Identifier' && HTTP_METHODS.includes(node.property.name)) ||
+        (node.computed && node.property?.type === 'StringLiteral' && HTTP_METHODS.includes(node.property.value));
 
     if (!isTargetMethod) return false;
 
     const obj = node.object;
     const isHttpClientProp =
-    obj?.type === "MemberExpression" &&
-    (
-    (!obj.computed && obj.property?.type === "Identifier" && obj.property.name === "httpClient") ||
-    (obj.computed && obj.property?.type === "StringLiteral" && obj.property.value === "httpClient")
-    ) &&
-    obj.object?.type === "ThisExpression";
+        obj?.type === 'MemberExpression' &&
+        ((!obj.computed && obj.property?.type === 'Identifier' && obj.property.name === 'httpClient') ||
+            (obj.computed && obj.property?.type === 'StringLiteral' && obj.property.value === 'httpClient')) &&
+        obj.object?.type === 'ThisExpression';
 
     return isHttpClientProp;
 }
 
 function isDirectlyAwaited(callPath) {
     let p = callPath.parentPath;
-    while (p && p.node?.type === "ParenthesizedExpression") p = p.parentPath;
-    return p?.node?.type === "AwaitExpression";
+    while (p && p.node?.type === 'ParenthesizedExpression') p = p.parentPath;
+    return p?.node?.type === 'AwaitExpression';
 }
 
 // === нормализация endpoint ===
@@ -69,57 +77,53 @@ function normalizeEndpoint(node, callPath) {
     if (!node) return null;
 
     switch (node.type) {
-        case "StringLiteral":
+        case 'StringLiteral':
             return node.value;
 
-        case "TemplateLiteral": {
+        case 'TemplateLiteral': {
             return node.quasis
-            .map((q, i) => {
-                const expr = node.expressions[i];
-                const val = expr ? normalizeEndpoint(expr, callPath) : "";
-                return q.value.cooked + val;
-            })
-            .join("");
+                .map((q, i) => {
+                    const expr = node.expressions[i];
+                    const val = expr ? normalizeEndpoint(expr, callPath) : '';
+                    return q.value.cooked + val;
+                })
+                .join('');
         }
 
-        case "BinaryExpression":
-            if (node.operator === "+") {
+        case 'BinaryExpression':
+            if (node.operator === '+') {
                 return normalizeEndpoint(node.left, callPath) + normalizeEndpoint(node.right, callPath);
             }
             return generate(node).code;
 
-        case "CallExpression": {
+        case 'CallExpression': {
             // "xxx".concat(...)
-            if (
-            node.callee.type === "MemberExpression" &&
-            node.callee.property.type === "Identifier" &&
-            node.callee.property.name === "concat"
-            ) {
+            if (node.callee.type === 'MemberExpression' && node.callee.property.type === 'Identifier' && node.callee.property.name === 'concat') {
                 const base = normalizeEndpoint(node.callee.object, callPath);
-                const args = node.arguments.map((a) => normalizeEndpoint(a, callPath)).join("");
+                const args = node.arguments.map((a) => normalizeEndpoint(a, callPath)).join('');
                 return base + args;
             }
             return generate(node).code;
         }
 
-        case "MemberExpression": {
+        case 'MemberExpression': {
             // Например t.url
             node.__endpointSource = generate(node, { concise: true }).code;
             node.__unsure = true;
-            if (node.property.type === "Identifier") {
+            if (node.property.type === 'Identifier') {
                 return `:${node.property.name}`;
             }
             return `:${generate(node.property).code}`;
         }
 
-        case "Identifier": {
+        case 'Identifier': {
             // Попытка найти объявление переменной
             let binding = null;
             if (callPath && callPath.scope) {
                 binding = callPath.scope.getBinding(node.name);
             }
 
-            if (binding && binding.path.node.type === "VariableDeclarator" && binding.path.node.init) {
+            if (binding && binding.path.node.type === 'VariableDeclarator' && binding.path.node.init) {
                 const initCode = generate(binding.path.node.init, { concise: true }).code;
                 node.__endpointSource = initCode;
                 node.__unsure = true;
@@ -141,18 +145,18 @@ function extractKeysFromValue(valueNode, path) {
 
     // Helper to extract keys from ObjectExpression node
     const keysFromObject = (obj) =>
-    obj.properties
-    .map((prop) => {
-        if (prop.type === "ObjectProperty") {
-            if (prop.key.type === "Identifier") return prop.key.name;
-            if (prop.key.type === "StringLiteral") return prop.key.value;
-        }
-        return null;
-    })
-    .filter(Boolean);
+        obj.properties
+            .map((prop) => {
+                if (prop.type === 'ObjectProperty') {
+                    if (prop.key.type === 'Identifier') return prop.key.name;
+                    if (prop.key.type === 'StringLiteral') return prop.key.value;
+                }
+                return null;
+            })
+            .filter(Boolean);
 
     // Resolve Identifier by finding its binding and following initializer
-    if (valueNode.type === "Identifier") {
+    if (valueNode.type === 'Identifier') {
         const name = valueNode.name;
         if (!path || !path.scope) return null;
         const binding = path.scope.getBinding(name);
@@ -167,20 +171,20 @@ function extractKeysFromValue(valueNode, path) {
     }
 
     // If it's an object literal — simple case
-    if (valueNode.type === "ObjectExpression") {
+    if (valueNode.type === 'ObjectExpression') {
         return keysFromObject(valueNode);
     }
 
     // If it's a call like (0, r.F)({...}) — проверим аргументы на объекты
-    if (valueNode.type === "CallExpression") {
+    if (valueNode.type === 'CallExpression') {
         const keys = [];
         for (const arg of valueNode.arguments) {
-            if (arg.type === "ObjectExpression") {
+            if (arg.type === 'ObjectExpression') {
                 keys.push(...keysFromObject(arg));
-            } else if (arg.type === "Identifier") {
+            } else if (arg.type === 'Identifier') {
                 const nested = extractKeysFromValue(arg, path);
                 if (nested) keys.push(...nested);
-            } else if (arg.type === "CallExpression") {
+            } else if (arg.type === 'CallExpression') {
                 const nested = extractKeysFromValue(arg, path);
                 if (nested) keys.push(...nested);
             }
@@ -190,7 +194,7 @@ function extractKeysFromValue(valueNode, path) {
 
     // If it's a sequence/expression that wraps an object: try to be permissive
     // e.g. (0, r.P)({...}) was handled, but also maybe other wrappers — we can try to see if node has .arguments or .left/right
-    if (valueNode.type === "SequenceExpression") {
+    if (valueNode.type === 'SequenceExpression') {
         for (const expr of valueNode.expressions) {
             const found = extractKeysFromValue(expr, path);
             if (found) return found;
@@ -208,22 +212,16 @@ function extractOptionsFromObject(objNode, path) {
     let jsonFormatted = null;
 
     for (const prop of objNode.properties) {
-        if (prop.type !== "ObjectProperty") continue;
+        if (prop.type !== 'ObjectProperty') continue;
 
         // --- searchParams ---
-        if (
-        (prop.key.type === "Identifier" && prop.key.name === "searchParams") ||
-        (prop.key.type === "StringLiteral" && prop.key.value === "searchParams")
-        ) {
+        if ((prop.key.type === 'Identifier' && prop.key.name === 'searchParams') || (prop.key.type === 'StringLiteral' && prop.key.value === 'searchParams')) {
             searchParams = generate(prop.value ?? prop, { concise: true }).code;
             searchParamsFormatted = extractKeysFromValue(prop.value ?? prop, path);
         }
 
         // --- json ---
-        if (
-        (prop.key.type === "Identifier" && prop.key.name === "json") ||
-        (prop.key.type === "StringLiteral" && prop.key.value === "json")
-        ) {
+        if ((prop.key.type === 'Identifier' && prop.key.name === 'json') || (prop.key.type === 'StringLiteral' && prop.key.value === 'json')) {
             json = generate(prop.value ?? prop, { concise: true }).code;
             jsonFormatted = extractKeysFromValue(prop.value ?? prop, path);
         }
@@ -240,12 +238,12 @@ function processNodeRecursive(node, path) {
 
     if (!node) return { searchParams, searchParamsFormatted, json, jsonFormatted };
 
-    if (node.type === "ObjectExpression") {
+    if (node.type === 'ObjectExpression') {
         const extracted = extractOptionsFromObject(node, path);
         return extracted;
     }
 
-    if (node.type === "CallExpression") {
+    if (node.type === 'CallExpression') {
         // проверяем аргументы рекурсивно (поддерживаем обёртки createHttpOptions(...), wrap(...createHttpOptions(...)) и т.п.)
         for (const arg of node.arguments) {
             const extracted = processNodeRecursive(arg, path);
@@ -259,7 +257,7 @@ function processNodeRecursive(node, path) {
         return { searchParams, searchParamsFormatted, json, jsonFormatted };
     }
 
-    if (node.type === "Identifier") {
+    if (node.type === 'Identifier') {
         // пытаемся найти binding и обработать инициализатор
         if (path && path.scope) {
             const binding = path.scope.getBinding(node.name);
@@ -271,7 +269,7 @@ function processNodeRecursive(node, path) {
     }
 
     // SequenceExpression (a, b, {...}) - проверим вложенные выражения
-    if (node.type === "SequenceExpression") {
+    if (node.type === 'SequenceExpression') {
         for (const expr of node.expressions) {
             const extracted = processNodeRecursive(expr, path);
             searchParams = searchParams ?? extracted.searchParams;
@@ -284,7 +282,6 @@ function processNodeRecursive(node, path) {
 
     return { searchParams, searchParamsFormatted, json, jsonFormatted };
 }
-
 
 function extractEndpointAndOptions(callNode, callPath) {
     const args = callNode.arguments;
@@ -308,8 +305,7 @@ function extractEndpointAndOptions(callNode, callPath) {
 
     if (args.length > 1) {
         const second = args[1];
-        ({ searchParams, searchParamsFormatted, json, jsonFormatted } =
-        processNodeRecursive(second, callPath));
+        ({ searchParams, searchParamsFormatted, json, jsonFormatted } = processNodeRecursive(second, callPath));
     }
 
     return {
@@ -319,7 +315,7 @@ function extractEndpointAndOptions(callNode, callPath) {
         json,
         jsonFormatted,
         unsureEndpoint,
-        endpointSource
+        endpointSource,
     };
 }
 
@@ -327,25 +323,25 @@ function getEnclosingFunctionName(callPath) {
     let p = callPath;
     while (p) {
         const n = p.node;
-        if (n.type === "FunctionDeclaration" && n.id) {
+        if (n.type === 'FunctionDeclaration' && n.id) {
             return n.id.name;
         }
-        if ((n.type === "FunctionExpression" || n.type === "ArrowFunctionExpression") && p.parentPath) {
+        if ((n.type === 'FunctionExpression' || n.type === 'ArrowFunctionExpression') && p.parentPath) {
             // Может быть метод объекта или класс
             const parent = p.parentPath.node;
-            if (parent.type === "ObjectProperty" && parent.key.type === "Identifier") {
+            if (parent.type === 'ObjectProperty' && parent.key.type === 'Identifier') {
                 return parent.key.name;
             }
-            if (parent.type === "ClassMethod" && parent.key.type === "Identifier") {
+            if (parent.type === 'ClassMethod' && parent.key.type === 'Identifier') {
                 return parent.key.name;
             }
-            if (parent.type === "VariableDeclarator" && parent.id.type === "Identifier") {
+            if (parent.type === 'VariableDeclarator' && parent.id.type === 'Identifier') {
                 return parent.id.name;
             }
         }
-        if (n.type === "ClassMethod" || n.type === "ObjectMethod") {
-            if (n.key.type === "Identifier") return n.key.name;
-            if (n.key.type === "StringLiteral") return n.key.value;
+        if (n.type === 'ClassMethod' || n.type === 'ObjectMethod') {
+            if (n.key.type === 'Identifier') return n.key.name;
+            if (n.key.type === 'StringLiteral') return n.key.value;
         }
         p = p.parentPath;
     }
@@ -360,9 +356,9 @@ function generateSimpleRoutesListFromResults(results) {
     for (const item of results) {
         if (!item.endpoint || item.unsureEndpoint) continue;
 
-        let endpointString = `${item.method} ${item.formated.endpoint}`
+        let endpointString = `${item.method} ${item.formated.endpoint}`;
 
-        if (item.formated.searchParamKeys) endpointString = endpointString.concat('?', item.formated.searchParamKeys.map(item=>`${item}=[${item}]`).join('&'));
+        if (item.formated.searchParamKeys) endpointString = endpointString.concat('?', item.formated.searchParamKeys.map((item) => `${item}=[${item}]`).join('&'));
 
         if (item.formated.jsonBodyKeys) endpointString = endpointString.concat(' { ', item.formated.jsonBodyKeys.join(', '), ' }');
 
@@ -373,7 +369,7 @@ function generateSimpleRoutesListFromResults(results) {
             const uniqueNameBrackets = [item.formated.endpoint.split('/')[1]];
             if (counter > 1) uniqueNameBrackets.push(counter);
             uniqueName = `${name} (${uniqueNameBrackets.join(' ')})`;
-            counter++
+            counter++;
         }
 
         routes[uniqueName] = endpointString;
@@ -415,22 +411,26 @@ function elementToText(el, pluralVar) {
             return pluralVar ? `{${pluralVar}}` : '#';
         case 8: // tag with children
             // сохраняем содержимое тегов как текст (можно расширить)
-            return (el.children || []).map(child => elementToText(child, pluralVar)).join('');
+            return (el.children || []).map((child) => elementToText(child, pluralVar)).join('');
         default:
             return '';
     }
 }
 
 function elementsToString(elements = [], pluralVar) {
-    return (elements || []).map(el => {
-        // для вложенных option.value может быть plain array
-        if (!el) return '';
-        if (el.type === 5 || el.type === 6) {
-            // не ожидаем вложенных branch-узлов тут для простой строки
-            return '';
-        }
-        return elementToText(el, pluralVar);
-    }).join('').replaceAll('\n', '\\n').replaceAll('\u00A0', ' ');
+    return (elements || [])
+        .map((el) => {
+            // для вложенных option.value может быть plain array
+            if (!el) return '';
+            if (el.type === 5 || el.type === 6) {
+                // не ожидаем вложенных branch-узлов тут для простой строки
+                return '';
+            }
+            return elementToText(el, pluralVar);
+        })
+        .join('')
+        .replaceAll('\n', '\\n')
+        .replaceAll('\u00A0', ' ');
 }
 
 /**
@@ -493,7 +493,7 @@ function compileMessages(messages) {
 function createOutputJson(data, fileName) {
     if (!data) return;
     try {
-        fs.writeFileSync(path.join(OUTPUT, fileName), JSON.stringify(data, null, 2), "utf8");
+        fs.writeFileSync(path.join(OUTPUT, fileName), JSON.stringify(data, null, 2), 'utf8');
         console.log(`💾 ${fileName} сохранён`);
     } catch (err) {
         console.error(`\n❌ Ошибка записи файла ${fileName} в ${OUTPUT}: ${err.message}\n`);
@@ -504,9 +504,9 @@ function createOutputJson(data, fileName) {
     console.time('Анализ завершён за');
     console.log(`\n🔍 Поиск JS/TS файлов в папке: ${APP_CHUNKS_ROOT}`);
 
-    const files = await fg(["**/*.{js,mjs,cjs,jsx,ts,tsx}"], {
+    const files = await fg(['**/*.{js,mjs,cjs,jsx,ts,tsx}'], {
         cwd: APP_CHUNKS_ROOT,
-        ignore: ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.git/**"],
+        ignore: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.git/**'],
         absolute: true,
     });
 
@@ -522,36 +522,32 @@ function createOutputJson(data, fileName) {
 
         let code;
         try {
-            code = fs.readFileSync(file, "utf8");
+            code = fs.readFileSync(file, 'utf8');
         } catch (err) {
-            console.error(
-              `\n\n❌ Ошибка чтения файла ${relPath}: ${err.message}\n`,
-            );
+            console.error(`\n\n❌ Ошибка чтения файла ${relPath}: ${err.message}\n`);
             continue;
         }
 
         let ast;
         try {
             ast = parser.parse(code, {
-                sourceType: "unambiguous",
+                sourceType: 'unambiguous',
                 plugins: [
-                    "jsx",
-                    "typescript",
-                    "classProperties",
-                    "classPrivateProperties",
-                    "classPrivateMethods",
-                    "decorators-legacy",
-                    "dynamicImport",
-                    "optionalChaining",
-                    "nullishCoalescingOperator",
-                    "topLevelAwait",
-                    "objectRestSpread",
+                    'jsx',
+                    'typescript',
+                    'classProperties',
+                    'classPrivateProperties',
+                    'classPrivateMethods',
+                    'decorators-legacy',
+                    'dynamicImport',
+                    'optionalChaining',
+                    'nullishCoalescingOperator',
+                    'topLevelAwait',
+                    'objectRestSpread',
                 ],
             });
         } catch (err) {
-            console.error(
-              `\n\n❌ Ошибка парсинга ${relPath}: ${err.message}\n`,
-            );
+            console.error(`\n\n❌ Ошибка парсинга ${relPath}: ${err.message}\n`);
             continue;
         }
 
@@ -561,8 +557,10 @@ function createOutputJson(data, fileName) {
                     if (!isHttpMethodCallee(callPath.node.callee)) return;
                     if (!isDirectlyAwaited(callPath)) return;
 
-                    const { endpoint, searchParams, searchParamsFormatted, json, jsonFormatted, unsureEndpoint, endpointSource } =
-                    extractEndpointAndOptions(callPath.node, callPath);
+                    const { endpoint, searchParams, searchParamsFormatted, json, jsonFormatted, unsureEndpoint, endpointSource } = extractEndpointAndOptions(
+                        callPath.node,
+                        callPath,
+                    );
                     const functionName = getEnclosingFunctionName(callPath);
                     const result = {
                         name: functionName,
@@ -571,7 +569,7 @@ function createOutputJson(data, fileName) {
                         searchParamKeys: searchParams,
                         jsonBodyKeys: json,
                         formated: {
-                            endpoint: "/".concat(endpoint),
+                            endpoint: '/'.concat(endpoint),
                             searchParamKeys: searchParamsFormatted,
                             jsonBodyKeys: jsonFormatted,
                         },
@@ -579,7 +577,7 @@ function createOutputJson(data, fileName) {
                             file: relPath,
                             line: callPath.node.loc?.start.line ?? null,
                             column: callPath.node.loc?.start.column ?? null,
-                        }
+                        },
                     };
 
                     if (unsureEndpoint) {
@@ -595,23 +593,19 @@ function createOutputJson(data, fileName) {
 
                     // Ищем присваивание вида ANY.WebNext = "WebNext"
                     const isWebNextMarker =
-                    node.left.type === "MemberExpression" &&
-                    node.left.property.type === "Identifier" &&
-                    node.left.property.name === "WebNext" &&
-                    node.right.type === "StringLiteral" &&
-                    node.right.value === "WebNext";
+                        node.left.type === 'MemberExpression' &&
+                        node.left.property.type === 'Identifier' &&
+                        node.left.property.name === 'WebNext' &&
+                        node.right.type === 'StringLiteral' &&
+                        node.right.value === 'WebNext';
 
                     if (!isWebNextMarker) return;
 
                     // Находим SequenceExpression-родителя (если есть)
                     let seqNode = path.parentPath.node;
-                    if (seqNode.type === "SequenceExpression") {
+                    if (seqNode.type === 'SequenceExpression') {
                         for (const expr of seqNode.expressions) {
-                            if (
-                            expr.type === "AssignmentExpression" &&
-                            expr.left.type === "MemberExpression" &&
-                            expr.left.property.type === "Identifier"
-                            ) {
+                            if (expr.type === 'AssignmentExpression' && expr.left.type === 'MemberExpression' && expr.left.property.type === 'Identifier') {
                                 experiments.push(expr.left.property.name);
                             }
                         }
@@ -620,15 +614,11 @@ function createOutputJson(data, fileName) {
                         experiments.push(node.left.property.name);
                     }
 
-                    console.log(
-                      `\n\n🔬 Найден реестр экспериментов, всего ключей: ${experiments.length}\n`,
-                    );
-                }
+                    console.log(`\n\n🔬 Найден реестр экспериментов, всего ключей: ${experiments.length}\n`);
+                },
             });
         } catch (err) {
-            console.error(
-              `\n\n❌ Ошибка обхода AST в ${relPath}: ${err.message}\n`,
-            );
+            console.error(`\n\n❌ Ошибка обхода AST в ${relPath}: ${err.message}\n`);
         }
     }
 
@@ -660,7 +650,7 @@ function createOutputJson(data, fileName) {
 
     console.log(`\nСортирую результаты...`);
     console.time(`Сортировка завершена`);
-    results.sort((a, b) => (a.formated.endpoint ?? "").localeCompare(b.formated.endpoint ?? ""));
+    results.sort((a, b) => (a.formated.endpoint ?? '').localeCompare(b.formated.endpoint ?? ''));
     experiments.sort((a, b) => a.localeCompare(b));
     console.timeEnd(`Сортировка завершена`);
     console.timeEnd('Анализ завершён за');

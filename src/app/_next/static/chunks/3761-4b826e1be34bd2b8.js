@@ -59,7 +59,7 @@
             var n = l(29318),
                 o = l(41028);
             !(function (e) {
-                ((e.CUSTOM = 'CUSTOM'),
+                (e.CUSTOM = 'CUSTOM'),
                     (e.DEFAULT = 'DEFAULT'),
                     (e.CLASSICAL = 'CLASSICAL'),
                     (e.CLUB = 'CLUB'),
@@ -77,7 +77,7 @@
                     (e.SKA = 'SKA'),
                     (e.SOFT = 'SOFT'),
                     (e.SOFT_ROCK = 'SOFT_ROCK'),
-                    (e.TECHNO = 'TECHNO'));
+                    (e.TECHNO = 'TECHNO');
             })(r || (r = {}));
             let v = {
                 [r.CUSTOM]: {
@@ -444,14 +444,14 @@
                         changePreamp(a) {
                             let { localStorage: l } = (0, o._$)(e),
                                 u = (0, o.dV)(e.currentPreset);
-                            ((e.customPreset = (0, o.wg)({ ...u, id: r.CUSTOM })), e.customPreset.setPreamp(a), (e.currentPreset = (0, o.o8)(e.customPreset)));
+                            (e.customPreset = (0, o.wg)({ ...u, id: r.CUSTOM })), e.customPreset.setPreamp(a), (e.currentPreset = (0, o.o8)(e.customPreset));
                             let t = l.get(d.cYZ.EqualizerConfig);
                             l.set(d.cYZ.EqualizerConfig, { ...t, customPreset: (0, n.HO)(e.customPreset), lastPresetId: r.CUSTOM, version: '6' });
                         },
                         changeAmp(a, l) {
                             let { localStorage: u } = (0, o._$)(e),
                                 t = (0, o.dV)(e.currentPreset);
-                            ((e.customPreset = (0, o.wg)({ ...t, id: r.CUSTOM })), e.customPreset.setAmp(a, l), (e.currentPreset = (0, o.o8)(e.customPreset)));
+                            (e.customPreset = (0, o.wg)({ ...t, id: r.CUSTOM })), e.customPreset.setAmp(a, l), (e.currentPreset = (0, o.o8)(e.customPreset));
                             let i = u.get(d.cYZ.EqualizerConfig);
                             u.set(d.cYZ.EqualizerConfig, { ...i, customPreset: (0, n.HO)(e.customPreset), lastPresetId: r.CUSTOM, version: '6' });
                         },
@@ -740,11 +740,11 @@
                                     (r && (r += ' '), (r += a));
                             return r;
                         }
-                        (l.r(a), l.d(a, { clsx: () => r, default: () => u }));
+                        l.r(a), l.d(a, { clsx: () => r, default: () => u });
                         let u = r;
                     },
                     4525: (e, a, l) => {
-                        (l.r(a), l.d(a, { default: () => r }));
+                        l.r(a), l.d(a, { default: () => r });
                         let r = {
                             root: 'JkKcxRVvjK7lcakkEliC',
                             root_alwaysThumb: 'cOKDtLfDZAuPXftfS2WM',
@@ -767,17 +767,17 @@
                             else r = a;
                             return { $$typeof: l, type: e, key: u, ref: void 0 !== (a = r.ref) ? a : null, props: r };
                         }
-                        ((a.Fragment = Symbol.for('react.fragment')), (a.jsx = r), (a.jsxs = r));
+                        (a.Fragment = Symbol.for('react.fragment')), (a.jsx = r), (a.jsxs = r);
                     },
                     1082: (e, a, l) => {
                         e.exports = l(7327);
                     },
                     2342: (e, a) => {
-                        (Object.defineProperty(a, '__esModule', { value: !0 }),
+                        Object.defineProperty(a, '__esModule', { value: !0 }),
                             (a.ThumbVariant = a.DEFAULT_MAX_VALUE = a.SliderMode = void 0),
                             (a.SliderMode = { NORMAL: 'normal', DEFERRED: 'deferred' }),
                             (a.DEFAULT_MAX_VALUE = 100),
-                            (a.ThumbVariant = { HOVER: 'hover', NEVER: 'never', ALWAYS: 'always' }));
+                            (a.ThumbVariant = { HOVER: 'hover', NEVER: 'never', ALWAYS: 'always' });
                     },
                     7886: function (e, a, l) {
                         var r =
@@ -785,7 +785,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(a, '__esModule', { value: !0 }), (a.Slider = void 0));
+                        Object.defineProperty(a, '__esModule', { value: !0 }), (a.Slider = void 0);
                         let u = l(1082),
                             t = l(5881),
                             i = l(810),
@@ -808,16 +808,16 @@
                                     [m, p] = (0, i.useState)(null != r ? r : 0),
                                     [A, q] = (0, i.useState)(!1),
                                     [b, S] = (0, i.useState)(!1);
-                                ((0, i.useEffect)(() => {
+                                (0, i.useEffect)(() => {
                                     A || p(r);
                                 }, [r, A]),
                                     (0, i.useEffect)(() => {
                                         !A && b && y === s.SliderMode.DEFERRED && (_(m, !0), S(!1));
-                                    }, [y, A, _, m, b]));
+                                    }, [y, A, _, m, b]);
                                 let z = (0, i.useCallback)(
                                         (e) => {
                                             let a = Number(e.target.value);
-                                            (p(a), S(!0), 'normal' === y ? (_(a, !0), S(!1)) : _(a, !1));
+                                            p(a), S(!0), 'normal' === y ? (_(a, !0), S(!1)) : _(a, !1);
                                         },
                                         [p, _, y],
                                     ),
@@ -825,12 +825,12 @@
                                         (e) => {
                                             let a = !1,
                                                 l = !1;
-                                            (e.stopPropagation(),
+                                            e.stopPropagation(),
                                                 e.nativeEvent instanceof window.MouseEvent
                                                     ? ((a = 0 === e.nativeEvent.button), (l = 'mousedown' === e.nativeEvent.type))
                                                     : ((a = 1 === e.nativeEvent.touches.length || 'touchend' === e.nativeEvent.type),
                                                       (l = 'touchstart' === e.nativeEvent.type)),
-                                                a && q(l));
+                                                a && q(l);
                                         },
                                         [q],
                                     ),
@@ -882,19 +882,19 @@
                 var a = i[e];
                 if (void 0 !== a) return a.exports;
                 var l = (i[e] = { exports: {} });
-                return (t[e].call(l.exports, l, l.exports, s), l.exports);
+                return t[e].call(l.exports, l, l.exports, s), l.exports;
             }
-            ((s.d = (e, a) => {
+            (s.d = (e, a) => {
                 for (var l in a) s.o(a, l) && !s.o(e, l) && Object.defineProperty(e, l, { enumerable: !0, get: a[l] });
             }),
                 (s.o = (e, a) => Object.prototype.hasOwnProperty.call(e, a)),
                 (s.r = (e) => {
-                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 }));
-                }));
+                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 });
+                });
             var n = {};
             (() => {
-                (Object.defineProperty(n, 'X', { value: !0 }), (n.i = void 0));
+                Object.defineProperty(n, 'X', { value: !0 }), (n.i = void 0);
                 var e = s(7886);
                 Object.defineProperty(n, 'i', {
                     enumerable: !0,

@@ -9,19 +9,19 @@
                 a = n(7144),
                 s = n(66268),
                 i = n(73827);
-            (!(function (e) {
-                ((e.formatDate = 'FormattedDate'),
+            !(function (e) {
+                (e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName'));
+                    (e.formatDisplayName = 'FormattedDisplayName');
             })(o || (o = {})),
                 (function (e) {
-                    ((e.formatDate = 'FormattedDateParts'),
+                    (e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts'));
-                })(r || (r = {})));
+                        (e.formatList = 'FormattedListParts');
+                })(r || (r = {}));
             var l = function (e) {
                 var t = (0, i.A)(),
                     n = e.value,
@@ -38,7 +38,7 @@
                         l = 'string' == typeof o ? new Date(o || 0) : o;
                     return r('formatDate' === e ? n.formatDateToParts(l, s) : n.formatTimeToParts(l, s));
                 };
-                return ((t.displayName = r[e]), t);
+                return (t.displayName = r[e]), t;
             }
             function d(e) {
                 var t = function (t) {
@@ -51,21 +51,21 @@
                     var d = n.textComponent || s.Fragment;
                     return s.createElement(d, null, c);
                 };
-                return ((t.displayName = o[e]), t);
+                return (t.displayName = o[e]), t;
             }
-            ((l.displayName = 'FormattedNumberParts'), (l.displayName = 'FormattedNumberParts'));
+            (l.displayName = 'FormattedNumberParts'), (l.displayName = 'FormattedNumberParts');
             var u = d('formatDate');
-            (d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime'));
+            d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime');
         },
         5884: (e, t, n) => {
             'use strict';
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'default', {
                     enumerable: !0,
                     get: function () {
                         return r;
                     },
-                }));
+                });
             let o = n(473)._(n(16092));
             function r(e, t) {
                 var n;
@@ -89,13 +89,13 @@
         },
         16092: (e, t, n) => {
             'use strict';
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'default', {
                     enumerable: !0,
                     get: function () {
                         return l;
                     },
-                }));
+                });
             let o = n(33008),
                 r = n(66268),
                 a = n(52283);
@@ -117,7 +117,7 @@
                                 : (0, o.jsx)(a.BailoutToCSR, { reason: 'next/dynamic', children: (0, o.jsx)(n, { ...e }) });
                         return (0, o.jsx)(c, { ...(i ? { fallback: s } : {}), children: d });
                     }
-                    return ((c.displayName = 'LoadableComponent'), c);
+                    return (c.displayName = 'LoadableComponent'), c;
                 };
         },
         26271: (e) => {
@@ -234,7 +234,7 @@
                 (0, m.CgZ)(g);
                 let { sendRefreshEvent: h } = (0, m.cYT)(),
                     p = (0, s.useCallback)(() => {
-                        (h(), (window.location.href = m.Zyd.main.href));
+                        h(), (window.location.href = m.Zyd.main.href);
                     }, [h]),
                     { contentRef: x } = (0, m.gKY)();
                 return (0, o.jsxs)('div', {
@@ -326,17 +326,17 @@
                                     let {
                                         config: { feed: n, top: r },
                                     } = yield t.getTabConfig({});
-                                    ((e.feedLimit = n.limit),
+                                    (e.feedLimit = n.limit),
                                         (e.feedOffset = n.offset),
                                         (e.topLimit = r.limit),
                                         (e.topOffset = r.offset),
-                                        (e.loadingState = o.GuX.RESOLVE));
+                                        (e.loadingState = o.GuX.RESOLVE);
                                 } catch (t) {
-                                    (n.error(t), (e.loadingState = o.GuX.REJECT));
+                                    n.error(t), (e.loadingState = o.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            ((e.loadingState = o.GuX.IDLE), (e.feedLimit = -1), (e.feedOffset = 3), (e.topLimit = 3), (e.topOffset = 0));
+                            (e.loadingState = o.GuX.IDLE), (e.feedLimit = -1), (e.feedOffset = 3), (e.topLimit = 3), (e.topOffset = 0);
                         },
                     })),
                 d = r.gK
@@ -363,7 +363,7 @@
                             let { concertsResource: t, modelActionsLogger: n } = (0, r._$)(e);
                             if (!e.config.isLoading && !e.isLoading)
                                 try {
-                                    ((e.loadingState = o.GuX.PENDING), yield e.config.getData());
+                                    (e.loadingState = o.GuX.PENDING), yield e.config.getData();
                                     let { items: n } = yield t.getFeed({}),
                                         { feedConcerts: a, topConcerts: i } = ((e, t) => {
                                             let { topLimit: n, topOffset: o, feedLimit: r, feedOffset: a } = e;
@@ -372,13 +372,13 @@
                                             e.config,
                                             n.map((e) => (0, s.ho)(e.data.concert, e.data.minPrice)),
                                         );
-                                    ((e.feedConcerts = (0, r.wg)(a)), (e.topConcerts = (0, r.wg)(i)), (e.loadingState = o.GuX.RESOLVE));
+                                    (e.feedConcerts = (0, r.wg)(a)), (e.topConcerts = (0, r.wg)(i)), (e.loadingState = o.GuX.RESOLVE);
                                 } catch (t) {
-                                    (n.error(t), (e.loadingState = o.GuX.REJECT));
+                                    n.error(t), (e.loadingState = o.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            (e.config.reset(), e.landing.reset(), (e.loadingState = o.GuX.IDLE), e.destroyItems([e.topConcerts, e.feedConcerts]));
+                            e.config.reset(), e.landing.reset(), (e.loadingState = o.GuX.IDLE), e.destroyItems([e.topConcerts, e.feedConcerts]);
                         },
                     }));
             var u = n(33008),
@@ -675,14 +675,14 @@
                 let { reason: t, children: n } = e;
                 return n;
             }
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'BailoutToCSR', {
                     enumerable: !0,
                     get: function () {
                         return o;
                     },
                 }),
-                n(32975));
+                n(32975);
         },
         59646: (e) => {
             e.exports = {
@@ -696,7 +696,7 @@
         },
         60628: (e, t, n) => {
             'use strict';
-            (n.r(t), n.d(t, { default: () => s }));
+            n.r(t), n.d(t, { default: () => s });
             var o = n(33008),
                 r = n(66268),
                 a = n(44958);
@@ -714,7 +714,7 @@
                 let { moduleIds: t } = e;
                 return null;
             }
-            (Object.defineProperty(t, '__esModule', { value: !0 }),
+            Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'PreloadChunks', {
                     enumerable: !0,
                     get: function () {
@@ -724,7 +724,7 @@
                 n(33008),
                 n(17229),
                 n(6077),
-                n(74964));
+                n(74964);
         },
         83888: (e, t, n) => {
             'use strict';
@@ -739,7 +739,7 @@
         },
     },
     (e) => {
-        (e.O(
+        e.O(
             0,
             [
                 7098, 8282, 9712, 5271, 7309, 8712, 8004, 9284, 7509, 1709, 4397, 9775, 8065, 952, 1311, 7764, 6706, 2089, 2140, 996, 4236, 6728, 3949, 9169, 8740, 9615,
@@ -747,6 +747,6 @@
             ],
             () => e((e.s = 95700)),
         ),
-            (_N_E = e.O()));
+            (_N_E = e.O());
     },
 ]);

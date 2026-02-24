@@ -124,7 +124,7 @@
                 (0, _.CgZ)(g);
                 let { sendRefreshEvent: h } = (0, _.cYT)(),
                     x = (0, r.useCallback)(() => {
-                        (h(), (window.location.href = _.Zyd.main.href));
+                        h(), (window.location.href = _.Zyd.main.href);
                     }, [h]),
                     { contentRef: N } = (0, _.gKY)();
                 return (0, s.jsxs)('div', {
@@ -235,7 +235,7 @@
                             try {
                                 t.loadingState = c.GuX.PENDING;
                                 let e = yield n.getPromotionsById({ promoId: o });
-                                ((t.title = e.title),
+                                (t.title = e.title),
                                     (t.promotionType = e.promotionType),
                                     e.artists && e.artists.length > 0 && (t.artists = (0, s.wg)(e.artists.map(l.dM))),
                                     e.albums && e.albums.length > 0 && (t.albums = (0, s.wg)(e.albums.map(r.pp))),
@@ -247,15 +247,15 @@
                                                 return (0, d.jX)(e);
                                             }),
                                         )),
-                                    t.loadingState !== c.GuX.IDLE && (t.loadingState = c.GuX.RESOLVE));
+                                    t.loadingState !== c.GuX.IDLE && (t.loadingState = c.GuX.RESOLVE);
                             } catch (e) {
-                                (i.error(e),
+                                i.error(e),
                                     e instanceof a.GX && (e.statusCode === a.X1.NOT_FOUND || e.statusCode === a.X1.BAD_REQUEST) && (t.errorStatusCode = a.X1.NOT_FOUND),
-                                    t.loadingState !== c.GuX.IDLE && (t.loadingState = c.GuX.REJECT));
+                                    t.loadingState !== c.GuX.IDLE && (t.loadingState = c.GuX.REJECT);
                             }
                     }),
                     reset() {
-                        ((t.loadingState = c.GuX.IDLE), (t.title = null), (t.artists = (0, s.wg)([])), (t.albums = (0, s.wg)([])));
+                        (t.loadingState = c.GuX.IDLE), (t.title = null), (t.artists = (0, s.wg)([])), (t.albums = (0, s.wg)([]));
                     },
                 }));
             o(75926);
@@ -263,14 +263,14 @@
         },
         38513: (t, e, o) => {
             'use strict';
-            (o.r(e), o.d(e, { default: () => i }));
+            o.r(e), o.d(e, { default: () => i });
             var s = o(33008),
                 a = o(17846),
                 n = o(66268),
                 r = o(36800);
             let i = () => {
                 let t = (0, a.useSearchParams)().get('promoId');
-                return (t || (0, a.notFound)(), (0, s.jsx)(n.Suspense, { children: (0, s.jsx)(r.EX, { promoId: t }) }));
+                return t || (0, a.notFound)(), (0, s.jsx)(n.Suspense, { children: (0, s.jsx)(r.EX, { promoId: t }) });
             };
         },
         40013: (t) => {
@@ -289,10 +289,10 @@
         60411: (t, e, o) => {
             'use strict';
             var s;
-            (o.d(e, { Q: () => s }),
+            o.d(e, { Q: () => s }),
                 (function (t) {
-                    ((t.ALBUMS = 'albums'), (t.ARTISTS = 'artists'), (t.PLAYLISTS = 'playlists'));
-                })(s || (s = {})));
+                    (t.ALBUMS = 'albums'), (t.ARTISTS = 'artists'), (t.PLAYLISTS = 'playlists');
+                })(s || (s = {}));
         },
         66513: (t) => {
             t.exports = { root: 'PostArtists_root__Zxmjq', content: 'PostArtists_content__JzGOH' };
@@ -372,14 +372,14 @@
                         { post: o } = (0, g.Pjs)(),
                         n = (0, g.W6M)(),
                         { contentScrollRef: h, setContentScrollRef: x } = (0, g.gKY)();
-                    ((0, i.useEffect)(
+                    (0, i.useEffect)(
                         () => () => {
                             o.reset();
                         },
                         [o],
                     ),
                         o.isNotFound && (0, r.notFound)(),
-                        (0, g.Jzs)(o.isResolved));
+                        (0, g.Jzs)(o.isResolved);
                     let j = (0, i.useMemo)(() => {
                         if (o.isLoading) return (0, s.jsx)(N, {});
                         switch (o.promotionType) {
@@ -445,11 +445,11 @@
         },
     },
     (t) => {
-        (t.O(
+        t.O(
             0,
             [7098, 8282, 9712, 5271, 7309, 9775, 952, 6451, 1709, 1311, 7764, 6706, 996, 4236, 9169, 8740, 9615, 3588, 2732, 1744, 4204, 7747, 5242, 9902, 5598, 7358],
             () => t((t.s = 15187)),
         ),
-            (_N_E = t.O()));
+            (_N_E = t.O());
     },
 ]);

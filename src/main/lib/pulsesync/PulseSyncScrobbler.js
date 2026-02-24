@@ -11,7 +11,7 @@ class PulseSyncScrobbler {
         this.currentTrackStartTime = null;
         this.currentTrackPlayedTime = 0;
         this.isScrobblerEnabled = true;
-        this.pulseSyncManager = manager
+        this.pulseSyncManager = manager;
     }
 
     handleEvent(playingState) {
@@ -22,7 +22,7 @@ class PulseSyncScrobbler {
         }
     }
     isEnabled() {
-        return this.isScrobblerEnabled
+        return this.isScrobblerEnabled;
     }
     isTrackChanged(newTrack) {
         return this.currentTrack?.id !== newTrack.id;
@@ -41,10 +41,7 @@ class PulseSyncScrobbler {
     }
 
     isPlaybackStateChanged(playingState) {
-        return (
-            this.currentTrack?.id === playingState.track?.id &&
-            (playingState.isPlaying ? this.currentTrackStartTime === null : this.currentTrackStartTime !== null)
-        );
+        return this.currentTrack?.id === playingState.track?.id && (playingState.isPlaying ? this.currentTrackStartTime === null : this.currentTrackStartTime !== null);
     }
 
     handlePlaybackStateChange(playingState) {
@@ -107,7 +104,7 @@ class PulseSyncScrobbler {
 
     async sendScrobble(track) {
         this.logger.info(`Sending scrobble for track: ${track.title} by ${track.artists[0].name}`);
-        this.pulseSyncManager.updateTrackInfo(track)
+        this.pulseSyncManager.updateTrackInfo(track);
     }
 }
 

@@ -8,19 +8,19 @@
                 r = i(70314),
                 a = i(8558),
                 o = (function (e) {
-                    return ((e.WEB = 'YandexMusicWebNext'), (e.DESKTOP = 'YandexMusicDesktopApp'), e);
+                    return (e.WEB = 'YandexMusicWebNext'), (e.DESKTOP = 'YandexMusicDesktopApp'), e;
                 })({});
             let s = () => {
                 {
                     let e,
                         t = (0, a.H)() || '1.0.0';
-                    return ((e = ''.concat(o.DESKTOP).concat((0, r.t)((0, n.u)()))), ''.concat(e, '/').concat(t));
+                    return (e = ''.concat(o.DESKTOP).concat((0, r.t)((0, n.u)()))), ''.concat(e, '/').concat(t);
                 }
             };
         },
         25601: (e, t, i) => {
-            (i.d(t, { bq: () => u, O5: () => l, p$: () => n, Jd: () => G, yi: () => d, oh: () => v, $P: () => h, ot: () => p, F4: () => _, y0: () => M, fD: () => y }),
-                ((n || (n = {})).UPDATED = 'UPDATED'));
+            i.d(t, { bq: () => u, O5: () => l, p$: () => n, Jd: () => G, yi: () => d, oh: () => v, $P: () => h, ot: () => p, F4: () => _, y0: () => M, fD: () => y }),
+                ((n || (n = {})).UPDATED = 'UPDATED');
             var n,
                 r,
                 a,
@@ -100,7 +100,7 @@
                 return JSON.parse(JSON.stringify(e));
             }
             function g(e, t, i) {
-                return (void 0 === e && (e = !1), !!e || !t || !i || Number(t.timestamp_ms) < Number(i.timestamp_ms));
+                return void 0 === e && (e = !1), !!e || !t || !i || Number(t.timestamp_ms) < Number(i.timestamp_ms);
             }
             var C = function () {
                     return (C =
@@ -113,7 +113,7 @@
                 },
                 O = (function () {
                     function e(e) {
-                        (Object.defineProperty(this, 'state', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        Object.defineProperty(this, 'state', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'prevState', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'diff', { enumerable: !0, configurable: !0, writable: !0, value: {} }),
                             Object.defineProperty(this, 'options', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -152,7 +152,7 @@
                                     player_queue_inject_optional: function () {},
                                 },
                             }),
-                            (this.listenersMap = new Map()));
+                            (this.listenersMap = new Map());
                     }
                     return (
                         Object.defineProperty(e.prototype, 'on', {
@@ -228,11 +228,11 @@
                                     var l = Object.keys(this.diff);
                                     if ((void 0 === r || r) && l.length) {
                                         var u = m(this.state);
-                                        (l.forEach(function (i) {
+                                        l.forEach(function (i) {
                                             (i in e.newState || i in t.state) && (u[i] = e.newState[i]);
                                         }),
                                             (this.prevState = m(this.state)),
-                                            (this.state = u));
+                                            (this.state = u);
                                     }
                                     var p = C(C({}, this.fullState), { options: e });
                                     this.emit(n.UPDATED, p, e.trigger);
@@ -509,9 +509,9 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t) {
-                                (this.diff.player_state || (this.diff.player_state = {}),
+                                this.diff.player_state || (this.diff.player_state = {}),
                                     e && !this.diff.player_state.player_queue && (this.diff.player_state.player_queue = {}),
-                                    t && !this.diff.player_state.status && (this.diff.player_state.status = {}));
+                                    t && !this.diff.player_state.status && (this.diff.player_state.status = {});
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updateLastRemoteDeviceChangingState', {
@@ -549,7 +549,7 @@
                                         f = a.find(function (e) {
                                             return e.info.device_id === (null == p ? void 0 : p.device_id);
                                         });
-                                    (this.lastRemoteDeviceChangingState &&
+                                    this.lastRemoteDeviceChangingState &&
                                         f &&
                                         this.lastRemoteDeviceChangingState.info.device_id === f.info.device_id &&
                                         !this.lastRemoteDeviceChangingState.is_offline &&
@@ -566,7 +566,7 @@
                                             p &&
                                             ((this.lastRemoteDeviceChangingState = m(f)),
                                             (this.lastRemoteDeviceChangingStateTS = Number(p.timestamp_ms)),
-                                            (t = { device: m(f), timestampMs: Number(p.timestamp_ms) })));
+                                            (t = { device: m(f), timestampMs: Number(p.timestamp_ms) }));
                                 }
                                 return t;
                             },
@@ -596,22 +596,22 @@
                         e
                     );
                 })();
-            (!(function (e) {
-                ((e.PRODUCTION = 'ynison.music.yandex.ru'), (e.QA = 'qa.ynison.music.yandex.ru'));
+            !(function (e) {
+                (e.PRODUCTION = 'ynison.music.yandex.ru'), (e.QA = 'qa.ynison.music.yandex.ru');
             })(r || (r = {})),
                 (function (e) {
-                    ((e.CONNECTING = 'CONNECTING'),
+                    (e.CONNECTING = 'CONNECTING'),
                         (e.CONNECTED = 'CONNECTED'),
                         (e.DISCONNECTED = 'DISCONNECTED'),
                         (e.WAITING_FOR_RECONNECT = 'WAITING_FOR_RECONNECT'),
-                        (e.READY_TO_RECONNECT = 'READY_TO_RECONNECT'));
+                        (e.READY_TO_RECONNECT = 'READY_TO_RECONNECT');
                 })(a || (a = {})),
                 (function (e) {
-                    ((e.RECEIVE_MESSAGE = 'RECEIVE_MESSAGE'), (e.REDIRECTOR_ERROR = 'REDIRECTOR_ERROR'), (e.HUB_ERROR = 'HUB_ERROR'));
-                })(o || (o = {})));
+                    (e.RECEIVE_MESSAGE = 'RECEIVE_MESSAGE'), (e.REDIRECTOR_ERROR = 'REDIRECTOR_ERROR'), (e.HUB_ERROR = 'HUB_ERROR');
+                })(o || (o = {}));
             var S = i(84511);
             !(function (e) {
-                ((e.ynisonBackoffMillis = 'ynison-backoff-millis'), (e.ynisonErrorCode = 'ynison-error-code'), (e.ynisonGoAwayForSeconds = 'ynison-go-away-for-seconds'));
+                (e.ynisonBackoffMillis = 'ynison-backoff-millis'), (e.ynisonErrorCode = 'ynison-error-code'), (e.ynisonGoAwayForSeconds = 'ynison-go-away-for-seconds');
             })(s || (s = {}));
             var E = i(41660),
                 P = (function () {
@@ -631,7 +631,7 @@
                         function n() {
                             this.constructor = t;
                         }
-                        (e(t, i), (t.prototype = null === i ? Object.create(i) : ((n.prototype = i.prototype), new n())));
+                        e(t, i), (t.prototype = null === i ? Object.create(i) : ((n.prototype = i.prototype), new n()));
                     };
                 })(),
                 R = function () {
@@ -668,14 +668,14 @@
                             r
                         );
                     }
-                    return (P(t, e), t);
+                    return P(t, e), t;
                 })(E.t),
                 I = i(7966),
                 A = function (e) {
-                    (Object.defineProperty(this, 'redirectorResponse', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                    Object.defineProperty(this, 'redirectorResponse', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'connectionState', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.redirectorResponse = new I.cJ(e.redirectorResponse)),
-                        (this.connectionState = new I.cJ(e.connectionState)));
+                        (this.connectionState = new I.cJ(e.connectionState));
                 },
                 T = (function () {
                     var e = function (t, i) {
@@ -694,7 +694,7 @@
                         function n() {
                             this.constructor = t;
                         }
-                        (e(t, i), (t.prototype = null === i ? Object.create(i) : ((n.prototype = i.prototype), new n())));
+                        e(t, i), (t.prototype = null === i ? Object.create(i) : ((n.prototype = i.prototype), new n()));
                     };
                 })(),
                 N = function () {
@@ -731,7 +731,7 @@
                             r
                         );
                     }
-                    return (T(t, e), t);
+                    return T(t, e), t;
                 })(E.t);
             function U(e) {
                 var t;
@@ -751,11 +751,11 @@
                 return e instanceof Error ? { name: e.name, message: e.message, stack: e.stack, cause: e.cause } : { data: e };
             }
             !(function (e) {
-                ((e.ynisonDeviceId = 'Ynison-Device-Id'),
+                (e.ynisonDeviceId = 'Ynison-Device-Id'),
                     (e.ynisonRedirectTicket = 'Ynison-Redirect-Ticket'),
                     (e.ynisonSessionId = 'Ynison-Session-Id'),
                     (e.ynisonDeviceInfo = 'Ynison-Device-Info'),
-                    (e.multiAuthUserId = 'X-Yandex-Music-Multi-Auth-User-Id'));
+                    (e.multiAuthUserId = 'X-Yandex-Music-Multi-Auth-User-Id');
             })(c || (c = {}));
             var L = function (e, t) {
                     var i,
@@ -796,12 +796,12 @@
                                             r = l;
                                             break;
                                         case 4:
-                                            return (o.label++, { value: l[1], done: !1 });
+                                            return o.label++, { value: l[1], done: !1 };
                                         case 5:
-                                            (o.label++, (n = l[1]), (l = [0]));
+                                            o.label++, (n = l[1]), (l = [0]);
                                             continue;
                                         case 7:
-                                            ((l = o.ops.pop()), o.trys.pop());
+                                            (l = o.ops.pop()), o.trys.pop();
                                             continue;
                                         default:
                                             if (!(r = (r = o.trys).length > 0 && r[r.length - 1]) && (6 === l[0] || 2 === l[0])) {
@@ -813,19 +813,19 @@
                                                 break;
                                             }
                                             if (6 === l[0] && o.label < r[1]) {
-                                                ((o.label = r[1]), (r = l));
+                                                (o.label = r[1]), (r = l);
                                                 break;
                                             }
                                             if (r && o.label < r[2]) {
-                                                ((o.label = r[2]), o.ops.push(l));
+                                                (o.label = r[2]), o.ops.push(l);
                                                 break;
                                             }
-                                            (r[2] && o.ops.pop(), o.trys.pop());
+                                            r[2] && o.ops.pop(), o.trys.pop();
                                             continue;
                                     }
                                     l = t.call(e, o);
                                 } catch (e) {
-                                    ((l = [6, e]), (n = 0));
+                                    (l = [6, e]), (n = 0);
                                 } finally {
                                     i = r = 0;
                                 }
@@ -836,10 +836,10 @@
                 },
                 F = (function () {
                     function e(e) {
-                        (Object.defineProperty(this, 'device', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        Object.defineProperty(this, 'device', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'connectionConfig', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             (this.device = e.device),
-                            (this.connectionConfig = e.connectionConfig));
+                            (this.connectionConfig = e.connectionConfig);
                     }
                     return (
                         Object.defineProperty(e.prototype, 'getHub', {
@@ -874,8 +874,8 @@
                                                             ((a = {})[c.ynisonDeviceId] = o),
                                                             (a[c.ynisonDeviceInfo] = JSON.stringify({ app_name: s, app_version: l, type: u })),
                                                             a);
-                                                    (void 0 !== p && (d.authorization = 'OAuth '.concat(p)),
-                                                        void 0 !== f && (d['X-Yandex-Music-Multi-Auth-User-Id'] = String(f)));
+                                                    void 0 !== p && (d.authorization = 'OAuth '.concat(p)),
+                                                        void 0 !== f && (d['X-Yandex-Music-Multi-Auth-User-Id'] = String(f));
                                                     var v = new WebSocket(Object.values(t.connectionConfig).join(''), [
                                                             'Bearer',
                                                             'v2',
@@ -898,9 +898,9 @@
                                                             n(new k('Error in connection to redirector', { data: { redirectorResponse: {} } }));
                                                         },
                                                         b = function () {
-                                                            (v.removeEventListener('message', h), v.removeEventListener('error', y), v.removeEventListener('close', b));
+                                                            v.removeEventListener('message', h), v.removeEventListener('error', y), v.removeEventListener('close', b);
                                                         };
-                                                    (v.addEventListener('message', h), v.addEventListener('error', y), v.addEventListener('close', b));
+                                                    v.addEventListener('message', h), v.addEventListener('error', y), v.addEventListener('close', b);
                                                 }),
                                             ];
                                         });
@@ -957,8 +957,8 @@
                             a = void 0 === r ? Date.now() : r,
                             o = t.activity_interception_type,
                             s = void 0 === o ? f.DO_NOT_INTERCEPT_BY_DEFAULT : o;
-                        ((n.player_action_timestamp_ms = a), (n.activity_interception_type = s));
-                    } else ((n.player_action_timestamp_ms = Date.now()), (n.activity_interception_type = f.DO_NOT_INTERCEPT_BY_DEFAULT));
+                        (n.player_action_timestamp_ms = a), (n.activity_interception_type = s);
+                    } else (n.player_action_timestamp_ms = Date.now()), (n.activity_interception_type = f.DO_NOT_INTERCEPT_BY_DEFAULT);
                     return { request: n, rid: i };
                 },
                 B = function () {
@@ -973,7 +973,7 @@
                 Y = (function () {
                     function e(e) {
                         var t = this;
-                        (Object.defineProperty(this, 'connectorConfig', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        Object.defineProperty(this, 'connectorConfig', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'socket', { enumerable: !0, configurable: !0, writable: !0, value: null }),
                             Object.defineProperty(this, 'emitter', { enumerable: !0, configurable: !0, writable: !0, value: new S.TinyEmitter() }),
                             Object.defineProperty(this, 'redirectorSocket', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -989,7 +989,7 @@
                             (this.redirectorSocket = new F({ device: this.connectorConfig.device, connectionConfig: this.connectorConfig.redirectorConnectionConfig })),
                             this.state.connectionState.onChange(function (e) {
                                 e === a.DISCONNECTED && t.socket && (t.socket.close(), (t.socket = null));
-                            }));
+                            });
                     }
                     return (
                         Object.defineProperty(e.prototype, 'config', {
@@ -1005,12 +1005,12 @@
                             writable: !0,
                             value: function (e, t) {
                                 var i = B({}, e);
-                                ((i.player_state.player_queue.version = y(this.connectorConfig.device.device_id, 0)),
-                                    (i.player_state.status.version = y(this.connectorConfig.device.device_id, 0)));
+                                (i.player_state.player_queue.version = y(this.connectorConfig.device.device_id, 0)),
+                                    (i.player_state.status.version = y(this.connectorConfig.device.device_id, 0));
                                 var n = x({ update_full_state: i }, B({ player_action_timestamp_ms: 0 }, t)),
                                     r = n.request,
                                     a = n.rid;
-                                return (this.sendRequest(r), a);
+                                return this.sendRequest(r), a;
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updatePlayingStatus', {
@@ -1023,7 +1023,7 @@
                                 var n = x({ update_playing_status: i }, t),
                                     r = n.request,
                                     a = n.rid;
-                                return (this.sendRequest(r), a);
+                                return this.sendRequest(r), a;
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updateActiveDevice', {
@@ -1034,7 +1034,7 @@
                                 var i = x({ update_active_device: e }, t),
                                     n = i.request,
                                     r = i.rid;
-                                return (this.sendRequest(n), r);
+                                return this.sendRequest(n), r;
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updateSessionParams', {
@@ -1045,7 +1045,7 @@
                                 var i = x({ update_session_params: e }, t),
                                     n = i.request,
                                     r = i.rid;
-                                return (this.sendRequest(n), r);
+                                return this.sendRequest(n), r;
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updatePlayerState', {
@@ -1054,12 +1054,12 @@
                             writable: !0,
                             value: function (e, t) {
                                 var i = B({}, e);
-                                ((i.player_state.player_queue.version = y(this.connectorConfig.device.device_id)),
-                                    (i.player_state.status.version = y(this.connectorConfig.device.device_id)));
+                                (i.player_state.player_queue.version = y(this.connectorConfig.device.device_id)),
+                                    (i.player_state.status.version = y(this.connectorConfig.device.device_id));
                                 var n = x({ update_player_state: i }, t),
                                     r = n.request,
                                     a = n.rid;
-                                return (this.sendRequest(r), a);
+                                return this.sendRequest(r), a;
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updateVolumeInfo', {
@@ -1072,7 +1072,7 @@
                                 var n = x({ update_volume_info: i }, t),
                                     r = n.request,
                                     a = n.rid;
-                                return (this.sendRequest(r), a);
+                                return this.sendRequest(r), a;
                             },
                         }),
                         Object.defineProperty(e.prototype, 'connect', {
@@ -1083,14 +1083,14 @@
                                 var t = this,
                                     i = e.oauth,
                                     n = e.multiAuthUserId;
-                                (void 0 !== i && (this.connectorConfig.oauth = i),
+                                void 0 !== i && (this.connectorConfig.oauth = i),
                                     void 0 !== n && (this.connectorConfig.multiAuthUserId = n),
                                     [a.DISCONNECTED, a.READY_TO_RECONNECT].includes(this.state.connectionState.value) &&
                                         ((this.state.connectionState.value = a.CONNECTING),
                                         this.redirectorSocket
                                             .getHub({ oauth: this.connectorConfig.oauth, multiAuthUserId: this.connectorConfig.multiAuthUserId })
                                             .then(function (e) {
-                                                ((t.state.redirectorResponse.value = e), t.connectToHub());
+                                                (t.state.redirectorResponse.value = e), t.connectToHub();
                                             })
                                             .catch(function (e) {
                                                 if (
@@ -1103,8 +1103,8 @@
                                                             ? 1e3 * Number(e.data.redirectorResponse.extra_headers[s.ynisonGoAwayForSeconds])
                                                             : t.connectorConfig.defaultReconnectTimeoutMS;
                                                     t.reconnect({ timeout: i });
-                                                } else ((t.reconnectAttempts = 0), t.emitter.emit(o.REDIRECTOR_ERROR, e));
-                                            })));
+                                                } else (t.reconnectAttempts = 0), t.emitter.emit(o.REDIRECTOR_ERROR, e);
+                                            }));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'disconnect', {
@@ -1112,9 +1112,9 @@
                             configurable: !0,
                             writable: !0,
                             value: function () {
-                                (this.reconnectTimeout && (clearTimeout(this.reconnectTimeout), (this.reconnectTimeout = null)),
+                                this.reconnectTimeout && (clearTimeout(this.reconnectTimeout), (this.reconnectTimeout = null)),
                                     (this.reconnectAttempts = 0),
-                                    (this.state.connectionState.value = a.DISCONNECTED));
+                                    (this.state.connectionState.value = a.DISCONNECTED);
                             },
                         }),
                         Object.defineProperty(e.prototype, 'on', {
@@ -1171,15 +1171,15 @@
                                             (f[c.ynisonSessionId] = b),
                                             (f[c.ynisonDeviceInfo] = JSON.stringify({ app_name: v, app_version: h, type: m })),
                                             f);
-                                    (void 0 !== i && (C.authorization = 'OAuth '.concat(i)), void 0 !== r && (C['X-Yandex-Music-Multi-Auth-User-Id'] = String(r)));
+                                    void 0 !== i && (C.authorization = 'OAuth '.concat(i)), void 0 !== r && (C['X-Yandex-Music-Multi-Auth-User-Id'] = String(r));
                                     var O = ''.concat(l).concat(g).concat(u),
                                         S = ['Bearer', 'v2', encodeURIComponent(JSON.stringify(C))];
-                                    ((this.socket = new WebSocket(O, S)),
+                                    (this.socket = new WebSocket(O, S)),
                                         this.socket.addEventListener('message', function (t) {
                                             e.onRecieveMessage(t);
                                         }),
                                         this.socket.addEventListener('error', function () {
-                                            ((e.state.connectionState.value = a.DISCONNECTED),
+                                            (e.state.connectionState.value = a.DISCONNECTED),
                                                 e.reconnectAttempts < e.connectorConfig.reconnectAttemptsLimit
                                                     ? e.reconnect()
                                                     : ((e.reconnectAttempts = 0),
@@ -1191,14 +1191,14 @@
                                                                   hubResponse: {},
                                                               },
                                                           }),
-                                                      )));
+                                                      ));
                                         }),
                                         this.socket.addEventListener('open', function () {
                                             e.state.connectionState.value = a.CONNECTED;
                                         }),
                                         this.socket.addEventListener('close', function () {
                                             e.state.connectionState.value = a.DISCONNECTED;
-                                        }));
+                                        });
                                 }
                             },
                         }),
@@ -1214,7 +1214,7 @@
                                 this.state.connectionState.value === a.DISCONNECTED &&
                                     ((this.reconnectAttempts += 1),
                                     (this.reconnectTimeout = setTimeout(function () {
-                                        ((t.state.connectionState.value = a.READY_TO_RECONNECT), t.connect({}));
+                                        (t.state.connectionState.value = a.READY_TO_RECONNECT), t.connect({});
                                     }, n)),
                                     (this.state.connectionState.value = a.WAITING_FOR_RECONNECT));
                             },
@@ -1233,7 +1233,7 @@
                                                 : this.connectorConfig.defaultReconnectTimeoutMS;
                                             this.reconnect({ timeout: i });
                                         } else
-                                            ((this.reconnectAttempts = 0),
+                                            (this.reconnectAttempts = 0),
                                                 this.emitter.emit(
                                                     o.HUB_ERROR,
                                                     new D('Error message from hub', {
@@ -1242,8 +1242,8 @@
                                                             hubResponse: t.error,
                                                         },
                                                     }),
-                                                ));
-                                    else ((this.reconnectAttempts = 0), this.emitter.emit(o.RECEIVE_MESSAGE, { rawData: t }));
+                                                );
+                                    else (this.reconnectAttempts = 0), this.emitter.emit(o.RECEIVE_MESSAGE, { rawData: t });
                                 } catch (e) {
                                     this.emitter.emit(
                                         o.HUB_ERROR,
@@ -1288,10 +1288,11 @@
                             return e;
                         }).apply(this, arguments);
                 },
+                electronBridge = i(77575),
                 G = (function () {
                     function e(e) {
                         var t = this;
-                        (Object.defineProperty(this, 'stateController', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        Object.defineProperty(this, 'stateController', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'connector', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'deviceConfig', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'variables', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -1325,7 +1326,7 @@
                                     case a.DISCONNECTED:
                                         t.onDisconnected();
                                 }
-                            }));
+                            });
                     }
                     return (
                         Object.defineProperty(e.prototype, 'isActive', {
@@ -1341,10 +1342,15 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                var t = this.getMessageContext(e);
-                                if ((this.updateFullStateCompletion(t), !this.shouldIgnoreMessage(t))) {
-                                    var i = this.processMessageState(e, t);
-                                    this.stateController.updateState(i);
+                                const selfDedup = e.rawData.player_state.status.version.device_id === this.deviceConfig.info.device_id;
+                                if(!selfDedup) {
+                                    console.debug('[WSConnector] Received message from hub', e.rawData);
+                                    electronBridge.sendYnisonState({ rawData: e.rawData });
+                                }
+                                const i = this.getMessageContext(e);
+                                if ((this.updateFullStateCompletion(i), !this.shouldIgnoreMessage(i))) {
+                                    const n = this.processMessageState(e, i);
+                                    this.stateController.updateState(n);
                                 }
                             },
                         }),
@@ -1467,7 +1473,7 @@
                                                 : 0.5,
                                         version: null != (a = null == (r = null == u ? void 0 : u.volume_info) ? void 0 : r.version) ? a : null,
                                     };
-                                    ((l.volume = p.volume), (l.volume_info = p));
+                                    (l.volume = p.volume), (l.volume_info = p);
                                 }
                                 return s;
                             },
@@ -1479,8 +1485,7 @@
                             value: function (e) {
                                 var t = m(e);
                                 return (
-                                    (t.player_state = m(this.stateController.currentState.player_state)),
-                                    { newState: t, skipVersionCompare: !0, trigger: 'WSConnector' }
+                                    (t.player_state = m(this.stateController.currentState.player_state)), { newState: t, skipVersionCompare: !0, trigger: 'WSConnector' }
                                 );
                             },
                         }),
@@ -1564,7 +1569,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function () {
-                                ((this.isUpdateFullStateCompleted = !1), (this.updateFullStateMessageRid = null));
+                                (this.isUpdateFullStateCompleted = !1), (this.updateFullStateMessageRid = null);
                             },
                         }),
                         Object.defineProperty(e.prototype, 'interceptActivity', {
@@ -1572,11 +1577,8 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                (void 0 === e && (e = f.INTERCEPT_EAGER),
-                                    this.connector.updatePlayerState(
-                                        { player_state: this.stateController.currentState.player_state },
-                                        { activity_interception_type: e },
-                                    ));
+                                void 0 === e && (e = f.INTERCEPT_EAGER),
+                                    this.connector.updatePlayerState({ player_state: this.stateController.currentState.player_state }, { activity_interception_type: e });
                             },
                         }),
                         Object.defineProperty(e.prototype, 'becomePassive', {
@@ -1586,10 +1588,10 @@
                             value: function () {
                                 this.connector.updateActiveDevice({ device_id_optional: null });
                                 var e = this.stateController.currentState;
-                                ((e.active_device_id_optional = null),
+                                (e.active_device_id_optional = null),
                                     (e.player_state.status.paused = !0),
                                     (e.player_state.status.version = y(this.deviceConfig.info.device_id)),
-                                    this.stateController.updateState({ newState: e, trigger: 'WSConnector' }));
+                                    this.stateController.updateState({ newState: e, trigger: 'WSConnector' });
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updateVariables', {
@@ -1703,7 +1705,7 @@
                     ).json();
                 }
                 constructor(e, t) {
-                    (super(e, t), (0, n._)(this, 'httpClient', void 0), (0, n._)(this, 'config', void 0), (this.httpClient = e), (this.config = t));
+                    super(e, t), (0, n._)(this, 'httpClient', void 0), (0, n._)(this, 'config', void 0), (this.httpClient = e), (this.config = t);
                 }
             }
         },

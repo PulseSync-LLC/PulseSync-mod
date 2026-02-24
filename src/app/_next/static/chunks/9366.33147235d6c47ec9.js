@@ -13,7 +13,7 @@
         },
         99366: (e, o, r) => {
             'use strict';
-            (r.r(o), r.d(o, { default: () => u }));
+            r.r(o), r.d(o, { default: () => u });
             var s = r(33008),
                 t = r(85896),
                 n = r(66268),

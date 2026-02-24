@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "YandexMusic",
-    "version": "5.85.0",
+    "version": "5.88.0",
     "description": "Персональные рекомендации, подборки на любой случай и музыкальные новинки",
     "author": "Яндекс Музыка <music@support.yandex.ru>",
     "homepage": "https://music.yandex.ru/download/",
@@ -15,32 +15,21 @@
     },
     "dependencies": {
         "@formatjs/icu-messageformat-parser": "~2.11.3",
-        "axios": "^1.13.2",
+        "@xhayper/discord-rpc": "^1.3.0",
+        "axios": "^1.13.5",
         "electron-is-accelerator": "^0.2.0",
         "electron-log": "~5.4.3",
-        "electron-store": "~8.2.0",
-        "electron-updater": "~6.7.3",
+        "electron-store": "~11.0.2",
+        "electron-updater": "~6.8.3",
         "intl-messageformat": "~10.7.17",
         "node-cron": "~4.2.1",
         "node-id3": "^0.2.9",
         "original-fs": "^1.2.0",
-        "semver": "~7.7.3",
+        "semver": "~7.7.4",
         "sharp": "^0.34.5",
         "socket.io-client": "^4.8.3",
-        "tar": "^7.5.7",
+        "tar": "^7.5.9",
         "uuid": "~13.0.0"
-    },
-    "devDependencies": {
-        "@electron/fuses": "~1.8.0",
-        "@electron/notarize": "~2.5.0",
-        "@types/node-cron": "~3.0.11",
-        "@types/semver": "~7.7.0",
-        "@yandex-chats/signer": "~0.0.3",
-        "dmg-builder": "~26.0.12",
-        "electron": "~36.4.0",
-        "electron-builder": "~26.0.12",
-        "electron-builder-squirrel-windows": "~26.0.12",
-        "js-yaml": "~4.1.0"
     },
     "appConfig": {
         "enableDevTools": false,
@@ -71,9 +60,9 @@
         ]
     },
     "buildInfo": {
-        "VERSION": "5.85.0",
-        "BRANCH": "r18649190",
-        "BUILD_TIME": "2026-02-03T16:36:10Z"
+        "VERSION": "5.88.0",
+        "BRANCH": "r18789987",
+        "BUILD_TIME": "2026-02-17T10:19:41Z"
     },
     "common": {
         "SHOW_RELEASE_NOTES": false,
@@ -85,7 +74,7 @@
         "RECOMMENDATIONS_URL": "https://music.yandex.ru/legal/recommendations/ru/#music"
     },
     "modification": {
-        "version": "1.20.5",
+        "version": "1.22.0",
         "realYMVersion": "5.75.2",
         "lastfm": {
             "apikey": "e6c5281b3221cb5d9b6684ec1a5f6f85",

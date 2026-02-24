@@ -82,10 +82,10 @@
                             -1 != Q.indexOf(e) && (q = ee[0] = e);
                         },
                         er = function (e) {
-                            ((J = e), et(e));
+                            (J = e), et(e);
                         };
                     function ea() {
-                        (er(1200), et(1252));
+                        er(1200), et(1252);
                     }
                     function en(e) {
                         for (var t = [], r = 0, a = e.length; r < a; ++r) t[r] = e.charCodeAt(r);
@@ -111,9 +111,9 @@
                             return String.fromCharCode(e);
                         };
                     function ef(e) {
-                        ((G = e),
+                        (G = e),
                             (er = function (e) {
-                                ((J = e), et(e));
+                                (J = e), et(e);
                             }),
                             (eo = function (e) {
                                 return 255 === e.charCodeAt(0) && 254 === e.charCodeAt(1) ? G.utils.decode(1200, en(e.slice(2))) : e;
@@ -124,17 +124,17 @@
                             (el = function (e) {
                                 return G.utils.decode(q, [e])[0];
                             }),
-                            r1());
+                            r1();
                     }
                     var eh = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
                     function eu(e) {
                         for (var t = '', r = 0, a = 0, n = 0, s = 0, i = 0, o = 0, c = 0, l = 0; l < e.length; )
-                            ((s = (r = e.charCodeAt(l++)) >> 2),
+                            (s = (r = e.charCodeAt(l++)) >> 2),
                                 (i = ((3 & r) << 4) | ((a = e.charCodeAt(l++)) >> 4)),
                                 (o = ((15 & a) << 2) | ((n = e.charCodeAt(l++)) >> 6)),
                                 (c = 63 & n),
                                 isNaN(a) ? (o = c = 64) : isNaN(n) && (c = 64),
-                                (t += eh.charAt(s) + eh.charAt(i) + eh.charAt(o) + eh.charAt(c)));
+                                (t += eh.charAt(s) + eh.charAt(i) + eh.charAt(o) + eh.charAt(c));
                         return t;
                     }
                     function ed(e) {
@@ -151,11 +151,11 @@
                         }
                         e = e.replace(/[^\w\+\/\=]/g, '');
                         for (var c = 0; c < e.length; )
-                            ((t += String.fromCharCode(((n = eh.indexOf(e.charAt(c++))) << 2) | ((s = eh.indexOf(e.charAt(c++))) >> 4))),
+                            (t += String.fromCharCode(((n = eh.indexOf(e.charAt(c++))) << 2) | ((s = eh.indexOf(e.charAt(c++))) >> 4))),
                                 (r = ((15 & s) << 4) | ((i = eh.indexOf(e.charAt(c++))) >> 2)),
                                 64 !== i && (t += String.fromCharCode(r)),
                                 (a = ((3 & i) << 6) | (o = eh.indexOf(e.charAt(c++)))),
-                                64 !== o && (t += String.fromCharCode(a)));
+                                64 !== o && (t += String.fromCharCode(a));
                         return t;
                     }
                     var ep = void 0 !== a && void 0 !== n && void 0 !== n.versions && !!n.versions.node,
@@ -231,12 +231,12 @@
                                       var a = new Uint8Array(r),
                                           n = 0;
                                       for (t = 0, r = 0; t < e.length; r += n, ++t)
-                                          ((n = e[t].length),
+                                          (n = e[t].length),
                                               e[t] instanceof Uint8Array
                                                   ? a.set(e[t], r)
                                                   : 'string' == typeof e[t]
                                                     ? a.set(new Uint8Array(ew(e[t])), r)
-                                                    : a.set(new Uint8Array(e[t]), r));
+                                                    : a.set(new Uint8Array(e[t]), r);
                                       return a;
                                   }
                                   return [].concat.apply(
@@ -405,7 +405,7 @@
                             l < t && ((o = (h = Math.floor(n)) * i + s), (f = h * l + c), !(n - h < 5e-8));
 
                         )
-                            ((n = 1 / (n - h)), (s = i), (i = o), (c = l), (l = f));
+                            (n = 1 / (n - h)), (s = i), (i = o), (c = l), (l = f);
                         if ((f > t && (l > t ? ((f = c), (o = s)) : ((f = l), (o = i))), !r)) return [0, a * o, f];
                         var u = Math.floor((a * o) / f);
                         return [u, a * o - u * f, f];
@@ -435,29 +435,22 @@
                             o.u > 0.9999 && ((o.u = 0), 86400 == ++n && ((o.T = n = 0), ++a, ++o.D)),
                             60 === a)
                         )
-                            ((i = r ? [1317, 10, 29] : [1900, 2, 29]), (s = 3));
-                        else if (0 === a) ((i = r ? [1317, 8, 29] : [1900, 1, 0]), (s = 6));
+                            (i = r ? [1317, 10, 29] : [1900, 2, 29]), (s = 3);
+                        else if (0 === a) (i = r ? [1317, 8, 29] : [1900, 1, 0]), (s = 6);
                         else {
                             a > 60 && --a;
                             var c,
                                 l,
                                 f,
                                 h = new Date(1900, 0, 1);
-                            (h.setDate(h.getDate() + a - 1),
+                            h.setDate(h.getDate() + a - 1),
                                 (i = [h.getFullYear(), h.getMonth() + 1, h.getDate()]),
                                 (s = h.getDay()),
                                 a < 60 && (s = (s + 6) % 7),
-                                r && ((c = h), (l = i), (l[0] -= 581), (f = c.getDay()), c < 60 && (f = (f + 6) % 7), (s = f)));
+                                r && ((c = h), (l = i), (l[0] -= 581), (f = c.getDay()), c < 60 && (f = (f + 6) % 7), (s = f));
                         }
                         return (
-                            (o.y = i[0]),
-                            (o.m = i[1]),
-                            (o.d = i[2]),
-                            (o.S = n % 60),
-                            (o.M = (n = Math.floor(n / 60)) % 60),
-                            (o.H = n = Math.floor(n / 60)),
-                            (o.q = s),
-                            o
+                            (o.y = i[0]), (o.m = i[1]), (o.d = i[2]), (o.S = n % 60), (o.M = (n = Math.floor(n / 60)) % 60), (o.H = n = Math.floor(n / 60)), (o.q = s), o
                         );
                     }
                     function eB(e) {
@@ -549,7 +542,7 @@
                                       return eJ(t, i.substr(0, o), a / Math.pow(10, 3 * (i.length - o)));
                                   }
                                   if (-1 !== r.indexOf('%'))
-                                      return ((l = (c = r).replace(eV, '')), (f = c.length - l.length), eJ(t, l, a * Math.pow(10, 2 * f)) + tT('%', f));
+                                      return (l = (c = r).replace(eV, '')), (f = c.length - l.length), eJ(t, l, a * Math.pow(10, 2 * f)) + tT('%', f);
                                   if (-1 !== r.indexOf('E'))
                                       return (function e(t, r) {
                                           var a,
@@ -562,8 +555,8 @@
                                               var i = Math.floor(Math.log(r) * Math.LOG10E) % s;
                                               if ((i < 0 && (i += s), !(a = (r / Math.pow(10, i)).toPrecision(n + 1 + ((s + i) % s))).match(/[Ee]/))) {
                                                   var o = Math.floor(Math.log(r) * Math.LOG10E);
-                                                  (-1 === a.indexOf('.') ? (a = a.charAt(0) + '.' + a.substr(1) + 'E+' + (o - a.length + i)) : (a += 'E+' + (o - i)),
-                                                      (a = a.replace(/\+-/, '-')));
+                                                  -1 === a.indexOf('.') ? (a = a.charAt(0) + '.' + a.substr(1) + 'E+' + (o - a.length + i)) : (a += 'E+' + (o - i)),
+                                                      (a = a.replace(/\+-/, '-'));
                                               }
                                               a = a.replace(/^([+-]?)(\d*)\.(\d*)[Ee]/, function (e, t, r, a) {
                                                   return t + r + a.substr(0, (s + i) % s) + '.' + a.substr(i) + 'E';
@@ -586,7 +579,7 @@
                                       m = Math.abs(a),
                                       g = a < 0 ? '-' : '';
                                   if (r.match(/^00+$/)) return g + eA(m, r.length);
-                                  if (r.match(/^[#?]+$/)) return ((h = '' + a), 0 === a && (h = ''), h.length > r.length ? h : eK(r.substr(0, r.length - h.length)) + h);
+                                  if (r.match(/^[#?]+$/)) return (h = '' + a), 0 === a && (h = ''), h.length > r.length ? h : eK(r.substr(0, r.length - h.length)) + h;
                                   if ((u = r.match(e$))) return g + (0 === m ? '' : '' + m) + tT(' ', (n = u)[1].length + 2 + n[4].length);
                                   if (r.match(/^#+0+$/)) return g + eA(m, r.length - r.indexOf('0'));
                                   if ((u = r.match(eG)))
@@ -679,7 +672,7 @@
                                       return eJ(t, h.substr(0, u), a / Math.pow(10, 3 * (h.length - u)));
                                   }
                                   if (-1 !== r.indexOf('%'))
-                                      return ((p = (d = r).replace(eV, '')), (m = d.length - p.length), eJ(t, p, a * Math.pow(10, 2 * m)) + tT('%', m));
+                                      return (p = (d = r).replace(eV, '')), (m = d.length - p.length), eJ(t, p, a * Math.pow(10, 2 * m)) + tT('%', m);
                                   if (-1 !== r.indexOf('E'))
                                       return (function e(t, r) {
                                           var a,
@@ -721,7 +714,7 @@
                                       T = Math.abs(a),
                                       y = a < 0 ? '-' : '';
                                   if (r.match(/^00+$/)) return y + eO(T, r.length);
-                                  if (r.match(/^[#?]+$/)) return ('0' === (g = eO(a, 0)) && (g = ''), g.length > r.length ? g : eK(r.substr(0, r.length - g.length)) + g);
+                                  if (r.match(/^[#?]+$/)) return '0' === (g = eO(a, 0)) && (g = ''), g.length > r.length ? g : eK(r.substr(0, r.length - g.length)) + g;
                                   if ((v = r.match(e$)))
                                       return (
                                           (o = Math.floor((i = Math.round(T * (s = parseInt((n = v)[4], 10)))) / s)),
@@ -827,7 +820,7 @@
                         for (var t = 0, r = '', a = ''; t < e.length; )
                             switch ((r = e.charAt(t))) {
                                 case 'G':
-                                    (eR(e, t) && (t += 6), t++);
+                                    eR(e, t) && (t += 6), t++;
                                     break;
                                 case '"':
                                     for (; 34 !== e.charCodeAt(++t) && t < e.length; );
@@ -886,7 +879,7 @@
                                     for (; e.charAt(++t) === r; );
                                     break;
                                 case '*':
-                                    (++t, (' ' == e.charAt(t) || '*' == e.charAt(t)) && ++t);
+                                    ++t, (' ' == e.charAt(t) || '*' == e.charAt(t)) && ++t;
                                     break;
                                 case '(':
                                 case ')':
@@ -940,8 +933,8 @@
                                 a = 'm/d/yy' == e && r.dateNF ? r.dateNF : e;
                                 break;
                             case 'number':
-                                (null == (a = 14 == e && r.dateNF ? r.dateNF : (null != r.table ? r.table : eD)[e]) && (a = (r.table && r.table[eP[e]]) || eD[eP[e]]),
-                                    null == a && (a = eL[e] || 'General'));
+                                null == (a = 14 == e && r.dateNF ? r.dateNF : (null != r.table ? r.table : eD)[e]) && (a = (r.table && r.table[eP[e]]) || eD[eP[e]]),
+                                    null == a && (a = eL[e] || 'General');
                         }
                         if (eR(a, 0)) return ez(t, r);
                         t instanceof Date && (t = tu(t, r.date1904));
@@ -958,7 +951,7 @@
                                                 ++a;
                                                 break;
                                             case 59:
-                                                ((t[t.length] = e.substr(n, a - n)), (n = a + 1));
+                                                (t[t.length] = e.substr(n, a - n)), (n = a + 1);
                                         }
                                     if (((t[t.length] = e.substr(n)), !0 === r)) throw Error('Format |' + e + '| unterminated string ');
                                     return t;
@@ -997,28 +990,28 @@
                                 switch ((f = e.charAt(l))) {
                                     case 'G':
                                         if (!eR(e, l)) throw Error('unrecognized character ' + f + ' in ' + e);
-                                        ((o[o.length] = { t: 'G', v: 'General' }), (l += 7));
+                                        (o[o.length] = { t: 'G', v: 'General' }), (l += 7);
                                         break;
                                     case '"':
                                         for (c = ''; 34 !== (i = e.charCodeAt(++l)) && l < e.length; ) c += String.fromCharCode(i);
-                                        ((o[o.length] = { t: 't', v: c }), ++l);
+                                        (o[o.length] = { t: 't', v: c }), ++l;
                                         break;
                                     case '\\':
                                         var d = e.charAt(++l),
                                             p = '(' === d || ')' === d ? d : 't';
-                                        ((o[o.length] = { t: p, v: d }), ++l);
+                                        (o[o.length] = { t: p, v: d }), ++l;
                                         break;
                                     case '_':
-                                        ((o[o.length] = { t: 't', v: ' ' }), (l += 2));
+                                        (o[o.length] = { t: 't', v: ' ' }), (l += 2);
                                         break;
                                     case '@':
-                                        ((o[o.length] = { t: 'T', v: t }), ++l);
+                                        (o[o.length] = { t: 'T', v: t }), ++l;
                                         break;
                                     case 'B':
                                     case 'b':
                                         if ('1' === e.charAt(l + 1) || '2' === e.charAt(l + 1)) {
                                             if (null == n && null == (n = eU(t, r, '2' === e.charAt(l + 1)))) return '';
-                                            ((o[o.length] = { t: 'X', v: e.substr(l, 2) }), (h = f), (l += 2));
+                                            (o[o.length] = { t: 'X', v: e.substr(l, 2) }), (h = f), (l += 2);
                                             break;
                                         }
                                     case 'M':
@@ -1037,7 +1030,7 @@
                                     case 'g':
                                         if (t < 0 || (null == n && null == (n = eU(t, r)))) return '';
                                         for (c = f; ++l < e.length && e.charAt(l).toLowerCase() === f; ) c += f;
-                                        ('m' === f && 'h' === h.toLowerCase() && (f = 'M'), 'h' === f && (f = u), (o[o.length] = { t: f, v: c }), (h = f));
+                                        'm' === f && 'h' === h.toLowerCase() && (f = 'M'), 'h' === f && (f = u), (o[o.length] = { t: f, v: c }), (h = f);
                                         break;
                                     case 'A':
                                     case 'a':
@@ -1055,14 +1048,14 @@
                                             null == n && 'T' === m.t)
                                         )
                                             return '';
-                                        ((o[o.length] = m), (h = f));
+                                        (o[o.length] = m), (h = f);
                                         break;
                                     case '[':
                                         for (c = f; ']' !== e.charAt(l++) && l < e.length; ) c += e.charAt(l);
                                         if (']' !== c.slice(-1)) throw 'unterminated "[" block: |' + c + '|';
                                         if (c.match(eq)) {
                                             if (null == n && null == (n = eU(t, r))) return '';
-                                            ((o[o.length] = { t: 'Z', v: c.toLowerCase() }), (h = c.charAt(1)));
+                                            (o[o.length] = { t: 'Z', v: c.toLowerCase() }), (h = c.charAt(1));
                                         } else c.indexOf('$') > -1 && ((c = (c.match(/\$([^-\[\]]*)/) || [])[1] || '$'), eQ(e) || (o[o.length] = { t: 't', v: c }));
                                         break;
                                     case '.':
@@ -1078,14 +1071,14 @@
                                         break;
                                     case '?':
                                         for (c = f; e.charAt(++l) === f; ) c += f;
-                                        ((o[o.length] = { t: f, v: c }), (h = f));
+                                        (o[o.length] = { t: f, v: c }), (h = f);
                                         break;
                                     case '*':
-                                        (++l, (' ' == e.charAt(l) || '*' == e.charAt(l)) && ++l);
+                                        ++l, (' ' == e.charAt(l) || '*' == e.charAt(l)) && ++l;
                                         break;
                                     case '(':
                                     case ')':
-                                        ((o[o.length] = { t: 1 === a ? 't' : f, v: f }), ++l);
+                                        (o[o.length] = { t: 1 === a ? 't' : f, v: f }), ++l;
                                         break;
                                     case '1':
                                     case '2':
@@ -1100,14 +1093,14 @@
                                         o[o.length] = { t: 'D', v: c };
                                         break;
                                     case ' ':
-                                        ((o[o.length] = { t: f, v: f }), ++l);
+                                        (o[o.length] = { t: f, v: f }), ++l;
                                         break;
                                     case '$':
-                                        ((o[o.length] = { t: 't', v: '$' }), ++l);
+                                        (o[o.length] = { t: 't', v: '$' }), ++l;
                                         break;
                                     default:
                                         if (-1 === ",$-+/():!^&'~{}<>=€acfijklopqrtuvwxzP".indexOf(f)) throw Error('unrecognized character ' + f + ' in ' + e);
-                                        ((o[o.length] = { t: 't', v: f }), ++l);
+                                        (o[o.length] = { t: 't', v: f }), ++l;
                                 }
                             var g,
                                 v = 0,
@@ -1116,17 +1109,17 @@
                                 switch (o[l].t) {
                                     case 'h':
                                     case 'H':
-                                        ((o[l].t = u), (h = 'h'), v < 1 && (v = 1));
+                                        (o[l].t = u), (h = 'h'), v < 1 && (v = 1);
                                         break;
                                     case 's':
-                                        ((g = o[l].v.match(/\.0+$/)) && ((b = Math.max(b, g[0].length - 1)), (v = 4)), v < 3 && (v = 3));
+                                        (g = o[l].v.match(/\.0+$/)) && ((b = Math.max(b, g[0].length - 1)), (v = 4)), v < 3 && (v = 3);
                                     case 'd':
                                     case 'y':
                                     case 'e':
                                         h = o[l].t;
                                         break;
                                     case 'M':
-                                        ((h = o[l].t), v < 2 && (v = 2));
+                                        (h = o[l].t), v < 2 && (v = 2);
                                         break;
                                     case 'm':
                                         's' === h && ((o[l].t = 'M'), v < 2 && (v = 2));
@@ -1134,7 +1127,7 @@
                                     case 'X':
                                         break;
                                     case 'Z':
-                                        (v < 1 && o[l].v.match(/[Hh]/) && (v = 1), v < 2 && o[l].v.match(/[Mm]/) && (v = 2), v < 3 && o[l].v.match(/[Ss]/) && (v = 3));
+                                        v < 1 && o[l].v.match(/[Hh]/) && (v = 1), v < 2 && o[l].v.match(/[Mm]/) && (v = 2), v < 3 && o[l].v.match(/[Ss]/) && (v = 3);
                                 }
                             switch (v) {
                                 case 0:
@@ -1142,10 +1135,10 @@
                                 case 1:
                                 case 2:
                                 case 3:
-                                    (n.u >= 0.5 && ((n.u = 0), ++n.S),
+                                    n.u >= 0.5 && ((n.u = 0), ++n.S),
                                         n.S >= 60 && ((n.S = 0), ++n.M),
                                         n.M >= 60 && ((n.M = 0), ++n.H),
-                                        n.H >= 24 && ((n.H = 0), ++n.D, ((w = eU(n.D)).u = n.u), (w.S = n.S), (w.M = n.M), (w.H = n.H), (n = w)));
+                                        n.H >= 24 && ((n.H = 0), ++n.D, ((w = eU(n.D)).u = n.u), (w.S = n.S), (w.M = n.M), (w.H = n.H), (n = w));
                                     break;
                                 case 4:
                                     switch (b) {
@@ -1158,10 +1151,10 @@
                                         case 3:
                                             n.u = Math.round(1e3 * n.u) / 1e3;
                                     }
-                                    (n.u >= 1 && ((n.u = 0), ++n.S),
+                                    n.u >= 1 && ((n.u = 0), ++n.S),
                                         n.S >= 60 && ((n.S = 0), ++n.M),
                                         n.M >= 60 && ((n.M = 0), ++n.H),
-                                        n.H >= 24 && ((n.H = 0), ++n.D, ((w = eU(n.D)).u = n.u), (w.S = n.S), (w.M = n.M), (w.H = n.H), (n = w)));
+                                        n.H >= 24 && ((n.H = 0), ++n.D, ((w = eU(n.D)).u = n.u), (w.S = n.S), (w.M = n.M), (w.H = n.H), (n = w));
                             }
                             var w,
                                 T,
@@ -1174,7 +1167,7 @@
                                     case 'D':
                                         break;
                                     case 'X':
-                                        ((o[l].v = ''), (o[l].t = ';'));
+                                        (o[l].v = ''), (o[l].t = ';');
                                         break;
                                     case 'd':
                                     case 'm':
@@ -1186,7 +1179,7 @@
                                     case 'e':
                                     case 'b':
                                     case 'Z':
-                                        ((o[l].v = (function (e, t, r, a) {
+                                        (o[l].v = (function (e, t, r, a) {
                                             var n,
                                                 s = '',
                                                 i = 0,
@@ -1200,17 +1193,17 @@
                                                     switch (t.length) {
                                                         case 1:
                                                         case 2:
-                                                            ((n = c % 100), (l = 2));
+                                                            (n = c % 100), (l = 2);
                                                             break;
                                                         default:
-                                                            ((n = c % 1e4), (l = 4));
+                                                            (n = c % 1e4), (l = 4);
                                                     }
                                                     break;
                                                 case 109:
                                                     switch (t.length) {
                                                         case 1:
                                                         case 2:
-                                                            ((n = r.m), (l = t.length));
+                                                            (n = r.m), (l = t.length);
                                                             break;
                                                         case 3:
                                                             return eF[r.m - 1][1];
@@ -1224,7 +1217,7 @@
                                                     switch (t.length) {
                                                         case 1:
                                                         case 2:
-                                                            ((n = r.d), (l = t.length));
+                                                            (n = r.d), (l = t.length);
                                                             break;
                                                         case 3:
                                                             return eN[r.q][0];
@@ -1236,7 +1229,7 @@
                                                     switch (t.length) {
                                                         case 1:
                                                         case 2:
-                                                            ((n = 1 + ((r.H + 11) % 12)), (l = t.length));
+                                                            (n = 1 + ((r.H + 11) % 12)), (l = t.length);
                                                             break;
                                                         default:
                                                             throw 'bad hour format: ' + t;
@@ -1246,7 +1239,7 @@
                                                     switch (t.length) {
                                                         case 1:
                                                         case 2:
-                                                            ((n = r.H), (l = t.length));
+                                                            (n = r.H), (l = t.length);
                                                             break;
                                                         default:
                                                             throw 'bad hour format: ' + t;
@@ -1256,7 +1249,7 @@
                                                     switch (t.length) {
                                                         case 1:
                                                         case 2:
-                                                            ((n = r.M), (l = t.length));
+                                                            (n = r.M), (l = t.length);
                                                             break;
                                                         default:
                                                             throw 'bad minute format: ' + t;
@@ -1292,11 +1285,11 @@
                                                     l = 3 === t.length ? 1 : 2;
                                                     break;
                                                 case 101:
-                                                    ((n = c), (l = 1));
+                                                    (n = c), (l = 1);
                                             }
                                             return l > 0 ? eA(n, l) : '';
                                         })(o[l].t.charCodeAt(0), o[l].v, n, b)),
-                                            (o[l].t = 't'));
+                                            (o[l].t = 't');
                                         break;
                                     case 'n':
                                     case '?':
@@ -1310,20 +1303,20 @@
                                                 ('t' === f && ('/' === o[T].v || (' ' === o[T].v && null != o[T + 1] && '?' == o[T + 1].t))));
 
                                         )
-                                            ((o[l].v += o[T].v), (o[T] = { v: '', t: ';' }), ++T);
-                                        ((y += o[l].v), (l = T - 1));
+                                            (o[l].v += o[T].v), (o[T] = { v: '', t: ';' }), ++T;
+                                        (y += o[l].v), (l = T - 1);
                                         break;
                                     case 'G':
-                                        ((o[l].t = 't'), (o[l].v = ez(t, r)));
+                                        (o[l].t = 't'), (o[l].v = ez(t, r));
                                 }
                             var E,
                                 k,
                                 x = '';
                             if (y.length > 0) {
-                                (40 == y.charCodeAt(0)
+                                40 == y.charCodeAt(0)
                                     ? ((E = t < 0 && 45 === y.charCodeAt(0) ? -t : t), (k = eJ('n', y, E)))
                                     : ((k = eJ('n', y, (E = t < 0 && a > 1 ? -t : t))), E < 0 && o[0] && 't' == o[0].t && ((k = k.substr(1)), (o[0].v = '-' + o[0].v))),
-                                    (T = k.length - 1));
+                                    (T = k.length - 1);
                                 var _ = o.length;
                                 for (l = 0; l < o.length; ++l)
                                     if (null != o[l] && 't' != o[l].t && o[l].v.indexOf('.') > -1) {
@@ -1352,13 +1345,13 @@
                                                 --s
                                             )
                                                 T >= 0 && ('0' === o[l].v.charAt(s) || '#' === o[l].v.charAt(s)) && (x = k.charAt(T--) + x);
-                                            ((o[l].v = x), (o[l].t = 't'), (S = l));
+                                            (o[l].v = x), (o[l].t = 't'), (S = l);
                                         }
                                     for (T >= 0 && S < o.length && (o[S].v = k.substr(0, T + 1) + o[S].v), T = k.indexOf('.') + 1, l = _; l < o.length; ++l)
                                         if (null != o[l] && (-1 !== 'n?('.indexOf(o[l].t) || l === _)) {
                                             for (s = o[l].v.indexOf('.') > -1 && l === _ ? o[l].v.indexOf('.') + 1 : 0, x = o[l].v.substr(0, s); s < o[l].v.length; ++s)
                                                 T < k.length && (x += k.charAt(T++));
-                                            ((o[l].v = x), (o[l].t = 't'), (S = l));
+                                            (o[l].v = x), (o[l].t = 't'), (S = l);
                                         }
                                 }
                             }
@@ -1386,14 +1379,14 @@
                             }
                             t < 0 && (t = 391);
                         }
-                        return ((eD[t] = e), t);
+                        return (eD[t] = e), t;
                     }
                     function e3(e) {
                         for (var t = 0; 392 != t; ++t) void 0 !== e[t] && e4(e[t], t);
                     }
                     function e5() {
                         var e;
-                        (e || (e = {}),
+                        e || (e = {}),
                             (e[0] = 'General'),
                             (e[1] = '0'),
                             (e[2] = '0.00'),
@@ -1423,7 +1416,7 @@
                             (e[48] = '##0.0E+0'),
                             (e[49] = '@'),
                             (e[56] = '"上午/下午 "hh"時"mm"分"ss"秒 "'),
-                            (eD = e));
+                            (eD = e);
                     }
                     var e6 = {
                             format: e2,
@@ -1516,7 +1509,7 @@
                             })(
                                 (s = (function () {
                                     for (var e = 0, t = Array(256), r = 0; 256 != r; ++r)
-                                        ((e =
+                                        (e =
                                             1 &
                                             (e =
                                                 1 &
@@ -1540,7 +1533,7 @@
                                                     : e >>> 1)
                                                 ? -0x12477ce0 ^ (e >>> 1)
                                                 : e >>> 1),
-                                            (t[r] = e));
+                                            (t[r] = e);
                                     return 'undefined' != typeof Int32Array ? new Int32Array(t) : t;
                                 })()),
                             ))[0]),
@@ -1631,16 +1624,16 @@
                                         i = {};
                                     switch (a) {
                                         case 21589:
-                                            (1 & (r = e.read_shift(1)) && (i.mtime = e.read_shift(4)),
+                                            1 & (r = e.read_shift(1)) && (i.mtime = e.read_shift(4)),
                                                 n > 5 && (2 & r && (i.atime = e.read_shift(4)), 4 & r && (i.ctime = e.read_shift(4))),
-                                                i.mtime && (i.mt = new Date(1e3 * i.mtime)));
+                                                i.mtime && (i.mt = new Date(1e3 * i.mtime));
                                             break;
                                         case 1:
                                             var o = e.read_shift(4),
                                                 c = e.read_shift(4);
-                                            ((i.usz = 0x100000000 * c + o), (o = e.read_shift(4)), (i.csz = 0x100000000 * (c = e.read_shift(4)) + o));
+                                            (i.usz = 0x100000000 * c + o), (o = e.read_shift(4)), (i.csz = 0x100000000 * (c = e.read_shift(4)) + o);
                                     }
-                                    ((e.l = s), (t[a] = i));
+                                    (e.l = s), (t[a] = i);
                                 }
                                 return t;
                             }
@@ -1733,7 +1726,7 @@
                                 aa(g, 0);
                                 var v = (function (e) {
                                     if (80 == e[e.l] && 75 == e[e.l + 1]) return [0, 0];
-                                    (e.chk(p, 'Header Signature: '), (e.l += 16));
+                                    e.chk(p, 'Header Signature: '), (e.l += 16);
                                     var t = e.read_shift(2, 'u');
                                     return [e.read_shift(2, 'u'), t];
                                 })(g);
@@ -1764,21 +1757,21 @@
                                     default:
                                         throw Error('Sector Shift: Expected 9 or 12 saw ' + E);
                                 }
-                                (T.chk('0600', 'Mini Sector Shift: '), T.chk('000000000000', 'Reserved: '));
+                                T.chk('0600', 'Mini Sector Shift: '), T.chk('000000000000', 'Reserved: ');
                                 var k = g.read_shift(4, 'i');
                                 if (3 === r && 0 !== k) throw Error('# Directory Sectors: Expected 0 saw ' + k);
-                                ((g.l += 4),
+                                (g.l += 4),
                                     (o = g.read_shift(4, 'i')),
                                     (g.l += 4),
                                     g.chk('00100000', 'Mini Stream Cutoff Size: '),
                                     (f = g.read_shift(4, 'i')),
                                     (s = g.read_shift(4, 'i')),
                                     (h = g.read_shift(4, 'i')),
-                                    (i = g.read_shift(4, 'i')));
+                                    (i = g.read_shift(4, 'i'));
                                 for (var x = -1, _ = 0; _ < 109 && !((x = g.read_shift(4, 'i')) < 0); ++_) m[_] = x;
                                 var S = (function (e, t) {
                                     for (var r = Math.ceil(e.length / t) - 1, a = [], n = 1; n < r; ++n) a[n - 1] = e.slice(n * t, (n + 1) * t);
-                                    return ((a[r - 1] = e.slice(r * t)), a);
+                                    return (a[r - 1] = e.slice(r * t)), a;
                                 })(e, n);
                                 !(function e(t, r, a, n, s) {
                                     var i = d;
@@ -1808,7 +1801,7 @@
                                             c = [];
                                             var p = [];
                                             for (h = u; h >= 0; ) {
-                                                ((p[h] = !0), (i[h] = !0), (o[o.length] = h), c.push(e[h]));
+                                                (p[h] = !0), (i[h] = !0), (o[o.length] = h), c.push(e[h]);
                                                 var m = r[Math.floor((4 * h) / a)];
                                                 if (a < 4 + (d = (4 * h) & l)) throw Error('FAT boundary crossed: ' + h + ' 4 ' + a);
                                                 if (!e[m] || p[(h = r6(e[m], d))]) break;
@@ -1817,18 +1810,18 @@
                                         }
                                     return s;
                                 })(S, o, m, n);
-                                (o < A.length && (A[o].name = '!Directory'),
+                                o < A.length && (A[o].name = '!Directory'),
                                     s > 0 && f !== d && (A[f].name = '!MiniFAT'),
                                     (A[m[0]].name = '!FAT'),
                                     (A.fat_addrs = m),
-                                    (A.ssz = n));
+                                    (A.ssz = n);
                                 var C = [],
                                     I = [],
                                     O = [];
-                                ((function (e, t, r, a, n, s, i, o) {
+                                (function (e, t, r, a, n, s, i, o) {
                                     for (var l, f = 0, h = 2 * !!a.length, p = t[e].data, m = 0, g = 0; m < p.length; m += 128) {
                                         var v = p.slice(m, m + 128);
-                                        (aa(v, 64), (g = v.read_shift(2)), (l = rM(v, 0, g - h)), a.push(l));
+                                        aa(v, 64), (g = v.read_shift(2)), (l = rM(v, 0, g - h)), a.push(l);
                                         var b = {
                                             name: l,
                                             type: v.read_shift(1),
@@ -1841,7 +1834,7 @@
                                             start: 0,
                                             size: 0,
                                         };
-                                        (0 !== v.read_shift(2) + v.read_shift(2) + v.read_shift(2) + v.read_shift(2) && (b.ct = c(v, v.l - 8)),
+                                        0 !== v.read_shift(2) + v.read_shift(2) + v.read_shift(2) + v.read_shift(2) && (b.ct = c(v, v.l - 8)),
                                             0 !== v.read_shift(2) + v.read_shift(2) + v.read_shift(2) + v.read_shift(2) && (b.mt = c(v, v.l - 8)),
                                             (b.start = v.read_shift(4, 'i')),
                                             (b.size = v.read_shift(4, 'i')),
@@ -1859,7 +1852,7 @@
                                                                 c = 0,
                                                                 l = 0;
                                                             for (c = t; c >= 0; ) {
-                                                                ((n[c] = !0), (s[s.length] = c), i.push(e[c]));
+                                                                (n[c] = !0), (s[s.length] = c), i.push(e[c]);
                                                                 var f = r[Math.floor((4 * c) / a)];
                                                                 if (a < 4 + (l = (4 * c) & o)) throw Error('FAT boundary crossed: ' + c + ' 4 ' + a);
                                                                 if (!e[f]) break;
@@ -1877,37 +1870,37 @@
                                                           t[f] &&
                                                           (b.content = (function (e, t, r) {
                                                               for (var a = e.start, n = e.size, s = [], i = a; r && n > 0 && i >= 0; )
-                                                                  (s.push(t.slice(i * u, i * u + u)), (n -= u), (i = r6(r, 4 * i)));
+                                                                  s.push(t.slice(i * u, i * u + u)), (n -= u), (i = r6(r, 4 * i));
                                                               return 0 === s.length ? as(0) : ek(s).slice(0, e.size);
                                                           })(b, t[f].data, (t[o] || {}).data))),
                                             b.content && aa(b.content, 0),
                                             (s[l] = b),
-                                            i.push(b));
+                                            i.push(b);
                                     }
                                 })(o, A, S, C, s, {}, I, f),
                                     (function (e, t, r) {
-                                        for (var a = 0, n = 0, s = 0, i = 0, o = 0, c = r.length, l = [], f = []; a < c; ++a) ((l[a] = f[a] = a), (t[a] = r[a]));
+                                        for (var a = 0, n = 0, s = 0, i = 0, o = 0, c = r.length, l = [], f = []; a < c; ++a) (l[a] = f[a] = a), (t[a] = r[a]);
                                         for (; o < f.length; ++o)
-                                            ((n = e[(a = f[o])].L),
+                                            (n = e[(a = f[o])].L),
                                                 (s = e[a].R),
                                                 (i = e[a].C),
                                                 l[a] === a && (-1 !== n && l[n] !== n && (l[a] = l[n]), -1 !== s && l[s] !== s && (l[a] = l[s])),
                                                 -1 !== i && (l[i] = a),
                                                 -1 !== n && a != l[a] && ((l[n] = l[a]), f.lastIndexOf(n) < o && f.push(n)),
-                                                -1 !== s && a != l[a] && ((l[s] = l[a]), f.lastIndexOf(s) < o && f.push(s)));
+                                                -1 !== s && a != l[a] && ((l[s] = l[a]), f.lastIndexOf(s) < o && f.push(s));
                                         for (a = 1; a < c; ++a) l[a] === a && (-1 !== s && l[s] !== s ? (l[a] = l[s]) : -1 !== n && l[n] !== n && (l[a] = l[n]));
                                         for (a = 1; a < c; ++a)
                                             if (0 !== e[a].type) {
                                                 if ((o = a) != l[o])
-                                                    do ((o = l[o]), (t[a] = t[o] + '/' + t[a]));
+                                                    do (o = l[o]), (t[a] = t[o] + '/' + t[a]);
                                                     while (0 !== o && -1 !== l[o] && o != l[o]);
                                                 l[a] = -1;
                                             }
                                         for (t[0] += '/', a = 1; a < c; ++a) 2 !== e[a].type && (t[a] += '/');
                                     })(I, O, C),
-                                    C.shift());
+                                    C.shift();
                                 var R = { FileIndex: I, FullPaths: O };
-                                return (t && t.raw && (R.raw = { header: w, sectors: S }), R);
+                                return t && t.raw && (R.raw = { header: w, sectors: S }), R;
                             }
                             function c(e, t) {
                                 return new Date(((r5(e, t + 4) / 1e7) * 0x100000000 + r5(e, t) / 1e7 - 0x2b6109100) * 1e3);
@@ -1917,20 +1910,20 @@
                                     a = r.root || 'Root Entry';
                                 if ((e.FullPaths || (e.FullPaths = []), e.FileIndex || (e.FileIndex = []), e.FullPaths.length !== e.FileIndex.length))
                                     throw Error('inconsistent CFB structure');
-                                (0 === e.FullPaths.length && ((e.FullPaths[0] = a + '/'), (e.FileIndex[0] = { name: a, type: 5 })),
+                                0 === e.FullPaths.length && ((e.FullPaths[0] = a + '/'), (e.FileIndex[0] = { name: a, type: 5 })),
                                     r.CLSID && (e.FileIndex[0].clsid = r.CLSID),
                                     (function (e) {
                                         var t = '\x01Sh33tJ5';
                                         if (!tr.find(e, '/' + t)) {
                                             var r = as(4);
-                                            ((r[0] = 55),
+                                            (r[0] = 55),
                                                 (r[1] = r[3] = 50),
                                                 (r[2] = 54),
                                                 e.FileIndex.push({ name: t, type: 2, content: r, size: 4, L: 69, R: 69, C: 69 }),
                                                 e.FullPaths.push(e.FullPaths[0] + t),
-                                                f(e));
+                                                f(e);
                                         }
-                                    })(e));
+                                    })(e);
                             }
                             function f(e, t) {
                                 l(e);
@@ -1943,7 +1936,7 @@
                                         case 1:
                                         case 2:
                                         case 5:
-                                            ((a = !0), isNaN(o.R * o.L * o.C) && (r = !0), o.R > -1 && o.L > -1 && o.R == o.L && (r = !0));
+                                            (a = !0), isNaN(o.R * o.L * o.C) && (r = !0), o.R > -1 && o.L > -1 && o.R == o.L && (r = !0);
                                             break;
                                         default:
                                             r = !0;
@@ -1955,14 +1948,14 @@
                                         h = Object.create ? Object.create(null) : {},
                                         u = [];
                                     for (i = 0; i < e.FullPaths.length; ++i)
-                                        ((h[e.FullPaths[i]] = !0), 0 !== e.FileIndex[i].type && u.push([e.FullPaths[i], e.FileIndex[i]]));
+                                        (h[e.FullPaths[i]] = !0), 0 !== e.FileIndex[i].type && u.push([e.FullPaths[i], e.FileIndex[i]]);
                                     for (i = 0; i < u.length; ++i) {
                                         var d = n(u[i][0]);
                                         for (a = h[d]; !a; ) {
                                             for (; n(d) && !h[n(d)]; ) d = n(d);
-                                            (u.push([d, { name: s(d).replace('/', ''), type: 1, clsid: g, ct: c, mt: c, content: null }]),
+                                            u.push([d, { name: s(d).replace('/', ''), type: 1, clsid: g, ct: c, mt: c, content: null }]),
                                                 (h[d] = !0),
-                                                (a = h[(d = n(u[i][0]))]));
+                                                (a = h[(d = n(u[i][0]))]);
                                         }
                                     }
                                     for (
@@ -1981,7 +1974,7 @@
                                         i < u.length;
                                         ++i
                                     )
-                                        ((e.FullPaths[i] = u[i][0]), (e.FileIndex[i] = u[i][1]));
+                                        (e.FullPaths[i] = u[i][0]), (e.FileIndex[i] = u[i][1]);
                                     for (i = 0; i < u.length; ++i) {
                                         var p = e.FileIndex[i],
                                             m = e.FullPaths[i];
@@ -1993,12 +1986,12 @@
                                             (p.clsid = p.clsid || g),
                                             0 === i)
                                         )
-                                            ((p.C = u.length > 1 ? 1 : -1), (p.size = 0), (p.type = 5));
+                                            (p.C = u.length > 1 ? 1 : -1), (p.size = 0), (p.type = 5);
                                         else if ('/' == m.slice(-1)) {
                                             for (f = i + 1; f < u.length && n(e.FullPaths[f]) != m; ++f);
                                             for (p.C = f >= u.length ? -1 : f, f = i + 1; f < u.length && n(e.FullPaths[f]) != n(m); ++f);
-                                            ((p.R = f >= u.length ? -1 : f), (p.type = 1));
-                                        } else (n(e.FullPaths[i + 1] || '') == n(m) && (p.R = i + 1), (p.type = 2));
+                                            (p.R = f >= u.length ? -1 : f), (p.type = 1);
+                                        } else n(e.FullPaths[i + 1] || '') == n(m) && (p.R = i + 1), (p.type = 2);
                                     }
                                 }
                             }
@@ -2037,7 +2030,7 @@
                                                 )
                                                     (p = h.charCodeAt(m)) >= 32 && p < 128 && ++u;
                                                 var g = u >= (4 * d) / 5;
-                                                (s.push(n),
+                                                s.push(n),
                                                     s.push('Content-Location: ' + (r.root || 'file:///C:/SheetJS/') + o),
                                                     s.push('Content-Transfer-Encoding: ' + (g ? 'quoted-printable' : 'base64')),
                                                     s.push(
@@ -2059,11 +2052,11 @@
                                                                       var t = e.charCodeAt(0).toString(16).toUpperCase();
                                                                       return '=' + (1 == t.length ? '0' + t : t);
                                                                   });
-                                                                  ('\n' == (t = t.replace(/ $/gm, '=20').replace(/\t$/gm, '=09')).charAt(0) && (t = '=0D' + t.slice(1)),
+                                                                  '\n' == (t = t.replace(/ $/gm, '=20').replace(/\t$/gm, '=09')).charAt(0) && (t = '=0D' + t.slice(1)),
                                                                       (t = t
                                                                           .replace(/\r(?!\n)/gm, '=0D')
                                                                           .replace(/\n\n/gm, '\n=0A')
-                                                                          .replace(/([^\r\n])\n/gm, '$1=0A')));
+                                                                          .replace(/([^\r\n])\n/gm, '$1=0A'));
                                                                   for (var r = [], a = t.split('\r\n'), n = 0; n < a.length; ++n) {
                                                                       var s = a[n];
                                                                       if (0 == s.length) {
@@ -2073,14 +2066,14 @@
                                                                       for (var i = 0; i < s.length; ) {
                                                                           var o = 76,
                                                                               c = s.slice(i, i + o);
-                                                                          ('=' == c.charAt(o - 1)
+                                                                          '=' == c.charAt(o - 1)
                                                                               ? o--
                                                                               : '=' == c.charAt(o - 2)
                                                                                 ? (o -= 2)
                                                                                 : '=' == c.charAt(o - 3) && (o -= 3),
                                                                               (c = s.slice(i, i + o)),
                                                                               (i += o) < s.length && (c += '='),
-                                                                              r.push(c));
+                                                                              r.push(c);
                                                                       }
                                                                   }
                                                                   return r.join('\r\n');
@@ -2089,9 +2082,9 @@
                                                                   for (var t = eu(e), r = [], a = 0; a < t.length; a += 76) r.push(t.slice(a, a + 76));
                                                                   return r.join('\r\n') + '\r\n';
                                                               })(h),
-                                                    ));
+                                                    );
                                             }
-                                        return (s.push(n + '--\r\n'), s.join('\r\n'));
+                                        return s.push(n + '--\r\n'), s.join('\r\n');
                                     })(e, n);
                                 if ((f(e), 'zip' === n.fileType))
                                     return (function (e, r) {
@@ -2117,9 +2110,9 @@
                                                     v = l,
                                                     b = as(u.length);
                                                 for (c = 0; c < u.length; ++c) b.write_shift(1, 127 & u.charCodeAt(c));
-                                                ((b = b.slice(0, b.l)), (p[f] = 'string' == typeof d.content ? tt.bstr(d.content, 0) : tt.buf(d.content, 0)));
+                                                (b = b.slice(0, b.l)), (p[f] = 'string' == typeof d.content ? tt.bstr(d.content, 0) : tt.buf(d.content, 0));
                                                 var w = 'string' == typeof d.content ? ew(d.content) : d.content;
-                                                (8 == i && ((g = w), (w = t ? t.deflateRawSync(g) : H(g))),
+                                                8 == i && ((g = w), (w = t ? t.deflateRawSync(g) : H(g))),
                                                     (s = as(30)).write_shift(4, 0x4034b50),
                                                     s.write_shift(2, 20),
                                                     s.write_shift(2, 0),
@@ -2128,9 +2121,9 @@
                                                         ? (function (e, t) {
                                                               'string' == typeof t && (t = new Date(t));
                                                               var r = t.getHours();
-                                                              ((r = ((r = (r << 6) | t.getMinutes()) << 5) | (t.getSeconds() >>> 1)), e.write_shift(2, r));
+                                                              (r = ((r = (r << 6) | t.getMinutes()) << 5) | (t.getSeconds() >>> 1)), e.write_shift(2, r);
                                                               var a = t.getFullYear() - 1980;
-                                                              ((a = ((a = (a << 4) | (t.getMonth() + 1)) << 5) | t.getDate()), e.write_shift(2, a));
+                                                              (a = ((a = (a << 4) | (t.getMonth() + 1)) << 5) | t.getDate()), e.write_shift(2, a);
                                                           })(s, d.mt)
                                                         : s.write_shift(4, 0),
                                                     s.write_shift(-4, (0, p[f])),
@@ -2164,7 +2157,7 @@
                                                     n.push(s),
                                                     (m += b.length),
                                                     n.push(b),
-                                                    ++f);
+                                                    ++f;
                                             }
                                         return (
                                             (s = as(22)).write_shift(4, 0x6054b50),
@@ -2237,7 +2230,7 @@
                                 };
                                 for (c = (o = 0) + s[1]; o < c; ++o) i.write_shift(-4, v.DIFSECT);
                                 for (c += s[2]; o < c; ++o) i.write_shift(-4, v.FATSECT);
-                                (l(s[3]), l(s[4]));
+                                l(s[3]), l(s[4]);
                                 for (var h = 0, u = 0, p = e.FileIndex[0]; h < e.FileIndex.length; ++h)
                                     (p = e.FileIndex[h]).content && ((u = p.content.length) < 4096 || ((p.start = c), l((u + 511) >> 9)));
                                 for (l((s[6] + 7) >> 3); 511 & i.l; ) i.write_shift(-4, v.ENDOFCHAIN);
@@ -2252,7 +2245,7 @@
                                         for (h = 0; h < 12; ++h) i.write_shift(4, 0);
                                         continue;
                                     }
-                                    ((p = e.FileIndex[o]), 0 === o && (p.start = p.size ? p.start - 1 : d));
+                                    (p = e.FileIndex[o]), 0 === o && (p.start = p.size ? p.start - 1 : d);
                                     var w = (0 === o && n.root) || p.name;
                                     if (
                                         (w.length > 31 && (console.error('Name ' + w + ' will be truncated to ' + w.slice(0, 31)), (w = w.slice(0, 31))),
@@ -2268,26 +2261,25 @@
                                     )
                                         i.write_shift(16, p.clsid, 'hex');
                                     else for (h = 0; h < 4; ++h) i.write_shift(4, 0);
-                                    (i.write_shift(4, p.state || 0),
+                                    i.write_shift(4, p.state || 0),
                                         i.write_shift(4, 0),
                                         i.write_shift(4, 0),
                                         i.write_shift(4, 0),
                                         i.write_shift(4, 0),
                                         i.write_shift(4, p.start),
                                         i.write_shift(4, p.size),
-                                        i.write_shift(4, 0));
+                                        i.write_shift(4, 0);
                                 }
                                 for (o = 1; o < e.FileIndex.length; ++o)
                                     if ((p = e.FileIndex[o]).size >= 4096)
-                                        if (((i.l = (p.start + 1) << 9), ep && a.isBuffer(p.content)))
-                                            (p.content.copy(i, i.l, 0, p.size), (i.l += (p.size + 511) & -512));
+                                        if (((i.l = (p.start + 1) << 9), ep && a.isBuffer(p.content))) p.content.copy(i, i.l, 0, p.size), (i.l += (p.size + 511) & -512);
                                         else {
                                             for (h = 0; h < p.size; ++h) i.write_shift(1, p.content[h]);
                                             for (; 511 & h; ++h) i.write_shift(1, 0);
                                         }
                                 for (o = 1; o < e.FileIndex.length; ++o)
                                     if ((p = e.FileIndex[o]).size > 0 && p.size < 4096)
-                                        if (ep && a.isBuffer(p.content)) (p.content.copy(i, i.l, 0, p.size), (i.l += (p.size + 63) & -64));
+                                        if (ep && a.isBuffer(p.content)) p.content.copy(i, i.l, 0, p.size), (i.l += (p.size + 63) & -64);
                                         else {
                                             for (h = 0; h < p.size; ++h) i.write_shift(1, p.content[h]);
                                             for (; 63 & h; ++h) i.write_shift(1, 0);
@@ -2362,15 +2354,15 @@
                             function I(e, t, r) {
                                 var a = 7 & t,
                                     n = t >>> 3;
-                                return (a <= 5 ? (e[n] |= (7 & r) << a) : ((e[n] |= (r << a) & 255), (e[n + 1] = (7 & r) >> (8 - a))), t + 3);
+                                return a <= 5 ? (e[n] |= (7 & r) << a) : ((e[n] |= (r << a) & 255), (e[n + 1] = (7 & r) >> (8 - a))), t + 3;
                             }
                             function O(e, t, r) {
                                 var a = t >>> 3;
-                                return ((r <<= 7 & t), (e[a] |= 255 & r), (r >>>= 8), (e[a + 1] = r), t + 8);
+                                return (r <<= 7 & t), (e[a] |= 255 & r), (r >>>= 8), (e[a + 1] = r), t + 8;
                             }
                             function R(e, t, r) {
                                 var a = t >>> 3;
-                                return ((r <<= 7 & t), (e[a] |= 255 & r), (r >>>= 8), (e[a + 1] = 255 & r), (e[a + 2] = r >>> 8), t + 16);
+                                return (r <<= 7 & t), (e[a] |= 255 & r), (r >>>= 8), (e[a + 1] = 255 & r), (e[a + 2] = r >>> 8), t + 16;
                             }
                             function N(e, t) {
                                 var r = e.length,
@@ -2389,7 +2381,7 @@
                                     else for (; n < r; ++n) i[n] = e[n];
                                     return i;
                                 }
-                                return ((e.length = a), e);
+                                return (e.length = a), e;
                             }
                             function F(e) {
                                 for (var t = Array(e), r = 0; r < e; ++r) t[r] = 0;
@@ -2407,7 +2399,7 @@
                                 for (s = c; s < r; ++s) e[s] = 0;
                                 c = e.length;
                                 var f = E ? new Uint16Array(c) : F(c);
-                                for (s = 0; s < c; ++s) (l[(n = e[s])]++, a < n && (a = n), (f[s] = 0));
+                                for (s = 0; s < c; ++s) l[(n = e[s])]++, a < n && (a = n), (f[s] = 0);
                                 for (s = 1, l[0] = 0; s <= a; ++s) l[s + 16] = o = (o + l[s - 1]) << 1;
                                 for (s = 0; s < c; ++s) 0 != (o = e[s]) && (f[s] = l[o + 16]++);
                                 var h = 0;
@@ -2487,20 +2479,20 @@
                                                 if (d > 2) {
                                                     (h = a[d]) <= 22 ? (n = O(r, n, k[h + 1] >> 1) - 1) : (O(r, n, 3), O(r, (n += 5), k[h - 23] >> 5), (n += 3));
                                                     var p = h < 8 ? 0 : (h - 4) >> 2;
-                                                    (p > 0 && (R(r, n, d - T[h]), (n += p)), (n = O(r, n, k[(h = e[s - u])] >> 3) - 3));
+                                                    p > 0 && (R(r, n, d - T[h]), (n += p)), (n = O(r, n, k[(h = e[s - u])] >> 3) - 3);
                                                     var m = h < 4 ? 0 : (h - 2) >> 1;
                                                     m > 0 && (R(r, n, s - u - y[h]), (n += m));
-                                                    for (var g = 0; g < d; ++g) ((i[c] = 32767 & s), (c = ((c << 5) ^ t[s]) & 32767), ++s);
+                                                    for (var g = 0; g < d; ++g) (i[c] = 32767 & s), (c = ((c << 5) ^ t[s]) & 32767), ++s;
                                                     o -= d - 1;
                                                 } else
-                                                    (h <= 143 ? (h += 48) : ((f = (1 & (f = 1)) << (7 & (l = n))), (r[l >>> 3] |= f), (n = l + 1)),
+                                                    h <= 143 ? (h += 48) : ((f = (1 & (f = 1)) << (7 & (l = n))), (r[l >>> 3] |= f), (n = l + 1)),
                                                         (n = O(r, n, k[h])),
                                                         (i[c] = 32767 & s),
-                                                        ++s);
+                                                        ++s;
                                             }
                                             n = O(r, n, 0) - 1;
                                         }
-                                        return ((r.l = ((n + 7) / 8) | 0), r.l);
+                                        return (r.l = ((n + 7) / 8) | 0), r.l;
                                     })(t, r);
                                 };
                             })();
@@ -2521,7 +2513,7 @@
                                         if (((a = _(e, r)), (r += 3), a >>> 1 == 0)) {
                                             7 & r && (r += 8 - (7 & r));
                                             var l = e[r >>> 3] | (e[(r >>> 3) + 1] << 8);
-                                            if (((r += 32), l > 0)) for (!t && i < s + l && (i = (n = N(n, s + l)).length); l-- > 0; ) ((n[s++] = e[r >>> 3]), (r += 8));
+                                            if (((r += 32), l > 0)) for (!t && i < s + l && (i = (n = N(n, s + l)).length); l-- > 0; ) (n[s++] = e[r >>> 3]), (r += 8);
                                             continue;
                                         }
                                         for (
@@ -2548,7 +2540,7 @@
                                                           m < o;
                                                           ++m
                                                       )
-                                                          ((l[w[m]] = c = _(e, t)), h < c && (h = c), u[c]++, (t += 3));
+                                                          (l[w[m]] = c = _(e, t)), h < c && (h = c), u[c]++, (t += 3);
                                                       var g = 0;
                                                       for (m = 1, u[0] = 0; m <= h; ++m) d[m] = g = (g + u[m - 1]) << 1;
                                                       for (m = 0; m < p; ++m) 0 != (g = l[m]) && (f[m] = d[g]++);
@@ -2584,13 +2576,13 @@
                                                                   for (c = 11 + A(e, t), t += 7; c-- > 0; ) T.push(0);
                                                                   break;
                                                               default:
-                                                                  (T.push(g), h < g && (h = g));
+                                                                  T.push(g), h < g && (h = g);
                                                           }
                                                       var y = T.slice(0, s),
                                                           x = T.slice(s);
                                                       for (m = s; m < 286; ++m) y[m] = 0;
                                                       for (m = i; m < 30; ++m) x[m] = 0;
-                                                      return ((K = D(y, V, 286)), (Y = D(x, G, 30)), t);
+                                                      return (K = D(y, V, 286)), (Y = D(x, G, 30)), t;
                                                   })(e, r)),
                                                   (o = K),
                                                   (c = Y));
@@ -2606,17 +2598,17 @@
                                                 var u = (h -= 257) < 8 ? 0 : (h - 4) >> 2;
                                                 u > 5 && (u = 0);
                                                 var d = s + T[h];
-                                                (u > 0 && ((d += C(e, r, u)), (r += u)), (f = C(e, r, c)), (r += 15 & (h = a >>> 1 == 1 ? L[f] : G[f])));
+                                                u > 0 && ((d += C(e, r, u)), (r += u)), (f = C(e, r, c)), (r += 15 & (h = a >>> 1 == 1 ? L[f] : G[f]));
                                                 var p = (h >>>= 4) < 4 ? 0 : (h - 2) >> 1,
                                                     m = y[h];
                                                 for (p > 0 && ((m += C(e, r, p)), (r += p)), !t && i < d && (i = (n = N(n, d + 100)).length); s < d; )
-                                                    ((n[s] = n[s - m]), ++s);
+                                                    (n[s] = n[s - m]), ++s;
                                             }
                                         }
                                     }
                                     return t ? [n, (r + 7) >>> 3] : [n.slice(0, s), (r + 7) >>> 3];
                                 })(e.slice(e.l || 0), t);
-                                return ((e.l += r[1]), r[0]);
+                                return (e.l += r[1]), r[0];
                             }
                             function J(e, t) {
                                 if (e) 'undefined' != typeof console && console.error(t);
@@ -2627,7 +2619,7 @@
                                 var a = { FileIndex: [], FullPaths: [] };
                                 l(a, { root: r.root });
                                 for (var n = e.length - 4; (80 != e[n] || 75 != e[n + 1] || 5 != e[n + 2] || 6 != e[n + 3]) && n >= 0; ) --n;
-                                ((e.l = n + 4), (e.l += 4));
+                                (e.l = n + 4), (e.l += 4);
                                 var s = e.read_shift(2);
                                 e.l += 6;
                                 var o = e.read_shift(4);
@@ -2643,7 +2635,7 @@
                                         m = i(e.slice(e.l + h, e.l + h + u));
                                     e.l += h + u + d;
                                     var g = e.l;
-                                    ((e.l = p + 4),
+                                    (e.l = p + 4),
                                         m && m[1] && ((m[1] || {}).usz && (f = m[1].usz), (m[1] || {}).csz && (c = m[1].csz)),
                                         (function (e, r, a, n, s) {
                                             e.l += 2;
@@ -2689,13 +2681,13 @@
                                                 E += String.fromCharCode(e[e.l++]);
                                             if (y) {
                                                 var x = i(e.slice(e.l, e.l + y));
-                                                ((x[21589] || {}).mt && (g = x[21589].mt),
+                                                (x[21589] || {}).mt && (g = x[21589].mt),
                                                     (x[1] || {}).usz && (w = x[1].usz),
                                                     (x[1] || {}).csz && (b = x[1].csz),
                                                     s &&
                                                         ((s[21589] || {}).mt && (g = s[21589].mt),
                                                         (s[1] || {}).usz && (w = s[1].usz),
-                                                        (s[1] || {}).csz && (b = s[1].csz)));
+                                                        (s[1] || {}).csz && (b = s[1].csz));
                                             }
                                             e.l += y;
                                             var _ = e.slice(e.l, e.l + b);
@@ -2705,7 +2697,7 @@
                                                         if (!t) return Z(e, r);
                                                         var a = new t.InflateRaw(),
                                                             n = a._processChunk(e.slice(e.l), a._finishFlushFlag);
-                                                        return ((e.l += a.bytesRead), n);
+                                                        return (e.l += a.bytesRead), n;
                                                     })(e, w);
                                                     break;
                                                 case 0:
@@ -2715,12 +2707,12 @@
                                                     throw Error('Unsupported ZIP Compression method ' + m);
                                             }
                                             var S = !1;
-                                            (8 & p && (0x8074b50 == e.read_shift(4) && (e.read_shift(4), (S = !0)), (b = e.read_shift(4)), (w = e.read_shift(4))),
+                                            8 & p && (0x8074b50 == e.read_shift(4) && (e.read_shift(4), (S = !0)), (b = e.read_shift(4)), (w = e.read_shift(4))),
                                                 b != r && J(S, 'Bad compressed size: ' + r + ' != ' + b),
                                                 w != a && J(S, 'Bad uncompressed size: ' + a + ' != ' + w),
-                                                ee(n, E, _, { unsafe: !0, mt: g }));
+                                                ee(n, E, _, { unsafe: !0, mt: g });
                                         })(e, c, f, a, m),
-                                        (e.l = g));
+                                        (e.l = g);
                                 }
                                 return a;
                             }
@@ -2740,17 +2732,14 @@
                                 var i = !n && tr.find(e, t);
                                 if (!i) {
                                     var o = e.FullPaths[0];
-                                    (t.slice(0, o.length) == o ? (o = t) : ('/' != o.slice(-1) && (o += '/'), (o = (o + t).replace('//', '/'))),
+                                    t.slice(0, o.length) == o ? (o = t) : ('/' != o.slice(-1) && (o += '/'), (o = (o + t).replace('//', '/'))),
                                         (i = { name: s(t), type: 2 }),
                                         e.FileIndex.push(i),
                                         e.FullPaths.push(o),
-                                        n || tr.utils.cfb_gc(e));
+                                        n || tr.utils.cfb_gc(e);
                                 }
                                 return (
-                                    (i.content = r),
-                                    (i.size = r ? r.length : 0),
-                                    a && (a.CLSID && (i.clsid = a.CLSID), a.mt && (i.mt = a.mt), a.ct && (i.ct = a.ct)),
-                                    i
+                                    (i.content = r), (i.size = r ? r.length : 0), a && (a.CLSID && (i.clsid = a.CLSID), a.mt && (i.mt = a.mt), a.ct && (i.ct = a.ct)), i
                                 );
                             }
                             return (
@@ -2777,7 +2766,7 @@
                                     var n = r && r.type;
                                     switch ((!n && ep && a.isBuffer(t) && (n = 'buffer'), n || 'base64')) {
                                         case 'file':
-                                            return (e || (e = j), o(e.readFileSync(t), r));
+                                            return e || (e = j), o(e.readFileSync(t), r);
                                         case 'base64':
                                             return o(ew(ed(t)), r);
                                         case 'binary':
@@ -2790,7 +2779,7 @@
                                     var n = h(t, r);
                                     switch ((r && r.type) || 'buffer') {
                                         case 'file':
-                                            (e || (e = j), e.writeFileSync(r.filename, n));
+                                            e || (e = j), e.writeFileSync(r.filename, n);
                                             break;
                                         case 'binary':
                                             return 'string' == typeof n ? n : b(n);
@@ -2811,7 +2800,7 @@
                                 (r.utils = {
                                     cfb_new: function (e) {
                                         var t = {};
-                                        return (l(t, e), t);
+                                        return l(t, e), t;
                                     },
                                     cfb_add: ee,
                                     cfb_del: function (e, t) {
@@ -2819,7 +2808,7 @@
                                         var r = tr.find(e, t);
                                         if (r) {
                                             for (var a = 0; a < e.FileIndex.length; ++a)
-                                                if (e.FileIndex[a] == r) return (e.FileIndex.splice(a, 1), e.FullPaths.splice(a, 1), !0);
+                                                if (e.FileIndex[a] == r) return e.FileIndex.splice(a, 1), e.FullPaths.splice(a, 1), !0;
                                         }
                                         return !1;
                                     },
@@ -2828,7 +2817,7 @@
                                         var a = tr.find(e, t);
                                         if (a) {
                                             for (var n = 0; n < e.FileIndex.length; ++n)
-                                                if (e.FileIndex[n] == a) return ((e.FileIndex[n].name = s(r)), (e.FullPaths[n] = r), !0);
+                                                if (e.FileIndex[n] == a) return (e.FileIndex[n].name = s(r)), (e.FullPaths[n] = r), !0;
                                         }
                                         return !1;
                                     },
@@ -2916,12 +2905,12 @@
                                     'data:application/octet-stream;base64,' +
                                     (function (e) {
                                         for (var t = '', r = 0, a = 0, n = 0, s = 0, i = 0, o = 0, c = 0, l = 0; l < e.length; )
-                                            ((s = (r = e[l++]) >> 2),
+                                            (s = (r = e[l++]) >> 2),
                                                 (i = ((3 & r) << 4) | ((a = e[l++]) >> 4)),
                                                 (o = ((15 & a) << 2) | ((n = e[l++]) >> 6)),
                                                 (c = 63 & n),
                                                 isNaN(a) ? (o = c = 64) : isNaN(n) && (c = 64),
-                                                (t += eh.charAt(s) + eh.charAt(i) + eh.charAt(o) + eh.charAt(c)));
+                                                (t += eh.charAt(s) + eh.charAt(i) + eh.charAt(o) + eh.charAt(c));
                                         return t;
                                     })(new Uint8Array(ta(a)));
                                 return chrome.downloads.download({ url: o, filename: e, saveAs: !0 });
@@ -2930,7 +2919,7 @@
                         if ('undefined' != typeof $ && 'undefined' != typeof File && 'undefined' != typeof Folder)
                             try {
                                 var c = File(e);
-                                return (c.open('w'), (c.encoding = 'binary'), Array.isArray(t) && (t = ey(t)), c.write(t), c.close(), t);
+                                return c.open('w'), (c.encoding = 'binary'), Array.isArray(t) && (t = ey(t)), c.write(t), c.close(), t;
                             } catch (e) {
                                 if (!e.message || -1 == e.message.indexOf('onstruct')) throw e;
                             }
@@ -2962,7 +2951,7 @@
                     function td(e) {
                         if (e >= 60 && e < 61) return e;
                         var t = new Date();
-                        return (t.setTime((e > 60 ? e : e + 1) * 864e5 + tl), t);
+                        return t.setTime((e > 60 ? e : e + 1) * 864e5 + tl), t;
                     }
                     var tp = /^(\d+):(\d+)(:\d+)?(\.\d+)?$/,
                         tm = /^(\d+)-(\d+)-(\d+)$/,
@@ -3076,13 +3065,13 @@
                                 .replace(/([\d]),([\d])/g, '$1$2')
                                 .replace(/[$]/g, '')
                                 .replace(/[%]/g, function () {
-                                    return ((r *= 100), '');
+                                    return (r *= 100), '';
                                 });
                         return isNaN((t = Number(a))) &&
                             isNaN(
                                 (t = Number(
                                     (a = a.replace(/[(]([^()]*)[)]/, function (e, t) {
-                                        return ((r = -r), t);
+                                        return (r = -r), t;
                                     })),
                                 )),
                             )
@@ -3146,7 +3135,7 @@
                         ((E = 5 == 'abacaba'.split(/(:?b)/i).length),
                         function (e, t, r) {
                             if (E || 'string' == typeof t) return e.split(t);
-                            for (var a = e.split(t), n = [a[0]], s = 1; s < a.length; ++s) (n.push(r), n.push(a[s]));
+                            for (var a = e.split(t), n = [a[0]], s = 1; s < a.length; ++s) n.push(r), n.push(a[s]);
                             return n;
                         });
                     function tI(e) {
@@ -3173,7 +3162,7 @@
                         for (var a = [], n = e.indexOf(t); n > -1; ) {
                             var s = e.indexOf(r, n + t.length);
                             if (-1 == s) break;
-                            (a.push(e.slice(n, s + r.length)), (n = e.indexOf(t, s + r.length)));
+                            a.push(e.slice(n, s + r.length)), (n = e.indexOf(t, s + r.length));
                         }
                         return a.length > 0 ? a : null;
                     }
@@ -3204,8 +3193,8 @@
                             ((k = {}),
                             function (e, t) {
                                 var r = k[t];
-                                (r || (k[t] = r = [RegExp('<(?:\\w+:)?' + t + '\\b[^<>]*>', 'g'), RegExp('</(?:\\w+:)?' + t + '>', 'g')]),
-                                    (r[0].lastIndex = r[1].lastIndex = 0));
+                                r || (k[t] = r = [RegExp('<(?:\\w+:)?' + t + '\\b[^<>]*>', 'g'), RegExp('</(?:\\w+:)?' + t + '>', 'g')]),
+                                    (r[0].lastIndex = r[1].lastIndex = 0);
                                 var a = r[0].exec(e);
                                 if (!a) return null;
                                 var n = a.index,
@@ -3230,7 +3219,7 @@
                                     var s = r.index;
                                     if (((n[1].lastIndex = n[0].lastIndex), !(r = n[1].exec(e)))) return null;
                                     var i = n[1].lastIndex;
-                                    (a.push(e.slice(s, i)), (n[0].lastIndex = n[1].lastIndex));
+                                    a.push(e.slice(s, i)), (n[0].lastIndex = n[1].lastIndex);
                                 }
                                 return 0 == a.length ? null : a;
                             }),
@@ -3240,13 +3229,13 @@
                                 var r,
                                     a = [],
                                     n = _[t];
-                                (n || (_[t] = n = [RegExp('<(?:\\w+:)?' + t + '\\b[^<>]*>', 'g'), RegExp('</(?:\\w+:)?' + t + '>', 'g')]),
-                                    (n[0].lastIndex = n[1].lastIndex = 0));
+                                n || (_[t] = n = [RegExp('<(?:\\w+:)?' + t + '\\b[^<>]*>', 'g'), RegExp('</(?:\\w+:)?' + t + '>', 'g')]),
+                                    (n[0].lastIndex = n[1].lastIndex = 0);
                                 for (var s = 0, i = 0; (r = n[0].exec(e)); ) {
                                     if (((s = r.index), a.push(e.slice(i, s)), (i = s), (n[1].lastIndex = n[0].lastIndex), !(r = n[1].exec(e)))) return null;
-                                    ((i = n[1].lastIndex), (n[0].lastIndex = n[1].lastIndex));
+                                    (i = n[1].lastIndex), (n[0].lastIndex = n[1].lastIndex);
                                 }
-                                return (a.push(e.slice(i)), 0 == a.length ? '' : a.join(''));
+                                return a.push(e.slice(i)), 0 == a.length ? '' : a.join('');
                             }),
                         tB =
                             ((S = {}),
@@ -3262,7 +3251,7 @@
                                     var s = r.index;
                                     if (((n[1].lastIndex = n[0].lastIndex), !(r = n[1].exec(e)))) return null;
                                     var i = n[1].lastIndex;
-                                    (a.push(e.slice(s, i)), (n[0].lastIndex = n[1].lastIndex));
+                                    a.push(e.slice(s, i)), (n[0].lastIndex = n[1].lastIndex);
                                 }
                                 return 0 == a.length ? null : a;
                             });
@@ -3339,18 +3328,18 @@
                                               for (var t = [], r = 0, a = e.length + 250, n = ev(e.length + 255), s = 0; s < e.length; ++s) {
                                                   var i = e.charCodeAt(s);
                                                   if (i < 128) n[r++] = i;
-                                                  else if (i < 2048) ((n[r++] = 192 | ((i >> 6) & 31)), (n[r++] = 128 | (63 & i)));
+                                                  else if (i < 2048) (n[r++] = 192 | ((i >> 6) & 31)), (n[r++] = 128 | (63 & i));
                                                   else if (i >= 55296 && i < 57344) {
                                                       i = (1023 & i) + 64;
                                                       var o = 1023 & e.charCodeAt(++s);
-                                                      ((n[r++] = 240 | ((i >> 8) & 7)),
+                                                      (n[r++] = 240 | ((i >> 8) & 7)),
                                                           (n[r++] = 128 | ((i >> 2) & 63)),
                                                           (n[r++] = 128 | ((o >> 6) & 15) | ((3 & i) << 4)),
-                                                          (n[r++] = 128 | (63 & o)));
-                                                  } else ((n[r++] = 224 | ((i >> 12) & 15)), (n[r++] = 128 | ((i >> 6) & 63)), (n[r++] = 128 | (63 & i)));
+                                                          (n[r++] = 128 | (63 & o));
+                                                  } else (n[r++] = 224 | ((i >> 12) & 15)), (n[r++] = 128 | ((i >> 6) & 63)), (n[r++] = 128 | (63 & i));
                                                   r > a && (t.push(n.slice(0, r)), (r = 0), (n = ev(65535)), (a = 65530));
                                               }
-                                              return (t.push(n.slice(0, r)), ek(t));
+                                              return t.push(n.slice(0, r)), ek(t);
                                           })(r)),
                                     tr.utils.cfb_add(e, t, a)
                                 );
@@ -3408,11 +3397,11 @@
                                     o != f.length && 58 !== f.charCodeAt(o);
                                     ++o
                                 );
-                                if (o === f.length) (f.indexOf('_') > 0 && (f = f.slice(0, f.indexOf('_'))), (a[f] = c), r || (a[f.toLowerCase()] = c));
+                                if (o === f.length) f.indexOf('_') > 0 && (f = f.slice(0, f.indexOf('_'))), (a[f] = c), r || (a[f.toLowerCase()] = c);
                                 else {
                                     var d = (5 === o && 'xmlns' === f.slice(0, 5) ? 'xmlns' : '') + f.slice(o + 1);
                                     if (a[d] && 'ext' == f.slice(o - 3, o)) continue;
-                                    ((a[d] = c), r || (a[d.toLowerCase()] = c));
+                                    (a[d] = c), r || (a[d.toLowerCase()] = c);
                                 }
                             }
                         return a;
@@ -3500,10 +3489,10 @@
                                 t += String.fromCharCode(((15 & a) << 12) | ((63 & n) << 6) | (63 & s));
                                 continue;
                             }
-                            ((t += String.fromCharCode(
+                            (t += String.fromCharCode(
                                 55296 + (((o = (((7 & a) << 18) | ((63 & n) << 12) | ((63 & s) << 6) | (63 & e.charCodeAt(r++))) - 65536) >>> 10) & 1023),
                             )),
-                                (t += String.fromCharCode(56320 + (1023 & o))));
+                                (t += String.fromCharCode(56320 + (1023 & o)));
                         }
                         return t;
                     }
@@ -3516,7 +3505,7 @@
                             i = 0,
                             o = 0;
                         for (r = 0; r < e.length; r += s)
-                            ((s = 1),
+                            (s = 1),
                                 (a = e.charCodeAt(r)) < 128
                                     ? (t = a)
                                     : a < 224
@@ -3537,7 +3526,7 @@
                                           (t = 56320 + (1023 & t))),
                                 0 !== o && ((n[i++] = 255 & o), (n[i++] = o >>> 8), (o = 0)),
                                 (n[i++] = t % 256),
-                                (n[i++] = t >>> 8));
+                                (n[i++] = t >>> 8);
                         return n.slice(0, i).toString('ucs2');
                     }
                     function rc(e) {
@@ -3556,19 +3545,19 @@
                                               t.push(String.fromCharCode(a));
                                               break;
                                           case a < 2048:
-                                              (t.push(String.fromCharCode(192 + (a >> 6))), t.push(String.fromCharCode(128 + (63 & a))));
+                                              t.push(String.fromCharCode(192 + (a >> 6))), t.push(String.fromCharCode(128 + (63 & a)));
                                               break;
                                           case a >= 55296 && a < 57344:
-                                              ((a -= 55296),
+                                              (a -= 55296),
                                                   t.push(String.fromCharCode(240 + (((n = e.charCodeAt(r++) - 56320 + (a << 10)) >> 18) & 7))),
                                                   t.push(String.fromCharCode(144 + ((n >> 12) & 63))),
                                                   t.push(String.fromCharCode(128 + ((n >> 6) & 63))),
-                                                  t.push(String.fromCharCode(128 + (63 & n))));
+                                                  t.push(String.fromCharCode(128 + (63 & n)));
                                               break;
                                           default:
-                                              (t.push(String.fromCharCode(224 + (a >> 12))),
+                                              t.push(String.fromCharCode(224 + (a >> 12))),
                                                   t.push(String.fromCharCode(128 + ((a >> 6) & 63))),
-                                                  t.push(String.fromCharCode(128 + (63 & a))));
+                                                  t.push(String.fromCharCode(128 + (63 & a)));
                                       }
                                   return t.join('');
                               },
@@ -3746,7 +3735,7 @@
                             return Array.isArray(e) || ('undefined' != typeof Uint8Array && e instanceof Uint8Array);
                         };
                     function r1() {
-                        ((rM = function (e, t, r) {
+                        (rM = function (e, t, r) {
                             return G.utils.decode(1200, e.slice(t, r)).replace(ex, '');
                         }),
                             (rz = function (e, t, r) {
@@ -3771,9 +3760,9 @@
                             (rJ = function (e, t) {
                                 var r = r5(e, t);
                                 return r > 0 ? G.utils.decode(65001, e.slice(t + 4, t + 4 + r)) : '';
-                            }));
+                            });
                     }
-                    (ep &&
+                    ep &&
                         ((rV = function (e, t) {
                             if (!a.isBuffer(e)) return rH(e, t);
                             var r = e.readUInt32LE(t);
@@ -3805,7 +3794,7 @@
                         (r0 = function (e) {
                             return a.isBuffer(e) || Array.isArray(e) || ('undefined' != typeof Uint8Array && e instanceof Uint8Array);
                         })),
-                        void 0 !== G && r1());
+                        void 0 !== G && r1();
                     var r2 = function (e, t) {
                             return e[t];
                         },
@@ -3834,49 +3823,49 @@
                         switch (t) {
                             case 'dbcs':
                                 if (((c = this.l), ep && a.isBuffer(this) && eg)) l = this.slice(this.l, this.l + 2 * e).toString('utf16le');
-                                else for (o = 0; o < e; ++o) ((l += String.fromCharCode(r4(this, c))), (c += 2));
+                                else for (o = 0; o < e; ++o) (l += String.fromCharCode(r4(this, c))), (c += 2);
                                 e *= 2;
                                 break;
                             case 'utf8':
                                 l = rz(this, this.l, this.l + e);
                                 break;
                             case 'utf16le':
-                                ((e *= 2), (l = rM(this, this.l, this.l + e)));
+                                (e *= 2), (l = rM(this, this.l, this.l + e));
                                 break;
                             case 'wstr':
                                 if (void 0 === G) return r8.call(this, e, 'dbcs');
-                                ((l = G.utils.decode(J, this.slice(this.l, this.l + 2 * e))), (e *= 2));
+                                (l = G.utils.decode(J, this.slice(this.l, this.l + 2 * e))), (e *= 2);
                                 break;
                             case 'lpstr-ansi':
-                                ((l = rV(this, this.l)), (e = 4 + r5(this, this.l)));
+                                (l = rV(this, this.l)), (e = 4 + r5(this, this.l));
                                 break;
                             case 'lpstr-cp':
-                                ((l = rG(this, this.l)), (e = 4 + r5(this, this.l)));
+                                (l = rG(this, this.l)), (e = 4 + r5(this, this.l));
                                 break;
                             case 'lpwstr':
-                                ((l = rX(this, this.l)), (e = 4 + 2 * r5(this, this.l)));
+                                (l = rX(this, this.l)), (e = 4 + 2 * r5(this, this.l));
                                 break;
                             case 'lpp4':
-                                ((e = 4 + r5(this, this.l)), (l = rY(this, this.l)), 2 & e && (e += 2));
+                                (e = 4 + r5(this, this.l)), (l = rY(this, this.l)), 2 & e && (e += 2);
                                 break;
                             case '8lpp4':
-                                ((e = 4 + r5(this, this.l)), (l = rJ(this, this.l)), 3 & e && (e += 4 - (3 & e)));
+                                (e = 4 + r5(this, this.l)), (l = rJ(this, this.l)), 3 & e && (e += 4 - (3 & e));
                                 break;
                             case 'cstr':
                                 for (e = 0, l = ''; 0 !== (s = r2(this, this.l + e++)); ) f.push(ec(s));
                                 l = f.join('');
                                 break;
                             case '_wstr':
-                                for (e = 0, l = ''; 0 !== (s = r4(this, this.l + e)); ) (f.push(ec(s)), (e += 2));
-                                ((e += 2), (l = f.join('')));
+                                for (e = 0, l = ''; 0 !== (s = r4(this, this.l + e)); ) f.push(ec(s)), (e += 2);
+                                (e += 2), (l = f.join(''));
                                 break;
                             case 'dbcs-cont':
                                 for (o = 0, l = '', c = this.l; o < e; ++o) {
                                     if (this.lens && -1 !== this.lens.indexOf(c))
-                                        return ((s = r2(this, c)), (this.l = c + 1), (i = r8.call(this, e - o, s ? 'dbcs-cont' : 'sbcs-cont')), f.join('') + i);
-                                    (f.push(ec(r4(this, c))), (c += 2));
+                                        return (s = r2(this, c)), (this.l = c + 1), (i = r8.call(this, e - o, s ? 'dbcs-cont' : 'sbcs-cont')), f.join('') + i;
+                                    f.push(ec(r4(this, c))), (c += 2);
                                 }
-                                ((l = f.join('')), (e *= 2));
+                                (l = f.join('')), (e *= 2);
                                 break;
                             case 'cpstr':
                                 if (void 0 !== G) {
@@ -3886,17 +3875,17 @@
                             case 'sbcs-cont':
                                 for (o = 0, l = '', c = this.l; o != e; ++o) {
                                     if (this.lens && -1 !== this.lens.indexOf(c))
-                                        return ((s = r2(this, c)), (this.l = c + 1), (i = r8.call(this, e - o, s ? 'dbcs-cont' : 'sbcs-cont')), f.join('') + i);
-                                    (f.push(ec(r2(this, c))), (c += 1));
+                                        return (s = r2(this, c)), (this.l = c + 1), (i = r8.call(this, e - o, s ? 'dbcs-cont' : 'sbcs-cont')), f.join('') + i;
+                                    f.push(ec(r2(this, c))), (c += 1);
                                 }
                                 l = f.join('');
                                 break;
                             default:
                                 switch (e) {
                                     case 1:
-                                        return ((r = r2(this, this.l)), this.l++, r);
+                                        return (r = r2(this, this.l)), this.l++, r;
                                     case 2:
-                                        return ((r = ('i' === t ? r3 : r4)(this, this.l)), (this.l += 2), r);
+                                        return (r = ('i' === t ? r3 : r4)(this, this.l)), (this.l += 2), r;
                                     case 4:
                                     case -4:
                                         if ('i' === t || (128 & this[this.l + 3]) == 0)
@@ -3911,7 +3900,7 @@
                                                 (this.l += 4),
                                                 r
                                             );
-                                        return ((n = r5(this, this.l)), (this.l += 4), n);
+                                        return (n = r5(this, this.l)), (this.l += 4), n;
                                     case 8:
                                     case -8:
                                         if ('f' === t)
@@ -3940,16 +3929,16 @@
                                         l = rB(this, this.l, e);
                                 }
                         }
-                        return ((this.l += e), l);
+                        return (this.l += e), l;
                     }
                     var r7 = function (e, t, r) {
-                            ((e[r] = 255 & t), (e[r + 1] = (t >>> 8) & 255), (e[r + 2] = (t >>> 16) & 255), (e[r + 3] = (t >>> 24) & 255));
+                            (e[r] = 255 & t), (e[r + 1] = (t >>> 8) & 255), (e[r + 2] = (t >>> 16) & 255), (e[r + 3] = (t >>> 24) & 255);
                         },
                         r9 = function (e, t, r) {
-                            ((e[r] = 255 & t), (e[r + 1] = (t >> 8) & 255), (e[r + 2] = (t >> 16) & 255), (e[r + 3] = (t >> 24) & 255));
+                            (e[r] = 255 & t), (e[r + 1] = (t >> 8) & 255), (e[r + 2] = (t >> 16) & 255), (e[r + 3] = (t >> 24) & 255);
                         },
                         ae = function (e, t, r) {
-                            ((e[r] = 255 & t), (e[r + 1] = (t >>> 8) & 255));
+                            (e[r] = 255 & t), (e[r + 1] = (t >>> 8) & 255);
                         };
                     function at(e, t, r) {
                         var a = 0,
@@ -3981,23 +3970,23 @@
                             var i = Math.min(this.l + e, this.length);
                             for (n = 0; n < Math.min(t.length, e); ++n) {
                                 var o = t.charCodeAt(n);
-                                ((this[this.l++] = 255 & o), (this[this.l++] = o >> 8));
+                                (this[this.l++] = 255 & o), (this[this.l++] = o >> 8);
                             }
                             for (; this.l < i; ) this[this.l++] = 0;
                             return this;
                         } else
                             switch (e) {
                                 case 1:
-                                    ((a = 1), (this[this.l] = 255 & t));
+                                    (a = 1), (this[this.l] = 255 & t);
                                     break;
                                 case 2:
-                                    ((a = 2), (this[this.l] = 255 & t), (t >>>= 8), (this[this.l + 1] = 255 & t));
+                                    (a = 2), (this[this.l] = 255 & t), (t >>>= 8), (this[this.l + 1] = 255 & t);
                                     break;
                                 case 3:
-                                    ((a = 3), (this[this.l] = 255 & t), (t >>>= 8), (this[this.l + 1] = 255 & t), (t >>>= 8), (this[this.l + 2] = 255 & t));
+                                    (a = 3), (this[this.l] = 255 & t), (t >>>= 8), (this[this.l + 1] = 255 & t), (t >>>= 8), (this[this.l + 2] = 255 & t);
                                     break;
                                 case 4:
-                                    ((a = 4), r7(this, t, this.l));
+                                    (a = 4), r7(this, t, this.l);
                                     break;
                                 case 8:
                                     if (((a = 8), 'f' === r)) {
@@ -4014,16 +4003,16 @@
                                                       n <= -1023 && (!isFinite(s) || s < 0x10000000000000) ? (n = -1022) : ((s -= 0x10000000000000), (n += 1023)))
                                                 : ((n = 2047), (s = 26985 * !!isNaN(t)));
                                             for (var o = 0; o <= 5; ++o, s /= 256) e[r + o] = 255 & s;
-                                            ((e[r + 6] = ((15 & n) << 4) | (15 & s)), (e[r + 7] = (n >> 4) | a));
+                                            (e[r + 6] = ((15 & n) << 4) | (15 & s)), (e[r + 7] = (n >> 4) | a);
                                         })(this, t, this.l);
                                         break;
                                     }
                                 case 16:
                                     break;
                                 case -4:
-                                    ((a = 4), r9(this, t, this.l));
+                                    (a = 4), r9(this, t, this.l);
                             }
-                        return ((this.l += a), this);
+                        return (this.l += a), this;
                     }
                     function ar(e, t) {
                         var r = rB(this, this.l, e.length >> 1);
@@ -4031,14 +4020,14 @@
                         this.l += e.length >> 1;
                     }
                     function aa(e, t) {
-                        ((e.l = t), (e.read_shift = r8), (e.chk = ar), (e.write_shift = at));
+                        (e.l = t), (e.read_shift = r8), (e.chk = ar), (e.write_shift = at);
                     }
                     function an(e, t) {
                         e.l += t;
                     }
                     function as(e) {
                         var t = ev(e);
-                        return (aa(t, 0), t);
+                        return aa(t, 0), t;
                     }
                     function ai(e, t, r) {
                         if (e) {
@@ -4059,7 +4048,7 @@
                         ep && as(t).copy;
                         var r = function (e) {
                                 var t = as(e);
-                                return (aa(t, 0), t);
+                                return aa(t, 0), t;
                             },
                             a = r(t),
                             n = function () {
@@ -4071,14 +4060,14 @@
                         return {
                             next: s,
                             push: function (e) {
-                                (n(), null == (a = e).l && (a.l = a.length), s(t));
+                                n(), null == (a = e).l && (a.l = a.length), s(t);
                             },
                             end: function () {
-                                return (n(), ek(e));
+                                return n(), ek(e);
                             },
                             _bufs: e,
                             end2: function () {
-                                return (n(), e);
+                                return n(), e;
                             },
                         };
                     }
@@ -4086,11 +4075,11 @@
                         var n,
                             s = +t;
                         if (!isNaN(s)) {
-                            (a || (a = oz[s].p || (r || []).length || 0), (n = 1 + +(s >= 128) + 1), a >= 128 && ++n, a >= 16384 && ++n, a >= 2097152 && ++n);
+                            a || (a = oz[s].p || (r || []).length || 0), (n = 1 + +(s >= 128) + 1), a >= 128 && ++n, a >= 16384 && ++n, a >= 2097152 && ++n;
                             var i = e.next(n);
                             s <= 127 ? i.write_shift(1, s) : (i.write_shift(1, (127 & s) + 128), i.write_shift(1, s >> 7));
                             for (var o = 0; 4 != o; ++o)
-                                if (a >= 128) (i.write_shift(1, (127 & a) + 128), (a >>= 7));
+                                if (a >= 128) i.write_shift(1, (127 & a) + 128), (a >>= 7);
                                 else {
                                     i.write_shift(1, a);
                                     break;
@@ -4108,16 +4097,14 @@
                     }
                     function af(e, t, r) {
                         var a = tw(e);
-                        return ((a.s = al(a.s, t.s, r)), (a.e = al(a.e, t.s, r)), a);
+                        return (a.s = al(a.s, t.s, r)), (a.e = al(a.e, t.s, r)), a;
                     }
                     function ah(e, t) {
                         if (e.cRel && e.c < 0) for (e = tw(e); e.c < 0; ) e.c += t > 8 ? 16384 : 256;
                         if (e.rRel && e.r < 0) for (e = tw(e); e.r < 0; ) e.r += t > 8 ? 1048576 : t > 5 ? 65536 : 16384;
                         var r = ab(e);
                         return (
-                            e.cRel || null == e.cRel || (r = r.replace(/^([A-Z])/, '$$$1')),
-                            e.rRel || null == e.rRel || (r = r.replace(/([A-Z]|^)(\d+)$/, '$1$$$2')),
-                            r
+                            e.cRel || null == e.cRel || (r = r.replace(/^([A-Z])/, '$$$1')), e.rRel || null == e.rRel || (r = r.replace(/([A-Z]|^)(\d+)$/, '$1$$$2')), r
                         );
                     }
                     function au(e, t) {
@@ -4179,10 +4166,10 @@
                             s = e.length;
                         for (r = 0; a < s && !((n = e.charCodeAt(a) - 64) < 1) && !(n > 26); ++a) r = 26 * r + n;
                         for (t.s.c = --r, r = 0; a < s && !((n = e.charCodeAt(a) - 48) < 0) && !(n > 9); ++a) r = 10 * r + n;
-                        if (((t.s.r = --r), a === s || 10 != n)) return ((t.e.c = t.s.c), (t.e.r = t.s.r), t);
+                        if (((t.s.r = --r), a === s || 10 != n)) return (t.e.c = t.s.c), (t.e.r = t.s.r), t;
                         for (++a, r = 0; a != s && !((n = e.charCodeAt(a) - 64) < 1) && !(n > 26); ++a) r = 26 * r + n;
                         for (t.e.c = --r, r = 0; a != s && !((n = e.charCodeAt(a) - 48) < 0) && !(n > 9); ++a) r = 10 * r + n;
-                        return ((t.e.r = --r), t);
+                        return (t.e.r = --r), t;
                     }
                     function ax(e, t) {
                         var r = 'd' == e.t && t instanceof Date;
@@ -4210,7 +4197,7 @@
                     function aS(e, t) {
                         var r = t && t.sheet ? t.sheet : 'Sheet1',
                             a = {};
-                        return ((a[r] = e), { SheetNames: [r], Sheets: a });
+                        return (a[r] = e), { SheetNames: [r], Sheets: a };
                     }
                     function aA(e, t, r) {
                         var a = r || {},
@@ -4223,16 +4210,16 @@
                             if ('number' == typeof a.origin) i = a.origin;
                             else {
                                 var c = 'string' == typeof a.origin ? av(a.origin) : a.origin;
-                                ((i = c.r), (o = c.c));
+                                (i = c.r), (o = c.c);
                             }
                         var l = { s: { c: 1e7, r: 1e7 }, e: { c: 0, r: 0 } };
                         if (s['!ref']) {
                             var f = ak(s['!ref']);
-                            ((l.s.c = f.s.c),
+                            (l.s.c = f.s.c),
                                 (l.s.r = f.s.r),
                                 (l.e.c = Math.max(l.e.c, f.e.c)),
                                 (l.e.r = Math.max(l.e.r, f.e.r)),
-                                -1 == i && (l.e.r = i = s['!ref'] ? f.e.r + 1 : 0));
+                                -1 == i && (l.e.r = i = s['!ref'] ? f.e.r + 1 : 0);
                         } else l.s.c = l.e.c = l.s.r = l.e.r = 0;
                         for (var h = [], u = !1, d = 0; d != t.length; ++d)
                             if (t[d]) {
@@ -4253,7 +4240,7 @@
                                         )
                                             if ((Array.isArray(v.v) && ((v.f = m[g][1]), (v.v = v.v[0])), null === v.v))
                                                 if (v.f) v.t = 'n';
-                                                else if (a.nullError) ((v.t = 'e'), (v.v = 0));
+                                                else if (a.nullError) (v.t = 'e'), (v.v = 0);
                                                 else {
                                                     if (!a.sheetStubs) continue;
                                                     v.t = 'z';
@@ -4275,20 +4262,20 @@
                                                               : ((v.t = 'n'), (v.v = tu(v.v, a.date1904)), (v.w = e2(v.z, v.v))))
                                                         : (v.t = 's');
                                         else v = m[g];
-                                        if (n) (h[b] && h[b].z && (v.z = h[b].z), (h[b] = v));
+                                        if (n) h[b] && h[b].z && (v.z = h[b].z), (h[b] = v);
                                         else {
                                             var w = ag(b) + (p + 1);
-                                            (s[w] && s[w].z && (v.z = s[w].z), (s[w] = v));
+                                            s[w] && s[w].z && (v.z = s[w].z), (s[w] = v);
                                         }
                                     }
                             }
-                        return (u && l.s.c < 104e5 && (s['!ref'] = aT(l)), s);
+                        return u && l.s.c < 104e5 && (s['!ref'] = aT(l)), s;
                     }
                     function aC(e, t) {
                         return aA(null, e, t);
                     }
                     function aI(e, t) {
-                        return (t || (t = as(4)), t.write_shift(4, e), t);
+                        return t || (t = as(4)), t.write_shift(4, e), t;
                     }
                     function aO(e) {
                         var t = e.read_shift(4);
@@ -4313,22 +4300,22 @@
                             for (var o = e.read_shift(4), c = 0; c != o; ++c) s.push({ ich: e.read_shift(2), ifnt: e.read_shift(2) });
                             i.r = s;
                         } else i.r = [{ ich: 0, ifnt: 0 }];
-                        return ((e.l = r + t), i);
+                        return (e.l = r + t), i;
                     }
                     function aF(e) {
                         var t = e.read_shift(4),
                             r = e.read_shift(2);
-                        return ((r += e.read_shift(1) << 16), e.l++, { c: t, iStyleRef: r });
+                        return (r += e.read_shift(1) << 16), e.l++, { c: t, iStyleRef: r };
                     }
                     function aD(e, t) {
-                        return (null == t && (t = as(8)), t.write_shift(-4, e.c), t.write_shift(3, e.iStyleRef || e.s), t.write_shift(1, 0), t);
+                        return null == t && (t = as(8)), t.write_shift(-4, e.c), t.write_shift(3, e.iStyleRef || e.s), t.write_shift(1, 0), t;
                     }
                     function aP(e) {
                         var t = e.read_shift(2);
-                        return ((t += e.read_shift(1) << 16), e.l++, { c: -1, iStyleRef: t });
+                        return (t += e.read_shift(1) << 16), e.l++, { c: -1, iStyleRef: t };
                     }
                     function aL(e, t) {
-                        return (null == t && (t = as(4)), t.write_shift(3, e.iStyleRef || e.s), t.write_shift(1, 0), t);
+                        return null == t && (t = as(4)), t.write_shift(3, e.iStyleRef || e.s), t.write_shift(1, 0), t;
                     }
                     function aM(e) {
                         var t = e.read_shift(4);
@@ -4362,11 +4349,11 @@
                     }
                     function az(e) {
                         var t = { s: {}, e: {} };
-                        return ((t.s.r = e.read_shift(4)), (t.e.r = e.read_shift(4)), (t.s.c = e.read_shift(4)), (t.e.c = e.read_shift(4)), t);
+                        return (t.s.r = e.read_shift(4)), (t.e.r = e.read_shift(4)), (t.s.c = e.read_shift(4)), (t.e.c = e.read_shift(4)), t;
                     }
                     'undefined' != typeof cptable ? ef(cptable) : ef(r(45430));
                     var aH = function (e, t) {
-                        return (t || (t = as(16)), t.write_shift(4, e.s.r), t.write_shift(4, e.e.r), t.write_shift(4, e.s.c), t.write_shift(4, e.e.c), t);
+                        return t || (t = as(16)), t.write_shift(4, e.s.r), t.write_shift(4, e.e.r), t.write_shift(4, e.s.c), t.write_shift(4, e.e.c), t;
                     };
                     function aV(e) {
                         if (e.length - e.l < 8) throw 'XLS Xnum Buffer underflow';
@@ -4376,7 +4363,7 @@
                         return (t || as(8)).write_shift(8, e, 'f');
                     }
                     function aG(e, t) {
-                        if ((t || (t = as(8)), !e || e.auto)) return (t.write_shift(4, 0), t.write_shift(4, 0), t);
+                        if ((t || (t = as(8)), !e || e.auto)) return t.write_shift(4, 0), t.write_shift(4, 0), t;
                         null != e.index
                             ? (t.write_shift(1, 2), t.write_shift(1, e.index))
                             : null != e.theme
@@ -4385,12 +4372,12 @@
                         var r = e.tint || 0;
                         if ((r > 0 ? (r *= 32767) : r < 0 && (r *= 32768), t.write_shift(2, r), e.rgb && null == e.theme)) {
                             var a = e.rgb || 'FFFFFF';
-                            ('number' == typeof a && (a = ('000000' + a.toString(16)).slice(-6)),
+                            'number' == typeof a && (a = ('000000' + a.toString(16)).slice(-6)),
                                 t.write_shift(1, parseInt(a.slice(0, 2), 16)),
                                 t.write_shift(1, parseInt(a.slice(2, 4), 16)),
                                 t.write_shift(1, parseInt(a.slice(4, 6), 16)),
-                                t.write_shift(1, 255));
-                        } else (t.write_shift(2, 0), t.write_shift(1, 0), t.write_shift(1, 0));
+                                t.write_shift(1, 255);
+                        } else t.write_shift(2, 0), t.write_shift(1, 0), t.write_shift(1, 0);
                         return t;
                     }
                     function aj(e, t) {
@@ -4403,7 +4390,7 @@
                                 return { 2: 'BITMAP', 3: 'METAFILEPICT', 8: 'DIB', 14: 'ENHMETAFILE' }[e.read_shift(4)] || '';
                         }
                         if (r > 400) throw Error('Unsupported Clipboard: ' + r.toString(16));
-                        return ((e.l -= 4), e.read_shift(0, 1 == t ? 'lpstr' : 'lpwstr'));
+                        return (e.l -= 4), e.read_shift(0, 1 == t ? 'lpstr' : 'lpwstr');
                     }
                     var aX = [80, 81],
                         aK = {
@@ -4711,7 +4698,7 @@
                     function a5(e, t, r) {
                         var a,
                             n = (function (e) {
-                                for (var t = [], r = ts(e), a = 0; a !== r.length; ++a) (null == t[e[r[a]]] && (t[e[r[a]]] = []), t[e[r[a]]].push(r[a]));
+                                for (var t = [], r = ts(e), a = 0; a !== r.length; ++a) null == t[e[r[a]]] && (t[e[r[a]]] = []), t[e[r[a]]].push(r[a]);
                                 return t;
                             })(a2),
                             s = [];
@@ -4807,12 +4794,12 @@
                                 var n = t4(e);
                                 if ('<Relationship' === n[0]) {
                                     var s = {};
-                                    ((s.Type = n.Type),
+                                    (s.Type = n.Type),
                                         (s.Target = t8(n.Target)),
                                         (s.Id = n.Id),
                                         n.TargetMode && (s.TargetMode = n.TargetMode),
                                         (r['External' === n.TargetMode ? n.Target : tZ(n.Target, t)] = s),
-                                        (a[n.Id] = s));
+                                        (a[n.Id] = s);
                                 }
                             }),
                             (r['!id'] = a),
@@ -4846,7 +4833,7 @@
                             e['!id'][n.Id])
                         )
                             throw Error('Cannot rewrite rId ' + t);
-                        return ((e['!id'][n.Id] = n), (e[('/' + n.Target).replace('//', '/')] = n), t);
+                        return (e['!id'][n.Id] = n), (e[('/' + n.Target).replace('//', '/')] = n), t;
                     }
                     function nb(e, t, r) {
                         return [
@@ -4885,7 +4872,7 @@
                         for (var r = 0; r < nT.length; ++r) {
                             var a = nT[r],
                                 n = tP(e, a[0]);
-                            (null != n && n.length > 0 && (t[a[1]] = t8(n[1])), 'date' === a[2] && t[a[1]] && (t[a[1]] = tv(t[a[1]])));
+                            null != n && n.length > 0 && (t[a[1]] = t8(n[1])), 'date' === a[2] && t[a[1]] && (t[a[1]] = tv(t[a[1]]));
                         }
                         return t;
                     }
@@ -4926,9 +4913,9 @@
                         for (var s = 0; s != nT.length; ++s) {
                             var i = nT[s],
                                 o = r.Props && null != r.Props[i[1]] ? r.Props[i[1]] : e ? e[i[1]] : null;
-                            (!0 === o ? (o = '1') : !1 === o ? (o = '0') : 'number' == typeof o && (o = String(o)), null != o && nE(i[0], o, null, a, n));
+                            !0 === o ? (o = '1') : !1 === o ? (o = '0') : 'number' == typeof o && (o = String(o)), null != o && nE(i[0], o, null, a, n);
                         }
-                        return (a.length > 2 && ((a[a.length] = '</cp:coreProperties>'), (a[1] = a[1].replace('/>', '>'))), a.join(''));
+                        return a.length > 2 && ((a[a.length] = '</cp:coreProperties>'), (a[1] = a[1].replace('/>', '>'))), a.join('');
                     }
                     var nx = [
                             ['Application', 'Application', 'string'],
@@ -4980,18 +4967,18 @@
                                     case 'Regneark':
                                     case 'Hojas de c\xe1lculo':
                                     case 'Werkbladen':
-                                        ((r.Worksheets = c), (r.SheetNames = i.slice(o, o + c)));
+                                        (r.Worksheets = c), (r.SheetNames = i.slice(o, o + c));
                                         break;
                                     case 'Named Ranges':
                                     case 'Rangos con nombre':
                                     case '名前付き一覧':
                                     case 'Benannte Bereiche':
                                     case 'Navngivne omr\xe5der':
-                                        ((r.NamedRanges = c), (r.DefinedNames = i.slice(o, o + c)));
+                                        (r.NamedRanges = c), (r.DefinedNames = i.slice(o, o + c));
                                         break;
                                     case 'Charts':
                                     case 'Diagramme':
-                                        ((r.Chartsheets = c), (r.ChartNames = i.slice(o, o + c)));
+                                        (r.Chartsheets = c), (r.ChartNames = i.slice(o, o + c));
                                 }
                                 o += c;
                             }
@@ -5047,14 +5034,14 @@
                         var r = 1;
                         return (
                             ts(e).forEach(function (a) {
-                                (++r,
+                                ++r,
                                     (t[t.length] = rw(
                                         'property',
                                         (function (e, t) {
                                             switch (typeof e) {
                                                 case 'string':
                                                     var r = rw('vt:lpwstr', re(e));
-                                                    return (t && (r = r.replace(/&quot;/g, '_x0022_')), r);
+                                                    return t && (r = r.replace(/&quot;/g, '_x0022_')), r;
                                                 case 'number':
                                                     return rw((0 | e) == e ? 'vt:i4' : 'vt:r8', re(String(e)));
                                                 case 'boolean':
@@ -5064,7 +5051,7 @@
                                             throw Error('Unable to serialize ' + e);
                                         })(e[a], !0),
                                         { fmtid: '{D5CDD505-2E9C-101B-9397-08002B2CF9AE}', pid: r, name: re(a) },
-                                    )));
+                                    ));
                             }),
                             t.length > 2 && ((t[t.length] = '</Properties>'), (t[1] = t[1].replace('/>', '>'))),
                             t.join('')
@@ -5108,18 +5095,18 @@
                         for (var r = e.read_shift(4), a = {}, n = 0; n != r; ++n) {
                             var s = e.read_shift(4),
                                 i = e.read_shift(4);
-                            ((a[s] = e
+                            (a[s] = e
                                 .read_shift(i, 1200 === t ? 'utf16le' : 'utf8')
                                 .replace(ex, '')
                                 .replace(e_, '!')),
-                                1200 === t && i % 2 && (e.l += 2));
+                                1200 === t && i % 2 && (e.l += 2);
                         }
-                        return (3 & e.l && (e.l = (e.l >> 3) << 2), a);
+                        return 3 & e.l && (e.l = (e.l >> 3) << 2), a;
                     }
                     function nP(e) {
                         var t = e.read_shift(4),
                             r = e.slice(e.l, e.l + t);
-                        return ((e.l += t), (3 & t) > 0 && (e.l += (4 - (3 & t)) & 3), r);
+                        return (e.l += t), (3 & t) > 0 && (e.l += (4 - (3 & t)) & 3), r;
                     }
                     function nL(e, t, r) {
                         var a,
@@ -5130,7 +5117,7 @@
                             throw Error('Expected type ' + t + ' saw ' + s);
                         switch (12 === t ? s : t) {
                             case 2:
-                                return ((n = e.read_shift(2, 'i')), i.raw || (e.l += 2), n);
+                                return (n = e.read_shift(2, 'i')), i.raw || (e.l += 2), n;
                             case 3:
                                 return e.read_shift(4, 'i');
                             case 11:
@@ -5139,14 +5126,14 @@
                                 return e.read_shift(4);
                             case 30:
                             case 31:
-                                ((e.l += 4), (val = nF(e, e[e.l - 4]).replace(/(^|[^\u0000])\u0000+$/, '$1')));
+                                (e.l += 4), (val = nF(e, e[e.l - 4]).replace(/(^|[^\u0000])\u0000+$/, '$1'));
                                 break;
                             case 64:
                                 return nR(e);
                             case 65:
                                 return nP(e);
                             case 71:
-                                return (((a = {}).Size = e.read_shift(4)), (e.l += a.Size + 3 - ((a.Size - 1) % 4)), a);
+                                return ((a = {}).Size = e.read_shift(4)), (e.l += a.Size + 3 - ((a.Size - 1) % 4)), a;
                             case 80:
                                 return nF(e, s, !i.raw).replace(ex, '');
                             case 81:
@@ -5160,7 +5147,7 @@
                                         (function (e) {
                                             var t = e.l,
                                                 r = nL(e, 81);
-                                            return (0 == e[e.l] && 0 == e[e.l + 1] && (e.l - t) & 2 && (e.l += 2), [r, nL(e, 3)]);
+                                            return 0 == e[e.l] && 0 == e[e.l + 1] && (e.l - t) & 2 && (e.l += 2), [r, nL(e, 3)];
                                         })(e),
                                     );
                                 return c;
@@ -5170,7 +5157,7 @@
                                     ? (function (e) {
                                           for (var t = e.read_shift(4), r = [], a = 0; a != t; ++a) {
                                               var n = e.l;
-                                              ((r[a] = e.read_shift(0, 'lpwstr').replace(ex, '')), (e.l - n) & 2 && (e.l += 2));
+                                              (r[a] = e.read_shift(0, 'lpwstr').replace(ex, '')), (e.l - n) & 2 && (e.l += 2);
                                           }
                                           return r;
                                       })(e)
@@ -5201,12 +5188,12 @@
                                 c.write_shift(4, +!!t);
                                 break;
                             case 64:
-                                ((a = (r = ('string' == typeof t ? new Date(Date.parse(t)) : t).getTime() / 1e3 + 0x2b6109100) % 0x100000000),
+                                (a = (r = ('string' == typeof t ? new Date(Date.parse(t)) : t).getTime() / 1e3 + 0x2b6109100) % 0x100000000),
                                     (n = ((r - a) / 0x100000000) * 1e7),
                                     (s = ((a *= 1e7) / 0x100000000) | 0) > 0 && ((a %= 0x100000000), (n += s)),
                                     (i = as(8)).write_shift(4, a),
                                     i.write_shift(4, n),
-                                    (c = i));
+                                    (c = i);
                                 break;
                             case 31:
                             case 80:
@@ -5295,11 +5282,11 @@
                             } else if (1 === s[i][0]) {
                                 if (((o = u.CodePage = nL(e, 2)), er(o), -1 !== c)) {
                                     var m = e.l;
-                                    ((e.l = s[c][1]), (l = nD(e, o)), (e.l = m));
+                                    (e.l = s[c][1]), (l = nD(e, o)), (e.l = m);
                                 }
                             } else if (0 === s[i][0]) {
                                 if (0 === o) {
-                                    ((c = i), (e.l = s[i + 1][1]));
+                                    (c = i), (e.l = s[i + 1][1]);
                                     continue;
                                 }
                                 l = nD(e, o);
@@ -5308,26 +5295,26 @@
                                     v = l[s[i][0]];
                                 switch (e[e.l]) {
                                     case 65:
-                                        ((e.l += 4), (g = nP(e)));
+                                        (e.l += 4), (g = nP(e));
                                         break;
                                     case 30:
                                     case 31:
-                                        ((e.l += 4), (g = nF(e, e[e.l - 4]).replace(/(^|[^\u0000])\u0000+$/, '$1')));
+                                        (e.l += 4), (g = nF(e, e[e.l - 4]).replace(/(^|[^\u0000])\u0000+$/, '$1'));
                                         break;
                                     case 3:
-                                        ((e.l += 4), (g = e.read_shift(4, 'i')));
+                                        (e.l += 4), (g = e.read_shift(4, 'i'));
                                         break;
                                     case 19:
-                                        ((e.l += 4), (g = e.read_shift(4)));
+                                        (e.l += 4), (g = e.read_shift(4));
                                         break;
                                     case 5:
-                                        ((e.l += 4), (g = e.read_shift(8, 'f')));
+                                        (e.l += 4), (g = e.read_shift(8, 'f'));
                                         break;
                                     case 11:
-                                        ((e.l += 4), (g = n$(e, 4)));
+                                        (e.l += 4), (g = n$(e, 4));
                                         break;
                                     case 64:
-                                        ((e.l += 4), (g = tv(nR(e))));
+                                        (e.l += 4), (g = tv(nR(e)));
                                         break;
                                     default:
                                         throw Error('unparsed value: ' + e[e.l]);
@@ -5335,7 +5322,7 @@
                                 u[v] = g;
                             }
                         }
-                        return ((e.l = r + a), u);
+                        return (e.l = r + a), u;
                     }
                     var nB = ['CodePage', 'Thumbnail', '_PID_LINKBASE', '_PID_HLINKS', 'SystemIdentifier', 'FMTID'];
                     function nW(e, t, r) {
@@ -5347,7 +5334,7 @@
                             c = as(8),
                             l = as(8);
                         if ((c.write_shift(4, 2), c.write_shift(4, 1200), l.write_shift(4, 1), s.push(c), n.push(l), (i += 8 + c.length), !t)) {
-                            ((l = as(8)).write_shift(4, 0), n.unshift(l));
+                            (l = as(8)).write_shift(4, 0), n.unshift(l);
                             var f = [as(4)];
                             for (f[0].write_shift(4, e.length), o = 0; o < e.length; ++o) {
                                 var h = e[o][0];
@@ -5361,7 +5348,7 @@
                                     c.write_shift(1, 0);
                                 f.push(c);
                             }
-                            ((c = ek(f)), s.unshift(c), (i += 8 + c.length));
+                            (c = ek(f)), s.unshift(c), (i += 8 + c.length);
                         }
                         for (o = 0; o < e.length; ++o)
                             if (!((t && !t[e[o][0]]) || nB.indexOf(e[o][0]) > -1 || n_.indexOf(e[o][0]) > -1) && null != e[o][1]) {
@@ -5388,13 +5375,13 @@
                                         }
                                         return -1;
                                     })(u);
-                                    (-1 == g && ((g = 31), (u = String(u))), (c = nM(g, u)));
+                                    -1 == g && ((g = 31), (u = String(u))), (c = nM(g, u));
                                 }
-                                (s.push(c), (l = as(8)).write_shift(4, t ? d : 2 + o), n.push(l), (i += 8 + c.length));
+                                s.push(c), (l = as(8)).write_shift(4, t ? d : 2 + o), n.push(l), (i += 8 + c.length);
                             }
                         var v = 8 * (s.length + 1);
-                        for (o = 0; o < s.length; ++o) (n[o].write_shift(4, v), (v += s[o].length));
-                        return (a.write_shift(4, i), a.write_shift(4, s.length), ek([a].concat(n).concat(s)));
+                        for (o = 0; o < s.length; ++o) n[o].write_shift(4, v), (v += s[o].length);
+                        return a.write_shift(4, i), a.write_shift(4, s.length), ek([a].concat(n).concat(s));
                     }
                     function nz(e, t, r) {
                         var a,
@@ -5406,7 +5393,7 @@
                             o,
                             c,
                             l = 0;
-                        (n.chk('feff', 'Byte Order: '), n.read_shift(2));
+                        n.chk('feff', 'Byte Order: '), n.read_shift(2);
                         var f = n.read_shift(4),
                             h = n.read_shift(16);
                         if (h !== tr.utils.consts.HEADER_CLSID && h !== r) throw Error('Bad PropertySet CLSID ' + h);
@@ -5422,39 +5409,39 @@
                             a = nU(n, null);
                         } catch (e) {}
                         for (p in a) d[p] = a[p];
-                        return ((d.FMTID = [i, o]), d);
+                        return (d.FMTID = [i, o]), d;
                     }
                     function nH(e, t, r, a, n, s) {
                         var i = as(n ? 68 : 48),
                             o = [i];
-                        (i.write_shift(2, 65534),
+                        i.write_shift(2, 65534),
                             i.write_shift(2, 0),
                             i.write_shift(4, 0x32363237),
                             i.write_shift(16, tr.utils.consts.HEADER_CLSID, 'hex'),
                             i.write_shift(4, n ? 2 : 1),
                             i.write_shift(16, t, 'hex'),
-                            i.write_shift(4, n ? 68 : 48));
+                            i.write_shift(4, n ? 68 : 48);
                         var c = nW(e, r, a);
                         if ((o.push(c), n)) {
                             var l = nW(n, null, null);
-                            (i.write_shift(16, s, 'hex'), i.write_shift(4, 68 + c.length), o.push(l));
+                            i.write_shift(16, s, 'hex'), i.write_shift(4, 68 + c.length), o.push(l);
                         }
                         return ek(o);
                     }
                     function nV(e, t) {
-                        return (e.read_shift(t), null);
+                        return e.read_shift(t), null;
                     }
                     function n$(e, t) {
                         return 1 === e.read_shift(t);
                     }
                     function nG(e, t) {
-                        return (t || (t = as(2)), t.write_shift(2, +!!e), t);
+                        return t || (t = as(2)), t.write_shift(2, +!!e), t;
                     }
                     function nj(e) {
                         return e.read_shift(2, 'u');
                     }
                     function nX(e, t) {
-                        return (t || (t = as(2)), t.write_shift(2, e), t);
+                        return t || (t = as(2)), t.write_shift(2, e), t;
                     }
                     function nK(e, t) {
                         for (var r = [], a = e.l + t; e.l < a; ) r.push(nj(e, a - e.l));
@@ -5466,17 +5453,17 @@
                         return 1 === e.read_shift(1) ? t : 1 === t;
                     }
                     function nZ(e, t, r) {
-                        return (r || (r = as(2)), r.write_shift(1, 'e' == t ? +e : +!!e), r.write_shift(1, +('e' == t)), r);
+                        return r || (r = as(2)), r.write_shift(1, 'e' == t ? +e : +!!e), r.write_shift(1, +('e' == t)), r;
                     }
                     function nJ(e, t, r) {
                         var a = e.read_shift(r && r.biff >= 12 ? 2 : 1),
                             n = 'sbcs-cont',
                             s = J;
-                        (r && r.biff >= 8 && (J = 1200),
+                        r && r.biff >= 8 && (J = 1200),
                             r && 8 != r.biff ? 12 == r.biff && (n = 'wstr') : e.read_shift(1) && (n = 'dbcs-cont'),
-                            r.biff >= 2 && r.biff <= 5 && (n = 'cpstr'));
+                            r.biff >= 2 && r.biff <= 5 && (n = 'cpstr');
                         var i = a ? e.read_shift(a, n) : '';
-                        return ((J = s), i);
+                        return (J = s), i;
                     }
                     function nq(e, t, r) {
                         if (r) {
@@ -5495,30 +5482,30 @@
                         return 0 === a ? (e.l++, '') : e.read_shift(a, r.biff <= 4 || !e.lens ? 'cpstr' : 'sbcs-cont');
                     }
                     function n1(e, t, r) {
-                        return (r || (r = as(3 + 2 * e.length)), r.write_shift(2, e.length), r.write_shift(1, 1), r.write_shift(31, e, 'utf16le'), r);
+                        return r || (r = as(3 + 2 * e.length)), r.write_shift(2, e.length), r.write_shift(1, 1), r.write_shift(31, e, 'utf16le'), r;
                     }
                     function n2(e) {
                         var t = e.read_shift(4);
                         return t > 0 ? e.read_shift(t, 'utf16le').replace(ex, '') : '';
                     }
                     function n4(e, t) {
-                        (t || (t = as(6 + 2 * e.length)), t.write_shift(4, 1 + e.length));
+                        t || (t = as(6 + 2 * e.length)), t.write_shift(4, 1 + e.length);
                         for (var r = 0; r < e.length; ++r) t.write_shift(2, e.charCodeAt(r));
-                        return (t.write_shift(2, 0), t);
+                        return t.write_shift(2, 0), t;
                     }
                     function n3(e) {
                         return [e.read_shift(1), e.read_shift(1), e.read_shift(1), e.read_shift(1)];
                     }
                     function n5(e, t) {
                         var r = n3(e, t);
-                        return ((r[3] = 0), r);
+                        return (r[3] = 0), r;
                     }
                     function n6(e, t, r) {
                         var a = { r: e.read_shift(2), c: e.read_shift(2), ixfe: 0 };
-                        return ((r && 2 == r.biff) || 7 == t ? ((a.ixfe = 63 & e.read_shift(1)), (e.l += 2)) : (a.ixfe = e.read_shift(2)), a);
+                        return (r && 2 == r.biff) || 7 == t ? ((a.ixfe = 63 & e.read_shift(1)), (e.l += 2)) : (a.ixfe = e.read_shift(2)), a;
                     }
                     function n8(e, t, r, a) {
-                        return (a || (a = as(6)), a.write_shift(2, e), a.write_shift(2, t), a.write_shift(2, r || 0), a);
+                        return a || (a = as(6)), a.write_shift(2, e), a.write_shift(2, t), a.write_shift(2, r || 0), a;
                     }
                     function n7(e) {
                         return [e.read_shift(2), aB(e)];
@@ -5529,7 +5516,7 @@
                         return { s: { c: e.read_shift(2), r: t }, e: { c: e.read_shift(2), r: r } };
                     }
                     function se(e, t) {
-                        return (t || (t = as(8)), t.write_shift(2, e.s.r), t.write_shift(2, e.e.r), t.write_shift(2, e.s.c), t.write_shift(2, e.e.c), t);
+                        return t || (t = as(8)), t.write_shift(2, e.s.r), t.write_shift(2, e.e.r), t.write_shift(2, e.s.c), t.write_shift(2, e.e.c), t;
                     }
                     function st(e) {
                         var t = e.read_shift(2),
@@ -5541,10 +5528,10 @@
                         var t = e.read_shift(2),
                             r = e.read_shift(2),
                             a = e.read_shift(2);
-                        return ((e.l += 12), [r, t, a]);
+                        return (e.l += 12), [r, t, a];
                     }
                     function sa(e) {
-                        ((e.l += 2), (e.l += e.read_shift(2)));
+                        (e.l += 2), (e.l += e.read_shift(2));
                     }
                     var sn = {
                         0: sa,
@@ -5552,7 +5539,7 @@
                         5: sa,
                         6: sa,
                         7: function (e) {
-                            return ((e.l += 4), (e.cf = e.read_shift(2)), {});
+                            return (e.l += 4), (e.cf = e.read_shift(2)), {};
                         },
                         8: sa,
                         9: sa,
@@ -5561,7 +5548,7 @@
                         12: sa,
                         13: function (e) {
                             var t = {};
-                            return ((e.l += 4), (e.l += 16), (t.fSharedNote = e.read_shift(2)), (e.l += 4), t);
+                            return (e.l += 4), (e.l += 16), (t.fSharedNote = e.read_shift(2)), (e.l += 4), t;
                         },
                         14: sa,
                         15: sa,
@@ -5586,7 +5573,7 @@
                             default:
                                 if (t > 6) throw Error('Unexpected BIFF Ver ' + r.BIFFVer);
                         }
-                        return (e.read_shift(t), r);
+                        return e.read_shift(t), r;
                     }
                     function si(e, t, r) {
                         var a = 1536,
@@ -5596,16 +5583,16 @@
                             case 'xla':
                                 break;
                             case 'biff5':
-                                ((a = 1280), (n = 8));
+                                (a = 1280), (n = 8);
                                 break;
                             case 'biff4':
-                                ((a = 4), (n = 6));
+                                (a = 4), (n = 6);
                                 break;
                             case 'biff3':
-                                ((a = 3), (n = 6));
+                                (a = 3), (n = 6);
                                 break;
                             case 'biff2':
-                                ((a = 2), (n = 4));
+                                (a = 2), (n = 4);
                                 break;
                             default:
                                 throw Error('unsupported BIFF version');
@@ -5636,23 +5623,23 @@
                             i = e.read_shift(n),
                             o = e.read_shift(2),
                             c = e.read_shift(2);
-                        return ((e.l = a), { s: { r: s, c: o }, e: { r: i, c: c } });
+                        return (e.l = a), { s: { r: s, c: o }, e: { r: i, c: c } };
                     }
                     function sl(e, t, r, a) {
                         var n = r && 5 == r.biff;
-                        (a || (a = as(n ? 16 : 20)),
+                        a || (a = as(n ? 16 : 20)),
                             a.write_shift(2, 0),
-                            e.style ? (a.write_shift(2, e.numFmtId || 0), a.write_shift(2, 65524)) : (a.write_shift(2, e.numFmtId || 0), a.write_shift(2, t << 4)));
+                            e.style ? (a.write_shift(2, e.numFmtId || 0), a.write_shift(2, 65524)) : (a.write_shift(2, e.numFmtId || 0), a.write_shift(2, t << 4));
                         var s = 0;
-                        return (e.numFmtId > 0 && n && (s |= 1024), a.write_shift(4, s), a.write_shift(4, 0), n || a.write_shift(4, 0), a.write_shift(2, 0), a);
+                        return e.numFmtId > 0 && n && (s |= 1024), a.write_shift(4, s), a.write_shift(4, 0), n || a.write_shift(4, 0), a.write_shift(2, 0), a;
                     }
                     function sf(e) {
                         var t = as(12);
-                        return (t.l++, t.write_shift(1, e.numFmtId), (t.l += 10), t);
+                        return t.l++, t.write_shift(1, e.numFmtId), (t.l += 10), t;
                     }
                     function sh(e, t, r, a, n, s) {
                         var i = as(8);
-                        return (n8(e, t, a, i), nZ(r, s, i), i);
+                        return n8(e, t, a, i), nZ(r, s, i), i;
                     }
                     var su = function (e, t, r) {
                         return 0 === t ? '' : n0(e, t, r);
@@ -5672,12 +5659,12 @@
                         return (
                             14849 === r.sbcch &&
                                 (a = (function (e, t, r) {
-                                    ((e.l += 4), (t -= 4));
+                                    (e.l += 4), (t -= 4);
                                     var a = e.l + t,
                                         n = nJ(e, t, r),
                                         s = e.read_shift(2);
                                     if (s !== (a -= e.l)) throw Error('Malformed AddinUdf: padding = ' + a + ' != ' + s);
-                                    return ((e.l += s), n);
+                                    return (e.l += s), n;
                                 })(e, t - 2, r)),
                             (s.body = a || e.read_shift(t - 2)),
                             'string' == typeof a && (s.Name = a),
@@ -5736,14 +5723,14 @@
                         var a = st(e, 6);
                         switch (r.biff) {
                             case 2:
-                                (e.l++, (t -= 7));
+                                e.l++, (t -= 7);
                                 break;
                             case 3:
                             case 4:
-                                ((e.l += 2), (t -= 8));
+                                (e.l += 2), (t -= 8);
                                 break;
                             default:
-                                ((e.l += 6), (t -= 12));
+                                (e.l += 6), (t -= 12);
                         }
                         return [
                             a,
@@ -5755,22 +5742,22 @@
                                     o = e.read_shift(i);
                                 if (65535 == o) return [[], ((a = t - 2), void (e.l += a))];
                                 var c = iD(e, o, r);
-                                return (t !== o + i && (n = iF(e, t - o - i, c, r)), (e.l = s), [c, n]);
+                                return t !== o + i && (n = iF(e, t - o - i, c, r)), (e.l = s), [c, n];
                             })(e, t, r, a),
                         ];
                     }
                     function sv(e, t, r, a) {
                         var n = as(6 + (a || e.length));
-                        return (n.write_shift(2, t), n.write_shift(2, r), n.write_shift(2, a || e.length), n.write_shift(e.length, e, 'sbcs'), n);
+                        return n.write_shift(2, t), n.write_shift(2, r), n.write_shift(2, a || e.length), n.write_shift(e.length, e, 'sbcs'), n;
                     }
                     var sb = {
                         8: function (e, t) {
                             var r = e.l + t;
                             e.l += 10;
                             var a = e.read_shift(2);
-                            ((e.l += 4), (e.l += 2), (e.l += 2), (e.l += 2), (e.l += 4));
+                            (e.l += 4), (e.l += 2), (e.l += 2), (e.l += 2), (e.l += 4);
                             var n = e.read_shift(1);
-                            return ((e.l += n), (e.l = r), { fmt: a });
+                            return (e.l += n), (e.l = r), { fmt: a };
                         },
                     };
                     function sw(e, t, r) {
@@ -5783,10 +5770,10 @@
                             c = e.read_shift(2);
                         2 == a && (e.l += 2);
                         var l = { s: n, e: s, w: i, ixfe: o, flags: c };
-                        return ((r.biff >= 5 || !r.biff) && (l.level = (c >> 8) & 7), l);
+                        return (r.biff >= 5 || !r.biff) && (l.level = (c >> 8) & 7), l;
                     }
                     function sT(e, t, r, a, n) {
-                        return (e || (e = as(7)), e.write_shift(2, t), e.write_shift(2, r), e.write_shift(1, a || 0), e.write_shift(1, n || 0), e.write_shift(1, 0), e);
+                        return e || (e = as(7)), e.write_shift(2, t), e.write_shift(2, r), e.write_shift(1, a || 0), e.write_shift(1, n || 0), e.write_shift(1, 0), e;
                     }
                     var sy = [2, 3, 48, 49, 131, 139, 140, 245],
                         sE = (function () {
@@ -5922,7 +5909,7 @@
                                                 break;
                                             case 48:
                                             case 49:
-                                                ((o = !0), (i = !0));
+                                                (o = !0), (i = !0);
                                                 break;
                                             case 140:
                                                 c = !0;
@@ -5932,14 +5919,14 @@
                                         }
                                         var l = 0,
                                             f = 521;
-                                        (2 == s && (l = n.read_shift(2)),
+                                        2 == s && (l = n.read_shift(2)),
                                             (n.l += 3),
                                             2 != s && (l = n.read_shift(4)),
                                             l > 1048576 && (l = 1e6),
-                                            2 != s && (f = n.read_shift(2)));
+                                            2 != s && (f = n.read_shift(2));
                                         var h = n.read_shift(2),
                                             u = r.codepage || 1252;
-                                        (2 != s && ((n.l += 16), n.read_shift(1), 0 !== n[n.l] && (u = e[n[n.l]]), (n.l += 1), (n.l += 2)), c && (n.l += 36));
+                                        2 != s && ((n.l += 16), n.read_shift(1), 0 !== n[n.l] && (u = e[n[n.l]]), (n.l += 1), (n.l += 2)), c && (n.l += 36);
                                         for (var d = [], p = {}, m = Math.min(n.length, 2 == s ? 521 : f - 10 - 264 * !!o), g = c ? 32 : 11; n.l < m && 13 != n[n.l]; )
                                             switch (
                                                 (((p = {}).name = (void 0 !== G ? G.utils.decode(u, n.slice(n.l, n.l + g)) : ey(n.slice(n.l, n.l + g))).replace(
@@ -5992,7 +5979,7 @@
                                             }
                                             for (++n.l, a[++v] = [], b = 0, b = 0; b != d.length; ++b) {
                                                 var w = n.slice(n.l, n.l + d[b].len);
-                                                ((n.l += d[b].len), aa(w, 0));
+                                                (n.l += d[b].len), aa(w, 0);
                                                 var T = void 0 !== G ? G.utils.decode(u, w) : ey(w);
                                                 switch (d[b].type) {
                                                     case 'C':
@@ -6043,7 +6030,7 @@
                                                         var y = w.read_shift(4),
                                                             E = w.read_shift(4);
                                                         if (0 == y && 0 == E) break;
-                                                        ((a[v][b] = new Date((y - 2440588) * 864e5 + E)), (r && r.UTC) || (a[v][b] = tI(a[v][b])));
+                                                        (a[v][b] = new Date((y - 2440588) * 864e5 + E)), (r && r.UTC) || (a[v][b] = tI(a[v][b]));
                                                         break;
                                                     case 'Y':
                                                         a[v][b] = w.read_shift(4, 'i') / 1e4 + (w.read_shift(4, 'i') / 1e4) * 0x100000000;
@@ -6069,7 +6056,7 @@
                                         }
                                         if (2 != s && n.l < n.length && 26 != n[n.l++])
                                             throw Error('DBF EOF Marker missing ' + (n.l - 1) + ' of ' + n.length + ' ' + n[n.l - 1].toString(16));
-                                        return (r && r.sheetRows && (a = a.slice(0, r.sheetRows)), (r.DBF = d), a);
+                                        return r && r.sheetRows && (a = a.slice(0, r.sheetRows)), (r.DBF = d), a;
                                     })(t, a),
                                     a,
                                 );
@@ -6086,7 +6073,7 @@
                                 to_workbook: function (e, t) {
                                     try {
                                         var a = aS(r(e, t), t);
-                                        return ((a.bookType = 'dbf'), a);
+                                        return (a.bookType = 'dbf'), a;
                                     } catch (e) {
                                         if (t && t.WTF) throw e;
                                     }
@@ -6109,7 +6096,7 @@
                                         m = 1;
                                     for (u = 0; u < l.length; ++u) {
                                         if (((h[u] || {}).DBF || {}).name) {
-                                            ((l[u] = h[u].DBF.name), ++p);
+                                            (l[u] = h[u].DBF.name), ++p;
                                             continue;
                                         }
                                         if (null != l[u]) {
@@ -6153,15 +6140,15 @@
                                                 case 'object':
                                                     y = k[d] instanceof Date ? 'D' : 'C';
                                             }
-                                            ((E = Math.max(E, (void 0 !== G && 'string' == typeof k[d] ? G.utils.encode(q, k[d]) : String(k[d])).length)),
-                                                (T = T && T != y ? 'C' : y));
+                                            (E = Math.max(E, (void 0 !== G && 'string' == typeof k[d] ? G.utils.encode(q, k[d]) : String(k[d])).length)),
+                                                (T = T && T != y ? 'C' : y);
                                         }
-                                        (E > 250 && (E = 250),
+                                        E > 250 && (E = 250),
                                             'C' == (y = ((h[u] || {}).DBF || {}).type) && h[u].DBF.len > E && (E = h[u].DBF.len),
                                             'B' == T && 'N' == y && ((T = 'N'), (w[u] = h[u].DBF.dec), (E = h[u].DBF.len)),
                                             (b[u] = 'C' == T || 'N' == y ? E : a[T] || 0),
                                             (m += b[u]),
-                                            (v[u] = T));
+                                            (v[u] = T);
                                     }
                                     var x = o.next(32);
                                     for (x.write_shift(4, 0x13021130), x.write_shift(4, f.length), x.write_shift(2, 296 + 32 * p), x.write_shift(2, m), u = 0; u < 4; ++u)
@@ -6178,7 +6165,7 @@
                                         if (null != l[u]) {
                                             var S = o.next(32),
                                                 A = (l[u].slice(-10) + '\0\0\0\0\0\0\0\0\0\0\0').slice(0, 11);
-                                            (S.write_shift(1, A, 'sbcs'),
+                                            S.write_shift(1, A, 'sbcs'),
                                                 S.write_shift(1, '?' == v[u] ? 'C' : v[u], 'sbcs'),
                                                 S.write_shift(4, d),
                                                 S.write_shift(1, b[u] || a[v[u]] || 0),
@@ -6188,7 +6175,7 @@
                                                 S.write_shift(1, 0),
                                                 S.write_shift(4, 0),
                                                 S.write_shift(4, 0),
-                                                (d += b[u] || a[v[u]] || 0));
+                                                (d += b[u] || a[v[u]] || 0);
                                         }
                                     var C = o.next(264);
                                     for (C.write_shift(4, 13), u = 0; u < 65; ++u) C.write_shift(4, 0);
@@ -6228,7 +6215,7 @@
                                                         for (I.write_shift(1, N, 'cpstr'), R += b[d] - I.l, p = 0; p < R; ++p) I.write_shift(1, 32);
                                                 }
                                     }
-                                    return ((J = i), o.next(1).write_shift(1, 26), o.end());
+                                    return (J = i), o.next(1).write_shift(1, 26), o.end();
                                 },
                             };
                         })(),
@@ -6426,13 +6413,13 @@
                                                             D = E[f].slice(1);
                                                             break;
                                                         case 'X':
-                                                            ((c = parseInt(E[f].slice(1), 10) - 1), (A = !0));
+                                                            (c = parseInt(E[f].slice(1), 10) - 1), (A = !0);
                                                             break;
                                                         case 'Y':
                                                             for (o = parseInt(E[f].slice(1), 10) - 1, A || (c = 0), s = h.length; s <= o; ++s) h[s] = [];
                                                             break;
                                                         case 'K':
-                                                            ('"' === (T = E[f].slice(1)).charAt(0)
+                                                            '"' === (T = E[f].slice(1)).charAt(0)
                                                                 ? ((T = T.slice(1, T.length - 1)), (F = 's'))
                                                                 : 'TRUE' === T || 'FALSE' === T
                                                                   ? ((T = 'TRUE' === T), (F = 'b'))
@@ -6450,10 +6437,10 @@
                                                                     'string' != (a || {}).type &&
                                                                     (a || {}).codepage &&
                                                                     (T = G.utils.decode(a.codepage, T)),
-                                                                (S = !0));
+                                                                (S = !0);
                                                             break;
                                                         case 'E':
-                                                            ((I = !0), (N = iu(E[f].slice(1), { r: o, c: c })));
+                                                            (I = !0), (N = iu(E[f].slice(1), { r: o, c: c }));
                                                             break;
                                                         case 'S':
                                                             C = !0;
@@ -6482,15 +6469,15 @@
                                                     if (!P || !P[1]) throw Error('SYLK shared formula cannot find base');
                                                     N = im(P[1], { r: o - O, c: c - R });
                                                 }
-                                                (N && (h[o][c] ? (h[o][c].f = N) : (h[o][c] = { t: 'n', f: N })),
-                                                    D && (h[o][c] || (h[o][c] = { t: 'z' }), (h[o][c].c = [{ a: 'SheetJSYLK', t: D }])));
+                                                N && (h[o][c] ? (h[o][c].f = N) : (h[o][c] = { t: 'n', f: N })),
+                                                    D && (h[o][c] || (h[o][c] = { t: 'z' }), (h[o][c].c = [{ a: 'SheetJSYLK', t: D }]));
                                                 break;
                                             case 'F':
                                                 var L = 0;
                                                 for (f = 1; f < E.length; ++f)
                                                     switch (E[f].charAt(0)) {
                                                         case 'X':
-                                                            ((c = parseInt(E[f].slice(1), 10) - 1), ++L);
+                                                            (c = parseInt(E[f].slice(1), 10) - 1), ++L;
                                                             break;
                                                         case 'Y':
                                                             for (o = parseInt(E[f].slice(1), 10) - 1, s = h.length; s <= o; ++s) h[s] = [];
@@ -6509,14 +6496,14 @@
                                                             break;
                                                         case 'W':
                                                             for (s = parseInt((v = E[f].slice(1).split(' '))[0], 10); s <= parseInt(v[1], 10); ++s)
-                                                                ((b = parseInt(v[2], 10)), (g[s - 1] = 0 === b ? { hidden: !0 } : { wch: b }));
+                                                                (b = parseInt(v[2], 10)), (g[s - 1] = 0 === b ? { hidden: !0 } : { wch: b });
                                                             break;
                                                         case 'C':
                                                             g[(c = parseInt(E[f].slice(1), 10) - 1)] || (g[c] = {});
                                                             break;
                                                         case 'R':
-                                                            (m[(o = parseInt(E[f].slice(1), 10) - 1)] || (m[o] = {}),
-                                                                b > 0 ? ((m[o].hpt = b), (m[o].hpx = s2(b))) : 0 === b && (m[o].hidden = !0));
+                                                            m[(o = parseInt(E[f].slice(1), 10) - 1)] || (m[o] = {}),
+                                                                b > 0 ? ((m[o].hpt = b), (m[o].hpx = s2(b))) : 0 === b && (m[o].hidden = !0);
                                                             break;
                                                         default:
                                                             if (a && a.WTF) throw Error('SYLK bad record ' + y);
@@ -6573,7 +6560,7 @@
                                         );
                                     },
                                     from_sheet: function (e, t, r) {
-                                        (t || (t = {}), (t._formats = ['General']));
+                                        t || (t = {}), (t._formats = ['General']);
                                         var a,
                                             n = ['ID;PSheetJS;N;E'],
                                             s = [],
@@ -6615,16 +6602,16 @@
                                                         if ((a = o ? e['!data'][l][f] : e[ag(f) + ap(l)]) && (null != a.v || (a.f && !a.F))) {
                                                             if ('General' != (a.z || ('d' == a.t ? eD[14] : 'General'))) {
                                                                 var u = t._formats.indexOf(a.z);
-                                                                (-1 == u && (t._formats.push(a.z), (u = t._formats.length - 1), n.push('P;P' + a.z.replace(/;/g, ';;'))),
-                                                                    h.push('F;P' + u + ';Y' + (l + 1) + ';X' + (f + 1)));
+                                                                -1 == u && (t._formats.push(a.z), (u = t._formats.length - 1), n.push('P;P' + a.z.replace(/;/g, ';;'))),
+                                                                    h.push('F;P' + u + ';Y' + (l + 1) + ';X' + (f + 1));
                                                             }
                                                             h.push(
                                                                 (function (e, t, r, a, n, s) {
                                                                     var i = 'C;Y' + (r + 1) + ';X' + (a + 1) + ';K';
                                                                     switch (e.t) {
                                                                         case 'n':
-                                                                            ((i += isFinite(e.v) ? e.v || 0 : aQ[isNaN(e.v) ? 36 : 7]),
-                                                                                e.f && !e.F && (i += ';E' + ip(e.f, { r: r, c: a })));
+                                                                            (i += isFinite(e.v) ? e.v || 0 : aQ[isNaN(e.v) ? 36 : 7]),
+                                                                                e.f && !e.F && (i += ';E' + ip(e.f, { r: r, c: a }));
                                                                             break;
                                                                         case 'b':
                                                                             i += e.v ? 'TRUE' : 'FALSE';
@@ -6650,18 +6637,18 @@
                                             e['!cols'] &&
                                                 e['!cols'].forEach(function (e, t) {
                                                     var r = 'F;W' + (t + 1) + ' ' + (t + 1) + ' ';
-                                                    (e.hidden
+                                                    e.hidden
                                                         ? (r += '0')
                                                         : ('number' != typeof e.width || e.wpx || (e.wpx = sY(e.width)),
                                                           'number' != typeof e.wpx || e.wch || (e.wch = sZ(e.wpx)),
                                                           'number' == typeof e.wch && (r += Math.round(e.wch))),
-                                                        ' ' != r.charAt(r.length - 1) && n.push(r));
+                                                        ' ' != r.charAt(r.length - 1) && n.push(r);
                                                 }),
                                             e['!rows'] &&
                                                 e['!rows'].forEach(function (e, t) {
                                                     var r = 'F;';
-                                                    (e.hidden ? (r += 'M0;') : e.hpt ? (r += 'M' + 20 * e.hpt + ';') : e.hpx && (r += 'M' + 20 * s1(e.hpx) + ';'),
-                                                        r.length > 2 && n.push(r + 'R' + (t + 1)));
+                                                    e.hidden ? (r += 'M0;') : e.hpt ? (r += 'M' + 20 * e.hpt + ';') : e.hpx && (r += 'M' + 20 * s1(e.hpx) + ';'),
+                                                        r.length > 2 && n.push(r + 'R' + (t + 1));
                                                 }),
                                             e['!ref'] && n.push('B;Y' + (i.e.r - i.s.r + 1) + ';X' + (i.e.c - i.s.c + 1) + ';D' + [i.s.c, i.s.r, i.e.c, i.e.r].join(' ')),
                                             n.push('O;L;D;B' + (c ? ';V4' : '') + ';K47;G100 0.001'),
@@ -6676,7 +6663,7 @@
                             function e(e, t) {
                                 for (var r = e.split('\n'), a = -1, n = -1, s = 0, i = []; s !== r.length; ++s) {
                                     if ('BOT' === r[s].trim()) {
-                                        ((i[++a] = []), (n = 0));
+                                        (i[++a] = []), (n = 0);
                                         continue;
                                     }
                                     if (!(a < 0)) {
@@ -6689,13 +6676,13 @@
                                         switch (((f = f.trim()), +c)) {
                                             case -1:
                                                 if ('BOT' === f) {
-                                                    ((i[++a] = []), (n = 0));
+                                                    (i[++a] = []), (n = 0);
                                                     continue;
                                                 }
                                                 if ('EOD' !== f) throw Error('Unrecognized DIF special command ' + f);
                                                 break;
                                             case 0:
-                                                ('TRUE' === f
+                                                'TRUE' === f
                                                     ? (i[a][n] = !0)
                                                     : 'FALSE' === f
                                                       ? (i[a][n] = !1)
@@ -6704,16 +6691,16 @@
                                                             ? (i[a][n] = l)
                                                             : ((i[a][n] = tv(l)), (t && t.UTC) || (i[a][n] = tI(i[a][n])))
                                                         : (i[a][n] = ty(l)),
-                                                    ++n);
+                                                    ++n;
                                                 break;
                                             case 1:
-                                                ((f = (f = f.slice(1, f.length - 1)).replace(/""/g, '"')) && f.match(/^=".*"$/) && (f = f.slice(2, -1)),
-                                                    (i[a][n++] = '' !== f ? f : null));
+                                                (f = (f = f.slice(1, f.length - 1)).replace(/""/g, '"')) && f.match(/^=".*"$/) && (f = f.slice(2, -1)),
+                                                    (i[a][n++] = '' !== f ? f : null);
                                         }
                                         if ('EOD' === f) break;
                                     }
                                 }
-                                return (t && t.sheetRows && (i = i.slice(0, t.sheetRows)), i);
+                                return t && t.sheetRows && (i = i.slice(0, t.sheetRows)), i;
                             }
                             function t(t, r) {
                                 return aC(
@@ -6742,7 +6729,7 @@
                             return {
                                 to_workbook: function (e, r) {
                                     var a = aS(t(e, r), r);
-                                    return ((a.bookType = 'dif'), a);
+                                    return (a.bookType = 'dif'), a;
                                 },
                                 to_sheet: t,
                                 from_sheet: function (e) {
@@ -6783,7 +6770,7 @@
                                                     c += n(isNaN(+f.v) ? f.v : '="' + f.v + '"');
                                                     break;
                                                 case 'd':
-                                                    (f.w || (f.w = e2(f.z || eD[14], tu(tv(f.v)))), (c += r(f.w, 'V')));
+                                                    f.w || (f.w = e2(f.z || eD[14], tu(tv(f.v)))), (c += r(f.w, 'V'));
                                                     break;
                                                 default:
                                                     c += '1,0\r\n""';
@@ -6818,14 +6805,14 @@
                                                     case 'vtf':
                                                         var l = o[o.length - 1];
                                                     case 'vtc':
-                                                        ('nl' === o[3]
+                                                        'nl' === o[3]
                                                             ? (i[a][n] = !!+o[4])
                                                             : (i[a][n] = '#' == o[o.length - 1].charAt(0) ? { t: 'e', v: a0[o[o.length - 1]] } : +o[4]),
-                                                            'vtf' == o[2] && (i[a][n] = [i[a][n], l]));
+                                                            'vtf' == o[2] && (i[a][n] = [i[a][n], l]);
                                                 }
                                             }
                                         }
-                                        return (t && t.sheetRows && (i = i.slice(0, t.sheetRows)), i);
+                                        return t && t.sheetRows && (i = i.slice(0, t.sheetRows)), i;
                                     })(e, t),
                                     t,
                                 );
@@ -6852,14 +6839,14 @@
                                                                 n.push(e(r.v));
                                                                 break;
                                                             case 'b':
-                                                                ((n[2] = 'vt' + (r.f ? 'f' : 'c')),
+                                                                (n[2] = 'vt' + (r.f ? 'f' : 'c')),
                                                                     (n[3] = 'nl'),
                                                                     (n[4] = r.v ? '1' : '0'),
-                                                                    (n[5] = e(r.f || (r.v ? 'TRUE' : 'FALSE'))));
+                                                                    (n[5] = e(r.f || (r.v ? 'TRUE' : 'FALSE')));
                                                                 break;
                                                             case 'd':
                                                                 var f = tu(tv(r.v));
-                                                                ((n[2] = 'vtc'), (n[3] = 'nd'), (n[4] = '' + f), (n[5] = r.w || e2(r.z || eD[14], f)));
+                                                                (n[2] = 'vtc'), (n[3] = 'nd'), (n[4] = '' + f), (n[5] = r.w || e2(r.z || eD[14], f));
                                                                 break;
                                                             case 'n':
                                                                 isFinite(r.v)
@@ -7007,8 +6994,8 @@
                                                         0 === k.length)
                                                     )
                                                         x.t = 'z';
-                                                    else if (s.raw) ((x.t = 's'), (x.v = k));
-                                                    else if (0 === k.trim().length) ((x.t = 's'), (x.v = k));
+                                                    else if (s.raw) (x.t = 's'), (x.v = k);
+                                                    else if (0 === k.trim().length) (x.t = 's'), (x.v = k);
                                                     else if (61 == k.charCodeAt(0))
                                                         34 == k.charCodeAt(1) && 34 == k.charCodeAt(k.length - 1)
                                                             ? ((x.t = 's'), (x.v = k.slice(2, -1).replace(/""/g, '"')))
@@ -7101,7 +7088,7 @@
                                                         case 10:
                                                             if (!m && w()) break e;
                                                     }
-                                                return (d - u > 0 && w(), (o['!ref'] = aT(c)), o);
+                                                return d - u > 0 && w(), (o['!ref'] = aT(c)), o;
                                             })(s, r)
                                           : aC(
                                                 (function (t, r) {
@@ -7110,14 +7097,14 @@
                                                     if (!t || 0 === t.length) return n;
                                                     for (var s = t.split(/[\r\n]/), i = s.length - 1; i >= 0 && 0 === s[i].length; ) --i;
                                                     for (var o = 10, c = 0, l = 0; l <= i; ++l)
-                                                        (-1 == (c = s[l].indexOf(' ')) ? (c = s[l].length) : c++, (o = Math.max(o, c)));
+                                                        -1 == (c = s[l].indexOf(' ')) ? (c = s[l].length) : c++, (o = Math.max(o, c));
                                                     for (l = 0; l <= i; ++l) {
                                                         n[l] = [];
                                                         var f = 0;
                                                         for (e(s[l].slice(0, o).trim(), n, l, f, a), f = 1; f <= (s[l].length - o) / 10 + 1; ++f)
                                                             e(s[l].slice(o + (f - 1) * 10, o + 10 * f).trim(), n, l, f, a);
                                                     }
-                                                    return (a.sheetRows && (n = n.slice(0, a.sheetRows)), n);
+                                                    return a.sheetRows && (n = n.slice(0, a.sheetRows)), n;
                                                 })(s, r),
                                                 r,
                                             ));
@@ -7223,15 +7210,15 @@
                                                     for (var v = m.read_shift(4), b = ((m.length - m.l) / v) | 0, w = 0; w < v; ++w) {
                                                         var T = m.l + b,
                                                             y = {};
-                                                        ((m.l += 2), (y.numFmtId = m.read_shift(2)), g[y.numFmtId] && (y.z = g[y.numFmtId]), (m.l = T), u.push(y));
+                                                        (m.l += 2), (y.numFmtId = m.read_shift(2)), g[y.numFmtId] && (y.z = g[y.numFmtId]), (m.l = T), u.push(y);
                                                     }
                                                     break;
                                                 case 1031:
-                                                    for (m.l += 12; m.l < m.length; ) ((o = m.read_shift(2)), (c = m.read_shift(1)), n.push(m.read_shift(o, 'cstr')));
+                                                    for (m.l += 12; m.l < m.length; ) (o = m.read_shift(2)), (c = m.read_shift(1)), n.push(m.read_shift(o, 'cstr'));
                                                     break;
                                                 case 1537:
                                                     var E = m.read_shift(2);
-                                                    ((a = {}),
+                                                    (a = {}),
                                                         r.dense && (a['!data'] = []),
                                                         (i.s.c = m.read_shift(2)),
                                                         (i.e.c = m.read_shift(2)),
@@ -7239,23 +7226,23 @@
                                                         (i.e.r = m.read_shift(4)),
                                                         (m.l += 4),
                                                         m.l + 2 < m.length && ((o = m.read_shift(2)), (c = m.read_shift(1)), (s = 0 == o ? '' : m.read_shift(o, 'cstr'))),
-                                                        s || (s = ag(E)));
+                                                        s || (s = ag(E));
                                                     break;
                                                 case 1538:
                                                     if (i.s.c > 255 || i.s.r > 999999) break;
-                                                    (i.e.c < i.s.c && (i.e.c = i.s.c), i.e.r < i.s.r && (i.e.r = i.s.r), (a['!ref'] = aT(i)), le(h, a, s));
+                                                    i.e.c < i.s.c && (i.e.c = i.s.c), i.e.r < i.s.r && (i.e.r = i.s.r), (a['!ref'] = aT(i)), le(h, a, s);
                                                     break;
                                                 case 2561:
-                                                    ((l = m.read_shift(2)),
+                                                    (l = m.read_shift(2)),
                                                         i.e.c < l && (i.e.c = l),
                                                         i.s.c > l && (i.s.c = l),
                                                         (f = m.read_shift(4)),
                                                         i.s.r > f && (i.s.r = f),
                                                         (f = m.read_shift(4)),
-                                                        i.e.r < f && (i.e.r = f));
+                                                        i.e.r < f && (i.e.r = f);
                                                     break;
                                                 case 3073:
-                                                    ((f = m.read_shift(4)), (o = m.read_shift(4)), i.s.r > f && (i.s.r = f), i.e.r < f + o - 1 && (i.e.r = f + o - 1));
+                                                    (f = m.read_shift(4)), (o = m.read_shift(4)), i.s.r > f && (i.s.r = f), i.e.r < f + o - 1 && (i.e.r = f + o - 1);
                                                     for (var k = ag(l); m.l < m.length; ) {
                                                         var x = { t: 'z' },
                                                             _ = m.read_shift(1),
@@ -7282,10 +7269,7 @@
                                                                 x = { t: 's', v: n[(c = m.read_shift(4) - 1)] };
                                                                 break;
                                                             case 8:
-                                                                ((x = { t: 'n', v: m.read_shift(8, 'f') }),
-                                                                    (m.l += 2),
-                                                                    (m.l += 4),
-                                                                    isNaN(x.v) && (x = { t: 'e', v: 15 }));
+                                                                (x = { t: 'n', v: m.read_shift(8, 'f') }), (m.l += 2), (m.l += 4), isNaN(x.v) && (x = { t: 'e', v: 15 });
                                                                 break;
                                                             default:
                                                                 throw 'Unrecognized QPW cell type ' + (31 & _);
@@ -7306,10 +7290,8 @@
                                                             }
                                                         if (!(!r.sheetStubs && 'z' == x.t)) {
                                                             var I = tw(x);
-                                                            ('n' == x.t && x.z && eQ(x.z) && r.cellDates && ((I.v = td(x.v)), (I.t = 'number' == typeof I.v ? 'n' : 'd')),
-                                                                null != a['!data']
-                                                                    ? (a['!data'][f] || (a['!data'][f] = []), (a['!data'][f][l] = I))
-                                                                    : (a[k + ap(f)] = I));
+                                                            'n' == x.t && x.z && eQ(x.z) && r.cellDates && ((I.v = td(x.v)), (I.t = 'number' == typeof I.v ? 'n' : 'd')),
+                                                                null != a['!data'] ? (a['!data'][f] || (a['!data'][f] = []), (a['!data'][f][l] = I)) : (a[k + ap(f)] = I);
                                                         }
                                                         for (++f, --o; A-- > 0 && o >= 0; ) {
                                                             if (32 & _)
@@ -7340,17 +7322,17 @@
                                                                     default:
                                                                         throw 'Cannot apply repeat for QPW cell type ' + (31 & _);
                                                                 }
-                                                            ((r.sheetStubs || 'z' != x.t) &&
+                                                            (r.sheetStubs || 'z' != x.t) &&
                                                                 (null != a['!data']
                                                                     ? (a['!data'][f] || (a['!data'][f] = []), (a['!data'][f][l] = x))
                                                                     : (a[k + ap(f)] = x)),
                                                                 ++f,
-                                                                --o);
+                                                                --o;
                                                         }
                                                     }
                                                     break;
                                                 case 3074:
-                                                    ((l = m.read_shift(2)), (f = m.read_shift(4)));
+                                                    (l = m.read_shift(2)), (f = m.read_shift(4));
                                                     var O = (function (e) {
                                                         var t = e.read_shift(2),
                                                             r = e.read_shift(1);
@@ -7368,16 +7350,16 @@
                                 if (0 == r[2] && (8 == r[3] || 9 == r[3]) && r.length >= 16 && 5 == r[14] && 108 === r[15])
                                     throw Error('Unsupported Works 3 for Mac file');
                                 if (2 == r[2])
-                                    ((n.Enum = p),
+                                    (n.Enum = p),
                                         e(
                                             r,
                                             function (e, r, a) {
                                                 switch (a) {
                                                     case 0:
-                                                        ((n.vers = e), e >= 4096 && (n.qpro = !0));
+                                                        (n.vers = e), e >= 4096 && (n.qpro = !0);
                                                         break;
                                                     case 255:
-                                                        ((n.vers = e), (n.works = !0));
+                                                        (n.vers = e), (n.works = !0);
                                                         break;
                                                     case 6:
                                                         d = e;
@@ -7390,12 +7372,12 @@
                                                         break;
                                                     case 15:
                                                     case 51:
-                                                        (((!n.qpro && !n.works) || 51 == a) && 48 > e[1].v.charCodeAt(0) && (e[1].v = e[1].v.slice(1)),
-                                                            (n.works || n.works2) && (e[1].v = e[1].v.replace(/\r\n/g, '\n')));
+                                                        ((!n.qpro && !n.works) || 51 == a) && 48 > e[1].v.charCodeAt(0) && (e[1].v = e[1].v.slice(1)),
+                                                            (n.works || n.works2) && (e[1].v = e[1].v.replace(/\r\n/g, '\n'));
                                                     case 13:
                                                     case 14:
                                                     case 16:
-                                                        ((112 & e[2]) == 112 &&
+                                                        (112 & e[2]) == 112 &&
                                                             (15 & e[2]) > 1 &&
                                                             (15 & e[2]) < 15 &&
                                                             ((e[1].z = n.dateNF || t[(15 & e[2]) - 1] || eD[14]),
@@ -7410,13 +7392,13 @@
                                                                 (d = { s: { r: 0, c: 0 }, e: { r: 0, c: 0 } }),
                                                                 (c = e[3]),
                                                                 (i = o || 'Sheet' + (c + 1)),
-                                                                (o = '')));
+                                                                (o = ''));
                                                         var h = n.dense ? (u[e[0].r] || [])[e[0].c] : s[ab(e[0])];
                                                         if (h) {
-                                                            ((h.t = e[1].t), (h.v = e[1].v), null != e[1].z && (h.z = e[1].z), null != e[1].f && (h.f = e[1].f), (b = h));
+                                                            (h.t = e[1].t), (h.v = e[1].v), null != e[1].z && (h.z = e[1].z), null != e[1].f && (h.f = e[1].f), (b = h);
                                                             break;
                                                         }
-                                                        (n.dense ? (u[e[0].r] || (u[e[0].r] = []), (u[e[0].r][e[0].c] = e[1])) : (s[ab(e[0])] = e[1]), (b = e[1]));
+                                                        n.dense ? (u[e[0].r] || (u[e[0].r] = []), (u[e[0].r][e[0].c] = e[1])) : (s[ab(e[0])] = e[1]), (b = e[1]);
                                                         break;
                                                     case 21509:
                                                         n.works2 = !0;
@@ -7428,9 +7410,9 @@
                                                 }
                                             },
                                             n,
-                                        ));
+                                        );
                                 else if (26 == r[2] || 14 == r[2])
-                                    ((n.Enum = m),
+                                    (n.Enum = m),
                                         14 == r[2] && ((n.qpro = !0), (r.l = 0)),
                                         e(
                                             r,
@@ -7440,12 +7422,12 @@
                                                         i = e;
                                                         break;
                                                     case 22:
-                                                        (48 > e[1].v.charCodeAt(0) && (e[1].v = e[1].v.slice(1)),
+                                                        48 > e[1].v.charCodeAt(0) && (e[1].v = e[1].v.slice(1)),
                                                             (e[1].v = e[1].v
                                                                 .replace(/\x0F./g, function (e) {
                                                                     return String.fromCharCode(e.charCodeAt(1) - 32);
                                                                 })
-                                                                .replace(/\r\n/g, '\n')));
+                                                                .replace(/\r\n/g, '\n'));
                                                     case 23:
                                                     case 24:
                                                     case 25:
@@ -7464,19 +7446,19 @@
                                                             v > 0 && e[0].r >= v)
                                                         )
                                                             break;
-                                                        (n.dense ? (u[e[0].r] || (u[e[0].r] = []), (u[e[0].r][e[0].c] = e[1])) : (s[ab(e[0])] = e[1]),
+                                                        n.dense ? (u[e[0].r] || (u[e[0].r] = []), (u[e[0].r][e[0].c] = e[1])) : (s[ab(e[0])] = e[1]),
                                                             d.e.c < e[0].c && (d.e.c = e[0].c),
-                                                            d.e.r < e[0].r && (d.e.r = e[0].r));
+                                                            d.e.r < e[0].r && (d.e.r = e[0].r);
                                                         break;
                                                     case 27:
                                                         e[14e3] && (h[e[14e3][0]] = e[14e3][1]);
                                                         break;
                                                     case 1537:
-                                                        ((h[e[0]] = e[1]), e[0] == c && (i = e[1]));
+                                                        (h[e[0]] = e[1]), e[0] == c && (i = e[1]);
                                                 }
                                             },
                                             n,
-                                        ));
+                                        );
                                 else throw Error('Unrecognized LOTUS BOF ' + r[2]);
                                 if (((s['!ref'] = aT(d)), (l[o || i] = s), f.push(o || i), !h.length)) return { SheetNames: f, Sheets: l };
                                 for (var w = {}, T = [], y = 0; y < h.length; ++y)
@@ -7499,15 +7481,15 @@
                             }
                             function s(e, t, r) {
                                 var a = as(7);
-                                return (a.write_shift(1, n(r)), a.write_shift(2, t), a.write_shift(2, e), a.write_shift(2, r.v, 'i'), a);
+                                return a.write_shift(1, n(r)), a.write_shift(2, t), a.write_shift(2, e), a.write_shift(2, r.v, 'i'), a;
                             }
                             function i(e, t, r) {
                                 var a = as(13);
-                                return (a.write_shift(1, n(r)), a.write_shift(2, t), a.write_shift(2, e), a.write_shift(8, r.v, 'f'), a);
+                                return a.write_shift(1, n(r)), a.write_shift(2, t), a.write_shift(2, e), a.write_shift(8, r.v, 'f'), a;
                             }
                             function o(e, t, r) {
                                 var a = 32768 & t;
-                                return ((t &= -32769), (t = (a ? e : 0) + (t >= 8192 ? t - 16384 : t)), (a ? '' : '$') + (r ? ag(t) : ap(t)));
+                                return (t &= -32769), (t = (a ? e : 0) + (t >= 8192 ? t - 16384 : t)), (a ? '' : '$') + (r ? ag(t) : ap(t));
                             }
                             var c = {
                                     31: ['NA', 0],
@@ -7587,7 +7569,7 @@
                                 ];
                             function f(e) {
                                 var t = [{ c: 0, r: 0 }, { t: 'n', v: 0 }, 0];
-                                return ((t[0].r = e.read_shift(2)), (t[3] = e[e.l++]), (t[0].c = e[e.l++]), t);
+                                return (t[0].r = e.read_shift(2)), (t[3] = e[e.l++]), (t[0].c = e[e.l++]), t;
                             }
                             function h(e, t) {
                                 var r = f(e, t),
@@ -7604,12 +7586,12 @@
                                         r
                                     );
                                 var i = 32768 & s;
-                                return ((s = (32767 & s) - 16446), (r[1].v = (1 - 2 * i) * (n * Math.pow(2, s + 32) + a * Math.pow(2, s))), r);
+                                return (s = (32767 & s) - 16446), (r[1].v = (1 - 2 * i) * (n * Math.pow(2, s + 32) + a * Math.pow(2, s))), r;
                             }
                             function u(e, t) {
                                 var r = f(e, t),
                                     a = e.read_shift(8, 'f');
-                                return ((r[1].v = a), r);
+                                return (r[1].v = a), r;
                             }
                             function d(e, t) {
                                 return 0 == e[e.l + t - 1] ? e.read_shift(t, 'cstr') : '';
@@ -7654,14 +7636,14 @@
                                         n: 'INTEGER',
                                         f: function (e, t, r) {
                                             var n = a(e, t, r);
-                                            return ((n[1].v = e.read_shift(2, 'i')), n);
+                                            return (n[1].v = e.read_shift(2, 'i')), n;
                                         },
                                     },
                                     14: {
                                         n: 'NUMBER',
                                         f: function (e, t, r) {
                                             var n = a(e, t, r);
-                                            return ((n[1].v = e.read_shift(8, 'f')), n);
+                                            return (n[1].v = e.read_shift(8, 'f')), n;
                                         },
                                     },
                                     15: {
@@ -7672,9 +7654,9 @@
                                             if (((s[1].t = 's'), (65534 & r.vers) == 20768)) {
                                                 e.l++;
                                                 var i = e.read_shift(1);
-                                                return ((s[1].v = e.read_shift(i, 'utf8')), s);
+                                                return (s[1].v = e.read_shift(i, 'utf8')), s;
                                             }
-                                            return (r.qpro && e.l++, (s[1].v = e.read_shift(n - e.l, 'cstr')), s);
+                                            return r.qpro && e.l++, (s[1].v = e.read_shift(n - e.l, 'cstr')), s;
                                         },
                                     },
                                     16: {
@@ -7685,7 +7667,7 @@
                                             if (((s[1].v = e.read_shift(8, 'f')), r.qpro)) e.l = n;
                                             else {
                                                 var i = e.read_shift(2);
-                                                ((function (e, t) {
+                                                (function (e, t) {
                                                     aa(e, 0);
                                                     for (var r = [], a = 0, n = '', s = '', i = '', f = ''; e.l < e.length; ) {
                                                         var h = e[e.l++];
@@ -7694,12 +7676,12 @@
                                                                 r.push(e.read_shift(8, 'f'));
                                                                 break;
                                                             case 1:
-                                                                ((s = o(t[0].c, e.read_shift(2), !0)), (n = o(t[0].r, e.read_shift(2), !1)), r.push(s + n));
+                                                                (s = o(t[0].c, e.read_shift(2), !0)), (n = o(t[0].r, e.read_shift(2), !1)), r.push(s + n);
                                                                 break;
                                                             case 2:
                                                                 var u = o(t[0].c, e.read_shift(2), !0),
                                                                     d = o(t[0].r, e.read_shift(2), !1);
-                                                                ((s = o(t[0].c, e.read_shift(2), !0)), (n = o(t[0].r, e.read_shift(2), !1)), r.push(u + d + ':' + s + n));
+                                                                (s = o(t[0].c, e.read_shift(2), !0)), (n = o(t[0].r, e.read_shift(2), !1)), r.push(u + d + ':' + s + n);
                                                                 break;
                                                             case 3:
                                                                 if (e.l < e.length) return void console.error('WK1 premature formula end');
@@ -7725,15 +7707,15 @@
                                                                 break;
                                                             case 20:
                                                             case 21:
-                                                                ((f = r.pop()), (i = r.pop()), r.push(['AND', 'OR'][h - 20] + '(' + i + ',' + f + ')'));
+                                                                (f = r.pop()), (i = r.pop()), r.push(['AND', 'OR'][h - 20] + '(' + i + ',' + f + ')');
                                                                 break;
                                                             default:
-                                                                if (h < 32 && l[h]) ((f = r.pop()), (i = r.pop()), r.push(i + l[h] + f));
+                                                                if (h < 32 && l[h]) (f = r.pop()), (i = r.pop()), r.push(i + l[h] + f);
                                                                 else if (c[h]) {
                                                                     if ((69 == (a = c[h][1]) && (a = e[e.l++]), a > r.length))
                                                                         return void console.error('WK1 bad formula parse 0x' + h.toString(16) + ':|' + r.join('|') + '|');
                                                                     var m = r.slice(-a);
-                                                                    ((r.length -= a), r.push(c[h][0] + '(' + m.join(',') + ')'));
+                                                                    (r.length -= a), r.push(c[h][0] + '(' + m.join(',') + ')');
                                                                 } else if (h <= 7) return console.error('WK1 invalid opcode ' + h.toString(16));
                                                                 else if (h <= 24) return console.error('WK1 unsupported op ' + h.toString(16));
                                                                 else if (h <= 30) return console.error('WK1 invalid opcode ' + h.toString(16));
@@ -7743,7 +7725,7 @@
                                                     }
                                                     1 == r.length ? (t[1].f = '' + r[0]) : console.error('WK1 bad formula parse |' + r.join('|') + '|');
                                                 })(e.slice(e.l, e.l + i), s),
-                                                    (e.l += i));
+                                                    (e.l += i);
                                             }
                                             return s;
                                         },
@@ -7777,9 +7759,9 @@
                                                 s = a(e, t, r);
                                             if (((s[1].t = 's'), 20768 == r.vers)) {
                                                 var i = e.read_shift(1);
-                                                return ((s[1].v = e.read_shift(i, 'utf8')), s);
+                                                return (s[1].v = e.read_shift(i, 'utf8')), s;
                                             }
-                                            return ((s[1].v = e.read_shift(n - e.l, 'cstr')), s);
+                                            return (s[1].v = e.read_shift(n - e.l, 'cstr')), s;
                                         },
                                     },
                                     55: { n: 'PASSWORD' },
@@ -7844,7 +7826,7 @@
                                         n: 'LABEL16',
                                         f: function (e, t) {
                                             var r = f(e, t);
-                                            return ((r[1].t = 's'), (r[1].v = e.read_shift(t - 4, 'cstr')), r);
+                                            return (r[1].t = 's'), (r[1].v = e.read_shift(t - 4, 'cstr')), r;
                                         },
                                     },
                                     23: { n: 'NUMBER17', f: h },
@@ -7880,14 +7862,14 @@
                                                     case 7:
                                                         a = (a >> 3) / 64;
                                                 }
-                                            return ((r[1].v = a), r);
+                                            return (r[1].v = a), r;
                                         },
                                     },
                                     25: {
                                         n: 'FORMULA19',
                                         f: function (e, t) {
                                             var r = h(e, 14);
-                                            return ((e.l += t - 14), r);
+                                            return (e.l += t - 14), r;
                                         },
                                     },
                                     26: { n: 'FORMULA1A' },
@@ -7897,7 +7879,7 @@
                                             for (var r = {}, a = e.l + t; e.l < a; ) {
                                                 var n = e.read_shift(2);
                                                 if (14e3 == n) {
-                                                    for (r[n] = [0, ''], r[n][0] = e.read_shift(2); e[e.l]; ) ((r[n][1] += String.fromCharCode(e[e.l])), e.l++);
+                                                    for (r[n] = [0, ''], r[n][0] = e.read_shift(2); e[e.l]; ) (r[n][1] += String.fromCharCode(e[e.l])), e.l++;
                                                     e.l++;
                                                 }
                                             }
@@ -7917,7 +7899,7 @@
                                         f: function (e, t) {
                                             var r = f(e, t),
                                                 a = e.read_shift(4);
-                                            return ((r[1].v = a >> 6), r);
+                                            return (r[1].v = a >> 6), r;
                                         },
                                     },
                                     38: { n: '??' },
@@ -7926,7 +7908,7 @@
                                         n: 'FORMULA28',
                                         f: function (e, t) {
                                             var r = u(e, 12);
-                                            return ((e.l += t - 12), r);
+                                            return (e.l += t - 12), r;
                                         },
                                     },
                                     142: { n: '??' },
@@ -8000,7 +7982,7 @@
                                         f: function (e, t, r) {
                                             if (r.qpro && !(t < 21)) {
                                                 var a = e.read_shift(1);
-                                                return ((e.l += 17), (e.l += 1), (e.l += 2), [a, e.read_shift(t - 21, 'cstr')]);
+                                                return (e.l += 17), (e.l += 1), (e.l += 2), [a, e.read_shift(t - 21, 'cstr')];
                                             }
                                         },
                                     },
@@ -8052,12 +8034,12 @@
                                     var f = ak(e['!ref']),
                                         h = null != e['!data'],
                                         u = [];
-                                    (oV(l, 0, ((r = 1030), (a = as(2)).write_shift(2, 1030), a)),
+                                    oV(l, 0, ((r = 1030), (a = as(2)).write_shift(2, 1030), a)),
                                         oV(
                                             l,
                                             6,
                                             ((n = f), (o = as(8)).write_shift(2, n.s.c), o.write_shift(2, n.s.r), o.write_shift(2, n.e.c), o.write_shift(2, n.e.r), o),
-                                        ));
+                                        );
                                     for (var d = Math.min(f.e.r, 8191), p = f.s.c; p <= f.e.c; ++p) u[p] = ag(p);
                                     for (var m = f.s.r; m <= d; ++m) {
                                         var g = ap(m);
@@ -8080,18 +8062,18 @@
                                                             15,
                                                             (function (e, t, r) {
                                                                 var a = as(7 + r.length);
-                                                                (a.write_shift(1, 255), a.write_shift(2, t), a.write_shift(2, e), a.write_shift(1, 39));
+                                                                a.write_shift(1, 255), a.write_shift(2, t), a.write_shift(2, e), a.write_shift(1, 39);
                                                                 for (var n = 0; n < a.length; ++n) {
                                                                     var s = r.charCodeAt(n);
                                                                     a.write_shift(1, s >= 128 ? 95 : s);
                                                                 }
-                                                                return (a.write_shift(1, 0), a);
+                                                                return a.write_shift(1, 0), a;
                                                             })(m, p, a_(v).slice(0, 239)),
                                                         );
                                                 }
                                         }
                                     }
-                                    return (oV(l, 1), l.end());
+                                    return oV(l, 1), l.end();
                                 },
                                 book_to_wk3: function (e, t) {
                                     var r = t || {};
@@ -8102,14 +8084,14 @@
                                         0,
                                         (function (e) {
                                             var t = as(26);
-                                            (t.write_shift(2, 4096), t.write_shift(2, 4), t.write_shift(4, 0));
+                                            t.write_shift(2, 4096), t.write_shift(2, 4), t.write_shift(4, 0);
                                             for (var r = 0, a = 0, n = 0, s = 0; s < e.SheetNames.length; ++s) {
                                                 var i = e.SheetNames[s],
                                                     o = e.Sheets[i];
                                                 if (o && o['!ref']) {
                                                     ++n;
                                                     var c = aw(o['!ref']);
-                                                    (r < c.e.r && (r = c.e.r), a < c.e.c && (a = c.e.c));
+                                                    r < c.e.r && (r = c.e.r), a < c.e.c && (a = c.e.c);
                                                 }
                                             }
                                             return (
@@ -8134,12 +8116,12 @@
                                                 27,
                                                 (function (e, t) {
                                                     var r = as(5 + e.length);
-                                                    (r.write_shift(2, 14e3), r.write_shift(2, t));
+                                                    r.write_shift(2, 14e3), r.write_shift(2, t);
                                                     for (var a = 0; a < e.length; ++a) {
                                                         var n = e.charCodeAt(a);
                                                         r[r.l++] = n > 127 ? 95 : n;
                                                     }
-                                                    return ((r[r.l++] = 0), r);
+                                                    return (r[r.l++] = 0), r;
                                                 })(e.SheetNames[n], s++),
                                             );
                                     var i = 0;
@@ -8160,7 +8142,7 @@
                                                                   (function (e, t, r, a) {
                                                                       var n = as(14);
                                                                       if ((n.write_shift(2, e), n.write_shift(1, r), n.write_shift(1, t), 0 == a))
-                                                                          return (n.write_shift(4, 0), n.write_shift(4, 0), n.write_shift(2, 65535), n);
+                                                                          return n.write_shift(4, 0), n.write_shift(4, 0), n.write_shift(2, 65535), n;
                                                                       var s = 0,
                                                                           i = 0,
                                                                           o = 0,
@@ -8188,19 +8170,19 @@
                                                                   22,
                                                                   (function (e, t, r, a) {
                                                                       var n = as(6 + a.length);
-                                                                      (n.write_shift(2, e), n.write_shift(1, r), n.write_shift(1, t), n.write_shift(1, 39));
+                                                                      n.write_shift(2, e), n.write_shift(1, r), n.write_shift(1, t), n.write_shift(1, 39);
                                                                       for (var s = 0; s < a.length; ++s) {
                                                                           var i = a.charCodeAt(s);
                                                                           n.write_shift(1, i >= 128 ? 95 : i);
                                                                       }
-                                                                      return (n.write_shift(1, 0), n);
+                                                                      return n.write_shift(1, 0), n;
                                                                   })(u, p, i, a_(g).slice(0, 239)),
                                                               ));
                                                 }
                                             ++i;
                                         }
                                     }
-                                    return (oV(a, 1), a.end());
+                                    return oV(a, 1), a.end();
                                 },
                                 to_workbook: function (e, t) {
                                     switch (t.type) {
@@ -8407,7 +8389,7 @@
                         sP = /^\s|\s$|[\t\n\r]/,
                         sL = function (e, t) {
                             var r = !1;
-                            return (null == t && ((r = !0), (t = as(15 + 4 * e.t.length))), t.write_shift(1, 0), aR(e.t, t), r ? t.slice(0, t.l) : t);
+                            return null == t && ((r = !0), (t = as(15 + 4 * e.t.length))), t.write_shift(1, 0), aR(e.t, t), r ? t.slice(0, t.l) : t;
                         };
                     function sM(e) {
                         if (void 0 !== G) return G.utils.encode(q, e);
@@ -8416,12 +8398,12 @@
                     }
                     function sU(e, t) {
                         var r = {};
-                        return ((r.Major = e.read_shift(2)), (r.Minor = e.read_shift(2)), t >= 4 && (e.l += t - 4), r);
+                        return (r.Major = e.read_shift(2)), (r.Minor = e.read_shift(2)), t >= 4 && (e.l += t - 4), r;
                     }
                     function sB(e, t) {
                         var r = e.l + t,
                             a = {};
-                        ((a.Flags = 63 & e.read_shift(4)), (e.l += 4), (a.AlgID = e.read_shift(4)));
+                        (a.Flags = 63 & e.read_shift(4)), (e.l += 4), (a.AlgID = e.read_shift(4));
                         var n = !1;
                         switch (a.AlgID) {
                             case 26126:
@@ -8491,19 +8473,19 @@
                             }),
                             (D = function (e) {
                                 for (var t = R[e.length - 1], r = 104, a = e.length - 1; a >= 0; --a)
-                                    for (var n = e[a], s = 0; 7 != s; ++s) (64 & n && (t ^= N[r]), (n *= 2), --r);
+                                    for (var n = e[a], s = 0; 7 != s; ++s) 64 & n && (t ^= N[r]), (n *= 2), --r;
                                 return t;
                             }),
                             function (e) {
                                 for (var t, r, a, n = sM(e), s = D(n), i = n.length, o = ev(16), c = 0; 16 != c; ++c) o[c] = 0;
                                 for ((1 & i) == 1 && ((t = s >> 8), (o[i] = F(O[0], t)), --i, (t = 255 & s), (r = n[n.length - 1]), (o[i] = F(r, t))); i > 0; )
-                                    (--i, (t = s >> 8), (o[i] = F(n[i], t)), --i, (t = 255 & s), (o[i] = F(n[i], t)));
-                                for (i = 15, a = 15 - n.length; a > 0; ) ((t = s >> 8), (o[i] = F(O[a], t)), --i, --a, (t = 255 & s), (o[i] = F(n[i], t)), --i, --a);
+                                    --i, (t = s >> 8), (o[i] = F(n[i], t)), --i, (t = 255 & s), (o[i] = F(n[i], t));
+                                for (i = 15, a = 15 - n.length; a > 0; ) (t = s >> 8), (o[i] = F(O[a], t)), --i, --a, (t = 255 & s), (o[i] = F(n[i], t)), --i, --a;
                                 return o;
                             }),
                         sV = function (e, t, r, a, n) {
                             var s, i;
-                            for (n || (n = t), a || (a = sH(e)), s = 0; s != t.length; ++s) ((i = (((i = t[s] ^ a[r]) >> 5) | (i << 3)) & 255), (n[s] = i), ++r);
+                            for (n || (n = t), a || (a = sH(e)), s = 0; s != t.length; ++s) (i = (((i = t[s] ^ a[r]) >> 5) | (i << 3)) & 255), (n[s] = i), ++r;
                             return [n, r, a];
                         },
                         s$ = function (e) {
@@ -8511,7 +8493,7 @@
                                 r = sH(e);
                             return function (e) {
                                 var a = sV('', e, t, r);
-                                return ((t = a[1]), a[0]);
+                                return (t = a[1]), a[0];
                             };
                         };
                     function sG(e, t) {
@@ -8532,12 +8514,12 @@
                                         case '\\cell':
                                             if ((++f, h.length)) {
                                                 var d = { v: h.join(''), t: 's' };
-                                                ('TRUE' == d.v || 'FALSE' == d.v
+                                                'TRUE' == d.v || 'FALSE' == d.v
                                                     ? ((d.v = 'TRUE' == d.v), (d.t = 'b'))
                                                     : isNaN(ty(d.v))
                                                       ? null != a0[d.v] && ((d.t = 'e'), (d.w = d.v), (d.v = a0[d.v]))
                                                       : ((d.t = 'n'), !1 !== r.cellText && (d.w = d.v), (d.v = ty(d.v))),
-                                                    n ? (o[f] = d) : (a[ab({ r: t, c: f })] = d));
+                                                    n ? (o[f] = d) : (a[ab({ r: t, c: f })] = d);
                                             }
                                             h = [];
                                             break;
@@ -8598,22 +8580,22 @@
                                         switch (0 | c) {
                                             case 0:
                                             case 6:
-                                                ((t = s * c), (o[0] += s), (o[1] += t));
+                                                (t = s * c), (o[0] += s), (o[1] += t);
                                                 break;
                                             case 1:
-                                                ((t = s * (2 - c)), (o[0] += t), (o[1] += s));
+                                                (t = s * (2 - c)), (o[0] += t), (o[1] += s);
                                                 break;
                                             case 2:
-                                                ((t = s * (c - 2)), (o[1] += s), (o[2] += t));
+                                                (t = s * (c - 2)), (o[1] += s), (o[2] += t);
                                                 break;
                                             case 3:
-                                                ((t = s * (4 - c)), (o[1] += t), (o[2] += s));
+                                                (t = s * (4 - c)), (o[1] += t), (o[2] += s);
                                                 break;
                                             case 4:
-                                                ((t = s * (c - 4)), (o[2] += s), (o[0] += t));
+                                                (t = s * (c - 4)), (o[2] += s), (o[0] += t);
                                                 break;
                                             case 5:
-                                                ((t = s * (6 - c)), (o[2] += t), (o[0] += s));
+                                                (t = s * (6 - c)), (o[2] += t), (o[0] += s);
                                         }
                                     for (var l = 0; 3 != l; ++l) o[l] = Math.round(255 * o[l]);
                                     return o;
@@ -8641,12 +8623,12 @@
                         sK = r;
                     }
                     function s0(e) {
-                        (e.width
+                        e.width
                             ? ((e.wpx = sY(e.width)), (e.wch = sZ(e.wpx)), (e.MDW = sK))
                             : e.wpx
                               ? ((e.wch = sZ(e.wpx)), (e.width = sJ(e.wch)), (e.MDW = sK))
                               : 'number' == typeof e.wch && ((e.width = sJ(e.wch)), (e.wpx = sY(e.width)), (e.MDW = sK)),
-                            e.customWidth && delete e.customWidth);
+                            e.customWidth && delete e.customWidth;
                     }
                     function s1(e) {
                         return (96 * e) / 96;
@@ -8775,7 +8757,7 @@
                                                   break;
                                               case '</font>':
                                               case '<font/>':
-                                                  (g.Fonts.push(n), (n = {}));
+                                                  g.Fonts.push(n), (n = {});
                                                   break;
                                               case '<name':
                                                   a.val && (n.name = rf(a.val));
@@ -8864,9 +8846,9 @@
                                                   else if (a.indexed) {
                                                       n.color.index = parseInt(a.indexed, 10);
                                                       var i = aq[n.color.index];
-                                                      (81 == n.color.index && (i = aq[1]),
+                                                      81 == n.color.index && (i = aq[1]),
                                                           i || (i = aq[1]),
-                                                          (n.color.rgb = i[0].toString(16) + i[1].toString(16) + i[2].toString(16)));
+                                                          (n.color.rgb = i[0].toString(16) + i[1].toString(16) + i[2].toString(16));
                                                   } else
                                                       a.theme &&
                                                           ((n.color.theme = parseInt(a.theme, 10)),
@@ -8921,28 +8903,28 @@
                                               case '<fill>':
                                               case '<fill':
                                               case '<fill/>':
-                                                  ((o = {}), g.Fills.push(o));
+                                                  (o = {}), g.Fills.push(o);
                                                   break;
                                               case '<gradientFill':
                                               case '</gradientFill>':
-                                                  (g.Fills.push(o), (o = {}));
+                                                  g.Fills.push(o), (o = {});
                                                   break;
                                               case '<patternFill':
                                               case '<patternFill>':
                                                   t.patternType && (o.patternType = t.patternType);
                                                   break;
                                               case '<bgColor':
-                                                  (o.bgColor || (o.bgColor = {}),
+                                                  o.bgColor || (o.bgColor = {}),
                                                       t.indexed && (o.bgColor.indexed = parseInt(t.indexed, 10)),
                                                       t.theme && (o.bgColor.theme = parseInt(t.theme, 10)),
                                                       t.tint && (o.bgColor.tint = parseFloat(t.tint)),
-                                                      t.rgb && (o.bgColor.rgb = t.rgb.slice(-6)));
+                                                      t.rgb && (o.bgColor.rgb = t.rgb.slice(-6));
                                                   break;
                                               case '<fgColor':
-                                                  (o.fgColor || (o.fgColor = {}),
+                                                  o.fgColor || (o.fgColor = {}),
                                                       t.theme && (o.fgColor.theme = parseInt(t.theme, 10)),
                                                       t.tint && (o.fgColor.tint = parseFloat(t.tint)),
-                                                      null != t.rgb && (o.fgColor.rgb = t.rgb.slice(-6)));
+                                                      null != t.rgb && (o.fgColor.rgb = t.rgb.slice(-6));
                                                   break;
                                               case '<ext':
                                                   c = !0;
@@ -9013,10 +8995,10 @@
                                               case '<border':
                                               case '<border>':
                                               case '<border/>':
-                                                  ((f = {}),
+                                                  (f = {}),
                                                       t.diagonalUp && (f.diagonalUp = rs(t.diagonalUp)),
                                                       t.diagonalDown && (f.diagonalDown = rs(t.diagonalDown)),
-                                                      g.Borders.push(f));
+                                                      g.Borders.push(f);
                                                   break;
                                               case '<ext':
                                                   h = !0;
@@ -9068,12 +9050,12 @@
                                               case '<alignment/>':
                                               case '<alignment>':
                                                   var n = {};
-                                                  (t.vertical && (n.vertical = t.vertical),
+                                                  t.vertical && (n.vertical = t.vertical),
                                                       t.horizontal && (n.horizontal = t.horizontal),
                                                       null != t.textRotation && (n.textRotation = t.textRotation),
                                                       t.indent && (n.indent = t.indent),
                                                       t.wrapText && (n.wrapText = rs(t.wrapText)),
-                                                      (d.alignment = n));
+                                                      (d.alignment = n);
                                                   break;
                                               case '<AlternateContent':
                                               case '<AlternateContent>':
@@ -9113,9 +9095,9 @@
                             'gray0625',
                         ];
                     function s7(e, t) {
-                        (t || (t = as(84)), K || (K = to(s8)));
+                        t || (t = as(84)), K || (K = to(s8));
                         var r = K[e.patternType];
-                        (null == r && (r = 40), t.write_shift(4, r));
+                        null == r && (r = 40), t.write_shift(4, r);
                         var a = 0;
                         if (40 != r) for (aG({ auto: 1 }, t), aG({ auto: 1 }, t); a < 12; ++a) t.write_shift(4, 0);
                         else {
@@ -9142,7 +9124,7 @@
                         );
                     }
                     function ie(e, t) {
-                        return (t || (t = as(10)), t.write_shift(1, 0), t.write_shift(1, 0), t.write_shift(4, 0), t.write_shift(4, 0), t);
+                        return t || (t = as(10)), t.write_shift(1, 0), t.write_shift(1, 0), t.write_shift(4, 0), t.write_shift(4, 0), t;
                     }
                     var it = [
                         '</a:lt1>',
@@ -9432,7 +9414,7 @@
                                 ),
                             o.forEach(function (e) {
                                 var t, r, a, n, o, c;
-                                (++i,
+                                ++i,
                                     s.push(
                                         ((t = e),
                                         (r = i),
@@ -9467,7 +9449,7 @@
                                             '</x:ClientData>',
                                             '</v:shape>',
                                         ].join('')),
-                                    ));
+                                    );
                             }),
                             s.push('</xml>'),
                             s.join('')
@@ -9480,9 +9462,9 @@
                             var i = av(t.ref);
                             if (!(i.r < 0) && !(i.c < 0)) {
                                 if ((s ? (e['!data'][i.r] || (e['!data'][i.r] = []), (n = e['!data'][i.r][i.c])) : (n = e[t.ref]), !n)) {
-                                    ((n = { t: 'z' }), s ? (e['!data'][i.r][i.c] = n) : (e[t.ref] = n));
+                                    (n = { t: 'z' }), s ? (e['!data'][i.r][i.c] = n) : (e[t.ref] = n);
                                     var o = ak(e['!ref'] || 'BDWGO1000001:A1');
-                                    (o.s.r > i.r && (o.s.r = i.r), o.e.r < i.r && (o.e.r = i.r), o.s.c > i.c && (o.s.c = i.c), o.e.c < i.c && (o.e.c = i.c));
+                                    o.s.r > i.r && (o.s.r = i.r), o.e.r < i.r && (o.e.r = i.r), o.s.c > i.c && (o.s.c = i.c), o.e.c < i.c && (o.e.c = i.c);
                                     var c = aT(o);
                                     e['!ref'] = c;
                                 }
@@ -9513,10 +9495,10 @@
                                     if (!s.T) return void delete s.ID;
                                     s.a && -1 == t.indexOf(s.a) && t.push(s.a);
                                     var o = { ref: e[0], id: '{54EE7951-7262-4200-6969-' + ('000000000000' + r.tcid++).slice(-12) + '}' };
-                                    (0 == i ? (n = o.id) : (o.parentId = n),
+                                    0 == i ? (n = o.id) : (o.parentId = n),
                                         (s.ID = o.id),
                                         s.a && (o.personId = '{54EE7950-7262-4200-6969-' + ('000000000000' + t.indexOf(s.a)).slice(-12) + '}'),
-                                        a.push(rw('threadedComment', rv('text', s.t || ''), o)));
+                                        a.push(rw('threadedComment', rv('text', s.t || ''), o));
                                 });
                             }),
                             a.push('</ThreadedComments>'),
@@ -9550,14 +9532,14 @@
                             function r(e, r, a, n) {
                                 var s = !1,
                                     i = !1;
-                                (0 == a.length ? (i = !0) : '[' == a.charAt(0) && ((i = !0), (a = a.slice(1, -1))),
-                                    0 == n.length ? (s = !0) : '[' == n.charAt(0) && ((s = !0), (n = n.slice(1, -1))));
+                                0 == a.length ? (i = !0) : '[' == a.charAt(0) && ((i = !0), (a = a.slice(1, -1))),
+                                    0 == n.length ? (s = !0) : '[' == n.charAt(0) && ((s = !0), (n = n.slice(1, -1)));
                                 var o = a.length > 0 ? 0 | parseInt(a, 10) : 0,
                                     c = n.length > 0 ? 0 | parseInt(n, 10) : 0;
-                                return (s ? (c += t.c) : --c, i ? (o += t.r) : --o, r + (s ? '' : '$') + ag(c) + (i ? '' : '$') + ap(o));
+                                return s ? (c += t.c) : --c, i ? (o += t.r) : --o, r + (s ? '' : '$') + ag(c) + (i ? '' : '$') + ap(o);
                             }
                             return function (a, n) {
-                                return ((t = n), a.replace(e, r));
+                                return (t = n), a.replace(e, r);
                             };
                         })(),
                         id = /(^|[^._A-Z0-9])(\$?)([A-Z]{1,2}|[A-W][A-Z]{2}|X[A-E][A-Z]|XF[A-D])(\$?)(\d{1,7})(?![_.\(A-Za-z0-9])/g;
@@ -9613,7 +9595,7 @@
                     function iE(e, t, r) {
                         if (r && r.biff >= 2 && r.biff <= 5) {
                             var a, n, s;
-                            return ((n = iw((a = e), 2)), (s = a.read_shift(1)), { r: n[0], c: s, cRel: n[1], rRel: n[2] });
+                            return (n = iw((a = e), 2)), (s = a.read_shift(1)), { r: n[0], c: s, cRel: n[1], rRel: n[2] };
                         }
                         var i = e.read_shift(r && 12 == r.biff ? 4 : 2),
                             o = iw(e, 2);
@@ -9621,20 +9603,20 @@
                     }
                     function ik(e) {
                         var t = 1 & e[e.l + 1];
-                        return ((e.l += 4), [t, 1]);
+                        return (e.l += 4), [t, 1];
                     }
                     function ix(e) {
                         return [e.read_shift(1), e.read_shift(1)];
                     }
                     function i_(e, t, r) {
                         var a;
-                        return ((e.l += 2), [{ r: e.read_shift(2), c: 255 & (a = e.read_shift(2)), fQuoted: !!(16384 & a), cRel: a >> 15, rRel: a >> 15 }]);
+                        return (e.l += 2), [{ r: e.read_shift(2), c: 255 & (a = e.read_shift(2)), fQuoted: !!(16384 & a), cRel: a >> 15, rRel: a >> 15 }];
                     }
                     function iS(e) {
-                        return ((e.l += 6), []);
+                        return (e.l += 6), [];
                     }
                     function iA(e) {
-                        return ((e.l += 2), [nj(e), 1 & e.read_shift(2)]);
+                        return (e.l += 2), [nj(e), 1 & e.read_shift(2)];
                     }
                     var iC = [
                             'Data',
@@ -9686,50 +9668,50 @@
                             23: {
                                 n: 'PtgStr',
                                 f: function (e, t, r) {
-                                    return (e.l++, nJ(e, t - 1, r));
+                                    return e.l++, nJ(e, t - 1, r);
                                 },
                             },
                             26: {
                                 n: 'PtgSheet',
                                 f: function (e, t, r) {
-                                    return ((e.l += 5), (e.l += 2), (e.l += 2 == r.biff ? 1 : 4), ['PTGSHEET']);
+                                    return (e.l += 5), (e.l += 2), (e.l += 2 == r.biff ? 1 : 4), ['PTGSHEET'];
                                 },
                             },
                             27: {
                                 n: 'PtgEndSheet',
                                 f: function (e, t, r) {
-                                    return ((e.l += 2 == r.biff ? 4 : 5), ['PTGENDSHEET']);
+                                    return (e.l += 2 == r.biff ? 4 : 5), ['PTGENDSHEET'];
                                 },
                             },
                             28: {
                                 n: 'PtgErr',
                                 f: function (e) {
-                                    return (e.l++, aQ[e.read_shift(1)]);
+                                    return e.l++, aQ[e.read_shift(1)];
                                 },
                             },
                             29: {
                                 n: 'PtgBool',
                                 f: function (e) {
-                                    return (e.l++, 0 !== e.read_shift(1));
+                                    return e.l++, 0 !== e.read_shift(1);
                                 },
                             },
                             30: {
                                 n: 'PtgInt',
                                 f: function (e) {
-                                    return (e.l++, e.read_shift(2));
+                                    return e.l++, e.read_shift(2);
                                 },
                             },
                             31: {
                                 n: 'PtgNum',
                                 f: function (e) {
-                                    return (e.l++, aV(e, 8));
+                                    return e.l++, aV(e, 8);
                                 },
                             },
                             32: {
                                 n: 'PtgArray',
                                 f: function (e, t, r) {
                                     var a = (96 & e[e.l++]) >> 5;
-                                    return ((e.l += 2 == r.biff ? 6 : 12 == r.biff ? 14 : 7), [a]);
+                                    return (e.l += 2 == r.biff ? 6 : 12 == r.biff ? 14 : 7), [a];
                                 },
                             },
                             33: {
@@ -9775,7 +9757,7 @@
                                 n: 'PtgRef',
                                 f: function (e, t, r) {
                                     var a = (96 & e[e.l]) >> 5;
-                                    return ((e.l += 1), [a, iE(e, 0, r)]);
+                                    return (e.l += 1), [a, iE(e, 0, r)];
                                 },
                             },
                             37: {
@@ -9788,7 +9770,7 @@
                                 n: 'PtgMemArea',
                                 f: function (e, t, r) {
                                     var a = (e.read_shift(1) >>> 5) & 3;
-                                    return ((e.l += r && 2 == r.biff ? 3 : 4), [a, e.read_shift(r && 2 == r.biff ? 1 : 2)]);
+                                    return (e.l += r && 2 == r.biff ? 3 : 4), [a, e.read_shift(r && 2 == r.biff ? 1 : 2)];
                                 },
                             },
                             39: { n: 'PtgMemErr', f: an },
@@ -9803,14 +9785,14 @@
                                 n: 'PtgRefErr',
                                 f: function (e, t, r) {
                                     var a = (e.read_shift(1) >>> 5) & 3;
-                                    return ((e.l += 4), r.biff < 8 && e.l--, 12 == r.biff && (e.l += 2), [a]);
+                                    return (e.l += 4), r.biff < 8 && e.l--, 12 == r.biff && (e.l += 2), [a];
                                 },
                             },
                             43: {
                                 n: 'PtgAreaErr',
                                 f: function (e, t, r) {
                                     var a = (96 & e[e.l++]) >> 5;
-                                    return ((e.l += r && r.biff > 8 ? 12 : r.biff < 8 ? 6 : 8), [a]);
+                                    return (e.l += r && r.biff > 8 ? 12 : r.biff < 8 ? 6 : 8), [a];
                                 },
                             },
                             44: {
@@ -9895,7 +9877,7 @@
                                     var a = (96 & e[e.l]) >> 5;
                                     e.l += 1;
                                     var n = e.read_shift(2);
-                                    return (r && 5 == r.biff && (e.l += 12), [a, n, iE(e, 0, r)]);
+                                    return r && 5 == r.biff && (e.l += 12), [a, n, iE(e, 0, r)];
                                 },
                             },
                             59: {
@@ -9907,7 +9889,7 @@
                                     if (r)
                                         switch (r.biff) {
                                             case 5:
-                                                ((e.l += 12), (s = 6));
+                                                (e.l += 12), (s = 6);
                                                 break;
                                             case 12:
                                                 s = 12;
@@ -9929,7 +9911,7 @@
                                             case 12:
                                                 s = 6;
                                         }
-                                    return ((e.l += s), [a, n]);
+                                    return (e.l += s), [a, n];
                                 },
                             },
                             61: {
@@ -9941,12 +9923,12 @@
                                     if (r)
                                         switch (r.biff) {
                                             case 5:
-                                                ((e.l += 12), (s = 6));
+                                                (e.l += 12), (s = 6);
                                                 break;
                                             case 12:
                                                 s = 12;
                                         }
-                                    return ((e.l += s), [a, n]);
+                                    return (e.l += s), [a, n];
                                 },
                             },
                             255: {},
@@ -10024,7 +10006,7 @@
                             29: {
                                 n: 'PtgSxName',
                                 f: function (e) {
-                                    return ((e.l += 2), [e.read_shift(4)]);
+                                    return (e.l += 2), [e.read_shift(4)];
                                 },
                             },
                             255: {},
@@ -10033,21 +10015,21 @@
                             0: {
                                 n: 'PtgAttrNoop',
                                 f: function (e) {
-                                    return ((e.l += 4), [0, 0]);
+                                    return (e.l += 4), [0, 0];
                                 },
                             },
                             1: {
                                 n: 'PtgAttrSemi',
                                 f: function (e, t, r) {
                                     var a = 255 & e[e.l + 1] ? 1 : 0;
-                                    return ((e.l += r && 2 == r.biff ? 3 : 4), [a]);
+                                    return (e.l += r && 2 == r.biff ? 3 : 4), [a];
                                 },
                             },
                             2: {
                                 n: 'PtgAttrIf',
                                 f: function (e, t, r) {
                                     var a = 255 & e[e.l + 1] ? 1 : 0;
-                                    return ((e.l += 2), [a, e.read_shift(r && 2 == r.biff ? 1 : 2)]);
+                                    return (e.l += 2), [a, e.read_shift(r && 2 == r.biff ? 1 : 2)];
                                 },
                             },
                             4: {
@@ -10062,7 +10044,7 @@
                                 n: 'PtgAttrGoto',
                                 f: function (e, t, r) {
                                     var a = 255 & e[e.l + 1] ? 1 : 0;
-                                    return ((e.l += 2), [a, e.read_shift(r && 2 == r.biff ? 1 : 2)]);
+                                    return (e.l += 2), [a, e.read_shift(r && 2 == r.biff ? 1 : 2)];
                                 },
                             },
                             16: {
@@ -10076,34 +10058,34 @@
                             64: {
                                 n: 'PtgAttrSpace',
                                 f: function (e) {
-                                    return (e.read_shift(2), ix(e, 2));
+                                    return e.read_shift(2), ix(e, 2);
                                 },
                             },
                             65: {
                                 n: 'PtgAttrSpaceSemi',
                                 f: function (e) {
-                                    return (e.read_shift(2), ix(e, 2));
+                                    return e.read_shift(2), ix(e, 2);
                                 },
                             },
                             128: {
                                 n: 'PtgAttrIfError',
                                 f: function (e) {
                                     var t = 255 & e[e.l + 1] ? 1 : 0;
-                                    return ((e.l += 2), [t, e.read_shift(2)]);
+                                    return (e.l += 2), [t, e.read_shift(2)];
                                 },
                             },
                             255: {},
                         };
                     function iF(e, t, r, a) {
-                        if (a.biff < 8) return ((n = t), void (e.l += n));
+                        if (a.biff < 8) return (n = t), void (e.l += n);
                         for (var n, s, i = e.l + t, o = [], c = 0; c !== r.length; ++c)
                             switch (r[c][0]) {
                                 case 'PtgArray':
-                                    ((r[c][1] = (function (e, t, r) {
+                                    (r[c][1] = (function (e, t, r) {
                                         var a = 0,
                                             n = 0;
-                                        (12 == r.biff ? ((a = e.read_shift(4)), (n = e.read_shift(4))) : ((n = 1 + e.read_shift(1)), (a = 1 + e.read_shift(2))),
-                                            r.biff >= 2 && r.biff < 8 && (--a, 0 == --n && (n = 256)));
+                                        12 == r.biff ? ((a = e.read_shift(4)), (n = e.read_shift(4))) : ((n = 1 + e.read_shift(1)), (a = 1 + e.read_shift(2))),
+                                            r.biff >= 2 && r.biff < 8 && (--a, 0 == --n && (n = 256));
                                         for (var s = 0, i = []; s != a && (i[s] = []); ++s)
                                             for (var o = 0; o != n; ++o)
                                                 i[s][o] = (function (e, t) {
@@ -10124,11 +10106,11 @@
                                                         }
                                                     switch (r[0]) {
                                                         case 4:
-                                                            ((r[1] = n$(e, 1) ? 'TRUE' : 'FALSE'), 12 != t && (e.l += 7));
+                                                            (r[1] = n$(e, 1) ? 'TRUE' : 'FALSE'), 12 != t && (e.l += 7);
                                                             break;
                                                         case 37:
                                                         case 16:
-                                                            ((r[1] = aQ[e[e.l]]), (e.l += 12 == t ? 4 : 8));
+                                                            (r[1] = aQ[e[e.l]]), (e.l += 12 == t ? 4 : 8);
                                                             break;
                                                         case 0:
                                                             e.l += 8;
@@ -10146,14 +10128,14 @@
                                                 })(e, r.biff);
                                         return i;
                                     })(e, 0, a)),
-                                        o.push(r[c][1]));
+                                        o.push(r[c][1]);
                                     break;
                                 case 'PtgMemArea':
-                                    ((r[c][2] = (function (e, t, r) {
+                                    (r[c][2] = (function (e, t, r) {
                                         for (var a = e.read_shift(12 == r.biff ? 4 : 2), n = [], s = 0; s != a; ++s) n.push((12 == r.biff ? az : n9)(e, 8));
                                         return n;
                                     })(e, r[c][1], a)),
-                                        o.push(r[c][2]));
+                                        o.push(r[c][2]);
                                     break;
                                 case 'PtgExp':
                                     a && 12 == a.biff && ((r[c][1][1] = e.read_shift(4)), o.push(r[c][1]));
@@ -10164,7 +10146,7 @@
                                 case 'PtgElfColSV':
                                     throw 'Unsupported ' + r[c][0];
                             }
-                        return (0 != (t = i - e.l) && o.push(((s = t), void (e.l += s))), o);
+                        return 0 != (t = i - e.l) && o.push(((s = t), void (e.l += s))), o;
                     }
                     function iD(e, t, r) {
                         for (var a, n, s, i = e.l + t, o = []; i != e.l; )
@@ -10192,13 +10174,13 @@
                         if (r.biff > 8 && (!e.XTI || !e.XTI[t])) return e.SheetNames[t];
                         if (!e.XTI) return 'SH33TJSERR6';
                         var a = e.XTI[t];
-                        if (r.biff < 8) return (t > 1e4 && (t -= 65536), t < 0 && (t = -t), 0 == t ? '' : e.XTI[t - 1]);
+                        if (r.biff < 8) return t > 1e4 && (t -= 65536), t < 0 && (t = -t), 0 == t ? '' : e.XTI[t - 1];
                         if (!a) return 'SH33TJSERR1';
                         var n = '';
                         if (r.biff > 8)
                             switch (e[a[0]][0]) {
                                 case 357:
-                                    return ((n = -1 == a[1] ? '#REF' : e.SheetNames[a[1]]), a[1] == a[2] ? n : n + ':' + e.SheetNames[a[2]]);
+                                    return (n = -1 == a[1] ? '#REF' : e.SheetNames[a[1]]), a[1] == a[2] ? n : n + ':' + e.SheetNames[a[2]];
                                 case 358:
                                     if (null != r.SID) return e.SheetNames[r.SID];
                                     return 'SH33TJSSAME' + e[a[0]][0];
@@ -10207,7 +10189,7 @@
                             }
                         switch (e[a[0]][0][0]) {
                             case 1025:
-                                return ((n = -1 == a[1] ? '#REF' : e.SheetNames[a[1]] || 'SH33TJSERR3'), a[1] == a[2] ? n : n + ':' + e.SheetNames[a[2]]);
+                                return (n = -1 == a[1] ? '#REF' : e.SheetNames[a[1]] || 'SH33TJSERR3'), a[1] == a[2] ? n : n + ':' + e.SheetNames[a[2]];
                             case 14849:
                                 return e[a[0]]
                                     .slice(1)
@@ -10217,7 +10199,7 @@
                                     .join(';;');
                             default:
                                 if (!e[a[0]][0][3]) return 'SH33TJSERR2';
-                                return ((n = -1 == a[1] ? '#REF' : e[a[0]][0][3][a[1]] || 'SH33TJSERR4'), a[1] == a[2] ? n : n + ':' + e[a[0]][0][3][a[2]]);
+                                return (n = -1 == a[1] ? '#REF' : e[a[0]][0][3][a[1]] || 'SH33TJSERR4'), a[1] == a[2] ? n : n + ':' + e[a[0]][0][3][a[2]];
                         }
                     }
                     function iM(e, t, r) {
@@ -10271,18 +10253,18 @@
                                             default:
                                                 if (((g = ''), n.WTF)) throw Error('Unexpected PtgAttrSpaceType ' + e[0][m][1][0]);
                                         }
-                                        ((i += g), (m = -1));
+                                        (i += g), (m = -1);
                                     }
                                     h.push(i + iP[w[0]] + s);
                                     break;
                                 case 'PtgIsect':
-                                    ((s = h.pop()), (i = h.pop()), h.push(i + ' ' + s));
+                                    (s = h.pop()), (i = h.pop()), h.push(i + ' ' + s);
                                     break;
                                 case 'PtgUnion':
-                                    ((s = h.pop()), (i = h.pop()), h.push(i + ',' + s));
+                                    (s = h.pop()), (i = h.pop()), h.push(i + ',' + s);
                                     break;
                                 case 'PtgRange':
-                                    ((s = h.pop()),
+                                    (s = h.pop()),
                                         (i = h.pop()),
                                         h.push(
                                             (function (e, t) {
@@ -10294,7 +10276,7 @@
                                                       ? e + ':' + t.slice(a + 1)
                                                       : (console.error('Cannot hydrate range', e, t), e + ':' + t);
                                             })(i, s),
-                                        ));
+                                        );
                                     break;
                                 case 'PtgAttrChoose':
                                 case 'PtgAttrGoto':
@@ -10314,13 +10296,13 @@
                                 case 'PtgMemNoMem':
                                     break;
                                 case 'PtgRef':
-                                    ((o = al(w[1][1], f, n)), h.push(ah(o, l)));
+                                    (o = al(w[1][1], f, n)), h.push(ah(o, l));
                                     break;
                                 case 'PtgRefN':
-                                    ((o = r ? al(w[1][1], r, n) : w[1][1]), h.push(ah(o, l)));
+                                    (o = r ? al(w[1][1], r, n) : w[1][1]), h.push(ah(o, l));
                                     break;
                                 case 'PtgRef3d':
-                                    ((u = w[1][1]), (o = al(w[1][2], f, n)), (p = iM(a, u, n)), h.push(p + '!' + ah(o, l)));
+                                    (u = w[1][1]), (o = al(w[1][2], f, n)), (p = iM(a, u, n)), h.push(p + '!' + ah(o, l));
                                     break;
                                 case 'PtgFunc':
                                 case 'PtgFuncVar':
@@ -10328,7 +10310,7 @@
                                         y = w[1][1];
                                     T || (T = 0);
                                     var E = 0 == (T &= 127) ? [] : h.slice(-T);
-                                    ((h.length -= T), 'User' === y && (y = E.shift()), h.push(y + '(' + E.join(',') + ')'));
+                                    (h.length -= T), 'User' === y && (y = E.shift()), h.push(y + '(' + E.join(',') + ')');
                                     break;
                                 case 'PtgBool':
                                     h.push(w[1] ? 'TRUE' : 'FALSE');
@@ -10344,13 +10326,13 @@
                                     h.push('"' + w[1].replace(/"/g, '""') + '"');
                                     break;
                                 case 'PtgAreaN':
-                                    ((c = af(w[1][1], r ? { s: r } : f, n)), h.push(au(c, n)));
+                                    (c = af(w[1][1], r ? { s: r } : f, n)), h.push(au(c, n));
                                     break;
                                 case 'PtgArea':
-                                    ((c = af(w[1][1], f, n)), h.push(au(c, n)));
+                                    (c = af(w[1][1], f, n)), h.push(au(c, n));
                                     break;
                                 case 'PtgArea3d':
-                                    ((u = w[1][1]), (c = w[1][2]), (p = iM(a, u, n)), h.push(p + '!' + au(c, n)));
+                                    (u = w[1][1]), (c = w[1][2]), (p = iM(a, u, n)), h.push(p + '!' + au(c, n));
                                     break;
                                 case 'PtgAttrSum':
                                     h.push('SUM(' + h.pop() + ')');
@@ -10359,12 +10341,12 @@
                                     d = w[1][2];
                                     var k = (a.names || [])[d - 1] || (a[0] || [])[d],
                                         x = k ? k.Name : 'SH33TJSNAME' + String(d);
-                                    (x && '_xlfn.' == x.slice(0, 6) && !n.xlfn && (x = x.slice(6)), h.push(x));
+                                    x && '_xlfn.' == x.slice(0, 6) && !n.xlfn && (x = x.slice(6)), h.push(x);
                                     break;
                                 case 'PtgNameX':
                                     var _,
                                         S = w[1][1];
-                                    if (((d = w[1][2]), n.biff <= 5)) (S < 0 && (S = -S), a[S] && (_ = a[S][d]));
+                                    if (((d = w[1][2]), n.biff <= 5)) S < 0 && (S = -S), a[S] && (_ = a[S][d]);
                                     else {
                                         var A = '';
                                         if (
@@ -10383,7 +10365,7 @@
                                         h.push(A);
                                         break;
                                     }
-                                    (_ || (_ = { Name: 'SH33TJSERRY' }), h.push(_.Name));
+                                    _ || (_ = { Name: 'SH33TJSERRY' }), h.push(_.Name);
                                     break;
                                 case 'PtgParen':
                                     var I = '(',
@@ -10425,7 +10407,7 @@
                                         var F = !1;
                                         for (s = 0; s != a.arrayf.length; ++s)
                                             if (((i = a.arrayf[s]), !(o.c < i[0].s.c) && !(o.c > i[0].e.c)) && !(o.r < i[0].s.r) && !(o.r > i[0].e.r)) {
-                                                (h.push(iU(i[1], f, R, a, n)), (F = !0));
+                                                h.push(iU(i[1], f, R, a, n)), (F = !0);
                                                 break;
                                             }
                                         F || h.push(w[1]);
@@ -10489,7 +10471,7 @@
                                     default:
                                         if (((g = ''), n.WTF)) throw Error('Unexpected PtgAttrSpaceType ' + w[1][0]);
                                 }
-                                (h.push((P ? g : '') + h.pop() + (P ? '' : g)), (m = -1));
+                                h.push((P ? g : '') + h.pop() + (P ? '' : g)), (m = -1);
                             }
                         }
                         if (h.length > 1 && n.WTF) throw Error('bad formula stack');
@@ -10503,13 +10485,13 @@
                                 if (65535 !== r4(e, e.l + 6)) return [aV(e), 'n'];
                                 switch (e[e.l]) {
                                     case 0:
-                                        return ((e.l += 8), ['String', 's']);
+                                        return (e.l += 8), ['String', 's'];
                                     case 1:
-                                        return ((t = 1 === e[e.l + 2]), (e.l += 8), [t, 'b']);
+                                        return (t = 1 === e[e.l + 2]), (e.l += 8), [t, 'b'];
                                     case 2:
-                                        return ((t = e[e.l + 2]), (e.l += 8), [t, 'e']);
+                                        return (t = e[e.l + 2]), (e.l += 8), [t, 'e'];
                                     case 3:
-                                        return ((e.l += 8), ['', 's']);
+                                        return (e.l += 8), ['', 's'];
                                 }
                                 return [];
                             })(e, 8),
@@ -10523,7 +10505,7 @@
                                 o = e.read_shift(i);
                             if (65535 == o) return [[], ((a = t - 2), void (e.l += a))];
                             var c = iD(e, o, r);
-                            return (t !== o + i && (n = iF(e, t - o - i, c, r)), (e.l = s), [c, n]);
+                            return t !== o + i && (n = iF(e, t - o - i, c, r)), (e.l = s), [c, n];
                         })(e, a - e.l, r);
                         return { cell: n, val: s[0], formula: o, shared: (i >> 3) & 1, tt: s[1] };
                     }
@@ -10537,17 +10519,17 @@
                     function iz(e) {
                         if ((0 | e) == e && e < 65536 && e >= 0) {
                             var t = as(11);
-                            return (t.write_shift(4, 3), t.write_shift(1, 30), t.write_shift(2, e), t.write_shift(4, 0), t);
+                            return t.write_shift(4, 3), t.write_shift(1, 30), t.write_shift(2, e), t.write_shift(4, 0), t;
                         }
                         var r = as(17);
-                        return (r.write_shift(4, 11), r.write_shift(1, 31), r.write_shift(8, e), r.write_shift(4, 0), r);
+                        return r.write_shift(4, 11), r.write_shift(1, 31), r.write_shift(8, e), r.write_shift(4, 0), r;
                     }
                     var iH = function (e, t) {
                             var r, a, n, s, i, o, c, l, f, h, u, d, p, m, g, v, b, w, T, y, E, k, x, _, S, A, C, I, O, R, N, F, D;
                             if ('number' == typeof e) return iz(e);
-                            if ('boolean' == typeof e) return ((r = as(10)).write_shift(4, 2), r.write_shift(1, 29), r.write_shift(1, +!!e), r.write_shift(4, 0), r);
+                            if ('boolean' == typeof e) return (r = as(10)).write_shift(4, 2), r.write_shift(1, 29), r.write_shift(1, +!!e), r.write_shift(4, 0), r;
                             if (/^#(DIV\/0!|GETTING_DATA|N\/A|NAME\?|NULL!|NUM!|REF!|VALUE!)$/.test(e))
-                                return ((a = +a0[e]), (n = as(10)).write_shift(4, 2), n.write_shift(1, 28), n.write_shift(1, a), n.write_shift(4, 0), n);
+                                return (a = +a0[e]), (n = as(10)).write_shift(4, 2), n.write_shift(1, 28), n.write_shift(1, a), n.write_shift(4, 0), n;
                             if (
                                 e.match(
                                     /^\$?(?:[A-W][A-Z]{2}|X[A-E][A-Z]|XF[A-D]|[A-Z]{1,2})\$?(?:10[0-3]\d{4}|104[0-7]\d{3}|1048[0-4]\d{2}|10485[0-6]\d|104857[0-6]|[1-9]\d{0,5})$/,
@@ -11880,9 +11862,9 @@
                             n = e.length;
                         if (r) {
                             if (iJ ? r.has(t) : Object.prototype.hasOwnProperty.call(r, t)) {
-                                for (var s = iJ ? r.get(t) : r[t]; a < s.length; ++a) if (e[s[a]].t === t) return (e.Count++, s[a]);
+                                for (var s = iJ ? r.get(t) : r[t]; a < s.length; ++a) if (e[s[a]].t === t) return e.Count++, s[a];
                             }
-                        } else for (; a < n; ++a) if (e[a].t === t) return (e.Count++, a);
+                        } else for (; a < n; ++a) if (e[a].t === t) return e.Count++, a;
                         return (
                             (e[n] = { t: t }),
                             e.Count++,
@@ -11906,13 +11888,13 @@
                     function i0(e, t) {
                         if (e) {
                             var r = [0.7, 0.7, 0.75, 0.75, 0.3, 0.3];
-                            ('xlml' == t && (r = [1, 1, 1, 1, 0.5, 0.5]),
+                            'xlml' == t && (r = [1, 1, 1, 1, 0.5, 0.5]),
                                 null == e.left && (e.left = r[0]),
                                 null == e.right && (e.right = r[1]),
                                 null == e.top && (e.top = r[2]),
                                 null == e.bottom && (e.bottom = r[3]),
                                 null == e.header && (e.header = r[4]),
-                                null == e.footer && (e.footer = r[5]));
+                                null == e.footer && (e.footer = r[5]);
                         }
                     }
                     function i1(e, t, r) {
@@ -11922,12 +11904,12 @@
                         if (null == a && r.ssf) {
                             for (; n < 392; ++n)
                                 if (null == r.ssf[n]) {
-                                    (te(t.z, n), (r.ssf[n] = t.z), (r.revssf[t.z] = a = n));
+                                    te(t.z, n), (r.ssf[n] = t.z), (r.revssf[t.z] = a = n);
                                     break;
                                 }
                         }
                         for (n = 0; n != s; ++n) if (e[n].numFmtId === a) return n;
-                        return ((e[s] = { numFmtId: a, fontId: 0, fillId: 0, borderId: 0, xfId: 0, applyNumberFormat: 1 }), s);
+                        return (e[s] = { numFmtId: a, fontId: 0, fillId: 0, borderId: 0, xfId: 0, applyNumberFormat: 1 }), s;
                     }
                     function i2(e, t, r, a, n, s, i) {
                         try {
@@ -11954,7 +11936,7 @@
                                 }
                             if (a.cellStyles && null != r)
                                 try {
-                                    ((e.s = s.Fills[r]),
+                                    (e.s = s.Fills[r]),
                                         e.s.fgColor &&
                                             e.s.fgColor.theme &&
                                             !e.s.fgColor.rgb &&
@@ -11963,7 +11945,7 @@
                                         e.s.bgColor &&
                                             e.s.bgColor.theme &&
                                             ((e.s.bgColor.rgb = sX(n.themeElements.clrScheme[e.s.bgColor.theme].rgb, e.s.bgColor.tint || 0)),
-                                            a.WTF && (e.s.bgColor.raw_rgb = n.themeElements.clrScheme[e.s.bgColor.theme].rgb)));
+                                            a.WTF && (e.s.bgColor.raw_rgb = n.themeElements.clrScheme[e.s.bgColor.theme].rgb));
                                 } catch (e) {
                                     if (a.WTF && s.Fills) throw e;
                                 }
@@ -11978,7 +11960,7 @@
                         i9 = /<(?:\w+:)?sheetPr\b[^<>]*?\/>/;
                     function oe(e, t, r, a) {
                         var n = t4(e);
-                        (r.Sheets[a] || (r.Sheets[a] = {}), n.codeName && (r.Sheets[a].CodeName = t8(rf(n.codeName))));
+                        r.Sheets[a] || (r.Sheets[a] = {}), n.codeName && (r.Sheets[a].CodeName = t8(rf(n.codeName)));
                     }
                     var ot = ['objects', 'scenarios', 'selectLockedCells', 'selectUnlockedCells'],
                         or = [
@@ -12051,12 +12033,12 @@
                                                             r.sheetRows && r.sheetRows < T)
                                                         )
                                                             continue;
-                                                        ((I = {}),
+                                                        (I = {}),
                                                             (O = !1),
                                                             c.ht && ((O = !0), (I.hpt = parseFloat(c.ht)), (I.hpx = s2(I.hpt))),
                                                             c.hidden && rs(c.hidden) && ((O = !0), (I.hidden = !0)),
                                                             null != c.outlineLevel && ((O = !0), (I.level = +c.outlineLevel)),
-                                                            O && (C[T - 1] = I));
+                                                            O && (C[T - 1] = I);
                                                     }
                                                     break;
                                                 case '<':
@@ -12064,7 +12046,7 @@
                                             }
                                         if (z >= u) break;
                                         if (((T = null != (c = t4(d.slice(z, u), !0)).r ? parseInt(c.r, 10) : T + 1), (y = -1), !r.sheetRows || !(r.sheetRows < T))) {
-                                            (!r.nodim && (a.s.r > T - 1 && (a.s.r = T - 1), a.e.r < T - 1 && (a.e.r = T - 1)),
+                                            !r.nodim && (a.s.r > T - 1 && (a.s.r = T - 1), a.e.r < T - 1 && (a.e.r = T - 1)),
                                                 r &&
                                                     r.cellStyles &&
                                                     ((I = {}),
@@ -12073,7 +12055,7 @@
                                                     c.hidden && rs(c.hidden) && ((O = !0), (I.hidden = !0)),
                                                     null != c.outlineLevel && ((O = !0), (I.level = +c.outlineLevel)),
                                                     O && (C[T - 1] = I)),
-                                                (p = d.slice(u).split(P)));
+                                                (p = d.slice(u).split(P));
                                             for (var H = 0; H != p.length && '<' == p[H].trim().charAt(0); ++H);
                                             for (u = 0, p = p.slice(H); u != p.length; ++u)
                                                 if (0 !== (d = p[u].trim()).length) {
@@ -12101,12 +12083,12 @@
                                                             if ('' == m[1])
                                                                 m[0].indexOf('t="shared"') > -1 && S[(f = t4(m[0])).si] && (o.f = ig(S[f.si][1], S[f.si][2], c.r));
                                                             else if (((o.f = t8(rf(m[1]), !0)), r.xlfn || (o.f = iv(o.f)), m[0].indexOf('t="array"') > -1))
-                                                                ((o.F = (w.match(U) || [])[1]), o.F.indexOf(':') > -1 && _.push([ak(o.F), o.F]));
+                                                                (o.F = (w.match(U) || [])[1]), o.F.indexOf(':') > -1 && _.push([ak(o.F), o.F]);
                                                             else if (m[0].indexOf('t="shared"') > -1) {
                                                                 f = t4(m[0]);
                                                                 var V,
                                                                     G = t8(rf(m[1]));
-                                                                (r.xlfn || (G = iv(G)), (S[parseInt(f.si, 10)] = [f, G, c.r]));
+                                                                r.xlfn || (G = iv(G)), (S[parseInt(f.si, 10)] = [f, G, c.r]);
                                                             }
                                                         } else (m = w.match(/<f[^<>]*\/>/)) && S[(f = t4(m[0])).si] && (o.f = ig(S[f.si][1], S[f.si][2], c.r));
                                                         var j = av(c.r);
@@ -12114,7 +12096,7 @@
                                                             j.r >= _[v][0].s.r && j.r <= _[v][0].e.r && j.c >= _[v][0].s.c && j.c <= _[v][0].e.c && (o.F = _[v][1]);
                                                     }
                                                     if (null == c.t && void 0 === o.v)
-                                                        if (o.f || o.F) ((o.v = 0), (o.t = 'n'));
+                                                        if (o.f || o.F) (o.v = 0), (o.t = 'n');
                                                         else {
                                                             if (!R) continue;
                                                             o.t = 'z';
@@ -12131,15 +12113,15 @@
                                                             if (void 0 === o.v) {
                                                                 if (!R) continue;
                                                                 o.t = 'z';
-                                                            } else ((l = iY[parseInt(o.v, 10)]), (o.v = l.t), (o.r = l.r), r.cellHTML && (o.h = l.h));
+                                                            } else (l = iY[parseInt(o.v, 10)]), (o.v = l.t), (o.r = l.r), r.cellHTML && (o.h = l.h);
                                                             break;
                                                         case 'str':
-                                                            ((o.t = 's'), (o.v = null != o.v ? t8(rf(o.v), !0) : ''), r.cellHTML && (o.h = ra(o.v)));
+                                                            (o.t = 's'), (o.v = null != o.v ? t8(rf(o.v), !0) : ''), r.cellHTML && (o.h = ra(o.v));
                                                             break;
                                                         case 'inlineStr':
-                                                            ((m = tL(w, 'is')),
+                                                            (m = tL(w, 'is')),
                                                                 (o.t = 's'),
-                                                                null != m && (l = sN(m[1])) ? ((o.v = l.t), r.cellHTML && (o.h = l.h)) : (o.v = ''));
+                                                                null != m && (l = sN(m[1])) ? ((o.v = l.t), r.cellHTML && (o.h = l.h)) : (o.v = '');
                                                             break;
                                                         case 'b':
                                                             o.v = rs(o.v);
@@ -12148,7 +12130,7 @@
                                                             r.cellDates ? (o.v = tv(o.v, N)) : ((o.v = tu(tv(o.v, N), N)), (o.t = 'n'));
                                                             break;
                                                         case 'e':
-                                                            ((r && !1 === r.cellText) || (o.w = o.v), (o.v = a0[o.v]));
+                                                            (r && !1 === r.cellText) || (o.w = o.v), (o.v = a0[o.v]);
                                                     }
                                                     if (
                                                         ((E = k = 0),
@@ -12168,8 +12150,8 @@
                                                         var X = (r.xlmeta.Cell || [])[c.cm - 1];
                                                         X && 'XLDAPR' == X.type && (o.D = !0);
                                                     }
-                                                    (r.nodim && ((V = av(c.r)), a.s.r > V.r && (a.s.r = V.r), a.e.r < V.r && (a.e.r = V.r)),
-                                                        A ? ((V = av(c.r)), t['!data'][V.r] || (t['!data'][V.r] = []), (t['!data'][V.r][V.c] = o)) : (t[c.r] = o));
+                                                    r.nodim && ((V = av(c.r)), a.s.r > V.r && (a.s.r = V.r), a.e.r < V.r && (a.e.r = V.r)),
+                                                        A ? ((V = av(c.r)), t['!data'][V.r] || (t['!data'][V.r] = []), (t['!data'][V.r][V.c] = o)) : (t[c.r] = o);
                                                 }
                                         }
                                     }
@@ -12177,10 +12159,10 @@
                                 C.length > 0 && (t['!rows'] = C);
                             });
                     function os(e, t, r) {
-                        return (null == r && (r = as(9)), aD(t, r), r.write_shift(1, e.v), r);
+                        return null == r && (r = as(9)), aD(t, r), r.write_shift(1, e.v), r;
                     }
                     function oi(e, t, r) {
-                        return (null == r && (r = as(8)), aL(t, r), r.write_shift(1, e.v), r.write_shift(2, 0), r.write_shift(1, 0), r);
+                        return null == r && (r = as(8)), aL(t, r), r.write_shift(1, e.v), r.write_shift(2, 0), r.write_shift(1, 0), r;
                     }
                     function oo(e) {
                         return [aP(e), aV(e), 'n'];
@@ -12260,7 +12242,7 @@
                         }
                     }
                     function om(e) {
-                        (op(e.WBProps, ol), op(e.CalcPr, ou), od(e.WBView, of), od(e.Sheets, oh), (iZ.date1904 = rs(e.WBProps.date1904)));
+                        op(e.WBProps, ol), op(e.CalcPr, ou), od(e.WBView, of), od(e.Sheets, oh), (iZ.date1904 = rs(e.WBProps.date1904));
                     }
                     var og = ':][*?/\\'.split('');
                     function ov(e, t) {
@@ -12284,7 +12266,7 @@
                         var t,
                             r,
                             a = (e.Workbook && e.Workbook.Sheets) || [];
-                        ((t = e.SheetNames),
+                        (t = e.SheetNames),
                             (r = !!e.vbaraw),
                             t.forEach(function (e, n) {
                                 ov(e);
@@ -12293,7 +12275,7 @@
                                     var i = (a && a[n] && a[n].CodeName) || e;
                                     if (95 == i.charCodeAt(0) && i.length > 22) throw Error('Bad Code Name: Worksheet' + i);
                                 }
-                            }));
+                            });
                         for (var n = 0; n < e.SheetNames.length; ++n)
                             !(function (e, t, r) {
                                 if (e && e['!ref']) {
@@ -12305,11 +12287,11 @@
                             var a,
                                 n = e.Sheets[t];
                             if (n && n['!autofilter']) {
-                                (e.Workbook || (e.Workbook = {}),
+                                e.Workbook || (e.Workbook = {}),
                                     e.Workbook.Names || (e.Workbook.Names = []),
                                     e.Workbook.Names.forEach(function (e) {
                                         '_xlnm._FilterDatabase' == e.Name && e.Sheet == r && (a = e);
-                                    }));
+                                    });
                                 var s = aE(t) + '!' + ay(n['!autofilter'].ref);
                                 a ? (a.Ref = s) : e.Workbook.Names.push({ Name: '_xlnm._FilterDatabase', Sheet: r, Ref: s });
                             }
@@ -12318,7 +12300,7 @@
                     var ow = /<\w+:workbook/;
                     function oT(e, t) {
                         var r = {};
-                        return (e.read_shift(4), (r.ArchID = e.read_shift(4)), (e.l += t - 8), r);
+                        return e.read_shift(4), (r.ArchID = e.read_shift(4)), (e.l += t - 8), r;
                     }
                     var oy = /\b((?:\w+:)?[\w]+)=((?:")([^"]*)(?:")|(?:')([^']*)(?:'))/g,
                         oE = /\b((?:\w+:)?[\w]+)=((?:")(?:[^"]*)(?:")|(?:')(?:[^']*)(?:'))/;
@@ -12349,7 +12331,7 @@
                             c = !1;
                         if ((1023 & (o = o.replace(/".*?"/g, '')).indexOf('>')) > Math.min(1023 & o.indexOf(','), 1023 & o.indexOf(';'))) {
                             var l = tw(s);
-                            return ((l.type = 'string'), sS.to_workbook(i, l));
+                            return (l.type = 'string'), sS.to_workbook(i, l);
                         }
                         if (
                             (-1 == o.indexOf('<?xml') &&
@@ -12364,7 +12346,7 @@
                             if (!u || 0 == u.length) throw Error('Invalid HTML: could not find <table>');
                             if (1 == u.length) {
                                 var d = aS(oY(u[0], h), h);
-                                return ((d.bookType = 'html'), d);
+                                return (d.bookType = 'html'), d;
                             }
                             var p = c9();
                             return (
@@ -12429,7 +12411,7 @@
                             J = 0,
                             q = { Sheets: [], WBProps: { date1904: !1 } },
                             Q = {};
-                        ((rE.lastIndex = 0), (i = tF(i, '\x3c!--', '--\x3e')));
+                        (rE.lastIndex = 0), (i = tF(i, '\x3c!--', '--\x3e'));
                         for (var ee = ''; (m = rE.exec(i)); )
                             switch ((m[3] = (ee = m[3]).toLowerCase())) {
                                 case 'data':
@@ -12455,21 +12437,21 @@
                                               }
                                               switch (r.Type) {
                                                   case 'Boolean':
-                                                      ((a.t = 'b'), (a.v = rs(e)));
+                                                      (a.t = 'b'), (a.v = rs(e));
                                                       break;
                                                   case 'String':
-                                                      ((a.t = 's'), (a.r = rn(t8(e))), (a.v = e.indexOf('<') > -1 ? t8(t || e).replace(/<[^<>]*>/g, '') : a.r));
+                                                      (a.t = 's'), (a.r = rn(t8(e))), (a.v = e.indexOf('<') > -1 ? t8(t || e).replace(/<[^<>]*>/g, '') : a.r);
                                                       break;
                                                   case 'DateTime':
-                                                      ('Z' != e.slice(-1) && (e += 'Z'),
+                                                      'Z' != e.slice(-1) && (e += 'Z'),
                                                           (a.v = tu(tv(e, f), f)),
                                                           a.v != a.v && (a.v = t8(e)),
-                                                          (h && 'General' != h) || (h = 'yyyy-mm-dd'));
+                                                          (h && 'General' != h) || (h = 'yyyy-mm-dd');
                                                   case 'Number':
-                                                      (void 0 === a.v && (a.v = +e), a.t || (a.t = 'n'));
+                                                      void 0 === a.v && (a.v = +e), a.t || (a.t = 'n');
                                                       break;
                                                   case 'Error':
-                                                      ((a.t = 'e'), (a.v = a0[e]), !1 !== l.cellText && (a.w = e));
+                                                      (a.t = 'e'), (a.v = a0[e]), !1 !== l.cellText && (a.w = e);
                                                       break;
                                                   default:
                                                       '' == e && '' == t ? (a.t = 'z') : ((a.t = 's'), (a.v = rn(t || e)));
@@ -12484,10 +12466,10 @@
                                                                       'n' === e.t ? ((0 | e.v) === e.v ? (e.w = e.v.toString(10)) : (e.w = eW(e.v))) : (e.w = ez(e.v));
                                                                   else {
                                                                       var n, s, i;
-                                                                      ((n = t || 'General'),
+                                                                      (n = t || 'General'),
                                                                           (s = e.v),
                                                                           (i = Y[n] || t8(n)),
-                                                                          (e.w = 'General' === i ? ez(s) : e2(i, s, { date1904: !!a })));
+                                                                          (e.w = 'General' === i ? ez(s) : e2(i, s, { date1904: !!a }));
                                                                   }
                                                               } catch (e) {
                                                                   if (r.WTF) throw e;
@@ -12507,21 +12489,21 @@
                                               )
                                                   if (a.Formula) {
                                                       var v = t8(a.Formula);
-                                                      (61 == v.charCodeAt(0) && (v = v.slice(1)),
+                                                      61 == v.charCodeAt(0) && (v = v.slice(1)),
                                                           (a.f = iu(v, n)),
                                                           delete a.Formula,
                                                           'RC' == a.ArrayRange
                                                               ? (a.F = iu('RC:RC', n))
-                                                              : a.ArrayRange && ((a.F = iu(a.ArrayRange, n)), c.push([ak(a.F), a.F])));
+                                                              : a.ArrayRange && ((a.F = iu(a.ArrayRange, n)), c.push([ak(a.F), a.F]));
                                                   } else
                                                       for (m = 0; m < c.length; ++m)
                                                           n.r >= c[m][0].s.r && n.r <= c[m][0].e.r && n.c >= c[m][0].s.c && n.c <= c[m][0].e.c && (a.F = c[m][1]);
-                                              (l.cellStyles &&
+                                              l.cellStyles &&
                                                   (p.forEach(function (e) {
                                                       !d.patternType && e.patternType && (d.patternType = e.patternType);
                                                   }),
                                                   (a.s = d)),
-                                                  void 0 !== a.StyleID && (a.ixfe = a.StyleID));
+                                                  void 0 !== a.StyleID && (a.ixfe = a.StyleID);
                                           })(i.slice(S, m.index), N, _, 'comment' == v[v.length - 1][0] ? W : k, { c: A, r: C }, O, z[A], x, V, s, q.WBProps.date1904)
                                         : ((N = ''), (_ = ok(m[0])), (S = m.index + m[0].length));
                                     break;
@@ -12554,7 +12536,7 @@
                                             } else ++A;
                                         else k.MergeAcross ? (A = Z + 1) : ++A;
                                     else
-                                        ((k = (function (e) {
+                                        (k = (function (e) {
                                             var t = e.split(/\s+/),
                                                 r = {};
                                             if (1 === t.length) return r;
@@ -12575,7 +12557,7 @@
                                             A < I.s.c && (I.s.c = A),
                                             A > I.e.c && (I.e.c = A),
                                             '/>' === m[0].slice(-2) && ++A,
-                                            (B = []));
+                                            (B = []);
                                     break;
                                 case 'row':
                                     '/' === m[1] || '/>' === m[0].slice(-2)
@@ -12592,7 +12574,7 @@
                                 case 'worksheet':
                                     if ('/' === m[1]) {
                                         if ((g = v.pop())[0] !== m[3]) throw Error('Bad state: ' + g.join('|'));
-                                        (w.push(y),
+                                        w.push(y),
                                             I.s.r <= I.e.r &&
                                                 I.s.c <= I.e.c &&
                                                 ((T['!ref'] = aT(I)),
@@ -12600,9 +12582,9 @@
                                             D.length && (T['!merges'] = D),
                                             z.length > 0 && (T['!cols'] = z),
                                             j.length > 0 && (T['!rows'] = j),
-                                            (b[y] = T));
+                                            (b[y] = T);
                                     } else
-                                        ((I = { s: { r: 2e6, c: 2e6 }, e: { r: 0, c: 0 } }),
+                                        (I = { s: { r: 2e6, c: 2e6 }, e: { r: 0, c: 0 } }),
                                             (C = A = 0),
                                             v.push([m[3], !1]),
                                             (y = t8((g = ok(m[0])).Name)),
@@ -12612,7 +12594,7 @@
                                             (V = []),
                                             (j = []),
                                             (Q = { name: y, Hidden: 0 }),
-                                            q.Sheets.push(Q));
+                                            q.Sheets.push(Q);
                                     break;
                                 case 'table':
                                     if ('/' === m[1]) {
@@ -12630,7 +12612,7 @@
                                     } else R = ok(m[0]);
                                     break;
                                 case 'numberformat':
-                                    ((R.nf = t8(ok(m[0]).Format || 'General')), Y[R.nf] && (R.nf = Y[R.nf]));
+                                    (R.nf = t8(ok(m[0]).Format || 'General')), Y[R.nf] && (R.nf = Y[R.nf]);
                                     for (var ei = 0; 392 != ei && eD[ei] != R.nf; ++ei);
                                     if (392 == ei) {
                                         for (ei = 57; 392 != ei; ++ei)
@@ -12643,10 +12625,10 @@
                                 case 'column':
                                     if ('table' !== v[v.length - 1][0] || '/' === m[1]) break;
                                     if (((E = ok(m[0])).Hidden && ((E.hidden = !0), delete E.Hidden), E.Width && (E.wpx = parseInt(E.Width, 10)), !H && E.wpx > 10)) {
-                                        ((H = !0), (sK = 6));
+                                        (H = !0), (sK = 6);
                                         for (var ec = 0; ec < z.length; ++ec) z[ec] && s0(z[ec]);
                                     }
-                                    (H && s0(E), (z[E.Index - 1 || z.length] = E));
+                                    H && s0(E), (z[E.Index - 1 || z.length] = E);
                                     for (var el = 0; el < +E.Span; ++el) z[z.length] = tw(E);
                                     break;
                                 case 'namedrange':
@@ -12658,7 +12640,7 @@
                                             Name: ((ef = eh.Name), a1.indexOf('_xlnm.' + ef) > -1 ? '_xlnm.' + ef : ef),
                                             Ref: iu(eh.RefersTo.slice(1), { r: 0, c: 0 }),
                                         };
-                                    (q.Sheets.length > 0 && (eu.Sheet = q.Sheets.length - 1), q.Names.push(eu));
+                                    q.Sheets.length > 0 && (eu.Sheet = q.Sheets.length - 1), q.Names.push(eu);
                                     break;
                                 case 'namedcell':
                                 case 'b':
@@ -12719,15 +12701,15 @@
                                 case 'comment':
                                     if ('/' === m[1]) {
                                         if ((g = v.pop())[0] !== m[3]) throw Error('Bad state: ' + g.join('|'));
-                                        (((n = W).t = n.v || ''), (n.t = n.t.replace(/\r\n/g, '\n').replace(/\r/g, '\n')), (n.v = n.w = n.ixfe = void 0), B.push(W));
-                                    } else (v.push([m[3], !1]), rs((g = ok(m[0])).ShowAlways || '0') || (B.hidden = !0), (W = { a: g.Author }));
+                                        ((n = W).t = n.v || ''), (n.t = n.t.replace(/\r\n/g, '\n').replace(/\r/g, '\n')), (n.v = n.w = n.ixfe = void 0), B.push(W);
+                                    } else v.push([m[3], !1]), rs((g = ok(m[0])).ShowAlways || '0') || (B.hidden = !0), (W = { a: g.Author });
                                     break;
                                 case 'autofilter':
                                     if ('/' === m[1]) {
                                         if ((g = v.pop())[0] !== m[3]) throw Error('Bad state: ' + g.join('|'));
                                     } else if ('/' !== m[0].charAt(m[0].length - 2)) {
                                         var ed = ok(m[0]);
-                                        ((T['!autofilter'] = { ref: iu(ed.Range).replace(/\$/g, '') }), v.push([m[3], !0]));
+                                        (T['!autofilter'] = { ref: iu(ed.Range).replace(/\$/g, '') }), v.push([m[3], !0]);
                                     }
                                     break;
                                 case 'datavalidation':
@@ -12757,7 +12739,7 @@
                                     if ((0 == v.length && 'document' == m[3]) || (0 == v.length && 'uof' == m[3]))
                                         return (function (e, t) {
                                             var r = o5(e, t);
-                                            return ((r.bookType = 'fods'), r);
+                                            return (r.bookType = 'fods'), r;
                                         })(i, s);
                                     var ep = !0;
                                     switch (v[v.length - 1][0]) {
@@ -12876,23 +12858,23 @@
                                                     else M = m.index + m[0].length;
                                                     break;
                                                 case 'header':
-                                                    (T['!margins'] || i0((T['!margins'] = {}), 'xlml'),
-                                                        isNaN(+t4(m[0]).Margin) || (T['!margins'].header = +t4(m[0]).Margin));
+                                                    T['!margins'] || i0((T['!margins'] = {}), 'xlml'),
+                                                        isNaN(+t4(m[0]).Margin) || (T['!margins'].header = +t4(m[0]).Margin);
                                                     break;
                                                 case 'footer':
-                                                    (T['!margins'] || i0((T['!margins'] = {}), 'xlml'),
-                                                        isNaN(+t4(m[0]).Margin) || (T['!margins'].footer = +t4(m[0]).Margin));
+                                                    T['!margins'] || i0((T['!margins'] = {}), 'xlml'),
+                                                        isNaN(+t4(m[0]).Margin) || (T['!margins'].footer = +t4(m[0]).Margin);
                                                     break;
                                                 case 'pagemargins':
                                                     var em = t4(m[0]);
-                                                    (T['!margins'] || i0((T['!margins'] = {}), 'xlml'),
+                                                    T['!margins'] || i0((T['!margins'] = {}), 'xlml'),
                                                         isNaN(+em.Top) || (T['!margins'].top = +em.Top),
                                                         isNaN(+em.Left) || (T['!margins'].left = +em.Left),
                                                         isNaN(+em.Right) || (T['!margins'].right = +em.Right),
-                                                        isNaN(+em.Bottom) || (T['!margins'].bottom = +em.Bottom));
+                                                        isNaN(+em.Bottom) || (T['!margins'].bottom = +em.Bottom);
                                                     break;
                                                 case 'displayrighttoleft':
-                                                    (q.Views || (q.Views = []), q.Views[0] || (q.Views[0] = {}), (q.Views[0].RTL = !0));
+                                                    q.Views || (q.Views = []), q.Views[0] || (q.Views[0] = {}), (q.Views[0].RTL = !0);
                                                     break;
                                                 case 'freezepanes':
                                                 case 'frozennosplit':
@@ -12961,10 +12943,10 @@
                                                 case 'protectcontents':
                                                     break;
                                                 case 'nosummaryrowsbelowdetail':
-                                                    (T['!outline'] || (T['!outline'] = {}), (T['!outline'].above = !0));
+                                                    T['!outline'] || (T['!outline'] = {}), (T['!outline'].above = !0);
                                                     break;
                                                 case 'nosummarycolumnsrightdetail':
-                                                    (T['!outline'] || (T['!outline'] = {}), (T['!outline'].left = !0));
+                                                    T['!outline'] || (T['!outline'] = {}), (T['!outline'].left = !0);
                                                     break;
                                                 default:
                                                     ep = !1;
@@ -13265,13 +13247,13 @@
                                         .forEach(function (e) {
                                             if (null != r[e[1]]) {
                                                 var n = t && t.Props && null != t.Props[e[1]] ? t.Props[e[1]] : r[e[1]];
-                                                ('date' === e[2] && (n = new Date(n).toISOString().replace(/\.\d*Z/, 'Z')),
+                                                'date' === e[2] && (n = new Date(n).toISOString().replace(/\.\d*Z/, 'Z')),
                                                     'number' == typeof n
                                                         ? (n = String(n))
                                                         : !0 === n || !1 === n
                                                           ? (n = n ? '1' : '0')
                                                           : n instanceof Date && (n = new Date(n).toISOString().replace(/\.\d*Z/, '')),
-                                                    a.push(rv(nO[e[1]] || e[1], n)));
+                                                    a.push(rv(nO[e[1]] || e[1], n));
                                             }
                                         }),
                                     rw('DocumentProperties', a.join(''), { xmlns: rI })),
@@ -13291,12 +13273,12 @@
                                                 for (t = 0; t < i.length; ++t) if (e == i[t]) return;
                                                 var r = n[e],
                                                     a = 'string';
-                                                ('number' == typeof r
+                                                'number' == typeof r
                                                     ? ((a = 'float'), (r = String(r)))
                                                     : !0 === r || !1 === r
                                                       ? ((a = 'boolean'), (r = r ? '1' : '0'))
                                                       : (r = String(r)),
-                                                    c.push(rw(rt(e), r, { 'dt:dt': a })));
+                                                    c.push(rw(rt(e), r, { 'dt:dt': a }));
                                             }
                                         }),
                                     s &&
@@ -13304,14 +13286,14 @@
                                             if (Object.prototype.hasOwnProperty.call(s, e) && !(n && Object.prototype.hasOwnProperty.call(n, e))) {
                                                 var t = s[e],
                                                     r = 'string';
-                                                ('number' == typeof t
+                                                'number' == typeof t
                                                     ? ((r = 'float'), (t = String(t)))
                                                     : !0 === t || !1 === t
                                                       ? ((r = 'boolean'), (t = t ? '1' : '0'))
                                                       : t instanceof Date
                                                         ? ((r = 'dateTime.tz'), (t = t.toISOString()))
                                                         : (t = String(t)),
-                                                    c.push(rw(rt(e), t, { 'dt:dt': r })));
+                                                    c.push(rw(rt(e), t, { 'dt:dt': r }));
                                             }
                                         }),
                                     '<' + o + ' xmlns="' + rI + '">' + c.join('') + '</' + o + '>'),
@@ -13329,7 +13311,7 @@
                         return (
                             t.cellXfs.forEach(function (e, t) {
                                 var a = [];
-                                (a.push(rw('NumberFormat', null, { 'ss:Format': re(eD[e.numFmtId]) })), r.push(rw('Style', a.join(''), { 'ss:ID': 's' + (21 + t) })));
+                                a.push(rw('NumberFormat', null, { 'ss:Format': re(eD[e.numFmtId]) })), r.push(rw('Style', a.join(''), { 'ss:ID': 's' + (21 + t) }));
                             }),
                             rw('Styles', r.join(''))
                         );
@@ -13431,26 +13413,26 @@
                                 isFinite(e.v) ? ((u = 'Number'), (d = String(e.v))) : ((u = 'Error'), (d = aQ[isNaN(e.v) ? 36 : 7]));
                                 break;
                             case 'b':
-                                ((u = 'Boolean'), (d = e.v ? '1' : '0'));
+                                (u = 'Boolean'), (d = e.v ? '1' : '0');
                                 break;
                             case 'e':
-                                ((u = 'Error'), (d = aQ[e.v]));
+                                (u = 'Error'), (d = aQ[e.v]);
                                 break;
                             case 'd':
-                                ((u = 'DateTime'), (d = new Date(e.v).toISOString()), null == e.z && (e.z = e.z || eD[14]));
+                                (u = 'DateTime'), (d = new Date(e.v).toISOString()), null == e.z && (e.z = e.z || eD[14]);
                                 break;
                             case 's':
-                                ((u = 'String'),
+                                (u = 'String'),
                                     (d = ((e.v || '') + '')
                                         .replace(t7, function (e) {
                                             return t6[e];
                                         })
                                         .replace(rr, function (e) {
                                             return '&#x' + e.charCodeAt(0).toString(16).toUpperCase() + ';';
-                                        })));
+                                        }));
                         }
                         var p = i1(a.cellXfs, e, a);
-                        ((c['ss:StyleID'] = 's' + (21 + p)), (c['ss:Index'] = i.c + 1));
+                        (c['ss:StyleID'] = 's' + (21 + p)), (c['ss:Index'] = i.c + 1);
                         var m = null != e.v ? d : '',
                             g = 'z' == e.t ? '' : '<Data ss:Type="' + u + '">' + m + '</Data>';
                         return (
@@ -13459,7 +13441,7 @@
                                     .map(function (e) {
                                         var t = rw('ss:Data', (e.t || '').replace(/(\r\n|[\r\n])/g, '&#10;'), { xmlns: 'http://www.w3.org/TR/REC-html40' }),
                                             r = {};
-                                        return (e.a && (r['ss:Author'] = e.a), o.hidden || (r['ss:ShowAlways'] = '1'), rw('Comment', t, r));
+                                        return e.a && (r['ss:Author'] = e.a), o.hidden || (r['ss:ShowAlways'] = '1'), rw('Comment', t, r);
                                     })
                                     .join('')),
                             rw('Cell', g, c)
@@ -13480,7 +13462,7 @@
                         if ('z' !== e.t && e.XF) {
                             var a = 0;
                             try {
-                                ((a = e.z || e.XF.numFmtId || 0), t.cellNF && null == e.z && (e.z = eD[a]));
+                                (a = e.z || e.XF.numFmtId || 0), t.cellNF && null == e.z && (e.z = eD[a]);
                             } catch (e) {
                                 if (t.WTF) throw e;
                             }
@@ -13512,7 +13494,7 @@
                     function oW(e, t) {
                         if ((t || (t = {}), cM(t), ea(), t.codepage && et(t.codepage), e.FullPaths)) {
                             if (tr.find(e, '/encryption')) throw Error('File is password-protected');
-                            ((n = tr.find(e, '!CompObj')), (s = tr.find(e, '/Workbook') || tr.find(e, '/Book')));
+                            (n = tr.find(e, '!CompObj')), (s = tr.find(e, '/Workbook') || tr.find(e, '/Book'));
                         } else {
                             switch (t.type) {
                                 case 'base64':
@@ -13526,7 +13508,7 @@
                                 case 'array':
                                     Array.isArray(e) || (e = Array.prototype.slice.call(e));
                             }
-                            (aa(e, 0), (s = { content: e }));
+                            aa(e, 0), (s = { content: e });
                         }
                         if (
                             (n &&
@@ -13541,7 +13523,7 @@
                                         ((r.l -= 4), (t.Reserved1 = r.read_shift(0, 'lpstr-ansi')), !(r.length - r.l <= 4) && 0x71b239f4 === (a = r.read_shift(4))) &&
                                         ((t.UnicodeClipboardFormat = aj(r, 2)), 0 != (a = r.read_shift(4)) && !(a > 40))
                                     )
-                                        ((r.l -= 4), (t.Reserved2 = r.read_shift(0, 'lpwstr')));
+                                        (r.l -= 4), (t.Reserved2 = r.read_shift(0, 'lpwstr'));
                                 })(n),
                             t.bookProps && !t.bookSheets)
                         )
@@ -13615,9 +13597,9 @@
                                                 ) {
                                                     for (var a = 0; a < E.length; ++a)
                                                         if (!(E[a][0].s.c > e.c) && !(E[a][0].s.r > e.r) && !(E[a][0].e.c < e.c) && !(E[a][0].e.r < e.r)) {
-                                                            ((t.F = aT(E[a][0])),
+                                                            (t.F = aT(E[a][0])),
                                                                 (E[a][0].s.c != e.c || E[a][0].s.r != e.r) && delete t.f,
-                                                                t.f && (t.f = '' + iU(E[a][1], m, e, M, R)));
+                                                                t.f && (t.f = '' + iU(E[a][1], m, e, M, R));
                                                             break;
                                                         }
                                                 }
@@ -13645,13 +13627,13 @@
                                         P = [],
                                         L = !1,
                                         M = [];
-                                    ((M.SheetNames = R.snames), (M.sharedf = R.sharedf), (M.arrayf = R.arrayf), (M.names = []), (M.XTI = []));
+                                    (M.SheetNames = R.snames), (M.sharedf = R.sharedf), (M.arrayf = R.arrayf), (M.names = []), (M.XTI = []);
                                     var U = 0,
                                         B = 0,
                                         W = 0,
                                         z = [],
                                         H = [];
-                                    ((R.codepage = 1200), er(1200));
+                                    (R.codepage = 1200), er(1200);
                                     for (var V = !1; e.l < e.length - 1; ) {
                                         var G = e.l,
                                             j = e.read_shift(2);
@@ -13693,20 +13675,20 @@
                                                                       default:
                                                                           n.enc.insitu(o);
                                                                   }
-                                                              (i.push(o), (r.l += s));
+                                                              i.push(o), (r.l += s);
                                                               for (var c = r4(r, r.l), l = oH[c], f = 0; null != l && oP.indexOf(c) > -1; )
-                                                                  ((s = r4(r, r.l + 2)),
+                                                                  (s = r4(r, r.l + 2)),
                                                                       (f = r.l + 4),
                                                                       2066 == c ? (f += 4) : (2165 == c || 2175 == c) && (f += 12),
                                                                       (o = r.slice(f, r.l + 4 + s)),
                                                                       i.push(o),
                                                                       (r.l += 4 + s),
-                                                                      (l = oH[(c = r4(r, r.l))]));
+                                                                      (l = oH[(c = r4(r, r.l))]);
                                                               var h = ek(i);
                                                               aa(h, 0);
                                                               var u = 0;
                                                               h.lens = [];
-                                                              for (var d = 0; d < i.length; ++d) (h.lens.push(u), (u += i[d].length));
+                                                              for (var d = 0; d < i.length; ++d) h.lens.push(u), (u += i[d].length);
                                                               if (h.length < a) throw 'XLS Record 0x' + e.toString(16) + ' Truncated: ' + h.length + ' < ' + a;
                                                               return t.f(h, h.length, n);
                                                           })(j, K, e, X, R)),
@@ -13740,7 +13722,7 @@
                                                         case 32769:
                                                             J = 1252;
                                                     }
-                                                    (er((R.codepage = J)), (V = !0));
+                                                    er((R.codepage = J)), (V = !0);
                                                     break;
                                                 case 317:
                                                     R.rrtabid = Z;
@@ -13776,9 +13758,9 @@
                                                     i.opts.FullCalc = Z;
                                                     break;
                                                 case 129:
-                                                    (Z.fDialog && (c['!type'] = 'dialog'),
+                                                    Z.fDialog && (c['!type'] = 'dialog'),
                                                         Z.fBelow || ((c['!outline'] || (c['!outline'] = {})).above = !0),
-                                                        Z.fRight || ((c['!outline'] || (c['!outline'] = {})).left = !0));
+                                                        Z.fRight || ((c['!outline'] || (c['!outline'] = {})).left = !0);
                                                     break;
                                                 case 67:
                                                 case 579:
@@ -13787,7 +13769,7 @@
                                                     k.push(Z);
                                                     break;
                                                 case 430:
-                                                    (M.push([Z]), (M[M.length - 1].XTI = []));
+                                                    M.push([Z]), (M[M.length - 1].XTI = []);
                                                     break;
                                                 case 35:
                                                 case 547:
@@ -13795,7 +13777,7 @@
                                                     break;
                                                 case 24:
                                                 case 536:
-                                                    ((s = { Name: Z.Name, Ref: iU(Z.rgce, m, null, M, R) }),
+                                                    (s = { Name: Z.Name, Ref: iU(Z.rgce, m, null, M, R) }),
                                                         Z.itab > 0 && (s.Sheet = Z.itab - 1),
                                                         M.names.push(s),
                                                         M[0] || ((M[0] = []), (M[0].XTI = [])),
@@ -13806,15 +13788,15 @@
                                                             Z.rgce[0] &&
                                                             Z.rgce[0][0] &&
                                                             'PtgArea3d' == Z.rgce[0][0][0] &&
-                                                            (H[Z.itab - 1] = { ref: aT(Z.rgce[0][0][1][2]) }));
+                                                            (H[Z.itab - 1] = { ref: aT(Z.rgce[0][0][1][2]) });
                                                     break;
                                                 case 22:
                                                     R.ExternCount = Z;
                                                     break;
                                                 case 23:
-                                                    (0 == M.length && ((M[0] = []), (M[0].XTI = [])),
+                                                    0 == M.length && ((M[0] = []), (M[0].XTI = [])),
                                                         (M[M.length - 1].XTI = M[M.length - 1].XTI.concat(Z)),
-                                                        (M.XTI = M.XTI.concat(Z)));
+                                                        (M.XTI = M.XTI.concat(Z));
                                                     break;
                                                 case 2196:
                                                     if (R.biff < 8) break;
@@ -13827,7 +13809,7 @@
                                                     0 !== Z && R.WTF && console.error('Password verifier: ' + Z);
                                                     break;
                                                 case 133:
-                                                    ((p[4 == R.biff ? R.snames.length : Z.pos] = Z), R.snames.push(Z.name));
+                                                    (p[4 == R.biff ? R.snames.length : Z.pos] = Z), R.snames.push(Z.name);
                                                     break;
                                                 case 10:
                                                     if (--B ? !A : A) break;
@@ -13835,17 +13817,17 @@
                                                         if (m.e.r > 0 && m.e.c > 0) {
                                                             if ((m.e.r--, m.e.c--, (c['!ref'] = aT(m)), t.sheetRows && t.sheetRows <= m.e.r)) {
                                                                 var q = m.e.r;
-                                                                ((m.e.r = t.sheetRows - 1), (c['!fullref'] = c['!ref']), (c['!ref'] = aT(m)), (m.e.r = q));
+                                                                (m.e.r = t.sheetRows - 1), (c['!fullref'] = c['!ref']), (c['!ref'] = aT(m)), (m.e.r = q);
                                                             }
-                                                            (m.e.r++, m.e.c++);
+                                                            m.e.r++, m.e.c++;
                                                         }
-                                                        (N.length > 0 && (c['!merges'] = N),
+                                                        N.length > 0 && (c['!merges'] = N),
                                                             F.length > 0 && (c['!objects'] = F),
                                                             D.length > 0 && (c['!cols'] = D),
                                                             P.length > 0 && (c['!rows'] = P),
-                                                            _.Sheets.push(S));
+                                                            _.Sheets.push(S);
                                                     }
-                                                    ('' === b ? (w = c) : (o[b] = c), (c = {}), t.dense && (c['!data'] = []));
+                                                    '' === b ? (w = c) : (o[b] = c), (c = {}), t.dense && (c['!data'] = []);
                                                     break;
                                                 case 9:
                                                 case 521:
@@ -13872,11 +13854,11 @@
                                                     )
                                                         b = (p[R.snames.indexOf(b) + 1] || { name: '' }).name;
                                                     else if (R.biff < 5 || (0 == Z.BIFFVer && 4096 == Z.dt)) {
-                                                        ('' === b && (b = 'Sheet1'), (m = { s: { r: 0, c: 0 }, e: { r: 0, c: 0 } }));
+                                                        '' === b && (b = 'Sheet1'), (m = { s: { r: 0, c: 0 }, e: { r: 0, c: 0 } });
                                                         var Q = { pos: e.l - X, name: b };
-                                                        ((p[Q.pos] = Q), R.snames.push(b));
+                                                        (p[Q.pos] = Q), R.snames.push(b);
                                                     } else b = (p[G] || { name: '' }).name;
-                                                    (32 == Z.dt && (c['!type'] = 'chart'),
+                                                    32 == Z.dt && (c['!type'] = 'chart'),
                                                         64 == Z.dt && (c['!type'] = 'macro'),
                                                         (N = []),
                                                         (F = []),
@@ -13884,37 +13866,37 @@
                                                         (D = []),
                                                         (P = []),
                                                         (L = !1),
-                                                        (S = { Hidden: (p[G] || { hs: 0 }).hs, name: b }));
+                                                        (S = { Hidden: (p[G] || { hs: 0 }).hs, name: b });
                                                     break;
                                                 case 515:
                                                 case 3:
                                                 case 2:
-                                                    ('chart' == c['!type'] && (t.dense ? (c['!data'][Z.r] || [])[Z.c] : c[ag(Z.c) + ap(Z.r)]) && ++Z.c,
+                                                    'chart' == c['!type'] && (t.dense ? (c['!data'][Z.r] || [])[Z.c] : c[ag(Z.c) + ap(Z.r)]) && ++Z.c,
                                                         (r = { ixfe: Z.ixfe, XF: k[Z.ixfe] || {}, v: Z.val, t: 'n' }),
                                                         W > 0 && (r.z = (r.XF && r.XF.numFmtId && z[r.XF.numFmtId]) || z[(r.ixfe >> 8) & 63]),
                                                         oL(r, t, i.opts.Date1904),
-                                                        O({ c: Z.c, r: Z.r }, r, t));
+                                                        O({ c: Z.c, r: Z.r }, r, t);
                                                     break;
                                                 case 5:
                                                 case 517:
-                                                    ((r = { ixfe: Z.ixfe, XF: k[Z.ixfe], v: Z.val, t: Z.t }),
+                                                    (r = { ixfe: Z.ixfe, XF: k[Z.ixfe], v: Z.val, t: Z.t }),
                                                         W > 0 && (r.z = (r.XF && r.XF.numFmtId && z[r.XF.numFmtId]) || z[(r.ixfe >> 8) & 63]),
                                                         oL(r, t, i.opts.Date1904),
-                                                        O({ c: Z.c, r: Z.r }, r, t));
+                                                        O({ c: Z.c, r: Z.r }, r, t);
                                                     break;
                                                 case 638:
-                                                    ((r = { ixfe: Z.ixfe, XF: k[Z.ixfe], v: Z.rknum, t: 'n' }),
+                                                    (r = { ixfe: Z.ixfe, XF: k[Z.ixfe], v: Z.rknum, t: 'n' }),
                                                         W > 0 && (r.z = (r.XF && r.XF.numFmtId && z[r.XF.numFmtId]) || z[(r.ixfe >> 8) & 63]),
                                                         oL(r, t, i.opts.Date1904),
-                                                        O({ c: Z.c, r: Z.r }, r, t));
+                                                        O({ c: Z.c, r: Z.r }, r, t);
                                                     break;
                                                 case 189:
                                                     for (var ee = Z.c; ee <= Z.C; ++ee) {
                                                         var et = Z.rkrec[ee - Z.c][0];
-                                                        ((r = { ixfe: et, XF: k[et], v: Z.rkrec[ee - Z.c][1], t: 'n' }),
+                                                        (r = { ixfe: et, XF: k[et], v: Z.rkrec[ee - Z.c][1], t: 'n' }),
                                                             W > 0 && (r.z = (r.XF && r.XF.numFmtId && z[r.XF.numFmtId]) || z[(r.ixfe >> 8) & 63]),
                                                             oL(r, t, i.opts.Date1904),
-                                                            O({ c: ee, r: Z.r }, r, t));
+                                                            O({ c: ee, r: Z.r }, r, t);
                                                     }
                                                     break;
                                                 case 6:
@@ -13935,21 +13917,21 @@
                                                                 : (r.F = ((t.dense ? (c['!data'][en] || [])[es] : c[ei]) || {}).F);
                                                         } else r.f = '' + iU(Z.formula, m, Z.cell, M, R);
                                                     }
-                                                    (W > 0 && (r.z = (r.XF && r.XF.numFmtId && z[r.XF.numFmtId]) || z[(r.ixfe >> 8) & 63]),
+                                                    W > 0 && (r.z = (r.XF && r.XF.numFmtId && z[r.XF.numFmtId]) || z[(r.ixfe >> 8) & 63]),
                                                         oL(r, t, i.opts.Date1904),
                                                         O(Z.cell, r, t),
-                                                        (g = Z));
+                                                        (g = Z);
                                                     break;
                                                 case 7:
                                                 case 519:
                                                     if (g)
-                                                        ((g.val = Z),
+                                                        (g.val = Z),
                                                             ((r = oM(Z, g.cell.ixfe, 's')).XF = k[r.ixfe]),
                                                             t.cellFormula && (r.f = '' + iU(g.formula, m, g.cell, M, R)),
                                                             W > 0 && (r.z = (r.XF && r.XF.numFmtId && z[r.XF.numFmtId]) || z[(r.ixfe >> 8) & 63]),
                                                             oL(r, t, i.opts.Date1904),
                                                             O(g.cell, r, t),
-                                                            (g = null));
+                                                            (g = null);
                                                     else throw Error('String record expects Formula');
                                                     break;
                                                 case 33:
@@ -13958,25 +13940,25 @@
                                                     var eo = ab(Z[0].s);
                                                     if (((f = t.dense ? (c['!data'][Z[0].s.r] || [])[Z[0].s.c] : c[eo]), t.cellFormula && f)) {
                                                         if (!g || !eo || !f) break;
-                                                        ((f.f = '' + iU(Z[1], m, Z[0], M, R)), (f.F = aT(Z[0])));
+                                                        (f.f = '' + iU(Z[1], m, Z[0], M, R)), (f.F = aT(Z[0]));
                                                     }
                                                     break;
                                                 case 1212:
                                                     if (!t.cellFormula) break;
                                                     if (T) {
                                                         if (!g) break;
-                                                        ((y[ab(g.cell)] = Z[0]),
+                                                        (y[ab(g.cell)] = Z[0]),
                                                             (((f = t.dense ? (c['!data'][g.cell.r] || [])[g.cell.c] : c[ab(g.cell)]) || {}).f =
-                                                                '' + iU(Z[0], m, l, M, R)));
+                                                                '' + iU(Z[0], m, l, M, R));
                                                     }
                                                     break;
                                                 case 253:
-                                                    ((r = oM(v[Z.isst].t, Z.ixfe, 's')),
+                                                    (r = oM(v[Z.isst].t, Z.ixfe, 's')),
                                                         v[Z.isst].h && (r.h = v[Z.isst].h),
                                                         (r.XF = k[r.ixfe]),
                                                         W > 0 && (r.z = (r.XF && r.XF.numFmtId && z[r.XF.numFmtId]) || z[(r.ixfe >> 8) & 63]),
                                                         oL(r, t, i.opts.Date1904),
-                                                        O({ c: Z.c, r: Z.r }, r, t));
+                                                        O({ c: Z.c, r: Z.r }, r, t);
                                                     break;
                                                 case 513:
                                                     t.sheetStubs &&
@@ -13989,19 +13971,19 @@
                                                     if (t.sheetStubs)
                                                         for (var ec = Z.c; ec <= Z.C; ++ec) {
                                                             var el = Z.ixfe[ec - Z.c];
-                                                            ((r = { ixfe: el, XF: k[el], t: 'z' }),
+                                                            (r = { ixfe: el, XF: k[el], t: 'z' }),
                                                                 W > 0 && (r.z = (r.XF && r.XF.numFmtId && z[r.XF.numFmtId]) || z[(r.ixfe >> 8) & 63]),
                                                                 oL(r, t, i.opts.Date1904),
-                                                                O({ c: ec, r: Z.r }, r, t));
+                                                                O({ c: ec, r: Z.r }, r, t);
                                                         }
                                                     break;
                                                 case 214:
                                                 case 516:
                                                 case 4:
-                                                    (((r = oM(Z.val, Z.ixfe, 's')).XF = k[r.ixfe]),
+                                                    ((r = oM(Z.val, Z.ixfe, 's')).XF = k[r.ixfe]),
                                                         W > 0 && (r.z = (r.XF && r.XF.numFmtId && z[r.XF.numFmtId]) || z[(r.ixfe >> 8) & 63]),
                                                         oL(r, t, i.opts.Date1904),
-                                                        O({ c: Z.c, r: Z.r }, r, t));
+                                                        O({ c: Z.c, r: Z.r }, r, t);
                                                     break;
                                                 case 0:
                                                 case 512:
@@ -14060,38 +14042,38 @@
                                                         h = { a: 'SheetJ5', t: Z[1] };
                                                     else {
                                                         var eu = F[Z[2]];
-                                                        ((h = { a: Z[1], t: eu.TxO.t }), null == Z[3] || 2 & Z[3] || (f.c.hidden = !0));
+                                                        (h = { a: Z[1], t: eu.TxO.t }), null == Z[3] || 2 & Z[3] || (f.c.hidden = !0);
                                                     }
                                                     f.c.push(h);
                                                     break;
                                                 case 2173:
-                                                    (k[Z.ixfe],
+                                                    k[Z.ixfe],
                                                         Z.ext.forEach(function (e) {
                                                             e[0];
-                                                        }));
+                                                        });
                                                     break;
                                                 case 125:
                                                     if (!R.cellStyles) break;
                                                     for (; Z.e >= Z.s; )
-                                                        ((D[Z.e--] = { width: Z.w / 256, level: Z.level || 0, hidden: !!(1 & Z.flags) }),
+                                                        (D[Z.e--] = { width: Z.w / 256, level: Z.level || 0, hidden: !!(1 & Z.flags) }),
                                                             L || ((L = !0), sQ(Z.w / 256)),
-                                                            s0(D[Z.e + 1]));
+                                                            s0(D[Z.e + 1]);
                                                     break;
                                                 case 520:
                                                     var ed = {};
-                                                    (null != Z.level && ((P[Z.r] = ed), (ed.level = Z.level)),
+                                                    null != Z.level && ((P[Z.r] = ed), (ed.level = Z.level)),
                                                         Z.hidden && ((P[Z.r] = ed), (ed.hidden = !0)),
-                                                        Z.hpt && ((P[Z.r] = ed), (ed.hpt = Z.hpt), (ed.hpx = s2(Z.hpt))));
+                                                        Z.hpt && ((P[Z.r] = ed), (ed.hpt = Z.hpt), (ed.hpx = s2(Z.hpt)));
                                                     break;
                                                 case 38:
                                                 case 39:
                                                 case 40:
                                                 case 41:
-                                                    (c['!margins'] || i0((c['!margins'] = {})),
-                                                        (c['!margins'][{ 38: 'left', 39: 'right', 40: 'top', 41: 'bottom' }[j]] = Z));
+                                                    c['!margins'] || i0((c['!margins'] = {})),
+                                                        (c['!margins'][{ 38: 'left', 39: 'right', 40: 'top', 41: 'bottom' }[j]] = Z);
                                                     break;
                                                 case 161:
-                                                    (c['!margins'] || i0((c['!margins'] = {})), (c['!margins'].header = Z.header), (c['!margins'].footer = Z.footer));
+                                                    c['!margins'] || i0((c['!margins'] = {})), (c['!margins'].header = Z.header), (c['!margins'].footer = Z.footer);
                                                     break;
                                                 case 574:
                                                     Z.RTL && (_.Views[0].RTL = !0);
@@ -14108,7 +14090,7 @@
                                                 case 442:
                                                     b ? (S.CodeName = Z || S.name) : (_.WBProps.CodeName = Z || 'ThisWorkbook');
                                             }
-                                        } else (K || console.error('Missing Info for XLS Record 0x' + j.toString(16)), (e.l += X));
+                                        } else K || console.error('Missing Info for XLS Record 0x' + j.toString(16)), (e.l += X);
                                     }
                                     return (
                                         (i.SheetNames = ts(p)
@@ -14185,11 +14167,11 @@
                                 f: function (e, t) {
                                     var r = {},
                                         a = e.l + t;
-                                    ((r.r = e.read_shift(4)), (e.l += 4));
+                                    (r.r = e.read_shift(4)), (e.l += 4);
                                     var n = e.read_shift(2);
                                     e.l += 1;
                                     var s = e.read_shift(1);
-                                    return ((e.l = a), 7 & s && (r.level = 7 & s), 16 & s && (r.hidden = !0), 32 & s && (r.hpt = n / 20), r);
+                                    return (e.l = a), 7 & s && (r.level = 7 & s), 16 & s && (r.hidden = !0), 32 & s && (r.hpt = n / 20), r;
                                 },
                             },
                             1: {
@@ -14351,9 +14333,9 @@
                                     } catch (e) {
                                         console.error('Could not parse defined name ' + o);
                                     }
-                                    (32 & s && (o = '_xlnm.' + o), (e.l = n));
+                                    32 & s && (o = '_xlnm.' + o), (e.l = n);
                                     var l = { Name: o, Ptg: a, Flags: s };
-                                    return (i < 0xfffffff && (l.Sheet = i), c && (l.Comment = c), l);
+                                    return i < 0xfffffff && (l.Sheet = i), c && (l.Comment = c), l;
                                 },
                             },
                             40: {},
@@ -14423,7 +14405,7 @@
                                                 case 3:
                                                     t.theme = a;
                                             }
-                                            return (0 != n && (t.tint = n > 0 ? n / 32767 : n / 32768), t);
+                                            return 0 != n && (t.tint = n > 0 ? n / 32767 : n / 32768), t;
                                         })(e, 8)),
                                         e.read_shift(1))
                                     ) {
@@ -14433,7 +14415,7 @@
                                         case 2:
                                             n.scheme = 'minor';
                                     }
-                                    return ((n.name = aO(e, t - 21)), n);
+                                    return (n.name = aO(e, t - 21)), n;
                                 },
                             },
                             44: {
@@ -14448,7 +14430,7 @@
                                     var r = e.l + t,
                                         a = e.read_shift(2),
                                         n = e.read_shift(2);
-                                    return ((e.l = r), { ixfe: a, numFmtId: n });
+                                    return (e.l = r), { ixfe: a, numFmtId: n };
                                 },
                             },
                             48: {},
@@ -14483,9 +14465,9 @@
                                     var t = {};
                                     t.i = e.read_shift(4);
                                     var r = {};
-                                    ((r.r = e.read_shift(4)), (r.c = e.read_shift(4)), (t.r = ab(r)));
+                                    (r.r = e.read_shift(4)), (r.c = e.read_shift(4)), (t.r = ab(r));
                                     var a = e.read_shift(1);
-                                    return (2 & a && (t.l = '1'), 8 & a && (t.a = '1'), t);
+                                    return 2 & a && (t.l = '1'), 8 & a && (t.a = '1'), t;
                                 },
                             },
                             64: { f: function () {} },
@@ -14508,7 +14490,7 @@
                                 T: 1,
                                 f: function (e) {
                                     var t = e.read_shift(2);
-                                    return ((e.l += 28), { RTL: 32 & t });
+                                    return (e.l += 28), { RTL: 32 & t };
                                 },
                             },
                             138: { T: -1 },
@@ -14524,7 +14506,7 @@
                                 f: function (e, t) {
                                     var r = {},
                                         a = e[e.l];
-                                    return (++e.l, (r.above = !(64 & a)), (r.left = !(128 & a)), (e.l += 18), (r.name = aO(e, t - 19)), r);
+                                    return ++e.l, (r.above = !(64 & a)), (r.left = !(128 & a)), (e.l += 18), (r.name = aO(e, t - 19)), r;
                                 },
                             },
                             148: { f: az, p: 16 },
@@ -14562,7 +14544,7 @@
                             156: {
                                 f: function (e, t) {
                                     var r = {};
-                                    return ((r.Hidden = e.read_shift(4)), (r.iTabID = e.read_shift(4)), (r.strRelID = aM(e, t - 8)), (r.name = aO(e)), r);
+                                    return (r.Hidden = e.read_shift(4)), (r.iTabID = e.read_shift(4)), (r.strRelID = aM(e, t - 8)), (r.name = aO(e)), r;
                                 },
                             },
                             157: {},
@@ -14756,7 +14738,7 @@
                             336: { T: -1 },
                             337: {
                                 f: function (e) {
-                                    return ((e.l += 4), 0 != e.read_shift(4));
+                                    return (e.l += 4), 0 != e.read_shift(4);
                                 },
                                 T: 1,
                             },
@@ -14864,7 +14846,7 @@
                                         n = [az(e, 16)];
                                     if (r.cellFormula) {
                                         var s = iW(e, a - e.l, r);
-                                        ((n[1] = s), (e.l = a));
+                                        (n[1] = s), (e.l = a);
                                     } else e.l = a;
                                     return n;
                                 },
@@ -14955,7 +14937,7 @@
                                         o = aO(e);
                                     e.l = r;
                                     var c = { rfx: a, relId: n, loc: s, display: o };
-                                    return (i && (c.Tooltip = i), c);
+                                    return i && (c.Tooltip = i), c;
                                 },
                             },
                             495: { T: 1 },
@@ -15089,7 +15071,7 @@
                                     var t = {};
                                     t.iauthor = e.read_shift(4);
                                     var r = az(e, 16);
-                                    return ((t.rfx = r.s), (t.ref = ab(r.s)), (e.l += 16), t);
+                                    return (t.rfx = r.s), (t.ref = ab(r.s)), (e.l += 16), t;
                                 },
                             },
                             636: { T: -1 },
@@ -15108,7 +15090,7 @@
                             650: { T: -1 },
                             651: {
                                 f: function (e, t) {
-                                    return ((e.l += 10), { name: aO(e, t - 10) });
+                                    return (e.l += 10), { name: aO(e, t - 10) };
                                 },
                             },
                             652: {},
@@ -15429,11 +15411,7 @@
                                         return [{ r: o, c: c }, e.read_shift(Math.min(l, 2048), 'cpstr')];
                                     }
                                     return (
-                                        (a = e.read_shift(2)),
-                                        (n = e.read_shift(2)),
-                                        (s = e.read_shift(2)),
-                                        (i = e.read_shift(2)),
-                                        [{ r: a, c: n }, n0(e, 0, r), i, s]
+                                        (a = e.read_shift(2)), (n = e.read_shift(2)), (s = e.read_shift(2)), (i = e.read_shift(2)), [{ r: a, c: n }, n0(e, 0, r), i, s]
                                     );
                                 },
                             },
@@ -15474,9 +15452,9 @@
                                                             a = (r.EncryptionVersionInfo = sU(e, 4));
                                                         if (((t -= 4), 2 != a.Minor)) throw Error('unrecognized minor version code: ' + a.Minor);
                                                         if (a.Major > 4 || a.Major < 2) throw Error('unrecognized major version code: ' + a.Major);
-                                                        ((r.Flags = e.read_shift(4)), (t -= 4));
+                                                        (r.Flags = e.read_shift(4)), (t -= 4);
                                                         var n = e.read_shift(4);
-                                                        return ((t -= 4), (r.EncryptionHeader = sB(e, n)), (r.EncryptionVerifier = sW(e, (t -= n))), r);
+                                                        return (t -= 4), (r.EncryptionHeader = sB(e, n)), (r.EncryptionVerifier = sW(e, (t -= n))), r;
                                                     })(e, a)))
                                             : (r.biff,
                                               (s = { key: nj(e), verificationBytes: nj(e) }),
@@ -15500,7 +15478,7 @@
                                         default:
                                             e.l += 10;
                                     }
-                                    return ((a.name = nJ(e, 0, r)), a);
+                                    return (a.name = nJ(e, 0, r)), a;
                                 },
                             },
                             51: { f: nj },
@@ -15531,10 +15509,10 @@
                             91: {},
                             92: {
                                 f: function (e, t, r) {
-                                    if (r.enc) return ((e.l += t), '');
+                                    if (r.enc) return (e.l += t), '';
                                     var a = e.l,
                                         n = n0(e, 0, r);
-                                    return (e.read_shift(t + a - e.l), n);
+                                    return e.read_shift(t + a - e.l), n;
                                 },
                             },
                             93: {
@@ -15572,10 +15550,10 @@
                                                 try {
                                                     a[n] = sn[n](e, r - e.l);
                                                 } catch (t) {
-                                                    return ((e.l = r), a);
+                                                    return (e.l = r), a;
                                                 }
                                             }
-                                            return (e.l != r && (e.l = r), a);
+                                            return e.l != r && (e.l = r), a;
                                         })(e, t - 22, f[1]);
                                     return { cmo: f, ft: h };
                                 },
@@ -15606,7 +15584,7 @@
                             133: {
                                 f: function (e, t, r) {
                                     var a = '';
-                                    if (4 == r.biff) return (0 === (a = nJ(e, 0, r)).length && (a = 'Sheet1'), { name: a });
+                                    if (4 == r.biff) return 0 === (a = nJ(e, 0, r)).length && (a = 'Sheet1'), { name: a };
                                     var n = e.read_shift(4),
                                         s = 3 & e.read_shift(1),
                                         i = e.read_shift(1);
@@ -15623,7 +15601,7 @@
                                         case 6:
                                             i = 'VBAModule';
                                     }
-                                    return (0 === (a = nJ(e, 0, r)).length && (a = 'Sheet1'), { pos: n, hs: s, dt: i, name: a });
+                                    return 0 === (a = nJ(e, 0, r)).length && (a = 'Sheet1'), { pos: n, hs: s, dt: i, name: a };
                                 },
                             },
                             134: {},
@@ -15631,7 +15609,7 @@
                                 f: function (e) {
                                     var t,
                                         r = [0, 0];
-                                    return ((t = e.read_shift(2)), (r[0] = aZ[t] || t), (t = e.read_shift(2)), (r[1] = aZ[t] || t), r);
+                                    return (t = e.read_shift(2)), (r[0] = aZ[t] || t), (t = e.read_shift(2)), (r[1] = aZ[t] || t), r;
                                 },
                             },
                             141: { f: nj },
@@ -15654,7 +15632,7 @@
                             161: {
                                 f: function (e, t) {
                                     var r = {};
-                                    return (t < 32 || ((e.l += 16), (r.header = aV(e, 8)), (r.footer = aV(e, 8)), (e.l += 2)), r);
+                                    return t < 32 || ((e.l += 16), (r.header = aV(e, 8)), (r.footer = aV(e, 8)), (e.l += 2)), r;
                                 },
                             },
                             174: {},
@@ -15766,7 +15744,7 @@
                             },
                             225: {
                                 f: function (e, t) {
-                                    return (0 === t || e.read_shift(2), 1200);
+                                    return 0 === t || e.read_shift(2), 1200;
                                 },
                             },
                             226: { f: nV },
@@ -15806,24 +15784,24 @@
                                                     i = 8 & n,
                                                     o = 0,
                                                     c = {};
-                                                (i && (o = e.read_shift(2)), s && (r = e.read_shift(4)));
+                                                i && (o = e.read_shift(2)), s && (r = e.read_shift(4));
                                                 var l = 0 === a ? '' : e.read_shift(a, 2 == 1 + (1 & n) ? 'dbcs-cont' : 'sbcs-cont');
-                                                return (i && (e.l += 4 * o), s && (e.l += r), (c.t = l), i || ((c.raw = '<t>' + c.t + '</t>'), (c.r = c.t)), (J = t), c);
+                                                return i && (e.l += 4 * o), s && (e.l += r), (c.t = l), i || ((c.raw = '<t>' + c.t + '</t>'), (c.r = c.t)), (J = t), c;
                                             })(e),
                                         );
-                                    return ((s.Count = a), (s.Unique = n), s);
+                                    return (s.Count = a), (s.Unique = n), s;
                                 },
                             },
                             253: {
                                 f: function (e, t, r) {
                                     var a = n6(e, t, r);
-                                    return ((a.isst = e.read_shift(4)), a);
+                                    return (a.isst = e.read_shift(4)), a;
                                 },
                             },
                             255: {
                                 f: function (e, t) {
                                     var r = {};
-                                    return ((r.dsst = e.read_shift(2)), (e.l += t - 2), r);
+                                    return (r.dsst = e.read_shift(2)), (e.l += t - 2), r;
                                 },
                             },
                             256: {},
@@ -15887,7 +15865,7 @@
                                         var s = (r.lastobj || { cmo: [0, 0] }).cmo[1];
                                         -1 == [0, 5, 7, 11, 12, 14].indexOf(s) ? (e.l += 6) : (e.read_shift(1), e.l++, e.read_shift(2), (e.l += 2));
                                         var i = e.read_shift(2);
-                                        (e.read_shift(2), nj(e, 2));
+                                        e.read_shift(2), nj(e, 2);
                                         var o = e.read_shift(2);
                                         e.l += o;
                                         for (var c = 1; c < e.lens.length - 1; ++c) {
@@ -15897,9 +15875,9 @@
                                             if ((n += f).length >= (l ? i : 2 * i)) break;
                                         }
                                         if (n.length !== i && n.length !== 2 * i) throw Error('cchText: ' + i + ' != ' + n.length);
-                                        return ((e.l = a + t), { t: n });
+                                        return (e.l = a + t), { t: n };
                                     } catch (r) {
-                                        return ((e.l = a + t), { t: n });
+                                        return (e.l = a + t), { t: n };
                                     }
                                 },
                             },
@@ -15924,7 +15902,7 @@
                                                     l,
                                                     f,
                                                     h = '';
-                                                (16 & n && (s = n2(e, r - e.l)),
+                                                16 & n && (s = n2(e, r - e.l)),
                                                     128 & n && (i = n2(e, r - e.l)),
                                                     (257 & n) == 257 && (o = n2(e, r - e.l)),
                                                     (257 & n) == 1 &&
@@ -15963,11 +15941,11 @@
                                                     8 & n && (h = n2(e, r - e.l)),
                                                     32 & n && (l = e.read_shift(16)),
                                                     64 & n && (f = nR(e)),
-                                                    (e.l = r));
+                                                    (e.l = r);
                                                 var u = i || o || c || '';
-                                                (u && h && (u += '#' + h), u || (u = '#' + h), 2 & n && '/' == u.charAt(0) && '/' != u.charAt(1) && (u = 'file://' + u));
+                                                u && h && (u += '#' + h), u || (u = '#' + h), 2 & n && '/' == u.charAt(0) && '/' != u.charAt(1) && (u = 'file://' + u);
                                                 var d = { Target: u };
-                                                return (l && (d.guid = l), f && (d.time = f), s && (d.Tooltip = s), d);
+                                                return l && (d.guid = l), f && (d.time = f), s && (d.Tooltip = s), d;
                                             })(e, t - 24),
                                         ]
                                     );
@@ -15982,7 +15960,7 @@
                             448: { f: nV },
                             449: {
                                 f: function (e) {
-                                    return (e.read_shift(2), e.read_shift(4));
+                                    return e.read_shift(2), e.read_shift(4);
                                 },
                                 r: 2,
                             },
@@ -15993,7 +15971,7 @@
                                 f: function (e, t, r) {
                                     r.biffguess && 2 == r.biff && (r.biff = 5);
                                     var a = n6(e, 6, r);
-                                    return ((a.val = aV(e, 8)), a);
+                                    return (a.val = aV(e, 8)), a;
                                 },
                             },
                             516: {
@@ -16001,25 +15979,25 @@
                                     r.biffguess && 2 == r.biff && (r.biff = 5);
                                     var a = e.l + t,
                                         n = n6(e, t, r);
-                                    return ((n.val = nQ(e, a - e.l, r)), n);
+                                    return (n.val = nQ(e, a - e.l, r)), n;
                                 },
                             },
                             517: {
                                 f: function (e, t, r) {
                                     var a = n6(e, 6, r),
                                         n = nY(e, 2);
-                                    return ((a.val = n), (a.t = !0 === n || !1 === n ? 'b' : 'e'), a);
+                                    return (a.val = n), (a.t = !0 === n || !1 === n ? 'b' : 'e'), a;
                                 },
                             },
                             519: { f: nQ },
                             520: {
                                 f: function (e) {
                                     var t = {};
-                                    ((t.r = e.read_shift(2)), (t.c = e.read_shift(2)), (t.cnt = e.read_shift(2) - t.c));
+                                    (t.r = e.read_shift(2)), (t.c = e.read_shift(2)), (t.cnt = e.read_shift(2) - t.c);
                                     var r = e.read_shift(2);
                                     e.l += 4;
                                     var a = e.read_shift(1);
-                                    return ((e.l += 3), 7 & a && (t.level = 7 & a), 32 & a && (t.hidden = !0), 64 & a && (t.hpt = r / 20), t);
+                                    return (e.l += 3), 7 & a && (t.level = 7 & a), 32 & a && (t.hidden = !0), 64 & a && (t.hpt = r / 20), t;
                                 },
                             },
                             523: {},
@@ -16127,7 +16105,7 @@
                                 f: function (e) {
                                     e.l += 2;
                                     var t = { cxfs: 0, crc: 0 };
-                                    return ((t.cxfs = e.read_shift(2)), (t.crc = e.read_shift(4)), t);
+                                    return (t.cxfs = e.read_shift(2)), (t.crc = e.read_shift(4)), t;
                                 },
                                 r: 12,
                             },
@@ -16170,7 +16148,7 @@
                                                                 case 3:
                                                                     t.xclrValue = e.read_shift(4);
                                                             }
-                                                            return ((e.l += 8), t);
+                                                            return (e.l += 8), t;
                                                         })(e, r);
                                                         break;
                                                     case 6:
@@ -16313,9 +16291,9 @@
                             4164: {
                                 f: function (e, t, r) {
                                     var a = { area: !1 };
-                                    if (5 != r.biff) return ((e.l += t), a);
+                                    if (5 != r.biff) return (e.l += t), a;
                                     var n = e.read_shift(1);
-                                    return ((e.l += 3), 16 & n && (a.area = !0), a);
+                                    return (e.l += 3), 16 & n && (a.area = !0), a;
                                 },
                             },
                             4165: {},
@@ -16351,14 +16329,14 @@
                                 f: function (e, t, r) {
                                     var a = n6(e, 7, r),
                                         n = e.read_shift(2);
-                                    return ((a.t = 'n'), (a.val = n), a);
+                                    return (a.t = 'n'), (a.val = n), a;
                                 },
                             },
                             3: {
                                 f: function (e, t, r) {
                                     var a = n6(e, 7, r),
                                         n = aV(e, 8);
-                                    return ((a.t = 'n'), (a.val = n), a);
+                                    return (a.t = 'n'), (a.val = n), a;
                                 },
                             },
                             4: {
@@ -16366,7 +16344,7 @@
                                     r.biffguess && 5 == r.biff && (r.biff = 2);
                                     var a = n6(e, 7, r),
                                         n = n0(e, t - 7, r);
-                                    return ((a.t = 'str'), (a.val = n), a);
+                                    return (a.t = 'str'), (a.val = n), a;
                                 },
                             },
                             5: {
@@ -16375,7 +16353,7 @@
                                         n = n6(e, 6, r);
                                     e.l = a;
                                     var s = nY(e, 2);
-                                    return ((n.val = s), (n.t = !0 === s || !1 === s ? 'b' : 'e'), n);
+                                    return (n.val = s), (n.t = !0 === s || !1 === s ? 'b' : 'e'), n;
                                 },
                             },
                             7: {
@@ -16396,7 +16374,7 @@
                             37: { f: so },
                             50: {
                                 f: function (e, t) {
-                                    ((e.l += 6), (e.l += 2), (e.l += 1), (e.l += 3), (e.l += 1), (e.l += t - 13));
+                                    (e.l += 6), (e.l += 2), (e.l += 1), (e.l += 3), (e.l += 1), (e.l += t - 13);
                                 },
                             },
                             62: {},
@@ -16426,7 +16404,7 @@
                                         r = e.read_shift(2),
                                         a = e.read_shift(4),
                                         n = { fmt: t, env: r, len: a, data: e.slice(e.l, e.l + a) };
-                                    return ((e.l += a), n);
+                                    return (e.l += a), n;
                                 },
                             },
                             135: {},
@@ -16437,7 +16415,7 @@
                                     var t = e.read_shift(4),
                                         r = e.read_shift(1),
                                         a = e.read_shift(r, 'sbcs');
-                                    return (0 === a.length && (a = 'Sheet1'), { flags: t, name: a });
+                                    return 0 === a.length && (a = 'Sheet1'), { flags: t, name: a };
                                 },
                             },
                             145: {},
@@ -16457,7 +16435,7 @@
                                         n = n6(e, 6, r),
                                         s = e.read_shift(2),
                                         i = nq(e, s, r);
-                                    return ((e.l = a), (n.t = 'str'), (n.val = i), n);
+                                    return (e.l = a), (n.t = 'str'), (n.val = i), n;
                                 },
                             },
                             223: {},
@@ -16527,12 +16505,12 @@
                         if (!isNaN(t)) {
                             var n = a || (r || []).length || 0,
                                 s = e.next(4);
-                            (s.write_shift(2, t), s.write_shift(2, n), n > 0 && r0(r) && e.push(r));
+                            s.write_shift(2, t), s.write_shift(2, n), n > 0 && r0(r) && e.push(r);
                         }
                     }
                     function o$(e, t, r, a) {
                         var n = as(9);
-                        return (sT(n, e, t), nZ(r, a || 'b', n), n);
+                        return sT(n, e, t), nZ(r, a || 'b', n), n;
                     }
                     function oG(e, t) {
                         t.forEach(function (t) {
@@ -16553,14 +16531,14 @@
                             var a = e.Sheets[e.SheetNames[r]];
                             if (a && a['!ref']) {
                                 var n = aw(a['!ref']);
-                                (n.e.c > 255 &&
+                                n.e.c > 255 &&
                                     'undefined' != typeof console &&
                                     console.error &&
                                     console.error("Worksheet '" + e.SheetNames[r] + "' extends beyond column IV (255).  Data may be lost."),
                                     n.e.r > 65535 &&
                                         'undefined' != typeof console &&
                                         console.error &&
-                                        console.error("Worksheet '" + e.SheetNames[r] + "' extends beyond row 65536.  Data may be lost."));
+                                        console.error("Worksheet '" + e.SheetNames[r] + "' extends beyond row 65536.  Data may be lost.");
                             }
                         }
                         var s = t || {};
@@ -16569,7 +16547,7 @@
                             case 5:
                                 var i = t || {},
                                     o = [];
-                                (e && !e.SSF && (e.SSF = tw(eD)),
+                                e && !e.SSF && (e.SSF = tw(eD)),
                                     e && e.SSF && (e5(), e3(e.SSF), (i.revssf = tc(e.SSF)), (i.revssf[e.SSF[65535]] = 0), (i.ssf = e.SSF)),
                                     (oj = 1),
                                     (oX = []),
@@ -16579,7 +16557,7 @@
                                     cU(i),
                                     (i.cellXfs = []),
                                     i1(i.cellXfs, {}, { revssf: { General: 0 } }),
-                                    e.Props || (e.Props = {}));
+                                    e.Props || (e.Props = {});
                                 for (var c = 0; c < e.SheetNames.length; ++c)
                                     o[o.length] = (function (e, t, r) {
                                         var a,
@@ -16609,9 +16587,9 @@
                                             A = k ? 65536 : 16384;
                                         if (S.e.c > 255 || S.e.r >= A) {
                                             if (t.WTF) throw Error('Range ' + (w['!ref'] || 'A1') + ' exceeds format limit A1:IV' + A);
-                                            ((S.e.c = Math.min(S.e.c, 255)), (S.e.r = Math.min(S.e.r, A - 1)));
+                                            (S.e.c = Math.min(S.e.c, 255)), (S.e.r = Math.min(S.e.r, A - 1));
                                         }
-                                        (oV(v, 2057, si(r, 16, t)),
+                                        oV(v, 2057, si(r, 16, t)),
                                             oV(v, 13, nX(1)),
                                             oV(v, 12, nX(100)),
                                             oV(v, 15, nG(!0)),
@@ -16668,7 +16646,7 @@
                                                 i.write_shift(2, S.e.c + 1),
                                                 i.write_shift(2, 0),
                                                 i),
-                                            ));
+                                            );
                                         var C = (((r || {}).Workbook || {}).WBProps || {}).date1904;
                                         k && (w['!links'] = []);
                                         for (var I = S.s.c; I <= S.e.c; ++I) _[I] = ag(I);
@@ -16700,7 +16678,7 @@
                                                                             return 'number' == typeof e ? a$(e) : a$(0);
                                                                         })(e.v),
                                                                         o = as(6);
-                                                                    (o.write_shift(2, 33), o.write_shift(4, 0));
+                                                                    o.write_shift(2, 33), o.write_shift(4, 0);
                                                                     for (var c = as(e.bf.length), l = 0; l < e.bf.length; ++l) c[l] = e.bf[l];
                                                                     return ek([s, i, o, c]);
                                                                 })(t, r, a, 0, i),
@@ -16760,12 +16738,12 @@
                                                       var r = '',
                                                           a = e[0]
                                                               .map(function (e) {
-                                                                  return (e.a && !r && (r = e.a), e.t);
+                                                                  return e.a && !r && (r = e.a), e.t;
                                                               })
                                                               .join('');
                                                       ++oj;
                                                       var n = as(150);
-                                                      (n.write_shift(2, 15),
+                                                      n.write_shift(2, 15),
                                                           n.write_shift(2, 61444),
                                                           n.write_shift(4, 150),
                                                           n.write_shift(2, 3234),
@@ -16821,9 +16799,9 @@
                                                           (n.l += 4),
                                                           (n.l = 150),
                                                           0 == t ? (o = n) : oV(f, 236, n),
-                                                          (l += 150));
+                                                          (l += 150);
                                                       var s = as(52);
-                                                      (s.write_shift(2, 21),
+                                                      s.write_shift(2, 21),
                                                           s.write_shift(2, 18),
                                                           s.write_shift(2, 25),
                                                           s.write_shift(2, oj),
@@ -16838,17 +16816,17 @@
                                                           s.write_shift(2, 0),
                                                           s.write_shift(4, 0),
                                                           (s.l += 4),
-                                                          oV(f, 93, s));
+                                                          oV(f, 93, s);
                                                       var i = as(8);
-                                                      ((i.l += 2), i.write_shift(2, 61453), (i.l += 4), oV(f, 236, i), (l += 8));
+                                                      (i.l += 2), i.write_shift(2, 61453), (i.l += 4), oV(f, 236, i), (l += 8);
                                                       var h = as(18);
-                                                      (h.write_shift(2, 18), (h.l += 8), h.write_shift(2, a.length), h.write_shift(2, 16), (h.l += 4), oV(f, 438, h));
+                                                      h.write_shift(2, 18), (h.l += 8), h.write_shift(2, a.length), h.write_shift(2, 16), (h.l += 4), oV(f, 438, h);
                                                       var u = as(1 + a.length);
-                                                      (u.write_shift(1, 0), u.write_shift(a.length, a, 'sbcs'), oV(f, 60, u));
+                                                      u.write_shift(1, 0), u.write_shift(a.length, a, 'sbcs'), oV(f, 60, u);
                                                       var d = as(16);
-                                                      ((d.l += 8), d.write_shift(2, a.length), (d.l += 6), oV(f, 60, d));
+                                                      (d.l += 8), d.write_shift(2, a.length), (d.l += 6), oV(f, 60, d);
                                                       var p = as(12 + r.length);
-                                                      (p.write_shift(2, e[1]),
+                                                      p.write_shift(2, e[1]),
                                                           p.write_shift(2, e[2]),
                                                           p.write_shift(2, 0 | (2 * !e[0].hidden)),
                                                           p.write_shift(2, oj),
@@ -16856,7 +16834,7 @@
                                                           p.write_shift(1, 0),
                                                           p.write_shift(r.length, r, 'sbcs'),
                                                           p.l++,
-                                                          c.push(p));
+                                                          c.push(p);
                                                   }),
                                                   (u = as(80)).write_shift(2, 15),
                                                   u.write_shift(2, 61442),
@@ -16920,13 +16898,13 @@
                                                 (function (e, t) {
                                                     for (var r = 0; r < t['!links'].length; ++r) {
                                                         var a = t['!links'][r];
-                                                        (oV(
+                                                        oV(
                                                             e,
                                                             440,
                                                             (function (e) {
                                                                 var t = as(24),
                                                                     r = av(e[0]);
-                                                                (t.write_shift(2, r.r), t.write_shift(2, r.r), t.write_shift(2, r.c), t.write_shift(2, r.c));
+                                                                t.write_shift(2, r.r), t.write_shift(2, r.r), t.write_shift(2, r.c), t.write_shift(2, r.c);
                                                                 for (var a = 'd0 c9 ea 79 f9 ba ce 11 8c 82 00 aa 00 4b a9 0b'.split(' '), n = 0; n < 16; ++n)
                                                                     t.write_shift(1, parseInt(a[n], 16));
                                                                 return ek([
@@ -16945,7 +16923,7 @@
                                                                             case '.':
                                                                                 s &= -3;
                                                                         }
-                                                                        (t.write_shift(4, 2), t.write_shift(4, s));
+                                                                        t.write_shift(4, 2), t.write_shift(4, s);
                                                                         var i = [8, 6815827, 6619237, 4849780, 83];
                                                                         for (r = 0; r < i.length; ++r) t.write_shift(4, i[r]);
                                                                         if (28 == s) n4((a = a.slice(1)), t);
@@ -16959,7 +16937,7 @@
                                                                             var o = n > -1 ? a.slice(0, n) : a;
                                                                             for (t.write_shift(4, 2 * (o.length + 1)), r = 0; r < o.length; ++r)
                                                                                 t.write_shift(2, o.charCodeAt(r));
-                                                                            (t.write_shift(2, 0), 8 & s && n4(n > -1 ? a.slice(n + 1) : '', t));
+                                                                            t.write_shift(2, 0), 8 & s && n4(n > -1 ? a.slice(n + 1) : '', t);
                                                                         } else {
                                                                             for (
                                                                                 r = 0, i = '03 03 00 00 00 00 00 00 c0 00 00 00 00 00 00 46'.split(' ');
@@ -16992,11 +16970,11 @@
                                                                             r = as(10 + 2 * (t.length + 1));
                                                                         r.write_shift(2, 2048);
                                                                         var a = av(e[0]);
-                                                                        (r.write_shift(2, a.r), r.write_shift(2, a.r), r.write_shift(2, a.c), r.write_shift(2, a.c));
+                                                                        r.write_shift(2, a.r), r.write_shift(2, a.r), r.write_shift(2, a.c), r.write_shift(2, a.c);
                                                                         for (var n = 0; n < t.length; ++n) r.write_shift(2, t.charCodeAt(n));
-                                                                        return (r.write_shift(2, 0), r);
+                                                                        return r.write_shift(2, 0), r;
                                                                     })(a),
-                                                                ));
+                                                                );
                                                     }
                                                     delete t['!links'];
                                                 })(v, w),
@@ -17041,7 +17019,7 @@
                                                 d = h.WBProps || {},
                                                 p = 8 == r.biff,
                                                 m = 5 == r.biff;
-                                            (oV(f, 2057, si(e, 5, r)),
+                                            oV(f, 2057, si(e, 5, r)),
                                                 'xla' == r.bookType && oV(f, 135),
                                                 oV(f, 225, p ? nX(1200) : null),
                                                 oV(
@@ -17142,24 +17120,24 @@
                                                                     1054,
                                                                     (function (e, t, r, a) {
                                                                         var n = r && 5 == r.biff;
-                                                                        (a || (a = as(n ? 3 + t.length : 5 + 2 * t.length)),
+                                                                        a || (a = as(n ? 3 + t.length : 5 + 2 * t.length)),
                                                                             a.write_shift(2, e),
                                                                             a.write_shift(n ? 1 : 2, t.length),
                                                                             n || a.write_shift(1, 1),
-                                                                            a.write_shift((n ? 1 : 2) * t.length, t, n ? 'sbcs' : 'utf16le'));
+                                                                            a.write_shift((n ? 1 : 2) * t.length, t, n ? 'sbcs' : 'utf16le');
                                                                         var s = a.length > a.l ? a.slice(0, a.l) : a;
-                                                                        return (null == s.l && (s.l = s.length), s);
+                                                                        return null == s.l && (s.l = s.length), s;
                                                                     })(t, c[t], r),
                                                                 );
-                                                    }));
+                                                    });
                                             for (var g = 0; g < 16; ++g) oV(f, 224, sl({ numFmtId: 0, style: !0 }, 0, r));
-                                            (r.cellXfs.forEach(function (e) {
+                                            r.cellXfs.forEach(function (e) {
                                                 oV(f, 224, sl(e, 0, r));
                                             }),
-                                                p && oV(f, 352, nG(!1)));
+                                                p && oV(f, 352, nG(!1));
                                             var v = f.end(),
                                                 b = ao();
-                                            (p && oV(b, 140, (l || (l = as(4)), l.write_shift(2, 1), l.write_shift(2, 1), l)),
+                                            p && oV(b, 140, (l || (l = as(4)), l.write_shift(2, 1), l.write_shift(2, 1), l)),
                                                 p &&
                                                     oX.length &&
                                                     oV(
@@ -17167,20 +17145,20 @@
                                                         235,
                                                         (function () {
                                                             var e = as(82 + 8 * oX.length);
-                                                            (e.write_shift(2, 15),
+                                                            e.write_shift(2, 15),
                                                                 e.write_shift(2, 61440),
                                                                 e.write_shift(4, 74 + 8 * oX.length),
                                                                 e.write_shift(2, 0),
                                                                 e.write_shift(2, 61446),
                                                                 e.write_shift(4, 16 + 8 * oX.length),
                                                                 e.write_shift(4, oj),
-                                                                e.write_shift(4, oX.length + 1));
+                                                                e.write_shift(4, oX.length + 1);
                                                             for (var t = 0, r = 0; r < oX.length; ++r) t += (oX[r] && oX[r][1]) || 0;
                                                             return (
                                                                 e.write_shift(4, t),
                                                                 e.write_shift(4, oX.length),
                                                                 oX.forEach(function (t) {
-                                                                    (e.write_shift(4, t[0]), e.write_shift(4, t[2]));
+                                                                    e.write_shift(4, t[0]), e.write_shift(4, t[2]);
                                                                 }),
                                                                 e.write_shift(2, 51),
                                                                 e.write_shift(2, 61451),
@@ -17208,11 +17186,11 @@
                                                         var n = (r || []).length || 0;
                                                         if (n <= 8224) return oV(e, 252, r, n);
                                                         if (!isNaN(252)) {
-                                                            for (var s = r.parts || [], i = 0, o = 0, c = 0; c + (s[i] || 8224) <= 8224; ) ((c += s[i] || 8224), i++);
+                                                            for (var s = r.parts || [], i = 0, o = 0, c = 0; c + (s[i] || 8224) <= 8224; ) (c += s[i] || 8224), i++;
                                                             var l = e.next(4);
                                                             for (l.write_shift(2, t), l.write_shift(2, c), e.push(r.slice(o, o + c)), o += c; o < n; ) {
-                                                                for ((l = e.next(4)).write_shift(2, 60), c = 0; c + (s[i] || 8224) <= 8224; ) ((c += s[i] || 8224), i++);
-                                                                (l.write_shift(2, c), e.push(r.slice(o, o + c)), (o += c));
+                                                                for ((l = e.next(4)).write_shift(2, 60), c = 0; c + (s[i] || 8224) <= 8224; ) (c += s[i] || 8224), i++;
+                                                                l.write_shift(2, c), e.push(r.slice(o, o + c)), (o += c);
                                                             }
                                                         }
                                                     })(
@@ -17220,14 +17198,14 @@
                                                         252,
                                                         (function (e, t) {
                                                             var r = as(8);
-                                                            (r.write_shift(4, e.Count), r.write_shift(4, e.Unique));
+                                                            r.write_shift(4, e.Count), r.write_shift(4, e.Unique);
                                                             for (var a = [], n = 0; n < e.length; ++n)
                                                                 a[n] = (function (e) {
                                                                     var t = e.t || '',
                                                                         r = as(3);
-                                                                    (r.write_shift(2, t.length), r.write_shift(1, 1));
+                                                                    r.write_shift(2, t.length), r.write_shift(1, 1);
                                                                     var a = as(2 * t.length);
-                                                                    return (a.write_shift(2 * t.length, t, 'utf16le'), ek([r, a]));
+                                                                    return a.write_shift(2 * t.length, t, 'utf16le'), ek([r, a]);
                                                                 })(e[n], t);
                                                             var s = ek([r].concat(a));
                                                             return (
@@ -17240,7 +17218,7 @@
                                                             );
                                                         })(r.Strings, r),
                                                     ),
-                                                oV(b, 10));
+                                                oV(b, 10);
                                             var w = b.end(),
                                                 T = ao(),
                                                 y = 0,
@@ -17248,27 +17226,27 @@
                                             for (E = 0; E < e.SheetNames.length; ++E) y += (p ? 12 : 11) + (p ? 2 : 1) * e.SheetNames[E].length;
                                             var k = v.length + y + w.length;
                                             for (E = 0; E < e.SheetNames.length; ++E)
-                                                (oV(
+                                                oV(
                                                     T,
                                                     133,
                                                     (function (e, t) {
                                                         var r = !t || t.biff >= 8 ? 2 : 1,
                                                             a = as(8 + r * e.name.length);
-                                                        (a.write_shift(4, e.pos),
+                                                        a.write_shift(4, e.pos),
                                                             a.write_shift(1, e.hs || 0),
                                                             a.write_shift(1, e.dt),
                                                             a.write_shift(1, e.name.length),
                                                             t.biff >= 8 && a.write_shift(1, 1),
-                                                            a.write_shift(r * e.name.length, e.name, t.biff < 8 ? 'sbcs' : 'utf16le'));
+                                                            a.write_shift(r * e.name.length, e.name, t.biff < 8 ? 'sbcs' : 'utf16le');
                                                         var n = a.slice(0, a.l);
-                                                        return ((n.l = a.l), n);
+                                                        return (n.l = a.l), n;
                                                     })({ pos: k, hs: (u[E] || {}).Hidden || 0, dt: 0, name: e.SheetNames[E] }, r),
                                                 ),
-                                                    (k += t[E].length));
+                                                    (k += t[E].length);
                                             var x = T.end();
                                             if (y != x.length) throw Error('BS8 ' + y + ' != ' + x.length);
                                             var _ = [];
-                                            return (v.length && _.push(v), x.length && _.push(x), w.length && _.push(w), ek(_));
+                                            return v.length && _.push(v), x.length && _.push(x), w.length && _.push(w), ek(_);
                                         })(e, o, i),
                                     ),
                                     ek(o)
@@ -17279,11 +17257,11 @@
                                 return (function (e, t) {
                                     for (var r = t || {}, a = ao(), n = 0, s = 0; s < e.SheetNames.length; ++s) e.SheetNames[s] == r.sheet && (n = s);
                                     if (0 == n && r.sheet && e.SheetNames[0] != r.sheet) throw Error('Sheet not found: ' + r.sheet);
-                                    (oV(a, 4 == r.biff ? 1033 : 3 == r.biff ? 521 : 9, si(e, 16, r)),
+                                    oV(a, 4 == r.biff ? 1033 : 3 == r.biff ? 521 : 9, si(e, 16, r)),
                                         ((e.Workbook || {}).WBProps || {}).date1904 && oV(a, 34, nG(!0)),
                                         (r.cellXfs = [{ numFmtId: 0 }]),
                                         (r._BIFF2FmtTable = ['General']),
-                                        (r._Fonts = []));
+                                        (r._Fonts = []);
                                     var i = ao();
                                     return (
                                         !(function (e, t, r, a, n) {
@@ -17293,7 +17271,7 @@
                                                 c = [];
                                             if (i.e.c > 255 || i.e.r > 16383) {
                                                 if (a.WTF) throw Error('Range ' + (t['!ref'] || 'A1') + ' exceeds format limit A1:IV16384');
-                                                ((i.e.c = Math.min(i.e.c, 255)), (i.e.r = Math.min(i.e.r, 16383)));
+                                                (i.e.c = Math.min(i.e.c, 255)), (i.e.r = Math.min(i.e.r, 16383));
                                             }
                                             for (var l = (((n || {}).Workbook || {}).WBProps || {}).date1904, f = [], h = [], u = i.s.c; u <= i.e.c; ++u) c[u] = ag(u);
                                             for (var d = i.s.r; d <= i.e.r; ++d)
@@ -17430,8 +17408,8 @@
                                             k.s.c == h && k.s.r < f && f <= k.e.r && ((h = k.e.c + 1), (E = -1));
                                         }
                                         var x = t4(w.slice(0, w.indexOf('>')));
-                                        ((d = x.colspan ? +x.colspan : 1),
-                                            ((u = +x.rowspan) > 1 || d > 1) && m.push({ s: { r: f, c: h }, e: { r: f + (u || 1) - 1, c: h + d - 1 } }));
+                                        (d = x.colspan ? +x.colspan : 1),
+                                            ((u = +x.rowspan) > 1 || d > 1) && m.push({ s: { r: f, c: h }, e: { r: f + (u || 1) - 1, c: h + d - 1 } });
                                         var _ = x.t || x['data-t'] || '';
                                         if (
                                             !T.length ||
@@ -17446,7 +17424,7 @@
                                             continue;
                                         }
                                         var S = { t: 's', v: T };
-                                        (r.raw ||
+                                        r.raw ||
                                             !T.trim().length ||
                                             's' == _ ||
                                             ('TRUE' === T
@@ -17463,12 +17441,12 @@
                                                     : (S = { t: 'n', v: ty(T) })),
                                             !1 !== S.cellText && (S.w = T),
                                             a ? (n['!data'][f] || (n['!data'][f] = []), (n['!data'][f][h] = S)) : (n[ab({ r: f, c: h })] = S),
-                                            (h += d));
+                                            (h += d);
                                     }
                                 }
                             }
                         }
-                        return ((n['!ref'] = aT(p)), m.length && (n['!merges'] = m), n);
+                        return (n['!ref'] = aT(p)), m.length && (n['!merges'] = m), n;
                     }
                     function oZ(e, t, r, a) {
                         for (var n = e['!merges'] || [], s = [], i = {}, o = null != e['!data'], c = t.s.c; c <= t.e.c; ++c) {
@@ -17478,7 +17456,7 @@
                                         l = -1;
                                         break;
                                     }
-                                    ((l = n[h].e.r - n[h].s.r + 1), (f = n[h].e.c - n[h].s.c + 1));
+                                    (l = n[h].e.r - n[h].s.r + 1), (f = n[h].e.c - n[h].s.c + 1);
                                     break;
                                 }
                             if (!(l < 0)) {
@@ -17486,7 +17464,7 @@
                                     d = o ? (e['!data'][r] || [])[c] : e[u];
                                 d && 'n' == d.t && null != d.v && !isFinite(d.v) && (d = isNaN(d.v) ? { t: 'e', v: 36, w: aQ[36] } : { t: 'e', v: 7, w: aQ[7] });
                                 var p = (d && null != d.v && (d.h || ra(d.w || (a_(d), d.w) || ''))) || '';
-                                ((i = {}),
+                                (i = {}),
                                     l > 1 && (i.rowspan = l),
                                     f > 1 && (i.colspan = f),
                                     a.editable
@@ -17497,7 +17475,7 @@
                                           null != d.z && (i['data-z'] = d.z),
                                           d.l && '#' != (d.l.Target || '#').charAt(0) && (p = '<a href="' + ra(d.l.Target) + '">' + p + '</a>')),
                                     (i.id = (a.id || 'sjs') + '-' + u),
-                                    s.push(rw('td', p, i)));
+                                    s.push(rw('td', p, i));
                             }
                         }
                         return '<tr>' + s.join('') + '</tr>';
@@ -17514,7 +17492,7 @@
                             s = [a],
                             i = aw(e['!ref'] || 'A1');
                         if ((s.push(oQ(e, i, r)), e['!ref'])) for (var o = i.s.r; o <= i.e.r; ++o) s.push(oZ(e, i, o, r));
-                        return (s.push('</table>' + n), s.join(''));
+                        return s.push('</table>' + n), s.join('');
                     }
                     function o1(e, t, r) {
                         var a = t.rows;
@@ -17527,17 +17505,17 @@
                             if ('number' == typeof n.origin) i = n.origin;
                             else {
                                 var c = 'string' == typeof n.origin ? av(n.origin) : n.origin;
-                                ((i = c.r), (o = c.c));
+                                (i = c.r), (o = c.c);
                             }
                         var l = Math.min(n.sheetRows || 1e7, a.length),
                             f = { s: { r: 0, c: 0 }, e: { r: i, c: o } };
                         if (e['!ref']) {
                             var h = aw(e['!ref']);
-                            ((f.s.r = Math.min(f.s.r, h.s.r)),
+                            (f.s.r = Math.min(f.s.r, h.s.r)),
                                 (f.s.c = Math.min(f.s.c, h.s.c)),
                                 (f.e.r = Math.max(f.e.r, h.e.r)),
                                 (f.e.c = Math.max(f.e.c, h.e.c)),
-                                -1 == i && (f.e.r = i = h.e.r + 1));
+                                -1 == i && (f.e.r = i = h.e.r + 1);
                         }
                         var u = [],
                             d = 0,
@@ -17564,12 +17542,12 @@
                                         var S = u[d];
                                         S.s.c == b + o && S.s.r < g + i && g + i <= S.e.r && ((b = S.e.c + 1 - o), (d = -1));
                                     }
-                                    ((T = +k.getAttribute('colspan') || 1),
+                                    (T = +k.getAttribute('colspan') || 1),
                                         ((w = +k.getAttribute('rowspan') || 1) > 1 || T > 1) &&
-                                            u.push({ s: { r: g + i, c: b + o }, e: { r: g + i + (w || 1) - 1, c: b + o + (T || 1) - 1 } }));
+                                            u.push({ s: { r: g + i, c: b + o }, e: { r: g + i + (w || 1) - 1, c: b + o + (T || 1) - 1 } });
                                     var A = { t: 's', v: x },
                                         C = k.getAttribute('data-t') || k.getAttribute('t') || '';
-                                    (null != x &&
+                                    null != x &&
                                         (0 == x.length
                                             ? (A.t = C || 'z')
                                             : n.raw ||
@@ -17589,15 +17567,15 @@
                                                               n.cellDates || (A = { t: 'n', v: tu(A.v) }),
                                                               (A.z = n.dateNF || eD[14]))
                                                         : (A = { t: 'n', v: ty(x) }))),
-                                        void 0 === A.z && null != _ && (A.z = _));
+                                        void 0 === A.z && null != _ && (A.z = _);
                                     var I = '',
                                         O = k.getElementsByTagName('A');
                                     if (O && O.length)
                                         for (var R = 0; R < O.length && (!O[R].hasAttribute('href') || '#' == (I = O[R].getAttribute('href')).charAt(0)); ++R);
-                                    (I && '#' != I.charAt(0) && 'javascript:' != I.slice(0, 11).toLowerCase() && (A.l = { Target: I }),
+                                    I && '#' != I.charAt(0) && 'javascript:' != I.slice(0, 11).toLowerCase() && (A.l = { Target: I }),
                                         s ? (e['!data'][g + i] || (e['!data'][g + i] = []), (e['!data'][g + i][b + o] = A)) : (e[ab({ c: b + o, r: g + i })] = A),
                                         f.e.c < b + o && (f.e.c = b + o),
-                                        (b += T));
+                                        (b += T);
                                 }
                             }
                             ++g;
@@ -17612,7 +17590,7 @@
                     }
                     function o2(e, t) {
                         var r = {};
-                        return ((t || {}).dense && (r['!data'] = []), o1(r, e, t));
+                        return (t || {}).dense && (r['!data'] = []), o1(r, e, t);
                     }
                     function o4(e) {
                         var t,
@@ -17623,12 +17601,12 @@
                                     : 'function' == typeof getComputedStyle
                                       ? getComputedStyle
                                       : null;
-                        return (a && (r = a(e).getPropertyValue('display')), r || (r = e.style && e.style.display), 'none' === r);
+                        return a && (r = a(e).getPropertyValue('display')), r || (r = e.style && e.style.display), 'none' === r;
                     }
                     function o3(e, t, r) {
                         var a = r || {},
                             n = ry(e);
-                        ((rE.lastIndex = 0), (n = tR(tF(n, '\x3c!--', '--\x3e'))));
+                        (rE.lastIndex = 0), (n = tR(tF(n, '\x3c!--', '--\x3e')));
                         for (var s, i, o, c = '', l = '', f = 0, h = -1, u = ''; (s = rE.exec(n)); )
                             switch ((s[3] = s[3].replace(/_[\s\S]*$/, ''))) {
                                 case 'number-style':
@@ -17694,7 +17672,7 @@
                                     }
                                     break;
                                 case 'seconds':
-                                    ('short' === (o = t4(s[0], !1)).style ? (c += 's') : (c += 'ss'), o['decimal-places'] && (c += '.' + tT('0', +o['decimal-places'])));
+                                    'short' === (o = t4(s[0], !1)).style ? (c += 's') : (c += 'ss'), o['decimal-places'] && (c += '.' + tT('0', +o['decimal-places']));
                                     break;
                                 case 'year':
                                     switch ((o = t4(s[0], !1)).style) {
@@ -17728,11 +17706,11 @@
                                         tT('0', +o['min-exponent-digits'] || 2);
                                     break;
                                 case 'fraction':
-                                    (+(o = t4(s[0], !1))['min-integer-digits'] ? (c += tT('0', +o['min-integer-digits'])) : (c += '#'),
+                                    +(o = t4(s[0], !1))['min-integer-digits'] ? (c += tT('0', +o['min-integer-digits'])) : (c += '#'),
                                         (c += ' '),
                                         (c += tT('?', +o['min-numerator-digits'] || 1)),
                                         (c += '/'),
-                                        +o['denominator-value'] ? (c += o['denominator-value']) : (c += tT('?', +o['min-denominator-digits'] || 1)));
+                                        +o['denominator-value'] ? (c += o['denominator-value']) : (c += tT('?', +o['min-denominator-digits'] || 1));
                                     break;
                                 case 'currency-symbol':
                                     '/' === s[1]
@@ -17758,12 +17736,12 @@
                                     break;
                                 case 'number':
                                     if ('/' === s[1]) break;
-                                    ((l = '' + tT('0', +(o = t4(s[0], !1))['min-integer-digits'] || 1)),
+                                    (l = '' + tT('0', +(o = t4(s[0], !1))['min-integer-digits'] || 1)),
                                         rs(o.grouping) && (l = eH(tT('#', Math.max(0, 4 - l.length)) + l)),
                                         (+o['min-decimal-places'] || +o['decimal-places']) && (l += '.'),
                                         +o['min-decimal-places'] && (l += tT('0', +o['min-decimal-places'] || 1)),
                                         o['decimal-places'] - (+o['min-decimal-places'] || 0) && (l += tT('0', o['decimal-places'] - (+o['min-decimal-places'] || 0))),
-                                        (c += l));
+                                        (c += l);
                                     break;
                                 case 'embedded-text':
                                     '/' === s[1]
@@ -17853,7 +17831,7 @@
                                 case 'table-row':
                                 case '行':
                                     if ('/' === m[1]) {
-                                        ((_ += L), (L = 1));
+                                        (_ += L), (L = 1);
                                         break;
                                     }
                                     if (((p = t4(m[0], !1))['行号'] ? (_ = p['行号'] - 1) : -1 == _ && (_ = 0), (L = +p['number-rows-repeated'] || 1) < 10))
@@ -17864,18 +17842,16 @@
                                     if ('/' !== m[1])
                                         if ((++S, (M = parseInt((v = t4(m[0], !1))['number-columns-repeated'] || '1', 10) || 1), a.sheetStubs)) {
                                             for (; M-- > 0; )
-                                                (a.dense
-                                                    ? (u['!data'][_] || (u['!data'][_] = []), (u['!data'][_][S] = { t: 'z' }))
-                                                    : (u[ab({ r: _, c: S })] = { t: 'z' }),
-                                                    ++S);
+                                                a.dense ? (u['!data'][_] || (u['!data'][_] = []), (u['!data'][_][S] = { t: 'z' })) : (u[ab({ r: _, c: S })] = { t: 'z' }),
+                                                    ++S;
                                             --S;
                                         } else S += M - 1;
-                                    ((w = ''), (k = []));
+                                    (w = ''), (k = []);
                                     break;
                                 case 'table-cell':
                                 case '数据':
                                     if ('/' === m[0].charAt(m[0].length - 2))
-                                        (++S,
+                                        ++S,
                                             (M = parseInt((v = t4(m[0], !1))['number-columns-repeated'] || '1', 10) || 1),
                                             (g = { t: 'z', v: null }),
                                             v.formula && !1 != a.cellFormula && (g.f = ij(t8(v.formula))),
@@ -17884,9 +17860,9 @@
                                                 ((g.t = 's'),
                                                 (g.v = t8(v['string-value'] || '')),
                                                 a.dense ? (u['!data'][_] || (u['!data'][_] = []), (u['!data'][_][S] = g)) : (u[ag(S) + ap(_)] = g)),
-                                            (S += M - 1));
+                                            (S += M - 1);
                                     else if ('/' !== m[1]) {
-                                        (++S, (w = y = ''), (T = E = 0), (k = []), (x = []), (M = 1));
+                                        ++S, (w = y = ''), (T = E = 0), (k = []), (x = []), (M = 1);
                                         var Z = L ? _ + L - 1 : _;
                                         if (
                                             (S > A.e.c && (A.e.c = S),
@@ -17907,11 +17883,11 @@
                                                     for (c = 0; c != i.length; ++c) {
                                                         for (s = 0, f = i[c].slice(1); s != f.length && 61 !== f.charCodeAt(s); ++s);
                                                         for (l = f.slice(0, s).trim(); 32 == f.charCodeAt(s + 1); ) ++s;
-                                                        ((h = +(34 == (n = f.charCodeAt(s + 1)) || 39 == n)),
+                                                        (h = +(34 == (n = f.charCodeAt(s + 1)) || 39 == n)),
                                                             (o = f.slice(s + 1 + h, f.length - h)),
                                                             l.indexOf('_') > 0 && (l = l.slice(0, l.indexOf('_'))),
                                                             (a[l] = o),
-                                                            (a[l.toLowerCase()] = o));
+                                                            (a[l.toLowerCase()] = o);
                                                     }
                                                 return a;
                                             })(m[0], !0)),
@@ -17949,28 +17925,28 @@
                                             g.t)
                                         ) {
                                             case 'boolean':
-                                                ((g.t = 'b'), (g.v = rs(v['boolean-value']) || +v['boolean-value'] >= 1));
+                                                (g.t = 'b'), (g.v = rs(v['boolean-value']) || +v['boolean-value'] >= 1);
                                                 break;
                                             case 'float':
-                                                ((g.t = 'n'),
+                                                (g.t = 'n'),
                                                     (g.v = parseFloat(v.value)),
                                                     a.cellDates &&
                                                         g.z &&
                                                         eQ(g.z) &&
-                                                        ((g.v = td(g.v + 1462 * !!B.WBProps.date1904)), (g.t = 'number' == typeof g.v ? 'n' : 'd')));
+                                                        ((g.v = td(g.v + 1462 * !!B.WBProps.date1904)), (g.t = 'number' == typeof g.v ? 'n' : 'd'));
                                                 break;
                                             case 'percentage':
                                             case 'currency':
-                                                ((g.t = 'n'), (g.v = parseFloat(v.value)));
+                                                (g.t = 'n'), (g.v = parseFloat(v.value));
                                                 break;
                                             case 'date':
-                                                ((g.t = 'd'),
+                                                (g.t = 'd'),
                                                     (g.v = tv(v['date-value'], B.WBProps.date1904)),
                                                     a.cellDates || ((g.t = 'n'), (g.v = tu(g.v, B.WBProps.date1904))),
-                                                    g.z || (g.z = 'm/d/yy'));
+                                                    g.z || (g.z = 'm/d/yy');
                                                 break;
                                             case 'time':
-                                                ((g.t = 'n'),
+                                                (g.t = 'n'),
                                                     (g.v =
                                                         (function (e) {
                                                             var t = 0,
@@ -17996,14 +17972,14 @@
                                                             return t;
                                                         })(v['time-value']) / 86400),
                                                     a.cellDates && ((g.v = td(g.v)), (g.t = 'number' == typeof g.v ? 'n' : 'd')),
-                                                    g.z || (g.z = 'HH:MM:SS'));
+                                                    g.z || (g.z = 'HH:MM:SS');
                                                 break;
                                             case 'number':
-                                                ((g.t = 'n'), (g.v = parseFloat(v['数据数值'])));
+                                                (g.t = 'n'), (g.v = parseFloat(v['数据数值']));
                                                 break;
                                             default:
                                                 if ('string' !== g.t && 'text' !== g.t && g.t) throw Error('Unsupported value type ' + g.t);
-                                                ((g.t = 's'), null != v['string-value'] && ((w = t8(v['string-value'])), (k = [])));
+                                                (g.t = 's'), null != v['string-value'] && ((w = t8(v['string-value'])), (k = []));
                                         }
                                     } else {
                                         if (
@@ -18023,7 +17999,7 @@
                                                 else for (u[ab({ r: _ + J, c: S })] = g; --M > 0; ) u[ab({ r: _ + J, c: S + M })] = tw(g);
                                                 A.e.c <= S && (A.e.c = S);
                                             }
-                                        ((S += (M = parseInt(v['number-columns-repeated'] || '1', 10)) - 1), (M = 0), (g = {}), (w = ''), (k = []));
+                                        (S += (M = parseInt(v['number-columns-repeated'] || '1', 10)) - 1), (M = 0), (g = {}), (w = ''), (k = []);
                                     }
                                     W = {};
                                     break;
@@ -18043,13 +18019,13 @@
                                 case 'annotation':
                                     if ('/' === m[1]) {
                                         if ((n = c.pop())[0] !== m[3]) throw 'Bad state: ' + n;
-                                        ((V.t = w), k.length && (V.R = k), (V.a = G), H.push(V), (w = y), (T = E), (k = x));
+                                        (V.t = w), k.length && (V.R = k), (V.a = G), H.push(V), (w = y), (T = E), (k = x);
                                     } else if ('/' !== m[0].charAt(m[0].length - 2)) {
                                         c.push([m[3], !1]);
                                         var q = t4(m[0], !0);
-                                        ((q.display && rs(q.display)) || (H.hidden = !0), (y = w), (E = T), (x = k), (w = ''), (T = 0), (k = []));
+                                        (q.display && rs(q.display)) || (H.hidden = !0), (y = w), (E = T), (x = k), (w = ''), (T = 0), (k = []);
                                     }
-                                    ((G = ''), (j = 0));
+                                    (G = ''), (j = 0);
                                     break;
                                 case 'creator':
                                     '/' === m[1] ? (G = o.slice(j, m.index)) : (j = m.index + m[0].length);
@@ -18074,7 +18050,7 @@
                                     if ('/' === m[1]) {
                                         if ((n = c.pop())[0] !== m[3]) throw 'Bad state: ' + n;
                                     } else '/' !== m[0].charAt(m[0].length - 2) && c.push([m[3], !1]);
-                                    ((w = ''), (T = 0), (k = []));
+                                    (w = ''), (T = 0), (k = []);
                                     break;
                                 case 'scientific-number':
                                 case 'currency-symbol':
@@ -18226,7 +18202,7 @@
                                 case 'time-style':
                                     if ('/' === m[1]) {
                                         var Q = rE.lastIndex;
-                                        (o3(o.slice(i, rE.lastIndex), t, I), (rE.lastIndex = Q));
+                                        o3(o.slice(i, rE.lastIndex), t, I), (rE.lastIndex = Q);
                                     } else '/' !== m[0].charAt(m[0].length - 2) && (i = rE.lastIndex - m[0].length);
                                     break;
                                 case 'style':
@@ -18247,7 +18223,7 @@
                                 case 'named-range':
                                     z = iX((s = t4(m[0], !1))['cell-range-address']);
                                     var et = { Name: s.name, Ref: z[0] + '!' + z[1] };
-                                    (K && (et.Sheet = h.length), B.Names.push(et));
+                                    K && (et.Sheet = h.length), B.Names.push(et);
                                     break;
                                 case 'null-date':
                                     '1904-01-01' === (s = t4(m[0], !1))['date-value'] && (B.WBProps.date1904 = !0);
@@ -18285,11 +18261,11 @@
                                 case 'a':
                                     if ('/' !== m[1]) {
                                         if (!(W = t4(m[0], !1)).href) break;
-                                        ((W.Target = t8(W.href)),
+                                        (W.Target = t8(W.href)),
                                             delete W.href,
                                             '#' == W.Target.charAt(0) && W.Target.indexOf('.') > -1
                                                 ? ((z = iX(W.Target.slice(1))), (W.Target = '#' + z[0] + '!' + z[1]))
-                                                : W.Target.match(/^\.\.[\\\/]/) && (W.Target = W.Target.slice(3)));
+                                                : W.Target.match(/^\.\.[\\\/]/) && (W.Target = W.Target.slice(3));
                                     }
                                     break;
                                 default:
@@ -18312,7 +18288,7 @@
                                     }
                             }
                         var ea = { Sheets: f, SheetNames: h, Workbook: B };
-                        return (a.bookSheets && delete ea.Sheets, ea);
+                        return a.bookSheets && delete ea.Sheets, ea;
                     }
                     var o6 =
                         ((B =
@@ -18389,7 +18365,7 @@
                             var d = '',
                                 p = e['!rows'] || [];
                             for (o = 0; o < l.s.r; ++o)
-                                ((d = p[o] ? ' table:style-name="ro' + p[o].ods + '"' : ''), i.push('        <table:table-row' + d + '></table:table-row>\n'));
+                                (d = p[o] ? ' table:style-name="ro' + p[o].ods + '"' : ''), i.push('        <table:table-row' + d + '></table:table-row>\n');
                             for (; o <= l.e.r; ++o) {
                                 for (d = p[o] ? ' table:style-name="ro' + p[o].ods + '"' : '', i.push('        <table:table-row' + d + '>\n'), c = 0; c < l.s.c; ++c)
                                     i.push(z);
@@ -18399,9 +18375,9 @@
                                         v = '';
                                     for (h = 0; h != f.length; ++h)
                                         if (!(f[h].s.c > c) && !(f[h].s.r > o) && !(f[h].e.c < c) && !(f[h].e.r < o)) {
-                                            ((f[h].s.c != c || f[h].s.r != o) && (m = !0),
+                                            (f[h].s.c != c || f[h].s.r != o) && (m = !0),
                                                 (g['table:number-columns-spanned'] = f[h].e.c - f[h].s.c + 1),
-                                                (g['table:number-rows-spanned'] = f[h].e.r - f[h].s.r + 1));
+                                                (g['table:number-rows-spanned'] = f[h].e.r - f[h].s.r + 1);
                                             break;
                                         }
                                     if (m) {
@@ -18419,7 +18395,7 @@
                                         w.F && w.F.slice(0, b.length) == b)
                                     ) {
                                         var T = aw(w.F);
-                                        ((g['table:number-matrix-columns-spanned'] = T.e.c - T.s.c + 1), (g['table:number-matrix-rows-spanned'] = T.e.r - T.s.r + 1));
+                                        (g['table:number-matrix-columns-spanned'] = T.e.c - T.s.c + 1), (g['table:number-matrix-rows-spanned'] = T.e.r - T.s.r + 1);
                                     }
                                     if (!w) {
                                         i.push(z);
@@ -18427,7 +18403,7 @@
                                     }
                                     switch (w.t) {
                                         case 'b':
-                                            ((v = w.v ? 'TRUE' : 'FALSE'), (g['office:value-type'] = 'boolean'), (g['office:boolean-value'] = w.v ? 'true' : 'false'));
+                                            (v = w.v ? 'TRUE' : 'FALSE'), (g['office:value-type'] = 'boolean'), (g['office:boolean-value'] = w.v ? 'true' : 'false');
                                             break;
                                         case 'n':
                                             isFinite(w.v)
@@ -18441,13 +18417,13 @@
                                             break;
                                         case 's':
                                         case 'str':
-                                            ((v = null == w.v ? '' : w.v), (g['office:value-type'] = 'string'));
+                                            (v = null == w.v ? '' : w.v), (g['office:value-type'] = 'string');
                                             break;
                                         case 'd':
-                                            ((v = w.w || tv(w.v, s).toISOString()),
+                                            (v = w.w || tv(w.v, s).toISOString()),
                                                 (g['office:value-type'] = 'date'),
                                                 (g['office:date-value'] = tv(w.v, s).toISOString()),
-                                                (g['table:style-name'] = 'ce1'));
+                                                (g['table:style-name'] = 'ce1');
                                             break;
                                         default:
                                             i.push(z);
@@ -18456,21 +18432,21 @@
                                     var y = W(v);
                                     if (w.l && w.l.Target) {
                                         var E = w.l.Target;
-                                        ('#' == (E = '#' == E.charAt(0) ? '#' + iK(E.slice(1)) : E).charAt(0) || E.match(/^\w+:/) || (E = '../' + E),
-                                            (y = rw('text:a', y, { 'xlink:href': E.replace(/&/g, '&amp;') })));
+                                        '#' == (E = '#' == E.charAt(0) ? '#' + iK(E.slice(1)) : E).charAt(0) || E.match(/^\w+:/) || (E = '../' + E),
+                                            (y = rw('text:a', y, { 'xlink:href': E.replace(/&/g, '&amp;') }));
                                     }
                                     n[w.z] && (g['table:style-name'] = 'ce' + n[w.z].slice(1));
                                     var k = rw('text:p', y, {});
                                     if (w.c) {
                                         for (var x = '', _ = '', S = {}, A = 0; A < w.c.length; ++A)
-                                            (!x && w.c[A].a && (x = w.c[A].a), (_ += '<text:p>' + W(w.c[A].t) + '</text:p>'));
-                                        (w.c.hidden || (S['office:display'] = !0), (k = rw('office:annotation', _, S) + k));
+                                            !x && w.c[A].a && (x = w.c[A].a), (_ += '<text:p>' + W(w.c[A].t) + '</text:p>');
+                                        w.c.hidden || (S['office:display'] = !0), (k = rw('office:annotation', _, S) + k);
                                     }
                                     i.push('          ' + rw('table:table-cell', k, g) + '\n');
                                 }
                                 i.push('        </table:table-row>\n');
                             }
-                            return ((t.Workbook || {}).Names && i.push(o8(t.Workbook.Names, t.SheetNames, r)), i.push('      </table:table>\n'), i.join(''));
+                            return (t.Workbook || {}).Names && i.push(o8(t.Workbook.Names, t.SheetNames, r)), i.push('      </table:table>\n'), i.join('');
                         }),
                         (V = function (e, t) {
                             e.push(' <office:automatic-styles>\n');
@@ -18483,17 +18459,17 @@
                                         if (t['!cols'][a]) {
                                             var n = t['!cols'][a];
                                             if (null == n.width && null == n.wpx && null == n.wch) continue;
-                                            (s0(n), (n.ods = r));
+                                            s0(n), (n.ods = r);
                                             var s = t['!cols'][a].wpx + 'px';
-                                            (e.push('  <style:style style:name="co' + r + '" style:family="table-column">\n'),
+                                            e.push('  <style:style style:name="co' + r + '" style:family="table-column">\n'),
                                                 e.push('   <style:table-column-properties fo:break-before="auto" style:column-width="' + s + '"/>\n'),
                                                 e.push('  </style:style>\n'),
-                                                ++r);
+                                                ++r;
                                         }
                                 }
                             });
                             var a = 0;
-                            (t.SheetNames.map(function (e) {
+                            t.SheetNames.map(function (e) {
                                 return t.Sheets[e];
                             }).forEach(function (t) {
                                 if (t && t['!rows']) {
@@ -18501,10 +18477,10 @@
                                         if (t['!rows'][r]) {
                                             t['!rows'][r].ods = a;
                                             var n = t['!rows'][r].hpx + 'px';
-                                            (e.push('  <style:style style:name="ro' + a + '" style:family="table-row">\n'),
+                                            e.push('  <style:style style:name="ro' + a + '" style:family="table-row">\n'),
                                                 e.push('   <style:table-row-properties fo:break-before="auto" style:row-height="' + n + '"/>\n'),
                                                 e.push('  </style:style>\n'),
-                                                ++a);
+                                                ++a;
                                         }
                                 }
                             }),
@@ -18517,7 +18493,7 @@
                                 e.push('   <number:day number:style="long"/>\n'),
                                 e.push('   <number:text>/</number:text>\n'),
                                 e.push('   <number:year/>\n'),
-                                e.push('  </number:date-style>\n'));
+                                e.push('  </number:date-style>\n');
                             var n = {},
                                 s = 69;
                             return (
@@ -18545,16 +18521,16 @@
                                                                         (e = e.slice(0, e.indexOf(';')))),
                                                                     '@' == e)
                                                                 ) {
-                                                                    ((r = 'text'), (a = '<number:text-content/>'));
+                                                                    (r = 'text'), (a = '<number:text-content/>');
                                                                     break r;
                                                                 }
                                                                 if ((e.indexOf(/\$/) > -1 && (r = 'currency'), '"' == e[i])) {
                                                                     for (s = ''; '"' != e[++i] || '"' == e[++i]; ) s += e[i];
-                                                                    ('*' == e[--i + 1]
+                                                                    '*' == e[--i + 1]
                                                                         ? (i++, (a += '<number:fill-character>' + re(s.replace(/""/g, '"')) + '</number:fill-character>'))
                                                                         : (a += '<number:text>' + re(s.replace(/""/g, '"')) + '</number:text>'),
                                                                         (e = e.slice(i + 1)),
-                                                                        (i = 0));
+                                                                        (i = 0);
                                                                 }
                                                                 var o = e.match(/# (\?+)\/(\?+)/);
                                                                 if (o) {
@@ -18574,13 +18550,13 @@
                                                                     break r;
                                                                 }
                                                                 if ((o = e.match(/\b(\d+)(|\.\d+)%/))) {
-                                                                    ((r = 'percentage'),
+                                                                    (r = 'percentage'),
                                                                         (a +=
                                                                             rw('number:number', null, {
                                                                                 'number:decimal-places': (o[2] && o.length - 1) || 0,
                                                                                 'number:min-decimal-places': (o[2] && o.length - 1) || 0,
                                                                                 'number:min-integer-digits': o[1].length,
-                                                                            }) + '<number:text>%</number:text>'));
+                                                                            }) + '<number:text>%</number:text>');
                                                                     break r;
                                                                 }
                                                                 var c = !1;
@@ -18590,7 +18566,7 @@
                                                                         switch ((s = e[i].toLowerCase())) {
                                                                             case 'h':
                                                                             case 's':
-                                                                                ((c = !0), --i);
+                                                                                (c = !0), --i;
                                                                                 break a;
                                                                             case 'm':
                                                                                 n: for (var l = i + 1; l < e.length; ++l)
@@ -18600,7 +18576,7 @@
                                                                                             break n;
                                                                                         case 'h':
                                                                                         case 's':
-                                                                                            ((c = !0), --i);
+                                                                                            (c = !0), --i;
                                                                                             break a;
                                                                                     }
                                                                             case 'y':
@@ -18642,7 +18618,7 @@
                                                                                 break;
                                                                             case '"':
                                                                                 for (; '"' != e[++i] || '"' == e[++i]; ) s += e[i];
-                                                                                (--i, (a += '<number:text>' + re(s.slice(1).replace(/""/g, '"')) + '</number:text>'));
+                                                                                --i, (a += '<number:text>' + re(s.slice(1).replace(/""/g, '"')) + '</number:text>');
                                                                                 break;
                                                                             case '\\':
                                                                                 a += '<number:text>' + re((s = e[++i])) + '</number:text>';
@@ -18655,7 +18631,7 @@
                                                                                 console.error('unrecognized character ' + s + ' in ODF format ' + e);
                                                                         }
                                                                     if (!c) break r;
-                                                                    ((e = e.slice(i + 1)), (i = 0));
+                                                                    (e = e.slice(i + 1)), (i = 0);
                                                                 }
                                                                 if (e.match(/^\[?[hms]/)) {
                                                                     for (
@@ -18682,7 +18658,7 @@
                                                                                     case 's':
                                                                                     case 'ss':
                                                                                         if ('.' == e[i + 1])
-                                                                                            do ((s += e[i + 1]), ++i);
+                                                                                            do (s += e[i + 1]), ++i;
                                                                                             while ('0' == e[i + 1]);
                                                                                         a +=
                                                                                             '<number:seconds number:style="' +
@@ -18696,7 +18672,7 @@
                                                                                 break;
                                                                             case '"':
                                                                                 for (; '"' != e[++i] || '"' == e[++i]; ) s += e[i];
-                                                                                (--i, (a += '<number:text>' + re(s.slice(1).replace(/""/g, '"')) + '</number:text>'));
+                                                                                --i, (a += '<number:text>' + re(s.slice(1).replace(/""/g, '"')) + '</number:text>');
                                                                                 break;
                                                                             case '/':
                                                                             case ':':
@@ -18704,11 +18680,11 @@
                                                                                 break;
                                                                             case 'a':
                                                                                 if ('a/p' == e.slice(i, i + 3).toLowerCase()) {
-                                                                                    ((a += '<number:am-pm/>'), (i += 2));
+                                                                                    (a += '<number:am-pm/>'), (i += 2);
                                                                                     break;
                                                                                 }
                                                                                 if ('am/pm' == e.slice(i, i + 5).toLowerCase()) {
-                                                                                    ((a += '<number:am-pm/>'), (i += 4));
+                                                                                    (a += '<number:am-pm/>'), (i += 4);
                                                                                     break;
                                                                                 }
                                                                             default:
@@ -18726,16 +18702,16 @@
                                                                     '"' == e[(i = 0)])
                                                                 ) {
                                                                     for (; '"' != e[++i] || '"' == e[++i]; ) s += e[i];
-                                                                    ('*' == e[--i + 1]
+                                                                    '*' == e[--i + 1]
                                                                         ? (i++, (a += '<number:fill-character>' + re(s.replace(/""/g, '"')) + '</number:fill-character>'))
                                                                         : (a += '<number:text>' + re(s.replace(/""/g, '"')) + '</number:text>'),
                                                                         (e = e.slice(i + 1)),
-                                                                        (i = 0));
+                                                                        (i = 0);
                                                                 }
                                                                 var f = e.match(/([#0][0#,]*)(\.[0#]*|)(E[+]?0*|)/i);
                                                                 if (f && f[0]) {
                                                                     var h = f[1].replace(/,/g, '');
-                                                                    ((a +=
+                                                                    (a +=
                                                                         '<number:' +
                                                                         (f[3] ? 'scientific-' : '') +
                                                                         'number number:min-integer-digits="' +
@@ -18748,11 +18724,11 @@
                                                                         '></number:' +
                                                                         (f[3] ? 'scientific-' : '') +
                                                                         'number>'),
-                                                                        (i = f.index + f[0].length));
+                                                                        (i = f.index + f[0].length);
                                                                 } else console.error('Could not find numeric part of ' + e);
                                                                 if ('"' == e[i]) {
                                                                     for (s = ''; '"' != e[++i] || '"' == e[++i]; ) s += e[i];
-                                                                    (--i, (a += '<number:text>' + re(s.replace(/""/g, '"')) + '</number:text>'));
+                                                                    --i, (a += '<number:text>' + re(s.replace(/""/g, '"')) + '</number:text>');
                                                                 }
                                                             }
                                                             return a
@@ -18832,12 +18808,12 @@
                                   ))
                                 : r.push('<office:document-content' + a + '>\n');
                             var s = V(r, e);
-                            (r.push('  <office:body>\n'),
+                            r.push('  <office:body>\n'),
                                 r.push('    <office:spreadsheet>\n'),
                                 ((e.Workbook || {}).WBProps || {}).date1904 &&
                                     r.push(
                                         '      <table:calculation-settings table:case-sensitive="false" table:search-criteria-must-apply-to-whole-cell="true" table:use-wildcards="true" table:use-regular-expressions="false" table:automatic-find-labels="false">\n        <table:null-date table:date-value="1904-01-01"/>\n      </table:calculation-settings>\n',
-                                    ));
+                                    );
                             for (var i = 0; i != e.SheetNames.length; ++i) r.push(H(e.Sheets[e.SheetNames[i]], e, i, t, s, ((e.Workbook || {}).WBProps || {}).date1904));
                             return (
                                 (e.Workbook || {}).Names && r.push(o8(e.Workbook.Names, e.SheetNames, -1)),
@@ -18871,15 +18847,15 @@
                                     var t = [tJ];
                                     t.push('<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">\n');
                                     for (var r = 0; r != e.length; ++r)
-                                        (t.push(nb(e[r][0], e[r][1])),
+                                        t.push(nb(e[r][0], e[r][1])),
                                             t.push(
                                                 [
                                                     '  <rdf:Description rdf:about="">\n',
                                                     '    <ns0:hasPart xmlns:ns0="http://docs.oasis-open.org/ns/office/1.2/meta/pkg#" rdf:resource="' + e[r][0] + '"/>\n',
                                                     '  </rdf:Description>\n',
                                                 ].join(''),
-                                            ));
-                                    return (t.push(nb('', 'Document', 'pkg')), t.push('</rdf:RDF>'), t.join(''));
+                                            );
+                                    return t.push(nb('', 'Document', 'pkg')), t.push('</rdf:RDF>'), t.join('');
                                 })(s),
                             ),
                             n.push([a, 'application/rdf+xml']),
@@ -18888,13 +18864,13 @@
                                 (a = 'META-INF/manifest.xml'),
                                 (function (e) {
                                     var t = [tJ];
-                                    (t.push('<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.2">\n'),
+                                    t.push('<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.2">\n'),
                                         t.push(
                                             '  <manifest:file-entry manifest:full-path="/" manifest:version="1.2" manifest:media-type="application/vnd.oasis.opendocument.spreadsheet"/>\n',
-                                        ));
+                                        );
                                     for (var r = 0; r < e.length; ++r)
                                         t.push('  <manifest:file-entry manifest:full-path="' + e[r][0] + '" manifest:media-type="' + e[r][1] + '"/>\n');
-                                    return (t.push('</manifest:manifest>'), t.join(''));
+                                    return t.push('</manifest:manifest>'), t.join('');
                                 })(n),
                             ),
                             r
@@ -18930,12 +18906,12 @@
                             var s = e[r],
                                 i = s.length;
                             if (i < 250) for (var o = 0; o < i; ++o) a[n++] = s[o];
-                            else (a.set(s, n), (n += i));
+                            else a.set(s, n), (n += i);
                         }
                         return a;
                     }
                     function cs(e) {
-                        return ((e -= (e >> 1) & 0x55555555), ((((e = (0x33333333 & e) + ((e >> 2) & 0x33333333)) + (e >> 4)) & 0xf0f0f0f) * 0x1010101) >>> 24);
+                        return (e -= (e >> 1) & 0x55555555), ((((e = (0x33333333 & e) + ((e >> 2) & 0x33333333)) + (e >> 4)) & 0xf0f0f0f) * 0x1010101) >>> 24;
                     }
                     function ci(e, t) {
                         var r = t.l,
@@ -18951,7 +18927,7 @@
                                 ((a += (127 & e[r]) * 0x40000000000), ++r, e[r++] < 128))
                         )
                             break s;
-                        return ((t.l = r), a);
+                        return (t.l = r), a;
                     }
                     function co(e) {
                         var t = new Uint8Array(7);
@@ -18969,7 +18945,7 @@
                                     ((t[r - 1] |= 128), (t[r] = ((e / 65536) >>> 21) & 127), ++r, e <= 0x3ffffffffff))
                             )
                                 break i;
-                            ((t[r - 1] |= 128), (t[r] = ((e / 0x1000000) >>> 21) & 127), ++r);
+                            (t[r - 1] |= 128), (t[r] = ((e / 0x1000000) >>> 21) & 127), ++r;
                         }
                         return t[ce](0, r);
                     }
@@ -19003,23 +18979,23 @@
                             switch (i) {
                                 case 0:
                                     for (; e[o++] >= 128; );
-                                    ((a = e[ce](r.l, o)), (r.l = o));
+                                    (a = e[ce](r.l, o)), (r.l = o);
                                     break;
                                 case 1:
-                                    ((a = e[ce](o, o + 8)), (r.l = o + 8));
+                                    (a = e[ce](o, o + 8)), (r.l = o + 8);
                                     break;
                                 case 2:
                                     var c = ci(e, r);
-                                    ((a = e[ce](r.l, r.l + c)), (r.l += c));
+                                    (a = e[ce](r.l, r.l + c)), (r.l += c);
                                     break;
                                 case 5:
-                                    ((a = e[ce](o, o + 4)), (r.l = o + 4));
+                                    (a = e[ce](o, o + 4)), (r.l = o + 4);
                                     break;
                                 default:
                                     throw Error('PB Type '.concat(i, ' for Field ').concat(s, ' at offset ').concat(n));
                             }
                             var l = { data: a, type: i };
-                            (null == t[s] && (t[s] = []), t[s].push(l));
+                            null == t[s] && (t[s] = []), t[s].push(l);
                         }
                         return t;
                     }
@@ -19050,13 +19026,13 @@
                                 s = ch(e[ce](a.l, a.l + n));
                             a.l += n;
                             var i = { id: cf(s[1][0].data), messages: [] };
-                            (s[2].forEach(function (t) {
+                            s[2].forEach(function (t) {
                                 var r = ch(t.data),
                                     n = cf(r[3][0].data);
-                                (i.messages.push({ meta: r, data: e[ce](a.l, a.l + n) }), (a.l += n));
+                                i.messages.push({ meta: r, data: e[ce](a.l, a.l + n) }), (a.l += n);
                             }),
                                 (null == (t = s[3]) ? void 0 : t[0]) && (i.merge = cf(s[3][0].data) >>> 0 > 0),
-                                r.push(i));
+                                r.push(i);
                         }
                         return r;
                     }
@@ -19068,14 +19044,14 @@
                                 null != e.merge && (r[3] = [{ data: co(+!!e.merge), type: 0 }]);
                                 var a = [];
                                 e.messages.forEach(function (e) {
-                                    (a.push(e.data), (e.meta[3] = [{ type: 0, data: co(e.data.length) }]), r[2].push({ data: cu(e.meta), type: 2 }));
+                                    a.push(e.data), (e.meta[3] = [{ type: 0, data: co(e.data.length) }]), r[2].push({ data: cu(e.meta), type: 2 });
                                 });
                                 var n = cu(r);
-                                (t.push(co(n.length)),
+                                t.push(co(n.length)),
                                     t.push(n),
                                     a.forEach(function (e) {
                                         return t.push(e);
-                                    }));
+                                    });
                             }),
                             cn(t)
                         );
@@ -19085,7 +19061,7 @@
                         for (var t = [], r = 0; r < e.length; ) {
                             var a = e[r++],
                                 n = e[r] | (e[r + 1] << 8) | (e[r + 2] << 16);
-                            ((r += 3),
+                            (r += 3),
                                 t.push.apply(
                                     t,
                                     (function (e, t) {
@@ -19097,15 +19073,15 @@
                                                 if (o < 60) ++o;
                                                 else {
                                                     var c = o - 59;
-                                                    ((o = t[s]),
+                                                    (o = t[s]),
                                                         c > 1 && (o |= t[s + 1] << 8),
                                                         c > 2 && (o |= t[s + 2] << 16),
                                                         c > 3 && (o |= t[s + 3] << 24),
                                                         (o >>>= 0),
                                                         o++,
-                                                        (s += c));
+                                                        (s += c);
                                                 }
-                                                (n.push(t[ce](s, s + o)), (s += o));
+                                                n.push(t[ce](s, s + o)), (s += o);
                                                 continue;
                                             }
                                             var l = 0,
@@ -19120,14 +19096,14 @@
                                                 0 == l)
                                             )
                                                 throw Error('Invalid offset 0');
-                                            for (var h = n.length - 1, u = l; h >= 0 && u >= n[h].length; ) ((u -= n[h].length), --h);
+                                            for (var h = n.length - 1, u = l; h >= 0 && u >= n[h].length; ) (u -= n[h].length), --h;
                                             if (h < 0)
                                                 if (0 == u) u = n[(h = 0)].length;
                                                 else throw Error('Invalid offset beyond length');
                                             if (f < u) n.push(n[h][ce](n[h].length - u, n[h].length - u + f));
                                             else {
                                                 for (u > 0 && (n.push(n[h][ce](n[h].length - u)), (f -= u)), ++h; f >= n[h].length; )
-                                                    (n.push(n[h]), (f -= n[h].length), ++h);
+                                                    n.push(n[h]), (f -= n[h].length), ++h;
                                                 f && n.push(n[h][ce](0, f));
                                             }
                                             n.length > 25 && (n = [cn(n)]);
@@ -19137,7 +19113,7 @@
                                         return n;
                                     })(a, e[ce](r, r + n)),
                                 ),
-                                (r += n));
+                                (r += n);
                         }
                         if (r !== e.length) throw Error('data is not a valid framed stream!');
                         return 1 == t.length ? t[0] : cn(t);
@@ -19149,7 +19125,7 @@
                             t.push(n);
                             var s = co(a),
                                 i = s.length;
-                            (t.push(s),
+                            t.push(s),
                                 a <= 60
                                     ? (i++, t.push(new Uint8Array([(a - 1) << 2])))
                                     : a <= 256
@@ -19166,7 +19142,7 @@
                                 (n[1] = 255 & i),
                                 (n[2] = (i >> 8) & 255),
                                 (n[3] = (i >> 16) & 255),
-                                (r += a));
+                                (r += a);
                         }
                         return cn(t);
                     }
@@ -19190,14 +19166,14 @@
                                     u = d = 2;
                                     break c;
                                 }
-                                ((u = m >= 604800 ? 1 : m >= 86400 ? 2 : m >= 3600 ? 4 : m >= 60 ? 8 : m >= 1 ? 16 : 32),
+                                (u = m >= 604800 ? 1 : m >= 86400 ? 2 : m >= 3600 ? 4 : m >= 60 ? 8 : m >= 1 ? 16 : 32),
                                     Math.floor(m) != m ? (d = 32) : m % 60 ? (d = 16) : m % 3600 ? (d = 8) : m % 86400 ? (d = 4) : m % 604800 && (d = 2),
-                                    d < u && (d = u));
+                                    d < u && (d = u);
                             }
                             if (-1 == u || -1 == d) break o;
                             var v = [],
                                 b = [];
-                            (1 == u &&
+                            1 == u &&
                                 ((g = m / 604800),
                                 1 == d ? b.push('d"d"') : ((g |= 0), (m -= 604800 * g)),
                                 v.push(g + (2 == h ? ' week' + (1 == g ? '' : 's') : 1 == h ? 'w' : ''))),
@@ -19237,7 +19213,7 @@
                                         : v.push(g + (2 == h ? ' millisecond' + (1 == g ? '' : 's') : 1 == h ? 'ms' : ''))),
                                 (e.w = v.join(0 == h ? ':' : ' ')),
                                 (e.z = b.join(0 == h ? '":"' : ' ')),
-                                0 == h && (e.w = e.w.replace(/:(\d\d\d)$/, '.$1')));
+                                0 == h && (e.w = e.w.replace(/:(\d\d\d)$/, '.$1'));
                         }
                     }
                     function cw(e, t) {
@@ -19253,7 +19229,7 @@
                                       (function (e, t, r) {
                                           var a = Math.floor(0 == r ? 0 : Math.LOG10E * Math.log(Math.abs(r))) + 6176 - 16,
                                               n = r / Math.pow(10, a - 6176);
-                                          ((e[t + 15] |= a >> 7), (e[t + 14] |= (127 & a) << 1));
+                                          (e[t + 15] |= a >> 7), (e[t + 14] |= (127 & a) << 1);
                                           for (var s = 0; n >= 1; ++s, n /= 256) e[t + s] = 255 & n;
                                           e[t + 15] |= r >= 0 ? 0 : 128;
                                       })(r, n, e.v),
@@ -19261,7 +19237,7 @@
                                       (n += 16));
                                 break;
                             case 'b':
-                                ((r[1] = 6), a.setFloat64(n, +!!e.v, !0), (s |= 2), (n += 8));
+                                (r[1] = 6), a.setFloat64(n, +!!e.v, !0), (s |= 2), (n += 8);
                                 break;
                             case 's':
                                 var i = null == e.v ? '' : String(e.v);
@@ -19270,14 +19246,14 @@
                                         var r;
                                         return t.v == i && t.l == (null == (r = e.l) ? void 0 : r.Target);
                                     });
-                                    (-1 == o && (t.rsst[(o = t.rsst.length)] = { v: i, l: e.l.Target }), (r[1] = 9), a.setUint32(n, o, !0), (s |= 16), (n += 4));
+                                    -1 == o && (t.rsst[(o = t.rsst.length)] = { v: i, l: e.l.Target }), (r[1] = 9), a.setUint32(n, o, !0), (s |= 16), (n += 4);
                                 } else {
                                     var c = t.sst.indexOf(i);
-                                    (-1 == c && (t.sst[(c = t.sst.length)] = i), (r[1] = 3), a.setUint32(n, c, !0), (s |= 8), (n += 4));
+                                    -1 == c && (t.sst[(c = t.sst.length)] = i), (r[1] = 3), a.setUint32(n, c, !0), (s |= 8), (n += 4);
                                 }
                                 break;
                             case 'd':
-                                ((r[1] = 5), a.setFloat64(n, (e.v.getTime() - Date.UTC(2001, 0, 1)) / 1e3, !0), (s |= 4), (n += 8));
+                                (r[1] = 5), a.setFloat64(n, (e.v.getTime() - Date.UTC(2001, 0, 1)) / 1e3, !0), (s |= 4), (n += 8);
                                 break;
                             case 'z':
                                 r[1] = 0;
@@ -19320,7 +19296,7 @@
                                         var r;
                                         return t.v == i && t.l == (null == (r = e.l) ? void 0 : r.Target);
                                     });
-                                    (-1 == o && (t.rsst[(o = t.rsst.length)] = { v: i, l: e.l.Target }), (r[1] = 9), a.setUint32(n, o, !0), (s |= 512), (n += 4));
+                                    -1 == o && (t.rsst[(o = t.rsst.length)] = { v: i, l: e.l.Target }), (r[1] = 9), a.setUint32(n, o, !0), (s |= 512), (n += 4);
                                 }
                                 break;
                             default:
@@ -19328,20 +19304,20 @@
                         }
                         switch ((e.c && (a.setUint32(n, t.cmnt.length - 1, !0), (s |= 4096), (n += 4)), e.t)) {
                             case 'n':
-                                ((r[1] = 2), a.setFloat64(n, e.v, !0), (s |= 32), (n += 8));
+                                (r[1] = 2), a.setFloat64(n, e.v, !0), (s |= 32), (n += 8);
                                 break;
                             case 'b':
-                                ((r[1] = 6), a.setFloat64(n, +!!e.v, !0), (s |= 32), (n += 8));
+                                (r[1] = 6), a.setFloat64(n, +!!e.v, !0), (s |= 32), (n += 8);
                                 break;
                             case 's':
                                 if (((i = null == e.v ? '' : String(e.v)), e.l));
                                 else {
                                     var c = t.sst.indexOf(i);
-                                    (-1 == c && (t.sst[(c = t.sst.length)] = i), (r[1] = 3), a.setUint32(n, c, !0), (s |= 16), (n += 4));
+                                    -1 == c && (t.sst[(c = t.sst.length)] = i), (r[1] = 3), a.setUint32(n, c, !0), (s |= 16), (n += 4);
                                 }
                                 break;
                             case 'd':
-                                ((r[1] = 5), a.setFloat64(n, (e.v.getTime() - Date.UTC(2001, 0, 1)) / 1e3, !0), (s |= 64), (n += 8));
+                                (r[1] = 5), a.setFloat64(n, (e.v.getTime() - Date.UTC(2001, 0, 1)) / 1e3, !0), (s |= 64), (n += 8);
                                 break;
                             case 'z':
                                 r[1] = 0;
@@ -19349,7 +19325,7 @@
                             default:
                                 throw 'unsupported cell type ' + e.t;
                         }
-                        return (a.setUint32(8, s, !0), r[ce](0, n));
+                        return a.setUint32(8, s, !0), r[ce](0, n);
                     }
                     function cy(e) {
                         return cf(ch(e)[1][0].data);
@@ -19507,7 +19483,7 @@
                                         return console.log('## ' + (e.message || e));
                                     }
                                     r.forEach(function (e) {
-                                        ((l[e.id] = e.messages), f.push(e.id));
+                                        (l[e.id] = e.messages), f.push(e.id);
                                     });
                                 }
                             }),
@@ -19589,13 +19565,13 @@
                                                                             var T = null != r['!data'],
                                                                                 y = ch(b[4][0].data),
                                                                                 E = { sst: [], rsst: [], ofmt: [], nfmt: [], fmla: [], ferr: [], cmnt: [] };
-                                                                            ((null == (n = y[4]) ? void 0 : n[0]) && (E.sst = c_(e, e[cy(y[4][0].data)][0])),
+                                                                            (null == (n = y[4]) ? void 0 : n[0]) && (E.sst = c_(e, e[cy(y[4][0].data)][0])),
                                                                                 (null == (s = y[6]) ? void 0 : s[0]) && (E.fmla = c_(e, e[cy(y[6][0].data)][0])),
                                                                                 (null == (i = y[11]) ? void 0 : i[0]) && (E.ofmt = c_(e, e[cy(y[11][0].data)][0])),
                                                                                 (null == (o = y[12]) ? void 0 : o[0]) && (E.ferr = c_(e, e[cy(y[12][0].data)][0])),
                                                                                 (null == (c = y[17]) ? void 0 : c[0]) && (E.rsst = c_(e, e[cy(y[17][0].data)][0])),
                                                                                 (null == (l = y[19]) ? void 0 : l[0]) && (E.cmnt = c_(e, e[cy(y[19][0].data)][0])),
-                                                                                (null == (f = y[22]) ? void 0 : f[0]) && (E.nfmt = c_(e, e[cy(y[22][0].data)][0])));
+                                                                                (null == (f = y[22]) ? void 0 : f[0]) && (E.nfmt = c_(e, e[cy(y[22][0].data)][0]));
                                                                             var k = ch(y[3][0].data),
                                                                                 x = 0;
                                                                             if (!(null == (h = y[9]) ? void 0 : h[0])) throw 'NUMBERS file missing row tree';
@@ -19654,28 +19630,28 @@
                                                                                                             : s.data) &&
                                                                                                         0 != t
                                                                                                     )
-                                                                                                        ((g =
+                                                                                                        (g =
                                                                                                             null == (o = null == (i = b[7]) ? void 0 : i[0])
                                                                                                                 ? void 0
                                                                                                                 : o.data),
                                                                                                             (v =
                                                                                                                 null == (l = null == (c = b[6]) ? void 0 : c[0])
                                                                                                                     ? void 0
-                                                                                                                    : l.data));
+                                                                                                                    : l.data);
                                                                                                     else if (
                                                                                                         (null == (h = null == (f = b[4]) ? void 0 : f[0])
                                                                                                             ? void 0
                                                                                                             : h.data) &&
                                                                                                         1 != t
                                                                                                     )
-                                                                                                        ((g =
+                                                                                                        (g =
                                                                                                             null == (d = null == (u = b[4]) ? void 0 : u[0])
                                                                                                                 ? void 0
                                                                                                                 : d.data),
                                                                                                             (v =
                                                                                                                 null == (m = null == (p = b[3]) ? void 0 : p[0])
                                                                                                                     ? void 0
-                                                                                                                    : m.data));
+                                                                                                                    : m.data);
                                                                                                     else throw 'NUMBERS Tile missing '.concat(t, ' cell storage');
                                                                                                     for (
                                                                                                         var E = y ? 4 : 1, k = ct(g), x = [], _ = 0;
@@ -19713,7 +19689,7 @@
                                                                                                     );
                                                                                                 }, []),
                                                                                             });
-                                                                                        (u.data.forEach(function (e, t) {
+                                                                                        u.data.forEach(function (e, t) {
                                                                                             e.forEach(function (e, n) {
                                                                                                 var s = (function (e, t, r) {
                                                                                                     switch (e[0]) {
@@ -19733,7 +19709,7 @@
                                                                                                                     h = 0,
                                                                                                                     u = new Date(Date.UTC(2001, 0, 1)),
                                                                                                                     d = r > 1 ? 12 : 8;
-                                                                                                                (2 & i && ((l = s.getUint32(d, !0)), (d += 4)),
+                                                                                                                2 & i && ((l = s.getUint32(d, !0)), (d += 4)),
                                                                                                                     (d += 4 * cs(i & (r > 1 ? 3468 : 396))),
                                                                                                                     512 & i && ((o = s.getUint32(d, !0)), (d += 4)),
                                                                                                                     (d += 4 * cs(i & (r > 1 ? 12288 : 4096))),
@@ -19746,7 +19722,7 @@
                                                                                                                         (d += 8)),
                                                                                                                     r > 1 &&
                                                                                                                         255 & (i = s.getUint32(8, !0) >>> 16) &&
-                                                                                                                        (-1 == l && (l = s.getUint32(d, !0)), (d += 4)));
+                                                                                                                        (-1 == l && (l = s.getUint32(d, !0)), (d += 4));
                                                                                                                 var p = e[r >= 4 ? 1 : 2];
                                                                                                                 switch (p) {
                                                                                                                     case 0:
@@ -19772,8 +19748,8 @@
                                                                                                                     case 9:
                                                                                                                         if (o > -1) {
                                                                                                                             var m = t.rsst[o];
-                                                                                                                            ((n = { t: 's', v: m.v }),
-                                                                                                                                m.l && (n.l = { Target: m.l }));
+                                                                                                                            (n = { t: 's', v: m.v }),
+                                                                                                                                m.l && (n.l = { Target: m.l });
                                                                                                                         } else
                                                                                                                             throw Error(
                                                                                                                                 'Unsupported cell type '.concat(
@@ -19807,7 +19783,7 @@
                                                                                                                     h = NaN,
                                                                                                                     u = 0,
                                                                                                                     d = new Date(Date.UTC(2001, 0, 1));
-                                                                                                                (1 & s &&
+                                                                                                                1 & s &&
                                                                                                                     ((f = (function (e, t) {
                                                                                                                         for (
                                                                                                                             var r =
@@ -19836,7 +19812,7 @@
                                                                                                                     (i += 4 * cs(480 & s)),
                                                                                                                     512 & s && (n.getUint32(i, !0), (i += 4)),
                                                                                                                     (i += 4 * cs(1024 & s)),
-                                                                                                                    2048 & s && (n.getUint32(i, !0), (i += 4)));
+                                                                                                                    2048 & s && (n.getUint32(i, !0), (i += 4));
                                                                                                                 var p = e[1];
                                                                                                                 switch (p) {
                                                                                                                     case 0:
@@ -19866,8 +19842,8 @@
                                                                                                                     case 9:
                                                                                                                         if (o > -1) {
                                                                                                                             var m = t.rsst[o];
-                                                                                                                            ((a = { t: 's', v: m.v }),
-                                                                                                                                m.l && (a.l = { Target: m.l }));
+                                                                                                                            (a = { t: 's', v: m.v }),
+                                                                                                                                m.l && (a.l = { Target: m.l });
                                                                                                                         } else
                                                                                                                             throw Error(
                                                                                                                                 'Unsupported cell type '
@@ -19893,7 +19869,7 @@
                                                                                                                     var g,
                                                                                                                         v,
                                                                                                                         b = n.getUint32(i, !0);
-                                                                                                                    ((i += 4),
+                                                                                                                    (i += 4),
                                                                                                                         t.cmnt[b] &&
                                                                                                                             (a.c =
                                                                                                                                 ((g = t.cmnt[b]),
@@ -19910,7 +19886,7 @@
                                                                                                                                             T: !0,
                                                                                                                                         });
                                                                                                                                     }),
-                                                                                                                                v)));
+                                                                                                                                v));
                                                                                                                 }
                                                                                                                 return (
                                                                                                                     l > -1 &&
@@ -19930,7 +19906,7 @@
                                                                                                         : (r[ag(n) + ap(x + t)] = s));
                                                                                             });
                                                                                         }),
-                                                                                            (x += u.nrows));
+                                                                                            (x += u.nrows);
                                                                                     }),
                                                                                 null == (u = y[13]) ? void 0 : u[0])
                                                                             ) {
@@ -20014,14 +19990,14 @@
                             0 == p.SheetNames.length)
                         )
                             throw Error('Empty NUMBERS file');
-                        return ((p.bookType = 'numbers'), p);
+                        return (p.bookType = 'numbers'), p;
                     }
                     function cA(e, t) {
                         return { meta: [[], [{ type: 0, data: co(e) }]], data: t };
                     }
                     function cC(e, t) {
                         t.last || (t.last = 927262);
-                        for (var r = t.last; r < 2e6; ++r) if (!t[r]) return ((t[(t.last = r)] = e), r);
+                        for (var r = t.last; r < 2e6; ++r) if (!t[r]) return (t[(t.last = r)] = e), r;
                         throw Error('Too many messages');
                     }
                     function cI(e, t, r) {
@@ -20056,14 +20032,14 @@
                         var n = tr.find(e, t[r].location);
                         if (!n) throw 'Could not find '.concat(t[r].location, ' in Numbers template');
                         var s = cp(cg(n.content));
-                        (a(
+                        a(
                             s.find(function (e) {
                                 return e.id == r;
                             }),
                             s,
                         ),
                             (n.content = cv(cm(s))),
-                            (n.size = n.content.length));
+                            (n.size = n.content.length);
                     }
                     function cN(e, t, r) {
                         var a = tr.find(e, t[r].location);
@@ -20073,7 +20049,7 @@
                         });
                     }
                     function cF(e, t, r) {
-                        (e[3].push({
+                        e[3].push({
                             type: 2,
                             data: cu([
                                 [],
@@ -20091,12 +20067,12 @@
                                 [{ type: 0, data: co(0) }],
                             ]),
                         }),
-                            (e[1] = [{ type: 0, data: co(Math.max(t + 1, cf(e[1][0].data))) }]));
+                            (e[1] = [{ type: 0, data: co(Math.max(t + 1, cf(e[1][0].data))) }]);
                     }
                     function cD(e, t, r, a, n, s) {
                         s || (s = cC({ deps: [], location: '', type: t }, n));
                         var i = ''.concat(a, '-').concat(s, '.iwa');
-                        ((n[s].location = 'Root Entry' + i), tr.utils.cfb_add(e, i, cv(cm([{ id: s, messages: [cA(t, cu(r))] }]))));
+                        (n[s].location = 'Root Entry' + i), tr.utils.cfb_add(e, i, cv(cm([{ id: s, messages: [cA(t, cu(r))] }])));
                         var o = i
                             .replace(/^[\/]/, '')
                             .replace(/^Index\//, '')
@@ -20104,7 +20080,7 @@
                         return (
                             cR(e, n, 2, function (e) {
                                 var t = ch(e.messages[0].data);
-                                (cF(t, s || 0, o), (e.messages[0].data = cu(t)));
+                                cF(t, s || 0, o), (e.messages[0].data = cu(t));
                             }),
                             s
                         );
@@ -20121,17 +20097,17 @@
                                 return (null == (t = a[3]) ? void 0 : t[0]) ? cr(a[3][0].data) == n : null != (r = a[2]) && !!r[0] && cr(a[2][0].data) == n;
                             }),
                             i = ch(e[3][s].data);
-                        (i[6] || (i[6] = []),
+                        i[6] || (i[6] = []),
                             (Array.isArray(a) ? a : [a]).forEach(function (e) {
                                 i[6].push({ type: 2, data: cu([[], [{ type: 0, data: co(e) }]]) });
                             }),
-                            (e[3][s].data = cu(i)));
+                            (e[3][s].data = cu(i));
                     }
                     function cL(e) {
                         return function (t) {
                             for (var r = 0; r != e.length; ++r) {
                                 var a = e[r];
-                                (void 0 === t[a[0]] && (t[a[0]] = a[1]), 'n' === a[2] && (t[a[0]] = Number(t[a[0]])));
+                                void 0 === t[a[0]] && (t[a[0]] = a[1]), 'n' === a[2] && (t[a[0]] = Number(t[a[0]]));
                             }
                         };
                     }
@@ -20170,7 +20146,7 @@
                         if ((e5(), cM((t = t || {})), tH(e, 'META-INF/manifest.xml') || tH(e, 'objectdata.xml'))) {
                             var r = e,
                                 n = t;
-                            ((n = n || {}),
+                            (n = n || {}),
                                 tH(r, 'META-INF/manifest.xml') &&
                                     (function (e, t) {
                                         for (var r, a, n = ry(e); (r = rE.exec(n)); )
@@ -20189,13 +20165,13 @@
                                                 default:
                                                     if (t && t.WTF) throw r;
                                             }
-                                    })(t$(r, 'META-INF/manifest.xml'), n));
+                                    })(t$(r, 'META-INF/manifest.xml'), n);
                             var s = tG(r, 'styles.xml'),
                                 i = s && o3(rf(s), n),
                                 o = tG(r, 'content.xml');
                             if (!o) throw Error('Missing content.xml in ODS / UOF file');
                             var c = o5(rf(o), n, i);
-                            return (tH(r, 'meta.xml') && (c.Props = ny(t$(r, 'meta.xml'))), (c.bookType = 'ods'), c);
+                            return tH(r, 'meta.xml') && (c.Props = ny(t$(r, 'meta.xml'))), (c.bookType = 'ods'), c;
                         }
                         if (tH(e, 'Index/Document.iwa')) {
                             if ('undefined' == typeof Uint8Array) throw Error('NUMBERS file parsing requires Uint8Array support');
@@ -20281,7 +20257,7 @@
                             _ = !1;
                         if ((0 === x.workbooks.length && t$(e, (b = 'xl/workbook.xml'), !0) && x.workbooks.push(b), 0 === x.workbooks.length)) {
                             if (!t$(e, (b = 'xl/workbook.bin'), !0)) throw Error('Could not find workbook');
-                            (x.workbooks.push(b), (_ = !0));
+                            x.workbooks.push(b), (_ = !0);
                         }
                         'bin' == x.workbooks[0].slice(-3) && (_ = !0);
                         var S = {},
@@ -20298,7 +20274,7 @@
                                                 ai(e, function (e, t, s) {
                                                     switch (s) {
                                                         case 159:
-                                                            ((a.Count = e[0]), (a.Unique = e[1]));
+                                                            (a.Count = e[0]), (a.Unique = e[1]);
                                                             break;
                                                         case 19:
                                                             a.push(e);
@@ -20329,7 +20305,7 @@
                                                     var i = sN(a[s].trim(), t);
                                                     null != i && (r[r.length] = i);
                                                 }
-                                                ((r.Count = (n = t4(n[0].slice(0, n[0].indexOf('>')))).count), (r.Unique = n.uniqueCount));
+                                                (r.Count = (n = t4(n[0].slice(0, n[0].indexOf('>')))).count), (r.Unique = n.uniqueCount);
                                             }
                                             return r;
                                         })(e, r);
@@ -20337,28 +20313,28 @@
                                 } catch (e) {
                                     if (t.WTF) throw e;
                                 }
-                            (t.cellStyles && x.themes.length && (S = ir(tG(e, x.themes[0].replace(/^\//, ''), !0) || '', t)),
+                            t.cellStyles && x.themes.length && (S = ir(tG(e, x.themes[0].replace(/^\//, ''), !0) || '', t)),
                                 x.style &&
                                     (A = (function (e, t, r, a) {
                                         if ('.bin' === t.slice(-4)) {
                                             var n = {};
                                             for (var s in ((n.NumberFmt = []), eD)) n.NumberFmt[s] = eD[s];
-                                            ((n.CellXf = []), (n.Fonts = []));
+                                            (n.CellXf = []), (n.Fonts = []);
                                             var i = [],
                                                 o = !1;
                                             return (
                                                 ai(e, function (e, t, s) {
                                                     switch (s) {
                                                         case 44:
-                                                            ((n.NumberFmt[e[0]] = e[1]), te(e[1], e[0]));
+                                                            (n.NumberFmt[e[0]] = e[1]), te(e[1], e[0]);
                                                             break;
                                                         case 43:
-                                                            (n.Fonts.push(e),
+                                                            n.Fonts.push(e),
                                                                 null != e.color.theme &&
                                                                     r &&
                                                                     r.themeElements &&
                                                                     r.themeElements.clrScheme &&
-                                                                    (e.color.rgb = sX(r.themeElements.clrScheme[e.color.theme].rgb, e.color.tint || 0)));
+                                                                    (e.color.rgb = sX(r.themeElements.clrScheme[e.color.theme].rgb, e.color.tint || 0));
                                                             break;
                                                         case 1025:
                                                         case 45:
@@ -20384,10 +20360,10 @@
                                                             o = !1;
                                                             break;
                                                         case 37:
-                                                            (i.push(s), (o = !0));
+                                                            i.push(s), (o = !0);
                                                             break;
                                                         case 38:
-                                                            (i.pop(), (o = !1));
+                                                            i.pop(), (o = !1);
                                                             break;
                                                         default:
                                                             if (t.T > 0) i.push(s);
@@ -20399,7 +20375,7 @@
                                             );
                                         }
                                         return s6(e, r, a);
-                                    })(t$(e, cB(x.style)), x.style, S, t)));
+                                    })(t$(e, cB(x.style)), x.style, S, t));
                         }
                         x.links.map(function (r) {
                             try {
@@ -20472,17 +20448,17 @@
                                             function (e, t, r) {
                                                 switch (r) {
                                                     case 156:
-                                                        (c.SheetNames.push(e.name), n.Sheets.push(e));
+                                                        c.SheetNames.push(e.name), n.Sheets.push(e);
                                                         break;
                                                     case 153:
                                                         n.WBProps = e;
                                                         break;
                                                     case 39:
-                                                        (null != e.Sheet && (a.SID = e.Sheet),
+                                                        null != e.Sheet && (a.SID = e.Sheet),
                                                             (e.Ref = e.Ptg ? iU(e.Ptg, null, null, c, a) : '#REF!'),
                                                             delete a.SID,
                                                             delete e.Ptg,
-                                                            o.push(e));
+                                                            o.push(e);
                                                         break;
                                                     case 1036:
                                                     case 361:
@@ -20522,20 +20498,20 @@
                                                     case 358:
                                                     case 355:
                                                     case 667:
-                                                        (c[0].length ? c.push([r, e]) : (c[0] = [r, e]), (c[c.length - 1].XTI = []));
+                                                        c[0].length ? c.push([r, e]) : (c[0] = [r, e]), (c[c.length - 1].XTI = []);
                                                         break;
                                                     case 362:
-                                                        (0 === c.length && ((c[0] = []), (c[0].XTI = [])),
+                                                        0 === c.length && ((c[0] = []), (c[0].XTI = [])),
                                                             (c[c.length - 1].XTI = c[c.length - 1].XTI.concat(e)),
-                                                            (c.XTI = c.XTI.concat(e)));
+                                                            (c.XTI = c.XTI.concat(e));
                                                         break;
                                                     case 35:
                                                     case 37:
-                                                        (s.push(r), (i = !0));
+                                                        s.push(r), (i = !0);
                                                         break;
                                                     case 36:
                                                     case 38:
-                                                        (s.pop(), (i = !1));
+                                                        s.pop(), (i = !1);
                                                         break;
                                                     default:
                                                         if (t.T);
@@ -20621,14 +20597,14 @@
                                                 case '<revisionPtr':
                                                     break;
                                                 case '<workbook':
-                                                    (o.match(ow) && (n = 'xmlns' + o.match(/<(\w+):/)[1]), (r.xmlns = l[n]));
+                                                    o.match(ow) && (n = 'xmlns' + o.match(/<(\w+):/)[1]), (r.xmlns = l[n]);
                                                     break;
                                                 case '<fileVersion':
-                                                    (delete l[0], (r.AppVersion = l));
+                                                    delete l[0], (r.AppVersion = l);
                                                     break;
                                                 case '<workbookPr':
                                                 case '<workbookPr/>':
-                                                    (ol.forEach(function (e) {
+                                                    ol.forEach(function (e) {
                                                         if (null != l[e[0]])
                                                             switch (e[2]) {
                                                                 case 'bool':
@@ -20641,11 +20617,11 @@
                                                                     r.WBProps[e[0]] = l[e[0]];
                                                             }
                                                     }),
-                                                        l.codeName && (r.WBProps.CodeName = rf(l.codeName)));
+                                                        l.codeName && (r.WBProps.CodeName = rf(l.codeName));
                                                     break;
                                                 case '<workbookView':
                                                 case '<workbookView/>':
-                                                    (delete l[0], r.WBView.push(l));
+                                                    delete l[0], r.WBView.push(l);
                                                     break;
                                                 case '<sheet':
                                                     switch (l.state) {
@@ -20658,7 +20634,7 @@
                                                         default:
                                                             l.Hidden = 0;
                                                     }
-                                                    (delete l.state, (l.name = t8(rf(l.name))), delete l[0], r.Sheets.push(l));
+                                                    delete l.state, (l.name = t8(rf(l.name))), delete l[0], r.Sheets.push(l);
                                                     break;
                                                 case '<definedNames>':
                                                 case '<definedNames':
@@ -20673,18 +20649,18 @@
                                                     a = !1;
                                                     break;
                                                 case '<definedName':
-                                                    (((s = {}).Name = rf(l.name)),
+                                                    ((s = {}).Name = rf(l.name)),
                                                         l.comment && (s.Comment = l.comment),
                                                         l.localSheetId && (s.Sheet = +l.localSheetId),
                                                         rs(l.hidden || '0') && (s.Hidden = !0),
-                                                        (i = c + o.length));
+                                                        (i = c + o.length);
                                                     break;
                                                 case '</definedName>':
-                                                    ((s.Ref = t8(rf(e.slice(i, c)))), r.Names.push(s));
+                                                    (s.Ref = t8(rf(e.slice(i, c)))), r.Names.push(s);
                                                     break;
                                                 case '<calcPr':
                                                 case '<calcPr/>':
-                                                    (delete l[0], (r.CalcPr = l));
+                                                    delete l[0], (r.CalcPr = l);
                                                     break;
                                                 default:
                                                     if (!a && t.WTF) throw Error('unrecognized ' + l[0] + ' in workbook');
@@ -20694,7 +20670,7 @@
                                         -1 === rC.indexOf(r.xmlns))
                                     )
                                         throw Error('Unknown Namespace: ' + r.xmlns);
-                                    return (om(r), r);
+                                    return om(r), r;
                                 })(e, r);
                             })(t$(e, cB(x.workbooks[0])), x.workbooks[0], t),
                             I = {},
@@ -20831,7 +20807,7 @@
                                             case '</calcChain>':
                                                 break;
                                             case '<c':
-                                                (delete t[0], t.i ? (s = t.i) : (t.i = s), n.push(t));
+                                                delete t[0], t.i ? (s = t.i) : (t.i = s), n.push(t);
                                         }
                                     }),
                                     n
@@ -20840,14 +20816,14 @@
                         var D = 0,
                             P = {},
                             L = C.Sheets;
-                        ((I.Worksheets = L.length), (I.SheetNames = []));
+                        (I.Worksheets = L.length), (I.SheetNames = []);
                         for (var M = 0; M != L.length; ++M) I.SheetNames[M] = L[M].name;
                         var U = _ ? 'bin' : 'xml',
                             B = x.workbooks[0].lastIndexOf('/'),
                             W = (x.workbooks[0].slice(0, B + 1) + '_rels/' + x.workbooks[0].slice(B + 1) + '.rels').replace(/^\//, '');
                         tH(e, W) || (W = 'xl/_rels/workbook.' + U + '.rels');
                         var z = nm(tG(e, W, !0), W.replace(/_rels.*/, 's5s'));
-                        ((x.metadata || []).length >= 1 &&
+                        (x.metadata || []).length >= 1 &&
                             (t.xlmeta = (function (e, t, r) {
                                 if ('.bin' === t.slice(-4)) {
                                     var a, n, s, i, o;
@@ -20876,10 +20852,10 @@
                                                     o = 2;
                                                     break;
                                                 case 35:
-                                                    (s.push(r), (i = !0));
+                                                    s.push(r), (i = !0);
                                                     break;
                                                 case 36:
-                                                    (s.pop(), (i = !1));
+                                                    s.pop(), (i = !1);
                                                     break;
                                                 default:
                                                     if (t.T);
@@ -20942,7 +20918,7 @@
                                                 break;
                                             case '<rvb':
                                                 if (!c) break;
-                                                (c.offsets || (c.offsets = []), c.offsets.push(+t.i));
+                                                c.offsets || (c.offsets = []), c.offsets.push(+t.i);
                                                 break;
                                             default:
                                                 if (!f && (null == r ? void 0 : r.WTF)) throw Error('unrecognized ' + t[0] + ' in metadata');
@@ -21015,7 +20991,7 @@
                                         return null;
                                     }
                                     return e && 0 !== e.length ? e : null;
-                                })(z, C.Sheets)));
+                                })(z, C.Sheets));
                         var H = +!!t$(e, 'xl/worksheets/sheet.xml', !0);
                         for (D = 0; D != I.Worksheets; ++D) {
                             var V = 'sheet';
@@ -21038,8 +21014,8 @@
                                     default:
                                         if (Array.isArray && Array.isArray(t.sheets)) {
                                             for (var G = !1, j = 0; j != t.sheets.length; ++j)
-                                                ('number' == typeof t.sheets[j] && t.sheets[j] == D && (G = 1),
-                                                    'string' == typeof t.sheets[j] && t.sheets[j].toLowerCase() == I.SheetNames[D].toLowerCase() && (G = 1));
+                                                'number' == typeof t.sheets[j] && t.sheets[j] == D && (G = 1),
+                                                    'string' == typeof t.sheets[j] && t.sheets[j].toLowerCase() == I.SheetNames[D].toLowerCase() && (G = 1);
                                             if (!G) continue;
                                         }
                                 }
@@ -21051,7 +21027,7 @@
                                         p = t$(e, t);
                                     switch (o) {
                                         case 'sheet':
-                                            ((u = s[a]),
+                                            (u = s[a]),
                                                 (d =
                                                     '.bin' === t.slice(-4)
                                                         ? (function (e, t, r, a, n, s, i) {
@@ -21077,7 +21053,7 @@
                                                                   k = !1,
                                                                   x = !1,
                                                                   _ = [];
-                                                              ((w.biff = 12), (w['!row'] = 0));
+                                                              (w.biff = 12), (w['!row'] = 0);
                                                               var S = 0,
                                                                   A = !1,
                                                                   C = [],
@@ -21109,12 +21085,12 @@
                                                                                       o = e;
                                                                                       break;
                                                                                   case 0:
-                                                                                      ((c = e),
+                                                                                      (c = e),
                                                                                           w.sheetRows && w.sheetRows <= c.r && (x = !0),
                                                                                           (m = ap((h = c.r))),
                                                                                           (w['!row'] = c.r),
                                                                                           (e.hidden || e.hpt || null != e.level) &&
-                                                                                              (e.hpt && (e.hpx = s2(e.hpt)), (F[e.r] = e)));
+                                                                                              (e.hpt && (e.hpx = s2(e.hpt)), (F[e.r] = e));
                                                                                       break;
                                                                                   case 2:
                                                                                   case 3:
@@ -21138,19 +21114,19 @@
                                                                                               l.v = e[1];
                                                                                               break;
                                                                                           case 's':
-                                                                                              ((p = iY[e[1]]), (l.v = p.t), (l.r = p.r));
+                                                                                              (p = iY[e[1]]), (l.v = p.t), (l.r = p.r);
                                                                                               break;
                                                                                           case 'b':
                                                                                               l.v = !!e[1];
                                                                                               break;
                                                                                           case 'e':
-                                                                                              ((l.v = e[1]), !1 !== w.cellText && (l.w = aQ[l.v]));
+                                                                                              (l.v = e[1]), !1 !== w.cellText && (l.w = aQ[l.v]);
                                                                                               break;
                                                                                           case 'str':
-                                                                                              ((l.t = 's'), (l.v = e[1]));
+                                                                                              (l.t = 's'), (l.v = e[1]);
                                                                                               break;
                                                                                           case 'is':
-                                                                                              ((l.t = 's'), (l.v = e[1].t));
+                                                                                              (l.t = 's'), (l.v = e[1].t);
                                                                                       }
                                                                                       if (
                                                                                           ((f = i.CellXf[e[0].iStyleRef]) && i2(l, f.numFmtId, null, w, s, i, P > 0),
@@ -21182,12 +21158,12 @@
                                                                                               ((l.t = 'd'),
                                                                                               (l.v = new Date(Date.UTC(M.y, M.m - 1, M.d, M.H, M.M, M.S, M.u))));
                                                                                       }
-                                                                                      (v && ('XLDAPR' == v.type && (l.D = !0), (v = void 0)), b && (b = void 0));
+                                                                                      v && ('XLDAPR' == v.type && (l.D = !0), (v = void 0)), b && (b = void 0);
                                                                                       break;
                                                                                   case 1:
                                                                                   case 12:
                                                                                       if (!w.sheetStubs || k) break;
-                                                                                      ((l = { t: 'z', v: void 0 }),
+                                                                                      (l = { t: 'z', v: void 0 }),
                                                                                           (u = -1 == e[0].c ? u + 1 : e[0].c),
                                                                                           w.dense
                                                                                               ? (T['!data'][h] || (T['!data'][h] = []), (T['!data'][h][u] = l))
@@ -21197,7 +21173,7 @@
                                                                                           y.e.r < c.r && (y.e.r = c.r),
                                                                                           y.e.c < u && (y.e.c = u),
                                                                                           v && ('XLDAPR' == v.type && (l.D = !0), (v = void 0)),
-                                                                                          b && (b = void 0));
+                                                                                          b && (b = void 0);
                                                                                       break;
                                                                                   case 176:
                                                                                       _.push(e);
@@ -21225,7 +21201,7 @@
                                                                                       break;
                                                                                   case 426:
                                                                                       if (!w.cellFormula) break;
-                                                                                      (C.push(e),
+                                                                                      C.push(e),
                                                                                           ((g = w.dense ? T['!data'][h][u] : T[ag(u) + m]).f = iU(
                                                                                               e[1],
                                                                                               y,
@@ -21233,25 +21209,25 @@
                                                                                               O,
                                                                                               w,
                                                                                           )),
-                                                                                          (g.F = aT(e[0])));
+                                                                                          (g.F = aT(e[0]));
                                                                                       break;
                                                                                   case 427:
                                                                                       if (!w.cellFormula) break;
-                                                                                      ((I[ab(e[0].s)] = e[1]),
+                                                                                      (I[ab(e[0].s)] = e[1]),
                                                                                           ((g = w.dense ? T['!data'][h][u] : T[ag(u) + m]).f = iU(
                                                                                               e[1],
                                                                                               y,
                                                                                               { r: c.r, c: u },
                                                                                               O,
                                                                                               w,
-                                                                                          )));
+                                                                                          ));
                                                                                       break;
                                                                                   case 60:
                                                                                       if (!w.cellStyles) break;
                                                                                       for (; e.e >= e.s; )
-                                                                                          ((N[e.e--] = { width: e.w / 256, hidden: !!(1 & e.flags), level: e.level }),
+                                                                                          (N[e.e--] = { width: e.w / 256, hidden: !!(1 & e.flags), level: e.level }),
                                                                                               D || ((D = !0), sQ(e.w / 256)),
-                                                                                              s0(N[e.e + 1]));
+                                                                                              s0(N[e.e + 1]);
                                                                                       break;
                                                                                   case 551:
                                                                                       e && (T['!legrel'] = e);
@@ -21263,14 +21239,14 @@
                                                                                       T['!margins'] = e;
                                                                                       break;
                                                                                   case 147:
-                                                                                      (n.Sheets[r] || (n.Sheets[r] = {}),
+                                                                                      n.Sheets[r] || (n.Sheets[r] = {}),
                                                                                           e.name && (n.Sheets[r].CodeName = e.name),
-                                                                                          (e.above || e.left) && (T['!outline'] = { above: e.above, left: e.left }));
+                                                                                          (e.above || e.left) && (T['!outline'] = { above: e.above, left: e.left });
                                                                                       break;
                                                                                   case 137:
-                                                                                      (n.Views || (n.Views = [{}]),
+                                                                                      n.Views || (n.Views = [{}]),
                                                                                           n.Views[0] || (n.Views[0] = {}),
-                                                                                          e.RTL && (n.Views[0].RTL = !0));
+                                                                                          e.RTL && (n.Views[0].RTL = !0);
                                                                                       break;
                                                                                   case 485:
                                                                                   case 64:
@@ -21333,10 +21309,10 @@
                                                                                       k = !1;
                                                                                       break;
                                                                                   case 37:
-                                                                                      (E.push(R), (k = !0));
+                                                                                      E.push(R), (k = !0);
                                                                                       break;
                                                                                   case 38:
-                                                                                      (E.pop(), (k = !1));
+                                                                                      E.pop(), (k = !1);
                                                                                       break;
                                                                                   default:
                                                                                       if (t.T);
@@ -21407,13 +21383,13 @@
                                                               E &&
                                                                   E[1] &&
                                                                   (function (e, t) {
-                                                                      (t.Views || (t.Views = [{}]),
+                                                                      t.Views || (t.Views = [{}]),
                                                                           (e.match(oa) || []).forEach(function (e, r) {
                                                                               var a = t4(e);
-                                                                              (t.Views[r] || (t.Views[r] = {}),
+                                                                              t.Views[r] || (t.Views[r] = {}),
                                                                                   +a.zoomScale && (t.Views[r].zoom = +a.zoomScale),
-                                                                                  a.rightToLeft && rs(a.rightToLeft) && (t.Views[r].RTL = !0));
-                                                                          }));
+                                                                                  a.rightToLeft && rs(a.rightToLeft) && (t.Views[r].RTL = !0);
+                                                                          });
                                                                   })(E[1], n);
                                                               var k = [];
                                                               if (t.cellStyles) {
@@ -21452,11 +21428,11 @@
                                                                           var s = t4(rf(t[n]), !0);
                                                                           if (!s.ref) return;
                                                                           var i = ((r || {})['!id'] || [])[s.id];
-                                                                          (i
+                                                                          i
                                                                               ? ((s.Target = i.Target), s.location && (s.Target += '#' + t8(s.location)))
                                                                               : ((s.Target = '#' + t8(s.location)), (i = { Target: s.Target, TargetMode: 'Internal' })),
                                                                               (s.Rel = i),
-                                                                              s.tooltip && ((s.Tooltip = s.tooltip), delete s.tooltip));
+                                                                              s.tooltip && ((s.Tooltip = s.tooltip), delete s.tooltip);
                                                                           for (var o = ak(s.ref), c = o.s.r; c <= o.e.r; ++c)
                                                                               for (var l = o.s.c; l <= o.e.c; ++l) {
                                                                                   var f = ag(l) + ap(c);
@@ -21501,7 +21477,7 @@
                                                                   a['!id'][c['!legrel']] && (c['!legdrawel'] = a['!id'][c['!legrel']]),
                                                                   c
                                                               );
-                                                          })(p, c, n, u, l, f, h)));
+                                                          })(p, c, n, u, l, f, h));
                                             break;
                                         case 'chart':
                                             if (
@@ -21522,7 +21498,7 @@
                                                                             l['!rel'] = e;
                                                                             break;
                                                                         case 651:
-                                                                            (s.Sheets[r] || (s.Sheets[r] = {}), e.name && (s.Sheets[r].CodeName = e.name));
+                                                                            s.Sheets[r] || (s.Sheets[r] = {}), e.name && (s.Sheets[r].CodeName = e.name);
                                                                             break;
                                                                         case 562:
                                                                         case 652:
@@ -21607,17 +21583,17 @@
                                                                     t = e.replace(/<[^<>]*>/g, '');
                                                                 }),
                                                                 [r, n, t]);
-                                                        ((f.s.r = f.s.c = 0),
+                                                        (f.s.r = f.s.c = 0),
                                                             (f.e.c = o),
                                                             (l = ag(o)),
                                                             s[0].forEach(function (e, t) {
-                                                                (i['!data']
+                                                                i['!data']
                                                                     ? (i['!data'][t] || (i['!data'][t] = []), (i['!data'][t][o] = { t: 'n', v: e, z: s[1] }))
                                                                     : (i[l + ap(t)] = { t: 'n', v: e, z: s[1] }),
-                                                                    (c = t));
+                                                                    (c = t);
                                                             }),
                                                             f.e.r < c && (f.e.r = c),
-                                                            ++o);
+                                                            ++o;
                                                     }),
                                                     o > 0 && (i['!ref'] = aT(f)),
                                                     i
@@ -21625,10 +21601,10 @@
                                             })(tG(e, b, !0), 0, 0, nm(tG(e, w, !0), b), 0, d);
                                             break;
                                         case 'macro':
-                                            (s[a], t.slice(-4), (d = { '!type': 'macro' }));
+                                            s[a], t.slice(-4), (d = { '!type': 'macro' });
                                             break;
                                         case 'dialog':
-                                            (s[a], t.slice(-4), (d = { '!type': 'dialog' }));
+                                            s[a], t.slice(-4), (d = { '!type': 'dialog' });
                                             break;
                                         default:
                                             throw Error('Unrecognized sheet type ' + o);
@@ -21636,7 +21612,7 @@
                                     i[a] = d;
                                     var T = [],
                                         y = [];
-                                    (s &&
+                                    s &&
                                         s[a] &&
                                         ts(s[a]).forEach(function (r) {
                                             var n,
@@ -21665,7 +21641,7 @@
                                                                             s = e;
                                                                             break;
                                                                         case 637:
-                                                                            ((s.t = e.t), (s.h = e.h), (s.r = e.r));
+                                                                            (s.t = e.t), (s.h = e.h), (s.r = e.r);
                                                                             break;
                                                                         case 636:
                                                                             if (
@@ -21674,7 +21650,7 @@
                                                                                 r.sheetRows && s.rfx && r.sheetRows <= s.rfx.r)
                                                                             )
                                                                                 break;
-                                                                            (s.t || (s.t = ''), delete s.rfx, a.push(s));
+                                                                            s.t || (s.t = ''), delete s.rfx, a.push(s);
                                                                             break;
                                                                         case 3072:
                                                                         case 37:
@@ -21720,11 +21696,11 @@
                                                                             if (!r.sheetRows || !(r.sheetRows <= s.r)) {
                                                                                 var i = tL(e, 'text'),
                                                                                     l = (!!i && !!i[1] && sN(i[1])) || { r: '', t: '', h: '' };
-                                                                                ((n.r = l.r),
+                                                                                (n.r = l.r),
                                                                                     '<t></t>' == l.r && (l.t = l.h = ''),
                                                                                     (n.t = (l.t || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n')),
                                                                                     r.cellHTML && (n.h = l.h),
-                                                                                    c.push(n));
+                                                                                    c.push(n);
                                                                             }
                                                                         }
                                                                     }
@@ -21830,11 +21806,11 @@
                                                             'Note' === r)
                                                         ) {
                                                             var o = c7(e, s >= 0 && i >= 0 ? ab({ r: s, c: i }) : l[f].ref);
-                                                            (o.c && (o.c.hidden = a), ++f);
+                                                            o.c && (o.c.hidden = a), ++f;
                                                         }
                                                     }));
                                             }
-                                        })(d, 0, e, t, 0, 0, 0, T));
+                                        })(d, 0, e, t, 0, 0, 0, T);
                                 } catch (e) {
                                     if (c.WTF) throw e;
                                 }
@@ -21861,7 +21837,7 @@
                                     : ((N.keys = []),
                                       (N.files = {}),
                                       e.FullPaths.forEach(function (t, r) {
-                                          ((t = t.replace(/^Root Entry[\/]/, '')), N.keys.push(t), (N.files[t] = e.FileIndex[r]));
+                                          (t = t.replace(/^Root Entry[\/]/, '')), N.keys.push(t), (N.files[t] = e.FileIndex[r]);
                                       }))),
                             t &&
                                 t.bookVBA &&
@@ -21873,14 +21849,14 @@
                         );
                     }
                     function cz(e, t) {
-                        (e && !e.SSF && (e.SSF = tw(eD)),
+                        e && !e.SSF && (e.SSF = tw(eD)),
                             e && e.SSF && (e5(), e3(e.SSF), (t.revssf = tc(e.SSF)), (t.revssf[e.SSF[65535]] = 0), (t.ssf = e.SSF)),
                             (t.rels = {}),
                             (t.wbrels = {}),
                             (t.Strings = []),
                             (t.Strings.Count = 0),
                             (t.Strings.Unique = 0),
-                            iJ ? (t.revStrings = new Map()) : ((t.revStrings = {}), (t.revStrings.foo = []), delete t.revStrings.foo));
+                            iJ ? (t.revStrings = new Map()) : ((t.revStrings = {}), (t.revStrings.foo = []), delete t.revStrings.foo);
                         var r,
                             a,
                             n,
@@ -21909,13 +21885,13 @@
                             for (var m = [], g = 0; g < e.SheetNames.length; ++g) 2 != (e.Workbook.Sheets[g] || {}).Hidden && m.push(e.SheetNames[g]);
                             e.Props.SheetNames = m;
                         } else e.Props.SheetNames = e.SheetNames;
-                        ((e.Props.Worksheets = e.Props.SheetNames.length),
+                        (e.Props.Worksheets = e.Props.SheetNames.length),
                             tX(u, d, nA(e.Props, t)),
                             h.extprops.push(d),
                             nv(t.rels, 3, d, nt),
                             e.Custprops !== e.Props &&
                                 ts(e.Custprops || {}).length > 0 &&
-                                (tX(u, (d = 'docProps/custom.xml'), nI(e.Custprops, t)), h.custprops.push(d), nv(t.rels, 4, d, nr)));
+                                (tX(u, (d = 'docProps/custom.xml'), nI(e.Custprops, t)), h.custprops.push(d), nv(t.rels, 4, d, nr));
                         var v = ['SheetJ5'];
                         for (p = 1, t.tcid = 0; p <= e.SheetNames.length; ++p) {
                             var b = { '!id': {} },
@@ -21937,11 +21913,11 @@
                                             h = ak(f);
                                         if (h.e.c > 16383 || h.e.r > 1048575) {
                                             if (t.WTF) throw Error('Range ' + f + ' exceeds format limit A1:XFD1048576');
-                                            ((h.e.c = Math.min(h.e.c, 16383)), (h.e.r = Math.min(h.e.c, 1048575)), (f = aT(h)));
+                                            (h.e.c = Math.min(h.e.c, 16383)), (h.e.r = Math.min(h.e.c, 1048575)), (f = aT(h));
                                         }
-                                        (a || (a = {}), (l['!comments'] = []));
+                                        a || (a = {}), (l['!comments'] = []);
                                         var u = [];
-                                        (!(function (e, t, r, a, n) {
+                                        !(function (e, t, r, a, n) {
                                             var s = !1,
                                                 i = {},
                                                 o = null;
@@ -21950,13 +21926,13 @@
                                                 try {
                                                     t.Workbook && (c = t.Workbook.Sheets[r].CodeName || c);
                                                 } catch (e) {}
-                                                ((s = !0), (i.codeName = rh(re(c))));
+                                                (s = !0), (i.codeName = rh(re(c)));
                                             }
                                             if (e && e['!outline']) {
                                                 var l = { summaryBelow: 1, summaryRight: 1 };
-                                                (e['!outline'].above && (l.summaryBelow = 0),
+                                                e['!outline'].above && (l.summaryBelow = 0),
                                                     e['!outline'].left && (l.summaryRight = 0),
-                                                    (o = (o || '') + rw('outlinePr', null, l)));
+                                                    (o = (o || '') + rw('outlinePr', null, l));
                                             }
                                             (s || o) && (n[n.length] = rw('sheetPr', o, i));
                                         })(l, r, e, t, s),
@@ -21975,7 +21951,7 @@
                                                 l['!cols'].length > 0 &&
                                                 (s[s.length] = (function (e, t) {
                                                     for (var r, a = ['<cols>'], n = 0; n != t.length; ++n) (r = t[n]) && (a[a.length] = rw('col', null, iQ(n, r)));
-                                                    return ((a[a.length] = '</cols>'), a.join(''));
+                                                    return (a[a.length] = '</cols>'), a.join('');
                                                 })(0, l['!cols'])),
                                             (s[(o = s.length)] = '<sheetData/>'),
                                             (l['!links'] = []),
@@ -21999,7 +21975,7 @@
                                                         w = (((a || {}).Workbook || {}).WBProps || {}).date1904;
                                                     for (d = c.s.c; d <= c.e.c; ++d) h[d] = ag(d);
                                                     for (u = c.s.r; u <= c.e.r; ++u) {
-                                                        ((o = []), (f = ap(u)));
+                                                        (o = []), (f = ap(u));
                                                         var T = m ? g[u] : [];
                                                         for (d = c.s.c; d <= c.e.c; ++d) {
                                                             n = h[d] + f;
@@ -22035,10 +22011,10 @@
                                                                                 case 'd':
                                                                                     if (a && a.cellDates) {
                                                                                         var f = tv(e.v, i);
-                                                                                        ((o = f.toISOString()),
+                                                                                        (o = f.toISOString()),
                                                                                             1900 > f.getUTCFullYear() &&
-                                                                                                (o = o.slice(o.indexOf('T') + 1).replace('Z', '')));
-                                                                                    } else (((e = tw(e)).t = 'n'), (o = '' + (e.v = tu(tv(e.v, i), i))));
+                                                                                                (o = o.slice(o.indexOf('T') + 1).replace('Z', ''));
+                                                                                    } else ((e = tw(e)).t = 'n'), (o = '' + (e.v = tu(tv(e.v, i), i)));
                                                                                     void 0 === e.z && (e.z = eD[14]);
                                                                                     break;
                                                                                 default:
@@ -22075,9 +22051,7 @@
                                                                             h = rw('f', re(e.f), p) + (null != e.v ? h : '');
                                                                         }
                                                                         return (
-                                                                            e.l && ((e.l.display = re(o)), r['!links'].push([t, e.l])),
-                                                                            e.D && (u.cm = 1),
-                                                                            rw('c', h, u)
+                                                                            e.l && ((e.l.display = re(o)), r['!links'].push([t, e.l])), e.D && (u.cm = 1), rw('c', h, u)
                                                                         );
                                                                     })(y, n, e, t, 0, 0, w)) &&
                                                                 o.push(l);
@@ -22123,7 +22097,7 @@
                                             null != l['!autofilter'] &&
                                                 (s[s.length] = (function (e, t, r, a) {
                                                     var n = 'string' == typeof e.ref ? e.ref : aT(e.ref);
-                                                    (r.Workbook || (r.Workbook = { Sheets: [] }), r.Workbook.Names || (r.Workbook.Names = []));
+                                                    r.Workbook || (r.Workbook = { Sheets: [] }), r.Workbook.Names || (r.Workbook.Names = []);
                                                     var s = r.Workbook.Names,
                                                         i = aw(n);
                                                     i.s.r == i.e.r && ((i.e.r = aw(t['!ref']).e.r), (n = aT(i)));
@@ -22146,7 +22120,7 @@
                                                     for (var t = '<mergeCells count="' + e.length + '">', r = 0; r != e.length; ++r)
                                                         t += '<mergeCell ref="' + aT(e[r]) + '"/>';
                                                     return t + '</mergeCells>';
-                                                })(l['!merges'])));
+                                                })(l['!merges']));
                                         var d,
                                             p,
                                             m,
@@ -22198,7 +22172,7 @@
                                     E = '';
                                 if (T && T.length > 0) {
                                     var k = !1;
-                                    (T.forEach(function (e) {
+                                    T.forEach(function (e) {
                                         e[1].forEach(function (e) {
                                             !0 == e.T && (k = !0);
                                         });
@@ -22218,11 +22192,11 @@
                                                     e.forEach(function (e) {
                                                         e[1].forEach(function (e) {
                                                             var a = re(e.a);
-                                                            (-1 == r.indexOf(a) && (r.push(a), t.push('<author>' + a + '</author>')),
+                                                            -1 == r.indexOf(a) && (r.push(a), t.push('<author>' + a + '</author>')),
                                                                 e.T &&
                                                                     e.ID &&
                                                                     -1 == r.indexOf('tc=' + e.ID) &&
-                                                                    (r.push('tc=' + e.ID), t.push('<author>tc=' + e.ID + '</author>')));
+                                                                    (r.push('tc=' + e.ID), t.push('<author>tc=' + e.ID + '</author>'));
                                                         });
                                                     }),
                                                     0 == r.length && (r.push('SheetJ5'), t.push('<author>SheetJ5</author>')),
@@ -22235,20 +22209,20 @@
                                                         if (
                                                             (e[1][0] && e[1][0].T && e[1][0].ID && (a = r.indexOf('tc=' + e[1][0].ID)),
                                                             e[1].forEach(function (e) {
-                                                                (e.a && (a = r.indexOf(re(e.a))), e.T && ++s, n.push(null == e.t ? '' : re(e.t)));
+                                                                e.a && (a = r.indexOf(re(e.a))), e.T && ++s, n.push(null == e.t ? '' : re(e.t));
                                                             }),
                                                             0 === s)
                                                         )
                                                             e[1].forEach(function (a) {
-                                                                (t.push('<comment ref="' + e[0] + '" authorId="' + r.indexOf(re(a.a)) + '"><text>'),
+                                                                t.push('<comment ref="' + e[0] + '" authorId="' + r.indexOf(re(a.a)) + '"><text>'),
                                                                     t.push(rv('t', null == a.t ? '' : re(a.t))),
-                                                                    t.push('</text></comment>'));
+                                                                    t.push('</text></comment>');
                                                             });
                                                         else {
-                                                            (e[1][0] && e[1][0].T && e[1][0].ID && (a = r.indexOf('tc=' + e[1][0].ID)),
-                                                                t.push('<comment ref="' + e[0] + '" authorId="' + a + '"><text>'));
+                                                            e[1][0] && e[1][0].T && e[1][0].ID && (a = r.indexOf('tc=' + e[1][0].ID)),
+                                                                t.push('<comment ref="' + e[0] + '" authorId="' + a + '"><text>');
                                                             for (var i = 'Comment:\n    ' + n[0] + '\n', o = 1; o < n.length; ++o) i += 'Reply:\n    ' + n[o] + '\n';
-                                                            (t.push(rv('t', re(i))), t.push('</text></comment>'));
+                                                            t.push(rv('t', re(i))), t.push('</text></comment>');
                                                         }
                                                     }),
                                                     t.push('</commentList>'),
@@ -22259,9 +22233,9 @@
                                         ),
                                         h.comments.push(E),
                                         nv(b, -1, '../comments' + p + '.xml', a9),
-                                        (y = !0));
+                                        (y = !0);
                                 }
-                                (w['!legacy'] && y && tX(u, 'xl/drawings/vmlDrawing' + p + '.vml', is(p, w['!comments'])), delete w['!comments'], delete w['!legacy']);
+                                w['!legacy'] && y && tX(u, 'xl/drawings/vmlDrawing' + p + '.vml', is(p, w['!comments'])), delete w['!comments'], delete w['!legacy'];
                             }
                             b['!id'].rId1 && tX(u, np(d), ng(b));
                         }
@@ -22279,7 +22253,7 @@
                                             if (null != e[a]) {
                                                 var n = e[a],
                                                     s = '<si>';
-                                                (n.r
+                                                n.r
                                                     ? (s += n.r)
                                                     : ((s += '<t'),
                                                       n.t || (n.t = ''),
@@ -22287,9 +22261,9 @@
                                                       n.t.match(sP) && (s += ' xml:space="preserve"'),
                                                       (s += '>' + re(n.t) + '</t>')),
                                                     (s += '</si>'),
-                                                    (r[r.length] = s));
+                                                    (r[r.length] = s);
                                             }
-                                        return (r.length > 2 && ((r[r.length] = '</sst>'), (r[1] = r[1].replace('/>', '>'))), r.join(''));
+                                        return r.length > 2 && ((r[r.length] = '</sst>'), (r[1] = r[1].replace('/>', '>'))), r.join('');
                                     })(t.Strings, t),
                                 ),
                                 h.strs.push(d),
@@ -22302,20 +22276,20 @@
                                     t[t.length] = rw('workbook', null, { xmlns: rC[0], 'xmlns:r': r_ });
                                     var r = e.Workbook && (e.Workbook.Names || []).length > 0,
                                         a = { codeName: 'ThisWorkbook' };
-                                    (e.Workbook &&
+                                    e.Workbook &&
                                         e.Workbook.WBProps &&
                                         (ol.forEach(function (t) {
                                             null != e.Workbook.WBProps[t[0]] && e.Workbook.WBProps[t[0]] != t[1] && (a[t[0]] = e.Workbook.WBProps[t[0]]);
                                         }),
                                         e.Workbook.WBProps.CodeName && ((a.codeName = e.Workbook.WBProps.CodeName), delete a.CodeName)),
-                                        (t[t.length] = rw('workbookPr', null, a)));
+                                        (t[t.length] = rw('workbookPr', null, a));
                                     var n = (e.Workbook && e.Workbook.Sheets) || [],
                                         s = 0;
                                     if (n && n[0] && n[0].Hidden) {
                                         for (s = 0, t[t.length] = '<bookViews>'; s != e.SheetNames.length && n[s] && n[s].Hidden; ++s);
-                                        (s == e.SheetNames.length && (s = 0),
+                                        s == e.SheetNames.length && (s = 0),
                                             (t[t.length] = '<workbookView firstSheet="' + s + '" activeTab="' + s + '"/>'),
-                                            (t[t.length] = '</bookViews>'));
+                                            (t[t.length] = '</bookViews>');
                                     }
                                     for (s = 0, t[t.length] = '<sheets>'; s != e.SheetNames.length; ++s) {
                                         var i = { name: re(e.SheetNames[s].slice(0, 31)) };
@@ -22337,10 +22311,10 @@
                                                 e.Workbook.Names &&
                                                 e.Workbook.Names.forEach(function (e) {
                                                     var r = { name: e.Name };
-                                                    (e.Comment && (r.comment = e.Comment),
+                                                    e.Comment && (r.comment = e.Comment),
                                                         null != e.Sheet && (r.localSheetId = '' + e.Sheet),
                                                         e.Hidden && (r.hidden = '1'),
-                                                        e.Ref && (t[t.length] = rw('definedName', re(e.Ref), r)));
+                                                        e.Ref && (t[t.length] = rw('definedName', re(e.Ref), r));
                                                 }),
                                             (t[t.length] = '</definedNames>')),
                                         t.length > 2 && ((t[t.length] = '</workbook>'), (t[1] = t[1].replace('/>', '>'))),
@@ -22489,9 +22463,9 @@
                                     if ('undefined' != typeof $ && 'undefined' != typeof File && 'undefined' != typeof Folder)
                                         try {
                                             var t = File(e);
-                                            (t.open('r'), (t.encoding = 'binary'));
+                                            t.open('r'), (t.encoding = 'binary');
                                             var r = t.read();
-                                            return (t.close(), r);
+                                            return t.close(), r;
                                         } catch (e) {
                                             if (!e.message || -1 == e.message.indexOf('onstruct')) throw e;
                                         }
@@ -22502,7 +22476,7 @@
                             'array' == u.type && 'undefined' != typeof Uint8Array && e instanceof Uint8Array && 'undefined' != typeof ArrayBuffer)
                         ) {
                             var g = new Uint8Array(new ArrayBuffer(3));
-                            if (((g.foo = 'bar'), !g.foo)) return (((u = tw(u)).type = 'array'), cG(eE(d), u));
+                            if (((g.foo = 'bar'), !g.foo)) return ((u = tw(u)).type = 'array'), cG(eE(d), u);
                         }
                         switch ((p = cH(d, u))[0]) {
                             case 208:
@@ -22642,7 +22616,7 @@
                                                                               });
                                                                               break;
                                                                           case '<dataIntegrity':
-                                                                              ((n.encryptedHmacKey = t.encryptedHmacKey), (n.encryptedHmacValue = t.encryptedHmacValue));
+                                                                              (n.encryptedHmacKey = t.encryptedHmacKey), (n.encryptedHmacValue = t.encryptedHmacValue);
                                                                               break;
                                                                           case '<keyEncryptors>':
                                                                           case '<keyEncryptors':
@@ -22687,7 +22661,7 @@
                                     w.WTF = !0;
                                     try {
                                         var y = sk.to_workbook(v, w);
-                                        return ((w.WTF = T), y);
+                                        return (w.WTF = T), y;
                                     } catch (e) {
                                         if (((w.WTF = T), -1 == e.message.indexOf('SYLK bad record ID') && T)) throw e;
                                         return sS.to_workbook(v, b);
@@ -22782,7 +22756,7 @@
                                     default:
                                         throw Error('Unrecognized type ' + k.type);
                                 }
-                                return (239 == _[0] && 187 == _[1] && 191 == _[2] && (x = rf(x)), (k.type = 'binary'), cV(x, k));
+                                return 239 == _[0] && 187 == _[1] && 191 == _[2] && (x = rf(x)), (k.type = 'binary'), cV(x, k);
                             case 137:
                                 if (80 === p[1] && 78 === p[2] && 71 === p[3]) throw Error('PNG Image File is not a spreadsheet');
                                 break;
@@ -22797,7 +22771,7 @@
                     }
                     function cj(e, t) {
                         var r = t || {};
-                        return ((r.type = 'file'), cG(e, r));
+                        return (r.type = 'file'), cG(e, r);
                     }
                     function cX(e, t) {
                         switch (t.type) {
@@ -22892,25 +22866,25 @@
                         }
                     }
                     function cJ(e, t) {
-                        (ea(), ob(e));
+                        ea(), ob(e);
                         var r,
                             a = tw(t || {});
                         if ((a.cellStyles && ((a.cellNF = !0), (a.sheetStubs = !0)), 'array' == a.type)) {
                             a.type = 'binary';
                             var n = cJ(e, a);
-                            return ((a.type = 'array'), eT(n));
+                            return (a.type = 'array'), eT(n);
                         }
                         return cK(cz(e, (r = tw(a || {}))), r);
                     }
                     function cq(t, r) {
-                        (ea(), ob(t));
+                        ea(), ob(t);
                         var a,
                             n,
                             s = tw(r || {});
                         if ((s.cellStyles && ((s.cellNF = !0), (s.sheetStubs = !0)), 'array' == s.type)) {
                             s.type = 'binary';
                             var i = cq(t, s);
-                            return ((s.type = 'array'), eT(i));
+                            return (s.type = 'array'), eT(i);
                         }
                         var o = 0;
                         if (s.sheet && ((o = 'number' == typeof s.sheet ? s.sheet : t.SheetNames.indexOf(s.sheet)), !t.SheetNames[o]))
@@ -22920,7 +22894,7 @@
                             case 'xlml':
                                 return cY(
                                     (function (e, t) {
-                                        (t || (t = {}),
+                                        t || (t = {}),
                                             e.SSF || (e.SSF = tw(eD)),
                                             e.SSF &&
                                                 (e5(),
@@ -22929,9 +22903,9 @@
                                                 (t.revssf[e.SSF[65535]] = 0),
                                                 (t.ssf = e.SSF),
                                                 (t.cellXfs = []),
-                                                i1(t.cellXfs, {}, { revssf: { General: 0 } })));
+                                                i1(t.cellXfs, {}, { revssf: { General: 0 } }));
                                         var r = [];
-                                        (r.push(oS(e, t)), r.push(oA(e, t)), r.push(''), r.push(oO(e, t)));
+                                        r.push(oS(e, t)), r.push(oA(e, t)), r.push(''), r.push(oO(e, t));
                                         for (var a = 0; a < e.SheetNames.length; ++a)
                                             r.push(
                                                 rw(
@@ -22956,9 +22930,9 @@
                                                                               var r = !!e.width,
                                                                                   a = iQ(t, e),
                                                                                   n = { 'ss:Index': t + 1 };
-                                                                              (r && (n['ss:Width'] = sY(a.width)),
+                                                                              r && (n['ss:Width'] = sY(a.width)),
                                                                                   e.hidden && (n['ss:Hidden'] = '1'),
-                                                                                  o.push(rw('Column', null, n)));
+                                                                                  o.push(rw('Column', null, n));
                                                                           });
                                                                       for (var c = null != e['!data'], l = { r: 0, c: 0 }, f = n.s.r; f <= n.e.r; ++f) {
                                                                           var h = [oD(f, (e['!rows'] || [])[f])];
@@ -22977,7 +22951,7 @@
                                                                                   h.push(oF(m, p, e, t, r, a, l));
                                                                               }
                                                                           }
-                                                                          (h.push('</Row>'), h.length > 2 && o.push(h.join('')));
+                                                                          h.push('</Row>'), h.length > 2 && o.push(h.join(''));
                                                                       }
                                                                       return o.join('');
                                                                   })(s, t, e, r)
@@ -23015,7 +22989,7 @@
                                     case 'base64':
                                         return (function (e) {
                                             for (var t = '', r = 0, a = 0, n = 0, s = 0, i = 0, o = 0, c = 0, l = 0; l < e.length; )
-                                                ((r = e.charCodeAt(l++)) > 255 && (r = 95),
+                                                (r = e.charCodeAt(l++)) > 255 && (r = 95),
                                                     (s = r >> 2),
                                                     (a = e.charCodeAt(l++)) > 255 && (a = 95),
                                                     (i = ((3 & r) << 4) | (a >> 4)),
@@ -23023,7 +22997,7 @@
                                                     (o = ((15 & a) << 2) | (n >> 6)),
                                                     (c = 63 & n),
                                                     isNaN(a) ? (o = c = 64) : isNaN(n) && (c = 64),
-                                                    (t += eh.charAt(s) + eh.charAt(i) + eh.charAt(o) + eh.charAt(c)));
+                                                    (t += eh.charAt(s) + eh.charAt(i) + eh.charAt(o) + eh.charAt(c));
                                             return t;
                                         })(c);
                                     case 'binary':
@@ -23060,7 +23034,7 @@
                                                     r.push(' \\cell');
                                                     continue;
                                                 }
-                                                (r.push(' ' + (a.w || (a_(a), a.w) || '').replace(/[\r\n]/g, '\\par ')), r.push('\\cell'));
+                                                r.push(' ' + (a.w || (a_(a), a.w) || '').replace(/[\r\n]/g, '\\par ')), r.push('\\cell');
                                             }
                                             r.push('\\pard\\intbl\\row');
                                         }
@@ -23081,7 +23055,7 @@
                             case 'biff3':
                                 s.biff || (s.biff = 3);
                             case 'biff4':
-                                return (s.biff || (s.biff = 4), cZ(oK(t, s), s));
+                                return s.biff || (s.biff = 4), cZ(oK(t, s), s);
                             case 'biff5':
                                 s.biff || (s.biff = 5);
                             case 'biff8':
@@ -23101,10 +23075,10 @@
                                                 case 'xla':
                                                     a.bookType || (a.bookType = 'xla');
                                                 case 'biff8':
-                                                    ((s = '/Workbook'), (a.biff = 8));
+                                                    (s = '/Workbook'), (a.biff = 8);
                                                     break;
                                                 case 'biff5':
-                                                    ((s = '/Book'), (a.biff = 5));
+                                                    (s = '/Book'), (a.biff = 5);
                                                     break;
                                                 default:
                                                     throw Error('invalid type ' + a.bookType + ' for XLS CFB');
@@ -23141,13 +23115,13 @@
                                                         var l = [];
                                                         for (i = 0; i < s.length; ++i)
                                                             nB.indexOf(s[i][0]) > -1 || n_.indexOf(s[i][0]) > -1 || (null != s[i][1] && l.push(s[i]));
-                                                        (n.length && tr.utils.cfb_add(t, '/\x05SummaryInformation', nH(n, oU, c, aY)),
+                                                        n.length && tr.utils.cfb_add(t, '/\x05SummaryInformation', nH(n, oU, c, aY)),
                                                             (a.length || l.length) &&
                                                                 tr.utils.cfb_add(
                                                                     t,
                                                                     '/\x05DocumentSummaryInformation',
                                                                     nH(a, oB, o, aK, l.length ? l : null, '05d5cdd59c2e1b10939708002b2cf9ae'),
-                                                                ));
+                                                                );
                                                     })(e, n),
                                                 8 == a.biff &&
                                                     e.vbaraw &&
@@ -23194,7 +23168,7 @@
                                                                     t.name.match(/\.iwa/) &&
                                                                     0 == t.content[0] &&
                                                                     cp(cg(t.content)).forEach(function (e) {
-                                                                        (a.push(e.id), (r[e.id] = { deps: [], location: n, type: cf(e.messages[0].meta[1][0].data) }));
+                                                                        a.push(e.id), (r[e.id] = { deps: [], location: n, type: cf(e.messages[0].meta[1][0].data) });
                                                                     });
                                                             }),
                                                             n.FileIndex.forEach(function (e) {
@@ -23219,7 +23193,7 @@
                                                     return (
                                                         e.SheetNames.forEach(function (t, r) {
                                                             var a, c, l, f, h, u, d, p, m, g, v, b, w, T, y;
-                                                            (r >= 1 &&
+                                                            r >= 1 &&
                                                                 ((a = n),
                                                                 (c = s),
                                                                 (l = r + 1),
@@ -23228,70 +23202,70 @@
                                                                 (u = {}),
                                                                 cR(a, c, 1, function (e, t) {
                                                                     var r = ch(e.messages[0].data);
-                                                                    ((h = cC(
+                                                                    (h = cC(
                                                                         { deps: [1], location: c[(f = cy(ch(e.messages[0].data)[1][0].data))].location, type: 2 },
                                                                         c,
                                                                     )),
                                                                         (u[f] = h),
                                                                         ck(e, h),
-                                                                        r[1].push({ type: 2, data: cE(h) }));
+                                                                        r[1].push({ type: 2, data: cE(h) });
                                                                     var n = cN(a, c, f);
-                                                                    ((n.id = h),
+                                                                    (n.id = h),
                                                                         c[1].location == c[h].location
                                                                             ? t.push(n)
                                                                             : cR(a, c, h, function (e, t) {
                                                                                   return t.push(n);
                                                                               }),
-                                                                        (e.messages[0].data = cu(r)));
+                                                                        (e.messages[0].data = cu(r));
                                                                 }),
                                                                 (d = -1),
                                                                 cR(a, c, h, function (e, t) {
                                                                     for (var r = ch(e.messages[0].data), n = 3; n <= 69; ++n) delete r[n];
                                                                     var s = cd(r[2], cy);
-                                                                    (s.forEach(function (t) {
+                                                                    s.forEach(function (t) {
                                                                         return cx(e, t);
                                                                     }),
                                                                         ck(e, (d = cC({ deps: [h], location: c[s[0]].location, type: c[s[0]].type }, c))),
                                                                         (u[s[0]] = d),
-                                                                        (r[2] = [{ type: 2, data: cE(d) }]));
+                                                                        (r[2] = [{ type: 2, data: cE(d) }]);
                                                                     var i = cN(a, c, s[0]);
-                                                                    ((i.id = d),
+                                                                    (i.id = d),
                                                                         c[s[0]].location == c[h].location
                                                                             ? t.push(i)
                                                                             : (cR(a, c, 2, function (e) {
                                                                                   var t = ch(e.messages[0].data);
-                                                                                  (cP(t, c, h, d), (e.messages[0].data = cu(t)));
+                                                                                  cP(t, c, h, d), (e.messages[0].data = cu(t));
                                                                               }),
                                                                               cR(a, c, d, function (e, t) {
                                                                                   return t.push(i);
                                                                               })),
-                                                                        (e.messages[0].data = cu(r)));
+                                                                        (e.messages[0].data = cu(r));
                                                                 }),
                                                                 (p = -1),
                                                                 cR(a, c, d, function (e, t) {
                                                                     for (var r = ch(e.messages[0].data), n = ch(r[1][0].data), s = 3; s <= 69; ++s) delete n[s];
                                                                     var i = cy(n[2][0].data);
-                                                                    ((n[2][0].data = cE(u[i])), (r[1][0].data = cu(n)));
+                                                                    (n[2][0].data = cE(u[i])), (r[1][0].data = cu(n));
                                                                     var o = cy(r[2][0].data);
-                                                                    (cx(e, o),
+                                                                    cx(e, o),
                                                                         ck(e, (p = cC({ deps: [d], location: c[o].location, type: c[o].type }, c))),
                                                                         (u[o] = p),
-                                                                        (r[2][0].data = cE(p)));
+                                                                        (r[2][0].data = cE(p));
                                                                     var l = cN(a, c, o);
-                                                                    ((l.id = p),
+                                                                    (l.id = p),
                                                                         c[d].location == c[p].location
                                                                             ? t.push(l)
                                                                             : cR(a, c, p, function (e, t) {
                                                                                   return t.push(l);
                                                                               }),
-                                                                        (e.messages[0].data = cu(r)));
+                                                                        (e.messages[0].data = cu(r));
                                                                 }),
                                                                 cR(a, c, p, function (e, t) {
                                                                     var r,
                                                                         n,
                                                                         s = ch(e.messages[0].data),
                                                                         i = cr(s[1][0].data).replace(/-[A-Z0-9]*/, '-'.concat(('0000' + l.toString(16)).slice(-4)));
-                                                                    ((s[1][0].data = ca(i)),
+                                                                    (s[1][0].data = ca(i)),
                                                                         [12, 13, 29, 31, 32, 33, 39, 44, 47, 81, 82, 84].forEach(function (e) {
                                                                             return delete s[e];
                                                                         }),
@@ -23315,77 +23289,77 @@
                                                                         ].forEach(function (t) {
                                                                             if (s[t]) {
                                                                                 var r = cy(s[t][0].data);
-                                                                                (delete s[t], cx(e, r));
+                                                                                delete s[t], cx(e, r);
                                                                             }
-                                                                        }));
+                                                                        });
                                                                     var o = ch(s[4][0].data);
                                                                     [2, 4, 5, 6, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22].forEach(function (r) {
                                                                         if (null == (n = o[r]) ? void 0 : n[0]) {
                                                                             var n,
                                                                                 s = cy(o[r][0].data),
                                                                                 i = cC({ deps: [p], location: c[s].location, type: c[s].type }, c);
-                                                                            (cx(e, s), ck(e, i), (u[s] = i));
+                                                                            cx(e, s), ck(e, i), (u[s] = i);
                                                                             var l = cN(a, c, s);
                                                                             if (((l.id = i), c[s].location == c[p].location)) t.push(l);
                                                                             else {
-                                                                                ((c[i].location = c[s].location.replace(s.toString(), i.toString())),
+                                                                                (c[i].location = c[s].location.replace(s.toString(), i.toString())),
                                                                                     c[i].location == c[s].location &&
                                                                                         (c[i].location = c[i].location.replace(/\.iwa/, '-'.concat(i, '.iwa'))),
-                                                                                    tr.utils.cfb_add(a, c[i].location, cv(cm([l]))));
+                                                                                    tr.utils.cfb_add(a, c[i].location, cv(cm([l])));
                                                                                 var f = c[i].location
                                                                                     .replace(/^Root Entry\//, '')
                                                                                     .replace(/^Index\//, '')
                                                                                     .replace(/\.iwa$/, '');
                                                                                 cR(a, c, 2, function (e) {
                                                                                     var t = ch(e.messages[0].data);
-                                                                                    (cF(t, i, f), cP(t, c, p, i), (e.messages[0].data = cu(t)));
+                                                                                    cF(t, i, f), cP(t, c, p, i), (e.messages[0].data = cu(t));
                                                                                 });
                                                                             }
                                                                             o[r][0].data = cE(i);
                                                                         }
                                                                     });
                                                                     var f = ch(o[1][0].data);
-                                                                    (null == (n = f[2]) ||
+                                                                    null == (n = f[2]) ||
                                                                         n.forEach(function (r) {
                                                                             var n = cy(r.data),
                                                                                 s = cC({ deps: [p], location: c[n].location, type: c[n].type }, c);
-                                                                            (cx(e, n), ck(e, s), (u[n] = s));
+                                                                            cx(e, n), ck(e, s), (u[n] = s);
                                                                             var i = cN(a, c, n);
                                                                             if (((i.id = s), c[n].location == c[p].location)) t.push(i);
                                                                             else {
-                                                                                ((c[s].location = c[n].location.replace(n.toString(), s.toString())),
+                                                                                (c[s].location = c[n].location.replace(n.toString(), s.toString())),
                                                                                     c[s].location == c[n].location &&
                                                                                         (c[s].location = c[s].location.replace(/\.iwa/, '-'.concat(s, '.iwa'))),
-                                                                                    tr.utils.cfb_add(a, c[s].location, cv(cm([i]))));
+                                                                                    tr.utils.cfb_add(a, c[s].location, cv(cm([i])));
                                                                                 var o = c[s].location
                                                                                     .replace(/^Root Entry\//, '')
                                                                                     .replace(/^Index\//, '')
                                                                                     .replace(/\.iwa$/, '');
                                                                                 cR(a, c, 2, function (e) {
                                                                                     var t = ch(e.messages[0].data);
-                                                                                    (cF(t, s, o), cP(t, c, p, s), (e.messages[0].data = cu(t)));
+                                                                                    cF(t, s, o), cP(t, c, p, s), (e.messages[0].data = cu(t));
                                                                                 });
                                                                             }
                                                                             r.data = cE(s);
                                                                         }),
-                                                                        (o[1][0].data = cu(f)));
+                                                                        (o[1][0].data = cu(f));
                                                                     var h = ch(o[3][0].data);
-                                                                    (h[1].forEach(function (t) {
+                                                                    h[1].forEach(function (t) {
                                                                         var r = ch(t.data),
                                                                             n = cy(r[2][0].data),
                                                                             s = u[n];
                                                                         if (!u[n]) {
-                                                                            ((s = cC({ deps: [p], location: '', type: c[n].type }, c)),
+                                                                            (s = cC({ deps: [p], location: '', type: c[n].type }, c)),
                                                                                 (c[s].location = 'Root Entry/Index/Tables/Tile-'.concat(s, '.iwa')),
-                                                                                (u[n] = s));
+                                                                                (u[n] = s);
                                                                             var i = cN(a, c, n);
-                                                                            ((i.id = s),
+                                                                            (i.id = s),
                                                                                 cx(e, n),
                                                                                 ck(e, s),
                                                                                 tr.utils.cfb_add(a, '/Index/Tables/Tile-'.concat(s, '.iwa'), cv(cm([i]))),
                                                                                 cR(a, c, 2, function (e) {
                                                                                     var t = ch(e.messages[0].data);
-                                                                                    (t[3].push({
+                                                                                    t[3].push({
                                                                                         type: 2,
                                                                                         data: cu([
                                                                                             [],
@@ -23405,14 +23379,14 @@
                                                                                     }),
                                                                                         (t[1] = [{ type: 0, data: co(Math.max(s + 1, cf(t[1][0].data))) }]),
                                                                                         cP(t, c, p, s),
-                                                                                        (e.messages[0].data = cu(t)));
-                                                                                }));
+                                                                                        (e.messages[0].data = cu(t));
+                                                                                });
                                                                         }
-                                                                        ((r[2][0].data = cE(s)), (t.data = cu(r)));
+                                                                        (r[2][0].data = cE(s)), (t.data = cu(r));
                                                                     }),
                                                                         (o[3][0].data = cu(h)),
                                                                         (s[4][0].data = cu(o)),
-                                                                        (e.messages[0].data = cu(s)));
+                                                                        (e.messages[0].data = cu(s));
                                                                 }),
                                                                 (o = cd(ch((i = cN(n, s, 1)).messages[0].data)[1], cy))),
                                                                 (m = n),
@@ -23423,7 +23397,7 @@
                                                                 (T = []),
                                                                 cR(m, g, w, function (e) {
                                                                     var t = ch(e.messages[0].data);
-                                                                    ((t[1] = [{ type: 2, data: ca(b) }]), (T = cd(t[2], cy)), (e.messages[0].data = cu(t)));
+                                                                    (t[1] = [{ type: 2, data: ca(b) }]), (T = cd(t[2], cy)), (e.messages[0].data = cu(t));
                                                                 }),
                                                                 (y = cy(ch(cN(m, g, T[0]).messages[0].data)[2][0].data)),
                                                                 cR(m, g, y, function (e, t) {
@@ -23433,9 +23407,9 @@
                                                                             o = aw(r['!ref']);
                                                                         o.s.r = o.s.c = 0;
                                                                         var c = !1;
-                                                                        (o.e.c > 999 && ((c = !0), (o.e.c = 999)),
+                                                                        o.e.c > 999 && ((c = !0), (o.e.c = 999)),
                                                                             o.e.r > 999999 && ((c = !0), (o.e.r = 999999)),
-                                                                            c && console.error('Truncating to '.concat(aT(o))));
+                                                                            c && console.error('Truncating to '.concat(aT(o)));
                                                                         var l = [];
                                                                         if (r['!data']) l = r['!data'];
                                                                         else {
@@ -23464,29 +23438,29 @@
                                                                                 sst: ['~Sh33tJ5~'],
                                                                             },
                                                                             g = ch(a.messages[0].data);
-                                                                        ((g[6][0].data = co(o.e.r + 1)), (g[7][0].data = co(o.e.c + 1)), delete g[46]);
+                                                                        (g[6][0].data = co(o.e.r + 1)), (g[7][0].data = co(o.e.c + 1)), delete g[46];
                                                                         var v = ch(g[4][0].data);
-                                                                        (cR(e, t, cy(ch(v[1][0].data)[2][0].data), function (e, t) {
+                                                                        cR(e, t, cy(ch(v[1][0].data)[2][0].data), function (e, t) {
                                                                             var r,
                                                                                 a = ch(e.messages[0].data);
                                                                             if (null == (r = null == a ? void 0 : a[2]) ? void 0 : r[0])
                                                                                 for (var n = 0; n < l.length; ++n) {
                                                                                     var s = ch(a[2][0].data);
-                                                                                    ((s[1][0].data = co(n)),
+                                                                                    (s[1][0].data = co(n)),
                                                                                         (s[4][0].data = co(l[n].length)),
-                                                                                        (a[2][n] = { type: a[2][0].type, data: cu(s) }));
+                                                                                        (a[2][n] = { type: a[2][0].type, data: cu(s) });
                                                                                 }
                                                                             e.messages[0].data = cu(a);
                                                                         }),
                                                                             cR(e, t, cy(v[2][0].data), function (e, t) {
                                                                                 for (var r = ch(e.messages[0].data), a = 0; a <= o.e.c; ++a) {
                                                                                     var n = ch(r[2][0].data);
-                                                                                    ((n[1][0].data = co(a)),
+                                                                                    (n[1][0].data = co(a)),
                                                                                         (n[4][0].data = co(o.e.r + 1)),
-                                                                                        (r[2][a] = { type: r[2][0].type, data: cu(n) }));
+                                                                                        (r[2][a] = { type: r[2][0].type, data: cu(n) });
                                                                                 }
                                                                                 e.messages[0].data = cu(r);
-                                                                            }));
+                                                                            });
                                                                         var b = ch(v[9][0].data);
                                                                         b[1] = [];
                                                                         var w = ch(v[3][0].data);
@@ -23502,13 +23476,13 @@
                                                                             )
                                                                                 ? cf(ch(i[0].data)[12][0].data)
                                                                                 : 0;
-                                                                        (tr.utils.cfb_del(e, t[T].location),
+                                                                        tr.utils.cfb_del(e, t[T].location),
                                                                             cR(e, t, 2, function (e) {
                                                                                 var r,
                                                                                     a,
                                                                                     n,
                                                                                     i = ch(e.messages[0].data);
-                                                                                ((i[3] = i[3].filter(function (e) {
+                                                                                (i[3] = i[3].filter(function (e) {
                                                                                     return cf(ch(e.data)[1][0].data) != T;
                                                                                 })),
                                                                                     (r = t[s].location
@@ -23528,10 +23502,10 @@
                                                                                         return cf(ch(e.data)[1][0].data) != T;
                                                                                     })),
                                                                                     (i[3][a].data = cu(n)),
-                                                                                    (e.messages[0].data = cu(i)));
+                                                                                    (e.messages[0].data = cu(i));
                                                                             }),
                                                                             cx(a, T),
-                                                                            (w[1] = []));
+                                                                            (w[1] = []);
                                                                         for (var E = Math.ceil((o.e.r + 1) / 256), k = 0; k < E; ++k) {
                                                                             var x = cC({ deps: [], location: '', type: 6002 }, t);
                                                                             t[x].location = 'Root Entry/Index/Tables/Tile-'.concat(x, '.iwa');
@@ -23591,11 +23565,11 @@
                                                                                     var l = 0;
                                                                                     if (c[7][0].data.length < 2 * e.length) {
                                                                                         var f = new Uint8Array(2 * e.length);
-                                                                                        (f.set(c[7][0].data), (c[7][0].data = f));
+                                                                                        f.set(c[7][0].data), (c[7][0].data = f);
                                                                                     }
                                                                                     if (c[4][0].data.length < 2 * e.length) {
                                                                                         var h = new Uint8Array(2 * e.length);
-                                                                                        (h.set(c[4][0].data), (c[4][0].data = h));
+                                                                                        h.set(c[4][0].data), (c[4][0].data = h);
                                                                                     }
                                                                                     for (
                                                                                         var u = ct(c[7][0].data),
@@ -23614,30 +23588,30 @@
                                                                                             ('z' == e[w].t && !(null == (s = e[w].c) ? void 0 : s.length)) ||
                                                                                             'e' == e[w].t
                                                                                         ) {
-                                                                                            (u.setUint16(2 * w, 65535, !0), m.setUint16(2 * w, 65535));
+                                                                                            u.setUint16(2 * w, 65535, !0), m.setUint16(2 * w, 65535);
                                                                                             continue;
                                                                                         }
                                                                                         switch ((u.setUint16(2 * w, d / b, !0), m.setUint16(2 * w, g / b, !0), e[w].t)) {
                                                                                             case 'd':
                                                                                                 if (e[w].v instanceof Date) {
-                                                                                                    ((i = cw(e[w], t)), (o = cT(e[w], t)));
+                                                                                                    (i = cw(e[w], t)), (o = cT(e[w], t));
                                                                                                     break;
                                                                                                 }
-                                                                                                ((i = cw(e[w], t)), (o = cT(e[w], t)));
+                                                                                                (i = cw(e[w], t)), (o = cT(e[w], t));
                                                                                                 break;
                                                                                             case 's':
                                                                                             case 'n':
                                                                                             case 'b':
                                                                                             case 'z':
-                                                                                                ((i = cw(e[w], t)), (o = cT(e[w], t)));
+                                                                                                (i = cw(e[w], t)), (o = cT(e[w], t));
                                                                                                 break;
                                                                                             default:
                                                                                                 throw Error('Unsupported value ' + e[w]);
                                                                                         }
-                                                                                        (p.push(i), (d += i.length), v.push(o), (g += o.length), ++l);
+                                                                                        p.push(i), (d += i.length), v.push(o), (g += o.length), ++l;
                                                                                     }
                                                                                     for (c[2][0].data = co(l), c[5][0].data = co(5); w < c[7][0].data.length / 2; ++w)
-                                                                                        (u.setUint16(2 * w, 65535, !0), m.setUint16(2 * w, 65535, !0));
+                                                                                        u.setUint16(2 * w, 65535, !0), m.setUint16(2 * w, 65535, !0);
                                                                                     return (
                                                                                         (c[6][0].data = cn(p)),
                                                                                         (c[3][0].data = cn(v)),
@@ -23645,17 +23619,17 @@
                                                                                         c
                                                                                     );
                                                                                 })(l[S], m, !0);
-                                                                                ((A[1][0].data = co(S - 256 * k)), _[5].push({ data: cu(A), type: 2 }));
+                                                                                (A[1][0].data = co(S - 256 * k)), _[5].push({ data: cu(A), type: 2 });
                                                                             }
                                                                             w[1].push({
                                                                                 type: 2,
                                                                                 data: cu([[], [{ type: 0, data: co(k) }], [{ type: 2, data: cE(x) }]]),
                                                                             });
                                                                             var C = cv(cm([{ id: x, messages: [cA(6002, cu(_))] }]));
-                                                                            (tr.utils.cfb_add(e, '/Index/Tables/Tile-'.concat(x, '.iwa'), C),
+                                                                            tr.utils.cfb_add(e, '/Index/Tables/Tile-'.concat(x, '.iwa'), C),
                                                                                 cR(e, t, 2, function (e) {
                                                                                     var r = ch(e.messages[0].data);
-                                                                                    (r[3].push({
+                                                                                    r[3].push({
                                                                                         type: 2,
                                                                                         data: cu([
                                                                                             [],
@@ -23675,13 +23649,13 @@
                                                                                     }),
                                                                                         (r[1] = [{ type: 0, data: co(Math.max(x + 1, cf(r[1][0].data))) }]),
                                                                                         cP(r, t, s, x),
-                                                                                        (e.messages[0].data = cu(r)));
+                                                                                        (e.messages[0].data = cu(r));
                                                                                 }),
                                                                                 ck(a, x),
                                                                                 b[1].push({
                                                                                     type: 2,
                                                                                     data: cu([[], [{ type: 0, data: co(256 * k) }], [{ type: 0, data: co(k) }]]),
-                                                                                }));
+                                                                                });
                                                                         }
                                                                         if (
                                                                             ((v[3][0].data = cu(w)),
@@ -23690,7 +23664,7 @@
                                                                             r['!merges'])
                                                                         ) {
                                                                             var I = cC({ type: 6144, deps: [s], location: t[s].location }, t);
-                                                                            (n.push({
+                                                                            n.push({
                                                                                 id: I,
                                                                                 messages: [
                                                                                     cA(
@@ -23747,13 +23721,13 @@
                                                                                 (v[13] = [{ type: 2, data: cE(I) }]),
                                                                                 cR(e, t, 2, function (e) {
                                                                                     var r = ch(e.messages[0].data);
-                                                                                    (cP(r, t, s, I), (e.messages[0].data = cu(r)));
+                                                                                    cP(r, t, s, I), (e.messages[0].data = cu(r));
                                                                                 }),
-                                                                                ck(a, I));
+                                                                                ck(a, I);
                                                                         } else delete v[13];
                                                                         cR(e, t, cy(v[4][0].data), function (e) {
                                                                             var t = ch(e.messages[0].data);
-                                                                            ((t[3] = []),
+                                                                            (t[3] = []),
                                                                                 m.sst.forEach(function (e, r) {
                                                                                     0 != r &&
                                                                                         t[3].push({
@@ -23766,7 +23740,7 @@
                                                                                             ]),
                                                                                         });
                                                                                 }),
-                                                                                (e.messages[0].data = cu(t)));
+                                                                                (e.messages[0].data = cu(t));
                                                                         });
                                                                         var O = cy(v[17][0].data);
                                                                         if (
@@ -23774,7 +23748,7 @@
                                                                                 var a = ch(r.messages[0].data);
                                                                                 a[3] = [];
                                                                                 var n = [904980, 903835, 903815, 903845];
-                                                                                (m.rsst.forEach(function (s, i) {
+                                                                                m.rsst.forEach(function (s, i) {
                                                                                     if (0 != i) {
                                                                                         var o = [
                                                                                             [],
@@ -23782,7 +23756,7 @@
                                                                                             [],
                                                                                             [{ type: 2, data: ca(s.v) }],
                                                                                         ];
-                                                                                        ((o[10] = [{ type: 0, data: new Uint8Array([1]) }]),
+                                                                                        (o[10] = [{ type: 0, data: new Uint8Array([1]) }]),
                                                                                             (o[19] = [{ type: 2, data: new Uint8Array([10, 6, 8, 0, 18, 2, 101, 110]) }]),
                                                                                             (o[5] = [
                                                                                                 { type: 2, data: new Uint8Array([10, 8, 8, 0, 18, 4, 8, 155, 149, 55]) },
@@ -23796,7 +23770,7 @@
                                                                                                 { type: 2, data: new Uint8Array([10, 8, 8, 0, 18, 4, 8, 165, 149, 55]) },
                                                                                             ]),
                                                                                             (o[14] = [{ type: 2, data: new Uint8Array([10, 6, 8, 0, 16, 0, 24, 0]) }]),
-                                                                                            (o[24] = [{ type: 2, data: new Uint8Array([10, 6, 8, 0, 16, 0, 24, 0]) }]));
+                                                                                            (o[24] = [{ type: 2, data: new Uint8Array([10, 6, 8, 0, 16, 0, 24, 0]) }]);
                                                                                         var c = cC({ deps: [], location: '', type: 2001 }, t),
                                                                                             l = [];
                                                                                         if (s.l) {
@@ -23809,7 +23783,7 @@
                                                                                             );
                                                                                             o[11] = [];
                                                                                             var h = [[], []];
-                                                                                            (h[1] || (h[1] = []),
+                                                                                            h[1] || (h[1] = []),
                                                                                                 h[1].push({
                                                                                                     type: 2,
                                                                                                     data: cu([
@@ -23819,17 +23793,17 @@
                                                                                                     ]),
                                                                                                 }),
                                                                                                 (o[11][0] = { type: 2, data: cu(h) }),
-                                                                                                l.push(f));
+                                                                                                l.push(f);
                                                                                         }
-                                                                                        (cD(e, 2001, o, '/Index/Tables/DataList', t, c),
+                                                                                        cD(e, 2001, o, '/Index/Tables/DataList', t, c),
                                                                                             cR(e, t, c, function (e) {
-                                                                                                (n.forEach(function (t) {
+                                                                                                n.forEach(function (t) {
                                                                                                     return ck(e, t);
                                                                                                 }),
                                                                                                     l.forEach(function (t) {
                                                                                                         return ck(e, t);
-                                                                                                    }));
-                                                                                            }));
+                                                                                                    });
+                                                                                            });
                                                                                         var u = cD(
                                                                                             e,
                                                                                             6218,
@@ -23850,7 +23824,7 @@
                                                                                             '/Index/Tables/DataList',
                                                                                             t,
                                                                                         );
-                                                                                        (cR(e, t, u, function (e) {
+                                                                                        cR(e, t, u, function (e) {
                                                                                             return ck(e, c);
                                                                                         }),
                                                                                             a[3].push({
@@ -23871,15 +23845,15 @@
                                                                                             ck(r, u),
                                                                                             cR(e, t, 2, function (e) {
                                                                                                 var r = ch(e.messages[0].data);
-                                                                                                (cP(r, t, O, u),
+                                                                                                cP(r, t, O, u),
                                                                                                     cP(r, t, u, c),
                                                                                                     cP(r, t, c, l),
                                                                                                     cP(r, t, c, n),
-                                                                                                    (e.messages[0].data = cu(r)));
-                                                                                            }));
+                                                                                                    (e.messages[0].data = cu(r));
+                                                                                            });
                                                                                     }
                                                                                 }),
-                                                                                    (r.messages[0].data = cu(a)));
+                                                                                    (r.messages[0].data = cu(a));
                                                                             }),
                                                                             m.cmnt.length > 1)
                                                                         ) {
@@ -23888,11 +23862,11 @@
                                                                                 F = 0;
                                                                             cR(e, t, R, function (r) {
                                                                                 var a = ch(r.messages[0].data);
-                                                                                ((a[3] = []),
+                                                                                (a[3] = []),
                                                                                     m.cmnt.forEach(function (n, s) {
                                                                                         if (0 != s) {
                                                                                             var i = [];
-                                                                                            (n.replies &&
+                                                                                            n.replies &&
                                                                                                 n.replies.forEach(function (r) {
                                                                                                     N[r.a || ''] ||
                                                                                                         (N[r.a || ''] = cD(
@@ -23936,14 +23910,14 @@
                                                                                                             '/Index/Tables/DataList',
                                                                                                             t,
                                                                                                         );
-                                                                                                    (cR(e, t, n, function (e) {
+                                                                                                    cR(e, t, n, function (e) {
                                                                                                         return ck(e, a);
                                                                                                     }),
                                                                                                         i.push(n),
                                                                                                         cR(e, t, 2, function (e) {
                                                                                                             var r = ch(e.messages[0].data);
-                                                                                                            (cP(r, t, n, a), (e.messages[0].data = cu(r)));
-                                                                                                        }));
+                                                                                                            cP(r, t, n, a), (e.messages[0].data = cu(r));
+                                                                                                        });
                                                                                                 }),
                                                                                                 N[n.a || ''] ||
                                                                                                     (N[n.a || ''] = cD(
@@ -23958,7 +23932,7 @@
                                                                                                         ],
                                                                                                         '/Index/Tables/DataList',
                                                                                                         t,
-                                                                                                    )));
+                                                                                                    ));
                                                                                             var o = N[n.a || ''],
                                                                                                 c = cD(
                                                                                                     e,
@@ -24000,11 +23974,11 @@
                                                                                                     '/Index/Tables/DataList',
                                                                                                     t,
                                                                                                 );
-                                                                                            (cR(e, t, c, function (e) {
-                                                                                                (ck(e, o),
+                                                                                            cR(e, t, c, function (e) {
+                                                                                                ck(e, o),
                                                                                                     i.forEach(function (t) {
                                                                                                         return ck(e, t);
-                                                                                                    }));
+                                                                                                    });
                                                                                             }),
                                                                                                 a[3].push({
                                                                                                     type: 2,
@@ -24025,34 +23999,34 @@
                                                                                                 ck(r, c),
                                                                                                 cR(e, t, 2, function (e) {
                                                                                                     var r = ch(e.messages[0].data);
-                                                                                                    (cP(r, t, R, c),
+                                                                                                    cP(r, t, R, c),
                                                                                                         cP(r, t, c, o),
                                                                                                         i.length && cP(r, t, c, i),
-                                                                                                        (e.messages[0].data = cu(r)));
-                                                                                                }));
+                                                                                                        (e.messages[0].data = cu(r));
+                                                                                                });
                                                                                         }
                                                                                     }),
                                                                                     (a[2][0].data = co(m.cmnt.length + 1)),
-                                                                                    (r.messages[0].data = cu(a)));
+                                                                                    (r.messages[0].data = cu(a));
                                                                             });
                                                                         }
-                                                                        ((g[4][0].data = cu(v)), (a.messages[0].data = cu(g)));
+                                                                        (g[4][0].data = cu(v)), (a.messages[0].data = cu(g));
                                                                     })(m, g, v, e, t, y);
-                                                                }));
+                                                                });
                                                         }),
                                                         n
                                                     );
                                                 })(t, r);
                                             case 'xlsb':
                                                 return (function (t, r) {
-                                                    (t && !t.SSF && (t.SSF = tw(eD)),
+                                                    t && !t.SSF && (t.SSF = tw(eD)),
                                                         t && t.SSF && (e5(), e3(t.SSF), (r.revssf = tc(t.SSF)), (r.revssf[t.SSF[65535]] = 0), (r.ssf = t.SSF)),
                                                         (r.rels = {}),
                                                         (r.wbrels = {}),
                                                         (r.Strings = []),
                                                         (r.Strings.Count = 0),
                                                         (r.Strings.Unique = 0),
-                                                        iJ ? (r.revStrings = new Map()) : ((r.revStrings = {}), (r.revStrings.foo = []), delete r.revStrings.foo));
+                                                        iJ ? (r.revStrings = new Map()) : ((r.revStrings = {}), (r.revStrings.foo = []), delete r.revStrings.foo);
                                                     var a,
                                                         n,
                                                         s,
@@ -24078,13 +24052,13 @@
                                                             2 != (t.Workbook.Sheets[d] || {}).Hidden && u.push(t.SheetNames[d]);
                                                         t.Props.SheetNames = u;
                                                     } else t.Props.SheetNames = t.SheetNames;
-                                                    ((t.Props.Worksheets = t.Props.SheetNames.length),
+                                                    (t.Props.Worksheets = t.Props.SheetNames.length),
                                                         tX(l, f, nA(t.Props, r)),
                                                         c.extprops.push(f),
                                                         nv(r.rels, 3, f, nt),
                                                         t.Custprops !== t.Props &&
                                                             ts(t.Custprops || {}).length > 0 &&
-                                                            (tX(l, (f = 'docProps/custom.xml'), nI(t.Custprops, r)), c.custprops.push(f), nv(r.rels, 4, f, nr)));
+                                                            (tX(l, (f = 'docProps/custom.xml'), nI(t.Custprops, r)), c.custprops.push(f), nv(r.rels, 4, f, nr));
                                                     var p = ['SheetJ5'];
                                                     for (h = 1, r.tcid = 0; h <= t.SheetNames.length; ++h) {
                                                         var m = { '!id': {} },
@@ -24114,9 +24088,9 @@
                                                                     var v = ak(m['!ref'] || 'A1');
                                                                     if (v.e.c > 16383 || v.e.r > 1048575) {
                                                                         if (t.WTF) throw Error('Range ' + (m['!ref'] || 'A1') + ' exceeds format limit A1:XFD1048576');
-                                                                        ((v.e.c = Math.min(v.e.c, 16383)), (v.e.r = Math.min(v.e.c, 1048575)));
+                                                                        (v.e.c = Math.min(v.e.c, 16383)), (v.e.r = Math.min(v.e.c, 1048575));
                                                                     }
-                                                                    ((m['!links'] = []),
+                                                                    (m['!links'] = []),
                                                                         (m['!comments'] = []),
                                                                         ac(d, 129),
                                                                         (r.vbaraw || m['!outline']) &&
@@ -24126,7 +24100,7 @@
                                                                                 (function (e, t, r) {
                                                                                     null == r && (r = as(84 + 4 * e.length));
                                                                                     var a = 192;
-                                                                                    (t && (t.above && (a &= -65), t.left && (a &= -129)), r.write_shift(1, a));
+                                                                                    t && (t.above && (a &= -65), t.left && (a &= -129)), r.write_shift(1, a);
                                                                                     for (var n = 1; n < 3; ++n) r.write_shift(1, 0);
                                                                                     return (
                                                                                         aG({ auto: 1 }, r),
@@ -24204,26 +24178,26 @@
                                                                                         var n = (function (e, t, r) {
                                                                                             var a = as(145),
                                                                                                 n = (r['!rows'] || [])[e] || {};
-                                                                                            (a.write_shift(4, e), a.write_shift(4, 0));
+                                                                                            a.write_shift(4, e), a.write_shift(4, 0);
                                                                                             var s = 320;
-                                                                                            (n.hpx ? (s = 20 * s1(n.hpx)) : n.hpt && (s = 20 * n.hpt),
+                                                                                            n.hpx ? (s = 20 * s1(n.hpx)) : n.hpt && (s = 20 * n.hpt),
                                                                                                 a.write_shift(2, s),
-                                                                                                a.write_shift(1, 0));
+                                                                                                a.write_shift(1, 0);
                                                                                             var i = 0;
-                                                                                            (n.level && (i |= n.level),
+                                                                                            n.level && (i |= n.level),
                                                                                                 n.hidden && (i |= 16),
                                                                                                 (n.hpx || n.hpt) && (i |= 32),
                                                                                                 a.write_shift(1, i),
-                                                                                                a.write_shift(1, 0));
+                                                                                                a.write_shift(1, 0);
                                                                                             var o = 0,
                                                                                                 c = a.l;
                                                                                             a.l += 4;
                                                                                             for (var l = { r: e, c: 0 }, f = null != r['!data'], h = 0; h < 16; ++h)
                                                                                                 if (!(t.s.c > (h + 1) << 10) && !(t.e.c < h << 10)) {
                                                                                                     for (var u = -1, d = -1, p = h << 10; p < (h + 1) << 10; ++p)
-                                                                                                        ((l.c = p),
+                                                                                                        (l.c = p),
                                                                                                             (f ? (r['!data'][l.r] || [])[l.c] : r[ab(l)]) &&
-                                                                                                                (u < 0 && (u = p), (d = p)));
+                                                                                                                (u < 0 && (u = p), (d = p));
                                                                                                     u < 0 || (++o, a.write_shift(4, u), a.write_shift(4, d));
                                                                                                 }
                                                                                             var m = a.l;
@@ -24278,9 +24252,9 @@
                                                                                                         R = t.v ? '1' : '0';
                                                                                                         break;
                                                                                                     case 'd':
-                                                                                                        (((t = tw(t)).z = t.z || eD[14]),
+                                                                                                        ((t = tw(t)).z = t.z || eD[14]),
                                                                                                             (t.v = tu(tv(t.v, o), o)),
-                                                                                                            (t.t = 'n'));
+                                                                                                            (t.t = 'n');
                                                                                                         break;
                                                                                                     case 'n':
                                                                                                     case 'e':
@@ -24420,9 +24394,7 @@
                                                                                                         );
                                                                                                     case 'e':
                                                                                                         return (
-                                                                                                            (O.t = 'e'),
-                                                                                                            i ? ac(e, 14, oi(t, O)) : ac(e, 3, os(t, O)),
-                                                                                                            !0
+                                                                                                            (O.t = 'e'), i ? ac(e, 14, oi(t, O)) : ac(e, 3, os(t, O)), !0
                                                                                                         );
                                                                                                 }
                                                                                                 return (
@@ -24435,8 +24407,8 @@
                                                                                         }
                                                                                 }
                                                                             ac(e, 146);
-                                                                        })(d, m, 0, t, r));
-                                                                    (m['!protect'] &&
+                                                                        })(d, m, 0, t, r);
+                                                                    m['!protect'] &&
                                                                         ac(
                                                                             d,
                                                                             535,
@@ -24471,8 +24443,7 @@
                                                                             if (t['!autofilter']) {
                                                                                 var n = t['!autofilter'],
                                                                                     s = 'string' == typeof n.ref ? n.ref : aT(n.ref);
-                                                                                (r.Workbook || (r.Workbook = { Sheets: [] }),
-                                                                                    r.Workbook.Names || (r.Workbook.Names = []));
+                                                                                r.Workbook || (r.Workbook = { Sheets: [] }), r.Workbook.Names || (r.Workbook.Names = []);
                                                                                 var i = r.Workbook.Names,
                                                                                     o = aw(s);
                                                                                 o.s.r == o.e.r && ((o.e.r = aw(t['!ref']).e.r), (s = aT(o)));
@@ -24483,17 +24454,17 @@
                                                                                         break;
                                                                                     }
                                                                                 }
-                                                                                (c == i.length &&
+                                                                                c == i.length &&
                                                                                     i.push({
                                                                                         Name: '_xlnm._FilterDatabase',
                                                                                         Sheet: a,
                                                                                         Ref: aE(r.SheetNames[a]) + '!' + ay(s),
                                                                                     }),
                                                                                     ac(e, 161, aH(ak(s))),
-                                                                                    ac(e, 162));
+                                                                                    ac(e, 162);
                                                                             }
-                                                                        })(d, m, r, e));
-                                                                    (m &&
+                                                                        })(d, m, r, e);
+                                                                    m &&
                                                                         m['!merges'] &&
                                                                         (ac(d, 177, ((l = m['!merges'].length), null == f && (f = as(4)), f.write_shift(4, l), f)),
                                                                         m['!merges'].forEach(function (e) {
@@ -24535,7 +24506,7 @@
                                                                             (function (e, t) {
                                                                                 if (t && t['!ref']) {
                                                                                     var r, a;
-                                                                                    (ac(e, 648),
+                                                                                    ac(e, 648),
                                                                                         ac(
                                                                                             e,
                                                                                             649,
@@ -24545,14 +24516,14 @@
                                                                                             aH(r, a),
                                                                                             a),
                                                                                         ),
-                                                                                        ac(e, 650));
+                                                                                        ac(e, 650);
                                                                                 }
-                                                                            })(d, m));
+                                                                            })(d, m);
                                                                     if (m['!comments'].length > 0) {
                                                                         var b = nv(a, -1, '../drawings/vmlDrawing' + (e + 1) + '.vml', a7);
-                                                                        (ac(d, 551, aU('rId' + b)), (m['!legacy'] = b));
+                                                                        ac(d, 551, aU('rId' + b)), (m['!legacy'] = b);
                                                                     }
-                                                                    return (ac(d, 130), d.end());
+                                                                    return ac(d, 130), d.end();
                                                                 })(h - 1, r, t, m),
                                                             ),
                                                             c.sheets.push(f),
@@ -24564,7 +24535,7 @@
                                                                 w = '';
                                                             if (v && v.length > 0) {
                                                                 var T = !1;
-                                                                (v.forEach(function (e) {
+                                                                v.forEach(function (e) {
                                                                     e[1].forEach(function (e) {
                                                                         !0 == e.T && (T = !0);
                                                                     });
@@ -24604,7 +24575,7 @@
                                                                                             c,
                                                                                             l,
                                                                                             f = -1;
-                                                                                        (a.ID && (f = r.indexOf('tc=' + a.ID)),
+                                                                                        a.ID && (f = r.indexOf('tc=' + a.ID)),
                                                                                             -1 == f && e[1][0].T && e[1][0].ID && (f = r.indexOf('tc=' + e[1][0].ID)),
                                                                                             -1 == f && (f = r.indexOf(a.a)),
                                                                                             (a.iauthor = f),
@@ -24638,7 +24609,7 @@
                                                                                                     o ? i.slice(0, i.l) : i),
                                                                                                 ),
                                                                                             ac(t, 636),
-                                                                                            delete a.iauthor);
+                                                                                            delete a.iauthor;
                                                                                     });
                                                                                 }),
                                                                                 ac(t, 634),
@@ -24649,11 +24620,11 @@
                                                                     ),
                                                                     c.comments.push(w),
                                                                     nv(m, -1, '../comments' + h + '.bin', a9),
-                                                                    (b = !0));
+                                                                    (b = !0);
                                                             }
-                                                            (g['!legacy'] && b && tX(l, 'xl/drawings/vmlDrawing' + h + '.vml', is(h, g['!comments'])),
+                                                            g['!legacy'] && b && tX(l, 'xl/drawings/vmlDrawing' + h + '.vml', is(h, g['!comments'])),
                                                                 delete g['!comments'],
-                                                                delete g['!legacy']);
+                                                                delete g['!legacy'];
                                                         }
                                                         m['!id'].rId1 && tX(l, np(f), ng(m));
                                                     }
@@ -24668,7 +24639,7 @@
                                                                         r = ao();
                                                                     ac(r, 159, (t || (t = as(8)), t.write_shift(4, e.Count), t.write_shift(4, e.Unique), t));
                                                                     for (var a = 0; a < e.length; ++a) ac(r, 19, sL(e[a]));
-                                                                    return (ac(r, 160), r.end());
+                                                                    return ac(r, 160), r.end();
                                                                 })(r.Strings, r),
                                                             ),
                                                             c.strs.push(f),
@@ -24678,7 +24649,7 @@
                                                             (f = 'xl/workbook.bin'),
                                                             (function (t, r) {
                                                                 var a = ao();
-                                                                (ac(a, 131),
+                                                                ac(a, 131),
                                                                     ac(
                                                                         a,
                                                                         128,
@@ -24729,7 +24700,7 @@
                                                                                 ),
                                                                                 ac(e, 136));
                                                                         }
-                                                                    })(a, t, r));
+                                                                    })(a, t, r);
                                                                 ac(a, 143);
                                                                 for (var n = 0; n != t.SheetNames.length; ++n) {
                                                                     var s,
@@ -24768,14 +24739,14 @@
                                                                         (function (e) {
                                                                             var t = e.SheetNames.length,
                                                                                 r = as(12 * t + 28);
-                                                                            (r.write_shift(4, t + 2),
+                                                                            r.write_shift(4, t + 2),
                                                                                 r.write_shift(4, 0),
                                                                                 r.write_shift(4, -2),
                                                                                 r.write_shift(4, -2),
                                                                                 r.write_shift(4, 0),
                                                                                 r.write_shift(4, -1),
-                                                                                r.write_shift(4, -1));
-                                                                            for (var a = 0; a < t; ++a) (r.write_shift(4, 0), r.write_shift(4, a), r.write_shift(4, a));
+                                                                                r.write_shift(4, -1);
+                                                                            for (var a = 0; a < t; ++a) r.write_shift(4, 0), r.write_shift(4, a), r.write_shift(4, a);
                                                                             return r;
                                                                         })(t, 0),
                                                                     ),
@@ -24793,15 +24764,15 @@
                                                                                         var r = as(9),
                                                                                             a = 0,
                                                                                             n = e.Name;
-                                                                                        (a1.indexOf(n) > -1 && ((a |= 32), (n = n.slice(6))),
+                                                                                        a1.indexOf(n) > -1 && ((a |= 32), (n = n.slice(6))),
                                                                                             r.write_shift(4, a),
                                                                                             r.write_shift(1, 0),
-                                                                                            r.write_shift(4, null == e.Sheet ? 0xffffffff : e.Sheet));
+                                                                                            r.write_shift(4, null == e.Sheet ? 0xffffffff : e.Sheet);
                                                                                         var s = [r, aR(n), iH(e.Ref, t)];
                                                                                         if (e.Comment) s.push(aU(e.Comment));
                                                                                         else {
                                                                                             var i = as(4);
-                                                                                            (i.write_shift(4, 0xffffffff), s.push(i));
+                                                                                            i.write_shift(4, 0xffffffff), s.push(i);
                                                                                         }
                                                                                         return ek(s);
                                                                                     })(e, t),
@@ -24835,7 +24806,7 @@
                                                                     (function (e, t) {
                                                                         if (t) {
                                                                             var r = 0;
-                                                                            ([
+                                                                            [
                                                                                 [5, 8],
                                                                                 [23, 26],
                                                                                 [41, 44],
@@ -24857,18 +24828,18 @@
                                                                                                     e,
                                                                                                     44,
                                                                                                     (function (e, t, r) {
-                                                                                                        (r || (r = as(6 + 4 * t.length)), r.write_shift(2, e), aR(t, r));
+                                                                                                        r || (r = as(6 + 4 * t.length)), r.write_shift(2, e), aR(t, r);
                                                                                                         var a = r.length > r.l ? r.slice(0, r.l) : r;
-                                                                                                        return (null == r.l && (r.l = r.length), a);
+                                                                                                        return null == r.l && (r.l = r.length), a;
                                                                                                     })(a, t[a]),
                                                                                                 );
                                                                                     }),
-                                                                                    ac(e, 616)));
+                                                                                    ac(e, 616));
                                                                         }
                                                                     })(o, e.SSF),
                                                                     (function (e) {
                                                                         var t, r, a, n, s, i;
-                                                                        (ac(e, 611, aI(1)),
+                                                                        ac(e, 611, aI(1)),
                                                                             ac(
                                                                                 e,
                                                                                 43,
@@ -24901,7 +24872,7 @@
                                                                                 aR(t.name, r),
                                                                                 r.length > r.l ? r.slice(0, r.l) : r),
                                                                             ),
-                                                                            ac(e, 612));
+                                                                            ac(e, 612);
                                                                     })(o, e),
                                                                     ac(o, 603, aI(2)),
                                                                     ac(o, 45, s7({ patternType: 'none' })),
@@ -24994,7 +24965,7 @@
                                                                 (function (e) {
                                                                     var t = as(4 + 8 * e.length);
                                                                     t.write_shift(4, e.length);
-                                                                    for (var r = 0; r < e.length; ++r) (t.write_shift(4, e[r][0]), t.write_shift(4, e[r][1]));
+                                                                    for (var r = 0; r < e.length; ++r) t.write_shift(4, e[r][0]), t.write_shift(4, e[r][1]);
                                                                     return t;
                                                                 })([[1, 0]]),
                                                             ),
@@ -25029,13 +25000,13 @@
                     function cQ(e) {
                         if (!e.bookType) {
                             var t = e.file.slice(e.file.lastIndexOf('.')).toLowerCase();
-                            (t.match(/^\.[a-z]+$/) && (e.bookType = t.slice(1)),
-                                (e.bookType = { xls: 'biff8', htm: 'html', slk: 'sylk', socialcalc: 'eth', Sh33tJS: 'WTF' }[e.bookType] || e.bookType));
+                            t.match(/^\.[a-z]+$/) && (e.bookType = t.slice(1)),
+                                (e.bookType = { xls: 'biff8', htm: 'html', slk: 'sylk', socialcalc: 'eth', Sh33tJS: 'WTF' }[e.bookType] || e.bookType);
                         }
                     }
                     function c0(e, t, r) {
                         var a = r || {};
-                        return ((a.type = 'file'), (a.file = t), cQ(a), cq(e, a));
+                        return (a.type = 'file'), (a.file = t), cQ(a), cq(e, a);
                     }
                     function c1(e, t, r, a, n, s, i) {
                         var o = ap(r),
@@ -25142,7 +25113,7 @@
                                         if ((null == r && (r = { w: '__EMPTY', t: 's' }), (o = i = a_(r, null, l)), (m = w[i] || 0))) {
                                             do o = i + '_' + m++;
                                             while (w[o]);
-                                            ((w[i] = m), (w[o] = 1));
+                                            (w[i] = m), (w[o] = 1);
                                         } else w[i] = 1;
                                         s[b] = o;
                                 }
@@ -25151,7 +25122,7 @@
                                 var E = c1(e, c, v, u, a, s, l);
                                 (!1 === E.isempty || (1 === a ? !1 !== l.blankrows : l.blankrows)) && (d[p++] = E.row);
                             }
-                        return ((d.length = p), d);
+                        return (d.length = p), d;
                     }
                     var c4 = /"/g;
                     function c3(e, t, r, a, n, s, i, o, c) {
@@ -25160,7 +25131,7 @@
                                 var g = d ? p[m] : e[a[m] + u];
                                 if (null == g) h = '';
                                 else if (null != g.v) {
-                                    ((l = !1), (h = '' + (c.rawNumbers && 'n' == g.t ? g.v : a_(g, null, c))));
+                                    (l = !1), (h = '' + (c.rawNumbers && 'n' == g.t ? g.v : a_(g, null, c)));
                                     for (var v = 0, b = 0; v !== h.length; ++v)
                                         if ((b = h.charCodeAt(v)) === n || b === s || 34 === b || c.forceQuotes) {
                                             h = '"' + h.replace(c4, '""') + '"';
@@ -25197,7 +25168,7 @@
                         return r.join('');
                     }
                     function c6(e, t) {
-                        (t || (t = {}), (t.FS = '	'), (t.RS = '\n'));
+                        t || (t = {}), (t.FS = '	'), (t.RS = '\n');
                         var r = c5(e, t);
                         if (void 0 === G || 'string' == t.type) return r;
                         var a = G.utils.encode(1200, r, 'str');
@@ -25215,18 +25186,18 @@
                             if ('number' == typeof a.origin) o = a.origin;
                             else {
                                 var l = 'string' == typeof a.origin ? av(a.origin) : a.origin;
-                                ((o = l.r), (c = l.c));
+                                (o = l.r), (c = l.c);
                             }
                         var f = { s: { c: 0, r: 0 }, e: { c: c, r: o + t.length - 1 + s } };
                         if (i['!ref']) {
                             var h = ak(i['!ref']);
-                            ((f.e.c = Math.max(f.e.c, h.e.c)), (f.e.r = Math.max(f.e.r, h.e.r)), -1 == o && ((o = h.e.r + 1), (f.e.r = o + t.length - 1 + s)));
+                            (f.e.c = Math.max(f.e.c, h.e.c)), (f.e.r = Math.max(f.e.r, h.e.r)), -1 == o && ((o = h.e.r + 1), (f.e.r = o + t.length - 1 + s));
                         } else -1 == o && ((o = 0), (f.e.r = t.length - 1 + s));
                         var u = a.header || [],
                             d = 0,
                             p = [];
-                        (t.forEach(function (e, t) {
-                            (n && !i['!data'][o + t + s] && (i['!data'][o + t + s] = []),
+                        t.forEach(function (e, t) {
+                            n && !i['!data'][o + t + s] && (i['!data'][o + t + s] = []),
                                 n && (p = i['!data'][o + t + s]),
                                 ts(e).forEach(function (r) {
                                     -1 == (d = u.indexOf(r)) && (u[(d = u.length)] = r);
@@ -25257,19 +25228,19 @@
                                         : n
                                           ? (p[c + d] = l)
                                           : (i[m] = l);
-                                }));
+                                });
                         }),
-                            (f.e.c = Math.max(f.e.c, c + u.length - 1)));
+                            (f.e.c = Math.max(f.e.c, c + u.length - 1));
                         var m = ap(o);
                         if ((n && !i['!data'][o] && (i['!data'][o] = []), s))
                             for (d = 0; d < u.length; ++d) n ? (i['!data'][o][d + c] = { t: 's', v: u[d] }) : (i[ag(d + c) + m] = { t: 's', v: u[d] });
-                        return ((i['!ref'] = aT(f)), i);
+                        return (i['!ref'] = aT(f)), i;
                     }
                     function c7(e, t, r) {
                         if ('string' == typeof t) {
                             if (null != e['!data']) {
                                 var a = av(t);
-                                return (e['!data'][a.r] || (e['!data'][a.r] = []), e['!data'][a.r][a.c] || (e['!data'][a.r][a.c] = { t: 'z' }));
+                                return e['!data'][a.r] || (e['!data'][a.r] = []), e['!data'][a.r][a.c] || (e['!data'][a.r][a.c] = { t: 'z' });
                             }
                             return e[t] || (e[t] = { t: 'z' });
                         }
@@ -25277,7 +25248,7 @@
                     }
                     function c9(e, t) {
                         var r = { SheetNames: [], Sheets: {} };
-                        return (e && le(r, e, t || 'Sheet1'), r);
+                        return e && le(r, e, t || 'Sheet1'), r;
                     }
                     function le(e, t, r, a) {
                         var n = 1;
@@ -25290,12 +25261,12 @@
                             for (++n; n <= 65535 && -1 != e.SheetNames.indexOf((r = i + n)); ++n);
                         }
                         if ((ov(r), e.SheetNames.indexOf(r) >= 0)) throw Error('Worksheet with name |' + r + '| already exists!');
-                        return (e.SheetNames.push(r), (e.Sheets[r] = t), r);
+                        return e.SheetNames.push(r), (e.Sheets[r] = t), r;
                     }
                     function lt(e, t, r) {
-                        return (t ? ((e.l = { Target: t }), r && (e.l.Tooltip = r)) : delete e.l, e);
+                        return t ? ((e.l = { Target: t }), r && (e.l.Tooltip = r)) : delete e.l, e;
                     }
-                    ((e.parse_xlscfb = oW),
+                    (e.parse_xlscfb = oW),
                         (e.parse_zip = cW),
                         (e.read = cG),
                         (e.readFile = cj),
@@ -25305,9 +25276,9 @@
                         (e.writeFileSync = c0),
                         (e.writeFileAsync = function (e, t, r, a) {
                             var n = r || {};
-                            ((n.type = 'file'), (n.file = e), cQ(n), (n.type = 'buffer'));
+                            (n.type = 'file'), (n.file = e), cQ(n), (n.type = 'buffer');
                             var s = a;
-                            return (s instanceof Function || (s = r), j.writeFile(e, cq(t, n), s));
+                            return s instanceof Function || (s = r), j.writeFile(e, cq(t, n), s);
                         }),
                         (e.utils = {
                             encode_col: ag,
@@ -25324,7 +25295,7 @@
                             format_cell: a_,
                             sheet_new: function (e) {
                                 var t = {};
-                                return ((e || {}).dense && (t['!data'] = []), t);
+                                return (e || {}).dense && (t['!data'] = []), t;
                             },
                             sheet_add_aoa: aA,
                             sheet_add_json: c8,
@@ -25358,7 +25329,7 @@
                                         if (((a = c[s] + o), (r = f ? (e['!data'][h] || [])[s] : e[a]), (n = ''), void 0 !== r)) {
                                             if (null != r.F) {
                                                 if (((a = r.F), !r.f)) continue;
-                                                ((n = r.f), -1 == a.indexOf(':') && (a = a + ':' + a));
+                                                (n = r.f), -1 == a.indexOf(':') && (a = a + ':' + a);
                                             }
                                             if (null != r.f) n = r.f;
                                             else if (t && !1 === t.values) continue;
@@ -25379,7 +25350,7 @@
                             book_new: c9,
                             book_append_sheet: le,
                             book_set_sheet_visibility: function (e, t, r) {
-                                (e.Workbook || (e.Workbook = {}), e.Workbook.Sheets || (e.Workbook.Sheets = []));
+                                e.Workbook || (e.Workbook = {}), e.Workbook.Sheets || (e.Workbook.Sheets = []);
                                 var a = (function (e, t) {
                                     if ('number' == typeof t) {
                                         if (t >= 0 && e.SheetNames.length > t) return t;
@@ -25403,20 +25374,20 @@
                                 e.Workbook.Sheets[a].Hidden = r;
                             },
                             cell_set_number_format: function (e, t) {
-                                return ((e.z = t), e);
+                                return (e.z = t), e;
                             },
                             cell_set_hyperlink: lt,
                             cell_set_internal_link: function (e, t, r) {
                                 return lt(e, '#' + t, r);
                             },
                             cell_add_comment: function (e, t, r) {
-                                (e.c || (e.c = []), e.c.push({ t: t, a: r || 'SheetJS' }));
+                                e.c || (e.c = []), e.c.push({ t: t, a: r || 'SheetJS' });
                             },
                             sheet_set_array_formula: function (e, t, r, a) {
                                 for (var n = 'string' != typeof t ? t : ak(t), s = 'string' == typeof t ? t : aT(t), i = n.s.r; i <= n.e.r; ++i)
                                     for (var o = n.s.c; o <= n.e.c; ++o) {
                                         var c = c7(e, i, o);
-                                        ((c.t = 'n'), (c.F = s), delete c.v, i == n.s.r && o == n.s.c && ((c.f = r), a && (c.D = !0)));
+                                        (c.t = 'n'), (c.F = s), delete c.v, i == n.s.r && o == n.s.c && ((c.f = r), a && (c.D = !0));
                                     }
                                 var l = aw(e['!ref']);
                                 return (
@@ -25433,7 +25404,7 @@
                         (e.writeXLSX = cJ),
                         (e.writeFileXLSX = function (e, t, r) {
                             var a = r || {};
-                            return ((a.type = 'file'), (a.file = t), cQ(a), cJ(e, a));
+                            return (a.type = 'file'), (a.file = t), cQ(a), cJ(e, a);
                         }),
                         (e.set_fs = function (e) {
                             j = e;
@@ -25443,7 +25414,7 @@
                         (e.stream = {
                             to_json: function (e, t) {
                                 var r = Z({ objectMode: !0 });
-                                if (null == e || null == e['!ref']) return (r.push(null), r);
+                                if (null == e || null == e['!ref']) return r.push(null), r;
                                 var a = { t: 'n', v: 0 },
                                     n = 0,
                                     s = 1,
@@ -25490,7 +25461,7 @@
                                                 if ((null == a && (a = { w: '__EMPTY', t: 's' }), (c = o = a_(a, null, f)), (p = b[o] || 0))) {
                                                     do c = o + '_' + p++;
                                                     while (b[c]);
-                                                    ((b[o] = p), (b[c] = 1));
+                                                    (b[o] = p), (b[c] = 1);
                                                 } else b[o] = 1;
                                                 i[v] = c;
                                         }
@@ -25519,9 +25490,9 @@
                                     c = !1;
                                 return (
                                     (r._read = function () {
-                                        if (o > i.e.r) return (c || ((c = !0), r.push('</table>' + s)), r.push(null));
+                                        if (o > i.e.r) return c || ((c = !0), r.push('</table>' + s)), r.push(null);
                                         for (; o <= i.e.r; ) {
-                                            (r.push(oZ(e, i, o, a)), ++o);
+                                            r.push(oZ(e, i, o, a)), ++o;
                                             break;
                                         }
                                     }),
@@ -25531,7 +25502,7 @@
                             to_csv: function (e, t) {
                                 var r = Z(),
                                     a = null == t ? {} : t;
-                                if (null == e || null == e['!ref']) return (r.push(null), r);
+                                if (null == e || null == e['!ref']) return r.push(null), r;
                                 for (
                                     var n = ak(e['!ref']),
                                         s = void 0 !== a.FS ? a.FS : ',',
@@ -25552,7 +25523,7 @@
                                     g = 0;
                                 return (
                                     (r._read = function () {
-                                        if (!m) return ((m = !0), r.push('\uFEFF'));
+                                        if (!m) return (m = !0), r.push('\uFEFF');
                                         for (; p <= n.e.r; )
                                             if (!(u[++p - 1] || {}).hidden && null != (l = c3(e, n, p - 1, f, i, c, s, g, a)) && (l || !1 !== a.blankrows))
                                                 return r.push((g++ ? o : '') + l);
@@ -25565,7 +25536,7 @@
                                 var r = Z(),
                                     a = null == t ? {} : t,
                                     n = +a.stride || 10;
-                                (e.SSF || (e.SSF = tw(eD)),
+                                e.SSF || (e.SSF = tw(eD)),
                                     e.SSF &&
                                         (e5(),
                                         e3(e.SSF),
@@ -25585,7 +25556,7 @@
                                                         f && ('d' == f.t && null == f.z && ((f = tw(f)).z = eD[14]), i1(a.cellXfs, f, a));
                                                     }
                                         }
-                                    }));
+                                    });
                                 var s = oC(e, a),
                                     i = 0,
                                     o = 0,
@@ -25602,33 +25573,33 @@
                                     (r._read = function () {
                                         switch (i) {
                                             case 0:
-                                                ((i = 1),
+                                                (i = 1),
                                                     r.push(tJ),
                                                     r.push(
                                                         '<Workbook' +
                                                             rb({ xmlns: rR, 'xmlns:o': rI, 'xmlns:x': rO, 'xmlns:ss': rR, 'xmlns:dt': rN, 'xmlns:html': rF }) +
                                                             '>',
-                                                    ));
+                                                    );
                                                 break;
                                             case 1:
-                                                ((i = 2), r.push(oS(e, a)), r.push(oA(e, a)));
+                                                (i = 2), r.push(oS(e, a)), r.push(oA(e, a));
                                                 break;
                                             case 2:
-                                                ((i = 3), r.push(s), r.push(oO(e, a)));
+                                                (i = 3), r.push(s), r.push(oO(e, a));
                                                 break;
                                             case 3:
                                                 if (((h = !1), o >= e.SheetNames.length)) {
-                                                    ((i = -1), r.push(''));
+                                                    (i = -1), r.push('');
                                                     break;
                                                 }
                                                 if ((r.push('<Worksheet' + rb({ 'ss:Name': re(e.SheetNames[o]) }) + '>'), !(c = e.Sheets[e.SheetNames[o]])))
-                                                    return (r.push('</Worksheet>'), void ++o);
+                                                    return r.push('</Worksheet>'), void ++o;
                                                 var t = oR(c, a, o, e);
                                                 if ((t.length && r.push('<Names>' + t + '</Names>'), !c['!ref'])) return (i = 5);
-                                                ((f = (l = ak(c['!ref'])).s.r), (i = 4));
+                                                (f = (l = ak(c['!ref'])).s.r), (i = 4);
                                                 break;
                                             case 4:
-                                                if (f < 0 || f > l.e.r) return (h && r.push('</Table>'), void (i = 5));
+                                                if (f < 0 || f > l.e.r) return h && r.push('</Table>'), void (i = 5);
                                                 f <= l.s.r &&
                                                     (c['!cols'] &&
                                                         c['!cols'].forEach(function (e, t) {
@@ -25636,10 +25607,10 @@
                                                             var a = !!e.width,
                                                                 n = iQ(t, e),
                                                                 s = { 'ss:Index': t + 1 };
-                                                            (a && (s['ss:Width'] = sY(n.width)),
+                                                            a && (s['ss:Width'] = sY(n.width)),
                                                                 e.hidden && (s['ss:Hidden'] = '1'),
                                                                 h || ((h = !0), r.push('<Table>')),
-                                                                r.push(rw('Column', null, s)));
+                                                                r.push(rw('Column', null, s));
                                                         }),
                                                     (p = null != c['!data']) && (m = c['!data']),
                                                     (g.r = g.c = 0));
@@ -25660,7 +25631,7 @@
                                                                 b.push(oF(E, y, c, a, o, e, g));
                                                             }
                                                         }
-                                                    (b.push('</Row>'), h || ((h = !0), r.push('<Table>')), r.push(b.join('')));
+                                                    b.push('</Row>'), h || ((h = !0), r.push('<Table>')), r.push(b.join(''));
                                                 }
                                                 break;
                                             case 5:
@@ -25679,7 +25650,7 @@
                                                     void (i = 3)
                                                 );
                                             case -1:
-                                                ((i = -2), r.push('</Workbook>'));
+                                                (i = -2), r.push('</Workbook>');
                                                 break;
                                             case -2:
                                                 r.push(null);
@@ -25692,7 +25663,7 @@
                                 Z = e;
                             },
                         }),
-                        void 0 !== tr && (e.CFB = tr));
+                        void 0 !== tr && (e.CFB = tr);
                     var lr = r(91540);
                     (lr || {}).Readable && (Z = lr.Readable);
                     try {

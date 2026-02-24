@@ -3,7 +3,7 @@
     {
         532: (e, i, t) => {
             'use strict';
-            (t.r(i), t.d(i, { VibeFallbackAnimation: () => m, VibeFallbackAnimationComponent: () => d }));
+            t.r(i), t.d(i, { VibeFallbackAnimation: () => m, VibeFallbackAnimationComponent: () => d });
             var n = t(33008),
                 a = t(85896),
                 r = t(97531),

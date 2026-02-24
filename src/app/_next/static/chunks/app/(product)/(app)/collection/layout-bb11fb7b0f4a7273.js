@@ -2,16 +2,16 @@
     [1925, 3239, 3335, 3361, 5112, 9032],
     {
         32534: (e, s, n) => {
-            (Promise.resolve().then(n.bind(n, 63361)),
+            Promise.resolve().then(n.bind(n, 63361)),
                 Promise.resolve().then(n.bind(n, 96803)),
                 Promise.resolve().then(n.bind(n, 63426)),
                 Promise.resolve().then(n.bind(n, 44903)),
                 Promise.resolve().then(n.bind(n, 40225)),
-                Promise.resolve().then(n.bind(n, 72933)));
+                Promise.resolve().then(n.bind(n, 72933));
         },
     },
     (e) => {
-        (e.O(
+        e.O(
             0,
             [
                 7098, 8282, 5271, 9712, 7309, 8712, 8400, 1709, 9284, 8004, 9323, 8387, 9750, 6071, 7245, 2866, 9765, 952, 5952, 9775, 5794, 1311, 7764, 6706, 2089, 2140,
@@ -20,6 +20,6 @@
             ],
             () => e((e.s = 32534)),
         ),
-            (_N_E = e.O()));
+            (_N_E = e.O());
     },
 ]);

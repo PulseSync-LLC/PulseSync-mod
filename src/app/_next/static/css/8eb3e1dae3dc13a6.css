@@ -2000,8 +2000,8 @@
     background-color: rgba(0, 0, 0, 0.5);
     transition: background-color 0.3s linear;
     @starting-style {
-    background-color: transparent;
-}
+        background-color: transparent;
+    }
 }
 .NaZE1NCUxSM1MvpZuLJV {
     background-color: var(--ym-background-color-primary-enabled-overlay);

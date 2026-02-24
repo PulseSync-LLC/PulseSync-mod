@@ -174,7 +174,7 @@
                 c = a(93225),
                 d = {
                     4601: (e, t, a) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useToggle = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useToggle = void 0);
                         let r = a(810);
                         t.useToggle = (e) => {
                             let [t, a] = (0, r.useState)(e);
@@ -205,11 +205,11 @@
                 var t = m[e];
                 if (void 0 !== t) return t.exports;
                 var a = (m[e] = { exports: {} });
-                return (d[e](a, a.exports, u), a.exports);
+                return d[e](a, a.exports, u), a.exports;
             }
             var _ = {};
-            ((() => {
-                (Object.defineProperty(_, '__esModule', { value: !0 }), (_.useTruncate = void 0));
+            (() => {
+                Object.defineProperty(_, '__esModule', { value: !0 }), (_.useTruncate = void 0);
                 let e = u(352),
                     t = u(810),
                     a = u(4601);
@@ -243,7 +243,7 @@
                     );
                 };
             })(),
-                _.__esModule);
+                _.__esModule;
             var C = _.useTruncate,
                 h = a(44189),
                 v = a(77868),
@@ -608,7 +608,7 @@
                 x = a(77017),
                 f = a.n(x),
                 b = (function (e) {
-                    return ((e.SPACE = 'Space'), (e.ENTER = 'Enter'), e);
+                    return (e.SPACE = 'Space'), (e.ENTER = 'Enter'), e;
                 })(b || {});
             let N = ' • ',
                 k = (0, n.PA)((e) => {
@@ -624,7 +624,7 @@
                         S = (0, C.ZpR)(D),
                         K = O(x),
                         P = (0, l.c)((e) => {
-                            (R({ to: s.QT.ConcertPurchaseScreen }), j(), null == e || e.stopPropagation());
+                            R({ to: s.QT.ConcertPurchaseScreen }), j(), null == e || e.stopPropagation();
                         }),
                         B = (0, l.c)((e) => {
                             if (!E) return void P(e);
@@ -638,7 +638,7 @@
                         }),
                         F = (0, l.c)((e) => {
                             let t = [];
-                            return (x.city && t.push(x.city), x.place && t.push(x.place), t.join(e));
+                            return x.city && t.push(x.city), x.place && t.push(x.place), t.join(e);
                         }),
                         $ = (0, c.L)(() => {
                             if (x.isCashbackExperimentEnabled && x.cashbackTitle)
@@ -944,7 +944,7 @@
                         (a) => {
                             if (!t) return a;
                             let r = new URLSearchParams(e);
-                            return (r.set('wl', m[t]), (0, d.Cvn)(a, r));
+                            return r.set('wl', m[t]), (0, d.Cvn)(a, r);
                         },
                         [t, e],
                     );
@@ -1314,10 +1314,10 @@
                     P = (0, s.useId)(),
                     B = (0, v.useGetPriceText)()(a),
                     W = (0, l.c)((e) => {
-                        ((0, d.P)(e, f().ripple), I && E(e));
+                        (0, d.P)(e, f().ripple), I && E(e);
                     }),
                     z = (0, l.c)((e) => {
-                        (j(), O(o.H2.ConcertPurchaseScreen), e.stopPropagation(), e.preventDefault());
+                        j(), O(o.H2.ConcertPurchaseScreen), e.stopPropagation(), e.preventDefault();
                     });
                 return (0, r.jsxs)(u.Paper, {
                     radius: b,

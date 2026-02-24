@@ -72,7 +72,7 @@
                     });
             };
             var l = (function (e) {
-                return ((e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e);
+                return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
             })(l || {});
             let n = (e) => {
                 let { sonataState: sonataState } = (0, a.Pjs)(),
@@ -202,7 +202,7 @@
         10758: (e, t, o) => {
             'use strict';
             o.d(t, { default: () => s });
-                let l = o(53555);
+            let l = o(53555);
             let s = {
                 init: () => {
                     window.pulsesyncApi = {
@@ -413,10 +413,10 @@
             let n = () => {
                 let { library: e, collection: t, experiments: o, main: n, user: r } = (0, l.Pjs)(),
                     i = (0, s.useCallback)(() => {
-                        (o.getData(),
+                        o.getData(),
                             e.getData(),
                             n.landing.isLoaded && n.landing.getSkeleton({ id: a.p.WEB_MAIN, showWizard: r.settings.showWizard }, { preloadBlocksCount: 2 }),
-                            t.landing.isLoaded && t.landing.getSkeleton({ id: a.p.WEB_COLLECTION, showWizard: r.settings.showWizard }, { preloadBlocksCount: 2 }));
+                            t.landing.isLoaded && t.landing.getSkeleton({ id: a.p.WEB_COLLECTION, showWizard: r.settings.showWizard }, { preloadBlocksCount: 2 });
                     }, [t.landing, o, e, n.landing, r.settings.showWizard]);
                 (0, s.useEffect)(() => {
                     var e;
@@ -625,7 +625,7 @@
                                 s = t[2] || '';
                             if (!o) return e;
                             let a = new URLSearchParams(s.startsWith('?') ? s.substring(1) : '');
-                            return (a.set('tab', o), '/?'.concat(a.toString()));
+                            return a.set('tab', o), '/?'.concat(a.toString());
                         },
                     ],
                     [/^\/home$/, () => n.Zyd.main.href],
@@ -704,7 +704,7 @@
                     let { version: t, formatMessage: o, closeToast: l } = e,
                         u = (0, a.useCallback)(() => {
                             var e;
-                            (null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_UPDATE), null == l || l());
+                            null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_UPDATE), null == l || l();
                         }, [l]),
                         h = (0, a.useMemo)(
                             () =>
@@ -741,7 +741,7 @@
                         [getProgress, setProgress] = (0, a.useState)(-1),
                         u = (0, a.useCallback)(() => {
                             var e;
-                            (null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_MOD_UPDATE), null == l || l());
+                            null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_MOD_UPDATE), null == l || l();
                         }, [l]),
                         callInstallModUpdate = (0, a.useCallback)(() => {
                             var e;
@@ -975,6 +975,7 @@
                         { notify: t } = (0, n.lkh)(),
                         { notify: modUpdateNotify, dismiss: modUpdateDismiss } = (0, n.lkh)(),
                         { notify: gpuStallNotify, dismiss: gpuStallDismiss } = (0, n.lkh)(),
+                        { notify: appStallNotify, dismiss: appStallDismiss } = (0, n.lkh)(),
                         { notify: basicToastNotify } = (0, n.lkh)(),
                         o = (0, a.useRef)(''),
                         r = (0, a.useCallback)(
@@ -1024,6 +1025,28 @@
                                 );
                             },
                             [gpuStallNotify, gpuStallDismiss],
+                        ),
+                        onAppStallFixClick = (0, a.useCallback)(() => {
+                            window.desktopEvents?.send(n.EE.APP_STALL_CANCEL_RESTART);
+                        }, []),
+                        onAppStall = (0, a.useCallback)(
+                            (event, dedupeTimestamp = 0) => {
+                                if (window.onAppStallStallDedupeNonce === dedupeTimestamp) return;
+                                if (dedupeTimestamp) window.onAppStallStallDedupeNonce = dedupeTimestamp;
+                                appStallNotify(
+                                    (0, s.jsx)(toastWithProgress, {
+                                        toastID: 'safeModeRestart',
+                                        message: `Приложение запускается слишком долго и перезапустится в безопасном режиме через 10 секунд`,
+                                        buttonLabel: 'Отменить',
+                                        onButtonClick: onAppStallFixClick,
+                                        dismissOnButtonClick: true,
+                                    }),
+                                    {
+                                        containerId: n.uQT.IMPORTANT,
+                                    },
+                                );
+                            },
+                            [appStallNotify, appStallDismiss],
                         ),
                         onBasicToastCreate = (0, a.useCallback)(
                             (event, toastID, message, dismissable, dedupeTimestamp = 0) => {
@@ -1076,6 +1099,16 @@
                     (0, a.useEffect)(() => {
                         var e;
                         return (
+                            null == (e = window.desktopEvents) || e.on(n.EE.APP_STALL, onAppStall),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(n.EE.APP_STALL, onAppStall);
+                            }
+                        );
+                    }, [onAppStall]);
+                    (0, a.useEffect)(() => {
+                        var e;
+                        return (
                             null == (e = window.desktopEvents) || e.on(n.EE.UPDATE_AVAILABLE, r),
                             () => {
                                 var e;
@@ -1098,11 +1131,11 @@
                     i = (0, s.useCallback)(
                         (e, s) => {
                             let { needToShowReleaseNotes: a, sortedDescReleaseNotesKeys: l, translationsReleaseNotes: n } = s;
-                            (o(n), r(l), a && t(!0));
+                            o(n), r(l), a && t(!0);
                         },
                         [r, o],
                     );
-                ((0, s.useEffect)(() => {
+                (0, s.useEffect)(() => {
                     e && l && (n.open(), t(!1));
                 }, [l, n, e]),
                     (0, s.useEffect)(() => {
@@ -1114,7 +1147,7 @@
                                 null == (e = window.desktopEvents) || e.off(a.EE.LOAD_RELEASE_NOTES, i);
                             }
                         );
-                    }, [i]));
+                    }, [i]);
             };
         },
         56574: (e) => {
@@ -1271,7 +1304,7 @@
                                 ? void 0
                                 : t.state.currentContext.onChange(() => {
                                       var a, l;
-                                      (null == e || e(),
+                                      null == e || e(),
                                           null == s || s(),
                                           (e =
                                               null == t || null == (a = t.state.currentContext.value)
@@ -1284,10 +1317,10 @@
                                                   ? void 0
                                                   : l.availableActions.moveForward.onChange((e) => {
                                                         sendPlayerStateDefault(t);
-                                                    })));
+                                                    }));
                                   });
                     return () => {
-                        (null == a || a(),
+                        null == a || a(),
                             null == currentContextListener || currentContextListener(),
                             null == onEntityChange || onEntityChange(),
                             null == getCurrentTrackListener || getCurrentTrackListener(),
@@ -1299,7 +1332,7 @@
                             null == onShuffleChange || onShuffleChange(),
                             null == onVolumeChange || onVolumeChange(),
                             null == s || s(),
-                            null == s || s());
+                            null == s || s();
                     };
                 }, [o, null == t ? void 0 : t.state.currentContext, null == t ? void 0 : t.state.playerState.status]);
             };
@@ -1403,10 +1436,10 @@
                 pulsesyncApi: () => playerApi.default,
             });
             let s = () => {
-                (document.addEventListener('auxclick', (e) => e.preventDefault()),
+                document.addEventListener('auxclick', (e) => e.preventDefault()),
                     document.addEventListener('click', (e) => {
                         (e.ctrlKey || e.metaKey || e.shiftKey) && e.preventDefault();
-                    }));
+                    });
             };
             var a = o(79169);
             let l = (e) => {
@@ -1704,9 +1737,47 @@
                             if (e.target.closest('button')) return;
                             (0, d.LO)();
                         }, []),
+                        [hidePulseSyncVersionInTitleBar, setHidePulseSyncVersionInTitleBar] = (0, n.useState)(window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() ?? !1),
                         m = (0, n.useCallback)(() => {
                             (0, d.N5)();
                         }, []);
+                    (0, n.useEffect)(() => {
+                        if (window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.()) return;
+                        const selector = `.${u().pulseText}`;
+                        const ensurePulseVersionVisible = () => {
+                            const el = window.document?.querySelector(selector);
+                            if (!el) return;
+                            const expectedText = `PulseSync ${window.PULSE_VERSION}`;
+                            if (el.textContent !== expectedText) {
+                                el.textContent = expectedText;
+                            }
+                            el.style?.setProperty?.('display', 'inline', 'important');
+                            el.style?.setProperty?.('visibility', 'visible', 'important');
+                            el.style?.setProperty?.('opacity', '1', 'important');
+                        };
+                        const observer =
+                            window.MutationObserver &&
+                            new MutationObserver(() => {
+                                ensurePulseVersionVisible();
+                            });
+                        observer?.observe(window.document?.documentElement || window.document?.body, {
+                            subtree: !0,
+                            childList: !0,
+                            attributes: !0,
+                            attributeFilter: ['style', 'class', 'hidden'],
+                        });
+                        ensurePulseVersionVisible();
+                        return () => {
+                            observer?.disconnect();
+                        };
+                    }, []);
+                    (0, n.useEffect)(() => {
+                        window.desktopEvents?.on('NATIVE_STORE_UPDATE', (event, key, value) => {
+                            if (key === 'modSettings.window.hidePulseSyncVersionInTitleBar') {
+                                setHidePulseSyncVersionInTitleBar(value);
+                            }
+                        });
+                    }, []);
                     return (0, s.jsx)('div', {
                         className: u().root,
                         onDoubleClick: handleDivDoubleClick,
@@ -1714,10 +1785,11 @@
                             l &&
                             (0, s.jsxs)(s.Fragment, {
                                 children: [
-                                    (0, s.jsx)('span', {
-                                        className: u().pulseText,
-                                        children: `PulseSync ${window.PULSE_VERSION}`,
-                                    }),
+                                    !hidePulseSyncVersionInTitleBar &&
+                                        (0, s.jsx)('span', {
+                                            className: u().pulseText,
+                                            children: `PulseSync ${window.PULSE_VERSION}`,
+                                        }),
                                     (0, s.jsx)(_, {
                                         onClick: onMiniPlayerToggle,
                                         ariaLabel: 'miniplayer',

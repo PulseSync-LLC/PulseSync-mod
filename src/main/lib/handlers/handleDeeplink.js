@@ -28,7 +28,7 @@ const navigateToDeeplink = (window, url) => {
 };
 exports.navigateToDeeplink = navigateToDeeplink;
 const handleDeeplinkOnApplicationStartup = () => {
-    const lastArgFromProccessArgs = process.argv.pop();
+    const lastArgFromProccessArgs = structuredClone(process.argv).pop();
     if (lastArgFromProccessArgs && (0, exports.checkIsDeeplink)(lastArgFromProccessArgs)) {
         state_js_1.state.deeplink = lastArgFromProccessArgs;
     }

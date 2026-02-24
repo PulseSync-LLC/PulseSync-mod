@@ -38,7 +38,7 @@
                         },
                         [_, S],
                     );
-                ((0, n.useEffect)(
+                (0, n.useEffect)(
                     () => () => {
                         _.reset();
                     },
@@ -66,7 +66,7 @@
                                 (0, p.jxB)(e);
                             });
                         }, [e]);
-                    })(_));
+                    })(_);
                 let R = (0, n.useMemo)(() => ({ Footer: () => (0, l.jsx)(y.A, { children: (0, l.jsx)(y.wi, { className: P().footer }) }) }), []);
                 return (S && _.isNeededToLoad && (0, n.use)(_.getData({ preloadedMeta: T, metatagId: S, page: 0, pageSize: f.c })), _.isSomethingWrong)
                     ? (0, l.jsx)(g.w, {})
@@ -426,7 +426,7 @@
                         },
                         [T, h],
                     );
-                ((0, n.useEffect)(
+                (0, n.useEffect)(
                     () => () => {
                         T.reset();
                     },
@@ -454,7 +454,7 @@
                                 (0, p.jxB)(e);
                             });
                         }, [e]);
-                    })(T));
+                    })(T);
                 let G = (0, n.useMemo)(() => ({ Footer: () => (0, l.jsx)(y.A, { children: (0, l.jsx)(y.wi, { className: S().footer }) }) }), []);
                 return (h && T.isNeededToLoad && (0, n.use)(T.getData({ preloadedMeta: P, metatagId: h, page: 0, pageSize: f.c })), T.isSomethingWrong)
                     ? (0, l.jsx)(g.w, {})
@@ -587,34 +587,34 @@
                                 'number' == typeof r && e.alreadyRequestedPages.set(''.concat(r), r);
                                 try {
                                     var c;
-                                    ((e.loadingState = o.GuX.PENDING), e.pendingPages.set(''.concat(r), r));
+                                    (e.loadingState = o.GuX.PENDING), e.pendingPages.set(''.concat(r), r);
                                     let t = u;
-                                    (t || (t = yield d.getMetatagAlbums({ id: a, offset: r, limit: n })), (e.fullTitle = t.title.fullTitle));
+                                    t || (t = yield d.getMetatagAlbums({ id: a, offset: r, limit: n })), (e.fullTitle = t.title.fullTitle);
                                     let s = { page: r, perPage: n, total: t.pager.total };
                                     0 === e.items.length && (e.items = (0, l.wg)(Array.from({ length: s.total }, () => null)));
                                     let g = t.albums.map(i.pp);
-                                    ((0, o.Iyy)({ items: e.items, mappedRawItems: g, page: r, pageSize: n }),
+                                    (0, o.Iyy)({ items: e.items, mappedRawItems: g, page: r, pageSize: n }),
                                         (e.pager = s),
                                         (e.requests = (null != (c = e.requests) ? c : 0) + 1),
-                                        e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.RESOLVE));
+                                        e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.RESOLVE);
                                 } catch (t) {
-                                    (g.error(t),
+                                    g.error(t),
                                         t instanceof s.GX &&
                                             (t.statusCode === s.X1.NOT_FOUND || t.statusCode === s.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = s.X1.NOT_FOUND),
-                                        e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.REJECT));
+                                        e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.REJECT);
                                 } finally {
                                     e.pendingPages.delete(''.concat(r));
                                 }
                             }
                         }),
                         reset() {
-                            ((e.loadingState = o.GuX.IDLE),
+                            (e.loadingState = o.GuX.IDLE),
                                 e.pendingPages.clear(),
                                 (e.pager = null),
                                 e.alreadyRequestedPages.clear(),
                                 (e.errorStatusCode = null),
-                                (e.items = (0, l.wg)([])));
+                                (e.items = (0, l.wg)([]));
                         },
                     })),
                 g = l.gK
@@ -669,19 +669,19 @@
                                 try {
                                     e.pagesLoader.setPageState(i, o.GuX.PENDING);
                                     let t = u;
-                                    (t || (t = yield d.getMetatagArtists({ id: a, offset: i, limit: r, period: 'week' })), (e.fullTitle = t.title.fullTitle));
+                                    t || (t = yield d.getMetatagArtists({ id: a, offset: i, limit: r, period: 'week' })), (e.fullTitle = t.title.fullTitle);
                                     let l = t.artists.map((e) => (0, n.dM)(e.artist));
                                     e.pagesLoader.setItems(l, { page: i, pager: t.pager });
                                 } catch (t) {
-                                    (g.error(t),
+                                    g.error(t),
                                         t instanceof s.GX &&
                                             (t.statusCode === s.X1.NOT_FOUND || t.statusCode === s.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = s.X1.NOT_FOUND),
-                                        e.pagesLoader.setItems(null, { responseStatus: o.FlZ.ERROR, page: i }));
+                                        e.pagesLoader.setItems(null, { responseStatus: o.FlZ.ERROR, page: i });
                                 }
                         }),
                         reset() {
-                            ((e.errorStatusCode = null), e.pagesLoader.reset());
+                            (e.errorStatusCode = null), e.pagesLoader.reset();
                         },
                     }));
             var c = a(25911);
@@ -720,30 +720,30 @@
                                 'number' == typeof s && e.alreadyRequestedPages.set(''.concat(s), s);
                                 try {
                                     var d;
-                                    ((e.loadingState = o.GuX.PENDING), e.pendingPages.set(''.concat(s), s));
+                                    (e.loadingState = o.GuX.PENDING), e.pendingPages.set(''.concat(s), s);
                                     let t = r;
-                                    (t || (t = yield n.getMetatagPlaylists({ id: a, offset: s, limit: i, withLikesCount: !0 })), (e.fullTitle = t.title.fullTitle));
+                                    t || (t = yield n.getMetatagPlaylists({ id: a, offset: s, limit: i, withLikesCount: !0 })), (e.fullTitle = t.title.fullTitle);
                                     let u = { page: s, perPage: i, total: t.pager.total };
                                     0 === e.items.length && (e.items = (0, l.wg)(Array.from({ length: u.total }, () => null)));
                                     let g = t.playlists.map(c.jX);
-                                    ((0, o.Iyy)({ items: e.items, mappedRawItems: g, page: s, pageSize: i }),
+                                    (0, o.Iyy)({ items: e.items, mappedRawItems: g, page: s, pageSize: i }),
                                         (e.pager = u),
                                         (e.requests = (null != (d = e.requests) ? d : 0) + 1),
-                                        e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.RESOLVE));
+                                        e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.RESOLVE);
                                 } catch (t) {
-                                    (u.error(t), e.alreadyRequestedPages.delete(''.concat(s)), e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.REJECT));
+                                    u.error(t), e.alreadyRequestedPages.delete(''.concat(s)), e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.REJECT);
                                 } finally {
                                     e.pendingPages.delete(''.concat(s));
                                 }
                             }
                         }),
                         reset() {
-                            ((e.loadingState = o.GuX.IDLE),
+                            (e.loadingState = o.GuX.IDLE),
                                 e.pendingPages.clear(),
                                 (e.pager = null),
                                 e.alreadyRequestedPages.clear(),
                                 (e.errorStatusCode = null),
-                                (e.items = (0, l.wg)([])));
+                                (e.items = (0, l.wg)([]));
                         },
                     })),
                 p = l.gK
@@ -791,23 +791,23 @@
                                 try {
                                     e.loadingState = o.GuX.PENDING;
                                     let t = u;
-                                    (t || (t = yield d.getMetatagById({ id: a })),
+                                    t || (t = yield d.getMetatagById({ id: a })),
                                         (e.id = t.id),
                                         (e.fullTitle = t.title.fullTitle),
                                         (e.artists = (0, l.wg)(t.artists.map(n.dM))),
                                         (e.albums = (0, l.wg)(t.albums.map(i.pp))),
                                         (e.playlists = (0, l.wg)(t.playlists.map(r.ZC))),
-                                        e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.RESOLVE));
+                                        e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.RESOLVE);
                                 } catch (t) {
-                                    (g.error(t),
+                                    g.error(t),
                                         t instanceof s.GX &&
                                             (t.statusCode === s.X1.NOT_FOUND || t.statusCode === s.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = s.X1.NOT_FOUND),
-                                        e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.REJECT));
+                                        e.loadingState !== o.GuX.IDLE && (e.loadingState = o.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            ((e.loadingState = o.GuX.IDLE), (e.fullTitle = null), (e.artists = (0, l.wg)([])), (e.albums = (0, l.wg)([])), (e.playlists = (0, l.wg)([])));
+                            (e.loadingState = o.GuX.IDLE), (e.fullTitle = null), (e.artists = (0, l.wg)([])), (e.albums = (0, l.wg)([])), (e.playlists = (0, l.wg)([]));
                         },
                     }));
             var y = a(74543),
@@ -815,7 +815,7 @@
             a(88351);
             var N = a(98224),
                 h = a(320);
-            (a(10456), a(21682), a(58024), a(63021));
+            a(10456), a(21682), a(58024), a(63021);
             var S = a(66268),
                 P = a(83879);
             let T = async (e, t) => {
@@ -828,10 +828,10 @@
                     return (0, o.tfF)(e, () => ({ genreMeta: void 0, tld: '', locale: null, host: '', fullUrl: null, url: null }));
                 }
             };
-            ((0, S.cache)(async (e) => T(e, async (e, t) => e.getMetatagAlbums({ id: t, offset: 0, limit: P.c }))),
+            (0, S.cache)(async (e) => T(e, async (e, t) => e.getMetatagAlbums({ id: t, offset: 0, limit: P.c }))),
                 (0, S.cache)(async (e) => T(e, async (e, t) => e.getMetatagArtists({ id: t, offset: 0, limit: P.c, period: 'week' }))),
                 (0, S.cache)(async (e) => T(e, async (e, t) => e.getMetatagById({ id: t }))),
-                (0, S.cache)(async (e) => T(e, async (e, t) => e.getMetatagPlaylists({ id: t, offset: 0, limit: P.c, withLikesCount: !0 }))));
+                (0, S.cache)(async (e) => T(e, async (e, t) => e.getMetatagPlaylists({ id: t, offset: 0, limit: P.c, withLikesCount: !0 })));
         },
         98224: (e, t, a) => {
             'use strict';

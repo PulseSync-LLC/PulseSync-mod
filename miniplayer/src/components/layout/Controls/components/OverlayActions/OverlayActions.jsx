@@ -38,7 +38,7 @@ export default function OverlayActions() {
                 />
                 <PlayerActionButton type="overlay_primary" name="backward" active={playerState.availableActions?.moveBackward} size={40} />
                 <PlayerActionButton
-                    type={settingsState.playerBarEnhancement.whitePlayButton ? 'overlay_primary' : 'overlay_yellow'}
+                    type={settingsState.playerBarEnhancement.playButtonType === 'yellow' ? 'overlay_yellow' : 'overlay_primary'}
                     name="play"
                     value={playerState.status !== 'paused'}
                     size={52}

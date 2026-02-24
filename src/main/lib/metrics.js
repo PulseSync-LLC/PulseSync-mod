@@ -182,7 +182,7 @@ async function sendEventWithFallback({ primaryUrl, fallbackUrl, apiKey, payload,
     }
 }
 
-function buildCommonPayload({ installId, appName, modVersion }) {
+function buildCommonPayload({ installId, appName, modVersion, metricType }) {
     return {
         ts: new Date().toISOString(),
         install_id: installId,
@@ -191,6 +191,7 @@ function buildCommonPayload({ installId, appName, modVersion }) {
         mod_version: modVersion || null,
         platform: process.platform,
         arch: process.arch,
+        metric_type: metricType,
     };
 }
 
@@ -220,7 +221,19 @@ function bindTeardownOnce() {
     process.on('SIGTERM', stopHeartbeatScheduler);
 }
 
-async function trySendHeartbeatOnce({ endpointUrl, fallbackUrl, apiKey, statePath, installId, appName, modVersion, heartbeatIntervalMs, timeoutMs, maxRetries }) {
+async function trySendHeartbeatOnce({
+    endpointUrl,
+    fallbackUrl,
+    apiKey,
+    statePath,
+    installId,
+    appName,
+    modVersion,
+    heartbeatIntervalMs,
+    timeoutMs,
+    maxRetries,
+    metricType,
+}) {
     if (heartbeatInFlight) return;
     heartbeatInFlight = true;
 
@@ -231,8 +244,8 @@ async function trySendHeartbeatOnce({ endpointUrl, fallbackUrl, apiKey, statePat
         if (!shouldSendHeartbeat(lastSentAt, heartbeatIntervalMs)) return;
 
         const payload = {
-            event: 'app_heartbeat',
-            ...buildCommonPayload({ installId, appName, modVersion }),
+            event: 'mod_heartbeat',
+            ...buildCommonPayload({ installId, appName, modVersion, metricType }),
         };
 
         await sendEventWithFallback({ primaryUrl: endpointUrl, fallbackUrl, apiKey, payload, timeoutMs, maxRetries });
@@ -268,8 +281,9 @@ function startHeartbeatScheduler(params) {
 async function initUserCountMetric(options) {
     const {
         endpointUrl,
-        fallbackUrl = 'https://pulsesync-metrics.forea-adoxid-account.workers.dev',
+        fallbackUrl = 'https://metrics.pulsesync.dev/metrics',
         apiKey = '',
+        metricType = 'mod',
         heartbeatIntervalMs = 3 * 60 * 60 * 1000,
         appName = app.getName(),
         modVersion = '',
@@ -300,18 +314,25 @@ async function initUserCountMetric(options) {
 
     if (isNew && !state.install_event_sent) {
         const payload = {
-            event: 'app_install',
-            ...buildCommonPayload({ installId, appName, modVersion }),
+            event: 'mod_install',
+            ...buildCommonPayload({ installId, appName, modVersion, metricType }),
         };
 
         try {
-            logger.debug('Sending app install event');
-            await sendEventWithFallback({ primaryUrl: endpointUrl, fallbackUrl, apiKey, payload, timeoutMs, maxRetries });
+            logger.debug('Sending mod install event');
+            await sendEventWithFallback({
+                primaryUrl: endpointUrl,
+                fallbackUrl: fallbackUrl,
+                apiKey,
+                payload,
+                timeoutMs,
+                maxRetries,
+            });
             const newState = { ...state, install_event_sent: true };
             await writeJsonAtomic(statePath, newState);
-            logger.info('App install event sent successfully');
+            logger.info('Mod install event sent successfully');
         } catch (error) {
-            logger.error('Failed to send app install event:', error);
+            logger.error('Failed to send mod install event:', error);
         }
     }
 
@@ -328,6 +349,7 @@ async function initUserCountMetric(options) {
             heartbeatIntervalMs,
             timeoutMs,
             maxRetries,
+            metricType,
         });
         logger.debug('Initial heartbeat sent');
     } catch (error) {
@@ -347,6 +369,7 @@ async function initUserCountMetric(options) {
             heartbeatIntervalMs,
             timeoutMs,
             maxRetries,
+            metricType,
         });
     } else {
         logger.info('Periodic heartbeat scheduler disabled');

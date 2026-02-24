@@ -1,6 +1,6 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
-global.requireIfExists = (path) =>{
+global.requireIfExists = (path) => {
     try {
         return require(path);
     } catch (e) {
@@ -43,10 +43,11 @@ Logger_js_1.Logger.setupLogger();
 const logger = new Logger_js_1.Logger('Main');
 
 logger.log('Application starting...');
+logger.log(process.argv);
 
 if (store_js_1.get('sendModAnonymizedMetrics') ?? true) {
     initUserCountMetric({
-        endpointUrl: 'https://metrics.pulsesync.dev/metrics',
+        endpointUrl: 'https://ru-node-1.pulsesync.dev/api/v2/metrics',
         apiKey: 'l4lRNGW8mFQDmBBIEd0ZJSeI9ARRcgSaf_p5kkpmCvw',
         modVersion: config_js_1.config.modification.version,
     });

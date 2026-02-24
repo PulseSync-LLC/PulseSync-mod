@@ -10,17 +10,17 @@ const isFirstInstance = electron_1.app.requestSingleInstanceLock();
 const checkForSingleInstance = () => {
     if (isFirstInstance) {
         electron_1.app.on('second-instance', (event, commandLine) => {
-            const [window] = electron_1.BrowserWindow.getAllWindows();
-            if (window) {
-                if (window.isMinimized()) {
-                    window.restore();
+            const mainWindow = electron_1.BrowserWindow.getAllWindows().find((w) => w.isMainWindow);
+            if (mainWindow) {
+                if (mainWindow.isMinimized()) {
+                    mainWindow.restore();
                     singleInstanceLogger.log('Restore window');
                 }
                 const lastCommandLineArg = commandLine.pop();
                 if (lastCommandLineArg && (0, handleDeeplink_js_1.checkIsDeeplink)(lastCommandLineArg)) {
-                    (0, handleDeeplink_js_1.navigateToDeeplink)(window, lastCommandLineArg);
+                    (0, handleDeeplink_js_1.navigateToDeeplink)(mainWindow, lastCommandLineArg);
                 }
-                (0, toggleWindowVisibility_js_1.toggleWindowVisibility)(window, true);
+                (0, toggleWindowVisibility_js_1.toggleWindowVisibility)(mainWindow, true);
                 singleInstanceLogger.log('Show window');
             }
         });

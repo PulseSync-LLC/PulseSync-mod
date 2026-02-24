@@ -21,11 +21,10 @@ const requireIfExists =
             return false;
         }
     });
-let native
+let native;
 try {
     native = requireIfExists('./native_modules/set_iconic_thumbnail');
-}
-catch (e) {
+} catch (e) {
     taskBarExtensionLogger.error('Error loading native module for thumbnails:', e);
     native = null;
 }

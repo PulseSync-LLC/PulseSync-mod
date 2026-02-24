@@ -207,14 +207,14 @@
                                         {
                                             resources: { musicExternalApi: s },
                                         } = e.get(eH.tw);
-                                    ((i.timeout = s.defaultTimeout),
+                                    (i.timeout = s.defaultTimeout),
                                         (i.hooks = {
                                             afterResponse: [...((null == i || null == (t = i.hooks) ? void 0 : t.afterResponse) || [])],
                                             beforeError: [u.beforeErrorHook, ...((null == i || null == (r = i.hooks) ? void 0 : r.beforeError) || [])],
                                             beforeRequest: [e_.x, ...((null == i || null == (o = i.hooks) ? void 0 : o.beforeRequest) || [])],
                                             afterTimeout: [u.beforeErrorHook, ...((null == i || null == (n = i.hooks) ? void 0 : n.afterTimeout) || [])],
                                             beforeRetry: [eR.i, u.beforeRetryHook, ...((null == i || null == (g = i.hooks) ? void 0 : g.beforeRetry) || [])],
-                                        }));
+                                        });
                                     let m = a(i);
                                     return (0, ei.sY)(m, {
                                         get isOffline() {

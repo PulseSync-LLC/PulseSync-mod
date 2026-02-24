@@ -121,7 +121,7 @@
                 (0, P.CgZ)(a);
                 let { sendRefreshEvent: _ } = (0, P.cYT)(),
                     x = (0, t.useCallback)(() => {
-                        (_(), (window.location.href = P.Zyd.main.href));
+                        _(), (window.location.href = P.Zyd.main.href);
                     }, [_]),
                     { contentRef: p } = (0, P.gKY)();
                 return (0, s.jsxs)('div', {
@@ -167,7 +167,7 @@
             });
         },
         31454: (e, o, n) => {
-            (Promise.resolve().then(n.bind(n, 52756)),
+            Promise.resolve().then(n.bind(n, 52756)),
                 Promise.resolve().then(n.bind(n, 41458)),
                 Promise.resolve().then(n.bind(n, 80922)),
                 Promise.resolve().then(n.bind(n, 54487)),
@@ -402,7 +402,7 @@
                 Promise.resolve().then(n.bind(n, 31922)),
                 Promise.resolve().then(n.bind(n, 51886)),
                 Promise.resolve().then(n.bind(n, 43701)),
-                Promise.resolve().then(n.bind(n, 45228)));
+                Promise.resolve().then(n.bind(n, 45228));
         },
         32468: (e) => {
             e.exports = {
@@ -439,10 +439,10 @@
         60411: (e, o, n) => {
             'use strict';
             var s;
-            (n.d(o, { Q: () => s }),
+            n.d(o, { Q: () => s }),
                 (function (e) {
-                    ((e.ALBUMS = 'albums'), (e.ARTISTS = 'artists'), (e.PLAYLISTS = 'playlists'));
-                })(s || (s = {})));
+                    (e.ALBUMS = 'albums'), (e.ARTISTS = 'artists'), (e.PLAYLISTS = 'playlists');
+                })(s || (s = {}));
         },
         66513: (e) => {
             e.exports = { root: 'PostArtists_root__Zxmjq', content: 'PostArtists_content__JzGOH' };
@@ -522,14 +522,14 @@
                         { post: n } = (0, a.Pjs)(),
                         r = (0, a.W6M)(),
                         { contentScrollRef: _, setContentScrollRef: x } = (0, a.gKY)();
-                    ((0, l.useEffect)(
+                    (0, l.useEffect)(
                         () => () => {
                             n.reset();
                         },
                         [n],
                     ),
                         n.isNotFound && (0, t.notFound)(),
-                        (0, a.Jzs)(n.isResolved));
+                        (0, a.Jzs)(n.isResolved);
                     let u = (0, l.useMemo)(() => {
                         if (n.isLoading) return (0, s.jsx)(p, {});
                         switch (n.promotionType) {
@@ -595,11 +595,11 @@
         },
     },
     (e) => {
-        (e.O(
+        e.O(
             0,
             [7098, 8282, 9712, 5271, 7309, 9775, 952, 6451, 1709, 1311, 7764, 6706, 996, 4236, 9169, 8740, 9615, 3588, 2732, 1744, 4204, 7747, 5242, 9902, 5598, 7358],
             () => e((e.s = 31454)),
         ),
-            (_N_E = e.O()));
+            (_N_E = e.O());
     },
 ]);

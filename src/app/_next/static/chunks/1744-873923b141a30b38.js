@@ -345,7 +345,7 @@
                                           }
                                           return !1;
                                       });
-                        (r && (r.entity.everFinished = !!t),
+                        r && (r.entity.everFinished = !!t),
                             E &&
                                 (null == d ? void 0 : d.streamProgress) &&
                                 (null == (p = d.streamProgress) ? void 0 : p.hasEverFinished) !== t &&
@@ -354,7 +354,7 @@
                                 !t &&
                                 (c.markTracksFinished({ withoutTracks: [e.id] }), c.setAlbumUnfinished(), c.setAllTracksUnfinished(!1)),
                             null == s || s.updateEverFinished(t),
-                            c.meta && t && c.checkAllAlbumTrackFinished());
+                            c.meta && t && c.checkAllAlbumTrackFinished();
                     }
                 });
             };
@@ -363,7 +363,7 @@
             'use strict';
             i.d(t, { N: () => r });
             var r = (function (e) {
-                return ((e.NEXT = 'NEXT'), (e.LAST = 'LAST'), (e.REMOVE = 'REMOVE'), (e.HIDE = 'HIDE'), e);
+                return (e.NEXT = 'NEXT'), (e.LAST = 'LAST'), (e.REMOVE = 'REMOVE'), (e.HIDE = 'HIDE'), e;
             })({});
         },
         57324: (e) => {
@@ -461,7 +461,7 @@
                 d = (e) => (0, l.wg)({ id: e.id, name: e.name, prettyName: e.prettyName }),
                 c = (e) => ({ id: e.id, albumId: e.albumId, timestamp: e.timestamp });
             var m = (function (e) {
-                    return ((e.TOO_MANY_FILES = 'TOO_MANY_FILES'), (e.UNKNOWN_ERROR = 'UNKNOWN_ERROR'), e);
+                    return (e.TOO_MANY_FILES = 'TOO_MANY_FILES'), (e.UNKNOWN_ERROR = 'UNKNOWN_ERROR'), e;
                 })({}),
                 g = (function (e) {
                     return (
@@ -486,7 +486,7 @@
                 k = i(30206),
                 O = i(6247);
             !(function (e) {
-                ((e.OWN = 'OWN'), (e.UGC = 'UGC'), (e.OWN_REPLACED_TO_UGC = 'OWN_REPLACED_TO_UGC'), (e.EXTERNAL = 'EXTERNAL'));
+                (e.OWN = 'OWN'), (e.UGC = 'UGC'), (e.OWN_REPLACED_TO_UGC = 'OWN_REPLACED_TO_UGC'), (e.EXTERNAL = 'EXTERNAL');
             })(n || (n = {}));
             var L = i(93435),
                 T = i(59615),
@@ -503,7 +503,7 @@
                         try {
                             return yield i.markFinished(t);
                         } catch (e) {
-                            return (r.error(e), A.T.ERROR);
+                            return r.error(e), A.T.ERROR;
                         }
                     }),
                     markUnlistened: (0, l.L3)(function* (t) {
@@ -511,7 +511,7 @@
                         try {
                             return yield i.markUnfinished(t);
                         } catch (e) {
-                            return (r.error(e), A.T.ERROR);
+                            return r.error(e), A.T.ERROR;
                         }
                     }),
                 })),
@@ -755,17 +755,17 @@
                                         let i = null == (s = e.file) ? void 0 : s.name,
                                             r = yield t.getUploadUrl({ playlistId: ''.concat(n, ':').concat(e.playlistKind), uid: n, path: i });
                                         if (r && 'result' in r && r.result === a.TOO_MANY_FILES) {
-                                            ((e.loadingState = g.REJECT), (e.errorReason = m.TOO_MANY_FILES));
+                                            (e.loadingState = g.REJECT), (e.errorReason = m.TOO_MANY_FILES);
                                             return;
                                         }
                                         if (r && 'post-target' in r && 'ugc-track-id' in r) {
-                                            ((e.uploadUrl = r['post-target']), (e.trackId = r['ugc-track-id']));
+                                            (e.uploadUrl = r['post-target']), (e.trackId = r['ugc-track-id']);
                                             return;
                                         }
-                                        ((e.errorReason = m.UNKNOWN_ERROR), (e.loadingState = g.REJECT));
+                                        (e.errorReason = m.UNKNOWN_ERROR), (e.loadingState = g.REJECT);
                                         return;
                                     } catch (t) {
-                                        ((e.loadingState = g.REJECT), i.error(t));
+                                        (e.loadingState = g.REJECT), i.error(t);
                                         return;
                                     }
                             }),
@@ -779,10 +779,10 @@
                                         i.append('file', e.file);
                                         let r = new AbortController(),
                                             n = r.signal;
-                                        ((e.abortController = r), yield t.uploadFile({ url: e.uploadUrl, formData: i }, { signal: n }), (e.loadingState = g.PROCESSING));
+                                        (e.abortController = r), yield t.uploadFile({ url: e.uploadUrl, formData: i }, { signal: n }), (e.loadingState = g.PROCESSING);
                                         return;
                                     } catch (t) {
-                                        ((e.loadingState = g.REJECT), i.error(t));
+                                        (e.loadingState = g.REJECT), i.error(t);
                                         return;
                                     }
                                 }
@@ -802,14 +802,14 @@
                                 i.clearCancelledUploads();
                             },
                             reset() {
-                                ((e.loadingState = g.IDLE), (e.trackId = null), (e.uploadUrl = null), (e.abortController = null));
+                                (e.loadingState = g.IDLE), (e.trackId = null), (e.uploadUrl = null), (e.abortController = null);
                             },
                         };
                         return t;
                     }),
                 C = l.gK.model('Ugc');
             var U = i(78724);
-            (i(97004), i(33647));
+            i(97004), i(33647);
             var M = i(68555);
         },
         68555: (e, t, i) => {
@@ -826,7 +826,7 @@
                     { formatMessage: g } = (0, a.A)(),
                     v = (0, n.useCallback)(
                         (e) => {
-                            (null == u || u(), e.stopPropagation());
+                            null == u || u(), e.stopPropagation();
                         },
                         [u],
                     );
@@ -846,9 +846,9 @@
         68565: (e, t, i) => {
             'use strict';
             var r;
-            (i.d(t, { O: () => r }),
+            i.d(t, { O: () => r }),
                 (function (e) {
-                    ((e.RADIO_STARTED = 'radioStarted'),
+                    (e.RADIO_STARTED = 'radioStarted'),
                         (e.TRACK_STARTED = 'trackStarted'),
                         (e.TRACK_FINISHED = 'trackFinished'),
                         (e.SKIP = 'skip'),
@@ -866,8 +866,8 @@
                         (e.PLAYABLE_ITEM_LIKE = 'playableItemLike'),
                         (e.PLAYABLE_ITEM_DISLIKE = 'playableItemDislike'),
                         (e.PLAYABLE_ITEM_UNLIKE = 'playableItemUnlike'),
-                        (e.PLAYABLE_ITEM_UNDISLIKE = 'playableItemUndislike'));
-                })(r || (r = {})));
+                        (e.PLAYABLE_ITEM_UNDISLIKE = 'playableItemUndislike');
+                })(r || (r = {}));
         },
         70559: (e, t, i) => {
             'use strict';
@@ -901,17 +901,17 @@
         75305: (e, t, i) => {
             'use strict';
             var r;
-            (i.d(t, { R: () => r }),
+            i.d(t, { R: () => r }),
                 (function (e) {
-                    ((e.Music = 'music'),
+                    (e.Music = 'music'),
                         (e.DownloadedMusic = 'downloadedMusic'),
                         (e.VibeTrack = 'vibeTrack'),
                         (e.Generative = 'generative'),
                         (e.Unknown = 'unknown'),
                         (e.SmartPreview = 'smartPreview'),
                         (e.Clip = 'clip'),
-                        (e.Radio = 'fm_radio'));
-                })(r || (r = {})));
+                        (e.Radio = 'fm_radio');
+                })(r || (r = {}));
         },
         78724: (e, t, i) => {
             'use strict';
@@ -939,7 +939,7 @@
                     [C, U] = (0, l.useState)(!1),
                     M = (0, v.useTimeLeftText)(),
                     { isPlaying: F, isCurrent: x } = (0, m.Dx4)({ playContextParams: _, entityId: L ? ''.concat(O, ':').concat(L) : O });
-                ((0, l.useEffect)(() => {
+                (0, l.useEffect)(() => {
                     if (!x) return void U(!1);
                     let e =
                         null == K
@@ -959,7 +959,7 @@
                     }, [T, null == R ? void 0 : R.allTracksUnfinished, null == R || null == (t = R.meta) ? void 0 : t.listeningFinished]),
                     (0, l.useEffect)(() => {
                         var e, t;
-                        (x &&
+                        x &&
                             (null == N || null == (e = N.entityMeta) ? void 0 : e.streamProgress) &&
                             T &&
                             N.entityMeta.streamProgress.hasEverFinished !== T.hasEverFinished &&
@@ -968,7 +968,7 @@
                                 ((null == N || null == (t = N.entityMeta) ? void 0 : t.streamProgress) &&
                                     x &&
                                     (N.entityMeta.streamProgress.updateEverFinished(!0), N.entityMeta.streamProgress.updateEndPositionSec(0)),
-                                null == T || T.updateEverFinished(!0)));
+                                null == T || T.updateEverFinished(!0));
                     }, [
                         x,
                         null == N || null == (i = N.entityMeta) ? void 0 : i.streamProgress,
@@ -987,15 +987,15 @@
                                       var e;
                                       let t = K.state.playerState.progress.value,
                                           i = null == N || null == (e = N.entityMeta) ? void 0 : e.streamProgress;
-                                      (0 !== t.position && C && T.updateEndPositionSec(t.position),
+                                      0 !== t.position && C && T.updateEndPositionSec(t.position),
                                           x &&
                                               parseInt(''.concat(null == i ? void 0 : i.endPositionSec), 10) !== parseInt(''.concat(t.position), 10) &&
-                                              (null == i || i.updateEndPositionSec(t.position)));
+                                              (null == i || i.updateEndPositionSec(t.position));
                                   });
                         return () => {
                             null == e || e();
                         };
-                    }, [K, T, x, F, C, O, null == N ? void 0 : N.entityMeta]));
+                    }, [K, T, x, F, C, O, null == N ? void 0 : N.entityMeta]);
                 let w = (x && (null == N || null == (f = N.entityMeta) || null == (y = f.streamProgress) ? void 0 : y.endPositionSec)) || T.endPositionSec,
                     j = (0, g.useProgressTimeNonMusic)(null != w ? w : 0, D),
                     G = (0, l.useMemo)(() => {

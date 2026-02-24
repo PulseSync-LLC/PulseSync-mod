@@ -4,10 +4,10 @@
         1370: (e, t, a) => {
             'use strict';
             var i;
-            (a.d(t, { E: () => i }),
+            a.d(t, { E: () => i }),
                 (function (e) {
-                    ((e.SHOW_AND_LOAD = 'SHOW_AND_LOAD'), (e.LOAD_AND_SHOW = 'LOAD_AND_SHOW'));
-                })(i || (i = {})));
+                    (e.SHOW_AND_LOAD = 'SHOW_AND_LOAD'), (e.LOAD_AND_SHOW = 'LOAD_AND_SHOW');
+                })(i || (i = {}));
         },
         3825: (e) => {
             e.exports = { station: 'MetroStation_station__mCvqj', stationColors: 'MetroStation_stationColors__MgJFV', colorSpan: 'MetroStation_colorSpan__cFHsy' };
@@ -193,7 +193,7 @@
             let g = (e) => ({ type: n._.TRACK_ITEM, data: (0, _.vU)(e.data.track) });
             var b = a(41028),
                 p = (function (e) {
-                    return ((e.IDLE = 'IDLE'), (e.PENDING = 'PENDING'), (e.RESOLVE = 'RESOLVE'), (e.REJECT = 'REJECT'), (e.OUTDATED = 'OUTDATED'), e);
+                    return (e.IDLE = 'IDLE'), (e.PENDING = 'PENDING'), (e.RESOLVE = 'RESOLVE'), (e.REJECT = 'REJECT'), (e.OUTDATED = 'OUTDATED'), e;
                 })({});
             let v = b.gK
                     .model('LandingBaseBlock', {
@@ -352,13 +352,13 @@
                                 try {
                                     e.loadingState = x.GuX.PENDING;
                                     let t = yield i.getBlockEntities({ blockId: a, page: 0, pageSize: 100 });
-                                    ((e.title = t.title), (e.items = (0, b.wg)(t.items.map(D))), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.RESOLVE));
+                                    (e.title = t.title), (e.items = (0, b.wg)(t.items.map(D))), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.RESOLVE);
                                 } catch (t) {
-                                    (l.error(t), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.REJECT));
+                                    l.error(t), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            ((e.loadingState = x.GuX.IDLE), (e.items = (0, b.wg)([])), (e.title = null));
+                            (e.loadingState = x.GuX.IDLE), (e.items = (0, b.wg)([])), (e.title = null);
                         },
                     }));
             var H = a(61979),
@@ -366,7 +366,7 @@
             let F = [l.t.COLLECTION_DOWNLOADED_TRACKS];
             var $ = a(51551);
             !(function (e) {
-                ((e.RADIO = 'radio'), (e.PROMOTIONS = 'promotions'), (e.EDITORIAL_PLAYLISTS = 'editorial-playlists'), (e.PLAYLIST_WITH_TRACKS = 'playlist-with-tracks'));
+                (e.RADIO = 'radio'), (e.PROMOTIONS = 'promotions'), (e.EDITORIAL_PLAYLISTS = 'editorial-playlists'), (e.PLAYLIST_WITH_TRACKS = 'playlist-with-tracks');
             })(i || (i = {}));
             let J = (e) => !!(e && 'object' == typeof e && e[0] && 'owner' in e[0].data);
             var Z = a(15479),
@@ -604,7 +604,7 @@
                                             ? void 0
                                             : t.reduce((e, t) => {
                                                   let a = ev(t);
-                                                  return ((ec.is(a) || eu.is(a) || eg.is(a)) && e.push(a), e);
+                                                  return (ec.is(a) || eu.is(a) || eg.is(a)) && e.push(a), e;
                                               }, []);
                                     return (0, b.wg)({ blocks: a });
                                 })(e.data);
@@ -617,7 +617,7 @@
                                             ? void 0
                                             : t.reduce((e, t) => {
                                                   let a = ev(t);
-                                                  return ((eI.is(a) || eC.is(a)) && e.push(a), e);
+                                                  return (eI.is(a) || eC.is(a)) && e.push(a), e;
                                               }, []);
                                     return (0, b.wg)({ blocks: a });
                                 })(e.data);
@@ -688,7 +688,7 @@
                             let { prefixlessResource: t, modelActionsLogger: a } = (0, b._$)(e);
                             if (!e.hasClicked)
                                 try {
-                                    ((e.hasClicked = !0), yield t.reportForAlbumPromo(e.clickUrl));
+                                    (e.hasClicked = !0), yield t.reportForAlbumPromo(e.clickUrl);
                                 } catch (e) {
                                     a.error(e);
                                 }
@@ -1134,7 +1134,7 @@
                                     [i] = yield t.getTracksMeta({ trackIds: [a], withProgress: !0 });
                                 if (((e.trackLoadingState = x.GuX.RESOLVE), i)) return (0, _.vU)(i);
                             } catch (t) {
-                                (a.error(t), (e.trackLoadingState = x.GuX.REJECT));
+                                a.error(t), (e.trackLoadingState = x.GuX.REJECT);
                             }
                         }),
                         getPlaylistMeta: (0, b.L3)(function* () {
@@ -1150,7 +1150,7 @@
                                     i = a.findIndex((t) => String(t.id) === e.track.id);
                                 if (((e.playlistLoadingState = x.GuX.RESOLVE), e.track.durationMs && -1 !== i)) return i;
                             } catch (t) {
-                                (a.error(t), (e.playlistLoadingState = x.GuX.REJECT));
+                                a.error(t), (e.playlistLoadingState = x.GuX.REJECT);
                             }
                         }),
                     })),
@@ -1766,7 +1766,7 @@
                     })),
                 aC = b.gK.compose(b.gK.model('TabsData', { data: b.gK.maybeNull(b.gK.array(aA)) }), R.pl, R.XT).actions((e) => ({
                     reset() {
-                        ((e.loadingState = x.GuX.IDLE), e.destroyItems([e.data]));
+                        (e.loadingState = x.GuX.IDLE), e.destroyItems([e.data]);
                     },
                 })),
                 aT = b.gK
@@ -2512,10 +2512,10 @@
                                     }
                                     a.loadingState = p.RESOLVE;
                                 } catch (e) {
-                                    (y.error(e),
+                                    y.error(e),
                                         (0, b._n)(a) &&
                                             ((a.loadingState = p.REJECT),
-                                            e instanceof H.GX && (e.statusCode === H.X1.NOT_FOUND || e.statusCode === H.X1.BAD_REQUEST) && (a.isNotFound = !0)));
+                                            e instanceof H.GX && (e.statusCode === H.X1.NOT_FOUND || e.statusCode === H.X1.BAD_REQUEST) && (a.isNotFound = !0));
                                 }
                             }),
                             getTabData: (0, b.L3)(function* (t) {
@@ -2527,21 +2527,21 @@
                                         (null == (s = ((yield a.getBlock({ source: t })) || {}).tabs)
                                             ? void 0
                                             : s.map((e) => (0, b.wg)({ id: e.id, title: e.title, subtitle: e.subtitle, covers: e.covers }))) || [];
-                                    (null == (l = e.tabs.data) ||
+                                    null == (l = e.tabs.data) ||
                                         l.forEach((e, t) => {
                                             let a = i.find((t) => t.title === e.meta.title);
                                             e.data = a || i[t];
                                         }),
-                                        (e.tabs.loadingState = x.GuX.RESOLVE));
+                                        (e.tabs.loadingState = x.GuX.RESOLVE);
                                 } catch (t) {
-                                    (i.error(t), (e.loadingState = x.GuX.REJECT));
+                                    i.error(t), (e.loadingState = x.GuX.REJECT);
                                 }
                             }),
                             async prefetchBlocks(a) {
                                 var i, l, s;
                                 let r = null != a ? a : 0,
                                     o = [];
-                                ((null == (i = e.meta) ? void 0 : i.source) && o.push(t.getTabData(e.meta.source)),
+                                (null == (i = e.meta) ? void 0 : i.source) && o.push(t.getTabData(e.meta.source)),
                                     null == (l = e.upperBlocks) ||
                                         l.forEach((e) => {
                                             r > 0 && (0, eb.v)(e.meta) && (r--, o.push(t.getBlock(e)));
@@ -2552,7 +2552,7 @@
                                                 (0, eb.v)(e.meta) && o.push(t.getBlock(e));
                                             });
                                         }),
-                                    o.length > 0 && (await Promise.allSettled(o)));
+                                    o.length > 0 && (await Promise.allSettled(o));
                             },
                             getChildrenSkeleton: (0, b.L3)(function* (t) {
                                 let { childrenLandingResource: a, modelActionsLogger: s } = (0, b._$)(e),
@@ -2574,7 +2574,7 @@
                                                             blocks: e.blocks
                                                                 .filter((e) => {
                                                                     let t;
-                                                                    return ((t = e.type), Object.values(i).includes(t));
+                                                                    return (t = e.type), Object.values(i).includes(t);
                                                                 })
                                                                 .map((e) =>
                                                                     ((e, t) => {
@@ -2778,10 +2778,10 @@
                                                 (0, b.wg)(a)
                                             );
                                         })(s, { isWaveAgentEnabled: o });
-                                    (d && ((e.id = s.category), (e.title = s.title), (e.meta = (0, b.wg)(d.meta)), (e.tabs.data = (0, b.wg)(d.tabs.data))),
-                                        e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.RESOLVE));
+                                    d && ((e.id = s.category), (e.title = s.title), (e.meta = (0, b.wg)(d.meta)), (e.tabs.data = (0, b.wg)(d.tabs.data))),
+                                        e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.RESOLVE);
                                 } catch (t) {
-                                    (s.error(t), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.REJECT));
+                                    s.error(t), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.REJECT);
                                 }
                             }),
                             getSkeleton: (0, b.L3)(function* (a, i) {
@@ -2791,16 +2791,16 @@
                                         e.loadingState = x.GuX.PENDING;
                                         let s = yield l.getSkeleton(a),
                                             r = ey(null == s ? void 0 : s.blocks);
-                                        (r &&
+                                        r &&
                                             ((e.id = s.id),
                                             (e.title = s.title),
                                             (e.meta = (0, b.wg)(r.meta)),
                                             (e.upperBlocks = (0, b.wg)(r.upperBlocks)),
                                             (e.tabs.data = (0, b.wg)(r.tabs.data)),
                                             yield t.prefetchBlocks(null == i ? void 0 : i.preloadBlocksCount)),
-                                            e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.RESOLVE));
+                                            e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.RESOLVE);
                                     } catch (t) {
-                                        (s.error(t), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.REJECT));
+                                        s.error(t), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.REJECT);
                                     }
                             }),
                             getArtistSkeleton: (0, b.L3)(function* (a, i) {
@@ -2810,16 +2810,16 @@
                                         e.loadingState = x.GuX.PENDING;
                                         let s = yield l.getSkeleton(a),
                                             r = ey(null == s ? void 0 : s.blocks);
-                                        (r &&
+                                        r &&
                                             ((e.id = s.id),
                                             (e.title = s.title),
                                             (e.meta = (0, b.wg)(r.meta)),
                                             (e.upperBlocks = (0, b.wg)(r.upperBlocks)),
                                             void 0 !== r.tabs && (e.tabs.data = (0, b.wg)(r.tabs.data)),
                                             yield t.prefetchBlocks(null == i ? void 0 : i.preloadBlocksCount)),
-                                            e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.RESOLVE));
+                                            e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.RESOLVE);
                                     } catch (t) {
-                                        (s.error(t), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.REJECT));
+                                        s.error(t), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.REJECT);
                                     }
                             }),
                             getConcertSkeleton: (0, b.L3)(function* (a, i) {
@@ -2829,20 +2829,20 @@
                                         e.loadingState = x.GuX.PENDING;
                                         let s = yield l.getSkeleton(a),
                                             r = ey(null == s ? void 0 : s.blocks);
-                                        (r &&
+                                        r &&
                                             ((e.id = s.id),
                                             (e.title = s.title),
                                             (e.meta = (0, b.wg)(r.meta)),
                                             (e.upperBlocks = (0, b.wg)(r.upperBlocks)),
                                             void 0 !== r.tabs && (e.tabs.data = (0, b.wg)(r.tabs.data)),
                                             yield t.prefetchBlocks(null == i ? void 0 : i.preloadBlocksCount)),
-                                            e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.RESOLVE));
+                                            e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.RESOLVE);
                                     } catch (t) {
-                                        (s.error(t), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.REJECT));
+                                        s.error(t), e.loadingState !== x.GuX.IDLE && (e.loadingState = x.GuX.REJECT);
                                     }
                             }),
                             reset() {
-                                ((e.loadingState = x.GuX.IDLE), (e.meta = null), e.tabs.reset(), (e.upperBlocks = null));
+                                (e.loadingState = x.GuX.IDLE), (e.meta = null), e.tabs.reset(), (e.upperBlocks = null);
                             },
                         };
                         return t;
@@ -3103,7 +3103,7 @@
                             return (
                                 e.metroStations.forEach((e) => {
                                     let a = t.get(e.title);
-                                    (a || ((a = new Set()), t.set(e.title, a)), a.add(e.lineColor));
+                                    a || ((a = new Set()), t.set(e.title, a)), a.add(e.lineColor);
                                 }),
                                 Array.from(t.entries()).map((e) => {
                                     let [t, a] = e;
@@ -3617,7 +3617,7 @@
                 L = a(96560),
                 y = a(48509);
             !(function (e) {
-                ((e.TOP = 'top'), (e.CENTER = 'center'));
+                (e.TOP = 'top'), (e.CENTER = 'center');
             })(i || (i = {}));
             var S = a(54487),
                 N = a(77868),
@@ -3642,10 +3642,10 @@
                         },
                     }),
                     C = (0, c.c)((e) => {
-                        (t.setClicked(), n({ to: I.QT.AlbumScreen }), m(e));
+                        t.setClicked(), n({ to: I.QT.AlbumScreen }), m(e);
                     }),
                     T = (0, c.c)(() => {
-                        (t.setClicked(), A());
+                        t.setClicked(), A();
                     }),
                     k = (0, E.cp)({ album: t.album, callback: T }),
                     R = (0, c.c)(() => {
@@ -3755,13 +3755,13 @@
                 },
                 O = {},
                 M = {};
-            ((() => {
-                (Object.defineProperty(M, 'X', { value: !0 }), (M.q = void 0));
+            (() => {
+                Object.defineProperty(M, 'X', { value: !0 }), (M.q = void 0);
                 var e = (function e(t) {
                     var a = O[t];
                     if (void 0 !== a) return a.exports;
                     var i = (O[t] = { exports: {} });
-                    return (K[t](i, i.exports, e), i.exports);
+                    return K[t](i, i.exports, e), i.exports;
                 })(1964);
                 Object.defineProperty(M, 'q', {
                     enumerable: !0,
@@ -3770,18 +3770,18 @@
                     },
                 });
             })(),
-                M.X);
+                M.X;
             var D = M.q;
             let B = (e) => {
                 let t,
                     { callback: a, visibleTime: i, threshold: l } = e;
                 return (0, m.Gv)(
                     (e, l) => {
-                        (e.isIntersecting &&
+                        e.isIntersecting &&
                             (t = setTimeout(() => {
-                                (a(), l.disconnect());
+                                a(), l.disconnect();
                             }, i)),
-                            e.isIntersecting || clearTimeout(t));
+                            e.isIntersecting || clearTimeout(t);
                     },
                     { threshold: l },
                 );
@@ -3848,7 +3848,7 @@
                                                 visibleTime: null != (t = null == r ? void 0 : r.blockImpression.timeMs) ? t : 2100,
                                                 callback: () => {
                                                     let e = null == r ? void 0 : r.blockImpression.url;
-                                                    (e && (null == s || s(e)), l());
+                                                    e && (null == s || s(e)), l();
                                                 },
                                             },
                                             {
@@ -3943,13 +3943,13 @@
                             playContextParams: { contextData: { type: y.K.Album, meta: { id: i.id }, from: b, utmLink: p }, loadContextMeta: !0 },
                         }),
                         R = (0, c.c)(() => {
-                            (null == m || m(), x());
+                            null == m || m(), x();
                         }),
                         f = (0, E.cp)({ album: i, callback: C }),
                         w = (0, E.cp)({ album: i, callback: R }),
                         K = (0, _.NKK)(),
                         O = (0, c.c)((e) => {
-                            ((0, H.P)(e, F().ripple), e.stopPropagation(), null == m || m(), K({ to: I.QT.AlbumScreen }), f(e));
+                            (0, H.P)(e, F().ripple), e.stopPropagation(), null == m || m(), K({ to: I.QT.AlbumScreen }), f(e);
                         }),
                         M = (0, c.c)(() => {
                             T() || (w(), L(!k));
@@ -4827,7 +4827,7 @@
                                               e.key,
                                           ),
                                       );
-                            return (null == e || e.unshift((0, l.jsx)(eZ.Bw, {}, 'create-playlist-card')), e);
+                            return null == e || e.unshift((0, l.jsx)(eZ.Bw, {}, 'create-playlist-card')), e;
                         }, [null == d ? void 0 : d.items]);
                     return (0, l.jsx)(g.OY, {
                         className: m,
@@ -5374,7 +5374,7 @@
                                     let t = (null == U ? void 0 : U.endPositionSec) || 0,
                                         a = e.position,
                                         i = a - ((null == Y ? void 0 : Y.endPositionSec) || 0);
-                                    (null == U || U.updateEndPositionSec(t + i), null == Y || Y.updateEndPositionSec(a));
+                                    null == U || U.updateEndPositionSec(t + i), null == Y || Y.updateEndPositionSec(a);
                                 }
                             },
                             [X.streamProgress, U, Y, $],
@@ -5446,14 +5446,14 @@
                                 null == T
                                     ? void 0
                                     : T.state.queueState.currentEntity.onChange(() => {
-                                          (null == e || e(),
+                                          null == e || e(),
                                               (e = T.state.playerState.progress.onChange(() => {
                                                   let e = T.state.playerState.progress.value;
                                                   H && et(e);
-                                              })));
+                                              }));
                                       });
                         return () => {
-                            (null == t || t(), null == e || e());
+                            null == t || t(), null == e || e();
                         };
                     }, [T, et, H, X.streamProgress]);
                     let er = $ ? X.mainAlbum.title : X.title,
@@ -5653,10 +5653,10 @@
                         o = (0, _.ZpR)(t.artist.url),
                         n = (0, _.NKK)(),
                         d = (0, c.c)(() => {
-                            (n({ to: I.QT.ArtistScreen }), o());
+                            n({ to: I.QT.ArtistScreen }), o();
                         }),
                         m = (0, c.c)(() => {
-                            (n({ to: I.QT.Link, deepLink: s }), r());
+                            n({ to: I.QT.Link, deepLink: s }), r();
                         }),
                         u = (0, j.SA)({ artist: t.artist, callback: d });
                     return (0, l.jsx)(tx.Xx, {
@@ -6303,7 +6303,7 @@
                         }),
                         m = (0, n.useCallback)(
                             (e) => {
-                                ((0, H.P)(e, ap().ripple), c());
+                                (0, H.P)(e, ap().ripple), c();
                             },
                             [c],
                         ),
@@ -6480,11 +6480,11 @@
                     { from: R, utmLink: P } = (0, _.fyy)({ contextId: s.id, contextType: y.K.Album }),
                     f = (0, _.NKK)(),
                     w = (0, c.c)((e) => {
-                        (f({ to: I.QT.ArtistScreen, objectId: null == u ? void 0 : u.id, objectType: I.ky.Artist }), T(e));
+                        f({ to: I.QT.ArtistScreen, objectId: null == u ? void 0 : u.id, objectType: I.ky.Artist }), T(e);
                     }),
                     K = (0, c.c)((e) => {
                         if (x()) {
-                            (e.stopPropagation(), e.preventDefault());
+                            e.stopPropagation(), e.preventDefault();
                             return;
                         }
                         (null == s ? void 0 : s.id) && (e.stopPropagation(), p.openAlbumTrailer(s.id), L(I.ky.Album, String(s.id)));
@@ -6940,7 +6940,7 @@
                         () => (
                             C.shouldUpdateHistory && (u(), C.setShouldUpdateHistory(!1)),
                             () => {
-                                (C.hasCleared && u(), C.reset());
+                                C.hasCleared && u(), C.reset();
                             }
                         ),
                         [C, u],
@@ -7646,7 +7646,7 @@
                         w = (0, _.fBs)(),
                         { settings: K, experiments: O } = (0, _.Pjs)(),
                         M = !O.checkExperiment(_.zal.WebNextVirtualSkeleton, 'on') && K.browserInfo && !K.browserInfo.isSafari;
-                    ((0, n.useEffect)(() => {
+                    (0, n.useEffect)(() => {
                         (i || !y) && g && (0, b.v)(E) && t.getBlock(a);
                     }, [a, i, g, y, t, E]),
                         (0, n.useEffect)(() => {
@@ -7654,7 +7654,7 @@
                         }, [T, I, o]),
                         (0, n.useEffect)(() => {
                             !k && T && (w(), x(!0));
-                        }, [k, T, w, x]));
+                        }, [k, T, w, x]);
                     let D = (0, v.L)(() => {
                         if (((e) => !!(e && 'object' == typeof e && 'current' in e))(r)) {
                             var e;
@@ -7777,25 +7777,25 @@
                         { notify: i, dismiss: s } = (0, _.lkh)(),
                         r = (0, n.useRef)(void 0),
                         o = (0, c.c)(() => {
-                            (a.blocks.forEach((e) => {
+                            a.blocks.forEach((e) => {
                                 e.isRejected && (0, b.v)(e.meta) && t.getBlock(e);
                             }),
                                 s({ notificationId: r.current }),
-                                a.setShouldReloadNotification(!1));
+                                a.setShouldReloadNotification(!1);
                         });
-                    ((0, n.useEffect)(() => {
+                    (0, n.useEffect)(() => {
                         a.hasErrorBlocks &&
                             !a.shouldReloadNotification &&
                             setTimeout(() => {
-                                ((r.current = i((0, l.jsx)(g.LV, { reloadBlocks: o }), { containerId: _.uQT.ERROR, autoClose: !1 })), a.setShouldReloadNotification(!0));
+                                (r.current = i((0, l.jsx)(g.LV, { reloadBlocks: o }), { containerId: _.uQT.ERROR, autoClose: !1 })), a.setShouldReloadNotification(!0);
                             });
                     }, [i, o, a.hasErrorBlocks, a.shouldReloadNotification, a]),
                         (0, n.useEffect)(
                             () => () => {
-                                (s(), (0, iR._n)(a) && a.setShouldReloadNotification(!1));
+                                s(), (0, iR._n)(a) && a.setShouldReloadNotification(!1);
                             },
                             [s, a],
-                        ));
+                        );
                 },
                 iw = (0, r.PA)((e) => {
                     var t;
@@ -7959,11 +7959,11 @@
                         [p, v] = (0, n.useState)(() => Array.from({ length: s.blocks.length }, (e, t) => t)),
                         A = (0, c.c)(() => {
                             let e = [];
-                            (s.blocks.forEach((t, a) => {
+                            s.blocks.forEach((t, a) => {
                                 var i;
                                 (t.isVisible || ((null == (i = t.meta) ? void 0 : i.showPolicy) === iK.E.LOAD_AND_SHOW && t.isNeededToLoad)) && e.push(a);
                             }),
-                                v(e));
+                                v(e);
                         }),
                         C = (0, c.c)((e) => {
                             let t = p[e];
@@ -7984,7 +7984,7 @@
                             a = s.blocks.findIndex((e) => e.id === t);
                         if (!p.includes(a)) return;
                         let i = null == (e = T.getOffsetForIndex(a, 'center')) ? void 0 : e[0];
-                        (T.scrollToIndex(a, { align: 'center', behavior: 'auto' }), T.scrollOffset && i && 100 > Math.abs(T.scrollOffset - i) && (b.current = !1));
+                        T.scrollToIndex(a, { align: 'center', behavior: 'auto' }), T.scrollOffset && i && 100 > Math.abs(T.scrollOffset - i) && (b.current = !1);
                     }, [p, d, s.blocks, T]);
                     let h = T.getTotalSize(),
                         L = T.getVirtualItems();
@@ -8053,7 +8053,7 @@
                         P = x.checkExperiment(_.zal.WebNextVirtualSkeleton, 'on') ? iY : iw,
                         f = (0, c.c)((e) => {
                             var t;
-                            (R ? window.scrollTo(0, 0) : k && (k.scrollTop = 0), null == (t = b.onTabChange) || t.call(b, e));
+                            R ? window.scrollTo(0, 0) : k && (k.scrollTop = 0), null == (t = b.onTabChange) || t.call(b, e);
                         });
                     return (0, l.jsxs)(l.Fragment, {
                         children: [
@@ -8321,10 +8321,10 @@
         72094: (e, t, a) => {
             'use strict';
             var i;
-            (a.d(t, { l: () => i }),
+            a.d(t, { l: () => i }),
                 (function (e) {
-                    ((e.PLAYLIST_LIKED_TAB = 'liked_playlist_tab'), (e.PLAYLIST_CREATED_TAB = 'created_playlist_tab'));
-                })(i || (i = {})));
+                    (e.PLAYLIST_LIKED_TAB = 'liked_playlist_tab'), (e.PLAYLIST_CREATED_TAB = 'created_playlist_tab');
+                })(i || (i = {}));
         },
         72310: (e) => {
             e.exports = {
@@ -8350,10 +8350,10 @@
         75460: (e, t, a) => {
             'use strict';
             var i;
-            (a.d(t, { R: () => i }),
+            a.d(t, { R: () => i }),
                 (function (e) {
-                    ((e.RADIAL = 'RADIAL'), (e.STACK = 'STACK'));
-                })(i || (i = {})));
+                    (e.RADIAL = 'RADIAL'), (e.STACK = 'STACK');
+                })(i || (i = {}));
         },
         77503: (e) => {
             e.exports = { root: 'VirtualizedSkeletonBlock_root__njUFa' };
@@ -8838,14 +8838,14 @@
                             _.current ||
                                 (_.current = new ResizeObserver((e) => {
                                     let t = !1;
-                                    (e.forEach((e) => {
+                                    e.forEach((e) => {
                                         let a = e.target.getAttribute('data-index');
                                         if (e.target && a) {
                                             let i = e.contentRect.height;
                                             i && i !== u.current.get(a) && (u.current.set(a, e.contentRect.height), (t = !0));
                                         }
                                     }),
-                                        t && A());
+                                        t && A();
                                 }));
                         }, [A]),
                         { virtualizer: v, resizeObserver: _.current }
@@ -8978,10 +8978,10 @@
         97464: (e, t, a) => {
             'use strict';
             var i;
-            (a.d(t, { n: () => i }),
+            a.d(t, { n: () => i }),
                 (function (e) {
-                    ((e.ALBUM = 'album_tab'), (e.PRESAVED_ALBUM = 'presaved_album_tab'));
-                })(i || (i = {})));
+                    (e.ALBUM = 'album_tab'), (e.PRESAVED_ALBUM = 'presaved_album_tab');
+                })(i || (i = {}));
         },
         99046: (e) => {
             e.exports = {
@@ -9034,7 +9034,7 @@
                 p = a(46697),
                 v = a.n(p),
                 A = (function (e) {
-                    return ((e.SPACE = 'Space'), (e.ENTER = 'Enter'), e);
+                    return (e.SPACE = 'Space'), (e.ENTER = 'Enter'), e;
                 })(A || {});
             let C = (e) => {
                 let { concert: t } = e,
@@ -9134,7 +9134,7 @@
                     }, [S, T, p, N, y, C]),
                     D = (0, s.useCallback)(
                         (e) => {
-                            (k({ to: o.QT.ConcertPurchaseScreen }), R(), null == e || e.stopPropagation());
+                            k({ to: o.QT.ConcertPurchaseScreen }), R(), null == e || e.stopPropagation();
                         },
                         [R, k],
                     ),
@@ -9272,10 +9272,10 @@
         99857: (e, t, a) => {
             'use strict';
             var i;
-            (a.d(t, { z: () => i }),
+            a.d(t, { z: () => i }),
                 (function (e) {
-                    ((e.NONE = 'none'), (e.DEFAULT = 'default'), (e.CUSTOM = 'custom'));
-                })(i || (i = {})));
+                    (e.NONE = 'none'), (e.DEFAULT = 'default'), (e.CUSTOM = 'custom');
+                })(i || (i = {}));
         },
     },
 ]);

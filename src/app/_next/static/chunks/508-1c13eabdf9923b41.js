@@ -89,7 +89,7 @@
                 (0, _.CgZ)(p);
                 let { sendRefreshEvent: x } = (0, _.cYT)(),
                     g = (0, l.useCallback)(() => {
-                        (x(), (window.location.href = _.Zyd.main.href));
+                        x(), (window.location.href = _.Zyd.main.href);
                     }, [x]),
                     { contentRef: h } = (0, _.gKY)();
                 return (0, i.jsxs)('div', {
@@ -222,7 +222,7 @@
                 });
             var g = a(22884),
                 h = (function (e) {
-                    return ((e.GRADIENT = 'branded_playlist_gradient'), e);
+                    return (e.GRADIENT = 'branded_playlist_gradient'), e;
                 })({});
             let f = (0, c.PA)((e) => {
                 let { children: t } = e,
@@ -445,15 +445,15 @@
                                     (i && (i += ' '), (i += t));
                             return i;
                         }
-                        (a.r(t), a.d(t, { clsx: () => i, default: () => r }));
+                        a.r(t), a.d(t, { clsx: () => i, default: () => r });
                         let r = i;
                     },
                     9474: (e, t, a) => {
-                        (a.r(t), a.d(t, { default: () => i }));
+                        a.r(t), a.d(t, { default: () => i });
                         let i = { root: 'LizdJ2L0HW7JWOvPrfly' };
                     },
                     3641: (e, t, a) => {
-                        (a.r(t), a.d(t, { default: () => i }));
+                        a.r(t), a.d(t, { default: () => i });
                         let i = {
                             root_controls_xxs: 'tRaaBpDMg9Qu8v6gKjtn',
                             root_entity_xxs: 'M9zvtlcpLUVn6DKdcHhj',
@@ -476,7 +476,7 @@
                         };
                     },
                     5153: (e, t, a) => {
-                        (a.r(t), a.d(t, { default: () => i }));
+                        a.r(t), a.d(t, { default: () => i });
                         let i = {
                             root_size_xs: 'qJJ288377iHlWN_RXeEE',
                             root_size_s: '_sd8Q9d_Ttn0Ufe4ISWS',
@@ -492,7 +492,7 @@
                         };
                     },
                     5818: (e, t, a) => {
-                        (a.r(t), a.d(t, { default: () => i }));
+                        a.r(t), a.d(t, { default: () => i });
                         let i = {
                             root: '_MWOVuZRvUQdXKTMcOPx',
                             root_clamp: 'LezmJlldtbHWqU7l1950',
@@ -509,7 +509,7 @@
                             else i = t;
                             return { $$typeof: a, type: e, key: r, ref: void 0 !== (t = i.ref) ? t : null, props: i };
                         }
-                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i));
+                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i);
                     },
                     1082: (e, t, a) => {
                         e.exports = a(7327);
@@ -520,7 +520,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Label = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Label = void 0);
                         let r = a(1082),
                             o = a(5881),
                             l = a(2582),
@@ -544,13 +544,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0);
                         let r = a(1082),
                             o = a(5881),
                             l = a(810),
                             n = a(4721),
                             s = i(a(3641));
-                        ((t.CaptionComponent = (e) => {
+                        (t.CaptionComponent = (e) => {
                             let { forwardRef: t, variant: a, type: i = 'text', size: l = 's', className: d, children: c, weight: u = 'medium', ..._ } = e;
                             return (0, r.jsx)(n.Typography, {
                                 variant: a,
@@ -560,7 +560,7 @@
                                 children: c,
                             });
                         }),
-                            (t.Caption = (0, l.forwardRef)((e, a) => (0, r.jsx)(t.CaptionComponent, { forwardRef: a, ...e }))));
+                            (t.Caption = (0, l.forwardRef)((e, a) => (0, r.jsx)(t.CaptionComponent, { forwardRef: a, ...e })));
                     },
                     404: function (e, t, a) {
                         var i =
@@ -568,13 +568,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.HeadingComponent = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.HeadingComponent = void 0);
                         let r = a(1082),
                             o = a(5881),
                             l = a(810),
                             n = a(4721),
                             s = i(a(5153));
-                        ((t.HeadingComponent = (e) => {
+                        (t.HeadingComponent = (e) => {
                             let { forwardRef: t, variant: a, weight: i = 'bold', size: l = 's', className: d, children: c, ...u } = e;
                             return (0, r.jsx)(n.Typography, {
                                 variant: a,
@@ -584,7 +584,7 @@
                                 children: c,
                             });
                         }),
-                            (t.Heading = (0, l.forwardRef)((e, a) => (0, r.jsx)(t.HeadingComponent, { forwardRef: a, ...e }))));
+                            (t.Heading = (0, l.forwardRef)((e, a) => (0, r.jsx)(t.HeadingComponent, { forwardRef: a, ...e })));
                     },
                     4721: function (e, t, a) {
                         var i =
@@ -592,7 +592,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0);
                         let r = a(1082),
                             o = a(5881),
                             l = a(810),
@@ -613,10 +613,10 @@
                                 children: l,
                             });
                         }
-                        ((t.TypographyComponent = s), (t.Typography = (0, l.forwardRef)((e, t) => (0, r.jsx)(s, { forwardRef: t, ...e }))));
+                        (t.TypographyComponent = s), (t.Typography = (0, l.forwardRef)((e, t) => (0, r.jsx)(s, { forwardRef: t, ...e })));
                     },
                     2582: (e, t, a) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.Caption = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.Caption = void 0);
                         var i = a(7743);
                         Object.defineProperty(t, 'Caption', {
                             enumerable: !0,
@@ -641,19 +641,19 @@
                 var t = u[e];
                 if (void 0 !== t) return t.exports;
                 var a = (u[e] = { exports: {} });
-                return (c[e].call(a.exports, a, a.exports, _), a.exports);
+                return c[e].call(a.exports, a, a.exports, _), a.exports;
             }
-            ((_.d = (e, t) => {
+            (_.d = (e, t) => {
                 for (var a in t) _.o(t, a) && !_.o(e, a) && Object.defineProperty(e, a, { enumerable: !0, get: t[a] });
             }),
                 (_.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (_.r = (e) => {
-                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 }));
-                }));
+                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 });
+                });
             var m = {};
             (() => {
-                (Object.defineProperty(m, '__esModule', { value: !0 }), (m.Label = void 0));
+                Object.defineProperty(m, '__esModule', { value: !0 }), (m.Label = void 0);
                 var e = _(2);
                 Object.defineProperty(m, 'Label', {
                     enumerable: !0,
@@ -698,7 +698,7 @@
                         (e) => {
                             if (d && ['Enter', 'Escape'].includes(e.key)) {
                                 var t;
-                                ('Escape' === e.key && (p.current = !0), null == (t = e.currentTarget) || t.blur());
+                                'Escape' === e.key && (p.current = !0), null == (t = e.currentTarget) || t.blur();
                             }
                         },
                         [d],
@@ -707,7 +707,7 @@
                         let e = _.trim();
                         p.current || (l && e.length < l) ? ((p.current = !1), null == u || u(a)) : null == u || u(e);
                     }, [_, p, l, u, a]);
-                ((0, n.useEffect)(() => {
+                (0, n.useEffect)(() => {
                     v.current && ((v.current.selectionStart = v.current.value.length), (v.current.selectionEnd = v.current.value.length));
                 }, []),
                     (0, n.useLayoutEffect)(() => {
@@ -717,7 +717,7 @@
                             let t = e.scrollHeight;
                             e.style.height = ''.concat(t, 'px');
                         }
-                    }, [v, _]));
+                    }, [v, _]);
                 let f = (0, n.useMemo)(() => ('textarea' === s ? (e) => (0, r.jsx)('textarea', { ref: v, rows: 6, ...e }) : (e) => (0, r.jsx)('input', { ...e })), [s]);
                 return (0, r.jsx)(f, {
                     className: (0, o.$)(N().root, t, { [N().root_textarea]: 'textarea' === s }),
@@ -757,7 +757,7 @@
                         I = t.length + c.length > 25,
                         M = (0, j.ZpR)(null != x ? x : ''),
                         S = (0, f.c)((e) => {
-                            (null == g || g(), M(e));
+                            null == g || g(), M(e);
                         }),
                         R = (0, n.useMemo)(
                             () =>
@@ -771,11 +771,11 @@
                         D = !k && i && T,
                         E = (0, n.useCallback)(() => {
                             var e;
-                            (H(!0), null == (e = B.current) || e.focus());
+                            H(!0), null == (e = B.current) || e.focus();
                         }, []),
                         z = (0, n.useCallback)(
                             (e) => {
-                                (H(!1), null == l || l(e));
+                                H(!1), null == l || l(e);
                             },
                             [l],
                         ),
@@ -1102,7 +1102,7 @@
                     a = t.filter((e) => !e.various),
                     i = e.filter((e) => e.isComposer && !e.various),
                     r = [];
-                return (a.length > 0 ? (r = a) : t.length > 0 && (r = t), r.concat(i));
+                return a.length > 0 ? (r = a) : t.length > 0 && (r = t), r.concat(i);
             };
             var q = a(33586),
                 X = a.n(q);
@@ -1206,7 +1206,7 @@
                         R = (0, f.c)(() => {
                             if (!v()) {
                                 if (c && !T) return void u();
-                                (M(), _(!B));
+                                M(), _(!B);
                             }
                         }),
                         D = (0, n.useMemo)(
@@ -1285,7 +1285,7 @@
                         s = (0, es.CC)(),
                         { ref: d, intersectionPropertyId: c } = (0, j.nMI)({ callback: s, withViewUuid: !0 }),
                         u = (0, f.c)((e) => {
-                            (n(U.QT.Link, t), l(e));
+                            n(U.QT.Link, t), l(e);
                         });
                     return (0, r.jsx)('div', {
                         ref: o,
@@ -1309,7 +1309,7 @@
                         d = (0, j.zzi)({ id: j.hCo.ARTIST_DONATION_BUTTON, ref: l }),
                         [c, u] = (0, n.useState)(d),
                         _ = (0, n.useCallback)(() => {
-                            (u(!1), o(!1));
+                            u(!1), o(!1);
                         }, [o]),
                         m = (0, n.useCallback)(
                             (e) => {
@@ -1423,7 +1423,7 @@
                         ec = (0, f.c)(() => {
                             if (!V()) {
                                 if (y) return void P();
-                                (el(), W(!eo));
+                                el(), W(!eo);
                             }
                         }),
                         e_ = (0, n.useMemo)(() => {
@@ -1768,10 +1768,10 @@
                         T.current || (w(), (T.current = !0));
                     }, [w]);
                     let H = (0, f.c)((e) => {
-                            (x(), null == e || e.stopPropagation());
+                            x(), null == e || e.stopPropagation();
                         }),
                         B = (0, f.c)((e) => {
-                            (P({ to: U.QT.ConcertPurchaseScreen }), H(e), e.preventDefault());
+                            P({ to: U.QT.ConcertPurchaseScreen }), H(e), e.preventDefault();
                         }),
                         M = (0, f.c)(() => {
                             P({ to: U.QT.ShareScreen });
@@ -1908,11 +1908,11 @@
                                     (i && (i += ' '), (i += t));
                             return i;
                         }
-                        (a.r(t), a.d(t, { clsx: () => i, default: () => r }));
+                        a.r(t), a.d(t, { clsx: () => i, default: () => r });
                         let r = i;
                     },
                     4092: (e, t, a) => {
-                        (a.r(t), a.d(t, { default: () => i }));
+                        a.r(t), a.d(t, { default: () => i });
                         let i = { root: 'sLuudThzDxW_5ARYjgjx', horizontal: 'xd6ji7lvp0et4nirt0TL', hasLabel: 'abbPp8VtL2D_PdW0Q_Wc', vertical: 'sMz62rSqViFDkXAMfGeO' };
                     },
                     7327: (e, t) => {
@@ -1924,7 +1924,7 @@
                             else i = t;
                             return { $$typeof: a, type: e, key: r, ref: void 0 !== (t = i.ref) ? t : null, props: i };
                         }
-                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i));
+                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i);
                     },
                     1082: (e, t, a) => {
                         e.exports = a(7327);
@@ -1935,7 +1935,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Divider = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Divider = void 0);
                         let r = a(1082),
                             o = a(5881),
                             l = i(a(4092));
@@ -1957,19 +1957,19 @@
                 var t = eL[e];
                 if (void 0 !== t) return t.exports;
                 var a = (eL[e] = { exports: {} });
-                return (eT[e].call(a.exports, a, a.exports, eH), a.exports);
+                return eT[e].call(a.exports, a, a.exports, eH), a.exports;
             }
-            ((eH.d = (e, t) => {
+            (eH.d = (e, t) => {
                 for (var a in t) eH.o(t, a) && !eH.o(e, a) && Object.defineProperty(e, a, { enumerable: !0, get: t[a] });
             }),
                 (eH.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (eH.r = (e) => {
-                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 }));
-                }));
+                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 });
+                });
             var eB = {};
             (() => {
-                (Object.defineProperty(eB, '__esModule', { value: !0 }), (eB.Divider = void 0));
+                Object.defineProperty(eB, '__esModule', { value: !0 }), (eB.Divider = void 0);
                 var e = eH(5455);
                 Object.defineProperty(eB, 'Divider', {
                     enumerable: !0,
@@ -2022,7 +2022,7 @@
                         Q = (0, f.c)(() => {
                             if (!T()) {
                                 if (_) return void m();
-                                (W(), w(!F));
+                                W(), w(!F);
                             }
                         }),
                         K = (0, n.useMemo)(
@@ -2151,10 +2151,10 @@
                             return;
                         }
                         if (m) return void _(!0);
-                        (null == s || s.download(t), c.count(j.xQR.MY_FAVORITES_PLAYLIST_DOWNLOAD, j.l6e));
+                        null == s || s.download(t), c.count(j.xQR.MY_FAVORITES_PLAYLIST_DOWNLOAD, j.l6e);
                     }),
                     y = (0, f.c)(() => {
-                        (null == s || s.delete(t), c.count(j.xQR.MY_FAVORITES_PLAYLIST_DELETE, j.l6e), null == i || i());
+                        null == s || s.delete(t), c.count(j.xQR.MY_FAVORITES_PLAYLIST_DELETE, j.l6e), null == i || i();
                     }),
                     P = (0, n.useMemo)(
                         () =>
@@ -2264,10 +2264,10 @@
                     }),
                     R = (0, f.c)((e) => {
                         var t;
-                        (null == e || e.stopPropagation(), null == p || null == (t = p.current) || t.click());
+                        null == e || e.stopPropagation(), null == p || null == (t = p.current) || t.click();
                     }),
                     D = (0, f.c)((e) => {
-                        (e.stopPropagation(), 'Enter' === e.key && R());
+                        e.stopPropagation(), 'Enter' === e.key && R();
                     }),
                     E = (0, f.c)((e) => {
                         e.stopPropagation();
@@ -2277,15 +2277,15 @@
                             a = e.target,
                             i = (a.files || [])[0] || null;
                         if (((a.value = ''), !i || ((t = i.type), !e0.includes(t)) || !((e) => e > 0 && e <= 2e7)(i.size))) return void M();
-                        (v && T(v), y(!1), x(URL.createObjectURL(i)));
+                        v && T(v), y(!1), x(URL.createObjectURL(i));
                         let r = new FormData();
-                        (r.append('image', i), P(r));
+                        r.append('image', i), P(r);
                     }),
                     O = (0, n.useCallback)(
                         async (e) => {
                             let t = e.target,
                                 i = () => {
-                                    (x(w), M(), y(!0));
+                                    x(w), M(), y(!0);
                                 };
                             if ((c && (t.currentSrc === k || t.currentSrc === N)) || !u || w === t.currentSrc) return;
                             if (
@@ -2299,7 +2299,7 @@
                                 return void i();
                             H(!0);
                             let r = await a.changePlaylistCover(C);
-                            (H(!1), r === j.FlZ.ERROR ? i() : y(!0));
+                            H(!1), r === j.FlZ.ERROR ? i() : y(!0);
                         },
                         [M, w, a, C, c, u, k, N],
                     ),
@@ -2436,9 +2436,9 @@
                         { state: u, toggleTrue: _, toggleFalse: m } = (0, ey.e)(!1),
                         [p, x] = (0, n.useState)(t.description || ''),
                         g = (0, n.useCallback)(async () => {
-                            (m(),
+                            m(),
                                 (await t.changeDescription(p)) === j.FlZ.ERROR &&
-                                    l((0, r.jsx)(A.hT, { error: a({ id: 'playlist-errors.failed-to-change-description' }) }), { containerId: j.uQT.ERROR }));
+                                    l((0, r.jsx)(A.hT, { error: a({ id: 'playlist-errors.failed-to-change-description' }) }), { containerId: j.uQT.ERROR });
                         }, [a, p, l, t, m]),
                         f = (0, n.useCallback)((e) => {
                             x(e);
@@ -2571,7 +2571,7 @@
                     s = (0, n.useCallback)(
                         (e) => {
                             let a = e.target.files;
-                            (a && a.length > 0 && i.appendFiles([...a], t), (e.target.value = ''));
+                            a && a.length > 0 && i.appendFiles([...a], t), (e.target.value = '');
                         },
                         [t, i],
                     );
@@ -2803,7 +2803,7 @@
                         em = (0, f.c)(() => {
                             if (!G()) {
                                 if (u) return void _();
-                                (ec(), J(!ed), g.setPlaylistFilter(P), eu ? Z() : X());
+                                ec(), J(!ed), g.setPlaylistFilter(P), eu ? Z() : X();
                             }
                         });
                     (0, n.useEffect)(() => {
@@ -2878,7 +2878,7 @@
                         }, [o]),
                         ef = (0, n.useMemo)(() => M({ id: 'entity-names.likes-count-description' }, { count: o.actualLikesCount }), [M, o.actualLikesCount]),
                         ey = (0, f.c)(() => {
-                            (O(), o.isLiked ? $() : q());
+                            O(), o.isLiked ? $() : q();
                         }),
                         eb = (0, y.L)(() => {
                             if (!o.isFavouritePlaylist)

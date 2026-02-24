@@ -1,4 +1,4 @@
-((self.__BUILD_MANIFEST = (function (e, r, t) {
+(self.__BUILD_MANIFEST = (function (e, r, t) {
     return {
         __rewrites: { afterFiles: [], beforeFiles: [], fallback: [] },
         __routerFilterStatic: {
@@ -1529,4 +1529,4 @@
         sortedPages: ['/_app', '/_error'],
     };
 })(1, 0, 1e-4)),
-    self.__BUILD_MANIFEST_CB && self.__BUILD_MANIFEST_CB());
+    self.__BUILD_MANIFEST_CB && self.__BUILD_MANIFEST_CB();

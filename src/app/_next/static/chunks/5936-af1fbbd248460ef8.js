@@ -96,7 +96,7 @@
                     );
                 };
             var l = (function (e) {
-                return ((e.DIVERSITY = 'diversity'), (e.MOOD_ENERGY = 'moodEnergy'), (e.LANGUAGE = 'language'), e);
+                return (e.DIVERSITY = 'diversity'), (e.MOOD_ENERGY = 'moodEnergy'), (e.LANGUAGE = 'language'), e;
             })({});
             let c = s.gK.model('ContextItem', {
                     title: s.gK.string,
@@ -124,23 +124,23 @@
                                     var c, u, d, p;
                                     e.loadingState = n.GuX.PENDING;
                                     let a = yield i.waveSettings(t);
-                                    ((null == a || null == (c = a.settingRestrictions) ? void 0 : c.diversity) &&
+                                    (null == a || null == (c = a.settingRestrictions) ? void 0 : c.diversity) &&
                                         (e.diversity = r(l.DIVERSITY, a.settingRestrictions.diversity)),
                                         (null == a || null == (u = a.settingRestrictions) ? void 0 : u.moodEnergy) &&
                                             (e.moodEnergy = r(l.MOOD_ENERGY, a.settingRestrictions.moodEnergy)),
                                         (null == a || null == (d = a.settingRestrictions) ? void 0 : d.language) &&
-                                            (e.language = r(l.LANGUAGE, a.settingRestrictions.language)));
+                                            (e.language = r(l.LANGUAGE, a.settingRestrictions.language));
                                     let g =
                                         Array.isArray(null == a ? void 0 : a.blocks) &&
                                         (null == a || null == (p = a.blocks) ? void 0 : p.find((e) => (null == e ? void 0 : e.type) === 'contexts'));
-                                    (g && Array.isArray(g.items) && (e.contextItems = (0, s.wg)(g.items.map(o))),
-                                        e.loadingState !== n.GuX.IDLE && (e.loadingState = n.GuX.RESOLVE));
+                                    g && Array.isArray(g.items) && (e.contextItems = (0, s.wg)(g.items.map(o))),
+                                        e.loadingState !== n.GuX.IDLE && (e.loadingState = n.GuX.RESOLVE);
                                 } catch (t) {
-                                    (a.error(t), e.loadingState !== n.GuX.IDLE && (e.loadingState = n.GuX.REJECT));
+                                    a.error(t), e.loadingState !== n.GuX.IDLE && (e.loadingState = n.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            ((e.loadingState = n.GuX.IDLE), (e.contextItems = (0, s.wg)([])), (e.diversity = null), (e.moodEnergy = null), (e.language = null));
+                            (e.loadingState = n.GuX.IDLE), (e.contextItems = (0, s.wg)([])), (e.diversity = null), (e.moodEnergy = null), (e.language = null);
                         },
                     }));
             var g = i(33008),
@@ -153,7 +153,7 @@
                 y = i(42213),
                 S = {
                     7672: (e, t, i) => {
-                        (i.r(t), i.d(t, { DOWN: () => r, LEFT: () => s, RIGHT: () => a, UP: () => o, useSwipeable: () => g }));
+                        i.r(t), i.d(t, { DOWN: () => r, LEFT: () => s, RIGHT: () => a, UP: () => o, useSwipeable: () => g });
                         var n = i(810);
                         let s = 'Left',
                             a = 'Right',
@@ -232,7 +232,7 @@
                                                         velocity: f,
                                                         vxvy: N,
                                                     };
-                                                    (j.first && i.onSwipeStart && i.onSwipeStart(j), i.onSwiping && i.onSwiping(j));
+                                                    j.first && i.onSwipeStart && i.onSwipeStart(j), i.onSwiping && i.onSwiping(j);
                                                     let O = !1;
                                                     return (
                                                         (i.onSwiping || i.onSwiped || i['onSwiped'.concat(T)]) && (O = !0),
@@ -246,7 +246,7 @@
                                                     let n;
                                                     if (e.swiping && e.eventData) {
                                                         if (t.timeStamp - e.start < i.swipeDuration) {
-                                                            ((n = Object.assign(Object.assign({}, e.eventData), { event: t })), i.onSwiped && i.onSwiped(n));
+                                                            (n = Object.assign(Object.assign({}, e.eventData), { event: t })), i.onSwiped && i.onSwiped(n);
                                                             let s = i['onSwiped'.concat(n.dir)];
                                                             s && s(n);
                                                         }
@@ -258,7 +258,7 @@
                                                 });
                                             },
                                             m = (e) => {
-                                                (document.removeEventListener(u, n), document.removeEventListener(d, m), g(e));
+                                                document.removeEventListener(u, n), document.removeEventListener(d, m), g(e);
                                             },
                                             b = (e, t) => {
                                                 let s = () => {};
@@ -269,7 +269,7 @@
                                                             ['touchmove', n, Object.assign(Object.assign({}, a), t.preventScrollOnSwipe ? { passive: !1 } : {})],
                                                             ['touchend', g, a],
                                                         ];
-                                                    (o.forEach((t) => {
+                                                    o.forEach((t) => {
                                                         let [i, n, s] = t;
                                                         return e.addEventListener(i, n, s);
                                                     }),
@@ -277,7 +277,7 @@
                                                             o.forEach((t) => {
                                                                 let [i, n] = t;
                                                                 return e.removeEventListener(i, n);
-                                                            })));
+                                                            }));
                                                 }
                                                 return s;
                                             },
@@ -295,7 +295,7 @@
                                                         });
                                                 },
                                             };
-                                        return (t.trackMouse && (_.onMouseDown = i), [_, b]);
+                                        return t.trackMouse && (_.onMouseDown = i), [_, b];
                                     })((e) => (_.current = e(_.current, v.current)), { trackMouse: b }),
                                 [b],
                             );
@@ -316,7 +316,7 @@
                         }
                     },
                     8691: (e, t, i) => {
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useCallbackRef = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useCallbackRef = void 0);
                         let n = i(810);
                         t.useCallbackRef = function (e) {
                             let t = (0, n.useRef)({
@@ -336,11 +336,11 @@
                     },
                     1381: (e, t, i) => {
                         var n;
-                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useComponentSwipeable = t.SwipeablePlacement = void 0));
+                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useComponentSwipeable = t.SwipeablePlacement = void 0);
                         let s = i(7672),
                             a = i(8691);
                         !(function (e) {
-                            ((e.TOP = 'top'), (e.BOTTOM = 'bottom'), (e.RIGHT = 'right'), (e.LEFT = 'left'));
+                            (e.TOP = 'top'), (e.BOTTOM = 'bottom'), (e.RIGHT = 'right'), (e.LEFT = 'left');
                         })(n || (t.SwipeablePlacement = n = {}));
                         let o = (e) => {
                                 let { ref: t, deltaY: i, deltaX: s, placement: a } = e;
@@ -412,19 +412,19 @@
                 var t = E[e];
                 if (void 0 !== t) return t.exports;
                 var i = (E[e] = { exports: {} });
-                return (S[e](i, i.exports, f), i.exports);
+                return S[e](i, i.exports, f), i.exports;
             }
-            ((f.d = (e, t) => {
+            (f.d = (e, t) => {
                 for (var i in t) f.o(t, i) && !f.o(e, i) && Object.defineProperty(e, i, { enumerable: !0, get: t[i] });
             }),
                 (f.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (f.r = (e) => {
-                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 }));
-                }));
+                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 });
+                });
             var N = {};
-            ((() => {
-                (Object.defineProperty(N, '__esModule', { value: !0 }), (N.usePopoverSwipeable = void 0));
+            (() => {
+                Object.defineProperty(N, '__esModule', { value: !0 }), (N.usePopoverSwipeable = void 0);
                 let e = f(810),
                     t = f(1381);
                 N.usePopoverSwipeable = (i) => {
@@ -450,7 +450,7 @@
                     return (0, t.useComponentSwipeable)({ ref: n, swipeableProps: s, onClose: a, disableSwipe: o, placement: c, threshold: l });
                 };
             })(),
-                N.__esModule);
+                N.__esModule;
             var T = N.usePopoverSwipeable,
                 B = i(45415),
                 j = i(88485),
@@ -519,7 +519,7 @@
                     ariaLabel: g,
                     ariaPressed: d,
                     onClickHandler: (0, b.useCallback)(async () => {
-                        (l.setApplyingSetting(a), await c(a, r), l.setApplyingSetting());
+                        l.setApplyingSetting(a), await c(a, r), l.setApplyingSetting();
                     }, [c, r, a, l]),
                 };
             };
@@ -717,7 +717,7 @@
                     V = (0, y.c)((e) => {
                         if (!o.isApplying) {
                             var t;
-                            (d.current && (0, j.P)(e, $().ripple, d.current), _(), null == (t = p.current) || t.focus());
+                            d.current && (0, j.P)(e, $().ripple, d.current), _(), null == (t = p.current) || t.focus();
                         }
                     }),
                     L = (0, b.useMemo)(() => {
@@ -880,11 +880,11 @@
                     { clipIds: L, activeClipIndex: G } = (0, y.V1)(P, V),
                     U = (0, E.df)(),
                     K = (0, E.Cc)();
-                ((0, r.useLayoutEffect)(() => {
+                (0, r.useLayoutEffect)(() => {
                     t && U && (K(L, G), O.setOpenedFromMain());
                 }, [t, U, O, L, G, K]),
                     (0, r.useEffect)(() => () => i.landing.reset(), [i.landing]),
-                    (0, f.Jzs)(i.landing.isResolved));
+                    (0, f.Jzs)(i.landing.isResolved);
                 let z = T.checkExperiment(f.zal.WebNextDisableVibe, 'on'),
                     D = (0, r.useCallback)(() => {
                         j.isReady && j.modal.open();
@@ -999,20 +999,20 @@
                             try {
                                 e.loadingState = o.GuX.PENDING;
                                 let i = yield t.waveLast();
-                                ((e.meta = (0, a.lb)(i)), (e.loadingState = o.GuX.RESOLVE));
+                                (e.meta = (0, a.lb)(i)), (e.loadingState = o.GuX.RESOLVE);
                             } catch (t) {
-                                (i.error(t), (e.loadingState = o.GuX.REJECT));
+                                i.error(t), (e.loadingState = o.GuX.REJECT);
                             }
                     }),
                     vibeReset: (0, s.L3)(function* () {
                         let { rotorResource: t, modelActionsLogger: i } = (0, s._$)(e);
                         if (e.vibeResetLoadingState !== o.GuX.PENDING)
                             try {
-                                ((e.vibeResetLoadingState = o.GuX.PENDING),
+                                (e.vibeResetLoadingState = o.GuX.PENDING),
                                     (yield t.waveLastReset()) === n.OK && (e.meta = (0, a.lb)({ name: '', seeds: [o.M19] })),
-                                    (e.vibeResetLoadingState = o.GuX.RESOLVE));
+                                    (e.vibeResetLoadingState = o.GuX.RESOLVE);
                             } catch (t) {
-                                (i.error(t), (e.vibeResetLoadingState = o.GuX.REJECT));
+                                i.error(t), (e.vibeResetLoadingState = o.GuX.REJECT);
                             }
                     }),
                     setApplyingSetting(t) {
@@ -1025,7 +1025,7 @@
                         e.meta = (0, a.lb)(t);
                     },
                     reset() {
-                        ((e.meta = null), (e.vibeResetLoadingState = o.GuX.IDLE), (e.loadingState = o.GuX.IDLE));
+                        (e.meta = null), (e.vibeResetLoadingState = o.GuX.IDLE), (e.loadingState = o.GuX.IDLE);
                     },
                 }));
             var c = i(33008),
@@ -1067,7 +1067,7 @@
                         v = (0, g.useMemo)(() => (t ? r({ id: 'vibe-actions.aria-label-pause' }) : r({ id: 'vibe-actions.aria-label-play' })), [r, t]),
                         h = (0, g.useCallback)(
                             (e) => {
-                                (a.isApplying || null == i || i(), e.stopPropagation(), e.preventDefault());
+                                a.isApplying || null == i || i(), e.stopPropagation(), e.preventDefault();
                             },
                             [i, a.isApplying],
                         );
@@ -1076,7 +1076,7 @@
                             if ('production' === d && 1 === l.length && O) {
                                 var e, t;
                                 let i = Math.round(performance.now());
-                                (null == (t = window.Ya) || null == (e = t.Rum) || e.sendTimeMark('my-vibe-button-loading-time', i), (O = !1));
+                                null == (t = window.Ya) || null == (e = t.Rum) || e.sendTimeMark('my-vibe-button-loading-time', i), (O = !1);
                             }
                         }, []),
                         (0, c.jsx)(x.Button, {
@@ -1194,7 +1194,7 @@
                         }, [N.isAuthorized, X.authorizationUrl, r, C, w]),
                         Z = (0, g.useCallback)(
                             (e) => {
-                                (e.stopPropagation(), e.preventDefault(), J());
+                                e.stopPropagation(), e.preventDefault(), J();
                             },
                             [J],
                         ),

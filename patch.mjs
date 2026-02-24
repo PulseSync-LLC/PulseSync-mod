@@ -30,7 +30,7 @@ let stats = await import('./data.json').catch(() => {
 
 let isVersion = false;
 const files = fs.readdirSync('./asar/');
-files.forEach(file => {
+files.forEach((file) => {
     if (file === version) isVersion = true;
 });
 
@@ -98,18 +98,12 @@ const versionInfo = packageJson.version;
 // }
 
 if (process.env.GITHUB_ACTIONS) process.exit(0);
-if(args.includes('-y')) copy();
-const answer = readline.question(
-    'Replace app.asar in %localappdata%/Programs/YandexMusic/resources? (y/n)',
-    { limit: ['y', 'n'] }
-);
+if (args.includes('-y')) copy();
+const answer = readline.question('Replace app.asar in %localappdata%/Programs/YandexMusic/resources? (y/n)', { limit: ['y', 'n'] });
 
 if (answer === 'y') copy();
 function copy() {
-    fs.copyFileSync(
-        './build/app.asar',
-        `${process.env.LOCALAPPDATA}/Programs/YandexMusic/resources/app.asar`
-    );
+    fs.copyFileSync('./build/app.asar', `${process.env.LOCALAPPDATA}/Programs/YandexMusic/resources/app.asar`);
     console.log('app.asar replaced');
     process.exit(0);
 }
@@ -120,7 +114,7 @@ function parseChangelog(content) {
     const versions = [];
     let currentVersion = null;
 
-    lines.forEach(line => {
+    lines.forEach((line) => {
         const versionMatch = line.match(/^## \[(.+)\] - (.+)$/);
         if (versionMatch) {
             currentVersion = { version: versionMatch[1], date: versionMatch[2], changes: [] };

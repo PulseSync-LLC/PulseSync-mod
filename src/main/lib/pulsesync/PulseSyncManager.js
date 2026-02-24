@@ -1,6 +1,9 @@
 const { io } = require('socket.io-client');
-const { Logger } = require('../../packages/logger/Logger');
+const net = require('net');
+const EventEmitter = require('node:events');
+const Logger_js_1 = require('../../packages/logger/Logger.js');
 const store_js_1 = require('../store.js');
+const store_js_2 = require('../../types/store.js');
 const { applyCss, removeCss, applyScript, wrapThemeScript } = require('./utils/PulseSyncUtils');
 const { Events } = require('../../types/events');
 const { addAllowedUrls } = require('../handlers/handleHeadersReceived/corsHandler.js');
@@ -12,12 +15,14 @@ function sanitizeId(name) {
 }
 
 let singletonInstance = null;
+const PULSE_SYNC_MANAGER_KEY = Symbol.for('pulsesync.manager.instance');
 
-class PulseSyncManager {
+class PulseSyncManager extends EventEmitter {
     constructor(window) {
+        super();
         this.window = window;
         this.webContents = window.webContents;
-        this.logger = new Logger('PulseSyncManager');
+        this.logger = new Logger_js_1.Logger('PulseSyncManager');
         this.socket = null;
         this.wsUrl = 'http://localhost:2007';
         this.prevExtensions = [];
@@ -32,18 +37,27 @@ class PulseSyncManager {
         this._lastPlayerState = null;
         this.hasReloadedOnTheme = false;
         this._applyInFlight = null;
+        this.reconnectDelaysMs = [5000, 15000, 30000];
+        this.maxReconnectDelayMs = 300000;
+        this.reconnectAttempt = 0;
+        this.reconnectTimer = null;
+        this.isConnecting = false;
+        this.isPremium = false;
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
         this.updateDownloadInfo = this.updateDownloadInfo.bind(this);
         this.readyEvent = this.readyEvent.bind(this);
         this.getEnabledAddons = this.getEnabledAddons.bind(this);
-        this.fromYnisonState = this.fromYnisonState.bind(this);
         this.handlePulseSyncApi = this.handlePulseSyncApi.bind(this);
-
+        this.validatePremium = this.validatePremium.bind(this);
         this.prevExtensions = mergeWithSystem([]);
     }
 
     async injectThemesAndAddons() {
+        if (process.argv.includes('--safe-mode')) {
+            this.logger.warn('Safe mode enabled: skipping theme and addon injection');
+            return;
+        }
         await this.handleExtensions(this.prevExtensions);
         if (this.currentTheme && this.currentTheme.name.toLowerCase() !== 'default') {
             await this.handleTheme(this.currentTheme);
@@ -79,13 +93,102 @@ class PulseSyncManager {
 
     start() {
         this.connectSocket();
+        this.tryConnect();
+        this.validatePremium();
+    }
+
+    clearReconnectTimer() {
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = null;
+        }
+    }
+
+    getReconnectDelayMs(attempt) {
+        if (attempt < this.reconnectDelaysMs.length) {
+            return this.reconnectDelaysMs[attempt];
+        }
+
+        const lastBaseDelay = this.reconnectDelaysMs[this.reconnectDelaysMs.length - 1];
+        const extraStep = attempt - this.reconnectDelaysMs.length + 1;
+        const grownDelay = lastBaseDelay * 2 ** extraStep;
+
+        return Math.min(grownDelay, this.maxReconnectDelayMs);
+    }
+
+    scheduleReconnect(reason = '') {
+        if (this.reconnectTimer) {
+            return;
+        }
+
+        const attemptNumber = this.reconnectAttempt + 1;
+        const delayMs = this.getReconnectDelayMs(this.reconnectAttempt);
+        this.reconnectAttempt += 1;
+
+        const reasonSuffix = reason ? ` (${reason})` : '';
+        this.logger.warn(`Socket reconnect attempt #${attemptNumber} scheduled in ${Math.round(delayMs / 1000)}s${reasonSuffix}`);
+
+        this.reconnectTimer = setTimeout(() => {
+            this.reconnectTimer = null;
+            this.tryConnect();
+        }, delayMs);
+    }
+
+    async isPulseSyncReachable() {
+        try {
+            const parsed = new URL(this.wsUrl);
+            const host = parsed.hostname || 'localhost';
+            const defaultPort = parsed.protocol === 'https:' || parsed.protocol === 'wss:' ? 443 : 80;
+            const port = Number(parsed.port || defaultPort);
+
+            if (!Number.isFinite(port) || port <= 0) {
+                return false;
+            }
+
+            return await new Promise((resolve) => {
+                const socket = net.createConnection({ host, port });
+
+                const finish = (result) => {
+                    socket.removeAllListeners();
+                    socket.destroy();
+                    resolve(result);
+                };
+
+                socket.setTimeout(1500);
+                socket.once('connect', () => finish(true));
+                socket.once('timeout', () => finish(false));
+                socket.once('error', () => finish(false));
+            });
+        } catch (e) {
+            this.logger.warn(`isPulseSyncReachable: invalid wsUrl (${e.message})`);
+            return false;
+        }
+    }
+
+    async tryConnect() {
+        if (!this.socket || this.socket.connected || this.isConnecting) {
+            return;
+        }
+
+        const reachable = await this.isPulseSyncReachable();
+        if (!reachable) {
+            this.scheduleReconnect('PulseSync is not running');
+            return;
+        }
+
+        this.isConnecting = true;
+        this.logger.info('Trying to connect to PulseSync socket');
+        this.socket.connect();
     }
 
     connectSocket() {
+        if (this.socket) {
+            return;
+        }
+
         this.socket = io(this.wsUrl, {
-            reconnection: true,
-            reconnectionAttempts: Infinity,
-            reconnectionDelay: 5000,
+            autoConnect: false,
+            reconnection: false,
             path: '/socket.io',
             transports: ['websocket', 'polling'],
             query: { v: '1', type: 'yaMusic' },
@@ -93,6 +196,10 @@ class PulseSyncManager {
 
         this.socket.on('connect', async () => {
             this.logger.info('Socket.IO connected');
+            this.emit('connected');
+            this.isConnecting = false;
+            this.reconnectAttempt = 0;
+            this.clearReconnectTimer();
             this.hasReloadedOnTheme = false;
 
             if (this.isReloading) {
@@ -108,11 +215,43 @@ class PulseSyncManager {
 
         this.socket.on('disconnect', (reason) => {
             this.logger.warn(`Socket.IO disconnected: ${reason}`);
+            this.isConnecting = false;
             this.readySent = false;
+            this.emit('disconnected', reason);
+            this.scheduleReconnect(reason);
         });
 
         this.socket.on('connect_error', (err) => {
             this.logger.warn(`Socket.IO connect_error: ${err.message}`);
+            this.isConnecting = false;
+            this.scheduleReconnect(err.message);
+        });
+
+        this.socket.on('PREMIUM_CHECK_TOKEN', async (args) => {
+            if (!args?.token) {
+                this.logger.warn('PREMIUM_CHECK_TOKEN: missing token in payload');
+                return;
+            }
+            store_js_1.set(store_js_2.StoreKeys.PREMIUM_CHECK_TOKEN, {
+                token: args.token,
+                expiresAt: args.expiresAt,
+            });
+            try {
+                const res = await fetch('https://ru-node-1.pulsesync.dev/user/subscription/validate', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${args.token}`,
+                    },
+                });
+                const data = await res.json();
+                this.isPremium = Boolean(data?.ok && data?.isPremium);
+                store_js_1.ensureUserPremium(this.isPremium);
+            } catch (error) {
+                this.logger.warn(`PREMIUM_CHECK_TOKEN: validation error (${error.message})`);
+                this.isPremium = false;
+                store_js_1.ensureUserPremium(false);
+            }
         });
 
         this.socket.on('PING', () => {
@@ -194,6 +333,13 @@ class PulseSyncManager {
     }
 
     async handleExtensions(addons) {
+        this.logger.info(process.argv);
+
+        if (process.argv.includes('--safe-mode')) {
+            this.logger.warn('Safe mode enabled: skipping ddon injection');
+            return;
+        }
+
         const merged = mergeWithSystem(Array.isArray(addons) ? addons : []);
 
         const unique = [];
@@ -295,6 +441,13 @@ class PulseSyncManager {
     }
 
     async handleTheme({ css = '', name = 'theme', script = '' }) {
+        this.logger.info(process.argv);
+
+        if (process.argv.includes('--safe-mode')) {
+            this.logger.warn('Safe mode enabled: skipping theme injection');
+            return;
+        }
+
         this.logger.info(`Applying theme: ${name}`);
         let changed = false;
         if (await this.handleCss({ css, name })) changed = true;
@@ -360,39 +513,6 @@ class PulseSyncManager {
         }
     }
 
-    fromYnisonState(rawState) {
-        if (!rawState || !store_js_1.getEnableYnisonForRpc()) {
-            return;
-        }
-        const raw = rawState.rawData;
-        const queue = raw.player_state.player_queue;
-        const cur = queue.playable_list[queue.current_playable_index];
-        if (!cur) {
-            this.logger.warn('fromYnisonState: no current Ynison track');
-            return;
-        }
-        const state = {
-            track: {
-                sourceType: 'ynison',
-                title: cur.title,
-                coverUri: cur.cover_url_optional,
-                id: cur.playable_id,
-                albums: cur.album_id_optional ? [{ id: cur.album_id_optional }] : [],
-                durationMs: parseInt(raw.player_state.status.duration_ms, 10),
-            },
-            ynisonProgress: parseInt(raw.player_state.status.progress_ms, 10),
-            status: raw.player_state.status.paused ? 'paused' : 'playing',
-            devices: raw.devices,
-            currentDevice: raw.devices.find((d) => d.info.device_id === raw.active_device_id_optional),
-        };
-        this._lastPlayerState = state;
-        if (this.socket?.connected) {
-            this.socket.emit('UPDATE_DATA', state);
-        } else {
-            this.logger.warn('fromYnisonState: socket not connected');
-        }
-    }
-
     updateDownloadInfo(downloadInfo) {
         if (!this._lastPlayerState?.track) {
             this.logger.warn('updateDownloadInfo: no track available');
@@ -420,16 +540,65 @@ class PulseSyncManager {
     sendReadyEvent() {
         if (this.socket?.connected) {
             this.socket.emit('READY');
+            this.socket.emit('IS_PREMIUM_USER');
             this.readySent = true;
         } else {
             this.logger.warn('sendReadyEvent: socket not connected, skipping');
         }
     }
+
+    async validatePremium() {
+        const tokenData = store_js_1.get(store_js_2.StoreKeys.PREMIUM_CHECK_TOKEN);
+        if (!tokenData?.token) {
+            this.logger.warn('validatePremium: no token available');
+            this.isPremium = false;
+            store_js_1.ensureUserPremium(false);
+            return;
+        }
+        try {
+            const res = await fetch('https://ru-node-1.pulsesync.dev/user/subscription/validate', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${tokenData.token}`,
+                },
+            });
+            const data = await res.json();
+            if (data.ok) {
+                this.isPremium = data.isPremium;
+                store_js_1.ensureUserPremium(this.isPremium);
+            } else {
+                this.logger.warn(`validatePremium: validation failed (${data.message || 'no message'})`);
+                this.isPremium = false;
+                store_js_1.ensureUserPremium(false);
+            }
+        } catch (e) {
+            this.logger.warn(`validatePremium: error during validation (${e.message})`);
+            this.isPremium = false;
+            store_js_1.ensureUserPremium(false);
+        }
+    }
+
+    get isConnected() {
+        return this.socket?.connected || false;
+    }
+
+    get isPremiumUser() {
+        return this.isPremium;
+    }
 }
 
 function getPulseSyncManager(window) {
+    const root = globalThis;
+    if (!singletonInstance && root[PULSE_SYNC_MANAGER_KEY]) {
+        singletonInstance = root[PULSE_SYNC_MANAGER_KEY];
+    }
+
+    if (!window) return singletonInstance;
+
     if (!singletonInstance) {
         singletonInstance = new PulseSyncManager(window);
+        root[PULSE_SYNC_MANAGER_KEY] = singletonInstance;
     } else {
         singletonInstance.window = window;
         singletonInstance.webContents = window.webContents;

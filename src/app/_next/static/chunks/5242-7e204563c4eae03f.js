@@ -115,7 +115,7 @@
             };
             var r = e(17846),
                 n = e(66268);
-            ((0, n.cache)(async (t, i) => {
+            (0, n.cache)(async (t, i) => {
                 var e;
                 let l;
                 try {
@@ -133,7 +133,7 @@
                 } catch (t) {
                     return (0, a.tfF)(t, () => ({ playlist: void 0, ...(0, a.Bj3)() }));
                 }
-                return ((null == (e = l.playlist) ? void 0 : e.error) === 'not-found' && (0, r.notFound)(), l);
+                return (null == (e = l.playlist) ? void 0 : e.error) === 'not-found' && (0, r.notFound)(), l;
             }),
                 (0, n.cache)(async (t) => {
                     var i;
@@ -154,8 +154,8 @@
                     } catch (t) {
                         return (0, a.tfF)(t, () => ({ playlist: void 0, ...(0, a.Bj3)() }));
                     }
-                    return ((null == (i = e.playlist) ? void 0 : i.error) === 'not-found' && (0, r.notFound)(), e);
-                }));
+                    return (null == (i = e.playlist) ? void 0 : i.error) === 'not-found' && (0, r.notFound)(), e;
+                });
             var o = e(25911);
             let c = (t) => ({ uid: t.uid, login: t.login, name: t.name, sex: t.sex, verified: t.verified }),
                 d = (t) =>
@@ -220,9 +220,9 @@
                                 t.description = i;
                                 try {
                                     let l = yield e.changePlaylistDescription({ description: i, userId: t.uid, playlistKind: t.kind });
-                                    return ((t.description = l.description), a.FlZ.OK);
+                                    return (t.description = l.description), a.FlZ.OK;
                                 } catch (i) {
-                                    ((t.description = l), s.error(i));
+                                    (t.description = l), s.error(i);
                                 }
                             }
                             return a.FlZ.ERROR;
@@ -232,7 +232,7 @@
                             let { usersResource: e, modelActionsLogger: s } = (0, l._$)(t);
                             try {
                                 let l = yield e.uploadPlaylistCover({ userId: t.uid, formData: i, playlistKind: t.kind });
-                                return ((t.coverUri = l.cover.uri), a.FlZ.OK);
+                                return (t.coverUri = l.cover.uri), a.FlZ.OK;
                             } catch (t) {
                                 s.error(t);
                             }
@@ -379,29 +379,29 @@
                     W = (0, P.PT7)(),
                     Q = (0, u.c)((t) => {
                         if ((t.stopPropagation(), W())) return void t.preventDefault();
-                        (K.setUtmLink(T), K.openPlaylistTrailer(e.id), X(o.ky.Playlist, e.id));
+                        K.setUtmLink(T), K.openPlaylistTrailer(e.id), X(o.ky.Playlist, e.id);
                     }),
                     [V, J] = (0, r.useState)(!1),
                     { isPlaying: G, togglePlay: tt } = (0, P.Dx4)({
                         playContextParams: { contextData: { type: d.K.Playlist, meta: { id: e.id, uuid: e.uuid }, from: B, utmLink: T }, loadContextMeta: !0 },
                     }),
                     ti = (0, u.c)(() => {
-                        (q({ to: o.QT.PlaylistScreen }), null == I || I());
+                        q({ to: o.QT.PlaylistScreen }), null == I || I();
                     }),
                     te = (0, u.c)((t) => {
-                        (ti(), Z(t));
+                        ti(), Z(t);
                     }),
                     tl = (0, u.c)(() => {
                         W() || (F || G || (S(!0), null == E || E()), tt(), H(!G));
                     }),
                     ta = (0, u.c)(() => {
-                        (R || e.isLiked || (M(!0), null == z || z()), D());
+                        R || e.isLiked || (M(!0), null == z || z()), D();
                     }),
                     ts = (0, u.c)((t) => {
-                        (t.preventDefault(), t.stopPropagation());
+                        t.preventDefault(), t.stopPropagation();
                     }),
                     tr = (0, u.c)((t) => {
-                        ($(t), J(t));
+                        $(t), J(t);
                     }),
                     tn = (0, r.useMemo)(() => {
                         var t;
@@ -587,12 +587,12 @@
                     _ = (0, P.KX)(s),
                     [k, x] = (0, r.useState)(!1),
                     h = (0, y.c)(async () => {
-                        (k || s.isLiked || (x(!0), null == m || m()), await _());
+                        k || s.isLiked || (x(!0), null == m || m()), await _();
                     }),
                     L = (0, v.Ftl)(),
                     f = (0, y.c)((t) => {
                         if ((t.stopPropagation(), u())) return void t.preventDefault();
-                        (d.openPlaylistTrailer(s.id), L(c.ky.Playlist, s.id));
+                        d.openPlaylistTrailer(s.id), L(c.ky.Playlist, s.id);
                     });
                 return (0, l.jsxs)('div', {
                     className: (0, a.$)(g().root, g().controls, e, { [g().controls_disabled]: !s.isAvailable }),
@@ -650,16 +650,16 @@
                     } = (0, v.Dx4)({ playContextParams: { contextData: { type: u.K.Playlist, meta: { id: e.id, uuid: e.uuid }, from: A }, loadContextMeta: !0 } }),
                     $ = (0, v.ZpR)(e.url),
                     Y = (0, y.c)((t) => {
-                        (null == E || E(), S({ to: c.QT.PlaylistScreen }), t.preventDefault(), $(t));
+                        null == E || E(), S({ to: c.QT.PlaylistScreen }), t.preventDefault(), $(t);
                     }),
                     D = (0, y.c)(() => {
                         I() || (b || R || (K(!0), null == F || F()), O(), N(!R));
                     }),
                     U = (0, y.c)((t) => {
-                        ((0, m.P)(t, C.$f.ripple), Y(t));
+                        (0, m.P)(t, C.$f.ripple), Y(t);
                     }),
                     q = (0, y.c)((t) => {
-                        (t.stopPropagation(), Y(t));
+                        t.stopPropagation(), Y(t);
                     }),
                     H = (0, r.useCallback)(
                         (t) =>

@@ -4,30 +4,30 @@
         65: (e, t, a) => {
             'use strict';
             var l, i;
-            (a.d(t, { K: () => i, j: () => l }),
+            a.d(t, { K: () => i, j: () => l }),
                 (function (e) {
-                    ((e.ALBUM = 'album'),
+                    (e.ALBUM = 'album'),
                         (e.PLAYLIST = 'playlist'),
                         (e.ALBUM_CHART_ITEM = 'album-chart-item'),
                         (e.BOOKMATE_BANNER_ENTITY = 'bookmate-banner-entity'),
                         (e.PROMOTION = 'promotion'),
-                        (e.CATEGORY_TAB = 'category'));
+                        (e.CATEGORY_TAB = 'category');
                 })(l || (l = {})),
                 (function (e) {
-                    ((e.ALBUM_CHART = 'album-chart'),
+                    (e.ALBUM_CHART = 'album-chart'),
                         (e.EDITORIAL_PLAYLISTS = 'editorial-playlists'),
                         (e.PLAYLIST_WITH_TRACKS = 'playlist-with-tracks'),
                         (e.CATEGORY = 'category'),
                         (e.BOOKMATE_BANNER = 'bookmate-banner'),
                         (e.PROMOTIONS = 'promotions'),
-                        (e.CATEGORIES_TAB = 'categories-tab'));
-                })(i || (i = {})));
+                        (e.CATEGORIES_TAB = 'categories-tab');
+                })(i || (i = {}));
         },
         33129: (e, t, a) => {
             'use strict';
             a.d(t, { x: () => l });
             var l = (function (e) {
-                return ((e.CATEGORY = 'category'), (e.EDITORIAL = 'editorial'), e);
+                return (e.CATEGORY = 'category'), (e.EDITORIAL = 'editorial'), e;
             })({});
         },
         37257: (e, t, a) => {
@@ -65,13 +65,13 @@
                         },
                         [A],
                     );
-                (A.isNotFound && (0, o.notFound)(),
+                A.isNotFound && (0, o.notFound)(),
                     (0, n.useEffect)(
                         () => () => {
                             A.reset();
                         },
                         [A],
-                    ));
+                    );
                 let L = (0, n.useMemo)(() => ({ Footer: () => (0, l.jsx)(_.A, { children: (0, l.jsx)(_.wi, { className: C().footer }) }) }), []);
                 if (((0, N.Jzs)(A.isResolved), A.isNeededToLoad && (0, n.use)(A.getData({ categoryId: y, page: 0, pageSize: 20 })), A.isSomethingWrong))
                     return (0, l.jsx)(g.w, {});
@@ -194,14 +194,14 @@
                                             c = l.playlists.map(r.jX),
                                             m = u * d,
                                             N = 0;
-                                        for (let t = m; t < m + d; t++) (c[N] && e.playlists[t] && (e.playlists[t].data = (0, s.wg)(c[N])), N++);
+                                        for (let t = m; t < m + d; t++) c[N] && e.playlists[t] && (e.playlists[t].data = (0, s.wg)(c[N])), N++;
                                         e.pager = o;
                                     } catch (t) {
-                                        (c.error(t),
+                                        c.error(t),
                                             t instanceof o.GX &&
                                                 (t.statusCode === o.X1.NOT_FOUND || t.statusCode === o.X1.BAD_REQUEST) &&
                                                 (e.errorStatusCode = o.X1.NOT_FOUND),
-                                            e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT));
+                                            e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT);
                                     }
                                 }
                             }),
@@ -212,25 +212,25 @@
                                     try {
                                         e.loadingState = l.GuX.PENDING;
                                         let a = yield u.getPlaylists({ categoryId: i });
-                                        ((e.title = a.title),
+                                        (e.title = a.title),
                                             a.entities && a.entities.length > 0 && (e.playlists = (0, s.wg)(a.entities.map((e) => ({ uid: e.uid, kind: e.kind })))),
                                             e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE),
-                                            yield t.getPlaylists({ page: n, pageSize: r }));
+                                            yield t.getPlaylists({ page: n, pageSize: r });
                                     } catch (t) {
-                                        (d.error(t),
+                                        d.error(t),
                                             t instanceof o.GX &&
                                                 (t.statusCode === o.X1.NOT_FOUND || t.statusCode === o.X1.BAD_REQUEST) &&
                                                 (e.errorStatusCode = o.X1.NOT_FOUND),
-                                            e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT));
+                                            e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT);
                                     }
                             }),
                             reset() {
-                                ((e.loadingState = l.GuX.IDLE),
+                                (e.loadingState = l.GuX.IDLE),
                                     e.alreadyRequestedPages.clear(),
                                     (e.title = null),
                                     (e.playlists = (0, s.wg)([])),
                                     (e.requests = null),
-                                    (e.pager = null));
+                                    (e.pager = null);
                             },
                         };
                         return t;
@@ -272,15 +272,15 @@
                                     var r;
                                     e.loadingState = l.GuX.PENDING;
                                     let t = yield i.getEditorialAlbums({ id: a });
-                                    ((e.title = t.title),
+                                    (e.title = t.title),
                                         (null == (r = t.entities) ? void 0 : r.length) && (e.albums = (0, s.wg)(t.entities.map((e) => ({ id: e })))),
-                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE));
+                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE);
                                 } catch (t) {
-                                    (n.error(t),
+                                    n.error(t),
                                         t instanceof o.GX &&
                                             (t.statusCode === o.X1.NOT_FOUND || t.statusCode === o.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = o.X1.NOT_FOUND),
-                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT));
+                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT);
                                 }
                         }),
                         getCategoryAlbums: (0, s.L3)(function* (t) {
@@ -291,29 +291,29 @@
                                     var r;
                                     e.loadingState = l.GuX.PENDING;
                                     let t = yield i.getCategoryAlbums({ id: a });
-                                    ((e.title = t.title),
+                                    (e.title = t.title),
                                         (null == (r = t.albums) ? void 0 : r.length) && (e.albums = (0, s.wg)(t.albums.map((e) => ({ id: e })))),
-                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE));
+                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE);
                                 } catch (t) {
-                                    (n.error(t),
+                                    n.error(t),
                                         t instanceof o.GX &&
                                             (t.statusCode === o.X1.NOT_FOUND || t.statusCode === o.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = o.X1.NOT_FOUND),
-                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT));
+                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT);
                                 }
                         }),
                         getAlbumsByRange: (0, s.L3)(function* (t, a) {
                             var l, i, o;
                             let { albumResource: n, modelActionsLogger: r } = (0, s._$)(e);
                             if (!(null == (l = e.albums) ? void 0 : l.length)) return null;
-                            ((t = Math.max(0, t)), (a = Math.min(a, e.albums.length)));
+                            (t = Math.max(0, t)), (a = Math.min(a, e.albums.length));
                             let u = [];
                             for (let l = t; l <= a; l++)
                                 (null == (i = e.albums[l]) ? void 0 : i.id) && !(null == (o = e.albums[l]) ? void 0 : o.data) && u.push(e.albums[l].id);
                             if (!u.length) return null;
                             try {
                                 let t = yield n.getAlbums({ albumIds: u });
-                                (null == t ||
+                                null == t ||
                                     t.forEach((t) => {
                                         var a;
                                         null == (a = e.albums) ||
@@ -322,14 +322,14 @@
                                                 a.id === t.id && (null == (i = e.albums) ? void 0 : i[l]) && (e.albums[l].data = (0, m.pp)(t));
                                             });
                                     }),
-                                    e.requestsCount ? (e.requestsCount = e.requestsCount + 1) : (e.requestsCount = 1));
+                                    e.requestsCount ? (e.requestsCount = e.requestsCount + 1) : (e.requestsCount = 1);
                             } catch (e) {
                                 r.error(e);
                             }
                             return null;
                         }),
                         reset() {
-                            ((e.loadingState = l.GuX.IDLE), (e.title = null), (e.albums = null), (e.requestsCount = 0));
+                            (e.loadingState = l.GuX.IDLE), (e.title = null), (e.albums = null), (e.requestsCount = 0);
                         },
                     }));
             var y = a(65),
@@ -403,7 +403,7 @@
                                     let t = yield i.getCategory({ categoryId: a });
                                     e.title = t.title;
                                     let o = [];
-                                    (t.blocks &&
+                                    t.blocks &&
                                         (t.blocks.forEach((e) => {
                                             switch (e.type) {
                                                 case y.K.ALBUM_CHART:
@@ -523,17 +523,17 @@
                                             }
                                         }),
                                         (e.blocks = (0, s.wg)(o))),
-                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE));
+                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.RESOLVE);
                                 } catch (t) {
-                                    (r.error(t),
+                                    r.error(t),
                                         t instanceof o.GX &&
                                             (t.statusCode === o.X1.NOT_FOUND || t.statusCode === o.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = o.X1.NOT_FOUND),
-                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT));
+                                        e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT);
                                 }
                         }),
                         reset() {
-                            ((e.errorStatusCode = null), (e.title = null), (e.loadingState = l.GuX.IDLE), (e.blocks = (0, s.wg)([])));
+                            (e.errorStatusCode = null), (e.title = null), (e.loadingState = l.GuX.IDLE), (e.blocks = (0, s.wg)([]));
                         },
                     })),
                 K = s.gK.model('NonMusicPage', { landing: c.Ju, albums: _, categorySubpage: O, categoryPlaylistsSubpage: g });
@@ -541,7 +541,7 @@
             a(80107);
             var k = a(66901),
                 v = a(37257);
-            (a(46103), a(63861));
+            a(46103), a(63861);
         },
         63861: (e, t, a) => {
             'use strict';
@@ -569,7 +569,7 @@
                     { formatMessage: a } = (0, n.A)(),
                     { contentScrollRef: s, setContentScrollRef: p } = (0, C.gKY)(),
                     [E, S] = (0, g.d)();
-                ((0, o.useEffect)(() => () => e.landing.reset(), [e.landing]), (0, C.Jzs)(e.landing.isResolved));
+                (0, o.useEffect)(() => () => e.landing.reset(), [e.landing]), (0, C.Jzs)(e.landing.isResolved);
                 let b = (0, N._9)(e.landing);
                 return (
                     e.landing.isNeededToLoad && (0, o.use)(e.landing.getSkeleton({ id: d.p.NON_MUSIC, showWizard: t.settings.showWizard }, { preloadBlocksCount: 2 })),
@@ -645,12 +645,12 @@
                         { contentScrollRef: s, setContentScrollRef: r } = (0, N.gKY)(),
                         g = (0, N.W6M)(),
                         y = (0, n.useRef)(null);
-                    (a.isNotFound && (0, o.notFound)(),
+                    a.isNotFound && (0, o.notFound)(),
                         (0, n.useEffect)(() => {
                             y.current !== t && t && (a.reset(), (y.current = t));
                         }, [t, a]),
                         (0, n.useEffect)(() => () => a.reset(), [a]),
-                        (0, N.Jzs)(a.isResolved));
+                        (0, N.Jzs)(a.isResolved);
                     let p = (0, n.useMemo)(
                         () =>
                             a.blocks.map((e, t) => {
@@ -750,14 +750,14 @@
                     { contentScrollRef: E, setContentScrollRef: S } = (0, m.gKY)(),
                     b = (0, m.W6M)(),
                     h = p.layout === m.u40.Mobile;
-                ((A.isNotFound || !s) && (0, o.notFound)(),
+                (A.isNotFound || !s) && (0, o.notFound)(),
                     (0, m.Jzs)(A.isResolved),
                     (0, n.useEffect)(
                         () => () => {
                             A.reset();
                         },
                         [A],
-                    ));
+                    );
                 let P = (0, n.useCallback)(
                         (e) => {
                             A.getAlbumsByRange(e.startIndex, e.endIndex);

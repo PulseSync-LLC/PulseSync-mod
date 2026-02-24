@@ -36,7 +36,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -283,7 +283,7 @@
                     return await s.json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -326,7 +326,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -337,13 +337,13 @@
             class a {
                 setPassportUid(t) {
                     let e = this.executionContext.getStore();
-                    (void 0 !== e && (e.puid = t), (this.passportUid = t));
+                    void 0 !== e && (e.puid = t), (this.passportUid = t);
                 }
                 getPassportUid() {
                     return this.passportUid;
                 }
                 constructor(t) {
-                    ((0, i._)(this, 'executionContext', void 0), (0, i._)(this, 'passportUid', void 0), (this.executionContext = t));
+                    (0, i._)(this, 'executionContext', void 0), (0, i._)(this, 'passportUid', void 0), (this.executionContext = t);
                 }
             }
         },
@@ -399,7 +399,7 @@
                     ).text();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -418,7 +418,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -447,7 +447,7 @@
                     this.config.set(t, e);
                 }
                 constructor(t) {
-                    ((0, i._)(this, 'config', void 0), (this.config = t));
+                    (0, i._)(this, 'config', void 0), (this.config = t);
                 }
             }
         },
@@ -474,21 +474,21 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
         19077: (t, e, s) => {
             'use strict';
             var i;
-            (s.d(e, { Q: () => a, c: () => i }),
+            s.d(e, { Q: () => a, c: () => i }),
                 (function (t) {
-                    ((t[(t.ERROR = 10)] = 'ERROR'),
+                    (t[(t.ERROR = 10)] = 'ERROR'),
                         (t[(t.WARNING = 20)] = 'WARNING'),
                         (t[(t.INFO = 30)] = 'INFO'),
                         (t[(t.DEBUG = 40)] = 'DEBUG'),
-                        (t[(t.TRACE = 50)] = 'TRACE'));
-                })(i || (i = {})));
+                        (t[(t.TRACE = 50)] = 'TRACE');
+                })(i || (i = {}));
             let a = { [i.ERROR]: 'error', [i.WARNING]: 'warn', [i.INFO]: 'info', [i.DEBUG]: 'debug', [i.TRACE]: 'trace' };
         },
         20757: (t, e, s) => {
@@ -522,7 +522,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -586,7 +586,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -637,7 +637,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -680,7 +680,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -699,7 +699,7 @@
                     );
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -732,7 +732,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -751,7 +751,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -820,7 +820,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -856,7 +856,7 @@
                     ).json();
                 }
                 async getTracksMeta(t, e) {
-                    return (
+                    const tracksMeta = await (
                         await this.httpClient.post(
                             'tracks',
                             this.createHttpOptions({
@@ -867,11 +867,11 @@
                                     return (
                                         Object.getOwnPropertyNames(t).forEach((s) => {
                                             let i = t[s];
-                                            (('number' == typeof i || 'string' == typeof i || 'boolean' == typeof i) && e.append(s, String(i)),
+                                            ('number' == typeof i || 'string' == typeof i || 'boolean' == typeof i) && e.append(s, String(i)),
                                                 Array.isArray(i) &&
                                                     i.forEach((t) => {
                                                         ('number' == typeof t || 'string' == typeof t) && e.append(s, String(t));
-                                                    }));
+                                                    });
                                         }),
                                         e
                                     );
@@ -880,6 +880,12 @@
                             }),
                         )
                     ).json();
+
+                    tracksMeta.forEach((t) => {
+                        t.substituted?.artists && t.artists ? (t.artists = t.substituted.artists) : undefined;
+                    });
+
+                    return tracksMeta;
                 }
                 async getFullInfoTrack(t, e) {
                     let s = t.albumId ? ''.concat(t.trackId, ':').concat(t.albumId) : t.trackId;
@@ -936,7 +942,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -975,7 +981,7 @@
                         retryAttempt: n,
                         retryPolicyConfig: null == o ? void 0 : o.config,
                     });
-                    ((i.retry.limit = r.retryLimit), await (0, d.c)(r.retryDelay));
+                    (i.retry.limit = r.retryLimit), await (0, d.c)(r.retryDelay);
                 },
                 h = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'get', 'post', 'put', 'patch', 'delete', 'head'];
             class g {
@@ -1014,10 +1020,10 @@
                         if (t instanceof a.H) throw this.errorConverter(t);
                         if (((i = t), t instanceof n.M))
                             throw (
-                                this.afterTimeoutHooks.forEach((e) => {
+                                (this.afterTimeoutHooks.forEach((e) => {
                                     e(this.errorConverter(t));
                                 }),
-                                this.errorConverter(t)
+                                this.errorConverter(t))
                             );
                         throw t;
                     } finally {
@@ -1070,7 +1076,7 @@
                     ) {
                         let t,
                             { beforeRequest: e, beforeRetry: s, beforeError: i, afterResponse: a } = o;
-                        (void 0 === y.hooks && (y.hooks = {}),
+                        void 0 === y.hooks && (y.hooks = {}),
                             Array.isArray(e) &&
                                 (y.hooks.beforeRequest = e.map((e) => async (s, i) => {
                                     t = Date.now();
@@ -1090,8 +1096,8 @@
                                 (y.hooks.afterResponse = a.map((e) => async (s, i, a) => {
                                     let n = this.normalizeOptions(s, i),
                                         o = Date.now();
-                                    return (await e(this.responseConverter(a, n, { start: t, response: o })), a);
-                                })));
+                                    return await e(this.responseConverter(a, n, { start: t, response: o })), a;
+                                }));
                     }
                     return (
                         void 0 !== g &&
@@ -1161,12 +1167,12 @@
                 }
                 constructor(t = {}) {
                     var e, s, a, n;
-                    ((0, i._)(this, 'client', void 0),
+                    (0, i._)(this, 'client', void 0),
                         (0, i._)(this, 'afterTimeoutHooks', []),
                         (0, i._)(this, 'requestDoneHooks', []),
                         (this.client = o.Ay.create(this.optionsConverter(t))),
                         (this.afterTimeoutHooks = null != (a = null == (e = t.hooks) ? void 0 : e.afterTimeout) ? a : []),
-                        (this.requestDoneHooks = null != (n = null == (s = t.hooks) ? void 0 : s.onRequestDone) ? n : []));
+                        (this.requestDoneHooks = null != (n = null == (s = t.hooks) ? void 0 : s.onRequestDone) ? n : []);
                 }
             }
         },
@@ -1191,7 +1197,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -1425,7 +1431,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -1444,7 +1450,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -1522,7 +1528,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -1615,7 +1621,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -1644,7 +1650,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -1667,15 +1673,15 @@
                     a = e[0];
                 return Promise.all(e.slice(1).map(s.e)).then(() => s(a));
             }
-            ((a.keys = () => Object.keys(i)), (a.id = 55256), (t.exports = a));
+            (a.keys = () => Object.keys(i)), (a.id = 55256), (t.exports = a);
         },
         56312: (t, e, s) => {
             'use strict';
             var i;
-            (s.d(e, { J: () => i }),
+            s.d(e, { J: () => i }),
                 (function (t) {
-                    ((t.OK = 'ok'), (t.ERROR = 'error'));
-                })(i || (i = {})));
+                    (t.OK = 'ok'), (t.ERROR = 'error');
+                })(i || (i = {}));
         },
         57098: (t, e, s) => {
             'use strict';
@@ -1695,35 +1701,35 @@
                         code: a.Z.METHOD_NOT_SUPPORTED,
                         cause: { method: 'GET', supportedMethods: ['POST'] },
                     });
-                    return (await this.executeBeforeErrorHooks(e), this.executeRequestDoneHooks(t, { method: 'GET' }, void 0, e), Promise.reject(e));
+                    return await this.executeBeforeErrorHooks(e), this.executeRequestDoneHooks(t, { method: 'GET' }, void 0, e), Promise.reject(e);
                 }
                 async put(t) {
                     let e = new n.m('PUT method is not supported by BeaconHttpClient. navigator.sendBeacon() only supports POST requests.', {
                         code: a.Z.METHOD_NOT_SUPPORTED,
                         cause: { method: 'PUT', supportedMethods: ['POST'] },
                     });
-                    return (await this.executeBeforeErrorHooks(e), this.executeRequestDoneHooks(t, { method: 'PUT' }, void 0, e), Promise.reject(e));
+                    return await this.executeBeforeErrorHooks(e), this.executeRequestDoneHooks(t, { method: 'PUT' }, void 0, e), Promise.reject(e);
                 }
                 async patch(t) {
                     let e = new n.m('PATCH method is not supported by BeaconHttpClient. navigator.sendBeacon() only supports POST requests.', {
                         code: a.Z.METHOD_NOT_SUPPORTED,
                         cause: { method: 'PATCH', supportedMethods: ['POST'] },
                     });
-                    return (await this.executeBeforeErrorHooks(e), this.executeRequestDoneHooks(t, { method: 'PATCH' }, void 0, e), Promise.reject(e));
+                    return await this.executeBeforeErrorHooks(e), this.executeRequestDoneHooks(t, { method: 'PATCH' }, void 0, e), Promise.reject(e);
                 }
                 async delete(t) {
                     let e = new n.m('DELETE method is not supported by BeaconHttpClient. navigator.sendBeacon() only supports POST requests.', {
                         code: a.Z.METHOD_NOT_SUPPORTED,
                         cause: { method: 'DELETE', supportedMethods: ['POST'] },
                     });
-                    return (await this.executeBeforeErrorHooks(e), this.executeRequestDoneHooks(t, { method: 'DELETE' }, void 0, e), Promise.reject(e));
+                    return await this.executeBeforeErrorHooks(e), this.executeRequestDoneHooks(t, { method: 'DELETE' }, void 0, e), Promise.reject(e);
                 }
                 async head(t) {
                     let e = new n.m('HEAD method is not supported by BeaconHttpClient. navigator.sendBeacon() only supports POST requests.', {
                         code: a.Z.METHOD_NOT_SUPPORTED,
                         cause: { method: 'HEAD', supportedMethods: ['POST'] },
                     });
-                    return (await this.executeBeforeErrorHooks(e), this.executeRequestDoneHooks(t, { method: 'HEAD' }, void 0, e), Promise.reject(e));
+                    return await this.executeBeforeErrorHooks(e), this.executeRequestDoneHooks(t, { method: 'HEAD' }, void 0, e), Promise.reject(e);
                 }
                 async post(t) {
                     let e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
@@ -1764,10 +1770,10 @@
                     }
                     if (e.searchParams) {
                         let t = new URL(s);
-                        (('string' == typeof e.searchParams ? new URLSearchParams(e.searchParams) : e.searchParams).forEach((e, s) => {
+                        ('string' == typeof e.searchParams ? new URLSearchParams(e.searchParams) : e.searchParams).forEach((e, s) => {
                             t.searchParams.set(s, e);
                         }),
-                            (s = t.toString()));
+                            (s = t.toString());
                     }
                     return s;
                 }
@@ -1876,7 +1882,7 @@
                     if (e < s && this.shouldRetryForError(t, i)) {
                         await this.executeBeforeRetryHooks(t, e, a);
                         let s = this.getRetryDelay(t, e - 1, i);
-                        return (s > 0 && (await (0, o.c)(s)), !0);
+                        return s > 0 && (await (0, o.c)(s)), !0;
                     }
                     return !1;
                 }
@@ -1896,7 +1902,7 @@
                 }
                 constructor(t = {}) {
                     var e, s, a, n, o, r, l, c;
-                    ((0, i._)(this, 'requestDoneHooks', []),
+                    (0, i._)(this, 'requestDoneHooks', []),
                         (0, i._)(this, 'beforeRequestHooks', []),
                         (0, i._)(this, 'beforeErrorHooks', []),
                         (0, i._)(this, 'beforeRetryHooks', []),
@@ -1905,7 +1911,7 @@
                         (this.beforeRequestHooks = null != (o = null == (e = t.hooks) ? void 0 : e.beforeRequest) ? o : []),
                         (this.beforeErrorHooks = null != (r = null == (s = t.hooks) ? void 0 : s.beforeError) ? r : []),
                         (this.beforeRetryHooks = null != (l = null == (a = t.hooks) ? void 0 : a.beforeRetry) ? l : []),
-                        (this.requestDoneHooks = null != (c = null == (n = t.hooks) ? void 0 : n.onRequestDone) ? c : []));
+                        (this.requestDoneHooks = null != (c = null == (n = t.hooks) ? void 0 : n.onRequestDone) ? c : []);
                 }
             }
         },
@@ -1933,7 +1939,7 @@
                     );
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -1979,7 +1985,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2006,17 +2012,17 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
         60866: (t, e, s) => {
             'use strict';
             var i;
-            (s.d(e, { f: () => i }),
+            s.d(e, { f: () => i }),
                 (function (t) {
-                    ((t.OK = 'ok'), (t.ERROR = 'error'));
-                })(i || (i = {})));
+                    (t.OK = 'ok'), (t.ERROR = 'error');
+                })(i || (i = {}));
         },
         63554: (t, e, s) => {
             'use strict';
@@ -2046,7 +2052,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2522,7 +2528,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2569,7 +2575,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2603,12 +2609,12 @@
                     return t;
                 }
                 constructor({ additionalData: t, maxLogLevel: e, secureFields: s }) {
-                    ((0, i._)(this, 'maxLogLevel', void 0),
+                    (0, i._)(this, 'maxLogLevel', void 0),
                         (0, i._)(this, 'secureFields', void 0),
                         (0, i._)(this, 'additionalData', void 0),
                         (this.maxLogLevel = e),
                         (this.secureFields = s),
-                        (this.additionalData = t));
+                        (this.additionalData = t);
                 }
             }
         },
@@ -2639,7 +2645,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2664,7 +2670,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2682,7 +2688,7 @@
                     return await s.json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2709,7 +2715,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2793,7 +2799,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2815,7 +2821,7 @@
                     await this.httpClient.post('account/family/accept-invite/'.concat(t.inviteId), this.createHttpOptions({ timeoutKey: 'acceptInvite', params: t }));
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2848,7 +2854,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -2902,7 +2908,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -3087,7 +3093,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -3159,7 +3165,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -3175,7 +3181,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -3196,10 +3202,10 @@
                     this.maxLogLevel >= a.c.TRACE && this.logToConsole(a.c.TRACE, t, e);
                 }
                 warn(t, e) {
-                    (this.maxLogLevel >= a.c.WARNING && this.logToConsole(a.c.WARNING, t, e), this.sendToErrorBooster(a.c.WARNING, t, e));
+                    this.maxLogLevel >= a.c.WARNING && this.logToConsole(a.c.WARNING, t, e), this.sendToErrorBooster(a.c.WARNING, t, e);
                 }
                 error(t, e) {
-                    (this.maxLogLevel >= a.c.ERROR && this.logToConsole(a.c.ERROR, t, e), this.sendToErrorBooster(a.c.ERROR, t, e));
+                    this.maxLogLevel >= a.c.ERROR && this.logToConsole(a.c.ERROR, t, e), this.sendToErrorBooster(a.c.ERROR, t, e);
                 }
                 log(t, e) {
                     this.logToConsole(a.c.INFO, t, e);
@@ -3213,7 +3219,7 @@
                     window.Ya.Rum.logError({ message: e, level: t, additional: { data: s ? this.obfuscateData({ ...this.additionalData, ...s }) : {} } });
                 }
                 constructor(t) {
-                    (super(t), (0, i._)(this, 'disableLogToConsole', void 0), (this.disableLogToConsole = t.disableLogToConsole));
+                    super(t), (0, i._)(this, 'disableLogToConsole', void 0), (this.disableLogToConsole = t.disableLogToConsole);
                 }
             }
         },
@@ -3226,7 +3232,7 @@
                     return this.store;
                 }
                 constructor(t) {
-                    ((0, i._)(this, 'store', void 0), (this.store = t));
+                    (0, i._)(this, 'store', void 0), (this.store = t);
                 }
             }
         },
@@ -3305,7 +3311,7 @@
                     );
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -3394,7 +3400,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -3460,7 +3466,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -3501,7 +3507,7 @@
                     a = e[0];
                 return Promise.all(e.slice(1).map(s.e)).then(() => s(a));
             }
-            ((a.keys = () => Object.keys(i)), (a.id = 94753), (t.exports = a));
+            (a.keys = () => Object.keys(i)), (a.id = 94753), (t.exports = a);
         },
         96029: (t, e, s) => {
             'use strict';
@@ -3524,7 +3530,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -3543,7 +3549,7 @@
                     ).json();
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },
@@ -3581,7 +3587,7 @@
                     );
                 }
                 constructor(t, e) {
-                    (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
+                    super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e);
                 }
             }
         },

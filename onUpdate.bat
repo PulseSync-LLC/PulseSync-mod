@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 >nul
-echo === Р—Р°РїСѓСЃРє РґРµР№СЃС‚РІРёР№ РїРѕ Р°РїРґРµР№С‚Сѓ ===
+echo === Запуск действий по апдейту ===
 
 node toolset.js extract -pd
 if errorlevel 1 goto :error
@@ -11,11 +11,11 @@ if errorlevel 1 goto :error
 node dataminer\diffCalculator.js diff -s
 if errorlevel 1 goto :error
 
-echo === Р”РµР№СЃС‚РІРёР№ СѓСЃРїРµС€РЅРѕ РІС‹РїРѕР»РЅРµРЅС‹ ===
+echo === Действий успешно выполнены ===
 goto :end
 
 :error
-echo *** РћС€РёР±РєР°! РЎРєСЂРёРїС‚ РѕСЃС‚Р°РЅРѕРІР»РµРЅ. РљРѕРґ РІРѕР·РІСЂР°С‚Р°: %errorlevel%
+echo *** Ошибка! Скрипт остановлен. Код возврата: %errorlevel%
 exit /b %errorlevel%
 
 :end

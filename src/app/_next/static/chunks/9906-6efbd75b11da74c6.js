@@ -38,7 +38,7 @@
                         },
                         [N, _],
                     );
-                ((0, l.useEffect)(
+                (0, l.useEffect)(
                     () => () => {
                         N.reset();
                     },
@@ -66,7 +66,7 @@
                                 (0, u.jxB)(e);
                             });
                         }, [e]);
-                    })(N));
+                    })(N);
                 let C = (0, l.useMemo)(() => ({ Footer: () => (0, i.jsx)(b.A, { children: (0, i.jsx)(b.wi, { className: x().footer }) }) }), []);
                 return (_ && N.isNeededToLoad && (0, l.use)(N.getData({ preloadedMeta: f, metatagId: _, page: 0, pageSize: P.c })), N.isSomethingWrong)
                     ? (0, i.jsx)(h.w, {})
@@ -122,7 +122,7 @@
             };
         },
         9906: (e, t, n) => {
-            (Promise.resolve().then(n.bind(n, 52756)),
+            Promise.resolve().then(n.bind(n, 52756)),
                 Promise.resolve().then(n.bind(n, 41458)),
                 Promise.resolve().then(n.bind(n, 80922)),
                 Promise.resolve().then(n.bind(n, 54487)),
@@ -360,7 +360,7 @@
                 Promise.resolve().then(n.bind(n, 31922)),
                 Promise.resolve().then(n.bind(n, 51886)),
                 Promise.resolve().then(n.bind(n, 43701)),
-                Promise.resolve().then(n.bind(n, 45228)));
+                Promise.resolve().then(n.bind(n, 45228));
         },
         10456: (e, t, n) => {
             'use strict';
@@ -548,7 +548,7 @@
                 (0, c.CgZ)(u);
                 let { sendRefreshEvent: P } = (0, c.cYT)(),
                     g = (0, o.useCallback)(() => {
-                        (P(), (window.location.href = c.Zyd.main.href));
+                        P(), (window.location.href = c.Zyd.main.href);
                     }, [P]),
                     { contentRef: p } = (0, c.gKY)();
                 return (0, i.jsxs)('div', {
@@ -848,7 +848,7 @@
                         },
                         [f, p],
                     );
-                ((0, l.useEffect)(
+                (0, l.useEffect)(
                     () => () => {
                         f.reset();
                     },
@@ -876,7 +876,7 @@
                                 (0, u.jxB)(e);
                             });
                         }, [e]);
-                    })(f));
+                    })(f);
                 let T = (0, l.useMemo)(() => ({ Footer: () => (0, i.jsx)(b.A, { children: (0, i.jsx)(b.wi, { className: _().footer }) }) }), []);
                 return (p && f.isNeededToLoad && (0, l.use)(f.getData({ preloadedMeta: x, metatagId: p, page: 0, pageSize: P.c })), f.isSomethingWrong)
                     ? (0, i.jsx)(h.w, {})
@@ -1017,14 +1017,14 @@
                             v.current ||
                                 (v.current = new ResizeObserver((e) => {
                                     let t = !1;
-                                    (e.forEach((e) => {
+                                    e.forEach((e) => {
                                         let n = e.target.getAttribute('data-index');
                                         if (e.target && n) {
                                             let i = e.contentRect.height;
                                             i && i !== c.current.get(n) && (c.current.set(n, e.contentRect.height), (t = !0));
                                         }
                                     }),
-                                        t && p());
+                                        t && p();
                                 }));
                         }, [p]),
                         { virtualizer: g, resizeObserver: v.current }

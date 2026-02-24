@@ -4,24 +4,24 @@
         65: (e, o, n) => {
             'use strict';
             var s, i;
-            (n.d(o, { K: () => i, j: () => s }),
+            n.d(o, { K: () => i, j: () => s }),
                 (function (e) {
-                    ((e.ALBUM = 'album'),
+                    (e.ALBUM = 'album'),
                         (e.PLAYLIST = 'playlist'),
                         (e.ALBUM_CHART_ITEM = 'album-chart-item'),
                         (e.BOOKMATE_BANNER_ENTITY = 'bookmate-banner-entity'),
                         (e.PROMOTION = 'promotion'),
-                        (e.CATEGORY_TAB = 'category'));
+                        (e.CATEGORY_TAB = 'category');
                 })(s || (s = {})),
                 (function (e) {
-                    ((e.ALBUM_CHART = 'album-chart'),
+                    (e.ALBUM_CHART = 'album-chart'),
                         (e.EDITORIAL_PLAYLISTS = 'editorial-playlists'),
                         (e.PLAYLIST_WITH_TRACKS = 'playlist-with-tracks'),
                         (e.CATEGORY = 'category'),
                         (e.BOOKMATE_BANNER = 'bookmate-banner'),
                         (e.PROMOTIONS = 'promotions'),
-                        (e.CATEGORIES_TAB = 'categories-tab'));
-                })(i || (i = {})));
+                        (e.CATEGORIES_TAB = 'categories-tab');
+                })(i || (i = {}));
         },
         2117: (e, o, n) => {
             'use strict';
@@ -31,19 +31,19 @@
                 r = n(7144),
                 t = n(66268),
                 l = n(73827);
-            (!(function (e) {
-                ((e.formatDate = 'FormattedDate'),
+            !(function (e) {
+                (e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName'));
+                    (e.formatDisplayName = 'FormattedDisplayName');
             })(s || (s = {})),
                 (function (e) {
-                    ((e.formatDate = 'FormattedDateParts'),
+                    (e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts'));
-                })(i || (i = {})));
+                        (e.formatList = 'FormattedListParts');
+                })(i || (i = {}));
             var d = function (e) {
                 var o = (0, l.A)(),
                     n = e.value,
@@ -60,7 +60,7 @@
                         d = 'string' == typeof s ? new Date(s || 0) : s;
                     return i('formatDate' === e ? n.formatDateToParts(d, t) : n.formatTimeToParts(d, t));
                 };
-                return ((o.displayName = i[e]), o);
+                return (o.displayName = i[e]), o;
             }
             function m(e) {
                 var o = function (o) {
@@ -73,21 +73,21 @@
                     var m = n.textComponent || t.Fragment;
                     return t.createElement(m, null, a);
                 };
-                return ((o.displayName = s[e]), o);
+                return (o.displayName = s[e]), o;
             }
-            ((d.displayName = 'FormattedNumberParts'), (d.displayName = 'FormattedNumberParts'));
+            (d.displayName = 'FormattedNumberParts'), (d.displayName = 'FormattedNumberParts');
             var h = m('formatDate');
-            (m('formatTime'), m('formatNumber'), m('formatList'), m('formatDisplayName'), a('formatDate'), a('formatTime'));
+            m('formatTime'), m('formatNumber'), m('formatList'), m('formatDisplayName'), a('formatDate'), a('formatTime');
         },
         5884: (e, o, n) => {
             'use strict';
-            (Object.defineProperty(o, '__esModule', { value: !0 }),
+            Object.defineProperty(o, '__esModule', { value: !0 }),
                 Object.defineProperty(o, 'default', {
                     enumerable: !0,
                     get: function () {
                         return i;
                     },
-                }));
+                });
             let s = n(473)._(n(16092));
             function i(e, o) {
                 var n;
@@ -102,13 +102,13 @@
         },
         16092: (e, o, n) => {
             'use strict';
-            (Object.defineProperty(o, '__esModule', { value: !0 }),
+            Object.defineProperty(o, '__esModule', { value: !0 }),
                 Object.defineProperty(o, 'default', {
                     enumerable: !0,
                     get: function () {
                         return d;
                     },
-                }));
+                });
             let s = n(33008),
                 i = n(66268),
                 r = n(52283);
@@ -130,7 +130,7 @@
                                 : (0, s.jsx)(r.BailoutToCSR, { reason: 'next/dynamic', children: (0, s.jsx)(n, { ...e }) });
                         return (0, s.jsx)(a, { ...(l ? { fallback: t } : {}), children: m });
                     }
-                    return ((a.displayName = 'LoadableComponent'), a);
+                    return (a.displayName = 'LoadableComponent'), a;
                 };
         },
         26271: (e) => {
@@ -247,7 +247,7 @@
                 (0, v.CgZ)(P);
                 let { sendRefreshEvent: u } = (0, v.cYT)(),
                     _ = (0, t.useCallback)(() => {
-                        (u(), (window.location.href = v.Zyd.main.href));
+                        u(), (window.location.href = v.Zyd.main.href);
                     }, [u]),
                     { contentRef: g } = (0, v.gKY)();
                 return (0, s.jsxs)('div', {
@@ -310,7 +310,7 @@
             'use strict';
             n.d(o, { x: () => s });
             var s = (function (e) {
-                return ((e.CATEGORY = 'category'), (e.EDITORIAL = 'editorial'), e);
+                return (e.CATEGORY = 'category'), (e.EDITORIAL = 'editorial'), e;
             })({});
         },
         35233: (e, o, n) => {
@@ -353,13 +353,13 @@
                         },
                         [g],
                     );
-                (g.isNotFound && (0, t.notFound)(),
+                g.isNotFound && (0, t.notFound)(),
                     (0, l.useEffect)(
                         () => () => {
                             g.reset();
                         },
                         [g],
-                    ));
+                    );
                 let A = (0, l.useMemo)(() => ({ Footer: () => (0, s.jsx)(c.A, { children: (0, s.jsx)(c.wi, { className: _().footer }) }) }), []);
                 if (((0, P.Jzs)(g.isResolved), g.isNeededToLoad && (0, l.use)(g.getData({ categoryId: u, page: 0, pageSize: 20 })), g.isSomethingWrong))
                     return (0, s.jsx)(h.w, {});
@@ -428,7 +428,7 @@
             });
         },
         49133: (e, o, n) => {
-            (Promise.resolve().then(n.bind(n, 95567)),
+            Promise.resolve().then(n.bind(n, 95567)),
                 Promise.resolve().then(n.bind(n, 78016)),
                 Promise.resolve().then(n.bind(n, 52756)),
                 Promise.resolve().then(n.bind(n, 41458)),
@@ -746,7 +746,7 @@
                 Promise.resolve().then(n.bind(n, 59546)),
                 Promise.resolve().then(n.bind(n, 78659)),
                 Promise.resolve().then(n.bind(n, 62763)),
-                Promise.resolve().then(n.t.bind(n, 86367, 23)));
+                Promise.resolve().then(n.t.bind(n, 86367, 23));
         },
         52283: (e, o, n) => {
             'use strict';
@@ -754,14 +754,14 @@
                 let { reason: o, children: n } = e;
                 return n;
             }
-            (Object.defineProperty(o, '__esModule', { value: !0 }),
+            Object.defineProperty(o, '__esModule', { value: !0 }),
                 Object.defineProperty(o, 'BailoutToCSR', {
                     enumerable: !0,
                     get: function () {
                         return s;
                     },
                 }),
-                n(32975));
+                n(32975);
         },
         63861: (e, o, n) => {
             'use strict';
@@ -789,7 +789,7 @@
                     { formatMessage: n } = (0, l.A)(),
                     { contentScrollRef: r, setContentScrollRef: N } = (0, _.gKY)(),
                     [f, x] = (0, h.d)();
-                ((0, t.useEffect)(() => () => e.landing.reset(), [e.landing]), (0, _.Jzs)(e.landing.isResolved));
+                (0, t.useEffect)(() => () => e.landing.reset(), [e.landing]), (0, _.Jzs)(e.landing.isResolved);
                 let C = (0, P._9)(e.landing);
                 return (
                     e.landing.isNeededToLoad && (0, t.use)(e.landing.getSkeleton({ id: m.p.NON_MUSIC, showWizard: o.settings.showWizard }, { preloadBlocksCount: 2 })),
@@ -865,12 +865,12 @@
                         { contentScrollRef: r, setContentScrollRef: d } = (0, P.gKY)(),
                         h = (0, P.W6M)(),
                         u = (0, l.useRef)(null);
-                    (n.isNotFound && (0, t.notFound)(),
+                    n.isNotFound && (0, t.notFound)(),
                         (0, l.useEffect)(() => {
                             u.current !== o && o && (n.reset(), (u.current = o));
                         }, [o, n]),
                         (0, l.useEffect)(() => () => n.reset(), [n]),
-                        (0, P.Jzs)(n.isResolved));
+                        (0, P.Jzs)(n.isResolved);
                     let N = (0, l.useMemo)(
                         () =>
                             n.blocks.map((e, o) => {
@@ -970,14 +970,14 @@
                     { contentScrollRef: f, setContentScrollRef: x } = (0, b.gKY)(),
                     C = (0, b.W6M)(),
                     j = N.layout === b.u40.Mobile;
-                ((g.isNotFound || !r) && (0, t.notFound)(),
+                (g.isNotFound || !r) && (0, t.notFound)(),
                     (0, b.Jzs)(g.isResolved),
                     (0, l.useEffect)(
                         () => () => {
                             g.reset();
                         },
                         [g],
-                    ));
+                    );
                 let y = (0, l.useCallback)(
                         (e) => {
                             g.getAlbumsByRange(e.startIndex, e.endIndex);
@@ -1078,7 +1078,7 @@
                 let { moduleIds: o } = e;
                 return null;
             }
-            (Object.defineProperty(o, '__esModule', { value: !0 }),
+            Object.defineProperty(o, '__esModule', { value: !0 }),
                 Object.defineProperty(o, 'PreloadChunks', {
                     enumerable: !0,
                     get: function () {
@@ -1088,7 +1088,7 @@
                 n(33008),
                 n(17229),
                 n(6077),
-                n(74964));
+                n(74964);
         },
         83888: (e, o, n) => {
             'use strict';

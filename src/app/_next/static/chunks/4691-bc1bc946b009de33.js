@@ -66,7 +66,7 @@
                         A.current = !0;
                     }),
                     k = e.historyPage.items.length;
-                (t.isAuthorized && (0, o.notFound)(),
+                t.isAuthorized && (0, o.notFound)(),
                     (0, l.useEffect)(() => {
                         y.current && j.canBack && y.current.focus();
                     }, [j.canBack]),
@@ -75,7 +75,7 @@
                             (null == A ? void 0 : A.current) ? (e.resetHistoryItems(), (A.current = !1)) : e.resetHistoryStateRequest();
                         },
                         [e],
-                    ));
+                    );
                 let b = (0, l.useMemo)(
                         () =>
                             (0, r.A)(() => {
@@ -325,16 +325,16 @@
                         O = (0, l.useRef)(f),
                         H = f.length > 0,
                         D = (0, p.df)();
-                    (b.checkExperiment(C.zal.WebNextDisableSearch, 'on') && (0, o.redirect)(C.Zyd.main.href),
+                    b.checkExperiment(C.zal.WebNextDisableSearch, 'on') && (0, o.redirect)(C.Zyd.main.href),
                         (0, C.Jzs)(k.landing.loadingState === C.GuX.RESOLVE),
                         (0, l.useEffect)(
                             () => () => {
-                                (k.reset(), T.isAuthorized && k.landing.reset());
+                                k.reset(), T.isAuthorized && k.landing.reset();
                             },
                             [T.isAuthorized, b, k],
-                        ));
+                        );
                     let M = (0, u.c)((e, t) => {
-                            (k.resetResults(), 0 !== e.length && k.getSearchResults({ text: decodeURIComponent(e), filter: t, withClips: D }));
+                            k.resetResults(), 0 !== e.length && k.getSearchResults({ text: decodeURIComponent(e), filter: t, withClips: D });
                         }),
                         w = (0, u.c)(() => {
                             A(!0);
@@ -349,9 +349,9 @@
                         U = (0, u.c)((t) => {
                             let s = t.trim(),
                                 a = encodeURIComponent(s);
-                            (L(a), (O.current = a), 0 !== e.value && K(0), M(a, d.$.TOP), k.history.setShouldUpdateHistory(!0), k.resetSearchCorrectedText(), A(!1));
+                            L(a), (O.current = a), 0 !== e.value && K(0), M(a, d.$.TOP), k.history.setShouldUpdateHistory(!0), k.resetSearchCorrectedText(), A(!1);
                             let r = new URL(window.location.href);
-                            (r.searchParams.set(E, s), B(String(r)));
+                            r.searchParams.set(E, s), B(String(r));
                         }),
                         Y = (0, u.c)((e) => {
                             let { id: t, type: s, blockPosition: a, position: r, feedbackType: i } = e;
@@ -477,9 +477,9 @@
         10462: (e, t, s) => {
             'use strict';
             var a;
-            (s.d(t, { n: () => a }),
+            s.d(t, { n: () => a }),
                 (function (e) {
-                    ((e.ALL = 'all'),
+                    (e.ALL = 'all'),
                         (e.TRACK = 'track'),
                         (e.ALBUM = 'album'),
                         (e.ARTIST = 'artist'),
@@ -492,8 +492,8 @@
                         (e.PODCAST_EPISODE = 'podcast_episode'),
                         (e.VIDEO = 'video'),
                         (e.LYRICS = 'lyrics'),
-                        (e.CLIP = 'clip'));
-                })(a || (a = {})));
+                        (e.CLIP = 'clip');
+                })(a || (a = {}));
         },
         10608: (e) => {
             e.exports = {
@@ -552,9 +552,9 @@
         11167: (e, t, s) => {
             'use strict';
             var a;
-            (s.d(t, { r: () => a }),
+            s.d(t, { r: () => a }),
                 (function (e) {
-                    ((e.TRACK = 'best_result_track'),
+                    (e.TRACK = 'best_result_track'),
                         (e.ARTIST = 'best_result_artist'),
                         (e.CONCERT = 'best_result_concert'),
                         (e.RECENT_RELEASE = 'best_result_recent_release'),
@@ -568,8 +568,8 @@
                         (e.CLIP = 'best_result_clip'),
                         (e.UPCOMING = 'best_result_upcoming'),
                         (e.PLAYLIST = 'best_result_playlist'),
-                        (e.BOOK_CHAPTER = 'best_result_book_chapter'));
-                })(a || (a = {})));
+                        (e.BOOK_CHAPTER = 'best_result_book_chapter');
+                })(a || (a = {}));
         },
         12561: (e) => {
             e.exports = {
@@ -611,7 +611,7 @@
         },
         18194: (e, t, s) => {
             'use strict';
-            (s.d(t, {
+            s.d(t, {
                 xo: () => U,
                 tn: () => Y.SearchCorrectedText,
                 qz: () => $.SearchEmpty,
@@ -625,7 +625,7 @@
                 Gw: () => o.G,
                 t9: () => l.useClearHistory,
             }),
-                s(33008));
+                s(33008);
             var a = s(52732);
             s(90317);
             var r = s(45242),
@@ -709,11 +709,11 @@
                             try {
                                 e.loadingState = l.GuX.PENDING;
                                 let r = yield s.getBlock({ source: { uri: '/landing/block/mixes', fullList: t }, type: i.t.MIXES });
-                                ((e.items = { items: (0, a.wg)(r.items.map((e) => (0, o.Ju)(e.data))) }.items), (e.loadingState = l.GuX.RESOLVE));
+                                (e.items = { items: (0, a.wg)(r.items.map((e) => (0, o.Ju)(e.data))) }.items), (e.loadingState = l.GuX.RESOLVE);
                             } catch (t) {
-                                (c.error(t),
+                                c.error(t),
                                     t instanceof r.GX && (t.statusCode === r.X1.NOT_FOUND || t.statusCode === r.X1.BAD_REQUEST) && (e.errorStatusCode = r.X1.NOT_FOUND),
-                                    e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT));
+                                    e.loadingState !== l.GuX.IDLE && (e.loadingState = l.GuX.REJECT);
                             }
                     }),
                 }));
@@ -1512,7 +1512,7 @@
                             };
                             p.forEach((t) => {
                                 var s, a;
-                                (null == (s = e[t.type]) || s.items.push(t), null == (a = e[n.n.ALL]) || a.items.push(t));
+                                null == (s = e[t.type]) || s.items.push(t), null == (a = e[n.n.ALL]) || a.items.push(t);
                             });
                             let t = {
                                 [n.n.ARTIST]: c.e8.search.SEARCH_MIXED_ARTIST,
@@ -1858,9 +1858,9 @@
         39535: (e, t, s) => {
             'use strict';
             var a;
-            (s.d(t, { $: () => a }),
+            s.d(t, { $: () => a }),
                 (function (e) {
-                    ((e.TOP = 'top'),
+                    (e.TOP = 'top'),
                         (e.TRACK = 'track'),
                         (e.CLIP = 'clip'),
                         (e.ALBUM = 'album'),
@@ -1872,8 +1872,8 @@
                         (e.PODCAST = 'podcast'),
                         (e.BOOK = 'book'),
                         (e.KIDS_PODCAST = 'kids-podcast'),
-                        (e.KIDS_BOOK = 'kids-book'));
-                })(a || (a = {})));
+                        (e.KIDS_BOOK = 'kids-book');
+                })(a || (a = {}));
         },
         41973: (e, t, s) => {
             'use strict';
@@ -2341,10 +2341,10 @@
                     }, [s.isEmptyHistory, h]),
                     (0, c.c)(() => {
                         try {
-                            (t.account.data.uid && s.clearHistory({ userId: t.account.data.uid }),
+                            t.account.data.uid && s.clearHistory({ userId: t.account.data.uid }),
                                 u((0, a.jsx)(d.$W, { message: (0, a.jsx)(l.A, { id: 'search.cleared-history' }) }), { containerId: n.uQT.INFO }),
                                 e && e(),
-                                h.push(n.Zyd.search.href));
+                                h.push(n.Zyd.search.href);
                         } catch (e) {
                             u((0, a.jsx)(d.hT, { error: m({ id: 'error-messages.error-during-action' }) }), { containerId: n.uQT.ERROR });
                         }

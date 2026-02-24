@@ -112,13 +112,13 @@
                                         { id: 'mask', type: 'Color', value: n },
                                     ],
                                 });
-                            (await (null == r ? void 0 : r.setThemeData(l)), h());
+                            await (null == r ? void 0 : r.setThemeData(l)), h();
                         }
                     }),
                     L = (0, d.c)(() => {
-                        (v(), w());
+                        v(), w();
                     });
-                ((0, o.useEffect)(() => {
+                (0, o.useEffect)(() => {
                     i ? null == r || r.play() : null == r || r.pause();
                 }, [r, i]),
                     (0, o.useEffect)(() => {
@@ -134,7 +134,7 @@
                                     r.removeEventListener('load', L);
                                 }
                             );
-                    }, [r, L]));
+                    }, [r, L]);
                 let N = !s || !b,
                     B = (0, u.L)(() => {
                         if (!A.current) return;
@@ -185,7 +185,7 @@
             'use strict';
             i.d(t, { h: () => a });
             var a = (function (e) {
-                return ((e.SMALL = 'small'), (e.LARGE = 'large'), e);
+                return (e.SMALL = 'small'), (e.LARGE = 'large'), e;
             })({});
         },
         17999: (e, t, i) => {
@@ -263,7 +263,7 @@
                     { isPlaying: P, togglePlay: A } = (0, u.B0S)({ seeds: t.seeds, pageIdForFrom: n, blockIdForFrom: p }),
                     f = (0, u.brA)(),
                     j = (0, l.useCallback)(() => {
-                        (A(), f(!P));
+                        A(), f(!P);
                     }, [A, P, f]),
                     I = (0, l.useCallback)(
                         () =>
@@ -392,7 +392,7 @@
                         l = i.get(e.pinId);
                     _(!0);
                     let g = await e.togglePin();
-                    (_(!1),
+                    _(!1),
                         l &&
                             l.type === s._.WAVE_ITEM &&
                             l.data.backgroundImageUrl &&
@@ -405,7 +405,7 @@
                             g.data.agent && (n.agent = (0, C.K)(g.data.agent))),
                         g
                             ? d((0, a.jsx)(v, { vibe: n }), { containerId: o.uQT.INFO })
-                            : d((0, a.jsx)(c.hT, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.uQT.ERROR }));
+                            : d((0, a.jsx)(c.hT, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.uQT.ERROR });
                 }, [u, d, m, i, t.isAuthorized, e]);
             };
         },
@@ -478,7 +478,7 @@
             };
             var l = i(17846),
                 s = i(66268);
-            ((0, s.cache)(async (e, t) => {
+            (0, s.cache)(async (e, t) => {
                 var i;
                 let a;
                 try {
@@ -496,7 +496,7 @@
                 } catch (e) {
                     return (0, r.tfF)(e, () => ({ playlist: void 0, ...(0, r.Bj3)() }));
                 }
-                return ((null == (i = a.playlist) ? void 0 : i.error) === 'not-found' && (0, l.notFound)(), a);
+                return (null == (i = a.playlist) ? void 0 : i.error) === 'not-found' && (0, l.notFound)(), a;
             }),
                 (0, s.cache)(async (e) => {
                     var t;
@@ -517,8 +517,8 @@
                     } catch (e) {
                         return (0, r.tfF)(e, () => ({ playlist: void 0, ...(0, r.Bj3)() }));
                     }
-                    return ((null == (t = i.playlist) ? void 0 : t.error) === 'not-found' && (0, l.notFound)(), i);
-                }));
+                    return (null == (t = i.playlist) ? void 0 : t.error) === 'not-found' && (0, l.notFound)(), i;
+                });
             var o = i(25911);
             let c = (e) => ({ uid: e.uid, login: e.login, name: e.name, sex: e.sex, verified: e.verified }),
                 d = (e) =>
@@ -583,9 +583,9 @@
                                 e.description = t;
                                 try {
                                     let a = yield i.changePlaylistDescription({ description: t, userId: e.uid, playlistKind: e.kind });
-                                    return ((e.description = a.description), r.FlZ.OK);
+                                    return (e.description = a.description), r.FlZ.OK;
                                 } catch (t) {
-                                    ((e.description = a), n.error(t));
+                                    (e.description = a), n.error(t);
                                 }
                             }
                             return r.FlZ.ERROR;
@@ -595,7 +595,7 @@
                             let { usersResource: i, modelActionsLogger: n } = (0, a._$)(e);
                             try {
                                 let a = yield i.uploadPlaylistCover({ userId: e.uid, formData: t, playlistKind: e.kind });
-                                return ((e.coverUri = a.cover.uri), r.FlZ.OK);
+                                return (e.coverUri = a.cover.uri), r.FlZ.OK;
                             } catch (e) {
                                 n.error(e);
                             }
@@ -612,7 +612,7 @@
         51379: (e, t, i) => {
             'use strict';
             var a;
-            (i.d(t, { y: () => a }), ((a || (a = {})).MIX = 'MIX'));
+            i.d(t, { y: () => a }), ((a || (a = {})).MIX = 'MIX');
         },
         54344: (e, t, i) => {
             'use strict';
@@ -760,7 +760,7 @@
                     E = (0, o.c)(() => {
                         if (!K()) {
                             if (I) return void B(!0);
-                            (A || T || (f(!0), null == w || w()), V(), L(!T));
+                            A || T || (f(!0), null == w || w()), V(), L(!T);
                         }
                     }),
                     z = (0, o.c)(() => {
@@ -839,10 +839,10 @@
         56016: (e, t, i) => {
             'use strict';
             var a;
-            (i.d(t, { h: () => a }),
+            i.d(t, { h: () => a }),
                 (function (e) {
-                    ((e.ALBUM = 'album'), (e.PLAYLIST = 'playlist'), (e.TRACK = 'track'), (e.ARTIST = 'artist'));
-                })(a || (a = {})));
+                    (e.ALBUM = 'album'), (e.PLAYLIST = 'playlist'), (e.TRACK = 'track'), (e.ARTIST = 'artist');
+                })(a || (a = {}));
         },
         56395: (e, t, i) => {
             'use strict';
@@ -977,29 +977,29 @@
                     W = (0, x.PT7)(),
                     q = (0, u.c)((e) => {
                         if ((e.stopPropagation(), W())) return void e.preventDefault();
-                        (w.setUtmLink(B), w.openPlaylistTrailer(i.id), Z(o.ky.Playlist, i.id));
+                        w.setUtmLink(B), w.openPlaylistTrailer(i.id), Z(o.ky.Playlist, i.id);
                     }),
                     [Q, G] = (0, l.useState)(!1),
                     { isPlaying: J, togglePlay: ee } = (0, x.Dx4)({
                         playContextParams: { contextData: { type: d.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: N, utmLink: B }, loadContextMeta: !0 },
                     }),
                     et = (0, u.c)(() => {
-                        (Y({ to: o.QT.PlaylistScreen }), null == V || V());
+                        Y({ to: o.QT.PlaylistScreen }), null == V || V();
                     }),
                     ei = (0, u.c)((e) => {
-                        (et(), X(e));
+                        et(), X(e);
                     }),
                     ea = (0, u.c)(() => {
                         W() || (E || J || (z(!0), null == S || S()), ee(), H(!J));
                     }),
                     er = (0, u.c)(() => {
-                        (R || i.isLiked || (U(!0), null == T || T()), F());
+                        R || i.isLiked || (U(!0), null == T || T()), F();
                     }),
                     en = (0, u.c)((e) => {
-                        (e.preventDefault(), e.stopPropagation());
+                        e.preventDefault(), e.stopPropagation();
                     }),
                     el = (0, u.c)((e) => {
-                        (M(e), G(e));
+                        M(e), G(e);
                     }),
                     es = (0, l.useMemo)(() => {
                         var e;
@@ -1193,12 +1193,12 @@
                     p = (0, x.KX)(n),
                     [C, b] = (0, l.useState)(!1),
                     k = (0, m.c)(async () => {
-                        (C || n.isLiked || (b(!0), null == _ || _()), await p());
+                        C || n.isLiked || (b(!0), null == _ || _()), await p();
                     }),
                     P = (0, y.Ftl)(),
                     A = (0, m.c)((e) => {
                         if ((e.stopPropagation(), u())) return void e.preventDefault();
-                        (d.openPlaylistTrailer(n.id), P(c.ky.Playlist, n.id));
+                        d.openPlaylistTrailer(n.id), P(c.ky.Playlist, n.id);
                     });
                 return (0, a.jsxs)('div', {
                     className: (0, r.$)(h().root, h().controls, i, { [h().controls_disabled]: !n.isAvailable }),
@@ -1256,16 +1256,16 @@
                     } = (0, y.Dx4)({ playContextParams: { contextData: { type: u.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: j }, loadContextMeta: !0 } }),
                     M = (0, y.ZpR)(i.url),
                     $ = (0, m.c)((e) => {
-                        (null == S || S(), z({ to: c.QT.PlaylistScreen }), e.preventDefault(), M(e));
+                        null == S || S(), z({ to: c.QT.PlaylistScreen }), e.preventDefault(), M(e);
                     }),
                     F = (0, m.c)(() => {
                         V() || (I || R || (w(!0), null == E || E()), O(), L(!R));
                     }),
                     D = (0, m.c)((e) => {
-                        ((0, _.P)(e, v.$f.ripple), $(e));
+                        (0, _.P)(e, v.$f.ripple), $(e);
                     }),
                     Y = (0, m.c)((e) => {
-                        (e.stopPropagation(), $(e));
+                        e.stopPropagation(), $(e);
                     }),
                     H = (0, l.useCallback)(
                         (e) =>
@@ -1431,7 +1431,7 @@
                                     ((0, d.P)(e, x().ripple),
                                     k(),
                                     I().finally(() => {
-                                        (P(), w(!j));
+                                        P(), w(!j);
                                     }));
                             },
                             [P, k, I, j, w, f],

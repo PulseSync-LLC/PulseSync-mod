@@ -849,18 +849,18 @@
         19964: (e, t, l) => {
             'use strict';
             var s;
-            (l.d(t, { x: () => s }),
+            l.d(t, { x: () => s }),
                 (function (e) {
-                    ((e.ASC = 'asc'), (e.DESC = 'desc'));
-                })(s || (s = {})));
+                    (e.ASC = 'asc'), (e.DESC = 'desc');
+                })(s || (s = {}));
         },
         19980: (e, t, l) => {
             'use strict';
             var s;
-            (l.d(t, { S: () => s }),
+            l.d(t, { S: () => s }),
                 (function (e) {
-                    ((e.MUSIC = 'music'), (e.CHILDREN = 'children'));
-                })(s || (s = {})));
+                    (e.MUSIC = 'music'), (e.CHILDREN = 'children');
+                })(s || (s = {}));
         },
         21002: (e) => {
             e.exports = {
@@ -902,13 +902,13 @@
                     i = (0, y.W6M)(),
                     { from: A } = (0, y.fyy)({ pageId: y._Q$.COLLECTION_KIDS }),
                     { formatMessage: S } = (0, n.A)();
-                ((0, o.useEffect)(
+                (0, o.useEffect)(
                     () => () => {
                         e.reset();
                     },
                     [e],
                 ),
-                    (0, y.Jzs)(e.isResolved));
+                    (0, y.Jzs)(e.isResolved);
                 let v = (0, u.L)(() =>
                     e.tracks.loadedItems.slice(0, 5).map((t, l) => {
                         let a = {
@@ -1313,12 +1313,12 @@
                                 l = Math.ceil((e.endIndex * n) / 20);
                             for (let e = t; e <= l; e++) g(e);
                         });
-                    ((0, o.useEffect)(() => {
+                    (0, o.useEffect)(() => {
                         a.isNeededToLoad && (null == l || l.scrollTo({ top: 0, behavior: 'instant' }), a.setInitialShimmer(), g());
                     }, [a, a.isNeededToLoad, g, l]),
                         (0, o.useEffect)(() => {
                             !_.isScrolling && _.range && P(_.range);
-                        }, [P, _.range, _.isScrolling]));
+                        }, [P, _.range, _.isScrolling]);
                     let A = (0, j.A)(() => {
                         r(S);
                     }, 100);
@@ -1457,13 +1457,13 @@
                     { from: b } = (0, g.fyy)({ pageId: g._Q$.COLLECTION_KIDS_TRACKS }),
                     { formatMessage: A } = (0, n.A)(),
                     k = (0, g.wZZ)();
-                ((0, o.useEffect)(
+                (0, o.useEffect)(
                     () => () => {
                         e.reset();
                     },
                     [e],
                 ),
-                    (0, g.Jzs)(e.isResolved));
+                    (0, g.Jzs)(e.isResolved);
                 let S = (0, o.useCallback)(
                     (t) => {
                         e.getData({ page: t, pageSize: x.c });
@@ -1581,7 +1581,7 @@
                 if (((0, g.Jzs)(l.isResolved), l.isRejected && !i.hasLiked)) return (0, s.jsx)(_.w, {});
                 (0, o.useEffect)(
                     () => () => {
-                        (l.reset(), i.reset());
+                        l.reset(), i.reset();
                     },
                     [l, i],
                 );
@@ -1893,7 +1893,7 @@
             'use strict';
             l.d(t, { j: () => s });
             var s = (function (e) {
-                return ((e[(e.TRACKS = 0)] = 'TRACKS'), (e[(e.ARTISTS = 1)] = 'ARTISTS'), e);
+                return (e[(e.TRACKS = 0)] = 'TRACKS'), (e[(e.ARTISTS = 1)] = 'ARTISTS'), e;
             })({});
         },
         49762: (e) => {
@@ -2183,7 +2183,7 @@
             'use strict';
             l.d(t, { h: () => s });
             var s = (function (e) {
-                return ((e.TRACKS = 'tracks'), (e.ARTISTS = 'artists'), e);
+                return (e.TRACKS = 'tracks'), (e.ARTISTS = 'artists'), e;
             })({});
         },
         58640: (e) => {
@@ -2273,7 +2273,7 @@
                 c = l(64143),
                 d = l(79169),
                 m = (function (e) {
-                    return ((e[(e.LIKED_ALBUMS = 0)] = 'LIKED_ALBUMS'), (e[(e.UPCOMING_ALBUMS = 1)] = 'UPCOMING_ALBUMS'), e);
+                    return (e[(e.LIKED_ALBUMS = 0)] = 'LIKED_ALBUMS'), (e[(e.UPCOMING_ALBUMS = 1)] = 'UPCOMING_ALBUMS'), e;
                 })({}),
                 u = l(92810),
                 _ = l.n(u),
@@ -2587,13 +2587,13 @@
                             return m.LIKED_ALBUMS;
                         }, [e]),
                         p = (0, r.useTabsState)(g);
-                    ((0, d.Jzs)(l.albums.isResolved),
+                    (0, d.Jzs)(l.albums.isResolved),
                         (0, o.useEffect)(
                             () => () => {
                                 l.albums.reset();
                             },
                             [l.albums],
-                        ));
+                        );
                     let x = (0, o.useMemo)(() => {
                         switch (p.value) {
                             case m.LIKED_ALBUMS:
@@ -2633,7 +2633,7 @@
             'use strict';
             l.d(t, { a: () => s });
             var s = (function (e) {
-                return ((e[(e.CREATED = 0)] = 'CREATED'), (e[(e.LIKED = 1)] = 'LIKED'), e);
+                return (e[(e.CREATED = 0)] = 'CREATED'), (e[(e.LIKED = 1)] = 'LIKED'), e;
             })({});
         },
         71327: (e) => {
@@ -2797,13 +2797,13 @@
                         { formatMessage: b } = (0, n.A)(),
                         { contentScrollRef: A, setContentScrollRef: k } = (0, C.gKY)(),
                         S = (0, C.W6M)();
-                    ((0, C.Jzs)(x.artists.isResolved),
+                    (0, C.Jzs)(x.artists.isResolved),
                         (0, o.useEffect)(
                             () => () => {
                                 x.artists.reset();
                             },
                             [x.artists],
-                        ));
+                        );
                     let v = (0, o.useCallback)(
                             (e) => {
                                 g.account.data.uid && x.artists.getData({ userId: g.account.data.uid, page: e, pageSize: 20 });
@@ -2980,7 +2980,7 @@
                     { contentScrollRef: i, setContentScrollRef: x } = (0, g.gKY)(),
                     { formatMessage: j } = (0, n.A)(),
                     y = !e.landing.isRejected && !!t.collectionHue;
-                ((0, o.useEffect)(() => () => e.landing.reset(), [e.landing]), (0, g.Jzs)(e.landing.isResolved));
+                (0, o.useEffect)(() => () => e.landing.reset(), [e.landing]), (0, g.Jzs)(e.landing.isResolved);
                 let b = (0, _._9)(e.landing),
                     A = (0, o.useMemo)(() => (y && t.collectionHue ? { '--collection-color': (0, g.eWZ)(t.collectionHue) } : null), [y, t.collectionHue]),
                     k = (0, o.useMemo)(
@@ -3153,7 +3153,7 @@
             var s,
                 a = l(48509);
             !(function (e) {
-                ((e.ALBUM = 'album'), (e.PLAYLIST = 'playlist'));
+                (e.ALBUM = 'album'), (e.PLAYLIST = 'playlist');
             })(s || (s = {}));
             let i = (e, t) => {
                 var l, i;
@@ -3686,14 +3686,14 @@
                             return u.j.TRACKS;
                         }, [e]),
                         x = (0, r.useTabsState)(p);
-                    (t.account.data.uid || (0, i.notFound)(),
+                    t.account.data.uid || (0, i.notFound)(),
                         (0, d.Jzs)(l.isResolved),
                         (0, o.useEffect)(
                             () => () => {
                                 l.reset();
                             },
                             [l],
-                        ));
+                        );
                     let P = (0, o.useMemo)(() => {
                         switch (x.value) {
                             case u.j.TRACKS:
@@ -3732,7 +3732,7 @@
             let n = (e) => {
                 let { sortModel: t } = e,
                     l = (0, i.XJ9)();
-                ((0, s.useLayoutEffect)(() => {
+                (0, s.useLayoutEffect)(() => {
                     let e = new URL(window.location.href).searchParams.get(i.K3F.SORT);
                     e && (0, o.W)(e) ? t.setSortBy(e) : t.setSortBy(a.g.YEAR);
                 }, [t]),
@@ -3741,7 +3741,7 @@
                             let e = (0, i.bJ)(i.K3F.SORT, t.sortBy);
                             e && l(e);
                         }
-                    }, [l, t.sortBy]));
+                    }, [l, t.sortBy]);
             };
         },
     },

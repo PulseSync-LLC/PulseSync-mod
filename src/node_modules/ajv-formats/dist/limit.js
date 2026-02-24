@@ -11,8 +11,8 @@ const KWDs = {
     formatExclusiveMinimum: { okStr: ">", ok: ops.GT, fail: ops.LTE },
 };
 const error = {
-    message: ({ keyword, schemaCode }) => codegen_1.str `should be ${KWDs[keyword].okStr} ${schemaCode}`,
-    params: ({ keyword, schemaCode }) => codegen_1._ `{comparison: ${KWDs[keyword].okStr}, limit: ${schemaCode}}`,
+    message: ({ keyword, schemaCode }) => (0, codegen_1.str) `should be ${KWDs[keyword].okStr} ${schemaCode}`,
+    params: ({ keyword, schemaCode }) => (0, codegen_1._) `{comparison: ${KWDs[keyword].okStr}, limit: ${schemaCode}}`,
 };
 exports.formatLimitDefinition = {
     keyword: Object.keys(KWDs),
@@ -35,8 +35,8 @@ exports.formatLimitDefinition = {
                 ref: self.formats,
                 code: opts.code.formats,
             });
-            const fmt = gen.const("fmt", codegen_1._ `${fmts}[${fCxt.schemaCode}]`);
-            cxt.fail$data(codegen_1.or(codegen_1._ `typeof ${fmt} != "object"`, codegen_1._ `${fmt} instanceof RegExp`, codegen_1._ `typeof ${fmt}.compare != "function"`, compareCode(fmt)));
+            const fmt = gen.const("fmt", (0, codegen_1._) `${fmts}[${fCxt.schemaCode}]`);
+            cxt.fail$data((0, codegen_1.or)((0, codegen_1._) `typeof ${fmt} != "object"`, (0, codegen_1._) `${fmt} instanceof RegExp`, (0, codegen_1._) `typeof ${fmt}.compare != "function"`, compareCode(fmt)));
         }
         function validateFormat() {
             const format = fCxt.schema;
@@ -51,12 +51,12 @@ exports.formatLimitDefinition = {
             const fmt = gen.scopeValue("formats", {
                 key: format,
                 ref: fmtDef,
-                code: opts.code.formats ? codegen_1._ `${opts.code.formats}${codegen_1.getProperty(format)}` : undefined,
+                code: opts.code.formats ? (0, codegen_1._) `${opts.code.formats}${(0, codegen_1.getProperty)(format)}` : undefined,
             });
             cxt.fail$data(compareCode(fmt));
         }
         function compareCode(fmt) {
-            return codegen_1._ `${fmt}.compare(${data}, ${schemaCode}) ${KWDs[keyword].fail} 0`;
+            return (0, codegen_1._) `${fmt}.compare(${data}, ${schemaCode}) ${KWDs[keyword].fail} 0`;
         }
     },
     dependencies: ["format"],

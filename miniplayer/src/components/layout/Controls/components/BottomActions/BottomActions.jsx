@@ -33,7 +33,10 @@ export default function BottomActions() {
                 active={playerState.availableActions?.shuffle}
             />
             <PlayerActionButton name="backward" active={playerState.availableActions?.moveBackward} />
-            <PlayButton isPlaying={!['paused', 'idle'].includes(playerState.status)} useYellowButton={settingsState.playerBarEnhancement.playButtonType === 'yellow'} />
+            <PlayButton
+                isPlaying={!['paused', 'idle'].includes(playerState.status)}
+                useYellowButton={settingsState.playerBarEnhancement.playButtonType === 'yellow'}
+            />
             <PlayerActionButton name="forward" active={playerState.availableActions?.moveForward} />
             <PlayerActionButton
                 type="secondary"

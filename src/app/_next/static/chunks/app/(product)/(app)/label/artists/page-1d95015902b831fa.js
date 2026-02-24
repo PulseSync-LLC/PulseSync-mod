@@ -76,10 +76,10 @@
         19964: (t, o, e) => {
             'use strict';
             var s;
-            (e.d(o, { x: () => s }),
+            e.d(o, { x: () => s }),
                 (function (t) {
-                    ((t.ASC = 'asc'), (t.DESC = 'desc'));
-                })(s || (s = {})));
+                    (t.ASC = 'asc'), (t.DESC = 'desc');
+                })(s || (s = {}));
         },
         25585: (t, o, e) => {
             'use strict';
@@ -185,14 +185,14 @@
         },
         43228: (t, o, e) => {
             'use strict';
-            (e.r(o), e.d(o, { default: () => i }));
+            e.r(o), e.d(o, { default: () => i });
             var s = e(33008),
                 r = e(17846),
                 n = e(25767),
                 a = e(79169);
             let i = () => {
                 let t = (0, r.useSearchParams)().get('labelId');
-                return ((t && (0, a.LLJ)(t)) || (0, r.notFound)(), (0, s.jsx)(n.ac, { labelId: t }));
+                return (t && (0, a.LLJ)(t)) || (0, r.notFound)(), (0, s.jsx)(n.ac, { labelId: t });
             };
         },
         99963: (t, o, e) => {
@@ -205,7 +205,7 @@
             let i = (t) => {
                 let { sortModel: o } = t,
                     e = (0, n.XJ9)();
-                ((0, s.useLayoutEffect)(() => {
+                (0, s.useLayoutEffect)(() => {
                     let t = new URL(window.location.href).searchParams.get(n.K3F.SORT);
                     t && (0, a.W)(t) ? o.setSortBy(t) : o.setSortBy(r.g.YEAR);
                 }, [o]),
@@ -214,12 +214,12 @@
                             let t = (0, n.bJ)(n.K3F.SORT, o.sortBy);
                             t && e(t);
                         }
-                    }, [e, o.sortBy]));
+                    }, [e, o.sortBy]);
             };
         },
     },
     (t) => {
-        (t.O(
+        t.O(
             0,
             [
                 7098, 8282, 9712, 5271, 7309, 952, 9775, 1709, 9284, 8004, 9323, 1311, 7764, 6706, 996, 4236, 9169, 8740, 9615, 3588, 2732, 4204, 7747, 9718, 508, 7111,
@@ -227,6 +227,6 @@
             ],
             () => t((t.s = 12518)),
         ),
-            (_N_E = t.O()));
+            (_N_E = t.O());
     },
 ]);

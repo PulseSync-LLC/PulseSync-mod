@@ -1,0 +1,149 @@
+name: Download FFmpeg binaries (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ffmpeg_version:
+        description: "FFmpeg version from ffmpeg-static releases (e.g. 7.1.1, 8.0.1)"
+        required: false
+        default: "6.1.1"
+
+concurrency:
+  group: ffmpeg-download-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  download:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-x86_64
+            runner: ubuntu-latest
+            target: linux
+            arch: x86_64
+            ffmpeg_static_name: linux-x64
+
+          - name: macos-x86_64
+            runner: macos-15-intel
+            target: macos
+            arch: x86_64
+            ffmpeg_static_name: darwin-x64
+
+          - name: macos-arm64
+            runner: macos-latest
+            target: macos
+            arch: arm64
+            ffmpeg_static_name: darwin-arm64
+
+          - name: windows-x86_64
+            runner: ubuntu-latest
+            target: windows
+            arch: x86_64
+            ffmpeg_static_name: win32-x64
+
+    runs-on: ${{ matrix.runner }}
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download FFmpeg binary from ffmpeg-static
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/bin
+          
+          FFMPEG_VERSION="${{ inputs.ffmpeg_version }}"
+          FFMPEG_STATIC_NAME="${{ matrix.ffmpeg_static_name }}"
+          
+          # Construct the download URL
+          # ffmpeg-static format: https://github.com/eugeneware/ffmpeg-static/releases/download/b{version}/ffmpeg-{name}
+          DOWNLOAD_URL="https://github.com/eugeneware/ffmpeg-static/releases/download/b${FFMPEG_VERSION}/ffmpeg-${FFMPEG_STATIC_NAME}"
+          
+          if [ "${{ matrix.target }}" = "windows" ]; then
+            BIN_PATH="dist/bin/ffmpeg.exe"
+          else
+            BIN_PATH="dist/bin/ffmpeg"
+          fi
+          
+          echo "Downloading from: ${DOWNLOAD_URL}"
+          curl -L --retry 5 --retry-delay 2 -o "${BIN_PATH}" "${DOWNLOAD_URL}"
+          
+          # Make executable (non-Windows)
+          if [ "${{ matrix.target }}" != "windows" ]; then
+            chmod +x "${BIN_PATH}"
+          fi
+          
+          echo "Downloaded: ${BIN_PATH}"
+          file "${BIN_PATH}" || true
+
+      - name: Package artifact (tar.gz only ffmpeg binary) + sha256 of binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARTIFACT="ffmpeg-${{ matrix.target }}-${{ matrix.arch }}"
+          mkdir -p out
+
+          if [ "${{ matrix.target }}" = "windows" ]; then
+            BIN="dist/bin/ffmpeg.exe"
+          else
+            BIN="dist/bin/ffmpeg"
+          fi
+
+          if [ ! -f "${BIN}" ]; then
+            echo "Expected binary not found: ${BIN}"
+            echo "dist tree:"
+            find dist -maxdepth 3 -type f -print
+            exit 1
+          fi
+
+          TAR_PATH="out/${ARTIFACT}.tar.gz"
+          SHA_PATH="out/${ARTIFACT}.sha256"
+
+          # 1) sha256 of the binary itself (this is what your updater wants)
+          if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum "${BIN}" | awk '{print $1}' > "${SHA_PATH}"
+          else
+            shasum -a 256 "${BIN}" | awk '{print $1}' > "${SHA_PATH}"
+          fi
+
+          # 2) tar.gz only the ffmpeg binary (no paths)
+          # Use -C to avoid embedding dist/bin path in the archive
+          tar -C "$(dirname "${BIN}")" -czf "${TAR_PATH}" "$(basename "${BIN}")"
+
+          echo "Created ${TAR_PATH}"
+          echo "Created ${SHA_PATH} (sha256 of binary)"
+          ls -la out
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-${{ matrix.target }}-${{ matrix.arch }}
+          path: out/*
+          if-no-files-found: error
+
+  release:
+    name: Publish release assets
+    needs: download
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+
+      - name: Create / update release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ffmpeg-binaries
+          name: FFmpeg prebuilt binaries
+          prerelease: false
+          make_latest: false
+          fail_on_unmatched_files: true
+          files: |
+            ffmpeg-*/ffmpeg-*.tar.gz
+            ffmpeg-*/ffmpeg-*.sha256
