@@ -13,6 +13,7 @@
     const yaml = require('js-yaml');
     const sevenZip = require('7zip-min');
     const FormData = require('form-data');
+    const { Octokit } = await import('@octokit/rest');
     const { execSync } = require('child_process');
     const { exec, spawn } = require('child_process');
     const { promisify } = require('util');
@@ -61,6 +62,10 @@
 
     const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
     const serverUrl = process.env.SERVER_URL;
+    const githubToken = process.env.GITHUB_TOKEN;
+    const githubOwnerEnv = process.env.GITHUB_REPO_OWNER;
+    const githubRepoEnv = process.env.GITHUB_REPO_NAME;
+    const githubTagPrefix = process.env.GITHUB_RELEASE_TAG_PREFIX ?? 'v';
 
     const patchNoteStringMD = fs.readFileSync(PATCH_NOTES_PATH, { encoding: 'utf8' });
 
@@ -80,6 +85,10 @@
 
         toDiscord() {
             return `# Client ${this.version}\n\n${this.patchNoteString}`;
+        }
+
+        toGitHub() {
+            return `## Patch for Yandex Music ${this.ymVersion}\n\n${this.patchNoteString}`;
         }
     }
 
@@ -103,6 +112,191 @@
             throw new Error(`Не удалось отправить webhook: ${webhookResponse.statusText}`);
         }
         console.log('Патчноут отправлен в Discord');
+    }
+
+    function parseGitHubRepoFromRemoteUrl(remoteUrl) {
+        if (!remoteUrl) return null;
+        const match = String(remoteUrl)
+            .trim()
+            .match(/github\.com[:/]([^/]+)\/(.+?)(?:\.git)?$/i);
+        if (!match) return null;
+        return { owner: match[1], repo: match[2] };
+    }
+
+    function resolveGitHubRepo() {
+        if (githubOwnerEnv && githubRepoEnv) {
+            return { owner: githubOwnerEnv, repo: githubRepoEnv };
+        }
+
+        try {
+            const remoteUrl = execSync('git config --get remote.origin.url', {
+                encoding: 'utf8',
+                stdio: ['ignore', 'pipe', 'ignore'],
+            }).trim();
+            return parseGitHubRepoFromRemoteUrl(remoteUrl);
+        } catch {
+            return null;
+        }
+    }
+
+    function getAsarUnpackedDirPath(asarPath) {
+        return path.join(path.dirname(asarPath), `${path.basename(asarPath)}.unpacked`);
+    }
+
+    async function zipFolder(folderPath, outputZipPath) {
+        if (!fs.existsSync(folderPath)) return null;
+        if (fs.existsSync(outputZipPath)) {
+            await fsp.rm(outputZipPath, { force: true });
+        }
+        await sevenZip.pack(folderPath, outputZipPath);
+        return outputZipPath;
+    }
+
+    async function deleteReleaseAssetIfExists(octokit, owner, repo, releaseId, assetName) {
+        const assetsResponse = await octokit.rest.repos.listReleaseAssets({
+            owner,
+            repo,
+            release_id: releaseId,
+            per_page: 100,
+        });
+
+        const existingAsset = assetsResponse.data.find((asset) => asset.name === assetName);
+        if (!existingAsset) return;
+
+        await octokit.rest.repos.deleteReleaseAsset({
+            owner,
+            repo,
+            asset_id: existingAsset.id,
+        });
+        console.log(`Deleted existing GitHub asset: ${assetName}`);
+    }
+
+    async function uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, releaseId, assetPath, contentType, maxRetries = 3) {
+        const assetName = path.basename(assetPath);
+        const assetData = fs.readFileSync(assetPath);
+        let lastError = null;
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                await deleteReleaseAssetIfExists(octokit, owner, repo, releaseId, assetName);
+                console.log(`Uploading GitHub asset ${assetName} (${attempt}/${maxRetries})...`);
+                const response = await octokit.rest.repos.uploadReleaseAsset({
+                    owner,
+                    repo,
+                    release_id: releaseId,
+                    name: assetName,
+                    data: assetData,
+                    headers: {
+                        'content-type': contentType,
+                        'content-length': assetData.length,
+                    },
+                });
+                console.log(`GitHub asset uploaded: ${assetName}`);
+                return response;
+            } catch (error) {
+                lastError = error;
+                console.warn(`GitHub asset upload failed for ${assetName}:`, error?.message ?? error);
+                if (attempt < maxRetries) {
+                    await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+                }
+            }
+        }
+
+        throw lastError;
+    }
+
+    async function ensureGitHubRelease(octokit, owner, repo, tagName, releaseName, body) {
+        try {
+            const existingReleaseResponse = await octokit.rest.repos.getReleaseByTag({
+                owner,
+                repo,
+                tag: tagName,
+            });
+
+            console.log(`GitHub release already exists for tag ${tagName}, updating draft`);
+            const updatedReleaseResponse = await octokit.rest.repos.updateRelease({
+                owner,
+                repo,
+                release_id: existingReleaseResponse.data.id,
+                tag_name: tagName,
+                name: releaseName,
+                body,
+                prerelease: false,
+            });
+
+            return updatedReleaseResponse.data;
+        } catch (error) {
+            const status = error?.status ?? error?.response?.status;
+            if (status !== 404) throw error;
+        }
+
+        console.log(`Creating GitHub release ${tagName}...`);
+        const createdReleaseResponse = await octokit.rest.repos.createRelease({
+            owner,
+            repo,
+            tag_name: tagName,
+            name: releaseName,
+            draft: true,
+            prerelease: false,
+            body,
+        });
+
+        return createdReleaseResponse.data;
+    }
+
+    async function createGitHubRelease(version, asarPath, patchNote) {
+        if (!githubToken) {
+            console.warn('GITHUB_TOKEN is not set, skipping GitHub release');
+            return null;
+        }
+
+        if (!fs.existsSync(asarPath)) {
+            throw new Error(`app.asar not found: ${asarPath}`);
+        }
+
+        const repoInfo = resolveGitHubRepo();
+        if (!repoInfo) {
+            console.warn('Unable to resolve GitHub owner/repo. Set GITHUB_REPO_OWNER and GITHUB_REPO_NAME');
+            return null;
+        }
+
+        const { owner, repo } = repoInfo;
+        const octokit = new Octokit({ auth: githubToken });
+        const tagName = `${githubTagPrefix}${version}`;
+        const release = await ensureGitHubRelease(octokit, owner, repo, tagName, version, patchNote.toGitHub());
+
+        await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, asarPath, 'application/octet-stream');
+
+        const asarUnpackedDirPath = getAsarUnpackedDirPath(asarPath);
+        let tempZipPath = null;
+
+        try {
+            if (fs.existsSync(asarUnpackedDirPath)) {
+                tempZipPath = path.join(TEMP_DIR, 'app.asar.unpacked.zip');
+                await zipFolder(asarUnpackedDirPath, tempZipPath);
+                await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, tempZipPath, 'application/zip');
+            } else {
+                console.warn(`app.asar.unpacked directory not found, skipping: ${asarUnpackedDirPath}`);
+            }
+        } finally {
+            if (tempZipPath && fs.existsSync(tempZipPath)) {
+                await fsp.rm(tempZipPath, { force: true });
+            }
+        }
+
+        await octokit.rest.repos.updateRelease({
+            owner,
+            repo,
+            release_id: release.id,
+            tag_name: tagName,
+            name: version,
+            body: patchNote.toGitHub(),
+            draft: false,
+            prerelease: false,
+        });
+
+        console.log(`GitHub release published: ${owner}/${repo}@${tagName}`);
+        return release;
     }
 
     async function uploadAppAsar(
@@ -792,6 +986,7 @@
         const version = await getModVersion();
         const { version: ymVersion } = await getLatestYMVersion();
         const patchNote = versions ? PatchNote.forSpoofPatch(versions.newVersion, version, versions.oldVersion) : new PatchNote(ymVersion, version, patchNoteStringMD);
+        await createGitHubRelease(version, dest, patchNote);
         await uploadAppAsar(dest, version, ymVersion, true, patchNote.patchNoteString, null, 'zstd', '/cdn/upload/asar');
         //await sendPatchNoteToDiscord(patchNote);
     }
