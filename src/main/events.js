@@ -322,7 +322,7 @@ const handleApplicationEvents = (window) => {
                     eventsLogger.error('Safe mode restart timeout reached. Restarting in safe mode.');
                     clearInterval(interval);
                     restartApplication(true);
-                }, 10000);
+                }, 11000);
             }
         }, 5000);
 
