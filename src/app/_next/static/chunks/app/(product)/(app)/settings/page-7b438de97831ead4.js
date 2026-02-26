@@ -503,11 +503,11 @@
                         [o],
                     );
                 return (0, i.jsxs)(p.a, {
-                    className: H().root,
+                    className: H().list,
                     style: { 'max-width': '34.375rem', height: 'auto' },
                     title: 'Системные настройки',
                     headerClassName: H().modalHeader,
-                    contentClassName: H().modalContent,
+                    contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -515,7 +515,7 @@
                     placement: 'center',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
-                        className: `${B().root} ${H().list}`,
+                        className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                         style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
@@ -674,11 +674,11 @@
                         [j],
                     );
                 return (0, i.jsxs)(p.a, {
-                    className: H().root,
+                    className: H().list,
                     style: { 'max-width': '31.25rem' },
                     title: 'Discord RPC',
                     headerClassName: H().modalHeader,
-                    contentClassName: H().modalContent,
+                    contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -686,7 +686,7 @@
                     placement: 'center',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
-                        className: `${B().root} ${H().list}`,
+                        className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                         style: { width: '29.125rem', 'max-height': '37.5rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
@@ -868,11 +868,11 @@
                         setUseTitleOnlyFallback(e);
                     }, []);
                 return (0, i.jsxs)(p.a, {
-                    className: H().root,
+                    className: H().list,
                     style: { 'max-width': '34.375rem', height: 'auto' },
                     title: 'Настройки LRCLib',
                     headerClassName: H().modalHeader,
-                    contentClassName: H().modalContent,
+                    contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -880,7 +880,7 @@
                     placement: 'center',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
-                        className: `${B().root} ${H().list}`,
+                        className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                         style: { width: '32.125rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
@@ -1106,10 +1106,10 @@
                         });
                     }, []),
                     (0, i.jsxs)(p.a, {
-                        className: H().root,
+                        className: H().list,
                         title: 'Скробблинг',
                         headerClassName: H().modalHeader,
-                        contentClassName: H().modalContent,
+                        contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                         open: t.isOpened,
                         onOpenChange: t.onOpenChange,
                         onClose: t.close,
@@ -1118,7 +1118,7 @@
                         style: { height: 'auto' },
                         labelClose: e({ id: 'interface-actions.close' }),
                         children: (0, i.jsxs)('ul', {
-                            className: `${B().root} ${H().list}`,
+                            className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                             style: { width: '-webkit-fill-available', gap: 0 },
                             children: [
                                 (0, i.jsx)('li', {
@@ -1272,11 +1272,11 @@
                     );
                 }, []);
                 return (0, i.jsxs)(p.a, {
-                    className: H().root,
+                    className: H().list,
                     style: { 'max-width': '31.25rem', height: 'auto' },
                     title: 'Панель плеера',
                     headerClassName: H().modalHeader,
-                    contentClassName: H().modalContent,
+                    contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -1284,7 +1284,7 @@
                     placement: 'center',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
-                        className: `${B().root} ${H().list}`,
+                        className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                         style: { width: '29.125rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
@@ -1396,11 +1396,11 @@
                         [g, v],
                     );
                 return (0, i.jsxs)(p.a, {
-                    className: H().root,
+                    className: H().list,
                     style: { 'max-width': '34.375rem', height: 'auto' },
                     title: 'Настройки аудио',
                     headerClassName: H().modalHeader,
-                    contentClassName: H().modalContent,
+                    contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -1408,7 +1408,7 @@
                     placement: 'center',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
-                        className: `${B().root} ${H().list}`,
+                        className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                         style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
@@ -1495,11 +1495,11 @@
                     setStartupPage(e);
                 }, []);
                 return (0, i.jsxs)(p.a, {
-                    className: H().root,
+                    className: H().list,
                     style: { 'max-width': '34.375rem', height: 'auto' },
                     title: 'Поведение окна',
                     headerClassName: H().modalHeader,
-                    contentClassName: H().modalContent,
+                    contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -1507,7 +1507,7 @@
                     placement: 'center',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
-                        className: `${B().root} ${H().list}`,
+                        className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                         style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
@@ -1617,11 +1617,11 @@
                         window.nativeSettings.set('modSettings.miniplayer.alwaysShowPlayerTimestamps', e);
                     }, []);
                 return (0, i.jsxs)(p.a, {
-                    className: H().root,
+                    className: H().list,
                     style: { 'max-width': '34.375rem', height: 'auto' },
                     title: 'Миниплеер',
                     headerClassName: H().modalHeader,
-                    contentClassName: H().modalContent,
+                    contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -1629,7 +1629,7 @@
                     placement: 'center',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
-                        className: `${B().root} ${H().list}`,
+                        className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                         style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
@@ -1731,11 +1731,11 @@
                         setSmoothDynamicEnergy(e);
                     }, []);
                 return (0, i.jsxs)(p.a, {
-                    className: H().root,
+                    className: H().list,
                     style: { 'max-width': '34.375rem' },
                     title: 'Анимация Моей Волны',
                     headerClassName: H().modalHeader,
-                    contentClassName: H().modalContent,
+                    contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -1743,7 +1743,7 @@
                     placement: 'center',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
-                        className: `${B().root} ${H().list}`,
+                        className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                         style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
@@ -1843,11 +1843,11 @@
                         window.nativeSettings.set('modSettings.vibeAnimationEnhancement.enableEndlessMusic', e);
                     }, []);
                 return (0, i.jsxs)(p.a, {
-                    className: H().root,
+                    className: H().list,
                     style: { 'max-width': '34.375rem', height: 'auto' },
                     title: 'Поведение Моей Волны',
                     headerClassName: H().modalHeader,
-                    contentClassName: H().modalContent,
+                    contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -1855,7 +1855,7 @@
                     placement: 'center',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
-                        className: `${B().root} ${H().list}`,
+                        className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                         style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
@@ -1987,10 +1987,10 @@
                         [j],
                     );
                 return (0, i.jsxs)(p.a, {
-                    className: H().root,
+                    className: H().list,
                     title: 'Ynison Remote',
                     headerClassName: H().modalHeader,
-                    contentClassName: H().modalContent,
+                    contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -1999,7 +1999,7 @@
                     style: { 'max-width': '34.375rem', height: 'auto' },
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
-                        className: `${B().root} ${H().list}`,
+                        className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
                         style: { width: '32.125rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
