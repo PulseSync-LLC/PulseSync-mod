@@ -480,12 +480,16 @@
     width: 0;
 }
 
+.Modal_content_no_right_padding {
+    padding-inline-end: 2px !important;
+}
+
 .PulseSync_experimentsListScroll {
     overscroll-behavior: contain;
     scrollbar-gutter: stable;
-    scrollbar-width: thin;
-    padding-right: 10px;
-    scrollbar-color: var(--ym-controls-color-secondary-text-enabled_variant, rgba(255, 255, 255, 0.35)) transparent;
+    scrollbar-width: thin !important;
+    padding-right: 4px;
+    scrollbar-color: var(--ym-controls-color-secondary-text-enabled, rgba(255, 255, 255, 0.35)) transparent;
 }
 
 .PulseSync_experimentsListScroll::-webkit-scrollbar {
@@ -497,7 +501,7 @@
 }
 
 .PulseSync_experimentsListScroll::-webkit-scrollbar-thumb {
-    background-color: var(--ym-controls-color-secondary-text-enabled_variant, rgba(255, 255, 255, 0.35));
+    background-color: var(--ym-controls-color-secondary-text-enabled, rgba(255, 255, 255, 0.35));
     border: 0.125rem solid transparent;
     border-radius: 999px;
     background-clip: content-box;
