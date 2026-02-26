@@ -21787,11 +21787,11 @@
                                     (n && (n += ' '), (n += t));
                             return n;
                         }
-                        r.r(t), r.d(t, { clsx: () => n, default: () => s });
+                        (r.r(t), r.d(t, { clsx: () => n, default: () => s }));
                         let s = n;
                     },
                     702: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => n });
+                        (r.r(t), r.d(t, { default: () => n }));
                         let n = {
                             root: 'JD1RZC0EtdwegdYvGm6W',
                             root_active: 'K4G7ASZk9TWzXzAWMZKF',
@@ -21815,7 +21815,7 @@
                             else n = t;
                             return { $$typeof: r, type: e, key: s, ref: void 0 !== (t = n.ref) ? t : null, props: n };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = n), (t.jsxs = n);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = n), (t.jsxs = n));
                     },
                     1082: (e, t, r) => {
                         e.exports = r(7327);
@@ -21826,7 +21826,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Shimmer = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Shimmer = void 0));
                         let s = r(1082),
                             a = r(5881),
                             o = n(r(702));
@@ -21853,19 +21853,19 @@
                 var t = s[e];
                 if (void 0 !== t) return t.exports;
                 var r = (s[e] = { exports: {} });
-                return n[e].call(r.exports, r, r.exports, a), r.exports;
+                return (n[e].call(r.exports, r, r.exports, a), r.exports);
             }
-            (a.d = (e, t) => {
+            ((a.d = (e, t) => {
                 for (var r in t) a.o(t, r) && !a.o(e, r) && Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
             }),
                 (a.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (a.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var o = {};
             (() => {
-                Object.defineProperty(o, 'X', { value: !0 }), (o.q = void 0);
+                (Object.defineProperty(o, 'X', { value: !0 }), (o.q = void 0));
                 var e = a(3186);
                 Object.defineProperty(o, 'q', {
                     enumerable: !0,
@@ -22237,7 +22237,7 @@
                                     containerClassName: w().overrideInput,
                                     type: 'text',
                                     name: 'experimentSearch',
-                                    placeholder: 'Search experiments',
+                                    placeholder: 'Поиск',
                                     value: d,
                                     onChange: (e) => x(e.target.value),
                                 }),
@@ -22248,15 +22248,10 @@
                                 weight: 'medium',
                                 children: ''.concat(I0.length, ' / ').concat(R0.length, ' experiments'),
                             }),
-                            (0, n.jsx)(g.Heading, {
-                                variant: 'h1',
-                                size: 's',
-                                weight: 'bold',
-                                className: w().heading,
-                                lineClamp: 2,
-                                children: 'Список экспериментов',
-                            }),
-                            (0, n.jsxs)('ul', {
+                            (0, n.jsx)('div', {
+                                className: 'PulseSync_experimentsListScroll',
+                                style: { flex: '1 1 auto', minHeight: 0, overflowY: 'auto' },
+                                children: (0, n.jsxs)('ul', {
                                 className: w().experimentsList,
                                 children: [
                                     I0.map((e) => {
@@ -22290,6 +22285,7 @@
                                             }),
                                         }),
                                 ],
+                                }),
                             }),
                         ],
                     });
@@ -23089,5 +23085,6 @@
         },
     },
 ]);
+
 
 
