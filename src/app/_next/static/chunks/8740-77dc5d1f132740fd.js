@@ -22102,8 +22102,8 @@
                 j = (0, s.PA)((e) => {
                     let { experimentName: t, selectedGroup: r, defaultGroup: a0, optionsState: a, onSelect: o, onOpenDropdown: i } = e,
                         c = 'error' === (null == a ? void 0 : a.status),
-                        u0 = a0 ? 'Без переопределения: '.concat(a0) : 'Без переопределения: unknown',
-                        u = c ? 'Failed to load variants. Open dropdown to retry. | '.concat(u0) : r ? 'Overridden | '.concat(u0) : u0,
+                        u0 = a0 ? 'С сервера: '.concat(a0) : 'С сервера: отсутствует',
+                        u = c ? 'Не удалось загрузить варианты. Попробуйте ещё раз. | '.concat(u0) : r ? 'Перепоределено | '.concat(u0) : u0,
                         f = buildExperimentOptions(a, r);
                     return (0, n.jsx)(settingBarWithDropdown, {
                         title: t,
