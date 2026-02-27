@@ -982,10 +982,16 @@
         return result;
     }
 
-    async function release(dest, versions = undefined) {
+    async function release(dest, versions = undefined, options = {}) {
+        const onlyUploadAppAsar = options.onlyUploadAppAsar ?? false;
         const version = await getModVersion();
         const { version: ymVersion } = await getLatestYMVersion();
         const patchNote = versions ? PatchNote.forSpoofPatch(versions.newVersion, version, versions.oldVersion) : new PatchNote(ymVersion, version, patchNoteStringMD);
+        if (onlyUploadAppAsar) {
+            await uploadAppAsar(dest, version, ymVersion, true, patchNote.patchNoteString, null, 'zstd', '/cdn/upload/asar');
+            console.log('Release: only uploadAppAsar mode enabled, skipping GitHub release and Discord patch note');
+            return;
+        }
         await createGitHubRelease(version, dest, patchNote);
         await uploadAppAsar(dest, version, ymVersion, true, patchNote.patchNoteString, null, 'zstd', '/cdn/upload/asar');
         await sendPatchNoteToDiscord(patchNote);
@@ -1330,6 +1336,7 @@
         const shouldBuildDirectly = flags.d ?? false;
         const shouldRelease = flags.r ?? false;
         const shouldBuild = flags.b ?? false;
+        const onlyUploadAppAsar = flags.onlyUploadAppAsar ?? false;
 
         const dest = flags.dest ?? (lastExtracted ? DEFAULT_PATCHED_DIST_PATH : DEFAULT_DIST_PATH);
         const src = command === 'extract' ? flags.src : lastExtracted ? await getLatestExtractedSrcDir(true) : (flags.src ?? SRC_PATH);
@@ -1342,7 +1349,7 @@
                 }
                 if (shouldRelease) {
                     await build({ srcPath: src, destDir: dest, noMinify: !shouldMinify, noNativeModules: noNativeModules });
-                    await release(dest);
+                    await release(dest, undefined, { onlyUploadAppAsar });
                     break;
                 }
 
@@ -1351,10 +1358,10 @@
             case 'spoof':
                 const versions = await spoof('extracted', shouldRelease);
                 if (shouldBuild || shouldRelease) await build({ destDir: dest, noMinify: !shouldMinify, noNativeModules: noNativeModules });
-                if (shouldRelease) await release(dest, versions);
+                if (shouldRelease) await release(dest, versions, { onlyUploadAppAsar });
                 break;
             case 'release':
-                await release(dest);
+                await release(dest, undefined, { onlyUploadAppAsar });
                 break;
             case 'download':
                 await downloadAndExtractYm({ versionOverride: downloadVersion, force });
@@ -1397,6 +1404,7 @@
                     'Флаги:\n\n -f - форсирует перезапись/пересборку/повторное извлечение\n --forceOpen - форсирует открытие Яндекс Музыки после выполнения команды\n --noNativeModules - пропускает сборку нативных модулей (только для build и buildDirectly)\n -m - минифицирует исходный код (только для build и buildDirectly)\n -o - обфускация исходного кода (только для build и buildDirectly)\n -r - вызывает release (только для spoof или build)\n -b - собирает проект (только для spoof)\n -d - собирает напрямую в дистрибутив Яндекс Музыки (только для build и patch)\n -p - патчит извлечённый (только для extract)\n --lastExtracted - использует последний извлечённый билд из ./extracted/ в качестве src (только для build и buildDirectly)\n --extractType [direct/extracted/src/customSrc/customAsar] - тип источника для извлечения (только для extract), по умолчанию direct\n --withoutPure - не извлекает чистую версию без патчей (только для extract)\n --version [semver] - использовать конкретную версию для download\n --src [path] - путь к исходному коду или asar-файлу, в зависимости от команды\n --dest [path] - путь к результирующему asar-файлу, в зависимости от команды\n --oldYMHashOverride [hash] - переопределяет старый хеш asar при обходе целостности (только Windows; для bypass-asar-integrity и build -d)',
                 );
                 console.log('\n================================\n');
+                console.log('--onlyUploadAppAsar - release runs only uploadAppAsar (skips GitHub release and Discord patch note)');
                 console.log('Флаги с аргументами указываются через =, например --oldYMHashOverride=f9cdcfb583ccebb5b23edaab0ea90165bee0479458532a0580c1b3a307d746d3');
                 console.log('\n================================\n');
                 break;
