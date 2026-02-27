@@ -326,7 +326,7 @@ const handleApplicationEvents = (window) => {
                     restartApplication(true);
                 }, 11000);
             }
-        }, 5000);
+        }, 10000);
 
         (0, pulseSyncManager_js_1.readyEvent)();
         (0, deviceInfo_js_1.logHardwareInfo)();
