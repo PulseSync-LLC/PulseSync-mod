@@ -326,7 +326,7 @@ const handleApplicationEvents = (window) => {
                     restartApplication(true);
                 }, 11000);
             }
-        }, 10000);
+        }, 15000);
 
         (0, pulseSyncManager_js_1.readyEvent)();
         (0, deviceInfo_js_1.logHardwareInfo)();
@@ -463,7 +463,7 @@ const handleApplicationEvents = (window) => {
         }
 
         const isActiveState = ['paused', 'playing'].includes(data?.status);
-        const isPlayable = isPlayerReady && data.status !== 'idle' && isActiveState;
+        const isPlayable = isPlayerReady && (data.status !== 'idle') && isActiveState;
 
         MiniPlayer.updatePlayerState(structuredClone(data));
         (0, taskBarExtension_js_1.onPlayerStateChange)(window, structuredClone(data));
