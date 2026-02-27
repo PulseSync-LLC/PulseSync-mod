@@ -5,53 +5,78 @@ on:
     types: [ published ]
   workflow_dispatch:
 
+concurrency:
+  group: compress-asset-release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
 jobs:
   compress_asset:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout репозитория
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Установить Gzip и Zstd
-        run: sudo apt-get update && sudo apt-get install -y gzip zstd
+      - name: Install Gzip, Zstd and jq
+        run: sudo apt-get update && sudo apt-get install -y gzip zstd jq
 
-      - name: Определить тег релиза
-        id: get_release
+      - name: Resolve release tag
         run: |
-          if [ "${{ github.event_name }}" == "release" ]; then
-            echo "TAG=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "TAG=${{ github.event.release.tag_name }}" >> "$GITHUB_ENV"
           else
-            LATEST_TAG=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
-            echo "TAG=$LATEST_TAG" >> $GITHUB_ENV
+            LATEST_TAG=$(curl -s \
+              -H "Authorization: Bearer ${{ github.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r '.tag_name')
+            if [ -z "$LATEST_TAG" ] || [ "$LATEST_TAG" = "null" ]; then
+              echo "Unable to determine latest release tag"
+              exit 1
+            fi
+            echo "TAG=$LATEST_TAG" >> "$GITHUB_ENV"
           fi
 
-      - name: Скачать ассет
+      - name: Download app.asar from resolved tag
         run: |
-          ASSET_URL=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.assets[] | select(.name == "app.asar") | .browser_download_url')
+          set -euo pipefail
 
-          if [ -z "$ASSET_URL" ]; then
-            echo "❌ Asset not found!"
+          RELEASE_JSON=$(curl -s \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ env.TAG }}")
+
+          ASSET_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name == "app.asar") | .browser_download_url')
+
+          if [ -z "$ASSET_URL" ] || [ "$ASSET_URL" = "null" ]; then
+            echo "Asset app.asar was not found in release tag ${{ env.TAG }}"
             exit 1
           fi
 
-          curl -L -o original_asset.bin "$ASSET_URL"
+          curl -L \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -o app.asar \
+            "$ASSET_URL"
 
-      - name: Переименовать и сжать в Gzip
-        run: |
-          mv original_asset.bin app.asar
-          gzip -k -9 app.asar
+      - name: Compress with Gzip
+        run: gzip -k -9 app.asar
 
-      - name: Сжать в Zstd
-        run: |
-          zstd -11 -k app.asar
+      - name: Compress with Zstd
+        run: zstd -11 -k app.asar
 
-      - name: Загрузить сжатые файлы в релиз
+      - name: Upload compressed assets to release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
+          make_latest: false
+          overwrite_files: true
+          fail_on_unmatched_files: true
           files: |
             app.asar.gz
             app.asar.zst
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
