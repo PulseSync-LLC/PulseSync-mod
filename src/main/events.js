@@ -326,7 +326,7 @@ const handleApplicationEvents = (window) => {
                     restartApplication(true);
                 }, 11000);
             }
-        }, 60 * 1000);
+        }, 30 * 1000);
 
         (0, pulseSyncManager_js_1.readyEvent)();
         (0, deviceInfo_js_1.logHardwareInfo)();
@@ -476,7 +476,7 @@ const handleApplicationEvents = (window) => {
             return;
         }
 
-        if (data.status === 'idle' && data.track && !isPlayerReady) {
+        if (data.track && !isPlayerReady) {
             if (store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
                 eventsLogger.info('Auto launch enabled: toggling play');
                 exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
