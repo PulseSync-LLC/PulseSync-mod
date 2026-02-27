@@ -69,7 +69,7 @@ jobs:
         run: zstd -11 -k app.asar
 
       - name: Upload compressed assets to release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.4.2
         with:
           tag_name: ${{ env.TAG }}
           make_latest: false
