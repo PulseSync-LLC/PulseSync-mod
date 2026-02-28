@@ -482,7 +482,6 @@ const handleApplicationEvents = (window) => {
         }
 
         if (data.track && !isPlayerReady) {
-
             isPlayerReady = true;
             playerReadyTimeout && clearTimeout(playerReadyTimeout);
             appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);

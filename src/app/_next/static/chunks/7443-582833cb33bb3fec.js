@@ -12869,29 +12869,29 @@
                             );
                     }, [h, o, e, r.isEnabled, r.isAvailable]);
                 let X = (0, u.useMemo)(() => {
-                        if (e || !r.isAvailable) return null;
-                        return (0, s.jsxs)('div', {
-                            className: tE().equalizer,
-                            style: { display: 'flex', 'align-items': 'center', 'justify-content': 'space-between', gap: '0.5rem' },
-                            children: [
-                                (0, s.jsx)(v.Caption, {
-                                    className: tE().item_option,
-                                    style: {
-                                        width: 'unset'
-                                    },
-                                    variant: 'span',
-                                    size: 'l',
-                                    weight: 'medium',
-                                    children: 'Нормализация громкости',
-                                }),
-                                (0, s.jsx)(tSwitch.l, {
-                                    isChecked: r128Enabled,
-                                    onChange: onR128NormalizationToggle,
-                                    'aria-label': 'Нормализация громкости',
-                                }),
-                            ],
-                        });
-                    }, [e, r.isAvailable, r128Enabled, onR128NormalizationToggle]);
+                    if (e || !r.isAvailable) return null;
+                    return (0, s.jsxs)('div', {
+                        className: tE().equalizer,
+                        style: { display: 'flex', 'align-items': 'center', 'justify-content': 'space-between', gap: '0.5rem' },
+                        children: [
+                            (0, s.jsx)(v.Caption, {
+                                className: tE().item_option,
+                                style: {
+                                    width: 'unset',
+                                },
+                                variant: 'span',
+                                size: 'l',
+                                weight: 'medium',
+                                children: 'Нормализация громкости',
+                            }),
+                            (0, s.jsx)(tSwitch.l, {
+                                isChecked: r128Enabled,
+                                onChange: onR128NormalizationToggle,
+                                'aria-label': 'Нормализация громкости',
+                            }),
+                        ],
+                    });
+                }, [e, r.isAvailable, r128Enabled, onR128NormalizationToggle]);
                 return (0, s.jsxs)(K.a, {
                     size: 'fitContent',
                     placement: e ? 'default' : 'right',
@@ -12929,7 +12929,7 @@
                                         }),
                                     }),
                                 ],
-                        }),
+                            }),
                         J,
                         X,
                         q,
