@@ -451,42 +451,48 @@ const handleApplicationEvents = (window) => {
     electron_1.ipcMain.on(events_js_1.Events.PLAYER_STATE, (event, data) => {
         eventsLogger.info(`Event received`, events_js_1.Events.PLAYER_STATE, data);
 
-        if (isBoolean(data.isPlaying)) {
-            state_js_1.state.player.isPlaying = data.isPlaying;
-            (0, appSuspension_js_1.toggleAppSuspension)(data.isPlaying, (store_js_1.getModSettings()?.window?.preventDisplaySleep ?? false) && window.isVisible());
-        }
-        if (isBoolean(data.canMoveBackward)) {
-            state_js_1.state.player.canMoveBackward = data.canMoveBackward;
-        }
-        if (isBoolean(data.canMoveForward)) {
-            state_js_1.state.player.canMoveForward = data.canMoveForward;
-        }
+        try {
+            if (isBoolean(data.isPlaying)) {
+                state_js_1.state.player.isPlaying = data.isPlaying;
+                (0, appSuspension_js_1.toggleAppSuspension)(data.isPlaying, (store_js_1.getModSettings()?.window?.preventDisplaySleep ?? false) && window.isVisible());
+            }
+            if (isBoolean(data.canMoveBackward)) {
+                state_js_1.state.player.canMoveBackward = data.canMoveBackward;
+            }
+            if (isBoolean(data.canMoveForward)) {
+                state_js_1.state.player.canMoveForward = data.canMoveForward;
+            }
 
-        const isActiveState = ['paused', 'playing'].includes(data?.status);
-        const isPlayable = isPlayerReady && (data.status !== 'idle') && isActiveState;
+            const isActiveState = ['paused', 'playing'].includes(data?.status);
+            const isPlayable = isPlayerReady && data.status !== 'idle' && isActiveState;
 
-        MiniPlayer.updatePlayerState(structuredClone(data));
-        (0, taskBarExtension_js_1.onPlayerStateChange)(window, structuredClone(data));
+            MiniPlayer.updatePlayerState(structuredClone(data));
+            (0, taskBarExtension_js_1.onPlayerStateChange)(window, structuredClone(data));
 
-        if (isPlayable) {
-            (0, tray_js_1.updateTrayMenu)(window);
-            (0, scrobbleManager_js_1.handlePlayingStateEvent)(structuredClone(data));
-            (0, pulseSyncManager_js_1.updatePlayerState)(structuredClone(data));
-            (0, discordRichPresence_js_1.discordRichPresence)(structuredClone(data));
-            return;
+            if (isPlayable) {
+                (0, tray_js_1.updateTrayMenu)(window);
+                (0, scrobbleManager_js_1.handlePlayingStateEvent)(structuredClone(data));
+                (0, pulseSyncManager_js_1.updatePlayerState)(structuredClone(data));
+                (0, discordRichPresence_js_1.discordRichPresence)(structuredClone(data));
+                return;
+            }
+        } catch (e) {
+            eventsLogger.error('Error handling player state event:', e, e.stack);
         }
 
         if (data.track && !isPlayerReady) {
-            if (store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
-                eventsLogger.info('Auto launch enabled: toggling play');
-                exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
-            }
+
             isPlayerReady = true;
             playerReadyTimeout && clearTimeout(playerReadyTimeout);
             appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
             sendBasicToastDismiss(window, 'safeModeRestart');
 
             if (isSafeMode) sendBasicToastCreate(window, 'safeModeNoticeToast', 'Безопасный режим. Аддоны отключены.', 'Ясно');
+
+            if (store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
+                eventsLogger.info('Auto launch enabled: toggling play');
+                exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
+            }
         }
     });
     electron_1.ipcMain.on(events_js_1.Events.YNISON_STATE, (event, data) => {
