@@ -21947,6 +21947,10 @@
                 EXPERIMENT_VARIANTS_CACHE = new Map(),
                 EXPERIMENT_VARIANTS_PENDING = new Map(),
                 UNSET_EXPERIMENT_GROUP_OPTION = { value: UNSET_EXPERIMENT_GROUP_VALUE, label: 'unset' },
+                DEFAULT_EXPERIMENT_GROUP_OPTIONS = [
+                    { value: 'default', label: 'default' },
+                    { value: 'on', label: 'on' },
+                ],
                 getStaticExperimentNames = () => {
                     try {
                         let e = null == L0 ? void 0 : L0.zal;
@@ -21966,11 +21970,11 @@
                 },
                 buildExperimentOptions = (e, t) => {
                     let r = [UNSET_EXPERIMENT_GROUP_OPTION],
-                        n = new Set([UNSET_EXPERIMENT_GROUP_VALUE]);
+                        n = new Set([UNSET_EXPERIMENT_GROUP_VALUE]),
+                        s = 'loaded' === (null == e ? void 0 : e.status) && (null == e ? void 0 : e.options) && e.options.length > 0 ? e.options : DEFAULT_EXPERIMENT_GROUP_OPTIONS;
                     return (
                         t && !n.has(t) && (r.push({ value: t, label: t, description: 'Current override' }), n.add(t)),
-                        (null == e ? void 0 : e.options) &&
-                            e.options.forEach((e) => {
+                        s.forEach((e) => {
                                 n.has(e.value) || (n.add(e.value), r.push(e));
                             }),
                         r
