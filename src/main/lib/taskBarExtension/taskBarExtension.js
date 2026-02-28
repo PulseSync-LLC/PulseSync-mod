@@ -178,7 +178,7 @@ const setIconicThumbnail = async (playerState) => {
         );
 
         if (!thumbnailBuffer) {
-            taskBarExtensionLogger.warn('Thumbnail buffer is null fallbacking to cover image');
+            taskBarExtensionLogger.warn(`Thumbnail buffer is null fallbacking to cover image ${width}x${height}`);
         }
 
         const result = native.getDWMIconicThumbnailInstance().setIconicThumbnail(thumbnailBuffer || imageBuffer);
