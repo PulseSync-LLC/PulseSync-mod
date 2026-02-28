@@ -245,7 +245,6 @@ function sendCurrentActivity() {
     const psm = pulseSyncManager_js_1.getPulseSyncManager();
     const isEnabled = settings()?.enable ?? true;
     discordRichPresenceLogger.log(`isPremiumUser: ${psm.isPremiumUser}`);
-    store_js_1.ensureUserPremium(psm.isPremiumUser);
     if (!isEnabled) {
         if (lastActivity) {
             rpc?.user.clearActivity();
@@ -329,6 +328,9 @@ function buildActivityObject(playingState) {
         endTimestamp = undefined;
     }
 
+    const isPremiumUser = Boolean(pulseSyncManager_js_1.getPulseSyncManager()?.isPremiumUser);
+    const hideBranding = Boolean(settings()?.hideBranding) && isPremiumUser;
+
     let activityObject = {
         type: 2,
         statusDisplayType: STATUS_DISPLAY_TYPES[settings()?.statusDisplayType] ?? 0,
@@ -337,7 +339,7 @@ function buildActivityObject(playingState) {
         state: string2Discord(artist),
         stateUrl: shareArtistPath.toWeb(),
         largeImageKey: albumArt,
-        largeImageText: !settings().hideBranding && `PulseSync Mod ${config_js_1.config.modification.version}`,
+        largeImageText: !hideBranding && `PulseSync Mod ${config_js_1.config.modification.version}`,
         largeImageUrl: WEB_LINK,
         startTimestamp,
         endTimestamp,

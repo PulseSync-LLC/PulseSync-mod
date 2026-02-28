@@ -246,11 +246,9 @@ class PulseSyncManager extends EventEmitter {
                 });
                 const data = await res.json();
                 this.isPremium = Boolean(data?.ok && data?.isPremium);
-                store_js_1.ensureUserPremium(this.isPremium);
             } catch (error) {
                 this.logger.warn(`PREMIUM_CHECK_TOKEN: validation error (${error.message})`);
                 this.isPremium = false;
-                store_js_1.ensureUserPremium(false);
             }
         });
 
@@ -552,7 +550,6 @@ class PulseSyncManager extends EventEmitter {
         if (!tokenData?.token) {
             this.logger.warn('validatePremium: no token available');
             this.isPremium = false;
-            store_js_1.ensureUserPremium(false);
             return;
         }
         try {
@@ -566,16 +563,13 @@ class PulseSyncManager extends EventEmitter {
             const data = await res.json();
             if (data.ok) {
                 this.isPremium = data.isPremium;
-                store_js_1.ensureUserPremium(this.isPremium);
             } else {
                 this.logger.warn(`validatePremium: validation failed (${data.message || 'no message'})`);
                 this.isPremium = false;
-                store_js_1.ensureUserPremium(false);
             }
         } catch (e) {
             this.logger.warn(`validatePremium: error during validation (${e.message})`);
             this.isPremium = false;
-            store_js_1.ensureUserPremium(false);
         }
     }
 
