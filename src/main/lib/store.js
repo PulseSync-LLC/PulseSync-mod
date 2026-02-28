@@ -234,6 +234,9 @@ const init = () => {
         showNonMusicPage: true,
         showConcertsTab: true,
         enableHardwareAcceleration: true,
+        hardwareAcceleration: {
+            angleEngine: 'default', // 'default' | 'd3d11' | 'd3d9' | 'gl' | 'd3d11on12'
+        },
     });
     initField(store_js_1.StoreKeys.IS_DEVTOOLS_ENABLED, false);
     initField(store_js_1.StoreKeys.SEND_ANONYMIZED_METRICS, true);

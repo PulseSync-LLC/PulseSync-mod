@@ -3697,6 +3697,7 @@
     height: 1.25rem;
     transition: background-color var(--ym-duration-transition);
     width: 2rem;
+    min-width: 2rem;
 }
 .rqUESGQ8jp3tbDawOzuG:not(:disabled):focus-visible {
     box-shadow: 0 0 0 0.125rem var(--ym-controls-color-secondary-default-focused_stroke);

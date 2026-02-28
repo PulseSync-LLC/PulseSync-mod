@@ -456,6 +456,10 @@
                         modals: { systemSettingsModal: t },
                     } = (0, _.Pjs)(),
                     { notify: j } = (0, _.lkh)(),
+                    [isHardwareAccelerationEnabled, setIsHardwareAccelerationEnabled] = (0, d.useState)(
+                        window.nativeSettings.get('modSettings.enableHardwareAcceleration'),
+                    ),
+                    [angleEngine, setAngleEngine] = (0, d.useState)(window.nativeSettings.get('modSettings.hardwareAcceleration.angleEngine')),
                     onPreventDisplaySleepToggle = (0, d.useCallback)((e) => {
                         console.log('preventDisplaySleep toggled. Value: ', e);
                         window.nativeSettings.set('modSettings.window.preventDisplaySleep', e);
@@ -485,7 +489,22 @@
                     onEnableHardwareAccelerationToggle = (0, d.useCallback)(
                         (e) => {
                             console.log('enableHardwareAcceleration toggled. Value: ', e);
+                            setIsHardwareAccelerationEnabled(e);
                             window.nativeSettings.set('modSettings.enableHardwareAcceleration', e);
+                            j(
+                                (0, i.jsx)(m.hT, {
+                                    error: 'Для применения этой настройки требуется перезапуск приложения',
+                                }),
+                                { containerId: _.uQT.ERROR },
+                            );
+                        },
+                        [j],
+                    ),
+                    onAngleEngineChange = (0, d.useCallback)(
+                        (e) => {
+                            console.log('angleEngine changed. Value: ', e);
+                            setAngleEngine(e);
+                            window.nativeSettings.set('modSettings.hardwareAcceleration.angleEngine', e);
                             j(
                                 (0, i.jsx)(m.hT, {
                                     error: 'Для применения этой настройки требуется перезапуск приложения',
@@ -504,7 +523,7 @@
                     );
                 return (0, i.jsxs)(p.a, {
                     className: H().list,
-                    style: { 'max-width': '34.375rem', height: 'auto' },
+                    style: { 'max-width': '36.375rem', height: 'auto' },
                     title: 'Системные настройки',
                     headerClassName: H().modalHeader,
                     contentClassName: `${H().modalContent} Modal_content_no_right_padding`,
@@ -516,15 +535,33 @@
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, i.jsxs)('ul', {
                         className: `${B().root} ${H().list} PulseSync_experimentsListScroll`,
-                        style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
+                        style: { width: '34.125rem', 'max-height': '37.5rem', gap: 0 },
                         children: [
                             (0, i.jsx)('li', {
                                 className: B().item,
                                 children: (0, i.jsx)(P, {
                                     title: 'Включить аппаратное ускорение',
-                                    description: 'Настоятельно рекомендуется не выключать. Отключайте только в крайнем случае',
+                                    description: 'Настоятельно рекомендуется не выключать. Отключайте только если ни одни вариант настроек ниже не помог.',
                                     onChange: onEnableHardwareAccelerationToggle,
-                                    isChecked: window.nativeSettings.get('modSettings.enableHardwareAcceleration'),
+                                    isChecked: isHardwareAccelerationEnabled,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(settingBarWithDropdown, {
+                                    title: 'API аппаратного ускорения',
+                                    description: 'Изменение может помочь в некоторых случаях, пробуйте по убыванию в списке.',
+                                    onChange: onAngleEngineChange,
+                                    disabled: !isHardwareAccelerationEnabled,
+                                    value: angleEngine,
+                                    direction: 'bottom',
+                                    options: [
+                                        { value: 'default', label: 'Авто' },
+                                        { value: 'd3d11', label: 'DirectX 11' },
+                                        { value: 'd3d11on12', label: 'DirectX 11 on 12' },
+                                        { value: 'gl', label: 'OpenGL' },
+                                        { value: 'd3d9', label: 'DirectX 9' },
+                                    ],
                                 }),
                             }),
                             (0, i.jsx)('li', {

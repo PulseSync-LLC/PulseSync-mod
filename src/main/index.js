@@ -96,15 +96,6 @@ if (!(store_js_1.getModSettings()?.enableHardwareAcceleration ?? true)) {
 }
 
 if (store_js_1.getModSettings()?.tryEnableSurroundAudio ?? false) {
-    logger.log(
-        '--try-supported-channel-layouts:',
-        electron_1.app.commandLine.hasSwitch('try-supported-channel-layouts'),
-        '--force-wave-audio:',
-        electron_1.app.commandLine.hasSwitch('force-wave-audio'),
-        '--disable-audio-output-resampler:',
-        electron_1.app.commandLine.hasSwitch('disable-audio-output-resampler'),
-    );
-
     electron_1.app.commandLine.appendSwitch('try-supported-channel-layouts');
     electron_1.app.commandLine.appendSwitch('force-wave-audio');
     electron_1.app.commandLine.appendSwitch('disable-audio-output-resampler');
@@ -117,6 +108,16 @@ if (store_js_1.getModSettings()?.tryEnableSurroundAudio ?? false) {
         '--disable-audio-output-resampler:',
         electron_1.app.commandLine.hasSwitch('disable-audio-output-resampler'),
     );
+}
+
+const angleEngines = ['default', 'd3d11', 'd3d9', 'gl', 'd3d11on12', 'gles', 'warp'];
+
+if (
+    angleEngines.includes(store_js_1.getModSettings()?.hardwareAcceleration?.angleEngine ?? 'default') &&
+    (store_js_1.getModSettings()?.enableHardwareAcceleration ?? true)
+) {
+    electron_1.app.commandLine.appendSwitch('use-angle', store_js_1.getModSettings()?.hardwareAcceleration?.angleEngine ?? 'default');
+    logger.log('--use-angle:', electron_1.app.commandLine.getSwitchValue('use-angle'));
 }
 
 initSessionStoragePath();
