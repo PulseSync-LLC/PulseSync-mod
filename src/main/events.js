@@ -307,10 +307,11 @@ const handleApplicationEvents = (window) => {
     electron_1.ipcMain.on(events_js_1.Events.APPLICATION_READY, async (event, language) => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_READY);
 
-        clearTimeout(applicationReadyTimeOut);
+        applicationReadyTimeOut && clearTimeout(applicationReadyTimeOut);
 
         isPlayerReady = false;
 
+        playerReadyTimeout && clearTimeout(playerReadyTimeout);
         playerReadyTimeout = setTimeout(() => {
             if (!isSafeMode) {
                 eventsLogger.error('PLAYER_READY event timeout reached. Prompt safe mode restart.');
