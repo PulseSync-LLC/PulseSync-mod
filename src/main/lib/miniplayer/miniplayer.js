@@ -66,7 +66,6 @@ class MiniPlayer {
 
         const backgroundColor = trackColor && allowedTrackColors ? hex2hsl(trackColor, 20).css : '#141414';
 
-
         this.window = new electron.BrowserWindow({
             width: (dimensions?.width ?? 380) * scaleFactor,
             height: (dimensions?.height ?? 590) * scaleFactor,

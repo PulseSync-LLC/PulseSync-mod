@@ -1343,7 +1343,7 @@
                             writable: !0,
                             value: function (e) {
                                 const selfDedup = e.rawData.player_state.status.version.device_id === this.deviceConfig.info.device_id;
-                                if(!selfDedup) {
+                                if (!selfDedup) {
                                     console.debug('[WSConnector] Received message from hub', e.rawData);
                                     electronBridge.sendYnisonState({ rawData: e.rawData });
                                 }
