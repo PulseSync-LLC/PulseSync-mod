@@ -1998,7 +1998,7 @@
                     onEnableYnisonRemoteControlToggle = (0, d.useCallback)(
                         async (e) => {
                             console.log('Ynison Remote Control toggled. Value: ', e);
-                            window.nativeSettings.set('enableYnisonRemoteControl', e);
+                            window.nativeSettings.set('enableYnisonPlayerRemoteControl', e);
                             setEnableYnisonRemote(e);
                             j(
                                 (0, i.jsx)(m.hT, {
@@ -2738,19 +2738,6 @@
                         async (e) => {
                             console.log('modSettings.showConcertsTab toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.showConcertsTab', e);
-                            j(
-                                (0, i.jsx)(m.hT, {
-                                    error: 'Для применения этой настройки требуется перезапуск приложения',
-                                }),
-                                { containerId: _.uQT.ERROR },
-                            );
-                        },
-                        [g],
-                    ),
-                    onEnableYnisonRemoteControlToggle = (0, d.useCallback)(
-                        async (e) => {
-                            console.log('Ynison Remote Control toggled. Value: ', e);
-                            window.nativeSettings.set('enableYnisonPlayerRemoteControl', e);
                             j(
                                 (0, i.jsx)(m.hT, {
                                     error: 'Для применения этой настройки требуется перезапуск приложения',
