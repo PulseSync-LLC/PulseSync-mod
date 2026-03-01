@@ -15,6 +15,7 @@ const {
 } = require('../utils.js');
 const { TracksApiWrapper } = require('./tracksApiWrapper.js');
 const { FfmpegWrapper } = require('./ffmpegWrapper.js');
+const { YtDlpWrapper } = require('./ytDlpWrapper.js');
 const { createDirIfNotExist } = require('../utils.js');
 
 const TMP_PATH = path.join(electron.app.getAppPath(), '../../', '\\temp');
@@ -53,6 +54,15 @@ function getTrackFilename(track) {
     return removeInvalidCharsFromFilename(trackFilename);
 }
 
+function isYandexMusicLink(rawURL) {
+    try {
+        const parsedURL = new URL(rawURL);
+        return parsedURL.hostname.toLowerCase().includes('music.yandex.');
+    } catch (error) {
+        return false;
+    }
+}
+
 class TrackDownloader {
     logger;
     window;
@@ -61,17 +71,33 @@ class TrackDownloader {
         this.logger = new Logger_js_1.Logger('TrackDownloaderLogger');
 
         this.ffmpeg = new FfmpegWrapper();
+        this.ytDlp = new YtDlpWrapper(window);
 
         this.logger.log('Initializing tracks API wrapper...');
 
         this.tracksAPI = null;
-
-        window.webContents.executeJavaScript('JSON.parse(localStorage.getItem("oauth")).value;').then((token) => {
-            // Dirty way to get OAuth token from localStorage
-            this.tracksAPI = new TracksApiWrapper(token, window.webContents.getUserAgent());
-            this.logger.log('TracksApiWrapper initialized');
-        });
+        this.readyPromise = window.webContents
+            .executeJavaScript('JSON.parse(localStorage.getItem("oauth")).value;')
+            .then((token) => {
+                // Dirty way to get OAuth token from localStorage
+                this.tracksAPI = new TracksApiWrapper(token, window.webContents.getUserAgent());
+                this.logger.log('TracksApiWrapper initialized');
+                return this.tracksAPI;
+            })
+            .catch((error) => {
+                this.logger.error('Failed to initialize TracksApiWrapper:', error);
+                throw error;
+            });
         this.logger.log('TrackDownloader initialized');
+    }
+
+    async waitUntilReady() {
+        if (this.tracksAPI) return this.tracksAPI;
+        await this.readyPromise;
+        if (!this.tracksAPI) {
+            throw new Error('Tracks API is not initialized');
+        }
+        return this.tracksAPI;
     }
 
     async downloadTrackFile(
@@ -155,6 +181,7 @@ class TrackDownloader {
             return null;
         },
     ) {
+        await this.waitUntilReady();
         const useMP3 = store_js_1.getModSettings()?.downloader?.useMP3 ?? false;
 
         this.logger.log(`Downloading single track: ${trackId}`);
@@ -210,6 +237,7 @@ class TrackDownloader {
     }
 
     async downloadMultipleTracks(trackIds, subDirName, callback) {
+        await this.waitUntilReady();
         const useMP3 = store_js_1.getModSettings()?.downloader?.useMP3 ?? false;
 
         let totalTracks = 0;
@@ -283,6 +311,23 @@ class TrackDownloader {
         this.logger.log('All tracks downloaded');
 
         setTimeout(() => callback(-1, -1), 5000);
+    }
+
+    async importTrackFromUrl(rawURL) {
+        if (!rawURL || typeof rawURL !== 'string') {
+            throw new Error('Track URL is required');
+        }
+
+        const normalizedURL = rawURL.trim();
+        if (!/^https?:\/\//i.test(normalizedURL)) {
+            throw new Error('Only HTTP(S) links are supported');
+        }
+
+        if (isYandexMusicLink(normalizedURL)) {
+            throw new Error('Ссылки на Яндекс Музыку здесь не поддерживаются');
+        }
+
+        return await this.ytDlp.downloadTrackFromUrl(normalizedURL);
     }
 
     async downloadTrack(data, callback) {

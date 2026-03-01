@@ -45,11 +45,23 @@ const FLAG_DEFINITIONS = {
     },
     version: {
         label: '--version=<semver>',
-        description: 'использует конкретную версию для download',
+        description: 'использует конкретную версию для download или выбора extracted-билда',
     },
     src: {
         label: '--src=<path>',
         description: 'путь к исходному коду или asar-файлу, в зависимости от команды',
+    },
+    patchFile: {
+        label: '--patchFile=<path>',
+        description: 'путь к unified diff патчу, который нужно адаптивно перенести на другую версию',
+    },
+    patchDir: {
+        label: '--patchDir=<path>',
+        description: 'папка с *.patch/*.diff файлами, которые нужно прогнать по порядку',
+    },
+    dryRun: {
+        label: '--dryRun',
+        description: 'выполняет только подбор файлов и расчёт патча без записи изменений на диск',
     },
     dest: {
         label: '--dest=<path>',

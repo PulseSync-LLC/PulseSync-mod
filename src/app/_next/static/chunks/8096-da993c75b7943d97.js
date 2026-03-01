@@ -693,9 +693,9 @@
                 ei = a(88834),
                 es = a.n(ei);
             let er = (0, s.PA)((e) => {
-                var t;
-                let { playlist: a } = e,
-                    { setPlaylistStickyFiltersRef: i, setPlaylistStaticFiltersRef: s } = (0, p.gKY)(),
+                    var t;
+                    let { playlist: a } = e,
+                        { setPlaylistStickyFiltersRef: i, setPlaylistStaticFiltersRef: s } = (0, p.gKY)(),
                     r = (0, ea.useTabsState)(a.filters.activeFilterIndex),
                     o = (0, n.useRef)(null),
                     d = { objectId: a.uuid },

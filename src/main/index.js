@@ -21,6 +21,7 @@ const createWindow_js_1 = require('./lib/window/createWindow.js');
 const updater_js_1 = require('./lib/updater.js');
 const miniPlayer_js_1 = require('./lib/miniplayer/miniplayer.js');
 const { getFfmpegUpdater } = require('./lib/ffmpegInstaller.js');
+const { getYtDlpInstaller } = require('./lib/ytDlpInstaller.js');
 const { initUserCountMetric } = require('./lib/metrics');
 
 const events_js_1 = require('./events.js');
@@ -129,6 +130,7 @@ const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
         repo: 'foreA-adoxid/ffmpeg-builds',
         tagName: 'ffmpeg-binaries',
     });
+    getYtDlpInstaller();
     electron_1.app.setAppUserModelId('ru.yandex.desktop.music');
     await electron_1.app.whenReady();
     const window = await (0, createWindow_js_1.createWindow)();

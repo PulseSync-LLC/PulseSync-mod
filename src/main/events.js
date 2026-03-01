@@ -37,6 +37,7 @@ const isAccelerator = require('electron-is-accelerator');
 const { getAllowedUrls } = require('./lib/handlers/handleHeadersReceived/corsHandler');
 const trackDownloader_js_1 = require('./lib/trackDownloader/trackDownloader.js');
 const { getFfmpegUpdater } = require('./lib/ffmpegInstaller.js');
+const { getYtDlpInstaller } = require('./lib/ytDlpInstaller.js');
 const { getPulseSyncAppInstaller } = require('./lib/pulsesyncAppInstaller.js');
 const taskBarExtension_js_1 = require('./lib/taskBarExtension/taskBarExtension.js');
 const scrobbleManager_js_1 = require('./lib/scrobble/index.js');
@@ -269,6 +270,19 @@ const handleApplicationEvents = (window) => {
 
         sendNativeStoreUpdate(key, filePaths[0], mainWindow);
     });
+    electron_1.ipcMain.handle('playlist-import-track-from-link', async (event, payload) => {
+        const link = payload?.url;
+
+        eventsLogger.info('Event received playlist-import-track-from-link', link);
+
+        const importedTrack = await trackDownloader.importTrackFromUrl(link);
+
+        return {
+            fileName: importedTrack.fileName,
+            mimeType: importedTrack.mimeType,
+            bufferBase64: importedTrack.buffer.toString('base64'),
+        };
+    });
     electron_1.ipcMain.on('autoStartupStatus', async (event, data) => {
         electron_1.app.setLoginItemSettings({
             openAtLogin: data ?? false,
@@ -407,6 +421,29 @@ const handleApplicationEvents = (window) => {
                     eventsLogger.error(err);
                     setTimeout(() => {
                         sendBasicToastDismiss(window, 'ffmpeg');
+                    }, 2500);
+                });
+        } else {
+        }
+
+        const ytDlpInstaller = getYtDlpInstaller();
+        if (!(await ytDlpInstaller.isInstalled())) {
+            sendBasicToastCreate(window, 'yt-dlp', 'Установка компонента: yt-dlp', false);
+
+            let callback = (progressRenderer, progressWindow) => {
+                sendProgressBarChange(window, 'yt-dlp', progressRenderer * 100);
+                window.setProgressBar(progressWindow);
+            };
+            ytDlpInstaller
+                .ensureInstalled(throttle(callback, PROGRESS_BAR_THROTTLE_MS))
+                .then(() => {
+                    sendBasicToastDismiss(window, 'yt-dlp');
+                })
+                .catch((err) => {
+                    sendProgressBarChange(window, 'yt-dlp', -1);
+                    eventsLogger.error(err);
+                    setTimeout(() => {
+                        sendBasicToastDismiss(window, 'yt-dlp');
                     }, 2500);
                 });
         } else {

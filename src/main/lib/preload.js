@@ -114,6 +114,9 @@ electron_1.contextBridge.exposeInMainWorld('zoomControl', {
 
 electron_1.contextBridge.exposeInMainWorld('autoStartupStatus', (data) => electron_1.ipcRenderer.send('autoStartupStatus', data));
 electron_1.contextBridge.exposeInMainWorld('openConfigFile', () => electron_1.ipcRenderer.invoke('openConfigFile'));
+electron_1.contextBridge.exposeInMainWorld('playlistLinkImporter', {
+    importTrack: (url) => electron_1.ipcRenderer.invoke('playlist-import-track-from-link', { url }),
+});
 window.document.addEventListener('DOMContentLoaded', () => {
     const theme = (0, getInitialTheme_js_1.getInitialTheme)();
     if (hostnamePatterns_js_1.applicationHostnamePattern.test(window.location.hostname)) {
