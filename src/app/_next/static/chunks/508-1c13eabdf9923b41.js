@@ -2556,25 +2556,68 @@
                             C,
                         ],
                     });
-                });
+            });
             var e9 = a(38884),
-                te = a.n(e9);
+                te = a.n(e9),
+                tModal = a(51704),
+                tInput = a(21949),
+                tStore = a(95007),
+                tEditContentStyles = a(13080),
+                tEditContent = a.n(tEditContentStyles);
             let tt = (0, l.PA)((e) => {
                 let { playlist: t } = e,
                     a = (0, n.useRef)(null),
-                    { ugcUploadCenter: i } = (0, j.Pjs)(),
+                    {
+                        ugcUploadCenter: i,
+                        fullscreenPlayer: s,
+                    } = (0, j.Pjs)(),
+                    {
+                        settings: { isMobile: m },
+                    } = (0, tStore.useStore)(),
+                    { notify: c } = (0, j.lkh)(),
                     { formatMessage: o } = (0, h.A)(),
-                    l = (0, n.useCallback)(() => {
+                    [l, u] = (0, n.useState)(!1),
+                    [_, g] = (0, n.useState)(''),
+                    p = (0, n.useCallback)(() => {
                         var e;
                         null == a || null == (e = a.current) || e.click();
                     }, [a]),
-                    s = (0, n.useCallback)(
+                    y = (0, f.c)(() => {
+                        u(!0);
+                    }),
+                    x = (0, n.useCallback)(() => {
+                        u(!1), g('');
+                    }, []),
+                    N = (0, n.useCallback)(
                         (e) => {
                             let a = e.target.files;
-                            a && a.length > 0 && i.appendFiles([...a], t), (e.target.value = '');
+                            a && a.length > 0 && (i.appendFiles([...a], t), x()), (e.target.value = '');
                         },
-                        [t, i],
-                    );
+                        [t, i, x],
+                    ),
+                    w = (e) => {
+                        let t = atob(e),
+                            a = new Uint8Array(t.length);
+                        for (let e = 0; e < t.length; e++) a[e] = t.charCodeAt(e);
+                        return a;
+                    },
+                    T = (0, n.useCallback)((e) => {
+                        g(e.target.value);
+                    }, []),
+                    P = (0, f.c)(async () => {
+                        let l = _.trim();
+                        if (!l) return;
+                        try {
+                            if (!(null == window ? void 0 : window.playlistLinkImporter)) throw new Error('Импорт по ссылке недоступен');
+                            let e = await window.playlistLinkImporter.importTrack(l),
+                                a = w(e.bufferBase64),
+                                n = new File([a], e.fileName || 'imported_track.mp3', { type: e.mimeType || 'audio/mpeg' });
+                            i.appendFiles([n], t), x();
+                        } catch (e) {
+                            let t = e instanceof Error ? e.message : 'Не удалось импортировать трек по ссылке';
+                            c((0, r.jsx)(A.hT, { error: t }), { containerId: s.modal.isOpened ? j.uQT.FULLSCREEN_ERROR : j.uQT.ERROR });
+                        }
+                    });
                 return (0, r.jsxs)(r.Fragment, {
                     children: [
                         (0, r.jsx)(b.Button, {
@@ -2582,15 +2625,102 @@
                             radius: 'xxxl',
                             'aria-label': o({ id: 'ugc.upload-track' }),
                             className: te().button,
-                            onClick: l,
+                            onClick: y,
                             ...(0, d.Am)(d.e8.pageHeader.PLAYLIST_HEADER_UPLOAD_UGC_BUTTON),
                             children: o({ id: 'ugc.upload-track' }),
                         }),
                         (0, r.jsx)('form', {
                             className: te().form,
                             encType: 'multipart/form-data',
-                            children: (0, r.jsx)('input', { ref: a, type: 'file', accept: 'audio/*', onChange: s, multiple: !0 }),
+                            children: (0, r.jsx)('input', { ref: a, type: 'file', accept: 'audio/*', onChange: N, multiple: !0 }),
                         }),
+                        l
+                            ? (0, r.jsxs)(tModal.a, {
+                                  size: 'fitContent',
+                                  placement: m ? 'default' : 'center',
+                                  open: l,
+                                  className: tEditContent().root,
+                                  contentClassName: tEditContent().modalContent,
+                                  showHeader: !1,
+                                  escapeKey: !1,
+                                  closeOnOutsidePress: !1,
+                                  isMobile: m,
+                                  containerProps: (0, d.Am)(d.e8.ugc.UGC_EDIT_MODAL),
+                                  overlayColor: 'full',
+                                  children: [
+                                      (0, r.jsxs)('div', {
+                                          className: tEditContent().header,
+                                          children: [
+                                              (0, r.jsx)(v.Heading, { variant: 'h4', size: 'm', weight: 'bold', className: tEditContent().title, children: 'Загрузка трека' }),
+                                              (0, r.jsx)(b.Button, {
+                                                  radius: 'round',
+                                                  color: 'secondary',
+                                                  size: 'xxs',
+                                                  icon: (0, r.jsx)(C.Icon, { variant: 'close', size: 'xxs' }),
+                                                  onClick: x,
+                                                  'aria-label': o({ id: 'ugc.close-edit-popup' }),
+                                                  ...(0, d.Am)(d.e8.ugc.UGC_EDIT_MODAL_CLOSE_BUTTON),
+                                              }),
+                                          ],
+                                      }),
+                                      (0, r.jsxs)('div', {
+                                          className: tEditContent().content,
+                                          children: [
+                                              (0, r.jsxs)('div', {
+                                                  className: tEditContent().field,
+                                                  children: [
+                                                      (0, r.jsx)(v.Caption, { variant: 'div', size: 'm', className: tEditContent().label, children: 'Файл' }),
+                                                      (0, r.jsx)(b.Button, {
+                                                          radius: 'xxxl',
+                                                          color: 'secondary',
+                                                          size: m ? 'l' : 'm',
+                                                          className: tEditContent().button,
+                                                          onClick: p,
+                                                          children: 'Выбрать файл',
+                                                      }),
+                                                  ],
+                                              }),
+                                              (0, r.jsxs)('div', {
+                                                  className: tEditContent().field,
+                                                  children: [
+                                                      (0, r.jsx)(v.Caption, { variant: 'div', size: 'm', className: tEditContent().label, children: 'Ссылка' }),
+                                                      (0, r.jsx)(tInput.p, {
+                                                          value: _,
+                                                          containerClassName: tEditContent().input,
+                                                          placeholder: 'Ссылка',
+                                                          onChange: T,
+                                                          minLength: 1,
+                                                          maxLength: 2048,
+                                                      }),
+                                                  ],
+                                              }),
+                                              (0, r.jsxs)('div', {
+                                                  className: tEditContent().buttons,
+                                                  children: [
+                                                      (0, r.jsx)(b.Button, {
+                                                          radius: 'xxxl',
+                                                          color: 'secondary',
+                                                          size: m ? 'l' : 'm',
+                                                          className: tEditContent().button,
+                                                          onClick: x,
+                                                          children: (0, r.jsx)(E.A, { id: 'interface-actions.cancel' }),
+                                                      }),
+                                                      (0, r.jsx)(b.Button, {
+                                                          radius: 'xxxl',
+                                                          color: 'primary',
+                                                          size: m ? 'l' : 'm',
+                                                          className: tEditContent().button,
+                                                          onClick: P,
+                                                          disabled: !_.trim(),
+                                                          children: 'Импортировать по ссылке',
+                                                      }),
+                                                  ],
+                                              }),
+                                          ],
+                                      }),
+                                  ],
+                              })
+                            : null,
                     ],
                 });
             });
