@@ -127,6 +127,32 @@ function getPrefetchedTrackCount(prefetchedInfo) {
     return 0;
 }
 
+function pickFirstNonEmpty(...values) {
+    for (const value of values) {
+        const normalizedValue = typeof value === 'string' ? value.trim() : '';
+        if (normalizedValue) {
+            return normalizedValue;
+        }
+    }
+
+    return null;
+}
+
+function getPrefetchedArtist(prefetchedInfo) {
+    return pickFirstNonEmpty(
+        prefetchedInfo?.artist,
+        prefetchedInfo?.album_artist,
+        prefetchedInfo?.creator,
+        prefetchedInfo?.playlist_uploader,
+        prefetchedInfo?.uploader,
+        prefetchedInfo?.channel,
+    );
+}
+
+function getPrefetchedTitle(prefetchedInfo) {
+    return pickFirstNonEmpty(prefetchedInfo?.track, prefetchedInfo?.title, prefetchedInfo?.playlist_title);
+}
+
 function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdoutLine, onStderrLine } = {}) {
     return new Promise((resolve, reject) => {
         const child = spawn(command, args, {
@@ -400,7 +426,8 @@ class YtDlpWrapper {
 
         return {
             trackCount,
-            title: prefetchedInfo?.title || null,
+            title: getPrefetchedTitle(prefetchedInfo),
+            artist: getPrefetchedArtist(prefetchedInfo),
             isPlaylist: trackCount > 1 || prefetchedInfo?._type === 'playlist',
         };
     }
