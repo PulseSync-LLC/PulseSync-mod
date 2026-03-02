@@ -275,12 +275,19 @@ const handleApplicationEvents = (window) => {
 
         eventsLogger.info('Event received playlist-import-track-from-link', link);
 
-        const importedTrack = await trackDownloader.importTrackFromUrl(link);
-
-        return {
+        const importedTracks = await trackDownloader.importTracksFromUrl(link);
+        const files = importedTracks.map((importedTrack) => ({
             fileName: importedTrack.fileName,
             mimeType: importedTrack.mimeType,
             bufferBase64: importedTrack.buffer.toString('base64'),
+        }));
+        const [firstFile] = files;
+
+        return {
+            files,
+            fileName: firstFile?.fileName,
+            mimeType: firstFile?.mimeType,
+            bufferBase64: firstFile?.bufferBase64,
         };
     });
     electron_1.ipcMain.on('autoStartupStatus', async (event, data) => {

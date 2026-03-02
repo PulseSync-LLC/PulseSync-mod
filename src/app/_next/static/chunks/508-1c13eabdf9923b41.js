@@ -2567,10 +2567,7 @@
             let tt = (0, l.PA)((e) => {
                 let { playlist: t } = e,
                     a = (0, n.useRef)(null),
-                    {
-                        ugcUploadCenter: i,
-                        fullscreenPlayer: s,
-                    } = (0, j.Pjs)(),
+                    { ugcUploadCenter: i, fullscreenPlayer: s } = (0, j.Pjs)(),
                     {
                         settings: { isMobile: m },
                     } = (0, tStore.useStore)(),
@@ -2578,6 +2575,16 @@
                     { formatMessage: o } = (0, h.A)(),
                     [l, u] = (0, n.useState)(!1),
                     [_, g] = (0, n.useState)(''),
+                    k = (e) => {
+                        try {
+                            let t = new URL(e);
+                            return 'http:' === t.protocol || 'https:' === t.protocol;
+                        } catch (e) {
+                            return !1;
+                        }
+                    },
+                    S = _.trim(),
+                    R = !!S && !k(S),
                     p = (0, n.useCallback)(() => {
                         var e;
                         null == a || null == (e = a.current) || e.click();
@@ -2586,12 +2593,12 @@
                         u(!0);
                     }),
                     x = (0, n.useCallback)(() => {
-                        u(!1), g('');
+                        (u(!1), g(''));
                     }, []),
                     N = (0, n.useCallback)(
                         (e) => {
                             let a = e.target.files;
-                            a && a.length > 0 && (i.appendFiles([...a], t), x()), (e.target.value = '');
+                            (a && a.length > 0 && (i.appendFiles([...a], t), x()), (e.target.value = ''));
                         },
                         [t, i, x],
                     ),
@@ -2605,14 +2612,17 @@
                         g(e.target.value);
                     }, []),
                     P = (0, f.c)(async () => {
-                        let l = _.trim();
-                        if (!l) return;
+                        let l = S;
+                        if (!l || R) return;
                         try {
                             if (!(null == window ? void 0 : window.playlistLinkImporter)) throw new Error('Импорт по ссылке недоступен');
                             let e = await window.playlistLinkImporter.importTrack(l),
-                                a = w(e.bufferBase64),
-                                n = new File([a], e.fileName || 'imported_track.mp3', { type: e.mimeType || 'audio/mpeg' });
-                            i.appendFiles([n], t), x();
+                                a = Array.isArray(null == e ? void 0 : e.files) && e.files.length > 0 ? e.files : [e],
+                                n = a.map((e) => {
+                                    let a = w(e.bufferBase64);
+                                    return new File([a], e.fileName || 'imported_track.mp3', { type: e.mimeType || 'audio/mpeg' });
+                                });
+                            (i.appendFiles(n, t), x());
                         } catch (e) {
                             let t = e instanceof Error ? e.message : 'Не удалось импортировать трек по ссылке';
                             c((0, r.jsx)(A.hT, { error: t }), { containerId: s.modal.isOpened ? j.uQT.FULLSCREEN_ERROR : j.uQT.ERROR });
@@ -2651,7 +2661,13 @@
                                       (0, r.jsxs)('div', {
                                           className: tEditContent().header,
                                           children: [
-                                              (0, r.jsx)(v.Heading, { variant: 'h4', size: 'm', weight: 'bold', className: tEditContent().title, children: 'Загрузка трека' }),
+                                              (0, r.jsx)(v.Heading, {
+                                                  variant: 'h4',
+                                                  size: 'm',
+                                                  weight: 'bold',
+                                                  className: tEditContent().title,
+                                                  children: 'Загрузка трека',
+                                              }),
                                               (0, r.jsx)(b.Button, {
                                                   radius: 'round',
                                                   color: 'secondary',
@@ -2668,7 +2684,29 @@
                                           children: [
                                               (0, r.jsxs)('div', {
                                                   className: tEditContent().field,
+                                                  style: {
+                                                      display: 'flex',
+                                                      alignItems: 'center',
+                                                      justifyContent: 'space-between',
+                                                      gap: 'var(--ym-spacer-size-m)',
+                                                      flexWrap: 'wrap',
+                                                  },
                                                   children: [
+                                                      (0, r.jsx)(v.Caption, {
+                                                          variant: 'div',
+                                                          size: 'm',
+                                                          className: tEditContent().label,
+                                                          style: { marginBlockEnd: 0 },
+                                                          children: 'Локальные треки',
+                                                      }),
+                                                      (0, r.jsx)(b.Button, {
+                                                          radius: 'xxxl',
+                                                          color: 'secondary',
+                                                          size: m ? 'l' : 'm',
+                                                          className: tEditContent().button,
+                                                          onClick: p,
+                                                          children: 'Выбор файлов',
+                                                      }),
                                                       (0, r.jsx)(v.Caption, { variant: 'div', size: 'm', className: tEditContent().label, children: 'Файл' }),
                                                       (0, r.jsx)(b.Button, {
                                                           radius: 'xxxl',
@@ -2686,12 +2724,31 @@
                                                       (0, r.jsx)(v.Caption, { variant: 'div', size: 'm', className: tEditContent().label, children: 'Ссылка' }),
                                                       (0, r.jsx)(tInput.p, {
                                                           value: _,
-                                                          containerClassName: tEditContent().input,
+                                                          type: 'url',
+                                                          inputMode: 'url',
+                                                          autoCapitalize: 'none',
+                                                          autoCorrect: 'off',
+                                                          spellCheck: !1,
+                                                          'aria-invalid': R,
+                                                          containerClassName: R
+                                                              ? ''.concat(tEditContent().input, ' ').concat(tEditContent().input_error)
+                                                              : tEditContent().input,
                                                           placeholder: 'Ссылка',
+                                                          placeholder: 'https://...',
                                                           onChange: T,
                                                           minLength: 1,
                                                           maxLength: 2048,
                                                       }),
+                                                      R &&
+                                                          (0, r.jsx)(v.Caption, {
+                                                              variant: 'div',
+                                                              size: 's',
+                                                              style: {
+                                                                  color: 'var(--ym-message-color-error-text-enabled)',
+                                                                  marginBlockStart: 'var(--ym-spacer-size-xs)',
+                                                              },
+                                                              children: 'Введите корректную http(s) ссылку',
+                                                          }),
                                                   ],
                                               }),
                                               (0, r.jsxs)('div', {
@@ -2711,7 +2768,7 @@
                                                           size: m ? 'l' : 'm',
                                                           className: tEditContent().button,
                                                           onClick: P,
-                                                          disabled: !_.trim(),
+                                                          disabled: !S || R,
                                                           children: 'Импортировать по ссылке',
                                                       }),
                                                   ],

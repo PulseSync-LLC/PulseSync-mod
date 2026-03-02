@@ -6,7 +6,8 @@ const { spawn } = require('child_process');
 const { getFfmpegUpdater } = require('../ffmpegInstaller.js');
 const { getYtDlpInstaller } = require('../ytDlpInstaller.js');
 
-const AUDIO_EXTENSIONS = new Set(['mp3', 'm4a', 'aac', 'flac', 'wav', 'ogg', 'opus']);
+const TARGET_AUDIO_EXTENSION = 'mp3';
+const TARGET_AUDIO_QUALITY = '320K';
 
 function getMimeTypeFromExtension(fileExtension = '') {
     switch (String(fileExtension).toLowerCase()) {
@@ -109,7 +110,7 @@ class YtDlpWrapper {
         return installedBinaryPath;
     }
 
-    async findDownloadedAudioFile(tempDirPath) {
+    async findDownloadedAudioFiles(tempDirPath) {
         const entries = await fs.readdir(tempDirPath, { withFileTypes: true });
         const files = [];
 
@@ -117,17 +118,17 @@ class YtDlpWrapper {
             if (!entry.isFile()) continue;
             const fullPath = path.join(tempDirPath, entry.name);
             const extension = path.extname(entry.name).slice(1).toLowerCase();
-            if (!AUDIO_EXTENSIONS.has(extension)) continue;
+            if (extension !== TARGET_AUDIO_EXTENSION) continue;
 
             const stats = await fs.stat(fullPath);
             files.push({ fullPath, modifiedAt: stats.mtimeMs });
         }
 
-        files.sort((a, b) => b.modifiedAt - a.modifiedAt);
-        return files[0]?.fullPath;
+        files.sort((a, b) => a.modifiedAt - b.modifiedAt);
+        return files.map((file) => file.fullPath);
     }
 
-    async downloadTrackFromUrl(rawURL) {
+    async downloadTracksFromUrl(rawURL) {
         const ytDlpBinaryPath = await this.resolveBinaryPath();
         const ffmpegPath = await this.ffmpegUpdater.ensureInstalled();
         const tempDirPath = await fs.mkdtemp(path.join(electron.app.getPath('temp'), 'pulsesync-yt-dlp-'));
@@ -138,22 +139,27 @@ class YtDlpWrapper {
             await runProcess(
                 ytDlpBinaryPath,
                 [
-                    '--no-playlist',
+                    '--ignore-config',
                     '--no-warnings',
                     '--no-progress',
                     '--restrict-filenames',
+                    '--format',
+                    'bestaudio/best',
                     '--extract-audio',
                     '--audio-format',
-                    'mp3',
+                    TARGET_AUDIO_EXTENSION,
                     '--audio-quality',
-                    '0',
+                    TARGET_AUDIO_QUALITY,
+                    '--embed-metadata',
+                    '--embed-thumbnail',
+                    '--convert-thumbnails',
+                    'jpg',
                     '--ffmpeg-location',
                     ffmpegPath,
                     '--referer',
                     referer,
                     '--user-agent',
                     this.window.webContents.getUserAgent(),
-                    '--no-write-thumbnail',
                     '--no-write-info-json',
                     '--no-write-playlist-metafiles',
                     '-o',
@@ -164,23 +170,38 @@ class YtDlpWrapper {
                 { cwd: tempDirPath },
             );
 
-            const downloadedFilePath = await this.findDownloadedAudioFile(tempDirPath);
+            const downloadedFilePaths = await this.findDownloadedAudioFiles(tempDirPath);
 
-            if (!downloadedFilePath) {
-                throw new Error('yt-dlp did not produce an audio file');
+            if (!downloadedFilePaths.length) {
+                throw new Error(`yt-dlp did not produce any ${TARGET_AUDIO_EXTENSION} files`);
             }
 
-            const fileExtension = path.extname(downloadedFilePath).slice(1).toLowerCase();
-            const buffer = await fs.readFile(downloadedFilePath);
+            return await Promise.all(
+                downloadedFilePaths.map(async (downloadedFilePath) => {
+                    const fileExtension = path.extname(downloadedFilePath).slice(1).toLowerCase();
+                    const buffer = await fs.readFile(downloadedFilePath);
 
-            return {
-                buffer,
-                fileName: path.basename(downloadedFilePath),
-                mimeType: getMimeTypeFromExtension(fileExtension),
-            };
+                    return {
+                        buffer,
+                        fileName: path.basename(downloadedFilePath),
+                        mimeType: getMimeTypeFromExtension(fileExtension),
+                    };
+                }),
+            );
         } finally {
             await fs.rm(tempDirPath, { recursive: true, force: true });
         }
+    }
+
+    async downloadTrackFromUrl(rawURL) {
+        const downloadedTracks = await this.downloadTracksFromUrl(rawURL);
+        const [firstTrack] = downloadedTracks;
+
+        if (!firstTrack) {
+            throw new Error(`yt-dlp did not produce any ${TARGET_AUDIO_EXTENSION} files`);
+        }
+
+        return firstTrack;
     }
 }
 

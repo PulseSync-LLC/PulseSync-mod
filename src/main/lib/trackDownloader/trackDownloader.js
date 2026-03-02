@@ -313,9 +313,9 @@ class TrackDownloader {
         setTimeout(() => callback(-1, -1), 5000);
     }
 
-    async importTrackFromUrl(rawURL) {
+    async importTracksFromUrl(rawURL) {
         if (!rawURL || typeof rawURL !== 'string') {
-            throw new Error('Track URL is required');
+            throw new Error('Track or playlist URL is required');
         }
 
         const normalizedURL = rawURL.trim();
@@ -327,7 +327,18 @@ class TrackDownloader {
             throw new Error('Ссылки на Яндекс Музыку здесь не поддерживаются');
         }
 
-        return await this.ytDlp.downloadTrackFromUrl(normalizedURL);
+        return await this.ytDlp.downloadTracksFromUrl(normalizedURL);
+    }
+
+    async importTrackFromUrl(rawURL) {
+        const importedTracks = await this.importTracksFromUrl(rawURL);
+        const [firstTrack] = importedTracks;
+
+        if (!firstTrack) {
+            throw new Error('Failed to import audio from URL');
+        }
+
+        return firstTrack;
     }
 
     async downloadTrack(data, callback) {
