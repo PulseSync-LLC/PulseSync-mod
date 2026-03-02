@@ -1,13 +1,16 @@
 const Logger_js_1 = require('../../packages/logger/Logger.js');
 const electron = require('electron');
 const fs = require('fs').promises;
+const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
 const { getFfmpegUpdater } = require('../ffmpegInstaller.js');
 const { getYtDlpInstaller } = require('../ytDlpInstaller.js');
+const store_js_1 = require('../store.js');
 
 const TARGET_AUDIO_EXTENSION = 'mp3';
 const TARGET_AUDIO_QUALITY = '320K';
+const YT_DLP_COOKIES_BROWSER_SOURCE_STORE_KEY = 'modSettings.downloader.ytDlpCookiesBrowserSource';
 
 function getMimeTypeFromExtension(fileExtension = '') {
     switch (String(fileExtension).toLowerCase()) {
@@ -153,6 +156,94 @@ function getPrefetchedTitle(prefetchedInfo) {
     return pickFirstNonEmpty(prefetchedInfo?.track, prefetchedInfo?.title, prefetchedInfo?.playlist_title);
 }
 
+function isYouTubeLikeURL(rawURL) {
+    try {
+        const hostname = new URL(rawURL).hostname.toLowerCase();
+        return (
+            hostname === 'youtu.be' ||
+            hostname === 'youtube.com' ||
+            hostname.endsWith('.youtube.com') ||
+            hostname === 'youtube-nocookie.com' ||
+            hostname.endsWith('.youtube-nocookie.com')
+        );
+    } catch {
+        return false;
+    }
+}
+
+async function pathExists(targetPath) {
+    if (!targetPath) {
+        return false;
+    }
+
+    try {
+        await fs.access(targetPath);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+function pushUniqueValue(values, value) {
+    const normalizedValue = typeof value === 'string' ? value.trim() : '';
+    if (!normalizedValue || values.includes(normalizedValue)) {
+        return;
+    }
+
+    values.push(normalizedValue);
+}
+
+async function getYandexBrowserCookieSource() {
+    let browserDataPath = null;
+
+    switch (process.platform) {
+        case 'win32':
+            browserDataPath = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local'), 'Yandex', 'YandexBrowser', 'User Data');
+            break;
+        case 'darwin':
+            browserDataPath = path.join(os.homedir(), 'Library', 'Application Support', 'Yandex', 'YandexBrowser');
+            break;
+        case 'linux':
+            browserDataPath = path.join(os.homedir(), '.config', 'yandex-browser');
+            break;
+        default:
+            return null;
+    }
+
+    return (await pathExists(browserDataPath)) ? `chromium:${browserDataPath}` : null;
+}
+
+async function mapBrowserAppNameToCookieSource(browserAppName) {
+    const normalizedAppName = String(browserAppName || '')
+        .trim()
+        .toLowerCase();
+    if (!normalizedAppName) {
+        return null;
+    }
+
+    if (normalizedAppName.includes('brave')) return 'brave';
+    if (normalizedAppName.includes('edge')) return 'edge';
+    if (normalizedAppName.includes('firefox')) return 'firefox';
+    if (normalizedAppName.includes('opera')) return 'opera';
+    if (normalizedAppName.includes('vivaldi')) return 'vivaldi';
+    if (normalizedAppName.includes('whale')) return 'whale';
+    if (normalizedAppName.includes('chromium')) return 'chromium';
+    if (normalizedAppName.includes('chrome')) return 'chrome';
+    if (normalizedAppName.includes('yandex') || normalizedAppName.includes('яндекс')) return await getYandexBrowserCookieSource();
+    if (normalizedAppName.includes('safari')) return 'safari';
+
+    return null;
+}
+
+async function getDefaultBrowserCookieSource() {
+    try {
+        const browserAppName = electron.app.getApplicationNameForProtocol('https://');
+        return await mapBrowserAppNameToCookieSource(browserAppName);
+    } catch {
+        return null;
+    }
+}
+
 function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdoutLine, onStderrLine } = {}) {
     return new Promise((resolve, reject) => {
         const child = spawn(command, args, {
@@ -202,9 +293,11 @@ function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdo
 }
 
 function createYtDlpProgressTracker(progressCallback) {
+    const SINGLE_TRACK_DOWNLOAD_PROGRESS_SHARE = 0.9;
     const state = {
         totalItems: 1,
         currentItem: 1,
+        currentItemProgress: 0,
         lastProgress: 0,
         errors: [],
         seenErrors: new Set(),
@@ -220,14 +313,37 @@ function createYtDlpProgressTracker(progressCallback) {
         progressCallback(state.lastProgress, state.lastProgress, statusLabel);
     };
 
-    const getItemStatusLabel = (postfix) => {
+    const getItemStatusLabel = (postfix, itemProgress) => {
+        const progressSuffix = Number.isFinite(itemProgress) && itemProgress >= 0 ? ` ${Math.min(100, Math.max(0, Math.floor(itemProgress * 100)))}%` : '';
+
         if (state.totalItems > 1) {
             return postfix
-                ? `${Math.min(state.currentItem, state.totalItems)} / ${state.totalItems} ${postfix}`
-                : `${Math.min(state.currentItem, state.totalItems)} / ${state.totalItems}`;
+                ? `${Math.min(state.currentItem, state.totalItems)} / ${state.totalItems} ${postfix}${progressSuffix}`
+                : `${Math.min(state.currentItem, state.totalItems)} / ${state.totalItems}${progressSuffix}`;
         }
 
-        return postfix || 'Подготовка...';
+        return postfix ? `${postfix}${progressSuffix}` : 'Подготовка...';
+    };
+
+    const getSingleTrackOverallDownloadProgress = (itemProgress) => {
+        const normalizedItemProgress = Math.min(Math.max(itemProgress, 0), 1);
+        return normalizedItemProgress * SINGLE_TRACK_DOWNLOAD_PROGRESS_SHARE;
+    };
+
+    const getSingleTrackOverallProcessingProgress = (line) => {
+        if (/^\[ExtractAudio\]/i.test(line)) {
+            return 0.92;
+        }
+
+        if (/^\[(Metadata|ThumbnailsConvertor|VideoConvertor)\]/i.test(line) || /Adding metadata/i.test(line)) {
+            return 0.96;
+        }
+
+        if (/^\[(EmbedThumbnail|Merger)\]/i.test(line) || /Embedding/i.test(line)) {
+            return 0.99;
+        }
+
+        return 0.95;
     };
 
     const rememberError = (line) => {
@@ -257,23 +373,25 @@ function createYtDlpProgressTracker(progressCallback) {
         if (match) {
             state.currentItem = Math.max(parseInt(match[1], 10) || 1, 1);
             state.totalItems = Math.max(parseInt(match[2], 10) || 1, 1);
-            emitProgress((state.currentItem - 1) / state.totalItems, getItemStatusLabel('Загрузка'));
+            state.currentItemProgress = 0;
+            emitProgress((state.currentItem - 1) / state.totalItems, getItemStatusLabel('Загрузка', state.currentItemProgress));
             return;
         }
 
         match = line.match(/playlist.+?Downloading (\d+) items?/i);
         if (match) {
             state.totalItems = Math.max(parseInt(match[1], 10) || 1, 1);
-            emitProgress(state.lastProgress, getItemStatusLabel('Загрузка'));
+            emitProgress(state.lastProgress, getItemStatusLabel('Загрузка', state.currentItemProgress));
             return;
         }
 
         match = line.match(/\[download\]\s+(\d{1,3}(?:\.\d+)?)%/i);
         if (match) {
             const itemProgress = Math.min(parseFloat(match[1]) || 0, 99.5) / 100;
+            state.currentItemProgress = itemProgress;
             const overallProgress =
-                state.totalItems > 1 ? ((state.currentItem - 1) + itemProgress) / state.totalItems : itemProgress;
-            emitProgress(overallProgress, getItemStatusLabel('Загрузка'));
+                state.totalItems > 1 ? (state.currentItem - 1 + itemProgress) / state.totalItems : getSingleTrackOverallDownloadProgress(itemProgress);
+            emitProgress(overallProgress, getItemStatusLabel('Загрузка', itemProgress));
             return;
         }
 
@@ -282,17 +400,27 @@ function createYtDlpProgressTracker(progressCallback) {
             /Adding metadata/i.test(line) ||
             /Embedding/i.test(line)
         ) {
-            const baseProgress = state.totalItems > 1 ? (state.currentItem - 1 + 0.995) / state.totalItems : 0.995;
-            emitProgress(baseProgress, getItemStatusLabel('Обработка'));
+            const baseProgress = state.totalItems > 1 ? (state.currentItem - 1 + 0.995) / state.totalItems : getSingleTrackOverallProcessingProgress(line);
+            state.currentItemProgress = 1;
+            emitProgress(baseProgress, getItemStatusLabel('Обработка', 1));
         }
     };
 
     return {
         handleLine,
+        reset() {
+            state.totalItems = 1;
+            state.currentItem = 1;
+            state.currentItemProgress = 0;
+            state.lastProgress = 0;
+            state.errors = [];
+            state.seenErrors = new Set();
+        },
         getSnapshot() {
             return {
                 totalItems: state.totalItems,
                 currentItem: state.currentItem,
+                currentItemProgress: state.currentItemProgress,
                 lastProgress: state.lastProgress,
                 errors: [...state.errors],
             };
@@ -307,6 +435,7 @@ class YtDlpWrapper {
         this.ffmpegUpdater = getFfmpegUpdater();
         this.ytDlpInstaller = getYtDlpInstaller();
         this.binaryPathPromise = null;
+        this.preferredYouTubeCookieSource = undefined;
     }
 
     async resolveBinaryPath() {
@@ -333,6 +462,115 @@ class YtDlpWrapper {
         return installedBinaryPath;
     }
 
+    getPreferredYouTubeCookieSource() {
+        if (typeof this.preferredYouTubeCookieSource !== 'undefined') {
+            return this.preferredYouTubeCookieSource;
+        }
+
+        const persistedCookieSource = (0, store_js_1.get)(YT_DLP_COOKIES_BROWSER_SOURCE_STORE_KEY);
+        this.preferredYouTubeCookieSource = typeof persistedCookieSource === 'string' && persistedCookieSource.trim() ? persistedCookieSource.trim() : null;
+        return this.preferredYouTubeCookieSource;
+    }
+
+    setPreferredYouTubeCookieSource(cookieSource) {
+        const normalizedCookieSource = typeof cookieSource === 'string' ? cookieSource.trim() : '';
+        this.preferredYouTubeCookieSource = normalizedCookieSource || null;
+        (0, store_js_1.set)(YT_DLP_COOKIES_BROWSER_SOURCE_STORE_KEY, this.preferredYouTubeCookieSource);
+    }
+
+    async getYouTubeCookieBrowserSources() {
+        const defaultCookieSource = await getDefaultBrowserCookieSource();
+        const otherCookieSources = [];
+
+        pushUniqueValue(otherCookieSources, process.env.YT_DLP_COOKIES_FROM_BROWSER);
+        pushUniqueValue(otherCookieSources, this.getPreferredYouTubeCookieSource());
+        pushUniqueValue(otherCookieSources, await getYandexBrowserCookieSource());
+
+        ['chrome', 'edge', 'brave', 'vivaldi', 'opera', 'firefox', 'chromium'].forEach((browserName) => {
+            pushUniqueValue(otherCookieSources, browserName);
+        });
+
+        return {
+            defaultCookieSource,
+            otherCookieSources: otherCookieSources.filter((cookieSource) => cookieSource !== defaultCookieSource),
+        };
+    }
+
+    async runYtDlpProcess(rawURL, args, { onAttemptStart, onAttemptFailure, onAttemptSuccess, ...runOptions } = {}) {
+        const ytDlpBinaryPath = await this.resolveBinaryPath();
+        const shouldUseBrowserCookies = isYouTubeLikeURL(rawURL);
+        const attempts = [{ label: 'no browser cookies', args, cookieSource: null }];
+
+        if (shouldUseBrowserCookies) {
+            const { defaultCookieSource, otherCookieSources } = await this.getYouTubeCookieBrowserSources();
+
+            if (defaultCookieSource) {
+                attempts.push({
+                    label: `default browser cookies: ${defaultCookieSource}`,
+                    args: ['--cookies-from-browser', defaultCookieSource, ...args],
+                    cookieSource: defaultCookieSource,
+                });
+            }
+
+            otherCookieSources.forEach((cookieSource) => {
+                attempts.push({
+                    label: `browser cookies: ${cookieSource}`,
+                    args: ['--cookies-from-browser', cookieSource, ...args],
+                    cookieSource,
+                });
+            });
+        }
+
+        let lastError = null;
+
+        for (let attemptIndex = 0; attemptIndex < attempts.length; attemptIndex++) {
+            const attempt = attempts[attemptIndex];
+
+            if (typeof onAttemptStart === 'function') {
+                await onAttemptStart({ ...attempt, attemptIndex, attemptsCount: attempts.length });
+            }
+
+            try {
+                shouldUseBrowserCookies && this.logger.log(`Running yt-dlp with ${attempt.label}`);
+                const result = await runProcess(ytDlpBinaryPath, attempt.args, this.logger, runOptions);
+
+                if (attempt.cookieSource) {
+                    this.setPreferredYouTubeCookieSource(attempt.cookieSource);
+                }
+
+                if (typeof onAttemptSuccess === 'function') {
+                    await onAttemptSuccess({ ...attempt, attemptIndex, attemptsCount: attempts.length }, result);
+                }
+
+                return result;
+            } catch (error) {
+                lastError = error;
+                const isLastAttempt = attemptIndex === attempts.length - 1;
+
+                if (attempt.cookieSource && attempt.cookieSource === this.getPreferredYouTubeCookieSource()) {
+                    this.setPreferredYouTubeCookieSource(null);
+                }
+
+                if (!shouldUseBrowserCookies || isLastAttempt) {
+                    throw error;
+                }
+
+                let shouldContinue = true;
+                if (typeof onAttemptFailure === 'function') {
+                    shouldContinue = (await onAttemptFailure({ ...attempt, attemptIndex, attemptsCount: attempts.length }, error)) !== false;
+                }
+
+                this.logger.warn(`yt-dlp attempt failed with ${attempt.label}: ${error?.message || error}`);
+
+                if (!shouldContinue) {
+                    throw error;
+                }
+            }
+        }
+
+        throw lastError;
+    }
+
     async findDownloadedAudioFiles(tempDirPath) {
         const entries = await fs.readdir(tempDirPath, { withFileTypes: true });
         const files = [];
@@ -351,6 +589,16 @@ class YtDlpWrapper {
         return files;
     }
 
+    async clearDirectoryContents(directoryPath) {
+        const entries = await fs.readdir(directoryPath, { withFileTypes: true }).catch(() => []);
+
+        await Promise.all(
+            entries.map((entry) => {
+                return fs.rm(path.join(directoryPath, entry.name), { recursive: true, force: true });
+            }),
+        );
+    }
+
     async readImportedTrack(downloadedFilePath) {
         const fileExtension = path.extname(downloadedFilePath).slice(1).toLowerCase();
         const buffer = await fs.readFile(downloadedFilePath);
@@ -362,13 +610,7 @@ class YtDlpWrapper {
         };
     }
 
-    async emitReadyDownloadedTracks(
-        tempDirPath,
-        processedFilePaths,
-        pendingFileStates,
-        importState,
-        { force = false, onTrackReady, collectTracks = true } = {},
-    ) {
+    async emitReadyDownloadedTracks(tempDirPath, processedFilePaths, pendingFileStates, importState, { force = false, onTrackReady, collectTracks = true } = {}) {
         const fileEntries = await this.findDownloadedAudioFiles(tempDirPath);
         const existingFilePaths = new Set(fileEntries.map((fileEntry) => fileEntry.fullPath));
 
@@ -410,13 +652,9 @@ class YtDlpWrapper {
     }
 
     async prefetchTracksFromUrl(rawURL) {
-        const ytDlpBinaryPath = await this.resolveBinaryPath();
-        const { stdout } = await runProcess(
-            ytDlpBinaryPath,
-            ['--ignore-config', '--no-warnings', '--skip-download', '--flat-playlist', '--dump-single-json', rawURL],
-            this.logger,
-            { shouldLogOutput: false },
-        );
+        const { stdout } = await this.runYtDlpProcess(rawURL, ['--ignore-config', '--no-warnings', '--skip-download', '--flat-playlist', '--dump-single-json', rawURL], {
+            shouldLogOutput: false,
+        });
         const prefetchedInfo = parseYtDlpJson(stdout);
         const trackCount = getPrefetchedTrackCount(prefetchedInfo);
 
@@ -433,7 +671,6 @@ class YtDlpWrapper {
     }
 
     async downloadTracksFromUrl(rawURL, progressCallback, { onTrackReady, collectTracks = true } = {}) {
-        const ytDlpBinaryPath = await this.resolveBinaryPath();
         const ffmpegPath = await this.ffmpegUpdater.ensureInstalled();
         const tempDirPath = await fs.mkdtemp(path.join(electron.app.getPath('temp'), 'pulsesync-yt-dlp-'));
         const parsedURL = new URL(rawURL);
@@ -482,8 +719,8 @@ class YtDlpWrapper {
             }, 350);
 
             try {
-                await runProcess(
-                    ytDlpBinaryPath,
+                await this.runYtDlpProcess(
+                    rawURL,
                     [
                         '--ignore-config',
                         '--no-warnings',
@@ -513,12 +750,28 @@ class YtDlpWrapper {
                         path.join(tempDirPath, '%(title).180B [%(id)s].%(ext)s'),
                         rawURL,
                     ],
-                    this.logger,
                     {
                         cwd: tempDirPath,
                         shouldLogOutput: false,
                         onStdoutLine: progressTracker.handleLine,
                         onStderrLine: progressTracker.handleLine,
+                        onAttemptStart: async ({ attemptIndex }) => {
+                            if (attemptIndex <= 0) {
+                                return;
+                            }
+
+                            progressTracker.reset();
+                            processedFilePaths.clear();
+                            pendingFileStates.clear();
+                            await this.clearDirectoryContents(tempDirPath);
+
+                            if (typeof progressCallback === 'function') {
+                                progressCallback(0, 0, 'Подготовка...');
+                            }
+                        },
+                        onAttemptFailure: async () => {
+                            return importState.importedCount <= 0;
+                        },
                     },
                 );
             } catch (error) {
