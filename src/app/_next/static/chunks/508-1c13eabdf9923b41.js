@@ -2588,8 +2588,18 @@
                             return !1;
                         }
                     },
+                    I = (e) => {
+                        try {
+                            let t = new URL(e),
+                                a = t.hostname.toLowerCase();
+                            return 'youtu.be' === a || 'youtube.com' === a || 'music.youtube.com' === a || a.endsWith('.youtube.com');
+                        } catch (e) {
+                            return !1;
+                        }
+                    },
                     S = _.trim(),
                     R = !!S && !k(S),
+                    B = !R && !!S && I(S),
                     F = !R && 'ready' === linkPrefetchState.status,
                     p = (0, n.useCallback)(() => {
                         var e;
@@ -2867,6 +2877,17 @@
                                                           }),
                                                   ],
                                               }),
+                                              B &&
+                                                  (0, r.jsx)(v.Caption, {
+                                                      variant: 'div',
+                                                      size: 's',
+                                                      style: {
+                                                          color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                          marginBlockStart: 'calc(var(--ym-spacer-size-s) * -1)',
+                                                          marginBlockEnd: 'var(--ym-spacer-size-m)',
+                                                      },
+                                                      children: 'Не забудьте добавить в proxy/VPN процесс yt-dlp.exe',
+                                                  }),
                                               (0, r.jsxs)('div', {
                                                   className: tEditContent().buttons,
                                                   children: [
