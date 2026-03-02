@@ -512,26 +512,29 @@ const handleApplicationEvents = (window) => {
         }
 
         const ytDlpInstaller = getYtDlpInstaller();
-        if (!(await ytDlpInstaller.isInstalled())) {
-            sendBasicToastCreate(window, 'yt-dlp', 'Установка компонента: yt-dlp', false);
+        if (await ytDlpInstaller.hasInstalledBinary()) {
+            const isInstalled = await ytDlpInstaller.isInstalled();
 
-            let callback = (progressRenderer, progressWindow) => {
-                sendProgressBarChange(window, 'yt-dlp', progressRenderer * 100);
-                window.setProgressBar(progressWindow);
-            };
-            ytDlpInstaller
-                .ensureInstalled(throttle(callback, PROGRESS_BAR_THROTTLE_MS))
-                .then(() => {
-                    sendBasicToastDismiss(window, 'yt-dlp');
-                })
-                .catch((err) => {
-                    sendProgressBarChange(window, 'yt-dlp', -1);
-                    eventsLogger.error(err);
-                    setTimeout(() => {
+            if (!isInstalled) {
+                sendBasicToastCreate(window, 'yt-dlp', 'Обновление компонента: yt-dlp', false);
+
+                let callback = (progressRenderer, progressWindow) => {
+                    sendProgressBarChange(window, 'yt-dlp', progressRenderer * 100);
+                    window.setProgressBar(progressWindow);
+                };
+                ytDlpInstaller
+                    .ensureInstalled(throttle(callback, PROGRESS_BAR_THROTTLE_MS))
+                    .then(() => {
                         sendBasicToastDismiss(window, 'yt-dlp');
-                    }, 2500);
-                });
-        } else {
+                    })
+                    .catch((err) => {
+                        sendProgressBarChange(window, 'yt-dlp', -1);
+                        eventsLogger.error(err);
+                        setTimeout(() => {
+                            sendBasicToastDismiss(window, 'yt-dlp');
+                        }, 2500);
+                    });
+            }
         }
 
         const pulseSyncInstaller = getPulseSyncAppInstaller();

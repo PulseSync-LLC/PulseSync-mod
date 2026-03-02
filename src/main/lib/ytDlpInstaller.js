@@ -120,8 +120,12 @@ class YtDlpInstaller {
         }
     }
 
+    async hasInstalledBinary() {
+        return await this.fileExists(this.installPath);
+    }
+
     async isInstalled() {
-        if (!(await this.fileExists(this.installPath))) {
+        if (!(await this.hasInstalledBinary())) {
             return false;
         }
 
