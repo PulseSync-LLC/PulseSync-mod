@@ -348,6 +348,7 @@ const handleApplicationEvents = (window) => {
                 isAvailable: true,
                 trackCount: prefetchedInfo.trackCount,
                 isPlaylist: prefetchedInfo.isPlaylist,
+                artist: prefetchedInfo.artist,
                 title: prefetchedInfo.title,
             };
         } catch (error) {

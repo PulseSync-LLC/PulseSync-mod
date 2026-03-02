@@ -2686,11 +2686,15 @@
                             let t = await window.playlistLinkImporter.prefetchTrack(S);
                             if (prefetchRequestRef.current !== e) return;
                             if (t?.isAvailable) {
-                                let a = Math.max(1, Number(t.trackCount) || 1);
+                                let a = Math.max(1, Number(t.trackCount) || 1),
+                                    n = 'string' == typeof (null == t ? void 0 : t.artist) ? t.artist.trim() : '',
+                                    i = 'string' == typeof (null == t ? void 0 : t.title) ? t.title.trim() : '',
+                                    r = n && i ? `Будет загружен трек ${n} - ${i}` : '',
+                                    l = t?.isPlaylist ? (r ? `${a} треков | ${r}` : `Будет загружено треков: ${a}`) : r || 'Будет загружен 1 трек';
                                 setLinkPrefetchState({
                                     status: 'ready',
                                     trackCount: a,
-                                    message: a > 1 ? `Будет загружено треков: ${a}` : 'Будет загружен 1 трек',
+                                    message: l,
                                 });
                             } else {
                                 setLinkPrefetchState({
@@ -2790,6 +2794,39 @@
                                                           className: tEditContent().button,
                                                           onClick: p,
                                                           children: 'Выбрать файлы',
+                                                      }),
+                                                  ],
+                                              }),
+                                              (0, r.jsxs)('div', {
+                                                  className: tEditContent().field,
+                                                  style: {
+                                                      display: 'flex',
+                                                      alignItems: 'center',
+                                                      gap: 'var(--ym-spacer-size-s)',
+                                                  },
+                                                  children: [
+                                                      (0, r.jsx)('div', {
+                                                          style: {
+                                                              flex: 1,
+                                                              height: '1px',
+                                                              background: 'var(--ym-controls-color-secondary-default-enabled)',
+                                                          },
+                                                      }),
+                                                      (0, r.jsx)(v.Caption, {
+                                                          variant: 'div',
+                                                          size: 's',
+                                                          style: {
+                                                              color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                              whiteSpace: 'nowrap',
+                                                          },
+                                                          children: 'или',
+                                                      }),
+                                                      (0, r.jsx)('div', {
+                                                          style: {
+                                                              flex: 1,
+                                                              height: '1px',
+                                                              background: 'var(--ym-controls-color-secondary-default-enabled)',
+                                                          },
                                                       }),
                                                   ],
                                               }),
