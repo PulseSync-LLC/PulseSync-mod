@@ -69,6 +69,7 @@ const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 MiniPlayer.updateSettingsState(store_js_1.getModSettings());
 
 const PROGRESS_BAR_THROTTLE_MS = 200;
+const PLAYLIST_LINK_IMPORT_TRACK_READY = 'PLAYLIST_LINK_IMPORT_TRACK_READY';
 let pulseSyncManager_js_1;
 const isBoolean = (value) => {
     return typeof value === 'boolean';
@@ -272,23 +273,100 @@ const handleApplicationEvents = (window) => {
     });
     electron_1.ipcMain.handle('playlist-import-track-from-link', async (event, payload) => {
         const link = payload?.url;
+        const importID = payload?.importID;
+        const toastID = `trackImport|${crypto.createHash('md5').update(`${link}|${Date.now()}`).digest('hex')}`;
 
         eventsLogger.info('Event received playlist-import-track-from-link', link);
+        sendBasicToastCreate(window, toastID, 'Импорт треков по ссылке | #s', false);
 
-        const importedTracks = await trackDownloader.importTracksFromUrl(link);
-        const files = importedTracks.map((importedTrack) => ({
-            fileName: importedTrack.fileName,
-            mimeType: importedTrack.mimeType,
-            bufferBase64: importedTrack.buffer.toString('base64'),
-        }));
-        const [firstFile] = files;
-
-        return {
-            files,
-            fileName: firstFile?.fileName,
-            mimeType: firstFile?.mimeType,
-            bufferBase64: firstFile?.bufferBase64,
+        const progressCallback = (progressRenderer, progressWindow, statusLabel) => {
+            sendProgressBarChange(window, toastID, Math.max(progressRenderer, 0) * 100, statusLabel);
+            window.setProgressBar(progressWindow);
         };
+
+        try {
+            const importedTracks = await trackDownloader.importTracksFromUrl(link, throttle(progressCallback, PROGRESS_BAR_THROTTLE_MS), {
+                collectTracks: false,
+                onTrackReady: (importedTrack) => {
+                    if (!importID) {
+                        return;
+                    }
+
+                    window.webContents.send(PLAYLIST_LINK_IMPORT_TRACK_READY, {
+                        importID,
+                        fileName: importedTrack.fileName,
+                        mimeType: importedTrack.mimeType,
+                        bufferBase64: importedTrack.buffer.toString('base64'),
+                    });
+                },
+            });
+            const successLabel = importedTracks.totalCount > 1 ? `${importedTracks.importedCount} / ${importedTracks.totalCount}` : 'Готово';
+
+            progressCallback(1, 1, successLabel);
+            setTimeout(() => {
+                sendBasicToastDismiss(window, toastID);
+                window.setProgressBar(-1);
+            }, 2000);
+
+            if (importedTracks.failedCount > 0) {
+                eventsLogger.warn(`Import from link completed with skipped tracks: ${importedTracks.failedCount}/${importedTracks.totalCount}`, importedTracks.errors);
+            }
+
+            return {
+                importID,
+                importedCount: importedTracks.importedCount,
+                totalCount: importedTracks.totalCount,
+                failedCount: importedTracks.failedCount,
+                errors: importedTracks.errors,
+            };
+        } catch (error) {
+            const rawMessage = error instanceof Error ? error.message : 'Не удалось импортировать треки по ссылке';
+            const errorMessage = String(rawMessage)
+                .split(/\r\n|[\r\n]/)
+                .map((line) => line.trim())
+                .filter(Boolean)
+                .at(-1);
+
+            sendProgressBarChange(window, toastID, 0, 'Ошибка');
+            window.setProgressBar(-1);
+            setTimeout(() => {
+                sendBasicToastDismiss(window, toastID);
+            }, 2500);
+            eventsLogger.error('Error importing tracks from link:', error, error?.stack);
+            throw new Error(errorMessage || 'Не удалось импортировать треки по ссылке');
+        }
+    });
+    electron_1.ipcMain.handle('playlist-prefetch-track-from-link', async (event, payload) => {
+        const link = payload?.url;
+
+        eventsLogger.info('Event received playlist-prefetch-track-from-link', link);
+
+        try {
+            const prefetchedInfo = await trackDownloader.prefetchTracksFromUrl(link);
+
+            return {
+                isAvailable: true,
+                trackCount: prefetchedInfo.trackCount,
+                isPlaylist: prefetchedInfo.isPlaylist,
+                title: prefetchedInfo.title,
+            };
+        } catch (error) {
+            const rawMessage = error instanceof Error ? error.message : 'Не удалось проверить ссылку';
+            const errorMessage = String(rawMessage)
+                .split(/\r\n|[\r\n]/)
+                .map((line) => line.trim())
+                .filter(Boolean)
+                .at(-1);
+
+            eventsLogger.warn('Prefetch for link import failed:', errorMessage);
+            return {
+                isAvailable: false,
+                trackCount: 0,
+                isPlaylist: false,
+                title: null,
+                message: errorMessage || 'Не удалось проверить ссылку',
+            };
+        }
     });
     electron_1.ipcMain.on('autoStartupStatus', async (event, data) => {
         electron_1.app.setLoginItemSettings({

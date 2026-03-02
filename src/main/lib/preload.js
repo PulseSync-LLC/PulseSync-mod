@@ -115,7 +115,19 @@ electron_1.contextBridge.exposeInMainWorld('zoomControl', {
 electron_1.contextBridge.exposeInMainWorld('autoStartupStatus', (data) => electron_1.ipcRenderer.send('autoStartupStatus', data));
 electron_1.contextBridge.exposeInMainWorld('openConfigFile', () => electron_1.ipcRenderer.invoke('openConfigFile'));
 electron_1.contextBridge.exposeInMainWorld('playlistLinkImporter', {
-    importTrack: (url) => electron_1.ipcRenderer.invoke('playlist-import-track-from-link', { url }),
+    prefetchTrack: (url) => electron_1.ipcRenderer.invoke('playlist-prefetch-track-from-link', { url }),
+    importTrack: (url, importID) => electron_1.ipcRenderer.invoke('playlist-import-track-from-link', { url, importID }),
+    onTrackImported: (callback) => {
+        const listener = (event, payload) => {
+            callback(payload);
+        };
+
+        electron_1.ipcRenderer.on('PLAYLIST_LINK_IMPORT_TRACK_READY', listener);
+
+        return () => {
+            electron_1.ipcRenderer.off('PLAYLIST_LINK_IMPORT_TRACK_READY', listener);
+        };
+    },
 });
 window.document.addEventListener('DOMContentLoaded', () => {
     const theme = (0, getInitialTheme_js_1.getInitialTheme)();

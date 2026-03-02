@@ -2575,6 +2575,11 @@
                     { formatMessage: o } = (0, h.A)(),
                     [l, u] = (0, n.useState)(!1),
                     [_, g] = (0, n.useState)(''),
+                    [linkPrefetchState, setLinkPrefetchState] = (0, n.useState)({ status: 'idle', trackCount: 0, message: '' }),
+                    [isLinkImporting, setIsLinkImporting] = (0, n.useState)(!1),
+                    prefetchRequestRef = (0, n.useRef)(0),
+                    prefetchTimerRef = (0, n.useRef)(null),
+                    activeImportSessionRef = (0, n.useRef)(null),
                     k = (e) => {
                         try {
                             let t = new URL(e);
@@ -2585,6 +2590,7 @@
                     },
                     S = _.trim(),
                     R = !!S && !k(S),
+                    F = !R && 'ready' === linkPrefetchState.status,
                     p = (0, n.useCallback)(() => {
                         var e;
                         null == a || null == (e = a.current) || e.click();
@@ -2593,7 +2599,9 @@
                         u(!0);
                     }),
                     x = (0, n.useCallback)(() => {
-                        (u(!1), g(''));
+                        prefetchRequestRef.current += 1;
+                        prefetchTimerRef.current && clearTimeout(prefetchTimerRef.current);
+                        ((prefetchTimerRef.current = null), u(!1), g(''), setLinkPrefetchState({ status: 'idle', trackCount: 0, message: '' }));
                     }, []),
                     N = (0, n.useCallback)(
                         (e) => {
@@ -2602,32 +2610,108 @@
                         },
                         [t, i, x],
                     ),
-                    w = (e) => {
+                    w = (0, n.useCallback)((e) => {
                         let t = atob(e),
                             a = new Uint8Array(t.length);
                         for (let e = 0; e < t.length; e++) a[e] = t.charCodeAt(e);
                         return a;
-                    },
+                    }, []),
                     T = (0, n.useCallback)((e) => {
                         g(e.target.value);
                     }, []),
                     P = (0, f.c)(async () => {
                         let l = S;
-                        if (!l || R) return;
+                        if (!l || R || !F || isLinkImporting) return;
+                        let e = `playlist-link-import|${Date.now()}|${Math.random().toString(36).slice(2)}`;
+                        activeImportSessionRef.current = e;
+                        setIsLinkImporting(!0);
                         try {
                             if (!(null == window ? void 0 : window.playlistLinkImporter)) throw new Error('Импорт по ссылке недоступен');
-                            let e = await window.playlistLinkImporter.importTrack(l),
-                                a = Array.isArray(null == e ? void 0 : e.files) && e.files.length > 0 ? e.files : [e],
-                                n = a.map((e) => {
-                                    let a = w(e.bufferBase64);
-                                    return new File([a], e.fileName || 'imported_track.mp3', { type: e.mimeType || 'audio/mpeg' });
-                                });
-                            (i.appendFiles(n, t), x());
+                            let a = await window.playlistLinkImporter.importTrack(l, e),
+                                n = Math.max(0, Number(null == a ? void 0 : a.importedCount) || 0),
+                                o = Math.max(0, Number(null == a ? void 0 : a.failedCount) || 0);
+                            if (o > 0) {
+                                let e = Array.isArray(null == a ? void 0 : a.errors) ? a.errors.filter(Boolean) : [],
+                                    l = e
+                                        .slice(0, 3)
+                                        .map((e, t) => `${t + 1}. ${e}`)
+                                        .join('\n'),
+                                    u = o > e.length ? `${l ? `${l}\n` : ''}Еще пропущено: ${o - e.length}` : l,
+                                    g = `Не удалось импортировать ${o} трек(ов)${u ? `\n${u}` : ''}`;
+                                c((0, r.jsx)(A.hT, { error: g }), { containerId: s.modal.isOpened ? j.uQT.FULLSCREEN_ERROR : j.uQT.ERROR });
+                            }
+                            n > 0 && x();
                         } catch (e) {
                             let t = e instanceof Error ? e.message : 'Не удалось импортировать трек по ссылке';
                             c((0, r.jsx)(A.hT, { error: t }), { containerId: s.modal.isOpened ? j.uQT.FULLSCREEN_ERROR : j.uQT.ERROR });
+                        } finally {
+                            setIsLinkImporting(!1);
                         }
                     });
+                (0, n.useEffect)(() => {
+                    if (!(null == window ? void 0 : window.playlistLinkImporter) || !window.playlistLinkImporter.onTrackImported) return;
+                    return window.playlistLinkImporter.onTrackImported((e) => {
+                        if (!e || e.importID !== activeImportSessionRef.current) return;
+                        try {
+                            let a = w(e.bufferBase64);
+                            i.appendFiles([new File([a], e.fileName || 'imported_track.mp3', { type: e.mimeType || 'audio/mpeg' })], t);
+                        } catch (e) {
+                            let t = e instanceof Error ? e.message : 'Не удалось обработать импортированный трек';
+                            c((0, r.jsx)(A.hT, { error: t }), { containerId: s.modal.isOpened ? j.uQT.FULLSCREEN_ERROR : j.uQT.ERROR });
+                        }
+                    });
+                }, [w, i, t, c, s.modal.isOpened]);
+                (0, n.useEffect)(() => {
+                    if (prefetchTimerRef.current) {
+                        clearTimeout(prefetchTimerRef.current);
+                        prefetchTimerRef.current = null;
+                    }
+                    if (!l) return;
+                    if (!S) {
+                        setLinkPrefetchState({ status: 'idle', trackCount: 0, message: '' });
+                        return;
+                    }
+                    if (R) {
+                        setLinkPrefetchState({ status: 'invalid', trackCount: 0, message: 'Введите корректную http(s) ссылку' });
+                        return;
+                    }
+                    if (!(null == window ? void 0 : window.playlistLinkImporter) || !window.playlistLinkImporter.prefetchTrack) {
+                        setLinkPrefetchState({ status: 'error', trackCount: 0, message: 'Проверка ссылки недоступна' });
+                        return;
+                    }
+                    let e = ++prefetchRequestRef.current;
+                    setLinkPrefetchState({ status: 'loading', trackCount: 0, message: 'Проверка ссылки...' });
+                    prefetchTimerRef.current = setTimeout(async () => {
+                        try {
+                            let t = await window.playlistLinkImporter.prefetchTrack(S);
+                            if (prefetchRequestRef.current !== e) return;
+                            if (t?.isAvailable) {
+                                let a = Math.max(1, Number(t.trackCount) || 1);
+                                setLinkPrefetchState({
+                                    status: 'ready',
+                                    trackCount: a,
+                                    message: a > 1 ? `Будет загружено треков: ${a}` : 'Будет загружен 1 трек',
+                                });
+                            } else {
+                                setLinkPrefetchState({
+                                    status: 'error',
+                                    trackCount: 0,
+                                    message: t?.message || 'Загрузка по этой ссылке недоступна',
+                                });
+                            }
+                        } catch (t) {
+                            if (prefetchRequestRef.current !== e) return;
+                            let a = t instanceof Error ? t.message : 'Не удалось проверить ссылку';
+                            setLinkPrefetchState({ status: 'error', trackCount: 0, message: a });
+                        } finally {
+                            prefetchRequestRef.current === e && (prefetchTimerRef.current = null);
+                        }
+                    }, 400);
+                    return () => {
+                        prefetchTimerRef.current && clearTimeout(prefetchTimerRef.current);
+                        prefetchTimerRef.current = null;
+                    };
+                }, [l, S, R]);
                 return (0, r.jsxs)(r.Fragment, {
                     children: [
                         (0, r.jsx)(b.Button, {
@@ -2729,25 +2813,29 @@
                                                           autoCapitalize: 'none',
                                                           autoCorrect: 'off',
                                                           spellCheck: !1,
-                                                          'aria-invalid': R,
-                                                          containerClassName: R
-                                                              ? ''.concat(tEditContent().input, ' ').concat(tEditContent().input_error)
-                                                              : tEditContent().input,
-                                                          placeholder: 'Ссылка',
+                                                          'aria-invalid': R || 'error' === linkPrefetchState.status || 'invalid' === linkPrefetchState.status,
+                                                          containerClassName:
+                                                              R || 'error' === linkPrefetchState.status || 'invalid' === linkPrefetchState.status
+                                                                  ? ''.concat(tEditContent().input, ' ').concat(tEditContent().input_error)
+                                                                  : tEditContent().input,
                                                           placeholder: 'https://...',
                                                           onChange: T,
                                                           minLength: 1,
                                                           maxLength: 2048,
                                                       }),
-                                                      R &&
+                                                      S &&
+                                                          (R || 'idle' !== linkPrefetchState.status) &&
                                                           (0, r.jsx)(v.Caption, {
                                                               variant: 'div',
                                                               size: 's',
                                                               style: {
-                                                                  color: 'var(--ym-message-color-error-text-enabled)',
+                                                                  color:
+                                                                      R || 'error' === linkPrefetchState.status || 'invalid' === linkPrefetchState.status
+                                                                          ? 'var(--ym-message-color-error-text-enabled)'
+                                                                          : 'var(--ym-controls-color-primary-text-enabled)',
                                                                   marginBlockStart: 'var(--ym-spacer-size-xs)',
                                                               },
-                                                              children: 'Введите корректную http(s) ссылку',
+                                                              children: R ? 'Введите корректную http(s) ссылку' : linkPrefetchState.message,
                                                           }),
                                                   ],
                                               }),
@@ -2768,7 +2856,7 @@
                                                           size: m ? 'l' : 'm',
                                                           className: tEditContent().button,
                                                           onClick: P,
-                                                          disabled: !S || R,
+                                                          disabled: !F || isLinkImporting,
                                                           children: 'Импортировать по ссылке',
                                                       }),
                                                   ],
