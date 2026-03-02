@@ -313,7 +313,13 @@ class TrackDownloader {
         setTimeout(() => callback(-1, -1), 5000);
     }
 
-    async importTracksFromUrl(rawURL) {
+    async importTracksFromUrl(
+        rawURL,
+        callback = (x, b, s) => {
+            return null;
+        },
+        options = {},
+    ) {
         if (!rawURL || typeof rawURL !== 'string') {
             throw new Error('Track or playlist URL is required');
         }
@@ -327,12 +333,35 @@ class TrackDownloader {
             throw new Error('Ссылки на Яндекс Музыку здесь не поддерживаются');
         }
 
-        return await this.ytDlp.downloadTracksFromUrl(normalizedURL);
+        return await this.ytDlp.downloadTracksFromUrl(normalizedURL, callback, options);
     }
 
-    async importTrackFromUrl(rawURL) {
-        const importedTracks = await this.importTracksFromUrl(rawURL);
-        const [firstTrack] = importedTracks;
+    async prefetchTracksFromUrl(rawURL) {
+        if (!rawURL || typeof rawURL !== 'string') {
+            throw new Error('Track or playlist URL is required');
+        }
+
+        const normalizedURL = rawURL.trim();
+        if (!/^https?:\/\//i.test(normalizedURL)) {
+            throw new Error('Only HTTP(S) links are supported');
+        }
+
+        if (isYandexMusicLink(normalizedURL)) {
+            throw new Error('РЎСЃС‹Р»РєРё РЅР° РЇРЅРґРµРєСЃ РњСѓР·С‹РєСѓ Р·РґРµСЃСЊ РЅРµ РїРѕРґРґРµСЂР¶РёРІР°СЋС‚СЃСЏ');
+        }
+
+        return await this.ytDlp.prefetchTracksFromUrl(normalizedURL);
+    }
+
+    async importTrackFromUrl(
+        rawURL,
+        callback = (x, b, s) => {
+            return null;
+        },
+        options = {},
+    ) {
+        const importedTracks = await this.importTracksFromUrl(rawURL, callback, options);
+        const [firstTrack] = importedTracks.tracks;
 
         if (!firstTrack) {
             throw new Error('Failed to import audio from URL');
