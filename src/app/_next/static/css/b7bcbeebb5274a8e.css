@@ -719,6 +719,10 @@
 .EditContentModal_input_error__fxTOr {
     box-shadow: 0 0 0 0.125rem var(--ym-message-color-error-text-enabled);
 }
+
+.EditContentModal_content__6yEGM > .EditContentModal_field__rexIL:first-child > :nth-child(n + 3) {
+    display: none;
+}
 .EditContentModal_buttons__bHzfS {
     display: flex;
     gap: var(--ym-spacer-size-xs);
