@@ -696,6 +696,39 @@ function createAdaptivePatchHelpers(deps) {
         return exportsById;
     }
 
+    function buildLocalModuleUsageIndex(lines) {
+        const aliasToModuleId = new Map();
+        const importCountByModuleId = new Map();
+        const usageByModuleId = new Map();
+
+        for (const importEntry of lines.map((line) => parseRequireImportLine(line)).filter(Boolean)) {
+            aliasToModuleId.set(importEntry.alias, importEntry.moduleId);
+            importCountByModuleId.set(importEntry.moduleId, (importCountByModuleId.get(importEntry.moduleId) ?? 0) + 1);
+        }
+
+        for (const line of lines) {
+            for (const match of line.matchAll(/\b([A-Za-z_$][\w$]*)\.([A-Za-z_$][\w$]*|\$)\b/g)) {
+                const moduleId = aliasToModuleId.get(match[1]);
+                if (!moduleId) {
+                    continue;
+                }
+
+                if (!usageByModuleId.has(moduleId)) {
+                    usageByModuleId.set(moduleId, new Map());
+                }
+
+                const exportUsage = usageByModuleId.get(moduleId);
+                const exportName = match[2];
+                exportUsage.set(exportName, (exportUsage.get(exportName) ?? 0) + 1);
+            }
+        }
+
+        return {
+            importCountByModuleId,
+            usageByModuleId,
+        };
+    }
+
     async function getModuleExportsById(targetRoot, moduleExportsById, moduleId) {
         if (moduleExportsById.has(moduleId)) {
             return moduleExportsById.get(moduleId);
@@ -898,42 +931,80 @@ function createAdaptivePatchHelpers(deps) {
         return index;
     }
 
-    async function resolveTargetModuleId(targetRoot, exportNames) {
+    async function resolveTargetModuleId(targetRoot, exportNames, targetFileLines = []) {
         if (!exportNames.length) {
             return null;
         }
 
         const moduleIndex = await getModuleExportIndex(targetRoot);
-        let bestMatch = null;
+        const localModuleUsage = buildLocalModuleUsageIndex(targetFileLines);
+        const modulesById = new Map();
 
         for (const moduleEntry of moduleIndex) {
-            const exportSet = new Set(moduleEntry.exports);
-            let score = 0;
+            if (!modulesById.has(moduleEntry.moduleId)) {
+                modulesById.set(moduleEntry.moduleId, {
+                    moduleId: moduleEntry.moduleId,
+                    exports: new Set(),
+                    filePaths: new Set(),
+                });
+            }
+
+            const aggregatedModule = modulesById.get(moduleEntry.moduleId);
+            moduleEntry.exports.forEach((exportName) => aggregatedModule.exports.add(exportName));
+            aggregatedModule.filePaths.add(moduleEntry.filePath);
+        }
+
+        let bestMatch = null;
+
+        for (const moduleEntry of modulesById.values()) {
+            const exportSet = moduleEntry.exports;
+            let exportMatchCount = 0;
             for (const exportName of exportNames) {
                 if (exportSet.has(exportName)) {
-                    score += 1;
+                    exportMatchCount += 1;
                 }
             }
 
-            if (score === 0) {
+            if (exportMatchCount === 0) {
                 continue;
             }
 
-            if (!bestMatch || score > bestMatch.score) {
-                bestMatch = { score, moduleId: moduleEntry.moduleId, filePath: moduleEntry.filePath, exports: moduleEntry.exports };
+            const localUsageCount = exportNames.reduce(
+                (sum, exportName) => sum + (localModuleUsage.usageByModuleId.get(moduleEntry.moduleId)?.get(exportName) ?? 0),
+                0,
+            );
+            const localImportCount = localModuleUsage.importCountByModuleId.get(moduleEntry.moduleId) ?? 0;
+
+            if (
+                !bestMatch ||
+                exportMatchCount > bestMatch.exportMatchCount ||
+                (exportMatchCount === bestMatch.exportMatchCount &&
+                    localImportCount > bestMatch.localImportCount) ||
+                (exportMatchCount === bestMatch.exportMatchCount &&
+                    localImportCount === bestMatch.localImportCount &&
+                    localUsageCount > bestMatch.localUsageCount)
+            ) {
+                bestMatch = {
+                    moduleId: moduleEntry.moduleId,
+                    filePaths: [...moduleEntry.filePaths],
+                    exports: [...moduleEntry.exports],
+                    exportMatchCount,
+                    localUsageCount,
+                    localImportCount,
+                };
             }
         }
 
         return bestMatch;
     }
 
-    async function buildModuleIdReplacementMap(targetRoot, oldLines, newLines) {
+    async function buildModuleIdReplacementMap(targetRoot, oldLines, newLines, targetFileLines = []) {
         const replacements = new Map();
         const addedImports = getAddedImports(oldLines, newLines);
 
         for (const addedImport of addedImports) {
             const exportNames = getAliasExportNames(newLines, addedImport.alias);
-            const targetModule = await resolveTargetModuleId(targetRoot, exportNames);
+            const targetModule = await resolveTargetModuleId(targetRoot, exportNames, targetFileLines);
 
             if (!targetModule) {
                 continue;
@@ -1013,7 +1084,7 @@ function createAdaptivePatchHelpers(deps) {
                     const matches = alignOldToTargetLines(oldLines, targetSegment);
                     const boundaries = buildBoundaryMap(oldLines.length, targetSegment.length, matches);
                     const diffOperations = diffLines(oldLines, newLines);
-                    const moduleIdReplacements = await buildModuleIdReplacementMap(targetRoot, oldLines, newLines);
+                    const moduleIdReplacements = await buildModuleIdReplacementMap(targetRoot, oldLines, newLines, targetLines);
                     const expressionReplacements = buildExpressionReplacementMap(oldLines, targetSegment, matches, newLines);
                     const aliasReplacements = await buildImportAliasReplacements(targetRoot, oldLines, targetSegment, newLines, moduleIdReplacements, targetLines);
                     const rebuiltSegment = [];
