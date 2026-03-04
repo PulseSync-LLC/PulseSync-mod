@@ -867,11 +867,11 @@
                                     return (
                                         Object.getOwnPropertyNames(t).forEach((s) => {
                                             let i = t[s];
-                                            (('number' == typeof i || 'string' == typeof i || 'boolean' == typeof i) && e.append(s, String(i)),
+                                            ('number' == typeof i || 'string' == typeof i || 'boolean' == typeof i) && e.append(s, String(i)),
                                                 Array.isArray(i) &&
                                                     i.forEach((t) => {
                                                         ('number' == typeof t || 'string' == typeof t) && e.append(s, String(t));
-                                                    }));
+                                                    });
                                         }),
                                         e
                                     );

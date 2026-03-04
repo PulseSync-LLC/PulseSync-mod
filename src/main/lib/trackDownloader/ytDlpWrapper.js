@@ -362,7 +362,9 @@ function createYtDlpProgressTracker(progressCallback) {
     };
 
     const handleLine = (rawLine) => {
-        const line = String(rawLine || '').replace(/\x1b\[[0-9;]*m/g, '').trim();
+        const line = String(rawLine || '')
+            .replace(/\x1b\[[0-9;]*m/g, '')
+            .trim();
         if (!line) {
             return;
         }

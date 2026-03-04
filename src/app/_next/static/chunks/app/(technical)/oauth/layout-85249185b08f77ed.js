@@ -1723,31 +1723,67 @@
                     (0, i.useEffect)(() => {
                         if (window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.()) return;
                         const selector = `.${h().pulseText}`;
-                        const ensurePulseVersionVisible = () => {
+                        const titleBarRootSelector = '[class*="TitleBar_root"]';
+                        const forceStyleId = `pulsesync-titlebar-force-style-${h().pulseText}`;
+                        const expectedText = `PulseSync ${window.PULSE_VERSION}`;
+                        const ensureForceStyle = () => {
+                            const cssText = `${titleBarRootSelector} { display: flex !important; visibility: visible !important; opacity: 1 !important; } ${selector} { display: inline !important; visibility: visible !important; opacity: 1 !important; }`;
+                            let styleEl = window.document?.getElementById?.(forceStyleId);
+                            if (!styleEl) {
+                                styleEl = window.document?.createElement?.('style');
+                                if (!styleEl) return;
+                                styleEl.id = forceStyleId;
+                                styleEl.textContent = cssText;
+                                (window.document?.head || window.document?.documentElement)?.appendChild?.(styleEl);
+                                return;
+                            }
+                            if (styleEl.textContent !== cssText) {
+                                styleEl.textContent = cssText;
+                            }
+                        };
+                        const syncPulseVersionText = () => {
                             const el = window.document?.querySelector(selector);
                             if (!el) return;
-                            const expectedText = `PulseSync ${window.PULSE_VERSION}`;
                             if (el.textContent !== expectedText) {
                                 el.textContent = expectedText;
                             }
-                            el.style?.setProperty?.('display', 'inline', 'important');
-                            el.style?.setProperty?.('visibility', 'visible', 'important');
-                            el.style?.setProperty?.('opacity', '1', 'important');
                         };
+                        let scheduledSyncId = 0;
+                        let usesRaf = !1;
+                        const flushSync = () => {
+                            scheduledSyncId = 0;
+                            syncPulseVersionText();
+                        };
+                        const scheduleSync = () => {
+                            if (scheduledSyncId) return;
+                            if (window.requestAnimationFrame) {
+                                usesRaf = !0;
+                                scheduledSyncId = window.requestAnimationFrame(flushSync);
+                                return;
+                            }
+                            usesRaf = !1;
+                            scheduledSyncId = window.setTimeout(flushSync, 16);
+                        };
+                        ensureForceStyle();
                         const observer =
                             window.MutationObserver &&
                             new MutationObserver(() => {
-                                ensurePulseVersionVisible();
+                                scheduleSync();
                             });
-                        observer?.observe(window.document?.documentElement || window.document?.body, {
-                            subtree: !0,
-                            childList: !0,
-                            attributes: !0,
-                            attributeFilter: ['style', 'class', 'hidden'],
-                        });
-                        ensurePulseVersionVisible();
+                        const observationRoot = window.document?.body || window.document?.documentElement;
+                        if (observationRoot) {
+                            observer?.observe(observationRoot, { subtree: !0, childList: !0 });
+                        }
+                        scheduleSync();
                         return () => {
                             observer?.disconnect();
+                            if (scheduledSyncId) {
+                                if (usesRaf && window.cancelAnimationFrame) {
+                                    window.cancelAnimationFrame(scheduledSyncId);
+                                } else {
+                                    clearTimeout(scheduledSyncId);
+                                }
+                            }
                         };
                     }, []);
                     (0, i.useEffect)(() => {

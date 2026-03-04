@@ -2556,7 +2556,7 @@
                             C,
                         ],
                     });
-            });
+                });
             var e9 = a(38884),
                 te = a.n(e9),
                 tModal = a(51704),
@@ -2611,12 +2611,12 @@
                     x = (0, n.useCallback)(() => {
                         prefetchRequestRef.current += 1;
                         prefetchTimerRef.current && clearTimeout(prefetchTimerRef.current);
-                        ((prefetchTimerRef.current = null), u(!1), g(''), setLinkPrefetchState({ status: 'idle', trackCount: 0, message: '' }));
+                        (prefetchTimerRef.current = null), u(!1), g(''), setLinkPrefetchState({ status: 'idle', trackCount: 0, message: '' });
                     }, []),
                     N = (0, n.useCallback)(
                         (e) => {
                             let a = e.target.files;
-                            (a && a.length > 0 && (i.appendFiles([...a], t), x()), (e.target.value = ''));
+                            a && a.length > 0 && (i.appendFiles([...a], t), x()), (e.target.value = '');
                         },
                         [t, i, x],
                     ),
