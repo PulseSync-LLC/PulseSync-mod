@@ -16,7 +16,7 @@ async function resolveCommandOptions(commandName, flags, core) {
     core.setOldYMHashOverride(flags.oldYMHashOverride);
 
     const dest = flags.dest ?? (lastExtracted ? core.constants.DEFAULT_PATCHED_DIST_PATH : core.constants.DEFAULT_DIST_PATH);
-    const src = commandName === 'extract' ? flags.src : lastExtracted ? await core.getLatestExtractedSrcDir(true) : (flags.src ?? core.constants.SRC_PATH);
+    const src = commandName === 'extract' ? flags.src : lastExtracted ? await core.extractUtils.getLatestExtractedSrcDir(true) : (flags.src ?? core.constants.SRC_PATH);
 
     return {
         commandName,
