@@ -14,6 +14,24 @@ function sanitizeId(name) {
     return sanitizeIdFromSystem(name);
 }
 
+function getAddonContentText(ext) {
+    const css = typeof ext?.css === 'string' ? ext.css : '';
+    const script = typeof ext?.script === 'string' ? ext.script : '';
+    return `${css}\n${script}`;
+}
+
+function touchesPulseSyncTitleBarBranding(ext) {
+    const source = getAddonContentText(ext);
+    if (!source.trim()) return false;
+
+    return (
+        /TitleBar[_-]pulseText/i.test(source) ||
+        /pulsesync-titlebar-force-style/i.test(source) ||
+        /PulseSync\s*\$\{\s*window\.PULSE_VERSION\s*}/i.test(source) ||
+        /PulseSync\s*\+\s*window\.PULSE_VERSION/i.test(source)
+    );
+}
+
 let singletonInstance = null;
 const PULSE_SYNC_MANAGER_KEY = Symbol.for('pulsesync.manager.instance');
 
@@ -26,6 +44,7 @@ class PulseSyncManager extends EventEmitter {
         this.socket = null;
         this.wsUrl = 'http://localhost:2007';
         this.prevExtensions = [];
+        this.sourceExtensions = [];
         this.currentTheme = null;
         this.cssContent = {};
         this.scriptContent = {};
@@ -50,6 +69,7 @@ class PulseSyncManager extends EventEmitter {
         this.getEnabledAddons = this.getEnabledAddons.bind(this);
         this.handlePulseSyncApi = this.handlePulseSyncApi.bind(this);
         this.validatePremium = this.validatePremium.bind(this);
+        this.updatePremiumState = this.updatePremiumState.bind(this);
         this.prevExtensions = mergeWithSystem([]);
     }
 
@@ -58,7 +78,7 @@ class PulseSyncManager extends EventEmitter {
             this.logger.warn('Safe mode enabled: skipping theme and addon injection');
             return;
         }
-        await this.handleExtensions(this.prevExtensions);
+        await this.handleExtensions(this.sourceExtensions);
         if (this.currentTheme && this.currentTheme.name.toLowerCase() !== 'default') {
             await this.handleTheme(this.currentTheme);
         }
@@ -89,6 +109,22 @@ class PulseSyncManager extends EventEmitter {
         if (!this.readySent && this.socket?.connected && !this.isReloading) {
             this.sendReadyEvent();
         }
+    }
+
+    async updatePremiumState(isPremium, source = 'unknown') {
+        const nextValue = Boolean(isPremium);
+        const changed = this.isPremium !== nextValue;
+        this.isPremium = nextValue;
+
+        if (!changed) return;
+
+        this.logger.info(`Premium state changed: ${this.isPremium} (${source})`);
+
+        if (!this.isPremium) return;
+        if (!this.appLoaded) return;
+        await this._ensureSingleApply(async () => {
+            await this.handleExtensions(this.sourceExtensions);
+        });
     }
 
     start() {
@@ -245,10 +281,10 @@ class PulseSyncManager extends EventEmitter {
                     },
                 });
                 const data = await res.json();
-                this.isPremium = Boolean(data?.ok && data?.isPremium);
+                await this.updatePremiumState(Boolean(data?.ok && data?.isPremium), 'PREMIUM_CHECK_TOKEN');
             } catch (error) {
                 this.logger.warn(`PREMIUM_CHECK_TOKEN: validation error (${error.message})`);
-                this.isPremium = false;
+                await this.updatePremiumState(false, 'PREMIUM_CHECK_TOKEN_ERROR');
             }
         });
 
@@ -338,7 +374,8 @@ class PulseSyncManager extends EventEmitter {
             return;
         }
 
-        const merged = mergeWithSystem(Array.isArray(addons) ? addons : []);
+        this.sourceExtensions = Array.isArray(addons) ? addons : [];
+        const merged = mergeWithSystem(this.sourceExtensions);
 
         const unique = [];
         const seen = new Set();
@@ -350,13 +387,29 @@ class PulseSyncManager extends EventEmitter {
             }
         }
 
-        if (this.prevExtensions.length > 0 && JSON.stringify(this.prevExtensions) !== JSON.stringify(unique)) {
-            this.prevExtensions = unique;
+        const blockedForNonPremium = [];
+        const filtered = unique.filter((ext) => {
+            if (this.isPremium) return true;
+            if (!touchesPulseSyncTitleBarBranding(ext)) return true;
+
+            const id = sanitizeId(ext.addon || ext.name);
+            blockedForNonPremium.push(id);
+            return false;
+        });
+
+        if (blockedForNonPremium.length > 0) {
+            this.logger.warn(
+                `Blocked non-premium titlebar branding addons: ${blockedForNonPremium.join(', ')}`,
+            );
+        }
+
+        if (this.prevExtensions.length > 0 && JSON.stringify(this.prevExtensions) !== JSON.stringify(filtered)) {
+            this.prevExtensions = filtered;
             return this.safeReload();
         }
-        this.prevExtensions = unique;
+        this.prevExtensions = filtered;
 
-        for (const ext of unique) {
+        for (const ext of filtered) {
             const base = sanitizeId(ext.addon || ext.name);
 
             if (ext.css) {
@@ -562,14 +615,14 @@ class PulseSyncManager extends EventEmitter {
             });
             const data = await res.json();
             if (data.ok) {
-                this.isPremium = data.isPremium;
+                await this.updatePremiumState(data.isPremium, 'validatePremium');
             } else {
                 this.logger.warn(`validatePremium: validation failed (${data.message || 'no message'})`);
-                this.isPremium = false;
+                await this.updatePremiumState(false, 'validatePremium_failed');
             }
         } catch (e) {
             this.logger.warn(`validatePremium: error during validation (${e.message})`);
-            this.isPremium = false;
+            await this.updatePremiumState(false, 'validatePremium_error');
         }
     }
 
