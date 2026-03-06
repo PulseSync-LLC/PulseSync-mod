@@ -1,0 +1,58 @@
+:root {
+    --header-height: 3.75rem;
+    --player-bar-height: 5rem;
+    --balbelow-height: 5rem;
+    --gap-between-contents: 0.75rem;
+    --subpage-sticky-header-height: 6rem;
+    --collection-header-with-tabs-height: 9.25rem;
+}
+@media only screen and (max-width: 767.98px) {
+    :root {
+        --player-bar-height: 4.125rem;
+        --subpage-sticky-header-height: 5rem;
+    }
+}
+html {
+    --html-font-size: 1rem;
+    font-size: 1rem;
+    font-size: var(--html-font-size);
+}
+@media only screen and (min-width: 1920px) {
+    html {
+        --html-font-size: calc(0.75rem + 0.3vw);
+    }
+}
+body {
+    background-color: var(--ym-background-color-primary-enabled-basic);
+    color: var(--ym-controls-color-primary-text-enabled);
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-m);
+    font-style: var(--ym-font-style-normal);
+    font-weight: var(--ym-font-weight-normal);
+    overflow: hidden;
+    padding: 0 !important;
+}
+body,
+button {
+    text-rendering: geometricprecision;
+}
+.desktop {
+    --mobile-width: 48.125rem;
+    min-width: 48.125rem;
+    min-width: var(--mobile-width);
+}
+::selection {
+    background-color: var(--ym-controls-color-primary-default-enabled);
+    color: var(--ym-controls-color-primary-on_default-enabled);
+}
+.updateNotificationContainer_application_macos {
+    inset-block-start: var(--ym-spacer-size-xxl);
+}
+.updateNotificationContainer_application_windows {
+    inset-block-start: var(--ym-spacer-size-xxxxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .updateNotificationContainer {
+        width: 100%;
+    }
+}

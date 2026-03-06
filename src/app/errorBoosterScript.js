@@ -305,14 +305,52 @@
     };
 })();
 
+!(function () {
+    'use strict';
+    var e;
+    ((e = Ya.Rum).logEventString = function (n, t, r) {
+        return e._logEvent('string', n, t, r);
+    }),
+        (e.logEventFloat = function (n, t, r) {
+            return e._logEvent('float', n, t, r);
+        }),
+        (e.logEventInteger = function (n, t, r) {
+            return e._logEvent('integer', n, t, r);
+        }),
+        (e._logEvent = function (n, t, r, i) {
+            i = i || {};
+            var l = e._errorSettings,
+                o = e._buildAdditional(l.additional, i.additional),
+                a = e._buildExperiments(l.experiments),
+                g = {
+                    '-env': l.env,
+                    '-project': l.project,
+                    '-service': i.service || l.service,
+                    '-page': i.page || l.page,
+                    '-platform': l.platform,
+                    '-experiments': a,
+                    '-version': l.version,
+                    '-yandexuid': l.yandexuid,
+                    '-loggedin': l.loggedin,
+                    '-referrer': e._getReferrer(l),
+                    '-additional': o,
+                    '-ts': +new Date(),
+                    '-type': n,
+                    '-name': t,
+                    '-value': r,
+                };
+            return e.send(null, '690.32', e._createVarsString(g), null, null, null, ['table=rum_events']);
+        });
+})();
+
 function initErrorBooster({ project, page, regionId, platform, environment, version, unhandledRejection, uncaughtException, resourceFails }) {
     Ya.Rum.initErrors({
         project: `'${project}'`,
-        page: `'${page}'`,
-        region: `'${regionId}'`,
-        ...(platform ? { '-platform': `'${platform}'` } : {}),
-        env: `'${environment}'`,
-        version: `'${version}'`,
+        page,
+        region: regionId,
+        ...(platform ? { '-platform': platform } : {}),
+        env: environment,
+        version,
         unhandledRejection,
         uncaughtException,
         resourceFails,

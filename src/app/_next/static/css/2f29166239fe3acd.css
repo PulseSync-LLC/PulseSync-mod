@@ -1,0 +1,40 @@
+.SplashScreen_root__3jzFk {
+    align-items: center;
+    display: flex;
+    height: 100vh;
+    height: 100dvh;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    justify-content: center;
+    position: fixed;
+    width: 100vw;
+    width: 100dvw;
+    z-index: 1002;
+    -webkit-app-region: drag;
+}
+.SplashScreen_root_dark__0OcZj {
+    background-color: #000;
+}
+.SplashScreen_root_light__XAJTf {
+    background-color: #fff;
+}
+.SplashScreen_root_hidden__BO7tp {
+    animation: SplashScreen_fade-out__uNMY4 0.2s forwards;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .SplashScreen_root_hidden__BO7tp {
+        animation: SplashScreen_fade-out__uNMY4 0s forwards;
+    }
+}
+.SplashScreen_video__wFSy5 {
+    aspect-ratio: 1;
+    width: 65%;
+}
+@keyframes SplashScreen_fade-out__uNMY4 {
+    0% {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}

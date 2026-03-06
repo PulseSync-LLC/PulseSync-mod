@@ -1,15 +1,15 @@
-!(function (e, t) {
+!(function (e) {
     if (((e.Ya = e.Ya || {}), Ya.Rum)) throw new Error('Rum: interface is already defined');
-    var n = e.performance,
-        i = (n && n.timing && n.timing.navigationStart) || Ya.startPageLoad || +new Date(),
-        s = e.requestAnimationFrame,
-        r = function () {},
-        a = (Ya.Rum = {
+    var t = e.performance,
+        n = (t && t.timing && t.timing.navigationStart) || Ya.startPageLoad || +new Date(),
+        i = e.requestAnimationFrame,
+        s = function () {},
+        r = (Ya.Rum = {
             _defTimes: [],
             _defRes: [],
             _countersToExposeAsEvents: ['2325', '2616.85.1928', 'react.inited'],
-            enabled: !!n,
-            version: '6.1.21',
+            enabled: !!t,
+            version: '6.1.24',
             vsStart: document.visibilityState,
             vsChanged: !1,
             vsChangeTime: 1 / 0,
@@ -22,90 +22,90 @@
             _settings: {},
             _vars: {},
             init: function (e, t) {
-                (a._settings = e), (a._vars = t);
+                (r._settings = e), (r._vars = t);
             },
             getTime:
-                n && n.now
+                t && t.now
                     ? function () {
-                          return n.now();
+                          return t.now();
                       }
                     : Date.now
                       ? function () {
-                            return Date.now() - i;
+                            return Date.now() - n;
                         }
                       : function () {
-                            return new Date() - i;
+                            return new Date() - n;
                         },
             time: function (e) {
-                a._deltaMarks[e] = [a.getTime()];
+                r._deltaMarks[e] = [r.getTime()];
             },
             timeEnd: function (e, t) {
-                var n = a._deltaMarks[e];
-                n && 0 !== n.length && n.push(a.getTime(), t);
+                var n = r._deltaMarks[e];
+                n && 0 !== n.length && n.push(r.getTime(), t);
             },
             sendTimeMark: function (e, t, n, i) {
-                void 0 === t && (t = a.getTime()), a.emit({ metricName: 'defTimes', data: [e, t, i] }), a.mark(e, t);
+                void 0 === t && (t = r.getTime()), r.emit({ metricName: 'defTimes', data: [e, t, i] }), r.mark(e, t);
             },
             sendDelta: function (e, t, n, i) {
                 var s,
-                    r = a._deltaMarks;
-                r[e] || void 0 === t || ((s = i && i.originalEndTime ? i.originalEndTime : a.getTime()), (r[e] = [s - t, s, n]));
+                    a = r._deltaMarks;
+                a[e] || void 0 === t || ((s = i && i.originalEndTime ? i.originalEndTime : r.getTime()), (a[e] = [s - t, s, n]));
             },
             sendResTiming: function (e, t) {
-                a.emit({ metricName: 'defRes', data: [e, t] });
+                r.emit({ metricName: 'defRes', data: [e, t] });
             },
             sendRaf: function (e) {
-                var t = a.getSetting('forcePaintTimeSending');
-                if (s && (t || a.isTimeAfterPageShow(a.getTime()))) {
+                var t = r.getSetting('forcePaintTimeSending');
+                if (i && (t || r.isTimeAfterPageShow(r.getTime()))) {
                     var n = '2616.' + e;
-                    s(function () {
-                        a.getSetting('sendFirstRaf') && a.sendTimeMark(n + '.205'),
-                            s(function () {
-                                a.sendTimeMark(n + '.1928');
+                    i(function () {
+                        r.getSetting('sendFirstRaf') && r.sendTimeMark(n + '.205'),
+                            i(function () {
+                                r.sendTimeMark(n + '.1928');
                             });
                     });
                 }
             },
             isVisibilityChanged: function () {
-                return a.vsStart && ('visible' !== a.vsStart || a.vsChanged);
+                return r.vsStart && ('visible' !== r.vsStart || r.vsChanged);
             },
             isTimeAfterPageShow: function (e) {
-                return 'visible' === a.vsStart || a.vsChangeTime < e;
+                return 'visible' === r.vsStart || r.vsChangeTime < e;
             },
             mark:
-                n && n.mark
-                    ? function (e, t) {
-                          n.mark(e + (t ? ': ' + t : ''));
+                t && t.mark
+                    ? function (e, n) {
+                          t.mark(e + (n ? ': ' + n : ''));
                       }
                     : function () {},
             getSetting: function (e) {
-                var t = a._settings[e];
+                var t = r._settings[e];
                 return null === t ? null : t || '';
             },
             on: function (e, t) {
                 if ('function' == typeof t)
                     return (
-                        (a._markListeners[e] = a._markListeners[e] || []).push(t),
+                        (r._markListeners[e] = r._markListeners[e] || []).push(t),
                         function () {
-                            if (a._markListeners[e]) {
-                                var n = a._markListeners[e].indexOf(t);
-                                n > -1 && a._markListeners[e].splice(n, 1);
+                            if (r._markListeners[e]) {
+                                var n = r._markListeners[e].indexOf(t);
+                                n > -1 && r._markListeners[e].splice(n, 1);
                             }
                         }
                     );
             },
-            noop: r,
-            sendTrafficData: r,
-            finalizeLayoutShiftScore: r,
-            finalizeLargestContentfulPaint: r,
-            getLCPAdditionalParams: r,
-            getCLSAdditionalParams: r,
-            getINPAdditionalParams: r,
-            getImageGoodnessAdditionalParams: r,
+            noop: s,
+            sendTrafficData: s,
+            finalizeLayoutShiftScore: s,
+            finalizeLargestContentfulPaint: s,
+            getLCPAdditionalParams: s,
+            getCLSAdditionalParams: s,
+            getINPAdditionalParams: s,
+            getImageGoodnessAdditionalParams: s,
             _eventListeners: {},
             _eventsBuffer: {},
             subscribe: function (e, t) {
-                if (!a.getSetting('noEvents'))
+                if (!r.getSetting('noEvents'))
                     return (
                         (this._eventLisneters[e] = this._eventLisneters[e] || new Set()),
                         this._eventLisneters[e].add(t),
@@ -118,8 +118,8 @@
                 this._eventLisneters[e].delete(t);
             },
             emit: function (e) {
-                if (!a.getSetting('noEvents')) {
-                    var t = (a.getSetting('eventsLimits') && a.getSetting('eventsLimits')[e.metricName]) || 20;
+                if (!r.getSetting('noEvents')) {
+                    var t = (r.getSetting('eventsLimits') && r.getSetting('eventsLimits')[e.metricName]) || 20;
                     this._eventLisneters[e.metricName] &&
                         this._eventLisneters[e.metricName].forEach(function (t) {
                             t(e);
@@ -143,10 +143,10 @@
                 this._eventsBuffer[e] && (this._eventsBuffer[e].length = 0);
             },
         });
-    function f() {
-        (Ya.Rum.vsChanged = !0), (Ya.Rum.vsChangeTime = a.getTime()), removeEventListener('visibilitychange', f);
+    function a() {
+        (Ya.Rum.vsChanged = !0), (Ya.Rum.vsChangeTime = r.getTime()), removeEventListener('visibilitychange', a);
     }
-    addEventListener('visibilitychange', f), (a._onVisibilityChange = f);
+    addEventListener('visibilitychange', a), (r._onVisibilityChange = a);
 })(window);
 
 !(function () {
@@ -158,64 +158,63 @@
         r = 4e4,
         g = 15,
         a = [],
-        s = '\r\n',
-        l = i.getSetting('countersInitialDelay') || 0;
-    if (l) {
-        var c;
+        s = i.getSetting('countersInitialDelay') || 0;
+    if (s) {
+        var l;
+        function c() {
+            removeEventListener('visibilitychange', u), clearTimeout(l), (s = 0), h();
+        }
         function u() {
-            removeEventListener('visibilitychange', h), clearTimeout(c), (l = 0), f();
+            document.hidden && c();
         }
-        function h() {
-            document.hidden && u();
-        }
-        (c = setTimeout(u, l)), addEventListener('visibilitychange', h);
+        (l = setTimeout(c, s)), addEventListener('visibilitychange', u);
     }
-    function f() {
+    function h() {
         if (t && a.length) {
-            for (var n = 0, i = 0, l = 0; i < a.length && l <= r && n < o; i++) (l += (i ? s.length : 0) + a[i].length) <= r && n++;
-            var c = a.splice(0, n);
-            d(t, c.join(s)), a.length && (e = setTimeout(f, g));
+            for (var n = 0, i = 0, s = 0; i < a.length && s <= r && n < o; i++) (s += (i ? 2 : 0) + a[i].length) <= r && n++;
+            var l = a.splice(0, n);
+            f(t, l.join('\r\n')), a.length && (e = setTimeout(h, g));
         } else a.length = 0;
     }
-    function d(e, t) {
+    function f(e, t) {
         if (!(navigator.sendBeacon && n && navigator.sendBeacon(e, t))) {
             var o = Boolean(i.getSetting('sendCookie')),
                 r = new XMLHttpRequest();
             r.open('POST', e), (r.withCredentials = o), r.send(t);
         }
     }
-    i.send = function (c, u, h, d, v, m, S, p) {
+    i.send = function (l, c, u, f, d, v, m, S) {
         (t = i.getSetting('clck')),
             (n = i.getSetting('beacon')),
             (o = i.getSetting('maxBatchCounters') || o),
             (r = i.getSetting('maxBatchLength') || r),
             (g = i.getSetting('countersBatchTimeout') || g),
-            (function (t, n, i, c, u, h, d, v, m, S) {
+            (function (t, n, i, l, c, u, f) {
                 clearTimeout(e);
-                var p = [
+                var d = [
                     t ? '/reqid=' + t : '',
                     n ? '/' + n.join('/') : '',
                     i ? '/path=' + i : '',
-                    c ? '/events=' + c : '',
-                    u ? '/slots=' + u.join(';') : '',
-                    h ? '/experiments=' + h.join(';') : '',
-                    d ? '/vars=' + d : '',
+                    l ? '/events=' + l : '',
+                    c ? '/slots=' + c.join(';') : '',
+                    u ? '/experiments=' + u.join(';') : '',
+                    f ? '/vars=' + f : '',
                     '/cts=' + new Date().getTime(),
                     '',
                     '/*',
                 ].join('');
-                p.length > r
-                    ? 'undefined' != typeof console && console.error && console.error('Counter length ' + p.length + ' is more than allowed ' + r, p)
-                    : (a.push(p),
-                      l ||
+                d.length > r
+                    ? 'undefined' != typeof console && console.error && console.error('Counter length ' + d.length + ' is more than allowed ' + r, d)
+                    : (a.push(d),
+                      s ||
                           ((function () {
                               if (a.length >= o) return !0;
-                              for (var e = 0, t = 0; t < a.length; t++) if ((e += (t ? s.length : 0) + a[t].length) >= r) return !0;
+                              for (var e = 0, t = 0; t < a.length; t++) if ((e += (t ? 2 : 0) + a[t].length) >= r) return !0;
                               return !1;
                           })()
-                              ? f()
-                              : (e = setTimeout(f, g))));
-            })(i.getSetting('reqid'), S, u, v, i.getSetting('slots'), i.getSetting('experiments'), h);
+                              ? h()
+                              : (e = setTimeout(h, g))));
+            })(i.getSetting('reqid'), m, c, d, i.getSetting('slots'), i.getSetting('experiments'), u);
     };
 })();
 
@@ -452,18 +451,18 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             beacon: !!navigator.sendBeacon,
             clck: 'https://yandex.ru/clck/click',
             ...(slots ? { slots } : {}),
-            reqid: `'${requestId}'`,
+            reqid: requestId,
             sendClientUa: sendClientUa,
         },
         {
-            rum_id: `'${rumId}'`,
-            '-region': `'${regionId}'`,
+            rum_id: rumId,
+            '-region': regionId,
             '-project': `'${project}'`,
-            ...(platform ? { '-platform': `'${platform}'` } : {}),
-            ...(service ? { '-service': `'${service}'` } : {}),
-            '-env': `'${environment}'`,
-            '-page': `'${page}'`,
-            '-version': `'${version}'`,
+            ...(platform ? { '-platform': platform } : {}),
+            ...(service ? { '-service': service } : {}),
+            '-env': environment,
+            '-page': page,
+            '-version': version,
         },
     );
     !(function () {
@@ -526,13 +525,13 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
         function s(e, n) {
             return 'string' == typeof e ? encodeURIComponent(e) : Math.round(1e3 * (e - (n || 0))) / 1e3;
         }
-        function u(e) {
+        function c(e) {
             if (!e) return '';
             var n = (e.tagName || '').toLowerCase(),
                 t = e.className && void 0 !== e.className.baseVal ? e.className.baseVal : e.className;
             return n + (t ? (' ' + t).replace(/\s+/g, '.') : '');
         }
-        function c(e) {
+        function u(e) {
             function n() {
                 removeEventListener('DOMContentLoaded', n), removeEventListener('load', n), e();
             }
@@ -551,92 +550,87 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             });
         }
         var m = {
-                connectEnd: 2116,
-                connectStart: 2114,
-                decodedBodySize: 2886,
-                domComplete: 2124,
-                domContentLoadedEventEnd: 2131,
-                domContentLoadedEventStart: 2123,
-                domInteractive: 2770,
-                domLoading: 2769,
-                domainLookupEnd: 2113,
-                domainLookupStart: 2112,
-                duration: 2136,
-                encodedBodySize: 2887,
-                entryType: 2888,
-                fetchStart: 2111,
-                initiatorType: 2889,
-                loadEventEnd: 2126,
-                loadEventStart: 2125,
-                nextHopProtocol: 2890,
-                redirectCount: 1385,
-                redirectEnd: 2110,
-                redirectStart: 2109,
-                requestStart: 2117,
-                responseEnd: 2120,
-                responseStart: 2119,
-                secureConnectionStart: 2115,
-                startTime: 2322,
-                transferSize: 2323,
-                type: 76,
-                unloadEventEnd: 2128,
-                unloadEventStart: 2127,
-                workerStart: 2137,
-            },
-            v = 625;
-        function g(n, t) {
+            connectEnd: 2116,
+            connectStart: 2114,
+            decodedBodySize: 2886,
+            domComplete: 2124,
+            domContentLoadedEventEnd: 2131,
+            domContentLoadedEventStart: 2123,
+            domInteractive: 2770,
+            domLoading: 2769,
+            domainLookupEnd: 2113,
+            domainLookupStart: 2112,
+            duration: 2136,
+            encodedBodySize: 2887,
+            entryType: 2888,
+            fetchStart: 2111,
+            initiatorType: 2889,
+            loadEventEnd: 2126,
+            loadEventStart: 2125,
+            nextHopProtocol: 2890,
+            redirectCount: 1385,
+            redirectEnd: 2110,
+            redirectStart: 2109,
+            requestStart: 2117,
+            responseEnd: 2120,
+            responseStart: 2119,
+            secureConnectionStart: 2115,
+            startTime: 2322,
+            transferSize: 2323,
+            type: 76,
+            unloadEventEnd: 2128,
+            unloadEventStart: 2127,
+            workerStart: 2137,
+        };
+        function v(n, t) {
             Object.keys(m).forEach(function (e) {
                 if (e in t) {
                     var i = t[e];
                     (i || 0 === i) && n.push(m[e] + '=' + s(i));
                 }
             }),
-                n.push(''.concat(v, '=').concat(e.version));
+                n.push(''.concat(625, '=').concat(e.version));
         }
-        var p,
+        var g,
+            p,
             h,
             y,
             S,
-            T,
-            b = '690.2096.2877',
-            w = '690.2096.207',
-            E = '690.2096.2044',
-            C = 3,
-            k = e.getSetting('savedDeltasLimit') || 0,
-            L = document.createElement('link'),
-            P = window.performance || {},
-            M = 'function' == typeof P.getEntriesByType,
-            _ = 0;
-        function O(n, t, i, r, o) {
+            T = e.getSetting('savedDeltasLimit') || 0,
+            b = document.createElement('link'),
+            w = window.performance || {},
+            E = 'function' == typeof w.getEntriesByType,
+            C = 0;
+        function k(n, t, i, r, o) {
             void 0 === t && (t = e.getTime()), (void 0 !== i && !0 !== i) || e.mark(n, t);
-            var a = I(n);
-            if ((a.push('207=' + s(t)), x(a, r))) {
-                j(w, a, o && o.force), (p[n] = p[n] || []), p[n].push(t);
-                var u = e._markListeners[n];
-                u &&
-                    u.length &&
-                    u.forEach(function (e) {
+            var a = L(n);
+            if ((a.push('207=' + s(t)), _(a, r))) {
+                O('690.2096.207', a, o && o.force), (g[n] = g[n] || []), g[n].push(t);
+                var c = e._markListeners[n];
+                c &&
+                    c.length &&
+                    c.forEach(function (e) {
                         e(t);
                     }),
                     e.emit({ metricName: n, value: t, params: r });
             }
         }
-        function I(n) {
-            return T.concat([
+        function L(n) {
+            return S.concat([
                 e.isVisibilityChanged() ? '-vsChanged=1' : '',
                 '1701=' + n,
                 e.ajaxStart && '1201.2154=' + s(e.ajaxStart),
                 e.ajaxComplete && '1201.2052=' + s(e.ajaxComplete),
             ]);
         }
-        function N() {
-            (S = l()), e.getSetting('sendClientUa') && S.push('1042=' + encodeURIComponent(navigator.userAgent));
+        function P() {
+            (y = l()), e.getSetting('sendClientUa') && y.push('1042=' + encodeURIComponent(navigator.userAgent));
         }
-        function R() {
+        function M() {
             var e = window.performance && window.performance.timing && window.performance.timing.navigationStart;
-            T = S.concat(['143.2129=' + e]);
+            S = y.concat(['143.2129=' + e]);
         }
-        function x(e, n) {
+        function _(e, n) {
             if (n) {
                 if (n.isCanceled && n.isCanceled()) return !1;
                 var t = e.reduce(function (e, n, t) {
@@ -652,63 +646,63 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             }
             return !0;
         }
-        function j(n, t, i) {
+        function O(n, t, i) {
             var r = encodeURIComponent(window.YaStaticRegion || 'unknown');
             t.push('-cdn=' + r);
             var o = t.filter(Boolean).join(',');
             e.send(null, n, o, void 0, void 0, void 0, void 0, i);
         }
-        function z(e, n, t) {
-            j(e, F().concat(n), t);
+        function I(e, n, t) {
+            O(e, z().concat(n), t);
         }
-        function B(n, t) {
-            var i = y[n];
-            i && 0 !== i.length && (i.push(e.getTime(), t), A(n));
+        function N(n, t) {
+            var i = h[n];
+            i && 0 !== i.length && (i.push(e.getTime(), t), R(n));
         }
-        function A(n, t, i, r) {
+        function R(n, t, i, r) {
             var o,
                 a,
-                u,
-                c = y[n];
+                c,
+                u = h[n];
             if (
-                (void 0 !== t ? (o = (a = r && r.originalEndTime ? r.originalEndTime : e.getTime()) - t) : c && ((o = c[0]), (a = c[1]), (u = c[2])),
+                (void 0 !== t ? (o = (a = r && r.originalEndTime ? r.originalEndTime : e.getTime()) - t) : u && ((o = u[0]), (a = u[1]), (c = u[2])),
                 void 0 !== o && void 0 !== a)
             ) {
-                var d = I(n);
+                var d = L(n);
                 d.push('207.2154=' + s(o), '207.1428=' + s(a), '2877=' + s(a - o)),
-                    x(d, i) &&
-                        x(d, u) &&
-                        (j(b, d, r && r.force),
-                        _ < k && ((h[n] = h[n] || []), h[n].push(a - o), _++),
+                    _(d, i) &&
+                        _(d, c) &&
+                        (O('690.2096.2877', d, r && r.force),
+                        C < T && ((p[n] = p[n] || []), p[n].push(a - o), C++),
                         e.emit({ metricName: n, value: a - o, params: { start: o, end: a } }),
-                        delete y[n]);
+                        delete h[n]);
             }
         }
-        function V(e, n) {
-            if (!M) return n(null);
-            L.href = e;
+        function x(e, n) {
+            if (!E) return n(null);
+            b.href = e;
             var t = 0,
                 i = 100,
-                o = L.href;
+                o = b.href;
             r(function e() {
-                var a = P.getEntriesByName(o);
+                var a = w.getEntriesByName(o);
                 if (a.length) return n(a);
-                t++ < C ? (r(e, i), (i += i)) : n(null);
+                t++ < 3 ? (r(e, i), (i += i)) : n(null);
             }, 0);
         }
-        function U(e, n, t) {
-            V(n, function (i) {
-                i && D(e, i[i.length - 1], n, t);
+        function A(e, n, t) {
+            x(n, function (i) {
+                i && j(e, i[i.length - 1], n, t);
             });
         }
-        function D(n, t, i, r) {
-            var o = I(n);
-            e.getSetting('sendUrlInResTiming') && o.push('13=' + encodeURIComponent(i)), g(o, t), x(o, r), j(E, o);
+        function j(n, t, i, r) {
+            var o = L(n);
+            e.getSetting('sendUrlInResTiming') && o.push('13=' + encodeURIComponent(i)), v(o, t), _(o, r), O('690.2096.2044', o);
         }
-        function F() {
-            return S;
+        function z() {
+            return y;
         }
-        var W = {
+        var B = {
                 bluetooth: 2064,
                 cellular: 2065,
                 ethernet: 2066,
@@ -724,45 +718,42 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                 4: 2071,
                 5: 2768,
             },
-            H = navigator.connection;
-        function Q(e) {
-            if (H) {
-                var n = W[H.type];
+            V = navigator.connection;
+        function U(e) {
+            if (V) {
+                var n = B[V.type];
                 e.push(
                     '2437=' + (n || 2771),
-                    void 0 !== H.downlinkMax && '2439=' + H.downlinkMax,
-                    H.effectiveType && '2870=' + H.effectiveType,
-                    void 0 !== H.rtt && 'rtt=' + H.rtt,
-                    void 0 !== H.downlink && 'dwl=' + H.downlink,
-                    !n && 'rawType=' + H.type,
+                    void 0 !== V.downlinkMax && '2439=' + V.downlinkMax,
+                    V.effectiveType && '2870=' + V.effectiveType,
+                    void 0 !== V.rtt && 'rtt=' + V.rtt,
+                    void 0 !== V.downlink && 'dwl=' + V.downlink,
+                    !n && 'rawType=' + V.type,
                 );
             }
         }
-        var Y,
-            q,
-            G,
+        var D,
+            F,
+            W,
+            H,
             J,
-            $,
-            K,
-            X,
-            Z,
-            ee = '690.2096.4004',
-            ne = !1,
-            te = 1 / 0,
-            ie = 1 / 0,
-            re =
-                ('layout-shift',
-                Boolean(
-                    window.PerformanceObserver &&
-                        window.PerformanceObserver.supportedEntryTypes &&
-                        -1 !== window.PerformanceObserver.supportedEntryTypes.indexOf('layout-shift'),
-                )
-                    ? 0
-                    : null);
-        function oe() {
-            $ > q && ((q = $), (G = J), e.emit({ metricName: 'cls-debug', value: q, params: { clsEntries: G, target: ae(G) } }));
+            Q,
+            Y,
+            q,
+            G = !1,
+            $ = 1 / 0,
+            K = 1 / 0,
+            X = Boolean(
+                window.PerformanceObserver &&
+                    window.PerformanceObserver.supportedEntryTypes &&
+                    -1 !== window.PerformanceObserver.supportedEntryTypes.indexOf('layout-shift'),
+            )
+                ? 0
+                : null;
+        function Z() {
+            J > F && ((F = J), (W = H), e.emit({ metricName: 'cls-debug', value: F, params: { clsEntries: W, target: ee(W) } }));
         }
-        function ae(e) {
+        function ee(e) {
             var n;
             if (!e) return null;
             var t = null;
@@ -784,98 +775,114 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             }
             return t;
         }
-        function se(e) {
-            null == q && (q = 0);
+        function ne(e) {
+            null == F && (F = 0);
             for (var n = 0; n < e.length; n++) {
                 var t = e[n];
                 t.hadRecentInput ||
-                    ($ && t.startTime - J[J.length - 1].startTime < te && t.startTime - J[0].startTime < ie
-                        ? (($ += t.value), J.push(t))
-                        : (oe(), ($ = t.value), (J = [t])));
+                    (J && t.startTime - H[H.length - 1].startTime < $ && t.startTime - H[0].startTime < K
+                        ? ((J += t.value), H.push(t))
+                        : (Z(), (J = t.value), (H = [t])));
             }
-            oe();
+            Z();
         }
-        function ue() {
-            (q = re), (Y = void 0), (G = null), (J = null), ($ = null), (ne = !1);
+        function te() {
+            (F = X), (D = void 0), (W = null), (H = null), (J = null), (G = !1);
         }
-        function ce(n) {
-            if (null != q && !ne) {
-                var t = Math.round(1e6 * q) / 1e6;
-                if (Y !== t) {
-                    (Y = t), e.getSetting('enableContinuousCollection') || (ne = !0);
-                    var i = ae(G),
+        function ie(n) {
+            if (null != F && !G) {
+                var t = Math.round(1e6 * F) / 1e6;
+                if (D !== t) {
+                    (D = t), e.getSetting('enableContinuousCollection') || (G = !0);
+                    var i = ee(W),
                         r = ['s=' + t];
-                    r.push('target=' + u(i && i.node));
+                    r.push('target=' + c(i && i.node));
                     var o = e.getCLSAdditionalParams(i);
-                    o && x(r, o), z(ee, r, n), e.emit({ metricName: 'cls-debug', value: q, params: { clsEntries: J, target: i, isFinalized: ne } });
+                    o && _(r, o), I('690.2096.4004', r, n), e.emit({ metricName: 'cls-debug', value: F, params: { clsEntries: H, target: i, isFinalized: G } });
                 }
             }
         }
-        function de(n) {
+        function re(n) {
             var t = n[n.length - 1];
-            (K = t.renderTime || t.loadTime),
-                (X = t),
-                e.emit({ metricName: 'largest-contentful-paint-debug', value: K, params: { entry: t } }),
-                Z || (O('largest-loading-elem-paint', K), (Z = !0));
+            if (
+                ((Q = e.correctTime(t.renderTime || t.loadTime)), (Y = t), e.emit({ metricName: 'largest-contentful-paint-debug', value: Q, params: { entry: t } }), !q)
+            ) {
+                var i = Q;
+                e.whenActivated(function () {
+                    return k('largest-loading-elem-paint', i);
+                }),
+                    (q = !0);
+            }
         }
-        function fe(n) {
-            if (null != K) {
-                var t = e.getLCPAdditionalParams(X);
-                O('largest-contentful-paint', K, !1, t, n && { force: !0 }),
-                    e.emit({ metricName: 'largest-contentful-paint-debug', value: K, params: { additionalParams: t, entry: X, isFinalized: !0 } }),
-                    (K = null),
-                    (X = null);
+        function oe(n) {
+            if (null != Q) {
+                var t = e.getLCPAdditionalParams(Y);
+                k('largest-contentful-paint', Q, !1, t, n && { force: !0 }),
+                    e.emit({ metricName: 'largest-contentful-paint-debug', value: Q, params: { additionalParams: t, entry: Y, isFinalized: !0 } }),
+                    (Q = null),
+                    (Y = null);
             }
         }
         e.getLCPAdditionalParams === e.noop &&
-            (e.getLCPAdditionalParams = function () {
-                var n = {},
-                    t = X.element;
-                if (t) {
-                    (n['-className'] = e.getSelector(t)), (n['-tagName'] = t.tagName.toLowerCase());
-                    var i = t.getBoundingClientRect();
-                    (n['-width'] = i.width), (n['-height'] = i.height);
+            (e.getLCPAdditionalParams = function (n) {
+                var t = {},
+                    i = n.element;
+                if (i) {
+                    (t['-className'] = e.getSelector(i)), (t['-tagName'] = i.tagName.toLowerCase());
+                    var r = i.getBoundingClientRect();
+                    (t['-width'] = r.width), (t['-height'] = r.height);
                 }
-                return X.size && (n['-size'] = X.size), n;
+                return n.size && (t['-size'] = n.size), t;
             });
-        var le = { 'first-paint': 2793, 'first-contentful-paint': 2794 },
-            me = Object.keys(le).length,
-            ve = {},
-            ge = window.performance || {},
-            pe = 'function' == typeof ge.getEntriesByType,
-            he = 0;
-        function ye() {
-            if (pe && (e.getSetting('forcePaintTimeSending') || !e.isVisibilityChanged()))
-                for (var n = ge.getEntriesByType('paint'), t = 0; t < n.length; t++) {
-                    var i = n[t],
-                        r = le[i.name];
-                    r && !ve[i.name] && ((ve[i.name] = !0), he++, O('1926.' + r, i.startTime));
-                }
+        var ae = { 'first-paint': 2793, 'first-contentful-paint': 2794 },
+            se = Object.keys(ae).length,
+            ce = {},
+            ue = window.performance || {},
+            de = 'function' == typeof ue.getEntriesByType,
+            fe = 0;
+        function le() {
+            if (de && (e.getSetting('forcePaintTimeSending') || !e.isVisibilityChanged()))
+                for (
+                    var n = ue.getEntriesByType('paint'),
+                        t = function () {
+                            var t = n[i],
+                                r = ae[t.name];
+                            if (r && !ce[t.name]) {
+                                (ce[t.name] = !0), fe++;
+                                var o = '1926.' + r;
+                                e.whenActivated(function () {
+                                    return k(o, e.correctTime(t.startTime));
+                                });
+                            }
+                        },
+                        i = 0;
+                    i < n.length;
+                    i++
+                )
+                    t();
         }
-        var Se = 3e3,
-            Te = 1;
-        function be() {
+        function me() {
             return e._tti.events || [];
         }
-        function we() {
+        function ve() {
             return e._tti.loafEvents;
         }
-        function Ee() {
+        function ge() {
             return e._tti;
         }
-        function Ce(n) {
+        function pe(n) {
             return n ? (n === e.getPageUrl() ? '<page>' : n.replace(/\?.*$/, '')) : n;
         }
-        function ke(n, t, i) {
-            if (Ee()) {
+        function he(n, t, i) {
+            if (ge()) {
                 var r = e.getTime(),
                     o = 'undefined' != typeof PerformanceLongAnimationFrameTiming && e.getSetting('sendLongAnimationFrames');
-                Le(function (a) {
-                    var u,
-                        c = { 2796.2797: Pe(be(), t), 689.2322: s(r) };
+                ye(function (a) {
+                    var c,
+                        u = { 2796.2797: Se(me(), t), 689.2322: s(r) };
                     if (o) {
                         var d = (function (e) {
-                            var n = we();
+                            var n = ve();
                             if (n)
                                 return e
                                     ? n.filter(function (n) {
@@ -884,33 +891,33 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                                     : n;
                         })(t);
                         d &&
-                            ((c['loaf.2797'] = Pe(d, void 0, { useName: !1 })),
-                            1 === e.getSetting('longAnimationFramesMode') && (c['-additional'] = encodeURIComponent(JSON.stringify({ loaf: ((u = d), u.map(Me)) }))));
+                            ((u['loaf.2797'] = Se(d, void 0, { useName: !1 })),
+                            1 === e.getSetting('longAnimationFramesMode') && (u['-additional'] = encodeURIComponent(JSON.stringify({ loaf: ((c = d), c.map(Te)) }))));
                     }
                     i &&
                         Object.keys(i).forEach(function (e) {
-                            c[e] = i[e];
+                            u[e] = i[e];
                         }),
-                        O(n || '2795', a, !0, c, { force: Boolean(o) }),
+                        k(n || '2795', a, !0, u, { force: Boolean(o) }),
                         (e._tti.fired = !0);
                 }, t);
             }
         }
-        function Le(n, t) {
+        function ye(n, t) {
             var i = (arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {}).mode,
-                o = void 0 === i ? Te : i;
-            Ee() &&
+                o = void 0 === i ? 1 : i;
+            ge() &&
                 (t || (t = e.getTime()),
                 (function i() {
                     var a,
                         s = t,
-                        u = e.getTime(),
-                        c = o === Te ? be() : we() || [],
-                        d = c.length;
-                    0 !== d && ((a = c[d - 1]), (s = Math.max(s, Math.floor(a.startTime + a.duration)))), u - s >= Se ? n(s) : r(i, 1e3);
+                        c = e.getTime(),
+                        u = 1 === o ? me() : ve() || [],
+                        d = u.length;
+                    0 !== d && ((a = u[d - 1]), (s = Math.max(s, Math.floor(a.startTime + a.duration)))), c - s >= 3e3 ? n(s) : r(i, 1e3);
                 })());
         }
-        function Pe(e, n) {
+        function Se(e, n) {
             var t = (arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {}).useName,
                 i = void 0 === t || t;
             return (
@@ -940,7 +947,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                     .join('.')
             );
         }
-        function Me(e) {
+        function Te(e) {
             var n = e.blockingDuration,
                 t = e.duration,
                 i = e.firstUIEventTimestamp,
@@ -948,12 +955,12 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                 o = e.scripts,
                 a = e.startTime,
                 s = e.styleAndLayoutStart;
-            return [Math.round(a), Math.round(t), o.map(Oe), Math.round(n), Math.round(i), Math.round(r), Math.round(s)];
+            return [Math.round(a), Math.round(t), o.map(we), Math.round(n), Math.round(i), Math.round(r), Math.round(s)];
         }
-        function _e(e) {
+        function be(e) {
             return { 'user-callback': 1, 'event-listener': 2, 'resolve-promise': 3, 'reject-promise': 4, 'classic-script': 5, 'module-script': 6 }[e] || 0;
         }
-        function Oe(e) {
+        function we(e) {
             var n = e.invoker,
                 t = e.sourceURL,
                 i = e.sourceFunctionName,
@@ -961,122 +968,121 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                 o = e.startTime,
                 a = e.duration,
                 s = e.windowAttribution,
-                u = e.executionStart,
-                c = e.forcedStyleAndLayoutDuration,
+                c = e.executionStart,
+                u = e.forcedStyleAndLayoutDuration,
                 d = e.pauseDuration,
                 f = e.invokerType;
-            return [Ce(n), Ce(t), i, r, Math.round(o), Math.round(a), s, Math.round(u), Math.round(c), Math.round(d), _e(f)];
+            return [pe(n), pe(t), i, r, Math.round(o), Math.round(a), s, Math.round(c), Math.round(u), Math.round(d), be(f)];
         }
-        var Ie = '690.2096.361',
-            Ne = document.createElement('a'),
-            Re = 0,
-            xe = {};
-        function je(e) {
+        var Ee = document.createElement('a'),
+            Ce = 0,
+            ke = {};
+        function Le(e) {
             var n = e.transferSize;
             if (null != n) {
-                Ne.href = e.name;
-                var t = Ne.pathname;
+                Ee.href = e.name;
+                var t = Ee.pathname;
                 if (0 !== t.indexOf('/clck')) {
                     var i = t.lastIndexOf('.'),
                         r = '';
-                    return -1 !== i && t.lastIndexOf('/') < i && t.length - i <= 5 && (r = t.slice(i + 1)), { size: n, domain: Ne.hostname, extension: r };
+                    return -1 !== i && t.lastIndexOf('/') < i && t.length - i <= 5 && (r = t.slice(i + 1)), { size: n, domain: Ee.hostname, extension: r };
                 }
             }
         }
-        function ze() {
+        function Pe() {
             var n = e.getSetting('maxTrafficCounters') || 250;
-            if (Re >= n) return !1;
-            for (var t = Object.keys(xe), i = '', r = 0; r < t.length; r++) {
+            if (Ce >= n) return !1;
+            for (var t = Object.keys(ke), i = '', r = 0; r < t.length; r++) {
                 var o = t[r],
-                    a = xe[o];
+                    a = ke[o];
                 i += encodeURIComponent(o) + '!' + a.count + '!' + a.size + ';';
             }
-            return i.length && (Re++, z(Ie, ['d=' + i, 't=' + s(e.getTime())])), (xe = {}), Re < n;
+            return i.length && (Ce++, I('690.2096.361', ['d=' + i, 't=' + s(e.getTime())])), (ke = {}), Ce < n;
         }
-        d(ze);
-        var Be = '690.1033',
-            Ae = { visible: 1, hidden: 2, prerender: 3 },
-            Ve = window.performance || {},
-            Ue = Ve.navigation || {},
-            De = Ve.timing || {},
-            Fe = De.navigationStart;
-        function We() {
-            var n = De.domContentLoadedEventStart,
-                t = De.domContentLoadedEventEnd;
+        d(Pe);
+        var Me = { visible: 1, hidden: 2, prerender: 3 },
+            _e = window.performance || {},
+            Oe = _e.navigation || {},
+            Ie = _e.timing || {},
+            Ne = Ie.navigationStart;
+        function Re() {
+            var n = Ie.domContentLoadedEventStart,
+                t = Ie.domContentLoadedEventEnd;
             if (0 !== n || 0 !== t) {
-                var i = 0 === De.responseStart ? Fe : De.responseStart,
-                    o = 0 === De.domainLookupStart ? Fe : De.domainLookupStart,
+                var i = 0 === Ie.responseStart ? Ne : Ie.responseStart,
+                    o = 0 === Ie.domainLookupStart ? Ne : Ie.domainLookupStart,
                     a = [
-                        '2129=' + Fe,
-                        '1036=' + (o - Fe),
-                        '1037=' + (De.domainLookupEnd - De.domainLookupStart),
-                        '1038=' + (De.connectEnd - De.connectStart),
-                        De.secureConnectionStart && '1383=' + (De.connectEnd - De.secureConnectionStart),
-                        '1039=' + (De.responseStart - De.connectEnd),
-                        '1040=' + (De.responseEnd - i),
-                        '1040.906=' + (De.responseEnd - o),
-                        '1310.2084=' + (De.domLoading - i),
-                        '1310.2085=' + (De.domInteractive - i),
+                        '2129=' + Ne,
+                        '1036=' + (o - Ne),
+                        '1037=' + (Ie.domainLookupEnd - Ie.domainLookupStart),
+                        '1038=' + (Ie.connectEnd - Ie.connectStart),
+                        Ie.secureConnectionStart && '1383=' + (Ie.connectEnd - Ie.secureConnectionStart),
+                        '1039=' + (Ie.responseStart - Ie.connectEnd),
+                        '1040=' + (Ie.responseEnd - i),
+                        '1040.906=' + (Ie.responseEnd - o),
+                        '1310.2084=' + (Ie.domLoading - i),
+                        '1310.2085=' + (Ie.domInteractive - i),
                         '1310.1309=' + (t - n),
                         '1310.1007=' + (n - i),
                         navigator.deviceMemory && '3140=' + navigator.deviceMemory,
                         navigator.hardwareConcurrency && '3141=' + navigator.hardwareConcurrency,
                     ];
                 Object.keys(m).forEach(function (e) {
-                    e in De && De[e] && a.push(m[e] + '=' + s(De[e], Fe));
+                    e in Ie && Ie[e] && a.push(m[e] + '=' + s(Ie[e], Ne));
                 }),
-                    e.vsStart ? (a.push('1484=' + (Ae[e.vsStart] || 2771)), e.vsChanged && a.push('1484.719=1')) : a.push('1484=' + Ae.visible),
-                    Ue && (Ue.redirectCount && a.push('1384.1385=' + Ue.redirectCount), (1 !== Ue.type && 2 !== Ue.type) || a.push('770.76=' + Ue.type)),
-                    Q(a),
-                    z(Be, a);
-            } else r(We, 50);
+                    e.vsStart ? (a.push('1484=' + (Me[e.vsStart] || 2771)), e.vsChanged && a.push('1484.719=1')) : a.push('1484=' + Me.visible),
+                    Oe && (Oe.redirectCount && a.push('1384.1385=' + Oe.redirectCount), (1 !== Oe.type && 2 !== Oe.type) || a.push('770.76=' + Oe.type)),
+                    U(a),
+                    I('690.1033', a);
+            } else r(Re, 50);
         }
-        var He = '690.2096.2892',
-            Qe = window.performance || {},
-            Ye = 'function' == typeof Qe.getEntriesByType;
+        var xe = window.performance || {},
+            Ae = 'function' == typeof xe.getEntriesByType;
         if (!e) throw new Error('Rum: interface is not included');
         if (e.enabled) {
-            function qe() {
-                (p = {}), (h = {}), (_ = 0), (y = e._deltaMarks), N(), R(), (e.ajaxStart = 0), (e.ajaxComplete = 0), c(Je);
+            function je() {
+                (g = {}), (p = {}), (C = 0), (h = e._deltaMarks), P(), M(), (e.ajaxStart = 0), (e.ajaxComplete = 0), u(Be);
             }
-            function Ge() {
+            function ze() {
                 var n;
-                (e.sendTimeMark = O), (e.sendResTiming = U), (e.sendTiming = D), (e.timeEnd = B);
+                (e.sendTimeMark = k), (e.sendResTiming = A), (e.sendTiming = j), (e.timeEnd = N);
                 var t = (e.getBufferedEvents(['defRes']).defRes || []).map(function (e) {
                     return e.data;
                 });
-                for (n = 0; n < t.length; n++) U(t[n][0], t[n][1]);
+                for (n = 0; n < t.length; n++) A(t[n][0], t[n][1]);
                 e.clearEvents('defRes');
                 var i = (e.getBufferedEvents(['defTimes']).defTimes || []).map(function (e) {
                     return e.data;
                 });
-                for (n = 0; n < i.length; n++) O(i[n][0], i[n][1], !1, i[n][2]);
+                for (n = 0; n < i.length; n++) k(i[n][0], i[n][1], !1, i[n][2]);
                 e.clearEvents('defTimes'),
-                    Object.keys(y).forEach(function (e) {
-                        A(e);
+                    Object.keys(h).forEach(function (e) {
+                        R(e);
                     });
             }
-            function Je() {
+            function Be() {
                 var n = window.performance && window.performance.timing && window.performance.timing.navigationStart,
                     t = e.getSetting('skipTiming'),
                     a = e.getSetting('techParamsByVisible');
-                n &&
-                    (a &&
-                        addEventListener('visibilitychange', function n() {
+                if (n) {
+                    if (a) {
+                        var s = function () {
                             'visible' !== e.vsStart
-                                ? 'visible' === document.visibilityState && ((e.vsStart = 'visible'), removeEventListener('visibilitychange', n), We())
-                                : removeEventListener('visibilitychange', n);
-                        }),
+                                ? 'visible' === document.visibilityState && ((e.vsStart = 'visible'), removeEventListener('visibilitychange', s), Re())
+                                : removeEventListener('visibilitychange', s);
+                        };
+                        addEventListener('visibilitychange', s);
+                    }
                     r(function () {
-                        Ge(),
-                            ((!t && !a) || (a && 'visible' === e.vsStart)) && We(),
+                        ze(),
+                            ((!t && !a) || (a && 'visible' === e.vsStart)) && Re(),
                             e.getSetting('disableFCP') ||
-                                (ye(),
-                                he < me &&
+                                (le(),
+                                fe < se &&
                                     i(
                                         'paint',
                                         function (e, n) {
-                                            ye(), n && he >= me && n.disconnect();
+                                            le(), n && fe >= se && n.disconnect();
                                         },
                                         { buffered: !0 },
                                     )),
@@ -1086,48 +1092,53 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                                     i('element', function (e) {
                                         for (var n = 0; n < e.length; n++) {
                                             var t = e[n];
-                                            O('element-timing.' + t.identifier, t.startTime);
+                                            k('element-timing.' + t.identifier, t.startTime);
                                         }
                                     })),
-                            o('pageshow', Xe),
-                            ke(),
-                            'complete' === document.readyState ? $e({ skipTimingApi: t }) : o('load', $e.bind(void 0, { skipTimingApi: t }));
-                    }, 0));
+                            o('pageshow', De),
+                            he(),
+                            'complete' === document.readyState ? Ve({ skipTimingApi: t }) : o('load', Ve.bind(void 0, { skipTimingApi: t }));
+                    }, 0);
+                }
             }
-            function $e(n) {
+            function Ve(n) {
                 var r, s;
                 e.getSetting('disableOnLoadTasks') ||
-                    (removeEventListener('load', $e),
+                    (removeEventListener('load', Ve),
                     n.skipTimingApi ||
                         (function () {
-                            if (Ye) {
-                                var e = Qe.getEntriesByType('navigation')[0];
-                                if (e) {
-                                    var n = [];
-                                    g(n, e), Q(n);
-                                    var t = Qe.getEntriesByName('yndxNavigationSource')[0];
-                                    t && n.push('2091.186=' + t.value);
-                                    var i = Qe.getEntriesByName('yndxNavigationToken', 'yndxEntry')[0];
-                                    i && n.push('2091.3649=' + i.value), z(He, n);
+                            if (Ae) {
+                                var n = xe.getEntriesByType('navigation')[0];
+                                if (n) {
+                                    var t = [];
+                                    v(t, n), U(t);
+                                    var i = xe.getEntriesByName('yndxNavigationSource')[0];
+                                    i && t.push('2091.186=' + i.value);
+                                    var r = xe.getEntriesByName('yndxNavigationToken', 'yndxEntry')[0];
+                                    if ((r && t.push('2091.3649=' + r.value), e.getSetting('sendConfidence') && n.confidence)) {
+                                        var o = { confidence: n.confidence };
+                                        t.push('-additional='.concat(encodeURIComponent(JSON.stringify(o))));
+                                    }
+                                    I('690.2096.2892', t);
                                 }
                             }
                         })(),
                     (s = e.getSetting('periodicStatsIntervalMs')) || null === s || (s = 15e3),
                     s &&
-                        ((r = setInterval(Ze, s)),
+                        ((r = setInterval(Fe, s)),
                         t(function () {
                             clearInterval(r);
                         }),
-                        (Ke = r)),
-                    o('beforeunload', Ze),
+                        (Ue = r)),
+                    o('beforeunload', Fe),
                     (function () {
                         if (window.PerformanceObserver) {
-                            (xe = {}), (Re = 0);
+                            (ke = {}), (Ce = 0);
                             var e = function (e) {
                                 !(function (e) {
                                     if (e && e.length)
-                                        for (var n = xe, t = 0; t < e.length; t++) {
-                                            var i = je(e[t]);
+                                        for (var n = ke, t = 0; t < e.length; t++) {
+                                            var i = Le(e[t]);
                                             if (i) {
                                                 var r = i.domain + '-' + i.extension,
                                                     o = (n[r] = n[r] || { count: 0, size: 0 });
@@ -1136,7 +1147,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                                         }
                                 })(e);
                             };
-                            i('resource', e), i('navigation', e), f().push(ze);
+                            i('resource', e), i('navigation', e), f().push(Pe);
                         }
                     })(),
                     e.getSetting('disableFID') ||
@@ -1147,9 +1158,9 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                                 if (i) {
                                     var r = i.processingStart,
                                         o = { duration: i.duration, js: i.processingEnd - r, name: i.name };
-                                    i.target && (o.target = u(i.target));
+                                    i.target && (o.target = c(i.target));
                                     var a = r - i.startTime;
-                                    A('first-input', a, o),
+                                    R('first-input', a, o),
                                         e.emit({ metricName: 'first-input-debug', value: a, params: { entry: i, additionalParams: o } }),
                                         t.disconnect();
                                 }
@@ -1158,48 +1169,52 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                         ),
                     e.getSetting('disableCLS') ||
                         (window.PerformanceObserver &&
-                            (d(ce),
-                            d(ue),
-                            (q = re),
-                            (G = null),
+                            (d(ie),
+                            d(te),
+                            (F = X),
+                            (W = null),
+                            (H = null),
                             (J = null),
-                            ($ = null),
-                            (te = e.getSetting('clsWindowGap') || te),
-                            (ie = e.getSetting('clsWindowSize') || ie),
+                            ($ = e.getSetting('clsWindowGap') || $),
+                            (K = e.getSetting('clsWindowSize') || K),
                             a(
-                                i('layout-shift', se),
+                                i('layout-shift', ne),
                                 function () {
-                                    return ce(!0);
+                                    return ie(!0);
                                 },
                                 !0,
                             ))),
                     e.getSetting('disableLCP') ||
                         !window.PerformanceObserver ||
                         (!e.getSetting('forcePaintTimeSending') && e.isVisibilityChanged()) ||
-                        (d(fe),
-                        (K = null),
-                        (X = null),
-                        (Z = !1),
+                        (d(function () {
+                            e.whenActivated(oe);
+                        }),
+                        (Q = null),
+                        (Y = null),
+                        (q = !1),
                         a(
-                            i('largest-contentful-paint', de),
+                            i('largest-contentful-paint', re),
                             function () {
-                                return fe(!0);
+                                e.whenActivated(function () {
+                                    oe(!0);
+                                });
                             },
                             !1,
                         )));
             }
-            var Ke;
-            function Xe(e) {
-                e.persisted && O('bfcache');
+            var Ue;
+            function De(e) {
+                e.persisted && k('bfcache');
             }
-            function Ze() {
+            function Fe() {
                 var e = !1;
                 f().forEach(function (n) {
                     n() && (e = !0);
                 }),
-                    e || clearInterval(Ke);
+                    e || clearInterval(Ue);
             }
-            d(Ge),
+            d(ze),
                 (e.destroy = function (n) {
                     var t = e._unsubscribers;
                     n.shouldComplete && e.completeSession(!0), (e._onComplete = []);
@@ -1214,7 +1229,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                     e.destroy({ shouldComplete: i }),
                         e.init(n, t),
                         addEventListener('visibilitychange', e._onVisibilityChange),
-                        qe(),
+                        je(),
                         (function () {
                             for (var n = 0; n < e._onInit.length; n++) e._onInit[n]();
                         })();
@@ -1223,16 +1238,16 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                     Object.keys(n).forEach(function (t) {
                         e._vars[t] = n[t];
                     }),
-                        N(),
-                        R();
+                        P(),
+                        M();
                 }),
                 (e.completeSession = function (n) {
                     for (var t = e._onComplete, i = 0; i < t.length; i++) t[i](n);
                 }),
-                qe(),
+                je(),
                 (e._periodicTasks = []),
                 (e.sendHeroElement = function (e) {
-                    O('2876', e);
+                    k('2876', e);
                 }),
                 (e.getPageUrl = function () {
                     return window.location.href;
@@ -1255,31 +1270,39 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                     };
                 }),
                 (e.getTimeMarks = function () {
-                    return p;
+                    return g;
                 }),
                 (e.getDeltas = function () {
-                    return h;
+                    return p;
                 }),
                 (e.getVarsList = l),
-                (e.getResourceTimings = V),
-                (e.pushConnectionTypeTo = Q),
-                (e.pushTimingTo = g),
+                (e.getResourceTimings = x),
+                (e.pushConnectionTypeTo = U),
+                (e.pushTimingTo = v),
                 (e.normalize = s),
-                (e.sendCounter = j),
-                (e.sendDelta = A),
-                (e.onReady = c),
-                (e.getSelector = u),
-                e.getSetting('disableCLS') || (e.finalizeLayoutShiftScore = ce),
-                e.getSetting('disableLCP') || (e.finalizeLargestContentfulPaint = fe),
-                (e.sendTrafficData = ze),
-                (e._getCommonVars = F),
+                (e.sendCounter = O),
+                (e.sendDelta = R),
+                (e.onReady = u),
+                (e.getSelector = c),
+                e.getSetting('disableCLS') || (e.finalizeLayoutShiftScore = ie),
+                e.getSetting('disableLCP') || (e.finalizeLargestContentfulPaint = oe),
+                (e.sendTrafficData = Pe),
+                (e._getCommonVars = z),
                 (e._addListener = o),
                 (e._observe = i),
                 (e._timeout = r),
-                (e.sendTTI = ke),
-                (e._getLongtasksStringValue = Pe),
-                (e.onQuietWindow = Le),
-                (e.sendBFCacheTimeMark = Xe);
+                (e.sendTTI = he),
+                (e._getLongtasksStringValue = Se),
+                (e.onQuietWindow = ye),
+                (e.sendBFCacheTimeMark = De),
+                e.correctTime ||
+                    (e.correctTime = function (e) {
+                        return e;
+                    }),
+                e.whenActivated ||
+                    (e.whenActivated = function (e) {
+                        return e();
+                    });
         } else
             (e.getSetting = function () {
                 return '';

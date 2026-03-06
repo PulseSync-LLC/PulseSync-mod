@@ -1,0 +1,9 @@
+.ShareButton_root__fGsNv {
+    font-size: var(--ym-font-size-label-l);
+    grid-column: 2;
+    line-height: var(--ym-font-line-height-label-l);
+}
+.ShareButton_root__fGsNv[data-open] {
+    background-color: var(--button-color, var(--ym-controls-color-secondary-default-enabled));
+    color: var(--text-color, var(--ym-controls-color-secondary-on_default-enabled));
+}

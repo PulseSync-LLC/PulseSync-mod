@@ -1,0 +1,21 @@
+.VibeSmallView_root__6IYFM {
+    --cover-background-color: transparent;
+    --control-background-color: transparent;
+    position: relative;
+}
+.VibeSmallView_root_radius_xs__hrEG3:after {
+    border-radius: var(--ym-radius-size-xs);
+}
+.VibeSmallView_root_radius_round__t4uAR:after {
+    border-radius: var(--ym-radius-size-round);
+}
+.VibeSmallView_root_withShadow__HU7NP:after {
+    box-shadow:
+        inset 0 0 0 0.0625rem hsla(0, 0%, 100%, 0.5),
+        inset 0 0 0.625rem 0 hsla(0, 0%, 100%, 0.9);
+}
+.VibeSmallView_root__6IYFM:after {
+    content: '';
+    inset: 0;
+    position: absolute;
+}

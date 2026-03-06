@@ -57,8 +57,10 @@ const valid_js_1 = __importDefault(require('semver/functions/valid.js'));
 const i18nKeys_js_1 = require('./constants/i18nKeys.js');
 const dateToDDMonthYYYYProps_js_1 = require('./lib/date/dateToDDMonthYYYYProps.js');
 const eventsLogger = new Logger_js_1.Logger('Events');
+const saveFileToLocalDiskLogger = new Logger_js_1.Logger('SaveFileToLocalDisk');
 const { throttle } = require('./lib/utils.js');
 const crypto = require('crypto');
+const fs = require('fs');
 
 let mainWindow = undefined;
 let isPlayerReady = false;
@@ -113,6 +115,20 @@ const restartApplication = (safeMode = false) => {
         electron_1.app.relaunch();
     }
     electron_1.app.exit();
+};
+
+const handleSaveToLocalDisk = async (defaultPath, buffer) => {
+    const { canceled, filePath } = await electron_1.dialog.showSaveDialog({
+        defaultPath,
+    });
+    if (canceled || !filePath) {
+        return;
+    }
+    fs.writeFile(filePath, Buffer.from(buffer), (error) => {
+        if (error) {
+            saveFileToLocalDiskLogger.error('Error saving file to local disk', error);
+        }
+    });
 };
 
 const handleApplicationEvents = (window) => {
@@ -661,6 +677,11 @@ const handleApplicationEvents = (window) => {
     electron_1.ipcMain.on(events_js_1.Events.TOGGLE_MINIPLAYER, (event) => {
         eventsLogger.info(`Event received`, events_js_1.Events.TOGGLE_MINIPLAYER);
         MiniPlayer.toggle();
+    });
+
+    electron_1.ipcMain.on(events_js_1.Events.SAVE_FILE_TO_LOCAL_DISK, async (event, defaultPath, buffer) => {
+        eventsLogger.info('Event handle', events_js_1.Events.SAVE_FILE_TO_LOCAL_DISK);
+        handleSaveToLocalDisk(defaultPath, buffer);
     });
 
     electron_1.ipcMain.handle(events_js_1.Events.GET_PASSPORT_LOGIN, async () => {
