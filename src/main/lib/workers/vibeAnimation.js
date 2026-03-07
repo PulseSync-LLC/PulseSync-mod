@@ -222,8 +222,8 @@
                         d = h * c - o * u,
                         g = o * l - a * c,
                         p = a * u - h * l,
-                        f = 2 * i[3];
-                    (l *= f), (u *= f), (c *= f), (d *= 2), (g *= 2), (p *= 2), (t[0] = s + l + d), (t[1] = r + u + g), (t[2] = n + c + p);
+                        m = 2 * i[3];
+                    (l *= m), (u *= m), (c *= m), (d *= 2), (g *= 2), (p *= 2), (t[0] = s + l + d), (t[1] = r + u + g), (t[2] = n + c + p);
                 })(this, this, t),
                 this
             );
@@ -273,8 +273,8 @@
     const d = new c();
     let g = 1,
         p = 1,
-        f = !1;
-    class m {
+        m = !1;
+    class f {
         constructor(t, e = {}) {
             t.canvas || console.error('gl not passed as first argument to Geometry'),
                 (this.gl = t),
@@ -377,7 +377,7 @@
         }
         getPosition() {
             const t = this.attributes.position;
-            return t.data ? t : f ? void 0 : (console.warn('No position buffer data found to compute bounds'), (f = !0));
+            return t.data ? t : m ? void 0 : (console.warn('No position buffer data found to compute bounds'), (m = !0));
         }
         computeBoundingBox(t) {
             t || (t = this.getPosition());
@@ -533,8 +533,8 @@
                         }
                         s = s[t];
                     }
-                    if (!s) return _(`Active uniform ${i.name} has not been supplied`);
-                    if (s && void 0 === s.value) return _(`${i.name} uniform is missing a value parameter`);
+                    if (!s) return M(`Active uniform ${i.name} has not been supplied`);
+                    if (s && void 0 === s.value) return M(`${i.name} uniform is missing a value parameter`);
                     if (s.value.texture) return (e += 1), s.value.update(e), E(this.gl, i.type, t, e);
                     if (s.value.length && s.value[0].texture) {
                         const r = [];
@@ -628,11 +628,11 @@
         for (let t = 0; t < e.length; t++) e[t] = t + 1 + ': ' + e[t];
         return e.join('\n');
     }
-    let M = 0;
-    function _(t) {
-        M > 100 || (console.warn(t), M++, M > 100 && console.warn('More than 100 program warnings - stopping logs.'));
+    let y = 0;
+    function M(t) {
+        y > 100 || (console.warn(t), y++, y > 100 && console.warn('More than 100 program warnings - stopping logs.'));
     }
-    const y = new c();
+    const _ = new c();
     let S = 1;
     class w {
         constructor({
@@ -821,7 +821,7 @@
                 r.forEach((r) => {
                     r.program.transparent ? (r.program.depthTest ? i.push(r) : s.push(r)) : t.push(r),
                         (r.zDepth = 0),
-                        0 === r.renderOrder && r.program.depthTest && e && (r.worldMatrix.getTranslation(y), y.applyMatrix4(e.projectionViewMatrix), (r.zDepth = y.z));
+                        0 === r.renderOrder && r.program.depthTest && e && (r.worldMatrix.getTranslation(_), _.applyMatrix4(e.projectionViewMatrix), (r.zDepth = _.z));
                 }),
                     t.sort(this.sortOpaque),
                     i.sort(this.sortTransparent),
@@ -847,7 +847,7 @@
             });
         }
     }
-    function R(t, e, i) {
+    function C(t, e, i) {
         let s = e[0],
             r = e[1],
             n = e[2],
@@ -864,13 +864,13 @@
             t
         );
     }
-    const T = function (t, e) {
+    const R = function (t, e) {
             return (t[0] = e[0]), (t[1] = e[1]), (t[2] = e[2]), (t[3] = e[3]), t;
         },
-        F = function (t, e, i, s, r) {
+        T = function (t, e, i, s, r) {
             return (t[0] = e), (t[1] = i), (t[2] = s), (t[3] = r), t;
         },
-        C = function (t, e) {
+        F = function (t, e) {
             return t[0] * e[0] + t[1] * e[1] + t[2] * e[2] + t[3] * e[3];
         },
         I = function (t, e) {
@@ -921,7 +921,7 @@
             return ((t = this._target)[0] = 0), (t[1] = 0), (t[2] = 0), (t[3] = 1), this.onChange(), this;
         }
         set(t, e, i, s) {
-            return t.length ? this.copy(t) : (F(this._target, t, e, i, s), this.onChange(), this);
+            return t.length ? this.copy(t) : (T(this._target, t, e, i, s), this.onChange(), this);
         }
         rotateX(t) {
             return (
@@ -991,16 +991,16 @@
             return (e = this._target), (i = t), (e[0] = -i[0]), (e[1] = -i[1]), (e[2] = -i[2]), (e[3] = i[3]), this.onChange(), this;
         }
         copy(t) {
-            return T(this._target, t), this.onChange(), this;
+            return R(this._target, t), this.onChange(), this;
         }
         normalize(t = this._target) {
             return I(this._target, t), this.onChange(), this;
         }
         multiply(t, e) {
-            return e ? R(this._target, t, e) : R(this._target, this._target, t), this.onChange(), this;
+            return e ? C(this._target, t, e) : C(this._target, this._target, t), this.onChange(), this;
         }
         dot(t) {
-            return C(this._target, t);
+            return F(this._target, t);
         }
         fromMatrix3(t) {
             return (
@@ -1077,15 +1077,15 @@
                         d = e[3],
                         g = i[0],
                         p = i[1],
-                        f = i[2],
-                        m = i[3];
-                    (n = l * g + u * p + c * f + d * m),
-                        n < 0 && ((n = -n), (g = -g), (p = -p), (f = -f), (m = -m)),
+                        m = i[2],
+                        f = i[3];
+                    (n = l * g + u * p + c * m + d * f),
+                        n < 0 && ((n = -n), (g = -g), (p = -p), (m = -m), (f = -f)),
                         1 - n > 1e-6 ? ((r = Math.acos(n)), (a = Math.sin(r)), (h = Math.sin((1 - s) * r) / a), (o = Math.sin(s * r) / a)) : ((h = 1 - s), (o = s)),
                         (t[0] = h * l + o * g),
                         (t[1] = h * u + o * p),
-                        (t[2] = h * c + o * f),
-                        (t[3] = h * d + o * m);
+                        (t[2] = h * c + o * m),
+                        (t[3] = h * d + o * f);
                 })(this._target, this._target, t, e),
                 this.onChange(),
                 this
@@ -1113,14 +1113,14 @@
             d = t[11],
             g = t[12],
             p = t[13],
-            f = t[14],
-            m = t[15];
+            m = t[14],
+            f = t[15];
         return (
-            (e * a - i * n) * (c * m - d * f) -
-            (e * h - s * n) * (u * m - d * p) +
-            (e * o - r * n) * (u * f - c * p) +
-            (i * h - s * a) * (l * m - d * g) -
-            (i * o - r * a) * (l * f - c * g) +
+            (e * a - i * n) * (c * f - d * m) -
+            (e * h - s * n) * (u * f - d * p) +
+            (e * o - r * n) * (u * m - c * p) +
+            (i * h - s * a) * (l * f - d * g) -
+            (i * o - r * a) * (l * m - c * g) +
             (s * o - r * h) * (l * p - u * g)
         );
     }
@@ -1137,43 +1137,43 @@
             d = e[9],
             g = e[10],
             p = e[11],
-            f = e[12],
-            m = e[13],
+            m = e[12],
+            f = e[13],
             v = e[14],
             x = e[15],
             b = i[0],
             E = i[1],
             A = i[2],
-            M = i[3];
+            y = i[3];
         return (
-            (t[0] = b * s + E * h + A * c + M * f),
-            (t[1] = b * r + E * o + A * d + M * m),
-            (t[2] = b * n + E * l + A * g + M * v),
-            (t[3] = b * a + E * u + A * p + M * x),
+            (t[0] = b * s + E * h + A * c + y * m),
+            (t[1] = b * r + E * o + A * d + y * f),
+            (t[2] = b * n + E * l + A * g + y * v),
+            (t[3] = b * a + E * u + A * p + y * x),
             (b = i[4]),
             (E = i[5]),
             (A = i[6]),
-            (M = i[7]),
-            (t[4] = b * s + E * h + A * c + M * f),
-            (t[5] = b * r + E * o + A * d + M * m),
-            (t[6] = b * n + E * l + A * g + M * v),
-            (t[7] = b * a + E * u + A * p + M * x),
+            (y = i[7]),
+            (t[4] = b * s + E * h + A * c + y * m),
+            (t[5] = b * r + E * o + A * d + y * f),
+            (t[6] = b * n + E * l + A * g + y * v),
+            (t[7] = b * a + E * u + A * p + y * x),
             (b = i[8]),
             (E = i[9]),
             (A = i[10]),
-            (M = i[11]),
-            (t[8] = b * s + E * h + A * c + M * f),
-            (t[9] = b * r + E * o + A * d + M * m),
-            (t[10] = b * n + E * l + A * g + M * v),
-            (t[11] = b * a + E * u + A * p + M * x),
+            (y = i[11]),
+            (t[8] = b * s + E * h + A * c + y * m),
+            (t[9] = b * r + E * o + A * d + y * f),
+            (t[10] = b * n + E * l + A * g + y * v),
+            (t[11] = b * a + E * u + A * p + y * x),
             (b = i[12]),
             (E = i[13]),
             (A = i[14]),
-            (M = i[15]),
-            (t[12] = b * s + E * h + A * c + M * f),
-            (t[13] = b * r + E * o + A * d + M * m),
-            (t[14] = b * n + E * l + A * g + M * v),
-            (t[15] = b * a + E * u + A * p + M * x),
+            (y = i[15]),
+            (t[12] = b * s + E * h + A * c + y * m),
+            (t[13] = b * r + E * o + A * d + y * f),
+            (t[14] = b * n + E * l + A * g + y * v),
+            (t[15] = b * a + E * u + A * p + y * x),
             t
         );
     }
@@ -1205,17 +1205,17 @@
                 d = i[6] * a,
                 g = i[8] * r,
                 p = i[9] * n,
-                f = i[10] * a,
-                m = h + c + f,
+                m = i[10] * a,
+                f = h + c + m,
                 v = 0;
             return (
-                m > 0
-                    ? ((v = 2 * Math.sqrt(m + 1)), (e[3] = 0.25 * v), (e[0] = (d - p) / v), (e[1] = (g - l) / v), (e[2] = (o - u) / v))
-                    : h > c && h > f
-                      ? ((v = 2 * Math.sqrt(1 + h - c - f)), (e[3] = (d - p) / v), (e[0] = 0.25 * v), (e[1] = (o + u) / v), (e[2] = (g + l) / v))
-                      : c > f
-                        ? ((v = 2 * Math.sqrt(1 + c - h - f)), (e[3] = (g - l) / v), (e[0] = (o + u) / v), (e[1] = 0.25 * v), (e[2] = (d + p) / v))
-                        : ((v = 2 * Math.sqrt(1 + f - h - c)), (e[3] = (o - u) / v), (e[0] = (g + l) / v), (e[1] = (d + p) / v), (e[2] = 0.25 * v)),
+                f > 0
+                    ? ((v = 2 * Math.sqrt(f + 1)), (e[3] = 0.25 * v), (e[0] = (d - p) / v), (e[1] = (g - l) / v), (e[2] = (o - u) / v))
+                    : h > c && h > m
+                      ? ((v = 2 * Math.sqrt(1 + h - c - m)), (e[3] = (d - p) / v), (e[0] = 0.25 * v), (e[1] = (o + u) / v), (e[2] = (g + l) / v))
+                      : c > m
+                        ? ((v = 2 * Math.sqrt(1 + c - h - m)), (e[3] = (g - l) / v), (e[0] = (o + u) / v), (e[1] = 0.25 * v), (e[2] = (d + p) / v))
+                        : ((v = 2 * Math.sqrt(1 + m - h - c)), (e[3] = (o - u) / v), (e[0] = (g + l) / v), (e[1] = (d + p) / v), (e[2] = 0.25 * v)),
                 e
             );
         };
@@ -1263,8 +1263,8 @@
         );
     }
     class P extends Array {
-        constructor(t = 1, e = 0, i = 0, s = 0, r = 0, n = 1, a = 0, h = 0, o = 0, l = 0, u = 1, c = 0, d = 0, g = 0, p = 0, f = 1) {
-            return super(t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, f), this;
+        constructor(t = 1, e = 0, i = 0, s = 0, r = 0, n = 1, a = 0, h = 0, o = 0, l = 0, u = 1, c = 0, d = 0, g = 0, p = 0, m = 1) {
+            return super(t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, m), this;
         }
         get x() {
             return this[12];
@@ -1290,10 +1290,10 @@
         set w(t) {
             this[15] = t;
         }
-        set(t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, f) {
+        set(t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, m) {
             return t.length
                 ? this.copy(t)
-                : ((function (t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, f, m) {
+                : ((function (t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, m, f) {
                       (t[0] = e),
                           (t[1] = i),
                           (t[2] = s),
@@ -1308,9 +1308,9 @@
                           (t[11] = d),
                           (t[12] = g),
                           (t[13] = p),
-                          (t[14] = f),
-                          (t[15] = m);
-                  })(this, t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, f),
+                          (t[14] = m),
+                          (t[15] = f);
+                  })(this, t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, m),
                   this);
         }
         translate(t, e = this) {
@@ -1328,14 +1328,14 @@
                         d,
                         g,
                         p,
-                        f = i[0],
-                        m = i[1],
+                        m = i[0],
+                        f = i[1],
                         v = i[2];
                     e === t
-                        ? ((t[12] = e[0] * f + e[4] * m + e[8] * v + e[12]),
-                          (t[13] = e[1] * f + e[5] * m + e[9] * v + e[13]),
-                          (t[14] = e[2] * f + e[6] * m + e[10] * v + e[14]),
-                          (t[15] = e[3] * f + e[7] * m + e[11] * v + e[15]))
+                        ? ((t[12] = e[0] * m + e[4] * f + e[8] * v + e[12]),
+                          (t[13] = e[1] * m + e[5] * f + e[9] * v + e[13]),
+                          (t[14] = e[2] * m + e[6] * f + e[10] * v + e[14]),
+                          (t[15] = e[3] * m + e[7] * f + e[11] * v + e[15]))
                         : ((s = e[0]),
                           (r = e[1]),
                           (n = e[2]),
@@ -1360,10 +1360,10 @@
                           (t[9] = d),
                           (t[10] = g),
                           (t[11] = p),
-                          (t[12] = s * f + h * m + c * v + e[12]),
-                          (t[13] = r * f + o * m + d * v + e[13]),
-                          (t[14] = n * f + l * m + g * v + e[14]),
-                          (t[15] = a * f + u * m + p * v + e[15]));
+                          (t[12] = s * m + h * f + c * v + e[12]),
+                          (t[13] = r * m + o * f + d * v + e[13]),
+                          (t[14] = n * m + l * f + g * v + e[14]),
+                          (t[15] = a * m + u * f + p * v + e[15]));
                 })(this, e, t),
                 this
             );
@@ -1382,28 +1382,28 @@
                         d,
                         g,
                         p,
-                        f,
                         m,
+                        f,
                         v,
                         x,
                         b,
                         E,
                         A,
+                        y,
                         M,
                         _,
-                        y,
                         S,
                         w,
-                        R,
-                        T = s[0],
-                        F = s[1],
-                        C = s[2],
-                        I = Math.hypot(T, F, C);
+                        C,
+                        R = s[0],
+                        T = s[1],
+                        F = s[2],
+                        I = Math.hypot(R, T, F);
                     Math.abs(I) < 1e-6 ||
                         ((I = 1 / I),
+                        (R *= I),
                         (T *= I),
                         (F *= I),
-                        (C *= I),
                         (r = Math.sin(i)),
                         (n = Math.cos(i)),
                         (a = 1 - n),
@@ -1415,31 +1415,31 @@
                         (d = e[5]),
                         (g = e[6]),
                         (p = e[7]),
-                        (f = e[8]),
-                        (m = e[9]),
+                        (m = e[8]),
+                        (f = e[9]),
                         (v = e[10]),
                         (x = e[11]),
-                        (b = T * T * a + n),
-                        (E = F * T * a + C * r),
-                        (A = C * T * a - F * r),
-                        (M = T * F * a - C * r),
-                        (_ = F * F * a + n),
-                        (y = C * F * a + T * r),
-                        (S = T * C * a + F * r),
-                        (w = F * C * a - T * r),
-                        (R = C * C * a + n),
-                        (t[0] = h * b + c * E + f * A),
-                        (t[1] = o * b + d * E + m * A),
+                        (b = R * R * a + n),
+                        (E = T * R * a + F * r),
+                        (A = F * R * a - T * r),
+                        (y = R * T * a - F * r),
+                        (M = T * T * a + n),
+                        (_ = F * T * a + R * r),
+                        (S = R * F * a + T * r),
+                        (w = T * F * a - R * r),
+                        (C = F * F * a + n),
+                        (t[0] = h * b + c * E + m * A),
+                        (t[1] = o * b + d * E + f * A),
                         (t[2] = l * b + g * E + v * A),
                         (t[3] = u * b + p * E + x * A),
-                        (t[4] = h * M + c * _ + f * y),
-                        (t[5] = o * M + d * _ + m * y),
-                        (t[6] = l * M + g * _ + v * y),
-                        (t[7] = u * M + p * _ + x * y),
-                        (t[8] = h * S + c * w + f * R),
-                        (t[9] = o * S + d * w + m * R),
-                        (t[10] = l * S + g * w + v * R),
-                        (t[11] = u * S + p * w + x * R),
+                        (t[4] = h * y + c * M + m * _),
+                        (t[5] = o * y + d * M + f * _),
+                        (t[6] = l * y + g * M + v * _),
+                        (t[7] = u * y + p * M + x * _),
+                        (t[8] = h * S + c * w + m * C),
+                        (t[9] = o * S + d * w + f * C),
+                        (t[10] = l * S + g * w + v * C),
+                        (t[11] = u * S + p * w + x * C),
                         e !== t && ((t[12] = e[12]), (t[13] = e[13]), (t[14] = e[14]), (t[15] = e[15])));
                 })(this, i, t, e),
                 this
@@ -1617,19 +1617,19 @@
                         d = r * a,
                         g = r * h,
                         p = r * o,
-                        f = n * a,
-                        m = n * h,
+                        m = n * a,
+                        f = n * h,
                         v = n * o;
                     (t[0] = 1 - c - p),
                         (t[1] = u + v),
-                        (t[2] = d - m),
+                        (t[2] = d - f),
                         (t[3] = 0),
                         (t[4] = u - v),
                         (t[5] = 1 - l - p),
-                        (t[6] = g + f),
+                        (t[6] = g + m),
                         (t[7] = 0),
-                        (t[8] = d + m),
-                        (t[9] = g - f),
+                        (t[8] = d + f),
+                        (t[9] = g - m),
                         (t[10] = 1 - l - c),
                         (t[11] = 0),
                         (t[12] = 0),
@@ -1659,40 +1659,40 @@
                         d = e[10],
                         g = e[11],
                         p = e[12],
-                        f = e[13],
-                        m = e[14],
+                        m = e[13],
+                        f = e[14],
                         v = e[15],
                         x = i * h - s * a,
                         b = i * o - r * a,
                         E = i * l - n * a,
                         A = s * o - r * h,
-                        M = s * l - n * h,
-                        _ = r * l - n * o,
-                        y = u * f - c * p,
-                        S = u * m - d * p,
+                        y = s * l - n * h,
+                        M = r * l - n * o,
+                        _ = u * m - c * p,
+                        S = u * f - d * p,
                         w = u * v - g * p,
-                        R = c * m - d * f,
-                        T = c * v - g * f,
-                        F = d * v - g * m,
-                        C = x * F - b * T + E * R + A * w - M * S + _ * y;
-                    C &&
-                        ((C = 1 / C),
-                        (t[0] = (h * F - o * T + l * R) * C),
-                        (t[1] = (r * T - s * F - n * R) * C),
-                        (t[2] = (f * _ - m * M + v * A) * C),
-                        (t[3] = (d * M - c * _ - g * A) * C),
-                        (t[4] = (o * w - a * F - l * S) * C),
-                        (t[5] = (i * F - r * w + n * S) * C),
-                        (t[6] = (m * E - p * _ - v * b) * C),
-                        (t[7] = (u * _ - d * E + g * b) * C),
-                        (t[8] = (a * T - h * w + l * y) * C),
-                        (t[9] = (s * w - i * T - n * y) * C),
-                        (t[10] = (p * M - f * E + v * x) * C),
-                        (t[11] = (c * E - u * M - g * x) * C),
-                        (t[12] = (h * S - a * R - o * y) * C),
-                        (t[13] = (i * R - s * S + r * y) * C),
-                        (t[14] = (f * b - p * A - m * x) * C),
-                        (t[15] = (u * A - c * b + d * x) * C));
+                        C = c * f - d * m,
+                        R = c * v - g * m,
+                        T = d * v - g * f,
+                        F = x * T - b * R + E * C + A * w - y * S + M * _;
+                    F &&
+                        ((F = 1 / F),
+                        (t[0] = (h * T - o * R + l * C) * F),
+                        (t[1] = (r * R - s * T - n * C) * F),
+                        (t[2] = (m * M - f * y + v * A) * F),
+                        (t[3] = (d * y - c * M - g * A) * F),
+                        (t[4] = (o * w - a * T - l * S) * F),
+                        (t[5] = (i * T - r * w + n * S) * F),
+                        (t[6] = (f * E - p * M - v * b) * F),
+                        (t[7] = (u * M - d * E + g * b) * F),
+                        (t[8] = (a * R - h * w + l * _) * F),
+                        (t[9] = (s * w - i * R - n * _) * F),
+                        (t[10] = (p * y - m * E + v * x) * F),
+                        (t[11] = (c * E - u * y - g * x) * F),
+                        (t[12] = (h * S - a * C - o * _) * F),
+                        (t[13] = (i * C - s * S + r * _) * F),
+                        (t[14] = (m * b - p * A - f * x) * F),
+                        (t[15] = (u * A - c * b + d * x) * F));
                 })(this, t),
                 this
             );
@@ -1711,26 +1711,26 @@
                         d = n * l,
                         g = n * u,
                         p = n * c,
-                        f = a * u,
-                        m = a * c,
+                        m = a * u,
+                        f = a * c,
                         v = h * c,
                         x = o * l,
                         b = o * u,
                         E = o * c,
                         A = s[0],
-                        M = s[1],
-                        _ = s[2];
-                    (r[0] = (1 - (f + v)) * A),
+                        y = s[1],
+                        M = s[2];
+                    (r[0] = (1 - (m + v)) * A),
                         (r[1] = (g + E) * A),
                         (r[2] = (p - b) * A),
                         (r[3] = 0),
-                        (r[4] = (g - E) * M),
-                        (r[5] = (1 - (d + v)) * M),
-                        (r[6] = (m + x) * M),
+                        (r[4] = (g - E) * y),
+                        (r[5] = (1 - (d + v)) * y),
+                        (r[6] = (f + x) * y),
                         (r[7] = 0),
-                        (r[8] = (p + b) * _),
-                        (r[9] = (m - x) * _),
-                        (r[10] = (1 - (d + f)) * _),
+                        (r[8] = (p + b) * M),
+                        (r[9] = (f - x) * M),
+                        (r[10] = (1 - (d + m)) * M),
                         (r[11] = 0),
                         (r[12] = i[0]),
                         (r[13] = i[1]),
@@ -1810,22 +1810,22 @@
                         g = u * u + c * c + d * d;
                     0 === g ? (d = 1) : ((g = 1 / Math.sqrt(g)), (u *= g), (c *= g), (d *= g));
                     let p = o * d - l * c,
-                        f = l * u - h * d,
-                        m = h * c - o * u;
-                    (g = p * p + f * f + m * m),
+                        m = l * u - h * d,
+                        f = h * c - o * u;
+                    (g = p * p + m * m + f * f),
                         0 === g &&
-                            (l ? (h += 1e-6) : o ? (l += 1e-6) : (o += 1e-6), (p = o * d - l * c), (f = l * u - h * d), (m = h * c - o * u), (g = p * p + f * f + m * m)),
+                            (l ? (h += 1e-6) : o ? (l += 1e-6) : (o += 1e-6), (p = o * d - l * c), (m = l * u - h * d), (f = h * c - o * u), (g = p * p + m * m + f * f)),
                         (g = 1 / Math.sqrt(g)),
                         (p *= g),
-                        (f *= g),
                         (m *= g),
+                        (f *= g),
                         (t[0] = p),
-                        (t[1] = f),
-                        (t[2] = m),
+                        (t[1] = m),
+                        (t[2] = f),
                         (t[3] = 0),
-                        (t[4] = c * m - d * f),
-                        (t[5] = d * p - u * m),
-                        (t[6] = u * f - c * p),
+                        (t[4] = c * f - d * m),
+                        (t[5] = d * p - u * f),
+                        (t[6] = u * m - c * p),
                         (t[7] = 0),
                         (t[8] = u),
                         (t[9] = c),
@@ -2034,8 +2034,8 @@
             d = i[0],
             g = i[1],
             p = i[2],
-            f = i[3],
-            m = i[4],
+            m = i[3],
+            f = i[4],
             v = i[5],
             x = i[6],
             b = i[7],
@@ -2044,9 +2044,9 @@
             (t[0] = d * s + g * a + p * l),
             (t[1] = d * r + g * h + p * u),
             (t[2] = d * n + g * o + p * c),
-            (t[3] = f * s + m * a + v * l),
-            (t[4] = f * r + m * h + v * u),
-            (t[5] = f * n + m * o + v * c),
+            (t[3] = m * s + f * a + v * l),
+            (t[4] = m * r + f * h + v * u),
+            (t[5] = m * n + f * o + v * c),
             (t[6] = x * s + b * a + E * l),
             (t[7] = x * r + b * h + E * u),
             (t[8] = x * n + b * o + E * c),
@@ -2192,17 +2192,17 @@
                         d = r * a,
                         g = r * h,
                         p = r * o,
-                        f = n * a,
-                        m = n * h,
+                        m = n * a,
+                        f = n * h,
                         v = n * o;
                     (t[0] = 1 - c - p),
                         (t[3] = u - v),
-                        (t[6] = d + m),
+                        (t[6] = d + f),
                         (t[1] = u + v),
                         (t[4] = 1 - l - p),
-                        (t[7] = g - f),
-                        (t[2] = d - m),
-                        (t[5] = g + f),
+                        (t[7] = g - m),
+                        (t[2] = d - f),
+                        (t[5] = g + m),
                         (t[8] = 1 - l - c);
                 })(this, t),
                 this
@@ -2258,33 +2258,33 @@
                         d = e[10],
                         g = e[11],
                         p = e[12],
-                        f = e[13],
-                        m = e[14],
+                        m = e[13],
+                        f = e[14],
                         v = e[15],
                         x = i * h - s * a,
                         b = i * o - r * a,
                         E = i * l - n * a,
                         A = s * o - r * h,
-                        M = s * l - n * h,
-                        _ = r * l - n * o,
-                        y = u * f - c * p,
-                        S = u * m - d * p,
+                        y = s * l - n * h,
+                        M = r * l - n * o,
+                        _ = u * m - c * p,
+                        S = u * f - d * p,
                         w = u * v - g * p,
-                        R = c * m - d * f,
-                        T = c * v - g * f,
-                        F = d * v - g * m,
-                        C = x * F - b * T + E * R + A * w - M * S + _ * y;
-                    C &&
-                        ((C = 1 / C),
-                        (t[0] = (h * F - o * T + l * R) * C),
-                        (t[1] = (o * w - a * F - l * S) * C),
-                        (t[2] = (a * T - h * w + l * y) * C),
-                        (t[3] = (r * T - s * F - n * R) * C),
-                        (t[4] = (i * F - r * w + n * S) * C),
-                        (t[5] = (s * w - i * T - n * y) * C),
-                        (t[6] = (f * _ - m * M + v * A) * C),
-                        (t[7] = (m * E - p * _ - v * b) * C),
-                        (t[8] = (p * M - f * E + v * x) * C));
+                        C = c * f - d * m,
+                        R = c * v - g * m,
+                        T = d * v - g * f,
+                        F = x * T - b * R + E * C + A * w - y * S + M * _;
+                    F &&
+                        ((F = 1 / F),
+                        (t[0] = (h * T - o * R + l * C) * F),
+                        (t[1] = (o * w - a * T - l * S) * F),
+                        (t[2] = (a * R - h * w + l * _) * F),
+                        (t[3] = (r * R - s * T - n * C) * F),
+                        (t[4] = (i * T - r * w + n * S) * F),
+                        (t[5] = (s * w - i * R - n * _) * F),
+                        (t[6] = (m * M - f * y + v * A) * F),
+                        (t[7] = (f * E - p * M - v * b) * F),
+                        (t[8] = (p * y - m * E + v * x) * F));
                 })(this, t),
                 this
             );
@@ -2489,7 +2489,7 @@
             return (t[e] = this[0]), (t[e + 1] = this[1]), t;
         }
     }
-    class J extends m {
+    class J extends f {
         constructor(t, { width: e = 1, height: i = 1, widthSegments: s = 1, heightSegments: r = 1, attributes: n = {} } = {}) {
             const a = s,
                 h = r,
@@ -2503,8 +2503,8 @@
                 Object.assign(n, { position: { size: 3, data: u }, normal: { size: 3, data: c }, uv: { size: 2, data: d }, index: { data: g } }),
                 super(t, n);
         }
-        static buildPlane(t, e, i, s, r, n, a, h, o, l = 0, u = 1, c = 2, d = 1, g = -1, p = 0, f = 0) {
-            const m = p,
+        static buildPlane(t, e, i, s, r, n, a, h, o, l = 0, u = 1, c = 2, d = 1, g = -1, p = 0, m = 0) {
+            const f = p,
                 v = r / h,
                 x = n / o;
             for (let b = 0; b <= o; b++) {
@@ -2523,11 +2523,11 @@
                         b === o || n === h)
                     )
                         continue;
-                    let A = m + n + b * (h + 1),
-                        M = m + n + (b + 1) * (h + 1),
-                        _ = m + n + (b + 1) * (h + 1) + 1,
-                        y = m + n + b * (h + 1) + 1;
-                    (s[6 * f] = A), (s[6 * f + 1] = M), (s[6 * f + 2] = y), (s[6 * f + 3] = M), (s[6 * f + 4] = _), (s[6 * f + 5] = y), f++;
+                    let A = f + n + b * (h + 1),
+                        y = f + n + (b + 1) * (h + 1),
+                        M = f + n + (b + 1) * (h + 1) + 1,
+                        _ = f + n + b * (h + 1) + 1;
+                    (s[6 * m] = A), (s[6 * m + 1] = y), (s[6 * m + 2] = _), (s[6 * m + 3] = y), (s[6 * m + 4] = M), (s[6 * m + 5] = _), m++;
                 }
             }
         }
@@ -2535,235 +2535,11 @@
     const tt = (t, e) => Math.floor(Math.random() * (Math.floor(e) - t + 1)) + t,
         et = (t, e = 0, i = 1) => Math.min(i, Math.max(e, t)),
         it = (t) => t ?? 10,
-        st = (t) => (t ? 'vec4' : 'vec3'),
-        rt = (t, e) =>
-            `
-precision highp float;
-
-uniform vec2 vScreenSize;
-uniform float vTime;
-uniform float vScale;
-
-uniform ${st(e)} vColorBackground;
-
-uniform vec3 vColor[6];
-uniform vec3 vRotation[3];
-
-uniform float vAudio[3];
-uniform float vReact[3];
-
-uniform vec2 vInteractionPoint;
-uniform float vInteraction;
-
-#define CIRCLE_WIDTH_BASE 0.8
-#define CIRCLE_WIDTH_STEP 0.2
-
-#define SPARK_STRENGTH_BASE 1.0
-#define SPARK_STRENGTH_STEP 0.3
-
-#define CIRCLE_RADIUS_BASE 0.95
-#define CIRCLE_RADIUS_STEP 0.15
-
-#define CIRCLE_OFFSET_BASE 0.0
-#define CIRCLE_OFFSET_STEP 1.57
-
-vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
-vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
-
-float snoise3(vec3 v) {
-  const vec2 C = vec2(0.1666667, 0.3333333); // vec2(1.0/6.0, 1.0/3.0)
-  const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-
-  // First corner
-  vec3 i = floor(v + dot(v, C.yyy));
-  vec3 x0 = v - i + dot(i, C.xxx);
-
-  // Other corners
-  vec3 g = step(x0.yzx, x0.xyz);
-  vec3 l = 1.0 - g;
-  vec3 i1 = min(g.xyz, l.zxy);
-  vec3 i2 = max(g.xyz, l.zxy);
-
-  // x0 = x0 - 0. + 0.0 * C
-  vec3 x1 = x0 - i1 + 1.0 * C.xxx;
-  vec3 x2 = x0 - i2 + 2.0 * C.xxx;
-  vec3 x3 = x0 - 1. + 3.0 * C.xxx;
-
-  // Permutations
-  i = mod(i, 289.0);
-  vec4 p = permute( permute( permute(
-             i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
-           + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
-           + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
-
-  // Gradients ( N*N points uniformly over a square, mapped onto an octahedron.)
-  // The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
-  float n_ = 0.142857142857; // 1.0/7.0
-  vec3 ns = n_ * D.wyz - D.xzx;
-
-  vec4 j = p - 49.0 * floor(p * ns.z *ns.z); //  mod(p,N*N), N=7
-
-  vec4 x_ = floor(j * ns.z);
-  vec4 y_ = floor(j - 7.0 * x_); // mod(j,N)
-
-  vec4 x = x_ *ns.x + ns.yyyy;
-  vec4 y = y_ *ns.x + ns.yyyy;
-  vec4 h = 1.0 - abs(x) - abs(y);
-
-  vec4 b0 = vec4( x.xy, y.xy );
-  vec4 b1 = vec4( x.zw, y.zw );
-
-  vec4 s0 = floor(b0)*2.0 + 1.0;
-  vec4 s1 = floor(b1)*2.0 + 1.0;
-  vec4 sh = -step(h, vec4(0.0));
-
-  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
-  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
-
-  vec3 p0 = vec3(a0.xy,h.x);
-  vec3 p1 = vec3(a0.zw,h.y);
-  vec3 p2 = vec3(a1.xy,h.z);
-  vec3 p3 = vec3(a1.zw,h.w);
-
-  //Normalise gradients
-  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-  p0 *= norm.x;
-  p1 *= norm.y;
-  p2 *= norm.z;
-  p3 *= norm.w;
-
-  // Mix final noise value
-  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-  m = m * m;
-  return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
-}
-
-float tri(in float x){return abs(fract(x)-.5);}
-vec3 tri3(in vec3 p){return vec3( tri(p.z+tri(p.y*20.)), tri(p.z+tri(p.x*1.)), tri(p.y+tri(p.x*1.)));}
-
-float triNoise3D(in vec3 p, in float spd)
-{
-  float z=0.4;
-  float rz = 0.1;
-  vec3 bp = p;
-  for (float i=0.; i<=4.; i++ )
-  {
-    vec3 dg = tri3(bp*0.01); // Increase the scale factor to make noise less frequent
-    p += (dg+vTime*.1*spd);
-
-    bp *= 4.; // Increase the scale factor
-    z *= 0.9;
-    p *= 1.6; // Increase the scale factor
-
-    rz+= (tri(p.z+tri(0.6*p.x+0.1*tri(p.y))))/z;
-  }
-  return smoothstep(0.0, 8., rz + sin(rz + sin(z) * 2.8) * 2.2);
-}
-
-vec2 rotate(vec2 p, float a) {
-  float s = sin(a);
-  float c = cos(a);
-  return vec2(p.x * c - p.y * s, p.x * s + p.y * c);
-}
-
-float light(float intensity, float attenuation, float dist) {
-  return intensity / (1.0 + dist + dist * attenuation);
-}
-
-vec4 makeNoiseBlob2(vec2 uv, vec3 color1, vec3 color2, float strength, float offset) {
-  float len = length(uv);
-  float v0, v1, cl;
-  float r0, d0, n0;
-  float r, d;
-
-  n0 = snoise3( vec3(uv * 1.2 + offset, vTime * 0.5 + offset) ) * 0.5 + 0.5;
-  r0 = mix(0.0, 1.0, n0);
-  d0 = distance(uv, r0 / len * uv);
-  v0 = smoothstep(r0 + 0.1 + (sin(vTime + offset) + 1.0), r0, len);
-
-  v1 = light(0.15 * (1.0 + 1.5 * (-sin(vTime * 2. + offset * 0.5) * 0.5)) + 0.3 * strength, 10.0 , d0);
-
-  vec3 col = mix(color1, color2, uv.y * 2.);
-  col = col + v1;
-  col.rgb = clamp(col.rgb, 0.0, 1.0);
-  return vec4(col, v0);
-}
-
-vec4 makeBlob(vec2 uv,
-              float blob,
-              vec3 color1,
-              vec3 color2,
-              float width,
-              float baseReaction,
-              float likeReaction,
-              float audioStrength,
-              float offset,
-              vec2 noiseOffset) {
-  float len = length(uv);
-
-  float outerRadius = blob + width * 0.5 + baseReaction * (1.0 + max(likeReaction, audioStrength * 0.6) * 50. * baseReaction);
-
-  float strength = max(likeReaction, audioStrength);
-
-  vec4 noise = makeNoiseBlob2(uv * (1.0 - likeReaction * 0.5) + noiseOffset, color1, color2, strength, offset);
-  noise.a = mix(0.0, noise.a, smoothstep(outerRadius, 0.5, len));
-  noise.rgb += 0.6 * likeReaction * (1.0 - smoothstep(0.2, outerRadius * 0.8, len));
-
-  return noise;
-}
-
-void main() {
-  vec2 uv = gl_FragCoord.xy / vScreenSize.xy;
-
-  uv = uv * 2.0 - 1.0;
-  uv.y *= vScreenSize.y / min(vScreenSize.x, vScreenSize.y) / vScale;
-  uv.x *= vScreenSize.x / min(vScreenSize.x, vScreenSize.y) / vScale;
-
-  vec2 ruv = uv * 2.0;
-  float pr = length(ruv);
-  float pa = atan(ruv.y, ruv.x);
-
-  float idx = (pa/3.1415) / 2.0;   // 0 to 1
-
-  vec2 ruv1 = rotate(uv * 2.0, 3.1415);
-  float pa1 = atan(ruv1.y, ruv1.x);
-  float idx1 = (pa1/3.1415) / 2.0;   // 0 to 1
-  float idx21 = (pa1/3.1415 + 1.0) / 2.0 * 3.1415; // 0 to PI
-
-  float spark = triNoise3D(vec3(idx, 0.0, 0.0), 0.1);
-  spark = mix(spark, triNoise3D(vec3(idx1, 0.0, idx1), 0.1), smoothstep(0.9, 1.0, sin(idx21)));
-  spark = spark * 0.2 + pow(spark, 10.);
-  spark = smoothstep(0.0, spark, 0.3) * spark;
-
-  ${st(e)} color = vColorBackground;
-  vec4 blobColor;
-  float floatIndex;
-  float radius;
-
-  float n0 = snoise3(vec3(uv * 1.2, vTime * 0.5));
-
-  for (int i = 0; i < ${t}; i++) {
-    floatIndex = float(i);
-    radius = CIRCLE_RADIUS_BASE - CIRCLE_RADIUS_STEP * floatIndex;
-    blobColor = makeBlob(uv,
-                         mix(radius, radius + 0.3, n0),
-                         vColor[i],
-                         vColor[i+3],
-                         CIRCLE_WIDTH_BASE - CIRCLE_WIDTH_STEP * floatIndex,
-                         (SPARK_STRENGTH_BASE - SPARK_STRENGTH_STEP * floatIndex) * spark,
-                         vReact[i],
-                         vAudio[i],
-                         CIRCLE_OFFSET_BASE + CIRCLE_OFFSET_STEP * floatIndex,
-                         rotate(vRotation[i].xy, vTime * vRotation[i].z));
-
-
-    ${((t) => (t ? 'color.rgb = mix(color.rgb, blobColor.rgb, blobColor.a); color.a = max(blobColor.a, color.a);' : 'color = mix(color, blobColor.rgb, blobColor.a);'))(e)}
-  }
-
-  ${((t) => (t ? 'gl_FragColor = color;' : 'gl_FragColor = vec4(color, 1.0);'))(e)}
-}
-`;
-    class nt {
+        st = (t) => ({ h: et(t.h, 0, 360), s: et(t.s, 0, 1), l: et(t.l, 0, 1) }),
+        rt = (t) => (t ? 'vec4' : 'vec3'),
+        nt = (t, e) =>
+            `\nprecision highp float;\n\nuniform vec2 vScreenSize;\nuniform float vTime;\nuniform float vScale;\n\nuniform ${rt(e)} vColorBackground;\n\nuniform vec3 vColor[6];\nuniform vec3 vRotation[3];\n\nuniform float vAudio[3];\nuniform float vReact[3];\n\nuniform vec2 vInteractionPoint;\nuniform float vInteraction;\n\n#define CIRCLE_WIDTH_BASE 0.8\n#define CIRCLE_WIDTH_STEP 0.2\n\n#define SPARK_STRENGTH_BASE 1.0\n#define SPARK_STRENGTH_STEP 0.3\n\n#define CIRCLE_RADIUS_BASE 0.95\n#define CIRCLE_RADIUS_STEP 0.15\n\n#define CIRCLE_OFFSET_BASE 0.0\n#define CIRCLE_OFFSET_STEP 1.57\n\nvec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}\nvec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}\n\nfloat snoise3(vec3 v) {\n  const vec2 C = vec2(0.1666667, 0.3333333); // vec2(1.0/6.0, 1.0/3.0)\n  const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);\n\n  // First corner\n  vec3 i = floor(v + dot(v, C.yyy));\n  vec3 x0 = v - i + dot(i, C.xxx);\n\n  // Other corners\n  vec3 g = step(x0.yzx, x0.xyz);\n  vec3 l = 1.0 - g;\n  vec3 i1 = min(g.xyz, l.zxy);\n  vec3 i2 = max(g.xyz, l.zxy);\n\n  // x0 = x0 - 0. + 0.0 * C\n  vec3 x1 = x0 - i1 + 1.0 * C.xxx;\n  vec3 x2 = x0 - i2 + 2.0 * C.xxx;\n  vec3 x3 = x0 - 1. + 3.0 * C.xxx;\n\n  // Permutations\n  i = mod(i, 289.0);\n  vec4 p = permute( permute( permute(\n             i.z + vec4(0.0, i1.z, i2.z, 1.0 ))\n           + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))\n           + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));\n\n  // Gradients ( N*N points uniformly over a square, mapped onto an octahedron.)\n  // The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)\n  float n_ = 0.142857142857; // 1.0/7.0\n  vec3 ns = n_ * D.wyz - D.xzx;\n\n  vec4 j = p - 49.0 * floor(p * ns.z *ns.z); //  mod(p,N*N), N=7\n\n  vec4 x_ = floor(j * ns.z);\n  vec4 y_ = floor(j - 7.0 * x_); // mod(j,N)\n\n  vec4 x = x_ *ns.x + ns.yyyy;\n  vec4 y = y_ *ns.x + ns.yyyy;\n  vec4 h = 1.0 - abs(x) - abs(y);\n\n  vec4 b0 = vec4( x.xy, y.xy );\n  vec4 b1 = vec4( x.zw, y.zw );\n\n  vec4 s0 = floor(b0)*2.0 + 1.0;\n  vec4 s1 = floor(b1)*2.0 + 1.0;\n  vec4 sh = -step(h, vec4(0.0));\n\n  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;\n  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;\n\n  vec3 p0 = vec3(a0.xy,h.x);\n  vec3 p1 = vec3(a0.zw,h.y);\n  vec3 p2 = vec3(a1.xy,h.z);\n  vec3 p3 = vec3(a1.zw,h.w);\n\n  //Normalise gradients\n  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));\n  p0 *= norm.x;\n  p1 *= norm.y;\n  p2 *= norm.z;\n  p3 *= norm.w;\n\n  // Mix final noise value\n  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);\n  m = m * m;\n  return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));\n}\n\nfloat tri(in float x){return abs(fract(x)-.5);}\nvec3 tri3(in vec3 p){return vec3( tri(p.z+tri(p.y*20.)), tri(p.z+tri(p.x*1.)), tri(p.y+tri(p.x*1.)));}\n\nfloat triNoise3D(in vec3 p, in float spd)\n{\n  float z=0.4;\n  float rz = 0.1;\n  vec3 bp = p;\n  for (float i=0.; i<=4.; i++ )\n  {\n    vec3 dg = tri3(bp*0.01); // Increase the scale factor to make noise less frequent\n    p += (dg+vTime*.1*spd);\n\n    bp *= 4.; // Increase the scale factor\n    z *= 0.9;\n    p *= 1.6; // Increase the scale factor\n\n    rz+= (tri(p.z+tri(0.6*p.x+0.1*tri(p.y))))/z;\n  }\n  return smoothstep(0.0, 8., rz + sin(rz + sin(z) * 2.8) * 2.2);\n}\n\nvec2 rotate(vec2 p, float a) {\n  float s = sin(a);\n  float c = cos(a);\n  return vec2(p.x * c - p.y * s, p.x * s + p.y * c);\n}\n\nfloat light(float intensity, float attenuation, float dist) {\n  return intensity / (1.0 + dist + dist * attenuation);\n}\n\nvec4 makeNoiseBlob2(vec2 uv, vec3 color1, vec3 color2, float strength, float offset) {\n  float len = length(uv);\n  float v0, v1, cl;\n  float r0, d0, n0;\n  float r, d;\n\n  n0 = snoise3( vec3(uv * 1.2 + offset, vTime * 0.5 + offset) ) * 0.5 + 0.5;\n  r0 = mix(0.0, 1.0, n0);\n  d0 = distance(uv, r0 / len * uv);\n  v0 = smoothstep(r0 + 0.1 + (sin(vTime + offset) + 1.0), r0, len);\n\n  v1 = light(0.15 * (1.0 + 1.5 * (-sin(vTime * 2. + offset * 0.5) * 0.5)) + 0.3 * strength, 10.0 , d0);\n\n  vec3 col = mix(color1, color2, uv.y * 2.);\n  col = col + v1;\n  col.rgb = clamp(col.rgb, 0.0, 1.0);\n  return vec4(col, v0);\n}\n\nvec4 makeBlob(vec2 uv,\n              float blob,\n              vec3 color1,\n              vec3 color2,\n              float width,\n              float baseReaction,\n              float likeReaction,\n              float audioStrength,\n              float offset,\n              vec2 noiseOffset) {\n  float len = length(uv);\n\n  float outerRadius = blob + width * 0.5 + baseReaction * (1.0 + max(likeReaction, audioStrength * 0.6) * 50. * baseReaction);\n\n  float strength = max(likeReaction, audioStrength);\n\n  vec4 noise = makeNoiseBlob2(uv * (1.0 - likeReaction * 0.5) + noiseOffset, color1, color2, strength, offset);\n  noise.a = mix(0.0, noise.a, smoothstep(outerRadius, 0.5, len));\n  noise.rgb += 0.6 * likeReaction * (1.0 - smoothstep(0.2, outerRadius * 0.8, len));\n\n  return noise;\n}\n\nvoid main() {\n  vec2 uv = gl_FragCoord.xy / vScreenSize.xy;\n\n  uv = uv * 2.0 - 1.0;\n  uv.y *= vScreenSize.y / min(vScreenSize.x, vScreenSize.y) / vScale;\n  uv.x *= vScreenSize.x / min(vScreenSize.x, vScreenSize.y) / vScale;\n\n  vec2 ruv = uv * 2.0;\n  float pr = length(ruv);\n  float pa = atan(ruv.y, ruv.x);\n\n  float idx = (pa/3.1415) / 2.0;   // 0 to 1\n\n  vec2 ruv1 = rotate(uv * 2.0, 3.1415);\n  float pa1 = atan(ruv1.y, ruv1.x);\n  float idx1 = (pa1/3.1415) / 2.0;   // 0 to 1\n  float idx21 = (pa1/3.1415 + 1.0) / 2.0 * 3.1415; // 0 to PI\n\n  float spark = triNoise3D(vec3(idx, 0.0, 0.0), 0.1);\n  spark = mix(spark, triNoise3D(vec3(idx1, 0.0, idx1), 0.1), smoothstep(0.9, 1.0, sin(idx21)));\n  spark = spark * 0.2 + pow(spark, 10.);\n  spark = smoothstep(0.0, spark, 0.3) * spark;\n\n  ${rt(e)} color = vColorBackground;\n  vec4 blobColor;\n  float floatIndex;\n  float radius;\n\n  float n0 = snoise3(vec3(uv * 1.2, vTime * 0.5));\n\n  for (int i = 0; i < ${t}; i++) {\n    floatIndex = float(i);\n    radius = CIRCLE_RADIUS_BASE - CIRCLE_RADIUS_STEP * floatIndex;\n    blobColor = makeBlob(uv,\n                         mix(radius, radius + 0.3, n0),\n                         vColor[i],\n                         vColor[i+3],\n                         CIRCLE_WIDTH_BASE - CIRCLE_WIDTH_STEP * floatIndex,\n                         (SPARK_STRENGTH_BASE - SPARK_STRENGTH_STEP * floatIndex) * spark,\n                         vReact[i],\n                         vAudio[i],\n                         CIRCLE_OFFSET_BASE + CIRCLE_OFFSET_STEP * floatIndex,\n                         rotate(vRotation[i].xy, vTime * vRotation[i].z));\n\n\n    ${((t) => (t ? 'color.rgb = mix(color.rgb, blobColor.rgb, blobColor.a); color.a = max(blobColor.a, color.a);' : 'color = mix(color, blobColor.rgb, blobColor.a);'))(e)}\n  }\n\n  ${((t) => (t ? 'gl_FragColor = color;' : 'gl_FragColor = vec4(color, 1.0);'))(e)}\n}\n`;
+    class at {
         fps;
         render;
         isActive = !1;
@@ -2786,9 +2562,9 @@ void main() {
             this.isActive && ((this.isActive = !1), cancelAnimationFrame(this.requestId));
         }
     }
-    const at = (t, e) => (e >= 280 && e < 360 ? t % 360 : t),
-        ht = (t) => (t + 280) % 360,
-        ot = (t, e, i) => {
+    const ht = (t, e) => (e >= 280 && e < 360 ? t % 360 : t),
+        ot = (t) => (t + 280) % 360,
+        lt = (t, e, i) => {
             const s = (s) => {
                 const r = (s + t / 30) % 12,
                     n = e * Math.min(i, 1 - i);
@@ -2796,7 +2572,7 @@ void main() {
             };
             return [s(0), s(8), s(4)];
         };
-    class lt {
+    class ut {
         currentValue;
         targetValue;
         elapsedTime;
@@ -2819,27 +2595,27 @@ void main() {
             return (this.elapsedTime += t), (this.currentValue = this.currentValue + (this.targetValue - this.currentValue) * e), this.currentValue;
         }
     }
-    const ut = 3e3;
-    class ct {
+    const ct = 3e3;
+    class dt {
         r;
         g;
         b;
         constructor(t) {
-            const e = ot(t, 1, 0.5);
-            (this.r = new lt(e[0], e[0], ut)), (this.g = new lt(e[1], e[1], ut)), (this.b = new lt(e[2], e[2], ut));
+            const e = lt(t, 1, 0.5);
+            (this.r = new ut(e[0], e[0], ct)), (this.g = new ut(e[1], e[1], ct)), (this.b = new ut(e[2], e[2], ct));
         }
         get value() {
             return [this.r.value, this.g.value, this.b.value];
         }
-        update(t) {
-            const e = ot(t, 1, 0.5);
-            this.r.update(e[0]), this.g.update(e[1]), this.b.update(e[2]);
+        update(t, e, i) {
+            let s;
+            (s = 'number' == typeof e && 'number' == typeof i ? lt(t, e, i) : lt(t, 1, 0.5)), this.r.update(s[0]), this.g.update(s[1]), this.b.update(s[2]);
         }
         next(t) {
             this.r.next(t), this.g.next(t), this.b.next(t);
         }
     }
-    class dt {
+    class gt {
         useDefaultHue = !1;
         topStart;
         topEnd;
@@ -2848,9 +2624,9 @@ void main() {
         bottomStart;
         bottomEnd;
         createParts(t) {
-            const e = ht(t),
-                i = at(e + tt(30, 40), e);
-            return [new ct(e), new ct(300), new ct(50), new ct(i), new ct(320), new ct(50)];
+            const e = ot(t),
+                i = ht(e + tt(30, 40), e);
+            return [new dt(e), new dt(300), new dt(50), new dt(i), new dt(320), new dt(50)];
         }
         constructor(t = 10) {
             const [e, i, s, r, n, a] = this.createParts(t);
@@ -2866,43 +2642,56 @@ void main() {
             this.useDefaultHue = t;
         }
         update(t, e) {
-            const i = ht(t),
-                s = at(i + tt(40, 80), i),
-                r = ht(e);
-            this.topStart.update(i),
-                this.topEnd.update(at(i + tt(30, 40), i)),
-                this.middleStart.update(s),
-                this.middleEnd.update(at(s + tt(30, 40), i)),
-                this.bottomStart.update(r),
-                this.bottomEnd.update(at(r + tt(30, 40), i));
+            if ('object' == typeof t) {
+                const { top: e, middle: i, bottom: s } = t;
+                this.topStart.update(e.h, e.s, e.l),
+                    this.topEnd.update(e.h, e.s, e.l),
+                    this.middleStart.update(i.h, i.s, i.l),
+                    this.middleEnd.update(i.h, i.s, i.l),
+                    this.bottomStart.update(s.h, s.s, s.l),
+                    this.bottomEnd.update(s.h, s.s, s.l);
+            } else {
+                if ('number' != typeof t || 'number' != typeof e) throw new Error('Invalid arguments for color update');
+                {
+                    const i = ot(t),
+                        s = ht(i + tt(40, 80), i),
+                        r = ot(e);
+                    this.topStart.update(i),
+                        this.topEnd.update(ht(i + tt(30, 40), i)),
+                        this.middleStart.update(s),
+                        this.middleEnd.update(ht(s + tt(30, 40), i)),
+                        this.bottomStart.update(r),
+                        this.bottomEnd.update(ht(r + tt(30, 40), i));
+                }
+            }
         }
         next(t) {
             this.topStart.next(t), this.topEnd.next(t), this.middleStart.next(t), this.middleEnd.next(t), this.bottomStart.next(t), this.bottomEnd.next(t);
         }
     }
-    class gt {
+    class pt {
         isMobile = !1;
         audioFrequencies = null;
         background = new c(0, 0, 0);
         baseScale = 1;
-        energy = new lt(0.2, 0.2, 250);
+        energy = new ut(0.2, 0.2, 250);
         time = Math.floor(3600 * Math.random());
         color;
         rotation = [new c(-0.3, 0.3, 0.2), new c(-0.3, -0.3, -0.2), new c(-0.3, -0.3, 0.2)];
         audioLow = 0;
         audioMiddle = 0;
         audioHigh = 0;
-        audioRatio = new lt(0, 0, 1e3);
-        reactTop = new lt(0, 0, 600);
-        reactMiddle = new lt(0, 0, 600);
-        reactBottom = new lt(0, 0, 600);
+        audioRatio = new ut(0, 0, 1e3);
+        reactTop = new ut(0, 0, 600);
+        reactMiddle = new ut(0, 0, 600);
+        reactBottom = new ut(0, 0, 600);
         point = [0, 0];
         interaction = 0;
         width = 0;
         height = 0;
         shaderOptions;
         constructor(t, e) {
-            (this.shaderOptions = e), (this.color = new dt(t)), this.updateSize();
+            (this.shaderOptions = e), (this.color = new gt(t)), this.updateSize();
         }
         switchToDefaultHue(t) {
             this.color.switchToDefaultHue(t);
@@ -2928,6 +2717,9 @@ void main() {
         }
         updateColor(t, e) {
             this.color.update(t, e);
+        }
+        updateCustomColors(t) {
+            this.color.update(t);
         }
         updateBackgroundColor(t) {
             this.background = new c(t, t, t);
@@ -2998,10 +2790,10 @@ void main() {
             };
         }
     }
-    var pt;
+    var mt;
     !(function (t) {
         (t.DEFAULT = 'DEFAULT'), (t.LITE = 'LITE');
-    })(pt || (pt = {}));
+    })(mt || (mt = {}));
     class ft {
         isRenderingEnabled = !0;
         state;
@@ -3022,14 +2814,14 @@ void main() {
                     ...t,
                 }))(s));
             try {
-                (this.uniforms = new gt(it(i), this.shaderOptions)),
+                (this.uniforms = new pt(it(i), this.shaderOptions)),
                     (this.renderer = this.createRenderer()),
-                    (this.ticker = new nt(maxFps, this.render.bind(this))),
+                    (this.ticker = new at(maxFps, this.render.bind(this))),
                     this.ticker.start();
             } catch (t) {
                 ('string' == typeof t || t instanceof Error) && r?.(t);
             }
-            (this.state = e ?? pt.DEFAULT), (this.shader = this.createShader());
+            (this.state = e ?? mt.DEFAULT), (this.shader = this.createShader());
         }
         createRenderer() {
             const { width: t, height: e } = this.uniforms?.size ?? {};
@@ -3045,11 +2837,11 @@ void main() {
         getVertexAndFragment(t) {
             return {
                 vertex: '\nprecision highp float;\nattribute vec4 position;\n\nvoid main() {\n    gl_Position = position;\n}\n',
-                fragment: rt(t, this.shaderOptions.transparent),
+                fragment: nt(t, this.shaderOptions.transparent),
             };
         }
         enableLiteAnimation() {
-            (this.state = pt.LITE), this.program?.setShaders(this.getVertexAndFragment(2));
+            (this.state = mt.LITE), this.program?.setShaders(this.getVertexAndFragment(2));
         }
         createShader() {
             if (!this.renderer || !this.uniforms) return;
@@ -3067,7 +2859,7 @@ void main() {
             this.isRenderingEnabled ? this.ticker?.start() : this.ticker?.stop();
         }
         get isLiteAnimationEnabled() {
-            return this.state === pt.LITE;
+            return this.state === mt.LITE;
         }
         applySettings(t = {}) {
             const {
@@ -3077,12 +2869,20 @@ void main() {
                 backgroundColor: r,
                 baseScale: n,
                 useDefaultHue: a,
-            } = (({ hue: t, collectionHue: e, energy: i, backgroundColor: s, baseScale: r, useDefaultHue: n }) => {
-                const a = { useDefaultHue: n, collectionHue: it(e) };
-                workerLog('applySettings', t, e, i, s, r, n);
-                return t && (a.hue = et(t, 0, 360)), i && (a.energy = 0.4 * (i + 1)), s && (a.backgroundColor = s), r && (a.baseScale = et(r, 0, 1)), a;
+                customColors: h,
+            } = (({ hue: t, collectionHue: e, energy: i, backgroundColor: s, baseScale: r, useDefaultHue: n, customColors: a }) => {
+                const h = { useDefaultHue: n, collectionHue: it(e) };
+                workerLog('applySettings', t, e, i, s, r, n, a);
+                return (
+                    t && (h.hue = et(t, 0, 360)),
+                    i && (h.energy = 0.4 * (i + 1)),
+                    s && (h.backgroundColor = s),
+                    r && (h.baseScale = et(r, 0, 1)),
+                    a && (h.customColors = { top: st(a.top), middle: st(a.middle), bottom: st(a.bottom) }),
+                    h
+                );
             })(t);
-            e && i && this.uniforms?.updateColor(e, i),
+            h ? this.uniforms?.updateCustomColors(h) : e && i && this.uniforms?.updateColor(e, i),
                 s && this.uniforms?.updateEnergy(s),
                 r && this.uniforms?.updateBackgroundColor(r),
                 n && this.uniforms?.updateBaseScale(n),
@@ -3125,56 +2925,56 @@ void main() {
             this.ticker?.stop();
         }
     }
-    let mt = null;
-    const vt = (e) => {
+    let vt = null;
+    const xt = (e) => {
         self.postMessage({ type: t.ERROR, payload: e });
     };
     self.addEventListener('message', (e) => {
         switch (e.data.type) {
             case t.INIT: {
                 const t = e.data.payload;
-                mt = new ft({ ...t, onError: vt });
+                vt = new ft({ ...t, onError: xt });
                 break;
             }
             case t.APPLY_SETTINGS: {
                 const t = e.data.payload;
-                mt?.applySettings(t);
+                vt?.applySettings(t);
                 break;
             }
             case t.UPDATE_LAYOUT: {
                 const t = e.data.payload;
-                mt?.uniforms?.updateLayout(Boolean(t?.isMobile));
+                vt?.uniforms?.updateLayout(Boolean(t?.isMobile));
                 break;
             }
             case t.AUDIO_ANALYZER_FREQUENCIES: {
                 const t = e.data.payload;
-                mt?.uniforms?.updateAudioFrequencies(t);
+                vt?.uniforms?.updateAudioFrequencies(t);
                 break;
             }
             case t.UPDATE_ENERGY: {
                 const t = e.data.payload;
-                mt?.uniforms?.updateNewEnergy(t);
+                vt?.uniforms?.updateNewEnergy(t);
                 break;
             }
             case t.ENABLE:
-                mt?.enableRender();
+                vt?.enableRender();
                 break;
             case t.DISABLE:
-                mt?.disableRender();
+                vt?.disableRender();
                 break;
             case t.IDLE_ANIMATION:
-                mt?.idleAnimation();
+                vt?.idleAnimation();
                 break;
             case t.PLAY_ANIMATION: {
                 const t = e.data.payload;
-                mt?.playAnimation(t);
+                vt?.playAnimation(t);
                 break;
             }
             case t.LIKE_ANIMATION:
-                mt?.likeAnimation();
+                vt?.likeAnimation();
                 break;
             case t.ENABLE_LITE_ANIMATION:
-                mt?.enableLiteAnimation();
+                vt?.enableLiteAnimation();
         }
     });
 })();
