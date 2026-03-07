@@ -3026,7 +3026,7 @@
                             size: 'fitContent',
                             placement: 'center',
                             overlayColor: 'full',
-                            style: { height: 'auto' },
+                            style: { height: 'auto', minWidth: '430px' },
                             labelClose: e({ id: 'interface-actions.close' }),
                             children: (0, n.jsxs)('ul', {
                                 className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
@@ -3358,6 +3358,11 @@
                                 }),
                             }),
                         }),
+                        C &&
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(G, { title: x({ id: 'settings.crossfade' }), onChange: te, isChecked: p.isCrossFadeEnabled }),
+                        }),
                         (0, n.jsx)(w.aQ, {
                             fallback:
                                 !a.checkExperiment(m.zal.WebNextDisableKids, 'on') &&
@@ -3396,11 +3401,6 @@
                             (0, n.jsxs)('li', {
                                 className: $().item,
                                 children: [(0, n.jsx)(D, { title: x({ id: 'settings.about-app' }), description: E, onClick: i.open }), (0, n.jsx)(A, {})],
-                            }),
-                        C &&
-                            (0, n.jsx)('li', {
-                                className: $().item,
-                                children: (0, n.jsx)(G, { title: x({ id: 'settings.crossfade' }), onChange: te, isChecked: p.isCrossFadeEnabled }),
                             }),
                         (0, n.jsx)('li', {
                             className: $().item,
