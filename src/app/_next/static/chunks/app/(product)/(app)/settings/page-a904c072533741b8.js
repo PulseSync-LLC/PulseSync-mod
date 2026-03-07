@@ -862,9 +862,9 @@
                     s = (0, m.d79)(),
                     { language: a } = (0, m.h6b)();
                 return (0, n.jsxs)(T.a, {
-                    className: K().root,
-                    headerClassName: K().modalHeader,
-                    contentClassName: K().modalContent,
+                    className: P().root,
+                    headerClassName: P().modalHeader,
+                    contentClassName: P().modalContent,
                     title: e({ id: 'settings.about-app' }),
                     open: o.isOpened,
                     onOpenChange: o.onOpenChange,
@@ -875,12 +875,12 @@
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: [
                         (0, n.jsxs)('ul', {
-                            className: K().list,
+                            className: P().list,
                             children: [
                                 (0, n.jsx)('li', {
-                                    className: K().item,
+                                    className: P().item,
                                     children: (0, n.jsx)(w.N_, {
-                                        className: K().link,
+                                        className: P().link,
                                         target: '_blank',
                                         href: 'https://yandex.'.concat(t.tld, '/support/music/performers-and-copyright-holders.html?lang=').concat(a),
                                         children: (0, n.jsx)(c.Caption, {
@@ -893,9 +893,9 @@
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
-                                    className: K().item,
+                                    className: P().item,
                                     children: (0, n.jsx)(w.N_, {
-                                        className: K().link,
+                                        className: P().link,
                                         target: '_blank',
                                         href: 'https://yandex.'.concat(t.tld, '/legal/music_mobile_agreement?lang=').concat(a),
                                         children: (0, n.jsx)(c.Caption, {
@@ -908,9 +908,9 @@
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
-                                    className: K().item,
+                                    className: P().item,
                                     children: (0, n.jsx)(w.N_, {
-                                        className: K().link,
+                                        className: P().link,
                                         target: '_blank',
                                         href: 'https://music.yandex.'.concat(t.tld, '/legal/recommendations/ru/#music'),
                                         children: (0, n.jsx)(c.Caption, {
@@ -923,9 +923,9 @@
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
-                                    className: K().item,
+                                    className: P().item,
                                     children: (0, n.jsx)(w.N_, {
-                                        className: K().link,
+                                        className: P().link,
                                         target: '_blank',
                                         href: 'https://yandex.'.concat(t.tld, '/support/music/index.html?lang=').concat(a),
                                         children: (0, n.jsx)(c.Caption, {
@@ -938,11 +938,11 @@
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
-                                    className: K().item,
+                                    className: P().item,
                                     children: (0, n.jsx)(w.N_, {
-                                        className: K().link,
+                                        className: P().link,
                                         target: '_blank',
-                                        href: 'https://github.com/PulseSync-LLC/PulseSync-client',
+                                        href: 'https://github.com/PulseSync-LLC/PulseSync-mod',
                                         children: (0, n.jsx)(c.Caption, {
                                             type: 'controls',
                                             variant: 'span',
@@ -952,10 +952,40 @@
                                         }),
                                     }),
                                 }),
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(w.N_, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://boosty.to/evt',
+                                        children: (0, n.jsx)(c.Caption, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Поддержать проект на Boosty',
+                                        }),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(w.N_, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://pulsesync.dev',
+                                        children: (0, n.jsx)(c.Caption, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Сайт проекта PulseSync',
+                                        }),
+                                    }),
+                                }),
                             ],
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: K().explicitText,
+                            className: P().explicitText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
@@ -963,35 +993,35 @@
                             dangerouslySetInnerHTML: { __html: e({ id: 'about-app.explicit-content' }) },
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: K().companyText,
+                            className: P().companyText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
                             children: (0, n.jsx)(r.A, { id: 'about-app.app-name' }),
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: K().versionText,
+                            className: P().versionText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
                             children: e({ id: 'desktop.app-version-short' }, { version: i }),
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: K().versionText,
+                            className: P().versionText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
                             children: e({ id: 'desktop.app-revision' }, { revision: s }),
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: K().versionText,
+                            className: P().versionText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
                             children: 'PulseSync ' + window.PULSE_VERSION,
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: K().versionText,
+                            className: P().versionText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
