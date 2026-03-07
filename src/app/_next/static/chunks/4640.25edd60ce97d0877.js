@@ -2160,7 +2160,7 @@
                     ).json();
                 }
                 async getTracksMeta(t, e) {
-                    return (
+                    const tracksMeta = await (
                         await this.httpClient.post(
                             'tracks',
                             this.createHttpOptions({
@@ -2184,6 +2184,16 @@
                             }),
                         )
                     ).json();
+
+                    tracksMeta.forEach((t) => {
+                        t.substituted?.artists && t.artists ? (t.artists = t.substituted.artists) : undefined;
+                        t.substituted?.ogImage && t.ogImage ? (t.ogImage = t.substituted.ogImage) : undefined;
+                        t.substituted?.coverUri && t.coverUri ? (t.coverUri = t.substituted.coverUri) : undefined;
+                        t.substituted?.title && t.title ? (t.title = t.substituted.title) : undefined;
+                        t.substituted?.derivedColors && t.derivedColors ? (t.derivedColors = t.substituted.derivedColors) : undefined;
+                    });
+
+                    return tracksMeta;
                 }
                 async getFullInfoTrack(t, e) {
                     let s = t.albumId ? ''.concat(t.trackId, ':').concat(t.albumId) : t.trackId;

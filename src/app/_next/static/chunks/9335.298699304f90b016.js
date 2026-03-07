@@ -102,7 +102,7 @@
                             energy = ((rms + rmsAlt) / 2) * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
                             energyNormalized = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? energy : (j?.entityMeta?.trackParameters?.energy ?? 1);
                         null == d || d.updateEnergy(energyNormalized),
-                        null == d || d.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != n ? n : 0 });
+                            null == d || d.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != n ? n : 0 });
                     });
                     (0, a.useEffect)(() => {
                         if (!m || d) return;

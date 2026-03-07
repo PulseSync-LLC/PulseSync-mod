@@ -3359,10 +3359,10 @@
                             }),
                         }),
                         C &&
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(G, { title: x({ id: 'settings.crossfade' }), onChange: te, isChecked: p.isCrossFadeEnabled }),
-                        }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(G, { title: x({ id: 'settings.crossfade' }), onChange: te, isChecked: p.isCrossFadeEnabled }),
+                            }),
                         (0, n.jsx)(w.aQ, {
                             fallback:
                                 !a.checkExperiment(m.zal.WebNextDisableKids, 'on') &&
