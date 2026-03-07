@@ -692,6 +692,7 @@
                 });
             var j = l(28584),
                 N = l(26870),
+                Tooltip = l(80585),
                 K = l.n(N);
             let U = (e) => {
                     let { minValue: a, maxValue: l, className: r, label: t, isDisabled: u, onChange: i, value: s, ...n } = e;
@@ -832,25 +833,50 @@
                                                     className: C().frequencies,
                                                     children: o.currentPreset.frequencies.map((e) => {
                                                         let a = ((e, a) =>
-                                                                e < 1e3 ? e.toString() : a({ id: 'equalizer.frequency-label' }, { value: (e / 1e3).toFixed(0) }))(
-                                                                e.key,
-                                                                n,
-                                                            ),
+                                                                e < 1e3
+                                                                    ? e.toString()
+                                                                    : a(
+                                                                          {
+                                                                              id: 'equalizer.frequency-label',
+                                                                          },
+                                                                          {
+                                                                              value: (e / 1e3).toFixed(0),
+                                                                          },
+                                                                      ))(e.key, n),
                                                             l = Math.round(10 * e.value) / 10;
-                                                        return (0, m.jsx)(
-                                                            U,
-                                                            {
-                                                                isDisabled: t,
-                                                                minValue: -12,
-                                                                maxValue: 12,
-                                                                value: e.value,
-                                                                label: a,
-                                                                onChange: d(e.key),
-                                                                'aria-label': n({ id: 'equalizer.slider-frequency-label' }, { label: a, value: l }),
-                                                                ...(0, b.Am)(b.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER),
-                                                            },
-                                                            a,
-                                                        );
+                                                        return (0, m.jsx)(Tooltip.hj, {
+                                                            title: `${(l ?? 0).toFixed(1)} dB`,
+                                                            children: (0, m.jsx)('div', {
+                                                                onWheel: (evt) => {
+                                                                    const delta = (evt.deltaY / 1000) * -1;
+                                                                    if (l === undefined) return;
+                                                                    let value = (parseFloat(l) + parseFloat(delta)).toFixed(1);
+                                                                    d(e.key)(Math.min(Math.max(value, -12), 12));
+                                                                },
+                                                                children: (0, m.jsx)(
+                                                                    U,
+                                                                    {
+                                                                        isDisabled: t,
+                                                                        minValue: -12,
+                                                                        maxValue: 12,
+                                                                        value: e.value,
+                                                                        label: a,
+                                                                        onChange: d(e.key),
+                                                                        'aria-label': n(
+                                                                            {
+                                                                                id: 'equalizer.slider-frequency-label',
+                                                                            },
+                                                                            {
+                                                                                label: a,
+                                                                                value: l,
+                                                                            },
+                                                                        ),
+                                                                        ...(0, b.Am)(b.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER),
+                                                                    },
+                                                                    a,
+                                                                ),
+                                                            }),
+                                                        });
                                                     }),
                                                 }),
                                             ],
