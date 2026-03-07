@@ -9770,6 +9770,8 @@
                             fullscreenPlayer: r,
                         } = (0, n.Pjs)(),
                         { state: l, toggleTrue: o } = (0, G.e)(!1),
+                        [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, u.useState)(window.isRemoteDeviceConnected ?? false),
+                        [remoteDevice, setRemoteDevice] = (0, u.useState)(window.remoteDevice ?? null),
                         d = (null == i ? void 0 : i.isTrackPodcast) || (null == i || null == (e = i.mainAlbum) ? void 0 : e.isPodcast),
                         m = null == i ? void 0 : i.isTrackAudiobook,
                         _ = {
@@ -9832,6 +9834,16 @@
                             [i, null == i ? void 0 : i.id, d, m, r.isSplitMode],
                         );
                     return (
+                        (0, u.useEffect)(() => {
+                            window.onRemoteDeviceConnected.push((device_info) => {
+                                setIsRemoteDeviceConnected(true);
+                                setRemoteDevice(device_info);
+                            });
+                            window.onRemoteDeviceDisconnected.push(() => {
+                                setIsRemoteDeviceConnected(false);
+                                setRemoteDevice(null);
+                            });
+                        }, []),
                         (0, u.useEffect)(
                             () => (
                                 window.addEventListener('resize', a),
@@ -9861,6 +9873,19 @@
                                     }),
                                     ...(0, R.Am)(R.e8.player.FULLSCREEN_PLAYER_FULLSCREEN_CONTENT),
                                     children: [
+                                        isRemoteDeviceConnected &&
+                                            (0, s.jsxs)('div', {
+                                                style: {
+                                                    position: 'absolute',
+                                                    top: '-25px',
+                                                    color: 'var(--ym-controls-color-primary-default-enabled)',
+                                                },
+                                                children: [
+                                                    (0, s.jsxs)('span', {
+                                                        children: `Управление с ${deviceTypeMap?.[remoteDevice?.info?.type] ?? ''}: ${remoteDevice?.info?.title}`,
+                                                    }),
+                                                ],
+                                            }),
                                         (0, s.jsx)(tv, {
                                             className: (0, c.$)(tg().poster, tg().important),
                                             coverUri: null == i ? void 0 : i.coverUri,
