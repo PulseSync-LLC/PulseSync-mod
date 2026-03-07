@@ -10903,7 +10903,7 @@
                     z = (0, Q.c)((e) => {
                         g.setVolume(e);
                     }),
-                    downloadCurrentTrack = (0, u.useCallback)(() => {
+                    onDownloadClick = (0, u.useCallback)(() => {
                         i?.id && electronBridgeModule.sendDownloadCurrentTrack(i.id);
                     }, [i]),
                     updateRealBitrate = (0, u.useCallback)(() => {
@@ -11224,33 +11224,46 @@
                                                         (0, s.jsx)(h.hj, {
                                                             title: 'Скачать трек в файл',
                                                             description: i?.id ? 'Скачать трек в читаемый файл на вашем ПК' : 'Не удалось получить данные о треке',
-                                                            children: (0, s.jsxs)('div', {
-                                                                style: { display: 'flex', flexDirection: 'column', gap: '2px', alignSelf: 'center', width: '24px' },
+                                                            children: (0, s.jsxs)('button', {
+                                                                disabled: !i?.id,
+                                                                className: `cpeagBA1_PblpJn8Xgtv UDMYhpDjiAFT3xUx268O ${
+                                                                    !i?.id ? '' : 'HbaqudSqu7Q3mv3zMPGr'
+                                                                } qU2apWBO1yyEK0lZ3lPO`,
+                                                                style: {
+                                                                    display: 'flex',
+                                                                    'flex-direction': 'column',
+                                                                    gap: '2px',
+                                                                    'align-self': 'center',
+                                                                    'padding-top': '5px',
+                                                                    'padding-inline': '2px',
+                                                                },
                                                                 children: [
-                                                                    (0, s.jsx)(_.$, {
-                                                                        radius: 'round',
-                                                                        size: 'xxxs',
-                                                                        variant: 'text',
-                                                                        disabled: !i?.id,
-                                                                        withRipple: !1,
-                                                                        'aria-label': 'Скачать трек в файл',
-                                                                        icon: (0, s.jsx)(D.Icon, { variant: 'download', size: 'xxs' }),
-                                                                        onClick: downloadCurrentTrack,
+                                                                    (0, s.jsxs)('span', {
+                                                                        className: 'JjlbHZ4FaP9EAcR_1DxF',
+                                                                        children: (0, s.jsx)(D.Icon, {
+                                                                            variant: 'download',
+                                                                            size: 'xxs',
+                                                                            style: {
+                                                                                width: '24px',
+                                                                                height: '24px',
+                                                                            },
+                                                                        }),
                                                                     }),
-                                                                    (0, s.jsx)('div', {
+                                                                    (0, s.jsxs)('div', {
                                                                         style: {
-                                                                            backgroundColor: 'var(--ym-controls-color-secondary-text-enabled)',
-                                                                            width: `${-100 === downloadProgress ? 0 : downloadProgress}%`,
+                                                                            'background-color': 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                            width: `${downloadProgress === -100 ? 0 : downloadProgress}%`,
                                                                             transition:
                                                                                 downloadProgress >= 0 && downloadProgress < 100
                                                                                     ? 'width 0.3s'
                                                                                     : 'width 0.3s, opacity 0.3s linear 0.5s',
                                                                             opacity: downloadProgress >= 0 && downloadProgress < 100 ? '1' : '0',
                                                                             height: '2px',
-                                                                            borderRadius: '10px',
+                                                                            'border-radius': '10px',
                                                                         },
                                                                     }),
                                                                 ],
+                                                                onClick: onDownloadClick,
                                                             }),
                                                         }),
                                                         (0, s.jsx)(h.hj, {
