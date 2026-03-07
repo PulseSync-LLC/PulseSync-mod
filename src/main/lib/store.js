@@ -99,6 +99,8 @@ let defaultExperimentOverrides = {
     WebNextTracksPreload: 'on',
     WebNextGetFileInfoPreload: 'on',
     WebNextEnableVibeRepeatControl: 'on',
+    WebNextUseWaveQueue: 'on',
+    WebNextInsertAlbumPlaylistIntoContext: 'on',
 };
 
 const useCachedValue = (key) => {
