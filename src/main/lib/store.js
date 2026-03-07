@@ -98,6 +98,7 @@ let defaultExperimentOverrides = {
     WebNextCrossMediaPlayer: 'on',
     WebNextTracksPreload: 'on',
     WebNextGetFileInfoPreload: 'on',
+    WebNextEnableVibeRepeatControl: 'on',
 };
 
 const useCachedValue = (key) => {
@@ -244,9 +245,6 @@ const init = () => {
     initField(store_js_1.StoreKeys.ENABLE_YNISON_REMOTE_CONTROL, true);
     initField(store_js_1.StoreKeys.YNISON_INTERCEPT_PLAYBACK, false);
     initField(store_js_1.StoreKeys.DISPLAY_MAX_FPS, 60);
-    fetchDefaultExperimentOverrides().then((data) => {
-        if (data) initField(store_js_1.StoreKeys.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES, data, true);
-    });
     if (getModSettings()?.scrobblers?.lastfm?.enable === undefined)
         initField(
             `${store_js_1.StoreKeys.MOD_SETTINGS}.scrobblers`,
