@@ -1397,37 +1397,193 @@
             'use strict';
             a.d(t, { usePlayerAction: () => n });
             var s = a(61910),
-                o = a(83252),
-                l = (function (e) {
+                o = a(83252);
+            const sendPlayerStateDefault = (e) => {
+                let t;
+                const a =
+                        (e.state.queueState.index.value ?? 0) - 1 >= 0
+                            ? e.state.queueState?.entityList.value?.[e.state.queueState.index.value - 1]?.entity?.entityData?.meta
+                            : void 0,
+                    s =
+                        (e.state.queueState.index.value ?? 0) + 1 >= 0
+                            ? e.state.queueState?.entityList.value?.[e.state.queueState.index.value + 1]?.entity?.entityData?.meta
+                            : void 0;
+                null == (t = window.desktopEvents) ||
+                    t.send(o.EE.PLAYER_STATE, {
+                        status: e.state.playerState.status.value,
+                        isPlaying: 'playing' === e.state.playerState.status.value,
+                        canMoveForward: e.state.currentContext.value?.availableActions.moveForward.value,
+                        canMoveBackward: e.state.currentContext.value?.availableActions.moveBackward.value,
+                        track: e.state.queueState.currentEntity.value?.entity.entityData.meta,
+                        progress: e.state.playerState.progress.value,
+                        availableActions: {
+                            moveBackward: e.state.currentContext.value?.availableActions.moveBackward.value,
+                            moveForward: e.state.currentContext.value?.availableActions.moveForward.value,
+                            repeat: e.state.currentContext.value?.availableActions.repeat.value,
+                            shuffle: e.state.currentContext.value?.availableActions.shuffle.value,
+                            speed: e.state.currentContext.value?.availableActions.speed.value,
+                        },
+                        actionsStore: {
+                            repeat: e.state.queueState.repeat.value,
+                            shuffle: e.state.queueState.shuffle.value,
+                            isLiked: e.state.queueState.currentEntity.value?.entity.likeStore.isTrackLiked(e.state.queueState.currentEntity.value?.entity.entityData?.meta.id),
+                            isDisliked: e.state.queueState.currentEntity.value?.entity.likeStore.isTrackDisliked(
+                                e.state.queueState.currentEntity.value?.entity.entityData?.meta.id,
+                            ),
+                        },
+                        previousTrack: a,
+                        nextTrack: s,
+                        volume: e.state.playerState.exponentVolume.value,
+                    });
+            };
+            var l = (function (e) {
                     return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
                 })(l || {});
             let n = (e) => {
-                let t = (0, s.useCallback)(
-                    (t, a) => {
-                        switch (a) {
-                            case 'PLAY':
-                            case 'PAUSE':
-                                null == e || e.togglePause();
-                                break;
-                            case 'MOVE_BACKWARD':
-                                null == e || e.moveBackward();
-                                break;
-                            case 'MOVE_FORWARD':
-                                null == e || e.moveForward();
-                        }
-                    },
-                    [e],
-                );
+                let { sonataState: t } = (0, o.Pjs)(),
+                    a = (0, s.useCallback)(
+                        async (a) => {
+                            let i = t.entityMeta;
+                            if (!e || !i) return;
+                            switch (a) {
+                                case 'TOGGLE_LIKE':
+                                    null == i || (await i.toggleLike?.());
+                                    break;
+                                case 'LIKE':
+                                    i.isLiked || (null == i || (await i.toggleLike?.()));
+                                    break;
+                                case 'LIKE_NONE':
+                                    i.isLiked && (null == i || (await i.toggleLike?.()));
+                            }
+                            sendPlayerStateDefault?.(e);
+                        },
+                        [e, t.entityMeta],
+                    ),
+                    n = (0, s.useCallback)(
+                        async (a) => {
+                            let i, n, r = t.entityMeta;
+                            if (!e || !r) return;
+                            let l = !1;
+                            switch (a) {
+                                case 'TOGGLE_DISLIKE':
+                                    l = !0;
+                                    break;
+                                case 'DISLIKE':
+                                    l = !r.isDisliked;
+                                    break;
+                                case 'DISLIKE_NONE':
+                                    l = !!r.isDisliked;
+                            }
+                            l && (null == r || (await r.toggleDislike?.())),
+                                l &&
+                                    !r.isDisliked &&
+                                    r.id === (null == e || null == (i = e.state.queueState.currentEntity.value) || null == (n = i.entity) ? void 0 : n.data.meta.id) &&
+                                    (null == e || e.moveForward()),
+                                sendPlayerStateDefault?.(e);
+                        },
+                        [e, t.entityMeta],
+                    ),
+                    r = (0, s.useCallback)(
+                        (t, i, r, s = 1) => {
+                            if (window.playerActionEventDedupeNonce === s) return;
+                            if (s) window.playerActionEventDedupeNonce = s;
+                            switch (i) {
+                                case 'PLAY':
+                                case 'PAUSE':
+                                case 'TOGGLE_PLAY':
+                                    null == e || e.togglePause();
+                                    break;
+                                case 'MOVE_BACKWARD':
+                                    null == e || e.moveBackward();
+                                    break;
+                                case 'MOVE_FORWARD':
+                                    null == e || e.moveForward();
+                                    break;
+                                case 'REPEAT_NONE':
+                                    null == e || e.setRepeatMode('none');
+                                    break;
+                                case 'REPEAT_CONTEXT':
+                                    null == e || e.setRepeatMode('context');
+                                    break;
+                                case 'REPEAT_ONE':
+                                    null == e || e.setRepeatMode('one');
+                                    break;
+                                case 'TOGGLE_REPEAT':
+                                    let t = 'none';
+                                    switch (e?.state?.queueState?.repeat?.value) {
+                                        case 'none':
+                                            t = e?.state?.currentContext?.value?.contextData?.type === 'vibe' ? 'one' : 'context';
+                                            break;
+                                        case 'context':
+                                            t = 'one';
+                                            break;
+                                        case 'one':
+                                        default:
+                                            t = 'none';
+                                    }
+                                    null == e || e.setRepeatMode(t);
+                                    break;
+                                case 'TOGGLE_SHUFFLE':
+                                    null == e || e.toggleShuffle();
+                                    break;
+                                case 'TOGGLE_LIKE':
+                                case 'LIKE':
+                                case 'LIKE_NONE':
+                                    a(i);
+                                    break;
+                                case 'DISLIKE':
+                                case 'DISLIKE_NONE':
+                                case 'TOGGLE_DISLIKE':
+                                    n(i);
+                                    break;
+                                case 'SET_VOLUME':
+                                    null == e || e.setExponentVolume(Math.min(Math.max(r, 0), 100));
+                                    break;
+                                case 'SET_PROGRESS':
+                                    null == e || e.setProgress(Math.max(r, 0));
+                            }
+                        },
+                        [e, a, n],
+                    );
                 (0, s.useEffect)(() => {
                     var e;
                     return (
-                        null == (e = window.desktopEvents) || e.on(o.EE.PLAYER_ACTION, t),
+                        null == (e = window.desktopEvents) || e.on(o.EE.PLAYER_ACTION, r),
                         () => {
                             var e;
-                            null == (e = window.desktopEvents) || e.off(o.EE.PLAYER_ACTION, t);
+                            null == (e = window.desktopEvents) || e.off(o.EE.PLAYER_ACTION, r);
                         }
                     );
-                }, [t]);
+                }, [r]),
+                    (0, s.useEffect)(() => {
+                        const e = (e, t) => {
+                                const a = window.pulsesyncApi;
+                                if (!a || !t?.action) return;
+                                const { action: s, trackId: o, albumId: l, options: n, args: r } = t,
+                                    i = a[s];
+                                if ('function' != typeof i) return;
+                                if (Array.isArray(r)) {
+                                    i(...r);
+                                    return;
+                                }
+                                if ('undefined' != typeof o) {
+                                    i(o, { ...n, albumId: l });
+                                    return;
+                                }
+                                i(n);
+                            },
+                            t = window.desktopEvents?.on(o.EE.PULSESYNC_API, e);
+                        return () => {
+                            null == t || t();
+                        };
+                    }, []),
+                    (0, s.useEffect)(() => {
+                        window.pulsesyncApi &&
+                            ((window.pulsesyncApi.likeTrack = () => a('LIKE')),
+                            (window.pulsesyncApi.unlikeTrack = () => a('LIKE_NONE')),
+                            (window.pulsesyncApi.dislikeTrack = () => n('DISLIKE')),
+                            (window.pulsesyncApi.undislikeTrack = () => n('DISLIKE_NONE')));
+                    }, [a, n]);
             };
         },
         96034: (e) => {
