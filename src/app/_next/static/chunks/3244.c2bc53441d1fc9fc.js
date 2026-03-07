@@ -238,7 +238,16 @@
                         { theme: C } = (0, c.DPo)(),
                         F = (0, c.iIU)(),
                         D = (0, s.c)((e) => {
-                            e.data.type === g.iR.ERROR ? (S(!0), w.error(e.data.payload)) : e.data.type === g.iR.LOG && console.debug('[WORKER]', e.data.payload.map((e, t) => (null !== e && void 0 !== e ? `[${t}]: ${e}` : null)).filter(Boolean).join(', '));
+                            e.data.type === g.iR.ERROR
+                                ? (S(!0), w.error(e.data.payload))
+                                : e.data.type === g.iR.LOG &&
+                                  console.debug(
+                                      '[WORKER]',
+                                      e.data.payload
+                                          .map((e, t) => (null !== e && void 0 !== e ? `[${t}]: ${e}` : null))
+                                          .filter(Boolean)
+                                          .join(', '),
+                                  );
                         }),
                         U = (0, s.c)(() => {
                             S(!0);
@@ -251,10 +260,10 @@
                     let H = (0, s.c)(() => {
                         if (!(null == F ? void 0 : F.analyser)) return;
                         let [e, t, n] = F.analyser.getAverageFrequencies([
-                                { low: 0, high: 450 },
-                                { low: 400, high: 5e3 },
-                                { low: 5e3, high: 2e4 },
-                            ]);
+                            { low: 0, high: 450 },
+                            { low: 400, high: 5e3 },
+                            { low: 5e3, high: 2e4 },
+                        ]);
                         let r = F.analyser.getRMS(),
                             a = F.analyser.getRMSAlt(),
                             o = ((r + a) / 2) * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
@@ -316,11 +325,13 @@
                         let e = I && I.entityMeta,
                             t = e && e.trackParameters,
                             n = t && t.hue,
-                            i = 'number' == typeof n ? ((e) => {
-                                    let t = e % 360;
-                                    return t < 0 && (t += 360), Math.round(t);
-                                })(n)
-                              : null,
+                            i =
+                                'number' == typeof n
+                                    ? ((e) => {
+                                          let t = e % 360;
+                                          return t < 0 && (t += 360), Math.round(t);
+                                      })(n)
+                                    : null,
                             r = (e && e.averageColor) || (e && e.derivedColors && 'string' == typeof e.derivedColors.average ? e.derivedColors.average : null),
                             l = (e && (e.id || e.trackId)) || (I && I.id) || '',
                             a = (e) => {
@@ -333,9 +344,11 @@
                                 let t = e.trim();
                                 if ('#' === t[0]) {
                                     let e = t.slice(1);
-                                    return 3 === e.length && (e = e[0] + e[0] + e[1] + e[1] + e[2] + e[2]), 8 === e.length && (e = e.slice(0, 6)), 6 !== e.length
-                                        ? null
-                                        : { r: parseInt(e.slice(0, 2), 16), g: parseInt(e.slice(2, 4), 16), b: parseInt(e.slice(4, 6), 16) };
+                                    return (
+                                        3 === e.length && (e = e[0] + e[0] + e[1] + e[1] + e[2] + e[2]),
+                                        8 === e.length && (e = e.slice(0, 6)),
+                                        6 !== e.length ? null : { r: parseInt(e.slice(0, 2), 16), g: parseInt(e.slice(2, 4), 16), b: parseInt(e.slice(4, 6), 16) }
+                                    );
                                 }
                                 if (t.startsWith('rgb')) {
                                     let e = t.match(/rgba?\s*\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i);
@@ -376,7 +389,7 @@
                                     let u = (t + n + i) / 3,
                                         d = a(String(l)),
                                         f = d % 20;
-                                    return u < 128 ? ((220 + f) % 360) : f % 360;
+                                    return u < 128 ? (220 + f) % 360 : f % 360;
                                 }
                                 return a(String(l));
                             })();
@@ -396,7 +409,8 @@
                             r = i && i.trackParameters,
                             l = r && r.energy,
                             a = (r && r.userCollectionHue) || (R && R.collectionHue);
-                        a && R.setUserCollectionHue(a), K ? null == k || k.playAnimation({ hue: null != B ? B : 0, energy: l, collectionHue: a }) : null == k || k.idleAnimation();
+                        a && R.setUserCollectionHue(a),
+                            K ? null == k || k.playAnimation({ hue: null != B ? B : 0, energy: l, collectionHue: a }) : null == k || k.idleAnimation();
                     }, [
                         K,
                         null == (e = I.entityMeta) || null == (t = e.trackParameters) ? void 0 : t.energy,

@@ -1086,7 +1086,10 @@
                     let t = normalizeLrclibCachePart(null == e ? void 0 : e.trackName),
                         i = normalizeLrclibCachePart(null == e ? void 0 : e.artistName),
                         n = null == e ? void 0 : e.duration;
-                    return ''.concat(t, '|').concat(i, '|').concat('number' == typeof n && n > 0 ? n : '');
+                    return ''
+                        .concat(t, '|')
+                        .concat(i, '|')
+                        .concat('number' == typeof n && n > 0 ? n : '');
                 },
                 readLrclibCache = (e, t) => {
                     let i = e.get(t);
@@ -1161,7 +1164,9 @@
                                     return { items: Array.isArray(payload) && payload.length ? payload : null, aborted: !1 };
                                 } catch (error) {
                                     let aborted = error?.name === 'AbortError';
-                                    return aborted ? console.debug('[LRCLib] request aborted') : console.debug('[LRCLib] request failed', error), { items: null, aborted };
+                                    return (
+                                        aborted ? console.debug('[LRCLib] request aborted') : console.debug('[LRCLib] request failed', error), { items: null, aborted }
+                                    );
                                 } finally {
                                     try {
                                         lrclibSearchControllers = lrclibSearchControllers.filter((e) => e !== controller);
@@ -1383,7 +1388,8 @@
                                         b && A && 'UGC' !== P && 'string' == typeof A && !/^https?:\/\//.test(A) && (b = ''.concat(b, ' ').concat(A));
                                         let w = !0;
                                         try {
-                                            let e = 'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useText') : null;
+                                            let e =
+                                                'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useText') : null;
                                             !1 === e && (w = !1);
                                         } catch (e) {}
                                         if (!w) return (e.loadingState = u.GuX.REJECT), (e.hasError = !1), e.modal.isOpened && e.modal.close(), void 0;

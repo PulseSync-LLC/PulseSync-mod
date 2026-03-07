@@ -19595,7 +19595,9 @@
                         DEFAULT_EXPERIMENT_GROUP_OPTIONS.forEach((e) => {
                             n.has(e.value) || (n.add(e.value), s.push(e));
                         }),
-                        'loaded' === (null == e ? void 0 : e.status) && (null == e ? void 0 : e.options) && e.options.length > 0 &&
+                        'loaded' === (null == e ? void 0 : e.status) &&
+                            (null == e ? void 0 : e.options) &&
+                            e.options.length > 0 &&
                             e.options.forEach((e) => {
                                 n.has(e.value) || (n.add(e.value), s.push(e));
                             }),
@@ -19734,7 +19736,11 @@
                         c = 'error' === (null == p0 ? void 0 : p0.status),
                         u0 = a0 ? 'С сервера: '.concat(a0) : 'С сервера: отсутствует',
                         f0 = r || l0,
-                        u = c ? 'Не удалось загрузить варианты. Попробуйте ещё раз. | '.concat(u0) : f0 && f0 !== UNSET_EXPERIMENT_GROUP_VALUE ? 'Перепоределено | '.concat(u0) : u0,
+                        u = c
+                            ? 'Не удалось загрузить варианты. Попробуйте ещё раз. | '.concat(u0)
+                            : f0 && f0 !== UNSET_EXPERIMENT_GROUP_VALUE
+                              ? 'Перепоределено | '.concat(u0)
+                              : u0,
                         f = buildExperimentOptions(p0, f0);
                     return (
                         a.useEffect(() => {

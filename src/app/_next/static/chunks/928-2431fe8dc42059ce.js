@@ -6862,7 +6862,15 @@
                                 o = r && (!_.currentTrackId || (n && i && n === i));
                             if (!e || !1 === t || a || _.isLoading || o) return;
                             _.setTrack(l), _.getLyrics(e);
-                        }, [null == l ? void 0 : l.id, null == l ? void 0 : l.isAvailable, null == l ? void 0 : l.isLyricsAvailable, _.currentTrackId, _.isLoading, _.lyrics, _]),
+                        }, [
+                            null == l ? void 0 : l.id,
+                            null == l ? void 0 : l.isAvailable,
+                            null == l ? void 0 : l.isLyricsAvailable,
+                            _.currentTrackId,
+                            _.isLoading,
+                            _.lyrics,
+                            _,
+                        ]),
                         _.shouldShowErrorNotification &&
                             (c((0, d.jsx)(C.hT, { error: s({ id: 'error-messages.error-during-action' }) }), { containerId: i.uQT.ERROR }), _.resetShouldShowError());
                     let A = (0, y.c)((e) => {
@@ -6874,42 +6882,42 @@
                         ? (0, d.jsx)(D, { isShimmerActive: _.isLoading || u.isLoading })
                         : !T
                           ? null
-                        : (0, d.jsxs)('div', {
-                              className: M().root,
-                              ...(0, x.Am)(x.Xk.track.TRACK_PAGE_LYRICS),
-                              children: [
-                                  (0, d.jsx)(N.Heading, {
-                                      variant: 'h2',
-                                      size: 'm',
-                                      lineClamp: 1,
-                                      className: M().title,
-                                      ...(0, x.Am)(x.e8.content.TRACK_LYRICS_TITLE),
-                                      children: s({ id: 'entity-names.text' }),
-                                  }),
-                                  (0, d.jsx)(L.K, {
-                                      moreText: s({ id: 'track-modal.read-more' }),
-                                      buttonClassName: M().button,
-                                      open: p,
-                                      onOpenChange: A,
-                                      lineClamp: 4,
-                                      withFade: !0,
-                                      children: (0, d.jsx)(N.Caption, {
-                                          variant: 'div',
-                                          className: M().lyrics,
-                                          size: 'l',
-                                          weight: 'medium',
-                                          ...(0, x.Am)(x.e8.content.TRACK_LYRICS_TEXT),
-                                          children: (0, d.jsx)(o.xe, {
-                                              lyrics: _.lyrics,
-                                              authors: _.writersNames,
-                                              source: null == (r = _.major) ? void 0 : r.prettyName,
-                                              isShimmerVisible: _.isShimmerVisible,
-                                              isShimmerActive: _.isLoading,
-                                          }),
-                                      }),
-                                  }),
-                              ],
-                          });
+                          : (0, d.jsxs)('div', {
+                                className: M().root,
+                                ...(0, x.Am)(x.Xk.track.TRACK_PAGE_LYRICS),
+                                children: [
+                                    (0, d.jsx)(N.Heading, {
+                                        variant: 'h2',
+                                        size: 'm',
+                                        lineClamp: 1,
+                                        className: M().title,
+                                        ...(0, x.Am)(x.e8.content.TRACK_LYRICS_TITLE),
+                                        children: s({ id: 'entity-names.text' }),
+                                    }),
+                                    (0, d.jsx)(L.K, {
+                                        moreText: s({ id: 'track-modal.read-more' }),
+                                        buttonClassName: M().button,
+                                        open: p,
+                                        onOpenChange: A,
+                                        lineClamp: 4,
+                                        withFade: !0,
+                                        children: (0, d.jsx)(N.Caption, {
+                                            variant: 'div',
+                                            className: M().lyrics,
+                                            size: 'l',
+                                            weight: 'medium',
+                                            ...(0, x.Am)(x.e8.content.TRACK_LYRICS_TEXT),
+                                            children: (0, d.jsx)(o.xe, {
+                                                lyrics: _.lyrics,
+                                                authors: _.writersNames,
+                                                source: null == (r = _.major) ? void 0 : r.prettyName,
+                                                isShimmerVisible: _.isShimmerVisible,
+                                                isShimmerActive: _.isLoading,
+                                            }),
+                                        }),
+                                    }),
+                                ],
+                            });
                 });
             var U = a(63585),
                 F = a(91126),
@@ -7198,7 +7206,8 @@
                                     ...(0, x.Am)(x.Xk.track.TRACK_PAGE_CONTENT),
                                     children: [
                                         (0, d.jsx)(E, { onModalClose: f }),
-                                        (((null == (l = _.meta) ? void 0 : l.isLyricsAvailable) || (null == (l = _.meta) ? void 0 : l.isAvailable)) && (0, d.jsx)(K, { track: _.meta }, _.meta.id)),
+                                        ((null == (l = _.meta) ? void 0 : l.isLyricsAvailable) || (null == (l = _.meta) ? void 0 : l.isAvailable)) &&
+                                            (0, d.jsx)(K, { track: _.meta }, _.meta.id),
                                         N &&
                                             _.similarTracks &&
                                             (0, d.jsx)(V, {
@@ -7698,7 +7707,10 @@
                     let t = normalizeLrclibSyncCachePart(null == e ? void 0 : e.trackName),
                         a = normalizeLrclibSyncCachePart(null == e ? void 0 : e.artistName),
                         i = null == e ? void 0 : e.duration;
-                    return ''.concat(t, '|').concat(a, '|').concat('number' == typeof i && i > 0 ? i : '');
+                    return ''
+                        .concat(t, '|')
+                        .concat(a, '|')
+                        .concat('number' == typeof i && i > 0 ? i : '');
                 },
                 readLrclibSyncCache = (e, t) => {
                     let a = e.get(t);
@@ -7729,7 +7741,11 @@
                         d = null == e ? void 0 : e.version,
                         u = null == e ? void 0 : e.trackSource,
                         m = null == e ? void 0 : e.ugcArtistName;
-                    return r || (r = m || null), c && d && 'UGC' !== u && 'string' == typeof d && !/^https?:\/\//.test(d) && (c = ''.concat(c, ' ').concat(d)), c ? { trackName: c, artistName: r, duration: o || s } : null;
+                    return (
+                        r || (r = m || null),
+                        c && d && 'UGC' !== u && 'string' == typeof d && !/^https?:\/\//.test(d) && (c = ''.concat(c, ' ').concat(d)),
+                        c ? { trackName: c, artistName: r, duration: o || s } : null
+                    );
                 },
                 lrclibSyncPrefetchRetryTimer = null,
                 lrclibSyncPrefetchSeq = 0,
@@ -8137,18 +8153,24 @@
                                         return (
                                             lrclibSyncPrefetchRetryTimer && clearTimeout(lrclibSyncPrefetchRetryTimer),
                                             logSyncPrefetch('retry-scheduled', { prefetchId: i, retry: a + 1 }),
-                                            void (lrclibSyncPrefetchRetryTimer = setTimeout(() => {
-                                                lrclibSyncPrefetchRetryTimer = null;
-                                                try {
-                                                    t.prefetchTrack(getNextQueueTrackMeta(lrclibSyncSonataStateRef), a + 1);
-                                                } catch (e) {}
-                                            }, 250 * (a + 1)))
+                                            void (lrclibSyncPrefetchRetryTimer = setTimeout(
+                                                () => {
+                                                    lrclibSyncPrefetchRetryTimer = null;
+                                                    try {
+                                                        t.prefetchTrack(getNextQueueTrackMeta(lrclibSyncSonataStateRef), a + 1);
+                                                    } catch (e) {}
+                                                },
+                                                250 * (a + 1),
+                                            ))
                                         );
                                     }
                                     let r = null == n ? void 0 : n.id,
                                         o = null == r ? null : String(r);
                                     if (!o) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'track-id' });
-                                    let s = !!(null != n && !0 === n.hasSyncLyrics) || !!(null != n && !0 === n.isSyncLyricsAvailable) || !!(null != n && !0 === n.isSyncLyricsAvailableWithOfflineFeature);
+                                    let s =
+                                        !!(null != n && !0 === n.hasSyncLyrics) ||
+                                        !!(null != n && !0 === n.isSyncLyricsAvailable) ||
+                                        !!(null != n && !0 === n.isSyncLyricsAvailableWithOfflineFeature);
                                     if (s) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'native-sync-available', trackId: o });
                                     if (lrclibSyncPrefetchByTrackId.has(o)) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'cached', trackId: o });
                                     let c = lrclibSyncPrefetchNoResultByTrackId.get(o);
@@ -8159,14 +8181,21 @@
                                         lrclibSyncPrefetchNoResultByTrackId.delete(o);
                                     }
                                     if (lrclibSyncPrefetchInFlight.has(o)) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'inflight', trackId: o });
-                                    if (String(o) === String(e.currentTrackId)) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'current-track', trackId: o });
+                                    if (String(o) === String(e.currentTrackId))
+                                        return void logSyncPrefetch('skip', { prefetchId: i, reason: 'current-track', trackId: o });
                                     let d = getSyncTrackLookup(n);
                                     if (!(null == d ? void 0 : d.trackName)) return void logSyncPrefetch('skip', { prefetchId: i, reason: 'lookup-missing', trackId: o });
                                     logSyncPrefetch('fetch-start', { prefetchId: i, trackId: o, trackName: d.trackName, artistName: d.artistName, duration: d.duration });
                                     let u = fetchLrclibLyrics(d)
                                         .then((e) => {
                                             let t = !!(e && e.syncedLyrics);
-                                            return t ? (lrclibSyncPrefetchByTrackId.set(o, e), lrclibSyncPrefetchNoResultByTrackId.delete(o)) : lrclibSyncPrefetchNoResultByTrackId.set(o, Date.now()), logSyncPrefetch('fetch-done', { prefetchId: i, trackId: o, hasResult: !!e, hasSynced: t }), e;
+                                            return (
+                                                t
+                                                    ? (lrclibSyncPrefetchByTrackId.set(o, e), lrclibSyncPrefetchNoResultByTrackId.delete(o))
+                                                    : lrclibSyncPrefetchNoResultByTrackId.set(o, Date.now()),
+                                                logSyncPrefetch('fetch-done', { prefetchId: i, trackId: o, hasResult: !!e, hasSynced: t }),
+                                                e
+                                            );
                                         })
                                         .catch((e) => (logSyncPrefetch('fetch-error', { prefetchId: i, trackId: o, error: null == e ? void 0 : e.message }), null))
                                         .finally(() => {
@@ -8214,16 +8243,19 @@
                                                     logSyncPrefetch('fallback-skip', { reason: 'no-result-cached', trackId: u });
                                                 } else lrclibSyncPrefetchNoResultByTrackId.delete(u);
                                             }
-                                            if (!m && (null == d ? void 0 : d.trackName) && !('number' == typeof e && Date.now() - e < LRCLIB_SYNC_PREFETCH_NO_RESULT_TTL_MS)) m = yield fetchLrclibLyrics(d);
+                                            if (
+                                                !m &&
+                                                (null == d ? void 0 : d.trackName) &&
+                                                !('number' == typeof e && Date.now() - e < LRCLIB_SYNC_PREFETCH_NO_RESULT_TTL_MS)
+                                            )
+                                                m = yield fetchLrclibLyrics(d);
                                         }
                                         if (isStale(o, a)) return;
                                         if (!m)
-                                            return void (
-                                                (e.loadingState = n.GuX.REJECT),
-                                                u && lrclibSyncPrefetchNoResultByTrackId.set(u, Date.now()),
-                                                logSyncPrefetch('trigger-from-getData', { reason: 'reject-no-fallback', trackId: a }),
-                                                r.error(err)
-                                            );
+                                            return void ((e.loadingState = n.GuX.REJECT),
+                                            u && lrclibSyncPrefetchNoResultByTrackId.set(u, Date.now()),
+                                            logSyncPrefetch('trigger-from-getData', { reason: 'reject-no-fallback', trackId: a }),
+                                            r.error(err));
                                         u &&
                                             (null != m && m.syncedLyrics
                                                 ? (lrclibSyncPrefetchByTrackId.set(u, m), lrclibSyncPrefetchNoResultByTrackId.delete(u))
@@ -8340,8 +8372,12 @@
                                 n = null == i || null == (a = i.entityMeta) ? void 0 : a.id,
                                 r = n ? String(n) : null,
                                 o = String(t),
-                                s = r && r === o ? null == i ? void 0 : i.entityMeta : null,
-                                c = !!(null == s ? void 0 : s.hasSyncLyrics) || !!(null == s ? void 0 : s.isSyncLyricsAvailable) || !!(null == s ? void 0 : s.isSyncLyricsAvailableWithOfflineFeature) || !!(null == s ? void 0 : s.hasLyrics),
+                                s = r && r === o ? (null == i ? void 0 : i.entityMeta) : null,
+                                c =
+                                    !!(null == s ? void 0 : s.hasSyncLyrics) ||
+                                    !!(null == s ? void 0 : s.isSyncLyricsAvailable) ||
+                                    !!(null == s ? void 0 : s.isSyncLyricsAvailableWithOfflineFeature) ||
+                                    !!(null == s ? void 0 : s.hasLyrics),
                                 d = e.syncLyrics.hasLyricsForTrack(t);
                             if (!c && !d) {
                                 !e.syncLyrics.isLoadingForTrack(t) && e.syncLyrics.getData(t);
@@ -9451,7 +9487,15 @@
                             r = getNextQueueTrackMeta(sonataRuntimeState);
                         lrclibSyncSonataStateRef = sonataRuntimeState;
                         n && _.getData(e), _.prefetchTrack(r);
-                    }, [null == m ? void 0 : m.hasSyncLyrics, null == m ? void 0 : m.hasLyrics, null == m ? void 0 : m.trackSource, null == m ? void 0 : m.id, _.currentTrackId, sonataRuntimeState, _]);
+                    }, [
+                        null == m ? void 0 : m.hasSyncLyrics,
+                        null == m ? void 0 : m.hasLyrics,
+                        null == m ? void 0 : m.trackSource,
+                        null == m ? void 0 : m.id,
+                        _.currentTrackId,
+                        sonataRuntimeState,
+                        _,
+                    ]);
                     (0, u.useEffect)(() => {
                         let e = null == m ? void 0 : m.id,
                             t = null == e ? null : String(e),
@@ -9463,12 +9507,30 @@
                     let h = (0, u.useMemo)(() => {
                             let e = null == m ? void 0 : m.id,
                                 t = e ? String(e) : null,
-                                a = !!(null == m ? void 0 : m.isSyncLyricsAvailable) || !!(null == m ? void 0 : m.isSyncLyricsAvailableWithOfflineFeature) || !!(null == m ? void 0 : m.hasSyncLyrics) || !!(null == m ? void 0 : m.hasLyrics) || (!!t && _.hasLyricsForTrack(t));
+                                a =
+                                    !!(null == m ? void 0 : m.isSyncLyricsAvailable) ||
+                                    !!(null == m ? void 0 : m.isSyncLyricsAvailableWithOfflineFeature) ||
+                                    !!(null == m ? void 0 : m.hasSyncLyrics) ||
+                                    !!(null == m ? void 0 : m.hasLyrics) ||
+                                    (!!t && _.hasLyricsForTrack(t));
                             if (_.isResolved) return (0, s.jsx)(e7, { key: null == _.currentTrackId ? 'sync-lyrics-no-track' : String(_.currentTrackId) });
                             if (!a && t && _.isLoadingForTrack(t)) return null;
                             if (_.isRejected || _.hasInvalidLyrics) return null;
                             return (0, s.jsx)(e$, { className: o });
-                        }, [null == m ? void 0 : m.id, null == m ? void 0 : m.isSyncLyricsAvailable, null == m ? void 0 : m.isSyncLyricsAvailableWithOfflineFeature, null == m ? void 0 : m.hasSyncLyrics, null == m ? void 0 : m.hasLyrics, _.isLoading, _.currentTrackId, _.lines, _.isResolved, _.isRejected, _.hasInvalidLyrics, o]),
+                        }, [
+                            null == m ? void 0 : m.id,
+                            null == m ? void 0 : m.isSyncLyricsAvailable,
+                            null == m ? void 0 : m.isSyncLyricsAvailableWithOfflineFeature,
+                            null == m ? void 0 : m.hasSyncLyrics,
+                            null == m ? void 0 : m.hasLyrics,
+                            _.isLoading,
+                            _.currentTrackId,
+                            _.lines,
+                            _.isResolved,
+                            _.isRejected,
+                            _.hasInvalidLyrics,
+                            o,
+                        ]),
                         g = (0, u.useMemo)(() => ({ counterClassName: a, scrollerClassName: r, footerClassName: i }), [a, i, r]);
                     return (0, s.jsx)(eV.Provider, {
                         value: g,
@@ -10141,14 +10203,33 @@
                                 size: 'xxxs',
                                 variant: 'text',
                                 disabled:
-                                    !(!!(null == (e = d.entityMeta) ? void 0 : e.isSyncLyricsAvailable) || !!(null == d.entityMeta ? void 0 : d.entityMeta.isSyncLyricsAvailableWithOfflineFeature) || !!(null == d.entityMeta ? void 0 : d.entityMeta.hasSyncLyrics) || !!(null == d.entityMeta ? void 0 : d.entityMeta.hasLyrics) || ((null == d.entityMeta ? void 0 : d.entityMeta.id) && r.syncLyrics.hasLyricsForTrack(null == d.entityMeta ? void 0 : d.entityMeta.id))) || m,
+                                    !(
+                                        !!(null == (e = d.entityMeta) ? void 0 : e.isSyncLyricsAvailable) ||
+                                        !!(null == d.entityMeta ? void 0 : d.entityMeta.isSyncLyricsAvailableWithOfflineFeature) ||
+                                        !!(null == d.entityMeta ? void 0 : d.entityMeta.hasSyncLyrics) ||
+                                        !!(null == d.entityMeta ? void 0 : d.entityMeta.hasLyrics) ||
+                                        ((null == d.entityMeta ? void 0 : d.entityMeta.id) &&
+                                            r.syncLyrics.hasLyricsForTrack(null == d.entityMeta ? void 0 : d.entityMeta.id))
+                                    ) || m,
                                 withRipple: !1,
                                 withHover: !1,
                                 'aria-label': t,
                                 icon: (0, s.jsx)(D.Icon, { variant: 'syncLyrics', size: 'xs' }),
                                 onClick: o,
                             });
-                        }, [g, N, p, o, m, r.syncLyrics, null == (r = d.entityMeta) ? void 0 : r.isSyncLyricsAvailable, null == d.entityMeta ? void 0 : d.entityMeta.isSyncLyricsAvailableWithOfflineFeature, null == d.entityMeta ? void 0 : d.entityMeta.hasSyncLyrics, null == d.entityMeta ? void 0 : d.entityMeta.hasLyrics, null == d.entityMeta ? void 0 : d.entityMeta.id]);
+                        }, [
+                            g,
+                            N,
+                            p,
+                            o,
+                            m,
+                            r.syncLyrics,
+                            null == (r = d.entityMeta) ? void 0 : r.isSyncLyricsAvailable,
+                            null == d.entityMeta ? void 0 : d.entityMeta.isSyncLyricsAvailableWithOfflineFeature,
+                            null == d.entityMeta ? void 0 : d.entityMeta.hasSyncLyrics,
+                            null == d.entityMeta ? void 0 : d.entityMeta.hasLyrics,
+                            null == d.entityMeta ? void 0 : d.entityMeta.id,
+                        ]);
                     return (0, s.jsx)('div', {
                         className: (0, c.$)(tf().footer, l),
                         children: (0, s.jsxs)('div', {
@@ -10192,8 +10273,25 @@
                             p && !A && o && d();
                         }, [d, p, o, A]),
                         P = (0, u.useCallback)(() => {
-                            if ((null == b ? void 0 : b.isSyncLyricsAvailable) || (null == b ? void 0 : b.isSyncLyricsAvailableWithOfflineFeature) || (null == b ? void 0 : b.hasSyncLyrics) || (null == b ? void 0 : b.hasLyrics) || ((null == b ? void 0 : b.id) && y.hasLyricsForTrack(null == b ? void 0 : b.id))) return p ? g() : v();
-                        }, [null == b ? void 0 : b.isSyncLyricsAvailable, null == b ? void 0 : b.isSyncLyricsAvailableWithOfflineFeature, null == b ? void 0 : b.hasSyncLyrics, null == b ? void 0 : b.hasLyrics, null == b ? void 0 : b.id, y, g, p, v]),
+                            if (
+                                (null == b ? void 0 : b.isSyncLyricsAvailable) ||
+                                (null == b ? void 0 : b.isSyncLyricsAvailableWithOfflineFeature) ||
+                                (null == b ? void 0 : b.hasSyncLyrics) ||
+                                (null == b ? void 0 : b.hasLyrics) ||
+                                ((null == b ? void 0 : b.id) && y.hasLyricsForTrack(null == b ? void 0 : b.id))
+                            )
+                                return p ? g() : v();
+                        }, [
+                            null == b ? void 0 : b.isSyncLyricsAvailable,
+                            null == b ? void 0 : b.isSyncLyricsAvailableWithOfflineFeature,
+                            null == b ? void 0 : b.hasSyncLyrics,
+                            null == b ? void 0 : b.hasLyrics,
+                            null == b ? void 0 : b.id,
+                            y,
+                            g,
+                            p,
+                            v,
+                        ]),
                         E = (0, u.useMemo)(() => {
                             if (b)
                                 return N
@@ -10838,20 +10936,33 @@
                             1 === e.detail && (null == i ? void 0 : i.hasTrackLink) && !x.modal.isOpened && B();
                         }
                     }),
-                    syncLyricsPrefetchHook = ((0, u.useEffect)(() => {
-                        let e = null == i ? void 0 : i.id,
-                            t = null != i && !1 === i.hasSyncLyrics,
-                            a = null == i ? void 0 : i.trackSource,
-                            n = e && x.syncLyrics.currentTrackId !== e && (t || 'UGC' === a),
-                            r = getNextQueueTrackMeta(sonataRuntimeState);
-                        lrclibSyncSonataStateRef = sonataRuntimeState;
-                        n && x.syncLyrics.getData(e), x.syncLyrics.prefetchTrack(r);
-                    }, [null == i ? void 0 : i.id, null == i ? void 0 : i.hasSyncLyrics, null == i ? void 0 : i.trackSource, x.syncLyrics, sonataRuntimeState]), null),
+                    syncLyricsPrefetchHook =
+                        ((0, u.useEffect)(() => {
+                            let e = null == i ? void 0 : i.id,
+                                t = null != i && !1 === i.hasSyncLyrics,
+                                a = null == i ? void 0 : i.trackSource,
+                                n = e && x.syncLyrics.currentTrackId !== e && (t || 'UGC' === a),
+                                r = getNextQueueTrackMeta(sonataRuntimeState);
+                            lrclibSyncSonataStateRef = sonataRuntimeState;
+                            n && x.syncLyrics.getData(e), x.syncLyrics.prefetchTrack(r);
+                        }, [null == i ? void 0 : i.id, null == i ? void 0 : i.hasSyncLyrics, null == i ? void 0 : i.trackSource, x.syncLyrics, sonataRuntimeState]),
+                        null),
                     ee = (0, u.useMemo)(() => {
                         let e = null == i ? void 0 : i.id,
                             t = e ? String(e) : null;
-                        return !!(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) || !!(null == i ? void 0 : i.hasLyrics) || (!!t && x.syncLyrics.hasLyricsForTrack(t));
-                    }, [null == i ? void 0 : i.id, null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature, null == i ? void 0 : i.hasLyrics, x.syncLyrics.currentTrackId, x.syncLyrics.lines, x.syncLyrics.isResolved]),
+                        return (
+                            !!(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) ||
+                            !!(null == i ? void 0 : i.hasLyrics) ||
+                            (!!t && x.syncLyrics.hasLyricsForTrack(t))
+                        );
+                    }, [
+                        null == i ? void 0 : i.id,
+                        null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature,
+                        null == i ? void 0 : i.hasLyrics,
+                        x.syncLyrics.currentTrackId,
+                        x.syncLyrics.lines,
+                        x.syncLyrics.isResolved,
+                    ]),
                     G = (0, u.useCallback)(
                         (e) => {
                             let { isPopoverEnabled: t } = e,
@@ -10949,9 +11060,12 @@
                     let e = (e, t, a) => {
                         'trackDownloadCurrent' === t && setDownloadProgress(a);
                     };
-                    return window.desktopEvents?.on?.(n.EE.PROGRESS_BAR_CHANGE, e), () => {
-                        window.desktopEvents?.off?.(n.EE.PROGRESS_BAR_CHANGE, e);
-                    };
+                    return (
+                        window.desktopEvents?.on?.(n.EE.PROGRESS_BAR_CHANGE, e),
+                        () => {
+                            window.desktopEvents?.off?.(n.EE.PROGRESS_BAR_CHANGE, e);
+                        }
+                    );
                 }, []);
                 (0, u.useEffect)(() => {
                     let e;
@@ -10975,10 +11089,7 @@
                     return (
                         t(),
                         () => {
-                            e && clearInterval(e),
-                                'function' == typeof a && a(),
-                                'function' == typeof i && i(),
-                                'function' == typeof r && r();
+                            e && clearInterval(e), 'function' == typeof a && a(), 'function' == typeof i && i(), 'function' == typeof r && r();
                         }
                     );
                 }, [theState, downloadInfo]);
@@ -11088,7 +11199,14 @@
                                                         fontSize: 'small',
                                                     },
                                                     children: (0, s.jsxs)('span', {
-                                                        children: ['Управление с ', null != (deviceTypeMap?.[null == remoteDevice ? void 0 : remoteDevice.info?.type]) ? deviceTypeMap?.[null == remoteDevice ? void 0 : remoteDevice.info?.type] : '', ': ', null == remoteDevice ? void 0 : remoteDevice.info?.title],
+                                                        children: [
+                                                            'Управление с ',
+                                                            null != deviceTypeMap?.[null == remoteDevice ? void 0 : remoteDevice.info?.type]
+                                                                ? deviceTypeMap?.[null == remoteDevice ? void 0 : remoteDevice.info?.type]
+                                                                : '',
+                                                            ': ',
+                                                            null == remoteDevice ? void 0 : remoteDevice.info?.title,
+                                                        ],
                                                     }),
                                                 }),
                                         ],
@@ -11139,8 +11257,12 @@
                                                             title: 'Качество трека',
                                                             description: downloadInfo?.quality
                                                                 ? `${qualityMap[null == downloadInfo ? void 0 : downloadInfo.quality]}: ${codecMap[null == downloadInfo ? void 0 : downloadInfo.codec]}` +
-                                                                  ((null == downloadInfo ? void 0 : downloadInfo.bitrate) ? `-${null == downloadInfo ? void 0 : downloadInfo.bitrate}` : '') +
-                                                                  ('mp3' !== (null == downloadInfo ? void 0 : downloadInfo.codec) && realBitrate ? ` ${realBitrate} kbps` : '')
+                                                                  ((null == downloadInfo ? void 0 : downloadInfo.bitrate)
+                                                                      ? `-${null == downloadInfo ? void 0 : downloadInfo.bitrate}`
+                                                                      : '') +
+                                                                  ('mp3' !== (null == downloadInfo ? void 0 : downloadInfo.codec) && realBitrate
+                                                                      ? ` ${realBitrate} kbps`
+                                                                      : '')
                                                                 : 'Не удалось получить качество трека',
                                                             children: (0, s.jsx)('div', {
                                                                 className: 'cpeagBA1_PblpJn8Xgtv HbaqudSqu7Q3mv3zMPGr',
@@ -11148,19 +11270,20 @@
                                                                     placement: 'bottom',
                                                                     open: f,
                                                                     onOpenChange: S,
-                                                                    icon:
-                                                                        (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK()
+                                                                    icon: (
+                                                                        window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK()
                                                                             ? codecMap[null == downloadInfo ? void 0 : downloadInfo.codec]
-                                                                            : qualityMap[null == downloadInfo ? void 0 : downloadInfo.quality])
-                                                                            ? (0, s.jsx)('span', {
-                                                                                  className: al().settingsButton,
-                                                                                  style: { width: 'auto', height: 'auto', alignContent: 'center' },
-                                                                                  children:
-                                                                                      (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK()
-                                                                                          ? codecMap[null == downloadInfo ? void 0 : downloadInfo.codec]
-                                                                                          : qualityMap[null == downloadInfo ? void 0 : downloadInfo.quality]) ?? 'NONE',
-                                                                              })
-                                                                            : (0, s.jsx)(D.Icon, { variant: 'settings', size: 'xs' }),
+                                                                            : qualityMap[null == downloadInfo ? void 0 : downloadInfo.quality]
+                                                                    )
+                                                                        ? (0, s.jsx)('span', {
+                                                                              className: al().settingsButton,
+                                                                              style: { width: 'auto', height: 'auto', alignContent: 'center' },
+                                                                              children:
+                                                                                  (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK()
+                                                                                      ? codecMap[null == downloadInfo ? void 0 : downloadInfo.codec]
+                                                                                      : qualityMap[null == downloadInfo ? void 0 : downloadInfo.quality]) ?? 'NONE',
+                                                                          })
+                                                                        : (0, s.jsx)(D.Icon, { variant: 'settings', size: 'xs' }),
                                                                     referenceLabel: 'Качество трека',
                                                                     size: 'xxxs',
                                                                     referenceClassName: al().settingsButton,

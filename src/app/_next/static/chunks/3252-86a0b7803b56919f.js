@@ -7164,7 +7164,17 @@
                 d = s(96952),
                 u = s.n(d);
             let _ = (e) => {
-                let { message: t, closeToast: s, cover: d, coverRadius: _, className: E, coverClassName: T, closeButton: p, withDefaultCloseButton: f = !0, children: m } = e;
+                let {
+                    message: t,
+                    closeToast: s,
+                    cover: d,
+                    coverRadius: _,
+                    className: E,
+                    coverClassName: T,
+                    closeButton: p,
+                    withDefaultCloseButton: f = !0,
+                    children: m,
+                } = e;
                 return (0, r.jsxs)(c.Paper, {
                     radius: 'l',
                     className: (0, n.$)(u().root, E),
@@ -7651,7 +7661,7 @@
                     (e.APPLY_SETTINGS = 'vibe-animation-worker-apply-settings'),
                     (e.IDLE_ANIMATION = 'vibe-animation-worker-idle-animation'),
                     (e.PLAY_ANIMATION = 'vibe-animation-worker-play-animation'),
-                (e.LIKE_ANIMATION = 'vibe-animation-worker-like-animation'),
+                    (e.LIKE_ANIMATION = 'vibe-animation-worker-like-animation'),
                     (e.ENABLE = 'vibe-animation-worker-enable'),
                     (e.DISABLE = 'vibe-animation-worker-disable'),
                     (e.AUDIO_ANALYZER_FREQUENCIES = 'vibe-animation-worker-audio-analyzer-frequencies'),

@@ -2675,9 +2675,9 @@
             });
             let to = (0, d.PA)((e) => {
                     var t, a, r, l;
-                let { playlist: s, onOpenChange: d, open: u, wrapperClassName: p, ...m } = e,
-                    { shouldShowBuySubscriptionModal: v, showBuySubscriptionModal: x } = (0, i.qBP)(),
-                    {
+                    let { playlist: s, onOpenChange: d, open: u, wrapperClassName: p, ...m } = e,
+                        { shouldShowBuySubscriptionModal: v, showBuySubscriptionModal: x } = (0, i.qBP)(),
+                        {
                             settings: { isMobile: g },
                             trailer: y,
                             playlist: {

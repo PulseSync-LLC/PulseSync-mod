@@ -3233,11 +3233,11 @@
                     'boolean' == typeof e && p.setCrossFadeMode(e);
                 }, [p, t]);
                 let te = (0, g.useCallback)(
-                    (e) => {
-                        p.setCrossFadeMode(e), b && (b.isCrossfadeEnabled.value = e);
-                    },
-                    [p, b],
-                ),
+                        (e) => {
+                            p.setCrossFadeMode(e), b && (b.isCrossfadeEnabled.value = e);
+                        },
+                        [p, b],
+                    ),
                     formatBytes = (e) => {
                         if ('number' != typeof e || e < 0) return '0 B';
                         let t = ['B', 'KB', 'MB', 'GB'],
@@ -3271,19 +3271,16 @@
                                 children: (() => {
                                     let e = downloadedTracksInfo.tracksCount ?? 0;
                                     return [
-                                    (0, n.jsx)(D, {
-                                        title: x({ id: 'offline.clear-memory' }),
-                                        description: 'Скачан'
-                                            .concat(
-                                                e % 10 === 1 && e % 100 !== 11 ? '' : 'о',
-                                                ' ',
-                                            )
-                                            .concat(e, ' ')
-                                            .concat(getTrackWordForm(e), ' (')
-                                            .concat(formatBytes(downloadedTracksInfo.tracksSize), ')'),
-                                        onClick: Y,
-                                    }),
-                                    (0, n.jsx)(I, {}),
+                                        (0, n.jsx)(D, {
+                                            title: x({ id: 'offline.clear-memory' }),
+                                            description: 'Скачан'
+                                                .concat(e % 10 === 1 && e % 100 !== 11 ? '' : 'о', ' ')
+                                                .concat(e, ' ')
+                                                .concat(getTrackWordForm(e), ' (')
+                                                .concat(formatBytes(downloadedTracksInfo.tracksSize), ')'),
+                                            onClick: Y,
+                                        }),
+                                        (0, n.jsx)(I, {}),
                                     ];
                                 })(),
                             }),
