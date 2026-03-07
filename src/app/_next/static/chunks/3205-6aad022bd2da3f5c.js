@@ -303,7 +303,7 @@
                 },
                 r = () => {
                     var e;
-                    null == (e = window.desktopEvents) || e.send('TOGGLE_MINIPLAYER');
+                    null == (e = window.desktopEvents) || e.send(s.EE.TOGGLE_MINIPLAYER);
                 };
         },
         45631: (e) => {
@@ -383,15 +383,282 @@
                         );
                     return (0, s.jsx)(c.$W, { className: (0, r.$)(_().root, _().important), message: h });
                 },
+                modUpdateToast = (e) => {
+                    let { version: t, formatMessage: a, closeToast: l } = e,
+                        [u, p] = (0, o.useState)(-1),
+                        h = (0, o.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_MOD_UPDATE), null == l || l();
+                        }, [l]),
+                        m = (0, o.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(n.EE.DOWNLOAD_MOD_UPDATE);
+                        }, []),
+                        b = (e) => {
+                            let t = a({ id: 'offline.download' });
+                            return e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Установить'), t;
+                        },
+                        P = (0, o.useMemo)(
+                            () =>
+                                (0, s.jsxs)('div', {
+                                    className: _().message,
+                                    children: [
+                                        (0, s.jsx)(d.Caption, {
+                                            className: _().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: a({ id: 'desktop.on-mod-update-available' }, { version: t }),
+                                        }),
+                                        (0, s.jsx)(i.$, {
+                                            className: _().button,
+                                            onClick: u <= 100 ? m : h,
+                                            variant: 'default',
+                                            color: 'secondary',
+                                            size: 'xs',
+                                            radius: 'xxxl',
+                                            disabled: u <= 100 && u >= 0,
+                                            children: (0, s.jsx)(d.Caption, { variant: 'div', type: 'controls', size: 'm', children: b(u) }),
+                                        }),
+                                    ],
+                                }),
+                            [a, h, t, u, m],
+                        ),
+                        C = (0, o.useCallback)((e, t, a, s = 0) => {
+                            if ('modUpdateToast' !== t) return;
+                            if (window.dedupeNonces && window.dedupeNonces[t] === s) return;
+                            window.dedupeNonces || (window.dedupeNonces = {}), s && (window.dedupeNonces[t] = s), p(a);
+                        }, []);
+                    return (
+                        (0, o.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(n.EE.PROGRESS_BAR_CHANGE, C),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(n.EE.PROGRESS_BAR_CHANGE, C);
+                                }
+                            );
+                        }, [C]),
+                        (0, o.useEffect)(() => {
+                            let e = () => {
+                                null == l || l();
+                            };
+                            return (
+                                window.desktopEvents?.on(n.EE.MOD_UPDATE_AVAILABLE, e),
+                                () => {
+                                    window.desktopEvents?.off?.(n.EE.MOD_UPDATE_AVAILABLE, e);
+                                }
+                            );
+                        }, [l]),
+                        (0, s.jsxs)(c.$W, {
+                            className: (0, r.$)(_().root, _().important),
+                            message: P,
+                            children: [
+                                (0, s.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: u + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: u <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
+                    );
+                },
+                toastWithProgress = (e) => {
+                    let { closeToast: t, toastID: a, message: l, buttonLabel: u, onButtonClick: p, disabled: h = !1, dismissOnButtonClick: m = !1 } = e,
+                        [b, P] = (0, o.useState)(-1),
+                        [C, A] = (0, o.useState)('Ожидание...'),
+                        y = '__pulseToastProgressCache',
+                        g = (0, o.useCallback)(() => {
+                            null == p || p(), m && (null == t || t());
+                        }, [m, p, t]),
+                        E = (0, o.useMemo)(
+                            () =>
+                                (0, s.jsxs)('div', {
+                                    className: _().message,
+                                    children: [
+                                        (0, s.jsx)(d.Caption, {
+                                            className: _().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: l.replace('#s', C),
+                                        }),
+                                        u &&
+                                            (0, s.jsx)(i.$, {
+                                                className: _().button,
+                                                onClick: g,
+                                                variant: 'default',
+                                                color: 'secondary',
+                                                size: 'xs',
+                                                radius: 'xxxl',
+                                                disabled: h,
+                                                children: (0, s.jsx)(d.Caption, { variant: 'div', type: 'controls', size: 'm', children: u }),
+                                            }),
+                                    ],
+                                }),
+                            [h, u, l, g, C],
+                        ),
+                        N = (0, o.useCallback)(
+                            (e, t, l, s = 0, o = void 0) => {
+                                if (t !== a) return;
+                                if (window.dedupeNonces && window.dedupeNonces[t] === s) return;
+                                window.dedupeNonces || (window.dedupeNonces = {}),
+                                    s && (window.dedupeNonces[t] = s),
+                                    window[y] || (window[y] = {}),
+                                    (window[y][t] = { progress: l, label: o }),
+                                    P(l),
+                                    o && A(o);
+                            },
+                            [a],
+                        ),
+                        f = (0, o.useCallback)(
+                            (e, l, s = 0) => {
+                                if (window['onBasicToastDismiss' + a] === s) return;
+                                s && (window['onBasicToastDismiss' + a] = s),
+                                    l === a && (window[y] && delete window[y][a], null == t || t());
+                            },
+                            [t, a],
+                        );
+                    return (
+                        (0, o.useEffect)(() => {
+                            let e = window[y] && window[y][a];
+                            e && (P(e.progress), e.label && A(e.label));
+                            return () => {
+                                window[y] && delete window[y][a];
+                            };
+                        }, [a]),
+                        (0, o.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(n.EE.PROGRESS_BAR_CHANGE, N),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(n.EE.PROGRESS_BAR_CHANGE, N);
+                                }
+                            );
+                        }, [N]),
+                        (0, o.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(n.EE.BASIC_TOAST_DISMISS, f),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(n.EE.BASIC_TOAST_DISMISS, f);
+                                }
+                            );
+                        }, [f]),
+                        (0, s.jsxs)(c.$W, {
+                            className: (0, r.$)(_().root, _().important),
+                            message: E,
+                            children: [
+                                (0, s.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: b + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: b <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
+                    );
+                },
                 p = () => {
                     let { formatMessage: e } = (0, l.A)(),
                         { notify: t } = (0, n.lkh)(),
+                        { notify: modUpdateNotify, dismiss: modUpdateDismiss } = (0, n.lkh)(),
+                        { notify: gpuStallNotify } = (0, n.lkh)(),
+                        { notify: appStallNotify } = (0, n.lkh)(),
+                        { notify: basicToastNotify } = (0, n.lkh)(),
                         a = (0, o.useRef)(''),
                         r = (0, o.useCallback)(
                             (o, l) => {
                                 a.current !== l && ((a.current = l), t((0, s.jsx)(h, { formatMessage: e, version: l }), { containerId: n.uQT.IMPORTANT }));
                             },
                             [e, a, t],
+                        ),
+                        w = (0, o.useCallback)(
+                            (t, o, r, l = 0) => {
+                                if (window.modUpdateAvailableEventDedupeNonce === l) return;
+                                l && (window.modUpdateAvailableEventDedupeNonce = l),
+                                    modUpdateNotify((0, s.jsx)(modUpdateToast, { formatMessage: e, version: `${o} -> ${r}`, closeToast: modUpdateDismiss }), {
+                                        containerId: n.uQT.IMPORTANT,
+                                    });
+                            },
+                            [e, modUpdateNotify, modUpdateDismiss],
+                        ),
+                        N = (0, o.useCallback)(() => {
+                            window.desktopEvents?.send(n.EE.APPLICATION_RESTART);
+                        }, []),
+                        f = (0, o.useCallback)(
+                            (e, t = 'GPU_STALL', a = 0) => {
+                                if (window.onGPUStallEventDedupeNonce === a) return;
+                                a && (window.onGPUStallEventDedupeNonce = a),
+                                    gpuStallNotify(
+                                        (0, s.jsx)(toastWithProgress, {
+                                            toastID: 'GPU_STALL',
+                                            message: `Аппаратное ускорение отключилось: ${t}`,
+                                            buttonLabel: 'Исправить',
+                                            onButtonClick: N,
+                                        }),
+                                        { containerId: n.uQT.IMPORTANT },
+                                    );
+                            },
+                            [gpuStallNotify, N],
+                        ),
+                        k = (0, o.useCallback)(() => {
+                            window.desktopEvents?.send(n.EE.APP_STALL_CANCEL_RESTART);
+                        }, []),
+                        b = (0, o.useCallback)(
+                            (e, t = 0) => {
+                                if (window.onAppStallStallDedupeNonce === t) return;
+                                t && (window.onAppStallStallDedupeNonce = t),
+                                    appStallNotify(
+                                        (0, s.jsx)(toastWithProgress, {
+                                            toastID: 'safeModeRestart',
+                                            message: 'Плеер запускается слишком долго. Перезагрузка в безопасном режиме через #s',
+                                            buttonLabel: 'Отменить',
+                                            onButtonClick: k,
+                                            dismissOnButtonClick: !0,
+                                        }),
+                                        { containerId: n.uQT.IMPORTANT },
+                                    );
+                            },
+                            [appStallNotify, k],
+                        ),
+                        P = (0, o.useCallback)(
+                            (e, t, a, o, r = 0) => {
+                                if (window['onBasicToastCreate' + t] === r) return;
+                                r && (window['onBasicToastCreate' + t] = r),
+                                    basicToastNotify(
+                                        (0, s.jsx)(toastWithProgress, {
+                                            toastID: t,
+                                            message: a,
+                                            buttonLabel: o || void 0,
+                                            dismissOnButtonClick: !!o,
+                                        }),
+                                        { containerId: n.uQT.IMPORTANT },
+                                    );
+                            },
+                            [basicToastNotify],
                         );
                     (0, o.useEffect)(() => {
                         var e;
@@ -403,6 +670,46 @@
                             }
                         );
                     }, [r]);
+                    (0, o.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(n.EE.BASIC_TOAST_CREATE, P),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(n.EE.BASIC_TOAST_CREATE, P);
+                            }
+                        );
+                    }, [P]);
+                    (0, o.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(n.EE.MOD_UPDATE_AVAILABLE, w),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(n.EE.MOD_UPDATE_AVAILABLE, w);
+                            }
+                        );
+                    }, [w]);
+                    (0, o.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(n.EE.GPU_STALL, f),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(n.EE.GPU_STALL, f);
+                            }
+                        );
+                    }, [f]);
+                    (0, o.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(n.EE.APP_STALL, b),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(n.EE.APP_STALL, b);
+                            }
+                        );
+                    }, [b]);
                 };
         },
         49475: (e) => {
@@ -632,6 +939,7 @@
                 sendDownloadTrack: () => sendDownloadTrack,
                 sendDownloadCurrentTrack: () => sendDownloadCurrentTrack,
                 sendDownloadTracks: () => sendDownloadTracks,
+                sendYnisonState: () => sendYnisonState,
             });
             let s = () => {
                 document.addEventListener('auxclick', (e) => e.preventDefault()),
@@ -655,6 +963,10 @@
                 sendDownloadTracks = (e, t, a) => {
                     var s;
                     null == (s = window.desktopEvents) || s.send(o.EE.DOWNLOAD_TRACKS, e, t, a);
+                },
+                sendYnisonState = (e) => {
+                    var t;
+                    null == (t = window.desktopEvents) || t.send(o.EE.YNISON_STATE, { rawData: e.rawData });
                 },
                 n = (e) => {
                     let t = e === o.Sxu.Light ? '#FFFFFF' : '#000000';
@@ -1239,7 +1551,7 @@
                         p = t?.state?.playerState?.exponentVolume?.onChange(() => {
                             i(t, t?.state?.playerState?.status?.value);
                         }),
-                        m = window.desktopEvents?.on('GET_CURRENT_TRACK', () => {
+                        m = window.desktopEvents?.on(n.EE.GET_CURRENT_TRACK, () => {
                             i(t, t?.state?.playerState?.status?.value);
                         }),
                         v =

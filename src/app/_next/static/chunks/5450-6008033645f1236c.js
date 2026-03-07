@@ -171,7 +171,8 @@
             var I = function (e, t) {
                     return Number((Math.round(e * t) / t).toFixed(4));
                 },
-                D = n(56258);
+                D = n(56258),
+                electronBridgeModule = n(68317);
             function A(e, t, n) {
                 return void 0 === e && (e = !1), !!e || !t || !n || Number(t.timestamp_ms) < Number(n.timestamp_ms);
             }
@@ -1558,6 +1559,11 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
+                                const selfDedup = e.rawData.player_state.status.version.device_id === this.deviceConfig.info.device_id;
+                                if (!selfDedup) {
+                                    console.debug('[WSConnector] Received message from hub', e.rawData);
+                                    electronBridgeModule.sendYnisonState({ rawData: e.rawData });
+                                }
                                 var t = this.getMessageContext(e);
                                 if ((this.updateFullStateCompletion(t), !this.shouldIgnoreMessage(t))) {
                                     var n = this.processMessageState(e, t);

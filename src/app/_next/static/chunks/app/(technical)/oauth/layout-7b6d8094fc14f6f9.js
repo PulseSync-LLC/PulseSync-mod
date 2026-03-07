@@ -70,7 +70,7 @@
                 },
                 l = () => {
                     var e;
-                    null == (e = window.desktopEvents) || e.send('TOGGLE_MINIPLAYER');
+                    null == (e = window.desktopEvents) || e.send(n.EE.TOGGLE_MINIPLAYER);
                 };
         },
         40493: (e, s, o) => {
@@ -114,7 +114,7 @@
         },
         47770: (e, s, o) => {
             'use strict';
-            o.d(s, { useApplicationUpdate: () => P });
+            o.d(s, { useApplicationUpdate: () => p });
             var n = o(54486),
                 r = o(61910),
                 t = o(43426),
@@ -158,28 +158,334 @@
                         );
                     return (0, n.jsx)(v.$W, { className: (0, l.$)(m().root, m().important), message: b });
                 },
-                P = () => {
+                modUpdateToast = (e) => {
+                    let { version: s, formatMessage: o, closeToast: t } = e,
+                        [h, b] = (0, r.useState)(-1),
+                        P = (0, r.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(i.EE.INSTALL_MOD_UPDATE), null == t || t();
+                        }, [t]),
+                        C = (0, r.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(i.EE.DOWNLOAD_MOD_UPDATE);
+                        }, []),
+                        A = (e) => {
+                            let s = o({ id: 'offline.download' });
+                            return e < 0 ? (s = o({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (s = 'Скачивание…') : e > 100 && (s = 'Установить'), s;
+                        },
+                        g = (0, r.useMemo)(
+                            () =>
+                                (0, n.jsxs)('div', {
+                                    className: m().message,
+                                    children: [
+                                        (0, n.jsx)(a.Caption, {
+                                            className: m().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: o({ id: 'desktop.on-mod-update-available' }, { version: s }),
+                                        }),
+                                        (0, n.jsx)(d.$, {
+                                            className: m().button,
+                                            onClick: h <= 100 ? C : P,
+                                            variant: 'default',
+                                            color: 'secondary',
+                                            size: 'xs',
+                                            radius: 'xxxl',
+                                            disabled: h <= 100 && h >= 0,
+                                            children: (0, n.jsx)(a.Caption, { variant: 'div', type: 'controls', size: 'm', children: A(h) }),
+                                        }),
+                                    ],
+                                }),
+                            [o, P, s, h, C],
+                        ),
+                        E = (0, r.useCallback)((e, s, o, r = 0) => {
+                            if ('modUpdateToast' !== s) return;
+                            if (window.dedupeNonces && window.dedupeNonces[s] === r) return;
+                            window.dedupeNonces || (window.dedupeNonces = {}), r && (window.dedupeNonces[s] = r), b(o);
+                        }, []);
+                    return (
+                        (0, r.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(i.EE.PROGRESS_BAR_CHANGE, E),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(i.EE.PROGRESS_BAR_CHANGE, E);
+                                }
+                            );
+                        }, [E]),
+                        (0, r.useEffect)(() => {
+                            let e = () => {
+                                null == t || t();
+                            };
+                            return (
+                                window.desktopEvents?.on(i.EE.MOD_UPDATE_AVAILABLE, e),
+                                () => {
+                                    window.desktopEvents?.off?.(i.EE.MOD_UPDATE_AVAILABLE, e);
+                                }
+                            );
+                        }, [t]),
+                        (0, n.jsxs)(v.$W, {
+                            className: (0, l.$)(m().root, m().important),
+                            message: g,
+                            children: [
+                                (0, n.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: h + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: h <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
+                    );
+                },
+                toastWithProgress = (e) => {
+                    let { closeToast: s, toastID: o, message: t, buttonLabel: h, onButtonClick: b, disabled: P = !1, dismissOnButtonClick: C = !1 } = e,
+                        [A, g] = (0, r.useState)(-1),
+                        [E, w] = (0, r.useState)('Ожидание...'),
+                        T = '__pulseToastProgressCache',
+                        N = (0, r.useCallback)(() => {
+                            null == b || b(), C && (null == s || s());
+                        }, [C, b, s]),
+                        f = (0, r.useMemo)(
+                            () =>
+                                (0, n.jsxs)('div', {
+                                    className: m().message,
+                                    children: [
+                                        (0, n.jsx)(a.Caption, {
+                                            className: m().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: t.replace('#s', E),
+                                        }),
+                                        h &&
+                                            (0, n.jsx)(d.$, {
+                                                className: m().button,
+                                                onClick: N,
+                                                variant: 'default',
+                                                color: 'secondary',
+                                                size: 'xs',
+                                                radius: 'xxxl',
+                                                disabled: P,
+                                                children: (0, n.jsx)(a.Caption, { variant: 'div', type: 'controls', size: 'm', children: h }),
+                                            }),
+                                    ],
+                                }),
+                            [P, h, t, N, E],
+                        ),
+                        k = (0, r.useCallback)(
+                            (e, s, t, n = 0, r = void 0) => {
+                                if (s !== o) return;
+                                if (window.dedupeNonces && window.dedupeNonces[s] === n) return;
+                                window.dedupeNonces || (window.dedupeNonces = {}),
+                                    n && (window.dedupeNonces[s] = n),
+                                    window[T] || (window[T] = {}),
+                                    (window[T][s] = { progress: t, label: r }),
+                                    g(t),
+                                    r && w(r);
+                            },
+                            [o],
+                        ),
+                        p = (0, r.useCallback)(
+                            (e, t, n = 0) => {
+                                if (window['onBasicToastDismiss' + o] === n) return;
+                                n && (window['onBasicToastDismiss' + o] = n),
+                                    t === o && (window[T] && delete window[T][o], null == s || s());
+                            },
+                            [s, o],
+                        );
+                    return (
+                        (0, r.useEffect)(() => {
+                            let e = window[T] && window[T][o];
+                            e && (g(e.progress), e.label && w(e.label));
+                            return () => {
+                                window[T] && delete window[T][o];
+                            };
+                        }, [o]),
+                        (0, r.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(i.EE.PROGRESS_BAR_CHANGE, k),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(i.EE.PROGRESS_BAR_CHANGE, k);
+                                }
+                            );
+                        }, [k]),
+                        (0, r.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(i.EE.BASIC_TOAST_DISMISS, p),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(i.EE.BASIC_TOAST_DISMISS, p);
+                                }
+                            );
+                        }, [p]),
+                        (0, n.jsxs)(v.$W, {
+                            className: (0, l.$)(m().root, m().important),
+                            message: f,
+                            children: [
+                                (0, n.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: A + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: A <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
+                    );
+                },
+                p = () => {
                     let { formatMessage: e } = (0, t.A)(),
                         { notify: s } = (0, i.lkh)(),
-                        o = (0, r.useRef)(''),
-                        l = (0, r.useCallback)(
-                            (r, t) => {
-                                o.current !== t && ((o.current = t), s((0, n.jsx)(b, { formatMessage: e, version: t }), { containerId: i.uQT.IMPORTANT }));
+                        { notify: o, dismiss: l } = (0, i.lkh)(),
+                        { notify: d } = (0, i.lkh)(),
+                        { notify: a } = (0, i.lkh)(),
+                        { notify: v } = (0, i.lkh)(),
+                        h = (0, r.useRef)(''),
+                        m = (0, r.useCallback)(
+                            (o, t) => {
+                                h.current !== t && ((h.current = t), s((0, n.jsx)(b, { formatMessage: e, version: t }), { containerId: i.uQT.IMPORTANT }));
                             },
-                            [e, o, s],
+                            [e, h, s],
+                        ),
+                        P = (0, r.useCallback)(
+                            (s, t, r, d = 0) => {
+                                if (window.modUpdateAvailableEventDedupeNonce === d) return;
+                                d && (window.modUpdateAvailableEventDedupeNonce = d),
+                                    o((0, n.jsx)(modUpdateToast, { formatMessage: e, version: `${t} -> ${r}`, closeToast: l }), { containerId: i.uQT.IMPORTANT });
+                            },
+                            [e, o, l],
+                        ),
+                        C = (0, r.useCallback)(() => {
+                            window.desktopEvents?.send(i.EE.APPLICATION_RESTART);
+                        }, []),
+                        A = (0, r.useCallback)(
+                            (e, s = 'GPU_STALL', o = 0) => {
+                                if (window.onGPUStallEventDedupeNonce === o) return;
+                                o && (window.onGPUStallEventDedupeNonce = o),
+                                    d(
+                                        (0, n.jsx)(toastWithProgress, {
+                                            toastID: 'GPU_STALL',
+                                            message: `Аппаратное ускорение отключилось: ${s}`,
+                                            buttonLabel: 'Исправить',
+                                            onButtonClick: C,
+                                        }),
+                                        { containerId: i.uQT.IMPORTANT },
+                                    );
+                            },
+                            [d, C],
+                        ),
+                        g = (0, r.useCallback)(() => {
+                            window.desktopEvents?.send(i.EE.APP_STALL_CANCEL_RESTART);
+                        }, []),
+                        E = (0, r.useCallback)(
+                            (e, s = 0) => {
+                                if (window.onAppStallStallDedupeNonce === s) return;
+                                s && (window.onAppStallStallDedupeNonce = s),
+                                    a(
+                                        (0, n.jsx)(toastWithProgress, {
+                                            toastID: 'safeModeRestart',
+                                            message: 'Плеер запускается слишком долго. Перезагрузка в безопасном режиме через #s',
+                                            buttonLabel: 'Отменить',
+                                            onButtonClick: g,
+                                            dismissOnButtonClick: !0,
+                                        }),
+                                        { containerId: i.uQT.IMPORTANT },
+                                    );
+                            },
+                            [a, g],
+                        ),
+                        w = (0, r.useCallback)(
+                            (e, s, o, r, t = 0) => {
+                                if (window['onBasicToastCreate' + s] === t) return;
+                                t && (window['onBasicToastCreate' + s] = t),
+                                    v(
+                                        (0, n.jsx)(toastWithProgress, {
+                                            toastID: s,
+                                            message: o,
+                                            buttonLabel: r || void 0,
+                                            dismissOnButtonClick: !!r,
+                                        }),
+                                        { containerId: i.uQT.IMPORTANT },
+                                    );
+                            },
+                            [v],
                         );
                     (0, r.useEffect)(() => {
                         var e;
                         return (
-                            null == (e = window.desktopEvents) || e.on(i.EE.UPDATE_AVAILABLE, l),
+                            null == (e = window.desktopEvents) || e.on(i.EE.UPDATE_AVAILABLE, m),
                             () => {
                                 var e;
-                                null == (e = window.desktopEvents) || e.off(i.EE.UPDATE_AVAILABLE, l);
+                                null == (e = window.desktopEvents) || e.off(i.EE.UPDATE_AVAILABLE, m);
                             }
                         );
-                    }, [l]);
+                    }, [m]);
+                    (0, r.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(i.EE.BASIC_TOAST_CREATE, w),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(i.EE.BASIC_TOAST_CREATE, w);
+                            }
+                        );
+                    }, [w]);
+                    (0, r.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(i.EE.MOD_UPDATE_AVAILABLE, P),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(i.EE.MOD_UPDATE_AVAILABLE, P);
+                            }
+                        );
+                    }, [P]);
+                    (0, r.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(i.EE.GPU_STALL, A),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(i.EE.GPU_STALL, A);
+                            }
+                        );
+                    }, [A]);
+                    (0, r.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(i.EE.APP_STALL, E),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(i.EE.APP_STALL, E);
+                            }
+                        );
+                    }, [E]);
                 };
         },
+
         49475: (e) => {
             e.exports = {
                 root: 'TitleBar_root__QjdOZ',
@@ -375,6 +681,7 @@
                 sendDownloadTrack: () => sendDownloadTrack,
                 sendDownloadCurrentTrack: () => sendDownloadCurrentTrack,
                 sendDownloadTracks: () => sendDownloadTracks,
+                sendYnisonState: () => sendYnisonState,
             });
             let n = () => {
                 document.addEventListener('auxclick', (e) => e.preventDefault()),
@@ -398,6 +705,10 @@
                 sendDownloadTracks = (e, s, o) => {
                     var t;
                     null == (t = window.desktopEvents) || t.send(r.EE.DOWNLOAD_TRACKS, e, s, o);
+                },
+                sendYnisonState = (e) => {
+                    var s;
+                    null == (s = window.desktopEvents) || s.send(r.EE.YNISON_STATE, { rawData: e.rawData });
                 },
                 i = (e) => {
                     let s = e === r.Sxu.Light ? '#FFFFFF' : '#000000';
@@ -1120,7 +1431,7 @@
                         b = s?.state?.playerState?.exponentVolume?.onChange(() => {
                             d(s, s?.state?.playerState?.status?.value);
                         }),
-                        P = window.desktopEvents?.on('GET_CURRENT_TRACK', () => {
+                        P = window.desktopEvents?.on(i.EE.GET_CURRENT_TRACK, () => {
                             d(s, s?.state?.playerState?.status?.value);
                         }),
                         c =

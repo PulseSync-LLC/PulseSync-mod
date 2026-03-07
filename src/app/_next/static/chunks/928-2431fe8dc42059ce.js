@@ -10081,6 +10081,33 @@
             var electronBridgeModule = a(68317),
                 ar = a(44123),
                 al = a.n(ar);
+            const qualityMap = {
+                lq: 'LQ',
+                nq: 'NQ',
+                hq: 'HQ',
+                lossless: 'HQ+',
+            };
+            const codecMap = {
+                mp3: 'MP3',
+                'he-aac': 'HE-AAC',
+                aac: 'AAC',
+                flac: 'FLAC',
+                'aac-mp4': 'AAC',
+                'he-aac-mp4': 'HE-AAC',
+                'flac-mp4': 'FLAC',
+            };
+            const deviceTypeMap = {
+                UNSPECIFIED: 'Неизвестного устройства',
+                WEB: 'Сайта',
+                ANDROID: 'Android приложения',
+                IOS: 'IOS приложения',
+                SMART_SPEAKER: 'Умной колонки',
+                WEB_TV: 'ТВ',
+                ANDROID_TV: 'Android ТВ',
+                APPLE_TV: 'Apple ТВ',
+                ANDROID_WEAR: 'Android часов',
+                WEB_DESKTOP: 'ПК приложения',
+            };
             let ao = (0, d.PA)((e) => {
                 var t;
                 let { className: a, entityMeta: i, isLiked: r, isDisliked: l, onLikeClick: o, onDislikeClick: d } = e,
@@ -10092,9 +10119,14 @@
                         advert: b,
                         track: A,
                     } = (0, n.Pjs)(),
+                    theState = (0, n.eGp)(),
                     [C, N] = (0, u.useState)(!1),
                     [f, S] = (0, u.useState)(!1),
                     [downloadProgress, setDownloadProgress] = (0, u.useState)(0),
+                    [downloadInfo, setDownloadInfo] = (0, u.useState)(theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data),
+                    [realBitrate, setRealBitrate] = (0, u.useState)(null),
+                    [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, u.useState)(false),
+                    [remoteDevice, setRemoteDevice] = (0, u.useState)(null),
                     { formatMessage: T } = (0, O.A)(),
                     P = !g.isGenerativeContext,
                     E = g.canSpeed && (null == i ? void 0 : i.isNonMusic),
@@ -10116,6 +10148,22 @@
                     }),
                     downloadCurrentTrack = (0, u.useCallback)(() => {
                         i?.id && electronBridgeModule.sendDownloadCurrentTrack(i.id);
+                    }, [i]),
+                    updateRealBitrate = (0, u.useCallback)(() => {
+                        const instance = window?.Ya?.YaspAudioElement?.instances?.find((instance) => instance.yaspSrc);
+                        if (!instance) {
+                            setTimeout(updateRealBitrate, 1000);
+                            return console.debug('YaspAudioElement not found, retrying...');
+                        }
+                        setTimeout(() => {
+                            instance.yaspRequestDebugInfo().then((info) => {
+                                const tracks = info.sources.find((src) => src.attached)?.abr?.abrDecisionsLog?.tracks;
+                                if (!tracks) return;
+                                let bitrate = Math.round((Object.values(tracks)?.[0]?.bitrate ?? 0) / 1000);
+                                setRealBitrate(bitrate);
+                                console.debug('Bitrate Updated:', bitrate);
+                            });
+                        }, 100);
                     }, [i]),
                     V = (0, Q.c)((e) => {
                         let t = e.target,
@@ -10223,6 +10271,7 @@
                                 : null,
                         [X, i, L, j, g.isGenerativeContext],
                     );
+                updateRealBitrate();
                 (0, u.useEffect)(() => {
                     let e = (e, t, a) => {
                         'trackDownloadCurrent' === t && setDownloadProgress(a);
@@ -10230,6 +10279,51 @@
                     return window.desktopEvents?.on?.(n.EE.PROGRESS_BAR_CHANGE, e), () => {
                         window.desktopEvents?.off?.(n.EE.PROGRESS_BAR_CHANGE, e);
                     };
+                }, []);
+                (0, u.useEffect)(() => {
+                    let e;
+                    const t = () => {
+                            let e = theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data,
+                                t = JSON.stringify(e),
+                                a = JSON.stringify(downloadInfo);
+                            if (t !== a)
+                                if (void 0 === e) {
+                                    let t = 5;
+                                    e = setInterval(() => {
+                                        const a = theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data;
+                                        (t <= 0 || void 0 !== a) && (setDownloadInfo(a), clearInterval(e));
+                                        t -= 1;
+                                    }, 200);
+                                } else setDownloadInfo(e);
+                        },
+                        a = theState?.state?.queueState?.currentEntity.onChange(t),
+                        i = theState?.state?.playerState?.status?.onChange(t),
+                        r = theState?.state?.playerState?.event?.onChange(t);
+                    return (
+                        t(),
+                        () => {
+                            e && clearInterval(e),
+                                'function' == typeof a && a(),
+                                'function' == typeof i && i(),
+                                'function' == typeof r && r();
+                        }
+                    );
+                }, [theState, downloadInfo]);
+                (0, u.useEffect)(() => {
+                    let e = (device_info) => {
+                            setIsRemoteDeviceConnected(true), setRemoteDevice(device_info), (window.isRemoteDeviceConnected = true), (window.remoteDevice = device_info);
+                        },
+                        t = () => {
+                            setIsRemoteDeviceConnected(false), setRemoteDevice(null), (window.isRemoteDeviceConnected = false), (window.remoteDevice = null);
+                        };
+                    return (
+                        window.onRemoteDeviceConnected.push(e),
+                        window.onRemoteDeviceDisconnected.push(t),
+                        () => {
+                            (window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((listener) => listener !== e)),
+                                (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((listener) => listener !== t));
+                        }
+                    );
                 }, []);
                 return (0, s.jsx)('section', {
                     style: b.isAdvertShown ? void 0 : M,
@@ -10291,7 +10385,13 @@
                                     (0, s.jsxs)('div', {
                                         className: al().sonata,
                                         children: [
-                                            (0, s.jsx)(h.aQ, { fallback: (0, s.jsx)(h.cy, { disabled: !i || b.isAdvertShown, isLiked: r, onClick: o, iconSize: 'xs' }) }),
+                                            window.CHANGE_DISLIKE_BUTTON_POS()
+                                                ? (0, s.jsx)(h.aQ, {
+                                                      fallback: (0, s.jsx)(h._I, { disabled: !i || b.isAdvertShown, isDisliked: l, onClick: d, iconSize: 'xs' }),
+                                                  })
+                                                : (0, s.jsx)(h.aQ, {
+                                                      fallback: (0, s.jsx)(h.cy, { disabled: !i || b.isAdvertShown, isLiked: r, onClick: o, iconSize: 'xs' }),
+                                                  }),
                                             (0, s.jsx)(I.$u, {
                                                 className: (0, c.$)(al().sonataControls, al().important),
                                                 withRepeat: !0,
@@ -10299,9 +10399,25 @@
                                                 isMobile: !1,
                                                 entityMeta: i,
                                             }),
-                                            (0, s.jsx)(h.aQ, {
-                                                fallback: (0, s.jsx)(h._I, { disabled: !i || b.isAdvertShown, isDisliked: l, onClick: d, iconSize: 'xs' }),
-                                            }),
+                                            window.CHANGE_DISLIKE_BUTTON_POS()
+                                                ? (0, s.jsx)(h.aQ, {
+                                                      fallback: (0, s.jsx)(h.cy, { disabled: !i || b.isAdvertShown, isLiked: r, onClick: o, iconSize: 'xs' }),
+                                                  })
+                                                : (0, s.jsx)(h.aQ, {
+                                                      fallback: (0, s.jsx)(h._I, { disabled: !i || b.isAdvertShown, isDisliked: l, onClick: d, iconSize: 'xs' }),
+                                                  }),
+                                            isRemoteDeviceConnected &&
+                                                (0, s.jsx)('div', {
+                                                    style: {
+                                                        position: 'absolute',
+                                                        bottom: 0,
+                                                        color: 'var(--ym-controls-color-primary-default-enabled)',
+                                                        fontSize: 'small',
+                                                    },
+                                                    children: (0, s.jsxs)('span', {
+                                                        children: ['Управление с ', null != (deviceTypeMap?.[null == remoteDevice ? void 0 : remoteDevice.info?.type]) ? deviceTypeMap?.[null == remoteDevice ? void 0 : remoteDevice.info?.type] : '', ': ', null == remoteDevice ? void 0 : remoteDevice.info?.title],
+                                                    }),
+                                                }),
                                         ],
                                     }),
                                     (0, s.jsxs)('div', {
@@ -10327,7 +10443,7 @@
                                                                         disabled: !i?.id,
                                                                         withRipple: !1,
                                                                         'aria-label': 'Скачать трек в файл',
-                                                                        icon: (0, s.jsx)(D.Icon, { variant: 'download', size: 'xs' }),
+                                                                        icon: (0, s.jsx)(D.Icon, { variant: 'download', size: 'xxs' }),
                                                                         onClick: downloadCurrentTrack,
                                                                     }),
                                                                     (0, s.jsx)('div', {
@@ -10346,13 +10462,37 @@
                                                                 ],
                                                             }),
                                                         }),
-                                                        (0, s.jsx)(tK, {
-                                                            placement: 'bottom',
-                                                            open: f,
-                                                            onOpenChange: S,
-                                                            icon: (0, s.jsx)(D.Icon, { variant: 'settings', size: 'xs' }),
-                                                            size: 'xxxs',
-                                                            referenceClassName: al().settingsButton,
+                                                        (0, s.jsx)(h.hj, {
+                                                            title: 'Качество трека',
+                                                            description: downloadInfo?.quality
+                                                                ? `${qualityMap[null == downloadInfo ? void 0 : downloadInfo.quality]}: ${codecMap[null == downloadInfo ? void 0 : downloadInfo.codec]}` +
+                                                                  ((null == downloadInfo ? void 0 : downloadInfo.bitrate) ? `-${null == downloadInfo ? void 0 : downloadInfo.bitrate}` : '') +
+                                                                  ('mp3' !== (null == downloadInfo ? void 0 : downloadInfo.codec) && realBitrate ? ` ${realBitrate} kbps` : '')
+                                                                : 'Не удалось получить качество трека',
+                                                            children: (0, s.jsx)('div', {
+                                                                className: 'cpeagBA1_PblpJn8Xgtv HbaqudSqu7Q3mv3zMPGr',
+                                                                children: (0, s.jsx)(tK, {
+                                                                    placement: 'bottom',
+                                                                    open: f,
+                                                                    onOpenChange: S,
+                                                                    icon:
+                                                                        (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK()
+                                                                            ? codecMap[null == downloadInfo ? void 0 : downloadInfo.codec]
+                                                                            : qualityMap[null == downloadInfo ? void 0 : downloadInfo.quality])
+                                                                            ? (0, s.jsx)('span', {
+                                                                                  className: al().settingsButton,
+                                                                                  style: { width: 'auto', height: 'auto', alignContent: 'center' },
+                                                                                  children:
+                                                                                      (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK()
+                                                                                          ? codecMap[null == downloadInfo ? void 0 : downloadInfo.codec]
+                                                                                          : qualityMap[null == downloadInfo ? void 0 : downloadInfo.quality]) ?? 'NONE',
+                                                                              })
+                                                                            : (0, s.jsx)(D.Icon, { variant: 'settings', size: 'xs' }),
+                                                                    referenceLabel: 'Качество трека',
+                                                                    size: 'xxxs',
+                                                                    referenceClassName: al().settingsButton,
+                                                                }),
+                                                            }),
                                                         }),
                                                     ],
                                                 }),

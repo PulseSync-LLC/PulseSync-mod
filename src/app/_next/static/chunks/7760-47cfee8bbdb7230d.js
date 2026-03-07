@@ -3533,20 +3533,22 @@
             class tt {
                 connectNodes() {
                     let { useAnalyser: e, useGain: t } = this.config;
-                    t && e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t && !e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
-                        !t && e && (this.sourceNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t || e || this.sourceNode.connect(this.context.destination);
+                    this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode),
+                        e && this.analyserNode.connect(this.r128GainNode),
+                        t && (this.r128GainNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
+                        !t && this.r128GainNode.connect(this.context.destination);
                 }
                 connectEqualizer() {
                     let { useAnalyser: e, useGain: t } = this.config,
                         a = this.bands[this.bands.length - 1];
                     a &&
                         (this.sourceNode.disconnect(),
+                        this.r128GainNode.disconnect(),
                         this.sourceNode.connect(this.preamp),
-                        t && a.connect(this.gainNode),
-                        !t && e && a.connect(this.analyserNode),
-                        t || e || a.connect(this.context.destination));
+                        a.connect(e ? this.analyserNode : this.r128GainNode),
+                        e && this.analyserNode.connect(this.r128GainNode),
+                        t && (this.r128GainNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
+                        !t && this.r128GainNode.connect(this.context.destination));
                 }
                 disconnectEqualizer() {
                     let { useAnalyser: e, useGain: t } = this.config,
@@ -3554,9 +3556,26 @@
                     a &&
                         (this.sourceNode.disconnect(),
                         a.disconnect(),
-                        t && this.sourceNode.connect(this.gainNode),
-                        !t && e && this.sourceNode.connect(this.analyserNode),
-                        t || e || this.sourceNode.connect(this.context.destination));
+                        this.r128GainNode.disconnect(),
+                        this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode),
+                        e && this.analyserNode.connect(this.r128GainNode),
+                        t && (this.r128GainNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
+                        !t && this.r128GainNode.connect(this.context.destination));
+                }
+                setR128Gain(e, t) {
+                    let a = -23,
+                        i = null == window || null == window.nativeSettings ? void 0 : window.nativeSettings.get('modSettings.r128Normalization'),
+                        r = null != e ? e : this.lastR128,
+                        s = Number(null == r ? void 0 : r.i),
+                        l = 'boolean' == typeof t ? t : i;
+                    null != e && (this.lastR128 = e);
+                    if (!1 === l) return void this.r128GainNode.gain.setValueAtTime(1, this.context.currentTime);
+                    if (!Number.isFinite(s)) return void this.r128GainNode.gain.setValueAtTime(1, this.context.currentTime);
+                    let n = Number(null == r ? void 0 : r.tp),
+                        d = a - s;
+                    Number.isFinite(n) && (d = Math.min(d, -n));
+                    let c = Math.pow(10, d / 20);
+                    (Number.isFinite(c) && c > 0) || (c = 1), this.r128GainNode.gain.setValueAtTime(c, this.context.currentTime);
                 }
                 setBands(e) {
                     0 === this.bands.length ? (this.bands = this.connectBandsBetween(this.createBandsByFrequencies(e))) : this.updateBands(e);
@@ -3619,6 +3638,8 @@
                         (0, O._)(this, 'bufferLength', 0),
                         (0, O._)(this, 'spectrum', new Uint8Array()),
                         (0, O._)(this, 'gainNode', void 0),
+                        (0, O._)(this, 'r128GainNode', void 0),
+                        (0, O._)(this, 'lastR128', null),
                         (0, O._)(this, 'config', void 0),
                         (this.audioElement = e),
                         (this.context = new AudioContext()),
@@ -3628,6 +3649,7 @@
                         (this.bufferLength = this.analyserNode.frequencyBinCount),
                         (this.spectrum = new Uint8Array(this.bufferLength)),
                         (this.gainNode = this.context.createGain()),
+                        (this.r128GainNode = this.context.createGain()),
                         (this.preamp = this.context.createGain()),
                         (this.config = t),
                         this.connectNodes();
@@ -3687,6 +3709,12 @@
                                     ((r = null == (t = l.data.meta.smartPreviewParams) ? void 0 : t.fade),
                                     (s = null == (i = l.data.meta.smartPreviewParams) ? void 0 : i.durationMs)),
                                 (0, eC.b)(l) && ((r = l.data.meta.fade), (s = l.data.meta.durationMs)),
+                                this.graphs.forEach((e) => {
+                                    var t;
+                                    let i = null == (t = a.state.mediaPlayersStore.value[X.e.AUDIO]) ? void 0 : t.currentAudioElement.value,
+                                        r = null == l ? void 0 : l.data.meta.r128;
+                                    (!i || e.audioElement === i) && e.setR128Gain(r);
+                                }),
                                 this.fade && this.fade.apply(r),
                                 this.smartPreview && this.smartPreview.apply(s),
                                 Promise.resolve()
@@ -7038,8 +7066,32 @@
                     l = a4(void 0 !== n ? i.get(n) : void 0, r);
                 return { type: F.z4.Unloaded, meta: { id: a.playable_id, albumId: a.album_id_optional }, wasPlayed: s, sourceContextData: l };
             }
+            window.onRemoteDeviceConnected = [];
+            window.onRemoteDeviceDisconnected = [];
             class ie {
                 onYnisonStateUpdated(e) {
+                    const isRemoteControlEnabled = window.ENABLE_YNISON_REMOTE_CONTROL;
+                    const allowedStatuses1 = [F.MT.ENDED, F.MT.IDLE, F.MT.PAUSED, F.MT.STOPPED, F.MT.MEDIA_ELEMENT_ERROR];
+                    const allowedStatuses2 = [F.MT.ENDED, F.MT.IDLE, F.MT.STOPPED, F.MT.MEDIA_ELEMENT_ERROR];
+                    const current_device_id = JSON.parse(localStorage.getItem('ynisonDeviceId'))?.value;
+                    const currentStatus = this.playback.state.playerState.status.value;
+                    const shouldApplyState = this.variables.shouldApplyState;
+                    const isDeviceMatch = e.state.active_device_id_optional === current_device_id;
+                    const selfStateDuped = e.state.player_state.status.version.device_id === current_device_id;
+                    if (
+                        isRemoteControlEnabled
+                            ? shouldApplyState && ((!selfStateDuped && isDeviceMatch) || allowedStatuses2.includes(currentStatus))
+                            : allowedStatuses1.includes(currentStatus) && shouldApplyState
+                    ) {
+                        if (isRemoteControlEnabled && !selfStateDuped) {
+                            const currentDevice = e.state.devices.find((device) => device.info.device_id === e.state.player_state.status.version.device_id);
+                            window.onRemoteDeviceConnected.forEach((listener) => listener(currentDevice));
+                            window.remoteDeviceConnected = true;
+                        }
+                    } else if (isRemoteControlEnabled && !isDeviceMatch) {
+                        window.onRemoteDeviceDisconnected.forEach((listener) => listener());
+                        window.remoteDeviceConnected = false;
+                    }
                     this.variables.shouldApplyState && this.applyYnisonDiff(e);
                 }
                 applyYnisonDiff(e) {
