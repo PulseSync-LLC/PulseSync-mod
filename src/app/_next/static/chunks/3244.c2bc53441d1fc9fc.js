@@ -232,17 +232,18 @@
                         [P, V] = (0, h.d)(),
                         [j, L] = (0, h.d)(),
                         [N, S] = (0, l.useState)(!1),
+                        [B, W] = (0, l.useState)(null),
                         { user: R, sonataState: I, settings: T } = (0, c.Pjs)(),
                         w = (0, c.UlF)(),
                         { theme: C } = (0, c.DPo)(),
                         F = (0, c.iIU)(),
                         D = (0, s.c)((e) => {
-                            e.data.type === g.iR.ERROR && (S(!0), w.error(e.data.payload));
+                            e.data.type === g.iR.ERROR ? (S(!0), w.error(e.data.payload)) : e.data.type === g.iR.LOG && console.debug('[WORKER]', e.data.payload.map((e, t) => (null !== e && void 0 !== e ? `[${t}]: ${e}` : null)).filter(Boolean).join(', '));
                         }),
                         U = (0, s.c)(() => {
                             S(!0);
                         }),
-                        K = I.isPlaying && I.isVibeContext,
+                        K = (I.isPlaying && I.isVibeContext) || window.VIBE_ANIMATION_PLAY_ON_ANY_ENTITY(),
                         O = (0, s.c)(() => {
                             null == k || k.likeAnimation();
                         });
@@ -250,18 +251,44 @@
                     let H = (0, s.c)(() => {
                         if (!(null == F ? void 0 : F.analyser)) return;
                         let [e, t, n] = F.analyser.getAverageFrequencies([
-                            { low: 0, high: 250 },
-                            { low: 500, high: 2e3 },
-                            { low: 2e3, high: 4e3 },
-                        ]);
-                        null == k || k.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != n ? n : 0 });
+                                { low: 0, high: 450 },
+                                { low: 400, high: 5e3 },
+                                { low: 5e3, high: 2e4 },
+                            ]);
+                        let r = F.analyser.getRMS(),
+                            a = F.analyser.getRMSAlt(),
+                            o = ((r + a) / 2) * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
+                            s = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? o : (I?.entityMeta?.trackParameters?.energy ?? 1);
+                        null == k || k.updateEnergy(s),
+                            null == k || k.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != n ? n : 0 });
+                        try {
+                            window.dispatchEvent(
+                                new CustomEvent('vibe:energy', {
+                                    detail: {
+                                        energy: s,
+                                        rms: r,
+                                        bands: { low: e ?? 0, middle: t ?? 0, high: n ?? 0 },
+                                        dynamic: !!window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.(),
+                                        ts: Date.now(),
+                                    },
+                                }),
+                            );
+                        } catch {}
                     });
                     (0, l.useEffect)(() => {
                         var e, t;
                         if (!P || k) return;
                         if (!P.transferControlToOffscreen) return void U();
                         let n = P.transferControlToOffscreen(),
-                            i = new g.a6({ offscreenCanvas: n, state: v, collectionHue: R.collectionHue, shaderOptions: void 0, onMessage: D, onError: U });
+                            i = new g.a6({
+                                offscreenCanvas: n,
+                                state: v,
+                                collectionHue: R.collectionHue,
+                                fps: window.VIBE_ANIMATION_MAX_FPS?.() ?? 25,
+                                shaderOptions: void 0,
+                                onMessage: D,
+                                onError: U,
+                            });
                         M(i), L(new g.Rv(g.p4, H));
                         let r = null == (t = I.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
                             l = R.collectionHue;
@@ -286,16 +313,95 @@
                         }
                     }, [C, k]),
                     (0, l.useEffect)(() => {
-                        var e, t, n, i, r, l;
-                        let a = null == (t = I.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
-                            o = null == (i = I.entityMeta) || null == (n = i.trackParameters) ? void 0 : n.energy,
-                            s = null == (l = I.entityMeta) || null == (r = l.trackParameters) ? void 0 : r.userCollectionHue;
-                        s && R.setUserCollectionHue(s), K ? null == k || k.playAnimation({ hue: a, energy: o, collectionHue: s }) : null == k || k.idleAnimation();
+                        let e = I && I.entityMeta,
+                            t = e && e.trackParameters,
+                            n = t && t.hue,
+                            i = 'number' == typeof n ? ((e) => {
+                                    let t = e % 360;
+                                    return t < 0 && (t += 360), Math.round(t);
+                                })(n)
+                              : null,
+                            r = (e && e.averageColor) || (e && e.derivedColors && 'string' == typeof e.derivedColors.average ? e.derivedColors.average : null),
+                            l = (e && (e.id || e.trackId)) || (I && I.id) || '',
+                            a = (e) => {
+                                let t = 2166136261;
+                                for (let n = 0; n < e.length; n++) (t ^= e.charCodeAt(n)), (t = Math.imul(t, 16777619));
+                                return (t >>>= 0), t % 360;
+                            },
+                            o = (e) => {
+                                if (!e || 'string' != typeof e) return null;
+                                let t = e.trim();
+                                if ('#' === t[0]) {
+                                    let e = t.slice(1);
+                                    return 3 === e.length && (e = e[0] + e[0] + e[1] + e[1] + e[2] + e[2]), 8 === e.length && (e = e.slice(0, 6)), 6 !== e.length
+                                        ? null
+                                        : { r: parseInt(e.slice(0, 2), 16), g: parseInt(e.slice(2, 4), 16), b: parseInt(e.slice(4, 6), 16) };
+                                }
+                                if (t.startsWith('rgb')) {
+                                    let e = t.match(/rgba?\s*\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i);
+                                    if (!e) return null;
+                                    return { r: +e[1], g: +e[2], b: +e[3] };
+                                }
+                                return null;
+                            },
+                            s = (e, t, n) => {
+                                let i = e / 255,
+                                    r = t / 255,
+                                    l = n / 255,
+                                    a = Math.max(i, r, l),
+                                    o = Math.min(i, r, l),
+                                    s = a - o;
+                                if (0 === s) return 0;
+                                let c;
+                                switch (a) {
+                                    case i:
+                                        c = ((r - l) / s) % 6;
+                                        break;
+                                    case r:
+                                        c = (l - i) / s + 2;
+                                        break;
+                                    default:
+                                        c = (i - r) / s + 4;
+                                }
+                                let u = 60 * c;
+                                return u < 0 && (u += 360), Math.round(u);
+                            },
+                            c = (() => {
+                                if (null !== i && !Number.isNaN(i)) return i;
+                                let e = o(r);
+                                if (e) {
+                                    let { r: t, g: n, b: i } = e,
+                                        c = Math.abs(t - n) < 10 && Math.abs(t - i) < 10 && Math.abs(n - i) < 10;
+                                    if (!c) return s(t, n, i);
+                                    let u = (t + n + i) / 3,
+                                        d = a(String(l)),
+                                        f = d % 20;
+                                    return u < 128 ? ((220 + f) % 360) : f % 360;
+                                }
+                                return a(String(l));
+                            })();
+                        B !== c && W(c);
+                    }, [
+                        I && I.entityMeta && I.entityMeta.trackParameters && I.entityMeta.trackParameters.hue,
+                        I && I.entityMeta && I.entityMeta.derivedColors && I.entityMeta.derivedColors.average,
+                        I && I.entityMeta && I.entityMeta.averageColor,
+                        I && I.entityMeta && I.entityMeta.id,
+                        I && I.entityMeta && I.entityMeta.trackId,
+                        I && I.id,
+                        B,
+                    ]),
+                    (0, l.useEffect)(() => {
+                        var e, t, n;
+                        let i = I && I.entityMeta,
+                            r = i && i.trackParameters,
+                            l = r && r.energy,
+                            a = (r && r.userCollectionHue) || (R && R.collectionHue);
+                        a && R.setUserCollectionHue(a), K ? null == k || k.playAnimation({ hue: null != B ? B : 0, energy: l, collectionHue: a }) : null == k || k.idleAnimation();
                     }, [
                         K,
-                        null == (a = I.entityMeta) || null == (r = a.trackParameters) ? void 0 : r.energy,
-                        null == (u = I.entityMeta) || null == (o = u.trackParameters) ? void 0 : o.hue,
-                        null == (f = I.entityMeta) || null == (d = f.trackParameters) ? void 0 : d.userCollectionHue,
+                        null == (e = I.entityMeta) || null == (t = e.trackParameters) ? void 0 : t.energy,
+                        null == (n = I.entityMeta) || null == (r = n.trackParameters) ? void 0 : r.userCollectionHue,
+                        B,
                         R,
                         k,
                     ]),

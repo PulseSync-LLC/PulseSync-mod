@@ -3148,7 +3148,8 @@
                         (this.contextFactory = new eW(e.contextFactoryParams));
                 }
             }
-            var eZ = a(60463);
+            var eZ = a(60463),
+                eZStorage = a(83252);
             class eJ {
                 getAverageFrequencies(e) {
                     if (null === this.currentGraph) return [];
@@ -3175,6 +3176,54 @@
                             r = o[a + 1];
                         return void 0 === i || void 0 === r ? 0 : (r - i) / (a - t + 1);
                     });
+                }
+                getExponentialVolume = (e) => {
+                    let t = Math.pow(0.01, 1 - e);
+                    return t > 0.01 ? t : 0;
+                };
+                getRMS() {
+                    if (null === this.currentGraph) return 0;
+                    let { analyserNode: t } = this.currentGraph;
+                    if (!t) return 0;
+                    let a = t.fftSize,
+                        i = new Uint8Array(a);
+                    t.getByteTimeDomainData(i);
+                    let r = 0,
+                        s = JSON.parse(window.localStorage.getItem(eZStorage.cYZ.YmPlayerVolume)),
+                        n = this.getExponentialVolume(s?.value ?? 1);
+                    for (let e = 0; e < a; e++) {
+                        let t = 0 !== n ? (i[e] - 128) / 128 / n : 0;
+                        r += t * t;
+                    }
+                    let l = 2 * Math.sqrt(r / a);
+                    if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
+                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICENT?.() ?? 0.2;
+                        return (this._prevRms = void 0 !== this._prevRms ? this._prevRms * (1 - e) + l * e : l), this._prevRms;
+                    }
+                    return l;
+                }
+                getRMSAlt() {
+                    if (null === this.currentGraph) return 0;
+                    let { analyserNode: t } = this.currentGraph;
+                    if (!t) return 0;
+                    let a = t.frequencyBinCount,
+                        i = new Float32Array(a);
+                    t.getFloatFrequencyData(i);
+                    let r = 0,
+                        s = JSON.parse(window.localStorage.getItem(eZStorage.cYZ.YmPlayerVolume)),
+                        n = this.getExponentialVolume(s?.value ?? 1);
+                    for (let e = 0; e < a; e++) {
+                        let t = i[e];
+                        if (t === -1 / 0) continue;
+                        let s = 0 !== n ? Math.pow(10, t / 20) / n : 0;
+                        r += s * s;
+                    }
+                    let l = 120 * Math.sqrt(r / a);
+                    if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
+                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICENT?.() ?? 0.2;
+                        return (this._prevRms = void 0 !== this._prevRms ? this._prevRms * (1 - e) + l * e : l), this._prevRms;
+                    }
+                    return l;
                 }
                 constructor({ currentAudioElement: e, graphs: t }) {
                     (0, O._)(this, 'currentGraph', null),

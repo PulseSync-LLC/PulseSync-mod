@@ -388,10 +388,9 @@
                                 return (0, x._)(t, s);
                             },
                             getExperiment(i) {
-                                var s;
                                 let l = e.experiments.get(i),
                                     r = t.getOverwrittenExperiments();
-                                return r && null != (s = r[i]) ? s : l;
+                                return r?.[i] ?? window?.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES?.()?.[i] ?? l;
                             },
                             isExperimentEnabled(e) {
                                 let i = t.getExperiment(e);
