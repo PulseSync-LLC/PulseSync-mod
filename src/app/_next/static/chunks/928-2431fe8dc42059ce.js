@@ -9939,8 +9939,9 @@
                 tT = a(39610),
                 tP = a(40320),
                 tk = a(43350),
-                tE = a(62395);
-            let tj = () => {
+                tE = a(62395),
+                tSwitch = a(61609);
+                let tj = () => {
                 let e = (0, tE.st)(),
                     t = (0, n.UlF)(),
                     { hash: a } = (0, tE.gf)(),
@@ -10736,6 +10737,26 @@
                     },
                     [i.modal],
                 );
+                (0, u.useEffect)(() => {
+                    i.modal.isOpened && setR128Enabled(window.nativeSettings.get('modSettings.r128Normalization') ?? !0);
+                }, [i.modal.isOpened]);
+                let r128Audio = 'function' == typeof n.iIU ? (0, n.iIU)() : null,
+                    [r128Enabled, setR128Enabled] = (0, u.useState)(() => window.nativeSettings.get('modSettings.r128Normalization') ?? !0),
+                    onR128NormalizationToggle = (0, u.useCallback)(
+                        (e) => {
+                            var a, i, r, l, o;
+                            let s = 'boolean' == typeof e ? e : !(window.nativeSettings.get('modSettings.r128Normalization') ?? !0);
+                            setR128Enabled(s), window.nativeSettings.set('modSettings.r128Normalization', s);
+                            let d = null == (a = t.state) || null == (i = a.queueState) || null == (r = i.currentEntity) || null == (l = r.value) ? void 0 : l.entity,
+                                c = null == d || null == (o = d.data) ? void 0 : o.meta.r128;
+                            null == r128Audio ||
+                            null == r128Audio.graphs ||
+                            r128Audio.graphs.forEach((e) => {
+                                e.setR128Gain(c, s);
+                            });
+                        },
+                        [t.state, r128Audio],
+                    );
                 let S = !a.hasPlus,
                     T = (0, u.useMemo)(
                         () =>
@@ -10770,6 +10791,30 @@
                                 g,
                             );
                     }, [g, o, e, r.isEnabled, r.isAvailable]);
+                let X = (0, u.useMemo)(() => {
+                    if (e || !r.isAvailable) return null;
+                    return (0, s.jsxs)('div', {
+                        className: tO().equalizer,
+                        style: { display: 'flex', 'align-items': 'center', 'justify-content': 'space-between', gap: '0.5rem' },
+                        children: [
+                            (0, s.jsx)(v.Caption, {
+                                className: tO().item_option,
+                                style: {
+                                    width: 'unset',
+                                },
+                                variant: 'span',
+                                size: 'l',
+                                weight: 'medium',
+                                children: 'Нормализация громкости',
+                            }),
+                            (0, s.jsx)(tSwitch.l, {
+                                isChecked: r128Enabled,
+                                onChange: onR128NormalizationToggle,
+                                'aria-label': 'Нормализация громкости',
+                            }),
+                        ],
+                    });
+                }, [e, r.isAvailable, r128Enabled, onR128NormalizationToggle]);
                 return (0, s.jsxs)(K.a, {
                     size: 'fitContent',
                     placement: e ? 'default' : 'right',
@@ -10802,6 +10847,7 @@
                                 ],
                             }),
                         T,
+                        X,
                         P,
                     ],
                 });
