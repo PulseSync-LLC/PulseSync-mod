@@ -433,23 +433,21 @@
                                 ref: s,
                                 style: h,
                                 className: F().container,
-                                children: d
-                                    .getVirtualItems()
-                                    .map((e) =>
-                                        (0, u.jsx)(
-                                            k.Ux,
-                                            {
-                                                className: F().row,
-                                                columnClassName: F().column,
-                                                virtualItem: e,
-                                                resizeObserver: m,
-                                                indices: _,
-                                                renderItemByIndex: x,
-                                                scrollMargin: d.options.scrollMargin,
-                                            },
-                                            e.key,
-                                        ),
+                                children: d.getVirtualItems().map((e) =>
+                                    (0, u.jsx)(
+                                        k.Ux,
+                                        {
+                                            className: F().row,
+                                            columnClassName: F().column,
+                                            virtualItem: e,
+                                            resizeObserver: m,
+                                            indices: _,
+                                            renderItemByIndex: x,
+                                            scrollMargin: d.options.scrollMargin,
+                                        },
+                                        e.key,
                                     ),
+                                ),
                             }),
                         ],
                     })

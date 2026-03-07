@@ -3809,23 +3809,21 @@
                     ref: b,
                     style: L,
                     className: T().root,
-                    children: v
-                        .getVirtualItems()
-                        .map((e) =>
-                            (0, u.jsx)(
-                                A,
-                                {
-                                    className: T().row,
-                                    columnClassName: T().column,
-                                    virtualItem: e,
-                                    resizeObserver: C,
-                                    indices: h,
-                                    renderItemByIndex: c,
-                                    scrollMargin: v.options.scrollMargin,
-                                },
-                                e.key,
-                            ),
+                    children: v.getVirtualItems().map((e) =>
+                        (0, u.jsx)(
+                            A,
+                            {
+                                className: T().row,
+                                columnClassName: T().column,
+                                virtualItem: e,
+                                resizeObserver: C,
+                                indices: h,
+                                renderItemByIndex: c,
+                                scrollMargin: v.options.scrollMargin,
+                            },
+                            e.key,
                         ),
+                    ),
                 });
             });
             var h = a(85272),
@@ -7383,27 +7381,25 @@
                             return (0, s.jsx)('div', {
                                 className: tB().covers,
                                 ...(0, d.Am)(d.e8.landing.CONTINUE_LISTEN_BASE_ITEM_COVERS),
-                                children: r
-                                    .slice(0, 2)
-                                    .map((e, t) =>
-                                        (0, s.jsx)(
-                                            S.Paper,
-                                            {
-                                                className: tB().coverContainer,
-                                                radius: 'xs',
-                                                children: (0, s.jsx)(eF.Image, {
-                                                    className: tB().cover,
-                                                    size: 80,
-                                                    src: e.uri,
-                                                    fit: 'contain',
-                                                    withAvatarReplace: !0,
-                                                    fallbackIconSize: 's',
-                                                    ...(0, d.Am)(''.concat(d.e8.landing.CONTINUE_LISTEN_BASE_ITEM_COVERS, '_').concat(t)),
-                                                }),
-                                            },
-                                            t,
-                                        ),
+                                children: r.slice(0, 2).map((e, t) =>
+                                    (0, s.jsx)(
+                                        S.Paper,
+                                        {
+                                            className: tB().coverContainer,
+                                            radius: 'xs',
+                                            children: (0, s.jsx)(eF.Image, {
+                                                className: tB().cover,
+                                                size: 80,
+                                                src: e.uri,
+                                                fit: 'contain',
+                                                withAvatarReplace: !0,
+                                                fallbackIconSize: 's',
+                                                ...(0, d.Am)(''.concat(d.e8.landing.CONTINUE_LISTEN_BASE_ITEM_COVERS, '_').concat(t)),
+                                            }),
+                                        },
+                                        t,
                                     ),
+                                ),
                             });
                     }, [r]),
                     b = (0, n.useCallback)(() => {

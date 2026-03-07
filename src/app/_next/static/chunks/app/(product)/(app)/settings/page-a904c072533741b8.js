@@ -343,6 +343,8 @@
                 textContainer: 'SettingsListToggleItem_textContainer__tRjyt',
                 title: 'SettingsListToggleItem_title__Xz8_Q',
                 description: 'SettingsListToggleItem_description__JBOzV',
+                titleDisabled: 'SettingsListToggleItem_title__Xz8_Q_disabled',
+                descriptionDisabled: 'SettingsListToggleItem_description__JBOzV_disabled',
             };
         },
         57249: (e, t, o) => {
@@ -860,9 +862,9 @@
                     s = (0, m.d79)(),
                     { language: a } = (0, m.h6b)();
                 return (0, n.jsxs)(T.a, {
-                    className: P().root,
-                    headerClassName: P().modalHeader,
-                    contentClassName: P().modalContent,
+                    className: K().root,
+                    headerClassName: K().modalHeader,
+                    contentClassName: K().modalContent,
                     title: e({ id: 'settings.about-app' }),
                     open: o.isOpened,
                     onOpenChange: o.onOpenChange,
@@ -873,12 +875,12 @@
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: [
                         (0, n.jsxs)('ul', {
-                            className: P().list,
+                            className: K().list,
                             children: [
                                 (0, n.jsx)('li', {
-                                    className: P().item,
+                                    className: K().item,
                                     children: (0, n.jsx)(w.N_, {
-                                        className: P().link,
+                                        className: K().link,
                                         target: '_blank',
                                         href: 'https://yandex.'.concat(t.tld, '/support/music/performers-and-copyright-holders.html?lang=').concat(a),
                                         children: (0, n.jsx)(c.Caption, {
@@ -891,9 +893,9 @@
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
-                                    className: P().item,
+                                    className: K().item,
                                     children: (0, n.jsx)(w.N_, {
-                                        className: P().link,
+                                        className: K().link,
                                         target: '_blank',
                                         href: 'https://yandex.'.concat(t.tld, '/legal/music_mobile_agreement?lang=').concat(a),
                                         children: (0, n.jsx)(c.Caption, {
@@ -906,9 +908,9 @@
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
-                                    className: P().item,
+                                    className: K().item,
                                     children: (0, n.jsx)(w.N_, {
-                                        className: P().link,
+                                        className: K().link,
                                         target: '_blank',
                                         href: 'https://music.yandex.'.concat(t.tld, '/legal/recommendations/ru/#music'),
                                         children: (0, n.jsx)(c.Caption, {
@@ -921,9 +923,9 @@
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
-                                    className: P().item,
+                                    className: K().item,
                                     children: (0, n.jsx)(w.N_, {
-                                        className: P().link,
+                                        className: K().link,
                                         target: '_blank',
                                         href: 'https://yandex.'.concat(t.tld, '/support/music/index.html?lang=').concat(a),
                                         children: (0, n.jsx)(c.Caption, {
@@ -936,9 +938,9 @@
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
-                                    className: P().item,
+                                    className: K().item,
                                     children: (0, n.jsx)(w.N_, {
-                                        className: P().link,
+                                        className: K().link,
                                         target: '_blank',
                                         href: 'https://github.com/PulseSync-LLC/PulseSync-client',
                                         children: (0, n.jsx)(c.Caption, {
@@ -953,7 +955,7 @@
                             ],
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: P().explicitText,
+                            className: K().explicitText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
@@ -961,35 +963,35 @@
                             dangerouslySetInnerHTML: { __html: e({ id: 'about-app.explicit-content' }) },
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: P().companyText,
+                            className: K().companyText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
                             children: (0, n.jsx)(r.A, { id: 'about-app.app-name' }),
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: P().versionText,
+                            className: K().versionText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
                             children: e({ id: 'desktop.app-version-short' }, { version: i }),
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: P().versionText,
+                            className: K().versionText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
                             children: e({ id: 'desktop.app-revision' }, { revision: s }),
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: P().versionText,
+                            className: K().versionText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
                             children: 'PulseSync ' + window.PULSE_VERSION,
                         }),
                         (0, n.jsx)(c.Caption, {
-                            className: P().versionText,
+                            className: K().versionText,
                             type: 'controls',
                             variant: 'div',
                             size: 'xs',
@@ -1035,6 +1037,7 @@
                         onClose: t.close,
                         size: 'fitContent',
                         placement: 'center',
+                        overlayColor: 'full',
                         labelClose: e({ id: 'interface-actions.close' }),
                         children: [
                             (0, n.jsx)(O.Image, { src: R.src, className: L().image, fit: 'contain', 'aria-hidden': !0 }),
@@ -1102,10 +1105,12 @@
             };
             var Z = o(61609),
                 Y = o(51734),
-                V = o.n(Y);
+                V = o.n(Y),
+                inputComponent = o(19009),
+                sliderComponent = o(28584);
             let G = (e) => {
-                let { title: t, onChange: o, isChecked: i, description: l, dataTestId: r } = e,
-                    s = (0, g.useId)();
+                let { title: t, onChange: o, isChecked: i, description: l, dataTestId: r, disabled: s = !1 } = e,
+                    a = (0, g.useId)();
                 return (0, n.jsxs)('div', {
                     className: V().root,
                     children: [
@@ -1113,8 +1118,8 @@
                             className: V().textContainer,
                             children: [
                                 (0, n.jsx)(c.Caption, {
-                                    className: V().title,
-                                    id: s,
+                                    className: s ? V().titleDisabled : V().title,
+                                    id: a,
                                     variant: 'div',
                                     size: 'l',
                                     weight: 'bold',
@@ -1122,15 +1127,24 @@
                                     'aria-hidden': !0,
                                     children: t,
                                 }),
-                                l && (0, n.jsx)(c.Caption, { variant: 'div', type: 'text', size: 'xs', weight: 'medium', className: V().description, children: l }),
+                                l &&
+                                    (0, n.jsx)(c.Caption, {
+                                        variant: 'div',
+                                        type: 'text',
+                                        size: 'xs',
+                                        weight: 'medium',
+                                        className: s ? V().descriptionDisabled : V().description,
+                                        children: l,
+                                    }),
                             ],
                         }),
-                        (0, n.jsx)(Z.l, { isChecked: i, 'aria-describedby': s, onChange: o, ...r }),
+                        (0, n.jsx)(Z.l, { isChecked: i, 'aria-describedby': a, onChange: o, disabled: s, ...r }),
                     ],
                 });
             };
             var Q = o(98190),
-                K = o.n(Q);
+                K = o.n(Q),
+                te = o(80585);
             let J = (0, i.PA)(() => {
                 let {
                         modals: { shortcutsModal: e },
@@ -1189,11 +1203,1500 @@
             });
             var X = o(58980),
                 $ = o.n(X);
+            let labeledBubble = (e) => {
+                    let {
+                        label: t,
+                        color: o = 'var(--ym-controls-color-primary-default-enabled)',
+                        tooltip: i = { title: 'Экспериментально', description: 'Может работать некорректно' },
+                        disabled: l,
+                        ...r
+                    } = e;
+                    return i
+                        ? (0, n.jsx)(te.hj, {
+                              title: i.title,
+                              description: i.description,
+                              children: (0, n.jsxs)('span', {
+                                  style: {
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      width: 'fit-content',
+                                      'margin-inline': '5px',
+                                      'background-color': o,
+                                      color: 'black',
+                                      'border-radius': '50px',
+                                      'padding-inline': '6px',
+                                      transition: 'opacity var(--ym-duration-transition)',
+                                      ...(l ? { opacity: 0.3 } : {}),
+                                  },
+                                  children: t,
+                              }),
+                          })
+                        : (0, n.jsxs)('span', {
+                              style: {
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  width: 'fit-content',
+                                  'margin-inline': '5px',
+                                  'background-color': o,
+                                  color: 'black',
+                                  'border-radius': '50px',
+                                  'padding-inline': '6px',
+                                  transition: 'opacity var(--ym-duration-transition)',
+                                  ...(l ? { opacity: 0.3 } : {}),
+                              },
+                              children: t,
+                          });
+                },
+                settingBarWithDropdown = (e) => {
+                    let { title: t, description: o, onChange: i, value: l, options: r, direction: s = 'bottom', disabled: a = !1 } = e,
+                        [d, u] = (0, g.useState)(!1),
+                        [_, p] = (0, g.useState)(160),
+                        h = (0, g.useRef)(null),
+                        f = r.find((e) => e.value === l),
+                        x = (0, g.useCallback)(
+                            (e) => {
+                                i(e), u(!1);
+                            },
+                            [i],
+                        ),
+                        v = (0, g.useCallback)(
+                            (e) => {
+                                d && e.target !== h.current && (e.stopPropagation(), e.preventDefault(), u(!1));
+                            },
+                            [d],
+                        );
+                    return (
+                        (0, g.useEffect)(() => {
+                            document.addEventListener('click', v);
+                            return () => {
+                                document.removeEventListener('click', v);
+                            };
+                        }, [v]),
+                        (0, g.useEffect)(() => {
+                            let e = h.current;
+                            if (!e) return;
+                            let t = new ResizeObserver(([e]) => {
+                                var t;
+                                p(null == (t = e.borderBoxSize[0]) ? void 0 : t.inlineSize);
+                            });
+                            return (
+                                t.observe(e),
+                                () => {
+                                    t.disconnect();
+                                }
+                            );
+                        }, []),
+                        (0, n.jsxs)('div', {
+                            className: V().root,
+                            children: [
+                                (0, n.jsxs)('div', {
+                                    className: V().textContainer,
+                                    children: [
+                                        (0, n.jsx)(c.Caption, {
+                                            className: a ? V().titleDisabled : V().title,
+                                            variant: 'div',
+                                            size: 'l',
+                                            weight: 'bold',
+                                            lineClamp: 1,
+                                            'aria-hidden': !0,
+                                            children: t,
+                                        }),
+                                        (f?.description ?? o) &&
+                                            (0, n.jsx)(c.Caption, {
+                                                variant: 'div',
+                                                type: 'text',
+                                                size: 'xs',
+                                                weight: 'medium',
+                                                className: a ? V().descriptionDisabled : V().description,
+                                                children: f?.description ?? o,
+                                            }),
+                                    ],
+                                }),
+                                (0, n.jsxs)('div', {
+                                    ref: h,
+                                    onClick: () => {
+                                        u((e) => (a ? !1 : !e));
+                                    },
+                                    className: ''.concat(
+                                        a ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button',
+                                        ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
+                                    ),
+                                    children: [
+                                        f?.label || 'Select...',
+                                        (0, n.jsx)('ul', {
+                                            role: 'menu',
+                                            className: 'settingBarWithDropdown_menu',
+                                            style: {
+                                                display: d ? 'flex' : 'none',
+                                                flexDirection: 'column',
+                                                width: ''.concat(_, 'px'),
+                                                top: 'bottom' === s ? '120%' : 'unset',
+                                                bottom: 'top' === s ? '120%' : 'unset',
+                                            },
+                                            children: r.map((e) =>
+                                                (0, n.jsxs)(
+                                                    'li',
+                                                    {
+                                                        role: 'menuitem',
+                                                        className: 'settingBarWithDropdown_menuItem',
+                                                        id: e.value,
+                                                        'aria-selected': l === e.value,
+                                                        onClick: (t) => {
+                                                            t.stopPropagation(), x(e.value);
+                                                        },
+                                                        children: [
+                                                            (0, n.jsx)('span', { children: e.label }),
+                                                            l === e.value &&
+                                                                (0, n.jsx)('svg', {
+                                                                    width: '16',
+                                                                    height: '16',
+                                                                    fill: 'currentColor',
+                                                                    xmlns: 'http://www.w3.org/2000/svg',
+                                                                    children: (0, n.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
+                                                                }),
+                                                        ],
+                                                    },
+                                                    e.value,
+                                                ),
+                                            ),
+                                        }),
+                                    ],
+                                }),
+                            ],
+                        })
+                    );
+                },
+                toggleBarWithPathChooser = (e) => {
+                    let { title: t, onChange: o, isChecked: i, description: l, placeholder: r, disabled: s, inputValue: a, onClick: d } = e,
+                        u = (0, g.useId)();
+                    return (0, n.jsxs)('div', {
+                        style: {
+                            flexDirection: 'column',
+                            display: 'flex',
+                            gap: '5px',
+                        },
+                        children: [
+                            (0, n.jsxs)('div', {
+                                className: V().root,
+                                children: [
+                                    (0, n.jsxs)('div', {
+                                        className: V().textContainer,
+                                        children: [
+                                            (0, n.jsx)(c.Caption, {
+                                                className: s ? V().titleDisabled : V().title,
+                                                id: u,
+                                                variant: 'div',
+                                                size: 'l',
+                                                weight: 'bold',
+                                                lineClamp: 1,
+                                                'aria-hidden': !0,
+                                                children: t,
+                                            }),
+                                            l &&
+                                                (0, n.jsx)(c.Caption, {
+                                                    variant: 'div',
+                                                    type: 'text',
+                                                    size: 'xs',
+                                                    weight: 'medium',
+                                                    className: s ? V().descriptionDisabled : V().description,
+                                                    children: l,
+                                                }),
+                                        ],
+                                    }),
+                                    (0, n.jsx)(Z.l, { isChecked: i, 'aria-describedby': u, onChange: o }),
+                                ],
+                            }),
+                            (0, n.jsxs)('div', {
+                                className: V().root,
+                                style: { justifyContent: 'unset', alignItems: 'unset' },
+                                children: [
+                                    (0, n.jsx)(inputComponent.p, {
+                                        containerClassName: 'ToggleBarWithPathChooser_input',
+                                        value: a,
+                                        placeholder: r,
+                                        disabled: !0,
+                                    }),
+                                    (0, n.jsx)(j.$, {
+                                        radius: 'xxxl',
+                                        color: 'secondary',
+                                        size: 'm',
+                                        onClick: d,
+                                        children: 'Обзор',
+                                        disabled: s,
+                                    }),
+                                ],
+                            }),
+                        ],
+                    });
+                },
+                settingBarWithSlider = (e) => {
+                    let { title: t, onChange: o, value: i, minValue: l, maxValue: r, step: s, description: a, disabled: d } = e,
+                        u = (0, g.useId)();
+                    return (0, n.jsxs)('div', {
+                        className: V().root,
+                        style: {
+                            flexDirection: 'column',
+                            alignItems: 'start',
+                        },
+                        children: [
+                            (0, n.jsxs)('div', {
+                                className: V().textContainer,
+                                children: [
+                                    (0, n.jsx)(c.Caption, {
+                                        className: d ? V().titleDisabled : V().title,
+                                        id: u,
+                                        variant: 'div',
+                                        size: 'l',
+                                        weight: 'bold',
+                                        lineClamp: 1,
+                                        'aria-hidden': !0,
+                                        children: t,
+                                    }),
+                                    a &&
+                                        (0, n.jsx)(c.Caption, {
+                                            variant: 'div',
+                                            type: 'text',
+                                            size: 'xs',
+                                            weight: 'medium',
+                                            className: d ? V().descriptionDisabled : V().description,
+                                            children: a,
+                                        }),
+                                ],
+                            }),
+                            (0, n.jsxs)('div', {
+                                style: {
+                                    width: '-webkit-fill-available',
+                                },
+                                children: [
+                                    (0, n.jsx)(c.Caption, {
+                                        style: {
+                                            textAlign: 'end',
+                                        },
+                                        variant: 'div',
+                                        type: 'text',
+                                        size: 'xs',
+                                        weight: 'medium',
+                                        className: d ? V().descriptionDisabled : V().description,
+                                        children: i,
+                                    }),
+                                    (0, n.jsx)(sliderComponent.A, {
+                                        thumbSize: 's',
+                                        trackSize: 's',
+                                        value: i,
+                                        minValue: l ?? 0,
+                                        maxValue: r ?? 2,
+                                        secondaryValue: r ?? 1,
+                                        step: s ?? 0.01,
+                                        disabled: d,
+                                        onChange: o,
+                                        'aria-describedby': u,
+                                    }),
+                                ],
+                            }),
+                        ],
+                    });
+                },
+                systemSettings = (0, i.PA)(() => {
+                    let { formatMessage: e } = (0, l.A)(),
+                        {
+                            modals: { systemSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        { notify: o } = (0, m.lkh)(),
+                        [isHardwareAccelerationEnabled, setIsHardwareAccelerationEnabled] = (0, g.useState)(
+                            window.nativeSettings.get('modSettings.enableHardwareAcceleration'),
+                        ),
+                        [angleEngine, setAngleEngine] = (0, g.useState)(window.nativeSettings.get('modSettings.hardwareAcceleration.angleEngine')),
+                        onPreventDisplaySleepToggle = (0, g.useCallback)((e) => {
+                            console.log('preventDisplaySleep toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.preventDisplaySleep', e);
+                        }, []),
+                        onSendAnonymizedMetricsToggle = (0, g.useCallback)(
+                            (e) => {
+                                console.log('sendModAnonymizedMetrics toggled. Value: ', e);
+                                window.nativeSettings.set('sendModAnonymizedMetrics', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onAutoStartupToggle = (0, g.useCallback)(async (e) => {
+                            console.log('autoStartup toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.autoStartup', e);
+                            window.autoStartupStatus?.(e);
+                        }, []),
+                        onMinimizedStartToggle = (0, g.useCallback)(async (e) => {
+                            console.log('minimizedStart toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.minimizedStart', e);
+                        }, []),
+                        onEnableHardwareAccelerationToggle = (0, g.useCallback)(
+                            (e) => {
+                                console.log('enableHardwareAcceleration toggled. Value: ', e);
+                                setIsHardwareAccelerationEnabled(e);
+                                window.nativeSettings.set('modSettings.enableHardwareAcceleration', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onAngleEngineChange = (0, g.useCallback)(
+                            (e) => {
+                                console.log('angleEngine changed. Value: ', e);
+                                setAngleEngine(e);
+                                window.nativeSettings.set('modSettings.hardwareAcceleration.angleEngine', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onGlobalShortcutsToggle = (0, g.useCallback)(async (e) => {
+                            console.log('toTray toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.globalShortcuts.enable', e);
+                        }, []);
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        title: 'Системные настройки',
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '34.125rem', maxHeight: '37.5rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Включить аппаратное ускорение',
+                                        description: 'Настоятельно рекомендуется не выключать. Отключайте только если ни одни вариант настроек ниже не помог.',
+                                        onChange: onEnableHardwareAccelerationToggle,
+                                        isChecked: isHardwareAccelerationEnabled,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithDropdown, {
+                                        title: 'API аппаратного ускорения',
+                                        description: 'Изменение может помочь в некоторых случаях, пробуйте по убыванию в списке.',
+                                        onChange: onAngleEngineChange,
+                                        disabled: !isHardwareAccelerationEnabled,
+                                        value: angleEngine,
+                                        direction: 'bottom',
+                                        options: [
+                                            { value: 'default', label: 'Авто' },
+                                            { value: 'd3d11', label: 'DirectX 11' },
+                                            { value: 'd3d11on12', label: 'DirectX 11 on 12' },
+                                            { value: 'gl', label: 'OpenGL' },
+                                            { value: 'd3d9', label: 'DirectX 9' },
+                                        ],
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Предотвращать отключение монитора',
+                                        description: 'Если включено и окно ЯМ видно на экране, он не уйдёт в сон от бездействия',
+                                        onChange: onPreventDisplaySleepToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.preventDisplaySleep'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Автозапуск при старте системы',
+                                        description: 'Приложение будет запускаться автоматически при включении системы.',
+                                        onChange: onAutoStartupToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.autoStartup'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Автоматический запуск свернутым',
+                                        description: 'Если включено, приложение будет запускаться свернутым в трей.',
+                                        onChange: onMinimizedStartToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.minimizedStart'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Глобальные горячие клавиши',
+                                        description: 'Настроить комбинации можно в Настройки -> Остальные настройки',
+                                        onChange: onGlobalShortcutsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.globalShortcuts.enable'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Отправлять анонимную статистику',
+                                        description: 'Отключит отправку стаитстики Мода его разработчику. Не влияет на метрику Яндекса',
+                                        onChange: onSendAnonymizedMetricsToggle,
+                                        isChecked: window.nativeSettings.get('sendModAnonymizedMetrics'),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                playerSettings = (0, i.PA)(() => {
+                    let { formatMessage: e } = (0, l.A)(),
+                        {
+                            modals: { playerSettingsModal: t },
+                            sonataState: v,
+                        } = (0, m.Pjs)(),
+                        { notify: o } = (0, m.lkh)(),
+                        onSwapDislikeToggle = (0, g.useCallback)(async (e) => {
+                            console.log('modSettings.playerBarEnhancement.changeDislikeButtonPos toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.playerBarEnhancement.changeDislikeButtonPos', e);
+                            setTimeout(() => {
+                                window.forcePlayerBarRerender?.();
+                            }, 100);
+                        }, []),
+                        onShowRepeatButtonOnVibe = (0, g.useCallback)(async (e) => {
+                            console.log('showRepeatButtonOnVibe toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.playerBarEnhancement.showRepeatButtonOnVibe', e);
+                            setTimeout(() => {
+                                window.forcePlayerBarRerender?.();
+                            }, 100);
+                        }, []),
+                        onTimestampsToggle = (0, g.useCallback)(
+                            async (e) => {
+                                console.log('alwaysShowTimestamps toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.playerBarEnhancement.alwaysShowTimestamps', e);
+                                setTimeout(() => {
+                                    window.forcePlayerBarRerender?.();
+                                }, 100);
+                            },
+                            [v],
+                        ),
+                        onShowCodecToggle = (0, g.useCallback)(async (e) => {
+                            console.log('showCodecInsteadOfQualityMark toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.playerBarEnhancement.showCodecInsteadOfQualityMark', e);
+                            setTimeout(() => {
+                                window.forcePlayerBarRerender?.();
+                            }, 100);
+                        }, []),
+                        onDisablePerTrackColorsToggle = (0, g.useCallback)(async (e) => {
+                            console.log('modSettings.playerBarEnhancement.disablePerTrackColors toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.playerBarEnhancement.disablePerTrackColors', e);
+                            setTimeout(() => {
+                                window.forcePlayerBarRerender?.();
+                            }, 100);
+                        }, []),
+                        onAlwaysWideBarToggle = (0, g.useCallback)(
+                            async (e) => {
+                                console.log('modSettings.playerBarEnhancement.alwaysWideBar toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.playerBarEnhancement.alwaysWideBar', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        );
+                    let playButtonType = (0, g.useState)(window.nativeSettings.get('modSettings.playerBarEnhancement.playButtonType') ?? 'yellow'),
+                        i = playButtonType[0],
+                        s = playButtonType[1],
+                        onPlayButtonTypeChange = (0, g.useCallback)(async (e) => {
+                            console.log('playButtonType changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.playerBarEnhancement.playButtonType', e);
+                            s(e);
+                            o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                containerId: m.uQT.ERROR,
+                            });
+                        }, []);
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        title: 'Панель плеера',
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '29.125rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithDropdown, {
+                                        title: 'Цвет кнопки воспроизведения',
+                                        description: 'Выберите цвет кнопки плеера',
+                                        onChange: onPlayButtonTypeChange,
+                                        value: i,
+                                        direction: 'bottom',
+                                        options: [
+                                            { value: 'yellow', label: 'Желтая' },
+                                            { value: 'white', label: 'Белая' },
+                                        ],
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Поменять местами Дизлайк и Лайк',
+                                        description: 'Чтобы их положение соответствовало остальным платформам',
+                                        onChange: onSwapDislikeToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.changeDislikeButtonPos'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Повтор трека в Моей Волне',
+                                        description: 'Кнопка повтора будет доступна даже если играет Моя Волна',
+                                        onChange: onShowRepeatButtonOnVibe,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.showRepeatButtonOnVibe'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Отображать кодек',
+                                        description: 'Отображает кодек вместо качества трека.',
+                                        onChange: onShowCodecToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.showCodecInsteadOfQualityMark'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Отображать временные метки',
+                                        description: 'Отображать метки независимо от положения курсора.',
+                                        onChange: onTimestampsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.alwaysShowTimestamps'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Отключить цвета треков',
+                                        description: 'Панель перестанет перекрашиваться под каждый трек',
+                                        onChange: onDisablePerTrackColorsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.disablePerTrackColors'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Всегда расширенная',
+                                        description: 'Панель будет всегда широкой, независимо от размера окна приложения',
+                                        onChange: onAlwaysWideBarToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.alwaysWideBar'),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                windowSettings = (0, i.PA)(() => {
+                    let { formatMessage: e } = (0, l.A)(),
+                        {
+                            modals: { windowSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        { notify: o } = (0, m.lkh)(),
+                        onSaveWindowDimensionsToggle = (0, g.useCallback)(async (e) => {
+                            console.log('saveWindowDimensionsOnRestart toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.saveWindowDimensionsOnRestart', e);
+                        }, []),
+                        onSaveWindowPositionToggle = (0, g.useCallback)(async (e) => {
+                            console.log('saveWindowPositionOnRestart toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.saveWindowPositionOnRestart', e);
+                        }, []),
+                        onToTrayToggle = (0, g.useCallback)(async (e) => {
+                            console.log('toTray toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.toTray', e);
+                        }, []),
+                        onTaskBarToggle = (0, g.useCallback)(
+                            async (e) => {
+                                window.nativeSettings.set('modSettings.taskBarExtensions.enable', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onTaskbarExtensionsCoverAsThumbnailToggle = (0, g.useCallback)(
+                            async (e) => {
+                                console.log('taskBarExtensions.coverAsThumbnail toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.taskBarExtensions.coverAsThumbnail', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onHidePulseSyncVersionInTitleBarToggle = (0, g.useCallback)(async (e) => {
+                            console.log('hidePulseSyncVersionInTitleBar toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.hidePulseSyncVersionInTitleBar', e);
+                            setHidePulseSyncVersionInTitleBar(e);
+                        }, []);
+                    let hidePulseSyncVersionInTitleBarState = (0, g.useState)(window.nativeSettings.get('modSettings.window.hidePulseSyncVersionInTitleBar') ?? !1),
+                        i = hidePulseSyncVersionInTitleBarState[0],
+                        setHidePulseSyncVersionInTitleBar = hidePulseSyncVersionInTitleBarState[1],
+                        isPremiumState = (0, g.useState)(!1),
+                        a = isPremiumState[0],
+                        d = isPremiumState[1];
+                    (0, g.useEffect)(() => {
+                        window.IS_PREMIUM_USER?.().then((e) => d(e));
+                    }, []);
+                    let startupPageState = (0, g.useState)(window.nativeSettings.get('modSettings.window.startupPage') ?? '/'),
+                        u = startupPageState[0],
+                        _ = startupPageState[1],
+                        onStartupPageChange = (0, g.useCallback)(async (e) => {
+                            console.log('startupPage changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.startupPage', e);
+                            _(e);
+                        }, []);
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        title: 'Поведение окна',
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithDropdown, {
+                                        title: 'Стартовая страница',
+                                        description: 'Страница по умолчанию при запуске',
+                                        onChange: onStartupPageChange,
+                                        value: u,
+                                        direction: 'bottom',
+                                        options: [
+                                            { value: '/', label: 'Главная' },
+                                            { value: '/search', label: 'Поиск' },
+                                            { value: '/non-music', label: 'Подкасты и книги' },
+                                            { value: '/collection', label: 'Коллекция' },
+                                        ],
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: [
+                                            'Скрывать версию PulseSync в TitleBar',
+                                            (0, n.jsx)(labeledBubble, {
+                                                label: 'Boosty',
+                                                tooltip: {
+                                                    title: 'Премиум функция',
+                                                    description: a ? 'У вас есть подписка на Boosty' : 'Подпишитись на Boosty, чтобы разблокировать',
+                                                },
+                                            }),
+                                        ],
+                                        description: 'Скрывает подпись PulseSync в верхней панели окна.',
+                                        onChange: onHidePulseSyncVersionInTitleBarToggle,
+                                        isChecked: i && a,
+                                        disabled: !a,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Сохранять размер окна',
+                                        description: 'Сохраняет размер окна при перезапуске',
+                                        onChange: onSaveWindowDimensionsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.saveWindowDimensionsOnRestart'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Сохранять положение окна',
+                                        description: 'Сохраняет положение окна при перезапуске',
+                                        onChange: onSaveWindowPositionToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.saveWindowPositionOnRestart'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Минимизировать в трей при закрытии',
+                                        description: 'Если включено, приложение свернется в трей при закрытии.',
+                                        onChange: onToTrayToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.toTray'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Кнопки в превью панели задач',
+                                        description: 'Добавляет поддержку расширений панели задач.',
+                                        onChange: onTaskBarToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.taskBarExtensions.enable'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Использовать обложку трека в превью окна',
+                                        description: 'Если трек играет, заменяет динамичное превью на картинку обложки трека',
+                                        onChange: onTaskbarExtensionsCoverAsThumbnailToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.taskBarExtensions.coverAsThumbnail'),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                miniPlayerSettings = (0, i.PA)(() => {
+                    let { formatMessage: e } = (0, l.A)(),
+                        {
+                            modals: { miniPlayerSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        onSkipTaskbarToggle = (0, g.useCallback)(async (e) => {
+                            console.log('modSettings.miniplayer.skipTaskbar toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.miniplayer.skipTaskbar', e);
+                        }, []),
+                        onSaveDimensionsToggle = (0, g.useCallback)(async (e) => {
+                            console.log('modSettings.miniplayer.saveDimensions toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.miniplayer.saveDimensions', e);
+                        }, []),
+                        onSavePositionToggle = (0, g.useCallback)(async (e) => {
+                            console.log('modSettings.miniplayer.savePosition toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.miniplayer.savePosition', e);
+                        }, []),
+                        onAlwaysShowPlayerTimestampsToggle = (0, g.useCallback)(async (e) => {
+                            console.log('modSettings.miniplayer.alwaysShowPlayerTimestamps toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.miniplayer.alwaysShowPlayerTimestamps', e);
+                        }, []);
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        title: 'Миниплеер',
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Сохранять размер окна',
+                                        description: 'Сохраняет размер окна миниплеера при перезапуске',
+                                        onChange: onSaveDimensionsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.saveDimensions'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Сохранять положение окна',
+                                        description: 'Сохраняет положение окна миниплеера при перезапуске',
+                                        onChange: onSavePositionToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.savePosition'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Не отображать окно в таскбаре',
+                                        description: 'Работает только если миниплеер закреплён поверх других окон',
+                                        onChange: onSkipTaskbarToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.skipTaskbar'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Всегда отображать временные метки',
+                                        description: 'Отображает временные метки независимо от положения курсора',
+                                        onChange: onAlwaysShowPlayerTimestampsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.alwaysShowPlayerTimestamps'),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                });
+            let discordRpcSettings = (0, i.PA)(() => {
+                let statusDisplayTypeState = (0, g.useState)(window.nativeSettings.get('modSettings.discordRPC.statusDisplayType') ?? 0),
+                    statusDisplayType = statusDisplayTypeState[0],
+                    setStatusDisplayType = statusDisplayTypeState[1],
+                    applicationIDForRPCState = (0, g.useState)(window.nativeSettings.get('modSettings.discordRPC.applicationIDForRPC') ?? '1124055337234858005'),
+                    applicationIDForRPC = applicationIDForRPCState[0],
+                    setApplicationIDForRPC = applicationIDForRPCState[1],
+                    hideBrandingState = (0, g.useState)(window.nativeSettings.get('modSettings.discordRPC.hideBranding') ?? !1),
+                    hideBranding = hideBrandingState[0],
+                    setHideBranding = hideBrandingState[1];
+                let { formatMessage: e } = (0, l.A)(),
+                    {
+                        modals: { discordRpcSettingsModal: t },
+                    } = (0, m.Pjs)(),
+                    { notify: o } = (0, m.lkh)(),
+                    afkTimeoutState = (0, g.useState)(window.nativeSettings.get('modSettings.discordRPC.afkTimeout')),
+                    afkTimeout = afkTimeoutState[0],
+                    setAfkTimeout = afkTimeoutState[1],
+                    reconnectIntervalState = (0, g.useState)(window.nativeSettings.get('modSettings.discordRPC.reconnectInterval')),
+                    reconnectInterval = reconnectIntervalState[0],
+                    setReconnectInterval = reconnectIntervalState[1],
+                    isExperimentOverridenState = (0, g.useState)(window.nativeSettings.get('modSettings.discordRPC.overrideDeepLinksExperiment')),
+                    isExperimentOverriden = isExperimentOverridenState[0],
+                    setIsExperimentOverriden = isExperimentOverridenState[1],
+                    showButtonsState = (0, g.useState)(window.nativeSettings.get('modSettings.discordRPC.showButtons')),
+                    showButtons = showButtonsState[0],
+                    setShowButtons = showButtonsState[1],
+                    isDiscordStatusEnabledState = (0, g.useState)(window.nativeSettings.get('modSettings.discordRPC.enable')),
+                    isDiscordStatusEnabled = isDiscordStatusEnabledState[0],
+                    setIsDiscordStatusEnabled = isDiscordStatusEnabledState[1],
+                    isPremiumState = (0, g.useState)(!1),
+                    isPremium = isPremiumState[0],
+                    setIsPremium = isPremiumState[1];
+                (0, g.useEffect)(() => {
+                    window.IS_PREMIUM_USER().then((e) => setIsPremium(e));
+                });
+                let onAfkTimeoutChange = (0, g.useCallback)(async (e) => {
+                        let t = Math.min(Math.max(e, 0), 30);
+                        setAfkTimeout(t);
+                        console.log('modSettings.discordRPC.afkTimeout changed. Value: ', t);
+                        window.nativeSettings.set('modSettings.discordRPC.afkTimeout', t);
+                    }, []),
+                    onReconnectIntervalChange = (0, g.useCallback)(async (e) => {
+                        let t = Math.min(Math.max(e, 0), 300);
+                        setReconnectInterval(t);
+                        console.log('modSettings.discordRPC.reconnectInterval changed. Value: ', t);
+                        window.nativeSettings.set('modSettings.discordRPC.reconnectInterval', t);
+                    }, []),
+                    onDiscordStatusToggle = (0, g.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.enable toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.enable', e);
+                        setIsDiscordStatusEnabled(e);
+                    }, []),
+                    onDiscordFromYnisonToggle = (0, g.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.fromYnison toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.fromYnison', e);
+                    }, []),
+                    onDiscordShowButtonsToggle = (0, g.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showButtons toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showButtons', e);
+                        setShowButtons(e);
+                    }, []),
+                    onDiscordOverrideDeepLinksExperimentToggle = (0, g.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.overrideDeepLinksExperiment toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.overrideDeepLinksExperiment', e);
+                        setIsExperimentOverriden(e);
+                    }, []),
+                    onDiscordShowGitHubButtonToggle = (0, g.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showGitHubButton toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showGitHubButton', e);
+                    }, []),
+                    onDiscordShowSmallIconToggle = (0, g.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showSmallIcon toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showSmallIcon', e);
+                    }, []),
+                    onDiscordShowAlbumToggle = (0, g.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showAlbum toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showAlbum', e);
+                    }, []),
+                    onDiscordShowVersionToggle = (0, g.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showVersion toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showVersion', e);
+                    }, []),
+                    onStatusDisplayTypeChange = (0, g.useCallback)(async (e) => {
+                        console.log('statusDisplayType changed. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.statusDisplayType', e);
+                        setStatusDisplayType(e);
+                    }, []),
+                    onHideBrandingChange = (0, g.useCallback)(async (e) => {
+                        console.log('hideBranding changed. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.hideBranding', e);
+                        setHideBranding(e);
+                    }, []),
+                    onApplicationIDForRPCChange = (0, g.useCallback)(
+                        async (e) => {
+                            console.log('applicationIDForRPC changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.discordRPC.applicationIDForRPC', e);
+                            setApplicationIDForRPC(e);
+                            o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                containerId: m.uQT.ERROR,
+                            });
+                        },
+                        [o],
+                    );
+                return (0, n.jsx)(T.a, {
+                    className: K().list,
+                    style: { 'max-width': '31.25rem' },
+                    title: 'Discord RPC',
+                    headerClassName: K().modalHeader,
+                    contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                    open: t.isOpened,
+                    onOpenChange: t.onOpenChange,
+                    onClose: t.close,
+                    size: 'fitContent',
+                    placement: 'center',
+                    overlayColor: 'full',
+                    labelClose: e({ id: 'interface-actions.close' }),
+                    children: (0, n.jsxs)('ul', {
+                        className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                        style: { width: '29.125rem', maxHeight: '37.5rem', gap: 0 },
+                        children: [
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(G, { title: 'Включить интеграцию с Discord', onChange: onDiscordStatusToggle, isChecked: isDiscordStatusEnabled }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(G, {
+                                    title: [
+                                        'Скрыть брендинг PulseSync в статусе',
+                                        (0, n.jsx)(labeledBubble, {
+                                            label: 'Boosty',
+                                            tooltip: {
+                                                title: 'Премиум функция',
+                                                description: isPremium ? 'У вас есть подписка на Boosty' : 'Подпишитись на Boosty, чтобы разблокировать',
+                                            },
+                                        }),
+                                    ],
+                                    onChange: onHideBrandingChange,
+                                    isChecked: hideBranding && isPremium,
+                                    disabled: !isDiscordStatusEnabled || !isPremium,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(G, {
+                                    title: ['Использовать Ynison', (0, n.jsx)(labeledBubble, { label: 'BETA', disabled: !isDiscordStatusEnabled })],
+                                    description: 'Использует данные о воспроизведении с других устройств',
+                                    onChange: onDiscordFromYnisonToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.fromYnison'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(settingBarWithDropdown, {
+                                    title: 'Тип отображения статуса',
+                                    description: 'Что будет отображаться в коротком статусе',
+                                    onChange: onStatusDisplayTypeChange,
+                                    value: statusDisplayType,
+                                    direction: 'bottom',
+                                    options: [
+                                        { value: 0, label: 'Платформа' },
+                                        { value: 1, label: 'Артист' },
+                                        { value: 2, label: 'Трек' },
+                                    ],
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(settingBarWithDropdown, {
+                                    title: 'Локализация платформы в статусе',
+                                    description: '1290778445370097674' === applicationIDForRPC ? 'Слушает Яндекс Музыку' : 'Listening to Yandex Music',
+                                    onChange: onApplicationIDForRPCChange,
+                                    value: applicationIDForRPC,
+                                    direction: 'bottom',
+                                    options: [
+                                        { value: '1124055337234858005', label: 'Английский' },
+                                        { value: '1290778445370097674', label: 'Русский' },
+                                    ],
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(G, {
+                                    title: 'Отображать Альбом',
+                                    description: 'Отображать ли название альбома в статусе',
+                                    onChange: onDiscordShowAlbumToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showAlbum'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(G, {
+                                    title: 'Отображать Версию трека',
+                                    description: 'Отображать ли версию трека в статусе',
+                                    onChange: onDiscordShowVersionToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showVersion'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(G, {
+                                    title: 'Отображать маленькую иконку',
+                                    description: 'Отображать ли иконку статуса воспроизведения (Playing, Paused)',
+                                    onChange: onDiscordShowSmallIconToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showSmallIcon'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(G, {
+                                    title: 'Отображать кнопки',
+                                    description: 'Отображает кнопки-ссылки в статусе',
+                                    onChange: onDiscordShowButtonsToggle,
+                                    isChecked: showButtons,
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(G, {
+                                    title: 'Объединить веб и апп ссылки в одну',
+                                    description: 'Уберёт ссылку открывающую приложение т.к. это сделает ссылка на сайт',
+                                    onChange: onDiscordOverrideDeepLinksExperimentToggle,
+                                    isChecked: isExperimentOverriden,
+                                    disabled: !(isDiscordStatusEnabled && showButtons),
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(G, {
+                                    title: 'Отображать кнопку на сайт PulseSync',
+                                    description: 'Отображает кнопку установки мода',
+                                    onChange: onDiscordShowGitHubButtonToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showGitHubButton'),
+                                    disabled: !(isDiscordStatusEnabled && showButtons && isExperimentOverriden),
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(settingBarWithSlider, {
+                                    title: 'Таймер бездействия',
+                                    description: 'Через сколько в минутах активность автоматически отчистится',
+                                    onChange: onAfkTimeoutChange,
+                                    value: afkTimeout,
+                                    maxValue: 30,
+                                    minValue: 0,
+                                    step: 1,
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(settingBarWithSlider, {
+                                    title: 'Повторное подключение к Discord',
+                                    description: 'Интервал повторных попыток подключения к Discord при потере соединения (в секундах, 0 — отключает)',
+                                    onChange: onReconnectIntervalChange,
+                                    value: reconnectInterval,
+                                    maxValue: 300,
+                                    minValue: 0,
+                                    step: 5,
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                        ],
+                    }),
+                });
+            });
+            let lrclibSettings = (0, i.PA)(() => {
+                    let { formatMessage: e } = (0, l.A)(),
+                        {
+                            modals: { lrclibSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        useLrclibTextState = (0, g.useState)(window.nativeSettings.get('modSettings.lrclib.useText') ?? !0),
+                        useLrclibText = useLrclibTextState[0],
+                        setUseLrclibText = useLrclibTextState[1],
+                        syncLyricsTextFallbackState = (0, g.useState)(window.nativeSettings.get('modSettings.lrclib.syncLyricsTextFallback') ?? !1),
+                        syncLyricsTextFallback = syncLyricsTextFallbackState[0],
+                        setSyncLyricsTextFallback = syncLyricsTextFallbackState[1],
+                        useTitleOnlyFallbackState = (0, g.useState)(window.nativeSettings.get('modSettings.lrclib.useTitleOnlyFallback') ?? !0),
+                        useTitleOnlyFallback = useTitleOnlyFallbackState[0],
+                        setUseTitleOnlyFallback = useTitleOnlyFallbackState[1],
+                        onUseLrclibTextToggle = (0, g.useCallback)((e) => {
+                            window.nativeSettings.set('modSettings.lrclib.useText', e);
+                            setUseLrclibText(e);
+                        }, []),
+                        onSyncLyricsTextFallbackToggle = (0, g.useCallback)((e) => {
+                            window.nativeSettings.set('modSettings.lrclib.syncLyricsTextFallback', e);
+                            setSyncLyricsTextFallback(e);
+                        }, []),
+                        onUseTitleOnlyFallbackToggle = (0, g.useCallback)((e) => {
+                            window.nativeSettings.set('modSettings.lrclib.useTitleOnlyFallback', e);
+                            setUseTitleOnlyFallback(e);
+                        }, []);
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        style: { 'max-width': '34.375rem', height: 'auto' },
+                        title: 'Настройки LRCLib',
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '32.125rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: ['Использовать LRCLib для текста', (0, n.jsx)(labeledBubble, { label: 'ALPHA' })],
+                                        description: useLrclibText ? 'Если в Яндекс Музыке текста нет, то ищем в LRCLib' : 'Берём текст только из Яндекс Музыки',
+                                        onChange: onUseLrclibTextToggle,
+                                        isChecked: useLrclibText,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Показывать текст вместо синхронизированной лирики',
+                                        description: 'Эта опция временно недоступна',
+                                        onChange: onSyncLyricsTextFallbackToggle,
+                                        isChecked: syncLyricsTextFallback,
+                                        disabled: !0,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Повторный поиск только по названию',
+                                        description: useTitleOnlyFallback
+                                            ? 'Если по названию и автору не нашли, то попробуем только по названию'
+                                            : 'Ищем по названию и автору',
+                                        onChange: onUseTitleOnlyFallbackToggle,
+                                        isChecked: useTitleOnlyFallback,
+                                        disabled: !useLrclibText,
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                downloaderSettings = (0, i.PA)(() => {
+                    let { formatMessage: e } = (0, l.A)(),
+                        {
+                            modals: { downloaderSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        { notify: o } = (0, m.lkh)(),
+                        useMP3State = (0, g.useState)(window.nativeSettings?.get('modSettings.downloader.useMP3') ?? !1),
+                        useMP3 = useMP3State[0],
+                        setUseMP3 = useMP3State[1],
+                        useCustomPathForSessionStorageState = (0, g.useState)(window.nativeSettings?.get('modSettings.downloader.useCustomPathForSessionStorage') ?? !1),
+                        useCustomPathForSessionStorage = useCustomPathForSessionStorageState[0],
+                        setUseCustomPathForSessionStorage = useCustomPathForSessionStorageState[1],
+                        useDefaultPathState = (0, g.useState)(window.nativeSettings?.get('modSettings.downloader.useDefaultPath') ?? !1),
+                        useDefaultPath = useDefaultPathState[0],
+                        setUseDefaultPath = useDefaultPathState[1],
+                        customPathForSessionStorageState = (0, g.useState)(window.nativeSettings?.get('modSettings.downloader.customPathForSessionStorage') ?? ''),
+                        customPathForSessionStorage = customPathForSessionStorageState[0],
+                        setCustomPathForSessionStorage = customPathForSessionStorageState[1],
+                        defaultPathState = (0, g.useState)(window.nativeSettings?.get('modSettings.downloader.defaultPath') ?? ''),
+                        defaultPath = defaultPathState[0],
+                        setDefaultPath = defaultPathState[1],
+                        onUseDefaultPathToggle = (0, g.useCallback)(async (e) => {
+                            console.log('useDefaultPath toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.downloader.useDefaultPath', e);
+                            setUseDefaultPath(e);
+                        }, []),
+                        onDefaultPathExploreClick = (0, g.useCallback)(async () => {
+                            window.nativeSettings?.setPathWithNativeDialog('modSettings.downloader.defaultPath', void 0, ['openDirectory', 'showHiddenFiles']);
+                        }, []),
+                        onUseMP3Toggle = (0, g.useCallback)(async (e) => {
+                            console.log('useMP3 toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.downloader.useMP3', e);
+                            setUseMP3(e);
+                        }, []),
+                        onUseSyncLyricsToggle = (0, g.useCallback)(async (e) => {
+                            console.log('useSyncLyrics toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.downloader.useSyncLyrics', e);
+                        }, []),
+                        onUseCustomPathForSessionStorageToggle = (0, g.useCallback)(
+                            async (e) => {
+                                console.log('useCustomPathForSessionStorage toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.downloader.useCustomPathForSessionStorage', e);
+                                setUseCustomPathForSessionStorage(e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onCustomPathForSessionStorageExploreClick = (0, g.useCallback)(async () => {
+                            window.nativeSettings?.setPathWithNativeDialog('modSettings.downloader.customPathForSessionStorage', void 0, [
+                                'openDirectory',
+                                'showHiddenFiles',
+                            ]);
+                        }, []);
+                    return (
+                        (0, g.useEffect)(() => {
+                            window.desktopEvents?.on('NATIVE_STORE_UPDATE', (event, e, t) => {
+                                'modSettings.downloader.defaultPath' === e
+                                    ? setDefaultPath(t)
+                                    : 'modSettings.downloader.customPathForSessionStorage' === e &&
+                                      (setCustomPathForSessionStorage(t),
+                                      o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                          containerId: m.uQT.ERROR,
+                                      }));
+                            });
+                        }, [o]),
+                        (0, n.jsx)(T.a, {
+                            className: K().root,
+                            style: { 'max-width': '34.375rem', height: 'auto' },
+                            title: 'Скачивание треков',
+                            headerClassName: K().modalHeader,
+                            contentClassName: K().modalContent,
+                            open: t.isOpened,
+                            onOpenChange: t.onOpenChange,
+                            onClose: t.close,
+                            size: 'fitContent',
+                            placement: 'center',
+                            overlayColor: 'full',
+                            labelClose: e({ id: 'interface-actions.close' }),
+                            children: (0, n.jsxs)('ul', {
+                                className: $().root,
+                                style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
+                                children: [
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(toggleBarWithPathChooser, {
+                                            title: 'Путь для кеша',
+                                            description: useCustomPathForSessionStorage
+                                                ? 'Использовать путь ниже для кеша (в т.ч. ванильного скачивания треков)'
+                                                : 'Использовать путь по умолчанию для кеша (в т.ч. ванильного скачивания треков)',
+                                            onChange: onUseCustomPathForSessionStorageToggle,
+                                            isChecked: useCustomPathForSessionStorage,
+                                            placeholder: 'Укажите путь кнопкой справа',
+                                            inputValue: customPathForSessionStorage,
+                                            onClick: onCustomPathForSessionStorageExploreClick,
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(G, {
+                                            title: 'Скачивать в MP3',
+                                            description: useMP3 ? 'Треки скачиваются в MP3' : 'Треки скачиваются в оригинальном формате',
+                                            onChange: onUseMP3Toggle,
+                                            isChecked: useMP3,
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(G, {
+                                            title: 'Скачивать текстомузыку',
+                                            description: 'Если возможно, записывать синхронный текст трека в метаданные файла',
+                                            onChange: onUseSyncLyricsToggle,
+                                            isChecked: window.nativeSettings.get('modSettings.downloader.useSyncLyrics'),
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(toggleBarWithPathChooser, {
+                                            title: 'Путь для файлов по умолчанию',
+                                            description: useDefaultPath
+                                                ? 'Использовать путь по умолчанию для скачивания треков в файл'
+                                                : 'Спрашивать путь при каждом скачивании трека',
+                                            onChange: onUseDefaultPathToggle,
+                                            isChecked: useDefaultPath,
+                                            placeholder: 'Укажите путь кнопкой справа',
+                                            inputValue: defaultPath,
+                                            onClick: onDefaultPathExploreClick,
+                                        }),
+                                    }),
+                                ],
+                            }),
+                        })
+                    );
+                }),
+                scrobblersSettings = (0, i.PA)(() => {
+                    let { formatMessage: e } = (0, l.A)(),
+                        {
+                            modals: { scrobblersSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        userInfoState = (0, g.useState)(null),
+                        userInfo = userInfoState[0],
+                        setUserInfo = userInfoState[1],
+                        unauthorizedProbeState = (0, g.useState)(!1),
+                        unauthorizedProbe = unauthorizedProbeState[0],
+                        setUnauthorizedProbe = unauthorizedProbeState[1],
+                        isLastFmEnabledState = (0, g.useState)(window.nativeSettings.get('modSettings.scrobblers.lastfm.enable')),
+                        isLastFmEnabled = isLastFmEnabledState[0],
+                        separatorTypeState = (0, g.useState)(window.nativeSettings.get('modSettings.scrobblers.lastfm.separatorType')),
+                        separatorType = separatorTypeState[0],
+                        setSeparatorType = separatorTypeState[1],
+                        onLastFMLoginClick = (0, g.useCallback)(async () => {
+                            console.log('scrobble-lastfm-login triggered.');
+                            await window.scrobble.lastfmLogin();
+                        }, []),
+                        onLastFMLogoutClick = (0, g.useCallback)(async () => {
+                            console.log('scrobble-lastfm-logout triggered.');
+                            await window.scrobble.lastfmLogout();
+                        }, []),
+                        onLastFmScrobblingToggle = (0, g.useCallback)(async (e) => {
+                            console.log('modSettings.scrobblers.lastfm.enable toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.scrobblers.lastfm.enable', e);
+                        }, []),
+                        onSeparatorTypeChange = (0, g.useCallback)(async (e) => {
+                            console.log('separatorType changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.scrobblers.lastfm.separatorType', e);
+                            setSeparatorType(e);
+                        }, []),
+                        onLastFmAutoLikesToggle = (0, g.useCallback)(async (e) => {
+                            console.log('modSettings.scrobblers.lastfm.autoLike toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.scrobblers.lastfm.autoLike', e);
+                        }, []),
+                        onLastFmFromYnisonToggle = (0, g.useCallback)(async (e) => {
+                            console.log('modSettings.scrobblers.lastfm.fromYnison toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.scrobblers.lastfm.fromYnison', e);
+                        }, []);
+                    return (
+                        (0, g.useEffect)(() => {
+                            window.scrobble?.lastfmGetUser().then((e) => {
+                                setUserInfo(e);
+                            });
+                            fetch('https://api.music.yandex.net/tracks/138005337:36143630').then((e) => {
+                                setUnauthorizedProbe(e.ok);
+                            });
+                        }, [t.isOpened]),
+                        (0, g.useEffect)(() => {
+                            window.desktopEvents?.on('LASTFM_USERINFO_UPDATE', (event, e) => {
+                                setUserInfo(e);
+                            });
+                        }, []),
+                        (0, n.jsx)(T.a, {
+                            className: K().list,
+                            title: 'Скробблинг',
+                            headerClassName: K().modalHeader,
+                            contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                            open: t.isOpened,
+                            onOpenChange: t.onOpenChange,
+                            onClose: t.close,
+                            size: 'fitContent',
+                            placement: 'center',
+                            overlayColor: 'full',
+                            style: { height: 'auto' },
+                            labelClose: e({ id: 'interface-actions.close' }),
+                            children: (0, n.jsxs)('ul', {
+                                className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                                style: { width: '-webkit-fill-available', gap: 0 },
+                                children: [
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        ...(userInfo?.user?.image ? { style: { display: 'flex', alignItems: 'center', gap: '16px' } } : {}),
+                                        children: [
+                                            (0, n.jsx)('div', {
+                                                children: userInfo?.user?.image?.[0]?.['#text']
+                                                    ? (0, n.jsx)('img', {
+                                                          src: (
+                                                              userInfo.user.image?.find((e) => 'medium' === e.size)?.['#text'] || userInfo.user.image?.[0]?.['#text']
+                                                          ).replace('64s', 'avatar'),
+                                                          alt: 'Аватар',
+                                                          style: {
+                                                              width: 46,
+                                                              height: 46,
+                                                              borderRadius: '50%',
+                                                          },
+                                                      })
+                                                    : null,
+                                            }),
+                                            (0, n.jsx)(D, {
+                                                title: userInfo
+                                                    ? ''.concat(userInfo.user.name, ' (').concat(Number(userInfo.user.playcount).toLocaleString().replace(' ', ','), ')')
+                                                    : 'LastFM',
+                                                description: userInfo ? 'Выйти из LastFM' : 'Авторизоваться в LastFM',
+                                                onClick: userInfo ? onLastFMLogoutClick : onLastFMLoginClick,
+                                            }),
+                                        ],
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(G, {
+                                            title: 'Скробблинг в LastFM',
+                                            disabled: !userInfo,
+                                            onChange: onLastFmScrobblingToggle,
+                                            isChecked: isLastFmEnabled,
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(settingBarWithDropdown, {
+                                            title: 'Разделитель',
+                                            description: 'Разделитель между артистами при скробблинге треков с несколькими артистами',
+                                            onChange: onSeparatorTypeChange,
+                                            value: separatorType,
+                                            direction: 'bottom',
+                                            options: [
+                                                { value: 0, label: 'Нет', description: 'Только первый артист' },
+                                                { value: 1, label: '" & "', description: 'Артист & артист' },
+                                                { value: 2, label: '" | "', description: 'Артист | артист' },
+                                                { value: 3, label: '", "', description: 'Артист, артист' },
+                                            ],
+                                            disabled: !isLastFmEnabled,
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(G, {
+                                            title: 'Синхронизировать лайки',
+                                            description: 'Автоматически лайкает/анлайкает треки в LastFM',
+                                            disabled: !(userInfo && isLastFmEnabled),
+                                            onChange: onLastFmAutoLikesToggle,
+                                            isChecked: window.nativeSettings.get('modSettings.scrobblers.lastfm.autoLike'),
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(G, {
+                                            title: [
+                                                'Использовать Ynison',
+                                                (0, n.jsx)(labeledBubble, { label: 'BETA', disabled: !(userInfo && isLastFmEnabled && unauthorizedProbe) }),
+                                            ],
+                                            description: unauthorizedProbe
+                                                ? 'Скробблить проигрывания даже с других устройств'
+                                                : 'Недоступно в вашем регионе или включён VPN',
+                                            disabled: !(userInfo && isLastFmEnabled && unauthorizedProbe),
+                                            onChange: onLastFmFromYnisonToggle,
+                                            isChecked: window.nativeSettings.get('modSettings.scrobblers.lastfm.fromYnison'),
+                                        }),
+                                    }),
+                                ],
+                            }),
+                        })
+                    );
+                });
             let ee = (0, i.PA)(() => {
                 let e = (0, m.HFS)(),
                     t = (0, m.NFA)().get(m.ooW),
                     {
-                        modals: { shortcutsModal: o, aboutAppModal: i, clearMemoryModal: r },
+                        modals: {
+                            shortcutsModal: o,
+                            aboutAppModal: i,
+                            clearMemoryModal: r,
+                            windowSettingsModal: se,
+                            playerSettingsModal: aeModal,
+                            systemSettingsModal: deModal,
+                            miniPlayerSettingsModal: ueModal,
+                            scrobblersSettingsModal: scrobblersSettingsModal,
+                            downloaderSettingsModal: downloaderSettingsModal,
+                            lrclibSettingsModal: lrclibSettingsModal,
+                            discordRpcSettingsModal: discordRpcSettingsModal,
+                        },
                         experiments: a,
                         wizard: c,
                         user: d,
@@ -1216,15 +2719,22 @@
                     y = d.hasPlus,
                     N = a.checkExperiment(m.zal.WebNextLiteVersion, 'on') && _.isLiteVersionModeAvailableForToggle && !0,
                     S = a.checkExperiment(m.zal.WebNextCustomThumb, 'on') && !_.isMobile,
-                    T = h.isEnabled ? x({ id: 'equalizer.enabled' }) : x({ id: 'equalizer.disabled' }),
-                    E = (0, g.useMemo)(() => ''.concat(x({ id: 'desktop.app-version-short' }, { version: e }), ' / Мод ').concat(window.PULSE_VERSION, ' / Хост ').concat(window.HOST_VERSION), [!0, x, e]),
+                    equalizerStatusLabel = h.isEnabled ? x({ id: 'equalizer.enabled' }) : x({ id: 'equalizer.disabled' }),
+                    E = (0, g.useMemo)(
+                        () =>
+                            ''
+                                .concat(x({ id: 'desktop.app-version-short' }, { version: e }), ' / Мод ')
+                                .concat(window.PULSE_VERSION, ' / Хост ')
+                                .concat(window.HOST_VERSION),
+                        [!0, x, e],
+                    ),
                     [ae, ce] = (0, g.useState)(window.nativeSettings?.get('modSettings.showNonMusicPage') ?? !0),
                     [de, ue] = (0, g.useState)(window.nativeSettings?.get('modSettings.showConcertsTab') ?? !0),
                     [me, pe] = (0, g.useState)(window.nativeSettings?.get('devMode') ?? !1),
                     oe = (0, g.useCallback)(() => {
                         f((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), { containerId: m.uQT.ERROR });
                     }, [f]),
-                    P = (0, g.useCallback)(
+                    childModeToggle = (0, g.useCallback)(
                         async (e) => {
                             (await d.setSettings({ isChildModeEnabled: e })) === m.FlZ.ERROR &&
                                 f((0, n.jsx)(w.hT, { error: x({ id: 'settings.failed-to-change-child-mode' }) }), { containerId: m.uQT.ERROR });
@@ -1313,7 +2823,7 @@
                                 children: [
                                     (0, n.jsx)(D, {
                                         title: x({ id: 'equalizer.title' }),
-                                        description: T,
+                                        description: equalizerStatusLabel,
                                         onClick: h.modal.open,
                                         descriptionProps: (0, s.Am)(s.e8.settings.SETTINGS_EQUALIZER_BUTTON_DESCRIPTION),
                                         ...(0, s.Am)(s.e8.settings.SETTINGS_EQUALIZER_BUTTON),
@@ -1326,6 +2836,24 @@
                                 className: $().item,
                                 children: (0, n.jsx)(G, { title: x({ id: 'settings.crossfade' }), onChange: te, isChecked: p.isCrossFadeEnabled }),
                             }),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: [
+                                    'Discord RPC',
+                                    (0, n.jsx)(labeledBubble, {
+                                        label: 'NEW',
+                                        tooltip: {
+                                            title: 'Переехало из клиента в мод',
+                                            description: 'Теперь для работы не требуется запущенный клиент PulseSync',
+                                        },
+                                    }),
+                                ],
+                                description: 'Интеграция с Discord',
+                                onClick: discordRpcSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(discordRpcSettings, {}),
                         (0, n.jsx)(w.aQ, {
                             fallback: (0, n.jsx)('li', {
                                 className: $().item,
@@ -1353,7 +2881,7 @@
                                     className: $().item,
                                     children: (0, n.jsx)(G, {
                                         title: x({ id: 'settings.show-child-section' }),
-                                        onChange: P,
+                                        onChange: childModeToggle,
                                         isChecked: d.settings.isChildModeEnabled,
                                         dataTestId: (0, s.Am)(s.e8.settings.SETTINGS_KIDS_BUTTON),
                                     }),
@@ -1361,18 +2889,16 @@
                         }),
                         (0, n.jsx)('li', {
                             className: $().item,
-                                children: (0, n.jsx)(G, {
-                                    title: 'Показывать раздел «Подкасты и книги»',
-                                    description: 'Управляет экспериментом отключения немusic-разделов',
-                                    onChange: Gt,
-                                    isChecked: ae,
-                                }),
+                            children: (0, n.jsx)(G, {
+                                title: 'Показывать раздел «Подкасты и книги»',
+                                onChange: Gt,
+                                isChecked: ae,
                             }),
+                        }),
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(G, {
                                 title: 'Показывать раздел «Концерты»',
-                                description: 'Управляет экспериментом показа вкладки концертов',
                                 onChange: Qt,
                                 isChecked: de,
                             }),
@@ -1386,6 +2912,69 @@
                                 isChecked: me,
                             }),
                         }),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Системные настройки',
+                                description: 'Автозапуск, аппаратное ускорение и т.п.',
+                                onClick: deModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(systemSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Поведение окна',
+                                description: 'Настройки поведения окна приложения',
+                                onClick: se.open,
+                            }),
+                        }),
+                        (0, n.jsx)(windowSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Миниплеер',
+                                description: 'Настройки поведения миниплеера',
+                                onClick: ueModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(miniPlayerSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Панель плеера',
+                                description: 'Настройки элементов на панели плеера',
+                                onClick: aeModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(playerSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: ['Настройки LRCLib', (0, n.jsx)(labeledBubble, { label: 'ALPHA' })],
+                                description: 'Поиск текста песен в LRCLib и режимы отображения',
+                                onClick: lrclibSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(lrclibSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Скробблинг',
+                                description: 'Авторизация в Last.fm и другие настройки',
+                                onClick: scrobblersSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(scrobblersSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Скачивание треков',
+                                description: 'Настройки оффлайн прослушивания, а также скачивания в файл',
+                                onClick: downloaderSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(downloaderSettings, {}),
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {

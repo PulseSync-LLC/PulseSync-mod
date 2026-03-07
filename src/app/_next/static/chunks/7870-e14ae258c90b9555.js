@@ -435,16 +435,14 @@
                 C = a(42140),
                 p = a(60049),
                 y = a(83909);
-            let A = o.gK
-                    .model('NonMusicBaseBlock')
-                    .props({
-                        type: o.gK.enumeration(Object.values(m.K.CATEGORY)),
-                        landingBlockType: o.gK.enumeration(Object.values(_.t)),
-                        id: o.gK.maybe(o.gK.string),
-                        title: o.gK.maybe(o.gK.string),
-                        description: o.gK.maybe(o.gK.string),
-                        viewAllActionLink: o.gK.maybe(o.gK.string),
-                    }),
+            let A = o.gK.model('NonMusicBaseBlock').props({
+                    type: o.gK.enumeration(Object.values(m.K.CATEGORY)),
+                    landingBlockType: o.gK.enumeration(Object.values(_.t)),
+                    id: o.gK.maybe(o.gK.string),
+                    title: o.gK.maybe(o.gK.string),
+                    description: o.gK.maybe(o.gK.string),
+                    viewAllActionLink: o.gK.maybe(o.gK.string),
+                }),
                 T = A.named('NonMusicCategoryBlock').props({
                     type: o.gK.literal(m.K.CATEGORY),
                     landingBlockType: o.gK.literal(_.t.NON_MUSIC_EDITORIAL_COMPILATION),

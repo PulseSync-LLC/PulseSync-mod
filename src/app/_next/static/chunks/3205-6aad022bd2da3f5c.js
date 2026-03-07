@@ -887,10 +887,7 @@
                                 (r = 0), l();
                             },
                             c = () => {
-                                r ||
-                                    (window.requestAnimationFrame
-                                        ? ((i = !0), (r = window.requestAnimationFrame(d)))
-                                        : ((i = !1), (r = window.setTimeout(d, 16))));
+                                r || (window.requestAnimationFrame ? ((i = !0), (r = window.requestAnimationFrame(d))) : ((i = !1), (r = window.setTimeout(d, 16))));
                             };
                         o();
                         const h =
@@ -1154,8 +1151,8 @@
                         let t = e?.state?.queueState?.index?.value ?? 0,
                             a = e?.state?.queueState?.order?.value,
                             s = e?.state?.queueState?.entityList?.value,
-                            o = t - 1 >= 0 ? a?.[t - 1] ?? t - 1 : null,
-                            l = t + 1 >= 0 ? a?.[t + 1] ?? t + 1 : null;
+                            o = t - 1 >= 0 ? (a?.[t - 1] ?? t - 1) : null,
+                            l = t + 1 >= 0 ? (a?.[t + 1] ?? t + 1) : null;
                         return {
                             previousTrack: null == o ? void 0 : s?.[o]?.entity?.entityData?.meta,
                             nextTrack: null == l ? void 0 : s?.[l]?.entity?.entityData?.meta,

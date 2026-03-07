@@ -1148,16 +1148,14 @@ button.ImageSliderModal_slider__gDVWR .swiper-pagination-bullet {
 }
 @media only screen and (max-width: 1080px) {
     .DefaultLayout_root__7J0wo {
-        grid-template: 'navbar content' minmax(
-                auto,
-                calc(100% - var(--player-bar-height) - var(--ym-spacer-size-m))
-            ) 'playerbar playerbar' auto 'barBelow barBelow' auto/auto 1fr;
+        grid-template:
+            'navbar content' minmax(auto, calc(100% - var(--player-bar-height) - var(--ym-spacer-size-m)))
+            'playerbar playerbar' auto 'barBelow barBelow' auto/auto 1fr;
     }
     .DefaultLayout_root_withBarBelow__jPsaV {
-        grid-template: 'navbar content' minmax(
-                auto,
-                calc(100% - var(--player-bar-height) - var(--balbelow-height) - var(--ym-spacer-size-m) * 2)
-            ) 'playerbar playerbar' auto 'barBelow barBelow' auto/auto 1fr;
+        grid-template:
+            'navbar content' minmax(auto, calc(100% - var(--player-bar-height) - var(--balbelow-height) - var(--ym-spacer-size-m) * 2))
+            'playerbar playerbar' auto 'barBelow barBelow' auto/auto 1fr;
     }
 }
 @media only screen and (max-width: 767.98px) {

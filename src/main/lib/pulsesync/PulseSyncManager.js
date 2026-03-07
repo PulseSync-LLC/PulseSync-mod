@@ -398,9 +398,7 @@ class PulseSyncManager extends EventEmitter {
         });
 
         if (blockedForNonPremium.length > 0) {
-            this.logger.warn(
-                `Blocked non-premium titlebar branding addons: ${blockedForNonPremium.join(', ')}`,
-            );
+            this.logger.warn(`Blocked non-premium titlebar branding addons: ${blockedForNonPremium.join(', ')}`);
         }
 
         if (this.prevExtensions.length > 0 && JSON.stringify(this.prevExtensions) !== JSON.stringify(filtered)) {

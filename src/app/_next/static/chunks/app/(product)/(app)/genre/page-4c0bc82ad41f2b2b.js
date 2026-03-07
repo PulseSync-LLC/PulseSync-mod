@@ -168,23 +168,21 @@
                     ref: h,
                     style: y,
                     className: f().root,
-                    children: v
-                        .getVirtualItems()
-                        .map((e) =>
-                            (0, c.jsx)(
-                                N,
-                                {
-                                    className: f().row,
-                                    columnClassName: f().column,
-                                    virtualItem: e,
-                                    resizeObserver: S,
-                                    indices: x,
-                                    renderItemByIndex: u,
-                                    scrollMargin: v.options.scrollMargin,
-                                },
-                                e.key,
-                            ),
+                    children: v.getVirtualItems().map((e) =>
+                        (0, c.jsx)(
+                            N,
+                            {
+                                className: f().row,
+                                columnClassName: f().column,
+                                virtualItem: e,
+                                resizeObserver: S,
+                                indices: x,
+                                renderItemByIndex: u,
+                                scrollMargin: v.options.scrollMargin,
+                            },
+                            e.key,
                         ),
+                    ),
                 });
             });
             var x = r(85272),
