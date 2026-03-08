@@ -160,7 +160,6 @@ const init = () => {
             toTray: false,
             autoStartup: false,
             minimizedStart: false,
-            skipSplashScreen: false,
             preventDisplaySleep: false,
             startupPage: '/',
             saveWindowDimensionsOnRestart: false,

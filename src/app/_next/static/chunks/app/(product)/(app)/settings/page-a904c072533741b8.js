@@ -1536,7 +1536,6 @@
                             window.nativeSettings.get('modSettings.enableHardwareAcceleration'),
                         ),
                         [angleEngine, setAngleEngine] = (0, g.useState)(window.nativeSettings.get('modSettings.hardwareAcceleration.angleEngine')),
-                        [skipSplashScreen, setSkipSplashScreen] = (0, g.useState)(window.nativeSettings.get('modSettings.window.skipSplashScreen') ?? !1),
                         onPreventDisplaySleepToggle = (0, g.useCallback)((e) => {
                             console.log('preventDisplaySleep toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.window.preventDisplaySleep', e);
@@ -1560,17 +1559,6 @@
                             console.log('minimizedStart toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.window.minimizedStart', e);
                         }, []),
-                        onSkipSplashScreenToggle = (0, g.useCallback)(
-                            (e) => {
-                                console.log('skipSplashScreen toggled. Value: ', e);
-                                setSkipSplashScreen(e);
-                                window.nativeSettings.set('modSettings.window.skipSplashScreen', e);
-                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
-                                    containerId: m.uQT.ERROR,
-                                });
-                            },
-                            [o],
-                        ),
                         onEnableHardwareAccelerationToggle = (0, g.useCallback)(
                             (e) => {
                                 console.log('enableHardwareAcceleration toggled. Value: ', e);
@@ -1665,15 +1653,6 @@
                                         description: 'Если включено, приложение будет запускаться свернутым в трей.',
                                         onChange: onMinimizedStartToggle,
                                         isChecked: window.nativeSettings.get('modSettings.window.minimizedStart'),
-                                    }),
-                                }),
-                                (0, n.jsx)('li', {
-                                    className: $().item,
-                                    children: (0, n.jsx)(G, {
-                                        title: 'Пропускать стартовую заставку',
-                                        description: 'Приложение будет открываться сразу без стартового экрана',
-                                        onChange: onSkipSplashScreenToggle,
-                                        isChecked: skipSplashScreen,
                                     }),
                                 }),
                                 (0, n.jsx)('li', {

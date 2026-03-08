@@ -175,7 +175,6 @@
                 h = i(49124);
             let c = (e) => {
                 let { children: t } = e;
-                if (window.SKIP_SPLASH_SCREEN?.()) return (0, s.jsx)(l.nlO.Provider, { value: { isVisible: !1 }, children: t });
                 let { state: i, toggleTrue: d } = (0, r.e)(!1),
                     { state: c, toggleTrue: m } = (0, r.e)(!1),
                     { getThemeFromStorage: v } = (0, l.QDo)(new a.si()),
