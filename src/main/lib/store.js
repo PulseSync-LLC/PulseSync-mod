@@ -190,7 +190,7 @@ const init = () => {
             smoothDynamicEnergy: false,
             smoothDynamicEnergyCoefficient: 0.2,
             playVibeOnAnyEntity: true,
-            useCustomColors: true,
+            useCustomColors: false,
             disableRendering: false,
             autoLaunchOnAppStartup: false,
             enableEndlessMusic: true,
