@@ -19644,47 +19644,46 @@
                             );
                         }, []),
                         (0, n.jsxs)('div', {
-                            style: { display: 'flex', gap: '0.75rem', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' },
+                            className: w().row,
                             children: [
                                 (0, n.jsxs)('div', {
-                                    style: { minWidth: 0, flex: '1 1 auto' },
+                                    className: w().textContainer,
                                     children: [
-                                        (0, n.jsx)('div', {
-                                            'aria-hidden': !0,
-                                            style: {
-                                                color: '#fff',
-                                                fontWeight: 700,
-                                                fontSize: 'large',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                whiteSpace: 'nowrap',
-                                            },
-                                            children: t,
-                                        }),
+                                        (0, n.jsx)('div', { className: w().title, children: t }),
                                         s &&
                                             (0, n.jsx)(g.Caption, {
                                                 variant: 'div',
                                                 type: 'text',
                                                 size: 'xs',
                                                 weight: 'medium',
-                                                lineClamp: 2,
+                                                className: w().description,
                                                 children: s,
                                             }),
                                     ],
                                 }),
                                 (0, n.jsx)('div', {
                                     ref: m,
+                                    role: 'button',
+                                    tabIndex: u ? -1 : 0,
                                     onClick: () =>
                                         x((e) => {
                                             if (u) return !1;
                                             let t = !e;
                                             return t && f && f(), t;
                                         }),
+                                    onKeyDown: (e) => {
+                                        if (u) return;
+                                        ('Enter' === e.key || ' ' === e.key) &&
+                                            (e.preventDefault(),
+                                            x((e) => {
+                                                let t = !e;
+                                                return t && f && f(), t;
+                                            }));
+                                    },
                                     className: ''.concat(
                                         u ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button',
-                                        ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
+                                        ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx '.concat(w().selectButton),
                                     ),
-                                    style: { minWidth: '10rem' },
                                     children: [
                                         (null == v ? void 0 : v.label) || 'Select...',
                                         (0, n.jsx)('ul', {
@@ -19895,8 +19894,8 @@
                                 children: ''.concat(I0.length, ' / ').concat(R0.length, ' experiments'),
                             }),
                             (0, n.jsx)('div', {
-                                className: 'PulseSync_experimentsListScroll',
-                                style: { flex: '1 1 auto', minHeight: 0, overflowY: 'auto' },
+                                className: 'PulseSync_experimentsListScroll '.concat(w().listScroll),
+                                style: { flex: '1 1 auto', minHeight: '16rem', overflowY: 'auto' },
                                 children: (0, n.jsxs)('ul', {
                                     className: w().experimentsList,
                                     children: [
@@ -23403,6 +23402,11 @@
                 root: 'OverwrittenExperimentsModal_root__amBOc',
                 header: 'OverwrittenExperimentsModal_header__9LrO1',
                 content: 'OverwrittenExperimentsModal_content__Eki5k',
+                row: 'OverwrittenExperimentsModal_row__W6A7r',
+                textContainer: 'OverwrittenExperimentsModal_textContainer__5m84F',
+                title: 'OverwrittenExperimentsModal_title__kMZ2J',
+                description: 'OverwrittenExperimentsModal_description__m9r4M',
+                selectButton: 'OverwrittenExperimentsModal_selectButton__P0v2_',
                 closeModalButton: 'OverwrittenExperimentsModal_closeModalButton__k0LqG',
                 reloadButton: 'OverwrittenExperimentsModal_reloadButton__bskTH',
                 heading: 'OverwrittenExperimentsModal_heading__9oiHL',
@@ -23411,6 +23415,7 @@
                 valueInput: 'OverwrittenExperimentsModal_valueInput__goR3Y',
                 shake: 'OverwrittenExperimentsModal_shake__mFxEK',
                 submitButton: 'OverwrittenExperimentsModal_submitButton___VRmz',
+                listScroll: 'OverwrittenExperimentsModal_listScroll__5D5cU',
                 experimentsList: 'OverwrittenExperimentsModal_experimentsList__PFRVV',
                 overridedExperiment: 'OverwrittenExperimentsModal_overridedExperiment__w1bng',
             };

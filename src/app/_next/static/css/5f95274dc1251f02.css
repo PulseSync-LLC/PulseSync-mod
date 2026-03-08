@@ -970,7 +970,7 @@
 .OverwrittenExperimentsModal_root__amBOc {
     height: 100%;
     max-height: 40.625rem;
-    max-width: 44rem;
+    max-width: 52rem;
     overflow: hidden;
     width: 100%;
 }
@@ -998,6 +998,57 @@
     scrollbar-width: none;
     transition: scrollbar-color 0.2s ease-in-out;
     --scrollbar-hidden: transparent;
+}
+.OverwrittenExperimentsModal_row__W6A7r {
+    align-items: start;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: minmax(0, 1fr) 12rem;
+    min-height: 3.5rem;
+    width: 100%;
+}
+.OverwrittenExperimentsModal_textContainer__5m84F {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding-top: 0.125rem;
+}
+.OverwrittenExperimentsModal_title__kMZ2J {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    display: block;
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-l);
+    font-style: normal;
+    font-weight: var(--ym-font-weight-bold);
+    letter-spacing: normal;
+    line-height: var(--ym-font-line-height-label-l);
+    margin: 0;
+    min-height: var(--ym-font-line-height-label-l);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.OverwrittenExperimentsModal_description__m9r4M {
+    color: var(--ym-controls-color-primary-text-enabled);
+    margin-top: 0.25rem;
+}
+.OverwrittenExperimentsModal_selectButton__P0v2_ {
+    align-self: start;
+    justify-self: end;
+    margin-right: 0;
+    max-width: 100%;
+    min-width: 12rem;
+    width: 12rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .OverwrittenExperimentsModal_row__W6A7r {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .OverwrittenExperimentsModal_selectButton__P0v2_ {
+        justify-self: stretch;
+        min-width: 0;
+        width: 100%;
+    }
 }
 .Modal_content_no_right_padding {
     padding-inline-end: 2px !important;
@@ -1102,13 +1153,18 @@
 .OverwrittenExperimentsModal_submitButton___VRmz {
     grid-column: 1 / span 2;
 }
+.OverwrittenExperimentsModal_listScroll__5D5cU {
+    min-height: 16rem;
+}
 .OverwrittenExperimentsModal_experimentsList__PFRVV {
     display: grid;
     grid-gap: var(--ym-spacer-size-xxl);
     gap: var(--ym-spacer-size-xxl);
+    width: 100%;
 }
 .OverwrittenExperimentsModal_overridedExperiment__w1bng {
     list-style: none;
+    width: 100%;
 }
 @keyframes OverwrittenExperimentsModal_shake__mFxEK {
     25% {
