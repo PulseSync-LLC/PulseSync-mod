@@ -47,11 +47,13 @@ electron_1.contextBridge.exposeInMainWorld(
     () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.smoothDynamicEnergyCoefficient,
 );
 electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_PLAY_ON_ANY_ENTITY', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.playVibeOnAnyEntity);
+electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_USE_CUSTOM_COLORS', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.useCustomColors);
 electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_DISABLE_RENDERING', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.disableRendering);
 electron_1.contextBridge.exposeInMainWorld('ALWAYS_SHOW_PLAYER_TIMESTAMPS', () => store_js_1.getModSettings()?.playerBarEnhancement?.alwaysShowTimestamps);
 electron_1.contextBridge.exposeInMainWorld('CHANGE_DISLIKE_BUTTON_POS', () => store_js_1.getModSettings()?.playerBarEnhancement?.changeDislikeButtonPos);
 electron_1.contextBridge.exposeInMainWorld('DISABLE_PER_TRACK_COLORS', () => store_js_1.getModSettings()?.playerBarEnhancement?.disablePerTrackColors);
 electron_1.contextBridge.exposeInMainWorld('ALWAYS_WIDE_BAR', () => store_js_1.getModSettings()?.playerBarEnhancement?.alwaysWideBar);
+electron_1.contextBridge.exposeInMainWorld('SKIP_SPLASH_SCREEN', () => store_js_1.getModSettings()?.window?.skipSplashScreen);
 electron_1.contextBridge.exposeInMainWorld('DEFAULT_MUSIC_EXPERIMENT_OVERRIDES', () => store_js_1.getDefaultExperimentOverrides());
 electron_1.contextBridge.exposeInMainWorld('ENABLE_ENDLESS_MUSIC', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.enableEndlessMusic);
 electron_1.contextBridge.exposeInMainWorld('ALLOWED_URLS', {

@@ -1536,6 +1536,7 @@
                             window.nativeSettings.get('modSettings.enableHardwareAcceleration'),
                         ),
                         [angleEngine, setAngleEngine] = (0, g.useState)(window.nativeSettings.get('modSettings.hardwareAcceleration.angleEngine')),
+                        [skipSplashScreen, setSkipSplashScreen] = (0, g.useState)(window.nativeSettings.get('modSettings.window.skipSplashScreen') ?? !1),
                         onPreventDisplaySleepToggle = (0, g.useCallback)((e) => {
                             console.log('preventDisplaySleep toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.window.preventDisplaySleep', e);
@@ -1559,6 +1560,17 @@
                             console.log('minimizedStart toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.window.minimizedStart', e);
                         }, []),
+                        onSkipSplashScreenToggle = (0, g.useCallback)(
+                            (e) => {
+                                console.log('skipSplashScreen toggled. Value: ', e);
+                                setSkipSplashScreen(e);
+                                window.nativeSettings.set('modSettings.window.skipSplashScreen', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
                         onEnableHardwareAccelerationToggle = (0, g.useCallback)(
                             (e) => {
                                 console.log('enableHardwareAcceleration toggled. Value: ', e);
@@ -1653,6 +1665,15 @@
                                         description: 'Если включено, приложение будет запускаться свернутым в трей.',
                                         onChange: onMinimizedStartToggle,
                                         isChecked: window.nativeSettings.get('modSettings.window.minimizedStart'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Пропускать стартовую заставку',
+                                        description: 'Приложение будет открываться сразу без стартового экрана',
+                                        onChange: onSkipSplashScreenToggle,
+                                        isChecked: skipSplashScreen,
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2134,6 +2155,7 @@
                         [u, p] = (0, g.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergy')),
                         [h, f] = (0, g.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.vibeIntensityCoefficient')),
                         [x, v] = (0, g.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergyCoefficient')),
+                        [j, C] = (0, g.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.useCustomColors') ?? !0),
                         onDisableVibeRenderingToggle = (0, g.useCallback)(async (e) => {
                             console.log('modSettings.vibeAnimationEnhancement.disableRendering toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.disableRendering', e);
@@ -2170,6 +2192,11 @@
                             console.log('modSettings.vibeAnimationEnhancement.smoothDynamicEnergy toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.smoothDynamicEnergy', e);
                             p(e);
+                        }, []),
+                        onUseCustomColorsToggle = (0, g.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.useCustomColors toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.useCustomColors', e);
+                            C(e);
                         }, []);
                     return (0, n.jsx)(T.a, {
                         className: K().list,
@@ -2204,6 +2231,16 @@
                                         description: 'Анимация будет реагировать на треки запущенные не через Мою Волну',
                                         onChange: onPlayOnAnyEntityToggle,
                                         isChecked: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.playVibeOnAnyEntity'),
+                                        disabled: !!r,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Использовать новый способ передачи цветов',
+                                        description: 'Переключает обычную анимацию между новым и старым способом передачи цветов.',
+                                        onChange: onUseCustomColorsToggle,
+                                        isChecked: j,
                                         disabled: !!r,
                                     }),
                                 }),

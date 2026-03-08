@@ -32,8 +32,9 @@
                 v = s.n(h),
                 m = s(49124);
             let P = (e) => {
-                let { children: r } = e,
-                    { state: s, toggleTrue: h } = (0, t.e)(!1),
+                let { children: r } = e;
+                if (window.SKIP_SPLASH_SCREEN?.()) return (0, o.jsx)(d.nlO.Provider, { value: { isVisible: !1 }, children: r });
+                let { state: s, toggleTrue: h } = (0, t.e)(!1),
                     { state: P, toggleTrue: b } = (0, t.e)(!1),
                     { getThemeFromStorage: a } = (0, d.QDo)(new l.si()),
                     c = (0, i.useMemo)(() => {

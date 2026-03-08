@@ -2505,7 +2505,8 @@
     -webkit-transform: translateZ(var(--toastify-z-index));
     width: 20rem;
     width: var(--toastify-toast-width);
-    z-index: 399;
+    z-index: 9999;
+    z-index: var(--toastify-z-index);
 }
 .Toastify__toast-container--top-left {
     left: 1em;

@@ -225,7 +225,14 @@
                 y = n(19009),
                 A = n(80246),
                 k = n.n(A);
-            let M = (0, r.PA)((e) => {
+            let q = (e, t, n) => ({ h: e, s: t / 100, l: n / 100 }),
+                G = (e, t) => {
+                    if (!e) return;
+                    let { h: n, s: i, l: r } = (0, c.g8k)(e);
+                    return { top: q(n, i + (t ? 25 : 15), r + (t ? 15 : 10)), middle: q(n, i + (t ? 20 : 15), r + (t ? 10 : 5)), bottom: q(n, i, r) };
+                },
+                J = (e, t) => ((window.VIBE_ANIMATION_USE_CUSTOM_COLORS?.() ?? !0) ? G(e, t) : void 0),
+                M = (0, r.PA)((e) => {
                     var t, n, r, a, o, u, d, f;
                     let { vibeAnimationState: v, isIntersecting: x, forwardRef: y, className: A } = e,
                         [k, M] = (0, h.d)(),
@@ -300,9 +307,24 @@
                             });
                         M(i), L(new g.Rv(g.p4, H));
                         let r = null == (t = I.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
-                            l = R.collectionHue;
-                        i.applySettings({ hue: r, collectionHue: l });
-                    }, [j, P, U, D, L, M, null == (n = I.entityMeta) || null == (t = n.trackParameters) ? void 0 : t.hue, H, R.collectionHue, v, k]);
+                            l = R.collectionHue,
+                            a = (I && I.entityMeta && I.entityMeta.averageColor) || (I && I.entityMeta && I.entityMeta.derivedColors && 'string' == typeof I.entityMeta.derivedColors.average ? I.entityMeta.derivedColors.average : null);
+                        i.applySettings({ hue: r, collectionHue: l, customColors: J(a, !!a) });
+                    }, [
+                        j,
+                        P,
+                        U,
+                        D,
+                        L,
+                        M,
+                        null == (n = I.entityMeta) || null == (t = n.trackParameters) ? void 0 : t.hue,
+                        I && I.entityMeta && I.entityMeta.derivedColors && I.entityMeta.derivedColors.average,
+                        I && I.entityMeta && I.entityMeta.averageColor,
+                        H,
+                        R.collectionHue,
+                        v,
+                        k,
+                    ]);
                     let z = (0, s.c)(() => {
                         null == k || k.destroy(), M(null), null == j || j.stop(), L(null);
                     });
@@ -321,6 +343,10 @@
                             null == k || k.applySettings({ backgroundColor: e });
                         }
                     }, [C, k]),
+                    (0, l.useEffect)(() => {
+                        let e = (I && I.entityMeta && I.entityMeta.averageColor) || (I && I.entityMeta && I.entityMeta.derivedColors && 'string' == typeof I.entityMeta.derivedColors.average ? I.entityMeta.derivedColors.average : null);
+                        null == k || k.applySettings({ customColors: J(e, !!e) });
+                    }, [I && I.entityMeta && I.entityMeta.derivedColors && I.entityMeta.derivedColors.average, I && I.entityMeta && I.entityMeta.averageColor, k]),
                     (0, l.useEffect)(() => {
                         let e = I && I.entityMeta,
                             t = e && e.trackParameters,
@@ -408,13 +434,17 @@
                         let i = I && I.entityMeta,
                             r = i && i.trackParameters,
                             l = r && r.energy,
-                            a = (r && r.userCollectionHue) || (R && R.collectionHue);
+                            a = (r && r.userCollectionHue) || (R && R.collectionHue),
+                            o = (i && i.averageColor) || (i && i.derivedColors && 'string' == typeof i.derivedColors.average ? i.derivedColors.average : null),
+                            s = J(o, !!o);
                         a && R.setUserCollectionHue(a),
-                            K ? null == k || k.playAnimation({ hue: null != B ? B : 0, energy: l, collectionHue: a }) : null == k || k.idleAnimation();
+                            K ? null == k || k.playAnimation({ hue: null != B ? B : 0, energy: l, collectionHue: a, customColors: s }) : null == k || k.idleAnimation();
                     }, [
                         K,
                         null == (e = I.entityMeta) || null == (t = e.trackParameters) ? void 0 : t.energy,
                         null == (n = I.entityMeta) || null == (r = n.trackParameters) ? void 0 : r.userCollectionHue,
+                        I && I.entityMeta && I.entityMeta.derivedColors && I.entityMeta.derivedColors.average,
+                        I && I.entityMeta && I.entityMeta.averageColor,
                         B,
                         R,
                         k,
