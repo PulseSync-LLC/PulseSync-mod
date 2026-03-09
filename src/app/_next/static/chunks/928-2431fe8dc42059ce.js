@@ -4354,6 +4354,7 @@
                     let { value: t, variant: a, className: r, forwardRef: l, ...s } = e,
                         c = 'start' === a ? o.Kq.changeTimecode.TIMECODE_TIME_START : o.Kq.changeTimecode.TIMECODE_TIME_END;
                     return (0, i.jsx)(p.Caption, {
+                        style: window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.() ? { opacity: 1 } : undefined,
                         ref: l,
                         tabIndex: 0,
                         className: (0, n.$)(h().root, h()['root_'.concat(a)], r),
@@ -4482,11 +4483,16 @@
                         A = 0 !== d ? d - h : 0,
                         C = Math.min(Math.max(b - h / 2, 0), A),
                         N = (0, c.L)(() => {
-                            if (!m) return { '--timecode-position': ''.concat(C, 'px') };
+                            if (!m)
+                                return {
+                                    '--timecode-position': ''.concat(C, 'px'),
+                                    ...(window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.() ? { opacity: 1 } : {}),
+                                };
                         });
                     return (0, i.jsxs)(i.Fragment, {
                         children: [
                             (0, i.jsx)(x, {
+                                style: window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.() ? { opacity: 1 } : undefined,
                                 role: 'text',
                                 'aria-label': p,
                                 value: y,
