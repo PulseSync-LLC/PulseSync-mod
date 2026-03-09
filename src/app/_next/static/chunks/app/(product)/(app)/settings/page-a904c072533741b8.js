@@ -3171,6 +3171,9 @@
                     ),
                     [ae, ce] = (0, g.useState)(window.nativeSettings?.get('modSettings.showNonMusicPage') ?? !0),
                     [de, ue] = (0, g.useState)(window.nativeSettings?.get('modSettings.showConcertsTab') ?? !0),
+                    [appendPlaylistTracksToEnd, setAppendPlaylistTracksToEnd] = (0, g.useState)(
+                        window.nativeSettings?.get('modSettings.playlist.addTracksToEndFromContextMenu') ?? !1,
+                    ),
                     [me, pe] = (0, g.useState)(window.nativeSettings?.get('devMode') ?? !1),
                     [downloadedTracksInfo, setDownloadedTracksInfo] = (0, g.useState)({
                         tracksCount: void 0,
@@ -3214,6 +3217,9 @@
                         },
                         [oe],
                     ),
+                    togglePlaylistAddTrackToEnd = (0, g.useCallback)((e) => {
+                        window.nativeSettings?.set('modSettings.playlist.addTracksToEndFromContextMenu', e), setAppendPlaylistTracksToEnd(e);
+                    }, []),
                     Xt = (0, g.useCallback)(
                         (e) => {
                             window.nativeSettings?.set('devMode', e), pe(e), oe();
@@ -3363,6 +3369,15 @@
                                 className: $().item,
                                 children: (0, n.jsx)(G, { title: x({ id: 'settings.crossfade' }), onChange: te, isChecked: p.isCrossFadeEnabled }),
                             }),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(G, {
+                                title: 'Добавлять треки в конец плейлиста',
+                                description: 'При добавлении из контекстного меню трек будет вставляться в конец, а не в начало',
+                                onChange: togglePlaylistAddTrackToEnd,
+                                isChecked: appendPlaylistTracksToEnd,
+                            }),
+                        }),
                         (0, n.jsx)(w.aQ, {
                             fallback:
                                 !a.checkExperiment(m.zal.WebNextDisableKids, 'on') &&

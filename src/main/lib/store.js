@@ -182,6 +182,9 @@ const init = () => {
             alwaysWideBar: false,
             playButtonType: 'yellow',
         },
+        playlist: {
+            addTracksToEndFromContextMenu: false,
+        },
         vibeAnimationEnhancement: {
             maxFPS: 60,
             vibeIntensityCoefficient: 1.3,

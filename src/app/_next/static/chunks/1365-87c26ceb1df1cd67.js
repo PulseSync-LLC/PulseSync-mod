@@ -1914,10 +1914,14 @@
                 return (0, r.c)(async (t) => {
                     var e;
                     let { playlist: i, track: a, withSuccessNotification: r = !0, withFailNotification: s = !0, withPageRefresh: n = !0 } = t,
-                        d = await i.changePlaylist(
-                            (0, l.Mp)({ operation: l.yC.INSERT, position: 0, tracks: [{ id: a.id, albumId: null == (e = a.mainAlbum) ? void 0 : e.id }] }),
+                        m = 'undefined' != typeof window && window.nativeSettings?.get('modSettings.playlist.addTracksToEndFromContextMenu') === !0,
+                        k = null != i.tracksCount ? i.tracksCount : null != i.trackCount ? i.trackCount : null == i ? void 0 : i.meta?.tracksCount,
+                        _ = null != k ? k : null == i ? void 0 : i.meta?.trackCount,
+                        p = m ? Number(null != _ ? _ : Array.isArray(i.tracks) ? i.tracks.length : 0) || 0 : 0,
+                        v = await i.changePlaylist(
+                            (0, l.Mp)({ operation: l.yC.INSERT, position: p, tracks: [{ id: a.id, albumId: null == (e = a.mainAlbum) ? void 0 : e.id }] }),
                         );
-                    return d === l.Y9.OK ? o({ withSuccessNotification: r, withPageRefresh: n, playlist: i, track: a }) : c({ withFailNotification: s }), d;
+                    return v === l.Y9.OK ? o({ withSuccessNotification: r, withPageRefresh: n, playlist: i, track: a }) : c({ withFailNotification: s }), v;
                 });
             };
         },
