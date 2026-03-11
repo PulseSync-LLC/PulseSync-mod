@@ -96,7 +96,7 @@ if (!(store_js_1.getModSettings()?.enableHardwareAcceleration ?? true)) {
     electron_1.app.disableHardwareAcceleration();
 }
 
-if (store_js_1.getModSettings()?.tryEnableSurroundAudio ?? false) {
+if (store_js_1.getModSettings()?.enableSurroundAudioCompatibility ?? false) {
     electron_1.app.commandLine.appendSwitch('try-supported-channel-layouts');
     electron_1.app.commandLine.appendSwitch('force-wave-audio');
     electron_1.app.commandLine.appendSwitch('disable-audio-output-resampler');

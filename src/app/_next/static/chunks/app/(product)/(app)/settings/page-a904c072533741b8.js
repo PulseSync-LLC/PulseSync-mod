@@ -1823,10 +1823,10 @@
                         } = (0, m.Pjs)(),
                         a = (0, m.iIU)(),
                         { notify: o } = (0, m.lkh)(),
-                        onTryEnableSurroundAudioToggle = (0, g.useCallback)(
+                        onSurroundAudioCompatibilityToggle = (0, g.useCallback)(
                             (e) => {
-                                console.log('tryEnableSurroundAudio toggled. Value: ', e);
-                                window.nativeSettings.set('modSettings.tryEnableSurroundAudio', e);
+                                console.log('enableSurroundAudioCompatibility toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.enableSurroundAudioCompatibility', e);
                                 o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
                                     containerId: m.uQT.ERROR,
                                 });
@@ -1879,8 +1879,8 @@
                                     children: (0, n.jsx)(G, {
                                         title: ['Попробовать включить пространственный звук', (0, n.jsx)(labeledBubble, { label: 'ALPHA' })],
                                         description: 'Включает поддержку систем 5.1 / 7.1 (Учтите что звук останется в стерео)',
-                                        onChange: onTryEnableSurroundAudioToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.tryEnableSurroundAudio'),
+                                        onChange: onSurroundAudioCompatibilityToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.enableSurroundAudioCompatibility') ?? !1,
                                     }),
                                 }),
                             ],

@@ -237,7 +237,7 @@ const init = () => {
             },
         },
         r128Normalization: false,
-        tryEnableSurroundAudio: true,
+        enableSurroundAudioCompatibility: false,
         showNonMusicPage: true,
         showConcertsTab: true,
         enableHardwareAcceleration: true,
