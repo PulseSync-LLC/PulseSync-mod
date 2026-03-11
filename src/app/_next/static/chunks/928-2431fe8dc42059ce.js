@@ -10836,11 +10836,19 @@
                             let s = 'boolean' == typeof e ? e : !(window.nativeSettings.get('modSettings.r128Normalization') ?? !0);
                             setR128Enabled(s), window.nativeSettings.set('modSettings.r128Normalization', s);
                             let d = null == (a = t.state) || null == (i = a.queueState) || null == (r = i.currentEntity) || null == (l = r.value) ? void 0 : l.entity,
-                                c = null == d || null == (o = d.data) ? void 0 : o.meta.r128;
+                                c = null == d || null == (o = d.data) ? void 0 : o.meta.r128,
+                                n = null == d ? void 0 : d.data.meta,
+                                m =
+                                    !c &&
+                                    ('UGC' === (null == n ? void 0 : n.trackSource) ||
+                                        'OWN_REPLACED_TO_UGC' === (null == n ? void 0 : n.trackSource) ||
+                                        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(null == n ? void 0 : n.id)))
+                                        ? { i: 0, tp: 0 }
+                                        : c;
                             null == r128Audio ||
                                 null == r128Audio.graphs ||
                                 r128Audio.graphs.forEach((e) => {
-                                    e.setR128Gain(c, s);
+                                    e.setR128Gain(m, s);
                                 });
                         },
                         [t.state, r128Audio],

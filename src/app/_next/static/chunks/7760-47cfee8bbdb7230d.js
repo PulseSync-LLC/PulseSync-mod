@@ -3761,8 +3761,9 @@
                                 this.graphs.forEach((e) => {
                                     var t;
                                     let i = null == (t = a.state.mediaPlayersStore.value[X.e.AUDIO]) ? void 0 : t.currentAudioElement.value,
-                                        r = null == l ? void 0 : l.data.meta.r128;
-                                    (!i || e.audioElement === i) && e.setR128Gain(r);
+                                        r = null == l ? void 0 : l.data.meta.r128,
+                                        n = !r && ep(l) ? { i: 0, tp: 0 } : r;
+                                    (!i || e.audioElement === i) && e.setR128Gain(n);
                                 }),
                                 this.fade && this.fade.apply(r),
                                 this.smartPreview && this.smartPreview.apply(s),

@@ -1839,11 +1839,21 @@
                                 console.log('modSettings.r128Normalization toggled. Value: ', e);
                                 window.nativeSettings.set('modSettings.r128Normalization', e);
                                 let o = null == (t = null == v ? void 0 : v.state) || null == t.queueState ? void 0 : t.queueState.currentEntity.value,
-                                    i = null == o ? void 0 : o.entity.data.meta.r128;
+                                    i = null == o ? void 0 : o.entity.data.meta.r128,
+                                    r = null == o ? void 0 : o.entity.data.meta,
+                                    s =
+                                        !i &&
+                                        ('UGC' === (null == r ? void 0 : r.trackSource) ||
+                                            'OWN_REPLACED_TO_UGC' === (null == r ? void 0 : r.trackSource) ||
+                                            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+                                                String(null == r ? void 0 : r.id),
+                                            ))
+                                            ? { i: 0, tp: 0 }
+                                            : i;
                                 null == a ||
                                     null == a.graphs ||
                                     a.graphs.forEach((t) => {
-                                        t.setR128Gain(i, e);
+                                        t.setR128Gain(s, e);
                                     });
                             },
                             [a, v],
