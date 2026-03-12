@@ -287,6 +287,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
                 maxBodyLength: Infinity,
                 maxContentLength: Infinity,
                 validateStatus: () => true,
+                timeout: 360000
             });
 
             if (response?.data?.ok) {
