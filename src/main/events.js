@@ -845,6 +845,16 @@ electron_1.ipcMain.handle('get-enabled-addons', () => {
     }
 });
 
+electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_SETTINGS_SNAPSHOT, () => {
+    try {
+        const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
+        return mgr?.getAddonSettingsSnapshot?.() ?? {};
+    } catch (err) {
+        eventsLogger.error('PULSESYNC_SETTINGS_SNAPSHOT handler failed:', err);
+        return {};
+    }
+});
+
 exports.setZoomLevel = setZoomLevel;
 exports.pulseSyncManager = pulseSyncManager_js_1;
 electron_1.ipcMain.handle('zoom-in', zoomIn);
