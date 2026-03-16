@@ -8938,7 +8938,7 @@
                 let e = (0, iJ.Sq)(),
                     t = (0, iz.iIU)(),
                     { sonataState: a } = (0, iz.Pjs)();
-                (0, w.useEffect)(() => {
+                ((0, w.useEffect)(() => {
                     e.loadPresets();
                 }, [e]),
                     (0, w.useEffect)(() => {
@@ -8947,7 +8947,7 @@
                             (e.isEnabled
                                 ? (e.currentPreset && t.equalizer.value.applyPreset((0, iZ.HO)(e.currentPreset)), t.equalizer.value.enable())
                                 : t.equalizer.value.disable());
-                    }, [e.currentPreset, e.isEnabled, null == t ? void 0 : t.equalizer, a.areCoresRegistered, e.isAvailable]);
+                    }, [e.currentPreset, e.isEnabled, null == t ? void 0 : t.equalizer, a.areCoresRegistered, e.isAvailable]));
             });
             var i1 = a(43426);
             let i3 = (0, R.PA)((e) => {
@@ -9067,7 +9067,7 @@
                                     () => {
                                         var t, a;
                                         let i = (null == (a = e.stateController.fullState.diff.player_state) || null == (t = a.status) ? void 0 : t.paused) === !1;
-                                        !e.isActive && i && e.interceptActivity();
+                                        !e.isActive && i && (window?.YNISON_INTERCEPT_PLAYBACK ?? false) && e.interceptActivity();
                                     },
                                     'App',
                                 );

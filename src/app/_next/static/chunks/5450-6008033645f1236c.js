@@ -1451,7 +1451,7 @@
                 es = (function () {
                     function e(e) {
                         var t = this;
-                        Object.defineProperty(this, 'stateController', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        (Object.defineProperty(this, 'stateController', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'connector', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'metricsController', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'deviceConfig', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -1461,9 +1461,9 @@
                             Object.defineProperty(this, 'isUpdateFullStateCompleted', { enumerable: !0, configurable: !0, writable: !0, value: !1 }),
                             (this.deviceConfig = e.deviceConfig),
                             (this.variables = e.variables),
-                            (this.logger = e.logger);
+                            (this.logger = e.logger));
                         var n = (Math.floor(0x225c17d02 * Math.random() + 1).toString() + Math.floor(0x3b9ac9fe * Math.random() + 1).toString()).slice(0, 19);
-                        (this.stateController = new M({ deviceConfig: this.deviceConfig })),
+                        ((this.stateController = new M({ deviceConfig: this.deviceConfig })),
                             (this.connector = new ei({
                                 config: {
                                     device: this.deviceConfig.info,
@@ -1481,6 +1481,7 @@
                                     sessionId: n,
                                 },
                             })),
+                            (window.ynison = { connector: this.connector, state: this.stateController }));
                             (this.metricsController = new ev({
                                 transports: e.metricsTransport,
                                 sessionId: n,
@@ -1719,7 +1720,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                return this.variables.isShadow ? ea(ea({}, e), { paused: !0 }) : e;
+                                return this.variables.isShadow || !this.isActive ? ea(ea({}, e), { paused: !0 }) : e;
                             },
                         }),
                         Object.defineProperty(e.prototype, 'createOutgoingDeviceData', {
