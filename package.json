@@ -7,6 +7,7 @@
         "release": "node toolset.js release",
         "buildMod": "node toolset.js build -d",
         "buildModProd": "node toolset.js build -m",
+        "rebuildMod": "node toolset.js rebuild",
         "buildModTest": "node toolset.js build -m -d",
         "buildMin": "node toolset.js build -d -m",
         "downloadLatest": "node toolset.js download",
