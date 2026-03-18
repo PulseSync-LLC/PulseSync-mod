@@ -3430,16 +3430,7 @@
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
-                                title: [
-                                    'Discord RPC',
-                                    (0, n.jsx)(labeledBubble, {
-                                        label: 'NEW',
-                                        tooltip: {
-                                            title: 'Переехало из клиента в мод',
-                                            description: 'Теперь для работы не требуется запущенный клиент PulseSync',
-                                        },
-                                    }),
-                                ],
+                                title: 'Discord RPC',
                                 description: 'Интеграция с Discord',
                                 onClick: discordRpcSettingsModal.open,
                             }),
