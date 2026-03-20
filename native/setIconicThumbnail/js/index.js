@@ -71,7 +71,7 @@ class DWMIconicThumbnail {
             this.maxHeight = lParam.readUInt16LE(0);
             this.maxWidth = lParam.readUInt16LE(2);
             if (this.lastIconicThumbnailImageBuffer) {
-                this.setIconicThumbnail(this.lastIconicThumbnailImageBuffer, this.maxWidth, this.maxHeight, this.lastIcomicThumbnailFlags);
+                this.setIconicThumbnail(this.lastIconicThumbnailImageBuffer, this.lastIcomicThumbnailFlags);
             }
         });
 

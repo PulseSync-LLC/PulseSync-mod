@@ -170,6 +170,7 @@ Napi::Value SetIconicThumbnail(const Napi::CallbackInfo& info) {
     }
 
     hr = DwmSetIconicThumbnail(hwnd, hBitmap, dwSITFlags);
+    DeleteObject(hBitmap);
 
     ShutdownGDIPlus();
 

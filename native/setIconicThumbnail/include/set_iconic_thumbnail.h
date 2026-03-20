@@ -9,7 +9,7 @@ bool InitGDIPlus();
 // Shutdown GDI+
 void ShutdownGDIPlus();
 
-// Set window iconic thumbnail from image buffer (PNG, JPEG, etc.)
+// Set window iconic thumbnail from an encoded image buffer (PNG, JPEG, etc.)
 Napi::Value SetIconicThumbnail(const Napi::CallbackInfo& info);
 
 // Clear iconic thumbnail and revert to live preview
@@ -18,5 +18,5 @@ Napi::Value ClearIconicThumbnail(const Napi::CallbackInfo& info);
 // Used as probe. For force triggering WM_DWMSENDICONICTHUMBNAIL
 Napi::Value ForceIconicFlags(const Napi::CallbackInfo& info);
 
-// Used as response to WM_DWMSENDICONICLIVEPREVIEW.
+// Used as response to WM_DWMSENDICONICLIVEPREVIEW with a BGRA bitmap buffer.
 Napi::Value SetIconicLivePreviewBitmap(const Napi::CallbackInfo& info);

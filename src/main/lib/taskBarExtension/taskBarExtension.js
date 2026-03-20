@@ -6,7 +6,9 @@ const events_js_1 = require('../../events');
 const config_js_1 = require('../../config');
 const store_js_1 = require('../store.js');
 const playerActions_js_1 = require('../../types/playerActions.js');
+const fs = require('node:fs');
 const path = require('node:path');
+const { performance } = require('node:perf_hooks');
 const Logger_js_1 = require('../../packages/logger/Logger.js');
 const thumbnailDrawner = require('./thumbnailDrawner.js');
 const taskBarExtensionLogger = new Logger_js_1.Logger('TaskBarExtension');
@@ -21,6 +23,7 @@ const requireIfExists =
             return false;
         }
     });
+const sharp = requireIfExists('sharp');
 
 let native;
 try {
@@ -39,6 +42,17 @@ let playerState;
 let assets = { dark: {}, light: {} };
 let systemTheme = electron_1.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
 let initiated = false;
+
+const THUMBNAIL_TRANSITION_DURATION_MS = 200;
+const THUMBNAIL_TRANSITION_FPS = 30;
+let thumbnailRenderRequestId = 0;
+let thumbnailAnimationToken = 0;
+let lastThumbnailRenderState = null;
+let activeThumbnailAnimation = null;
+let nativeThemeListener = null;
+const defaultTrackCoverBufferCache = new Map();
+let defaultTrackCoverTemplate = null;
+const DEFAULT_TRACK_COVER_SIZE = 200;
 
 /**
  * Простой LRU-кэш на Map.
@@ -163,15 +177,158 @@ const getImageBufferCached = async (url) => {
     }
 };
 
+const wait = (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+};
+
+const getThumbnailTransitionFrameCount = () => {
+    return Math.max(1, Math.round((THUMBNAIL_TRANSITION_DURATION_MS / 1000) * THUMBNAIL_TRANSITION_FPS));
+};
+
+const getDefaultTrackCoverTemplate = () => {
+    if (defaultTrackCoverTemplate) {
+        return defaultTrackCoverTemplate;
+    }
+
+    defaultTrackCoverTemplate = fs.readFileSync(path.join(__dirname, 'assets/defaultTrackCover.svg'), 'utf8');
+    return defaultTrackCoverTemplate;
+};
+
+const getDefaultTrackCoverBuffer = async (variant = systemTheme, size = DEFAULT_TRACK_COVER_SIZE) => {
+    const cacheKey = `${variant}:${size}`;
+    const cachedBuffer = defaultTrackCoverBufferCache.get(cacheKey);
+    if (cachedBuffer) {
+        return cachedBuffer;
+    }
+
+    const palette = variant === 'light' ? { background: '#dadada', icon: '#666666' } : { background: '#202020', icon: '#ffffff80' };
+
+    const svg = getDefaultTrackCoverTemplate()
+        .replace('width="200"', `width="${size}"`)
+        .replace('height="200"', `height="${size}"`)
+        .replace('__BACKGROUND__', palette.background)
+        .replace('__ICON__', palette.icon);
+
+    let buffer;
+
+    if (sharp) {
+        buffer = await sharp(Buffer.from(svg)).resize(size, size).png().toBuffer();
+    } else {
+        buffer = electron_1.nativeImage
+            .createFromDataURL(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`)
+            .resize({ width: size, height: size })
+            .toPNG();
+    }
+
+    defaultTrackCoverBufferCache.set(cacheKey, buffer);
+    return buffer;
+};
+
+const getTrackCoverUrl = (track) => {
+    if (!track) {
+        return undefined;
+    }
+
+    const trackId = typeof track.id === 'string' ? track.id : '';
+    const isGenerative = trackId.startsWith('generative');
+    const source = (isGenerative ? track.imageUrl : track.coverUri) || track.coverUri || track.imageUrl;
+    if (!source) {
+        return undefined;
+    }
+
+    return `https://${source}`.replace('%%', '200x200');
+};
+
+const getTrackImageBuffer = async (track) => {
+    if (!track) {
+        return undefined;
+    }
+
+    const coverUrl = getTrackCoverUrl(track);
+    if (!coverUrl) {
+        return getDefaultTrackCoverBuffer();
+    }
+
+    try {
+        return await getImageBufferCached(coverUrl);
+    } catch (error) {
+        taskBarExtensionLogger.warn(`Failed to load cover for track ${track.id ?? 'unknown'}, using default cover.`, error);
+        return getDefaultTrackCoverBuffer();
+    }
+};
+
+const createThumbnailRenderState = (playerState, currentTrackBuffer, previousTrackBuffer, nextTrackBuffer, isRepeatOne) => {
+    return {
+        previousTrack: isRepeatOne ? currentTrackBuffer : previousTrackBuffer,
+        currentTrack: currentTrackBuffer,
+        nextTrack: isRepeatOne ? currentTrackBuffer : nextTrackBuffer,
+        isPlaying: !playerState.isPaused,
+        trackId: playerState.track?.id ?? null,
+        previousTrackId: isRepeatOne ? (playerState.track?.id ?? null) : (playerState.previousTrack?.id ?? null),
+        nextTrackId: isRepeatOne ? (playerState.track?.id ?? null) : (playerState.nextTrack?.id ?? null),
+    };
+};
+
+const getThumbnailTransitionDirection = (fromRenderState, toRenderState) => {
+    if (!fromRenderState?.trackId || !toRenderState?.trackId) {
+        return null;
+    }
+
+    if (fromRenderState.nextTrackId && fromRenderState.nextTrackId === toRenderState.trackId) {
+        return 'forward';
+    }
+
+    if (fromRenderState.previousTrackId && fromRenderState.previousTrackId === toRenderState.trackId) {
+        return 'backward';
+    }
+
+    if (
+        fromRenderState.trackId === toRenderState.trackId &&
+        fromRenderState.previousTrackId === toRenderState.previousTrackId &&
+        !fromRenderState.nextTrackId &&
+        !!toRenderState.nextTrackId
+    ) {
+        return 'next-appear';
+    }
+
+    return null;
+};
+
+const renderThumbnailState = async (iconicThumbnail, width, height, renderState) => {
+    const thumbnailBuffer = await thumbnailDrawner.drawThumbnail(
+        width,
+        height,
+        renderState.previousTrack,
+        renderState.currentTrack,
+        renderState.nextTrack,
+        renderState.isPlaying,
+    );
+
+    if (!thumbnailBuffer) {
+        taskBarExtensionLogger.warn(`Thumbnail buffer is null fallbacking to cover image ${width}x${height}`);
+    }
+
+    const result = iconicThumbnail.setIconicThumbnail(thumbnailBuffer || renderState.currentTrack);
+    taskBarExtensionLogger.log('Thumbnail set result:', result);
+};
+
 const taskBarExtension = (window) => {
     initiated = true;
     loadAssets('dark');
     loadAssets('light');
 
-    electron_1.nativeTheme.on('updated', () => {
+    if (nativeThemeListener) {
+        electron_1.nativeTheme.removeListener('updated', nativeThemeListener);
+    }
+
+    nativeThemeListener = () => {
         systemTheme = electron_1.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
         updateTaskbarExtension(window);
-    });
+    };
+
+    electron_1.nativeTheme.on('updated', nativeThemeListener);
 
     if (native) {
         native.getDWMIconicThumbnailInstance(window);
@@ -260,27 +417,20 @@ const getArtist = () => {
 };
 
 const setIconicThumbnail = async (playerState) => {
-    const isGenerative = playerState.track?.id.startsWith('generative');
-
-    if (!playerState?.track?.coverUri && !isGenerative) {
-        taskBarExtensionLogger.log('No cover URI found, clearing iconic thumbnail.');
+    const renderRequestId = ++thumbnailRenderRequestId;
+    if (!playerState?.track) {
+        taskBarExtensionLogger.log('No track found, clearing iconic thumbnail.');
         await clearIconicThumbnail();
         return;
     }
 
-    const coverUrl = `https://${isGenerative ? playerState.track.imageUrl : playerState.track.coverUri}`.replace('%%', '200x200');
-
-    const previousCoverUrl = playerState.previousTrack?.coverUri ? `https://${playerState.previousTrack.coverUri}`.replace('%%', '200x200') : undefined;
-
-    const nextCoverUrl = playerState.nextTrack?.coverUri ? `https://${playerState.nextTrack.coverUri}`.replace('%%', '200x200') : undefined;
-
     try {
-        taskBarExtensionLogger.log('Setting thumbnail for cover:', coverUrl);
+        taskBarExtensionLogger.log('Setting thumbnail for track:', playerState.track.id ?? 'unknown');
 
         const [imageBuffer, nextImageBuffer, previousImageBuffer] = await Promise.all([
-            getImageBufferCached(coverUrl),
-            getImageBufferCached(nextCoverUrl),
-            getImageBufferCached(previousCoverUrl),
+            getTrackImageBuffer(playerState.track),
+            getTrackImageBuffer(playerState.nextTrack),
+            getTrackImageBuffer(playerState.previousTrack),
         ]);
 
         if (!imageBuffer) {
@@ -289,31 +439,94 @@ const setIconicThumbnail = async (playerState) => {
             return;
         }
 
+        if (renderRequestId !== thumbnailRenderRequestId) {
+            return;
+        }
+
         const store = getActionsStoreObject(playerState.actionsStore);
         const isRepeatOne = store.repeat === 'one';
+        const nextRenderState = createThumbnailRenderState(playerState, imageBuffer, previousImageBuffer, nextImageBuffer, isRepeatOne);
+        const iconicThumbnail = native.getDWMIconicThumbnailInstance();
 
-        const width = native.getDWMIconicThumbnailInstance().maxWidth;
-        const height = native.getDWMIconicThumbnailInstance().maxHeight;
+        const width = iconicThumbnail.maxWidth;
+        const height = iconicThumbnail.maxHeight;
 
         taskBarExtensionLogger.log(
             `thumbnail draw call: ${width}x${height}, isRepeatOne: ${isRepeatOne}, hasPrevious: ${!!previousImageBuffer}, hasNext: ${!!nextImageBuffer}`,
         );
 
-        const thumbnailBuffer = await thumbnailDrawner.drawThumbnail(
-            width,
-            height,
-            isRepeatOne ? imageBuffer : previousImageBuffer,
-            imageBuffer,
-            isRepeatOne ? imageBuffer : nextImageBuffer,
-            !playerState.isPaused,
-        );
+        if (activeThumbnailAnimation) {
+            if (activeThumbnailAnimation.targetTrackId === nextRenderState.trackId) {
+                activeThumbnailAnimation.finalRenderState = nextRenderState;
+                return;
+            }
 
-        if (!thumbnailBuffer) {
-            taskBarExtensionLogger.warn(`Thumbnail buffer is null fallbacking to cover image ${width}x${height}`);
+            thumbnailAnimationToken++;
+            activeThumbnailAnimation = null;
         }
 
-        const result = native.getDWMIconicThumbnailInstance().setIconicThumbnail(thumbnailBuffer || imageBuffer);
-        taskBarExtensionLogger.log('Thumbnail set result:', result);
+        const transitionDirection = getThumbnailTransitionDirection(lastThumbnailRenderState, nextRenderState);
+        const shouldAnimateTransition = width > 0 && height > 0 && lastThumbnailRenderState?.currentTrack && nextRenderState.currentTrack && transitionDirection;
+
+        if (shouldAnimateTransition) {
+            const animationToken = ++thumbnailAnimationToken;
+            const frameCount = getThumbnailTransitionFrameCount();
+            const frameDelayMs = THUMBNAIL_TRANSITION_DURATION_MS / frameCount;
+            const animationStartedAt = performance.now();
+            activeThumbnailAnimation = {
+                token: animationToken,
+                targetTrackId: nextRenderState.trackId,
+                finalRenderState: nextRenderState,
+            };
+
+            taskBarExtensionLogger.log(`Animating thumbnail transition: ${lastThumbnailRenderState.trackId} -> ${nextRenderState.trackId} (${transitionDirection})`);
+
+            for (let frameIndex = 1; frameIndex <= frameCount; frameIndex++) {
+                if (animationToken !== thumbnailAnimationToken) {
+                    return;
+                }
+
+                const frameBuffer = await thumbnailDrawner.drawThumbnailTransition(
+                    width,
+                    height,
+                    lastThumbnailRenderState,
+                    activeThumbnailAnimation.finalRenderState,
+                    frameIndex / frameCount,
+                    transitionDirection,
+                    activeThumbnailAnimation.finalRenderState.isPlaying,
+                );
+
+                if (frameBuffer) {
+                    const result = iconicThumbnail.setIconicThumbnail(frameBuffer);
+                    taskBarExtensionLogger.log(`Transition frame ${frameIndex}/${frameCount} set result:`, result);
+                }
+
+                if (frameIndex < frameCount) {
+                    const targetNextFrameAt = animationStartedAt + frameIndex * frameDelayMs;
+                    const waitMs = Math.max(0, targetNextFrameAt - performance.now());
+                    if (waitMs > 0) {
+                        await wait(waitMs);
+                    }
+                }
+            }
+
+            if (animationToken !== thumbnailAnimationToken) {
+                return;
+            }
+
+            const finalRenderState = activeThumbnailAnimation?.token === animationToken ? activeThumbnailAnimation.finalRenderState : nextRenderState;
+            activeThumbnailAnimation = null;
+            await renderThumbnailState(iconicThumbnail, width, height, finalRenderState);
+            lastThumbnailRenderState = finalRenderState;
+            return;
+        }
+
+        if (renderRequestId !== thumbnailRenderRequestId) {
+            return;
+        }
+
+        await renderThumbnailState(iconicThumbnail, width, height, nextRenderState);
+        lastThumbnailRenderState = nextRenderState;
     } catch (error) {
         taskBarExtensionLogger.error('Error setting thumbnail:', error);
     }
@@ -321,6 +534,10 @@ const setIconicThumbnail = async (playerState) => {
 
 const clearIconicThumbnail = async () => {
     try {
+        thumbnailRenderRequestId++;
+        thumbnailAnimationToken++;
+        lastThumbnailRenderState = null;
+        activeThumbnailAnimation = null;
         taskBarExtensionLogger.log('Clearing thumbnail');
         const result = native.getDWMIconicThumbnailInstance().clearIconicThumbnail();
         taskBarExtensionLogger.log('Thumbnail cleared result:', result);
@@ -336,20 +553,16 @@ const updateTaskbarExtension = (window) => {
     const store = getActionsStoreObject(playerState.actionsStore);
 
     let repeatAsset = assets[systemTheme].repeat;
-    let nextRepeatAction = playerActions_js_1.PlayerActions.REPEAT_NONE;
 
     switch (store.repeat) {
         case 'none':
             repeatAsset = assets[systemTheme].repeat;
-            nextRepeatAction = playerActions_js_1.PlayerActions.REPEAT_CONTEXT;
             break;
         case 'context':
             repeatAsset = assets[systemTheme].repeated;
-            nextRepeatAction = playerActions_js_1.PlayerActions.REPEAT_ONE;
             break;
         case 'one':
             repeatAsset = assets[systemTheme].one_repeated;
-            nextRepeatAction = playerActions_js_1.PlayerActions.REPEAT_NONE;
             break;
     }
 
