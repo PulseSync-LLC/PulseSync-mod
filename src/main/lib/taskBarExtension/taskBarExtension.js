@@ -21,6 +21,7 @@ const requireIfExists =
             return false;
         }
     });
+
 let native;
 try {
     native = requireIfExists('./native_modules/set_iconic_thumbnail');
@@ -39,14 +40,139 @@ let assets = { dark: {}, light: {} };
 let systemTheme = electron_1.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
 let initiated = false;
 
+/**
+ * Простой LRU-кэш на Map.
+ * Самый старый элемент всегда первый в map.keys().
+ */
+class LRUCache {
+    constructor(limit = 100) {
+        if (!Number.isInteger(limit) || limit <= 0) {
+            throw new Error('limit must be a positive integer');
+        }
+
+        this.limit = limit;
+        this.map = new Map();
+    }
+
+    get size() {
+        return this.map.size;
+    }
+
+    get(key) {
+        if (!this.map.has(key)) {
+            return undefined;
+        }
+
+        const value = this.map.get(key);
+
+        // Обновляем "свежесть"
+        this.map.delete(key);
+        this.map.set(key, value);
+
+        return value;
+    }
+
+    set(key, value) {
+        if (this.map.has(key)) {
+            this.map.delete(key);
+            this.map.set(key, value);
+            return;
+        }
+
+        if (this.map.size >= this.limit) {
+            const oldestKey = this.map.keys().next().value;
+            this.map.delete(oldestKey);
+        }
+
+        this.map.set(key, value);
+    }
+
+    has(key) {
+        return this.map.has(key);
+    }
+
+    delete(key) {
+        return this.map.delete(key);
+    }
+
+    clear() {
+        this.map.clear();
+    }
+}
+
+/**
+ * Кэш уже загруженных изображений.
+ * key = image url
+ * value = Buffer
+ */
+const imageBufferCache = new LRUCache(100);
+
+/**
+ * Хранилище активных запросов.
+ * Нужен для дедупликации: если один и тот же URL уже качается,
+ * второй запрос просто ждёт тот же Promise.
+ */
+const pendingImageRequests = new Map();
+
+/**
+ * Загружает картинку по URL с LRU-кэшированием и дедупликацией in-flight запросов.
+ * @param {string | undefined} url
+ * @returns {Promise<Buffer | undefined>}
+ */
+const getImageBufferCached = async (url) => {
+    if (!url) {
+        return undefined;
+    }
+
+    const cachedBuffer = imageBufferCache.get(url);
+    if (cachedBuffer) {
+        taskBarExtensionLogger.log(`Image cache hit: ${url}`);
+        return cachedBuffer;
+    }
+
+    if (pendingImageRequests.has(url)) {
+        taskBarExtensionLogger.log(`Image request joined pending: ${url}`);
+        return pendingImageRequests.get(url);
+    }
+
+    const requestPromise = (async () => {
+        taskBarExtensionLogger.log(`Image cache miss, fetching: ${url}`);
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch image ${url}: HTTP ${response.status}`);
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const imageBuffer = Buffer.from(arrayBuffer);
+
+        imageBufferCache.set(url, imageBuffer);
+
+        taskBarExtensionLogger.log(`Image cached: ${url}. Cache size: ${imageBufferCache.size}`);
+
+        return imageBuffer;
+    })();
+
+    pendingImageRequests.set(url, requestPromise);
+
+    try {
+        return await requestPromise;
+    } finally {
+        pendingImageRequests.delete(url);
+    }
+};
+
 const taskBarExtension = (window) => {
     initiated = true;
     loadAssets('dark');
     loadAssets('light');
+
     electron_1.nativeTheme.on('updated', () => {
         systemTheme = electron_1.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
         updateTaskbarExtension(window);
     });
+
     if (native) {
         native.getDWMIconicThumbnailInstance(window);
     }
@@ -55,15 +181,15 @@ exports.taskBarExtension = taskBarExtension;
 
 const onPlayerStateChange = (window, newPlayerState) => {
     if (!initiated) return;
-
     if (!(settings?.enable ?? true)) return;
+
     if (typeof newPlayerState !== 'undefined') {
         playerState = structuredClone(newPlayerState);
         playerState.isPaused = playerState.status === 'paused';
     }
+
     updateTaskbarExtension(window);
 };
-
 exports.onPlayerStateChange = onPlayerStateChange;
 
 const loadAssets = (variant) => {
@@ -120,13 +246,16 @@ const getTooltipString = () => {
 };
 
 const getArtist = () => {
-    let artistsArray = playerState.track?.artists;
-    if (!artistsArray?.[0]) return 'loading';
+    const artistsArray = [...(playerState.track?.artists || [])];
+    if (!artistsArray[0]) return 'loading';
+
     let artistsLabel = artistsArray[0].name;
     artistsArray.shift();
+
     artistsArray.forEach((artist) => {
         artistsLabel += ', ' + artist.name;
     });
+
     return artistsLabel;
 };
 
@@ -134,39 +263,41 @@ const setIconicThumbnail = async (playerState) => {
     const isGenerative = playerState.track?.id.startsWith('generative');
 
     if (!playerState?.track?.coverUri && !isGenerative) {
-        taskBarExtensionLogger.log('No cover URI found, skipping thumbnail update.');
+        taskBarExtensionLogger.log('No cover URI found, clearing iconic thumbnail.');
         await clearIconicThumbnail();
         return;
     }
 
     const coverUrl = `https://${isGenerative ? playerState.track.imageUrl : playerState.track.coverUri}`.replace('%%', '200x200');
 
-    const previousCoverUrl = playerState.previousTrack ? `https://${playerState.previousTrack.coverUri}`.replace('%%', '200x200') : undefined;
+    const previousCoverUrl = playerState.previousTrack?.coverUri ? `https://${playerState.previousTrack.coverUri}`.replace('%%', '200x200') : undefined;
 
-    const nextCoverUrl = playerState.nextTrack ? `https://${playerState.nextTrack.coverUri}`.replace('%%', '200x200') : undefined;
+    const nextCoverUrl = playerState.nextTrack?.coverUri ? `https://${playerState.nextTrack.coverUri}`.replace('%%', '200x200') : undefined;
 
     try {
         taskBarExtensionLogger.log('Setting thumbnail for cover:', coverUrl);
-        const coverImage = await fetch(coverUrl);
-        const imageBuffer = Buffer.from(await coverImage.arrayBuffer());
-        let nextImageBuffer, previousImageBuffer;
 
-        if (nextCoverUrl) {
-            const nextCoverImage = await fetch(nextCoverUrl);
-            nextImageBuffer = Buffer.from(await nextCoverImage.arrayBuffer());
-        }
+        const [imageBuffer, nextImageBuffer, previousImageBuffer] = await Promise.all([
+            getImageBufferCached(coverUrl),
+            getImageBufferCached(nextCoverUrl),
+            getImageBufferCached(previousCoverUrl),
+        ]);
 
-        if (previousCoverUrl) {
-            const previousCoverImage = await fetch(previousCoverUrl);
-            previousImageBuffer = Buffer.from(await previousCoverImage.arrayBuffer());
+        if (!imageBuffer) {
+            taskBarExtensionLogger.warn('Main cover image buffer is empty, clearing thumbnail.');
+            await clearIconicThumbnail();
+            return;
         }
 
         const store = getActionsStoreObject(playerState.actionsStore);
-
         const isRepeatOne = store.repeat === 'one';
 
         const width = native.getDWMIconicThumbnailInstance().maxWidth;
         const height = native.getDWMIconicThumbnailInstance().maxHeight;
+
+        taskBarExtensionLogger.log(
+            `thumbnail draw call: ${width}x${height}, isRepeatOne: ${isRepeatOne}, hasPrevious: ${!!previousImageBuffer}, hasNext: ${!!nextImageBuffer}`,
+        );
 
         const thumbnailBuffer = await thumbnailDrawner.drawThumbnail(
             width,
@@ -200,11 +331,13 @@ const clearIconicThumbnail = async () => {
 
 const updateTaskbarExtension = (window) => {
     if (!playerState?.availableActions) return;
+
     const availability = getActionsAvailabilityObject(playerState.availableActions);
     const store = getActionsStoreObject(playerState.actionsStore);
 
     let repeatAsset = assets[systemTheme].repeat;
     let nextRepeatAction = playerActions_js_1.PlayerActions.REPEAT_NONE;
+
     switch (store.repeat) {
         case 'none':
             repeatAsset = assets[systemTheme].repeat;
@@ -240,10 +373,11 @@ const updateTaskbarExtension = (window) => {
                   click() {
                       taskBarExtensionLogger.log('Dislike Toggled');
                       events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_DISLIKE);
-                      if (!store.disliked)
+                      if (!store.disliked) {
                           setTimeout(() => {
                               events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.MOVE_FORWARD);
                           }, 200);
+                      }
                   },
               }
             : {
@@ -298,10 +432,11 @@ const updateTaskbarExtension = (window) => {
                   click() {
                       taskBarExtensionLogger.log('Dislike Toggled');
                       events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_DISLIKE);
-                      if (!store.disliked)
+                      if (!store.disliked) {
                           setTimeout(() => {
                               events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.MOVE_FORWARD);
                           }, 200);
+                      }
                   },
               },
         {
