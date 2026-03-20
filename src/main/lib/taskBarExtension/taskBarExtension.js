@@ -43,8 +43,10 @@ let assets = { dark: {}, light: {} };
 let systemTheme = electron_1.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
 let initiated = false;
 
-const THUMBNAIL_TRANSITION_DURATION_MS = 200;
+const THUMBNAIL_TRANSITION_DURATION_MS = 250;
+const THUMBNAIL_PLAY_STATE_TRANSITION_DURATION_MS = 100;
 const THUMBNAIL_TRANSITION_FPS = 30;
+
 let thumbnailRenderRequestId = 0;
 let thumbnailAnimationToken = 0;
 let lastThumbnailRenderState = null;
@@ -183,8 +185,16 @@ const wait = (ms) => {
     });
 };
 
-const getThumbnailTransitionFrameCount = () => {
-    return Math.max(1, Math.round((THUMBNAIL_TRANSITION_DURATION_MS / 1000) * THUMBNAIL_TRANSITION_FPS));
+const getThumbnailTransitionDurationMs = (transitionDirection) => {
+    if (transitionDirection === 'play-state') {
+        return THUMBNAIL_PLAY_STATE_TRANSITION_DURATION_MS;
+    }
+
+    return THUMBNAIL_TRANSITION_DURATION_MS;
+};
+
+const getThumbnailTransitionFrameCount = (transitionDurationMs) => {
+    return Math.max(1, Math.round((transitionDurationMs / 1000) * THUMBNAIL_TRANSITION_FPS));
 };
 
 const getDefaultTrackCoverTemplate = () => {
@@ -271,6 +281,14 @@ const createThumbnailRenderState = (playerState, currentTrackBuffer, previousTra
     };
 };
 
+const getThumbnailRenderStateKey = (renderState) => {
+    if (!renderState) {
+        return null;
+    }
+
+    return [renderState.trackId ?? '', renderState.previousTrackId ?? '', renderState.nextTrackId ?? '', renderState.isPlaying ? '1' : '0'].join(':');
+};
+
 const getThumbnailTransitionDirection = (fromRenderState, toRenderState) => {
     if (!fromRenderState?.trackId || !toRenderState?.trackId) {
         return null;
@@ -291,6 +309,15 @@ const getThumbnailTransitionDirection = (fromRenderState, toRenderState) => {
         !!toRenderState.nextTrackId
     ) {
         return 'next-appear';
+    }
+
+    if (
+        fromRenderState.trackId === toRenderState.trackId &&
+        fromRenderState.previousTrackId === toRenderState.previousTrackId &&
+        fromRenderState.nextTrackId === toRenderState.nextTrackId &&
+        fromRenderState.isPlaying !== toRenderState.isPlaying
+    ) {
+        return 'play-state';
     }
 
     return null;
@@ -456,7 +483,7 @@ const setIconicThumbnail = async (playerState) => {
         );
 
         if (activeThumbnailAnimation) {
-            if (activeThumbnailAnimation.targetTrackId === nextRenderState.trackId) {
+            if (activeThumbnailAnimation.targetRenderStateKey === getThumbnailRenderStateKey(nextRenderState)) {
                 activeThumbnailAnimation.finalRenderState = nextRenderState;
                 return;
             }
@@ -470,16 +497,19 @@ const setIconicThumbnail = async (playerState) => {
 
         if (shouldAnimateTransition) {
             const animationToken = ++thumbnailAnimationToken;
-            const frameCount = getThumbnailTransitionFrameCount();
-            const frameDelayMs = THUMBNAIL_TRANSITION_DURATION_MS / frameCount;
+            const transitionDurationMs = getThumbnailTransitionDurationMs(transitionDirection);
+            const frameCount = getThumbnailTransitionFrameCount(transitionDurationMs);
+            const frameDelayMs = transitionDurationMs / frameCount;
             const animationStartedAt = performance.now();
             activeThumbnailAnimation = {
                 token: animationToken,
-                targetTrackId: nextRenderState.trackId,
+                targetRenderStateKey: getThumbnailRenderStateKey(nextRenderState),
                 finalRenderState: nextRenderState,
             };
 
-            taskBarExtensionLogger.log(`Animating thumbnail transition: ${lastThumbnailRenderState.trackId} -> ${nextRenderState.trackId} (${transitionDirection})`);
+            taskBarExtensionLogger.log(
+                `Animating thumbnail transition: ${lastThumbnailRenderState.trackId} -> ${nextRenderState.trackId} (${transitionDirection}, ${transitionDurationMs}ms)`,
+            );
 
             for (let frameIndex = 1; frameIndex <= frameCount; frameIndex++) {
                 if (animationToken !== thumbnailAnimationToken) {

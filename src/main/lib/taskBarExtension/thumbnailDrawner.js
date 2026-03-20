@@ -158,6 +158,14 @@ function buildStaticInstances(previousTrack, currentTrack, nextTrack, layout) {
     return instances.sort((a, b) => a.zIndex - b.zIndex);
 }
 
+function interpolateSlot(fromSlot, toSlot, progress) {
+    return {
+        left: Math.round(lerp(fromSlot.left, toSlot.left, progress)),
+        top: Math.round(lerp(fromSlot.top, toSlot.top, progress)),
+        size: Math.round(lerp(fromSlot.size, toSlot.size, progress)),
+    };
+}
+
 function buildForwardTransitionInstances(fromState, toState, layout, progress) {
     const instances = [];
 
@@ -347,7 +355,46 @@ function buildNextAppearTransitionInstances(fromState, toState, layout, progress
     return instances;
 }
 
-function buildTransitionInstances(fromState, toState, layout, t, direction = 'forward') {
+function buildPlayStateTransitionInstances(fromState, toState, fromLayout, toLayout, progress) {
+    const instances = [];
+    const slotDefinitions = [
+        {
+            slotName: 'prev',
+            track: toState?.previousTrack || fromState?.previousTrack || null,
+            zIndex: 1,
+        },
+        {
+            slotName: 'next',
+            track: toState?.nextTrack || fromState?.nextTrack || null,
+            zIndex: 1,
+        },
+        {
+            slotName: 'current',
+            track: toState?.currentTrack || fromState?.currentTrack || null,
+            zIndex: 3,
+        },
+    ];
+
+    for (const { slotName, track, zIndex } of slotDefinitions) {
+        if (!track) {
+            continue;
+        }
+
+        const slot = interpolateSlot(fromLayout.slots[slotName], toLayout.slots[slotName], progress);
+
+        instances.push({
+            track,
+            left: slot.left,
+            top: slot.top,
+            size: slot.size,
+            zIndex,
+        });
+    }
+
+    return instances;
+}
+
+function buildTransitionInstances(fromState, toState, layout, t, direction = 'forward', fromLayout = layout, toLayout = layout) {
     const progress = easeOutCubic(clamp(t, 0, 1));
     let instances;
 
@@ -357,6 +404,9 @@ function buildTransitionInstances(fromState, toState, layout, t, direction = 'fo
             break;
         case 'next-appear':
             instances = buildNextAppearTransitionInstances(fromState, toState, layout, progress);
+            break;
+        case 'play-state':
+            instances = buildPlayStateTransitionInstances(fromState, toState, fromLayout, toLayout, progress);
             break;
         default:
             instances = buildForwardTransitionInstances(fromState, toState, layout, progress);
@@ -422,8 +472,10 @@ async function drawThumbnailTransition(
         return null;
     }
 
-    const layout = getLayout(width, height, isPlaying);
-    const instances = buildTransitionInstances(fromState, toState, layout, progress, direction);
+    const fromLayout = direction === 'play-state' ? getLayout(width, height, fromState?.isPlaying ?? isPlaying) : null;
+    const toLayout = getLayout(width, height, toState?.isPlaying ?? isPlaying);
+    const layout = toLayout;
+    const instances = buildTransitionInstances(fromState, toState, layout, progress, direction, fromLayout || layout, toLayout);
 
     return await renderInstances(width, height, instances, transparentColor);
 }
