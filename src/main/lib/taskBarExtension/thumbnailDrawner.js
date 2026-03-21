@@ -355,6 +355,56 @@ function buildNextAppearTransitionInstances(fromState, toState, layout, progress
     return instances;
 }
 
+function buildAdjacentAppearTransitionInstances(fromState, toState, layout, progress) {
+    const instances = [];
+
+    if (fromState?.currentTrack) {
+        instances.push({
+            track: fromState.currentTrack,
+            left: layout.slots.current.left,
+            top: layout.slots.current.top,
+            size: layout.slots.current.size,
+            zIndex: 3,
+        });
+    }
+
+    if (toState?.previousTrack) {
+        const end = layout.slots.prev;
+        const start = {
+            left: end.left - Math.round(end.size * 0.45),
+            top: end.top,
+            size: end.size,
+        };
+
+        instances.push({
+            track: toState.previousTrack,
+            left: Math.round(lerp(start.left, end.left, progress)),
+            top: Math.round(lerp(start.top, end.top, progress)),
+            size: Math.round(lerp(start.size, end.size, progress)),
+            zIndex: 1,
+        });
+    }
+
+    if (toState?.nextTrack) {
+        const end = layout.slots.next;
+        const start = {
+            left: end.left + Math.round(end.size * 0.45),
+            top: end.top,
+            size: end.size,
+        };
+
+        instances.push({
+            track: toState.nextTrack,
+            left: Math.round(lerp(start.left, end.left, progress)),
+            top: Math.round(lerp(start.top, end.top, progress)),
+            size: Math.round(lerp(start.size, end.size, progress)),
+            zIndex: 2,
+        });
+    }
+
+    return instances;
+}
+
 function buildPlayStateTransitionInstances(fromState, toState, fromLayout, toLayout, progress) {
     const instances = [];
     const slotDefinitions = [
@@ -404,6 +454,9 @@ function buildTransitionInstances(fromState, toState, layout, t, direction = 'fo
             break;
         case 'next-appear':
             instances = buildNextAppearTransitionInstances(fromState, toState, layout, progress);
+            break;
+        case 'adjacent-appear':
+            instances = buildAdjacentAppearTransitionInstances(fromState, toState, layout, progress);
             break;
         case 'play-state':
             instances = buildPlayStateTransitionInstances(fromState, toState, fromLayout, toLayout, progress);

@@ -50,6 +50,7 @@ const THUMBNAIL_TRANSITION_FPS = 30;
 let thumbnailRenderRequestId = 0;
 let thumbnailAnimationToken = 0;
 let lastThumbnailRenderState = null;
+let lastThumbnailPresentationMode = null;
 let activeThumbnailAnimation = null;
 let nativeThemeListener = null;
 const defaultTrackCoverBufferCache = new Map();
@@ -289,6 +290,22 @@ const getThumbnailRenderStateKey = (renderState) => {
     return [renderState.trackId ?? '', renderState.previousTrackId ?? '', renderState.nextTrackId ?? '', renderState.isPlaying ? '1' : '0'].join(':');
 };
 
+const createFallbackThumbnailRenderState = (renderState) => {
+    if (!renderState) {
+        return null;
+    }
+
+    return {
+        previousTrack: null,
+        currentTrack: renderState.currentTrack,
+        nextTrack: null,
+        isPlaying: renderState.isPlaying,
+        trackId: renderState.trackId,
+        previousTrackId: null,
+        nextTrackId: null,
+    };
+};
+
 const getThumbnailTransitionDirection = (fromRenderState, toRenderState) => {
     if (!fromRenderState?.trackId || !toRenderState?.trackId) {
         return null;
@@ -339,6 +356,7 @@ const renderThumbnailState = async (iconicThumbnail, width, height, renderState)
 
     const result = iconicThumbnail.setIconicThumbnail(thumbnailBuffer || renderState.currentTrack);
     taskBarExtensionLogger.log('Thumbnail set result:', result);
+    return thumbnailBuffer ? 'drawn' : 'fallback';
 };
 
 const taskBarExtension = (window) => {
@@ -358,7 +376,14 @@ const taskBarExtension = (window) => {
     electron_1.nativeTheme.on('updated', nativeThemeListener);
 
     if (native) {
-        native.getDWMIconicThumbnailInstance(window);
+        const iconicThumbnail = native.getDWMIconicThumbnailInstance(window);
+        iconicThumbnail.onIconicThumbnailRequested = () => {
+            if (lastThumbnailPresentationMode !== 'fallback' || !playerState?.track) {
+                return;
+            }
+
+            void setIconicThumbnail(playerState);
+        };
     }
 };
 exports.taskBarExtension = taskBarExtension;
@@ -492,8 +517,15 @@ const setIconicThumbnail = async (playerState) => {
             activeThumbnailAnimation = null;
         }
 
-        const transitionDirection = getThumbnailTransitionDirection(lastThumbnailRenderState, nextRenderState);
-        const shouldAnimateTransition = width > 0 && height > 0 && lastThumbnailRenderState?.currentTrack && nextRenderState.currentTrack && transitionDirection;
+        let transitionFromState = lastThumbnailRenderState;
+        let transitionDirection = getThumbnailTransitionDirection(lastThumbnailRenderState, nextRenderState);
+
+        if (width > 0 && height > 0 && lastThumbnailPresentationMode === 'fallback' && nextRenderState.currentTrack) {
+            transitionFromState = createFallbackThumbnailRenderState(nextRenderState);
+            transitionDirection = nextRenderState.previousTrack || nextRenderState.nextTrack ? 'adjacent-appear' : null;
+        }
+
+        const shouldAnimateTransition = width > 0 && height > 0 && transitionFromState?.currentTrack && nextRenderState.currentTrack && transitionDirection;
 
         if (shouldAnimateTransition) {
             const animationToken = ++thumbnailAnimationToken;
@@ -508,7 +540,7 @@ const setIconicThumbnail = async (playerState) => {
             };
 
             taskBarExtensionLogger.log(
-                `Animating thumbnail transition: ${lastThumbnailRenderState.trackId} -> ${nextRenderState.trackId} (${transitionDirection}, ${transitionDurationMs}ms)`,
+                `Animating thumbnail transition: ${transitionFromState.trackId} -> ${nextRenderState.trackId} (${transitionDirection}, ${transitionDurationMs}ms)`,
             );
 
             for (let frameIndex = 1; frameIndex <= frameCount; frameIndex++) {
@@ -519,7 +551,7 @@ const setIconicThumbnail = async (playerState) => {
                 const frameBuffer = await thumbnailDrawner.drawThumbnailTransition(
                     width,
                     height,
-                    lastThumbnailRenderState,
+                    transitionFromState,
                     activeThumbnailAnimation.finalRenderState,
                     frameIndex / frameCount,
                     transitionDirection,
@@ -546,7 +578,7 @@ const setIconicThumbnail = async (playerState) => {
 
             const finalRenderState = activeThumbnailAnimation?.token === animationToken ? activeThumbnailAnimation.finalRenderState : nextRenderState;
             activeThumbnailAnimation = null;
-            await renderThumbnailState(iconicThumbnail, width, height, finalRenderState);
+            lastThumbnailPresentationMode = await renderThumbnailState(iconicThumbnail, width, height, finalRenderState);
             lastThumbnailRenderState = finalRenderState;
             return;
         }
@@ -555,7 +587,7 @@ const setIconicThumbnail = async (playerState) => {
             return;
         }
 
-        await renderThumbnailState(iconicThumbnail, width, height, nextRenderState);
+        lastThumbnailPresentationMode = await renderThumbnailState(iconicThumbnail, width, height, nextRenderState);
         lastThumbnailRenderState = nextRenderState;
     } catch (error) {
         taskBarExtensionLogger.error('Error setting thumbnail:', error);
@@ -567,6 +599,7 @@ const clearIconicThumbnail = async () => {
         thumbnailRenderRequestId++;
         thumbnailAnimationToken++;
         lastThumbnailRenderState = null;
+        lastThumbnailPresentationMode = null;
         activeThumbnailAnimation = null;
         taskBarExtensionLogger.log('Clearing thumbnail');
         const result = native.getDWMIconicThumbnailInstance().clearIconicThumbnail();

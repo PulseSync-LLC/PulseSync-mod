@@ -73,6 +73,12 @@ class DWMIconicThumbnail {
             if (this.lastIconicThumbnailImageBuffer) {
                 this.setIconicThumbnail(this.lastIconicThumbnailImageBuffer, this.lastIcomicThumbnailFlags);
             }
+
+            if (typeof this.onIconicThumbnailRequested === 'function') {
+                Promise.resolve(this.onIconicThumbnailRequested({ maxWidth: this.maxWidth, maxHeight: this.maxHeight })).catch((error) => {
+                    console.error('Error in onIconicThumbnailRequested callback:', error);
+                });
+            }
         });
 
         window.hookWindowMessage(NATIVE_EVENTS.WM_DWMSENDICONICLIVEPREVIEWBITMAP, async () => {
