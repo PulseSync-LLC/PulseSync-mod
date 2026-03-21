@@ -200,6 +200,7 @@ const init = () => {
         appAutoUpdates: {
             enableAppAutoUpdate: store.get(store_js_1.StoreKeys.AUTO_UPDATES) ?? true,
             enableAppAutoUpdateByProbability: false,
+            enableModAutoUpdate: true,
         },
         scrobblers: {
             lastfm: {

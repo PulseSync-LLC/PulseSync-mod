@@ -354,7 +354,7 @@
                     let { version: t, formatMessage: a, closeToast: l } = e,
                         u = (0, o.useCallback)(() => {
                             var e;
-                            null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_UPDATE), null == l || l();
+                            null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_UPDATE);
                         }, [l]),
                         h = (0, o.useMemo)(
                             () =>

@@ -38,6 +38,8 @@
     min-width: 7.875rem;
 }
 .NotificationUpdate_message__rLYpW {
+    z-index: 2;
+    position: relative;
     align-items: center;
     display: flex;
     justify-content: space-between;

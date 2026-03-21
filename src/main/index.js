@@ -19,10 +19,12 @@ const tray_js_1 = require('./lib/tray.js');
 const singleInstance_js_1 = require('./lib/singleInstance.js');
 const createWindow_js_1 = require('./lib/window/createWindow.js');
 const updater_js_1 = require('./lib/updater.js');
+const modUpdater_js_1 = require('./lib/modUpdater.js');
 const miniPlayer_js_1 = require('./lib/miniplayer/miniplayer.js');
 const { getFfmpegUpdater } = require('./lib/ffmpegInstaller.js');
 const { getYtDlpInstaller } = require('./lib/ytDlpInstaller.js');
 const { initUserCountMetric } = require('./lib/metrics');
+const { throttle } = require('./lib/utils.js');
 
 const events_js_1 = require('./events.js');
 const customTitleBar_js_1 = require('./lib/customTitleBar.js');
@@ -126,6 +128,7 @@ const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 
 (async () => {
     const updater = (0, updater_js_1.getUpdater)();
+    const modUpdater = (0, modUpdater_js_1.getModUpdater)();
     const ffmpegInstaller = getFfmpegUpdater({
         repo: 'foreA-adoxid/ffmpeg-builds',
         tagName: 'ffmpeg-binaries',
@@ -161,5 +164,16 @@ const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
         updater.onUpdate((version) => {
             (0, events_js_1.sendUpdateAvailable)(window, version);
         });
+    }
+    modUpdater.onUpdateAvailable((currVersion, newVersion) => {
+        (0, events_js_1.sendModUpdateAvailable)(window, currVersion, newVersion);
+        let callback = (progressRenderer, progressWindow) => {
+            events_js_1.sendProgressBarChange(window, 'modUpdateToast', progressRenderer * 100);
+            window.setProgressBar(progressWindow);
+        };
+        (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(throttle(callback, 200));
+    });
+    if (store_js_1.getModSettings()?.appAutoUpdates.enableModAutoUpdate && deviceInfo_js_1.devicePlatform === platform_js_1.Platform.WINDOWS) {
+        modUpdater.start();
     }
 })();
