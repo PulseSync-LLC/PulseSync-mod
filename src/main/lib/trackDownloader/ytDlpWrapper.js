@@ -466,7 +466,7 @@ class YtDlpWrapper {
             } catch (error) {}
         }
         const { sendBasicToastCreate, sendProgressBarChange, sendBasicToastDismiss } = getMainEventSenders();
-        sendBasicToastCreate(this.window, 'yt-dlp', 'Обновление компонента: yt-dlp', false);
+        sendBasicToastCreate(this.window, 'yt-dlp', 'Установка компонента: yt-dlp', false);
 
         const callback = (progressRenderer, progressWindow) => {
             sendProgressBarChange(this.window, 'yt-dlp', progressRenderer * 100);
