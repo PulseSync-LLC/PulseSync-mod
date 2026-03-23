@@ -34,7 +34,7 @@ const loadReleaseNotes_js_1 = require('./lib/loadReleaseNotes.js');
 const deviceInfo_js_1 = require('./lib/deviceInfo.js');
 
 const isAccelerator = require('electron-is-accelerator');
-const modUpdater_js_1 = require('./lib/modUpdater.js');
+// const modUpdater_js_1 = require('./lib/modUpdater.js');
 
 const { getAllowedUrls } = require('./lib/handlers/handleHeadersReceived/corsHandler');
 const trackDownloader_js_1 = require('./lib/trackDownloader/trackDownloader.js');
@@ -54,6 +54,7 @@ const getSortedDescReleaseNotesKeys_js_1 = require('./lib/releaseNotes/getSorted
 const removeNewerReleaseNotes_js_1 = require('./lib/releaseNotes/removeNewerReleaseNotes.js');
 const formatters_js_1 = require('./lib/i18n/formatters.js');
 const stringToAST_js_1 = require('./lib/i18n/stringToAST.js');
+const { sendFeaturesMetric } = require('./lib/metrics.js');
 const gt_js_1 = __importDefault(require('semver/functions/gt.js'));
 const valid_js_1 = __importDefault(require('semver/functions/valid.js'));
 const i18nKeys_js_1 = require('./constants/i18nKeys.js');
@@ -77,6 +78,35 @@ const PLAYLIST_LINK_IMPORT_TRACK_READY = 'PLAYLIST_LINK_IMPORT_TRACK_READY';
 let pulseSyncManager_js_1;
 const isBoolean = (value) => {
     return typeof value === 'boolean';
+};
+
+const buildFeaturesSnapshot = () => {
+    return {
+        sendModAnonymizedMetrics: store_js_1.get('sendModAnonymizedMetrics'),
+        enableYnisonPlayerRemoteControl: store_js_1.get('enableYnisonPlayerRemoteControl'),
+        ynisonInterceptPlayback: store_js_1.get('ynisonInterceptPlayback'),
+        autoUpdates: store_js_1.get('autoUpdates'),
+        modSettings: store_js_1.getModSettings(),
+    };
+};
+
+const buildFeaturesPatch = (path, value) => {
+    if (!path || typeof path !== 'string') {
+        return null;
+    }
+
+    const patch = {};
+    const keys = path.split('.');
+    const lastKey = keys.pop();
+    let current = patch;
+
+    for (const key of keys) {
+        current[key] = {};
+        current = current[key];
+    }
+
+    current[lastKey] = value;
+    return patch;
 };
 
 const updateGlobalShortcuts = () => {
@@ -424,6 +454,7 @@ const handleApplicationEvents = (window) => {
     });
     electron_1.ipcMain.on(events_js_1.Events.APPLICATION_READY, async (event, language) => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_READY);
+        void sendFeaturesMetric(buildFeaturesSnapshot());
 
         applicationReadyTimeOut && clearTimeout(applicationReadyTimeOut);
 
@@ -652,12 +683,12 @@ const handleApplicationEvents = (window) => {
             sendProgressBarChange(window, 'modUpdateToast', progressRenderer * 100);
             window.setProgressBar(progressWindow);
         };
-        await (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(throttle(callback, PROGRESS_BAR_THROTTLE_MS));
+        //await (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(throttle(callback, PROGRESS_BAR_THROTTLE_MS));
     });
 
     electron_1.ipcMain.on(events_js_1.Events.INSTALL_MOD_UPDATE, async (event, data) => {
         eventsLogger.info(`Event received`, events_js_1.Events.INSTALL_MOD_UPDATE);
-        await (0, modUpdater_js_1.getModUpdater)().onInstallUpdate();
+        //await (0, modUpdater_js_1.getModUpdater)().onInstallUpdate();
     });
 
     electron_1.ipcMain.on(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
@@ -674,6 +705,10 @@ const handleApplicationEvents = (window) => {
             updateGlobalShortcuts();
         }
         MiniPlayer.updateSettingsState(store_js_1.getModSettings());
+        const featurePatch = buildFeaturesPatch(key, value);
+        if (featurePatch) {
+            void sendFeaturesMetric(featurePatch);
+        }
     });
 
     electron_1.ipcMain.on(events_js_1.Events.TOGGLE_MINIPLAYER, (event) => {

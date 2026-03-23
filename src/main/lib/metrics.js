@@ -199,6 +199,149 @@ let heartbeatTimer = null;
 let heartbeatStopped = false;
 let heartbeatInFlight = false;
 let teardownBound = false;
+let metricsRuntimeConfig = null;
+
+function isPlainObject(value) {
+    return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function buildFeaturesEndpoint(endpointUrl) {
+    if (!endpointUrl) return '';
+    const trimmed = endpointUrl.endsWith('/') ? endpointUrl.slice(0, -1) : endpointUrl;
+    if (trimmed.endsWith('/features')) return trimmed;
+    return `${trimmed}/features`;
+}
+
+function normalizeBooleanFeatureTree(value) {
+    if (!isPlainObject(value)) {
+        return null;
+    }
+
+    const normalized = {};
+
+    for (const [key, nestedValue] of Object.entries(value)) {
+        if (typeof nestedValue === 'boolean') {
+            normalized[key] = nestedValue;
+            continue;
+        }
+
+        const nestedTree = normalizeBooleanFeatureTree(nestedValue);
+        if (nestedTree && Object.keys(nestedTree).length > 0) {
+            normalized[key] = nestedTree;
+        }
+    }
+
+    return Object.keys(normalized).length > 0 ? normalized : null;
+}
+
+function cloneFeatureTree(value) {
+    if (!isPlainObject(value)) {
+        return {};
+    }
+
+    const clone = {};
+
+    for (const [key, nestedValue] of Object.entries(value)) {
+        clone[key] = isPlainObject(nestedValue) ? cloneFeatureTree(nestedValue) : nestedValue;
+    }
+
+    return clone;
+}
+
+function areFeatureTreesEqual(left, right) {
+    if (left === right) {
+        return true;
+    }
+
+    if (typeof left === 'boolean' || typeof right === 'boolean') {
+        return left === right;
+    }
+
+    if (!isPlainObject(left) || !isPlainObject(right)) {
+        return false;
+    }
+
+    const leftKeys = Object.keys(left);
+    const rightKeys = Object.keys(right);
+
+    if (leftKeys.length !== rightKeys.length) {
+        return false;
+    }
+
+    for (const key of leftKeys) {
+        if (!Object.prototype.hasOwnProperty.call(right, key)) {
+            return false;
+        }
+
+        if (!areFeatureTreesEqual(left[key], right[key])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function hasFeatureTreeChanges(currentState, nextState) {
+    if (!isPlainObject(nextState)) {
+        return false;
+    }
+
+    for (const [key, nextValue] of Object.entries(nextState)) {
+        const currentValue = isPlainObject(currentState) ? currentState[key] : undefined;
+
+        if (typeof nextValue === 'boolean') {
+            if (currentValue !== nextValue) {
+                return true;
+            }
+            continue;
+        }
+
+        if (!isPlainObject(currentValue)) {
+            return true;
+        }
+
+        if (hasFeatureTreeChanges(currentValue, nextValue)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function mergeFeatureTree(baseState, patchState) {
+    const nextState = cloneFeatureTree(baseState);
+
+    if (!isPlainObject(patchState)) {
+        return nextState;
+    }
+
+    for (const [key, patchValue] of Object.entries(patchState)) {
+        if (typeof patchValue === 'boolean') {
+            nextState[key] = patchValue;
+            continue;
+        }
+
+        nextState[key] = mergeFeatureTree(nextState[key], patchValue);
+    }
+
+    return nextState;
+}
+
+function getMetricScopedFeatureState(state, metricType) {
+    const featureStates = isPlainObject(state.last_sent_features_by_metric_type) ? state.last_sent_features_by_metric_type : {};
+    const metricState = featureStates[metricType];
+    return isPlainObject(metricState) ? metricState : {};
+}
+
+function buildFeatureStateUpdate(state, metricType, features) {
+    const featureStates = isPlainObject(state.last_sent_features_by_metric_type) ? cloneFeatureTree(state.last_sent_features_by_metric_type) : {};
+    featureStates[metricType] = features;
+    return {
+        ...state,
+        last_sent_features_by_metric_type: featureStates,
+        last_features_sent_at_ms: nowMs(),
+    };
+}
 
 function stopHeartbeatScheduler() {
     heartbeatStopped = true;
@@ -297,6 +440,17 @@ async function initUserCountMetric(options) {
         return;
     }
 
+    metricsRuntimeConfig = {
+        endpointUrl,
+        fallbackUrl,
+        apiKey,
+        metricType,
+        appName,
+        modVersion,
+        timeoutMs,
+        maxRetries,
+    };
+
     logger.info('Initializing user count metrics');
 
     await app.whenReady();
@@ -376,7 +530,64 @@ async function initUserCountMetric(options) {
     }
 }
 
+async function sendFeaturesMetric(features, overrides = {}) {
+    if (!metricsRuntimeConfig?.endpointUrl || !features || typeof features !== 'object' || Array.isArray(features)) {
+        return;
+    }
+
+    try {
+        await app.whenReady();
+
+        const statePath = getMetricsStatePath();
+        const { state, installId } = await getOrCreateInstallId(statePath);
+        const metricType = overrides.metricType || metricsRuntimeConfig.metricType || 'mod';
+        const normalizedFeatures = normalizeBooleanFeatureTree(features);
+
+        if (!normalizedFeatures) {
+            return;
+        }
+
+        const lastSentFeatures = getMetricScopedFeatureState(state, metricType);
+        const hasChanges = hasFeatureTreeChanges(lastSentFeatures, normalizedFeatures);
+
+        if (!hasChanges) {
+            logger.debug('Skipping features metric send because boolean feature state did not change');
+            return;
+        }
+
+        const endpointUrl = buildFeaturesEndpoint(overrides.endpointUrl || metricsRuntimeConfig.endpointUrl);
+        const fallbackUrl = buildFeaturesEndpoint(overrides.fallbackUrl || metricsRuntimeConfig.fallbackUrl);
+        const payload = {
+            features: normalizedFeatures,
+            ...buildCommonPayload({
+                installId,
+                appName: overrides.appName || metricsRuntimeConfig.appName,
+                modVersion: overrides.modVersion || metricsRuntimeConfig.modVersion,
+                metricType,
+            }),
+        };
+
+        await sendEventWithFallback({
+            primaryUrl: endpointUrl,
+            fallbackUrl,
+            apiKey: overrides.apiKey || metricsRuntimeConfig.apiKey,
+            payload,
+            timeoutMs: overrides.timeoutMs || metricsRuntimeConfig.timeoutMs,
+            maxRetries: overrides.maxRetries || metricsRuntimeConfig.maxRetries,
+        });
+
+        const nextFeaturesState = areFeatureTreesEqual(lastSentFeatures, normalizedFeatures)
+            ? lastSentFeatures
+            : mergeFeatureTree(lastSentFeatures, normalizedFeatures);
+        const latestState = (await readJsonSafe(statePath)) || state;
+        await writeJsonAtomic(statePath, buildFeatureStateUpdate(latestState, metricType, nextFeaturesState));
+    } catch (error) {
+        logger.warn('Failed to send features metric:', error?.message || error);
+    }
+}
+
 module.exports = {
     initUserCountMetric,
     stopHeartbeatScheduler,
+    sendFeaturesMetric,
 };
