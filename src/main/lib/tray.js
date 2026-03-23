@@ -5,7 +5,7 @@ const electron_1 = require('electron');
 const node_path_1 = require('node:path');
 const deviceInfo_js_1 = require('./deviceInfo.js');
 const updater_js_1 = require('./updater.js');
-const modUpdater_js_1 = require('./modUpdater.js');
+//const modUpdater_js_1 = require('./modUpdater.js');
 const formatters_js_1 = require('./i18n/formatters.js');
 const state_js_1 = require('./state.js');
 const toggleWindowState_js_1 = require('./window/toggleWindowState.js');
@@ -43,7 +43,7 @@ const trayIcon = () => {
 };
 const createContextMenu = (window) => {
     const updater = (0, updater_js_1.getUpdater)();
-    const modUpdater = (0, modUpdater_js_1.getModUpdater)();
+    //const modUpdater = (0, modUpdater_js_1.getModUpdater)();
     const windowStateLabel = state_js_1.state.isMinimized
         ? (0, formatters_js_1.formatMessage)({ id: 'windows-menu.unwrap' })
         : (0, formatters_js_1.formatMessage)({ id: 'windows-menu.roll-up' });
@@ -63,18 +63,18 @@ const createContextMenu = (window) => {
                 updater.check();
             },
         },
-        {
-            label: 'Проверить обновления мода',
-            click() {
-                modUpdater.check();
-            },
-        },
-        {
-            label: 'Переустановить мод',
-            click() {
-                modUpdater.check(true);
-            },
-        },
+        // {
+        //     label: 'Проверить обновления мода',
+        //     click() {
+        //         modUpdater.check();
+        //     },
+        // },
+        // {
+        //     label: 'Переустановить мод',
+        //     click() {
+        //         modUpdater.check(true);
+        //     },
+        // },
         {
             type: 'separator',
         },
