@@ -558,13 +558,11 @@ const handleApplicationEvents = (window) => {
                         sendBasicToastDismiss(window, 'ffmpeg');
                     }, 2500);
                 });
-        } else {
         }
 
         const ytDlpInstaller = getYtDlpInstaller();
         if (await ytDlpInstaller.hasInstalledBinary()) {
             const isInstalled = await ytDlpInstaller.isInstalled();
-
             if (!isInstalled) {
                 sendBasicToastCreate(window, 'yt-dlp', 'Обновление компонента: yt-dlp', false);
 
@@ -785,14 +783,16 @@ const sendModUpdateAvailable = (window, currVersion, newVersion) => {
     eventsLogger.info('Event sent', events_js_1.Events.MOD_UPDATE_AVAILABLE, currVersion, newVersion);
 };
 exports.sendModUpdateAvailable = sendModUpdateAvailable;
-const sendBasicToastCreate = (window, toastID, message, dismissable) => {
+const sendBasicToastCreate = (window = mainWindow, toastID, message, dismissable) => {
     window.webContents.send(events_js_1.Events.BASIC_TOAST_CREATE, toastID, message, dismissable, Date.now());
     eventsLogger.info('Event sent', events_js_1.Events.BASIC_TOAST_CREATE, toastID, message);
 };
-const sendBasicToastDismiss = (window, toastID) => {
+exports.sendBasicToastCreate = sendBasicToastCreate;
+const sendBasicToastDismiss = (window = mainWindow, toastID) => {
     window.webContents.send(events_js_1.Events.BASIC_TOAST_DISMISS, toastID, Date.now());
     eventsLogger.info('Event sent', events_js_1.Events.BASIC_TOAST_DISMISS, toastID);
 };
+exports.sendBasicToastDismiss = sendBasicToastDismiss;
 const sendRefreshApplicationData = (window) => {
     window.webContents.send(events_js_1.Events.REFRESH_APPLICATION_DATA);
     eventsLogger.info('Event sent', events_js_1.Events.REFRESH_APPLICATION_DATA);

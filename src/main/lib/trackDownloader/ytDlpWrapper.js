@@ -7,6 +7,7 @@ const { spawn } = require('child_process');
 const { getFfmpegUpdater } = require('../ffmpegInstaller.js');
 const { getYtDlpInstaller } = require('../ytDlpInstaller.js');
 const store_js_1 = require('../store.js');
+const { throttle } = require('../utils');
 
 const TARGET_AUDIO_EXTENSION = 'mp3';
 const TARGET_AUDIO_QUALITY = '320K';
@@ -41,6 +42,10 @@ function buildBinaryCandidates() {
     const appBaseDir = getAppBaseDir();
     const exeDir = path.dirname(electron.app.getPath('exe'));
     return [process.env.YT_DLP_PATH, path.join(appBaseDir, binaryName), path.join(exeDir, binaryName), binaryName].filter(Boolean);
+}
+
+function getMainEventSenders() {
+    return require('../../events');
 }
 
 function emitProcessLines(buffer, chunk, onLine) {
@@ -442,7 +447,10 @@ class YtDlpWrapper {
 
     async resolveBinaryPath() {
         if (!this.binaryPathPromise) {
-            this.binaryPathPromise = this.findBinaryPath();
+            this.binaryPathPromise = this.findBinaryPath().catch((error) => {
+                this.binaryPathPromise = null;
+                throw error;
+            });
         }
         return this.binaryPathPromise;
     }
@@ -457,11 +465,28 @@ class YtDlpWrapper {
                 return candidate;
             } catch (error) {}
         }
+        const { sendBasicToastCreate, sendProgressBarChange, sendBasicToastDismiss } = getMainEventSenders();
+        sendBasicToastCreate(this.window, 'yt-dlp', 'Обновление компонента: yt-dlp', false);
 
-        const installedBinaryPath = await this.ytDlpInstaller.ensureInstalled();
-        await runProcess(installedBinaryPath, ['--version'], this.logger, { shouldLogOutput: false });
-        this.logger.log(`Downloaded yt-dlp binary: ${installedBinaryPath}`);
-        return installedBinaryPath;
+        const callback = (progressRenderer, progressWindow) => {
+            sendProgressBarChange(this.window, 'yt-dlp', progressRenderer * 100);
+            this.window.setProgressBar(progressWindow);
+        };
+
+        try {
+            const res = await this.ytDlpInstaller.ensureInstalled(throttle(callback, 200));
+            sendBasicToastDismiss(this.window, 'yt-dlp');
+            await runProcess(res, ['--version'], this.logger, { shouldLogOutput: false });
+            this.logger.log(`Downloaded yt-dlp binary: ${res}`);
+            return res;
+        } catch (err) {
+            sendProgressBarChange(this.window, 'yt-dlp', -1);
+            this.logger.error(`Failed to install yt-dlp: ${err}`);
+            setTimeout(() => {
+                sendBasicToastDismiss(this.window, 'yt-dlp');
+            }, 2500);
+            throw err;
+        }
     }
 
     getPreferredYouTubeCookieSource() {
