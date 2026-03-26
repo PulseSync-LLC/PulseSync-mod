@@ -5,6 +5,9 @@ echo === Запуск действий по апдейту ===
 node toolset.js extract -pd
 if errorlevel 1 goto :error
 
+node toolset.js pretty
+if errorlevel 1 goto :error
+
 node dataminer\dataminer.js
 if errorlevel 1 goto :error
 
