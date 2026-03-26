@@ -6,6 +6,7 @@ const { createIntegrityUtils } = require('./utils/integrityUtils.js');
 const { createPatchUtils } = require('./utils/patchUtils.js');
 const { createBuildUtils } = require('./utils/buildUtils.js');
 const { createReleaseUtils } = require('./utils/releaseUtils.js');
+const { createMigrationUtils } = require('./utils/migrationUtils.js');
 
 async function createToolsetCore() {
     const runtime = await createRuntime();
@@ -25,6 +26,7 @@ async function createToolsetCore() {
         packageUtils,
         extractUtils,
     });
+    const migrationUtils = createMigrationUtils(runtime);
 
     return {
         runtime,
@@ -37,6 +39,7 @@ async function createToolsetCore() {
         patchUtils,
         buildUtils,
         releaseUtils,
+        migrationUtils,
     };
 }
 
