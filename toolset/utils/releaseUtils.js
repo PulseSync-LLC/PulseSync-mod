@@ -287,7 +287,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
                 maxBodyLength: Infinity,
                 maxContentLength: Infinity,
                 validateStatus: () => true,
-                timeout: 360000
+                timeout: 360000,
             });
 
             if (response?.data?.ok) {
@@ -305,10 +305,14 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
         }
     }
 
-    async function release({ dest, versions = undefined, onlyUploadAppAsar = false }) {
+    async function release({ dest, versions = undefined, onlyUploadAppAsar = false, onlySendPatchNotes = false }) {
         const version = await packageUtils.getModVersion();
         const { version: ymVersion } = await extractUtils.getLatestYMVersion();
         const patchNote = versions ? PatchNote.forSpoofPatch(versions.newVersion, version, versions.oldVersion) : new PatchNote(ymVersion, version, patchNoteStringMD);
+
+        if (onlyUploadAppAsar && onlySendPatchNotes) {
+            throw new Error('Release: onlyUploadAppAsar and onlySendPatchNotes cannot be used together');
+        }
 
         if (onlyUploadAppAsar) {
             await uploadAppAsar({
@@ -322,6 +326,12 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
                 endpointPath: '/cdn/upload/asar',
             });
             console.log('Release: only uploadAppAsar mode enabled, skipping GitHub release and Discord patch note');
+            return;
+        }
+
+        if (onlySendPatchNotes) {
+            await sendPatchNoteToDiscord(patchNote);
+            console.log('Release: onlySendPatchNotes mode enabled, skipping GitHub release and app.asar upload');
             return;
         }
 

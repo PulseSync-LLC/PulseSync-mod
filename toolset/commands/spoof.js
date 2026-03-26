@@ -2,8 +2,8 @@ module.exports = {
     name: 'spoof',
     description: 'подменяет версию приложения в src на последнюю',
     order: 20,
-    usage: 'spoof [-b] [-r] [-m] [--noNativeModules] [--dest=<path>] [--onlyUploadAppAsar]',
-    flags: ['b', 'r', 'm', 'noNativeModules', 'dest', 'onlyUploadAppAsar'],
+    usage: 'spoof [-b] [-r] [-m] [--noNativeModules] [--dest=<path>] [--onlyUploadAppAsar] [--onlySendPatchNotes]',
+    flags: ['b', 'r', 'm', 'noNativeModules', 'dest', 'onlyUploadAppAsar', 'onlySendPatchNotes'],
     async execute({ core, options }) {
         const versions = await core.buildUtils.spoof('extracted');
 
@@ -20,6 +20,7 @@ module.exports = {
                 dest: options.dest,
                 versions,
                 onlyUploadAppAsar: options.onlyUploadAppAsar,
+                onlySendPatchNotes: options.onlySendPatchNotes,
             });
         }
     },

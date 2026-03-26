@@ -75,6 +75,10 @@ const FLAG_DEFINITIONS = {
         label: '--onlyUploadAppAsar',
         description: 'в release загружает только app.asar, без GitHub release и Discord патчноута',
     },
+    onlySendPatchNotes: {
+        label: '--onlySendPatchNotes',
+        description: 'Send only Discord patch notes during release, without GitHub release or app.asar upload',
+    },
 };
 
 function getSortedCommands(commands) {
