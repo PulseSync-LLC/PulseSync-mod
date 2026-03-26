@@ -11,6 +11,8 @@
         "buildModTest": "node toolset.js build -m -d",
         "buildMin": "node toolset.js build -d -m",
         "downloadLatest": "node toolset.js download",
+        "migrateReport": "node toolset.js migrate-report",
+        "migrateTodo": "node toolset.js migrate-todo",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "PulseSync <contact@pulsesync.dev>",

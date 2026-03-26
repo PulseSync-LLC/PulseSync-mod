@@ -40,11 +40,13 @@ const { printHelp } = require('./toolset/utils/help.js');
             printHelp,
         });
 
-        const isYmRunning = await core.appControlUtils.isYandexMusicRunning();
-        if (!isYmRunning && options.forceOpen) {
-            console.log('Запуск Яндекс Музыки...');
-            await core.appControlUtils.launchYandexMusic();
-            console.log('Яндекс Музыка запущена');
+        if (options.forceOpen) {
+            const isYmRunning = await core.appControlUtils.isYandexMusicRunning();
+            if (!isYmRunning) {
+                console.log('Запуск Яндекс Музыки...');
+                await core.appControlUtils.launchYandexMusic();
+                console.log('Яндекс Музыка запущена');
+            }
         }
     } finally {
         if (shouldMeasureExecutionTime) {
