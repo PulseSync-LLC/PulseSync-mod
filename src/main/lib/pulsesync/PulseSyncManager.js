@@ -20,6 +20,18 @@ function getAddonContentText(ext) {
     return `${css}\n${script}`;
 }
 
+function hasAddonScript(ext) {
+    return !!ext?.script && !!String(ext.script).trim();
+}
+
+function mapExtensionsById(extensions) {
+    const mapped = new Map();
+    for (const ext of Array.isArray(extensions) ? extensions : []) {
+        mapped.set(sanitizeId(ext.addon || ext.name), ext);
+    }
+    return mapped;
+}
+
 
 
 let singletonInstance = null;
@@ -319,6 +331,10 @@ class PulseSyncManager extends EventEmitter {
             const prev = this.currentTheme?.name.toLowerCase() || null;
 
             if (incoming === 'default' && prev && prev !== 'default') {
+                const prevThemeId = sanitizeId(prev);
+                const prevThemeScriptKey = `theme-script-${prevThemeId}`;
+                const hadThemeScript = !!this.scriptContent[prevThemeScriptKey] || !!this.scriptKeys[prevThemeScriptKey];
+
                 for (const key of Object.keys(this.cssContent)) {
                     await removeCss(this.window, key, this.styleKeys);
                 }
@@ -327,7 +343,9 @@ class PulseSyncManager extends EventEmitter {
                 this.scriptContent = {};
                 this.scriptKeys = {};
                 this.currentTheme = null;
-                this.safeReload();
+                if (hadThemeScript) {
+                    this.safeReload('theme switched to default with script');
+                }
                 return;
             }
 
@@ -375,7 +393,8 @@ class PulseSyncManager extends EventEmitter {
         });
     }
 
-    safeReload() {
+    safeReload(reason = 'unknown') {
+        this.logger.info(`safeReload: ${reason}`);
         if (this.socket?.connected) {
             this.socket.emit('UPDATE_DATA', { type: 'refresh' });
         } else {
@@ -415,21 +434,69 @@ class PulseSyncManager extends EventEmitter {
 
         const filtered = unique;
 
-        if (this.prevExtensions.length > 0 && JSON.stringify(this.prevExtensions) !== JSON.stringify(filtered)) {
-            this.prevExtensions = filtered;
-            return this.safeReload();
+        if (this.prevExtensions.length > 0) {
+            const prevMap = mapExtensionsById(this.prevExtensions);
+            const nextMap = mapExtensionsById(filtered);
+            let requiresReload = false;
+
+            for (const [id, prevExt] of prevMap) {
+                const nextExt = nextMap.get(id);
+                const prevHasScript = hasAddonScript(prevExt);
+                const nextHasScript = hasAddonScript(nextExt);
+
+                if (!nextExt) {
+                    if (prevHasScript) {
+                        requiresReload = true;
+                        break;
+                    }
+                    continue;
+                }
+
+                if (prevHasScript !== nextHasScript) {
+                    requiresReload = true;
+                    break;
+                }
+
+                if (prevHasScript && String(prevExt.script) !== String(nextExt.script)) {
+                    requiresReload = true;
+                    break;
+                }
+            }
+
+            if (!requiresReload) {
+                for (const [id, nextExt] of nextMap) {
+                    if (!prevMap.has(id) && hasAddonScript(nextExt)) {
+                        requiresReload = true;
+                        break;
+                    }
+                }
+            }
+
+            if (requiresReload) {
+                this.prevExtensions = filtered;
+                return this.safeReload('extension script set changed');
+            }
+
+            for (const [id] of prevMap) {
+                if (nextMap.has(id)) continue;
+
+                const cssKey = `css-${id}`;
+                if (this.cssContent[cssKey]) {
+                    delete this.cssContent[cssKey];
+                    await removeCss(this.window, cssKey, this.styleKeys);
+                }
+            }
         }
+
         this.prevExtensions = filtered;
 
         for (const ext of filtered) {
             const base = sanitizeId(ext.addon || ext.name);
 
-            if (ext.css) {
-                await this.handleCss({ css: ext.css, name: base });
-            }
+            await this.handleCss({ css: ext.css || '', name: base });
 
             const key = `ext-script-${base}`;
-            const hasScript = !!ext.script && !!String(ext.script).trim();
+            const hasScript = hasAddonScript(ext);
 
             if (!hasScript && isSystemId(base)) {
                 if (!this.scriptKeys[key]) {
@@ -443,7 +510,7 @@ class PulseSyncManager extends EventEmitter {
                 await applyScript(this.window, key, ext.script);
                 this.scriptKeys[key] = true;
             } else if (!hasScript && this.scriptKeys[key]) {
-                return this.safeReload();
+                return this.safeReload(`extension script removed: ${base}`);
             }
         }
     }
@@ -516,30 +583,30 @@ class PulseSyncManager extends EventEmitter {
         }
 
         this.logger.info(`Applying theme: ${name}`);
-        let changed = false;
-        if (await this.handleCss({ css, name })) changed = true;
+        await this.handleCss({ css, name });
 
         const keyScript = `theme-script-${sanitizeId(name)}`;
         const wrapped = wrapThemeScript(script);
         const oldWrapped = this.scriptContent[keyScript] || '';
+        let scriptChanged = false;
 
         if (!script.trim()) {
             if (oldWrapped) {
                 delete this.scriptContent[keyScript];
                 delete this.scriptKeys[keyScript];
-                this.safeReload();
+                this.safeReload(`theme script removed: ${name}`);
                 return;
             }
         } else if (!this.scriptKeys[keyScript] || wrapped !== oldWrapped) {
             this.scriptContent[keyScript] = wrapped;
             this.scriptKeys[keyScript] = true;
             await applyScript(this.window, keyScript, wrapped);
-            changed = true;
+            scriptChanged = true;
         }
 
-        if (!this.isReloading && name.toLowerCase() !== 'default' && changed && !this.hasReloadedOnTheme) {
+        if (!this.isReloading && name.toLowerCase() !== 'default' && scriptChanged && !this.hasReloadedOnTheme) {
             this.hasReloadedOnTheme = true;
-            this.safeReload();
+            this.safeReload(`theme script changed: ${name}`);
         }
     }
 
