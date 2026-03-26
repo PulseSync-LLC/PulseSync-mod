@@ -804,6 +804,7 @@
                     var i, r;
                     let o = null == (i = t.substituted?.artists ?? t.artists) ? void 0 : i.map(s.dM),
                         c = null == (r = t.albums) ? void 0 : r.map(l.e7);
+                    t.type = t.type.toLowerCase();
                     return (0, a.wg)({ ...(0, n.gK)(t, e), artists: o, albums: c });
                 },
                 c = (t, e) => (0, a.wg)({ ...o(t), chart: e && (0, r.ws)(e) });
