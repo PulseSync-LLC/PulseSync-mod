@@ -64,6 +64,7 @@ const saveFileToLocalDiskLogger = new Logger_js_1.Logger('SaveFileToLocalDisk');
 const { throttle } = require('./lib/utils.js');
 const crypto = require('crypto');
 const fs = require('fs');
+const EventEmitter = require('node:events');
 
 let mainWindow = undefined;
 let isPlayerReady = false;
@@ -178,6 +179,33 @@ const handleApplicationEvents = (window) => {
     let playerReadyTimeout;
     let appSafeModeRestartTimeout;
     let safeModeRestartInterval;
+
+    const handlePlayerReadyTimeout = () => {
+        playerReadyTimeout && clearTimeout(playerReadyTimeout);
+        playerReadyTimeout = setTimeout(() => {
+            if (!isSafeMode) {
+                eventsLogger.error('PLAYER_READY event timeout reached. Prompt safe mode restart.');
+                mainWindow.webContents.send(events_js_1.Events.APP_STALL);
+                let progress = 0;
+                safeModeRestartInterval = setInterval(() => {
+                    sendProgressBarChange(window, 'safeModeRestart', progress, `${Math.round(10 - progress / 10)} сек`);
+                    progress += 1;
+                }, 100);
+                appSafeModeRestartTimeout = setTimeout(() => {
+                    eventsLogger.error('Safe mode restart timeout reached. Restarting in safe mode.');
+                    clearInterval(safeModeRestartInterval);
+                    restartApplication(true);
+                }, 11000);
+            }
+        }, 30 * 1000);
+    };
+
+    const schedulePlayerReadyTimeout = () => {
+        if (!mainWindow || isPlayerReady) return;
+
+        mainWindow.removeListener('show', handlePlayerReadyTimeout);
+        mainWindow.once('show', handlePlayerReadyTimeout);
+    };
 
     const updater = (0, updater_js_1.getUpdater)();
     const trackDownloader = new trackDownloader_js_1.TrackDownloader(window);
@@ -460,23 +488,11 @@ const handleApplicationEvents = (window) => {
 
         isPlayerReady = false;
 
-        playerReadyTimeout && clearTimeout(playerReadyTimeout);
-        playerReadyTimeout = setTimeout(() => {
-            if (!isSafeMode) {
-                eventsLogger.error('PLAYER_READY event timeout reached. Prompt safe mode restart.');
-                mainWindow.webContents.send(events_js_1.Events.APP_STALL);
-                let progress = 0;
-                safeModeRestartInterval = setInterval(() => {
-                    sendProgressBarChange(window, 'safeModeRestart', progress, `${Math.round(10 - progress / 10)} сек`);
-                    progress += 1;
-                }, 100);
-                appSafeModeRestartTimeout = setTimeout(() => {
-                    eventsLogger.error('Safe mode restart timeout reached. Restarting in safe mode.');
-                    clearInterval(safeModeRestartInterval);
-                    restartApplication(true);
-                }, 11000);
-            }
-        }, 30 * 1000);
+        if (mainWindow?.isVisible()) {
+            handlePlayerReadyTimeout();
+        } else {
+            schedulePlayerReadyTimeout();
+        }
 
         (0, pulseSyncManager_js_1.readyEvent)();
         (0, deviceInfo_js_1.logHardwareInfo)();
