@@ -43,9 +43,9 @@ let assets = { dark: {}, light: {} };
 let systemTheme = electron_1.nativeTheme.shouldUseDarkColorsForSystemIntegratedUI ? 'dark' : 'light';
 let initiated = false;
 
-const THUMBNAIL_TRANSITION_DURATION_MS = 250;
+const THUMBNAIL_TRANSITION_DURATION_MS = 300;
 const THUMBNAIL_PLAY_STATE_TRANSITION_DURATION_MS = 100;
-const THUMBNAIL_TRANSITION_FPS = 30;
+const THUMBNAIL_TRANSITION_FPS = 60;
 
 let thumbnailRenderRequestId = 0;
 let thumbnailAnimationToken = 0;
@@ -365,7 +365,7 @@ const renderThumbnailState = async (iconicThumbnail, width, height, renderState)
         taskBarExtensionLogger.warn(`Thumbnail buffer is null fallbacking to cover image ${width}x${height}`);
     }
 
-    const result = iconicThumbnail.setIconicThumbnail(thumbnailBuffer || renderState.currentTrack);
+    const result = thumbnailBuffer ? iconicThumbnail.setIconicThumbnailRaw(thumbnailBuffer) : iconicThumbnail.setIconicThumbnail(renderState.currentTrack);
     taskBarExtensionLogger.log('Thumbnail set result:', result);
     return thumbnailBuffer ? 'drawn' : 'fallback';
 };
@@ -550,6 +550,7 @@ const setIconicThumbnail = async (playerState) => {
             const frameCount = getThumbnailTransitionFrameCount(transitionDurationMs);
             const frameDelayMs = transitionDurationMs / frameCount;
             const animationStartedAt = performance.now();
+
             activeThumbnailAnimation = {
                 token: animationToken,
                 targetRenderStateKey: getThumbnailRenderStateKey(nextRenderState),
@@ -560,12 +561,10 @@ const setIconicThumbnail = async (playerState) => {
                 `Animating thumbnail transition: ${transitionFromState.trackId} -> ${nextRenderState.trackId} (${transitionDirection}, ${transitionDurationMs}ms)`,
             );
 
-            for (let frameIndex = 1; frameIndex <= frameCount; frameIndex++) {
-                if (animationToken !== thumbnailAnimationToken) {
-                    return;
-                }
+            let nextFramePromise = null;
 
-                const frameBuffer = await thumbnailDrawner.drawThumbnailTransition(
+            const renderFrame = (frameIndex) => {
+                return thumbnailDrawner.drawThumbnailTransition(
                     width,
                     height,
                     transitionFromState,
@@ -574,15 +573,33 @@ const setIconicThumbnail = async (playerState) => {
                     transitionDirection,
                     activeThumbnailAnimation.finalRenderState.isPlaying,
                 );
+            };
+
+            // Pre-render first frame
+            nextFramePromise = renderFrame(1);
+
+            for (let frameIndex = 1; frameIndex <= frameCount; frameIndex++) {
+                if (animationToken !== thumbnailAnimationToken) {
+                    return;
+                }
+
+                const frameBuffer = await nextFramePromise;
+
+                // Pre-render next frame in parallel
+                if (frameIndex < frameCount) {
+                    nextFramePromise = renderFrame(frameIndex + 1);
+                }
 
                 if (frameBuffer) {
-                    const result = iconicThumbnail.setIconicThumbnail(frameBuffer);
+                    const result = iconicThumbnail.setIconicThumbnailRaw(frameBuffer);
                     taskBarExtensionLogger.log(`Transition frame ${frameIndex}/${frameCount} set result:`, result);
                 }
 
                 if (frameIndex < frameCount) {
                     const targetNextFrameAt = animationStartedAt + frameIndex * frameDelayMs;
+
                     const waitMs = Math.max(0, targetNextFrameAt - performance.now());
+
                     if (waitMs > 0) {
                         await wait(waitMs);
                     }
@@ -594,9 +611,13 @@ const setIconicThumbnail = async (playerState) => {
             }
 
             const finalRenderState = activeThumbnailAnimation?.token === animationToken ? activeThumbnailAnimation.finalRenderState : nextRenderState;
+
             activeThumbnailAnimation = null;
+
             lastThumbnailPresentationMode = await renderThumbnailState(iconicThumbnail, width, height, finalRenderState);
+
             lastThumbnailRenderState = finalRenderState;
+
             return;
         }
 

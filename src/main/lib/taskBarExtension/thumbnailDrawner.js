@@ -10,6 +10,12 @@ const requireIfExists =
     });
 
 const sharp = requireIfExists('sharp');
+
+if (sharp) {
+    sharp.simd(true);
+    sharp.concurrency(0);
+}
+
 const roundedMaskCache = new Map();
 const preparedTrackImageCache = new WeakMap();
 
@@ -50,16 +56,24 @@ async function applyRoundedCorners(inputBuffer, width, height, radius) {
         roundedMaskCache.set(roundedMaskCacheKey, roundedMask);
     }
 
-    return await sharp(inputBuffer)
+    const data = await sharp(inputBuffer)
         .resize(width, height, { fit: 'cover' })
+        .ensureAlpha()
         .composite([
             {
                 input: roundedMask,
                 blend: 'dest-in',
             },
         ])
-        .png()
+        .raw()
         .toBuffer();
+
+    return {
+        data,
+        width,
+        height,
+        channels: 4,
+    };
 }
 
 async function prepareTrackImage(trackBuffer, size) {
@@ -488,7 +502,12 @@ async function renderInstances(width, height, instances, transparentColor = { r:
             }
 
             return {
-                input: img,
+                input: img.data,
+                raw: {
+                    width: img.width,
+                    height: img.height,
+                    channels: img.channels,
+                },
                 left: item.left,
                 top: item.top,
             };
@@ -497,7 +516,7 @@ async function renderInstances(width, height, instances, transparentColor = { r:
 
     const layers = preparedLayers.filter(Boolean);
 
-    return await background.composite(layers).png().toBuffer();
+    return await background.composite(layers).raw().toBuffer();
 }
 
 async function drawThumbnail(width, height, previousTrack, currentTrack, nextTrack, isPlaying = true, transparentColor = { r: 0, g: 0, b: 0, alpha: 0 }) {
