@@ -40,7 +40,7 @@ if (!native) {
 const settings = store_js_1.getModSettings()?.taskBarExtensions;
 let playerState;
 let assets = { dark: {}, light: {} };
-let systemTheme = electron_1.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+let systemTheme = electron_1.nativeTheme.shouldUseDarkColorsForSystemIntegratedUI ? 'dark' : 'light';
 let initiated = false;
 
 const THUMBNAIL_TRANSITION_DURATION_MS = 250;
@@ -56,6 +56,17 @@ let nativeThemeListener = null;
 const defaultTrackCoverBufferCache = new Map();
 let defaultTrackCoverTemplate = null;
 const DEFAULT_TRACK_COVER_SIZE = 200;
+
+const TRANSITION_ANIMATION_DEADLINE_PUSH_SIZE = 15 * 1000;
+let transitionAnimationDeadline = 0;
+
+const pushTransitionAnimationDeadline = (value = TRANSITION_ANIMATION_DEADLINE_PUSH_SIZE) => {
+    transitionAnimationDeadline = Date.now() + value;
+};
+
+const isInTransitionAnimationDeadline = () => {
+    return transitionAnimationDeadline >= Date.now();
+};
 
 /**
  * Простой LRU-кэш на Map.
@@ -369,7 +380,7 @@ const taskBarExtension = (window) => {
     }
 
     nativeThemeListener = () => {
-        systemTheme = electron_1.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+        systemTheme = electron_1.nativeTheme.shouldUseDarkColorsForSystemIntegratedUI ? 'dark' : 'light';
         updateTaskbarExtension(window);
     };
 
@@ -378,6 +389,9 @@ const taskBarExtension = (window) => {
     if (native) {
         const iconicThumbnail = native.getDWMIconicThumbnailInstance(window);
         iconicThumbnail.onIconicThumbnailRequested = () => {
+
+            pushTransitionAnimationDeadline();
+
             if (lastThumbnailPresentationMode !== 'fallback' || !playerState?.track) {
                 return;
             }
@@ -525,7 +539,10 @@ const setIconicThumbnail = async (playerState) => {
             transitionDirection = nextRenderState.previousTrack || nextRenderState.nextTrack ? 'adjacent-appear' : null;
         }
 
-        const shouldAnimateTransition = width > 0 && height > 0 && transitionFromState?.currentTrack && nextRenderState.currentTrack && transitionDirection;
+        if (transitionDirection === 'adjacent-appear') pushTransitionAnimationDeadline();
+
+        const shouldAnimateTransition =
+            width > 0 && height > 0 && transitionFromState?.currentTrack && nextRenderState.currentTrack && transitionDirection && isInTransitionAnimationDeadline();
 
         if (shouldAnimateTransition) {
             const animationToken = ++thumbnailAnimationToken;
@@ -637,6 +654,7 @@ const updateTaskbarExtension = (window) => {
             icon: store.shuffle ? assets[systemTheme].shuffled : assets[systemTheme].shuffle,
             flags: availability.shuffleUnavailable ? ['disabled'] : undefined,
             click() {
+                pushTransitionAnimationDeadline();
                 taskBarExtensionLogger.log('Shuffle Toggled');
                 events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_SHUFFLE);
             },
@@ -647,6 +665,7 @@ const updateTaskbarExtension = (window) => {
                   icon: store.disliked ? assets[systemTheme].disliked : assets[systemTheme].dislike,
                   flags: isGenerative ? ['disabled'] : undefined,
                   click() {
+                      pushTransitionAnimationDeadline();
                       taskBarExtensionLogger.log('Dislike Toggled');
                       events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_DISLIKE);
                       if (!store.disliked) {
@@ -661,6 +680,7 @@ const updateTaskbarExtension = (window) => {
                   icon: store.liked ? assets[systemTheme].liked : assets[systemTheme].like,
                   flags: isGenerative ? ['disabled'] : undefined,
                   click() {
+                      pushTransitionAnimationDeadline();
                       taskBarExtensionLogger.log('Like Toggled');
                       events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_LIKE);
                   },
@@ -670,6 +690,7 @@ const updateTaskbarExtension = (window) => {
             icon: assets[systemTheme].previous,
             flags: availability.previousUnavailable ? ['disabled'] : undefined,
             click() {
+                pushTransitionAnimationDeadline();
                 taskBarExtensionLogger.log('Previous');
                 events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.MOVE_BACKWARD);
             },
@@ -678,6 +699,7 @@ const updateTaskbarExtension = (window) => {
             tooltip: !playerState.isPaused ? 'Pause' : 'Play',
             icon: !playerState.isPaused ? assets[systemTheme].pause : assets[systemTheme].play,
             click() {
+                pushTransitionAnimationDeadline();
                 taskBarExtensionLogger.log('Play Toggled');
                 events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
             },
@@ -687,6 +709,7 @@ const updateTaskbarExtension = (window) => {
             icon: assets[systemTheme].next,
             flags: availability.nextUnavailable ? ['disabled'] : undefined,
             click() {
+                pushTransitionAnimationDeadline();
                 taskBarExtensionLogger.log('Next Toggled');
                 events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.MOVE_FORWARD);
             },
@@ -697,6 +720,7 @@ const updateTaskbarExtension = (window) => {
                   icon: store.liked ? assets[systemTheme].liked : assets[systemTheme].like,
                   flags: isGenerative ? ['disabled'] : undefined,
                   click() {
+                      pushTransitionAnimationDeadline();
                       taskBarExtensionLogger.log('Like Toggled');
                       events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_LIKE);
                   },
@@ -706,6 +730,7 @@ const updateTaskbarExtension = (window) => {
                   icon: store.disliked ? assets[systemTheme].disliked : assets[systemTheme].dislike,
                   flags: isGenerative ? ['disabled'] : undefined,
                   click() {
+                      pushTransitionAnimationDeadline();
                       taskBarExtensionLogger.log('Dislike Toggled');
                       events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_DISLIKE);
                       if (!store.disliked) {
@@ -720,6 +745,7 @@ const updateTaskbarExtension = (window) => {
             icon: repeatAsset,
             flags: availability.repeatUnavailable ? ['disabled'] : undefined,
             click() {
+                pushTransitionAnimationDeadline();
                 taskBarExtensionLogger.log('Repeat Toggled');
                 events_js_1.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_REPEAT);
             },
