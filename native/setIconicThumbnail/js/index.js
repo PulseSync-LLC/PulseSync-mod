@@ -49,6 +49,7 @@ class DWMIconicThumbnail {
         if (process.platform !== 'win32') throw new DWMIconicThumbnailError('DWMIconicThumbnail is only supported on Windows');
         if (!native) throw new DWMIconicThumbnailError('Native module IconicThumbnail not available');
         this.lastIconicThumbnailImageBuffer = null;
+        this.lastIconicThumbnailImageBufferKind = null;
         this.maxWidth = 0;
         this.maxHeight = 0;
         this.lastIcomicThumbnailFlags = 0;
@@ -71,7 +72,11 @@ class DWMIconicThumbnail {
             this.maxHeight = lParam.readUInt16LE(0);
             this.maxWidth = lParam.readUInt16LE(2);
             if (this.lastIconicThumbnailImageBuffer) {
-                this.setIconicThumbnail(this.lastIconicThumbnailImageBuffer, this.lastIcomicThumbnailFlags);
+                if (this.lastIconicThumbnailImageBufferKind === 'raw') {
+                    this.setIconicThumbnailRaw(this.lastIconicThumbnailImageBuffer, this.lastIcomicThumbnailFlags);
+                } else {
+                    this.setIconicThumbnail(this.lastIconicThumbnailImageBuffer, this.lastIcomicThumbnailFlags);
+                }
             }
 
             if (typeof this.onIconicThumbnailRequested === 'function') {
@@ -104,12 +109,39 @@ class DWMIconicThumbnail {
 
         if (!this.lastIconicThumbnailImageBuffer) {
             this.lastIconicThumbnailImageBuffer = imageBuffer;
+            this.lastIconicThumbnailImageBufferKind = 'encoded';
+            this.lastIcomicThumbnailFlags = flags;
             return this.probe();
         }
 
         this.lastIconicThumbnailImageBuffer = imageBuffer;
+        this.lastIconicThumbnailImageBufferKind = 'encoded';
         this.lastIcomicThumbnailFlags = flags;
         return native.setIconicThumbnail(this.hwnd, this.lastIconicThumbnailImageBuffer, this.maxWidth, this.maxHeight, this.lastIcomicThumbnailFlags);
+    }
+
+    /**
+     * Set the iconic thumbnail for a given window using an image buffer.
+     * @param {Buffer|Uint8Array} imageBuffer - RAW image buffer
+     * @param {0|1} [flags=0] - Currently only one flag defined: 1 = DWM_SIT_DISPLAYFRAME (0x00000001)
+     * @returns {number} HRESULT (0 = S_OK)
+     */
+    setIconicThumbnailRaw(imageBuffer, flags = 0) {
+        if (!Buffer.isBuffer(imageBuffer)) {
+            throw new DWMIconicThumbnailError('imageBuffer must be a Buffer');
+        }
+
+        if (!this.lastIconicThumbnailImageBuffer) {
+            this.lastIconicThumbnailImageBuffer = imageBuffer;
+            this.lastIconicThumbnailImageBufferKind = 'raw';
+            this.lastIcomicThumbnailFlags = flags;
+            return this.probe();
+        }
+
+        this.lastIconicThumbnailImageBuffer = imageBuffer;
+        this.lastIconicThumbnailImageBufferKind = 'raw';
+        this.lastIcomicThumbnailFlags = flags;
+        return native.setIconicThumbnailRaw(this.hwnd, this.lastIconicThumbnailImageBuffer, this.maxWidth, this.maxHeight, this.lastIcomicThumbnailFlags);
     }
 
     /**
@@ -132,6 +164,7 @@ class DWMIconicThumbnail {
      */
     clearIconicThumbnail() {
         this.lastIconicThumbnailImageBuffer = null;
+        this.lastIconicThumbnailImageBufferKind = null;
         this.lastIcomicThumbnailFlags = 0;
         return native.clearIconicThumbnail(this.hwnd);
     }

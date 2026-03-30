@@ -20,3 +20,7 @@ Napi::Value ForceIconicFlags(const Napi::CallbackInfo& info);
 
 // Used as response to WM_DWMSENDICONICLIVEPREVIEW with a BGRA bitmap buffer.
 Napi::Value SetIconicLivePreviewBitmap(const Napi::CallbackInfo& info);
+
+// Set window iconic thumbnail from raw image buffer
+Napi::Value SetIconicThumbnailRaw(const Napi::CallbackInfo& info);
+

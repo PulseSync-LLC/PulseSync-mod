@@ -307,12 +307,162 @@ Napi::Value SetIconicLivePreviewBitmap(const Napi::CallbackInfo& info) {
     return Napi::Number::New(env, hr);
 }
 
+// ================================
+// Raw RGBA -> HBITMAP
+// ================================
+
+HBITMAP RawToHBITMAP(
+    const unsigned char* data,
+    UINT width,
+    UINT height
+) {
+    BITMAPINFO bmi = {0};
+
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth = width;
+    bmi.bmiHeader.biHeight = -(LONG)height; // top-down
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = 32;
+    bmi.bmiHeader.biCompression = BI_RGB;
+
+    void* pvBits = nullptr;
+
+    HBITMAP hBitmap = CreateDIBSection(
+        NULL,
+        &bmi,
+        DIB_RGB_COLORS,
+        &pvBits,
+        NULL,
+        0
+    );
+
+    if (!hBitmap || !pvBits) {
+        return NULL;
+    }
+
+    const size_t pixelCount = static_cast<size_t>(width) * static_cast<size_t>(height);
+    BYTE* out = static_cast<BYTE*>(pvBits);
+
+    for (size_t i = 0; i < pixelCount; ++i) {
+        const size_t srcOffset = i * 4;
+        const size_t dstOffset = i * 4;
+
+        // sharp.raw() returns RGBA, but DIB section pixels are stored as BGRA.
+        out[dstOffset + 0] = data[srcOffset + 2];
+        out[dstOffset + 1] = data[srcOffset + 1];
+        out[dstOffset + 2] = data[srcOffset + 0];
+        out[dstOffset + 3] = data[srcOffset + 3];
+    }
+
+    return hBitmap;
+}
+
+
+// ================================
+// SetIconicThumbnail RAW
+// ================================
+
+Napi::Value SetIconicThumbnailRaw(const Napi::CallbackInfo& info) {
+
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 5 ||
+        !info[0].IsNumber() ||
+        !info[1].IsBuffer() ||
+        !info[2].IsNumber() ||
+        !info[3].IsNumber() ||
+        !info[4].IsNumber()
+    ) {
+        Napi::TypeError::New(
+            env,
+            "Expected: hwnd, buffer, width, height, flags"
+        ).ThrowAsJavaScriptException();
+
+        return env.Undefined();
+    }
+
+    HWND hwnd = reinterpret_cast<HWND>(
+        static_cast<uintptr_t>(
+            info[0].As<Napi::Number>().Int64Value()
+        )
+    );
+
+    auto buffer =
+        info[1].As<Napi::Buffer<unsigned char>>();
+
+    UINT width =
+        info[2].As<Napi::Number>().Uint32Value();
+
+    UINT height =
+        info[3].As<Napi::Number>().Uint32Value();
+
+    UINT flags =
+        info[4].As<Napi::Number>().Uint32Value();
+
+    const size_t expectedLength = static_cast<size_t>(width) * static_cast<size_t>(height) * 4;
+
+    if (buffer.Length() != expectedLength) {
+        Napi::TypeError::New(
+            env,
+            "Raw buffer length must be width * height * 4 bytes"
+        ).ThrowAsJavaScriptException();
+
+        return env.Undefined();
+    }
+
+    BOOL fForceIconic = TRUE;
+    BOOL fHasIconicBitmap = TRUE;
+
+    HRESULT hr = DwmSetWindowAttribute(
+        hwnd,
+        DWMWA_FORCE_ICONIC_REPRESENTATION,
+        &fForceIconic,
+        sizeof(fForceIconic)
+    );
+
+    if (FAILED(hr)) {
+        return Napi::Number::New(env, hr);
+    }
+
+    hr = DwmSetWindowAttribute(
+        hwnd,
+        DWMWA_HAS_ICONIC_BITMAP,
+        &fHasIconicBitmap,
+        sizeof(fHasIconicBitmap)
+    );
+
+    if (FAILED(hr)) {
+        return Napi::Number::New(env, hr);
+    }
+
+    HBITMAP hBitmap = RawToHBITMAP(
+        buffer.Data(),
+        width,
+        height
+    );
+
+    if (!hBitmap) {
+        return Napi::Number::New(env, -1);
+    }
+
+    hr = DwmSetIconicThumbnail(
+        hwnd,
+        hBitmap,
+        flags
+    );
+
+    DeleteObject(hBitmap);
+
+    return Napi::Number::New(env, hr);
+}
+
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "setIconicThumbnail"), Napi::Function::New(env, SetIconicThumbnail));
     exports.Set(Napi::String::New(env, "clearIconicThumbnail"), Napi::Function::New(env, ClearIconicThumbnail));
     exports.Set(Napi::String::New(env, "forceIconicFlags"), Napi::Function::New(env, ForceIconicFlags));
     exports.Set(Napi::String::New(env, "setIconicLivePreviewBitmap"), Napi::Function::New(env, SetIconicLivePreviewBitmap));
+    exports.Set(Napi::String::New(env, "setIconicThumbnailRaw"), Napi::Function::New(env, SetIconicThumbnailRaw));
     return exports;
 }
 
