@@ -22,27 +22,28 @@ module.exports = {
         const todo = core.migrationUtils.buildMigrationTodo(report);
         const artifacts = await core.migrationUtils.writeMigrationTodo(todo, report.context.reportDir);
 
-        console.log(`Baseline: ${baselineRoot}`);
-        console.log(`Source: ${srcRoot}`);
+        console.log(`Базовый билд: ${baselineRoot}`);
+        console.log(`Исходники: ${srcRoot}`);
         if (targetRoot) {
-            console.log(`Target: ${targetRoot}`);
+            console.log(`Целевой билд: ${targetRoot}`);
         }
+
         console.log('');
-        console.log(`TODO items: ${todo.items.length}`);
-        console.log(`main signals: ${todo.summary.mainSignalsToMerge}`);
-        console.log(`preload signals: ${todo.summary.preloadSignalsToMerge}`);
-        console.log(`event constants: ${todo.summary.eventConstantsToMerge}`);
-        console.log(`missing features: ${todo.summary.missingFeatures}`);
+        console.log(`Пунктов TODO: ${todo.items.length}`);
+        console.log(`main-сигналов: ${todo.summary.mainSignalsToMerge}`);
+        console.log(`preload-сигналов: ${todo.summary.preloadSignalsToMerge}`);
+        console.log(`констант событий: ${todo.summary.eventConstantsToMerge}`);
+        console.log(`отсутствующих фич: ${todo.summary.missingFeatures}`);
 
         const topFeatures = todo.items.filter((item) => item.type === 'feature').slice(0, 8);
         if (topFeatures.length) {
             console.log('');
-            console.log('Features to restore:');
+            console.log('Фичи для восстановления:');
             topFeatures.forEach((item) => {
-                const targetPreview = item.targetCandidates.slice(0, 3).join(', ') || 'no candidates';
+                const targetPreview = item.targetCandidates.slice(0, 3).join(', ') || 'кандидаты не найдены';
                 console.log(`- ${item.title}`);
                 console.log(`  src: ${item.sourceFiles.slice(0, 3).join(', ')}`);
-                console.log(`  target: ${targetPreview}`);
+                console.log(`  цель: ${targetPreview}`);
             });
         }
 

@@ -1069,7 +1069,7 @@ function createAdaptivePatchHelpers(deps) {
                 let targetLines = (await fsp.readFile(matchedPath, 'utf8')).replace(/\r/g, '').split('\n');
                 const originalTargetLines = [...targetLines];
 
-                console.log(`Adaptive patch: ${filePatch.oldPath || filePatch.newPath} -> ${matchedPath} (${matchReason})`);
+                console.log(`Адаптивный патч: ${filePatch.oldPath || filePatch.newPath} -> ${matchedPath} (${matchReason})`);
 
                 for (const hunk of filePatch.hunks) {
                     const oldLines = getOldHunkLines(hunk);

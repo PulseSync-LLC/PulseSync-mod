@@ -15,6 +15,10 @@ const FLAG_DEFINITIONS = {
         label: '-m',
         description: 'минифицирует исходный код перед сборкой',
     },
+    modernize: {
+        label: '--modernize',
+        description: 'добавляет этап modernize перед pretty/minify/build',
+    },
     r: {
         label: '-r',
         description: 'после команды запускает release',
@@ -61,15 +65,15 @@ const FLAG_DEFINITIONS = {
     },
     dryRun: {
         label: '--dryRun',
-        description: 'выполняет только подбор файлов и расчёт патча без записи изменений на диск',
+        description: 'выполняет только расчёт изменений без записи на диск',
     },
     dest: {
         label: '--dest=<path>',
-        description: 'путь к результирующему asar-файлу',
+        description: 'путь к результирующей директории или app.asar, в зависимости от команды',
     },
     oldYMHashOverride: {
         label: '--oldYMHashOverride=<hash>',
-        description: 'переопределяет старый hash asar при обходе целостности',
+        description: 'переопределяет старый hash app.asar при обходе целостности',
     },
     onlyUploadAppAsar: {
         label: '--onlyUploadAppAsar',
@@ -77,7 +81,7 @@ const FLAG_DEFINITIONS = {
     },
     onlySendPatchNotes: {
         label: '--onlySendPatchNotes',
-        description: 'Send only Discord patch notes during release, without GitHub release or app.asar upload',
+        description: 'в release отправляет только Discord патчноут, без GitHub release и загрузки app.asar',
     },
 };
 

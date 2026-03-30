@@ -20,41 +20,39 @@ module.exports = {
             reportDir,
         });
 
-        console.log(`Baseline: ${baselineRoot}`);
-        console.log(`Source: ${srcRoot}`);
+        console.log(`Базовый билд: ${baselineRoot}`);
+        console.log(`Исходники: ${srcRoot}`);
         if (targetRoot) {
-            console.log(`Target: ${targetRoot}`);
+            console.log(`Целевой билд: ${targetRoot}`);
         }
+
         console.log('');
-        console.log(`app src diff: +${report.baselineToSrc.appDiff.counts.added} / ~${report.baselineToSrc.appDiff.counts.changed} / -${report.baselineToSrc.appDiff.counts.removed}`);
         console.log(
-            `main src custom signals: +${report.baselineToSrc.mainSignals.counts.added} / -${report.baselineToSrc.mainSignals.counts.removed} относительно baseline`,
+            `diff app/src: +${report.baselineToSrc.appDiff.counts.added} / ~${report.baselineToSrc.appDiff.counts.changed} / -${report.baselineToSrc.appDiff.counts.removed}`,
         );
         console.log(
-            `preload src custom signals: +${report.baselineToSrc.preloadSignals.counts.added} / -${report.baselineToSrc.preloadSignals.counts.removed} относительно baseline`,
+            `кастомные main-сигналы в src: +${report.baselineToSrc.mainSignals.counts.added} / -${report.baselineToSrc.mainSignals.counts.removed} относительно baseline`,
         );
         console.log(
-            `src event constants: +${report.baselineToSrc.eventConstants.counts.added} / -${report.baselineToSrc.eventConstants.counts.removed} относительно baseline`,
+            `кастомные preload-сигналы в src: +${report.baselineToSrc.preloadSignals.counts.added} / -${report.baselineToSrc.preloadSignals.counts.removed} относительно baseline`,
         );
+        console.log(
+            `константы событий в src: +${report.baselineToSrc.eventConstants.counts.added} / -${report.baselineToSrc.eventConstants.counts.removed} относительно baseline`,
+        );
+
         const srcCustomFeatures = report.featureAudit.filter((feature) => feature.status.customInSrc);
-        console.log(`src custom feature anchors: ${srcCustomFeatures.length}`);
+        console.log(`кастомных feature-якорей в src: ${srcCustomFeatures.length}`);
 
         if (report.baselineToTarget) {
             console.log('');
             console.log(
-                `app target diff: +${report.baselineToTarget.appDiff.counts.added} / ~${report.baselineToTarget.appDiff.counts.changed} / -${report.baselineToTarget.appDiff.counts.removed}`,
+                `diff app/целевого билда: +${report.baselineToTarget.appDiff.counts.added} / ~${report.baselineToTarget.appDiff.counts.changed} / -${report.baselineToTarget.appDiff.counts.removed}`,
             );
-            console.log(
-                `new upstream main signals to merge: ${report.mergeHints.mainSignalsToMerge.length}`,
-            );
-            console.log(
-                `new upstream preload signals to merge: ${report.mergeHints.preloadSignalsToMerge.length}`,
-            );
-            console.log(
-                `new upstream event constants to merge: ${report.mergeHints.eventConstantsToMerge.length}`,
-            );
-            console.log(`overlapping app files: ${report.mergeHints.appChangedOverlap.length}`);
-            console.log(`custom src features missing in target: ${report.mergeHints.featuresMissingInTarget.length}`);
+            console.log(`новых upstream main-сигналов для переноса: ${report.mergeHints.mainSignalsToMerge.length}`);
+            console.log(`новых upstream preload-сигналов для переноса: ${report.mergeHints.preloadSignalsToMerge.length}`);
+            console.log(`новых upstream констант событий для переноса: ${report.mergeHints.eventConstantsToMerge.length}`);
+            console.log(`пересекающихся app-файлов: ${report.mergeHints.appChangedOverlap.length}`);
+            console.log(`кастомных src-фич, отсутствующих в целевом билде: ${report.mergeHints.featuresMissingInTarget.length}`);
             report.mergeHints.featuresMissingInTarget.forEach((feature) => {
                 console.log(`  - ${feature.title}`);
             });

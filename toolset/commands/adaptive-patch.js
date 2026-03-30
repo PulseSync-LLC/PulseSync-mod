@@ -22,7 +22,7 @@ module.exports = {
             });
 
             for (const entry of summary) {
-                console.log(`${entry.dryRun ? '[dry-run]' : '[applied]'} ${entry.sourcePath} -> ${entry.targetPath}`);
+                console.log(`${entry.dryRun ? '[dry-run]' : '[применён]'} ${entry.sourcePath} -> ${entry.targetPath}`);
             }
         }
     },

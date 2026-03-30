@@ -1,10 +1,14 @@
 module.exports = {
     name: 'pretty',
-    description: 'форматирует последний extracted@pure через Prettier',
+    description: 'форматирует extracted-билд через Prettier',
     order: 90,
-    usage: 'pretty',
-    flags: [],
-    async execute({ core }) {
-        await core.buildUtils.prettifyLatestPure();
+    usage: 'pretty [--src=<path>] [--dest=<path>] [--lastExtracted] [--modernize]',
+    flags: ['src', 'dest', 'lastExtracted', 'modernize'],
+    async execute({ core, options }) {
+        await core.buildUtils.prettifySource({
+            srcPath: options.src,
+            destDir: options.dest,
+            modernize: options.shouldModernize,
+        });
     },
 };

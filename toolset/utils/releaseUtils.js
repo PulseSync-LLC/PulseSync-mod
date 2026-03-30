@@ -96,7 +96,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
             repo,
             asset_id: existingAsset.id,
         });
-        console.log(`Deleted existing GitHub asset: ${assetName}`);
+        console.log(`Удалён существующий ассет GitHub: ${assetName}`);
     }
 
     async function uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, releaseId, assetPath, contentType, maxRetries = 3) {
@@ -107,7 +107,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
                 await deleteReleaseAssetIfExists(octokit, owner, repo, releaseId, assetName);
-                console.log(`Uploading GitHub asset ${assetName} (${attempt}/${maxRetries})...`);
+                console.log(`Загрузка ассета GitHub ${assetName} (${attempt}/${maxRetries})...`);
                 const response = await octokit.rest.repos.uploadReleaseAsset({
                     owner,
                     repo,
@@ -119,11 +119,11 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
                         'content-length': assetData.length,
                     },
                 });
-                console.log(`GitHub asset uploaded: ${assetName}`);
+                console.log(`Ассет GitHub загружен: ${assetName}`);
                 return response;
             } catch (error) {
                 lastError = error;
-                console.warn(`GitHub asset upload failed for ${assetName}:`, error?.message ?? error);
+                console.warn(`Не удалось загрузить ассет GitHub ${assetName}:`, error?.message ?? error);
                 if (attempt < maxRetries) {
                     await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
                 }
@@ -141,7 +141,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
                 tag: tagName,
             });
 
-            console.log(`GitHub release already exists for tag ${tagName}, updating draft`);
+            console.log(`Релиз GitHub для тега ${tagName} уже существует, обновляю draft`);
             const updatedReleaseResponse = await octokit.rest.repos.updateRelease({
                 owner,
                 repo,
@@ -158,7 +158,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
             if (status !== 404) throw error;
         }
 
-        console.log(`Creating GitHub release ${tagName}...`);
+        console.log(`Создание релиза GitHub ${tagName}...`);
         const createdReleaseResponse = await octokit.rest.repos.createRelease({
             owner,
             repo,
@@ -174,17 +174,17 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
 
     async function createGitHubRelease(version, asarPath, patchNote) {
         if (!githubToken) {
-            console.warn('GITHUB_TOKEN is not set, skipping GitHub release');
+            console.warn('GITHUB_TOKEN не задан, релиз GitHub пропущен');
             return null;
         }
 
         if (!fs.existsSync(asarPath)) {
-            throw new Error(`app.asar not found: ${asarPath}`);
+            throw new Error(`app.asar не найден: ${asarPath}`);
         }
 
         const repoInfo = resolveGitHubRepo();
         if (!repoInfo) {
-            console.warn('Unable to resolve GitHub owner/repo. Set GITHUB_REPO_OWNER and GITHUB_REPO_NAME');
+            console.warn('Не удалось определить owner/repo GitHub. Укажите GITHUB_REPO_OWNER и GITHUB_REPO_NAME');
             return null;
         }
 
@@ -204,7 +204,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
                 await zipFolder(asarUnpackedDirPath, tempZipPath);
                 await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, tempZipPath, 'application/zip');
             } else {
-                console.warn(`app.asar.unpacked directory not found, skipping: ${asarUnpackedDirPath}`);
+                console.warn(`Директория app.asar.unpacked не найдена, пропускаю: ${asarUnpackedDirPath}`);
             }
         } finally {
             if (tempZipPath && fs.existsSync(tempZipPath)) {
@@ -223,7 +223,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
             prerelease: false,
         });
 
-        console.log(`GitHub release published: ${owner}/${repo}@${tagName}`);
+        console.log(`Релиз GitHub опубликован: ${owner}/${repo}@${tagName}`);
         return release;
     }
 
@@ -311,7 +311,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
         const patchNote = versions ? PatchNote.forSpoofPatch(versions.newVersion, version, versions.oldVersion) : new PatchNote(ymVersion, version, patchNoteStringMD);
 
         if (onlyUploadAppAsar && onlySendPatchNotes) {
-            throw new Error('Release: onlyUploadAppAsar and onlySendPatchNotes cannot be used together');
+            throw new Error('Release: onlyUploadAppAsar и onlySendPatchNotes нельзя использовать вместе');
         }
 
         if (onlyUploadAppAsar) {
@@ -325,13 +325,13 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils }) {
                 compressionType: 'zstd',
                 endpointPath: '/cdn/upload/asar',
             });
-            console.log('Release: only uploadAppAsar mode enabled, skipping GitHub release and Discord patch note');
+            console.log('Релиз: включён режим onlyUploadAppAsar, релиз GitHub и Discord патчноут пропущены');
             return;
         }
 
         if (onlySendPatchNotes) {
             await sendPatchNoteToDiscord(patchNote);
-            console.log('Release: onlySendPatchNotes mode enabled, skipping GitHub release and app.asar upload');
+            console.log('Релиз: включён режим onlySendPatchNotes, релиз GitHub и загрузка app.asar пропущены');
             return;
         }
 
