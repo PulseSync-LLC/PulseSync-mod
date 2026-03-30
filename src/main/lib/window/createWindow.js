@@ -74,6 +74,7 @@ const createWindow = async () => {
 
         (0, toggleWindowVisibility_js_1.toggleWindowVisibility)(window, shouldShow);
     });
+    window.removel
     return window;
 };
 exports.createWindow = createWindow;
