@@ -653,6 +653,11 @@ const handleApplicationEvents = (window) => {
                 state_js_1.state.player.canMoveForward = data.canMoveForward;
             }
 
+            if (data?.track?.substituted) {
+                data.track.coverUri = data.track.substituted.coverUri ?? data.track.coverUri;
+                data.track.derivedColors = data.track.substituted.derivedColors ?? data.track.derivedColors;
+            }
+
             const isActiveState = ['paused', 'playing'].includes(data?.status);
             const isPlayable = isPlayerReady && data.status !== 'idle' && isActiveState;
 
