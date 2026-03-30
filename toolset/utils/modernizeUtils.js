@@ -6,6 +6,12 @@ function createModernizeUtils(runtime) {
     const generate = require('@babel/generator').default;
 
     const TRANSFORMABLE_EXTENSIONS = new Set(['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs']);
+    const IGNORED_DIRECTORY_NAMES = new Set(['node_modules']);
+    const MAX_TRANSFORM_PASSES = 5;
+
+    function cloneNode(node) {
+        return t.cloneNode(node, true);
+    }
 
     function parseCode(code) {
         return parser.parse(code, {
@@ -34,7 +40,7 @@ function createModernizeUtils(runtime) {
     }
 
     function makeIncludesCall(indexOfCall) {
-        return t.callExpression(t.memberExpression(indexOfCall.callee.object, t.identifier('includes')), indexOfCall.arguments);
+        return t.callExpression(t.memberExpression(indexOfCall.callee.object, t.identifier('includes')), indexOfCall.arguments.map((argument) => cloneNode(argument)));
     }
 
     function isEmptyObjectLiteral(node) {
@@ -57,8 +63,16 @@ function createModernizeUtils(runtime) {
         return t.isNullLiteral(node);
     }
 
+    function isVoidZeroNode(node) {
+        return t.isUnaryExpression(node, { operator: 'void' }) && t.isNumericLiteral(node.argument, { value: 0 });
+    }
+
     function isUndefinedNode(node) {
-        return t.isIdentifier(node, { name: 'undefined' });
+        return t.isIdentifier(node, { name: 'undefined' }) || isVoidZeroNode(node);
+    }
+
+    function isNullishNode(node) {
+        return isNullNode(node) || isUndefinedNode(node);
     }
 
     function isSimpleBase(node) {
@@ -111,6 +125,17 @@ function createModernizeUtils(runtime) {
         return parts;
     }
 
+    function flattenLogicalExpression(node, operator, parts = []) {
+        if (t.isLogicalExpression(node, { operator })) {
+            flattenLogicalExpression(node.left, operator, parts);
+            flattenLogicalExpression(node.right, operator, parts);
+            return parts;
+        }
+
+        parts.push(node);
+        return parts;
+    }
+
     function buildOptionalChainOrCallFromAnd(node) {
         const parts = flattenAndChain(node);
 
@@ -124,7 +149,7 @@ function createModernizeUtils(runtime) {
             return null;
         }
 
-        let result = first;
+        let result = cloneNode(first);
         let prev = first;
 
         for (let index = 1; index < parts.length; index++) {
@@ -135,21 +160,21 @@ function createModernizeUtils(runtime) {
                     return null;
                 }
 
-                result = t.optionalMemberExpression(result, current.property, current.computed, true);
+                result = t.optionalMemberExpression(result, cloneNode(current.property), current.computed, true);
                 prev = current;
                 continue;
             }
 
             if (t.isCallExpression(current) && t.isMemberExpression(current.callee)) {
                 if (sameNode(current.callee, prev)) {
-                    result = t.optionalCallExpression(result, current.arguments, true);
+                    result = t.optionalCallExpression(result, current.arguments.map((argument) => cloneNode(argument)), true);
                     prev = current.callee;
                     continue;
                 }
 
                 if (sameNode(current.callee.object, prev)) {
-                    const optionalMember = t.optionalMemberExpression(result, current.callee.property, current.callee.computed, true);
-                    result = t.optionalCallExpression(optionalMember, current.arguments, true);
+                    const optionalMember = t.optionalMemberExpression(result, cloneNode(current.callee.property), current.callee.computed, true);
+                    result = t.optionalCallExpression(optionalMember, current.arguments.map((argument) => cloneNode(argument)), false);
                     prev = current.callee;
                     continue;
                 }
@@ -159,53 +184,6 @@ function createModernizeUtils(runtime) {
         }
 
         return result;
-    }
-
-    function isNullishCheck(node, target) {
-        if (!t.isBinaryExpression(node)) {
-            return false;
-        }
-
-        if (node.operator === '==' || node.operator === '===') {
-            if (sameNode(node.left, target) && (isNullNode(node.right) || isUndefinedNode(node.right))) {
-                return true;
-            }
-
-            if (sameNode(node.right, target) && (isNullNode(node.left) || isUndefinedNode(node.left))) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    function isNullishOrCheck(node) {
-        if (!t.isLogicalExpression(node, { operator: '||' })) {
-            return null;
-        }
-
-        const candidates = [];
-
-        if (t.isBinaryExpression(node.left)) {
-            candidates.push(node.left.left, node.left.right);
-        }
-
-        if (t.isBinaryExpression(node.right)) {
-            candidates.push(node.right.left, node.right.right);
-        }
-
-        for (const candidate of candidates) {
-            if (candidate && (t.isIdentifier(candidate) || t.isMemberExpression(candidate) || t.isThisExpression(candidate))) {
-                const leftOk = isNullishCheck(node.left, candidate);
-                const rightOk = isNullishCheck(node.right, candidate);
-
-                if (leftOk && rightOk) {
-                    return candidate;
-                }
-            }
-        }
-
-        return null;
     }
 
     function isArrayPrototypeSliceCallArguments(node) {
@@ -236,6 +214,8 @@ function createModernizeUtils(runtime) {
             indexOfToIncludes: 0,
             andChainToOptional: 0,
             ternaryToNullish: 0,
+            transpiledOptionalToOptional: 0,
+            transpiledNullishToNullish: 0,
             sliceCallArguments: 0,
         };
     }
@@ -246,135 +226,303 @@ function createModernizeUtils(runtime) {
         }
     }
 
+    function extractGuardCandidate(node) {
+        if (t.isAssignmentExpression(node, { operator: '=' }) && t.isIdentifier(node.left)) {
+            return {
+                binding: node.left,
+                value: node.right,
+            };
+        }
+
+        if (t.isIdentifier(node) || t.isMemberExpression(node) || t.isThisExpression(node)) {
+            return {
+                binding: node,
+                value: node,
+            };
+        }
+
+        return null;
+    }
+
+    function matchNullishComparison(node, operators) {
+        if (!t.isBinaryExpression(node) || !operators.includes(node.operator)) {
+            return null;
+        }
+
+        if (isNullishNode(node.right)) {
+            return extractGuardCandidate(node.left);
+        }
+
+        if (isNullishNode(node.left)) {
+            return extractGuardCandidate(node.right);
+        }
+
+        return null;
+    }
+
+    function extractGuardInfo(node, logicalOperator, comparisonOperators) {
+        if (logicalOperator && t.isLogicalExpression(node, { operator: logicalOperator })) {
+            const parts = flattenLogicalExpression(node, logicalOperator);
+            let matched = null;
+
+            for (const part of parts) {
+                const current = matchNullishComparison(part, comparisonOperators);
+                if (!current) {
+                    return null;
+                }
+
+                if (!matched) {
+                    matched = current;
+                    continue;
+                }
+
+                if (!sameNode(matched.binding, current.binding)) {
+                    return null;
+                }
+            }
+
+            return matched;
+        }
+
+        return matchNullishComparison(node, comparisonOperators);
+    }
+
+    function extractNullishGuardInfo(node) {
+        return extractGuardInfo(node, '||', ['==', '===']);
+    }
+
+    function extractNonNullishGuardInfo(node) {
+        return extractGuardInfo(node, '&&', ['!=', '!==']);
+    }
+
+    function hasOptionalChain(node) {
+        return t.isOptionalMemberExpression(node) || t.isOptionalCallExpression(node);
+    }
+
+    function rebuildGuardedExpression(node, guardInfo) {
+        if (sameNode(node, guardInfo.binding)) {
+            return cloneNode(guardInfo.value);
+        }
+
+        if (t.isMemberExpression(node)) {
+            const rebuiltObject = rebuildGuardedExpression(node.object, guardInfo);
+            if (!rebuiltObject) {
+                return null;
+            }
+
+            if (sameNode(node.object, guardInfo.binding) || hasOptionalChain(rebuiltObject)) {
+                return t.optionalMemberExpression(rebuiltObject, cloneNode(node.property), node.computed, sameNode(node.object, guardInfo.binding));
+            }
+
+            return t.memberExpression(rebuiltObject, cloneNode(node.property), node.computed);
+        }
+
+        if (t.isCallExpression(node)) {
+            const rebuiltCallee = rebuildGuardedExpression(node.callee, guardInfo);
+            if (!rebuiltCallee) {
+                return null;
+            }
+
+            const rebuiltArguments = node.arguments.map((argument) => cloneNode(argument));
+
+            if (sameNode(node.callee, guardInfo.binding) || hasOptionalChain(rebuiltCallee)) {
+                return t.optionalCallExpression(rebuiltCallee, rebuiltArguments, sameNode(node.callee, guardInfo.binding));
+            }
+
+            return t.callExpression(rebuiltCallee, rebuiltArguments);
+        }
+
+        return null;
+    }
+
+    function extractNullishValue(node, guardInfo) {
+        if (sameNode(node, guardInfo.binding) || sameNode(node, guardInfo.value)) {
+            return cloneNode(guardInfo.value);
+        }
+
+        return null;
+    }
+
     function transformAst(ast) {
-        let changes = 0;
-        const stats = createEmptyStats();
+        let totalChanges = 0;
+        const totalStats = createEmptyStats();
 
-        traverse(ast, {
-            CallExpression(astPath) {
-                const { node } = astPath;
+        for (let passIndex = 0; passIndex < MAX_TRANSFORM_PASSES; passIndex++) {
+            let passChanges = 0;
+            const passStats = createEmptyStats();
 
-                if (isArrayPrototypeSliceCallArguments(node)) {
-                    astPath.replaceWith(makeSpreadArgumentsArray());
-                    changes++;
-                    stats.sliceCallArguments++;
-                    return;
-                }
+            traverse(ast, {
+                CallExpression(astPath) {
+                    const { node } = astPath;
 
-                if (
-                    t.isMemberExpression(node.callee) &&
-                    !node.callee.computed &&
-                    t.isIdentifier(node.callee.object, { name: 'Object' }) &&
-                    t.isIdentifier(node.callee.property, { name: 'assign' }) &&
-                    node.arguments.length >= 2 &&
-                    isEmptyObjectLiteral(node.arguments[0])
-                ) {
-                    const restArgs = node.arguments.slice(1);
-
-                    if (restArgs.every(canSpreadArgument)) {
-                        astPath.replaceWith(t.objectExpression(restArgs.map((arg) => t.spreadElement(arg))));
-                        changes++;
-                        stats.objectAssignToSpread++;
-                    }
-                }
-            },
-
-            BinaryExpression(astPath) {
-                const { node } = astPath;
-
-                if ((node.operator === '!==' || node.operator === '!=') && isIndexOfCall(node.left) && isLiteralMinusOne(node.right)) {
-                    astPath.replaceWith(makeIncludesCall(node.left));
-                    changes++;
-                    stats.indexOfToIncludes++;
-                    return;
-                }
-
-                if ((node.operator === '!==' || node.operator === '!=') && isLiteralMinusOne(node.left) && isIndexOfCall(node.right)) {
-                    astPath.replaceWith(makeIncludesCall(node.right));
-                    changes++;
-                    stats.indexOfToIncludes++;
-                    return;
-                }
-
-                if ((node.operator === '===' || node.operator === '==') && isIndexOfCall(node.left) && isLiteralMinusOne(node.right)) {
-                    astPath.replaceWith(t.unaryExpression('!', makeIncludesCall(node.left), true));
-                    changes++;
-                    stats.indexOfToIncludes++;
-                    return;
-                }
-
-                if ((node.operator === '===' || node.operator === '==') && isLiteralMinusOne(node.left) && isIndexOfCall(node.right)) {
-                    astPath.replaceWith(t.unaryExpression('!', makeIncludesCall(node.right), true));
-                    changes++;
-                    stats.indexOfToIncludes++;
-                }
-            },
-
-            LogicalExpression(astPath) {
-                const { node } = astPath;
-
-                if (node.operator !== '&&') {
-                    return;
-                }
-
-                const optional = buildOptionalChainOrCallFromAnd(node);
-
-                if (optional) {
-                    astPath.replaceWith(optional);
-                    changes++;
-                    stats.andChainToOptional++;
-                }
-            },
-
-            ConditionalExpression(astPath) {
-                const { node } = astPath;
-
-                if (t.isLogicalExpression(node.test, { operator: '&&' }) && sameNode(node.test.right, node.consequent)) {
-                    const optional = buildOptionalChainOrCallFromAnd(node.test);
-
-                    if (optional) {
-                        astPath.replaceWith(t.logicalExpression('??', optional, node.alternate));
-                        changes++;
-                        stats.ternaryToNullish++;
+                    if (isArrayPrototypeSliceCallArguments(node)) {
+                        astPath.replaceWith(makeSpreadArgumentsArray());
+                        passChanges++;
+                        passStats.sliceCallArguments++;
                         return;
                     }
-                }
 
-                if (
-                    t.isBinaryExpression(node.test) &&
-                    (node.test.operator === '==' || node.test.operator === '===') &&
-                    sameNode(node.test.left, node.alternate) &&
-                    (isNullNode(node.test.right) || isUndefinedNode(node.test.right))
-                ) {
-                    astPath.replaceWith(t.logicalExpression('??', node.alternate, node.consequent));
-                    changes++;
-                    stats.ternaryToNullish++;
-                    return;
-                }
+                    if (
+                        t.isMemberExpression(node.callee) &&
+                        !node.callee.computed &&
+                        t.isIdentifier(node.callee.object, { name: 'Object' }) &&
+                        t.isIdentifier(node.callee.property, { name: 'assign' }) &&
+                        node.arguments.length >= 2 &&
+                        isEmptyObjectLiteral(node.arguments[0])
+                    ) {
+                        const restArgs = node.arguments.slice(1);
 
-                if (
-                    t.isBinaryExpression(node.test) &&
-                    (node.test.operator === '==' || node.test.operator === '===') &&
-                    sameNode(node.test.right, node.alternate) &&
-                    (isNullNode(node.test.left) || isUndefinedNode(node.test.left))
-                ) {
-                    astPath.replaceWith(t.logicalExpression('??', node.alternate, node.consequent));
-                    changes++;
-                    stats.ternaryToNullish++;
-                    return;
-                }
+                        if (restArgs.every(canSpreadArgument)) {
+                            astPath.replaceWith(t.objectExpression(restArgs.map((argument) => t.spreadElement(cloneNode(argument)))));
+                            passChanges++;
+                            passStats.objectAssignToSpread++;
+                        }
+                    }
+                },
 
-                const nullishTarget = isNullishOrCheck(node.test);
+                BinaryExpression(astPath) {
+                    const { node } = astPath;
 
-                if (nullishTarget && sameNode(node.alternate, nullishTarget)) {
-                    astPath.replaceWith(t.logicalExpression('??', node.alternate, node.consequent));
-                    changes++;
-                    stats.ternaryToNullish++;
-                }
-            },
-        });
+                    if ((node.operator === '!==' || node.operator === '!=') && isIndexOfCall(node.left) && isLiteralMinusOne(node.right)) {
+                        astPath.replaceWith(makeIncludesCall(node.left));
+                        passChanges++;
+                        passStats.indexOfToIncludes++;
+                        return;
+                    }
 
-        return { changes, stats };
+                    if ((node.operator === '!==' || node.operator === '!=') && isLiteralMinusOne(node.left) && isIndexOfCall(node.right)) {
+                        astPath.replaceWith(makeIncludesCall(node.right));
+                        passChanges++;
+                        passStats.indexOfToIncludes++;
+                        return;
+                    }
+
+                    if ((node.operator === '===' || node.operator === '==') && isIndexOfCall(node.left) && isLiteralMinusOne(node.right)) {
+                        astPath.replaceWith(t.unaryExpression('!', makeIncludesCall(node.left), true));
+                        passChanges++;
+                        passStats.indexOfToIncludes++;
+                        return;
+                    }
+
+                    if ((node.operator === '===' || node.operator === '==') && isLiteralMinusOne(node.left) && isIndexOfCall(node.right)) {
+                        astPath.replaceWith(t.unaryExpression('!', makeIncludesCall(node.right), true));
+                        passChanges++;
+                        passStats.indexOfToIncludes++;
+                    }
+                },
+
+                LogicalExpression(astPath) {
+                    const { node } = astPath;
+
+                    if (node.operator !== '&&') {
+                        return;
+                    }
+
+                    const optional = buildOptionalChainOrCallFromAnd(node);
+
+                    if (optional) {
+                        astPath.replaceWith(optional);
+                        passChanges++;
+                        passStats.andChainToOptional++;
+                    }
+                },
+
+                ConditionalExpression(astPath) {
+                    const { node } = astPath;
+
+                    if (t.isLogicalExpression(node.test, { operator: '&&' }) && sameNode(node.test.right, node.consequent)) {
+                        const optional = buildOptionalChainOrCallFromAnd(node.test);
+
+                        if (optional) {
+                            astPath.replaceWith(t.logicalExpression('??', optional, cloneNode(node.alternate)));
+                            passChanges++;
+                            passStats.ternaryToNullish++;
+                            return;
+                        }
+                    }
+
+                    if (isUndefinedNode(node.consequent)) {
+                        const nullishGuard = extractNullishGuardInfo(node.test);
+                        if (nullishGuard) {
+                            const optional = rebuildGuardedExpression(node.alternate, nullishGuard);
+                            if (optional) {
+                                astPath.replaceWith(optional);
+                                passChanges++;
+                                passStats.transpiledOptionalToOptional++;
+                                return;
+                            }
+                        }
+                    }
+
+                    if (isUndefinedNode(node.alternate)) {
+                        const nonNullishGuard = extractNonNullishGuardInfo(node.test);
+                        if (nonNullishGuard) {
+                            const optional = rebuildGuardedExpression(node.consequent, nonNullishGuard);
+                            if (optional) {
+                                astPath.replaceWith(optional);
+                                passChanges++;
+                                passStats.transpiledOptionalToOptional++;
+                                return;
+                            }
+                        }
+                    }
+
+                    if (
+                        t.isBinaryExpression(node.test) &&
+                        (node.test.operator === '==' || node.test.operator === '===') &&
+                        sameNode(node.test.left, node.alternate) &&
+                        isNullishNode(node.test.right)
+                    ) {
+                        astPath.replaceWith(t.logicalExpression('??', cloneNode(node.alternate), cloneNode(node.consequent)));
+                        passChanges++;
+                        passStats.ternaryToNullish++;
+                        return;
+                    }
+
+                    if (
+                        t.isBinaryExpression(node.test) &&
+                        (node.test.operator === '==' || node.test.operator === '===') &&
+                        sameNode(node.test.right, node.alternate) &&
+                        isNullishNode(node.test.left)
+                    ) {
+                        astPath.replaceWith(t.logicalExpression('??', cloneNode(node.alternate), cloneNode(node.consequent)));
+                        passChanges++;
+                        passStats.ternaryToNullish++;
+                        return;
+                    }
+
+                    const negativeNullishGuard = extractNullishGuardInfo(node.test);
+                    if (negativeNullishGuard) {
+                        const guardedValue = extractNullishValue(node.alternate, negativeNullishGuard);
+                        if (guardedValue && !isUndefinedNode(node.consequent)) {
+                            astPath.replaceWith(t.logicalExpression('??', guardedValue, cloneNode(node.consequent)));
+                            passChanges++;
+                            passStats.transpiledNullishToNullish++;
+                            return;
+                        }
+                    }
+
+                    const positiveNullishGuard = extractNonNullishGuardInfo(node.test);
+                    if (positiveNullishGuard) {
+                        const guardedValue = extractNullishValue(node.consequent, positiveNullishGuard);
+                        if (guardedValue && !isUndefinedNode(node.alternate)) {
+                            astPath.replaceWith(t.logicalExpression('??', guardedValue, cloneNode(node.alternate)));
+                            passChanges++;
+                            passStats.transpiledNullishToNullish++;
+                        }
+                    }
+                },
+            });
+
+            if (passChanges === 0) {
+                break;
+            }
+
+            totalChanges += passChanges;
+            mergeStats(totalStats, passStats);
+        }
+
+        return { changes: totalChanges, stats: totalStats };
     }
 
     async function transformFile(srcPath, destPath) {
@@ -454,6 +602,11 @@ function createModernizeUtils(runtime) {
             const destPath = path.join(destDir, entry.name);
 
             if (entry.isDirectory()) {
+                if (IGNORED_DIRECTORY_NAMES.has(entry.name)) {
+                    await fsp.cp(srcPath, destPath, { recursive: true, force: true });
+                    continue;
+                }
+
                 await modernizeDirectoryRecursive(srcPath, destPath, summary);
                 continue;
             }
@@ -502,6 +655,8 @@ function createModernizeUtils(runtime) {
             `- indexOf(...) -> includes(...): ${summary.stats.indexOfToIncludes}`,
             `- &&-цепочки -> optional chaining/call: ${summary.stats.andChainToOptional}`,
             `- ternary/nullish -> ??: ${summary.stats.ternaryToNullish}`,
+            `- transpiled optional chaining -> ?.: ${summary.stats.transpiledOptionalToOptional}`,
+            `- transpiled nullish checks -> ??: ${summary.stats.transpiledNullishToNullish}`,
             `- Array.prototype.slice.call(arguments) -> [...arguments]: ${summary.stats.sliceCallArguments}`,
             `Ошибок с копированием как есть: ${summary.errors.length}`,
         ];

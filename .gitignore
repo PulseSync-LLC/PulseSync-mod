@@ -162,3 +162,4 @@ temp
 !src/node_modules/**/*
 
 native/setIconicThumbnail/node_modules
+/modernized/**

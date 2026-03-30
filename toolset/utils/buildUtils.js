@@ -2,8 +2,10 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
     const { asar, fs, fsp, path, crypto, minify, execSync } = runtime.deps;
     const { REPO_ROOT, SRC_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, PRETTIER_CONFIG_PATH } = runtime.constants;
 
+    const MINIFIABLE_EXTENSIONS = new Set(['.js', '.mjs', '.cjs']);
+
     function isMinifiableFile(filePath) {
-        return path.extname(filePath).toLowerCase() === '.js';
+        return MINIFIABLE_EXTENSIONS.has(path.extname(filePath).toLowerCase());
     }
 
     async function minifyDir(srcDir, destDir) {
