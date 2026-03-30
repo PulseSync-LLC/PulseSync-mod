@@ -2171,11 +2171,11 @@
                                     return (
                                         Object.getOwnPropertyNames(t).forEach((s) => {
                                             let i = t[s];
-                                            ('number' == typeof i || 'string' == typeof i || 'boolean' == typeof i) && e.append(s, String(i)),
+                                            (('number' == typeof i || 'string' == typeof i || 'boolean' == typeof i) && e.append(s, String(i)),
                                                 Array.isArray(i) &&
                                                     i.forEach((t) => {
                                                         ('number' == typeof t || 'string' == typeof t) && e.append(s, String(t));
-                                                    });
+                                                    }));
                                         }),
                                         e
                                     );
@@ -2191,6 +2191,11 @@
                         t.substituted?.coverUri && t.coverUri ? (t.coverUri = t.substituted.coverUri) : undefined;
                         t.substituted?.title && t.title ? (t.title = t.substituted.title) : undefined;
                         t.substituted?.derivedColors && t.derivedColors ? (t.derivedColors = t.substituted.derivedColors) : undefined;
+                        t.substituted?.version && t.version
+                            ? (t.version = t.substituted.version)
+                            : t.substituted
+                              ? 'Подменёные данные трека были восстановлены'
+                              : undefined;
                     });
 
                     return tracksMeta;

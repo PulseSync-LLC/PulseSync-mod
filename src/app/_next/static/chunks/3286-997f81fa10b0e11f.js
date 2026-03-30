@@ -1832,9 +1832,9 @@
                         isAvailable: !!(null == e ? void 0 : e.available),
                         isRemoved: (null == e ? void 0 : e.error) === 'not-found',
                         title: e?.substituted?.title ?? e?.title ?? '',
-                        version: null == e ? void 0 : e.version,
+                        version: e?.version ?? (e?.substituted ? (e.substituted?.version ?? 'Подменёные данные трека были восстановлены') : undefined),
                         durationMs: y,
-                        coverUri: null == e ? void 0 : e.coverUri,
+                        coverUri: e?.substituted?.coverUri ?? e?.coverUri,
                         averageColor: g,
                         trackParameters: ((e) =>
                             (0, n.wg)({
