@@ -51,4 +51,6 @@ var Events;
     Events['NATIVE_STORE_SET'] = 'NATIVE_STORE_SET';
     Events['TOGGLE_MINIPLAYER'] = 'TOGGLE_MINIPLAYER';
     Events['PULSESYNC_API'] = 'PULSESYNC_API';
+    Events['PULSESYNC_SETTINGS'] = 'PULSESYNC_SETTINGS';
+    Events['PULSESYNC_SETTINGS_SNAPSHOT'] = 'PULSESYNC_SETTINGS_SNAPSHOT';
 })(Events || (exports.Events = Events = {}));

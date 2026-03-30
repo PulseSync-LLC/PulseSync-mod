@@ -64,6 +64,7 @@ class PulseSyncManager extends EventEmitter {
         this.reconnectTimer = null;
         this.isConnecting = false;
         this.isPremium = false;
+        this._addonSettingsSnapshot = {};
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
         this.updateDownloadInfo = this.updateDownloadInfo.bind(this);
@@ -73,6 +74,14 @@ class PulseSyncManager extends EventEmitter {
         this.validatePremium = this.validatePremium.bind(this);
         this.updatePremiumState = this.updatePremiumState.bind(this);
         this.prevExtensions = mergeWithSystem([]);
+    }
+
+    cloneAddonSettingsValue(value) {
+        try {
+            return JSON.parse(JSON.stringify(value || {}));
+        } catch {
+            return value || {};
+        }
     }
 
     async injectThemesAndAddons() {
@@ -355,6 +364,33 @@ class PulseSyncManager extends EventEmitter {
         this.socket.on('PULSESYNC_API_CALL', (payload) => {
             this.handlePulseSyncApi(payload);
         });
+
+        this.socket.on('ADDON_SETTINGS_SNAPSHOT', (payload) => {
+            const settings = payload?.settings && typeof payload.settings === 'object' && !Array.isArray(payload.settings) ? payload.settings : {};
+            this._addonSettingsSnapshot = this.cloneAddonSettingsValue(settings);
+            this.window.webContents.send(Events.PULSESYNC_SETTINGS, {
+                type: 'snapshot',
+                settings,
+            });
+        });
+
+        this.socket.on('ADDON_SETTINGS_UPDATE', (payload) => {
+            if (!payload?.addon || typeof payload.addon !== 'string') {
+                this.logger.warn('ADDON_SETTINGS_UPDATE: missing addon id');
+                return;
+            }
+
+            const settings = payload.settings && typeof payload.settings === 'object' && !Array.isArray(payload.settings) ? payload.settings : {};
+            this._addonSettingsSnapshot = {
+                ...this._addonSettingsSnapshot,
+                [payload.addon]: this.cloneAddonSettingsValue(settings),
+            };
+            this.window.webContents.send(Events.PULSESYNC_SETTINGS, {
+                type: 'update',
+                addon: payload.addon,
+                settings,
+            });
+        });
     }
 
     safeReload(reason = 'unknown') {
@@ -513,6 +549,10 @@ class PulseSyncManager extends EventEmitter {
         }
 
         return { scripts, theme };
+    }
+
+    getAddonSettingsSnapshot() {
+        return this.cloneAddonSettingsValue(this._addonSettingsSnapshot);
     }
 
     async handleCss({ css, name }) {

@@ -74,37 +74,112 @@
             this.settings = {};
 
             this.old_settings = {};
+
+            this._unsubscribe = null;
+
+            this._subscribeTimer = null;
+        }
+
+        _createContextPayload() {
+            return {
+                settings: this.theme.settingsManager,
+                styles: this.theme.stylesManager,
+                state: this.theme.player.state,
+            };
+        }
+
+        _clone(value) {
+            if (typeof structuredClone === 'function') {
+                return structuredClone(value);
+            }
+
+            try {
+                return JSON.parse(JSON.stringify(value));
+            } catch {
+                return value;
+            }
+        }
+
+        _isEqual(left, right) {
+            try {
+                return JSON.stringify(left) === JSON.stringify(right);
+            } catch {
+                return left === right;
+            }
+        }
+
+        _extractItemValue(item) {
+            if (item.bool != undefined) return item.bool;
+            if (item.filePath != undefined) return item.filePath;
+            if (item.input != undefined) return item.input;
+            if (item.selected != undefined) return item.selected;
+            return item.value;
+        }
+
+        _normalizeSettingsPayload(input) {
+            if (!input || typeof input !== 'object' || Array.isArray(input)) {
+                return {};
+            }
+
+            if (Array.isArray(input.sections)) {
+                return this.transformJSON(input);
+            }
+
+            return this._clone(input);
+        }
+
+        _applySettings(nextSettings) {
+            const normalizedSettings = this._normalizeSettingsPayload(nextSettings);
+            const hasChanged = !this._isEqual(this.settings, normalizedSettings);
+            if (!hasChanged) {
+                return this.settings;
+            }
+
+            this.old_settings = this.settings;
+            this.settings = normalizedSettings;
+            const context = this._createContextPayload();
+
+            this.emit('update', context);
+
+            for (const id in this.settings) {
+                if (this.hasChanged(id)) {
+                    this.emit(`change:${id}`, context);
+                }
+            }
+
+            return this.settings;
+        }
+
+        _subscribeToPulseSyncApi() {
+            const source = window?.pulsesyncApi?.getSettings?.(this.theme.id);
+            if (!source || typeof source.onChange !== 'function') {
+                this._subscribeTimer = setTimeout(() => this._subscribeToPulseSyncApi(), 250);
+                return;
+            }
+
+            this._subscribeTimer = null;
+            this._unsubscribe = source.onChange((settings) => {
+                this._applySettings(settings);
+            });
+        }
+
+        start() {
+            if (this._unsubscribe || this._subscribeTimer) {
+                return;
+            }
+
+            this._subscribeToPulseSyncApi();
         }
 
         async update() {
             try {
-                const response = await fetch(`http://localhost:2007/get_handle?name=${this.theme.id}`);
-                if (!response.ok) throw new Error(`Ошибка сети: ${response.status}`);
-
-                const { data } = await response.json();
-                if (!data?.sections) {
-                    console.warn('Структура данных не соответствует ожидаемой');
+                const source = window?.pulsesyncApi?.getSettings?.(this.theme.id);
+                if (!source || typeof source.getCurrent !== 'function') {
                     return null;
                 }
 
-                this.old_settings = this.settings;
-                this.settings = this.transformJSON(data);
-
-                this.emit('update', {
-                    settings: this.theme.settingsManager,
-                    styles: this.theme.stylesManager,
-                    state: this.theme.player.state,
-                });
-
-                for (const id in this.settings) {
-                    if (this.hasChanged(id)) {
-                        this.emit(`change:${id}`, {
-                            settings: this.theme.settingsManager,
-                            styles: this.theme.stylesManager,
-                            state: this.theme.player.state,
-                        });
-                    }
-                }
+                const current = source.getCurrent();
+                return this._applySettings(current);
             } catch (error) {
                 console.error(error);
                 return null;
@@ -116,10 +191,22 @@
 
             try {
                 input.sections.forEach((section) => {
+                    if (!Array.isArray(section?.items)) {
+                        return;
+                    }
+
                     section.items.forEach((item) => {
+                        if (!item?.id) {
+                            return;
+                        }
+
                         if (item.type === 'text' && item.buttons) {
                             result[item.id] = {};
                             item.buttons.forEach((button) => {
+                                if (!button?.id) {
+                                    return;
+                                }
+
                                 result[item.id][button.id] = {
                                     value: button.text,
                                     default: button.defaultParameter,
@@ -127,16 +214,7 @@
                             });
                         } else {
                             result[item.id] = {
-                                value:
-                                    item.bool != undefined
-                                        ? item.bool
-                                        : item.filePath != undefined
-                                          ? item.filePath
-                                          : item.input != undefined
-                                            ? item.input
-                                            : item.selected != undefined
-                                              ? item.selected
-                                              : item.value,
+                                value: this._extractItemValue(item),
                                 default: item.defaultParameter,
                             };
                         }
@@ -174,7 +252,7 @@
                 oldValue = oldValue[key];
             }
 
-            return value?.value !== oldValue?.value;
+            return !this._isEqual(value, oldValue);
         }
     }
 
@@ -222,8 +300,116 @@
                 .catch((reason) => {
                     console.error('Ошибка при получении данных:', reason);
                 });
-        }
+            }
     }
+
+    const getSharedPlayerEventsBridge = () => {
+        if (typeof window === 'undefined') {
+            return null;
+        }
+
+        if (window.__WOLFYLIBRARY_PLAYER_EVENTS_BRIDGE__) {
+            return window.__WOLFYLIBRARY_PLAYER_EVENTS_BRIDGE__;
+        }
+
+        const subscribers = new Set();
+
+        const notify = (eventName) => {
+            subscribers.forEach((subscriber) => {
+                subscriber._dispatchCustomEvent(eventName);
+            });
+        };
+
+        const syncPage = () => {
+            subscribers.forEach((subscriber) => {
+                subscriber.state.page = window.location.pathname;
+                subscriber._dispatchCustomEvent('pageChange');
+            });
+        };
+
+        const playerCheck = (node) => {
+            if (node.querySelector)
+                return !node?.matches('[data-floating-ui-portal]') ? node.querySelector('[data-test-id="FULLSCREEN_PLAYER_MODAL"]') : null;
+        };
+        const textCheck = (node) => {
+            return node.querySelector ? node.querySelector('[data-test-id="SYNC_LYRICS_CONTENT"]') : null;
+        };
+        const queueCheck = (node) => {
+            return node.querySelector ? node.querySelector('.PlayQueue_root__ponhw') : null;
+        };
+
+        const ensureStarted = () => {
+            if (window.__WOLFYLIBRARY_PLAYER_EVENTS_BRIDGE_STARTED__) {
+                return;
+            }
+
+            if (!document.body) {
+                setTimeout(ensureStarted, 100);
+                return;
+            }
+
+            window.__WOLFYLIBRARY_PLAYER_EVENTS_BRIDGE_STARTED__ = true;
+
+            const observer = new MutationObserver((mutations) => {
+                for (const mutation of mutations) {
+                    for (const node of mutation.addedNodes) {
+                        const playerElement = playerCheck(node);
+                        const textElement = textCheck(node);
+                        const queueElement = queueCheck(node);
+
+                        if (playerElement) notify('openPlayer');
+                        else if (textElement) notify('openText');
+                        else if (queueElement) notify('openQueue');
+                    }
+
+                    for (const node of mutation.removedNodes) {
+                        const playerElement = playerCheck(node);
+                        const textElement = textCheck(node);
+                        const queueElement = queueCheck(node);
+
+                        if (playerElement) notify('closePlayer');
+                        else if (textElement) notify('closeText');
+                        else if (queueElement) notify('closeQueue');
+                    }
+                }
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+            });
+
+            const pushState = history.pushState;
+            const replaceState = history.replaceState;
+
+            history.pushState = function (...args) {
+                pushState.apply(this, args);
+                syncPage();
+            };
+
+            history.replaceState = function (...args) {
+                replaceState.apply(this, args);
+                syncPage();
+            };
+
+            window.addEventListener('popstate', syncPage);
+        };
+
+        const bridge = {
+            register(subscriber) {
+                subscribers.add(subscriber);
+                ensureStarted();
+                subscriber.state.page = window.location.pathname;
+
+                return () => {
+                    subscribers.delete(subscriber);
+                };
+            },
+        };
+
+        window.__WOLFYLIBRARY_PLAYER_EVENTS_BRIDGE__ = bridge;
+        return bridge;
+    };
 
     class PlayerEvents extends EventEmitter {
         constructor(theme) {
@@ -278,6 +464,8 @@
                 },
             };
 
+            this._detachSharedBridge = null;
+
             this._registerEvents();
         }
 
@@ -290,133 +478,76 @@
         }
 
         _registerEvents() {
-            const start = setInterval(() => {
-                if (window?.sonataState && window?.sonataState?.queueState?.currentEntity?.value?.entity?.data?.meta) {
-                    clearInterval(start);
-
-                    const sonataState = window.sonataState;
-                    const playerState = sonataState.playerState;
-                    const queueState = sonataState.queueState;
-
-                    const currentEntity = queueState.currentEntity;
-
-                    this.state.track = currentEntity.value.entity.data.meta;
-                    this.state.page = window.location.pathname;
-
-                    currentEntity.onChange((event) => {
-                        this.state.track = event.entity.data.meta;
-                        this._dispatchCustomEvent('trackChange');
-                    });
-
-                    playerState.status.onChange((status) => {
-                        const prevStatus = this.state.status;
-                        this.state.status = status;
-                        switch (status) {
-                            case 'playing':
-                                if (prevStatus == 'playing') break;
-
-                                this._dispatchCustomEvent('play');
-                                break;
-                            case 'paused':
-                                if (prevStatus == 'paused') break;
-
-                                this._dispatchCustomEvent('pause');
-                                break;
-                            default:
-                                return;
-                        }
-                    });
-
-                    playerState.event.onChange((event) => {
-                        if (event == 'audio-set-progress') {
-                            this._dispatchCustomEvent('seek');
-                        }
-                    });
-
-                    playerState.progress.onChange((progress) => {
-                        this.state.progress = progress;
-                        this._dispatchCustomEvent('progressChange');
-                    });
-
-                    playerState.volume.onChange((volume) => {
-                        this.state.volume = Math.round(100 * volume) / 100;
-                        this._dispatchCustomEvent('volumeChange');
-                    });
-
-                    queueState.shuffle.onChange((shuffle) => {
-                        this.state.shuffle = shuffle;
-                        this._dispatchCustomEvent('shuffleChange');
-                    });
-
-                    queueState.repeat.onChange((repeat) => {
-                        this.state.repeat = repeat;
-                        this._dispatchCustomEvent('repeatChange');
-                    });
-
-                    const playerCheck = (node) => {
-                        if (node.querySelector)
-                            return !node?.matches('[data-floating-ui-portal]') ? node.querySelector('[data-test-id="FULLSCREEN_PLAYER_MODAL"]') : null;
-                    };
-                    const textCheck = (node) => {
-                        return node.querySelector ? node.querySelector('[data-test-id="SYNC_LYRICS_CONTENT"]') : null;
-                    };
-                    const queueCheck = (node) => {
-                        return node.querySelector ? node.querySelector('.PlayQueue_root__ponhw') : null;
-                    };
-
-                    const handleMutations = (mutations) => {
-                        for (const mutation of mutations) {
-                            for (const node of mutation.addedNodes) {
-                                const playerElement = playerCheck(node);
-                                const textElement = textCheck(node);
-                                const queueElement = queueCheck(node);
-
-                                if (playerElement) this._dispatchCustomEvent('openPlayer');
-                                else if (textElement) this._dispatchCustomEvent('openText');
-                                else if (queueElement) this._dispatchCustomEvent('openQueue');
-                            }
-
-                            for (const node of mutation.removedNodes) {
-                                const playerElement = playerCheck(node);
-                                const textElement = textCheck(node);
-                                const queueElement = queueCheck(node);
-
-                                if (playerElement) this._dispatchCustomEvent('closePlayer');
-                                else if (textElement) this._dispatchCustomEvent('closeText');
-                                else if (queueElement) this._dispatchCustomEvent('closeQueue');
-                            }
-                        }
-                    };
-
-                    const observer = new MutationObserver(handleMutations);
-                    observer.observe(document.body, {
-                        childList: true,
-                        subtree: true,
-                    });
-
-                    const pushState = history.pushState;
-                    const replaceState = history.replaceState;
-
-                    const self = this;
-
-                    history.pushState = function (...args) {
-                        pushState.apply(this, args);
-                        self.state.page = window.location.pathname;
-                        self._dispatchCustomEvent('pageChange');
-                    };
-
-                    history.replaceState = function (...args) {
-                        replaceState.apply(this, args);
-                        self.state.page = window.location.pathname;
-                        self._dispatchCustomEvent('pageChange');
-                    };
-
-                    window.addEventListener('popstate', () => {
-                        self.state.page = window.location.pathname;
-                        self._dispatchCustomEvent('pageChange');
-                    });
+            const tryRegister = () => {
+                if (!window?.sonataState?.queueState?.currentEntity?.value?.entity?.data?.meta) {
+                    setTimeout(tryRegister, 250);
+                    return;
                 }
-            });
+
+                const sonataState = window.sonataState;
+                const playerState = sonataState.playerState;
+                const queueState = sonataState.queueState;
+
+                const currentEntity = queueState.currentEntity;
+
+                this.state.track = currentEntity.value.entity.data.meta;
+                this.state.page = window.location.pathname;
+                if (!this._detachSharedBridge) {
+                    this._detachSharedBridge = getSharedPlayerEventsBridge()?.register(this) ?? null;
+                }
+
+                currentEntity.onChange((event) => {
+                    this.state.track = event.entity.data.meta;
+                    this._dispatchCustomEvent('trackChange');
+                });
+
+                playerState.status.onChange((status) => {
+                    const prevStatus = this.state.status;
+                    this.state.status = status;
+                    switch (status) {
+                        case 'playing':
+                            if (prevStatus == 'playing') break;
+
+                            this._dispatchCustomEvent('play');
+                            break;
+                        case 'paused':
+                            if (prevStatus == 'paused') break;
+
+                            this._dispatchCustomEvent('pause');
+                            break;
+                        default:
+                            return;
+                    }
+                });
+
+                playerState.event.onChange((event) => {
+                    if (event == 'audio-set-progress') {
+                        this._dispatchCustomEvent('seek');
+                    }
+                });
+
+                playerState.progress.onChange((progress) => {
+                    this.state.progress = progress;
+                    this._dispatchCustomEvent('progressChange');
+                });
+
+                playerState.volume.onChange((volume) => {
+                    this.state.volume = Math.round(100 * volume) / 100;
+                    this._dispatchCustomEvent('volumeChange');
+                });
+
+                queueState.shuffle.onChange((shuffle) => {
+                    this.state.shuffle = shuffle;
+                    this._dispatchCustomEvent('shuffleChange');
+                });
+
+                queueState.repeat.onChange((repeat) => {
+                    this.state.repeat = repeat;
+                    this._dispatchCustomEvent('repeatChange');
+                });
+            };
+
+            tryRegister();
         }
     }
 
@@ -478,7 +609,15 @@
         }
 
         start(interval) {
-            setInterval(() => this.update(), interval);
+            if (!this._settingsUpdateBound) {
+                this._settingsUpdateBound = true;
+                this.settingsManager.on('update', () => {
+                    if (!this.settingsManager.settings) return;
+                    this.applyTheme();
+                });
+            }
+
+            this.settingsManager.start();
             this.update();
         }
     }
