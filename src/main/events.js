@@ -658,6 +658,16 @@ const handleApplicationEvents = (window) => {
                 data.track.derivedColors = data.track.substituted.derivedColors ?? data.track.derivedColors;
             }
 
+            if (data?.previousTrack?.substituted) {
+                data.previousTrack.coverUri = data.previousTrack.substituted.coverUri ?? data.previousTrack.coverUri;
+                data.previousTrack.derivedColors = data.previousTrack.substituted.derivedColors ?? data.previousTrack.derivedColors;
+            }
+
+            if (data?.nextTrack?.substituted) {
+                data.nextTrack.coverUri = data.nextTrack.substituted.coverUri ?? data.nextTrack.coverUri;
+                data.nextTrack.derivedColors = data.nextTrack.substituted.derivedColors ?? data.nextTrack.derivedColors;
+            }
+
             const isActiveState = ['paused', 'playing'].includes(data?.status);
             const isPlayable = isPlayerReady && data.status !== 'idle' && isActiveState;
 
