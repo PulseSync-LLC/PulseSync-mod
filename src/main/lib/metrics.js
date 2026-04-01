@@ -200,6 +200,7 @@ let heartbeatStopped = false;
 let heartbeatInFlight = false;
 let teardownBound = false;
 let metricsRuntimeConfig = null;
+const FEATURE_METRIC_STATE_VERSION = 5;
 
 function isPlainObject(value) {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -213,6 +214,43 @@ function shouldSkipFeatureKey(key) {
     return key === 'premiumCheckToken';
 }
 
+function getFeatureValueKey(pathParts) {
+    return pathParts.join('.');
+}
+
+function shouldSkipFeaturePath(pathParts) {
+    if (pathParts.length < 2) {
+        return false;
+    }
+
+    const lastKey = pathParts[pathParts.length - 1];
+    const parentKey = pathParts[pathParts.length - 2];
+    const isWindowGeometryKey = lastKey === 'width' || lastKey === 'height' || lastKey === 'x' || lastKey === 'y';
+
+    return parentKey === 'window' && isWindowGeometryKey;
+}
+
+function normalizePathLikeFeatureValue(value) {
+    if (typeof value !== 'string') {
+        return value;
+    }
+
+    return value.trim().length > 0 ? 'custom' : 'empty';
+}
+
+function normalizeFeaturePrimitiveValue(pathParts, value) {
+    const key = getFeatureValueKey(pathParts);
+
+    if (
+        key === 'modSettings.downloader.defaultPath' ||
+        key === 'modSettings.downloader.customPathForSessionStorage'
+    ) {
+        return normalizePathLikeFeatureValue(value);
+    }
+
+    return value;
+}
+
 function buildFeaturesEndpoint(endpointUrl) {
     if (!endpointUrl) return '';
     const trimmed = endpointUrl.endsWith('/') ? endpointUrl.slice(0, -1) : endpointUrl;
@@ -220,7 +258,7 @@ function buildFeaturesEndpoint(endpointUrl) {
     return `${trimmed}/features`;
 }
 
-function normalizeFeatureTree(value) {
+function normalizeFeatureTree(value, pathParts = []) {
     if (!isPlainObject(value)) {
         return null;
     }
@@ -232,12 +270,17 @@ function normalizeFeatureTree(value) {
             continue;
         }
 
-        if (isPrimitiveFeatureValue(nestedValue)) {
-            normalized[key] = nestedValue;
+        const nextPathParts = [...pathParts, key];
+        if (shouldSkipFeaturePath(nextPathParts)) {
             continue;
         }
 
-        const nestedTree = normalizeFeatureTree(nestedValue);
+        if (isPrimitiveFeatureValue(nestedValue)) {
+            normalized[key] = normalizeFeaturePrimitiveValue(nextPathParts, nestedValue);
+            continue;
+        }
+
+        const nestedTree = normalizeFeatureTree(nestedValue, nextPathParts);
         if (nestedTree && Object.keys(nestedTree).length > 0) {
             normalized[key] = nestedTree;
         }
@@ -345,6 +388,24 @@ function getMetricScopedFeatureState(state, metricType) {
     return isPlainObject(metricState) ? metricState : {};
 }
 
+function normalizeFeatureMetricsState(state) {
+    const version = typeof state?.feature_metrics_state_version === 'number' ? state.feature_metrics_state_version : 0;
+
+    if (version === FEATURE_METRIC_STATE_VERSION) {
+        return state;
+    }
+
+    logger.info(
+        `Resetting cached feature metrics state due to schema change (${version} -> ${FEATURE_METRIC_STATE_VERSION})`,
+    );
+
+    return {
+        ...state,
+        last_sent_features_by_metric_type: {},
+        feature_metrics_state_version: FEATURE_METRIC_STATE_VERSION,
+    };
+}
+
 function buildFeatureStateUpdate(state, metricType, features) {
     const featureStates = isPlainObject(state.last_sent_features_by_metric_type) ? cloneFeatureTree(state.last_sent_features_by_metric_type) : {};
     featureStates[metricType] = features;
@@ -352,6 +413,7 @@ function buildFeatureStateUpdate(state, metricType, features) {
         ...state,
         last_sent_features_by_metric_type: featureStates,
         last_features_sent_at_ms: nowMs(),
+        feature_metrics_state_version: FEATURE_METRIC_STATE_VERSION,
     };
 }
 
@@ -551,7 +613,8 @@ async function sendFeaturesMetric(features, overrides = {}) {
         await app.whenReady();
 
         const statePath = getMetricsStatePath();
-        const { state, installId } = await getOrCreateInstallId(statePath);
+        const { state: rawState, installId } = await getOrCreateInstallId(statePath);
+        const state = normalizeFeatureMetricsState(rawState);
         const metricType = overrides.metricType || metricsRuntimeConfig.metricType || 'mod';
         const normalizedFeatures = normalizeFeatureTree(features);
 
@@ -591,7 +654,7 @@ async function sendFeaturesMetric(features, overrides = {}) {
         const nextFeaturesState = areFeatureTreesEqual(lastSentFeatures, normalizedFeatures)
             ? lastSentFeatures
             : mergeFeatureTree(lastSentFeatures, normalizedFeatures);
-        const latestState = (await readJsonSafe(statePath)) || state;
+        const latestState = normalizeFeatureMetricsState((await readJsonSafe(statePath)) || state);
         await writeJsonAtomic(statePath, buildFeatureStateUpdate(latestState, metricType, nextFeaturesState));
     } catch (error) {
         logger.warn('Failed to send features metric:', error?.message || error);

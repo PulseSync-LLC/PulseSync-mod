@@ -81,13 +81,46 @@ const isBoolean = (value) => {
     return typeof value === 'boolean';
 };
 
+const getLastFmScrobbler = () => scrobbleManager_js_1.scrobblerManager.getScrobblerByType('Last.fm');
+
+const getLastFmScrobblingState = () => {
+    const lastFmEnabled = Boolean(store_js_1.getModSettings()?.scrobblers?.lastfm?.enable);
+    if (!lastFmEnabled) {
+        return 'disabled';
+    }
+
+    const lastFmScrobbler = getLastFmScrobbler();
+    return lastFmScrobbler?.isLoggedIn?.() ? 'enabled_logged_in' : 'enabled_logged_out';
+};
+
+const withDerivedFeatureMetrics = (modSettings) => ({
+    ...modSettings,
+    scrobblers: {
+        ...modSettings?.scrobblers,
+        lastfm: {
+            ...modSettings?.scrobblers?.lastfm,
+            scrobblingState: getLastFmScrobblingState(),
+        },
+    },
+});
+
+const buildLastFmScrobblingStatePatch = () => ({
+    modSettings: {
+        scrobblers: {
+            lastfm: {
+                scrobblingState: getLastFmScrobblingState(),
+            },
+        },
+    },
+});
+
 const buildFeaturesSnapshot = () => {
     return {
         sendModAnonymizedMetrics: store_js_1.get('sendModAnonymizedMetrics'),
         enableYnisonPlayerRemoteControl: store_js_1.get('enableYnisonPlayerRemoteControl'),
         ynisonInterceptPlayback: store_js_1.get('ynisonInterceptPlayback'),
         autoUpdates: store_js_1.get('autoUpdates'),
-        modSettings: store_js_1.getModSettings(),
+        modSettings: withDerivedFeatureMetrics(store_js_1.getModSettings()),
     };
 };
 
@@ -107,6 +140,16 @@ const buildFeaturesPatch = (path, value) => {
     }
 
     current[lastKey] = value;
+
+    if (path.startsWith('modSettings.scrobblers.lastfm.')) {
+        patch.modSettings = patch.modSettings || {};
+        patch.modSettings.scrobblers = patch.modSettings.scrobblers || {};
+        patch.modSettings.scrobblers.lastfm = {
+            ...(patch.modSettings.scrobblers.lastfm || {}),
+            scrobblingState: getLastFmScrobblingState(),
+        };
+    }
+
     return patch;
 };
 
@@ -319,12 +362,14 @@ const handleApplicationEvents = (window) => {
             scrobbler.logout();
         });
     });
-    electron_1.ipcMain.handle('scrobble-lastfm-login', () => {
-        scrobbleManager_js_1.scrobblerManager.getScrobblerByType('Last.fm').login();
+    electron_1.ipcMain.handle('scrobble-lastfm-login', async () => {
+        await getLastFmScrobbler().login();
+        void sendFeaturesMetric(buildLastFmScrobblingStatePatch());
     });
 
-    electron_1.ipcMain.handle('scrobble-lastfm-logout', () => {
-        scrobbleManager_js_1.scrobblerManager.getScrobblerByType('Last.fm').logout();
+    electron_1.ipcMain.handle('scrobble-lastfm-logout', async () => {
+        await getLastFmScrobbler().logout();
+        void sendFeaturesMetric(buildLastFmScrobblingStatePatch());
     });
 
     electron_1.ipcMain.handle('scrobble-lastfm-get-user', () => {
