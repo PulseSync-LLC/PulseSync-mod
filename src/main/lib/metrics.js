@@ -205,6 +205,14 @@ function isPlainObject(value) {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
+function isPrimitiveFeatureValue(value) {
+    return value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string';
+}
+
+function shouldSkipFeatureKey(key) {
+    return key === 'premiumCheckToken';
+}
+
 function buildFeaturesEndpoint(endpointUrl) {
     if (!endpointUrl) return '';
     const trimmed = endpointUrl.endsWith('/') ? endpointUrl.slice(0, -1) : endpointUrl;
@@ -212,7 +220,7 @@ function buildFeaturesEndpoint(endpointUrl) {
     return `${trimmed}/features`;
 }
 
-function normalizeBooleanFeatureTree(value) {
+function normalizeFeatureTree(value) {
     if (!isPlainObject(value)) {
         return null;
     }
@@ -220,12 +228,16 @@ function normalizeBooleanFeatureTree(value) {
     const normalized = {};
 
     for (const [key, nestedValue] of Object.entries(value)) {
-        if (typeof nestedValue === 'boolean') {
+        if (shouldSkipFeatureKey(key)) {
+            continue;
+        }
+
+        if (isPrimitiveFeatureValue(nestedValue)) {
             normalized[key] = nestedValue;
             continue;
         }
 
-        const nestedTree = normalizeBooleanFeatureTree(nestedValue);
+        const nestedTree = normalizeFeatureTree(nestedValue);
         if (nestedTree && Object.keys(nestedTree).length > 0) {
             normalized[key] = nestedTree;
         }
@@ -253,7 +265,7 @@ function areFeatureTreesEqual(left, right) {
         return true;
     }
 
-    if (typeof left === 'boolean' || typeof right === 'boolean') {
+    if (isPrimitiveFeatureValue(left) || isPrimitiveFeatureValue(right)) {
         return left === right;
     }
 
@@ -289,7 +301,7 @@ function hasFeatureTreeChanges(currentState, nextState) {
     for (const [key, nextValue] of Object.entries(nextState)) {
         const currentValue = isPlainObject(currentState) ? currentState[key] : undefined;
 
-        if (typeof nextValue === 'boolean') {
+        if (isPrimitiveFeatureValue(nextValue)) {
             if (currentValue !== nextValue) {
                 return true;
             }
@@ -316,7 +328,7 @@ function mergeFeatureTree(baseState, patchState) {
     }
 
     for (const [key, patchValue] of Object.entries(patchState)) {
-        if (typeof patchValue === 'boolean') {
+        if (isPrimitiveFeatureValue(patchValue)) {
             nextState[key] = patchValue;
             continue;
         }
@@ -541,7 +553,7 @@ async function sendFeaturesMetric(features, overrides = {}) {
         const statePath = getMetricsStatePath();
         const { state, installId } = await getOrCreateInstallId(statePath);
         const metricType = overrides.metricType || metricsRuntimeConfig.metricType || 'mod';
-        const normalizedFeatures = normalizeBooleanFeatureTree(features);
+        const normalizedFeatures = normalizeFeatureTree(features);
 
         if (!normalizedFeatures) {
             return;
@@ -551,7 +563,7 @@ async function sendFeaturesMetric(features, overrides = {}) {
         const hasChanges = hasFeatureTreeChanges(lastSentFeatures, normalizedFeatures);
 
         if (!hasChanges) {
-            logger.debug('Skipping features metric send because boolean feature state did not change');
+            logger.debug('Skipping features metric send because feature state did not change');
             return;
         }
 
