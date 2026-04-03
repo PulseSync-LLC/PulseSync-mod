@@ -14,6 +14,7 @@ async function resolveCommandOptions(commandName, flags, core) {
     const shouldBuild = flags.b ?? false;
     const onlyUploadAppAsar = flags.onlyUploadAppAsar ?? false;
     const onlySendPatchNotes = flags.onlySendPatchNotes ?? false;
+    const shouldBuildZstd = flags.buildZstd ?? false;
 
     core.setOldYMHashOverride(flags.oldYMHashOverride);
 
@@ -47,6 +48,7 @@ async function resolveCommandOptions(commandName, flags, core) {
         shouldBuild,
         onlyUploadAppAsar,
         onlySendPatchNotes,
+        shouldBuildZstd,
         dest,
         src,
     };

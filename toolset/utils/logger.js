@@ -13,7 +13,14 @@ function createIdentityChalk() {
 
 function loadChalk() {
     try {
-        return require('chalk');
+        const chalkModule = require('chalk');
+        const normalized = chalkModule?.default ?? chalkModule?.Chalk ? new (chalkModule.default?.constructor ?? chalkModule.Chalk)() : chalkModule;
+
+        if (normalized && typeof normalized.cyan === 'function') {
+            return normalized;
+        }
+
+        return createIdentityChalk();
     } catch {
         return createIdentityChalk();
     }

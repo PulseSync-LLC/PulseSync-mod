@@ -75,6 +75,10 @@ const FLAG_DEFINITIONS = {
         label: '--oldYMHashOverride=<hash>',
         description: 'переопределяет старый hash app.asar при обходе целостности',
     },
+    buildZstd: {
+        label: '--buildZstd',
+        description: 'после сборки принудительно создаёт рядом app.asar.zst',
+    },
     onlyUploadAppAsar: {
         label: '--onlyUploadAppAsar',
         description: 'в release загружает только app.asar, без GitHub release и Discord патчноута',

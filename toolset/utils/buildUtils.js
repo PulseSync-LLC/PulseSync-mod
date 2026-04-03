@@ -1,4 +1,4 @@
-function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, modernizeUtils }) {
+function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, modernizeUtils, zstdUtils }) {
     const { asar, fs, fsp, path, crypto, minify, execSync } = runtime.deps;
     const { REPO_ROOT, SRC_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, PRETTIER_CONFIG_PATH } = runtime.constants;
 
@@ -310,6 +310,14 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
     }
 
+    async function prepareReleaseAsarArtifact(asarPath = DEFAULT_DIST_PATH) {
+        console.log(`Подготовка zstd-артефакта для релиза: ${asarPath}.zst`);
+        console.time('Подготовка zstd-артефакта завершена');
+        const artifactPath = await zstdUtils.ensureCompressedAsarArtifact(asarPath);
+        console.timeEnd('Подготовка zstd-артефакта завершена');
+        return artifactPath;
+    }
+
     async function buildDirectly(src, noMinify = false, noNativeModules = false, forceOpen = false, modernize = false) {
         if (process.platform === 'darwin' && integrityUtils.checkIfSystemIntegrityProtectionEnabled()) {
             console.log('System Integrity Protection включён. Отключите SIP для File System и попробуйте снова.');
@@ -402,6 +410,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
     return {
         build,
+        prepareReleaseAsarArtifact,
         buildDirectly,
         spoof,
         modernizeSource,
