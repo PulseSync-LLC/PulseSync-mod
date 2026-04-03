@@ -1285,7 +1285,7 @@
                         f = r.find((e) => e.value === l),
                         x = (0, g.useCallback)(
                             (e) => {
-                                i(e), u(!1);
+                                (i(e), u(!1));
                             },
                             [i],
                         ),
@@ -1360,6 +1360,11 @@
                                                 display: d ? 'flex' : 'none',
                                                 flexDirection: 'column',
                                                 width: ''.concat(_, 'px'),
+                                                maxHeight: '16rem',
+                                                overflowY: 'auto',
+                                                overflowX: 'hidden',
+                                                scrollbarWidth: 'thin',
+                                                overscrollBehavior: 'contain',
                                                 top: 'bottom' === s ? '120%' : 'unset',
                                                 bottom: 'top' === s ? '120%' : 'unset',
                                             },
@@ -1372,7 +1377,7 @@
                                                         id: e.value,
                                                         'aria-selected': l === e.value,
                                                         onClick: (t) => {
-                                                            t.stopPropagation(), x(e.value);
+                                                            (t.stopPropagation(), x(e.value));
                                                         },
                                                         children: [
                                                             (0, n.jsx)('span', { children: e.label }),
@@ -1395,6 +1400,310 @@
                             ],
                         })
                     );
+                },
+                keybindDisplayPart = (e) => {
+                    switch (e) {
+                        case 'Plus':
+                            return '+';
+                        case 'CommandOrControl':
+                        case 'CmdOrCtrl':
+                        case 'Control':
+                        case 'Ctrl':
+                            return 'Ctrl';
+                        case 'Command':
+                        case 'Cmd':
+                            return 'Cmd';
+                        case 'Option':
+                            return 'Alt';
+                        case 'Super':
+                            return 'Win';
+                        case 'Escape':
+                            return 'Esc';
+                        default:
+                            return e;
+                    }
+                },
+                formatKeybindDisplay = (e) => (e ? e.split('+').map(keybindDisplayPart).join(' + ') : 'Не задано'),
+                keybindNamedKeyMap = {
+                    ' ': 'Space',
+                    Spacebar: 'Space',
+                    Tab: 'Tab',
+                    Backspace: 'Backspace',
+                    Delete: 'Delete',
+                    Insert: 'Insert',
+                    Enter: 'Enter',
+                    Return: 'Return',
+                    Escape: 'Esc',
+                    Esc: 'Esc',
+                    ArrowUp: 'Up',
+                    ArrowDown: 'Down',
+                    ArrowLeft: 'Left',
+                    ArrowRight: 'Right',
+                    Home: 'Home',
+                    End: 'End',
+                    PageUp: 'PageUp',
+                    PageDown: 'PageDown',
+                    PrintScreen: 'PrintScreen',
+                    AudioVolumeUp: 'VolumeUp',
+                    AudioVolumeDown: 'VolumeDown',
+                    AudioVolumeMute: 'VolumeMute',
+                    MediaTrackNext: 'MediaNextTrack',
+                    MediaTrackPrevious: 'MediaPreviousTrack',
+                    MediaStop: 'MediaStop',
+                    MediaPlayPause: 'MediaPlayPause',
+                },
+                keybindCodeMap = {
+                    Backquote: '`',
+                    Minus: '-',
+                    Equal: '=',
+                    BracketLeft: '[',
+                    BracketRight: ']',
+                    Backslash: '\\',
+                    IntlBackslash: '\\',
+                    Semicolon: ';',
+                    Quote: "'",
+                    Comma: ',',
+                    Period: '.',
+                    Slash: '/',
+                },
+                getKeybindModifiers = (e) => {
+                    let t = [];
+                    return (e.ctrlKey && t.push('Ctrl'), e.altKey && t.push('Alt'), e.shiftKey && t.push('Shift'), e.metaKey && t.push('Super'), t);
+                },
+                getKeybindModifierPreview = (e, t) => {
+                    let o = getKeybindModifiers(e);
+                    return o.length ? ''.concat(o.join(' + '), ' + ...') : t;
+                },
+                buildKeybindFromEvent = (e, t) => {
+                    let o = getKeybindModifiers(e),
+                        i = ['Plus', ')', '!', '@', '#', '$', '%', '^', '&', '*', '(', ':', '<', '_', '>', '?', '~', '{', '|', '}', '"'].includes(t);
+                    return (i ? o.filter((e) => 'Shift' !== e) : o).concat(t).join('+');
+                },
+                getKeybindTokenFromEvent = (e) => {
+                    if ('+' === e.key || 'NumpadAdd' === e.code) return 'Plus';
+                    let t = keybindNamedKeyMap[e.key];
+                    if (t) return t;
+                    if (1 === e.key?.length) {
+                        let t = e.key.toUpperCase();
+                        if (/^[0-9A-Z)!@#$%^&*(:<_>?~{|}";=,\-./`\[\\\]']$/.test(t)) return t;
+                    }
+                    if (/^Key[A-Z]$/.test(e.code)) return e.code.slice(3);
+                    if (/^Digit[0-9]$/.test(e.code)) return e.code.slice(5);
+                    if (/^F([1-9]|1[0-9]|2[0-4])$/.test(e.code)) return e.code;
+                    return keybindCodeMap[e.code] ?? null;
+                },
+                settingBarWithKeybindRecorder = (e) => {
+                    let {
+                            title: t,
+                            description: o,
+                            onChange: i,
+                            value: l,
+                            onRecordingChange: r1,
+                            disabled: r = !1,
+                            placeholder: s = 'Не задано',
+                            recordingPlaceholder: a = 'Нажмите сочетание...',
+                            clearHint: d = 'Esc - отмена, Backspace - сброс',
+                        } = e,
+                        [u, p] = (0, g.useState)(!1),
+                        [h, f] = (0, g.useState)(a),
+                        x = (0, g.useRef)(null),
+                        v = (0, g.useId)(),
+                        _ = (0, g.useCallback)(() => {
+                            r ||
+                                p((e) => {
+                                    let t = !e;
+                                    return (f(a), t);
+                                });
+                        }, [r, a]),
+                        b = (0, g.useCallback)(() => {
+                            (p(!1), f(a));
+                        }, [a]),
+                        j = (0, g.useCallback)(
+                            (e) => {
+                                if ((e.preventDefault(), e.stopPropagation(), e.repeat)) return;
+                                if (['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) return void f(getKeybindModifierPreview(e, a));
+                                if (!e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey && ('Escape' === e.key || 'Esc' === e.key)) return void b();
+                                if (!e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey && ('Backspace' === e.key || 'Delete' === e.key)) return (i(''), void b());
+                                let t = getKeybindTokenFromEvent(e);
+                                if (!t) return void f(getKeybindModifierPreview(e, a));
+                                (i(buildKeybindFromEvent(e, t)), b());
+                            },
+                            [i, b, a],
+                        ),
+                        C = (0, g.useCallback)(
+                            (e) => {
+                                f(getKeybindModifierPreview(e, a));
+                            },
+                            [a],
+                        );
+                    return (
+                        (0, g.useEffect)(() => {
+                            if (!u) return;
+                            let e = (e) => {
+                                    x.current && !x.current.contains(e.target) && b();
+                                },
+                                t = () => {
+                                    b();
+                                };
+                            return (
+                                document.addEventListener('keydown', j, !0),
+                                document.addEventListener('keyup', C, !0),
+                                document.addEventListener('mousedown', e, !0),
+                                window.addEventListener('blur', t),
+                                () => {
+                                    (document.removeEventListener('keydown', j, !0),
+                                        document.removeEventListener('keyup', C, !0),
+                                        document.removeEventListener('mousedown', e, !0),
+                                        window.removeEventListener('blur', t));
+                                }
+                            );
+                        }, [u, j, C, b]),
+                        (0, g.useEffect)(() => {
+                            return (
+                                r1?.(u),
+                                () => {
+                                    u && r1?.(!1);
+                                }
+                            );
+                        }, [u, r1]),
+                        (0, g.useEffect)(() => {
+                            r && u && b();
+                        }, [r, u, b]),
+                        (0, n.jsxs)('div', {
+                            className: V().root,
+                            children: [
+                                (0, n.jsxs)('div', {
+                                    className: V().textContainer,
+                                    children: [
+                                        (0, n.jsx)(c.Caption, {
+                                            className: r ? V().titleDisabled : V().title,
+                                            id: v,
+                                            variant: 'div',
+                                            size: 'l',
+                                            weight: 'bold',
+                                            lineClamp: 1,
+                                            'aria-hidden': !0,
+                                            children: t,
+                                        }),
+                                        (u ? d : o) &&
+                                            (0, n.jsx)(c.Caption, {
+                                                variant: 'div',
+                                                type: 'text',
+                                                size: 'xs',
+                                                weight: 'medium',
+                                                className: r ? V().descriptionDisabled : V().description,
+                                                children: u ? d : o,
+                                            }),
+                                    ],
+                                }),
+                                (0, n.jsx)('div', {
+                                    ref: x,
+                                    role: 'button',
+                                    tabIndex: r ? -1 : 0,
+                                    'aria-describedby': v,
+                                    'aria-pressed': u,
+                                    onClick: _,
+                                    onKeyDown: (e) => {
+                                        r || u || ('Enter' !== e.key && ' ' !== e.key) || (e.preventDefault(), e.stopPropagation(), _());
+                                    },
+                                    className: ''.concat(
+                                        r ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button',
+                                        ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
+                                    ),
+                                    style: {
+                                        minWidth: '12.5rem',
+                                        textAlign: 'center',
+                                        ...(u
+                                            ? {
+                                                  borderColor: 'var(--ym-controls-color-secondary-outline-hovered_stroke)',
+                                                  boxShadow: 'inset 0 0 0 1px var(--ym-controls-color-secondary-outline-hovered_stroke)',
+                                              }
+                                            : {}),
+                                    },
+                                    children: u ? h : l ? formatKeybindDisplay(l) : s,
+                                }),
+                            ],
+                        })
+                    );
+                },
+                settingBarWithInput = (e) => {
+                    let {
+                            title: t,
+                            description: o,
+                            onChange: i,
+                            value: l,
+                            disabled: r = !1,
+                            placeholder: s = '',
+                            type: a = 'text',
+                            min: d,
+                            max: u,
+                            step: p,
+                            inputMode: h,
+                        } = e,
+                        f = (0, g.useId)();
+                    return (0, n.jsxs)('div', {
+                        className: V().root,
+                        children: [
+                            (0, n.jsxs)('div', {
+                                className: V().textContainer,
+                                children: [
+                                    (0, n.jsx)(c.Caption, {
+                                        className: r ? V().titleDisabled : V().title,
+                                        id: f,
+                                        variant: 'div',
+                                        size: 'l',
+                                        weight: 'bold',
+                                        lineClamp: 1,
+                                        'aria-hidden': !0,
+                                        children: t,
+                                    }),
+                                    o &&
+                                        (0, n.jsx)(c.Caption, {
+                                            variant: 'div',
+                                            type: 'text',
+                                            size: 'xs',
+                                            weight: 'medium',
+                                            className: r ? V().descriptionDisabled : V().description,
+                                            children: o,
+                                        }),
+                                ],
+                            }),
+                            (0, n.jsx)('input', {
+                                type: a,
+                                value: l ?? '',
+                                min: d,
+                                max: u,
+                                step: p,
+                                inputMode: h,
+                                placeholder: s,
+                                disabled: r,
+                                'aria-describedby': f,
+                                onChange: (e) => {
+                                    i(e.target.value);
+                                },
+                                className: ''.concat(
+                                    r ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button',
+                                    ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
+                                ),
+                                style: {
+                                    minWidth: '12.5rem',
+                                    textAlign: 'left',
+                                    paddingInline: '0.875rem',
+                                    height: '2.5rem',
+                                    borderRadius: '999px',
+                                    border: '1px solid var(--ym-controls-color-secondary-outline-default-stroke)',
+                                    background: 'var(--ym-surface-color-primary-enabled-list)',
+                                    color: 'inherit',
+                                    font: 'inherit',
+                                    boxShadow: 'none',
+                                    outline: 'none',
+                                    appearance: 'none',
+                                    WebkitAppearance: 'none',
+                                    caretColor: 'currentColor',
+                                },
+                            }),
+                        ],
+                    });
                 },
                 toggleBarWithPathChooser = (e) => {
                     let { title: t, onChange: o, isChecked: i, description: l, placeholder: r, disabled: s, inputValue: a, onClick: d } = e,
@@ -1526,6 +1835,557 @@
                         ],
                     });
                 },
+                createGlobalShortcutDraftId = (e = 'shortcut') => ''.concat(e, '_', Date.now(), '_', Math.random().toString(36).slice(2, 9)),
+                globalShortcutFallbackActions = [
+                    'TOGGLE_PLAY',
+                    'PLAY',
+                    'PAUSE',
+                    'MOVE_FORWARD',
+                    'MOVE_BACKWARD',
+                    'TOGGLE_REPEAT',
+                    'REPEAT_NONE',
+                    'REPEAT_CONTEXT',
+                    'REPEAT_ONE',
+                    'TOGGLE_SHUFFLE',
+                    'SHUFFLE',
+                    'SHUFFLE_NONE',
+                    'TOGGLE_LIKE',
+                    'LIKE',
+                    'LIKE_NONE',
+                    'TOGGLE_DISLIKE',
+                    'DISLIKE',
+                    'DISLIKE_NONE',
+                    'SET_VOLUME',
+                    'SET_PROGRESS',
+                ],
+                globalShortcutActionLabels = {
+                    PLAY: 'Плей',
+                    PAUSE: 'Пауза',
+                    TOGGLE_PLAY: 'Плей/Пауза',
+                    MOVE_FORWARD: 'Следующий трек',
+                    MOVE_BACKWARD: 'Предыдущий трек',
+                    TOGGLE_LIKE: 'Переключить Лайк',
+                    LIKE: 'Поставить лайк',
+                    LIKE_NONE: 'Снять лайк',
+                    TOGGLE_DISLIKE: 'Переключить Дизлайк',
+                    DISLIKE: 'Поставить дизлайк',
+                    DISLIKE_NONE: 'Снять дизлайк',
+                    TOGGLE_REPEAT: 'Переключить Повтор',
+                    REPEAT_NONE: 'Повтор выкл.',
+                    REPEAT_CONTEXT: 'Повтор плейлиста',
+                    REPEAT_ONE: 'Повтор трека',
+                    TOGGLE_SHUFFLE: 'Переключить Шафл',
+                    SHUFFLE: 'Включить шафл',
+                    SHUFFLE_NONE: 'Выключить шафл',
+                    SET_VOLUME: 'Громкость',
+                    SET_PROGRESS: 'Позиция',
+                },
+                globalShortcutActionDescriptions = {
+                    PLAY: 'Запускает воспроизведение.',
+                    PAUSE: 'Ставит воспроизведение на паузу.',
+                    TOGGLE_PLAY: 'Переключает воспроизведение и паузу.',
+                    MOVE_FORWARD: 'Переключает на следующий трек.',
+                    MOVE_BACKWARD: 'Переключает на предыдущий трек.',
+                    TOGGLE_LIKE: 'Переключает состояние лайка.',
+                    LIKE: 'Ставит лайк текущему треку.',
+                    LIKE_NONE: 'Снимает лайк с текущего трека.',
+                    TOGGLE_DISLIKE: 'Переключает дизлайк.',
+                    DISLIKE: 'Ставит дизлайк текущему треку.',
+                    DISLIKE_NONE: 'Снимает дизлайк с текущего трека.',
+                    TOGGLE_REPEAT: 'Переключает режим повтора.',
+                    REPEAT_NONE: 'Выключает повтор.',
+                    REPEAT_CONTEXT: 'Включает повтор текущего списка.',
+                    REPEAT_ONE: 'Включает повтор текущего трека.',
+                    TOGGLE_SHUFFLE: 'Переключает шафл.',
+                    SHUFFLE: 'Включает шафл.',
+                    SHUFFLE_NONE: 'Выключает шафл.',
+                    SET_VOLUME: 'Устанавливает громкость. Ниже задаётся значение от 0 до 100.',
+                    SET_PROGRESS: 'Перематывает трек. Ниже задаётся позиция в секундах.',
+                },
+                globalShortcutActionsWithValue = ['SET_VOLUME', 'SET_PROGRESS'],
+                globalShortcutActionDefaultValues = { SET_VOLUME: '50', SET_PROGRESS: '0' },
+                globalShortcutActionValueMeta = {
+                    SET_VOLUME: {
+                        description: 'Процент громкости от 0 до 100.',
+                        placeholder: '50',
+                        min: 0,
+                        max: 100,
+                        step: 1,
+                        inputMode: 'numeric',
+                    },
+                    SET_PROGRESS: {
+                        description: 'Позиция трека в секундах.',
+                        placeholder: '0',
+                        min: 0,
+                        step: 1,
+                        inputMode: 'numeric',
+                    },
+                },
+                globalShortcutActionNeedsValue = (e) => globalShortcutActionsWithValue.includes(e),
+                normalizeGlobalShortcutValue = (e, t) => {
+                    if (!globalShortcutActionNeedsValue(e)) return ''.concat(null == t ? '' : t);
+                    let o = ''
+                            .concat(null == t ? '' : t)
+                            .replace(',', '.')
+                            .replace(/[^0-9.]/g, ''),
+                        i = o.split('.'),
+                        l = i.shift() ?? '',
+                        r = i.length ? ''.concat(l, '.', i.join('')) : l;
+                    if (!r) return '';
+                    let s = Number(r);
+                    return Number.isFinite(s) ? ('SET_VOLUME' === e ? ''.concat(Math.min(Math.max(s, 0), 100)) : ''.concat(Math.max(s, 0))) : r;
+                },
+                getAvailableGlobalShortcutActions = () => {
+                    let e = window.PLAYER_ACTIONS ? Object.values(window.PLAYER_ACTIONS) : globalShortcutFallbackActions;
+                    return Array.from(new Set(e.filter((e) => 'string' == typeof e && e)));
+                },
+                buildGlobalShortcutActionOptions = (e = []) => {
+                    let t = Array.from(new Set(getAvailableGlobalShortcutActions().concat(e.filter((e) => 'string' == typeof e && e))));
+                    return [{ value: '', label: 'Выберите действие', description: 'Хоткей не сохранится, пока действие не выбрано.' }].concat(
+                        t.map((e) => ({
+                            value: e,
+                            label: globalShortcutActionLabels[e] ?? e,
+                            description: globalShortcutActionDescriptions[e],
+                        })),
+                    );
+                },
+                createGlobalShortcutCommandDraft = (e = '', t) => ({
+                    id: createGlobalShortcutDraftId('action'),
+                    action: e,
+                    value: void 0 !== t ? t : globalShortcutActionNeedsValue(e) ? (globalShortcutActionDefaultValues[e] ?? '') : '',
+                }),
+                createEmptyGlobalShortcutDraft = () => ({
+                    id: createGlobalShortcutDraftId('shortcut'),
+                    accelerator: '',
+                    commands: [createGlobalShortcutCommandDraft()],
+                }),
+                parseGlobalShortcutCommandToken = (e) => {
+                    if ('string' != typeof e || !e.trim()) return null;
+                    let t = e.indexOf('|'),
+                        o = (-1 === t ? e : e.slice(0, t)).trim(),
+                        i = (-1 === t ? '' : e.slice(t + 1)).trim();
+                    return o ? { id: createGlobalShortcutDraftId('action'), action: o, value: i } : null;
+                },
+                parseGlobalShortcutsConfig = (e) => {
+                    if (!e || 'object' != typeof e) return [];
+                    return Object.entries(e).reduce((t, [o, i]) => {
+                        if ('enable' === o) return t;
+                        let l = 'string' == typeof o ? o.split(' ').map(parseGlobalShortcutCommandToken).filter(Boolean) : [],
+                            r = l.length ? l : [createGlobalShortcutCommandDraft()];
+                        return (
+                            t.push({
+                                id: createGlobalShortcutDraftId('shortcut'),
+                                accelerator: 'string' == typeof i ? i : '',
+                                commands: r,
+                            }),
+                            t
+                        );
+                    }, []);
+                },
+                serializeGlobalShortcutCommand = (e) => {
+                    if (!e || 'string' != typeof e.action || !e.action.trim()) return null;
+                    let t = e.action.trim();
+                    if (!globalShortcutActionNeedsValue(t)) return t;
+                    let o = normalizeGlobalShortcutValue(t, e.value);
+                    return ''.concat(t, '|', o || globalShortcutActionDefaultValues[t] || '0');
+                },
+                serializeGlobalShortcutsConfig = (e, t) => {
+                    let o = { enable: Boolean(t) };
+                    return (
+                        e.forEach((e) => {
+                            let t = 'string' == typeof e.accelerator ? e.accelerator.trim() : '',
+                                i = e.commands.map(serializeGlobalShortcutCommand).filter(Boolean);
+                            t && i.length && (o[i.join(' ')] = t);
+                        }),
+                        o
+                    );
+                },
+                getGlobalShortcutValueMeta = (e) => globalShortcutActionValueMeta[e] ?? { description: 'Дополнительное значение действия.', placeholder: '' },
+                globalShortcutsSettings = (0, i.PA)(() => {
+                    let { formatMessage: formatMessage } = (0, l.A)(),
+                        {
+                            modals: { globalShortcutsSettingsModal: modal },
+                        } = (0, m.Pjs)(),
+                        [isGlobalShortcutsEnabled, setIsGlobalShortcutsEnabled] = (0, g.useState)(
+                            Boolean(window.nativeSettings.get('modSettings.globalShortcuts.enable')),
+                        ),
+                        [shortcutItems, setShortcutItems] = (0, g.useState)(() => parseGlobalShortcutsConfig(window.nativeSettings.get('modSettings.globalShortcuts'))),
+                        isGlobalShortcutsEnabledRef = (0, g.useRef)(Boolean(window.nativeSettings.get('modSettings.globalShortcuts.enable'))),
+                        recordingIdsRef = (0, g.useRef)(new Set()),
+                        isRecordingRef = (0, g.useRef)(!1),
+                        extraActions = (0, g.useMemo)(
+                            () =>
+                                shortcutItems.reduce((e, t) => {
+                                    t.commands.forEach((t) => {
+                                        t.action && !e.includes(t.action) && e.push(t.action);
+                                    });
+                                    return e;
+                                }, []),
+                            [shortcutItems],
+                        ),
+                        actionOptions = (0, g.useMemo)(() => buildGlobalShortcutActionOptions(extraActions), [extraActions]),
+                        syncGlobalShortcutsFromStore = (0, g.useCallback)(() => {
+                            let e = window.nativeSettings.get('modSettings.globalShortcuts') ?? {};
+                            ((isGlobalShortcutsEnabledRef.current = Boolean(e.enable)),
+                                setIsGlobalShortcutsEnabled(Boolean(e.enable)),
+                                setShortcutItems(parseGlobalShortcutsConfig(e)));
+                        }, []),
+                        persistShortcutItems = (0, g.useCallback)((e, t) => {
+                            window.nativeSettings.set(
+                                'modSettings.globalShortcuts',
+                                serializeGlobalShortcutsConfig(e, void 0 === t ? isGlobalShortcutsEnabledRef.current : t),
+                            );
+                        }, []),
+                        updateShortcutItems = (0, g.useCallback)(
+                            (e) => {
+                                setShortcutItems((t) => {
+                                    let o = 'function' == typeof e ? e(t) : e;
+                                    return (persistShortcutItems(o), o);
+                                });
+                            },
+                            [persistShortcutItems],
+                        ),
+                        onGlobalShortcutsEnabledChange = (0, g.useCallback)((e) => {
+                            ((isGlobalShortcutsEnabledRef.current = e),
+                                setIsGlobalShortcutsEnabled(e),
+                                window.nativeSettings.set('modSettings.globalShortcuts.enable', e));
+                        }, []),
+                        onRecorderStateChange = (0, g.useCallback)((e, t) => {
+                            let o = recordingIdsRef.current;
+                            t ? o.add(e) : o.delete(e);
+                            let i = o.size > 0;
+                            i !== isRecordingRef.current && ((isRecordingRef.current = i), window.globalShortcutsControl?.setRecordingState?.(i));
+                        }, []),
+                        onAcceleratorChange = (0, g.useCallback)(
+                            (e, t) => {
+                                updateShortcutItems((o) =>
+                                    o.map((o) =>
+                                        o.id !== e
+                                            ? o
+                                            : {
+                                                  ...o,
+                                                  accelerator: t,
+                                              },
+                                    ),
+                                );
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onRemoveShortcut = (0, g.useCallback)(
+                            (e) => {
+                                updateShortcutItems((t) => t.filter((t) => t.id !== e));
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onAddActionToShortcut = (0, g.useCallback)(
+                            (e) => {
+                                updateShortcutItems((t) =>
+                                    t.map((t) =>
+                                        t.id !== e
+                                            ? t
+                                            : {
+                                                  ...t,
+                                                  commands: t.commands.concat(createGlobalShortcutCommandDraft()),
+                                              },
+                                    ),
+                                );
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onRemoveActionFromShortcut = (0, g.useCallback)(
+                            (e, t) => {
+                                updateShortcutItems((o) =>
+                                    o.map((o) => {
+                                        if (o.id !== e) return o;
+                                        let i = o.commands.filter((e) => e.id !== t);
+                                        return {
+                                            ...o,
+                                            commands: i.length ? i : [createGlobalShortcutCommandDraft()],
+                                        };
+                                    }),
+                                );
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onActionChange = (0, g.useCallback)(
+                            (e, t, o) => {
+                                updateShortcutItems((i) =>
+                                    i.map((i) => {
+                                        if (i.id !== e) return i;
+                                        return {
+                                            ...i,
+                                            commands: i.commands.map((e) => {
+                                                if (e.id !== t) return e;
+                                                let i = ''.concat(null == e.value ? '' : e.value).trim();
+                                                return {
+                                                    ...e,
+                                                    action: o,
+                                                    value: o ? (globalShortcutActionNeedsValue(o) ? i || globalShortcutActionDefaultValues[o] || '' : '') : '',
+                                                };
+                                            }),
+                                        };
+                                    }),
+                                );
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onActionValueChange = (0, g.useCallback)(
+                            (e, t, o) => {
+                                updateShortcutItems((i) =>
+                                    i.map((i) => {
+                                        if (i.id !== e) return i;
+                                        return {
+                                            ...i,
+                                            commands: i.commands.map((e) =>
+                                                e.id !== t
+                                                    ? e
+                                                    : {
+                                                          ...e,
+                                                          value: normalizeGlobalShortcutValue(e.action, o),
+                                                      },
+                                            ),
+                                        };
+                                    }),
+                                );
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onAddShortcut = (0, g.useCallback)(() => {
+                            setShortcutItems((e) => e.concat(createEmptyGlobalShortcutDraft()));
+                        }, []);
+                    return (
+                        (0, g.useEffect)(() => {
+                            if (modal.isOpened) return void syncGlobalShortcutsFromStore();
+                            isRecordingRef.current &&
+                                (recordingIdsRef.current.clear(), (isRecordingRef.current = !1), window.globalShortcutsControl?.setRecordingState?.(!1));
+                        }, [modal.isOpened, syncGlobalShortcutsFromStore]),
+                        (0, g.useEffect)(() => {
+                            return () => {
+                                isRecordingRef.current &&
+                                    (recordingIdsRef.current.clear(), (isRecordingRef.current = !1), window.globalShortcutsControl?.setRecordingState?.(!1));
+                            };
+                        }, []),
+                        (0, n.jsx)(T.a, {
+                            className: K().root,
+                            headerClassName: K().modalHeader,
+                            contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                            title: 'Глобальные горячие клавиши',
+                            style: { maxWidth: '38.0rem', width: '38.0rem', height: 'auto' },
+                            open: modal.isOpened,
+                            onOpenChange: modal.onOpenChange,
+                            onClose: modal.close,
+                            size: 'fitContent',
+                            placement: 'center',
+                            overlayColor: 'full',
+                            labelClose: formatMessage({ id: 'interface-actions.close' }),
+                            children: (0, n.jsxs)('div', {
+                                style: {
+                                    width: '36.5rem',
+                                    maxHeight: '28rem',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '0.75rem',
+                                },
+                                children: [
+                                    (0, n.jsx)('div', {
+                                        style: { paddingRight: '0.75rem' },
+                                        children: (0, n.jsx)(G, {
+                                            title: 'Включить глобальные горячие клавиши',
+                                            description: 'Во время записи регистрация временно отключается, чтобы не было конфликтов с уже назначенными сочетаниями.',
+                                            onChange: onGlobalShortcutsEnabledChange,
+                                            isChecked: isGlobalShortcutsEnabled,
+                                        }),
+                                    }),
+                                    (0, n.jsx)(c.Caption, {
+                                        variant: 'div',
+                                        type: 'text',
+                                        size: 'xs',
+                                        weight: 'medium',
+                                        className: K().text,
+                                        style: { paddingRight: '0.75rem' },
+                                        children: 'Один хоткей может запускать несколько действий подряд. Пустые записи не сохраняются в конфиг.',
+                                    }),
+                                    (0, n.jsxs)('ul', {
+                                        className: ''.concat(K().list, ' PulseSync_experimentsListScroll'),
+                                        style: {
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '0.75rem',
+                                            paddingRight: '0.75rem',
+                                        },
+                                        children: [
+                                            !shortcutItems.length &&
+                                                (0, n.jsx)('li', {
+                                                    style: {
+                                                        listStyle: 'none',
+                                                        padding: '0.875rem 1rem',
+                                                        borderRadius: '1rem',
+                                                        background: 'var(--ym-surface-color-primary-enabled-list)',
+                                                    },
+                                                    children: (0, n.jsx)(c.Caption, {
+                                                        variant: 'div',
+                                                        type: 'text',
+                                                        size: 'xs',
+                                                        weight: 'medium',
+                                                        children: 'Пока нет настроенных хоткеев.',
+                                                    }),
+                                                }),
+                                            ...shortcutItems.map((shortcutItem, shortcutIndex) =>
+                                                (0, n.jsx)(
+                                                    'li',
+                                                    {
+                                                        style: {
+                                                            listStyle: 'none',
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            gap: '0.75rem',
+                                                            padding: '0.875rem',
+                                                            borderRadius: '1rem',
+                                                            background: 'var(--ym-surface-color-primary-enabled-list)',
+                                                            border: '1px solid var(--ym-controls-color-secondary-outline-default-stroke)',
+                                                        },
+                                                        children: (0, n.jsxs)('div', {
+                                                            style: { display: 'flex', flexDirection: 'column', gap: '0.75rem' },
+                                                            children: [
+                                                                (0, n.jsx)(c.Caption, {
+                                                                    variant: 'div',
+                                                                    size: 'm',
+                                                                    weight: 'bold',
+                                                                    children: 'Хоткей '.concat(shortcutIndex + 1),
+                                                                }),
+                                                                (0, n.jsx)(settingBarWithKeybindRecorder, {
+                                                                    title: 'Сочетание',
+                                                                    description:
+                                                                        'Нажмите справа и введите комбинацию. Esc отменяет запись, Backspace/Delete очищает поле.',
+                                                                    value: shortcutItem.accelerator,
+                                                                    onChange: (e) => {
+                                                                        onAcceleratorChange(shortcutItem.id, e);
+                                                                    },
+                                                                    onRecordingChange: (e) => {
+                                                                        onRecorderStateChange(shortcutItem.id, e);
+                                                                    },
+                                                                }),
+                                                                ...shortcutItem.commands.map((commandItem, commandIndex) => {
+                                                                    let valueMeta = getGlobalShortcutValueMeta(commandItem.action);
+                                                                    return (0, n.jsxs)(
+                                                                        'div',
+                                                                        {
+                                                                            style: { display: 'flex', flexDirection: 'column', gap: '0.5rem' },
+                                                                            children: [
+                                                                                (0, n.jsxs)('div', {
+                                                                                    style: { display: 'flex', alignItems: 'center', gap: '0.5rem' },
+                                                                                    children: [
+                                                                                        (0, n.jsx)('div', {
+                                                                                            style: { flex: 1 },
+                                                                                            children: (0, n.jsx)(settingBarWithDropdown, {
+                                                                                                title: 'Действие '.concat(commandIndex + 1),
+                                                                                                description: 'Что должно произойти после нажатия.',
+                                                                                                value: commandItem.action,
+                                                                                                onChange: (e) => {
+                                                                                                    onActionChange(shortcutItem.id, commandItem.id, e);
+                                                                                                },
+                                                                                                options: actionOptions,
+                                                                                                direction: shortcutIndex === shortcutItems.length - 1 ? 'top' : 'bottom',
+                                                                                            }),
+                                                                                        }),
+                                                                                        shortcutItem.commands.length > 1 &&
+                                                                                            (0, n.jsx)(j.$, {
+                                                                                                radius: 'xxxl',
+                                                                                                color: 'secondary',
+                                                                                                size: 'm',
+                                                                                                icon: (0, n.jsx)('svg', {
+                                                                                                    width: '14',
+                                                                                                    height: '14',
+                                                                                                    viewBox: '0 0 14 14',
+                                                                                                    fill: 'none',
+                                                                                                    xmlns: 'http://www.w3.org/2000/svg',
+                                                                                                    'aria-hidden': 'true',
+                                                                                                    children: (0, n.jsx)('path', {
+                                                                                                        d: 'M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5',
+                                                                                                        stroke: 'currentColor',
+                                                                                                        strokeWidth: '1.8',
+                                                                                                        strokeLinecap: 'round',
+                                                                                                    }),
+                                                                                                }),
+                                                                                                'aria-label': 'Удалить действие',
+                                                                                                title: 'Удалить действие',
+                                                                                                onClick: () => {
+                                                                                                    onRemoveActionFromShortcut(shortcutItem.id, commandItem.id);
+                                                                                                },
+                                                                                            }),
+                                                                                    ],
+                                                                                }),
+                                                                                globalShortcutActionNeedsValue(commandItem.action) &&
+                                                                                    (0, n.jsx)(settingBarWithInput, {
+                                                                                        title: 'Значение',
+                                                                                        description: valueMeta.description,
+                                                                                        value: commandItem.value,
+                                                                                        onChange: (e) => {
+                                                                                            onActionValueChange(shortcutItem.id, commandItem.id, e);
+                                                                                        },
+                                                                                        placeholder: valueMeta.placeholder,
+                                                                                        type: 'number',
+                                                                                        min: valueMeta.min,
+                                                                                        max: valueMeta.max,
+                                                                                        step: valueMeta.step,
+                                                                                        inputMode: valueMeta.inputMode,
+                                                                                    }),
+                                                                            ],
+                                                                        },
+                                                                        commandItem.id,
+                                                                    );
+                                                                }),
+                                                                (0, n.jsxs)('div', {
+                                                                    style: {
+                                                                        display: 'flex',
+                                                                        flexWrap: 'wrap',
+                                                                        justifyContent: 'flex-end',
+                                                                        gap: '0.5rem',
+                                                                    },
+                                                                    children: [
+                                                                        (0, n.jsx)(j.$, {
+                                                                            radius: 'xxxl',
+                                                                            color: 'secondary',
+                                                                            size: 'm',
+                                                                            onClick: () => {
+                                                                                onAddActionToShortcut(shortcutItem.id);
+                                                                            },
+                                                                            children: 'Добавить действие',
+                                                                        }),
+                                                                        (0, n.jsx)(j.$, {
+                                                                            radius: 'xxxl',
+                                                                            color: 'secondary',
+                                                                            size: 'm',
+                                                                            onClick: () => {
+                                                                                onRemoveShortcut(shortcutItem.id);
+                                                                            },
+                                                                            children: 'Удалить хоткей',
+                                                                        }),
+                                                                    ],
+                                                                }),
+                                                            ],
+                                                        }),
+                                                    },
+                                                    shortcutItem.id,
+                                                ),
+                                            ),
+                                            (0, n.jsx)('li', {
+                                                style: { listStyle: 'none', display: 'flex', justifyContent: 'flex-end' },
+                                                children: (0, n.jsx)(j.$, {
+                                                    radius: 'xxxl',
+                                                    color: 'secondary',
+                                                    size: 'm',
+                                                    onClick: onAddShortcut,
+                                                    children: 'Добавить хоткей',
+                                                }),
+                                            }),
+                                        ],
+                                    }),
+                                ],
+                            }),
+                        })
+                    );
+                }),
                 systemSettings = (0, i.PA)(() => {
                     let { formatMessage: e } = (0, l.A)(),
                         {
@@ -1580,11 +2440,7 @@
                                 });
                             },
                             [o],
-                        ),
-                        onGlobalShortcutsToggle = (0, g.useCallback)(async (e) => {
-                            console.log('toTray toggled. Value: ', e);
-                            window.nativeSettings.set('modSettings.globalShortcuts.enable', e);
-                        }, []);
+                        );
                     return (0, n.jsx)(T.a, {
                         className: K().list,
                         headerClassName: K().modalHeader,
@@ -1653,15 +2509,6 @@
                                         description: 'Если включено, приложение будет запускаться свернутым в трей.',
                                         onChange: onMinimizedStartToggle,
                                         isChecked: window.nativeSettings.get('modSettings.window.minimizedStart'),
-                                    }),
-                                }),
-                                (0, n.jsx)('li', {
-                                    className: $().item,
-                                    children: (0, n.jsx)(G, {
-                                        title: 'Глобальные горячие клавиши',
-                                        description: 'Настроить комбинации можно в Настройки -> Остальные настройки',
-                                        onChange: onGlobalShortcutsToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.globalShortcuts.enable'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -1845,9 +2692,7 @@
                                         !i &&
                                         ('UGC' === (null == r ? void 0 : r.trackSource) ||
                                             'OWN_REPLACED_TO_UGC' === (null == r ? void 0 : r.trackSource) ||
-                                            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-                                                String(null == r ? void 0 : r.id),
-                                            ))
+                                            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(null == r ? void 0 : r.id)))
                                             ? { i: 0, tp: 0 }
                                             : i;
                                 null == a ||
@@ -3140,6 +3985,7 @@
                             myVibeSettingsModal: myVibeSettingsModal,
                             appUpdatesSettingsModal: appUpdatesSettingsModal,
                             systemSettingsModal: deModal,
+                            globalShortcutsSettingsModal: globalShortcutsSettingsModal,
                             myVibeParamsSettingsModal: myVibeParamsSettingsModal,
                             miniPlayerSettingsModal: ueModal,
                             ynisonSettingsModal: ynisonSettingsModal,
@@ -3217,22 +4063,22 @@
                     ),
                     Gt = (0, g.useCallback)(
                         (e) => {
-                            window.nativeSettings?.set('modSettings.showNonMusicPage', e), ce(e), oe();
+                            (window.nativeSettings?.set('modSettings.showNonMusicPage', e), ce(e), oe());
                         },
                         [oe],
                     ),
                     Qt = (0, g.useCallback)(
                         (e) => {
-                            window.nativeSettings?.set('modSettings.showConcertsTab', e), ue(e), oe();
+                            (window.nativeSettings?.set('modSettings.showConcertsTab', e), ue(e), oe());
                         },
                         [oe],
                     ),
                     togglePlaylistAddTrackToEnd = (0, g.useCallback)((e) => {
-                        window.nativeSettings?.set('modSettings.playlist.addTracksToEndFromContextMenu', e), setAppendPlaylistTracksToEnd(e);
+                        (window.nativeSettings?.set('modSettings.playlist.addTracksToEndFromContextMenu', e), setAppendPlaylistTracksToEnd(e));
                     }, []),
                     Xt = (0, g.useCallback)(
                         (e) => {
-                            window.nativeSettings?.set('devMode', e), pe(e), oe();
+                            (window.nativeSettings?.set('devMode', e), pe(e), oe());
                         },
                         [oe],
                     ),
@@ -3421,6 +4267,15 @@
                             className: $().item,
                             children: [(0, n.jsx)(D, { title: x({ id: 'settings.shortcuts' }), onClick: o.open }), (0, n.jsx)(J, {})],
                         }),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Глобальные горячие клавиши',
+                                description: 'Действия, кейбинды и группы действий',
+                                onClick: globalShortcutsSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(globalShortcutsSettings, {}),
                         S && (0, n.jsx)('li', { className: $().item, children: (0, n.jsx)(k, {}) }),
                         E &&
                             (0, n.jsxs)('li', {

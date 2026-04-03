@@ -5,6 +5,7 @@ const config_js_1 = require('../config.js');
 const getInitialTheme_js_1 = require('./getInitialTheme.js');
 const deviceInfo_js_1 = require('./deviceInfo.js');
 const theme_js_1 = require('../types/theme.js');
+const playerActions_js_1 = require('../types/playerActions.js');
 const hostnamePatterns_js_1 = require('../constants/hostnamePatterns.js');
 const deviceInfo = (0, deviceInfo_js_1.getDeviceInfo)();
 const store_js_1 = require('./store.js');
@@ -38,6 +39,7 @@ electron_1.contextBridge.exposeInMainWorld('BRANCH', String(config_js_1.config.b
 electron_1.contextBridge.exposeInMainWorld('PLATFORM', deviceInfo.os);
 electron_1.contextBridge.exposeInMainWorld('DEVICE_INFO', deviceInfo);
 electron_1.contextBridge.exposeInMainWorld('DEVICE_HOSTNAME', (0, deviceInfo_js_1.getDeviceHostname)());
+electron_1.contextBridge.exposeInMainWorld('PLAYER_ACTIONS', playerActions_js_1.PlayerActions);
 electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_INTENSITY_COEFFICIENT', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.vibeIntensityCoefficient);
 electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_MAX_FPS', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.maxFPS);
 electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_USE_DYNAMIC_ENERGY', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.useDynamicEnergy);
@@ -93,6 +95,11 @@ electron_1.contextBridge.exposeInMainWorld('nativeSettings', {
     },
     setPathWithNativeDialog(key, defaultPath = undefined, properties = undefined) {
         electron_1.ipcRenderer.invoke('setPathWithNativeDialog', key, defaultPath, properties);
+    },
+});
+electron_1.contextBridge.exposeInMainWorld('globalShortcutsControl', {
+    setRecordingState(isRecording) {
+        electron_1.ipcRenderer.send(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, Boolean(isRecording));
     },
 });
 electron_1.contextBridge.exposeInMainWorld('scrobble', {

@@ -69,6 +69,7 @@ const EventEmitter = require('node:events');
 let mainWindow = undefined;
 let isPlayerReady = false;
 let downloadQueue = Promise.resolve();
+let isGlobalShortcutsRecordingActive = false;
 
 const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 
@@ -160,6 +161,11 @@ const updateGlobalShortcuts = () => {
     const modSettings = store_js_1.getModSettings();
 
     eventsLogger.info('(GlobalShortcuts) modSettings.globalShortcuts:', modSettings?.globalShortcuts);
+
+    if (isGlobalShortcutsRecordingActive) {
+        eventsLogger.info('(GlobalShortcuts) Registration skipped while keybind recording is active.');
+        return;
+    }
 
     if (modSettings?.globalShortcuts?.enable) {
         const shortcuts = Object.entries(modSettings.globalShortcuts);
@@ -775,7 +781,7 @@ const handleApplicationEvents = (window) => {
             }
         }
         store_js_1.set(key, value);
-        if (key === 'modSettings.globalShortcuts.enable') {
+        if ('string' == typeof key && ('modSettings.globalShortcuts' === key || key.startsWith('modSettings.globalShortcuts.'))) {
             updateGlobalShortcuts();
         }
         MiniPlayer.updateSettingsState(store_js_1.getModSettings());
@@ -783,6 +789,11 @@ const handleApplicationEvents = (window) => {
         if (featurePatch) {
             void sendFeaturesMetric(featurePatch);
         }
+    });
+    electron_1.ipcMain.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {
+        eventsLogger.info(`Event received`, events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, value);
+        isGlobalShortcutsRecordingActive = Boolean(value);
+        updateGlobalShortcuts();
     });
 
     electron_1.ipcMain.on(events_js_1.Events.TOGGLE_MINIPLAYER, (event) => {

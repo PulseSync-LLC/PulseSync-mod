@@ -12796,7 +12796,7 @@
                     kids: ee,
                     clips: A,
                 });
-            a(38155),
+            (a(38155),
                 a(2313),
                 a(66875),
                 a(53793),
@@ -12814,7 +12814,7 @@
                 a(85872),
                 a(25605),
                 a(23430),
-                a(57202);
+                a(57202));
             var er = a(66498),
                 es = a(34942);
             let en = {
@@ -13063,6 +13063,7 @@
                     scrobblersSettingsModal: {},
                     downloaderSettingsModal: {},
                     systemSettingsModal: {},
+                    globalShortcutsSettingsModal: {},
                     myVibeParamsSettingsModal: {},
                     miniPlayerSettingsModal: {},
                     ynisonSettingsModal: {},
@@ -13533,9 +13534,9 @@
                                 { usersResource: a, modelActionsLogger: i } = (0, l._$)(e);
                             if (e.loadingState !== u.GuX.PENDING && t.account.data.uid)
                                 try {
-                                    (e.loadingState = u.GuX.PENDING), yield a.clearSearchHistory({ userId: t.account.data.uid }), (e.loadingState = u.GuX.RESOLVE);
+                                    ((e.loadingState = u.GuX.PENDING), yield a.clearSearchHistory({ userId: t.account.data.uid }), (e.loadingState = u.GuX.RESOLVE));
                                 } catch (t) {
-                                    i.error(t), (e.loadingState = u.GuX.REJECT);
+                                    (i.error(t), (e.loadingState = u.GuX.REJECT));
                                 }
                         }),
                         reset() {
@@ -13599,7 +13600,7 @@
                                 c = i === eN.$.TOP;
                             try {
                                 var h;
-                                (e.loadingState = u.GuX.PENDING), e.pagesLoader.setPageState(r, u.GuX.PENDING);
+                                ((e.loadingState = u.GuX.PENDING), e.pagesLoader.setPageState(r, u.GuX.PENDING));
                                 let t = yield s.getInstantMixedSearch({
                                     text: a,
                                     type: ((e, t) => {
@@ -13620,7 +13621,7 @@
                                 });
                                 t.misspellResult && (e.searchCorrectedText = t.misspellResult);
                                 let o = [];
-                                t.results &&
+                                (t.results &&
                                     t.results.length > 0 &&
                                     ((o = t.results.map((e) => {
                                         switch (e.type) {
@@ -13729,9 +13730,9 @@
                                         page: r,
                                         pager: { page: r, perPage: null != (h = t.perPage) ? h : ew.T_, total: c ? ew.T_ : Math.min(t.total, ew.T) },
                                     }),
-                                    (e.loadingState = u.GuX.RESOLVE);
+                                    (e.loadingState = u.GuX.RESOLVE));
                             } catch (t) {
-                                (e.loadingState = u.GuX.REJECT), e.pagesLoader.setItems(null, { responseStatus: u.FlZ.ERROR, page: r });
+                                ((e.loadingState = u.GuX.REJECT), e.pagesLoader.setItems(null, { responseStatus: u.FlZ.ERROR, page: r }));
                             }
                         }),
                         getHistory: (0, l.L3)(function* (t) {
@@ -13741,9 +13742,9 @@
                             try {
                                 e.historyPage.loadingState = u.GuX.PENDING;
                                 let t = yield i.getSearchHistory({ userId: a, supportedTypes: eO });
-                                (e.historyPage.items = (0, l.wg)(t.map(eK).filter((e) => e))), (e.historyPage.loadingState = u.GuX.RESOLVE);
+                                ((e.historyPage.items = (0, l.wg)(t.map(eK).filter((e) => e))), (e.historyPage.loadingState = u.GuX.RESOLVE));
                             } catch (t) {
-                                r.error(t), (e.historyPage.loadingState = u.GuX.REJECT);
+                                (r.error(t), (e.historyPage.loadingState = u.GuX.REJECT));
                             }
                         }),
                         clearHistory: (0, l.L3)(function* (t) {
@@ -13751,25 +13752,25 @@
                                 { usersResource: i, modelActionsLogger: r } = (0, l._$)(e);
                             if (e.loadingState !== u.GuX.PENDING)
                                 try {
-                                    (e.loadingState = u.GuX.PENDING), yield i.clearSearchHistory({ userId: a }), (e.loadingState = u.GuX.RESOLVE);
+                                    ((e.loadingState = u.GuX.PENDING), yield i.clearSearchHistory({ userId: a }), (e.loadingState = u.GuX.RESOLVE));
                                 } catch (t) {
-                                    r.error(t), (e.loadingState = u.GuX.REJECT);
+                                    (r.error(t), (e.loadingState = u.GuX.REJECT));
                                 }
                         }),
                         resetHistoryItems() {
                             e.historyPage.reset();
                         },
                         resetHistoryStateRequest() {
-                            (e.historyPage.loadingState = u.GuX.IDLE), e.historyPage.reset();
+                            ((e.historyPage.loadingState = u.GuX.IDLE), e.historyPage.reset());
                         },
                         resetResults() {
-                            e.destroyItems([e.bestResults]), e.pagesLoader.reset();
+                            (e.destroyItems([e.bestResults]), e.pagesLoader.reset());
                         },
                         resetSearchCorrectedText() {
                             e.searchCorrectedText = null;
                         },
                         reset() {
-                            (e.searchCorrectedText = null), (e.loadingState = u.GuX.IDLE), (e.filters = null), e.destroyItems([e.bestResults]), e.pagesLoader.reset();
+                            ((e.searchCorrectedText = null), (e.loadingState = u.GuX.IDLE), (e.filters = null), e.destroyItems([e.bestResults]), e.pagesLoader.reset());
                         },
                         sendFeedback: (0, l.L3)(function* (t) {
                             let { searchResource: a, modelActionsLogger: i } = (0, l._$)(e);
@@ -13978,6 +13979,7 @@
                 scrobblersSettingsModal: P.qt,
                 downloaderSettingsModal: P.qt,
                 systemSettingsModal: P.qt,
+                globalShortcutsSettingsModal: P.qt,
                 myVibeParamsSettingsModal: P.qt,
                 miniPlayerSettingsModal: P.qt,
                 ynisonSettingsModal: P.qt,
