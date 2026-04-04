@@ -2194,7 +2194,7 @@
                         t.substituted?.version && t.version
                             ? (t.version = t.substituted.version)
                             : t.substituted
-                              ? 'Подменёные данные трека были восстановлены'
+                              ? 'Подменённые данные трека были восстановлены.'
                               : undefined;
                     });
 
