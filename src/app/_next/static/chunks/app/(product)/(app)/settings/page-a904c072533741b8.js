@@ -1278,7 +1278,7 @@
                           });
                 },
                 settingBarWithDropdown = (e) => {
-                    let { title: t, description: o, onChange: i, value: l, options: r, direction: s = 'bottom', disabled: a = !1 } = e,
+                    let { title: t, description: o, onChange: i, value: l, options: r, direction: s = 'bottom', disabled: a = !1, buttonStyle: buttonStyle = {} } = e,
                         [d, u] = (0, g.useState)(!1),
                         [_, p] = (0, g.useState)(160),
                         h = (0, g.useRef)(null),
@@ -1351,6 +1351,9 @@
                                         a ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button',
                                         ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
                                     ),
+                                    style: {
+                                        ...buttonStyle,
+                                    },
                                     children: [
                                         f?.label || 'Select...',
                                         (0, n.jsx)('ul', {
@@ -1687,19 +1690,8 @@
                                 ),
                                 style: {
                                     minWidth: '12.5rem',
-                                    textAlign: 'left',
-                                    paddingInline: '0.875rem',
-                                    height: '2.5rem',
-                                    borderRadius: '999px',
-                                    border: '1px solid var(--ym-controls-color-secondary-outline-default-stroke)',
-                                    background: 'var(--ym-surface-color-primary-enabled-list)',
-                                    color: 'inherit',
-                                    font: 'inherit',
-                                    boxShadow: 'none',
-                                    outline: 'none',
-                                    appearance: 'none',
-                                    WebkitAppearance: 'none',
-                                    caretColor: 'currentColor',
+                                    textAlign: 'center',
+                                    background: 'transparent',
                                 },
                             }),
                         ],
@@ -2170,7 +2162,7 @@
                             headerClassName: K().modalHeader,
                             contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
                             title: 'Глобальные горячие клавиши',
-                            style: { maxWidth: '38.0rem', width: '38.0rem', height: 'auto' },
+                            style: { maxWidth: '38.0rem', width: '38.0rem' },
                             open: modal.isOpened,
                             onOpenChange: modal.onOpenChange,
                             onClose: modal.close,
@@ -2181,7 +2173,7 @@
                             children: (0, n.jsxs)('div', {
                                 style: {
                                     width: '36.5rem',
-                                    maxHeight: '28rem',
+                                    maxHeight: '30rem',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     gap: '0.75rem',
@@ -2211,7 +2203,7 @@
                                             display: 'flex',
                                             flexDirection: 'column',
                                             gap: '0.75rem',
-                                            paddingRight: '0.75rem',
+                                            paddingRight: '0.35rem',
                                         },
                                         children: [
                                             !shortcutItems.length &&
@@ -2238,7 +2230,6 @@
                                                             listStyle: 'none',
                                                             display: 'flex',
                                                             flexDirection: 'column',
-                                                            gap: '0.75rem',
                                                             padding: '0.875rem',
                                                             borderRadius: '1rem',
                                                             background: 'var(--ym-surface-color-primary-enabled-list)',
@@ -2286,6 +2277,10 @@
                                                                                                 },
                                                                                                 options: actionOptions,
                                                                                                 direction: shortcutIndex === shortcutItems.length - 1 ? 'top' : 'bottom',
+                                                                                                buttonStyle: {
+                                                                                                    minWidth: '12.5rem',
+                                                                                                    textAlign: 'center',
+                                                                                                },
                                                                                             }),
                                                                                         }),
                                                                                         shortcutItem.commands.length > 1 &&

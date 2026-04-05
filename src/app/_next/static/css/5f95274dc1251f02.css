@@ -3550,6 +3550,13 @@
         border 0.2s,
         color 0.2s,
         border 0.2s;
+
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 }
 .settingBarWithDropdown_button__disabled {
     color: var(--ym-controls-color-primary-text-disabled);
@@ -3565,6 +3572,12 @@
         border 0.2s,
         color 0.2s,
         border 0.2s;
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 }
 .settingBarWithDropdown_button:hover:not(:has(:hover)) {
     border: 1px solid var(--ym-controls-color-secondary-outline-hovered_stroke);
