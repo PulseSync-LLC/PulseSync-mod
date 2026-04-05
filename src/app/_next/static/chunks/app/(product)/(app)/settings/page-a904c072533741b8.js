@@ -2188,15 +2188,6 @@
                                             isChecked: isGlobalShortcutsEnabled,
                                         }),
                                     }),
-                                    (0, n.jsx)(c.Caption, {
-                                        variant: 'div',
-                                        type: 'text',
-                                        size: 'xs',
-                                        weight: 'medium',
-                                        className: K().text,
-                                        style: { paddingRight: '0.75rem' },
-                                        children: 'Один хоткей может запускать несколько действий подряд. Пустые записи не сохраняются в конфиг.',
-                                    }),
                                     (0, n.jsxs)('ul', {
                                         className: ''.concat(K().list, ' PulseSync_experimentsListScroll'),
                                         style: {
