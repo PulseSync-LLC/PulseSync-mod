@@ -7,12 +7,28 @@
     }
 
     class StylesManager {
-        constructor() {
+        constructor(addonName) {
             this._styles = {};
+            this._addonName = addonName;
         }
 
-        add(id, style) {
-            this._styles[id] = style;
+        get result() {
+            return Object.values(this._styles).join('\n\n');
+        }
+
+        apply() {
+            let themeStylesElement = document.getElementById(`${this._addonName}-styles`);
+            if (!themeStylesElement) {
+                themeStylesElement = document.createElement('style');
+                themeStylesElement.id = `${this._addonName}-styles`;
+                document.head.appendChild(themeStylesElement);
+            }
+
+            themeStylesElement.textContent = this.result;
+        }
+
+        add(id, styles) {
+            this._styles[id] = styles;
         }
 
         remove(id) {
@@ -26,30 +42,26 @@
         clear() {
             this._styles = {};
         }
-
-        get result() {
-            return Object.values(this._styles).join('\n\n');
-        }
     }
 
     class EventEmitter {
         constructor() {
-            this.events = {};
+            this._events = {};
         }
 
         on(eventName, callback) {
-            if (!this.events[eventName]) this.events[eventName] = [];
-            this.events[eventName].push(callback);
+            if (!this._events[eventName]) this._events[eventName] = [];
+            this._events[eventName].push(callback);
         }
 
         off(eventName, callback) {
-            if (!this.events[eventName]) return;
-            this.events[eventName] = this.events[eventName].filter((cb) => cb !== callback);
+            if (!this._events[eventName]) return;
+            this._events[eventName] = this._events[eventName].filter((cb) => cb !== callback);
         }
 
         emit(eventName, data) {
-            if (!this.events[eventName]) return;
-            this.events[eventName].forEach((callback) => callback(data));
+            if (!this._events[eventName]) return;
+            this._events[eventName].forEach((callback) => callback(data));
         }
 
         once(eventName, callback) {
@@ -61,30 +73,27 @@
         }
 
         removeAllListeners(eventName) {
-            delete this.events[eventName];
+            delete this._events[eventName];
         }
     }
 
     class SettingsManager extends EventEmitter {
-        constructor(theme) {
-            super();
-
-            this.theme = theme;
+        constructor(addon) {
+            super()
+            this._addon = addon;
 
             this.settings = {};
-
-            this.old_settings = {};
+            this.oldSettings = {};
 
             this._unsubscribe = null;
-
             this._subscribeTimer = null;
         }
 
         _createContextPayload() {
             return {
-                settings: this.theme.settingsManager,
-                styles: this.theme.stylesManager,
-                state: this.theme.player.state,
+                settings: this._addon.settingsManager,
+                styles: this._addon.stylesManager,
+                state: this._addon.player.state,
             };
         }
 
@@ -108,21 +117,9 @@
             }
         }
 
-        _extractItemValue(item) {
-            if (item.bool != undefined) return item.bool;
-            if (item.filePath != undefined) return item.filePath;
-            if (item.input != undefined) return item.input;
-            if (item.selected != undefined) return item.selected;
-            return item.value;
-        }
-
         _normalizeSettingsPayload(input) {
             if (!input || typeof input !== 'object' || Array.isArray(input)) {
                 return {};
-            }
-
-            if (Array.isArray(input.sections)) {
-                return this.transformJSON(input);
             }
 
             return this._clone(input);
@@ -135,7 +132,7 @@
                 return this.settings;
             }
 
-            this.old_settings = this.settings;
+            this.oldSettings = this.settings;
             this.settings = normalizedSettings;
             const context = this._createContextPayload();
 
@@ -151,7 +148,7 @@
         }
 
         _subscribeToPulseSyncApi() {
-            const source = window?.pulsesyncApi?.getSettings?.(this.theme.id);
+            const source = window?.pulsesyncApi?.getSettings?.(this._addon.name);
             if (!source || typeof source.onChange !== 'function') {
                 this._subscribeTimer = setTimeout(() => this._subscribeToPulseSyncApi(), 250);
                 return;
@@ -173,7 +170,7 @@
 
         async update() {
             try {
-                const source = window?.pulsesyncApi?.getSettings?.(this.theme.id);
+                const source = window?.pulsesyncApi?.getSettings?.(this._addon.name);
                 if (!source || typeof source.getCurrent !== 'function') {
                     return null;
                 }
@@ -186,84 +183,25 @@
             }
         }
 
-        transformJSON(input) {
-            const result = {};
-
-            try {
-                input.sections.forEach((section) => {
-                    if (!Array.isArray(section?.items)) {
-                        return;
-                    }
-
-                    section.items.forEach((item) => {
-                        if (!item?.id) {
-                            return;
-                        }
-
-                        if (item.type === 'text' && item.buttons) {
-                            result[item.id] = {};
-                            item.buttons.forEach((button) => {
-                                if (!button?.id) {
-                                    return;
-                                }
-
-                                result[item.id][button.id] = {
-                                    value: button.text,
-                                    default: button.defaultParameter,
-                                };
-                            });
-                        } else {
-                            result[item.id] = {
-                                value: this._extractItemValue(item),
-                                default: item.defaultParameter,
-                            };
-                        }
-                    });
-                });
-            } catch (error) {
-                console.error('Failed to transform JSON:', error);
-            }
-
-            return result;
-        }
-
         get(id) {
-            const keys = id.split('.');
-            let value = this.settings;
-
-            for (const key of keys) {
-                value = value[key];
-            }
-
-            return value;
+            return this.settings[id];
         }
 
         hasChanged(id) {
-            const hasSettings = Object.keys(this.settings).length > 0;
-            if (!hasSettings) return true;
-
-            const keys = id.split('.');
-            let value = this.settings;
-            let oldValue = this.old_settings;
-
-            for (const key of keys) {
-                if (value === undefined || oldValue === undefined) return true;
-                value = value[key];
-                oldValue = oldValue[key];
-            }
-
-            return !this._isEqual(value, oldValue);
+            return !this._isEqual(this.settings[id], this.oldSettings[id]);
         }
     }
 
     class AssetsManager {
-        constructor() {
-            this._urlBase = 'http://localhost:2007/assets';
+        constructor(addonName) {
+            this._addonName = addonName;
+            this._urlBase = 'http://localhost:2007/assets'
         }
 
         async getContent(fileName) {
             try {
-                const response = await fetch(`${this._urlBase}/${fileName}`);
+                const fileLink = this.getFileLink(fileName)
+                const response = await fetch(fileLink);
                 if (!response.ok) {
                     throw new Error(`Ошибка сети: ${response.status}`);
                 }
@@ -281,12 +219,12 @@
             }
         }
 
-        getLink(fileName) {
-            return `${this._urlBase}/${fileName}`;
+        getFileLink(fileName) {
+            return `${this._urlBase}/${fileName}?name=${this._addonName}`;
         }
 
         get files() {
-            return fetch(this._urlBase)
+            return fetch(`${this._urlBase}?name=${this._addonName}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error(`Ошибка сети: ${response.status}`);
@@ -300,7 +238,7 @@
                 .catch((reason) => {
                     console.error('Ошибка при получении данных:', reason);
                 });
-            }
+        }
     }
 
     const getSharedPlayerEventsBridge = () => {
@@ -335,7 +273,7 @@
             return node.querySelector ? node.querySelector('[data-test-id="SYNC_LYRICS_CONTENT"]') : null;
         };
         const queueCheck = (node) => {
-            return node.querySelector ? node.querySelector('.PlayQueue_root__ponhw') : null;
+            return node.querySelector ? node.querySelector('[data-test-id="PLAY_QUEUE"]') : null;
         };
 
         const ensureStarted = () => {
@@ -412,12 +350,12 @@
     };
 
     class PlayerEvents extends EventEmitter {
-        constructor(theme) {
+        constructor(addon) {
             super();
+            this._addon = addon;
 
-            this.settingsManager = theme.settingsManager;
-
-            this.stylesManager = theme.stylesManager;
+            this.settingsManager = this._addon.settingsManager;
+            this.stylesManager = this._addon.stylesManager;
 
             this.state = {
                 speed: 1,
@@ -428,7 +366,7 @@
                     duration: 0,
                     loaded: 0,
                     position: 0,
-                    played: 0,
+                    remainingBufferedTime: 0,
                 },
                 shuffle: false,
                 repeat: '',
@@ -440,7 +378,7 @@
                     availableForPremiumUsers: true,
                     availableFullWithoutPermission: false,
                     coverUri: '',
-                    derivedColors: { average: '', waveText: '', miniPlayer: '', accent: '' },
+                    derivedColors: { accent: '', average: '', miniPlayer: '', waveText: ''  },
                     disclaimers: [],
                     durationMs: 0,
                     fade: { inStart: 0, inStop: 0, outStart: 0, outStop: 0 },
@@ -506,12 +444,12 @@
                     this.state.status = status;
                     switch (status) {
                         case 'playing':
-                            if (prevStatus == 'playing') break;
+                            if (prevStatus === 'playing') break;
 
                             this._dispatchCustomEvent('play');
                             break;
                         case 'paused':
-                            if (prevStatus == 'paused') break;
+                            if (prevStatus === 'paused') break;
 
                             this._dispatchCustomEvent('pause');
                             break;
@@ -521,7 +459,7 @@
                 });
 
                 playerState.event.onChange((event) => {
-                    if (event == 'audio-set-progress') {
+                    if (event === 'Seeking') {
                         this._dispatchCustomEvent('seek');
                     }
                 });
@@ -531,7 +469,7 @@
                     this._dispatchCustomEvent('progressChange');
                 });
 
-                playerState.volume.onChange((volume) => {
+                playerState.exponentVolume.onChange((volume) => {
                     this.state.volume = Math.round(100 * volume) / 100;
                     this._dispatchCustomEvent('volumeChange');
                 });
@@ -551,18 +489,15 @@
         }
     }
 
-    class Theme {
-        constructor(id) {
-            this.id = id;
+    class Addon {
+        constructor(addonName) {
+            this.name = addonName;
 
             this.actions = {};
 
-            this.stylesManager = new StylesManager();
-
-            this.assetsManager = new AssetsManager();
-
+            this.stylesManager = new StylesManager(this.name);
+            this.assetsManager = new AssetsManager(this.name);
             this.settingsManager = new SettingsManager(this);
-
             this.player = new PlayerEvents(this);
         }
 
@@ -583,18 +518,7 @@
                 }
             }
 
-            this.applyStyles();
-        }
-
-        applyStyles() {
-            let themeStylesElement = document.getElementById(`${this.id}-styles`);
-            if (!themeStylesElement) {
-                themeStylesElement = document.createElement('style');
-                themeStylesElement.id = `${this.id}-styles`;
-                document.head.appendChild(themeStylesElement);
-            }
-
-            themeStylesElement.textContent = this.stylesManager.result;
+            this.stylesManager.apply();
         }
 
         addAction(id, callback) {
@@ -608,7 +532,7 @@
             this.applyTheme();
         }
 
-        start(interval) {
+        start() {
             if (!this._settingsUpdateBound) {
                 this._settingsUpdateBound = true;
                 this.settingsManager.on('update', () => {
@@ -629,10 +553,10 @@
             SettingsManager,
             AssetsManager,
             PlayerEvents,
-            Theme,
+            Addon,
         };
-        if (!window.Theme) {
-            window.Theme = Theme;
+        if (!window.Addon) {
+            window.Addon = Addon;
         }
     }
 })();
