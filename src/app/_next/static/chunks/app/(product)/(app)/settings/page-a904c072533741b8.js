@@ -3672,6 +3672,16 @@
                             modals: { appUpdatesSettingsModal: t },
                         } = (0, m.Pjs)(),
                         { notify: o } = (0, m.lkh)(),
+                        onModAutoUpdateToggle = (0, g.useCallback)(
+                            async (e) => {
+                                console.log('enableModAutoUpdate toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.appAutoUpdates.enableModAutoUpdate', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
                         onAppAutoUpdateByProbabilityToggle = (0, g.useCallback)(
                             async (e) => {
                                 console.log('enableAppAutoUpdateByProbability toggled. Value: ', !e);
@@ -3725,6 +3735,15 @@
                                         description: 'Выключает участие в получении обновлений волнами',
                                         onChange: onAppAutoUpdateByProbabilityToggle,
                                         isChecked: !window.nativeSettings.get('modSettings.appAutoUpdates.enableAppAutoUpdateByProbability'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(G, {
+                                        title: 'Проверять обновления модификации',
+                                        description: 'Проверять ли наличие обновлений мода автоматически',
+                                        onChange: onModAutoUpdateToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.appAutoUpdates.enableModAutoUpdate'),
                                     }),
                                 }),
                             ],

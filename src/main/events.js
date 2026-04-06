@@ -34,7 +34,7 @@ const loadReleaseNotes_js_1 = require('./lib/loadReleaseNotes.js');
 const deviceInfo_js_1 = require('./lib/deviceInfo.js');
 
 const isAccelerator = require('electron-is-accelerator');
-// const modUpdater_js_1 = require('./lib/modUpdater.js');
+const modUpdater_js_1 = require('./lib/modUpdater.js');
 
 const { getAllowedUrls } = require('./lib/handlers/handleHeadersReceived/corsHandler');
 const trackDownloader_js_1 = require('./lib/trackDownloader/trackDownloader.js');
@@ -763,12 +763,12 @@ const handleApplicationEvents = (window) => {
             sendProgressBarChange(window, 'modUpdateToast', progressRenderer * 100);
             window.setProgressBar(progressWindow);
         };
-        //await (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(throttle(callback, PROGRESS_BAR_THROTTLE_MS));
+        await (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(throttle(callback, PROGRESS_BAR_THROTTLE_MS));
     });
 
     electron_1.ipcMain.on(events_js_1.Events.INSTALL_MOD_UPDATE, async (event, data) => {
         eventsLogger.info(`Event received`, events_js_1.Events.INSTALL_MOD_UPDATE);
-        //await (0, modUpdater_js_1.getModUpdater)().onInstallUpdate();
+        await (0, modUpdater_js_1.getModUpdater)().onInstallUpdate();
     });
 
     electron_1.ipcMain.on(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
