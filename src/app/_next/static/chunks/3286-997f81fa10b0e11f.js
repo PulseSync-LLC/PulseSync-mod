@@ -1832,7 +1832,7 @@
                         isAvailable: !!(null == e ? void 0 : e.available),
                         isRemoved: (null == e ? void 0 : e.error) === 'not-found',
                         title: e?.substituted?.title ?? e?.title ?? '',
-                        version: e?.version ?? (e?.substituted ? (e.substituted?.version ?? 'Подменённые данные трека были восстановлены.') : undefined),
+                        version: e?.version ?? (e?.substituted ? (e.substituted?.version ?? 'Подменённые данные трека были восстановлены') : undefined),
                         durationMs: y,
                         coverUri: e?.substituted?.coverUri ?? e?.coverUri,
                         averageColor: g,
