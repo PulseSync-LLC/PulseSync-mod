@@ -3427,7 +3427,7 @@
                                 className: $().item,
                                 children: (0, n.jsx)(settingBarWithSlider, {
                                     title: 'Таймер бездействия',
-                                    description: 'Через сколько в минутах активность автоматически отчистится',
+                                    description: 'Через сколько в минутах активность автоматически пропадёт',
                                     onChange: onAfkTimeoutChange,
                                     value: afkTimeout,
                                     maxValue: 30,
