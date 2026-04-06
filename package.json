@@ -1,6 +1,6 @@
 {
     "name": "pulsesync-asar",
-    "version": "1.24.9",
+    "version": "1.25.0",
     "description": "Mod for Yandex Music Desktop",
     "main": "index.js",
     "scripts": {
@@ -40,8 +40,7 @@
         "prettier": "^3.8.1",
         "readline-sync": "^1.4.10",
         "semver": "^7.7.4",
-        "terser": "^5.46.1"
-        ,
+        "terser": "^5.46.1",
         "zstd-codec": "^0.1.5"
     }
 }
