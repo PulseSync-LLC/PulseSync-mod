@@ -136,13 +136,13 @@
             this.settings = normalizedSettings;
             const context = this._createContextPayload();
 
-            this.emit('update', context);
-
             for (const id in this.settings) {
                 if (this.hasChanged(id)) {
                     this.emit(`change:${id}`, context);
                 }
             }
+
+            this.emit('update', context);
 
             return this.settings;
         }
@@ -413,6 +413,7 @@
                 styles: this.stylesManager,
                 state: this.state,
             });
+            this.stylesManager.apply();
         }
 
         _registerEvents() {
