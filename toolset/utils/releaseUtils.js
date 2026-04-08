@@ -287,7 +287,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         });
 
         if (response.status < 200 || response.status >= 300) {
-            throw new Error(`UPLOAD_PART_FAILED:${response.status}`);
+            throw new Error(`UPLOAD_PART_FAILED:${signedUrl} ${response.status}: ${response.data}`);
         }
 
         const eTag = response.headers?.etag || response.headers?.ETag;
@@ -480,7 +480,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         } catch (error) {
             await abortMultipartUploadIfNeeded(multipartBasePath, uploadState);
             const axiosMsg = error?.response?.data?.message || error?.response?.data || error?.message || error;
-            console.error('Ошибка при выполнении multipart загрузки app.asar:', axiosMsg);
+            console.error('Ошибка при выполнении multipart загрузки app.asar:', error);
             return null;
         } finally {
             if (preparedUpload?.shouldCleanup && preparedUpload?.filePath && fs.existsSync(preparedUpload.filePath)) {
