@@ -1,0 +1,34 @@
+diff --git a/extracted/5.95.0@pretty/app/_next/static/chunks/4980-3217125e606cd402.js b/extracted/5.95.0@pretty/app/_next/static/chunks/4980-3217125e606cd402.js
+--- a/extracted/5.95.0@pretty/app/_next/static/chunks/4980-3217125e606cd402.js
++++ b/extracted/5.95.0@pretty/app/_next/static/chunks/4980-3217125e606cd402.js
+@@ -417,9 +417,10 @@
+                             },
+                             getExperiment(i) {
+                                 var s;
+-                                let r = e.experiments.get(i),
+-                                    l = t.getOverwrittenExperiments();
+-                                return l && null != (s = l[i]) ? s : r;
++                                let r = e.overwrittenExperiments.get(i),
++                                    l = e.experiments.get(i),
++                                    a = t.getOverwrittenExperiments();
++                                return null != r ? r : a && null != (s = a[i]) ? s : l;
+                             },
+                             isExperimentEnabled(e) {
+                                 let i = t.getExperiment(e);
+@@ -434,11 +435,11 @@
+                                 for (let s of new Set([...e.overwrittenExperiments.keys(), ...e.experiments.keys()]).keys()) t.isExperimentEnabled(s) && i.push(s);
+                                 return i;
+                             },
+-                            checkExperiment(t, i) {
+-                                let r = e.experiments.get(t),
+-                                    { containerStorage: l, clientSafeConfig: a } = (0, s._$)(e),
+-                                    n = a.get(R.yc);
+-                                return (0, N.i)({ containerStorage: l, name: t, value: i, experimentDetail: r }, n);
++                            checkExperiment(i, r) {
++                                let l = t.getExperiment(i),
++                                    { containerStorage: a, clientSafeConfig: n } = (0, s._$)(e),
++                                    o = n.get(R.yc);
++                                return (0, N.i)({ containerStorage: a, name: i, value: r, experimentDetail: l }, o);
+                             },
+                             isRejected: () => e.loadingState === K.G.REJECT,
+                         };
