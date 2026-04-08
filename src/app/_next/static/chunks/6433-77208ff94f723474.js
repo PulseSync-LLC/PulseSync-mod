@@ -388,9 +388,10 @@
                                 return (0, x._)(t, s);
                             },
                             getExperiment(i) {
-                                let l = e.experiments.get(i),
-                                    r = t.getOverwrittenExperiments();
-                                return r?.[i] ?? window?.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES?.()?.[i] ?? l;
+                                let s = e.overwrittenExperiments.get(i),
+                                    r = e.experiments.get(i),
+                                    a = t.getOverwrittenExperiments();
+                                return s ?? a?.[i] ?? window?.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES?.()?.[i] ?? r;
                             },
                             isExperimentEnabled(e) {
                                 let i = t.getExperiment(e);
@@ -405,11 +406,11 @@
                                 for (let s of new Set([...e.overwrittenExperiments.keys(), ...e.experiments.keys()]).keys()) t.isExperimentEnabled(s) && i.push(s);
                                 return i;
                             },
-                            checkExperiment(t, i) {
-                                let s = e.experiments.get(t),
-                                    { containerStorage: r, clientSafeConfig: a } = (0, l._$)(e),
-                                    n = a.get(R.yc);
-                                return (0, P.i)({ containerStorage: r, name: t, value: i, experimentDetail: s }, n);
+                            checkExperiment(i, s) {
+                                let r = t.getExperiment(i),
+                                    { containerStorage: a, clientSafeConfig: n } = (0, l._$)(e),
+                                    o = n.get(R.yc);
+                                return (0, P.i)({ containerStorage: a, name: i, value: s, experimentDetail: r }, o);
                             },
                             isRejected: () => e.loadingState === f.G.REJECT,
                         };
@@ -422,15 +423,15 @@
                                 try {
                                     e.loadingState = f.G.PENDING;
                                     let s = t;
-                                    s || (s = yield i.experimentsDetails()),
+                                    (s || (s = yield i.experimentsDetails()),
                                         e.experiments.clear(),
                                         Object.entries(s).forEach((t) => {
                                             let [i, s] = t;
                                             e.experiments.set(i, s);
                                         }),
-                                        (e.loadingState = f.G.RESOLVE);
+                                        (e.loadingState = f.G.RESOLVE));
                                 } catch (t) {
-                                    s.error(t), (e.loadingState = f.G.REJECT);
+                                    (s.error(t), (e.loadingState = f.G.REJECT));
                                 } finally {
                                     var r;
                                     Object.entries(null != (r = e.getOverwrittenExperiments()) ? r : {}).forEach((t) => {
