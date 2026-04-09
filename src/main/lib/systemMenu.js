@@ -120,22 +120,23 @@ const createContextMenu = (window) => {
             ],
         });
     }
+    const debugSubmenu = [
+        {
+            role: 'reload',
+        },
+        {
+            role: 'forceReload',
+        },
+    ];
     if (config_js_1.config.app.enableDevTools || store_js_1.getDevMode()) {
-        template.push({
-            label: 'Debug',
-            submenu: [
-                {
-                    role: 'reload',
-                },
-                {
-                    role: 'forceReload',
-                },
-                {
-                    role: 'toggleDevTools',
-                },
-            ],
+        debugSubmenu.push({
+            role: 'toggleDevTools',
         });
     }
+    template.push({
+        label: 'Debug',
+        submenu: debugSubmenu,
+    });
 
     template.push({
         label: 'Zoom',
