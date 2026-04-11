@@ -1162,49 +1162,6 @@
                         }, []),
                         [w, N] = (0, i.useState)(window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() ?? !1);
                     (0, i.useEffect)(() => {
-                        if (window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.()) return;
-                        const e = `.${h().pulseText}`,
-                            s = '[class*="TitleBar_root"]',
-                            o = `pulsesync-titlebar-force-style-${h().pulseText}`,
-                            t = `PulseSync ${window.PULSE_VERSION}`,
-                            a = () => {
-                                const a = `${s} { display: flex !important; visibility: visible !important; opacity: 1 !important; } ${e} { display: inline !important; visibility: visible !important; opacity: 1 !important; }`;
-                                let i = window.document?.getElementById?.(o);
-                                if (!i) {
-                                    if (!(i = window.document?.createElement?.('style'))) return;
-                                    (i.id = o), (i.textContent = a), (window.document?.head || window.document?.documentElement)?.appendChild?.(i);
-                                    return;
-                                }
-                                i.textContent !== a && (i.textContent = a);
-                            },
-                            l = () => {
-                                const s = window.document?.querySelector(e);
-                                s && s.textContent !== t && (s.textContent = t);
-                            };
-                        let n = 0,
-                            r = !1;
-                        const d = () => {
-                                (n = 0), l();
-                            },
-                            c = () => {
-                                n || (window.requestAnimationFrame ? ((r = !0), (n = window.requestAnimationFrame(d))) : ((r = !1), (n = window.setTimeout(d, 16))));
-                            };
-                        a();
-                        const u =
-                                window.MutationObserver &&
-                                new MutationObserver(() => {
-                                    c();
-                                }),
-                            _ = window.document?.body || window.document?.documentElement;
-                        return (
-                            _ && u?.observe(_, { subtree: !0, childList: !0 }),
-                            c(),
-                            () => {
-                                u?.disconnect(), n && (r && window.cancelAnimationFrame ? window.cancelAnimationFrame(n) : clearTimeout(n));
-                            }
-                        );
-                    }, []),
-                        (0, i.useEffect)(() => {
                             const e = (event, key, value) => {
                                 'modSettings.window.hidePulseSyncVersionInTitleBar' === key && N(value);
                             };
