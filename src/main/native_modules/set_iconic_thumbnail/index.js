@@ -107,16 +107,20 @@ class DWMIconicThumbnail {
             throw new DWMIconicThumbnailError('imageBuffer must be a Buffer');
         }
 
-        if (!this.lastIconicThumbnailImageBuffer) {
-            this.lastIconicThumbnailImageBuffer = imageBuffer;
-            this.lastIconicThumbnailImageBufferKind = 'encoded';
-            this.lastIcomicThumbnailFlags = flags;
-            return this.probe();
-        }
+        const isInitialThumbnail = !this.lastIconicThumbnailImageBuffer;
 
         this.lastIconicThumbnailImageBuffer = imageBuffer;
         this.lastIconicThumbnailImageBufferKind = 'encoded';
         this.lastIcomicThumbnailFlags = flags;
+
+        if (isInitialThumbnail) {
+            return this.probe();
+        }
+
+        if (this.maxWidth <= 0 || this.maxHeight <= 0) {
+            return 0;
+        }
+
         return native.setIconicThumbnail(this.hwnd, this.lastIconicThumbnailImageBuffer, this.maxWidth, this.maxHeight, this.lastIcomicThumbnailFlags);
     }
 
@@ -131,16 +135,20 @@ class DWMIconicThumbnail {
             throw new DWMIconicThumbnailError('imageBuffer must be a Buffer');
         }
 
-        if (!this.lastIconicThumbnailImageBuffer) {
-            this.lastIconicThumbnailImageBuffer = imageBuffer;
-            this.lastIconicThumbnailImageBufferKind = 'raw';
-            this.lastIcomicThumbnailFlags = flags;
-            return this.probe();
-        }
+        const isInitialThumbnail = !this.lastIconicThumbnailImageBuffer;
 
         this.lastIconicThumbnailImageBuffer = imageBuffer;
         this.lastIconicThumbnailImageBufferKind = 'raw';
         this.lastIcomicThumbnailFlags = flags;
+
+        if (isInitialThumbnail) {
+            return this.probe();
+        }
+
+        if (this.maxWidth <= 0 || this.maxHeight <= 0) {
+            return 0;
+        }
+
         return native.setIconicThumbnailRaw(this.hwnd, this.lastIconicThumbnailImageBuffer, this.maxWidth, this.maxHeight, this.lastIcomicThumbnailFlags);
     }
 

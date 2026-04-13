@@ -51,6 +51,7 @@ let thumbnailRenderRequestId = 0;
 let thumbnailAnimationToken = 0;
 let lastThumbnailRenderState = null;
 let lastThumbnailPresentationMode = null;
+let lastThumbnailRequestStateKey = null;
 let activeThumbnailAnimation = null;
 let nativeThemeListener = null;
 const defaultTrackCoverBufferCache = new Map();
@@ -301,6 +302,23 @@ const getThumbnailRenderStateKey = (renderState) => {
     return [renderState.trackId ?? '', renderState.previousTrackId ?? '', renderState.nextTrackId ?? '', renderState.isPlaying ? '1' : '0'].join(':');
 };
 
+const getThumbnailRequestStateKey = (playerState) => {
+    if (!playerState?.track) {
+        return null;
+    }
+
+    const store = getActionsStoreObject(playerState.actionsStore);
+    const isRepeatOne = store.repeat === 'one';
+
+    return [
+        systemTheme,
+        playerState.track?.id ?? '',
+        isRepeatOne ? (playerState.track?.id ?? '') : (playerState.previousTrack?.id ?? ''),
+        isRepeatOne ? (playerState.track?.id ?? '') : (playerState.nextTrack?.id ?? ''),
+        playerState.isPaused ? '0' : '1',
+    ].join(':');
+};
+
 const createFallbackThumbnailRenderState = (renderState) => {
     if (!renderState) {
         return null;
@@ -396,7 +414,7 @@ const taskBarExtension = (window) => {
                 return;
             }
 
-            void setIconicThumbnail(playerState);
+            void setIconicThumbnail(playerState, { force: true });
         };
     }
 };
@@ -482,13 +500,24 @@ const getArtist = () => {
     return artistsLabel;
 };
 
-const setIconicThumbnail = async (playerState) => {
-    const renderRequestId = ++thumbnailRenderRequestId;
+const setIconicThumbnail = async (playerState, { force = false } = {}) => {
+    const nextThumbnailRequestStateKey = getThumbnailRequestStateKey(playerState);
+
     if (!playerState?.track) {
+        const renderRequestId = ++thumbnailRenderRequestId;
+        lastThumbnailRequestStateKey = null;
         taskBarExtensionLogger.log('No track found, clearing iconic thumbnail.');
         await clearIconicThumbnail();
         return;
     }
+
+    if (!force && !activeThumbnailAnimation && nextThumbnailRequestStateKey && nextThumbnailRequestStateKey === lastThumbnailRequestStateKey) {
+        taskBarExtensionLogger.log('Skipping thumbnail update because visual state is unchanged.');
+        return;
+    }
+
+    const renderRequestId = ++thumbnailRenderRequestId;
+    lastThumbnailRequestStateKey = nextThumbnailRequestStateKey;
 
     try {
         taskBarExtensionLogger.log('Setting thumbnail for track:', playerState.track.id ?? 'unknown');
@@ -628,6 +657,9 @@ const setIconicThumbnail = async (playerState) => {
         lastThumbnailPresentationMode = await renderThumbnailState(iconicThumbnail, width, height, nextRenderState);
         lastThumbnailRenderState = nextRenderState;
     } catch (error) {
+        if (lastThumbnailRequestStateKey === nextThumbnailRequestStateKey) {
+            lastThumbnailRequestStateKey = null;
+        }
         taskBarExtensionLogger.error('Error setting thumbnail:', error);
     }
 };
@@ -638,6 +670,7 @@ const clearIconicThumbnail = async () => {
         thumbnailAnimationToken++;
         lastThumbnailRenderState = null;
         lastThumbnailPresentationMode = null;
+        lastThumbnailRequestStateKey = null;
         activeThumbnailAnimation = null;
         taskBarExtensionLogger.log('Clearing thumbnail');
         const result = native.getDWMIconicThumbnailInstance().clearIconicThumbnail();
