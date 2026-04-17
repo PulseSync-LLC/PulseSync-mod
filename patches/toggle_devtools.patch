@@ -1,0 +1,53 @@
+diff --git a/index.js b/index.js
+index eb67b05..7f057c7 100644
+--- a/index.js
++++ b/index.js
+@@ -14759,6 +14759,22 @@ const toggleWindowVisibility = (window, isVisible) => {
+ const createContextMenu = (window) => {
+     const updater = getUpdater();
+     const template = [];
++    if (process.platform === 'win32') {
++        template.push(
++            {
++                type: 'separator',
++            },
++            {
++                label: 'Toggle DevTools',
++                accelerator: 'Ctrl+Shift+I',
++                click() {
++                    if (window && !window.isDestroyed()) {
++                        window.webContents.toggleDevTools();
++                    }
++                },
++            }
++        );
++    }
+     if (devicePlatform === Platform.MACOS) {
+         template.push({
+             label: formatMessage({ id: 'about-app.app-name' }),
+@@ -14895,6 +14911,7 @@ const checkForSingleInstance = () => {
+ };
+ const createWindow = async () => {
+     const webPreferences = {
++        devTools: true,
+         webSecurity: true,
+         nodeIntegrationInWorker: true,
+         nodeIntegration: false,
+@@ -15217,6 +15234,17 @@ const handleWindowLifecycleEvents = (window) => {
+             loadUnavailableErrorPage(window);
+         }
+     });
++    window.webContents.on('before-input-event', (event, input) => {
++        if (
++            input.control &&
++            input.shift &&
++            input.code === 'KeyI' &&
++            input.type === 'keyDown'
++        ) {
++            event.preventDefault();
++            window.webContents.toggleDevTools();
++        }
++    });
+     webContents.on('did-finish-load', () => {
+         webContents.insertCSS(`
+                 body {
