@@ -1281,6 +1281,7 @@
                     let { title: t, description: o, onChange: i, value: l, options: r, direction: s = 'bottom', disabled: a = !1, buttonStyle: buttonStyle = {} } = e,
                         [d, u] = (0, g.useState)(!1),
                         [_, p] = (0, g.useState)(160),
+                        [m, y] = (0, g.useState)(!1),
                         h = (0, g.useRef)(null),
                         f = r.find((e) => e.value === l),
                         x = (0, g.useCallback)(
@@ -1316,6 +1317,18 @@
                                 }
                             );
                         }, []),
+                        (0, g.useEffect)(() => {
+                            d && y(!0);
+                        }, [d]),
+                        (0, g.useEffect)(() => {
+                            if (d || !m) return;
+                            let e = setTimeout(() => {
+                                y(!1);
+                            }, 180);
+                            return () => {
+                                clearTimeout(e);
+                            };
+                        }, [d, m]),
                         (0, n.jsxs)('div', {
                             className: V().root,
                             children: [
@@ -1356,48 +1369,51 @@
                                     },
                                     children: [
                                         f?.label || 'Select...',
-                                        (0, n.jsx)('ul', {
-                                            role: 'menu',
-                                            className: 'settingBarWithDropdown_menu',
-                                            style: {
-                                                display: d ? 'flex' : 'none',
-                                                flexDirection: 'column',
-                                                width: ''.concat(_, 'px'),
-                                                maxHeight: '16rem',
-                                                overflowY: 'auto',
-                                                overflowX: 'hidden',
-                                                scrollbarWidth: 'thin',
-                                                overscrollBehavior: 'contain',
-                                                top: 'bottom' === s ? '120%' : 'unset',
-                                                bottom: 'top' === s ? '120%' : 'unset',
-                                            },
-                                            children: r.map((e) =>
-                                                (0, n.jsxs)(
-                                                    'li',
-                                                    {
-                                                        role: 'menuitem',
-                                                        className: 'settingBarWithDropdown_menuItem',
-                                                        id: e.value,
-                                                        'aria-selected': l === e.value,
-                                                        onClick: (t) => {
-                                                            (t.stopPropagation(), x(e.value));
+                                        m &&
+                                            (0, n.jsx)('ul', {
+                                                role: 'menu',
+                                                className: 'settingBarWithDropdown_menu'.concat(d ? '' : ' settingBarWithDropdown_menu__closed'),
+                                                style: {
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    width: ''.concat(_, 'px'),
+                                                    maxHeight: '16rem',
+                                                    overflowY: 'auto',
+                                                    overflowX: 'hidden',
+                                                    scrollbarWidth: 'thin',
+                                                    overscrollBehavior: 'contain',
+                                                    top: 'bottom' === s ? '120%' : 'unset',
+                                                    bottom: 'top' === s ? '120%' : 'unset',
+                                                    '--settingBarWithDropdown-offset-y': 'bottom' === s ? '-6px' : '6px',
+                                                    '--settingBarWithDropdown-origin': 'bottom' === s ? 'top right' : 'bottom right',
+                                                },
+                                                children: r.map((e) =>
+                                                    (0, n.jsxs)(
+                                                        'li',
+                                                        {
+                                                            role: 'menuitem',
+                                                            className: 'settingBarWithDropdown_menuItem',
+                                                            id: e.value,
+                                                            'aria-selected': l === e.value,
+                                                            onClick: (t) => {
+                                                                (t.stopPropagation(), x(e.value));
+                                                            },
+                                                            children: [
+                                                                (0, n.jsx)('span', { children: e.label }),
+                                                                l === e.value &&
+                                                                    (0, n.jsx)('svg', {
+                                                                        width: '16',
+                                                                        height: '16',
+                                                                        fill: 'currentColor',
+                                                                        xmlns: 'http://www.w3.org/2000/svg',
+                                                                        children: (0, n.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
+                                                                    }),
+                                                            ],
                                                         },
-                                                        children: [
-                                                            (0, n.jsx)('span', { children: e.label }),
-                                                            l === e.value &&
-                                                                (0, n.jsx)('svg', {
-                                                                    width: '16',
-                                                                    height: '16',
-                                                                    fill: 'currentColor',
-                                                                    xmlns: 'http://www.w3.org/2000/svg',
-                                                                    children: (0, n.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
-                                                                }),
-                                                        ],
-                                                    },
-                                                    e.value,
+                                                        e.value,
+                                                    ),
                                                 ),
-                                            ),
-                                        }),
+                                            }),
                                     ],
                                 }),
                             ],

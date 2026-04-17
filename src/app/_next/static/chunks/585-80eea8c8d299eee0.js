@@ -19608,6 +19608,7 @@
                     let { title: t, description: s, onChange: r, value: o, options: l, direction: c = 'bottom', disabled: u = !1, onOpen: f } = e,
                         [d, x] = a.useState(!1),
                         [p, _] = a.useState(160),
+                        [h, b] = a.useState(!1),
                         m = a.useRef(null),
                         v = l.find((e) => e.value === o);
                     return (
@@ -19643,6 +19644,18 @@
                                 }
                             );
                         }, []),
+                        a.useEffect(() => {
+                            d && b(!0);
+                        }, [d]),
+                        a.useEffect(() => {
+                            if (d || !h) return;
+                            let e = setTimeout(() => {
+                                b(!1);
+                            }, 180);
+                            return () => {
+                                clearTimeout(e);
+                            };
+                        }, [d, h]),
                         (0, n.jsxs)('div', {
                             className: w().row,
                             children: [
@@ -19686,43 +19699,46 @@
                                     ),
                                     children: [
                                         (null == v ? void 0 : v.label) || 'Select...',
-                                        (0, n.jsx)('ul', {
-                                            role: 'menu',
-                                            className: 'settingBarWithDropdown_menu',
-                                            style: {
-                                                display: d ? 'flex' : 'none',
-                                                flexDirection: 'column',
-                                                width: ''.concat(p, 'px'),
-                                                top: 'bottom' === c ? '120%' : 'unset',
-                                                bottom: 'top' === c ? '120%' : 'unset',
-                                            },
-                                            children: l.map((e) =>
-                                                (0, n.jsx)(
-                                                    'li',
-                                                    {
-                                                        role: 'menuitem',
-                                                        className: 'settingBarWithDropdown_menuItem',
-                                                        id: e.value,
-                                                        'aria-selected': o === e.value,
-                                                        onClick: (t) => {
-                                                            t.stopPropagation(), r(e.value), x(!1);
+                                        h &&
+                                            (0, n.jsx)('ul', {
+                                                role: 'menu',
+                                                className: 'settingBarWithDropdown_menu'.concat(d ? '' : ' settingBarWithDropdown_menu__closed'),
+                                                style: {
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    width: ''.concat(p, 'px'),
+                                                    top: 'bottom' === c ? '120%' : 'unset',
+                                                    bottom: 'top' === c ? '120%' : 'unset',
+                                                    '--settingBarWithDropdown-offset-y': 'bottom' === c ? '-6px' : '6px',
+                                                    '--settingBarWithDropdown-origin': 'bottom' === c ? 'top right' : 'bottom right',
+                                                },
+                                                children: l.map((e) =>
+                                                    (0, n.jsx)(
+                                                        'li',
+                                                        {
+                                                            role: 'menuitem',
+                                                            className: 'settingBarWithDropdown_menuItem',
+                                                            id: e.value,
+                                                            'aria-selected': o === e.value,
+                                                            onClick: (t) => {
+                                                                t.stopPropagation(), r(e.value), x(!1);
+                                                            },
+                                                            children: [
+                                                                (0, n.jsx)('span', { children: e.label }),
+                                                                o === e.value &&
+                                                                    (0, n.jsx)('svg', {
+                                                                        width: '16',
+                                                                        height: '16',
+                                                                        fill: 'currentColor',
+                                                                        xmlns: 'http://www.w3.org/2000/svg',
+                                                                        children: (0, n.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
+                                                                    }),
+                                                            ],
                                                         },
-                                                        children: [
-                                                            (0, n.jsx)('span', { children: e.label }),
-                                                            o === e.value &&
-                                                                (0, n.jsx)('svg', {
-                                                                    width: '16',
-                                                                    height: '16',
-                                                                    fill: 'currentColor',
-                                                                    xmlns: 'http://www.w3.org/2000/svg',
-                                                                    children: (0, n.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
-                                                                }),
-                                                        ],
-                                                    },
-                                                    ''.concat(e.value),
+                                                        ''.concat(e.value),
+                                                    ),
                                                 ),
-                                            ),
-                                        }),
+                                            }),
                                     ],
                                 }),
                             ],

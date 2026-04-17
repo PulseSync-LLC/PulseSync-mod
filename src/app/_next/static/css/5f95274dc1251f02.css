@@ -3594,7 +3594,30 @@
     overflow: hidden;
     background: var(--ym-background-color-primary-enabled-popover);
     z-index: 99999;
-    transform: translateX(1px);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    will-change: opacity, transform;
+    transform: translateX(1px) translateY(0);
+    transform-origin: var(--settingBarWithDropdown-origin, top right);
+    transition: opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0s linear 0s;
+
+    @starting-style {
+        opacity: 0;
+        transform: translateX(1px) translateY(var(--settingBarWithDropdown-offset-y, -6px));
+    }
+}
+
+.settingBarWithDropdown_menu__closed {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(1px) translateY(var(--settingBarWithDropdown-offset-y, -6px));
+    transition: opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0s linear 0.18s;
 }
 .settingBarWithDropdown_menuItem {
     display: flex;
@@ -3611,6 +3634,13 @@
 }
 .settingBarWithDropdown_menuItem:hover {
     background-color: var(--ym-controls-color-secondary-default-hovered);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .settingBarWithDropdown_menu,
+    .settingBarWithDropdown_menu__closed {
+        transition: none;
+    }
 }
 
 .EqualizerPresets_buttonIcon__DgPG8,
