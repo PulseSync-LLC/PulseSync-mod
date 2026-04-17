@@ -38,6 +38,7 @@
         min-width: 50px;
         min-height: 50px;
         width: 50px;
+        box-shadow: none;
     }
 }
 
