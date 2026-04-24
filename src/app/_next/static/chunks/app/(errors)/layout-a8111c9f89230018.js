@@ -37,19 +37,19 @@
                         c = (0, t.useCallback)(() => {
                             (0, a.N5)();
                         }, []),
-                        onMiniPlayerToggle = (0, i.useCallback)(() => {
+                        onMiniPlayerToggle = (0, t.useCallback)(() => {
                             (0, a.toggleMiniPlayer)();
                         }, []),
-                        E = (0, i.useCallback)((e) => {
+                        E = (0, t.useCallback)((e) => {
                             if (e.target.closest('button')) return;
                             (0, a.LO)();
                         }, []),
-                        [w, N] = (0, i.useState)(window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() ?? !1);
-                    (0, i.useEffect)(() => {
+                        [w, N] = (0, t.useState)(window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() ?? !1);
+                    (0, t.useEffect)(() => {
                         const e = (event, key, value) => {
                             'modSettings.window.hidePulseSyncVersionInTitleBar' === key && N(value);
                         };
-                        return (window.desktopEvents?.on('NATIVE_STORE_UPDATE', e), () => window.desktopEvents?.off?.('NATIVE_STORE_UPDATE', e));
+                        return window.desktopEvents?.on('NATIVE_STORE_UPDATE', e), () => window.desktopEvents?.off?.('NATIVE_STORE_UPDATE', e);
                     }, []);
                     return (0, n.jsx)('div', {
                         className: h().root,
@@ -254,37 +254,197 @@
             'use strict';
             o.d(s, { usePlayerAction: () => t });
             var n = o(44020),
-                r = o(42561),
-                i = (function (e) {
-                    return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
-                })(i || {});
+                r = o(42561);
+            const sendPlayerStateDefault = (e) => {
+                let s;
+                const o =
+                        (e.state.queueState.index.value ?? 0) - 1 >= 0
+                            ? e.state.queueState?.entityList.value?.[e.state.queueState.index.value - 1]?.entity?.entityData?.meta
+                            : void 0,
+                    n =
+                        (e.state.queueState.index.value ?? 0) + 1 >= 0
+                            ? e.state.queueState?.entityList.value?.[e.state.queueState.index.value + 1]?.entity?.entityData?.meta
+                            : void 0;
+                null == (s = window.desktopEvents) ||
+                    s.send(r.EE.PLAYER_STATE, {
+                        status: e.state.playerState.status.value,
+                        isPlaying: 'playing' === e.state.playerState.status.value,
+                        canMoveForward: e.state.currentContext.value?.availableActions.moveForward.value,
+                        canMoveBackward: e.state.currentContext.value?.availableActions.moveBackward.value,
+                        track: e.state.queueState.currentEntity.value?.entity.entityData.meta,
+                        progress: e.state.playerState.progress.value,
+                        availableActions: {
+                            moveBackward: e.state.currentContext.value?.availableActions.moveBackward.value,
+                            moveForward: e.state.currentContext.value?.availableActions.moveForward.value,
+                            repeat: e.state.currentContext.value?.availableActions.repeat.value,
+                            shuffle: e.state.currentContext.value?.availableActions.shuffle.value,
+                            speed: e.state.currentContext.value?.availableActions.speed.value,
+                        },
+                        actionsStore: {
+                            repeat: e.state.queueState.repeat.value,
+                            shuffle: e.state.queueState.shuffle.value,
+                            isLiked: e.state.queueState.currentEntity.value?.entity.likeStore.isTrackLiked(
+                                e.state.queueState.currentEntity.value?.entity.entityData?.meta.id,
+                            ),
+                            isDisliked: e.state.queueState.currentEntity.value?.entity.likeStore.isTrackDisliked(
+                                e.state.queueState.currentEntity.value?.entity.entityData?.meta.id,
+                            ),
+                        },
+                        previousTrack: o,
+                        nextTrack: n,
+                        volume: e.state.playerState.exponentVolume.value,
+                    });
+            };
+            var i = (function (e) {
+                return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
+            })(i || {});
             let t = (e) => {
-                let s = (0, n.useCallback)(
-                    (s, o) => {
-                        switch (o) {
-                            case 'PLAY':
-                            case 'PAUSE':
-                                null == e || e.togglePause();
-                                break;
-                            case 'MOVE_BACKWARD':
-                                null == e || e.moveBackward();
-                                break;
-                            case 'MOVE_FORWARD':
-                                null == e || e.moveForward();
-                        }
-                    },
-                    [e],
-                );
+                let { sonataState: s } = (0, r.Pjs)(),
+                    o = (0, n.useCallback)(
+                        async (o) => {
+                            let i = s.entityMeta;
+                            if (!e || !i) return;
+                            switch (o) {
+                                case 'TOGGLE_LIKE':
+                                    null == i || (await i.toggleLike?.());
+                                    break;
+                                case 'LIKE':
+                                    i.isLiked || null == i || (await i.toggleLike?.());
+                                    break;
+                                case 'LIKE_NONE':
+                                    i.isLiked && (null == i || (await i.toggleLike?.()));
+                            }
+                            sendPlayerStateDefault?.(e);
+                        },
+                        [e, s.entityMeta],
+                    ),
+                    t = (0, n.useCallback)(
+                        async (o) => {
+                            let t,
+                                l,
+                                i = s.entityMeta;
+                            if (!e || !i) return;
+                            let d = !1;
+                            switch (o) {
+                                case 'TOGGLE_DISLIKE':
+                                    d = !0;
+                                    break;
+                                case 'DISLIKE':
+                                    d = !i.isDisliked;
+                                    break;
+                                case 'DISLIKE_NONE':
+                                    d = !!i.isDisliked;
+                            }
+                            d && (null == i || (await i.toggleDislike?.())),
+                                d &&
+                                    !i.isDisliked &&
+                                    i.id === (null == e || null == (t = e.state.queueState.currentEntity.value) || null == (l = t.entity) ? void 0 : l.data.meta.id) &&
+                                    (null == e || e.moveForward()),
+                                sendPlayerStateDefault?.(e);
+                        },
+                        [e, s.entityMeta],
+                    ),
+                    l = (0, n.useCallback)(
+                        (s, i, l, n = 1) => {
+                            if (window.playerActionEventDedupeNonce === n) return;
+                            if (n) window.playerActionEventDedupeNonce = n;
+                            switch (i) {
+                                case 'PLAY':
+                                case 'PAUSE':
+                                case 'TOGGLE_PLAY':
+                                    null == e || e.togglePause();
+                                    break;
+                                case 'MOVE_BACKWARD':
+                                    null == e || e.moveBackward();
+                                    break;
+                                case 'MOVE_FORWARD':
+                                    null == e || e.moveForward();
+                                    break;
+                                case 'REPEAT_NONE':
+                                    null == e || e.setRepeatMode('none');
+                                    break;
+                                case 'REPEAT_CONTEXT':
+                                    null == e || e.setRepeatMode('context');
+                                    break;
+                                case 'REPEAT_ONE':
+                                    null == e || e.setRepeatMode('one');
+                                    break;
+                                case 'TOGGLE_REPEAT':
+                                    let s = 'none';
+                                    switch (e?.state?.queueState?.repeat?.value) {
+                                        case 'none':
+                                            s = e?.state?.currentContext?.value?.contextData?.type === 'vibe' ? 'one' : 'context';
+                                            break;
+                                        case 'context':
+                                            s = 'one';
+                                            break;
+                                        case 'one':
+                                        default:
+                                            s = 'none';
+                                    }
+                                    null == e || e.setRepeatMode(s);
+                                    break;
+                                case 'TOGGLE_SHUFFLE':
+                                    null == e || e.toggleShuffle();
+                                    break;
+                                case 'TOGGLE_LIKE':
+                                case 'LIKE':
+                                case 'LIKE_NONE':
+                                    o(i);
+                                    break;
+                                case 'DISLIKE':
+                                case 'DISLIKE_NONE':
+                                case 'TOGGLE_DISLIKE':
+                                    t(i);
+                                    break;
+                                case 'SET_VOLUME':
+                                    null == e || e.setExponentVolume(Math.min(Math.max(l, 0), 100));
+                                    break;
+                                case 'SET_PROGRESS':
+                                    null == e || e.setProgress(Math.max(l, 0));
+                            }
+                        },
+                        [e, o, t],
+                    );
                 (0, n.useEffect)(() => {
                     var e;
                     return (
-                        null == (e = window.desktopEvents) || e.on(r.EE.PLAYER_ACTION, s),
+                        null == (e = window.desktopEvents) || e.on(r.EE.PLAYER_ACTION, l),
                         () => {
                             var e;
-                            null == (e = window.desktopEvents) || e.off(r.EE.PLAYER_ACTION, s);
+                            null == (e = window.desktopEvents) || e.off(r.EE.PLAYER_ACTION, l);
                         }
                     );
-                }, [s]);
+                }, [l]),
+                    (0, n.useEffect)(() => {
+                        const e = (e, s) => {
+                                const o = window.pulsesyncApi;
+                                if (!o || !s?.action) return;
+                                const { action: n, trackId: r, albumId: i, options: t, args: l } = s,
+                                    d = o[n];
+                                if ('function' != typeof d) return;
+                                if (Array.isArray(l)) {
+                                    d(...l);
+                                    return;
+                                }
+                                if ('undefined' != typeof r) {
+                                    d(r, { ...t, albumId: i });
+                                    return;
+                                }
+                                d(t);
+                            },
+                            s = window.desktopEvents?.on(r.EE.PULSESYNC_API, e);
+                        return () => {
+                            null == s || s();
+                        };
+                    }, []),
+                    (0, n.useEffect)(() => {
+                        window.pulsesyncApi &&
+                            ((window.pulsesyncApi.likeTrack = () => o('LIKE')),
+                            (window.pulsesyncApi.unlikeTrack = () => o('LIKE_NONE')),
+                            (window.pulsesyncApi.dislikeTrack = () => t('DISLIKE')),
+                            (window.pulsesyncApi.undislikeTrack = () => t('DISLIKE_NONE')));
+                    }, [o, t]);
             };
         },
         18085: (e, s, o) => {
@@ -306,6 +466,10 @@
                 sb: () => P.useRefreshTracksAvailability,
                 sq: () => c.useReleaseNotes,
                 OM: () => u.useSendPlayerState,
+                sendDownloadTrack: () => sendDownloadTrack,
+                sendDownloadCurrentTrack: () => sendDownloadCurrentTrack,
+                sendDownloadTracks: () => sendDownloadTracks,
+                sendYnisonState: () => sendYnisonState,
             });
             let n = () => {
                 document.addEventListener('auxclick', (e) => e.preventDefault()),
@@ -317,6 +481,22 @@
             let i = (e) => {
                     var s;
                     null == (s = window.desktopEvents) || s.send(r.EE.APPLICATION_READY, e);
+                },
+                sendDownloadTrack = (e, s) => {
+                    var o;
+                    null == (o = window.desktopEvents) || o.send(r.EE.DOWNLOAD_TRACK, e, s);
+                },
+                sendDownloadCurrentTrack = (e) => {
+                    var s;
+                    null == (s = window.desktopEvents) || s.send(r.EE.DOWNLOAD_CURRENT_TRACK, e);
+                },
+                sendDownloadTracks = (e, s, o) => {
+                    var n;
+                    null == (n = window.desktopEvents) || n.send(r.EE.DOWNLOAD_TRACKS, e, s, o);
+                },
+                sendYnisonState = (e) => {
+                    var s;
+                    null == (s = window.desktopEvents) || s.send(r.EE.YNISON_STATE, { rawData: e.rawData });
                 },
                 t = (e) => {
                     let s = e === r.Sxu.Light ? '#FFFFFF' : '#000000';
@@ -376,7 +556,7 @@
                     let { version: s, formatMessage: o, closeToast: i } = e,
                         h = (0, r.useCallback)(() => {
                             var e;
-                            null == (e = window.desktopEvents) || e.send(t.EE.INSTALL_UPDATE), null == i || i();
+                            null == (e = window.desktopEvents) || e.send(t.EE.INSTALL_UPDATE);
                         }, [i]),
                         b = (0, r.useMemo)(
                             () =>
@@ -405,26 +585,330 @@
                         );
                     return (0, n.jsx)(v.$W, { className: (0, l.$)(m().root, m().important), message: b });
                 },
+                modUpdateToast = (e) => {
+                    let { version: s, formatMessage: o, closeToast: i } = e,
+                        [h, b] = (0, r.useState)(-1),
+                        P = (0, r.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(t.EE.INSTALL_MOD_UPDATE), null == i || i();
+                        }, [i]),
+                        C = (0, r.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(t.EE.DOWNLOAD_MOD_UPDATE);
+                        }, []),
+                        A = (e) => {
+                            let s = o({ id: 'offline.download' });
+                            return e < 0 ? (s = o({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (s = 'Скачивание…') : e > 100 && (s = 'Установить'), s;
+                        },
+                        g = (0, r.useMemo)(
+                            () =>
+                                (0, n.jsxs)('div', {
+                                    className: m().message,
+                                    children: [
+                                        (0, n.jsx)(a.Caption, {
+                                            className: m().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: o({ id: 'desktop.on-mod-update-available' }, { version: s }),
+                                        }),
+                                        (0, n.jsx)(d.$, {
+                                            className: m().button,
+                                            onClick: h <= 100 ? C : P,
+                                            variant: 'default',
+                                            color: 'secondary',
+                                            size: 'xs',
+                                            radius: 'xxxl',
+                                            disabled: h <= 100 && h >= 0,
+                                            children: (0, n.jsx)(a.Caption, { variant: 'div', type: 'controls', size: 'm', children: A(h) }),
+                                        }),
+                                    ],
+                                }),
+                            [o, P, s, h, C],
+                        ),
+                        E = (0, r.useCallback)((e, s, o, r = 0) => {
+                            if ('modUpdateToast' !== s) return;
+                            if (window.dedupeNonces && window.dedupeNonces[s] === r) return;
+                            window.dedupeNonces || (window.dedupeNonces = {}), r && (window.dedupeNonces[s] = r), b(o);
+                        }, []);
+                    return (
+                        (0, r.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(t.EE.PROGRESS_BAR_CHANGE, E),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(t.EE.PROGRESS_BAR_CHANGE, E);
+                                }
+                            );
+                        }, [E]),
+                        (0, r.useEffect)(() => {
+                            let e = () => {
+                                null == i || i();
+                            };
+                            return (
+                                window.desktopEvents?.on(t.EE.MOD_UPDATE_AVAILABLE, e),
+                                () => {
+                                    window.desktopEvents?.off?.(t.EE.MOD_UPDATE_AVAILABLE, e);
+                                }
+                            );
+                        }, [i]),
+                        (0, n.jsxs)(v.$W, {
+                            className: (0, l.$)(m().root, m().important),
+                            message: g,
+                            children: [
+                                (0, n.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: h + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: h <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
+                    );
+                },
+                toastWithProgress = (e) => {
+                    let { closeToast: s, toastID: o, message: i, buttonLabel: h, onButtonClick: b, disabled: P = !1, dismissOnButtonClick: C = !1 } = e,
+                        [A, g] = (0, r.useState)(-1),
+                        [E, w] = (0, r.useState)('Ожидание...'),
+                        N = '__pulseToastProgressCache',
+                        f = (0, r.useCallback)(() => {
+                            null == b || b(), C && (null == s || s());
+                        }, [C, b, s]),
+                        k = (0, r.useMemo)(
+                            () =>
+                                (0, n.jsxs)('div', {
+                                    className: m().message,
+                                    children: [
+                                        (0, n.jsx)(a.Caption, {
+                                            className: m().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: i.replace('#s', E),
+                                        }),
+                                        h &&
+                                            (0, n.jsx)(d.$, {
+                                                className: m().button,
+                                                onClick: f,
+                                                variant: 'default',
+                                                color: 'secondary',
+                                                size: 'xs',
+                                                radius: 'xxxl',
+                                                disabled: P,
+                                                children: (0, n.jsx)(a.Caption, { variant: 'div', type: 'controls', size: 'm', children: h }),
+                                            }),
+                                    ],
+                                }),
+                            [P, h, i, f, E],
+                        ),
+                        p = (0, r.useCallback)(
+                            (e, s, i, n = 0, r = void 0) => {
+                                if (s !== o) return;
+                                if (window.dedupeNonces && window.dedupeNonces[s] === n) return;
+                                window.dedupeNonces || (window.dedupeNonces = {}),
+                                    n && (window.dedupeNonces[s] = n),
+                                    window[N] || (window[N] = {}),
+                                    (window[N][s] = { progress: i, label: r }),
+                                    g(i),
+                                    r && w(r);
+                            },
+                            [o],
+                        ),
+                        y = (0, r.useCallback)(
+                            (e, i, n = 0) => {
+                                if (window['onBasicToastDismiss' + o] === n) return;
+                                n && (window['onBasicToastDismiss' + o] = n), i === o && (window[N] && delete window[N][o], null == s || s());
+                            },
+                            [s, o],
+                        );
+                    return (
+                        (0, r.useEffect)(() => {
+                            let e = window[N] && window[N][o];
+                            e && (g(e.progress), e.label && w(e.label));
+                            return () => {
+                                window[N] && delete window[N][o];
+                            };
+                        }, [o]),
+                        (0, r.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(t.EE.PROGRESS_BAR_CHANGE, p),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(t.EE.PROGRESS_BAR_CHANGE, p);
+                                }
+                            );
+                        }, [p]),
+                        (0, r.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(t.EE.BASIC_TOAST_DISMISS, y),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(t.EE.BASIC_TOAST_DISMISS, y);
+                                }
+                            );
+                        }, [y]),
+                        (0, n.jsxs)(v.$W, {
+                            className: (0, l.$)(m().root, m().important),
+                            message: k,
+                            children: [
+                                (0, n.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: A + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: A <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
+                    );
+                },
                 P = () => {
                     let { formatMessage: e } = (0, i.A)(),
                         { notify: s } = (0, t.lkh)(),
-                        o = (0, r.useRef)(''),
-                        l = (0, r.useCallback)(
-                            (r, i) => {
-                                o.current !== i && ((o.current = i), s((0, n.jsx)(b, { formatMessage: e, version: i }), { containerId: t.uQT.IMPORTANT }));
+                        { notify: o, dismiss: l } = (0, t.lkh)(),
+                        { notify: d } = (0, t.lkh)(),
+                        { notify: a } = (0, t.lkh)(),
+                        { notify: v } = (0, t.lkh)(),
+                        h = (0, r.useRef)(''),
+                        m = (0, r.useCallback)(
+                            (o, i) => {
+                                h.current !== i && ((h.current = i), s((0, n.jsx)(b, { formatMessage: e, version: i }), { containerId: t.uQT.IMPORTANT }));
                             },
-                            [e, o, s],
+                            [e, h, s],
+                        ),
+                        C = (0, r.useCallback)(
+                            (s, r, i, d = 0) => {
+                                if (window.modUpdateAvailableEventDedupeNonce === d) return;
+                                d && (window.modUpdateAvailableEventDedupeNonce = d),
+                                    o((0, n.jsx)(modUpdateToast, { formatMessage: e, version: `${r} -> ${i}`, closeToast: l }), { containerId: t.uQT.IMPORTANT });
+                            },
+                            [e, o, l],
+                        ),
+                        A = (0, r.useCallback)(() => {
+                            window.desktopEvents?.send(t.EE.APPLICATION_RESTART);
+                        }, []),
+                        g = (0, r.useCallback)(
+                            (e, s = 'GPU_STALL', o = 0) => {
+                                if (window.onGPUStallEventDedupeNonce === o) return;
+                                o && (window.onGPUStallEventDedupeNonce = o),
+                                    d(
+                                        (0, n.jsx)(toastWithProgress, {
+                                            toastID: 'GPU_STALL',
+                                            message: `Аппаратное ускорение отключилось: ${s}`,
+                                            buttonLabel: 'Исправить',
+                                            onButtonClick: A,
+                                        }),
+                                        { containerId: t.uQT.IMPORTANT },
+                                    );
+                            },
+                            [d, A],
+                        ),
+                        E = (0, r.useCallback)(() => {
+                            window.desktopEvents?.send(t.EE.APP_STALL_CANCEL_RESTART);
+                        }, []),
+                        w = (0, r.useCallback)(
+                            (e, s = 0) => {
+                                if (window.onAppStallStallDedupeNonce === s) return;
+                                s && (window.onAppStallStallDedupeNonce = s),
+                                    a(
+                                        (0, n.jsx)(toastWithProgress, {
+                                            toastID: 'safeModeRestart',
+                                            message: 'Плеер запускается слишком долго. Перезагрузка в безопасном режиме через #s',
+                                            buttonLabel: 'Отменить',
+                                            onButtonClick: E,
+                                            dismissOnButtonClick: !0,
+                                        }),
+                                        { containerId: t.uQT.IMPORTANT },
+                                    );
+                            },
+                            [a, E],
+                        ),
+                        N = (0, r.useCallback)(
+                            (e, s, o, r, i = 0) => {
+                                if (window['onBasicToastCreate' + s] === i) return;
+                                i && (window['onBasicToastCreate' + s] = i),
+                                    v(
+                                        (0, n.jsx)(toastWithProgress, {
+                                            toastID: s,
+                                            message: o,
+                                            buttonLabel: r || void 0,
+                                            dismissOnButtonClick: !!r,
+                                        }),
+                                        { containerId: t.uQT.IMPORTANT },
+                                    );
+                            },
+                            [v],
                         );
                     (0, r.useEffect)(() => {
                         var e;
                         return (
-                            null == (e = window.desktopEvents) || e.on(t.EE.UPDATE_AVAILABLE, l),
+                            null == (e = window.desktopEvents) || e.on(t.EE.UPDATE_AVAILABLE, m),
                             () => {
                                 var e;
-                                null == (e = window.desktopEvents) || e.off(t.EE.UPDATE_AVAILABLE, l);
+                                null == (e = window.desktopEvents) || e.off(t.EE.UPDATE_AVAILABLE, m);
                             }
                         );
-                    }, [l]);
+                    }, [m]);
+                    (0, r.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(t.EE.BASIC_TOAST_CREATE, N),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(t.EE.BASIC_TOAST_CREATE, N);
+                            }
+                        );
+                    }, [N]);
+                    (0, r.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(t.EE.MOD_UPDATE_AVAILABLE, C),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(t.EE.MOD_UPDATE_AVAILABLE, C);
+                            }
+                        );
+                    }, [C]);
+                    (0, r.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(t.EE.GPU_STALL, g),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(t.EE.GPU_STALL, g);
+                            }
+                        );
+                    }, [g]);
+                    (0, r.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(t.EE.APP_STALL, w),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(t.EE.APP_STALL, w);
+                            }
+                        );
+                    }, [w]);
                 };
         },
         22029: (e) => {
@@ -578,39 +1062,135 @@
                     o = (0, r.c)((e) => {
                         var s;
                         let { isPlaying: o, canMoveBackward: n, canMoveForward: r } = e;
-                        null == (s = window.desktopEvents) || s.send(t.EE.PLAYER_STATE, { isPlaying: o, canMoveBackward: n, canMoveForward: r });
-                    });
+                        null == (s = window.desktopEvents) ||
+                            s.send(t.EE.PLAYER_STATE, {
+                                isPlaying: o,
+                                canMoveBackward: n,
+                                canMoveForward: r,
+                                status: e.status,
+                                track: e.track,
+                                progress: e.progress,
+                                availableActions: e.availableActions,
+                                actionsStore: e.actionsStore,
+                                previousTrack: e.previousTrack,
+                                nextTrack: e.nextTrack,
+                                volume: e.volume,
+                            });
+                    }),
+                    l = (e) => {
+                        let s = e?.state?.queueState?.index?.value ?? 0,
+                            o = e?.state?.queueState?.order?.value,
+                            n = e?.state?.queueState?.entityList?.value,
+                            r = s - 1 >= 0 ? (o?.[s - 1] ?? s - 1) : null,
+                            i = s + 1 >= 0 ? (o?.[s + 1] ?? s + 1) : null;
+                        return {
+                            previousTrack: null == r ? void 0 : n?.[r]?.entity?.entityData?.meta,
+                            nextTrack: null == i ? void 0 : n?.[i]?.entity?.entityData?.meta,
+                        };
+                    },
+                    d = (e, n) => {
+                        let { previousTrack: r, nextTrack: d } = l(e);
+                        o({
+                            status: n,
+                            isPlaying: n === i.MT.PLAYING,
+                            canMoveForward: e?.state?.currentContext?.value?.availableActions.moveForward.value,
+                            canMoveBackward: e?.state?.currentContext?.value?.availableActions.moveBackward.value,
+                            track: e?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta,
+                            progress: e?.state?.playerState?.progress?.value,
+                            availableActions: {
+                                moveBackward: e?.state?.currentContext?.value?.availableActions.moveBackward.value,
+                                moveForward: e?.state?.currentContext?.value?.availableActions.moveForward.value,
+                                repeat: e?.state?.currentContext?.value?.availableActions.repeat?.value,
+                                shuffle: e?.state?.currentContext?.value?.availableActions.shuffle?.value,
+                                speed: e?.state?.currentContext?.value?.availableActions.speed?.value,
+                            },
+                            actionsStore: {
+                                repeat: e?.state?.queueState?.repeat?.value,
+                                shuffle: e?.state?.queueState?.shuffle?.value,
+                                isLiked: !!e?.state?.queueState?.currentEntity?.value?.entity?.likeStore?.isTrackLiked?.(
+                                    e?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta?.id,
+                                ),
+                                isDisliked: !!e?.state?.queueState?.currentEntity?.value?.entity?.likeStore?.isTrackDisliked?.(
+                                    e?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta?.id,
+                                ),
+                            },
+                            previousTrack: r,
+                            nextTrack: d,
+                            volume: e?.state?.playerState?.exponentVolume?.value,
+                        });
+                    };
                 (0, n.useEffect)(() => {
+                    s && window.pulsesyncApi?.setPlayerInstance?.(s);
                     let e,
-                        n,
-                        r =
+                        r,
+                        l =
                             null == s
                                 ? void 0
                                 : s.state.playerState.status.onChange((e) => {
-                                      e && o({ isPlaying: e === i.MT.PLAYING });
+                                      e && d(s, e);
                                   }),
-                        t =
+                        o = s?.state?.queueState?.currentEntity?.onChange((e) => {
+                            e && d(s, i.MT.PLAYING);
+                        }),
+                        a = s?.state?.playerState?.event?.onChange(() => {
+                            let e = s?.state?.playerState?.event?.value;
+                            ('SET_PROGRESS' === e || e === i.Iu?.SET_PROGRESS) && d(s, s?.state?.playerState?.status?.value);
+                        }),
+                        v = s?.state?.queueState?.entityList?.onChange(() => {
+                            d(s, s?.state?.playerState?.status?.value);
+                        }),
+                        h = s?.state?.currentContext?.value?.availableActions.repeat?.onChange(() => {
+                            d(s, s?.state?.playerState?.status?.value);
+                        }),
+                        m = s?.state?.currentContext?.value?.availableActions.shuffle?.onChange(() => {
+                            d(s, s?.state?.playerState?.status?.value);
+                        }),
+                        b = s?.state?.queueState?.repeat?.onChange(() => {
+                            d(s, s?.state?.playerState?.status?.value);
+                        }),
+                        P = s?.state?.queueState?.shuffle?.onChange(() => {
+                            d(s, s?.state?.playerState?.status?.value);
+                        }),
+                        c = s?.state?.playerState?.exponentVolume?.onChange(() => {
+                            d(s, s?.state?.playerState?.status?.value);
+                        }),
+                        u = window.desktopEvents?.on(t.EE.GET_CURRENT_TRACK, () => {
+                            d(s, s?.state?.playerState?.status?.value);
+                        }),
+                        E =
                             null == s
                                 ? void 0
                                 : s.state.currentContext.onChange(() => {
-                                      var r, i;
+                                      var o, n;
                                       null == e || e(),
-                                          null == n || n(),
+                                          null == r || r(),
                                           (e =
-                                              null == s || null == (r = s.state.currentContext.value)
+                                              null == s || null == (o = s.state.currentContext.value)
                                                   ? void 0
-                                                  : r.availableActions.moveBackward.onChange((e) => {
-                                                        o({ canMoveBackward: !!e });
+                                                  : o.availableActions.moveBackward.onChange(() => {
+                                                        d(s, s?.state?.playerState?.status?.value);
                                                     })),
-                                          (n =
-                                              null == s || null == (i = s.state.currentContext.value)
+                                          (r =
+                                              null == s || null == (n = s.state.currentContext.value)
                                                   ? void 0
-                                                  : i.availableActions.moveForward.onChange((e) => {
-                                                        o({ canMoveForward: !!e });
+                                                  : n.availableActions.moveForward.onChange(() => {
+                                                        d(s, s?.state?.playerState?.status?.value);
                                                     }));
                                   });
                     return () => {
-                        null == r || r(), null == t || t(), null == n || n(), null == n || n();
+                        null == l || l(),
+                            null == E || E(),
+                            null == o || o(),
+                            null == u || u(),
+                            null == a || a(),
+                            null == v || v(),
+                            null == h || h(),
+                            null == m || m(),
+                            null == b || b(),
+                            null == P || P(),
+                            null == c || c(),
+                            null == r || r(),
+                            null == r || r();
                     };
                 }, [o, null == s ? void 0 : s.state.currentContext, null == s ? void 0 : s.state.playerState.status]);
             };

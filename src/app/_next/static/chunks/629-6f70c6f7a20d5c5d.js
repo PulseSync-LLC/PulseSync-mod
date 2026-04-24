@@ -49,7 +49,7 @@
                         const e = (event, key, value) => {
                             'modSettings.window.hidePulseSyncVersionInTitleBar' === key && A(value);
                         };
-                        return (window.desktopEvents?.on('NATIVE_STORE_UPDATE', e), () => window.desktopEvents?.off?.('NATIVE_STORE_UPDATE', e));
+                        return window.desktopEvents?.on('NATIVE_STORE_UPDATE', e), () => window.desktopEvents?.off?.('NATIVE_STORE_UPDATE', e);
                     }, []);
                     return (0, s.jsx)('div', {
                         className: u().root,
@@ -266,47 +266,207 @@
             'use strict';
             a.d(t, { usePlayerAction: () => n });
             var s = a(44020),
-                l = a(42561),
-                o = (function (e) {
-                    return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
-                })(o || {});
+                o = a(42561);
+            const sendPlayerStateDefault = (e) => {
+                let t;
+                const a =
+                        (e.state.queueState.index.value ?? 0) - 1 >= 0
+                            ? e.state.queueState?.entityList.value?.[e.state.queueState.index.value - 1]?.entity?.entityData?.meta
+                            : void 0,
+                    s =
+                        (e.state.queueState.index.value ?? 0) + 1 >= 0
+                            ? e.state.queueState?.entityList.value?.[e.state.queueState.index.value + 1]?.entity?.entityData?.meta
+                            : void 0;
+                null == (t = window.desktopEvents) ||
+                    t.send(o.EE.PLAYER_STATE, {
+                        status: e.state.playerState.status.value,
+                        isPlaying: 'playing' === e.state.playerState.status.value,
+                        canMoveForward: e.state.currentContext.value?.availableActions.moveForward.value,
+                        canMoveBackward: e.state.currentContext.value?.availableActions.moveBackward.value,
+                        track: e.state.queueState.currentEntity.value?.entity.entityData.meta,
+                        progress: e.state.playerState.progress.value,
+                        availableActions: {
+                            moveBackward: e.state.currentContext.value?.availableActions.moveBackward.value,
+                            moveForward: e.state.currentContext.value?.availableActions.moveForward.value,
+                            repeat: e.state.currentContext.value?.availableActions.repeat.value,
+                            shuffle: e.state.currentContext.value?.availableActions.shuffle.value,
+                            speed: e.state.currentContext.value?.availableActions.speed.value,
+                        },
+                        actionsStore: {
+                            repeat: e.state.queueState.repeat.value,
+                            shuffle: e.state.queueState.shuffle.value,
+                            isLiked: e.state.queueState.currentEntity.value?.entity.likeStore.isTrackLiked(
+                                e.state.queueState.currentEntity.value?.entity.entityData?.meta.id,
+                            ),
+                            isDisliked: e.state.queueState.currentEntity.value?.entity.likeStore.isTrackDisliked(
+                                e.state.queueState.currentEntity.value?.entity.entityData?.meta.id,
+                            ),
+                        },
+                        previousTrack: a,
+                        nextTrack: s,
+                        volume: e.state.playerState.exponentVolume.value,
+                    });
+            };
+            var l = (function (e) {
+                return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
+            })(l || {});
             let n = (e) => {
-                let t = (0, s.useCallback)(
-                    (t, a) => {
-                        switch (a) {
-                            case 'PLAY':
-                            case 'PAUSE':
-                                null == e || e.togglePause();
-                                break;
-                            case 'MOVE_BACKWARD':
-                                null == e || e.moveBackward();
-                                break;
-                            case 'MOVE_FORWARD':
-                                null == e || e.moveForward();
-                        }
-                    },
-                    [e],
-                );
+                let { sonataState: t } = (0, o.Pjs)(),
+                    a = (0, s.useCallback)(
+                        async (a) => {
+                            let i = t.entityMeta;
+                            if (!e || !i) return;
+                            switch (a) {
+                                case 'TOGGLE_LIKE':
+                                    null == i || (await i.toggleLike?.());
+                                    break;
+                                case 'LIKE':
+                                    i.isLiked || null == i || (await i.toggleLike?.());
+                                    break;
+                                case 'LIKE_NONE':
+                                    i.isLiked && (null == i || (await i.toggleLike?.()));
+                            }
+                            sendPlayerStateDefault?.(e);
+                        },
+                        [e, t.entityMeta],
+                    ),
+                    n = (0, s.useCallback)(
+                        async (a) => {
+                            let i,
+                                n,
+                                r = t.entityMeta;
+                            if (!e || !r) return;
+                            let l = !1;
+                            switch (a) {
+                                case 'TOGGLE_DISLIKE':
+                                    l = !0;
+                                    break;
+                                case 'DISLIKE':
+                                    l = !r.isDisliked;
+                                    break;
+                                case 'DISLIKE_NONE':
+                                    l = !!r.isDisliked;
+                            }
+                            l && (null == r || (await r.toggleDislike?.())),
+                                l &&
+                                    !r.isDisliked &&
+                                    r.id === (null == e || null == (i = e.state.queueState.currentEntity.value) || null == (n = i.entity) ? void 0 : n.data.meta.id) &&
+                                    (null == e || e.moveForward()),
+                                sendPlayerStateDefault?.(e);
+                        },
+                        [e, t.entityMeta],
+                    ),
+                    r = (0, s.useCallback)(
+                        (t, i, r, s = 1) => {
+                            if (window.playerActionEventDedupeNonce === s) return;
+                            if (s) window.playerActionEventDedupeNonce = s;
+                            switch (i) {
+                                case 'PLAY':
+                                case 'PAUSE':
+                                case 'TOGGLE_PLAY':
+                                    null == e || e.togglePause();
+                                    break;
+                                case 'MOVE_BACKWARD':
+                                    null == e || e.moveBackward();
+                                    break;
+                                case 'MOVE_FORWARD':
+                                    null == e || e.moveForward();
+                                    break;
+                                case 'REPEAT_NONE':
+                                    null == e || e.setRepeatMode('none');
+                                    break;
+                                case 'REPEAT_CONTEXT':
+                                    null == e || e.setRepeatMode('context');
+                                    break;
+                                case 'REPEAT_ONE':
+                                    null == e || e.setRepeatMode('one');
+                                    break;
+                                case 'TOGGLE_REPEAT':
+                                    let t = 'none';
+                                    switch (e?.state?.queueState?.repeat?.value) {
+                                        case 'none':
+                                            t = e?.state?.currentContext?.value?.contextData?.type === 'vibe' ? 'one' : 'context';
+                                            break;
+                                        case 'context':
+                                            t = 'one';
+                                            break;
+                                        case 'one':
+                                        default:
+                                            t = 'none';
+                                    }
+                                    null == e || e.setRepeatMode(t);
+                                    break;
+                                case 'TOGGLE_SHUFFLE':
+                                    null == e || e.toggleShuffle();
+                                    break;
+                                case 'TOGGLE_LIKE':
+                                case 'LIKE':
+                                case 'LIKE_NONE':
+                                    a(i);
+                                    break;
+                                case 'DISLIKE':
+                                case 'DISLIKE_NONE':
+                                case 'TOGGLE_DISLIKE':
+                                    n(i);
+                                    break;
+                                case 'SET_VOLUME':
+                                    null == e || e.setExponentVolume(Math.min(Math.max(r, 0), 100));
+                                    break;
+                                case 'SET_PROGRESS':
+                                    null == e || e.setProgress(Math.max(r, 0));
+                            }
+                        },
+                        [e, a, n],
+                    );
                 (0, s.useEffect)(() => {
                     var e;
                     return (
-                        null == (e = window.desktopEvents) || e.on(l.EE.PLAYER_ACTION, t),
+                        null == (e = window.desktopEvents) || e.on(o.EE.PLAYER_ACTION, r),
                         () => {
                             var e;
-                            null == (e = window.desktopEvents) || e.off(l.EE.PLAYER_ACTION, t);
+                            null == (e = window.desktopEvents) || e.off(o.EE.PLAYER_ACTION, r);
                         }
                     );
-                }, [t]);
+                }, [r]),
+                    (0, s.useEffect)(() => {
+                        const e = (e, t) => {
+                                const a = window.pulsesyncApi;
+                                if (!a || !t?.action) return;
+                                const { action: s, trackId: o, albumId: l, options: n, args: r } = t,
+                                    i = a[s];
+                                if ('function' != typeof i) return;
+                                if (Array.isArray(r)) {
+                                    i(...r);
+                                    return;
+                                }
+                                if ('undefined' != typeof o) {
+                                    i(o, { ...n, albumId: l });
+                                    return;
+                                }
+                                i(n);
+                            },
+                            t = window.desktopEvents?.on(o.EE.PULSESYNC_API, e);
+                        return () => {
+                            null == t || t();
+                        };
+                    }, []),
+                    (0, s.useEffect)(() => {
+                        window.pulsesyncApi &&
+                            ((window.pulsesyncApi.likeTrack = () => a('LIKE')),
+                            (window.pulsesyncApi.unlikeTrack = () => a('LIKE_NONE')),
+                            (window.pulsesyncApi.dislikeTrack = () => n('DISLIKE')),
+                            (window.pulsesyncApi.undislikeTrack = () => n('DISLIKE_NONE')));
+                    }, [a, n]);
             };
         },
         18085: (e, t, a) => {
             'use strict';
             a.d(t, {
-                qw: () => g.ReleaseNotesModal,
-                _o: () => x,
+                qw: () => E.ReleaseNotesModal,
+                _o: () => g,
                 cq: () => w.TitleBar,
                 CA: () => s,
-                M4: () => o,
+                M4: () => l,
                 _E: () => n,
                 LD: () => r.useApplicationDeeplinks,
                 P4: () => i.useApplicationUpdate,
@@ -317,7 +477,11 @@
                 eP: () => h.useRefreshRepositoryMeta,
                 sb: () => p.useRefreshTracksAvailability,
                 sq: () => m.useReleaseNotes,
-                OM: () => C.useSendPlayerState,
+                OM: () => v.useSendPlayerState,
+                sendDownloadTrack: () => sendDownloadTrack,
+                sendDownloadCurrentTrack: () => sendDownloadCurrentTrack,
+                sendDownloadTracks: () => sendDownloadTracks,
+                sendYnisonState: () => sendYnisonState,
             });
             let s = () => {
                 document.addEventListener('auxclick', (e) => e.preventDefault()),
@@ -325,14 +489,30 @@
                         (e.ctrlKey || e.metaKey || e.shiftKey) && e.preventDefault();
                     });
             };
-            var l = a(42561);
-            let o = (e) => {
+            var o = a(42561);
+            let l = (e) => {
                     var t;
-                    null == (t = window.desktopEvents) || t.send(l.EE.APPLICATION_READY, e);
+                    null == (t = window.desktopEvents) || t.send(o.EE.APPLICATION_READY, e);
+                },
+                sendDownloadTrack = (e, t) => {
+                    var a;
+                    null == (a = window.desktopEvents) || a.send(o.EE.DOWNLOAD_TRACK, e, t);
+                },
+                sendDownloadCurrentTrack = (e) => {
+                    var t;
+                    null == (t = window.desktopEvents) || t.send(o.EE.DOWNLOAD_CURRENT_TRACK, e);
+                },
+                sendDownloadTracks = (e, t, a) => {
+                    var s;
+                    null == (s = window.desktopEvents) || s.send(o.EE.DOWNLOAD_TRACKS, e, t, a);
+                },
+                sendYnisonState = (e) => {
+                    var t;
+                    null == (t = window.desktopEvents) || t.send(o.EE.YNISON_STATE, { rawData: e.rawData });
                 },
                 n = (e) => {
-                    let t = e === l.Sxu.Light ? '#FFFFFF' : '#000000';
-                    window.desktopEvents.send(l.EE.APPLICATION_THEME, t);
+                    let t = e === o.Sxu.Light ? '#FFFFFF' : '#000000';
+                    window.desktopEvents.send(o.EE.APPLICATION_THEME, t);
                 };
             a(99269);
             var r = a(5257),
@@ -344,12 +524,12 @@
                 h = a(92070),
                 p = a(71992),
                 m = a(11908),
-                C = a(42100),
-                v = a(51606),
-                A = a(54690);
-            let E = v.gK.model('TranslationsModel', { data: v.gK.frozen() }),
-                x = v.gK
-                    .model('ReleaseNotes', { modal: A.qt, translations: v.gK.maybeNull(E), sortedDescReleaseNotesKeys: v.gK.maybeNull(v.gK.array(v.gK.string)) })
+                v = a(42100),
+                x = a(51606),
+                C = a(54690);
+            let A = x.gK.model('TranslationsModel', { data: x.gK.frozen() }),
+                g = x.gK
+                    .model('ReleaseNotes', { modal: C.qt, translations: x.gK.maybeNull(A), sortedDescReleaseNotesKeys: x.gK.maybeNull(x.gK.array(x.gK.string)) })
                     .views((e) => ({
                         get isReady() {
                             var t;
@@ -362,13 +542,13 @@
                     }))
                     .actions((e) => ({
                         setSortedDescReleaseNotesKeys: (t) => {
-                            e.sortedDescReleaseNotesKeys = (0, v.wg)(t);
+                            e.sortedDescReleaseNotesKeys = (0, x.wg)(t);
                         },
                         setTranslationsReleaseNotes: (t) => {
-                            t && (e.translations = E.create({ data: t }));
+                            t && (e.translations = A.create({ data: t }));
                         },
                     }));
-            var g = a(35483),
+            var E = a(35483),
                 w = a(3803);
         },
         19404: (e, t, a) => {
@@ -467,8 +647,8 @@
             'use strict';
             a.d(t, { useApplicationUpdate: () => p });
             var s = a(62936),
-                l = a(44020),
-                o = a(47480),
+                o = a(44020),
+                l = a(47480),
                 n = a(42561),
                 r = a(79950),
                 i = a(5099),
@@ -477,12 +657,12 @@
                 u = a(63727),
                 _ = a.n(u);
             let h = (e) => {
-                    let { version: t, formatMessage: a, closeToast: o } = e,
-                        u = (0, l.useCallback)(() => {
+                    let { version: t, formatMessage: a, closeToast: l } = e,
+                        u = (0, o.useCallback)(() => {
                             var e;
-                            null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_UPDATE), null == o || o();
-                        }, [o]),
-                        h = (0, l.useMemo)(
+                            null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_UPDATE);
+                        }, [l]),
+                        h = (0, o.useMemo)(
                             () =>
                                 (0, s.jsxs)('div', {
                                     className: _().message,
@@ -509,17 +689,283 @@
                         );
                     return (0, s.jsx)(c.$W, { className: (0, r.$)(_().root, _().important), message: h });
                 },
+                modUpdateToast = (e) => {
+                    let { version: t, formatMessage: a, closeToast: l } = e,
+                        [u, p] = (0, o.useState)(-1),
+                        h = (0, o.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(n.EE.INSTALL_MOD_UPDATE), null == l || l();
+                        }, [l]),
+                        m = (0, o.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(n.EE.DOWNLOAD_MOD_UPDATE);
+                        }, []),
+                        b = (e) => {
+                            let t = a({ id: 'offline.download' });
+                            return e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Установить'), t;
+                        },
+                        P = (0, o.useMemo)(
+                            () =>
+                                (0, s.jsxs)('div', {
+                                    className: _().message,
+                                    children: [
+                                        (0, s.jsx)(d.Caption, {
+                                            className: _().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: a({ id: 'desktop.on-mod-update-available' }, { version: t }),
+                                        }),
+                                        (0, s.jsx)(i.$, {
+                                            className: _().button,
+                                            onClick: u <= 100 ? m : h,
+                                            variant: 'default',
+                                            color: 'secondary',
+                                            size: 'xs',
+                                            radius: 'xxxl',
+                                            disabled: u <= 100 && u >= 0,
+                                            children: (0, s.jsx)(d.Caption, { variant: 'div', type: 'controls', size: 'm', children: b(u) }),
+                                        }),
+                                    ],
+                                }),
+                            [a, h, t, u, m],
+                        ),
+                        C = (0, o.useCallback)((e, t, a, s = 0) => {
+                            if ('modUpdateToast' !== t) return;
+                            if (window.dedupeNonces && window.dedupeNonces[t] === s) return;
+                            window.dedupeNonces || (window.dedupeNonces = {}), s && (window.dedupeNonces[t] = s), p(a);
+                        }, []);
+                    return (
+                        (0, o.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(n.EE.PROGRESS_BAR_CHANGE, C),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(n.EE.PROGRESS_BAR_CHANGE, C);
+                                }
+                            );
+                        }, [C]),
+                        (0, o.useEffect)(() => {
+                            let e = () => {
+                                null == l || l();
+                            };
+                            return (
+                                window.desktopEvents?.on(n.EE.MOD_UPDATE_AVAILABLE, e),
+                                () => {
+                                    window.desktopEvents?.off?.(n.EE.MOD_UPDATE_AVAILABLE, e);
+                                }
+                            );
+                        }, [l]),
+                        (0, s.jsxs)(c.$W, {
+                            className: (0, r.$)(_().root, _().important),
+                            message: P,
+                            children: [
+                                (0, s.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: u + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: u <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
+                    );
+                },
+                toastWithProgress = (e) => {
+                    let { closeToast: t, toastID: a, message: l, buttonLabel: u, onButtonClick: p, disabled: h = !1, dismissOnButtonClick: m = !1 } = e,
+                        [b, P] = (0, o.useState)(-1),
+                        [C, A] = (0, o.useState)('Ожидание...'),
+                        y = '__pulseToastProgressCache',
+                        g = (0, o.useCallback)(() => {
+                            null == p || p(), m && (null == t || t());
+                        }, [m, p, t]),
+                        E = (0, o.useMemo)(
+                            () =>
+                                (0, s.jsxs)('div', {
+                                    className: _().message,
+                                    children: [
+                                        (0, s.jsx)(d.Caption, {
+                                            className: _().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: l.replace('#s', C),
+                                        }),
+                                        u &&
+                                            (0, s.jsx)(i.$, {
+                                                className: _().button,
+                                                onClick: g,
+                                                variant: 'default',
+                                                color: 'secondary',
+                                                size: 'xs',
+                                                radius: 'xxxl',
+                                                disabled: h,
+                                                children: (0, s.jsx)(d.Caption, { variant: 'div', type: 'controls', size: 'm', children: u }),
+                                            }),
+                                    ],
+                                }),
+                            [h, u, l, g, C],
+                        ),
+                        N = (0, o.useCallback)(
+                            (e, t, l, s = 0, o = void 0) => {
+                                if (t !== a) return;
+                                if (window.dedupeNonces && window.dedupeNonces[t] === s) return;
+                                window.dedupeNonces || (window.dedupeNonces = {}),
+                                    s && (window.dedupeNonces[t] = s),
+                                    window[y] || (window[y] = {}),
+                                    (window[y][t] = { progress: l, label: o }),
+                                    P(l),
+                                    o && A(o);
+                            },
+                            [a],
+                        ),
+                        f = (0, o.useCallback)(
+                            (e, l, s = 0) => {
+                                if (window['onBasicToastDismiss' + a] === s) return;
+                                s && (window['onBasicToastDismiss' + a] = s), l === a && (window[y] && delete window[y][a], null == t || t());
+                            },
+                            [t, a],
+                        );
+                    return (
+                        (0, o.useEffect)(() => {
+                            let e = window[y] && window[y][a];
+                            e && (P(e.progress), e.label && A(e.label));
+                            return () => {
+                                window[y] && delete window[y][a];
+                            };
+                        }, [a]),
+                        (0, o.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(n.EE.PROGRESS_BAR_CHANGE, N),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(n.EE.PROGRESS_BAR_CHANGE, N);
+                                }
+                            );
+                        }, [N]),
+                        (0, o.useEffect)(() => {
+                            var e;
+                            return (
+                                null == (e = window.desktopEvents) || e.on(n.EE.BASIC_TOAST_DISMISS, f),
+                                () => {
+                                    var e;
+                                    null == (e = window.desktopEvents) || e.off(n.EE.BASIC_TOAST_DISMISS, f);
+                                }
+                            );
+                        }, [f]),
+                        (0, s.jsxs)(c.$W, {
+                            className: (0, r.$)(_().root, _().important),
+                            message: E,
+                            children: [
+                                (0, s.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: b + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: b <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
+                    );
+                },
                 p = () => {
-                    let { formatMessage: e } = (0, o.A)(),
+                    let { formatMessage: e } = (0, l.A)(),
                         { notify: t } = (0, n.lkh)(),
-                        a = (0, l.useRef)(''),
-                        r = (0, l.useCallback)(
-                            (l, o) => {
-                                a.current !== o && ((a.current = o), t((0, s.jsx)(h, { formatMessage: e, version: o }), { containerId: n.uQT.IMPORTANT }));
+                        { notify: modUpdateNotify, dismiss: modUpdateDismiss } = (0, n.lkh)(),
+                        { notify: gpuStallNotify } = (0, n.lkh)(),
+                        { notify: appStallNotify } = (0, n.lkh)(),
+                        { notify: basicToastNotify } = (0, n.lkh)(),
+                        a = (0, o.useRef)(''),
+                        r = (0, o.useCallback)(
+                            (o, l) => {
+                                a.current !== l && ((a.current = l), t((0, s.jsx)(h, { formatMessage: e, version: l }), { containerId: n.uQT.IMPORTANT }));
                             },
                             [e, a, t],
+                        ),
+                        w = (0, o.useCallback)(
+                            (t, o, r, l = 0) => {
+                                if (window.modUpdateAvailableEventDedupeNonce === l) return;
+                                l && (window.modUpdateAvailableEventDedupeNonce = l),
+                                    modUpdateNotify((0, s.jsx)(modUpdateToast, { formatMessage: e, version: `${o} -> ${r}`, closeToast: modUpdateDismiss }), {
+                                        containerId: n.uQT.IMPORTANT,
+                                    });
+                            },
+                            [e, modUpdateNotify, modUpdateDismiss],
+                        ),
+                        N = (0, o.useCallback)(() => {
+                            window.desktopEvents?.send(n.EE.APPLICATION_RESTART);
+                        }, []),
+                        f = (0, o.useCallback)(
+                            (e, t = 'GPU_STALL', a = 0) => {
+                                if (window.onGPUStallEventDedupeNonce === a) return;
+                                a && (window.onGPUStallEventDedupeNonce = a),
+                                    gpuStallNotify(
+                                        (0, s.jsx)(toastWithProgress, {
+                                            toastID: 'GPU_STALL',
+                                            message: `Аппаратное ускорение отключилось: ${t}`,
+                                            buttonLabel: 'Исправить',
+                                            onButtonClick: N,
+                                        }),
+                                        { containerId: n.uQT.IMPORTANT },
+                                    );
+                            },
+                            [gpuStallNotify, N],
+                        ),
+                        k = (0, o.useCallback)(() => {
+                            window.desktopEvents?.send(n.EE.APP_STALL_CANCEL_RESTART);
+                        }, []),
+                        b = (0, o.useCallback)(
+                            (e, t = 0) => {
+                                if (window.onAppStallStallDedupeNonce === t) return;
+                                t && (window.onAppStallStallDedupeNonce = t),
+                                    appStallNotify(
+                                        (0, s.jsx)(toastWithProgress, {
+                                            toastID: 'safeModeRestart',
+                                            message: 'Плеер запускается слишком долго. Перезагрузка в безопасном режиме через #s',
+                                            buttonLabel: 'Отменить',
+                                            onButtonClick: k,
+                                            dismissOnButtonClick: !0,
+                                        }),
+                                        { containerId: n.uQT.IMPORTANT },
+                                    );
+                            },
+                            [appStallNotify, k],
+                        ),
+                        P = (0, o.useCallback)(
+                            (e, t, a, o, r = 0) => {
+                                if (window['onBasicToastCreate' + t] === r) return;
+                                r && (window['onBasicToastCreate' + t] = r),
+                                    basicToastNotify(
+                                        (0, s.jsx)(toastWithProgress, {
+                                            toastID: t,
+                                            message: a,
+                                            buttonLabel: o || void 0,
+                                            dismissOnButtonClick: !!o,
+                                        }),
+                                        { containerId: n.uQT.IMPORTANT },
+                                    );
+                            },
+                            [basicToastNotify],
                         );
-                    (0, l.useEffect)(() => {
+                    (0, o.useEffect)(() => {
                         var e;
                         return (
                             null == (e = window.desktopEvents) || e.on(n.EE.UPDATE_AVAILABLE, r),
@@ -529,6 +975,46 @@
                             }
                         );
                     }, [r]);
+                    (0, o.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(n.EE.BASIC_TOAST_CREATE, P),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(n.EE.BASIC_TOAST_CREATE, P);
+                            }
+                        );
+                    }, [P]);
+                    (0, o.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(n.EE.MOD_UPDATE_AVAILABLE, w),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(n.EE.MOD_UPDATE_AVAILABLE, w);
+                            }
+                        );
+                    }, [w]);
+                    (0, o.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(n.EE.GPU_STALL, f),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(n.EE.GPU_STALL, f);
+                            }
+                        );
+                    }, [f]);
+                    (0, o.useEffect)(() => {
+                        var e;
+                        return (
+                            null == (e = window.desktopEvents) || e.on(n.EE.APP_STALL, b),
+                            () => {
+                                var e;
+                                null == (e = window.desktopEvents) || e.off(n.EE.APP_STALL, b);
+                            }
+                        );
+                    }, [b]);
                 };
         },
         22029: (e) => {
@@ -852,47 +1338,143 @@
             'use strict';
             a.d(t, { useSendPlayerState: () => r });
             var s = a(44020),
-                l = a(59935),
-                o = a(46663),
+                o = a(59935),
+                l = a(46663),
                 n = a(42561);
             let r = (e) => {
                 let { sonata: t } = e,
-                    a = (0, l.c)((e) => {
+                    a = (0, o.c)((e) => {
                         var t;
-                        let { isPlaying: a, canMoveBackward: s, canMoveForward: l } = e;
-                        null == (t = window.desktopEvents) || t.send(n.EE.PLAYER_STATE, { isPlaying: a, canMoveBackward: s, canMoveForward: l });
-                    });
+                        let { isPlaying: a, canMoveBackward: s, canMoveForward: o } = e;
+                        null == (t = window.desktopEvents) ||
+                            t.send(n.EE.PLAYER_STATE, {
+                                isPlaying: a,
+                                canMoveBackward: s,
+                                canMoveForward: o,
+                                status: e.status,
+                                track: e.track,
+                                progress: e.progress,
+                                availableActions: e.availableActions,
+                                actionsStore: e.actionsStore,
+                                previousTrack: e.previousTrack,
+                                nextTrack: e.nextTrack,
+                                volume: e.volume,
+                            });
+                    }),
+                    r = (e) => {
+                        let t = e?.state?.queueState?.index?.value ?? 0,
+                            a = e?.state?.queueState?.order?.value,
+                            s = e?.state?.queueState?.entityList?.value,
+                            o = t - 1 >= 0 ? (a?.[t - 1] ?? t - 1) : null,
+                            l = t + 1 >= 0 ? (a?.[t + 1] ?? t + 1) : null;
+                        return {
+                            previousTrack: null == o ? void 0 : s?.[o]?.entity?.entityData?.meta,
+                            nextTrack: null == l ? void 0 : s?.[l]?.entity?.entityData?.meta,
+                        };
+                    },
+                    i = (e, t) => {
+                        let { previousTrack: s, nextTrack: o } = r(e);
+                        a({
+                            status: t,
+                            isPlaying: t === l.MT.PLAYING,
+                            canMoveForward: e?.state?.currentContext?.value?.availableActions.moveForward.value,
+                            canMoveBackward: e?.state?.currentContext?.value?.availableActions.moveBackward.value,
+                            track: e?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta,
+                            progress: e?.state?.playerState?.progress?.value,
+                            availableActions: {
+                                moveBackward: e?.state?.currentContext?.value?.availableActions.moveBackward.value,
+                                moveForward: e?.state?.currentContext?.value?.availableActions.moveForward.value,
+                                repeat: e?.state?.currentContext?.value?.availableActions.repeat?.value,
+                                shuffle: e?.state?.currentContext?.value?.availableActions.shuffle?.value,
+                                speed: e?.state?.currentContext?.value?.availableActions.speed?.value,
+                            },
+                            actionsStore: {
+                                repeat: e?.state?.queueState?.repeat?.value,
+                                shuffle: e?.state?.queueState?.shuffle?.value,
+                                isLiked: !!e?.state?.queueState?.currentEntity?.value?.entity?.likeStore?.isTrackLiked?.(
+                                    e?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta?.id,
+                                ),
+                                isDisliked: !!e?.state?.queueState?.currentEntity?.value?.entity?.likeStore?.isTrackDisliked?.(
+                                    e?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta?.id,
+                                ),
+                            },
+                            previousTrack: s,
+                            nextTrack: o,
+                            volume: e?.state?.playerState?.exponentVolume?.value,
+                        });
+                    };
                 (0, s.useEffect)(() => {
+                    t && window.pulsesyncApi?.setPlayerInstance?.(t);
                     let e,
-                        s,
-                        l =
+                        a,
+                        s =
                             null == t
                                 ? void 0
                                 : t.state.playerState.status.onChange((e) => {
-                                      e && a({ isPlaying: e === o.MT.PLAYING });
+                                      e && i(t, e);
                                   }),
-                        n =
+                        o = t?.state?.queueState?.currentEntity?.onChange((e) => {
+                            e && i(t, l.MT.PLAYING);
+                        }),
+                        r = t?.state?.playerState?.event?.onChange(() => {
+                            let e = t?.state?.playerState?.event?.value;
+                            ('SET_PROGRESS' === e || e === l.Iu?.SET_PROGRESS) && i(t, t?.state?.playerState?.status?.value);
+                        }),
+                        d = t?.state?.queueState?.entityList?.onChange(() => {
+                            i(t, t?.state?.playerState?.status?.value);
+                        }),
+                        c = t?.state?.currentContext?.value?.availableActions.repeat?.onChange(() => {
+                            i(t, t?.state?.playerState?.status?.value);
+                        }),
+                        u = t?.state?.currentContext?.value?.availableActions.shuffle?.onChange(() => {
+                            i(t, t?.state?.playerState?.status?.value);
+                        }),
+                        _ = t?.state?.queueState?.repeat?.onChange(() => {
+                            i(t, t?.state?.playerState?.status?.value);
+                        }),
+                        h = t?.state?.queueState?.shuffle?.onChange(() => {
+                            i(t, t?.state?.playerState?.status?.value);
+                        }),
+                        p = t?.state?.playerState?.exponentVolume?.onChange(() => {
+                            i(t, t?.state?.playerState?.status?.value);
+                        }),
+                        m = window.desktopEvents?.on(n.EE.GET_CURRENT_TRACK, () => {
+                            i(t, t?.state?.playerState?.status?.value);
+                        }),
+                        v =
                             null == t
                                 ? void 0
                                 : t.state.currentContext.onChange(() => {
-                                      var l, o;
+                                      var s, o;
                                       null == e || e(),
-                                          null == s || s(),
+                                          null == a || a(),
                                           (e =
-                                              null == t || null == (l = t.state.currentContext.value)
+                                              null == t || null == (s = t.state.currentContext.value)
                                                   ? void 0
-                                                  : l.availableActions.moveBackward.onChange((e) => {
-                                                        a({ canMoveBackward: !!e });
+                                                  : s.availableActions.moveBackward.onChange(() => {
+                                                        i(t, t?.state?.playerState?.status?.value);
                                                     })),
-                                          (s =
+                                          (a =
                                               null == t || null == (o = t.state.currentContext.value)
                                                   ? void 0
-                                                  : o.availableActions.moveForward.onChange((e) => {
-                                                        a({ canMoveForward: !!e });
+                                                  : o.availableActions.moveForward.onChange(() => {
+                                                        i(t, t?.state?.playerState?.status?.value);
                                                     }));
                                   });
                     return () => {
-                        null == l || l(), null == n || n(), null == s || s(), null == s || s();
+                        null == s || s(),
+                            null == v || v(),
+                            null == o || o(),
+                            null == m || m(),
+                            null == r || r(),
+                            null == d || d(),
+                            null == c || c(),
+                            null == u || u(),
+                            null == _ || _(),
+                            null == h || h(),
+                            null == p || p(),
+                            null == a || a(),
+                            null == a || a();
                     };
                 }, [a, null == t ? void 0 : t.state.currentContext, null == t ? void 0 : t.state.playerState.status]);
             };
