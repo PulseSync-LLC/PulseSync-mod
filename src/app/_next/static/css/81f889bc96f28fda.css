@@ -2006,6 +2006,11 @@
 }
 .NaZE1NCUxSM1MvpZuLJV {
     background-color: var(--ym-background-color-primary-enabled-overlay);
+    transition: opacity 0.3s;
+
+    @starting-style {
+        opacity: 0;
+    }
 }
 .wEOFUiLOfluq86BrDUfg {
     align-items: flex-start;
