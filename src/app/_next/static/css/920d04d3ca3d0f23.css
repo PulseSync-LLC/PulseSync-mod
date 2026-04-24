@@ -38,6 +38,8 @@
     min-width: 7.875rem;
 }
 .NotificationUpdate_message__rLYpW {
+    z-index: 2;
+    position: relative;
     align-items: center;
     display: flex;
     justify-content: space-between;
@@ -185,6 +187,11 @@
     font-family: var(--ym-font-text);
     font-weight: 100;
     line-height: var(--ym-font-line-height-label-s);
+}
+.ym-light-theme {
+    .TitleBar_pulseText__FhYv {
+        color: rgba(0, 0, 0, 0.29);
+    }
 }
 .UserIcon_root__X0jg9 {
     --user-icon-size: 2.125rem;
