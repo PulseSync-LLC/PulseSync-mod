@@ -15994,7 +15994,7 @@
                 u = r(26782),
                 d = r.n(u);
             let _ = (e) => {
-                let { message: t, closeToast: r, cover: u, coverRadius: _, className: E, coverClassName: T, closeButton: p, withDefaultCloseButton: f = !0 } = e;
+                let { message: t, closeToast: r, cover: u, coverRadius: _, className: E, coverClassName: T, closeButton: p, withDefaultCloseButton: f = !0, children: m } = e;
                 return (0, s.jsxs)(c.Paper, {
                     radius: 'l',
                     className: (0, n.$)(d().root, E),
@@ -16004,6 +16004,7 @@
                             className: (0, n.$)(d().message, { [d().message_withCover]: (0, a.isValidElement)(u) }),
                             ...(0, i.Am)(i.S7.NOTIFICATION_TEXT),
                             children: [
+                                ...(m ? m : []),
                                 (0, a.isValidElement)(u) &&
                                     (0, s.jsx)(c.Paper, {
                                         className: (0, n.$)(d().cover, T),

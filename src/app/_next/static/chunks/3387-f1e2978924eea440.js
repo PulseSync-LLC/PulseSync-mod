@@ -543,7 +543,17 @@
                         (P = eo().rootNewWave_withBarBelow),
                         (D = eo().rootNewWave);
                 }
-                let O = (0, r.$)(p().root, D, { [eo().root_applicationPreserveTitleBar]: b || y, [P]: M, [p().root_withAxeBanner]: j.isVisible }, f),
+                let O = (0, r.$)(
+                        p().root,
+                        D,
+                        {
+                            [eo().root_applicationPreserveTitleBar]: b || y,
+                            [P]: M,
+                            [p().root_withAxeBanner]: j.isVisible,
+                            ['modSettings_alwaysWideBar']: window.ALWAYS_WIDE_BAR?.(),
+                        },
+                        f,
+                    ),
                     S = (0, l.L)(() => {
                         if (k && m)
                             return T.checkExperiment(h.zal.WebNextShaderFallbackEnabled, 'on')

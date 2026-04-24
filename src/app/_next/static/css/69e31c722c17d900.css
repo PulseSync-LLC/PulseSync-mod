@@ -1819,6 +1819,12 @@ button.ImageSliderModal_slider__gDVWR .swiper-pagination-bullet {
     initial-value: #000;
     inherits: false;
 }
+.modSettings_alwaysWideBar {
+    grid-template:
+        'navbar content' minmax(auto, calc(100% - var(--player-bar-height) - var(--ym-spacer-size-m)))
+        'playerbar playerbar' auto
+        'barBelow barBelow' auto / auto 1fr !important;
+}
 .DefaultLayout_root__7J0wo {
     grid-template: 'navbar content' 1fr 'navbar playerbar' auto 'navbar barBelow' auto/auto 1fr;
     transition: grid-template var(--ym-duration-transition);

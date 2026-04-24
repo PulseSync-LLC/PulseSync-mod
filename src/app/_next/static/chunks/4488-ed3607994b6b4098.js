@@ -3981,20 +3981,22 @@
             class tu {
                 connectNodes() {
                     let { useAnalyser: e, useGain: t } = this.config;
-                    t && e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t && !e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
-                        !t && e && (this.sourceNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t || e || this.sourceNode.connect(this.context.destination);
+                    this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode),
+                        e && this.analyserNode.connect(this.r128GainNode),
+                        t && (this.r128GainNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
+                        !t && this.r128GainNode.connect(this.context.destination);
                 }
                 connectEqualizer() {
                     let { useAnalyser: e, useGain: t } = this.config,
                         a = this.bands[this.bands.length - 1];
                     a &&
                         (this.sourceNode.disconnect(),
+                        this.r128GainNode.disconnect(),
                         this.sourceNode.connect(this.preamp),
-                        t && a.connect(this.gainNode),
-                        !t && e && a.connect(this.analyserNode),
-                        t || e || a.connect(this.context.destination));
+                        a.connect(e ? this.analyserNode : this.r128GainNode),
+                        e && this.analyserNode.connect(this.r128GainNode),
+                        t && (this.r128GainNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
+                        !t && this.r128GainNode.connect(this.context.destination));
                 }
                 disconnectEqualizer() {
                     let { useAnalyser: e, useGain: t } = this.config,
@@ -4002,9 +4004,26 @@
                     a &&
                         (this.sourceNode.disconnect(),
                         a.disconnect(),
-                        t && this.sourceNode.connect(this.gainNode),
-                        !t && e && this.sourceNode.connect(this.analyserNode),
-                        t || e || this.sourceNode.connect(this.context.destination));
+                        this.r128GainNode.disconnect(),
+                        this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode),
+                        e && this.analyserNode.connect(this.r128GainNode),
+                        t && (this.r128GainNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
+                        !t && this.r128GainNode.connect(this.context.destination));
+                }
+                setR128Gain(e, t) {
+                    let a = -23,
+                        i = null == window || null == window.nativeSettings ? void 0 : window.nativeSettings.get('modSettings.r128Normalization'),
+                        r = null != e ? e : this.lastR128,
+                        s = Number(null == r ? void 0 : r.i),
+                        l = 'boolean' == typeof t ? t : i;
+                    null != e && (this.lastR128 = e);
+                    if (!1 === l) return void this.r128GainNode.gain.setValueAtTime(1, this.context.currentTime);
+                    if (!Number.isFinite(s)) return void this.r128GainNode.gain.setValueAtTime(1, this.context.currentTime);
+                    let n = Number(null == r ? void 0 : r.tp),
+                        d = a - s;
+                    Number.isFinite(n) && (d = Math.min(d, -n));
+                    let c = Math.pow(10, d / 20);
+                    (Number.isFinite(c) && c > 0) || (c = 1), this.r128GainNode.gain.setValueAtTime(c, this.context.currentTime);
                 }
                 setBands(e) {
                     0 === this.bands.length ? (this.bands = this.connectBandsBetween(this.createBandsByFrequencies(e))) : this.updateBands(e);
@@ -4067,6 +4086,8 @@
                         (0, W._)(this, 'bufferLength', 0),
                         (0, W._)(this, 'spectrum', new Uint8Array()),
                         (0, W._)(this, 'gainNode', void 0),
+                        (0, W._)(this, 'r128GainNode', void 0),
+                        (0, W._)(this, 'lastR128', null),
                         (0, W._)(this, 'config', void 0),
                         (this.audioElement = e),
                         (this.context = new AudioContext()),
@@ -4076,6 +4097,7 @@
                         (this.bufferLength = this.analyserNode.frequencyBinCount),
                         (this.spectrum = new Uint8Array(this.bufferLength)),
                         (this.gainNode = this.context.createGain()),
+                        (this.r128GainNode = this.context.createGain()),
                         (this.preamp = this.context.createGain()),
                         (this.config = t),
                         this.connectNodes();
@@ -4135,6 +4157,13 @@
                                     ((i = null == (t = o.data.meta.smartPreviewParams) ? void 0 : t.fade),
                                     (s = null == (r = o.data.meta.smartPreviewParams) ? void 0 : r.durationMs)),
                                 (0, eL.b)(o) && ((i = o.data.meta.fade), (s = o.data.meta.durationMs)),
+                                this.graphs.forEach((e) => {
+                                    var t;
+                                    let i = null == (t = a.state.mediaPlayersStore.value[Q.e.AUDIO]) ? void 0 : t.currentAudioElement.value,
+                                        r = null == o ? void 0 : o.data.meta.r128,
+                                        n = !r && eI(o) ? { i: 0, tp: 0 } : r;
+                                    (!i || e.audioElement === i) && e.setR128Gain(n);
+                                }),
                                 this.fade && this.fade.apply(i),
                                 this.smartPreview && this.smartPreview.apply(s),
                                 Promise.resolve()
@@ -5729,7 +5758,10 @@
                     );
                 }
                 updateMetadata(e) {
-                    if (!e) return null;
+                    if (!e) {
+                        window.navigator.mediaSession.metadata = null;
+                        return;
+                    }
                     let t = this.prepareMetadata(e);
                     return (window.navigator.mediaSession.metadata = null), (window.navigator.mediaSession.metadata = new MediaMetadata(t)), t;
                 }
@@ -5768,6 +5800,14 @@
                 }
                 handlePlayerEvents(e) {
                     let t, a;
+                    e.state.currentMediaPlayer?.onChange((currentPlayer) => {
+                        currentPlayer?.isCrossing.onChange((isCrossing) => {
+                            if (!isCrossing) {
+                                this.updateMetadata();
+                                this.updateMetadata(e.state.queueState.currentEntity.value?.entity.data.meta);
+                            }
+                        });
+                    });
                     e.state.queueState.currentEntity.onChange(() => {
                         this.updateCurrentEntityMetadata(e), this.updatePositionState(e);
                     }),
@@ -5777,6 +5817,7 @@
                         this.subscribeToCrossfadeEnd(e),
                         e.state.playerState.event.onChange(() => {
                             e.state.playerState.event.value === Y.Iu.UPDATING_PROGRESS &&
+                                !e.state.currentMediaPlayer?.value.isCrossing?.value &&
                                 (this.updateCurrentEntityMetadata(e),
                                 this.updatePositionState(e),
                                 aE.forEach((t) => {
@@ -6903,8 +6944,32 @@
                     o = rl(void 0 !== n ? r.get(n) : void 0, i);
                 return { type: Y.z4.Unloaded, meta: { id: a.playable_id, albumId: a.album_id_optional }, wasPlayed: s, sourceContextData: o };
             }
+            window.onRemoteDeviceConnected = [];
+            window.onRemoteDeviceDisconnected = [];
             class rc {
                 onYnisonStateUpdated(e) {
+                    const isRemoteControlEnabled = window.ENABLE_YNISON_REMOTE_CONTROL;
+                    const allowedStatuses1 = [Y.MT.ENDED, Y.MT.IDLE, Y.MT.PAUSED, Y.MT.STOPPED, Y.MT.MEDIA_ELEMENT_ERROR];
+                    const allowedStatuses2 = [Y.MT.ENDED, Y.MT.IDLE, Y.MT.STOPPED, Y.MT.MEDIA_ELEMENT_ERROR];
+                    const current_device_id = JSON.parse(localStorage.getItem('ynisonDeviceId'))?.value;
+                    const currentStatus = this.playback.state.playerState.status.value;
+                    const shouldApplyState = this.variables.shouldApplyState;
+                    const isDeviceMatch = e.state.active_device_id_optional === current_device_id;
+                    const selfStateDuped = e.state.player_state.status.version.device_id === current_device_id;
+                    if (
+                        isRemoteControlEnabled
+                            ? shouldApplyState && ((!selfStateDuped && isDeviceMatch) || allowedStatuses2.includes(currentStatus))
+                            : allowedStatuses1.includes(currentStatus) && shouldApplyState
+                    ) {
+                        if (isRemoteControlEnabled && !selfStateDuped) {
+                            const currentDevice = e.state.devices.find((device) => device.info.device_id === e.state.player_state.status.version.device_id);
+                            window.onRemoteDeviceConnected.forEach((listener) => listener(currentDevice));
+                            window.remoteDeviceConnected = true;
+                        }
+                    } else if (isRemoteControlEnabled && !isDeviceMatch) {
+                        window.onRemoteDeviceDisconnected.forEach((listener) => listener());
+                        window.remoteDeviceConnected = false;
+                    }
                     this.variables.shouldApplyState && this.applyYnisonDiff(e);
                 }
                 applyYnisonDiff(e) {
@@ -8807,7 +8872,7 @@
                                     () => {
                                         var t, a;
                                         let r = (null == (a = e.stateController.fullState.diff.player_state) || null == (t = a.status) ? void 0 : t.paused) === !1;
-                                        !e.isActive && r && e.interceptActivity();
+                                        !e.isActive && r && (window?.YNISON_INTERCEPT_PLAYBACK ?? false) && e.interceptActivity();
                                     },
                                     'App',
                                 );
@@ -11432,6 +11497,20 @@
                     buySubscriptionModal: { isOpened: !0 },
                     promoLandingBuySubscriptionModal: {},
                     clearMemoryModal: {},
+                    windowSettingsModal: {},
+                    playerSettingsModal: {},
+                    audioSettingsModal: {},
+                    myVibeSettingsModal: {},
+                    appUpdatesSettingsModal: {},
+                    scrobblersSettingsModal: {},
+                    downloaderSettingsModal: {},
+                    systemSettingsModal: {},
+                    globalShortcutsSettingsModal: {},
+                    myVibeParamsSettingsModal: {},
+                    miniPlayerSettingsModal: {},
+                    ynisonSettingsModal: {},
+                    lrclibSettingsModal: {},
+                    discordRpcSettingsModal: {},
                     imageSliderModal: { modal: {} },
                     artistAboutModal: { loadingState: c.GuX.IDLE, modal: {} },
                     bestRecommedationModal: {},
@@ -12182,107 +12261,108 @@
                         let t = {
                             getData: (0, l.L3)(function* () {
                                 let { dynamicPagesResource: a, modelActionsLogger: r } = (0, l._$)(e);
-                                if (e.loadingState !== c.GuX.PENDING && e.loadingState !== c.GuX.RESOLVE)
-                                    try {
-                                        var s;
-                                        let r;
-                                        if (
-                                            (((e.loadingState = c.GuX.PENDING),
-                                            (s = r =
-                                                e.withTriggersV2
-                                                    ? yield a.getTriggersV2({ anchorIds: Object.values(ey.v) })
-                                                    : yield a.getTriggers({ anchorIds: Object.values(ey.v) })) &&
-                                                s.triggers &&
-                                                Array.isArray(s.triggers) &&
-                                                s.triggers.every(
-                                                    (e) =>
-                                                        !!(
-                                                            e &&
-                                                            'object' == typeof e &&
-                                                            'anchorId' in e &&
-                                                            'triggers' in e &&
-                                                            Array.isArray(e.triggers) &&
-                                                            e.triggers.every(
-                                                                (e) =>
-                                                                    !!(
-                                                                        e &&
-                                                                        'object' == typeof e &&
-                                                                        'screenId' in e &&
-                                                                        'feedbackToken' in e &&
-                                                                        'data' in e &&
-                                                                        'meta' in e
-                                                                    ),
-                                                            )
-                                                        ),
-                                                ))
-                                                ? (e.list = ((e) => {
-                                                      let t = [],
-                                                          a = [];
-                                                      return (
-                                                          e.triggers.forEach((e) => {
-                                                              var r;
-                                                              switch (null == (r = e.triggers[0]) ? void 0 : r.meta.notificationId) {
-                                                                  case i.BAR_BELOW:
-                                                                      return void e.triggers.forEach((e) => {
-                                                                          t.push((0, ep.S3)(e));
-                                                                      });
-                                                                  case i.FULLSCREEN:
-                                                                      return void e.triggers.forEach((e) => {
-                                                                          a.push((0, ev.fZ)(e));
-                                                                      });
-                                                              }
-                                                          }),
-                                                          (0, l.wg)({ barBelow: { list: t }, modal: { list: a } })
-                                                      );
-                                                  })(r))
-                                                : r &&
-                                                  r.triggers &&
-                                                  Array.isArray(r.triggers) &&
-                                                  r.triggers.every(
-                                                      (e) =>
-                                                          !!(
-                                                              e &&
-                                                              'object' == typeof e &&
-                                                              'anchorId' in e &&
-                                                              'screenId' in e &&
-                                                              'div' in e &&
-                                                              'meta' in e &&
-                                                              !('triggers' in e)
-                                                          ),
-                                                  ) &&
-                                                  (e.list = ((e) => {
-                                                      let t = [],
-                                                          a = [];
-                                                      return (
-                                                          e.triggers.forEach((e) => {
-                                                              switch (e.meta.notificationId) {
-                                                                  case i.BAR_BELOW:
-                                                                      t.push((0, ep.S3)(e));
-                                                                      return;
-                                                                  case i.FULLSCREEN:
-                                                                      a.push((0, ev.fZ)(e));
-                                                                      return;
-                                                              }
-                                                          }),
-                                                          (0, l.wg)({ barBelow: { list: t }, modal: { list: a } })
-                                                      );
-                                                  })(r)),
-                                            e.loadingState !== c.GuX.IDLE && (e.loadingState = c.GuX.RESOLVE),
-                                            !e.list)
-                                        )
-                                            return;
-                                        let { barBelow: n, modal: o } = e.list;
-                                        n.setAnchorId(ey.v.ON_START_BAR_BELOW),
-                                            n.barBelowItem && (n.show(), t.shown(n.barBelowItem.anchorId, n.barBelowItem.screenId, n.barBelowItem.feedbackToken)),
-                                            o.setAnchorId(ey.v.ON_START_FULLSCREEN),
-                                            o.modalItem && (o.open(), t.shown(o.modalItem.anchorId, o.modalItem.screenId, o.modalItem.feedbackToken));
-                                    } catch (t) {
-                                        r.error(t),
-                                            t instanceof T.GX &&
-                                                (t.statusCode === T.X1.NOT_FOUND || t.statusCode === T.X1.BAD_REQUEST) &&
-                                                (e.errorStatusCode = T.X1.NOT_FOUND),
-                                            e.loadingState !== c.GuX.IDLE && (e.loadingState = c.GuX.REJECT);
-                                    }
+                                return (e.loadingState = c.GuX.RESOLVE);
+                                // if (e.loadingState !== c.GuX.PENDING && e.loadingState !== c.GuX.RESOLVE)
+                                //     try {
+                                //         var s;
+                                //         let r;
+                                //         if (
+                                //             (((e.loadingState = c.GuX.PENDING),
+                                //             (s = r =
+                                //                 e.withTriggersV2
+                                //                     ? yield a.getTriggersV2({ anchorIds: Object.values(ey.v) })
+                                //                     : yield a.getTriggers({ anchorIds: Object.values(ey.v) })) &&
+                                //                 s.triggers &&
+                                //                 Array.isArray(s.triggers) &&
+                                //                 s.triggers.every(
+                                //                     (e) =>
+                                //                         !!(
+                                //                             e &&
+                                //                             'object' == typeof e &&
+                                //                             'anchorId' in e &&
+                                //                             'triggers' in e &&
+                                //                             Array.isArray(e.triggers) &&
+                                //                             e.triggers.every(
+                                //                                 (e) =>
+                                //                                     !!(
+                                //                                         e &&
+                                //                                         'object' == typeof e &&
+                                //                                         'screenId' in e &&
+                                //                                         'feedbackToken' in e &&
+                                //                                         'data' in e &&
+                                //                                         'meta' in e
+                                //                                     ),
+                                //                             )
+                                //                         ),
+                                //                 ))
+                                //                 ? (e.list = ((e) => {
+                                //                       let t = [],
+                                //                           a = [];
+                                //                       return (
+                                //                           e.triggers.forEach((e) => {
+                                //                               var r;
+                                //                               switch (null == (r = e.triggers[0]) ? void 0 : r.meta.notificationId) {
+                                //                                   case i.BAR_BELOW:
+                                //                                       return void e.triggers.forEach((e) => {
+                                //                                           t.push((0, ep.S3)(e));
+                                //                                       });
+                                //                                   case i.FULLSCREEN:
+                                //                                       return void e.triggers.forEach((e) => {
+                                //                                           a.push((0, ev.fZ)(e));
+                                //                                       });
+                                //                               }
+                                //                           }),
+                                //                           (0, l.wg)({ barBelow: { list: t }, modal: { list: a } })
+                                //                       );
+                                //                   })(r))
+                                //                 : r &&
+                                //                   r.triggers &&
+                                //                   Array.isArray(r.triggers) &&
+                                //                   r.triggers.every(
+                                //                       (e) =>
+                                //                           !!(
+                                //                               e &&
+                                //                               'object' == typeof e &&
+                                //                               'anchorId' in e &&
+                                //                               'screenId' in e &&
+                                //                               'div' in e &&
+                                //                               'meta' in e &&
+                                //                               !('triggers' in e)
+                                //                           ),
+                                //                   ) &&
+                                //                   (e.list = ((e) => {
+                                //                       let t = [],
+                                //                           a = [];
+                                //                       return (
+                                //                           e.triggers.forEach((e) => {
+                                //                               switch (e.meta.notificationId) {
+                                //                                   case i.BAR_BELOW:
+                                //                                       t.push((0, ep.S3)(e));
+                                //                                       return;
+                                //                                   case i.FULLSCREEN:
+                                //                                       a.push((0, ev.fZ)(e));
+                                //                                       return;
+                                //                               }
+                                //                           }),
+                                //                           (0, l.wg)({ barBelow: { list: t }, modal: { list: a } })
+                                //                       );
+                                //                   })(r)),
+                                //             e.loadingState !== c.GuX.IDLE && (e.loadingState = c.GuX.RESOLVE),
+                                //             !e.list)
+                                //         )
+                                //             return;
+                                //         let { barBelow: n, modal: o } = e.list;
+                                //         n.setAnchorId(ey.v.ON_START_BAR_BELOW),
+                                //             n.barBelowItem && (n.show(), t.shown(n.barBelowItem.anchorId, n.barBelowItem.screenId, n.barBelowItem.feedbackToken)),
+                                //             o.setAnchorId(ey.v.ON_START_FULLSCREEN),
+                                //             o.modalItem && (o.open(), t.shown(o.modalItem.anchorId, o.modalItem.screenId, o.modalItem.feedbackToken));
+                                //     } catch (t) {
+                                //         r.error(t),
+                                //             t instanceof T.GX &&
+                                //                 (t.statusCode === T.X1.NOT_FOUND || t.statusCode === T.X1.BAD_REQUEST) &&
+                                //                 (e.errorStatusCode = T.X1.NOT_FOUND),
+                                //             e.loadingState !== c.GuX.IDLE && (e.loadingState = c.GuX.REJECT);
+                                //     }
                             }),
                             shown: (0, l.L3)(function* (t, a, r) {
                                 let { dynamicPagesResource: i, modelActionsLogger: s } = (0, l._$)(e);
@@ -12320,6 +12400,20 @@
                 overwrittenExperimentsModal: A.qt,
                 buySubscriptionModal: A.qt,
                 clearMemoryModal: A.qt,
+                windowSettingsModal: A.qt,
+                playerSettingsModal: A.qt,
+                audioSettingsModal: A.qt,
+                myVibeSettingsModal: A.qt,
+                appUpdatesSettingsModal: A.qt,
+                scrobblersSettingsModal: A.qt,
+                downloaderSettingsModal: A.qt,
+                systemSettingsModal: A.qt,
+                globalShortcutsSettingsModal: A.qt,
+                myVibeParamsSettingsModal: A.qt,
+                miniPlayerSettingsModal: A.qt,
+                ynisonSettingsModal: A.qt,
+                lrclibSettingsModal: A.qt,
+                discordRpcSettingsModal: A.qt,
                 imageSliderModal: e_.J,
                 promoLandingBuySubscriptionModal: A.qt,
                 artistAboutModal: eb.Xj,

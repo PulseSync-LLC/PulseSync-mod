@@ -723,6 +723,7 @@
                 });
             var j = l(53030),
                 N = l(51384),
+                Tooltip = l(85906),
                 K = l.n(N);
             let B = (e) => {
                     let { minValue: a, maxValue: l, className: r, label: t, isDisabled: u, onChange: i, value: s, ...n } = e;
@@ -868,20 +869,39 @@
                                                                 n,
                                                             ),
                                                             l = Math.round(10 * e.value) / 10;
-                                                        return (0, m.jsx)(
-                                                            B,
-                                                            {
-                                                                isDisabled: t,
-                                                                minValue: -12,
-                                                                maxValue: 12,
-                                                                value: e.value,
-                                                                label: a,
-                                                                onChange: d(e.key),
-                                                                'aria-label': n({ id: 'equalizer.slider-frequency-label' }, { label: a, value: l }),
-                                                                ...(0, b.Am)(b.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER),
-                                                            },
-                                                            a,
-                                                        );
+                                                        return (0, m.jsx)(Tooltip.hj, {
+                                                            title: `${(l ?? 0).toFixed(1)} dB`,
+                                                            children: (0, m.jsx)('div', {
+                                                                onWheel: (evt) => {
+                                                                    const delta = (evt.deltaY / 1000) * -1;
+                                                                    if (l === undefined) return;
+                                                                    let value = (parseFloat(l) + parseFloat(delta)).toFixed(1);
+                                                                    d(e.key)(Math.min(Math.max(value, -12), 12));
+                                                                },
+                                                                children: (0, m.jsx)(
+                                                                    B,
+                                                                    {
+                                                                        isDisabled: t,
+                                                                        minValue: -12,
+                                                                        maxValue: 12,
+                                                                        value: e.value,
+                                                                        label: a,
+                                                                        onChange: d(e.key),
+                                                                        'aria-label': n(
+                                                                            {
+                                                                                id: 'equalizer.slider-frequency-label',
+                                                                            },
+                                                                            {
+                                                                                label: a,
+                                                                                value: l,
+                                                                            },
+                                                                        ),
+                                                                        ...(0, b.Am)(b.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER),
+                                                                    },
+                                                                    a,
+                                                                ),
+                                                            }),
+                                                        });
                                                     }),
                                                 }),
                                             ],
