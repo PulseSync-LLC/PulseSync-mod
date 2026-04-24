@@ -403,10 +403,10 @@
                                 return (0, A._)(t, s);
                             },
                             getExperiment(i) {
-                                var r;
-                                let s = e.experiments.get(i),
+                                let s = e.overwrittenExperiments.get(i),
+                                    r = e.experiments.get(i),
                                     l = t.getOverwrittenExperiments();
-                                return l && null != (r = l[i]) ? r : s;
+                                return s ?? l?.[i] ?? window?.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES?.()?.[i] ?? r;
                             },
                             isExperimentEnabled(e) {
                                 let i = t.getExperiment(e);
@@ -421,11 +421,11 @@
                                 for (let r of new Set([...e.overwrittenExperiments.keys(), ...e.experiments.keys()]).keys()) t.isExperimentEnabled(r) && i.push(r);
                                 return i;
                             },
-                            checkExperiment(t, i) {
-                                let s = e.experiments.get(t),
-                                    { containerStorage: l, clientSafeConfig: a } = (0, r._$)(e),
-                                    n = a.get(k.yc);
-                                return (0, R.i)({ containerStorage: l, name: t, value: i, experimentDetail: s }, n);
+                            checkExperiment(i, s) {
+                                let h = t.getExperiment(i),
+                                    { containerStorage: a, clientSafeConfig: n } = (0, r._$)(e),
+                                    o = n.get(k.yc);
+                                return (0, R.i)({ containerStorage: a, name: i, value: s, experimentDetail: h }, o);
                             },
                             isRejected: () => e.loadingState === K.G.REJECT,
                         };
