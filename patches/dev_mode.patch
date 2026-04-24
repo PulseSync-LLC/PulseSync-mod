@@ -2,7 +2,7 @@ diff --git "a/app/_next/static/chunks/8740-77dc5d1f132740fd.js" "b/src/app/_next
 index ecc17d4..4716833 100644
 --- "a/app/_next/static/chunks/8740-77dc5d1f132740fd.js"
 +++ "b/src/app/_next/static/chunks/8740-77dc5d1f132740fd.js"
-@@ -21888,81 +21940,191 @@
+@@ -21888,79 +21940,234 @@
                 k = r(21949),
                 h = r(48467),
                 E = r(51862),
@@ -60,16 +60,19 @@ index ecc17d4..4716833 100644
 +                buildExperimentOptions = (e, t) => {
 +                    let r = [UNSET_EXPERIMENT_GROUP_OPTION],
 +                        n = new Set([UNSET_EXPERIMENT_GROUP_VALUE]),
-+                        s =
-+                            'loaded' === (null == e ? void 0 : e.status) && (null == e ? void 0 : e.options) && e.options.length > 0
-+                                ? e.options
-+                                : DEFAULT_EXPERIMENT_GROUP_OPTIONS;
++                        s = [];
 +                    return (
 +                        t && !n.has(t) && (r.push({ value: t, label: t, description: 'Current override' }), n.add(t)),
-+                        s.forEach((e) => {
-+                            n.has(e.value) || (n.add(e.value), r.push(e));
++                        DEFAULT_EXPERIMENT_GROUP_OPTIONS.forEach((e) => {
++                            n.has(e.value) || (n.add(e.value), s.push(e));
 +                        }),
-+                        r
++                        'loaded' === (null == e ? void 0 : e.status) &&
++                            (null == e ? void 0 : e.options) &&
++                            e.options.length > 0 &&
++                            e.options.forEach((e) => {
++                                n.has(e.value) || (n.add(e.value), s.push(e));
++                            }),
++                        r.concat(s)
 +                    );
 +                },
 +                settingBarWithDropdown = (e) => {
@@ -209,12 +212,23 @@ index ecc17d4..4716833 100644
 +                                }),
 +                                (0, n.jsx)('div', {
 +                                    ref: m,
++                                    role: 'button',
++                                    tabIndex: u ? -1 : 0,
 +                                    onClick: () =>
 +                                        x((e) => {
 +                                            if (u) return !1;
 +                                            let t = !e;
 +                                            return t && f && f(), t;
 +                                        }),
++                                    onKeyDown: (e) => {
++                                        if (u) return;
++                                        ('Enter' === e.key || ' ' === e.key) &&
++                                            (e.preventDefault(),
++                                            x((e) => {
++                                                let t = !e;
++                                                return t && f && f(), t;
++                                            }));
++                                    },
 +                                    className: ''.concat(
 +                                        u ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button',
 +                                        ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
@@ -269,19 +283,32 @@ index ecc17d4..4716833 100644
 +                    );
 +                },
 +                j = (0, s.PA)((e) => {
-+                    let { experimentName: t, selectedGroup: r, defaultGroup: a0, optionsState: a, onSelect: o, onOpenDropdown: i } = e,
-+                        c = 'error' === (null == a ? void 0 : a.status),
++                    let { experimentName: t, selectedGroup: r, defaultGroup: a0, optionsState: p0, onSelect: o, onOpenDropdown: i } = e,
++                        [l0, c0] = a.useState(r || UNSET_EXPERIMENT_GROUP_VALUE),
++                        c = 'error' === (null == p0 ? void 0 : p0.status),
 +                        u0 = a0 ? 'С сервера: '.concat(a0) : 'С сервера: отсутствует',
-+                        u = c ? 'Не удалось загрузить варианты. Попробуйте ещё раз. | '.concat(u0) : r ? 'Перепоределено | '.concat(u0) : u0,
-+                        f = buildExperimentOptions(a, r);
-+                    return (0, n.jsx)(settingBarWithDropdown, {
-+                        title: t,
-+                        description: u,
-+                        value: r || UNSET_EXPERIMENT_GROUP_VALUE,
-+                        options: f,
-+                        onChange: (e) => o(t, e),
-+                        onOpen: () => i(t),
-                     });
++                        f0 = r || l0,
++                        u = c
++                            ? 'Не удалось загрузить варианты. Попробуйте ещё раз. | '.concat(u0)
++                            : f0 && f0 !== UNSET_EXPERIMENT_GROUP_VALUE
++                              ? 'Перепоределено | '.concat(u0)
++                              : u0,
++                        f = buildExperimentOptions(p0, f0);
++                    return (
++                        a.useEffect(() => {
++                            c0(r || UNSET_EXPERIMENT_GROUP_VALUE);
++                        }, [r]),
++                        (0, n.jsx)(settingBarWithDropdown, {
++                            title: t,
++                            description: u,
++                            value: f0,
++                            options: f,
++                            onChange: (e) => {
++                                c0(e), o(t, e);
++                            },
++                            onOpen: () => i(t),
++                        })
++                    );
                  }),
                  O = { className: w().closeModalButton },
 @@ -21972,12 +22134,88 @@
@@ -437,7 +464,7 @@ index ecc17d4..4716833 100644
 +                            }),
 +                            (0, n.jsx)('div', {
 +                                className: 'PulseSync_experimentsListScroll',
-+                                style: { flex: '1 1 auto', minHeight: 0, overflowY: 'auto' },
++                                style: { flex: '1 1 auto', minHeight: '16rem', overflowY: 'auto' },
 +                                children: (0, n.jsxs)('ul', {
 +                                    className: w().experimentsList,
 +                                    children: [
@@ -481,7 +508,7 @@ diff --git "a/app/_next/static/css/b7bcbeebb5274a8e.css" "b/src/app/_next/static
 index 0000000..0000000 100644
 --- "a/app/_next/static/css/b7bcbeebb5274a8e.css"
 +++ "b/src/app/_next/static/css/b7bcbeebb5274a8e.css"
-@@ -478,7 +478,79 @@
+@@ -478,12 +478,139 @@
  }
  .OverwrittenExperimentsModal_content__Eki5k::-webkit-scrollbar {
      display: none;
