@@ -1,0 +1,138 @@
+.DonationCard_root__81nc5 {
+    align-items: center;
+    display: flex;
+    padding-block-end: var(--ym-spacer-size-xs);
+    padding-block-start: var(--ym-spacer-size-xs);
+}
+.DonationCard_donation__SlArJ {
+    --donation-cover-size: 9.75rem;
+}
+.DonationCard_cover__Mqb3g {
+    aspect-ratio: 1;
+    cursor: pointer;
+    position: relative;
+    transition: transform var(--ym-duration-transition) ease-in-out;
+    width: var(--donation-cover-size);
+}
+.DonationCard_cover__Mqb3g:hover {
+    transform: scale(1.03);
+}
+.DonationCard_cover__Mqb3g:has(:focus-visible) {
+    transform: scale(1.03);
+}
+@supports not selector(:has(*)) {
+    .DonationCard_cover__Mqb3g:focus-within {
+        transform: scale(1.03);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .DonationCard_cover__Mqb3g {
+        transition: none;
+    }
+}
+.DonationCard_image__xABTn {
+    height: 100%;
+    width: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+    .DonationCard_image__xABTn {
+        transition: none;
+    }
+}
+.DonationCard_container__1xkqs {
+    justify-content: center;
+    max-width: calc(100% - var(--donation-cover-size));
+    row-gap: var(--ym-spacer-size-m);
+    width: 100%;
+}
+.DonationCard_container__1xkqs,
+.DonationCard_text__mdeXx {
+    display: flex;
+    flex-direction: column;
+}
+.DonationCard_text__mdeXx {
+    margin-inline-start: var(--ym-spacer-size-l);
+    row-gap: var(--ym-spacer-size-xxxs);
+}
+.DonationCard_artist__xq4Jw {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    hyphens: auto;
+    overflow-wrap: break-word;
+}
+.DonationCard_goal__6BdcG {
+    color: var(--ym-controls-color-primary-text-enabled);
+    line-height: var(--ym-font-line-height-label-m);
+}
+.DonationCard_label__T_hDw {
+    align-items: center;
+    background-color: var(--ym-controls-color-secondary-default-enabled);
+    border-radius: var(--ym-radius-size-xxxl);
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    display: flex;
+    gap: var(--ym-spacer-size-xxxs);
+    margin-inline-start: var(--ym-spacer-size-m);
+    padding-inline-end: var(--ym-spacer-size-l);
+    padding-inline-start: var(--ym-spacer-size-l);
+    width: -moz-fit-content;
+    width: fit-content;
+}
+.DonationCard_shimmer__cMO7r {
+    align-items: stretch;
+    display: flex;
+}
+.DonationCard_shimmerContainer__9ZH20 {
+    justify-content: center;
+    max-width: calc(100% - var(--donation-cover-size));
+    row-gap: var(--ym-spacer-size-m);
+    width: 100%;
+}
+.DonationCard_shimmerContainer__9ZH20,
+.DonationCard_shimmerText__TrtjR {
+    display: flex;
+    flex-direction: column;
+}
+.DonationCard_shimmerText__TrtjR {
+    margin-inline-start: var(--ym-spacer-size-l);
+    row-gap: var(--ym-spacer-size-xxxs);
+}
+.DonationCard_shimmerCover__U6Rwp {
+    height: var(--donation-cover-size);
+    width: var(--donation-cover-size);
+}
+.DonationCard_shimmerArtist__jRQCV {
+    height: var(--ym-font-line-height-headline-xs);
+    width: 6.25rem;
+}
+.DonationCard_shimmerGoal__UGSTd {
+    height: var(--ym-font-line-height-label-m);
+    width: 9.375rem;
+}
+.DonationCard_shimmerButton__LYfOm {
+    height: 2.5rem;
+    margin-inline-start: var(--ym-spacer-size-m);
+    width: 8.625rem;
+}
+.DonationCarousel_root__Uejjw:hover .DonationCarousel_controls__anVvP {
+    opacity: 1;
+}
+.DonationCarousel_item__89_B6.DonationCarousel_important__Y52Es {
+    max-width: 21.25rem;
+    min-width: 18.75rem;
+    width: 100%;
+}
+@media only screen and (min-width: 1240px) and (max-width: 1550px) {
+    .DonationCarousel_item__89_B6.DonationCarousel_important__Y52Es {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(33.33333% - var(--ym-spacer-size-l) * 2 / 3);
+    }
+}
+@media only screen and (min-width: 1550px) and (max-width: 1920px) {
+    .DonationCarousel_item__89_B6.DonationCarousel_important__Y52Es {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(25% - var(--ym-spacer-size-l) * 3 / 4);
+    }
+}

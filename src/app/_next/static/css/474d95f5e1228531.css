@@ -1,0 +1,176 @@
+.NonMusicCategoryPlaylistsPage_root__NvUH8 {
+    container-name: non-music-category-playlists-page;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+@media only screen and (max-width: 767.98px) {
+    .NonMusicCategoryPlaylistsPage_root__NvUH8 {
+        container-type: normal;
+    }
+}
+.NonMusicCategoryPlaylistsPage_scrollContainer__uUyGe.NonMusicCategoryPlaylistsPage_important__YBsHf {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .NonMusicCategoryPlaylistsPage_scrollContainer__uUyGe.NonMusicCategoryPlaylistsPage_important__YBsHf {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+.NonMusicCategoryPlaylistsPage_footer__TtkEO {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .NonMusicCategoryPlaylistsPage_footer__TtkEO {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .NonMusicCategoryPlaylistsPage_footer__TtkEO {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .NonMusicCategoryPlaylistsPage_footer__TtkEO {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.NonMusicCategoryPlaylistsPage_item__4YasT {
+    display: flex;
+    min-width: 8.75rem;
+}
+.NonMusicCategoryPlaylistsPage_content__GZb1j {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@supports (-moz-appearance: none) {
+    .NonMusicCategoryPlaylistsPage_content__GZb1j {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .NonMusicCategoryPlaylistsPage_content__GZb1j {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .NonMusicCategoryPlaylistsPage_content__GZb1j {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+@media only screen and (min-width: 360px) {
+    .NonMusicCategoryPlaylistsPage_content__GZb1j {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .NonMusicCategoryPlaylistsPage_content__GZb1j {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .NonMusicCategoryPlaylistsPage_content__GZb1j {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .NonMusicCategoryPlaylistsPage_content__GZb1j {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .NonMusicCategoryPlaylistsPage_content__GZb1j {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .NonMusicCategoryPlaylistsPage_content__GZb1j {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container non-music-category-playlists-page (width >= 618px) {
+        .NonMusicCategoryPlaylistsPage_content__GZb1j {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container non-music-category-playlists-page (width >= 815px) {
+        .NonMusicCategoryPlaylistsPage_content__GZb1j {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container non-music-category-playlists-page (width >= 1010px) {
+        .NonMusicCategoryPlaylistsPage_content__GZb1j {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container non-music-category-playlists-page (width >= 1206px) {
+        .NonMusicCategoryPlaylistsPage_content__GZb1j {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .NonMusicCategoryPlaylistsPage_content__GZb1j {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+.NonMusicPage_root__IPKkH {
+    padding: 0;
+}
+.NonMusicPage_content__7_TYy {
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+}
+.NonMusicPage_content__7_TYy,
+.NonMusicPage_header__dijgk {
+    display: flex;
+    justify-content: space-between;
+}
+.NonMusicPage_header__dijgk {
+    align-items: center;
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    width: 100%;
+}
+.NonMusicPage_landing__kGKTh {
+    margin-block-start: var(--subpage-sticky-header-height);
+}
+.NonMusicPage_landing_onlyWizard__P9nN3 {
+    margin-block-start: var(--ym-spacer-size-xxxxl);
+}
+.NonMusicPage_footer__juz5v {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .NonMusicPage_footer__juz5v {
+        padding-inline-end: var(--ym-spacer-size-l);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .NonMusicPage_footer__juz5v {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.NonMusicPage_error__oW0V3 {
+    height: auto;
+    margin-block-start: var(--ym-spacer-size-xxxxl);
+}
