@@ -235,9 +235,9 @@
                     let H = (0, s.c)(() => {
                         if (!(null == F ? void 0 : F.analyser)) return;
                         let [e, t, n] = F.analyser.getAverageFrequencies([
-                            { low: 0, high: 250 },
-                            { low: 500, high: 2e3 },
-                            { low: 2e3, high: 4e3 },
+                            { low: 0, high: 450 },
+                            { low: 400, high: 5e3 },
+                            { low: 5e3, high: 2e4 },
                         ]);
                         null == A || A.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != n ? n : 0 });
                     });
@@ -246,7 +246,7 @@
                         if (!P || A) return;
                         if (!P.transferControlToOffscreen) return void U();
                         let n = P.transferControlToOffscreen(),
-                            i = new g.a6({ offscreenCanvas: n, state: v, collectionHue: R.collectionHue, shaderOptions: void 0, onMessage: D, onError: U });
+                            i = new g.a6({ offscreenCanvas: n, state: v, collectionHue: R.collectionHue, shaderOptions: void 0, fps: window.VIBE_ANIMATION_MAX_FPS?.() ?? 25, onMessage: D, onError: U });
                         M(i), L(new g.Rv(g.p4, H));
                         let r = null == (t = I.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
                             l = R.collectionHue;
