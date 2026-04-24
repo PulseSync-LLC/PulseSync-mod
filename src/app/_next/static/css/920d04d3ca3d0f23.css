@@ -179,6 +179,13 @@
 .TitleBar_closeButton__Epxh7:hover {
     background-color: var(--title-bar-close-button-color);
 }
+.TitleBar_pulseText__FhYv {
+    margin-right: 20px;
+    color: rgba(255, 255, 255, 0.29);
+    font-family: var(--ym-font-text);
+    font-weight: 100;
+    line-height: var(--ym-font-line-height-label-s);
+}
 .UserIcon_root__X0jg9 {
     --user-icon-size: 2.125rem;
     height: 2.125rem;
