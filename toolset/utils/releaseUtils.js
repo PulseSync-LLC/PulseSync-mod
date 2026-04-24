@@ -1,3 +1,5 @@
+const FormData = require('form-data');
+
 function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) {
     const { fs, fsp, path, axios, sevenZip, Octokit, execSync, crypto } = runtime.deps;
     const { DEFAULT_DIST_PATH, TEMP_DIR, PATCH_NOTES_PATH } = runtime.constants;
