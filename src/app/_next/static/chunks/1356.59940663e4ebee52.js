@@ -318,17 +318,22 @@
                     let T = (0, s.c)(() => {
                         if (!(null == w ? void 0 : w.analyser)) return;
                         let [e, t, i] = w.analyser.getAverageFrequencies([
-                            { low: 0, high: 250 },
-                            { low: 500, high: 2e3 },
-                            { low: 2e3, high: 4e3 },
+                            { low: 0, high: 450 },
+                            { low: 400, high: 5e3 },
+                            { low: 5e3, high: 2e4 },
                         ]);
-                        null == c || c.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != i ? i : 0 });
+                        let rms = w.analyser.getRMS(),
+                            rmsAlt = w.analyser.getRMSAlt(),
+                            energy = ((rms + rmsAlt) / 2) * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
+                            energyNormalized = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? energy : (N?.entityMeta?.trackParameters?.energy ?? 1);
+                        null == c || c.updateEnergy(energyNormalized),
+                            null == c || c.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != i ? i : 0 });
                     });
                     (0, a.useEffect)(() => {
                         if (!f || c) return;
                         if (!f.transferControlToOffscreen) return void R();
                         let e = f.transferControlToOffscreen(),
-                            i = new A.a6({ offscreenCanvas: e, state: t, shaderOptions: y, onMessage: M, onError: R });
+                            i = new A.a6({ offscreenCanvas: e, state: t, shaderOptions: y, fps: window.VIBE_ANIMATION_MAX_FPS?.() ?? 25, onMessage: M, onError: R });
                         d(i), k(new A.Rv(A.p4, T)), i.applySettings({ customColors: E({ averageColor: r, isPlaying: N.isPlaying }) });
                     }, [r, f, R, M, k, d, N.isPlaying, T, t, c]);
                     let W = (0, s.c)(() => {
