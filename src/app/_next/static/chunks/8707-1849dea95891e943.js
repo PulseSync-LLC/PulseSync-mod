@@ -1,0 +1,792 @@
+(self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([
+    [8707],
+    {
+        3122: (e, t, a) => {
+            'use strict';
+            a.d(t, { LabelPage: () => P });
+            var l = a(62936),
+                s = a(79950),
+                r = a(19718),
+                i = a(69526),
+                o = a(44020),
+                n = a(47480),
+                u = a(26731),
+                d = a(8669),
+                m = a(59935),
+                c = a(5099),
+                g = a(85742),
+                b = a(14501),
+                p = a(20418),
+                L = a(35085),
+                N = a(65438),
+                h = a(90914),
+                y = a(11334),
+                _ = a(92229),
+                A = a(42561),
+                S = a(85906),
+                f = a(85075),
+                C = a(88452),
+                x = a.n(C);
+            let P = (0, r.PA)((e) => {
+                var t, a, r, C;
+                let { labelId: P, preloadedLabel: v } = e,
+                    {
+                        label: T,
+                        settings: { isMobile: j },
+                    } = (0, A.Pjs)(),
+                    { formatMessage: E } = (0, n.A)(),
+                    { contentScrollRef: R, setContentScrollRef: I } = (0, A.gKY)(),
+                    { notify: w } = (0, A.lkh)(),
+                    { shareLink: X } = (0, A.bNS)('/label/:labelId', { params: { labelId: null != (a = T.id) ? a : '' } }),
+                    U = (0, o.useRef)(null),
+                    B = (0, o.useRef)(0);
+                (0, f.Q)({ id: Number(T.id), name: null != (r = T.name) ? r : '', type: null != (C = T.type) ? C : '' }, f.T.ROOT);
+                let F = (0, m.c)(async () => {
+                        await window.navigator.clipboard.writeText(X),
+                            w((0, l.jsx)(S.Do, { entityVariant: A.Yxq.LABEL, entityTitle: T.name || '' }), { containerId: A.uQT.INFO });
+                    }),
+                    k = (0, o.useMemo)(
+                        () =>
+                            j
+                                ? (0, l.jsx)(c.$, {
+                                      className: x().button,
+                                      onClick: F,
+                                      icon: (0, l.jsx)(g.Icon, { variant: 'share', size: 'xxs' }),
+                                      size: 'l',
+                                      radius: 'xxxl',
+                                      ...(0, d.Am)(d.Xk.label.SHARE_COPY_LINK_BUTTON),
+                                  })
+                                : (0, l.jsx)(c.$, {
+                                      className: x().button,
+                                      onClick: F,
+                                      icon: (0, l.jsx)(g.Icon, { variant: 'share', size: 'xxs' }),
+                                      size: 'l',
+                                      radius: 'xxxl',
+                                      ...(0, d.Am)(d.Xk.label.SHARE_COPY_LINK_BUTTON),
+                                      children: (0, l.jsx)(u.A, { id: 'interface-actions.share' }),
+                                  }),
+                        [j, F],
+                    ),
+                    O = T.isPublisher ? E({ id: 'entity-names.publisher' }) : E({ id: 'entity-names.label' }),
+                    D = T.isPublisher ? E({ id: 'entity-names.non-music-releases' }) : E({ id: 'entity-names.releases' });
+                return ((0, o.useEffect)(
+                    () => () => {
+                        T.reset();
+                    },
+                    [T],
+                ),
+                T.isNotFound && (0, i.notFound)(),
+                (0, o.useEffect)(
+                    () => () => {
+                        B.current = 0;
+                    },
+                    [T],
+                ),
+                (0, o.useEffect)(() => {
+                    T.isRejected &&
+                        B &&
+                        !(B.current > 0) &&
+                        (w((0, l.jsx)(S.hT, { error: E({ id: 'error-messages.error-load-part-page' }) }), { containerId: A.uQT.ERROR }), B.current++);
+                }, [T.isRejected, w, E]),
+                (0, A.Jzs)(T.isResolved),
+                T.isNeededToLoad && (0, o.use)(T.getData({ labelId: Number(P), preloadedLabel: v })),
+                T.isRejected && !T.isNotFound)
+                    ? (0, l.jsx)(N.w, {})
+                    : (0, l.jsx)(A.nVz, {
+                          pageId: A._Q$.LABEL,
+                          children: (0, l.jsxs)(_.hO, {
+                              scrollElement: R,
+                              children: [
+                                  (0, l.jsx)(S.Y9, { innerHeaderRef: U }),
+                                  (0, l.jsxs)(b.N, {
+                                      className: x().root,
+                                      containerClassName: x().content,
+                                      ref: I,
+                                      ...(0, d.Am)(d.Xk.label.LABEL_PAGE),
+                                      children: [
+                                          (0, l.jsxs)('div', {
+                                              className: x().header,
+                                              children: [
+                                                  (0, l.jsx)(p.Caption, { variant: 'div', type: 'text', size: 'm', weight: 'medium', children: O }),
+                                                  (0, l.jsx)(L.RR, { className: x().title, title: T.name || '', headingVariant: 'h1' }),
+                                                  k,
+                                              ],
+                                          }),
+                                          T.hasAlbums &&
+                                              T.albums &&
+                                              (0, l.jsx)(h.pZ, {
+                                                  isShimmerVisible: T.isLoading,
+                                                  isShimmerActive: !0,
+                                                  className: x().carouselContainer,
+                                                  headerClassName: (0, s.$)(x().carouselBlock, x().carouselBlockHeader),
+                                                  containerClassName: x().carouselBlock,
+                                                  title: D,
+                                                  viewAllActionLink: T.albumsUrl,
+                                                  albums: T.albums,
+                                                  headingVariant: 'h2',
+                                                  ...(0, d.Am)(d.Xk.label.RELEASES_CAROUSEL),
+                                              }),
+                                          T.hasArtists &&
+                                              (0, l.jsx)(S.OY, {
+                                                  isShimmerVisible: T.isLoading,
+                                                  isShimmerActive: !0,
+                                                  headerClassName: (0, s.$)(x().carouselBlockHeader, x().carouselBlock),
+                                                  containerClassName: x().carouselBlock,
+                                                  viewAllActionLink: T.artistsUrl,
+                                                  title: E({ id: 'entity-names.artists' }),
+                                                  headingVariant: 'h2',
+                                                  ...(0, d.Am)(d.Xk.label.ARTISTS_CAROUSEL),
+                                                  children: null == (t = T.artists) ? void 0 : t.map((e) => (0, l.jsx)(y.ao, { artist: e, contentLinesCount: 3 }, e.id)),
+                                              }),
+                                          (0, l.jsx)(S.A, { children: (0, l.jsx)(S.wi, { className: x().footer }) }),
+                                      ],
+                                  }),
+                              ],
+                          }),
+                      });
+            });
+        },
+        9834: (e) => {
+            e.exports = {
+                root: 'LabelArtistsPage_root__smTJJ',
+                scrollContainer: 'LabelArtistsPage_scrollContainer__alDjs',
+                important: 'LabelArtistsPage_important__pOZpi',
+                footer: 'LabelArtistsPage_footer__JU2P3',
+                item: 'LabelArtistsPage_item__kol2m',
+                content: 'LabelArtistsPage_content__4hjcX',
+            };
+        },
+        10969: (e, t, a) => {
+            'use strict';
+            a.d(t, { _: () => s });
+            var l = a(42561);
+            async function s(e, t) {
+                var a, s, r;
+                if (!e) return { title: '', description: '', openGraph: {}, twitter: {}, appLinks: {}, other: {} };
+                let i = await (0, l.WGy)(t.locale),
+                    o = i({ id: 'metadata.label-albums-title' }, { labelName: e.name, labelType: e.type }),
+                    n = i({ id: 'metadata.label-albums-description' }, { labelName: e.name, labelType: e.type });
+                return {
+                    title: o,
+                    description: n,
+                    openGraph: (0, l.i$E)({
+                        ogTitle: o,
+                        ogDescription: n,
+                        fullUrl: null != (a = t.fullUrl) ? a : '',
+                        locale: t.locale,
+                        siteName: i({ id: 'metadata.yandex-music' }),
+                        ogType: 'music.playlist',
+                    }),
+                    twitter: (0, l.HRN)({ cardType: l.WfF.APP, title: o, url: t.url, appName: i({ id: 'metadata.yandex-music' }) }),
+                    appLinks: (0, l.X5i)({
+                        additional: { ...t, url: null != (s = t.url) ? s : '', fullUrl: null != (r = t.fullUrl) ? r : '', host: t.host },
+                        appName: i({ id: 'metadata.yandex-music' }),
+                    }),
+                    alternates: (0, l.SEs)('/label/:labelId/albums', t.tld, { params: { labelId: e.id } }),
+                };
+            }
+        },
+        29276: (e, t, a) => {
+            'use strict';
+            a.d(t, { LabelAlbumsPage: () => A });
+            var l = a(62936),
+                s = a(79950),
+                r = a(19718),
+                i = a(69526),
+                o = a(44020),
+                n = a(47480),
+                u = a(8669),
+                d = a(59935),
+                m = a(20418),
+                c = a(65438),
+                g = a(90914),
+                b = a(92229),
+                p = a(83881),
+                L = a(42561),
+                N = a(85906),
+                h = a(85075),
+                y = a(90026),
+                _ = a.n(y);
+            let A = (0, r.PA)((e) => {
+                let { labelId: t, preloadedLabel: a, preloadedAlbums: r, sortBy: y } = e,
+                    {
+                        label: { id: A, type: S, name: f, albumsSubpage: C, reset: x, isNeededToLoad: P, getData: v, isPublisher: T },
+                        settings: { isMobile: j },
+                    } = (0, L.Pjs)(),
+                    { formatMessage: E } = (0, n.A)(),
+                    { contentScrollRef: R, setContentScrollRef: I } = (0, L.gKY)(),
+                    w = (0, L.W6M)(),
+                    X = T ? E({ id: 'page.label-podcast-header' }, { labelName: f }) : E({ id: 'page.label-albums-header' }, { labelName: f }),
+                    U = (0, d.c)((e) => {
+                        var a;
+                        C.getData({ labelId: Number(t), page: e, pageSize: 20, sortBy: null != (a = C.sort.sortBy) ? a : y });
+                    }),
+                    B = (0, d.c)(() => {
+                        C.reset(), U(0);
+                    });
+                (0, p.y8)({ sortModel: C.sort }),
+                    (0, L.XcE)(C.pagesLoader, U),
+                    (0, o.useEffect)(
+                        () => () => {
+                            x(), C.reset();
+                        },
+                        [x, C],
+                    ),
+                    C.isNotFound && (0, i.notFound)(),
+                    (0, h.Q)({ id: Number(A), name: null != f ? f : '', type: null != S ? S : '' }, h.T.ALBUMS),
+                    (0, L.Jzs)(C.isResolved);
+                let F = (0, o.useMemo)(() => ({ Footer: () => (0, l.jsx)(N.A, { children: (0, l.jsx)(N.wi, { className: _().footer }) }) }), []),
+                    k = E({ id: 'entity-names.label-albums-list' }),
+                    O = [];
+                if (C.isNeededToLoad) {
+                    var D;
+                    let e = C.sort.sortBy === y || void 0 === C.sort.sortBy;
+                    O.push(C.getData({ labelId: Number(t), page: 0, pageSize: 20, preloadedAlbums: e ? r : void 0, sortBy: null != (D = C.sort.sortBy) ? D : y }));
+                }
+                if (
+                    (P && O.push(v({ labelId: Number(t), preloadedLabel: a, withLabelEntities: !1 })),
+                    O.length && (0, o.use)(Promise.allSettled(O)),
+                    C.isRejected && !C.isNotFound)
+                )
+                    return (0, l.jsx)(c.w, {});
+                let G = C.isShimmerVisible ? 20 : C.items.length;
+                return (0, l.jsx)(L.nVz, {
+                    pageId: L._Q$.LABEL_ALBUMS,
+                    children: (0, l.jsx)(b.hO, {
+                        scrollElement: R,
+                        outerTitle: X,
+                        children: (0, l.jsxs)('div', {
+                            className: _().root,
+                            ...(0, u.Am)(u.Xk.label.LABEL_ALBUMS_PAGE),
+                            children: [
+                                (0, l.jsxs)(N.Y9, {
+                                    variant: N.Vw.TEXT,
+                                    withForwardControl: !1,
+                                    withBackwardControl: w.canBack,
+                                    children: [
+                                        (0, l.jsx)(m.Heading, { variant: 'h1', weight: 'bold', size: 'xl', lineClamp: 1, children: X }),
+                                        (0, l.jsx)(p.mi, { sortModel: C.sort, onSort: B }),
+                                    ],
+                                }),
+                                (0, l.jsx)(N.$$, {
+                                    className: (0, s.$)(_().scrollContainer, _().important),
+                                    listClassName: _().content,
+                                    itemClassName: _().item,
+                                    customComponents: F,
+                                    itemContentCallback: (e) => {
+                                        let t = C.items[e],
+                                            a = E({ id: 'loading-messages.entity-is-loading' }, { entityName: E({ id: 'entity-names.album' }) });
+                                        return t
+                                            ? (0, l.jsx)(g.aX, { album: t, contentLinesCount: 4, withAddition: !t.isNonMusic, withLikesCount: t.isNonMusic }, t.id)
+                                            : (0, l.jsx)(N.Vt, { 'aria-label': a, linesCount: 4 });
+                                    },
+                                    totalCount: G,
+                                    onGetDataByPage: U,
+                                    pageSize: 20,
+                                    totalRequests: C.requestsCount,
+                                    handleRef: I,
+                                    context: { listAriaLabel: k },
+                                    isMobileLayout: j,
+                                    useWindowScroll: j,
+                                }),
+                            ],
+                        }),
+                    }),
+                });
+            });
+        },
+        42724: (e, t, a) => {
+            'use strict';
+            a.d(t, { LabelArtistsPage: () => _ });
+            var l = a(62936),
+                s = a(79950),
+                r = a(19718),
+                i = a(69526),
+                o = a(44020),
+                n = a(47480),
+                u = a(8669),
+                d = a(59935),
+                m = a(20418),
+                c = a(65438),
+                g = a(11334),
+                b = a(92229),
+                p = a(42561),
+                L = a(85906),
+                N = a(85075),
+                h = a(9834),
+                y = a.n(h);
+            let _ = (0, r.PA)((e) => {
+                let { labelId: t, preloadedLabel: a, preloadedArtists: r } = e,
+                    {
+                        label: { id: h, name: _, type: A, artistsSubpage: S, reset: f, isNeededToLoad: C, getData: x },
+                        settings: { isMobile: P },
+                    } = (0, p.Pjs)(),
+                    { formatMessage: v } = (0, n.A)(),
+                    { contentScrollRef: T, setContentScrollRef: j } = (0, p.gKY)(),
+                    E = (0, p.W6M)(),
+                    R = v({ id: 'page.label-artists-header' }, { labelName: _ }),
+                    I = (0, d.c)((e) => {
+                        S.getData({ labelId: Number(t), page: e, pageSize: 20 });
+                    });
+                (0, p.XcE)(S.pagesLoader, I),
+                    (0, o.useEffect)(
+                        () => () => {
+                            f(), S.reset();
+                        },
+                        [f, S],
+                    ),
+                    S.isNotFound && (0, i.notFound)(),
+                    (0, N.Q)({ id: Number(h), name: null != _ ? _ : '', type: null != A ? A : '' }, N.T.ARTISTS),
+                    (0, p.Jzs)(S.isResolved);
+                let w = (0, o.useMemo)(() => ({ Footer: () => (0, l.jsx)(L.A, { children: (0, l.jsx)(L.wi, { className: y().footer }) }) }), []),
+                    X = v({ id: 'entity-names.label-artists-list' }),
+                    U = [];
+                if (
+                    (S.isNeededToLoad && U.push(S.getData({ labelId: Number(t), page: 0, pageSize: 20, preloadedArtists: r })),
+                    C && U.push(x({ labelId: Number(t), preloadedLabel: a, withLabelEntities: !1 })),
+                    U.length && (0, o.use)(Promise.allSettled(U)),
+                    S.isRejected && !S.isNotFound)
+                )
+                    return (0, l.jsx)(c.w, {});
+                let B = S.isShimmerVisible ? 20 : S.items.length;
+                return (0, l.jsx)(p.nVz, {
+                    pageId: p._Q$.LABEL_ARTISTS,
+                    children: (0, l.jsx)(b.hO, {
+                        scrollElement: T,
+                        outerTitle: R,
+                        children: (0, l.jsxs)('div', {
+                            className: y().root,
+                            ...(0, u.Am)(u.Xk.label.LABEL_ARTISTS_PAGE),
+                            children: [
+                                (0, l.jsx)(L.Y9, {
+                                    variant: L.Vw.TEXT,
+                                    withForwardControl: !1,
+                                    withBackwardControl: E.canBack,
+                                    className: y().header,
+                                    children: (0, l.jsx)(m.Heading, { variant: 'h1', weight: 'bold', size: 'xl', lineClamp: 1, children: R }),
+                                }),
+                                (0, l.jsx)(L.$$, {
+                                    className: (0, s.$)(y().scrollContainer, y().important),
+                                    listClassName: y().content,
+                                    itemClassName: y().item,
+                                    customComponents: w,
+                                    itemContentCallback: (e) => {
+                                        let t = S.items[e],
+                                            a = v({ id: 'loading-messages.entity-is-loading' }, { entityName: v({ id: 'entity-names.artist' }) });
+                                        return t
+                                            ? (0, l.jsx)(g.ao, { artist: t, contentLinesCount: 4 }, t.id)
+                                            : (0, l.jsx)(L.Vt, { 'aria-label': a, round: !0, centered: !0, linesCount: 4 });
+                                    },
+                                    totalCount: B,
+                                    onGetDataByPage: I,
+                                    pageSize: 20,
+                                    totalRequests: S.requestsCount,
+                                    handleRef: j,
+                                    context: { listAriaLabel: X },
+                                    isMobileLayout: P,
+                                    useWindowScroll: P,
+                                }),
+                            ],
+                        }),
+                    }),
+                });
+            });
+        },
+        59189: (e, t, a) => {
+            'use strict';
+            a.d(t, { I: () => s });
+            var l = a(42561);
+            async function s(e, t) {
+                var a, s, r;
+                if (!e) return { title: '', description: '', openGraph: {}, twitter: {}, appLinks: {}, other: {} };
+                let i = await (0, l.WGy)(t.locale),
+                    o = i({ id: 'metadata.label-title' }, { labelTitle: e.name, labelType: e.type }),
+                    n = i({ id: 'metadata.label-description' }, { labelTitle: e.name, labelType: e.type });
+                return {
+                    title: o,
+                    description: n,
+                    openGraph: (0, l.i$E)({
+                        ogTitle: o,
+                        ogDescription: n,
+                        fullUrl: null != (a = t.fullUrl) ? a : '',
+                        locale: t.locale,
+                        siteName: i({ id: 'metadata.yandex-music' }),
+                        ogType: 'music.playlist',
+                    }),
+                    twitter: (0, l.HRN)({ cardType: l.WfF.APP, title: o, url: t.url, appName: i({ id: 'metadata.yandex-music' }) }),
+                    appLinks: (0, l.X5i)({
+                        additional: { ...t, url: null != (s = t.url) ? s : '', fullUrl: null != (r = t.fullUrl) ? r : '', host: t.host },
+                        appName: i({ id: 'metadata.yandex-music' }),
+                    }),
+                    alternates: (0, l.SEs)('/label/:labelId', t.tld, { params: { labelId: e.id } }),
+                };
+            }
+        },
+        61831: (e, t, a) => {
+            'use strict';
+            a.d(t, { LabelNotFoundPage: () => r });
+            var l = a(62936),
+                s = a(9939);
+            let r = () => (0, l.jsx)(s.M, {});
+        },
+        68707: (e, t, a) => {
+            'use strict';
+            a.d(t, { oM: () => L.LabelAlbumsPage, ac: () => N.LabelArtistsPage, wg: () => h.LabelPage, X: () => p });
+            var l,
+                s = a(69526),
+                r = a(44020),
+                i = a(42561);
+            (0, r.cache)(async function (e, t) {
+                var a;
+                let l,
+                    r = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : { labelId: Number(e), page: 0, pageSize: 20, sortBy: t };
+                (0, i.LLJ)(e) || (0, s.notFound)();
+                try {
+                    let { container: t, backendHostTld: a, locale: s, host: o, fullUrl: n, isRSC: u, requestUrl: d } = await (0, i.IhE)();
+                    if (u) return { label: void 0, albums: void 0, backendHostTld: a, locale: s, host: o, fullUrl: n, requestUrl: d };
+                    let m = Number(e),
+                        c = t.get(i.PLX),
+                        g = await c.getData({ labelId: m }),
+                        b = await c.getAlbums(r || { labelId: m, page: 0, pageSize: 20 });
+                    l = { label: g, albums: b, backendHostTld: a, locale: s, host: o, fullUrl: n, requestUrl: d };
+                } catch (e) {
+                    return (0, i.tfF)(e, () => ({ label: void 0, albums: void 0, ...(0, i.Bj3)() }));
+                }
+                return (null == (a = l.label) ? void 0 : a.error) === 'not-found' && (0, s.notFound)(), l;
+            }),
+                (0, r.cache)(async (e, t) => {
+                    var a;
+                    let l;
+                    (0, i.LLJ)(e) || (0, s.notFound)();
+                    try {
+                        let { container: a, backendHostTld: s, locale: r, host: o, fullUrl: n, isRSC: u, requestUrl: d } = await (0, i.IhE)();
+                        if (u) return { label: void 0, artists: void 0, backendHostTld: s, locale: r, host: o, fullUrl: n, requestUrl: d };
+                        let m = Number(e),
+                            c = a.get(i.PLX),
+                            g = await c.getData({ labelId: m }),
+                            b = await c.getArtists(t || { labelId: m, page: 0, pageSize: 20 });
+                        l = { label: g, artists: b, backendHostTld: s, locale: r, host: o, fullUrl: n, requestUrl: d };
+                    } catch (e) {
+                        return (0, i.tfF)(e, () => ({ label: void 0, artists: void 0, ...(0, i.Bj3)() }));
+                    }
+                    return (null == (a = l.label) ? void 0 : a.error) === 'not-found' && (0, s.notFound)(), l;
+                }),
+                (0, r.cache)(async (e) => {
+                    var t;
+                    let a;
+                    (0, i.LLJ)(e) || (0, s.notFound)();
+                    try {
+                        let { container: t, backendHostTld: l, locale: s, host: r, fullUrl: o, isRSC: n, requestUrl: u } = await (0, i.IhE)();
+                        if (n) return { label: void 0, backendHostTld: l, locale: s, host: r, fullUrl: o, requestUrl: u };
+                        let d = t.get(i.PLX);
+                        a = { label: await d.getData({ labelId: Number(e) }), backendHostTld: l, locale: s, host: r, fullUrl: o, requestUrl: u };
+                    } catch (e) {
+                        return (0, i.tfF)(e, () => ({ label: void 0, ...(0, i.Bj3)() }));
+                    }
+                    return (null == (t = a.label) ? void 0 : t.error) === 'not-found' && (0, s.notFound)(), a;
+                }),
+                a(10969),
+                a(95453),
+                a(59189);
+            var o = a(51606),
+                n = a(14525);
+            !(function (e) {
+                (e.MUSICAL = 'musical'), (e.PUBLISHER = 'publisher');
+            })(l || (l = {}));
+            var u = a(90914),
+                d = a(81628),
+                m = a(54690),
+                c = a(83881);
+            let g = o.gK
+                    .model('LabelAlbumsPage', { pagesLoader: (0, m.Ij)(u.JC), errorStatusCode: o.gK.maybeNull(o.gK.number), sort: c.wY })
+                    .views((e) => ({
+                        get isShimmerVisible() {
+                            return !e.pagesLoader.isSomePageResolved;
+                        },
+                        get isNeededToLoad() {
+                            return e.pagesLoader.isNeedToMakeInitialRequest;
+                        },
+                        get isRejected() {
+                            return e.pagesLoader.isInitialRequestRejected;
+                        },
+                        get isEmpty() {
+                            return e.pagesLoader.isEmpty;
+                        },
+                        get isResolved() {
+                            return e.pagesLoader.isSomePageResolved;
+                        },
+                        get requestsCount() {
+                            return e.pagesLoader.requestsCount;
+                        },
+                        get items() {
+                            var t;
+                            return null != (t = e.pagesLoader.items) ? t : [];
+                        },
+                        get isNotFound() {
+                            return e.pagesLoader.isInitialRequestRejected && e.errorStatusCode === n.X1.NOT_FOUND;
+                        },
+                    }))
+                    .actions((e) => ({
+                        getData: (0, o.L3)(function* (t) {
+                            let { labelId: a, page: l = 0, pageSize: s = 20, preloadedAlbums: r, sortBy: d } = t,
+                                { labelsResource: m, modelActionsLogger: c } = (0, o._$)(e);
+                            if (e.pagesLoader.isPageNeedToLoad(l))
+                                try {
+                                    e.pagesLoader.setPageState(l, i.GuX.PENDING);
+                                    let t = r;
+                                    t || (t = yield m.getAlbums({ labelId: a, page: l, pageSize: s, sortBy: d }));
+                                    let o = t.albums.map(u.pp);
+                                    e.pagesLoader.setItems(o, { page: l, pager: t.pager });
+                                } catch (t) {
+                                    c.error(t),
+                                        t instanceof n.GX && t.statusCode === n.X1.NOT_FOUND && (e.errorStatusCode = n.X1.NOT_FOUND),
+                                        e.pagesLoader.setItems(null, { responseStatus: i.FlZ.ERROR, page: l });
+                                }
+                        }),
+                        reset() {
+                            e.pagesLoader.reset(), (e.errorStatusCode = null);
+                        },
+                    })),
+                b = o.gK
+                    .model('LabelArtistsPage', { pagesLoader: (0, m.Ij)(d.PK), errorStatusCode: o.gK.maybeNull(o.gK.number) })
+                    .views((e) => ({
+                        get isShimmerVisible() {
+                            return !e.pagesLoader.isSomePageResolved;
+                        },
+                        get isNeededToLoad() {
+                            return e.pagesLoader.isNeedToMakeInitialRequest;
+                        },
+                        get isRejected() {
+                            return e.pagesLoader.isInitialRequestRejected;
+                        },
+                        get isEmpty() {
+                            return e.pagesLoader.isEmpty;
+                        },
+                        get isResolved() {
+                            return e.pagesLoader.isSomePageResolved;
+                        },
+                        get requestsCount() {
+                            return e.pagesLoader.requestsCount;
+                        },
+                        get items() {
+                            var t;
+                            return null != (t = e.pagesLoader.items) ? t : [];
+                        },
+                        get isNotFound() {
+                            return e.pagesLoader.isInitialRequestRejected && e.errorStatusCode === n.X1.NOT_FOUND;
+                        },
+                    }))
+                    .actions((e) => ({
+                        getData: (0, o.L3)(function* (t) {
+                            let { labelId: a, page: l = 0, pageSize: s = 20, preloadedArtists: r } = t,
+                                { labelsResource: u, modelActionsLogger: m } = (0, o._$)(e);
+                            if (e.pagesLoader.isPageNeedToLoad(l))
+                                try {
+                                    e.pagesLoader.setPageState(l, i.GuX.PENDING);
+                                    let t = r;
+                                    t || (t = yield u.getArtists({ labelId: a, page: l, pageSize: s }));
+                                    let o = t.artists.map(d.dM);
+                                    e.pagesLoader.setItems(o, { page: l, pager: t.pager });
+                                } catch (t) {
+                                    m.error(t),
+                                        t instanceof n.GX && t.statusCode === n.X1.NOT_FOUND && (e.errorStatusCode = n.X1.NOT_FOUND),
+                                        e.pagesLoader.setItems(null, { responseStatus: i.FlZ.ERROR, page: l });
+                                }
+                        }),
+                        reset() {
+                            e.pagesLoader.reset(), (e.errorStatusCode = null);
+                        },
+                    })),
+                p = o.gK
+                    .compose(
+                        o.gK.model('LabelPage', {
+                            id: o.gK.maybeNull(o.gK.string),
+                            name: o.gK.maybeNull(o.gK.string),
+                            type: o.gK.maybeNull(o.gK.string),
+                            albums: o.gK.maybeNull(o.gK.array(u.JC)),
+                            albumsSubpage: g,
+                            artistsSubpage: b,
+                            artists: o.gK.maybeNull(o.gK.array(d.PK)),
+                            errorStatusCode: o.gK.maybeNull(o.gK.number),
+                        }),
+                        m.pl,
+                        m.XT,
+                    )
+                    .views((e) => {
+                        let t = {
+                            get isLoading() {
+                                return e.isNeededToLoad || e.loadingState === i.GuX.PENDING;
+                            },
+                            get hasAlbums() {
+                                return !!(t.isLoading || (e.albums && e.albums.length > 0));
+                            },
+                            get hasArtists() {
+                                if (t.isPublisher) return !1;
+                                return !!(t.isLoading || (e.artists && e.artists.length > 0));
+                            },
+                            get isNotFound() {
+                                let a = e.isResolved && !e.name && !t.hasAlbums && !t.hasArtists,
+                                    l = e.errorStatusCode && [n.X1.NOT_FOUND, n.X1.BAD_REQUEST].includes(e.errorStatusCode);
+                                return (e.isRejected && l) || a;
+                            },
+                            get albumsUrl() {
+                                if (!e.id) return '';
+                                let { href: t } = (0, i.uvd)('/label/:labelId/albums', { params: { labelId: e.id } });
+                                return t;
+                            },
+                            get artistsUrl() {
+                                if (!e.id) return '';
+                                let { href: t } = (0, i.uvd)('/label/:labelId/artists', { params: { labelId: e.id } });
+                                return t;
+                            },
+                            get isPublisher() {
+                                return e.type === l.PUBLISHER;
+                            },
+                            get isMusical() {
+                                return e.type === l.MUSICAL;
+                            },
+                        };
+                        return t;
+                    })
+                    .actions((e) => {
+                        let t = {
+                            getAlbums: (0, o.L3)(function* (t) {
+                                let { labelsResource: a, modelActionsLogger: l } = (0, o._$)(e);
+                                try {
+                                    let l = yield a.getAlbums(t);
+                                    e.albums = (0, o.wg)(l.albums.map(u.pp));
+                                } catch (t) {
+                                    l.error(t), t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = n.X1.NOT_FOUND);
+                                }
+                            }),
+                            getArtists: (0, o.L3)(function* (t) {
+                                let { labelsResource: a, modelActionsLogger: l } = (0, o._$)(e);
+                                try {
+                                    let l = yield a.getArtists(t);
+                                    e.artists = (0, o.wg)(l.artists.map(d.dM));
+                                } catch (t) {
+                                    l.error(t), t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = n.X1.NOT_FOUND);
+                                }
+                            }),
+                            getData: (0, o.L3)(function* (a) {
+                                let { labelId: l, preloadedLabel: s, withLabelEntities: r = !0 } = a,
+                                    { labelsResource: u, modelActionsLogger: d } = (0, o._$)(e);
+                                if (e.loadingState !== i.GuX.PENDING)
+                                    try {
+                                        e.loadingState = i.GuX.PENDING;
+                                        let a = s;
+                                        a || (a = yield u.getData({ labelId: l })),
+                                            (e.id = String(a.id)),
+                                            (e.name = a.name),
+                                            (e.type = a.type),
+                                            r && (yield t.getAlbums({ labelId: l, pageSize: 8 }), yield t.getArtists({ labelId: l, pageSize: 8 })),
+                                            (e.loadingState = i.GuX.RESOLVE);
+                                    } catch (t) {
+                                        d.error(t),
+                                            t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = t.statusCode),
+                                            e.loadingState !== i.GuX.IDLE && (e.loadingState = i.GuX.REJECT);
+                                    }
+                            }),
+                            reset() {
+                                (e.loadingState = i.GuX.IDLE),
+                                    (e.id = null),
+                                    (e.name = null),
+                                    (e.type = null),
+                                    (e.errorStatusCode = null),
+                                    e.destroyItems([e.albums, e.artists]);
+                            },
+                        };
+                        return t;
+                    });
+            var L = a(29276),
+                N = a(42724);
+            a(61831);
+            var h = a(3122);
+        },
+        85075: (e, t, a) => {
+            'use strict';
+            a.d(t, { Q: () => u, T: () => n });
+            var l = a(44020),
+                s = a(42561),
+                r = a(10969),
+                i = a(95453),
+                o = a(59189),
+                n = (function (e) {
+                    return (e.ROOT = 'root'), (e.ALBUMS = 'albums'), (e.ARTISTS = 'artists'), e;
+                })({});
+            let u = (e, t) => {
+                (0, l.useEffect)(() => {
+                    switch (t) {
+                        case 'root':
+                            (0, o.I)(e, { fullUrl: null, locale: null, url: null, tld: '', host: '' }).then((e) => {
+                                (0, s.jxB)(e);
+                            });
+                            break;
+                        case 'albums':
+                            (0, r._)(e, { fullUrl: null, locale: null, url: null, tld: '', host: '' }).then((e) => {
+                                (0, s.jxB)(e);
+                            });
+                            break;
+                        case 'artists':
+                            (0, i.M)(e, { fullUrl: null, locale: null, url: null, tld: '', host: '' }).then((e) => {
+                                (0, s.jxB)(e);
+                            });
+                    }
+                }, [null == e ? void 0 : e.id, null == e ? void 0 : e.type, null == e ? void 0 : e.name, t, e]);
+            };
+        },
+        88452: (e) => {
+            e.exports = {
+                root: 'LabelPage_root__jquyP',
+                content: 'LabelPage_content__9st_X',
+                header: 'LabelPage_header__G2xY_',
+                title: 'LabelPage_title__BNxeX',
+                button: 'LabelPage_button__JXw3C',
+                carouselBlock: 'LabelPage_carouselBlock__zPJmW',
+                carouselBlockHeader: 'LabelPage_carouselBlockHeader__dvYqJ',
+                carouselContainer: 'LabelPage_carouselContainer__bRVMp',
+                footer: 'LabelPage_footer__lvKmF',
+            };
+        },
+        90026: (e) => {
+            e.exports = {
+                root: 'LabelAlbumsPage_root__xyWi4',
+                scrollContainer: 'LabelAlbumsPage_scrollContainer__zRUlM',
+                important: 'LabelAlbumsPage_important__s18oL',
+                footer: 'LabelAlbumsPage_footer__dcXFk',
+                item: 'LabelAlbumsPage_item__Qjz9F',
+                content: 'LabelAlbumsPage_content__jOWKZ',
+            };
+        },
+        95453: (e, t, a) => {
+            'use strict';
+            a.d(t, { M: () => s });
+            var l = a(42561);
+            async function s(e, t) {
+                var a, s, r;
+                if (!e) return { title: '', description: '', openGraph: {}, twitter: {}, appLinks: {}, other: {} };
+                let i = await (0, l.WGy)(t.locale),
+                    o = i({ id: 'metadata.label-artists-title' }, { labelName: e.name, labelType: e.type }),
+                    n = i({ id: 'metadata.label-artists-description' }, { labelName: e.name, labelType: e.type });
+                return {
+                    title: o,
+                    description: n,
+                    openGraph: (0, l.i$E)({
+                        ogTitle: o,
+                        ogDescription: n,
+                        fullUrl: null != (a = t.fullUrl) ? a : '',
+                        locale: t.locale,
+                        siteName: i({ id: 'metadata.yandex-music' }),
+                        ogType: 'music.playlist',
+                    }),
+                    twitter: (0, l.HRN)({ cardType: l.WfF.APP, title: o, url: t.url, appName: i({ id: 'metadata.yandex-music' }) }),
+                    appLinks: (0, l.X5i)({
+                        additional: { ...t, url: null != (s = t.url) ? s : '', fullUrl: null != (r = t.fullUrl) ? r : '', host: t.host },
+                        appName: i({ id: 'metadata.yandex-music' }),
+                    }),
+                    alternates: (0, l.SEs)('/label/:labelId/artists', t.tld, { params: { labelId: e.id } }),
+                };
+            }
+        },
+    },
+]);

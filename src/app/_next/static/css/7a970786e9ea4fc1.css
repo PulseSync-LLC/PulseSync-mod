@@ -1,0 +1,51 @@
+.RedAlert_wrapper__rGvGN {
+    background-color: var(--ym-controls-color-accent-default-enabled);
+    border-radius: var(--ym-radius-size-l);
+    height: 5rem;
+    margin-block-start: var(--ym-spacer-size-l);
+    padding-block-end: var(--ym-spacer-size-xs);
+    padding-block-start: var(--ym-spacer-size-xs);
+    padding-inline-end: var(--ym-spacer-size-l);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+.RedAlert_root__1VZOr,
+.RedAlert_wrapper__rGvGN {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.RedAlert_root__1VZOr {
+    --text-color: var(--ym-controls-color-primary-text-enabled_variant);
+    --button-color: var(--ym-controls-color-primary-on_outline-enabled);
+    gap: var(--ym-spacer-size-l);
+}
+.RedAlert_root_light__j7Kr3 {
+    --text-color: #fff;
+    --button-color: #fff;
+}
+@media only screen and (min-width: 960px) {
+    .RedAlert_root__1VZOr {
+        padding-block-end: var(--ym-spacer-size-m);
+        padding-block-start: var(--ym-spacer-size-m);
+        padding-inline-end: var(--ym-spacer-size-xxxxl);
+        padding-inline-start: var(--ym-spacer-size-xxxxl);
+    }
+}
+.RedAlert_text__UB_Bq {
+    color: var(--text-color);
+    display: block;
+    max-width: 30rem;
+}
+.RedAlert_button__Ho43z {
+    background-color: var(--button-color);
+    color: var(--ym-controls-color-primary-on_default-enabled);
+    padding-block-end: var(--ym-spacer-size-s);
+    padding-block-start: var(--ym-spacer-size-s);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    text-wrap: nowrap;
+}
+.RedAlert_button__Ho43z:hover,
+.RedAlert_button__Ho43z:not(:disabled):focus-visible {
+    background-color: var(--button-color);
+}

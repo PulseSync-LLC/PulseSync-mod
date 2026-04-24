@@ -1,3 +1,17 @@
+const swUrl = new URL(self.location.href);
+const captureParam = swUrl.searchParams.get('capture') ?? '*';
+
+const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const captureRegexps = captureParam.split(',').map((pattern) => RegExp(`^${escapeRegExp(pattern).replace(/\\\*/g, '.*')}$`));
+
+self.addEventListener('fetch', (event) => {
+    if (!captureRegexps.some((regex) => regex.test(event.request.url))) {
+        event.stopImmediatePropagation();
+    }
+});
+
+// MSW code:
+
 /* eslint-disable */
 /* tslint:disable */
 
@@ -7,7 +21,7 @@
  * - Please do NOT modify this file.
  */
 
-const PACKAGE_VERSION = '2.12.7';
+const PACKAGE_VERSION = '2.12.10';
 const INTEGRITY_CHECKSUM = '4db4a41e972cec1b64cc569c66952d82';
 const IS_MOCKED_RESPONSE = Symbol('isMockedResponse');
 const activeClientIds = new Set();
