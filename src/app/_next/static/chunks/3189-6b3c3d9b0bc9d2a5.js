@@ -1858,7 +1858,7 @@
                         return null;
                     default: {
                         let t = e.data.meta,
-                            s = null == (a = t.artists) ? void 0 : a.map(i.dM),
+                            s = null == (a = t.substituted?.artists ?? t.artists) ? void 0 : a.map(i.dM),
                             o = null == (r = t.albums) ? void 0 : r.map(u.e7);
                         return (0, n.wg)({ ...(0, m.gK)(t), artists: s, albums: o, isHiddenFromSonataQueue: e.hidden });
                     }

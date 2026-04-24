@@ -147,7 +147,8 @@
             var T = function (e, t) {
                     return Number((Math.round(e * t) / t).toFixed(4));
                 },
-                D = n(63924);
+                D = n(63924),
+                electronBridgeModule = n(18085);
             function I(e, t, n) {
                 return void 0 === e && (e = !1), !!e || !t || !n || Number(t.timestamp_ms) < Number(n.timestamp_ms);
             }
@@ -1453,24 +1454,25 @@
                                     sessionId: n,
                                 },
                             })),
-                            (this.metricsController = new ed({
-                                transports: e.metricsTransport,
-                                sessionId: n,
-                                variables: {
-                                    get puid() {
-                                        return e.variables.puid;
-                                    },
-                                    get isShadow() {
-                                        return e.variables.isShadow;
-                                    },
-                                    get isActive() {
-                                        return t.isActive;
-                                    },
-                                    get enableDebugMode() {
-                                        return e.variables.enableDebugMode;
-                                    },
+                            (window.ynison = { connector: this.connector, state: this.stateController });
+                        (this.metricsController = new ed({
+                            transports: e.metricsTransport,
+                            sessionId: n,
+                            variables: {
+                                get puid() {
+                                    return e.variables.puid;
                                 },
-                            })),
+                                get isShadow() {
+                                    return e.variables.isShadow;
+                                },
+                                get isActive() {
+                                    return t.isActive;
+                                },
+                                get enableDebugMode() {
+                                    return e.variables.enableDebugMode;
+                                },
+                            },
+                        })),
                             this.registerMetrics(),
                             this.connector.on(a.RECEIVE_MESSAGE, this.onMessageReceived.bind(this)),
                             this.stateController.on(r.UPDATED, this.onStateChanged.bind(this), 'WSConnector'),
@@ -1531,6 +1533,11 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
+                                const selfDedup = e.rawData.player_state.status.version.device_id === this.deviceConfig.info.device_id;
+                                if (!selfDedup) {
+                                    console.debug('[WSConnector] Received message from hub', e.rawData);
+                                    electronBridgeModule.sendYnisonState({ rawData: e.rawData });
+                                }
                                 var t = this.getMessageContext(e);
                                 if ((this.updateFullStateCompletion(t), !this.shouldIgnoreMessage(t))) {
                                     var n = this.processMessageState(e, t);
@@ -1686,7 +1693,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                return this.variables.isShadow ? eo(eo({}, e), { paused: !0 }) : e;
+                                return this.variables.isShadow || !this.isActive ? eo(eo({}, e), { paused: !0 }) : e;
                             },
                         }),
                         Object.defineProperty(e.prototype, 'createOutgoingDeviceData', {
