@@ -7,6 +7,8 @@
                 textContainer: 'SettingsListToggleItem_textContainer__tRjyt',
                 title: 'SettingsListToggleItem_title__Xz8_Q',
                 description: 'SettingsListToggleItem_description__JBOzV',
+                titleDisabled: 'SettingsListToggleItem_title__Xz8_Q_disabled',
+                descriptionDisabled: 'SettingsListToggleItem_description__JBOzV_disabled',
             };
         },
         10076: (e, t, o) => {
@@ -241,6 +243,51 @@
                                         }),
                                     }),
                                 }),
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(w.N_, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://github.com/PulseSync-LLC/PulseSync-mod',
+                                        children: (0, n.jsx)(c.Caption, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Репозиторий PulseSync на GitHub',
+                                        }),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(w.N_, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://boosty.to/evt',
+                                        children: (0, n.jsx)(c.Caption, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Поддержать проект на Boosty',
+                                        }),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(w.N_, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://pulsesync.dev',
+                                        children: (0, n.jsx)(c.Caption, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Сайт проекта PulseSync',
+                                        }),
+                                    }),
+                                }),
                             ],
                         }),
                         (0, n.jsx)(c.Caption, {
@@ -271,6 +318,20 @@
                             variant: 'div',
                             size: 'xs',
                             children: e({ id: 'desktop.app-revision' }, { revision: s }),
+                        }),
+                        (0, n.jsx)(c.Caption, {
+                            className: P().versionText,
+                            type: 'controls',
+                            variant: 'div',
+                            size: 'xs',
+                            children: 'PulseSync ' + window.PULSE_VERSION,
+                        }),
+                        (0, n.jsx)(c.Caption, {
+                            className: P().versionText,
+                            type: 'controls',
+                            variant: 'div',
+                            size: 'xs',
+                            children: 'Host ' + window.HOST_VERSION,
                         }),
                     ],
                 });
@@ -379,10 +440,12 @@
             };
             var Z = o(18099),
                 Y = o(7876),
-                G = o.n(Y);
+                G = o.n(Y),
+                inputComponent = o(69671),
+                sliderComponent = o(53030);
             let Q = (e) => {
-                let { title: t, onChange: o, isChecked: l, description: i, dataTestId: r } = e,
-                    s = (0, v.useId)();
+                let { title: t, onChange: o, isChecked: i, description: l, dataTestId: r, disabled: s = !1 } = e,
+                    a = (0, v.useId)();
                 return (0, n.jsxs)('div', {
                     className: G().root,
                     children: [
@@ -390,8 +453,8 @@
                             className: G().textContainer,
                             children: [
                                 (0, n.jsx)(c.Caption, {
-                                    className: G().title,
-                                    id: s,
+                                    className: s ? G().titleDisabled : G().title,
+                                    id: a,
                                     variant: 'div',
                                     size: 'l',
                                     weight: 'bold',
@@ -399,15 +462,24 @@
                                     'aria-hidden': !0,
                                     children: t,
                                 }),
-                                i && (0, n.jsx)(c.Caption, { variant: 'div', type: 'text', size: 'xs', weight: 'medium', className: G().description, children: i }),
+                                l &&
+                                    (0, n.jsx)(c.Caption, {
+                                        variant: 'div',
+                                        type: 'text',
+                                        size: 'xs',
+                                        weight: 'medium',
+                                        className: s ? G().descriptionDisabled : G().description,
+                                        children: l,
+                                    }),
                             ],
                         }),
-                        (0, n.jsx)(Z.l, { isChecked: l, 'aria-describedby': s, onChange: o, ...r }),
+                        (0, n.jsx)(Z.l, { isChecked: i, 'aria-describedby': a, onChange: o, disabled: s, ...r }),
                     ],
                 });
             };
             var V = o(91044),
-                K = o.n(V);
+                K = o.n(V),
+                te = o(85906);
             let J = (0, l.PA)(() => {
                 let {
                         modals: { shortcutsModal: e },
@@ -466,11 +538,2712 @@
             });
             var X = o(95722),
                 $ = o.n(X);
+            let labeledBubble = (e) => {
+                    let {
+                        label: t,
+                        color: o = 'var(--ym-controls-color-primary-default-enabled)',
+                        tooltip: i = { title: 'Экспериментально', description: 'Может работать некорректно' },
+                        disabled: l,
+                        ...r
+                    } = e;
+                    return i
+                        ? (0, n.jsx)(te.hj, {
+                              title: i.title,
+                              description: i.description,
+                              children: (0, n.jsxs)('span', {
+                                  style: {
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      width: 'fit-content',
+                                      'margin-inline': '5px',
+                                      'background-color': o,
+                                      color: 'black',
+                                      'border-radius': '50px',
+                                      'padding-inline': '6px',
+                                      transition: 'opacity var(--ym-duration-transition)',
+                                      ...(l ? { opacity: 0.3 } : {}),
+                                  },
+                                  children: t,
+                              }),
+                          })
+                        : (0, n.jsxs)('span', {
+                              style: {
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  width: 'fit-content',
+                                  'margin-inline': '5px',
+                                  'background-color': o,
+                                  color: 'black',
+                                  'border-radius': '50px',
+                                  'padding-inline': '6px',
+                                  transition: 'opacity var(--ym-duration-transition)',
+                                  ...(l ? { opacity: 0.3 } : {}),
+                              },
+                              children: t,
+                          });
+                },
+                settingBarWithDropdown = (e) => {
+                    let { title: t, description: o, onChange: i, value: l, options: r, direction: s = 'bottom', disabled: a = !1, buttonStyle: buttonStyle = {} } = e,
+                        [d, u] = (0, v.useState)(!1),
+                        [_, p] = (0, v.useState)(160),
+                        [m, y] = (0, v.useState)(!1),
+                        h = (0, v.useRef)(null),
+                        f = r.find((e) => e.value === l),
+                        x = (0, v.useCallback)(
+                            (e) => {
+                                i(e), u(!1);
+                            },
+                            [i],
+                        ),
+                        closeDropdownOnOuterClick = (0, v.useCallback)(
+                            (e) => {
+                                d && e.target !== h.current && (e.stopPropagation(), e.preventDefault(), u(!1));
+                            },
+                            [d],
+                        );
+                    return (
+                        (0, v.useEffect)(() => {
+                            document.addEventListener('click', closeDropdownOnOuterClick);
+                            return () => {
+                                document.removeEventListener('click', closeDropdownOnOuterClick);
+                            };
+                        }, [closeDropdownOnOuterClick]),
+                        (0, v.useEffect)(() => {
+                            let e = h.current;
+                            if (!e) return;
+                            let t = new ResizeObserver(([e]) => {
+                                var t;
+                                p(null == (t = e.borderBoxSize[0]) ? void 0 : t.inlineSize);
+                            });
+                            return (
+                                t.observe(e),
+                                () => {
+                                    t.disconnect();
+                                }
+                            );
+                        }, []),
+                        (0, v.useEffect)(() => {
+                            d && y(!0);
+                        }, [d]),
+                        (0, v.useEffect)(() => {
+                            if (d || !m) return;
+                            let e = setTimeout(() => {
+                                y(!1);
+                            }, 180);
+                            return () => {
+                                clearTimeout(e);
+                            };
+                        }, [d, m]),
+                        (0, n.jsxs)('div', {
+                            className: G().root,
+                            children: [
+                                (0, n.jsxs)('div', {
+                                    className: G().textContainer,
+                                    children: [
+                                        (0, n.jsx)(c.Caption, {
+                                            className: a ? G().titleDisabled : G().title,
+                                            variant: 'div',
+                                            size: 'l',
+                                            weight: 'bold',
+                                            lineClamp: 1,
+                                            'aria-hidden': !0,
+                                            children: t,
+                                        }),
+                                        (f?.description ?? o) &&
+                                            (0, n.jsx)(c.Caption, {
+                                                variant: 'div',
+                                                type: 'text',
+                                                size: 'xs',
+                                                weight: 'medium',
+                                                className: a ? G().descriptionDisabled : G().description,
+                                                children: f?.description ?? o,
+                                            }),
+                                    ],
+                                }),
+                                (0, n.jsxs)('div', {
+                                    ref: h,
+                                    onClick: () => {
+                                        u((e) => (a ? !1 : !e));
+                                    },
+                                    className: ''.concat(
+                                        a ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button',
+                                        ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
+                                    ),
+                                    style: {
+                                        ...buttonStyle,
+                                    },
+                                    children: [
+                                        f?.label || 'Select...',
+                                        m &&
+                                            (0, n.jsx)('ul', {
+                                                role: 'menu',
+                                                className: 'settingBarWithDropdown_menu'.concat(d ? '' : ' settingBarWithDropdown_menu__closed'),
+                                                style: {
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    width: ''.concat(_, 'px'),
+                                                    maxHeight: '16rem',
+                                                    overflowY: 'auto',
+                                                    overflowX: 'hidden',
+                                                    scrollbarWidth: 'thin',
+                                                    overscrollBehavior: 'contain',
+                                                    top: 'bottom' === s ? '120%' : 'unset',
+                                                    bottom: 'top' === s ? '120%' : 'unset',
+                                                    '--settingBarWithDropdown-offset-y': 'bottom' === s ? '-6px' : '6px',
+                                                    '--settingBarWithDropdown-origin': 'bottom' === s ? 'top right' : 'bottom right',
+                                                },
+                                                children: r.map((e) =>
+                                                    (0, n.jsxs)(
+                                                        'li',
+                                                        {
+                                                            role: 'menuitem',
+                                                            className: 'settingBarWithDropdown_menuItem',
+                                                            id: e.value,
+                                                            'aria-selected': l === e.value,
+                                                            onClick: (t) => {
+                                                                t.stopPropagation(), x(e.value);
+                                                            },
+                                                            children: [
+                                                                (0, n.jsx)('span', { children: e.label }),
+                                                                l === e.value &&
+                                                                    (0, n.jsx)('svg', {
+                                                                        width: '16',
+                                                                        height: '16',
+                                                                        fill: 'currentColor',
+                                                                        xmlns: 'http://www.w3.org/2000/svg',
+                                                                        children: (0, n.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
+                                                                    }),
+                                                            ],
+                                                        },
+                                                        e.value,
+                                                    ),
+                                                ),
+                                            }),
+                                    ],
+                                }),
+                            ],
+                        })
+                    );
+                },
+                keybindDisplayPart = (e) => {
+                    switch (e) {
+                        case 'Plus':
+                            return '+';
+                        case 'CommandOrControl':
+                        case 'CmdOrCtrl':
+                        case 'Control':
+                        case 'Ctrl':
+                            return 'Ctrl';
+                        case 'Command':
+                        case 'Cmd':
+                            return 'Cmd';
+                        case 'Option':
+                            return 'Alt';
+                        case 'Super':
+                            return 'Win';
+                        case 'Escape':
+                            return 'Esc';
+                        default:
+                            return e;
+                    }
+                },
+                formatKeybindDisplay = (e) => (e ? e.split('+').map(keybindDisplayPart).join(' + ') : 'Не задано'),
+                keybindNamedKeyMap = {
+                    ' ': 'Space',
+                    Spacebar: 'Space',
+                    Tab: 'Tab',
+                    Backspace: 'Backspace',
+                    Delete: 'Delete',
+                    Insert: 'Insert',
+                    Enter: 'Enter',
+                    Return: 'Return',
+                    Escape: 'Esc',
+                    Esc: 'Esc',
+                    ArrowUp: 'Up',
+                    ArrowDown: 'Down',
+                    ArrowLeft: 'Left',
+                    ArrowRight: 'Right',
+                    Home: 'Home',
+                    End: 'End',
+                    PageUp: 'PageUp',
+                    PageDown: 'PageDown',
+                    PrintScreen: 'PrintScreen',
+                    AudioVolumeUp: 'VolumeUp',
+                    AudioVolumeDown: 'VolumeDown',
+                    AudioVolumeMute: 'VolumeMute',
+                    MediaTrackNext: 'MediaNextTrack',
+                    MediaTrackPrevious: 'MediaPreviousTrack',
+                    MediaStop: 'MediaStop',
+                    MediaPlayPause: 'MediaPlayPause',
+                },
+                keybindCodeMap = {
+                    Backquote: '`',
+                    Minus: '-',
+                    Equal: '=',
+                    BracketLeft: '[',
+                    BracketRight: ']',
+                    Backslash: '\\',
+                    IntlBackslash: '\\',
+                    Semicolon: ';',
+                    Quote: "'",
+                    Comma: ',',
+                    Period: '.',
+                    Slash: '/',
+                },
+                getKeybindModifiers = (e) => {
+                    let t = [];
+                    return e.ctrlKey && t.push('Ctrl'), e.altKey && t.push('Alt'), e.shiftKey && t.push('Shift'), e.metaKey && t.push('Super'), t;
+                },
+                getKeybindModifierPreview = (e, t) => {
+                    let o = getKeybindModifiers(e);
+                    return o.length ? ''.concat(o.join(' + '), ' + ...') : t;
+                },
+                buildKeybindFromEvent = (e, t) => {
+                    let o = getKeybindModifiers(e),
+                        i = ['Plus', ')', '!', '@', '#', '$', '%', '^', '&', '*', '(', ':', '<', '_', '>', '?', '~', '{', '|', '}', '"'].includes(t);
+                    return (i ? o.filter((e) => 'Shift' !== e) : o).concat(t).join('+');
+                },
+                getKeybindTokenFromEvent = (e) => {
+                    if ('+' === e.key || 'NumpadAdd' === e.code) return 'Plus';
+                    let t = keybindNamedKeyMap[e.key];
+                    if (t) return t;
+                    if (1 === e.key?.length) {
+                        let t = e.key.toUpperCase();
+                        if (/^[0-9A-Z)!@#$%^&*(:<_>?~{|}";=,\-./`\[\\\]']$/.test(t)) return t;
+                    }
+                    if (/^Key[A-Z]$/.test(e.code)) return e.code.slice(3);
+                    if (/^Digit[0-9]$/.test(e.code)) return e.code.slice(5);
+                    if (/^F([1-9]|1[0-9]|2[0-4])$/.test(e.code)) return e.code;
+                    return keybindCodeMap[e.code] ?? null;
+                },
+                settingBarWithKeybindRecorder = (e) => {
+                    let {
+                            title: t,
+                            description: o,
+                            onChange: i,
+                            value: l,
+                            onRecordingChange: r1,
+                            disabled: r = !1,
+                            placeholder: s = 'Не задано',
+                            recordingPlaceholder: a = 'Нажмите сочетание...',
+                            clearHint: d = 'Esc - отмена, Backspace - сброс',
+                        } = e,
+                        [u, p] = (0, v.useState)(!1),
+                        [h, f] = (0, v.useState)(a),
+                        x = (0, v.useRef)(null),
+                        ariaId = (0, v.useId)(),
+                        _ = (0, v.useCallback)(() => {
+                            r ||
+                                p((e) => {
+                                    let t = !e;
+                                    return f(a), t;
+                                });
+                        }, [r, a]),
+                        b = (0, v.useCallback)(() => {
+                            p(!1), f(a);
+                        }, [a]),
+                        j = (0, v.useCallback)(
+                            (e) => {
+                                if ((e.preventDefault(), e.stopPropagation(), e.repeat)) return;
+                                if (['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) return void f(getKeybindModifierPreview(e, a));
+                                if (!e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey && ('Escape' === e.key || 'Esc' === e.key)) return void b();
+                                if (!e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey && ('Backspace' === e.key || 'Delete' === e.key)) return i(''), void b();
+                                let t = getKeybindTokenFromEvent(e);
+                                if (!t) return void f(getKeybindModifierPreview(e, a));
+                                i(buildKeybindFromEvent(e, t)), b();
+                            },
+                            [i, b, a],
+                        ),
+                        C = (0, v.useCallback)(
+                            (e) => {
+                                f(getKeybindModifierPreview(e, a));
+                            },
+                            [a],
+                        );
+                    return (
+                        (0, v.useEffect)(() => {
+                            if (!u) return;
+                            let e = (e) => {
+                                    x.current && !x.current.contains(e.target) && b();
+                                },
+                                t = () => {
+                                    b();
+                                };
+                            return (
+                                document.addEventListener('keydown', j, !0),
+                                document.addEventListener('keyup', C, !0),
+                                document.addEventListener('mousedown', e, !0),
+                                window.addEventListener('blur', t),
+                                () => {
+                                    document.removeEventListener('keydown', j, !0),
+                                        document.removeEventListener('keyup', C, !0),
+                                        document.removeEventListener('mousedown', e, !0),
+                                        window.removeEventListener('blur', t);
+                                }
+                            );
+                        }, [u, j, C, b]),
+                        (0, v.useEffect)(() => {
+                            return (
+                                r1?.(u),
+                                () => {
+                                    u && r1?.(!1);
+                                }
+                            );
+                        }, [u, r1]),
+                        (0, v.useEffect)(() => {
+                            r && u && b();
+                        }, [r, u, b]),
+                        (0, n.jsxs)('div', {
+                            className: G().root,
+                            children: [
+                                (0, n.jsxs)('div', {
+                                    className: G().textContainer,
+                                    children: [
+                                        (0, n.jsx)(c.Caption, {
+                                            className: r ? G().titleDisabled : G().title,
+                                            id: ariaId,
+                                            variant: 'div',
+                                            size: 'l',
+                                            weight: 'bold',
+                                            lineClamp: 1,
+                                            'aria-hidden': !0,
+                                            children: t,
+                                        }),
+                                        (u ? d : o) &&
+                                            (0, n.jsx)(c.Caption, {
+                                                variant: 'div',
+                                                type: 'text',
+                                                size: 'xs',
+                                                weight: 'medium',
+                                                className: r ? G().descriptionDisabled : G().description,
+                                                children: u ? d : o,
+                                            }),
+                                    ],
+                                }),
+                                (0, n.jsx)('div', {
+                                    ref: x,
+                                    role: 'button',
+                                    tabIndex: r ? -1 : 0,
+                                    'aria-describedby': ariaId,
+                                    'aria-pressed': u,
+                                    onClick: _,
+                                    onKeyDown: (e) => {
+                                        r || u || ('Enter' !== e.key && ' ' !== e.key) || (e.preventDefault(), e.stopPropagation(), _());
+                                    },
+                                    className: ''.concat(
+                                        r ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button',
+                                        ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
+                                    ),
+                                    style: {
+                                        minWidth: '12.5rem',
+                                        textAlign: 'center',
+                                        ...(u
+                                            ? {
+                                                  borderColor: 'var(--ym-controls-color-secondary-outline-hovered_stroke)',
+                                                  boxShadow: 'inset 0 0 0 1px var(--ym-controls-color-secondary-outline-hovered_stroke)',
+                                              }
+                                            : {}),
+                                    },
+                                    children: u ? h : l ? formatKeybindDisplay(l) : s,
+                                }),
+                            ],
+                        })
+                    );
+                },
+                settingBarWithInput = (e) => {
+                    let {
+                            title: t,
+                            description: o,
+                            onChange: i,
+                            value: l,
+                            disabled: r = !1,
+                            placeholder: s = '',
+                            type: a = 'text',
+                            min: d,
+                            max: u,
+                            step: p,
+                            inputMode: h,
+                        } = e,
+                        f = (0, v.useId)();
+                    return (0, n.jsxs)('div', {
+                        className: G().root,
+                        children: [
+                            (0, n.jsxs)('div', {
+                                className: G().textContainer,
+                                children: [
+                                    (0, n.jsx)(c.Caption, {
+                                        className: r ? G().titleDisabled : G().title,
+                                        id: f,
+                                        variant: 'div',
+                                        size: 'l',
+                                        weight: 'bold',
+                                        lineClamp: 1,
+                                        'aria-hidden': !0,
+                                        children: t,
+                                    }),
+                                    o &&
+                                        (0, n.jsx)(c.Caption, {
+                                            variant: 'div',
+                                            type: 'text',
+                                            size: 'xs',
+                                            weight: 'medium',
+                                            className: r ? G().descriptionDisabled : G().description,
+                                            children: o,
+                                        }),
+                                ],
+                            }),
+                            (0, n.jsx)('input', {
+                                type: a,
+                                value: l ?? '',
+                                min: d,
+                                max: u,
+                                step: p,
+                                inputMode: h,
+                                placeholder: s,
+                                disabled: r,
+                                'aria-describedby': f,
+                                onChange: (e) => {
+                                    i(e.target.value);
+                                },
+                                className: ''.concat(
+                                    r ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button',
+                                    ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
+                                ),
+                                style: {
+                                    minWidth: '12.5rem',
+                                    textAlign: 'center',
+                                    background: 'transparent',
+                                },
+                            }),
+                        ],
+                    });
+                },
+                toggleBarWithPathChooser = (e) => {
+                    let { title: t, onChange: o, isChecked: i, description: l, placeholder: r, disabled: s, inputValue: a, onClick: d } = e,
+                        u = (0, v.useId)();
+                    return (0, n.jsxs)('div', {
+                        style: {
+                            flexDirection: 'column',
+                            display: 'flex',
+                            gap: '5px',
+                        },
+                        children: [
+                            (0, n.jsxs)('div', {
+                                className: G().root,
+                                children: [
+                                    (0, n.jsxs)('div', {
+                                        className: G().textContainer,
+                                        children: [
+                                            (0, n.jsx)(c.Caption, {
+                                                className: s ? G().titleDisabled : G().title,
+                                                id: u,
+                                                variant: 'div',
+                                                size: 'l',
+                                                weight: 'bold',
+                                                lineClamp: 1,
+                                                'aria-hidden': !0,
+                                                children: t,
+                                            }),
+                                            l &&
+                                                (0, n.jsx)(c.Caption, {
+                                                    variant: 'div',
+                                                    type: 'text',
+                                                    size: 'xs',
+                                                    weight: 'medium',
+                                                    className: s ? G().descriptionDisabled : G().description,
+                                                    children: l,
+                                                }),
+                                        ],
+                                    }),
+                                    (0, n.jsx)(Z.l, { isChecked: i, 'aria-describedby': u, onChange: o }),
+                                ],
+                            }),
+                            (0, n.jsxs)('div', {
+                                className: G().root,
+                                style: { justifyContent: 'unset', alignItems: 'unset' },
+                                children: [
+                                    (0, n.jsx)(inputComponent.p, {
+                                        containerClassName: 'ToggleBarWithPathChooser_input',
+                                        value: a,
+                                        placeholder: r,
+                                        disabled: !0,
+                                    }),
+                                    (0, n.jsx)(j.$, {
+                                        radius: 'xxxl',
+                                        color: 'secondary',
+                                        size: 'm',
+                                        onClick: d,
+                                        children: 'Обзор',
+                                        disabled: s,
+                                    }),
+                                ],
+                            }),
+                        ],
+                    });
+                },
+                settingBarWithSlider = (e) => {
+                    let { title: t, onChange: o, value: i, minValue: l, maxValue: r, step: s, description: a, disabled: d } = e,
+                        u = (0, v.useId)();
+                    return (0, n.jsxs)('div', {
+                        className: G().root,
+                        style: {
+                            flexDirection: 'column',
+                            alignItems: 'start',
+                        },
+                        children: [
+                            (0, n.jsxs)('div', {
+                                className: G().textContainer,
+                                children: [
+                                    (0, n.jsx)(c.Caption, {
+                                        className: d ? G().titleDisabled : G().title,
+                                        id: u,
+                                        variant: 'div',
+                                        size: 'l',
+                                        weight: 'bold',
+                                        lineClamp: 1,
+                                        'aria-hidden': !0,
+                                        children: t,
+                                    }),
+                                    a &&
+                                        (0, n.jsx)(c.Caption, {
+                                            variant: 'div',
+                                            type: 'text',
+                                            size: 'xs',
+                                            weight: 'medium',
+                                            className: d ? G().descriptionDisabled : G().description,
+                                            children: a,
+                                        }),
+                                ],
+                            }),
+                            (0, n.jsxs)('div', {
+                                style: {
+                                    width: '-webkit-fill-available',
+                                },
+                                children: [
+                                    (0, n.jsx)(c.Caption, {
+                                        style: {
+                                            textAlign: 'end',
+                                        },
+                                        variant: 'div',
+                                        type: 'text',
+                                        size: 'xs',
+                                        weight: 'medium',
+                                        className: d ? G().descriptionDisabled : G().description,
+                                        children: i,
+                                    }),
+                                    (0, n.jsx)(sliderComponent.A, {
+                                        thumbSize: 's',
+                                        trackSize: 's',
+                                        value: i,
+                                        minValue: l ?? 0,
+                                        maxValue: r ?? 2,
+                                        secondaryValue: r ?? 1,
+                                        step: s ?? 0.01,
+                                        disabled: d,
+                                        onChange: o,
+                                        'aria-describedby': u,
+                                    }),
+                                ],
+                            }),
+                        ],
+                    });
+                },
+                createGlobalShortcutDraftId = (e = 'shortcut') => ''.concat(e, '_', Date.now(), '_', Math.random().toString(36).slice(2, 9)),
+                globalShortcutFallbackActions = [
+                    'TOGGLE_PLAY',
+                    'PLAY',
+                    'PAUSE',
+                    'MOVE_FORWARD',
+                    'MOVE_BACKWARD',
+                    'TOGGLE_REPEAT',
+                    'REPEAT_NONE',
+                    'REPEAT_CONTEXT',
+                    'REPEAT_ONE',
+                    'TOGGLE_SHUFFLE',
+                    'SHUFFLE',
+                    'SHUFFLE_NONE',
+                    'TOGGLE_LIKE',
+                    'LIKE',
+                    'LIKE_NONE',
+                    'TOGGLE_DISLIKE',
+                    'DISLIKE',
+                    'DISLIKE_NONE',
+                    'SET_VOLUME',
+                    'SET_PROGRESS',
+                ],
+                globalShortcutActionLabels = {
+                    PLAY: 'Плей',
+                    PAUSE: 'Пауза',
+                    TOGGLE_PLAY: 'Плей/Пауза',
+                    MOVE_FORWARD: 'Следующий трек',
+                    MOVE_BACKWARD: 'Предыдущий трек',
+                    TOGGLE_LIKE: 'Переключить Лайк',
+                    LIKE: 'Поставить лайк',
+                    LIKE_NONE: 'Снять лайк',
+                    TOGGLE_DISLIKE: 'Переключить Дизлайк',
+                    DISLIKE: 'Поставить дизлайк',
+                    DISLIKE_NONE: 'Снять дизлайк',
+                    TOGGLE_REPEAT: 'Переключить Повтор',
+                    REPEAT_NONE: 'Повтор выкл.',
+                    REPEAT_CONTEXT: 'Повтор плейлиста',
+                    REPEAT_ONE: 'Повтор трека',
+                    TOGGLE_SHUFFLE: 'Переключить Шафл',
+                    SHUFFLE: 'Включить шафл',
+                    SHUFFLE_NONE: 'Выключить шафл',
+                    SET_VOLUME: 'Громкость',
+                    SET_PROGRESS: 'Позиция',
+                },
+                globalShortcutActionDescriptions = {
+                    PLAY: 'Запускает воспроизведение.',
+                    PAUSE: 'Ставит воспроизведение на паузу.',
+                    TOGGLE_PLAY: 'Переключает воспроизведение и паузу.',
+                    MOVE_FORWARD: 'Переключает на следующий трек.',
+                    MOVE_BACKWARD: 'Переключает на предыдущий трек.',
+                    TOGGLE_LIKE: 'Переключает состояние лайка.',
+                    LIKE: 'Ставит лайк текущему треку.',
+                    LIKE_NONE: 'Снимает лайк с текущего трека.',
+                    TOGGLE_DISLIKE: 'Переключает дизлайк.',
+                    DISLIKE: 'Ставит дизлайк текущему треку.',
+                    DISLIKE_NONE: 'Снимает дизлайк с текущего трека.',
+                    TOGGLE_REPEAT: 'Переключает режим повтора.',
+                    REPEAT_NONE: 'Выключает повтор.',
+                    REPEAT_CONTEXT: 'Включает повтор текущего списка.',
+                    REPEAT_ONE: 'Включает повтор текущего трека.',
+                    TOGGLE_SHUFFLE: 'Переключает шафл.',
+                    SHUFFLE: 'Включает шафл.',
+                    SHUFFLE_NONE: 'Выключает шафл.',
+                    SET_VOLUME: 'Устанавливает громкость. Ниже задаётся значение от 0 до 100.',
+                    SET_PROGRESS: 'Перематывает трек. Ниже задаётся позиция в секундах.',
+                },
+                globalShortcutActionsWithValue = ['SET_VOLUME', 'SET_PROGRESS'],
+                globalShortcutActionDefaultValues = { SET_VOLUME: '50', SET_PROGRESS: '0' },
+                globalShortcutActionValueMeta = {
+                    SET_VOLUME: {
+                        description: 'Процент громкости от 0 до 100.',
+                        placeholder: '50',
+                        min: 0,
+                        max: 100,
+                        step: 1,
+                        inputMode: 'numeric',
+                    },
+                    SET_PROGRESS: {
+                        description: 'Позиция трека в секундах.',
+                        placeholder: '0',
+                        min: 0,
+                        step: 1,
+                        inputMode: 'numeric',
+                    },
+                },
+                globalShortcutActionNeedsValue = (e) => globalShortcutActionsWithValue.includes(e),
+                normalizeGlobalShortcutValue = (e, t) => {
+                    if (!globalShortcutActionNeedsValue(e)) return ''.concat(null == t ? '' : t);
+                    let o = ''
+                            .concat(null == t ? '' : t)
+                            .replace(',', '.')
+                            .replace(/[^0-9.]/g, ''),
+                        i = o.split('.'),
+                        l = i.shift() ?? '',
+                        r = i.length ? ''.concat(l, '.', i.join('')) : l;
+                    if (!r) return '';
+                    let s = Number(r);
+                    return Number.isFinite(s) ? ('SET_VOLUME' === e ? ''.concat(Math.min(Math.max(s, 0), 100)) : ''.concat(Math.max(s, 0))) : r;
+                },
+                getAvailableGlobalShortcutActions = () => {
+                    let e = window.PLAYER_ACTIONS ? Object.values(window.PLAYER_ACTIONS) : globalShortcutFallbackActions;
+                    return Array.from(new Set(e.filter((e) => 'string' == typeof e && e)));
+                },
+                buildGlobalShortcutActionOptions = (e = []) => {
+                    let t = Array.from(new Set(getAvailableGlobalShortcutActions().concat(e.filter((e) => 'string' == typeof e && e))));
+                    return [{ value: '', label: 'Выберите действие', description: 'Хоткей не сохранится, пока действие не выбрано.' }].concat(
+                        t.map((e) => ({
+                            value: e,
+                            label: globalShortcutActionLabels[e] ?? e,
+                            description: globalShortcutActionDescriptions[e],
+                        })),
+                    );
+                },
+                createGlobalShortcutCommandDraft = (e = '', t) => ({
+                    id: createGlobalShortcutDraftId('action'),
+                    action: e,
+                    value: void 0 !== t ? t : globalShortcutActionNeedsValue(e) ? (globalShortcutActionDefaultValues[e] ?? '') : '',
+                }),
+                createEmptyGlobalShortcutDraft = () => ({
+                    id: createGlobalShortcutDraftId('shortcut'),
+                    accelerator: '',
+                    commands: [createGlobalShortcutCommandDraft()],
+                }),
+                parseGlobalShortcutCommandToken = (e) => {
+                    if ('string' != typeof e || !e.trim()) return null;
+                    let t = e.indexOf('|'),
+                        o = (-1 === t ? e : e.slice(0, t)).trim(),
+                        i = (-1 === t ? '' : e.slice(t + 1)).trim();
+                    return o ? { id: createGlobalShortcutDraftId('action'), action: o, value: i } : null;
+                },
+                parseGlobalShortcutsConfig = (e) => {
+                    if (!e || 'object' != typeof e) return [];
+                    return Object.entries(e).reduce((t, [o, i]) => {
+                        if ('enable' === o) return t;
+                        let l = 'string' == typeof o ? o.split(' ').map(parseGlobalShortcutCommandToken).filter(Boolean) : [],
+                            r = l.length ? l : [createGlobalShortcutCommandDraft()];
+                        return (
+                            t.push({
+                                id: createGlobalShortcutDraftId('shortcut'),
+                                accelerator: 'string' == typeof i ? i : '',
+                                commands: r,
+                            }),
+                            t
+                        );
+                    }, []);
+                },
+                serializeGlobalShortcutCommand = (e) => {
+                    if (!e || 'string' != typeof e.action || !e.action.trim()) return null;
+                    let t = e.action.trim();
+                    if (!globalShortcutActionNeedsValue(t)) return t;
+                    let o = normalizeGlobalShortcutValue(t, e.value);
+                    return ''.concat(t, '|', o || globalShortcutActionDefaultValues[t] || '0');
+                },
+                serializeGlobalShortcutsConfig = (e, t) => {
+                    let o = { enable: Boolean(t) };
+                    return (
+                        e.forEach((e) => {
+                            let t = 'string' == typeof e.accelerator ? e.accelerator.trim() : '',
+                                i = e.commands.map(serializeGlobalShortcutCommand).filter(Boolean);
+                            t && i.length && (o[i.join(' ')] = t);
+                        }),
+                        o
+                    );
+                },
+                getGlobalShortcutValueMeta = (e) => globalShortcutActionValueMeta[e] ?? { description: 'Дополнительное значение действия.', placeholder: '' },
+                globalShortcutsSettings = (0, l.PA)(() => {
+                    let { formatMessage: formatMessage } = (0, i.A)(),
+                        {
+                            modals: { globalShortcutsSettingsModal: modal },
+                        } = (0, m.Pjs)(),
+                        [isGlobalShortcutsEnabled, setIsGlobalShortcutsEnabled] = (0, v.useState)(
+                            Boolean(window.nativeSettings.get('modSettings.globalShortcuts.enable')),
+                        ),
+                        [shortcutItems, setShortcutItems] = (0, v.useState)(() => parseGlobalShortcutsConfig(window.nativeSettings.get('modSettings.globalShortcuts'))),
+                        isGlobalShortcutsEnabledRef = (0, v.useRef)(Boolean(window.nativeSettings.get('modSettings.globalShortcuts.enable'))),
+                        recordingIdsRef = (0, v.useRef)(new Set()),
+                        isRecordingRef = (0, v.useRef)(!1),
+                        extraActions = (0, v.useMemo)(
+                            () =>
+                                shortcutItems.reduce((e, t) => {
+                                    t.commands.forEach((t) => {
+                                        t.action && !e.includes(t.action) && e.push(t.action);
+                                    });
+                                    return e;
+                                }, []),
+                            [shortcutItems],
+                        ),
+                        actionOptions = (0, v.useMemo)(() => buildGlobalShortcutActionOptions(extraActions), [extraActions]),
+                        syncGlobalShortcutsFromStore = (0, v.useCallback)(() => {
+                            let e = window.nativeSettings.get('modSettings.globalShortcuts') ?? {};
+                            (isGlobalShortcutsEnabledRef.current = Boolean(e.enable)),
+                                setIsGlobalShortcutsEnabled(Boolean(e.enable)),
+                                setShortcutItems(parseGlobalShortcutsConfig(e));
+                        }, []),
+                        persistShortcutItems = (0, v.useCallback)((e, t) => {
+                            window.nativeSettings.set(
+                                'modSettings.globalShortcuts',
+                                serializeGlobalShortcutsConfig(e, void 0 === t ? isGlobalShortcutsEnabledRef.current : t),
+                            );
+                        }, []),
+                        updateShortcutItems = (0, v.useCallback)(
+                            (e) => {
+                                setShortcutItems((t) => {
+                                    let o = 'function' == typeof e ? e(t) : e;
+                                    return persistShortcutItems(o), o;
+                                });
+                            },
+                            [persistShortcutItems],
+                        ),
+                        onGlobalShortcutsEnabledChange = (0, v.useCallback)((e) => {
+                            (isGlobalShortcutsEnabledRef.current = e), setIsGlobalShortcutsEnabled(e), window.nativeSettings.set('modSettings.globalShortcuts.enable', e);
+                        }, []),
+                        onRecorderStateChange = (0, v.useCallback)((e, t) => {
+                            let o = recordingIdsRef.current;
+                            t ? o.add(e) : o.delete(e);
+                            let i = o.size > 0;
+                            i !== isRecordingRef.current && ((isRecordingRef.current = i), window.globalShortcutsControl?.setRecordingState?.(i));
+                        }, []),
+                        onAcceleratorChange = (0, v.useCallback)(
+                            (e, t) => {
+                                updateShortcutItems((o) =>
+                                    o.map((o) =>
+                                        o.id !== e
+                                            ? o
+                                            : {
+                                                  ...o,
+                                                  accelerator: t,
+                                              },
+                                    ),
+                                );
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onRemoveShortcut = (0, v.useCallback)(
+                            (e) => {
+                                updateShortcutItems((t) => t.filter((t) => t.id !== e));
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onAddActionToShortcut = (0, v.useCallback)(
+                            (e) => {
+                                updateShortcutItems((t) =>
+                                    t.map((t) =>
+                                        t.id !== e
+                                            ? t
+                                            : {
+                                                  ...t,
+                                                  commands: t.commands.concat(createGlobalShortcutCommandDraft()),
+                                              },
+                                    ),
+                                );
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onRemoveActionFromShortcut = (0, v.useCallback)(
+                            (e, t) => {
+                                updateShortcutItems((o) =>
+                                    o.map((o) => {
+                                        if (o.id !== e) return o;
+                                        let i = o.commands.filter((e) => e.id !== t);
+                                        return {
+                                            ...o,
+                                            commands: i.length ? i : [createGlobalShortcutCommandDraft()],
+                                        };
+                                    }),
+                                );
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onActionChange = (0, v.useCallback)(
+                            (e, t, o) => {
+                                updateShortcutItems((i) =>
+                                    i.map((i) => {
+                                        if (i.id !== e) return i;
+                                        return {
+                                            ...i,
+                                            commands: i.commands.map((e) => {
+                                                if (e.id !== t) return e;
+                                                let i = ''.concat(null == e.value ? '' : e.value).trim();
+                                                return {
+                                                    ...e,
+                                                    action: o,
+                                                    value: o ? (globalShortcutActionNeedsValue(o) ? i || globalShortcutActionDefaultValues[o] || '' : '') : '',
+                                                };
+                                            }),
+                                        };
+                                    }),
+                                );
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onActionValueChange = (0, v.useCallback)(
+                            (e, t, o) => {
+                                updateShortcutItems((i) =>
+                                    i.map((i) => {
+                                        if (i.id !== e) return i;
+                                        return {
+                                            ...i,
+                                            commands: i.commands.map((e) =>
+                                                e.id !== t
+                                                    ? e
+                                                    : {
+                                                          ...e,
+                                                          value: normalizeGlobalShortcutValue(e.action, o),
+                                                      },
+                                            ),
+                                        };
+                                    }),
+                                );
+                            },
+                            [updateShortcutItems],
+                        ),
+                        onAddShortcut = (0, v.useCallback)(() => {
+                            setShortcutItems((e) => e.concat(createEmptyGlobalShortcutDraft()));
+                        }, []);
+                    return (
+                        (0, v.useEffect)(() => {
+                            if (modal.isOpened) return void syncGlobalShortcutsFromStore();
+                            isRecordingRef.current &&
+                                (recordingIdsRef.current.clear(), (isRecordingRef.current = !1), window.globalShortcutsControl?.setRecordingState?.(!1));
+                        }, [modal.isOpened, syncGlobalShortcutsFromStore]),
+                        (0, v.useEffect)(() => {
+                            return () => {
+                                isRecordingRef.current &&
+                                    (recordingIdsRef.current.clear(), (isRecordingRef.current = !1), window.globalShortcutsControl?.setRecordingState?.(!1));
+                            };
+                        }, []),
+                        (0, n.jsx)(T.a, {
+                            className: K().root,
+                            headerClassName: K().modalHeader,
+                            contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                            title: 'Глобальные горячие клавиши',
+                            style: { maxWidth: '38.0rem', width: '38.0rem' },
+                            open: modal.isOpened,
+                            onOpenChange: modal.onOpenChange,
+                            onClose: modal.close,
+                            size: 'fitContent',
+                            placement: 'center',
+                            overlayColor: 'full',
+                            labelClose: formatMessage({ id: 'interface-actions.close' }),
+                            children: (0, n.jsxs)('div', {
+                                style: {
+                                    width: '36.5rem',
+                                    maxHeight: '30rem',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '0.75rem',
+                                },
+                                children: [
+                                    (0, n.jsx)('div', {
+                                        style: { paddingRight: '0.75rem' },
+                                        children: (0, n.jsx)(Q, {
+                                            title: 'Включить глобальные горячие клавиши',
+                                            description: 'Во время записи регистрация временно отключается, чтобы не было конфликтов с уже назначенными сочетаниями.',
+                                            onChange: onGlobalShortcutsEnabledChange,
+                                            isChecked: isGlobalShortcutsEnabled,
+                                        }),
+                                    }),
+                                    (0, n.jsxs)('ul', {
+                                        className: ''.concat(K().list, ' PulseSync_experimentsListScroll'),
+                                        style: {
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '0.75rem',
+                                            paddingRight: '0.35rem',
+                                        },
+                                        children: [
+                                            !shortcutItems.length &&
+                                                (0, n.jsx)('li', {
+                                                    style: {
+                                                        listStyle: 'none',
+                                                        padding: '0.875rem 1rem',
+                                                        borderRadius: '1rem',
+                                                        background: 'var(--ym-surface-color-primary-enabled-list)',
+                                                    },
+                                                    children: (0, n.jsx)(c.Caption, {
+                                                        variant: 'div',
+                                                        type: 'text',
+                                                        size: 'xs',
+                                                        weight: 'medium',
+                                                        children: 'Пока нет настроенных хоткеев.',
+                                                    }),
+                                                }),
+                                            ...shortcutItems.map((shortcutItem, shortcutIndex) =>
+                                                (0, n.jsx)(
+                                                    'li',
+                                                    {
+                                                        style: {
+                                                            listStyle: 'none',
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            padding: '0.875rem',
+                                                            borderRadius: '1rem',
+                                                            background: 'var(--ym-surface-color-primary-enabled-list)',
+                                                            border: '1px solid var(--ym-controls-color-secondary-outline-default-stroke)',
+                                                        },
+                                                        children: (0, n.jsxs)('div', {
+                                                            style: { display: 'flex', flexDirection: 'column', gap: '0.75rem' },
+                                                            children: [
+                                                                (0, n.jsx)(c.Caption, {
+                                                                    variant: 'div',
+                                                                    size: 'm',
+                                                                    weight: 'bold',
+                                                                    children: 'Хоткей '.concat(shortcutIndex + 1),
+                                                                }),
+                                                                (0, n.jsx)(settingBarWithKeybindRecorder, {
+                                                                    title: 'Сочетание',
+                                                                    description:
+                                                                        'Нажмите справа и введите комбинацию. Esc отменяет запись, Backspace/Delete очищает поле.',
+                                                                    value: shortcutItem.accelerator,
+                                                                    onChange: (e) => {
+                                                                        onAcceleratorChange(shortcutItem.id, e);
+                                                                    },
+                                                                    onRecordingChange: (e) => {
+                                                                        onRecorderStateChange(shortcutItem.id, e);
+                                                                    },
+                                                                }),
+                                                                ...shortcutItem.commands.map((commandItem, commandIndex) => {
+                                                                    let valueMeta = getGlobalShortcutValueMeta(commandItem.action);
+                                                                    return (0, n.jsxs)(
+                                                                        'div',
+                                                                        {
+                                                                            style: { display: 'flex', flexDirection: 'column', gap: '0.5rem' },
+                                                                            children: [
+                                                                                (0, n.jsxs)('div', {
+                                                                                    style: { display: 'flex', alignItems: 'center', gap: '0.5rem' },
+                                                                                    children: [
+                                                                                        (0, n.jsx)('div', {
+                                                                                            style: { flex: 1 },
+                                                                                            children: (0, n.jsx)(settingBarWithDropdown, {
+                                                                                                title: 'Действие '.concat(commandIndex + 1),
+                                                                                                description: 'Что должно произойти после нажатия.',
+                                                                                                value: commandItem.action,
+                                                                                                onChange: (e) => {
+                                                                                                    onActionChange(shortcutItem.id, commandItem.id, e);
+                                                                                                },
+                                                                                                options: actionOptions,
+                                                                                                direction: shortcutIndex === shortcutItems.length - 1 ? 'top' : 'bottom',
+                                                                                                buttonStyle: {
+                                                                                                    minWidth: '12.5rem',
+                                                                                                    textAlign: 'center',
+                                                                                                },
+                                                                                            }),
+                                                                                        }),
+                                                                                        shortcutItem.commands.length > 1 &&
+                                                                                            (0, n.jsx)(j.$, {
+                                                                                                radius: 'xxxl',
+                                                                                                color: 'secondary',
+                                                                                                size: 'm',
+                                                                                                icon: (0, n.jsx)('svg', {
+                                                                                                    width: '14',
+                                                                                                    height: '14',
+                                                                                                    viewBox: '0 0 14 14',
+                                                                                                    fill: 'none',
+                                                                                                    xmlns: 'http://www.w3.org/2000/svg',
+                                                                                                    'aria-hidden': 'true',
+                                                                                                    children: (0, n.jsx)('path', {
+                                                                                                        d: 'M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5',
+                                                                                                        stroke: 'currentColor',
+                                                                                                        strokeWidth: '1.8',
+                                                                                                        strokeLinecap: 'round',
+                                                                                                    }),
+                                                                                                }),
+                                                                                                'aria-label': 'Удалить действие',
+                                                                                                title: 'Удалить действие',
+                                                                                                onClick: () => {
+                                                                                                    onRemoveActionFromShortcut(shortcutItem.id, commandItem.id);
+                                                                                                },
+                                                                                            }),
+                                                                                    ],
+                                                                                }),
+                                                                                globalShortcutActionNeedsValue(commandItem.action) &&
+                                                                                    (0, n.jsx)(settingBarWithInput, {
+                                                                                        title: 'Значение',
+                                                                                        description: valueMeta.description,
+                                                                                        value: commandItem.value,
+                                                                                        onChange: (e) => {
+                                                                                            onActionValueChange(shortcutItem.id, commandItem.id, e);
+                                                                                        },
+                                                                                        placeholder: valueMeta.placeholder,
+                                                                                        type: 'number',
+                                                                                        min: valueMeta.min,
+                                                                                        max: valueMeta.max,
+                                                                                        step: valueMeta.step,
+                                                                                        inputMode: valueMeta.inputMode,
+                                                                                    }),
+                                                                            ],
+                                                                        },
+                                                                        commandItem.id,
+                                                                    );
+                                                                }),
+                                                                (0, n.jsxs)('div', {
+                                                                    style: {
+                                                                        display: 'flex',
+                                                                        flexWrap: 'wrap',
+                                                                        justifyContent: 'flex-end',
+                                                                        gap: '0.5rem',
+                                                                    },
+                                                                    children: [
+                                                                        (0, n.jsx)(j.$, {
+                                                                            radius: 'xxxl',
+                                                                            color: 'secondary',
+                                                                            size: 'm',
+                                                                            onClick: () => {
+                                                                                onAddActionToShortcut(shortcutItem.id);
+                                                                            },
+                                                                            children: 'Добавить действие',
+                                                                        }),
+                                                                        (0, n.jsx)(j.$, {
+                                                                            radius: 'xxxl',
+                                                                            color: 'secondary',
+                                                                            size: 'm',
+                                                                            onClick: () => {
+                                                                                onRemoveShortcut(shortcutItem.id);
+                                                                            },
+                                                                            children: 'Удалить хоткей',
+                                                                        }),
+                                                                    ],
+                                                                }),
+                                                            ],
+                                                        }),
+                                                    },
+                                                    shortcutItem.id,
+                                                ),
+                                            ),
+                                            (0, n.jsx)('li', {
+                                                style: { listStyle: 'none', display: 'flex', justifyContent: 'flex-end' },
+                                                children: (0, n.jsx)(j.$, {
+                                                    radius: 'xxxl',
+                                                    color: 'secondary',
+                                                    size: 'm',
+                                                    onClick: onAddShortcut,
+                                                    children: 'Добавить хоткей',
+                                                }),
+                                            }),
+                                        ],
+                                    }),
+                                ],
+                            }),
+                        })
+                    );
+                }),
+                systemSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { systemSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        { notify: o } = (0, m.lkh)(),
+                        [isHardwareAccelerationEnabled, setIsHardwareAccelerationEnabled] = (0, v.useState)(
+                            window.nativeSettings.get('modSettings.enableHardwareAcceleration'),
+                        ),
+                        [angleEngine, setAngleEngine] = (0, v.useState)(window.nativeSettings.get('modSettings.hardwareAcceleration.angleEngine')),
+                        onPreventDisplaySleepToggle = (0, v.useCallback)((e) => {
+                            console.log('preventDisplaySleep toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.preventDisplaySleep', e);
+                        }, []),
+                        onSendAnonymizedMetricsToggle = (0, v.useCallback)(
+                            (e) => {
+                                console.log('sendModAnonymizedMetrics toggled. Value: ', e);
+                                window.nativeSettings.set('sendModAnonymizedMetrics', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onAutoStartupToggle = (0, v.useCallback)(async (e) => {
+                            console.log('autoStartup toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.autoStartup', e);
+                            window.autoStartupStatus?.(e);
+                        }, []),
+                        onMinimizedStartToggle = (0, v.useCallback)(async (e) => {
+                            console.log('minimizedStart toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.minimizedStart', e);
+                        }, []),
+                        onEnableHardwareAccelerationToggle = (0, v.useCallback)(
+                            (e) => {
+                                console.log('enableHardwareAcceleration toggled. Value: ', e);
+                                setIsHardwareAccelerationEnabled(e);
+                                window.nativeSettings.set('modSettings.enableHardwareAcceleration', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onAngleEngineChange = (0, v.useCallback)(
+                            (e) => {
+                                console.log('angleEngine changed. Value: ', e);
+                                setAngleEngine(e);
+                                window.nativeSettings.set('modSettings.hardwareAcceleration.angleEngine', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        );
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        title: 'Системные настройки',
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '34.125rem', maxHeight: '37.5rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Включить аппаратное ускорение',
+                                        description: 'Настоятельно рекомендуется не выключать. Отключайте только если ни одни вариант настроек ниже не помог.',
+                                        onChange: onEnableHardwareAccelerationToggle,
+                                        isChecked: isHardwareAccelerationEnabled,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithDropdown, {
+                                        title: 'API аппаратного ускорения',
+                                        description: 'Изменение может помочь в некоторых случаях, пробуйте по убыванию в списке.',
+                                        onChange: onAngleEngineChange,
+                                        disabled: !isHardwareAccelerationEnabled,
+                                        value: angleEngine,
+                                        direction: 'bottom',
+                                        options: [
+                                            { value: 'default', label: 'Авто' },
+                                            { value: 'd3d11', label: 'DirectX 11' },
+                                            { value: 'd3d11on12', label: 'DirectX 11 on 12' },
+                                            { value: 'gl', label: 'OpenGL' },
+                                            { value: 'd3d9', label: 'DirectX 9' },
+                                        ],
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Предотвращать отключение монитора',
+                                        description: 'Если включено и окно ЯМ видно на экране, он не уйдёт в сон от бездействия',
+                                        onChange: onPreventDisplaySleepToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.preventDisplaySleep'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Автозапуск при старте системы',
+                                        description: 'Приложение будет запускаться автоматически при включении системы.',
+                                        onChange: onAutoStartupToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.autoStartup'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Автоматический запуск свернутым',
+                                        description: 'Если включено, приложение будет запускаться свернутым в трей.',
+                                        onChange: onMinimizedStartToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.minimizedStart'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Отправлять анонимную статистику',
+                                        description: 'Отключит отправку стаитстики Мода его разработчику. Не влияет на метрику Яндекса',
+                                        onChange: onSendAnonymizedMetricsToggle,
+                                        isChecked: window.nativeSettings.get('sendModAnonymizedMetrics'),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                playerSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { playerSettingsModal: t },
+                            sonataState: sonataState,
+                        } = (0, m.Pjs)(),
+                        { notify: o } = (0, m.lkh)(),
+                        onSwapDislikeToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.playerBarEnhancement.changeDislikeButtonPos toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.playerBarEnhancement.changeDislikeButtonPos', e);
+                            setTimeout(() => {
+                                window.forcePlayerBarRerender?.();
+                            }, 100);
+                        }, []),
+                        onTimestampsToggle = (0, v.useCallback)(
+                            async (e) => {
+                                console.log('alwaysShowTimestamps toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.playerBarEnhancement.alwaysShowTimestamps', e);
+                                setTimeout(() => {
+                                    window.forcePlayerBarRerender?.();
+                                }, 100);
+                            },
+                            [sonataState],
+                        ),
+                        onShowCodecToggle = (0, v.useCallback)(async (e) => {
+                            console.log('showCodecInsteadOfQualityMark toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.playerBarEnhancement.showCodecInsteadOfQualityMark', e);
+                            setTimeout(() => {
+                                window.forcePlayerBarRerender?.();
+                            }, 100);
+                        }, []),
+                        onDisablePerTrackColorsToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.playerBarEnhancement.disablePerTrackColors toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.playerBarEnhancement.disablePerTrackColors', e);
+                            setTimeout(() => {
+                                window.forcePlayerBarRerender?.();
+                            }, 100);
+                        }, []),
+                        onAlwaysWideBarToggle = (0, v.useCallback)(
+                            async (e) => {
+                                console.log('modSettings.playerBarEnhancement.alwaysWideBar toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.playerBarEnhancement.alwaysWideBar', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        );
+                    let playButtonType = (0, v.useState)(window.nativeSettings.get('modSettings.playerBarEnhancement.playButtonType') ?? 'yellow'),
+                        playButtonTypeValue = playButtonType[0],
+                        s = playButtonType[1],
+                        onPlayButtonTypeChange = (0, v.useCallback)(async (e) => {
+                            console.log('playButtonType changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.playerBarEnhancement.playButtonType', e);
+                            s(e);
+                            o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                containerId: m.uQT.ERROR,
+                            });
+                        }, []);
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        title: 'Панель плеера',
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '29.125rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithDropdown, {
+                                        title: 'Цвет кнопки воспроизведения',
+                                        description: 'Выберите цвет кнопки плеера',
+                                        onChange: onPlayButtonTypeChange,
+                                        value: playButtonTypeValue,
+                                        direction: 'bottom',
+                                        options: [
+                                            { value: 'yellow', label: 'Желтая' },
+                                            { value: 'white', label: 'Белая' },
+                                        ],
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Поменять местами Дизлайк и Лайк',
+                                        description: 'Чтобы их положение соответствовало остальным платформам',
+                                        onChange: onSwapDislikeToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.changeDislikeButtonPos'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Отображать кодек',
+                                        description: 'Отображает кодек вместо качества трека.',
+                                        onChange: onShowCodecToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.showCodecInsteadOfQualityMark'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Отображать временные метки',
+                                        description: 'Отображать метки независимо от положения курсора.',
+                                        onChange: onTimestampsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.alwaysShowTimestamps'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Отключить цвета треков',
+                                        description: 'Панель перестанет перекрашиваться под каждый трек',
+                                        onChange: onDisablePerTrackColorsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.disablePerTrackColors'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Всегда расширенная',
+                                        description: 'Панель будет всегда широкой, независимо от размера окна приложения',
+                                        onChange: onAlwaysWideBarToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.alwaysWideBar'),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                audioSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { audioSettingsModal: t },
+                            sonataState: sonataState,
+                        } = (0, m.Pjs)(),
+                        a = (0, m.iIU)(),
+                        { notify: o } = (0, m.lkh)(),
+                        onSurroundAudioCompatibilityToggle = (0, v.useCallback)(
+                            (e) => {
+                                console.log('enableSurroundAudioCompatibility toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.enableSurroundAudioCompatibility', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onR128NormalizationToggle = (0, v.useCallback)(
+                            async (e) => {
+                                var t;
+                                console.log('modSettings.r128Normalization toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.r128Normalization', e);
+                                let o =
+                                        null == (t = null == sonataState ? void 0 : sonataState.state) || null == t.queueState
+                                            ? void 0
+                                            : t.queueState.currentEntity.value,
+                                    i = null == o ? void 0 : o.entity.data.meta.r128,
+                                    r = null == o ? void 0 : o.entity.data.meta,
+                                    s =
+                                        !i &&
+                                        ('UGC' === (null == r ? void 0 : r.trackSource) ||
+                                            'OWN_REPLACED_TO_UGC' === (null == r ? void 0 : r.trackSource) ||
+                                            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(null == r ? void 0 : r.id)))
+                                            ? { i: 0, tp: 0 }
+                                            : i;
+                                null == a ||
+                                    null == a.graphs ||
+                                    a.graphs.forEach((t) => {
+                                        t.setR128Gain(s, e);
+                                    });
+                            },
+                            [a, sonataState],
+                        );
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        style: { maxWidth: '34.375rem', height: 'auto' },
+                        title: 'Настройки аудио',
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: ['Нормализация громкости', (0, n.jsx)(labeledBubble, { label: 'r128', tooltip: null })],
+                                        description: 'Приводит громкость треков к единому уровню.',
+                                        onChange: onR128NormalizationToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.r128Normalization') ?? !0,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: ['Попробовать включить пространственный звук', (0, n.jsx)(labeledBubble, { label: 'ALPHA' })],
+                                        description: 'Включает поддержку систем 5.1 / 7.1 (Учтите что звук останется в стерео)',
+                                        onChange: onSurroundAudioCompatibilityToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.enableSurroundAudioCompatibility') ?? !1,
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                windowSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { windowSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        { notify: o } = (0, m.lkh)(),
+                        onSaveWindowDimensionsToggle = (0, v.useCallback)(async (e) => {
+                            console.log('saveWindowDimensionsOnRestart toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.saveWindowDimensionsOnRestart', e);
+                        }, []),
+                        onSaveWindowPositionToggle = (0, v.useCallback)(async (e) => {
+                            console.log('saveWindowPositionOnRestart toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.saveWindowPositionOnRestart', e);
+                        }, []),
+                        onToTrayToggle = (0, v.useCallback)(async (e) => {
+                            console.log('toTray toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.toTray', e);
+                        }, []),
+                        onTaskBarToggle = (0, v.useCallback)(
+                            async (e) => {
+                                window.nativeSettings.set('modSettings.taskBarExtensions.enable', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onTaskbarExtensionsCoverAsThumbnailToggle = (0, v.useCallback)(
+                            async (e) => {
+                                console.log('taskBarExtensions.coverAsThumbnail toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.taskBarExtensions.coverAsThumbnail', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onHidePulseSyncVersionInTitleBarToggle = (0, v.useCallback)(async (e) => {
+                            console.log('hidePulseSyncVersionInTitleBar toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.hidePulseSyncVersionInTitleBar', e);
+                            setHidePulseSyncVersionInTitleBar(e);
+                        }, []);
+                    let hidePulseSyncVersionInTitleBarState = (0, v.useState)(window.nativeSettings.get('modSettings.window.hidePulseSyncVersionInTitleBar') ?? !1),
+                        hidePulseSyncVersionInTitleBar = hidePulseSyncVersionInTitleBarState[0],
+                        setHidePulseSyncVersionInTitleBar = hidePulseSyncVersionInTitleBarState[1],
+                        isPremiumState = (0, v.useState)(!1),
+                        a = isPremiumState[0],
+                        d = isPremiumState[1];
+                    (0, v.useEffect)(() => {
+                        window.IS_PREMIUM_USER?.().then((e) => d(e));
+                    }, []);
+                    let startupPageState = (0, v.useState)(window.nativeSettings.get('modSettings.window.startupPage') ?? '/'),
+                        u = startupPageState[0],
+                        _ = startupPageState[1],
+                        onStartupPageChange = (0, v.useCallback)(async (e) => {
+                            console.log('startupPage changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.window.startupPage', e);
+                            _(e);
+                        }, []);
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        title: 'Поведение окна',
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithDropdown, {
+                                        title: 'Стартовая страница',
+                                        description: 'Страница по умолчанию при запуске',
+                                        onChange: onStartupPageChange,
+                                        value: u,
+                                        direction: 'bottom',
+                                        options: [
+                                            { value: '/', label: 'Главная' },
+                                            { value: '/search', label: 'Поиск' },
+                                            { value: '/non-music', label: 'Подкасты и книги' },
+                                            { value: '/collection', label: 'Коллекция' },
+                                        ],
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: [
+                                            'Скрывать версию PulseSync в TitleBar',
+                                            (0, n.jsx)(labeledBubble, {
+                                                label: 'Boosty',
+                                                tooltip: {
+                                                    title: 'Премиум функция',
+                                                    description: a ? 'У вас есть подписка на Boosty' : 'Подпишитесь на Boosty, чтобы разблокировать',
+                                                },
+                                            }),
+                                        ],
+                                        description: 'Скрывает подпись PulseSync в верхней панели окна.',
+                                        onChange: onHidePulseSyncVersionInTitleBarToggle,
+                                        isChecked: hidePulseSyncVersionInTitleBar && a,
+                                        disabled: !a,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Сохранять размер окна',
+                                        description: 'Сохраняет размер окна при перезапуске',
+                                        onChange: onSaveWindowDimensionsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.saveWindowDimensionsOnRestart'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Сохранять положение окна',
+                                        description: 'Сохраняет положение окна при перезапуске',
+                                        onChange: onSaveWindowPositionToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.saveWindowPositionOnRestart'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Минимизировать в трей при закрытии',
+                                        description: 'Если включено, приложение свернется в трей при закрытии.',
+                                        onChange: onToTrayToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.window.toTray'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Кнопки в превью панели задач',
+                                        description: 'Добавляет поддержку расширений панели задач.',
+                                        onChange: onTaskBarToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.taskBarExtensions.enable'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Использовать обложку трека в превью окна',
+                                        description: 'Если трек играет, заменяет динамичное превью на картинку обложки трека',
+                                        onChange: onTaskbarExtensionsCoverAsThumbnailToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.taskBarExtensions.coverAsThumbnail'),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                miniPlayerSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { miniPlayerSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        onSkipTaskbarToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.miniplayer.skipTaskbar toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.miniplayer.skipTaskbar', e);
+                        }, []),
+                        onSaveDimensionsToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.miniplayer.saveDimensions toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.miniplayer.saveDimensions', e);
+                        }, []),
+                        onSavePositionToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.miniplayer.savePosition toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.miniplayer.savePosition', e);
+                        }, []),
+                        onAlwaysShowPlayerTimestampsToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.miniplayer.alwaysShowPlayerTimestamps toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.miniplayer.alwaysShowPlayerTimestamps', e);
+                        }, []);
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        title: 'Миниплеер',
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Сохранять размер окна',
+                                        description: 'Сохраняет размер окна миниплеера при перезапуске',
+                                        onChange: onSaveDimensionsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.saveDimensions'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Сохранять положение окна',
+                                        description: 'Сохраняет положение окна миниплеера при перезапуске',
+                                        onChange: onSavePositionToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.savePosition'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Не отображать окно в таскбаре',
+                                        description: 'Работает только если миниплеер закреплён поверх других окон',
+                                        onChange: onSkipTaskbarToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.skipTaskbar'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Всегда отображать временные метки',
+                                        description: 'Отображает временные метки независимо от положения курсора',
+                                        onChange: onAlwaysShowPlayerTimestampsToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.alwaysShowPlayerTimestamps'),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                });
+            let myVibeSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { myVibeSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        [o, setMaxFPS] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.maxFPS')),
+                        [r, s] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.disableRendering')),
+                        [a, d] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.useDynamicEnergy')),
+                        [u, p] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergy')),
+                        [h, f] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.vibeIntensityCoefficient')),
+                        [x, setSmoothDynamicEnergyCoefficient] = (0, v.useState)(
+                            window.nativeSettings.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergyCoefficient'),
+                        ),
+                        [j, C] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.useCustomColors') ?? !0),
+                        onDisableVibeRenderingToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.disableRendering toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.disableRendering', e);
+                            s(e);
+                        }, []),
+                        onMaxFPSchange = (0, v.useCallback)(async (e) => {
+                            let t = Math.min(Math.max(e, 1), window?.DISPLAY_MAX_FPS);
+                            setMaxFPS(t);
+                            console.log('modSettings.vibeAnimationEnhancement.maxFPS changed. Value: ', t);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.maxFPS', t);
+                        }, []),
+                        onIntensityCoefficientChange = (0, v.useCallback)(async (e) => {
+                            let t = Math.min(Math.max(e, 0), 2.5);
+                            f(t);
+                            console.log('modSettings.vibeAnimationEnhancement.vibeIntensityCoefficient changed. Value: ', t);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.vibeIntensityCoefficient', t);
+                        }, []),
+                        onSmoothDynamicEnergyCoefficientChange = (0, v.useCallback)(async (e) => {
+                            let t = Math.min(Math.max(e, 0.01), 1);
+                            setSmoothDynamicEnergyCoefficient(t);
+                            console.log('modSettings.vibeAnimationEnhancement.smoothDynamicEnergyCoefficient changed. Value: ', t);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.smoothDynamicEnergyCoefficient', t);
+                        }, []),
+                        onPlayOnAnyEntityToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.playVibeOnAnyEntity. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.playVibeOnAnyEntity', e);
+                        }, []),
+                        onEnableUseDynamicEnergy = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.useDynamicEnergy toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.useDynamicEnergy', e);
+                            d(e);
+                        }, []),
+                        onEnableSmoothDynamicEnergy = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.smoothDynamicEnergy toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.smoothDynamicEnergy', e);
+                            p(e);
+                        }, []),
+                        onUseCustomColorsToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.useCustomColors toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.useCustomColors', e);
+                            C(e);
+                        }, []);
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        style: { maxWidth: '34.375rem' },
+                        title: 'Анимация Моей Волны',
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Отключить отрисовку анимации Волны',
+                                        description: 'Значительно увеличивает производительность на слабом железе',
+                                        onChange: onDisableVibeRenderingToggle,
+                                        isChecked: r,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Реакция анимации Волны на любые треки',
+                                        description: 'Анимация будет реагировать на треки запущенные не через Мою Волну',
+                                        onChange: onPlayOnAnyEntityToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.playVibeOnAnyEntity'),
+                                        disabled: !!r,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Использовать новый способ передачи цветов',
+                                        description: 'Переключает обычную анимацию между новым и старым способом передачи цветов.',
+                                        onChange: onUseCustomColorsToggle,
+                                        isChecked: j,
+                                        disabled: !!r,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithSlider, {
+                                        title: 'Ограничение FPS',
+                                        description: 'Верхняя граница FPS. Чем больше, тем плавнее анимация',
+                                        onChange: onMaxFPSchange,
+                                        value: o,
+                                        maxValue: Math.max(window?.DISPLAY_MAX_FPS ?? 60, o),
+                                        minValue: 1,
+                                        step: 1,
+                                        disabled: !!r,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithSlider, {
+                                        title: 'Интенсивность реакции на трек',
+                                        description: 'Чем больше, тем сильнее анимация ускоряется под трек',
+                                        onChange: onIntensityCoefficientChange,
+                                        value: h,
+                                        maxValue: 2.5,
+                                        minValue: 0,
+                                        step: 0.1,
+                                        disabled: !!r,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Подстраивать скорость анимации под Энергию трека',
+                                        description: 'Анимация будет подстраивать скорость под Энергию трека в реальном времени',
+                                        onChange: onEnableUseDynamicEnergy,
+                                        isChecked: a,
+                                        disabled: !!r,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Смягчать динамическую энергию',
+                                        description: 'Изменения скорости трека будут более плавными',
+                                        onChange: onEnableSmoothDynamicEnergy,
+                                        isChecked: u,
+                                        disabled: !(!r && a),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithSlider, {
+                                        title: 'Коэффициент смягчения энергии',
+                                        description: 'Чем меньше, тем сильнее сглаживаются изменения скорости анимации',
+                                        onChange: onSmoothDynamicEnergyCoefficientChange,
+                                        value: x,
+                                        maxValue: 1,
+                                        minValue: 0.01,
+                                        step: 0.01,
+                                        disabled: !(!r && a && u),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                myVibeParamsSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { myVibeParamsSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        onAutoLaunchOnAppStartup = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.autoLaunchOnAppStartup toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.autoLaunchOnAppStartup', e);
+                        }, []),
+                        onEnableEndlessMusicToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.enableEndlessMusic toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.enableEndlessMusic', e);
+                        }, []);
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        style: { maxWidth: '34.375rem', height: 'auto' },
+                        title: 'Поведение Моей Волны',
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Запускать воспроизведение трека при старте приложения',
+                                        description: 'Запустит последний играющий трек сразу после старта приложения',
+                                        onChange: onAutoLaunchOnAppStartup,
+                                        isChecked: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.autoLaunchOnAppStartup'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Музыка без остановки',
+                                        description: 'После окончания воспроизведения очереди, запустится волна',
+                                        onChange: onEnableEndlessMusicToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.enableEndlessMusic'),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                });
+            let discordRpcSettings = (0, l.PA)(() => {
+                let statusDisplayTypeState = (0, v.useState)(window.nativeSettings.get('modSettings.discordRPC.statusDisplayType') ?? 0),
+                    statusDisplayType = statusDisplayTypeState[0],
+                    setStatusDisplayType = statusDisplayTypeState[1],
+                    applicationIDForRPCState = (0, v.useState)(window.nativeSettings.get('modSettings.discordRPC.applicationIDForRPC') ?? '1124055337234858005'),
+                    applicationIDForRPC = applicationIDForRPCState[0],
+                    setApplicationIDForRPC = applicationIDForRPCState[1],
+                    hideBrandingState = (0, v.useState)(window.nativeSettings.get('modSettings.discordRPC.hideBranding') ?? !1),
+                    hideBranding = hideBrandingState[0],
+                    setHideBranding = hideBrandingState[1];
+                let { formatMessage: e } = (0, i.A)(),
+                    {
+                        modals: { discordRpcSettingsModal: t },
+                    } = (0, m.Pjs)(),
+                    { notify: o } = (0, m.lkh)(),
+                    afkTimeoutState = (0, v.useState)(window.nativeSettings.get('modSettings.discordRPC.afkTimeout')),
+                    afkTimeout = afkTimeoutState[0],
+                    setAfkTimeout = afkTimeoutState[1],
+                    reconnectIntervalState = (0, v.useState)(window.nativeSettings.get('modSettings.discordRPC.reconnectInterval')),
+                    reconnectInterval = reconnectIntervalState[0],
+                    setReconnectInterval = reconnectIntervalState[1],
+                    isExperimentOverridenState = (0, v.useState)(window.nativeSettings.get('modSettings.discordRPC.overrideDeepLinksExperiment')),
+                    isExperimentOverriden = isExperimentOverridenState[0],
+                    setIsExperimentOverriden = isExperimentOverridenState[1],
+                    showButtonsState = (0, v.useState)(window.nativeSettings.get('modSettings.discordRPC.showButtons')),
+                    showButtons = showButtonsState[0],
+                    setShowButtons = showButtonsState[1],
+                    isDiscordStatusEnabledState = (0, v.useState)(window.nativeSettings.get('modSettings.discordRPC.enable')),
+                    isDiscordStatusEnabled = isDiscordStatusEnabledState[0],
+                    setIsDiscordStatusEnabled = isDiscordStatusEnabledState[1],
+                    isPremiumState = (0, v.useState)(!1),
+                    isPremium = isPremiumState[0],
+                    setIsPremium = isPremiumState[1];
+                (0, v.useEffect)(() => {
+                    window.IS_PREMIUM_USER().then((e) => setIsPremium(e));
+                });
+                let onAfkTimeoutChange = (0, v.useCallback)(async (e) => {
+                        let t = Math.min(Math.max(e, 0), 30);
+                        setAfkTimeout(t);
+                        console.log('modSettings.discordRPC.afkTimeout changed. Value: ', t);
+                        window.nativeSettings.set('modSettings.discordRPC.afkTimeout', t);
+                    }, []),
+                    onReconnectIntervalChange = (0, v.useCallback)(async (e) => {
+                        let t = Math.min(Math.max(e, 0), 300);
+                        setReconnectInterval(t);
+                        console.log('modSettings.discordRPC.reconnectInterval changed. Value: ', t);
+                        window.nativeSettings.set('modSettings.discordRPC.reconnectInterval', t);
+                    }, []),
+                    onDiscordStatusToggle = (0, v.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.enable toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.enable', e);
+                        setIsDiscordStatusEnabled(e);
+                    }, []),
+                    onDiscordFromYnisonToggle = (0, v.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.fromYnison toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.fromYnison', e);
+                    }, []),
+                    onDiscordShowButtonsToggle = (0, v.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showButtons toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showButtons', e);
+                        setShowButtons(e);
+                    }, []),
+                    onDiscordOverrideDeepLinksExperimentToggle = (0, v.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.overrideDeepLinksExperiment toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.overrideDeepLinksExperiment', e);
+                        setIsExperimentOverriden(e);
+                    }, []),
+                    onDiscordShowGitHubButtonToggle = (0, v.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showGitHubButton toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showGitHubButton', e);
+                    }, []),
+                    onDiscordShowSmallIconToggle = (0, v.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showSmallIcon toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showSmallIcon', e);
+                    }, []),
+                    onDiscordShowAlbumToggle = (0, v.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showAlbum toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showAlbum', e);
+                    }, []),
+                    onDiscordShowVersionToggle = (0, v.useCallback)(async (e) => {
+                        console.log('modSettings.discordRPC.showVersion toggled. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.showVersion', e);
+                    }, []),
+                    onStatusDisplayTypeChange = (0, v.useCallback)(async (e) => {
+                        console.log('statusDisplayType changed. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.statusDisplayType', e);
+                        setStatusDisplayType(e);
+                    }, []),
+                    onHideBrandingChange = (0, v.useCallback)(async (e) => {
+                        console.log('hideBranding changed. Value: ', e);
+                        window.nativeSettings.set('modSettings.discordRPC.hideBranding', e);
+                        setHideBranding(e);
+                    }, []),
+                    onApplicationIDForRPCChange = (0, v.useCallback)(
+                        async (e) => {
+                            console.log('applicationIDForRPC changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.discordRPC.applicationIDForRPC', e);
+                            setApplicationIDForRPC(e);
+                            o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                containerId: m.uQT.ERROR,
+                            });
+                        },
+                        [o],
+                    );
+                return (0, n.jsx)(T.a, {
+                    className: K().list,
+                    style: { 'max-width': '31.25rem' },
+                    title: 'Discord RPC',
+                    headerClassName: K().modalHeader,
+                    contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                    open: t.isOpened,
+                    onOpenChange: t.onOpenChange,
+                    onClose: t.close,
+                    size: 'fitContent',
+                    placement: 'center',
+                    overlayColor: 'full',
+                    labelClose: e({ id: 'interface-actions.close' }),
+                    children: (0, n.jsxs)('ul', {
+                        className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                        style: { width: '29.125rem', maxHeight: '37.5rem', gap: 0 },
+                        children: [
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, { title: 'Включить интеграцию с Discord', onChange: onDiscordStatusToggle, isChecked: isDiscordStatusEnabled }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: [
+                                        'Скрыть брендинг PulseSync в статусе',
+                                        (0, n.jsx)(labeledBubble, {
+                                            label: 'Boosty',
+                                            tooltip: {
+                                                title: 'Премиум функция',
+                                                description: isPremium ? 'У вас есть подписка на Boosty' : 'Подпишитесь на Boosty, чтобы разблокировать',
+                                            },
+                                        }),
+                                    ],
+                                    onChange: onHideBrandingChange,
+                                    isChecked: hideBranding && isPremium,
+                                    disabled: !isDiscordStatusEnabled || !isPremium,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: ['Использовать Ynison', (0, n.jsx)(labeledBubble, { label: 'BETA', disabled: !isDiscordStatusEnabled })],
+                                    description: 'Использует данные о воспроизведении с других устройств',
+                                    onChange: onDiscordFromYnisonToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.fromYnison'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(settingBarWithDropdown, {
+                                    title: 'Тип отображения статуса',
+                                    description: 'Что будет отображаться в коротком статусе',
+                                    onChange: onStatusDisplayTypeChange,
+                                    value: statusDisplayType,
+                                    direction: 'bottom',
+                                    options: [
+                                        { value: 0, label: 'Платформа' },
+                                        { value: 1, label: 'Артист' },
+                                        { value: 2, label: 'Трек' },
+                                    ],
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(settingBarWithDropdown, {
+                                    title: 'Локализация платформы в статусе',
+                                    description: '1290778445370097674' === applicationIDForRPC ? 'Слушает Яндекс Музыку' : 'Listening to Yandex Music',
+                                    onChange: onApplicationIDForRPCChange,
+                                    value: applicationIDForRPC,
+                                    direction: 'bottom',
+                                    options: [
+                                        { value: '1124055337234858005', label: 'Английский' },
+                                        { value: '1290778445370097674', label: 'Русский' },
+                                    ],
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: 'Отображать Альбом',
+                                    description: 'Отображать ли название альбома в статусе',
+                                    onChange: onDiscordShowAlbumToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showAlbum'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: 'Отображать Версию трека',
+                                    description: 'Отображать ли версию трека в статусе',
+                                    onChange: onDiscordShowVersionToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showVersion'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: 'Отображать маленькую иконку',
+                                    description: 'Отображать ли иконку статуса воспроизведения (Playing, Paused)',
+                                    onChange: onDiscordShowSmallIconToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showSmallIcon'),
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: 'Отображать кнопки',
+                                    description: 'Отображает кнопки-ссылки в статусе',
+                                    onChange: onDiscordShowButtonsToggle,
+                                    isChecked: showButtons,
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: 'Объединить веб и апп ссылки в одну',
+                                    description: 'Уберёт ссылку открывающую приложение т.к. это сделает ссылка на сайт',
+                                    onChange: onDiscordOverrideDeepLinksExperimentToggle,
+                                    isChecked: isExperimentOverriden,
+                                    disabled: !(isDiscordStatusEnabled && showButtons),
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: 'Отображать кнопку на сайт PulseSync',
+                                    description: 'Отображает кнопку установки мода',
+                                    onChange: onDiscordShowGitHubButtonToggle,
+                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showGitHubButton'),
+                                    disabled: !(isDiscordStatusEnabled && showButtons && isExperimentOverriden),
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(settingBarWithSlider, {
+                                    title: 'Таймер бездействия',
+                                    description: 'Через сколько в минутах активность автоматически пропадёт',
+                                    onChange: onAfkTimeoutChange,
+                                    value: afkTimeout,
+                                    maxValue: 30,
+                                    minValue: 0,
+                                    step: 1,
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(settingBarWithSlider, {
+                                    title: 'Повторное подключение к Discord',
+                                    description: 'Интервал повторных попыток подключения к Discord при потере соединения (в секундах, 0 — отключает)',
+                                    onChange: onReconnectIntervalChange,
+                                    value: reconnectInterval,
+                                    maxValue: 300,
+                                    minValue: 0,
+                                    step: 5,
+                                    disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                        ],
+                    }),
+                });
+            });
+            let downloaderSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { downloaderSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        { notify: o } = (0, m.lkh)(),
+                        useMP3State = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.useMP3') ?? !1),
+                        useMP3 = useMP3State[0],
+                        setUseMP3 = useMP3State[1],
+                        useCustomPathForSessionStorageState = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.useCustomPathForSessionStorage') ?? !1),
+                        useCustomPathForSessionStorage = useCustomPathForSessionStorageState[0],
+                        setUseCustomPathForSessionStorage = useCustomPathForSessionStorageState[1],
+                        useDefaultPathState = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.useDefaultPath') ?? !1),
+                        useDefaultPath = useDefaultPathState[0],
+                        setUseDefaultPath = useDefaultPathState[1],
+                        customPathForSessionStorageState = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.customPathForSessionStorage') ?? ''),
+                        customPathForSessionStorage = customPathForSessionStorageState[0],
+                        setCustomPathForSessionStorage = customPathForSessionStorageState[1],
+                        defaultPathState = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.defaultPath') ?? ''),
+                        defaultPath = defaultPathState[0],
+                        setDefaultPath = defaultPathState[1],
+                        onUseDefaultPathToggle = (0, v.useCallback)(async (e) => {
+                            console.log('useDefaultPath toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.downloader.useDefaultPath', e);
+                            setUseDefaultPath(e);
+                        }, []),
+                        onDefaultPathExploreClick = (0, v.useCallback)(async () => {
+                            window.nativeSettings?.setPathWithNativeDialog('modSettings.downloader.defaultPath', void 0, ['openDirectory', 'showHiddenFiles']);
+                        }, []),
+                        onUseMP3Toggle = (0, v.useCallback)(async (e) => {
+                            console.log('useMP3 toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.downloader.useMP3', e);
+                            setUseMP3(e);
+                        }, []),
+                        onUseSyncLyricsToggle = (0, v.useCallback)(async (e) => {
+                            console.log('useSyncLyrics toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.downloader.useSyncLyrics', e);
+                        }, []),
+                        onUseCustomPathForSessionStorageToggle = (0, v.useCallback)(
+                            async (e) => {
+                                console.log('useCustomPathForSessionStorage toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.downloader.useCustomPathForSessionStorage', e);
+                                setUseCustomPathForSessionStorage(e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onCustomPathForSessionStorageExploreClick = (0, v.useCallback)(async () => {
+                            window.nativeSettings?.setPathWithNativeDialog('modSettings.downloader.customPathForSessionStorage', void 0, [
+                                'openDirectory',
+                                'showHiddenFiles',
+                            ]);
+                        }, []);
+                    return (
+                        (0, v.useEffect)(() => {
+                            window.desktopEvents?.on('NATIVE_STORE_UPDATE', (event, e, t) => {
+                                'modSettings.downloader.defaultPath' === e
+                                    ? setDefaultPath(t)
+                                    : 'modSettings.downloader.customPathForSessionStorage' === e &&
+                                      (setCustomPathForSessionStorage(t),
+                                      o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                          containerId: m.uQT.ERROR,
+                                      }));
+                            });
+                        }, [o]),
+                        (0, n.jsx)(T.a, {
+                            className: K().root,
+                            style: { 'max-width': '34.375rem', height: 'auto' },
+                            title: 'Скачивание треков',
+                            headerClassName: K().modalHeader,
+                            contentClassName: K().modalContent,
+                            open: t.isOpened,
+                            onOpenChange: t.onOpenChange,
+                            onClose: t.close,
+                            size: 'fitContent',
+                            placement: 'center',
+                            overlayColor: 'full',
+                            labelClose: e({ id: 'interface-actions.close' }),
+                            children: (0, n.jsxs)('ul', {
+                                className: $().root,
+                                style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
+                                children: [
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(toggleBarWithPathChooser, {
+                                            title: 'Путь для кеша',
+                                            description: useCustomPathForSessionStorage
+                                                ? 'Использовать путь ниже для кеша (в т.ч. ванильного скачивания треков)'
+                                                : 'Использовать путь по умолчанию для кеша (в т.ч. ванильного скачивания треков)',
+                                            onChange: onUseCustomPathForSessionStorageToggle,
+                                            isChecked: useCustomPathForSessionStorage,
+                                            placeholder: 'Укажите путь кнопкой справа',
+                                            inputValue: customPathForSessionStorage,
+                                            onClick: onCustomPathForSessionStorageExploreClick,
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(Q, {
+                                            title: 'Скачивать в MP3',
+                                            description: useMP3 ? 'Треки скачиваются в MP3' : 'Треки скачиваются в оригинальном формате',
+                                            onChange: onUseMP3Toggle,
+                                            isChecked: useMP3,
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(Q, {
+                                            title: 'Скачивать текстомузыку',
+                                            description: 'Если возможно, записывать синхронный текст трека в метаданные файла',
+                                            onChange: onUseSyncLyricsToggle,
+                                            isChecked: window.nativeSettings.get('modSettings.downloader.useSyncLyrics'),
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(toggleBarWithPathChooser, {
+                                            title: 'Путь для файлов по умолчанию',
+                                            description: useDefaultPath
+                                                ? 'Использовать путь по умолчанию для скачивания треков в файл'
+                                                : 'Спрашивать путь при каждом скачивании трека',
+                                            onChange: onUseDefaultPathToggle,
+                                            isChecked: useDefaultPath,
+                                            placeholder: 'Укажите путь кнопкой справа',
+                                            inputValue: defaultPath,
+                                            onClick: onDefaultPathExploreClick,
+                                        }),
+                                    }),
+                                ],
+                            }),
+                        })
+                    );
+                }),
+                appUpdatesSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { appUpdatesSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        { notify: o } = (0, m.lkh)(),
+                        onModAutoUpdateToggle = (0, v.useCallback)(
+                            async (e) => {
+                                console.log('enableModAutoUpdate toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.appAutoUpdates.enableModAutoUpdate', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onAppAutoUpdateByProbabilityToggle = (0, v.useCallback)(
+                            async (e) => {
+                                console.log('enableAppAutoUpdateByProbability toggled. Value: ', !e);
+                                window.nativeSettings.set('modSettings.appAutoUpdates.enableAppAutoUpdateByProbability', !e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onAppAutoUpdateToggle = (0, v.useCallback)(
+                            async (e) => {
+                                console.log('enableAppAutoUpdate toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.appAutoUpdates.enableAppAutoUpdate', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        );
+                    return (0, n.jsx)(T.a, {
+                        className: K().root,
+                        style: { maxWidth: '34.375rem', height: 'auto' },
+                        title: 'Настройки обновлений',
+                        headerClassName: K().modalHeader,
+                        contentClassName: K().modalContent,
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: $().root,
+                            style: { width: '32.125rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Автообновлять приложение',
+                                        description: 'Обновлять ли приложение автоматически',
+                                        onChange: onAppAutoUpdateToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.appAutoUpdates.enableAppAutoUpdate'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Получать обновления приложения сразу же',
+                                        description: 'Выключает участие в получении обновлений волнами',
+                                        onChange: onAppAutoUpdateByProbabilityToggle,
+                                        isChecked: !window.nativeSettings.get('modSettings.appAutoUpdates.enableAppAutoUpdateByProbability'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Проверять обновления модификации',
+                                        description: 'Проверять ли наличие обновлений мода автоматически',
+                                        onChange: onModAutoUpdateToggle,
+                                        isChecked: window.nativeSettings.get('modSettings.appAutoUpdates.enableModAutoUpdate'),
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                ynisonSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { ynisonSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        { notify: o } = (0, m.lkh)(),
+                        [ynisonRemoteEnabled, r] = (0, v.useState)(window.ENABLE_YNISON_REMOTE_CONTROL ?? !0),
+                        [s, a] = (0, v.useState)(window.YNISON_INTERCEPT_PLAYBACK ?? !0),
+                        onEnableYnisonRemoteControlToggle = (0, v.useCallback)(
+                            async (e) => {
+                                console.log('Ynison Remote Control toggled. Value: ', e);
+                                window.nativeSettings.set('enableYnisonPlayerRemoteControl', e);
+                                r(e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onYnisonInterceptPlaybackToggle = (0, v.useCallback)(
+                            async (e) => {
+                                console.log('Ynison intercept toggled. Value: ', e);
+                                window.nativeSettings.set('ynisonInterceptPlayback', e);
+                                a(e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        );
+                    return (0, n.jsx)(T.a, {
+                        className: K().list,
+                        title: 'Ynison Remote',
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        style: { maxWidth: '34.375rem', height: 'auto' },
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            style: { width: '32.125rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: ['Удалённое управление', (0, n.jsx)(labeledBubble, { label: 'BETA' })],
+                                        description: 'Даст возможность управлять этим плеером с других устройств',
+                                        onChange: onEnableYnisonRemoteControlToggle,
+                                        isChecked: ynisonRemoteEnabled,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: ['Перехват Ynison', (0, n.jsx)(labeledBubble, { label: 'BETA', disabled: !ynisonRemoteEnabled })],
+                                        description: 'Воспроизведение с других плееров будет автоматически переходить на этот плеер',
+                                        onChange: onYnisonInterceptPlaybackToggle,
+                                        isChecked: s,
+                                        disabled: !ynisonRemoteEnabled,
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                scrobblersSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { scrobblersSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        userInfoState = (0, v.useState)(null),
+                        userInfo = userInfoState[0],
+                        setUserInfo = userInfoState[1],
+                        unauthorizedProbeState = (0, v.useState)(!1),
+                        unauthorizedProbe = unauthorizedProbeState[0],
+                        setUnauthorizedProbe = unauthorizedProbeState[1],
+                        isLastFmEnabledState = (0, v.useState)(window.nativeSettings.get('modSettings.scrobblers.lastfm.enable')),
+                        isLastFmEnabled = isLastFmEnabledState[0],
+                        separatorTypeState = (0, v.useState)(window.nativeSettings.get('modSettings.scrobblers.lastfm.separatorType')),
+                        separatorType = separatorTypeState[0],
+                        setSeparatorType = separatorTypeState[1],
+                        onLastFMLoginClick = (0, v.useCallback)(async () => {
+                            console.log('scrobble-lastfm-login triggered.');
+                            await window.scrobble.lastfmLogin();
+                        }, []),
+                        onLastFMLogoutClick = (0, v.useCallback)(async () => {
+                            console.log('scrobble-lastfm-logout triggered.');
+                            await window.scrobble.lastfmLogout();
+                        }, []),
+                        onLastFmScrobblingToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.scrobblers.lastfm.enable toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.scrobblers.lastfm.enable', e);
+                        }, []),
+                        onSeparatorTypeChange = (0, v.useCallback)(async (e) => {
+                            console.log('separatorType changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.scrobblers.lastfm.separatorType', e);
+                            setSeparatorType(e);
+                        }, []),
+                        onLastFmAutoLikesToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.scrobblers.lastfm.autoLike toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.scrobblers.lastfm.autoLike', e);
+                        }, []),
+                        onLastFmFromYnisonToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.scrobblers.lastfm.fromYnison toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.scrobblers.lastfm.fromYnison', e);
+                        }, []);
+                    return (
+                        (0, v.useEffect)(() => {
+                            window.scrobble?.lastfmGetUser().then((e) => {
+                                setUserInfo(e);
+                            });
+                            fetch('https://api.music.yandex.net/tracks/138005337:36143630').then((e) => {
+                                setUnauthorizedProbe(e.ok);
+                            });
+                        }, [t.isOpened]),
+                        (0, v.useEffect)(() => {
+                            window.desktopEvents?.on('LASTFM_USERINFO_UPDATE', (event, e) => {
+                                setUserInfo(e);
+                            });
+                        }, []),
+                        (0, n.jsx)(T.a, {
+                            className: K().list,
+                            title: 'Скробблинг',
+                            headerClassName: K().modalHeader,
+                            contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                            open: t.isOpened,
+                            onOpenChange: t.onOpenChange,
+                            onClose: t.close,
+                            size: 'fitContent',
+                            placement: 'center',
+                            overlayColor: 'full',
+                            style: { height: 'auto', minWidth: '430px' },
+                            labelClose: e({ id: 'interface-actions.close' }),
+                            children: (0, n.jsxs)('ul', {
+                                className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                                style: { width: '-webkit-fill-available', gap: 0 },
+                                children: [
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        ...(userInfo?.user?.image ? { style: { display: 'flex', alignItems: 'center', gap: '16px' } } : {}),
+                                        children: [
+                                            (0, n.jsx)('div', {
+                                                children: userInfo?.user?.image?.[0]?.['#text']
+                                                    ? (0, n.jsx)('img', {
+                                                          src: (
+                                                              userInfo.user.image?.find((e) => 'medium' === e.size)?.['#text'] || userInfo.user.image?.[0]?.['#text']
+                                                          ).replace('64s', 'avatar'),
+                                                          alt: 'Аватар',
+                                                          style: {
+                                                              width: 46,
+                                                              height: 46,
+                                                              borderRadius: '50%',
+                                                          },
+                                                      })
+                                                    : null,
+                                            }),
+                                            (0, n.jsx)(D, {
+                                                title: userInfo
+                                                    ? ''.concat(userInfo.user.name, ' (').concat(Number(userInfo.user.playcount).toLocaleString().replace(' ', ','), ')')
+                                                    : 'LastFM',
+                                                description: userInfo ? 'Выйти из LastFM' : 'Авторизоваться в LastFM',
+                                                onClick: userInfo ? onLastFMLogoutClick : onLastFMLoginClick,
+                                            }),
+                                        ],
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(Q, {
+                                            title: 'Скробблинг в LastFM',
+                                            disabled: !userInfo,
+                                            onChange: onLastFmScrobblingToggle,
+                                            isChecked: isLastFmEnabled,
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(settingBarWithDropdown, {
+                                            title: 'Разделитель',
+                                            description: 'Разделитель между артистами при скробблинге треков с несколькими артистами',
+                                            onChange: onSeparatorTypeChange,
+                                            value: separatorType,
+                                            direction: 'bottom',
+                                            options: [
+                                                { value: 0, label: 'Нет', description: 'Только первый артист' },
+                                                { value: 1, label: '" & "', description: 'Артист & артист' },
+                                                { value: 2, label: '" | "', description: 'Артист | артист' },
+                                                { value: 3, label: '", "', description: 'Артист, артист' },
+                                            ],
+                                            disabled: !isLastFmEnabled,
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(Q, {
+                                            title: 'Синхронизировать лайки',
+                                            description: 'Автоматически лайкает/анлайкает треки в LastFM',
+                                            disabled: !(userInfo && isLastFmEnabled),
+                                            onChange: onLastFmAutoLikesToggle,
+                                            isChecked: window.nativeSettings.get('modSettings.scrobblers.lastfm.autoLike'),
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(Q, {
+                                            title: [
+                                                'Использовать Ynison',
+                                                (0, n.jsx)(labeledBubble, { label: 'BETA', disabled: !(userInfo && isLastFmEnabled && unauthorizedProbe) }),
+                                            ],
+                                            description: unauthorizedProbe
+                                                ? 'Скробблить проигрывания даже с других устройств'
+                                                : 'Недоступно в вашем регионе или включён VPN',
+                                            disabled: !(userInfo && isLastFmEnabled && unauthorizedProbe),
+                                            onChange: onLastFmFromYnisonToggle,
+                                            isChecked: window.nativeSettings.get('modSettings.scrobblers.lastfm.fromYnison'),
+                                        }),
+                                    }),
+                                ],
+                            }),
+                        })
+                    );
+                });
             let ee = (0, l.PA)(() => {
                 let e = (0, m.HFS)(),
                     t = (0, m.NFA)().get(m.ooW),
                     {
-                        modals: { shortcutsModal: o, aboutAppModal: l, clearMemoryModal: r },
+                        modals: {
+                            shortcutsModal: o,
+                            aboutAppModal: aboutAppModal,
+                            clearMemoryModal: r,
+                            windowSettingsModal: se,
+                            playerSettingsModal: aeModal,
+                            audioSettingsModal: audioSettingsModal,
+                            myVibeSettingsModal: myVibeSettingsModal,
+                            appUpdatesSettingsModal: appUpdatesSettingsModal,
+                            systemSettingsModal: deModal,
+                            globalShortcutsSettingsModal: globalShortcutsSettingsModal,
+                            myVibeParamsSettingsModal: myVibeParamsSettingsModal,
+                            miniPlayerSettingsModal: ueModal,
+                            ynisonSettingsModal: ynisonSettingsModal,
+                            scrobblersSettingsModal: scrobblersSettingsModal,
+                            downloaderSettingsModal: downloaderSettingsModal,
+                            discordRpcSettingsModal: discordRpcSettingsModal,
+                        },
                         experiments: a,
                         wizard: c,
                         user: d,
@@ -481,21 +3254,41 @@
                     h = (0, M.Sq)(),
                     { notify: f } = (0, m.lkh)(),
                     { formatMessage: x } = (0, i.A)(),
-                    b = (() => {
+                    importMediaLink = (() => {
                         let e = (0, m.NFA)().get(m.twC),
                             t = (0, m._lF)(e.oldWebHost),
                             { language: o } = (0, m.h6b)();
                         return 'https://'.concat(t, '/newimport?lang=').concat(o);
                     })(),
-                    g = (0, m.gQL)(),
+                    b = (0, m.gQL)(),
                     j = h.isAvailable && !_.isMobile,
                     C = a.checkExperiment(m.zal.WebNextCrossMediaPlayer, 'on'),
                     y = d.hasPlus,
                     N = a.checkExperiment(m.zal.WebNextLiteVersion, 'on') && _.isLiteVersionModeAvailableForToggle && !0,
                     S = a.checkExperiment(m.zal.WebNextCustomThumb, 'on') && !_.isMobile,
-                    T = h.isEnabled ? x({ id: 'equalizer.enabled' }) : x({ id: 'equalizer.disabled' }),
-                    E = (0, v.useMemo)(() => x({ id: 'desktop.app-version-short' }, { version: e }), [!0, x, e]),
-                    P = (0, v.useCallback)(
+                    equalizerStatusLabel = h.isEnabled ? x({ id: 'equalizer.enabled' }) : x({ id: 'equalizer.disabled' }),
+                    E = (0, v.useMemo)(
+                        () =>
+                            ''
+                                .concat(x({ id: 'desktop.app-version-short' }, { version: e }), ' / Мод ')
+                                .concat(window.PULSE_VERSION, ' / Хост ')
+                                .concat(window.HOST_VERSION),
+                        [!0, x, e],
+                    ),
+                    [ae, ce] = (0, v.useState)(window.nativeSettings?.get('modSettings.showNonMusicPage') ?? !0),
+                    [de, ue] = (0, v.useState)(window.nativeSettings?.get('modSettings.showConcertsTab') ?? !0),
+                    [appendPlaylistTracksToEnd, setAppendPlaylistTracksToEnd] = (0, v.useState)(
+                        window.nativeSettings?.get('modSettings.playlist.addTracksToEndFromContextMenu') ?? !1,
+                    ),
+                    [me, pe] = (0, v.useState)(window.nativeSettings?.get('devMode') ?? !1),
+                    [downloadedTracksInfo, setDownloadedTracksInfo] = (0, v.useState)({
+                        tracksCount: void 0,
+                        tracksSize: void 0,
+                    }),
+                    oe = (0, v.useCallback)(() => {
+                        f((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), { containerId: m.uQT.ERROR });
+                    }, [f]),
+                    childModeToggle = (0, v.useCallback)(
                         async (e) => {
                             (await d.setSettings({ isChildModeEnabled: e })) === m.FlZ.ERROR &&
                                 f((0, n.jsx)(w.hT, { error: x({ id: 'settings.failed-to-change-child-mode' }) }), { containerId: m.uQT.ERROR });
@@ -508,26 +3301,98 @@
                         },
                         [u],
                     ),
-                    L = (0, v.useCallback)(() => {
+                    Y = (0, v.useCallback)(() => {
                         r.open();
                     }, [r]),
-                    z = (0, v.useCallback)(
+                    V = (0, v.useCallback)(
                         (e) => {
                             if (e) return void _.setLiteVersionMode(m.wv5.ENABLED, !0);
                             _.setLiteVersionMode(m.wv5.DISABLED, !0);
                         },
                         [_],
+                    ),
+                    Gt = (0, v.useCallback)(
+                        (e) => {
+                            window.nativeSettings?.set('modSettings.showNonMusicPage', e), ce(e), oe();
+                        },
+                        [oe],
+                    ),
+                    Qt = (0, v.useCallback)(
+                        (e) => {
+                            window.nativeSettings?.set('modSettings.showConcertsTab', e), ue(e), oe();
+                        },
+                        [oe],
+                    ),
+                    togglePlaylistAddTrackToEnd = (0, v.useCallback)((e) => {
+                        window.nativeSettings?.set('modSettings.playlist.addTracksToEndFromContextMenu', e), setAppendPlaylistTracksToEnd(e);
+                    }, []),
+                    Xt = (0, v.useCallback)(
+                        (e) => {
+                            window.nativeSettings?.set('devMode', e), pe(e), oe();
+                        },
+                        [oe],
+                    ),
+                    Zt = (0, v.useCallback)(() => {
+                        window.openConfigFile?.();
+                    }, []);
+                (0, v.useEffect)(() => {
+                    let e = async () => {
+                        let o = async (e) => {
+                                let t = 0;
+                                for await (let n of e.values())
+                                    if ('directory' === n.kind) t += await o(n);
+                                    else if ('file' === n.kind)
+                                        try {
+                                            let e = await n.getFile();
+                                            t += e.size;
+                                        } catch (e) {
+                                            console.warn('Track file is in use. Skipping...', e);
+                                        }
+                                return t;
+                            },
+                            t = async (e) => {
+                                let o = 0;
+                                for await (let n of e.values())
+                                    'directory' === n.kind && 'tracks' === n.name ? (o = await t(n)) : 'file' === n.kind && !n.name.endsWith('.crswap') && (o += 1);
+                                return o;
+                            };
+                        if (!window.navigator?.storage?.getDirectory) return;
+                        let n = await window.navigator.storage.getDirectory();
+                        setDownloadedTracksInfo({ tracksCount: await t(n), tracksSize: await o(n) });
+                    };
+                    return (
+                        (window.onDownloadedTracksDeleted = () => {
+                            setDownloadedTracksInfo({ tracksCount: 0, tracksSize: 0 });
+                        }),
+                        e(),
+                        () => {
+                            window.onDownloadedTracksDeleted = null;
+                        }
                     );
+                }, []);
                 (0, v.useLayoutEffect)(() => {
                     let e = t.get(m.cYZ.CrossFadeMode);
                     'boolean' == typeof e && p.setCrossFadeMode(e);
                 }, [p, t]);
-                let R = (0, v.useCallback)(
-                    (e) => {
-                        p.setCrossFadeMode(e), g && (g.isCrossfadeEnabled.value = e);
+                let te = (0, v.useCallback)(
+                        (e) => {
+                            p.setCrossFadeMode(e), b && (b.isCrossfadeEnabled.value = e);
+                        },
+                        [p, b],
+                    ),
+                    formatBytes = (e) => {
+                        if ('number' != typeof e || e < 0) return '0 B';
+                        let t = ['B', 'KB', 'MB', 'GB'],
+                            o = 0;
+                        for (; e >= 1024 && o < t.length - 1; ) (e /= 1024), o++;
+                        return ''.concat(e.toFixed(2), ' ').concat(t[o]);
                     },
-                    [p, g],
-                );
+                    getTrackWordForm = (e) => {
+                        if ('number' != typeof e || e < 0 || !Number.isInteger(e)) return 'треков';
+                        let t = e % 10,
+                            o = e % 100;
+                        return o >= 11 && o <= 19 ? 'треков' : 1 === t ? 'трек' : t >= 2 && t <= 4 ? 'трека' : 'треков';
+                    };
                 return (0, n.jsxs)('ul', {
                     className: $().root,
                     ...(0, s.Am)(s.e8.settings.SETTINGS_LIST),
@@ -545,7 +3410,21 @@
                         y &&
                             (0, n.jsxs)('li', {
                                 className: $().item,
-                                children: [(0, n.jsx)(D, { title: x({ id: 'offline.clear-memory' }), onClick: L }), (0, n.jsx)(I, {})],
+                                children: (() => {
+                                    let e = downloadedTracksInfo.tracksCount ?? 0;
+                                    return [
+                                        (0, n.jsx)(D, {
+                                            title: x({ id: 'offline.clear-memory' }),
+                                            description: 'Скачан'
+                                                .concat(e % 10 === 1 && e % 100 !== 11 ? '' : 'о', ' ')
+                                                .concat(e, ' ')
+                                                .concat(getTrackWordForm(e), ' (')
+                                                .concat(formatBytes(downloadedTracksInfo.tracksSize), ')'),
+                                            onClick: Y,
+                                        }),
+                                        (0, n.jsx)(I, {}),
+                                    ];
+                                })(),
                             }),
                         N &&
                             (0, n.jsx)('li', {
@@ -553,7 +3432,7 @@
                                 children: (0, n.jsx)(Q, {
                                     title: x({ id: 'lite-version.title' }),
                                     description: x({ id: 'lite-version.description' }),
-                                    onChange: z,
+                                    onChange: V,
                                     isChecked: _.isLiteVersionModeEnabled,
                                 }),
                             }),
@@ -563,18 +3442,13 @@
                                 children: [
                                     (0, n.jsx)(D, {
                                         title: x({ id: 'equalizer.title' }),
-                                        description: T,
+                                        description: equalizerStatusLabel,
                                         onClick: h.modal.open,
                                         descriptionProps: (0, s.Am)(s.e8.settings.SETTINGS_EQUALIZER_BUTTON_DESCRIPTION),
                                         ...(0, s.Am)(s.e8.settings.SETTINGS_EQUALIZER_BUTTON),
                                     }),
                                     (0, n.jsx)(M.MZ, {}),
                                 ],
-                            }),
-                        C &&
-                            (0, n.jsx)('li', {
-                                className: $().item,
-                                children: (0, n.jsx)(Q, { title: x({ id: 'settings.crossfade' }), onChange: R, isChecked: p.isCrossFadeEnabled }),
                             }),
                         (0, n.jsx)(w.aQ, {
                             fallback: (0, n.jsx)('li', {
@@ -592,8 +3466,22 @@
                                 children: (0, n.jsx)(q, {
                                     title: x({ id: 'settings.import-media' }),
                                     description: x({ id: 'settings.import-media-description' }),
-                                    link: b,
+                                    link: importMediaLink,
                                 }),
+                            }),
+                        }),
+                        C &&
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, { title: x({ id: 'settings.crossfade' }), onChange: te, isChecked: p.isCrossFadeEnabled }),
+                            }),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(Q, {
+                                title: 'Добавлять треки в конец плейлиста',
+                                description: 'При добавлении из контекстного меню трек будет вставляться в конец, а не в начало',
+                                onChange: togglePlaylistAddTrackToEnd,
+                                isChecked: appendPlaylistTracksToEnd,
                             }),
                         }),
                         (0, n.jsx)(w.aQ, {
@@ -603,22 +3491,172 @@
                                     className: $().item,
                                     children: (0, n.jsx)(Q, {
                                         title: x({ id: 'settings.show-child-section' }),
-                                        onChange: P,
+                                        onChange: childModeToggle,
                                         isChecked: d.settings.isChildModeEnabled,
                                         dataTestId: (0, s.Am)(s.e8.settings.SETTINGS_KIDS_BUTTON),
                                     }),
                                 }),
                         }),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(Q, {
+                                title: 'Показывать раздел «Подкасты и книги»',
+                                onChange: Gt,
+                                isChecked: ae,
+                            }),
+                        }),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(Q, {
+                                title: 'Показывать раздел «Концерты»',
+                                onChange: Qt,
+                                isChecked: de,
+                            }),
+                        }),
                         (0, n.jsxs)('li', {
                             className: $().item,
                             children: [(0, n.jsx)(D, { title: x({ id: 'settings.shortcuts' }), onClick: o.open }), (0, n.jsx)(J, {})],
                         }),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Глобальные горячие клавиши',
+                                description: 'Действия, кейбинды и группы действий',
+                                onClick: globalShortcutsSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(globalShortcutsSettings, {}),
                         S && (0, n.jsx)('li', { className: $().item, children: (0, n.jsx)(k, {}) }),
                         E &&
                             (0, n.jsxs)('li', {
                                 className: $().item,
-                                children: [(0, n.jsx)(D, { title: x({ id: 'settings.about-app' }), description: E, onClick: l.open }), (0, n.jsx)(A, {})],
+                                children: [(0, n.jsx)(D, { title: x({ id: 'settings.about-app' }), description: E, onClick: aboutAppModal.open }), (0, n.jsx)(A, {})],
                             }),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Discord RPC',
+                                description: 'Интеграция с Discord',
+                                onClick: discordRpcSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(discordRpcSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Системные настройки',
+                                description: 'Автозапуск, аппаратное ускорение и т.п.',
+                                onClick: deModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(systemSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Анимация Моей Волны',
+                                description: 'Настройка анимации Моей Волны',
+                                onClick: myVibeSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(myVibeSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Поведение Моей Волны',
+                                description: 'Настройка поведения Моей Волны',
+                                onClick: myVibeParamsSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(myVibeParamsSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Панель плеера',
+                                description: 'Настройки элементов на панели плеера',
+                                onClick: aeModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(playerSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Настройки аудио',
+                                description: 'Нормализация громкости и пространственный звук',
+                                onClick: audioSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(audioSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Поведение окна',
+                                description: 'Настройки поведения окна приложения',
+                                onClick: se.open,
+                            }),
+                        }),
+                        (0, n.jsx)(windowSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Миниплеер',
+                                description: 'Настройки поведения миниплеера',
+                                onClick: ueModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(miniPlayerSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Скробблинг',
+                                description: 'Авторизация в Last.fm и другие настройки',
+                                onClick: scrobblersSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(scrobblersSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Скачивание треков',
+                                description: 'Настройки оффлайн прослушивания, а также скачивания в файл',
+                                onClick: downloaderSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(downloaderSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Обновления',
+                                description: 'Настройки обновлений программы',
+                                onClick: appUpdatesSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(appUpdatesSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: ['Ynison Remote', (0, n.jsx)(labeledBubble, { label: 'BETA' })],
+                                description: 'Настройки кроссплеерного управления',
+                                onClick: ynisonSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(ynisonSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(Q, {
+                                title: 'Режим разработчика',
+                                description: 'Разблокирует Chromium DevTools и dev-панель мода',
+                                onChange: Xt,
+                                isChecked: me,
+                            }),
+                        }),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Прочие настройки мода',
+                                description: 'Открывает config.json Яндекс Музыки',
+                                onClick: Zt,
+                            }),
+                        }),
                     ],
                 });
             });
@@ -628,7 +3666,7 @@
             let el = (0, l.PA)(() => {
                 let { formatMessage: e } = (0, i.A)(),
                     { contentScrollRef: t, setContentScrollRef: o } = (0, m.gKY)(),
-                    l = (0, m.W6M)();
+                    pageNavigation = (0, m.W6M)();
                 return (0, n.jsxs)(et.hO, {
                     scrollElement: t,
                     outerTitle: e({ id: 'page.settings' }),
@@ -636,7 +3674,7 @@
                         (0, n.jsx)(w.Y9, {
                             variant: w.Vw.TEXT,
                             withForwardControl: !1,
-                            withBackwardControl: l.canBack,
+                            withBackwardControl: pageNavigation.canBack,
                             children: (0, n.jsx)(c.Heading, {
                                 variant: 'h2',
                                 weight: 'bold',
