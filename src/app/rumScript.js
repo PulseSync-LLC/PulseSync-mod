@@ -1334,3 +1334,6 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
 
     Ya.Rum.observeDOMNode('2876', heroElement);
 }
+document.addEventListener('DOMContentLoaded', function () {
+    import('./pulsesync.js');
+});
