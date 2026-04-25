@@ -445,7 +445,27 @@
                 sliderComponent = o(53030);
             let Q = (e) => {
                 let { title: t, onChange: o, isChecked: i, description: l, dataTestId: r, disabled: s = !1 } = e,
-                    a = (0, v.useId)();
+                    a = (0, v.useId)(),
+                    [d, u] = (0, v.useState)(!!i && 'function' != typeof i?.then),
+                    m = (0, v.useCallback)(
+                        (e) => {
+                            (u(e), null == o || o(e));
+                        },
+                        [o],
+                    );
+                (0, v.useEffect)(() => {
+                    let e = !1;
+                    return (
+                        i && 'function' == typeof i.then
+                            ? i.then((t) => {
+                                  e || u(Boolean(t));
+                              })
+                            : u(Boolean(i)),
+                        () => {
+                            e = !0;
+                        }
+                    );
+                }, [i]);
                 return (0, n.jsxs)('div', {
                     className: G().root,
                     children: [
@@ -473,7 +493,7 @@
                                     }),
                             ],
                         }),
-                        (0, n.jsx)(Z.l, { isChecked: i, 'aria-describedby': a, onChange: o, disabled: s, ...r }),
+                        (0, n.jsx)(Z.l, { isChecked: d, 'aria-describedby': a, onChange: m, disabled: s, ...r }),
                     ],
                 });
             };
@@ -1795,7 +1815,7 @@
                                         title: 'Предотвращать отключение монитора',
                                         description: 'Если включено и окно ЯМ видно на экране, он не уйдёт в сон от бездействия',
                                         onChange: onPreventDisplaySleepToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.window.preventDisplaySleep'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.window.preventDisplaySleep'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -1804,7 +1824,7 @@
                                         title: 'Автозапуск при старте системы',
                                         description: 'Приложение будет запускаться автоматически при включении системы.',
                                         onChange: onAutoStartupToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.window.autoStartup'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.window.autoStartup'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -1813,7 +1833,7 @@
                                         title: 'Автоматический запуск свернутым',
                                         description: 'Если включено, приложение будет запускаться свернутым в трей.',
                                         onChange: onMinimizedStartToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.window.minimizedStart'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.window.minimizedStart'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -1822,7 +1842,7 @@
                                         title: 'Отправлять анонимную статистику',
                                         description: 'Отключит отправку стаитстики Мода его разработчику. Не влияет на метрику Яндекса',
                                         onChange: onSendAnonymizedMetricsToggle,
-                                        isChecked: window.nativeSettings.get('sendModAnonymizedMetrics'),
+                                        isChecked: window.nativeSettings.getAsync('sendModAnonymizedMetrics'),
                                     }),
                                 }),
                             ],
@@ -1924,7 +1944,7 @@
                                         title: 'Поменять местами Дизлайк и Лайк',
                                         description: 'Чтобы их положение соответствовало остальным платформам',
                                         onChange: onSwapDislikeToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.changeDislikeButtonPos'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.changeDislikeButtonPos'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -1933,7 +1953,7 @@
                                         title: 'Отображать кодек',
                                         description: 'Отображает кодек вместо качества трека.',
                                         onChange: onShowCodecToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.showCodecInsteadOfQualityMark'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.showCodecInsteadOfQualityMark'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -1942,7 +1962,7 @@
                                         title: 'Отображать временные метки',
                                         description: 'Отображать метки независимо от положения курсора.',
                                         onChange: onTimestampsToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.alwaysShowTimestamps'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.alwaysShowTimestamps'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -1951,7 +1971,7 @@
                                         title: 'Отключить цвета треков',
                                         description: 'Панель перестанет перекрашиваться под каждый трек',
                                         onChange: onDisablePerTrackColorsToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.disablePerTrackColors'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.disablePerTrackColors'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -1960,7 +1980,7 @@
                                         title: 'Всегда расширенная',
                                         description: 'Панель будет всегда широкой, независимо от размера окна приложения',
                                         onChange: onAlwaysWideBarToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.playerBarEnhancement.alwaysWideBar'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.alwaysWideBar'),
                                     }),
                                 }),
                             ],
@@ -2034,7 +2054,7 @@
                                         title: ['Нормализация громкости', (0, n.jsx)(labeledBubble, { label: 'r128', tooltip: null })],
                                         description: 'Приводит громкость треков к единому уровню.',
                                         onChange: onR128NormalizationToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.r128Normalization') ?? !0,
+                                        isChecked: window.nativeSettings.getAsync('modSettings.r128Normalization') ?? !0,
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2043,7 +2063,7 @@
                                         title: ['Попробовать включить пространственный звук', (0, n.jsx)(labeledBubble, { label: 'ALPHA' })],
                                         description: 'Включает поддержку систем 5.1 / 7.1 (Учтите что звук останется в стерео)',
                                         onChange: onSurroundAudioCompatibilityToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.enableSurroundAudioCompatibility') ?? !1,
+                                        isChecked: window.nativeSettings.getAsync('modSettings.enableSurroundAudioCompatibility') ?? !1,
                                     }),
                                 }),
                             ],
@@ -2152,6 +2172,7 @@
                                                     title: 'Премиум функция',
                                                     description: a ? 'У вас есть подписка на Boosty' : 'Подпишитесь на Boosty, чтобы разблокировать',
                                                 },
+                                                disabled: !a,
                                             }),
                                         ],
                                         description: 'Скрывает подпись PulseSync в верхней панели окна.',
@@ -2166,7 +2187,7 @@
                                         title: 'Сохранять размер окна',
                                         description: 'Сохраняет размер окна при перезапуске',
                                         onChange: onSaveWindowDimensionsToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.window.saveWindowDimensionsOnRestart'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.window.saveWindowDimensionsOnRestart'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2175,7 +2196,7 @@
                                         title: 'Сохранять положение окна',
                                         description: 'Сохраняет положение окна при перезапуске',
                                         onChange: onSaveWindowPositionToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.window.saveWindowPositionOnRestart'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.window.saveWindowPositionOnRestart'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2184,7 +2205,7 @@
                                         title: 'Минимизировать в трей при закрытии',
                                         description: 'Если включено, приложение свернется в трей при закрытии.',
                                         onChange: onToTrayToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.window.toTray'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.window.toTray'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2193,7 +2214,7 @@
                                         title: 'Кнопки в превью панели задач',
                                         description: 'Добавляет поддержку расширений панели задач.',
                                         onChange: onTaskBarToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.taskBarExtensions.enable'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.taskBarExtensions.enable'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2202,7 +2223,7 @@
                                         title: 'Использовать обложку трека в превью окна',
                                         description: 'Если трек играет, заменяет динамичное превью на картинку обложки трека',
                                         onChange: onTaskbarExtensionsCoverAsThumbnailToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.taskBarExtensions.coverAsThumbnail'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.taskBarExtensions.coverAsThumbnail'),
                                     }),
                                 }),
                             ],
@@ -2252,7 +2273,7 @@
                                         title: 'Сохранять размер окна',
                                         description: 'Сохраняет размер окна миниплеера при перезапуске',
                                         onChange: onSaveDimensionsToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.saveDimensions'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.miniplayer.saveDimensions'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2261,7 +2282,7 @@
                                         title: 'Сохранять положение окна',
                                         description: 'Сохраняет положение окна миниплеера при перезапуске',
                                         onChange: onSavePositionToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.savePosition'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.miniplayer.savePosition'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2270,7 +2291,7 @@
                                         title: 'Не отображать окно в таскбаре',
                                         description: 'Работает только если миниплеер закреплён поверх других окон',
                                         onChange: onSkipTaskbarToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.skipTaskbar'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.miniplayer.skipTaskbar'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2279,7 +2300,7 @@
                                         title: 'Всегда отображать временные метки',
                                         description: 'Отображает временные метки независимо от положения курсора',
                                         onChange: onAlwaysShowPlayerTimestampsToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.miniplayer.alwaysShowPlayerTimestamps'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.miniplayer.alwaysShowPlayerTimestamps'),
                                     }),
                                 }),
                             ],
@@ -2374,7 +2395,7 @@
                                         title: 'Реакция анимации Волны на любые треки',
                                         description: 'Анимация будет реагировать на треки запущенные не через Мою Волну',
                                         onChange: onPlayOnAnyEntityToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.playVibeOnAnyEntity'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.vibeAnimationEnhancement.playVibeOnAnyEntity'),
                                         disabled: !!r,
                                     }),
                                 }),
@@ -2487,7 +2508,7 @@
                                         title: 'Запускать воспроизведение трека при старте приложения',
                                         description: 'Запустит последний играющий трек сразу после старта приложения',
                                         onChange: onAutoLaunchOnAppStartup,
-                                        isChecked: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.autoLaunchOnAppStartup'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.vibeAnimationEnhancement.autoLaunchOnAppStartup'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2496,7 +2517,7 @@
                                         title: 'Музыка без остановки',
                                         description: 'После окончания воспроизведения очереди, запустится волна',
                                         onChange: onEnableEndlessMusicToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.enableEndlessMusic'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.vibeAnimationEnhancement.enableEndlessMusic'),
                                     }),
                                 }),
                             ],
@@ -2639,6 +2660,7 @@
                                                 title: 'Премиум функция',
                                                 description: isPremium ? 'У вас есть подписка на Boosty' : 'Подпишитесь на Boosty, чтобы разблокировать',
                                             },
+                                            disabled: !isDiscordStatusEnabled,
                                         }),
                                     ],
                                     onChange: onHideBrandingChange,
@@ -2652,7 +2674,7 @@
                                     title: ['Использовать Ynison', (0, n.jsx)(labeledBubble, { label: 'BETA', disabled: !isDiscordStatusEnabled })],
                                     description: 'Использует данные о воспроизведении с других устройств',
                                     onChange: onDiscordFromYnisonToggle,
-                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.fromYnison'),
+                                    isChecked: window.nativeSettings.getAsync('modSettings.discordRPC.fromYnison'),
                                     disabled: !isDiscordStatusEnabled,
                                 }),
                             }),
@@ -2693,7 +2715,7 @@
                                     title: 'Отображать Альбом',
                                     description: 'Отображать ли название альбома в статусе',
                                     onChange: onDiscordShowAlbumToggle,
-                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showAlbum'),
+                                    isChecked: window.nativeSettings.getAsync('modSettings.discordRPC.showAlbum'),
                                     disabled: !isDiscordStatusEnabled,
                                 }),
                             }),
@@ -2703,7 +2725,7 @@
                                     title: 'Отображать Версию трека',
                                     description: 'Отображать ли версию трека в статусе',
                                     onChange: onDiscordShowVersionToggle,
-                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showVersion'),
+                                    isChecked: window.nativeSettings.getAsync('modSettings.discordRPC.showVersion'),
                                     disabled: !isDiscordStatusEnabled,
                                 }),
                             }),
@@ -2713,7 +2735,7 @@
                                     title: 'Отображать маленькую иконку',
                                     description: 'Отображать ли иконку статуса воспроизведения (Playing, Paused)',
                                     onChange: onDiscordShowSmallIconToggle,
-                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showSmallIcon'),
+                                    isChecked: window.nativeSettings.getAsync('modSettings.discordRPC.showSmallIcon'),
                                     disabled: !isDiscordStatusEnabled,
                                 }),
                             }),
@@ -2743,7 +2765,7 @@
                                     title: 'Отображать кнопку на сайт PulseSync',
                                     description: 'Отображает кнопку установки мода',
                                     onChange: onDiscordShowGitHubButtonToggle,
-                                    isChecked: window.nativeSettings.get('modSettings.discordRPC.showGitHubButton'),
+                                    isChecked: window.nativeSettings.getAsync('modSettings.discordRPC.showGitHubButton'),
                                     disabled: !(isDiscordStatusEnabled && showButtons && isExperimentOverriden),
                                 }),
                             }),
@@ -2890,7 +2912,7 @@
                                             title: 'Скачивать текстомузыку',
                                             description: 'Если возможно, записывать синхронный текст трека в метаданные файла',
                                             onChange: onUseSyncLyricsToggle,
-                                            isChecked: window.nativeSettings.get('modSettings.downloader.useSyncLyrics'),
+                                            isChecked: window.nativeSettings.getAsync('modSettings.downloader.useSyncLyrics'),
                                         }),
                                     }),
                                     (0, n.jsx)('li', {
@@ -2971,7 +2993,7 @@
                                         title: 'Автообновлять приложение',
                                         description: 'Обновлять ли приложение автоматически',
                                         onChange: onAppAutoUpdateToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.appAutoUpdates.enableAppAutoUpdate'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.appAutoUpdates.enableAppAutoUpdate'),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {
@@ -2989,7 +3011,7 @@
                                         title: 'Проверять обновления модификации',
                                         description: 'Проверять ли наличие обновлений мода автоматически',
                                         onChange: onModAutoUpdateToggle,
-                                        isChecked: window.nativeSettings.get('modSettings.appAutoUpdates.enableModAutoUpdate'),
+                                        isChecked: window.nativeSettings.getAsync('modSettings.appAutoUpdates.enableModAutoUpdate'),
                                     }),
                                 }),
                             ],
@@ -3199,7 +3221,7 @@
                                             description: 'Автоматически лайкает/анлайкает треки в LastFM',
                                             disabled: !(userInfo && isLastFmEnabled),
                                             onChange: onLastFmAutoLikesToggle,
-                                            isChecked: window.nativeSettings.get('modSettings.scrobblers.lastfm.autoLike'),
+                                            isChecked: window.nativeSettings.getAsync('modSettings.scrobblers.lastfm.autoLike'),
                                         }),
                                     }),
                                     (0, n.jsx)('li', {
@@ -3214,7 +3236,7 @@
                                                 : 'Недоступно в вашем регионе или включён VPN',
                                             disabled: !(userInfo && isLastFmEnabled && unauthorizedProbe),
                                             onChange: onLastFmFromYnisonToggle,
-                                            isChecked: window.nativeSettings.get('modSettings.scrobblers.lastfm.fromYnison'),
+                                            isChecked: window.nativeSettings.getAsync('modSettings.scrobblers.lastfm.fromYnison'),
                                         }),
                                     }),
                                 ],

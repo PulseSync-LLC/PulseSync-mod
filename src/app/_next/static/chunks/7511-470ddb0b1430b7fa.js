@@ -6346,7 +6346,7 @@
                     b = tE(),
                     f = (0, u.useCallback)(
                         (e) => {
-                            b(e, t.quality), t.setQuality(e), null == g || g.setQuality(e), x.set(n.cYZ.YmPlayerQuality, e, { expires: 365 });
+                            (b(e, t.quality), t.setQuality(e), null == g || g.setQuality(e), x.set(n.cYZ.YmPlayerQuality, e, { expires: 365 }));
                         },
                         [g, t, x, b],
                     ),
@@ -6363,7 +6363,7 @@
                     k = (0, u.useCallback)(
                         (e, a) => () => {
                             if (t.quality === e) return;
-                            i.modal.close(), f(e);
+                            (i.modal.close(), f(e));
                             let { message: r, ariaLabel: s } = C(a);
                             m((0, l.jsx)(tM, { onOpenQualitySettingsMenu: i.modal.open, message: r, ariaLabel: s }), { containerId: n.uQT.INFO });
                         },
@@ -6418,15 +6418,24 @@
                     [i.modal],
                 );
                 (0, u.useEffect)(() => {
-                    i.modal.isOpened && setR128Enabled(window.nativeSettings.get('modSettings.r128Normalization') ?? !0);
+                    let e = !1;
+                    return (
+                        i.modal.isOpened &&
+                            window.nativeSettings.getAsync('modSettings.r128Normalization').then((t) => {
+                                e || setR128Enabled(t ?? !0);
+                            }),
+                        () => {
+                            e = !0;
+                        }
+                    );
                 }, [i.modal.isOpened]);
                 let r128Audio = 'function' == typeof n.iIU ? (0, n.iIU)() : null,
-                    [r128Enabled, setR128Enabled] = (0, u.useState)(() => window.nativeSettings.get('modSettings.r128Normalization') ?? !0),
+                    [r128Enabled, setR128Enabled] = (0, u.useState)(!0),
                     onR128NormalizationToggle = (0, u.useCallback)(
                         (e) => {
                             var a, r, s, o, d;
-                            let c = 'boolean' == typeof e ? e : !(window.nativeSettings.get('modSettings.r128Normalization') ?? !0);
-                            setR128Enabled(c), window.nativeSettings.set('modSettings.r128Normalization', c);
+                            let c = 'boolean' == typeof e ? e : !r128Enabled;
+                            setR128Enabled(c), void window.nativeSettings.set('modSettings.r128Normalization', c);
                             let m = null == (a = t.state) || null == (r = a.queueState) || null == (s = r.currentEntity) || null == (o = s.value) ? void 0 : o.entity,
                                 _ = null == m || null == (d = m.data) ? void 0 : d.meta.r128,
                                 p = null == m ? void 0 : m.data.meta,
@@ -6443,7 +6452,7 @@
                                     e.setR128Gain(v, c);
                                 });
                         },
-                        [t.state, r128Audio],
+                        [t.state, r128Audio, r128Enabled],
                     );
                 let P = !a.hasPlus,
                     N = (0, u.useMemo)(
@@ -6774,17 +6783,17 @@
                 }, [theState, downloadInfo]);
                 (0, u.useEffect)(() => {
                     let e = (device_info) => {
-                            setIsRemoteDeviceConnected(!0), setRemoteDevice(device_info), (window.isRemoteDeviceConnected = !0), (window.remoteDevice = device_info);
+                            (setIsRemoteDeviceConnected(!0), setRemoteDevice(device_info), (window.isRemoteDeviceConnected = !0), (window.remoteDevice = device_info));
                         },
                         t = () => {
-                            setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null);
+                            (setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null));
                         };
                     return (
                         (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
                         (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
                         () => {
-                            (window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
-                                (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t));
+                            ((window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
+                                (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t)));
                         }
                     );
                 }, []);
@@ -6848,7 +6857,7 @@
                                     (0, l.jsxs)('div', {
                                         className: (0, c.$)(al().sonata, { [al().sonata_withReversedControls]: J }),
                                         children: [
-                                            window.CHANGE_DISLIKE_BUTTON_POS?.()
+                                            !window.CHANGE_DISLIKE_BUTTON_POS?.()
                                                 ? (0, l.jsx)(h.aQ, {
                                                       fallback: (0, l.jsx)(h._I, { disabled: !i || b.isAdvertShown, isDisliked: s, onClick: d, iconSize: 'xs' }),
                                                   })
@@ -6862,7 +6871,7 @@
                                                 isMobile: !1,
                                                 entityMeta: i,
                                             }),
-                                            window.CHANGE_DISLIKE_BUTTON_POS?.()
+                                            !window.CHANGE_DISLIKE_BUTTON_POS?.()
                                                 ? (0, l.jsx)(h.aQ, {
                                                       fallback: (0, l.jsx)(h.cy, { disabled: !i || b.isAdvertShown, isLiked: r, onClick: o, iconSize: 'xs' }),
                                                   })
