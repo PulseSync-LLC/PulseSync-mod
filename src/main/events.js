@@ -770,8 +770,7 @@ const handleApplicationEvents = (window) => {
         await (0, modUpdater_js_1.getModUpdater)().onInstallUpdate();
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
-        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, value);
+    const setNativeStoreValue = (key, value) => {
         if (key === 'modSettings.window.hidePulseSyncVersionInTitleBar') {
             const isPremium = Boolean(getPulseSyncManager()?.isPremiumUser);
             if (value && !isPremium) {
@@ -788,6 +787,19 @@ const handleApplicationEvents = (window) => {
         if (featurePatch) {
             void sendFeaturesMetric(featurePatch);
         }
+        return value;
+    };
+    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_STORE_GET, (event, key) => {
+        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_GET, key);
+        return store_js_1.get(key);
+    });
+    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
+        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, value);
+        return setNativeStoreValue(key, value);
+    });
+    electron_1.ipcMain.on(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
+        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, value);
+        setNativeStoreValue(key, value);
     });
     electron_1.ipcMain.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {
         eventsLogger.info(`Event received`, events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, value);

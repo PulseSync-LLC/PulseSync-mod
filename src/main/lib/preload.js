@@ -42,6 +42,21 @@ const getTitlebarVisibilitySettings = () => {
 const resetTitlebarVisibilitySettings = () => {
     cachedTitlebarVisibilitySettings = null;
 };
+const nativeStoreUpdateListeners = new Set();
+const registerNativeStoreUpdateCacheSync = () => {
+    if (window.__pulsesyncNativeStoreUpdateCacheSyncRegistered) {
+        return;
+    }
+    window.__pulsesyncNativeStoreUpdateCacheSyncRegistered = true;
+
+    electron_1.ipcRenderer.on(events_js_1.Events.NATIVE_STORE_UPDATE, (event, key, value) => {
+        store_js_1.updateCache?.(key, value);
+        if (typeof key === 'string' && key.startsWith('modSettings')) {
+            resetTitlebarVisibilitySettings();
+        }
+        nativeStoreUpdateListeners.forEach((callback) => callback(key, value));
+    });
+};
 const shouldHidePulseSyncVersionInTitleBar = () => {
     try {
         return getTitlebarVisibilitySettings().shouldHidePulseSyncVersion;
@@ -194,10 +209,8 @@ const installNonPremiumTitlebarBrandingGuard = () => {
     ensureNonPremiumTitlebarBranding();
     observeTitlebar();
 
-    electron_1.ipcRenderer.on(events_js_1.Events.NATIVE_STORE_UPDATE, (event, key, value) => {
-        store_js_1.updateCache?.(key, value);
+    nativeStoreUpdateListeners.add((key) => {
         if (typeof key === 'string' && key.startsWith('modSettings')) {
-            resetTitlebarVisibilitySettings();
             scheduleGuard();
         }
     });
@@ -227,6 +240,8 @@ const loadWorker = (workerName) => {
     const code = fs.readFileSync(workerPath);
     loadedWorkers.set(workerName, code.toString('utf-8'));
 };
+
+registerNativeStoreUpdateCacheSync();
 
 electron_1.contextBridge.exposeInMainWorld('IS_PREMIUM_USER', () => electron_1.ipcRenderer.invoke('isPremiumUser'));
 electron_1.contextBridge.exposeInMainWorld('HIDE_PULSESYNC_VERSION_IN_TITLEBAR', () => shouldHidePulseSyncVersionInTitleBar());
@@ -296,10 +311,13 @@ electron_1.contextBridge.exposeInMainWorld('desktopEvents', {
 });
 electron_1.contextBridge.exposeInMainWorld('nativeSettings', {
     set(key, value) {
-        electron_1.ipcRenderer.send(events_js_1.Events.NATIVE_STORE_SET, key, value);
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_STORE_SET, key, value);
     },
     get(key) {
         return store_js_1.get(key);
+    },
+    getAsync(key) {
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_STORE_GET, key);
     },
     setPathWithNativeDialog(key, defaultPath = undefined, properties = undefined) {
         electron_1.ipcRenderer.invoke('setPathWithNativeDialog', key, defaultPath, properties);

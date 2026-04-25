@@ -3950,7 +3950,7 @@
                         ),
                         r.isReadyForAudioEffectInStart.onChange(
                             (e) => {
-                                e && this.canEnableFastFade(r.isReadyForAudioEffect.value) && this.enableFastFade(), e || this.disableFade();
+                                (e && this.canEnableFastFade(r.isReadyForAudioEffect.value) && this.enableFastFade(), e || this.disableFade());
                             },
                             { skipFirstChange: !0 },
                         ));
@@ -3978,6 +3978,15 @@
                 (function (e) {
                     (e.SUSPENDED = 'suspended'), (e.RUNNING = 'running'), (e.CLOSED = 'closed');
                 })(l || (l = {}));
+            let tR128NormalizationEnabled = !0;
+            null == window ||
+                null == window.nativeSettings ||
+                window.nativeSettings
+                    .getAsync('modSettings.r128Normalization')
+                    .then((e) => {
+                        tR128NormalizationEnabled = e ?? !0;
+                    })
+                    .catch(() => {});
             class tu {
                 connectNodes() {
                     let { useAnalyser: e, useGain: t } = this.config;
@@ -4012,10 +4021,10 @@
                 }
                 setR128Gain(e, t) {
                     let a = -23,
-                        i = null == window || null == window.nativeSettings ? void 0 : window.nativeSettings.get('modSettings.r128Normalization'),
                         r = null != e ? e : this.lastR128,
                         s = Number(null == r ? void 0 : r.i),
-                        l = 'boolean' == typeof t ? t : i;
+                        l = 'boolean' == typeof t ? t : tR128NormalizationEnabled;
+                    'boolean' == typeof t && (tR128NormalizationEnabled = t);
                     null != e && (this.lastR128 = e);
                     if (!1 === l) return void this.r128GainNode.gain.setValueAtTime(1, this.context.currentTime);
                     if (!Number.isFinite(s)) return void this.r128GainNode.gain.setValueAtTime(1, this.context.currentTime);
