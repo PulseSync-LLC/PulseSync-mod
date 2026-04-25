@@ -1650,7 +1650,28 @@
                 b = i(35250),
                 v = i(42561),
                 p = i(85906),
+                y0 = i(85742),
                 _ = i(14716);
+            let downloadTracksToFile = (0, a.PA)((e) => {
+                let { album: t, tracks: i } = e,
+                    a = (0, s.useMemo)(() => (Array.isArray(i) ? i.map((e) => e.id) : []), [i]),
+                    l = (0, s.useMemo)(() => {
+                        let e = Array.isArray(t.artists) ? t.artists.map((e) => e.name).join(', ') : t.artistName,
+                            i = [t.title];
+                        return ['album', 'single'].includes(t.type ?? 'album') && e && i.unshift(e), i.join(' — ');
+                    }, [t]),
+                    n = (0, c.c)(() => {
+                        var e;
+                        a.length && (null == (e = window.desktopEvents) || e.send(v.EE.DOWNLOAD_TRACKS, a, t.type ?? 'album', l));
+                    });
+                return a.length
+                    ? (0, r.jsx)(d.Dr, {
+                          onClick: n,
+                          icon: (0, r.jsx)(y0.Icon, { variant: 'download', size: 'xxs' }),
+                          children: 'Скачать в файл',
+                      })
+                    : null;
+            });
             let g = (0, a.PA)((e) => {
                 var t, i;
                 let { album: a, children: g, onOpenChange: A, open: C, wrapperClassName: y, variant: h, ...k } = e,
@@ -1661,6 +1682,7 @@
                         user: L,
                         experiments: I,
                         albumCPA: { isPlusCPAEnabled: K, isPlusCPAPlayerBarEnabled: T },
+                        album: albumStore,
                     } = (0, v.Pjs)(),
                     O = (0, m.KX)(a),
                     j = (0, m.A7)(a),
@@ -1723,6 +1745,7 @@
                         U && (0, r.jsx)(b.dx, { entityVariant: v.DwC.ARTIST, adminUrl: q }),
                         J,
                         Z,
+                        (0, r.jsx)(downloadTracksToFile, { album: a, tracks: null == albumStore ? void 0 : albumStore.tracks }),
                         X,
                         ee,
                         g,
