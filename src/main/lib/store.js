@@ -6,6 +6,7 @@ var __importDefault =
     };
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.getDefaultExperimentOverrides =
+    exports.updateCache =
     exports.fetchDefaultExperimentOverrides =
     exports.setWindowMonitor =
     exports.getWindowMonitor =
@@ -54,11 +55,25 @@ class CachedStore {
     }
 
     get(path, defaultValue) {
-        return structuredClone(
-            path.split('.').reduce((acc, key) => {
-                return acc && acc[key] !== undefined ? acc[key] : undefined;
-            }, this._data) ?? defaultValue,
-        );
+        let current = this._data;
+        for (const key of path.split('.')) {
+            if (!current || typeof current !== 'object' || !Object.prototype.hasOwnProperty.call(current, key)) {
+                return structuredClone(defaultValue);
+            }
+            current = current[key];
+        }
+        return structuredClone(current);
+    }
+
+    has(path) {
+        let current = this._data;
+        for (const key of path.split('.')) {
+            if (!current || typeof current !== 'object' || !Object.prototype.hasOwnProperty.call(current, key)) {
+                return false;
+            }
+            current = current[key];
+        }
+        return true;
     }
 
     set(path, value) {
@@ -90,35 +105,37 @@ class CachedStore {
     }
 }
 
-const cachedStore = new CachedStore();
+const cachedStore = new CachedStore(store.store);
+let storeRevision = 0;
+let cachedDefaultExperimentOverrides = null;
+let cachedDefaultExperimentOverridesRevision = -1;
 
 let defaultExperimentOverrides = {
     WebNextPromoVeryBestRecommendations: 'off',
     WebNextYnisonActivityInterception: 'on',
-    WebNextCrossMediaPlayer: 'on',
-    WebNextTracksPreload: 'on',
-    WebNextGetFileInfoPreload: 'on',
     WebNextEnableVibeRepeatControl: 'on',
     WebNextUseWaveQueue: 'on',
     WebNextInsertAlbumPlaylistIntoContext: 'on',
     WebNextCustomThumb: 'on',
     WebNextWaveScreenWordsInWave: 'on',
-    WebNextNewWaveTab: 'on',
     WebNextNewWaveTabFeedbackForm: 'on',
     WebNextNewWaveTabRedesign: 'on',
 };
 
 const useCachedValue = (key) => {
     let cachedValue = null;
+    let hasCachedValue = false;
     const get = () => {
-        if (cachedValue) {
+        if (hasCachedValue) {
             return cachedValue;
         }
         cachedValue = getStore(key);
+        hasCachedValue = true;
         return cachedValue;
     };
     const set = (value) => {
         cachedValue = value;
+        hasCachedValue = true;
         setStore(key, value);
     };
     return [get, set];
@@ -392,18 +409,27 @@ const getGlobalShortcuts = () => {
 exports.getGlobalShortcuts = getGlobalShortcuts;
 
 const getStore = (key) => {
-    return cachedStore.get(key, undefined) ?? store.get(key);
+    if (cachedStore.has(key)) {
+        return cachedStore.get(key, undefined);
+    }
+    return store.get(key);
 };
 exports.get = getStore;
 
 const setStore = (key, value) => {
     const result = store.set(key, value);
     cachedStore.set(key, value);
+    storeRevision += 1;
     const { sendNativeStoreUpdate } = require('../events.js');
     sendNativeStoreUpdate(key, value);
     return result;
 };
 exports.set = setStore;
+const updateCache = (key, value) => {
+    cachedStore.set(key, value);
+    storeRevision += 1;
+};
+exports.updateCache = updateCache;
 
 const getAutoUpdatesStatus = () => {
     return Boolean(getStore(store_js_1.StoreKeys.AUTO_UPDATES));
@@ -489,12 +515,21 @@ const fetchDefaultExperimentOverrides = async () => {
 exports.fetchDefaultExperimentOverrides = fetchDefaultExperimentOverrides;
 
 const getDefaultExperimentOverrides = () => {
-    const data = getStore(store_js_1.StoreKeys.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES) ?? defaultExperimentOverrides;
-    data.WebNextYnisonActivityInterception = getStore(store_js_1.StoreKeys.ENABLE_YNISON_REMOTE_CONTROL) ? 'on' : 'off';
-    data.WebNextDisableConcertsTab = getStore(store_js_1.StoreKeys.MOD_SETTINGS).showConcertsTab ? 'off' : 'on';
-    data.WebNextDisableNonMusic = getStore(store_js_1.StoreKeys.MOD_SETTINGS).showNonMusicPage ? 'off' : 'on';
-    data.WebNextPlayerBarYellowButton = getStore(store_js_1.StoreKeys.MOD_SETTINGS).playerBarEnhancement.playButtonType === 'yellow' ? 'on' : 'off';
+    if (cachedDefaultExperimentOverrides && cachedDefaultExperimentOverridesRevision === storeRevision) {
+        return cachedDefaultExperimentOverrides;
+    }
 
-    return data;
+    const modSettings = getStore(store_js_1.StoreKeys.MOD_SETTINGS) ?? {};
+    const data = {
+        ...(getStore(store_js_1.StoreKeys.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES) ?? defaultExperimentOverrides),
+        WebNextYnisonActivityInterception: getStore(store_js_1.StoreKeys.ENABLE_YNISON_REMOTE_CONTROL) ? 'on' : 'off',
+        WebNextDisableConcertsTab: modSettings.showConcertsTab ? 'off' : 'on',
+        WebNextDisableNonMusic: modSettings.showNonMusicPage ? 'off' : 'on',
+        WebNextPlayerBarYellowButton: modSettings.playerBarEnhancement?.playButtonType === 'yellow' ? 'on' : 'off',
+    };
+
+    cachedDefaultExperimentOverrides = Object.freeze(data);
+    cachedDefaultExperimentOverridesRevision = storeRevision;
+    return cachedDefaultExperimentOverrides;
 };
 exports.getDefaultExperimentOverrides = getDefaultExperimentOverrides;
