@@ -951,6 +951,20 @@
                 x = i(7103),
                 k = i(64304),
                 C = i(35250);
+            let downloadPlaylistToFile = ({ playlist: e }) => {
+                let t = Array.isArray(e?.trackIds) ? e.trackIds : [],
+                    i = (0, u.c)(() => {
+                        var t;
+                        e?.title && e?.trackIds?.length && (null == (t = window.desktopEvents) || t.send(y.EE.DOWNLOAD_TRACKS, e.trackIds, 'playlist', e.title));
+                    });
+                return t.length
+                    ? (0, n.jsx)(k.Dr, {
+                          onClick: i,
+                          icon: (0, n.jsx)(h.Icon, { variant: 'download', size: 'xxs' }),
+                          children: 'Скачать в файл',
+                      })
+                    : null;
+            };
             let f = (0, s.PA)((e) => {
                 var t;
                 let { playlist: i, onOpenChange: r, open: s, ...l } = e,
@@ -986,6 +1000,7 @@
                         L && (0, n.jsx)(C.dx, { entityVariant: y.DwC.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : A }),
                         !h && (0, n.jsx)(b.L1, { onClick: x, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, n.jsx)(b.TW, { onClick: _, isLiked: i.isLiked, disabled: !P.isAuthorized }),
+                        (0, n.jsx)(downloadPlaylistToFile, { playlist: i }),
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, n.jsx)(b.No, { onClick: w, disabled: !i.isAvailable }),
                     ],
                 });

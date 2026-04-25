@@ -2500,7 +2500,22 @@
                 te = a(41094),
                 tt = a(35250),
                 ta = a(43026);
-            let ti = (0, d.PA)((e) => {
+            let downloadTracksToFile = (0, d.PA)((e) => {
+                    let { playlist: t, trackIds: a } = e,
+                        r = (0, c.useMemo)(() => `${t.title}`, [t]),
+                        o = (0, n.c)(() => {
+                            var e;
+                            a?.length && (null == (e = window.desktopEvents) || e.send(i.EE.DOWNLOAD_TRACKS, a, 'playlist', r));
+                        });
+                    return a?.length
+                        ? (0, l.jsx)(eR.Dr, {
+                              onClick: o,
+                              icon: (0, l.jsx)(x.Icon, { variant: 'download', size: 'xxs' }),
+                              children: 'Скачать в файл',
+                          })
+                        : null;
+                }),
+                ti = (0, d.PA)((e) => {
                     var t, a, o, r;
                     let { playlist: s, onOpenChange: d, open: u, wrapperClassName: m, ...v } = e,
                         { shouldShowBuySubscriptionModal: g, showBuySubscriptionModal: b } = (0, i.qBP)(),
@@ -2510,6 +2525,7 @@
                             playlist: {
                                 filters: { activeFilter: f, analyticsParamsActiveFilterIndex: P },
                                 items: j,
+                                trackIds: eg,
                             },
                             user: N,
                             experiments: k,
@@ -2597,6 +2613,7 @@
                             I && (0, l.jsx)(tt.dx, { entityVariant: i.DwC.PLAYLIST, adminUrl: s.isFavouritePlaylist ? void 0 : ei, withPlaylistPageFeatures: !0 }),
                             !y && (0, l.jsx)(C.L1, { onClick: E, isPinned: s.isPinned }),
                             !s.isFavouritePlaylist && (0, l.jsx)(C.TW, { onClick: L, isLiked: s.isLiked, disabled: !N.isAuthorized }),
+                            (0, l.jsx)(downloadTracksToFile, { playlist: s, trackIds: eg }),
                             (null == (o = s.trailer) ? void 0 : o.isAvailable) && (0, l.jsx)(C.No, { onClick: el }),
                             (0, l.jsx)(C.C6, { disabled: !s.isAvailable, onClick: en, variant: i.IGO.PLAYLIST }),
                             V &&
