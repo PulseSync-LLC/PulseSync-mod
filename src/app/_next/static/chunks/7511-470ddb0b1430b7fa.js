@@ -1060,23 +1060,36 @@
                             return (0, n.jsx)('div', {
                                 onWheel: M,
                                 className: (0, r.$)(g().sliderContainer, { [g().sliderContainer_focusVisible]: P }),
-                                children: (0, n.jsx)('div', {
-                                    className: (0, r.$)(g().wrapperSlider, s),
-                                    children: (0, n.jsx)(v.A, {
-                                        onMouseLeave: S,
-                                        className: (0, r.$)(g().slider, g().important),
-                                        thumbSize: 's',
-                                        onFocus: N,
-                                        onBlur: S,
-                                        trackSize: 's',
-                                        value: T,
-                                        maxValue: 1,
-                                        step: 0.01,
-                                        onChange: I,
-                                        'aria-label': j({ id: 'player-actions.volume-control' }),
-                                        ...(0, c.Am)(c.Kq.changeVolume.CHANGE_VOLUME_SLIDER),
+                                children: [
+                                    (0, n.jsx)('span', {
+                                        children: `${Math.round(T.toFixed(2) * 100)}%`,
+                                        style: {
+                                            position: 'absolute',
+                                            left: 0,
+                                            right: 0,
+                                            'margin-inline': 'auto',
+                                            width: 'fit-content',
+                                            top: '0.7rem',
+                                        },
                                     }),
-                                }),
+                                    (0, n.jsx)('div', {
+                                        className: (0, r.$)(g().wrapperSlider, s),
+                                        children: (0, n.jsx)(v.A, {
+                                            onMouseLeave: S,
+                                            className: (0, r.$)(g().slider, g().important),
+                                            thumbSize: 's',
+                                            onFocus: N,
+                                            onBlur: S,
+                                            trackSize: 's',
+                                            value: T,
+                                            maxValue: 1,
+                                            step: 0.01,
+                                            onChange: I,
+                                            'aria-label': j({ id: 'player-actions.volume-control' }),
+                                            ...(0, c.Am)(c.Kq.changeVolume.CHANGE_VOLUME_SLIDER),
+                                        }),
+                                    }),
+                                ],
                             });
                     });
                 return (0, n.jsxs)('div', {
@@ -1785,6 +1798,7 @@
                     let { value: t, variant: a, className: r, forwardRef: s, ...l } = e,
                         c = 'start' === a ? o.Kq.changeTimecode.TIMECODE_TIME_START : o.Kq.changeTimecode.TIMECODE_TIME_END;
                     return (0, i.jsx)(p.Caption, {
+                        style: window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.() ? { opacity: 1 } : undefined,
                         ref: s,
                         tabIndex: 0,
                         className: (0, n.$)(y().root, y()['root_'.concat(a)], r),
@@ -1913,11 +1927,16 @@
                         f = 0 !== d ? d - y : 0,
                         C = Math.min(Math.max(b - y / 2, 0), f),
                         k = (0, c.L)(() => {
-                            if (!m) return { '--timecode-position': ''.concat(C, 'px') };
+                            if (!m)
+                                return {
+                                    '--timecode-position': ''.concat(C, 'px'),
+                                    ...(window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.() ? { opacity: 1 } : {}),
+                                };
                         });
                     return (0, i.jsxs)(i.Fragment, {
                         children: [
                             (0, i.jsx)(g, {
+                                style: window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.() ? { opacity: 1 } : undefined,
                                 role: 'text',
                                 'aria-label': p,
                                 value: x,
@@ -4061,7 +4080,19 @@
                 F = a(85742),
                 K = a(4714),
                 V = a(59260);
-            let z = (e) => ({ '--player-average-color-background': (0, w.ye)(null == e ? void 0 : e.averageColor) });
+            let z = (e) => ({ '--player-average-color-background': (0, w.ye)(null == e || (window.DISABLE_PER_TRACK_COLORS?.() ?? !1) ? void 0 : e.averageColor) });
+            const deviceTypeMap = {
+                UNSPECIFIED: 'Неизвестного устройства',
+                WEB: 'Сайта',
+                ANDROID: 'Android приложения',
+                IOS: 'IOS приложения',
+                SMART_SPEAKER: 'Умной колонки',
+                WEB_TV: 'ТВ',
+                ANDROID_TV: 'Android ТВ',
+                APPLE_TV: 'Apple ТВ',
+                ANDROID_WEAR: 'Android часов',
+                WEB_DESKTOP: 'ПК приложения',
+            };
             var W = a(45983),
                 U = a.n(W),
                 Q = a(32474),
@@ -5382,6 +5413,8 @@
                             fullscreenPlayer: r,
                         } = (0, n.Pjs)(),
                         { state: s, toggleTrue: o } = (0, G.e)(!1),
+                        [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, u.useState)(window.isRemoteDeviceConnected ?? !1),
+                        [remoteDevice, setRemoteDevice] = (0, u.useState)(window.remoteDevice ?? null),
                         d = (null == i ? void 0 : i.isTrackPodcast) || (null == i || null == (e = i.mainAlbum) ? void 0 : e.isPodcast),
                         m = null == i ? void 0 : i.isTrackAudiobook,
                         _ = {
@@ -5444,6 +5477,22 @@
                             [i, null == i ? void 0 : i.id, d, m, r.isSplitMode],
                         );
                     return (
+                        (0, u.useEffect)(() => {
+                            let e = (device_info) => {
+                                    setIsRemoteDeviceConnected(!0), setRemoteDevice(device_info);
+                                },
+                                t = () => {
+                                    setIsRemoteDeviceConnected(!1), setRemoteDevice(null);
+                                };
+                            return (
+                                (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
+                                (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
+                                () => {
+                                    (window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
+                                        (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t));
+                                }
+                            );
+                        }, []),
                         (0, u.useEffect)(
                             () => (
                                 window.addEventListener('resize', a),
@@ -5473,6 +5522,19 @@
                                     }),
                                     ...(0, D.Am)(D.e8.player.FULLSCREEN_PLAYER_FULLSCREEN_CONTENT),
                                     children: [
+                                        isRemoteDeviceConnected &&
+                                            (0, l.jsxs)('div', {
+                                                style: {
+                                                    position: 'absolute',
+                                                    top: '-25px',
+                                                    color: 'var(--ym-controls-color-primary-default-enabled)',
+                                                },
+                                                children: [
+                                                    (0, l.jsx)('span', {
+                                                        children: `Управление с ${deviceTypeMap?.[remoteDevice?.info?.type] ?? ''}: ${remoteDevice?.info?.title}`,
+                                                    }),
+                                                ],
+                                            }),
                                         (0, l.jsx)(ty, {
                                             className: (0, c.$)(tg().poster, tg().important),
                                             coverUri: null == i ? void 0 : i.coverUri,
@@ -6451,6 +6513,8 @@
                     } = (0, n.Pjs)(),
                     [k, j] = (0, u.useState)(!1),
                     [A, N] = (0, u.useState)(!1),
+                    [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, u.useState)(window.isRemoteDeviceConnected ?? !1),
+                    [remoteDevice, setRemoteDevice] = (0, u.useState)(window.remoteDevice ?? null),
                     { formatMessage: S } = (0, R.A)(),
                     T = !v.isGenerativeContext,
                     I = v.canSpeed && (null == i ? void 0 : i.isNonMusic),
@@ -6576,6 +6640,22 @@
                     J =
                         (C.checkExperiment(n.zal.WebNextNewWaveTab, 'on') || C.checkExperiment(n.zal.WebNextNewWaveTab, 'on1')) &&
                         C.checkExperiment(n.zal.WebNextNewWaveTabRedesign, 'on');
+                (0, u.useEffect)(() => {
+                    let e = (device_info) => {
+                            setIsRemoteDeviceConnected(!0), setRemoteDevice(device_info), (window.isRemoteDeviceConnected = !0), (window.remoteDevice = device_info);
+                        },
+                        t = () => {
+                            setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null);
+                        };
+                    return (
+                        (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
+                        (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
+                        () => {
+                            (window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
+                                (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t));
+                        }
+                    );
+                }, []);
                 return (0, l.jsx)('section', {
                     style: b.isAdvertShown ? void 0 : M,
                     className: (0, c.$)(al().root, al().important, a),
@@ -6647,6 +6727,23 @@
                                             (0, l.jsx)(h.aQ, {
                                                 fallback: (0, l.jsx)(h._I, { disabled: !i || b.isAdvertShown, isDisliked: s, onClick: d, iconSize: 'xs' }),
                                             }),
+                                            isRemoteDeviceConnected &&
+                                                (0, l.jsx)('div', {
+                                                    style: {
+                                                        position: 'absolute',
+                                                        bottom: 0,
+                                                        color: 'var(--ym-controls-color-primary-default-enabled)',
+                                                        fontSize: 'small',
+                                                    },
+                                                    children: (0, l.jsxs)('span', {
+                                                        children: [
+                                                            'Управление с ',
+                                                            null != deviceTypeMap?.[remoteDevice?.info?.type] ? deviceTypeMap?.[remoteDevice?.info?.type] : '',
+                                                            ': ',
+                                                            remoteDevice?.info?.title,
+                                                        ],
+                                                    }),
+                                                }),
                                         ],
                                     }),
                                     (0, l.jsxs)('div', {

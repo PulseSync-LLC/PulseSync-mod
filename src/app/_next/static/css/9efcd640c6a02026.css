@@ -617,7 +617,7 @@
     opacity: 0;
     pointer-events: none;
     position: absolute;
-    transition: opacity var(--ym-duration-transition) ease 0.2s;
+    transition: opacity var(--ym-duration-transition) ease;
     width: 5.25rem;
     width: var(--width-slider-container);
     z-index: var(--toastify-z-index);
@@ -687,7 +687,7 @@
 .ChangeVolume_slider__fCKGZ {
     --default-thumb-color: var(--ym-controls-color-primary-default-enabled);
     inset-inline-start: 0.5rem;
-    min-width: 12rem;
+    min-width: 10.4rem;
     transform: rotate(-90deg);
     transform-origin: 0.0625rem;
 }
