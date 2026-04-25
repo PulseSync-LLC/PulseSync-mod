@@ -15,6 +15,7 @@ const PULSESYNC_TITLEBAR_TEXT_CLASS = 'TitleBar_pulseText__FhYv';
 const PULSESYNC_TITLEBAR_TEXT_SELECTOR = '[class*="TitleBar_root"] > span[class*="TitleBar_pulseText"], [class*="TitleBar_root"] > .TitleBar_pulseText__FhYv, [class*="TitleBar_root"] > [class*="TitleBar_pulseText"]';
 const PULSESYNC_FOREIGN_TITLEBAR_SELECTOR =
     '[class*="TitleBar_root"] > [id*="custom-titlebar"], [class*="TitleBar_root"] > [class*="custom-titlebar"], [class*="TitleBar_root"] > [data-titlebar-replacement]';
+let cachedTitlebarVisibilitySettings = null;
 const getIsPremiumUserSync = () => {
     try {
         return Boolean(electron_1.ipcRenderer.sendSync('isPremiumUserSync'));
@@ -22,11 +23,26 @@ const getIsPremiumUserSync = () => {
         return false;
     }
 };
+const getTitlebarVisibilitySettings = () => {
+    if (cachedTitlebarVisibilitySettings) {
+        return cachedTitlebarVisibilitySettings;
+    }
+
+    const hidePulseSyncVersion = Boolean(store_js_1.getModSettings()?.window?.hidePulseSyncVersionInTitleBar);
+    const isPremium = getIsPremiumUserSync();
+    cachedTitlebarVisibilitySettings = {
+        hidePulseSyncVersion,
+        isPremium,
+        shouldHidePulseSyncVersion: hidePulseSyncVersion && isPremium,
+    };
+    return cachedTitlebarVisibilitySettings;
+};
+const resetTitlebarVisibilitySettings = () => {
+    cachedTitlebarVisibilitySettings = null;
+};
 const shouldHidePulseSyncVersionInTitleBar = () => {
     try {
-        const hidePulseSyncVersion = Boolean(store_js_1.getModSettings()?.window?.hidePulseSyncVersionInTitleBar);
-        const isPremium = getIsPremiumUserSync();
-        return hidePulseSyncVersion && isPremium;
+        return getTitlebarVisibilitySettings().shouldHidePulseSyncVersion;
     } catch (error) {
         return false;
     }
@@ -38,7 +54,8 @@ const cleanupNonPremiumTitlebarBranding = () => {
     }
 };
 const ensureNonPremiumTitlebarBranding = () => {
-    if (shouldHidePulseSyncVersionInTitleBar() || getIsPremiumUserSync()) {
+    const titlebarVisibilitySettings = getTitlebarVisibilitySettings();
+    if (titlebarVisibilitySettings.shouldHidePulseSyncVersion || titlebarVisibilitySettings.isPremium) {
         cleanupNonPremiumTitlebarBranding();
         return;
     }
@@ -96,13 +113,23 @@ const ensureNonPremiumTitlebarBranding = () => {
         pulseText.textContent = brandingText;
     }
 
-    pulseText.setAttribute('data-pulsesync-titlebar-branding', 'true');
-    pulseText.style.setProperty('display', 'inline', 'important');
-    pulseText.style.setProperty('visibility', 'visible', 'important');
-    pulseText.style.setProperty('opacity', '1', 'important');
-    pulseText.style.setProperty('width', 'auto', 'important');
-    pulseText.style.setProperty('height', 'auto', 'important');
-    pulseText.style.setProperty('overflow', 'visible', 'important');
+    if (pulseText.getAttribute('data-pulsesync-titlebar-branding') !== 'true') {
+        pulseText.setAttribute('data-pulsesync-titlebar-branding', 'true');
+    }
+
+    const setImportantStyle = (element, property, value) => {
+        if (element.style.getPropertyValue(property) === value && element.style.getPropertyPriority(property) === 'important') {
+            return;
+        }
+        element.style.setProperty(property, value, 'important');
+    };
+
+    setImportantStyle(pulseText, 'display', 'inline');
+    setImportantStyle(pulseText, 'visibility', 'visible');
+    setImportantStyle(pulseText, 'opacity', '1');
+    setImportantStyle(pulseText, 'width', 'auto');
+    setImportantStyle(pulseText, 'height', 'auto');
+    setImportantStyle(pulseText, 'overflow', 'visible');
 
     for (const element of titleBar.querySelectorAll('[id*="custom-titlebar"], [class*="custom-titlebar"], [data-titlebar-replacement]')) {
         if (element === pulseText) continue;
@@ -110,13 +137,27 @@ const ensureNonPremiumTitlebarBranding = () => {
     }
 };
 const installNonPremiumTitlebarBrandingGuard = () => {
-    if (shouldHidePulseSyncVersionInTitleBar()) return;
-    if (getIsPremiumUserSync()) return;
+    const titlebarVisibilitySettings = getTitlebarVisibilitySettings();
+    if (titlebarVisibilitySettings.shouldHidePulseSyncVersion) return;
+    if (titlebarVisibilitySettings.isPremium) return;
 
     let scheduled = false;
+    let applyingBranding = false;
+    let titlebarObserver = null;
+    let titlebarObserverTarget = null;
     const runGuard = () => {
         scheduled = false;
-        ensureNonPremiumTitlebarBranding();
+        if (applyingBranding) {
+            return;
+        }
+
+        applyingBranding = true;
+        try {
+            ensureNonPremiumTitlebarBranding();
+            observeTitlebar();
+        } finally {
+            applyingBranding = false;
+        }
     };
     const scheduleGuard = () => {
         if (scheduled) return;
@@ -127,20 +168,52 @@ const installNonPremiumTitlebarBrandingGuard = () => {
         }
         window.setTimeout(runGuard, 16);
     };
+    const observeTitlebar = () => {
+        if (!window.MutationObserver) return;
+
+        const titleBar = window.document.querySelector('[class*="TitleBar_root"]');
+        if (!titleBar || titlebarObserverTarget === titleBar) {
+            return;
+        }
+
+        titlebarObserver?.disconnect();
+        titlebarObserverTarget = titleBar;
+        titlebarObserver = new MutationObserver(() => {
+            if (applyingBranding) {
+                return;
+            }
+            scheduleGuard();
+        });
+        titlebarObserver.observe(titleBar, {
+            childList: true,
+        });
+    };
 
     ensureNonPremiumTitlebarBranding();
+    observeTitlebar();
+
+    electron_1.ipcRenderer.on(events_js_1.Events.NATIVE_STORE_UPDATE, (event, key, value) => {
+        store_js_1.updateCache?.(key, value);
+        if (typeof key === 'string' && key.startsWith('modSettings')) {
+            resetTitlebarVisibilitySettings();
+            scheduleGuard();
+        }
+    });
 
     if (!window.MutationObserver) return;
     const observer = new MutationObserver(() => {
-        scheduleGuard();
+        if (applyingBranding) {
+            return;
+        }
+        if (!titlebarObserverTarget?.isConnected) {
+            scheduleGuard();
+        }
     });
     const observeTarget = window.document.body || window.document.documentElement;
     if (observeTarget) {
         observer.observe(observeTarget, {
             subtree: true,
             childList: true,
-            attributes: true,
-            characterData: true,
         });
     }
 };
