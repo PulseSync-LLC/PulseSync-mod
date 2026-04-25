@@ -101,6 +101,11 @@ let defaultExperimentOverrides = {
     WebNextEnableVibeRepeatControl: 'on',
     WebNextUseWaveQueue: 'on',
     WebNextInsertAlbumPlaylistIntoContext: 'on',
+    WebNextCustomThumb: 'on',
+    WebNextWaveScreenWordsInWave: 'on',
+    WebNextNewWaveTab: 'on',
+    WebNextNewWaveTabFeedbackForm: 'on',
+    WebNextNewWaveTabRedesign: 'on',
 };
 
 const useCachedValue = (key) => {
