@@ -16122,7 +16122,7 @@
                 i,
                 l = r(30141),
                 o = function (e) {
-                    const code = window.loadWorker('vibeAnimation');
+                    const code = window.getWorker('vibeAnimation');
                     const blob = new Blob([code], { type: 'application/javascript' });
                     const url = URL.createObjectURL(blob);
                     return new Worker(url, e);

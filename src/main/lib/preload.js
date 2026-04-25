@@ -1,6 +1,8 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 const electron_1 = require('electron');
+const fs = require('fs');
+const path = require('path');
 const config_js_1 = require('../config.js');
 const getInitialTheme_js_1 = require('./getInitialTheme.js');
 const deviceInfo_js_1 = require('./deviceInfo.js');
@@ -218,6 +220,14 @@ const installNonPremiumTitlebarBrandingGuard = () => {
     }
 };
 
+const loadedWorkers = new Map();
+
+const loadWorker = (workerName) => {
+    const workerPath = path.join(__dirname, 'workers', `${path.parse(workerName).name}.js`);
+    const code = fs.readFileSync(workerPath);
+    loadedWorkers.set(workerName, code.toString('utf-8'));
+};
+
 electron_1.contextBridge.exposeInMainWorld('IS_PREMIUM_USER', () => electron_1.ipcRenderer.invoke('isPremiumUser'));
 electron_1.contextBridge.exposeInMainWorld('HIDE_PULSESYNC_VERSION_IN_TITLEBAR', () => shouldHidePulseSyncVersionInTitleBar());
 electron_1.contextBridge.exposeInMainWorld('IS_DEVTOOLS_ENABLED', Boolean(store_js_1.getDevMode()));
@@ -341,10 +351,7 @@ window.document.addEventListener('DOMContentLoaded', () => {
         installNonPremiumTitlebarBrandingGuard();
     }
 });
-electron_1.contextBridge.exposeInMainWorld('loadWorker', (workerName) => {
-    const fs = require('fs');
-    const path = require('path');
-    const workerPath = path.join(__dirname, 'workers', `${path.parse(workerName).name}.js`);
-    const code = fs.readFileSync(workerPath);
-    return code.toString('utf-8');
+electron_1.contextBridge.exposeInMainWorld('getWorker', (workerName) => {
+    if (!loadedWorkers.get(workerName)) loadWorker(workerName);
+    return loadedWorkers.get(workerName);
 });
