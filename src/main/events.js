@@ -64,7 +64,6 @@ const saveFileToLocalDiskLogger = new Logger_js_1.Logger('SaveFileToLocalDisk');
 const { throttle } = require('./lib/utils.js');
 const crypto = require('crypto');
 const fs = require('fs');
-const EventEmitter = require('node:events');
 
 let mainWindow = undefined;
 let isPlayerReady = false;
@@ -252,8 +251,8 @@ const handleApplicationEvents = (window) => {
     const schedulePlayerReadyTimeout = () => {
         if (!mainWindow || isPlayerReady) return;
 
-        mainWindow.removeListener('show', handlePlayerReadyTimeout);
-        mainWindow.once('show', handlePlayerReadyTimeout);
+        mainWindow.removeListener('focus', handlePlayerReadyTimeout);
+        mainWindow.once('focus', handlePlayerReadyTimeout);
     };
 
     const updater = (0, updater_js_1.getUpdater)();
