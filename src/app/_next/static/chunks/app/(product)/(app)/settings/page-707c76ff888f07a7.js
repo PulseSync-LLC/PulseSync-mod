@@ -2402,7 +2402,7 @@
                                 (0, n.jsx)('li', {
                                     className: $().item,
                                     children: (0, n.jsx)(Q, {
-                                        title: 'Использовать новую цветовую схему Волны',
+                                        title: 'Использовать альтернативную цветовую схему Волны',
                                         description: 'Переключение между радужным и одноцветным градиентом Волны',
                                         onChange: onUseVibeWidgetColorsToggle,
                                         isChecked: j,

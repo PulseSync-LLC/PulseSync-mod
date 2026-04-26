@@ -214,7 +214,7 @@ const init = () => {
             smoothDynamicEnergy: false,
             smoothDynamicEnergyCoefficient: 0.2,
             playVibeOnAnyEntity: true,
-            useVibeWidgetColors: true,
+            useVibeWidgetColors: false,
             disableRendering: false,
             autoLaunchOnAppStartup: false,
             enableEndlessMusic: true,
