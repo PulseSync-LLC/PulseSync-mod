@@ -8242,7 +8242,7 @@
                         E = (0, $.c)(() => {
                             f() || I();
                         }),
-                        L = (0, et.L)(() => (m.isGenerativeContext ? (null == S ? void 0 : S.coverUri) || aT : (null == s ? void 0 : s.coverUri) || aT));
+                        L = (0, et.L)(() => (S?.coverUri ?? s?.coverUri) || aT);
                     return (
                         (0, u.useEffect)(
                             () => (
