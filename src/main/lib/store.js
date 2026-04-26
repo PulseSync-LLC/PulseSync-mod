@@ -245,7 +245,7 @@ const init = () => {
             useText: false,
             syncLyricsTextFallback: false,
             useTitleOnlyFallback: false,
-            useTrackVersion: true,
+            useTrackVersion: false,
         },
         miniplayer: {
             skipTaskbar: false,
