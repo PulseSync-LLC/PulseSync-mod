@@ -216,7 +216,7 @@
                     let { h: n, s: i, l: r } = (0, c.g8k)(e);
                     return { top: q(n, i + (t ? 25 : 15), r + (t ? 15 : 10)), middle: q(n, i + (t ? 20 : 15), r + (t ? 10 : 5)), bottom: q(n, i, r) };
                 },
-                Q = () => window.VIBE_ANIMATION_USE_CUSTOM_COLORS?.() ?? !0,
+                Q = () => window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.() ?? !0,
                 J = (e, t) => (Q() ? G(e, t) : void 0),
                 M = (0, r.PA)((e) => {
                     var t, n, r, a, o, u, d, f;

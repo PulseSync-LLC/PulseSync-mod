@@ -6184,13 +6184,36 @@
                         var e;
                         (null == (e = u.meta) ? void 0 : e.id) && x && v && _.getLyrics(u.meta.id);
                     }, [v, x, _, null == (n = u.meta) ? void 0 : n.id]),
+                        (0, m.useEffect)(() => {
+                            let e = null == l ? void 0 : l.id,
+                                t = null == l ? void 0 : l.isAvailable,
+                                a = null == l ? void 0 : l.isLyricsAvailable,
+                                n = _.currentTrackId ? String(_.currentTrackId) : null,
+                                r = e ? String(e) : null,
+                                s = !!(_.lyrics && String(_.lyrics).trim().length > 0),
+                                o = s && (!_.currentTrackId || (r && n && r === n));
+                            if (!e || !1 === t || a || _.isLoading || o) return;
+                            _.setTrack(l), _.getLyrics(e);
+                        }, [
+                            null == l ? void 0 : l.id,
+                            null == l ? void 0 : l.isAvailable,
+                            null == l ? void 0 : l.isLyricsAvailable,
+                            _.currentTrackId,
+                            _.isLoading,
+                            _.lyrics,
+                            _,
+                        ]),
                         _.shouldShowErrorNotification &&
                             (d((0, c.jsx)(A.hT, { error: o({ id: 'error-messages.error-during-action' }) }), { containerId: i.uQT.ERROR }), _.resetShouldShowError());
                     let N = (0, I.c)((e) => {
                         g(e), e && l && _.sendViews({ trackId: l.id, albumId: l.albumId });
                     });
-                    return _.isShimmerVisible || !_.lyrics || u.isShimmerVisible
+                    let L = !!(_.lyrics && String(_.lyrics).trim().length > 0),
+                        W = _.isShimmerVisible || u.isShimmerVisible || (_.isLoading && !L);
+                    return W
                         ? (0, c.jsx)(D, { isShimmerActive: _.isLoading || u.isLoading })
+                        : !L
+                          ? null
                         : (0, c.jsxs)('div', {
                               className: M().root,
                               ...(0, b.Am)(b.Xk.track.TRACK_PAGE_LYRICS),
@@ -6524,7 +6547,8 @@
                                     ...(0, b.Am)(b.Xk.track.TRACK_PAGE_CONTENT),
                                     children: [
                                         (0, c.jsx)(j, { onModalClose: f }),
-                                        (null == (o = g.meta) ? void 0 : o.isLyricsAvailable) && (0, c.jsx)(K, { track: g.meta }, g.meta.id),
+                                        ((null == (o = g.meta) ? void 0 : o.isLyricsAvailable) || (null == (o = g.meta) ? void 0 : o.isAvailable)) &&
+                                            (0, c.jsx)(K, { track: g.meta }, g.meta.id),
                                         C &&
                                             g.similarTracks &&
                                             (0, c.jsx)(z, {

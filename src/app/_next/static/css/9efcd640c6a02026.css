@@ -1194,6 +1194,9 @@
     position: absolute;
     z-index: 1;
 }
+.AlbumCover_root_withYellowPlayButton__lK9nW {
+    --album-cover-play-button-color: var(--ym-logo-color-primary-player);
+}
 .AlbumCover_coverContainer__NOd_o,
 .AlbumCover_root__hkDPz {
     align-items: center;
@@ -1270,7 +1273,7 @@
     }
 }
 .AlbumCover_playButtonIcon__2b7_R {
-    color: #000;
+    color: var(--ym-controls-color-primary-on_default-enabled);
     height: 2.75rem;
     transition: color var(--ym-duration-transition);
     width: 2.75rem;
@@ -1282,7 +1285,7 @@
 }
 .AlbumCover_playButton__N2FOS {
     align-items: center;
-    background-color: var(--ym-logo-color-primary-player);
+    background-color: var(--album-cover-play-button-color, var(--ym-controls-color-secondary-on_default-hovered));
     display: flex;
     height: 100%;
     justify-content: center;
