@@ -214,7 +214,7 @@ const init = () => {
             smoothDynamicEnergy: false,
             smoothDynamicEnergyCoefficient: 0.2,
             playVibeOnAnyEntity: true,
-            useCustomColors: false,
+            useVibeWidgetColors: true,
             disableRendering: false,
             autoLaunchOnAppStartup: false,
             enableEndlessMusic: true,
@@ -245,6 +245,7 @@ const init = () => {
             useText: false,
             syncLyricsTextFallback: false,
             useTitleOnlyFallback: false,
+            useTrackVersion: true,
         },
         miniplayer: {
             skipTaskbar: false,

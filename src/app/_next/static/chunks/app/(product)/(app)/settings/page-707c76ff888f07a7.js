@@ -2320,7 +2320,7 @@
                         [x, setSmoothDynamicEnergyCoefficient] = (0, v.useState)(
                             window.nativeSettings.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergyCoefficient'),
                         ),
-                        [j, C] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.useCustomColors') ?? !0),
+                        [j, C] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.useVibeWidgetColors') ?? !0),
                         onDisableVibeRenderingToggle = (0, v.useCallback)(async (e) => {
                             console.log('modSettings.vibeAnimationEnhancement.disableRendering toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.disableRendering', e);
@@ -2358,9 +2358,9 @@
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.smoothDynamicEnergy', e);
                             p(e);
                         }, []),
-                        onUseCustomColorsToggle = (0, v.useCallback)(async (e) => {
-                            console.log('modSettings.vibeAnimationEnhancement.useCustomColors toggled. Value: ', e);
-                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.useCustomColors', e);
+                        onUseVibeWidgetColorsToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.useVibeWidgetColors toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.useVibeWidgetColors', e);
                             C(e);
                         }, []);
                     return (0, n.jsx)(T.a, {
@@ -2404,7 +2404,7 @@
                                     children: (0, n.jsx)(Q, {
                                         title: 'Использовать новую цветовую схему Волны',
                                         description: 'Переключение между радужным и одноцветным градиентом Волны',
-                                        onChange: onUseCustomColorsToggle,
+                                        onChange: onUseVibeWidgetColorsToggle,
                                         isChecked: j,
                                         disabled: !!r,
                                     }),
@@ -2793,6 +2793,101 @@
                                     minValue: 0,
                                     step: 5,
                                     disabled: !isDiscordStatusEnabled,
+                                }),
+                            }),
+                        ],
+                    }),
+                });
+            });
+            let lrclibSettings = (0, l.PA)(() => {
+                let { formatMessage: e } = (0, i.A)(),
+                    {
+                        modals: { lrclibSettingsModal: t },
+                    } = (0, m.Pjs)(),
+                    useLrclibTextState = (0, v.useState)(window.nativeSettings.get('modSettings.lrclib.useText') ?? !0),
+                    useLrclibText = useLrclibTextState[0],
+                    setUseLrclibText = useLrclibTextState[1],
+                    syncLyricsTextFallbackState = (0, v.useState)(window.nativeSettings.get('modSettings.lrclib.syncLyricsTextFallback') ?? !1),
+                    syncLyricsTextFallback = syncLyricsTextFallbackState[0],
+                    setSyncLyricsTextFallback = syncLyricsTextFallbackState[1],
+                    useTitleOnlyFallbackState = (0, v.useState)(window.nativeSettings.get('modSettings.lrclib.useTitleOnlyFallback') ?? !0),
+                    useTitleOnlyFallback = useTitleOnlyFallbackState[0],
+                    setUseTitleOnlyFallback = useTitleOnlyFallbackState[1],
+                    useTrackVersionState = (0, v.useState)(window.nativeSettings.get('modSettings.lrclib.useTrackVersion') ?? !0),
+                    useTrackVersion = useTrackVersionState[0],
+                    setUseTrackVersion = useTrackVersionState[1],
+                    onUseLrclibTextToggle = (0, v.useCallback)((e) => {
+                        window.nativeSettings.set('modSettings.lrclib.useText', e);
+                        setUseLrclibText(e);
+                    }, []),
+                    onSyncLyricsTextFallbackToggle = (0, v.useCallback)((e) => {
+                        window.nativeSettings.set('modSettings.lrclib.syncLyricsTextFallback', e);
+                        setSyncLyricsTextFallback(e);
+                    }, []),
+                    onUseTitleOnlyFallbackToggle = (0, v.useCallback)((e) => {
+                        window.nativeSettings.set('modSettings.lrclib.useTitleOnlyFallback', e);
+                        setUseTitleOnlyFallback(e);
+                    }, []),
+                    onUseTrackVersionToggle = (0, v.useCallback)((e) => {
+                        window.nativeSettings.set('modSettings.lrclib.useTrackVersion', e);
+                        setUseTrackVersion(e);
+                    }, []);
+                return (0, n.jsx)(T.a, {
+                    className: K().list,
+                    style: { 'max-width': '34.375rem', height: 'auto' },
+                    title: 'Настройки LRCLib',
+                    headerClassName: K().modalHeader,
+                    contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                    open: t.isOpened,
+                    onOpenChange: t.onOpenChange,
+                    onClose: t.close,
+                    size: 'fitContent',
+                    placement: 'center',
+                    overlayColor: 'full',
+                    labelClose: e({ id: 'interface-actions.close' }),
+                    children: (0, n.jsxs)('ul', {
+                        className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                        style: { width: '32.125rem', gap: 0 },
+                        children: [
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: ['Использовать LRCLib для текста', (0, n.jsx)(labeledBubble, { label: 'ALPHA' })],
+                                    description: useLrclibText ? 'Если в Яндекс Музыке текста нет, то ищем в LRCLib' : 'Берём текст только из Яндекс Музыки',
+                                    onChange: onUseLrclibTextToggle,
+                                    isChecked: useLrclibText,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: 'Показывать текст вместо синхронизированной лирики',
+                                    description: 'Эта опция временно недоступна',
+                                    onChange: onSyncLyricsTextFallbackToggle,
+                                    isChecked: syncLyricsTextFallback,
+                                    disabled: !0,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: 'Повторный поиск только по названию',
+                                    description: useTitleOnlyFallback
+                                        ? 'Если по названию и автору не нашли, то попробуем только по названию'
+                                        : 'Ищем по названию и автору',
+                                    onChange: onUseTitleOnlyFallbackToggle,
+                                    isChecked: useTitleOnlyFallback,
+                                    disabled: !useLrclibText,
+                                }),
+                            }),
+                            (0, n.jsx)('li', {
+                                className: $().item,
+                                children: (0, n.jsx)(Q, {
+                                    title: 'Учитывать версию трека при поиске',
+                                    description: useTrackVersion ? 'Добавляем версию трека к названию при поиске в LRCLib' : 'Ищем в LRCLib без версии трека',
+                                    onChange: onUseTrackVersionToggle,
+                                    isChecked: useTrackVersion,
+                                    disabled: !useLrclibText,
                                 }),
                             }),
                         ],
@@ -3265,6 +3360,7 @@
                             scrobblersSettingsModal: scrobblersSettingsModal,
                             downloaderSettingsModal: downloaderSettingsModal,
                             discordRpcSettingsModal: discordRpcSettingsModal,
+                            lrclibSettingsModal: lrclibSettingsModal,
                         },
                         experiments: a,
                         wizard: c,
@@ -3599,6 +3695,15 @@
                             }),
                         }),
                         (0, n.jsx)(playerSettings, {}),
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: ['Настройки LRCLib', (0, n.jsx)(labeledBubble, { label: 'ALPHA' })],
+                                description: 'Поиск текста песен в LRCLib и режимы отображения',
+                                onClick: lrclibSettingsModal.open,
+                            }),
+                        }),
+                        (0, n.jsx)(lrclibSettings, {}),
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
