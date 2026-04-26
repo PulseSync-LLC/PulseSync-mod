@@ -294,7 +294,7 @@
                         ? { top: h(n, r + 15, a + 10), middle: h(n, r + 15, a + 5), bottom: h(n, r, a) }
                         : { top: h(50, 100, 50), middle: h(330, 100, 50), bottom: h(300, 100, 50) };
                 },
-                Q = () => window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.() ?? !0;
+                Q = () => !window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.() ?? !1;
             var x = i(81256);
             let y = { transparent: !0 },
                 k = (0, r.PA)((e) => {
