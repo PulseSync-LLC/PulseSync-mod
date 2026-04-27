@@ -75,7 +75,10 @@ class LastFmScrobbler {
         return !!session && !!session.key;
     }
     async login() {
+        await this.api.configureSystemProxy();
+
         const token = await this.api.getToken();
+
         return await new Promise((resolve) => {
             const childWindow = new electron_1.BrowserWindow({
                 resizable: false,
@@ -86,12 +89,12 @@ class LastFmScrobbler {
                 titleBarStyle: 'hidden',
                 ...(process.platform !== 'darwin'
                     ? {
-                          titleBarOverlay: {
-                              color: '#000',
-                              symbolColor: '#fff',
-                              height: 48,
-                          },
-                      }
+                        titleBarOverlay: {
+                            color: '#000',
+                            symbolColor: '#fff',
+                            height: 48,
+                        },
+                    }
                     : {}),
                 contextIsolation: true,
                 nodeIntegration: false,
@@ -100,7 +103,9 @@ class LastFmScrobbler {
                     devTools: true,
                 },
             });
+
             childWindow.loadURL(`https://www.last.fm/api/auth/?api_key=${this.API_KEY}&token=${token}`);
+
             childWindow.on('closed', async () => {
                 await this.fetchAndStoreSession(token);
                 events_js_1.sendLastFmUserInfoUpdated(undefined, await this.api.getUserInfo());

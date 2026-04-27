@@ -1,9 +1,12 @@
 'use strict';
+
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.LastFmApi = void 0;
+
+const { app, net, session } = require('electron');
 const signature_1 = require('../utils/signature');
 const Logger_1 = require('../../../../../packages/logger/Logger');
-const { options } = require('axios');
+
 /**
  * Handles all Last.fm API communication
  */
@@ -14,7 +17,92 @@ class LastFmApi {
         this.baseUrl = baseUrl;
         this.sessionProvider = sessionProvider;
         this.logger = new Logger_1.Logger('LastFmApi');
+
+        this.systemProxyConfigured = false;
     }
+
+    async configureSystemProxy() {
+        await this.ensureSystemProxy();
+    }
+
+    async ensureSystemProxy() {
+        if (this.systemProxyConfigured) {
+            return;
+        }
+
+        if (!app.isReady()) {
+            await app.whenReady();
+        }
+
+        await session.defaultSession.setProxy({
+            mode: 'system',
+        });
+
+        this.systemProxyConfigured = true;
+
+        await this.logSystemProxy();
+    }
+
+    async logSystemProxy() {
+        try {
+            const proxy = await session.defaultSession.resolveProxy(this.baseUrl);
+
+            this.logger.info(`Resolved system proxy for "${this.baseUrl}": ${proxy}`);
+
+            if (proxy === 'DIRECT') {
+                this.logger.info(`Last.fm requests will be sent directly without proxy.`);
+            } else {
+                this.logger.info(`Last.fm requests will use proxy: ${proxy}`);
+            }
+        } catch (e) {
+            this.logger.error('Failed to resolve system proxy.', e);
+        }
+    }
+
+    async electronRequest(url, requestOptions = {}) {
+        await this.ensureSystemProxy();
+
+        const method = requestOptions.method || 'GET';
+        const body = requestOptions.body;
+
+        return await new Promise((resolve, reject) => {
+            const request = net.request({
+                method,
+                url,
+                session: session.defaultSession,
+            });
+
+            request.on('response', (response) => {
+                let responseText = '';
+
+                response.on('data', (chunk) => {
+                    responseText += chunk.toString();
+                });
+
+                response.on('end', () => {
+                    resolve({
+                        ok: response.statusCode >= 200 && response.statusCode < 300,
+                        status: response.statusCode,
+                        statusText: response.statusMessage,
+                        headers: response.headers,
+                        text: async () => responseText,
+                    });
+                });
+
+                response.on('error', reject);
+            });
+
+            request.on('error', reject);
+
+            if (body !== undefined && body !== null) {
+                request.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+                request.write(body.toString());
+            }
+
+            request.end();
+        });
+    }
+
     /**
      * Gets an authentication token from Last.fm
      *
@@ -28,8 +116,10 @@ class LastFmApi {
             noSk: true,
             method: 'GET',
         });
+
         return token;
     }
+
     /**
      * Gets a session from Last.fm using a token
      *
@@ -40,8 +130,10 @@ class LastFmApi {
      */
     async getSession(token) {
         const { session } = await this.request('auth.getSession', { token }, { noSk: true, method: 'GET' });
+
         return session;
     }
+
     /**
      * Updates the now playing track on Last.fm
      *
@@ -55,6 +147,7 @@ class LastFmApi {
 
         return await this.getCurrentPlayingTrack();
     }
+
     /**
      * Scrobbles a track on Last.fm
      *
@@ -68,8 +161,10 @@ class LastFmApi {
             ...trackInfo,
             timestamp: Math.floor(Date.now() / 1000),
         });
+
         this.handleScrobbleResult(result.scrobbles.scrobble);
     }
+
     /**
      * Handles possible warnings from a scrobble result
      *
@@ -80,12 +175,15 @@ class LastFmApi {
      */
     handleScrobbleResult({ ignoredMessage }) {
         const warningMessages = [];
+
         if (ignoredMessage?.code !== '0') {
             warningMessages.push(`Track was ignored by Last.fm with code: ${ignoredMessage.code}`);
+
             if (ignoredMessage['#text']) {
                 warningMessages.push(ignoredMessage['#text']);
             }
         }
+
         if (warningMessages.length > 0) {
             throw new Error(warningMessages.join('; '));
         }
@@ -105,6 +203,7 @@ class LastFmApi {
             extended: 1,
             user: user ?? this.sessionProvider().name,
         });
+
         return result?.recenttracks?.track?.filter((track) => track['@attr']?.nowplaying)?.[0];
     }
 
@@ -177,24 +276,38 @@ class LastFmApi {
     ) {
         const queryParams = new URLSearchParams();
         const isPostMethod = options.method === 'POST';
+
         if (params) {
             Object.entries(params).forEach(([key, value]) => {
-                if (value !== undefined) queryParams.append(key, value.toString());
+                if (value !== undefined) {
+                    queryParams.append(key, value.toString());
+                }
             });
         }
+
         queryParams.append('method', method);
         queryParams.append('api_key', this.apiKey);
+
         if (!options.noSk) {
             queryParams.append('sk', this.sessionProvider().key);
         }
+
         if (!options.noSig) {
             queryParams.append('api_sig', (0, signature_1.generateSignature)(queryParams, this.sharedSecret));
         }
+
         const url = isPostMethod ? `${this.baseUrl}?format=json` : `${this.baseUrl}?${queryParams.toString()}&format=json`;
+
         const body = isPostMethod ? queryParams : undefined;
-        const response = await fetch(url, { method: options.method, body });
+
+        const response = await this.electronRequest(url, {
+            method: options.method,
+            body,
+        });
+
         return await this.handleResponse(response);
     }
+
     /**
      * Handles a response from the Last.fm API
      *
@@ -208,20 +321,27 @@ class LastFmApi {
             this.logger.error('Failed to read response', e);
             throw e;
         });
+
         this.logger.debug(`Response: "${text}"`);
+
         let result;
+
         try {
             result = JSON.parse(text);
         } catch (e) {
             this.logger.error('Failed to parse response:', text);
             throw e;
         }
+
         if (this.isApiError(result)) {
             this.logger.error(`Received API error.`, `For more information, see https://www.last.fm/api/errorcodes.`, result);
+
             throw new Error(result.message);
         }
+
         return result;
     }
+
     /**
      * `ILastFmApiError` type guard
      *
@@ -232,4 +352,5 @@ class LastFmApi {
         return typeof error === 'object' && error !== null && 'error' in error && typeof error.error === 'number';
     }
 }
+
 exports.LastFmApi = LastFmApi;

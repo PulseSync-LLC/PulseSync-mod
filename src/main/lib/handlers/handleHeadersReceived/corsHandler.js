@@ -15,7 +15,7 @@ exports.DIRECT_URLS = DIRECT_URLS;
 
 const LOCAL_IPS = ['http://192.168.0.210', 'https://192.168.0.210'];
 const STATIC_ALLOWED_URLS = METRIKA_URLS.concat(DIRECT_URLS, LOCAL_IPS);
-const WILDCARD_HOSTS = ['yandex.ru', 'yandex.net', 'yastatic.net', 'lrclib.net', 'passport.yandex.ru'];
+const WILDCARD_HOSTS = ['yandex.ru', 'yandex.net', 'yastatic.net', 'lrclib.net', 'passport.yandex.ru', 'ws.audioscrobbler.com', 'www.last.fm', 'last.fm'];
 
 const ACCESS_CONTROL_ALLOW_ORIGIN_HEADER = 'access-control-allow-origin';
 const NEW_HEADER_VALUE = [`${config_js_1.config.app.appProtocol}://${config_js_1.config.app.appHostname}`];
