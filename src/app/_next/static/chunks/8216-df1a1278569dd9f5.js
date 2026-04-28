@@ -6214,42 +6214,42 @@
                         ? (0, c.jsx)(D, { isShimmerActive: _.isLoading || u.isLoading })
                         : !L
                           ? null
-                        : (0, c.jsxs)('div', {
-                              className: M().root,
-                              ...(0, b.Am)(b.Xk.track.TRACK_PAGE_LYRICS),
-                              children: [
-                                  (0, c.jsx)(S.Heading, {
-                                      variant: 'h2',
-                                      size: 'm',
-                                      lineClamp: 1,
-                                      className: M().title,
-                                      ...(0, b.Am)(b.e8.content.TRACK_LYRICS_TITLE),
-                                      children: o({ id: 'entity-names.text' }),
-                                  }),
-                                  (0, c.jsx)(R.K, {
-                                      moreText: o({ id: 'track-modal.read-more' }),
-                                      buttonClassName: M().button,
-                                      open: p,
-                                      onOpenChange: N,
-                                      lineClamp: 4,
-                                      withFade: !0,
-                                      children: (0, c.jsx)(S.Caption, {
-                                          variant: 'div',
-                                          className: M().lyrics,
-                                          size: 'l',
-                                          weight: 'medium',
-                                          ...(0, b.Am)(b.e8.content.TRACK_LYRICS_TEXT),
-                                          children: (0, c.jsx)(s.xe, {
-                                              lyrics: _.lyrics,
-                                              authors: _.writersNames,
-                                              source: null == (r = _.major) ? void 0 : r.prettyName,
-                                              isShimmerVisible: _.isShimmerVisible,
-                                              isShimmerActive: _.isLoading,
-                                          }),
-                                      }),
-                                  }),
-                              ],
-                          });
+                          : (0, c.jsxs)('div', {
+                                className: M().root,
+                                ...(0, b.Am)(b.Xk.track.TRACK_PAGE_LYRICS),
+                                children: [
+                                    (0, c.jsx)(S.Heading, {
+                                        variant: 'h2',
+                                        size: 'm',
+                                        lineClamp: 1,
+                                        className: M().title,
+                                        ...(0, b.Am)(b.e8.content.TRACK_LYRICS_TITLE),
+                                        children: o({ id: 'entity-names.text' }),
+                                    }),
+                                    (0, c.jsx)(R.K, {
+                                        moreText: o({ id: 'track-modal.read-more' }),
+                                        buttonClassName: M().button,
+                                        open: p,
+                                        onOpenChange: N,
+                                        lineClamp: 4,
+                                        withFade: !0,
+                                        children: (0, c.jsx)(S.Caption, {
+                                            variant: 'div',
+                                            className: M().lyrics,
+                                            size: 'l',
+                                            weight: 'medium',
+                                            ...(0, b.Am)(b.e8.content.TRACK_LYRICS_TEXT),
+                                            children: (0, c.jsx)(s.xe, {
+                                                lyrics: _.lyrics,
+                                                authors: _.writersNames,
+                                                source: null == (r = _.major) ? void 0 : r.prettyName,
+                                                isShimmerVisible: _.isShimmerVisible,
+                                                isShimmerActive: _.isLoading,
+                                            }),
+                                        }),
+                                    }),
+                                ],
+                            });
                 });
             var U = a(81959),
                 G = a(9432),

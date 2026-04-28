@@ -449,7 +449,7 @@
                     [d, u] = (0, v.useState)(!!i && 'function' != typeof i?.then),
                     m = (0, v.useCallback)(
                         (e) => {
-                            (u(e), null == o || o(e));
+                            u(e), null == o || o(e);
                         },
                         [o],
                     );

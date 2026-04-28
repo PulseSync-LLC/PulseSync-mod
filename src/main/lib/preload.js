@@ -14,7 +14,8 @@ const store_js_1 = require('./store.js');
 const events_js_1 = require('../types/events.js');
 const PULSESYNC_TITLEBAR_STYLE_ID = 'pulsesync-non-premium-titlebar-guard';
 const PULSESYNC_TITLEBAR_TEXT_CLASS = 'TitleBar_pulseText__FhYv';
-const PULSESYNC_TITLEBAR_TEXT_SELECTOR = '[class*="TitleBar_root"] > span[class*="TitleBar_pulseText"], [class*="TitleBar_root"] > .TitleBar_pulseText__FhYv, [class*="TitleBar_root"] > [class*="TitleBar_pulseText"]';
+const PULSESYNC_TITLEBAR_TEXT_SELECTOR =
+    '[class*="TitleBar_root"] > span[class*="TitleBar_pulseText"], [class*="TitleBar_root"] > .TitleBar_pulseText__FhYv, [class*="TitleBar_root"] > [class*="TitleBar_pulseText"]';
 const PULSESYNC_FOREIGN_TITLEBAR_SELECTOR =
     '[class*="TitleBar_root"] > [id*="custom-titlebar"], [class*="TitleBar_root"] > [class*="custom-titlebar"], [class*="TitleBar_root"] > [data-titlebar-replacement]';
 let cachedTitlebarVisibilitySettings = null;

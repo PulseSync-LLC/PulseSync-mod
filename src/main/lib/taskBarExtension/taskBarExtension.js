@@ -407,7 +407,6 @@ const taskBarExtension = (window) => {
     if (native) {
         const iconicThumbnail = native.getDWMIconicThumbnailInstance(window);
         iconicThumbnail.onIconicThumbnailRequested = () => {
-
             pushTransitionAnimationDeadline();
 
             if (lastThumbnailPresentationMode !== 'fallback' || !playerState?.track) {

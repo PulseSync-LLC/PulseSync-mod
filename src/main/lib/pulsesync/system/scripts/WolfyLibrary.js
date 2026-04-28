@@ -79,7 +79,7 @@
 
     class SettingsManager extends EventEmitter {
         constructor(addon) {
-            super()
+            super();
             this._addon = addon;
 
             this.settings = {};
@@ -195,12 +195,12 @@
     class AssetsManager {
         constructor(addonName) {
             this._addonName = addonName;
-            this._urlBase = 'http://localhost:2007/assets'
+            this._urlBase = 'http://localhost:2007/assets';
         }
 
         async getContent(fileName) {
             try {
-                const fileLink = this.getFileLink(fileName)
+                const fileLink = this.getFileLink(fileName);
                 const response = await fetch(fileLink);
                 if (!response.ok) {
                     throw new Error(`Ошибка сети: ${response.status}`);
@@ -266,8 +266,7 @@
         };
 
         const playerCheck = (node) => {
-            if (node.querySelector)
-                return !node?.matches('[data-floating-ui-portal]') ? node.querySelector('[data-test-id="FULLSCREEN_PLAYER_MODAL"]') : null;
+            if (node.querySelector) return !node?.matches('[data-floating-ui-portal]') ? node.querySelector('[data-test-id="FULLSCREEN_PLAYER_MODAL"]') : null;
         };
         const textCheck = (node) => {
             return node.querySelector ? node.querySelector('[data-test-id="SYNC_LYRICS_CONTENT"]') : null;
@@ -378,7 +377,7 @@
                     availableForPremiumUsers: true,
                     availableFullWithoutPermission: false,
                     coverUri: '',
-                    derivedColors: { accent: '', average: '', miniPlayer: '', waveText: ''  },
+                    derivedColors: { accent: '', average: '', miniPlayer: '', waveText: '' },
                     disclaimers: [],
                     durationMs: 0,
                     fade: { inStart: 0, inStop: 0, outStart: 0, outStop: 0 },

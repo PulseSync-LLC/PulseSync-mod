@@ -3950,7 +3950,7 @@
                         ),
                         r.isReadyForAudioEffectInStart.onChange(
                             (e) => {
-                                (e && this.canEnableFastFade(r.isReadyForAudioEffect.value) && this.enableFastFade(), e || this.disableFade());
+                                e && this.canEnableFastFade(r.isReadyForAudioEffect.value) && this.enableFastFade(), e || this.disableFade();
                             },
                             { skipFirstChange: !0 },
                         ));

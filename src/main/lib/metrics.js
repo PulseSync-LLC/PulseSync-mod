@@ -241,10 +241,7 @@ function normalizePathLikeFeatureValue(value) {
 function normalizeFeaturePrimitiveValue(pathParts, value) {
     const key = getFeatureValueKey(pathParts);
 
-    if (
-        key === 'modSettings.downloader.defaultPath' ||
-        key === 'modSettings.downloader.customPathForSessionStorage'
-    ) {
+    if (key === 'modSettings.downloader.defaultPath' || key === 'modSettings.downloader.customPathForSessionStorage') {
         return normalizePathLikeFeatureValue(value);
     }
 
@@ -395,9 +392,7 @@ function normalizeFeatureMetricsState(state) {
         return state;
     }
 
-    logger.info(
-        `Resetting cached feature metrics state due to schema change (${version} -> ${FEATURE_METRIC_STATE_VERSION})`,
-    );
+    logger.info(`Resetting cached feature metrics state due to schema change (${version} -> ${FEATURE_METRIC_STATE_VERSION})`);
 
     return {
         ...state,
@@ -651,9 +646,7 @@ async function sendFeaturesMetric(features, overrides = {}) {
             maxRetries: overrides.maxRetries || metricsRuntimeConfig.maxRetries,
         });
 
-        const nextFeaturesState = areFeatureTreesEqual(lastSentFeatures, normalizedFeatures)
-            ? lastSentFeatures
-            : mergeFeatureTree(lastSentFeatures, normalizedFeatures);
+        const nextFeaturesState = areFeatureTreesEqual(lastSentFeatures, normalizedFeatures) ? lastSentFeatures : mergeFeatureTree(lastSentFeatures, normalizedFeatures);
         const latestState = normalizeFeatureMetricsState((await readJsonSafe(statePath)) || state);
         await writeJsonAtomic(statePath, buildFeatureStateUpdate(latestState, metricType, nextFeaturesState));
     } catch (error) {

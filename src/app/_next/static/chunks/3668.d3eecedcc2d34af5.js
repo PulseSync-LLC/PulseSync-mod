@@ -352,7 +352,9 @@
                                     : null),
                             d = J(u, !!u);
                         s && R.setUserCollectionHue(s),
-                            K ? null == A || A.playAnimation(Q() ? { energy: o, customColors: d } : { hue: a, energy: o, collectionHue: s }) : null == A || A.idleAnimation();
+                            K
+                                ? null == A || A.playAnimation(Q() ? { energy: o, customColors: d } : { hue: a, energy: o, collectionHue: s })
+                                : null == A || A.idleAnimation();
                     }, [
                         K,
                         null == (a = I.entityMeta) || null == (r = a.trackParameters) ? void 0 : r.energy,

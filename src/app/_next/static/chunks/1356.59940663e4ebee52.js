@@ -345,7 +345,11 @@
                                 onError: R,
                             }),
                             n = null == (l = N.entityMeta) || null == (a = l.trackParameters) ? void 0 : a.hue;
-                        d(i), k(new A.Rv(A.p4, T)), Q() ? i.applySettings({ customColors: E({ averageColor: r, isPlaying: N.isPlaying }) }) : i.applySettings({ hue: n, collectionHue: B.collectionHue });
+                        d(i),
+                            k(new A.Rv(A.p4, T)),
+                            Q()
+                                ? i.applySettings({ customColors: E({ averageColor: r, isPlaying: N.isPlaying }) })
+                                : i.applySettings({ hue: n, collectionHue: B.collectionHue });
                     }, [r, f, R, M, k, d, N.isPlaying, T, t, c, B.collectionHue, null == N.entityMeta ? void 0 : N.entityMeta.trackParameters]);
                     let W = (0, s.c)(() => {
                         null == c || c.destroy(), d(null), null == h || h.stop(), k(null);
@@ -359,7 +363,9 @@
                     (0, a.useEffect)(() => {
                         var e, t;
                         let i = null == (t = N.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue;
-                        Q() ? null == c || c.applySettings({ customColors: E({ averageColor: r, isPlaying: N.isPlaying }) }) : null == c || c.applySettings({ hue: i, collectionHue: B.collectionHue });
+                        Q()
+                            ? null == c || c.applySettings({ customColors: E({ averageColor: r, isPlaying: N.isPlaying }) })
+                            : null == c || c.applySettings({ hue: i, collectionHue: B.collectionHue });
                     }, [r, N.isPlaying, c, B.collectionHue, null == N.entityMeta ? void 0 : N.entityMeta.trackParameters]),
                     (0, a.useEffect)(() => {
                         var e, t, n, a, r;

@@ -89,12 +89,12 @@ class LastFmScrobbler {
                 titleBarStyle: 'hidden',
                 ...(process.platform !== 'darwin'
                     ? {
-                        titleBarOverlay: {
-                            color: '#000',
-                            symbolColor: '#fff',
-                            height: 48,
-                        },
-                    }
+                          titleBarOverlay: {
+                              color: '#000',
+                              symbolColor: '#fff',
+                              height: 48,
+                          },
+                      }
                     : {}),
                 contextIsolation: true,
                 nodeIntegration: false,

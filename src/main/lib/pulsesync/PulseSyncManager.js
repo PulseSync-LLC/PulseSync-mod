@@ -32,8 +32,6 @@ function mapExtensionsById(extensions) {
     return mapped;
 }
 
-
-
 let singletonInstance = null;
 const PULSE_SYNC_MANAGER_KEY = Symbol.for('pulsesync.manager.instance');
 

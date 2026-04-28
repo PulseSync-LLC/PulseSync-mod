@@ -15994,7 +15994,17 @@
                 u = r(26782),
                 d = r.n(u);
             let _ = (e) => {
-                let { message: t, closeToast: r, cover: u, coverRadius: _, className: E, coverClassName: T, closeButton: p, withDefaultCloseButton: f = !0, children: m } = e;
+                let {
+                    message: t,
+                    closeToast: r,
+                    cover: u,
+                    coverRadius: _,
+                    className: E,
+                    coverClassName: T,
+                    closeButton: p,
+                    withDefaultCloseButton: f = !0,
+                    children: m,
+                } = e;
                 return (0, s.jsxs)(c.Paper, {
                     radius: 'l',
                     className: (0, n.$)(d().root, E),
@@ -16128,7 +16138,7 @@
                     return new Worker(url, e);
                 };
             !(function (e) {
-                ((e.INIT = 'vibe-animation-worker-init'),
+                (e.INIT = 'vibe-animation-worker-init'),
                     (e.ERROR = 'vibe-animation-worker-error'),
                     (e.UPDATE_LAYOUT = 'vibe-animation-worker-update-layout'),
                     (e.APPLY_SETTINGS = 'vibe-animation-worker-apply-settings'),
@@ -16139,7 +16149,7 @@
                     (e.DISABLE = 'vibe-animation-worker-disable'),
                     (e.AUDIO_ANALYZER_FREQUENCIES = 'vibe-animation-worker-audio-analyzer-frequencies'),
                     (e.UPDATE_VIBE_ENERGY = 'vibe-animation-worker-update-energy'),
-                    (e.ENABLE_LITE_ANIMATION = 'vibe-animation-worker-enable-lite-animation'));
+                    (e.ENABLE_LITE_ANIMATION = 'vibe-animation-worker-enable-lite-animation');
             })(i || (i = {}));
             class c {
                 invoke(e, t) {
@@ -16177,18 +16187,18 @@
                     this.invoke(i.UPDATE_VIBE_ENERGY, e);
                 }
                 destroy() {
-                    (this.onMessage && this.worker.removeEventListener('message', this.onMessage),
+                    this.onMessage && this.worker.removeEventListener('message', this.onMessage),
                         this.onError && this.worker.removeEventListener('error', this.onError),
-                        this.worker.terminate());
+                        this.worker.terminate();
                 }
                 constructor({ offscreenCanvas: e, state: t, collectionHue: r, fps: maxFps, shaderOptions: s, onError: n, onMessage: a }) {
-                    ((0, l._)(this, 'worker', void 0),
+                    (0, l._)(this, 'worker', void 0),
                         (0, l._)(this, 'onMessage', void 0),
                         (0, l._)(this, 'onError', void 0),
                         (this.worker = new o()),
                         a && ((this.onMessage = a), this.worker.addEventListener('message', this.onMessage)),
                         n && ((this.onError = n), this.worker.addEventListener('error', this.onError)),
-                        this.invoke(i.INIT, { canvas: e, state: t, collectionHue: r, fps: maxFps, shaderOptions: s }, [e]));
+                        this.invoke(i.INIT, { canvas: e, state: t, collectionHue: r, fps: maxFps, shaderOptions: s }, [e]);
                 }
             }
             let u = 25,
