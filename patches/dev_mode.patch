@@ -32,9 +32,9 @@ index ecc17d4..4716833 100644
 +                IGNORED_EXPERIMENT_NAMES = new Set(['ABTestIds']),
 +                EXPERIMENT_VARIANTS_CACHE = new Map(),
 +                EXPERIMENT_VARIANTS_PENDING = new Map(),
-+                UNSET_EXPERIMENT_GROUP_OPTION = { value: UNSET_EXPERIMENT_GROUP_VALUE, label: 'unset' },
++                UNSET_EXPERIMENT_GROUP_OPTION = { value: UNSET_EXPERIMENT_GROUP_VALUE, label: 'с сервера' },
 +                DEFAULT_EXPERIMENT_GROUP_OPTIONS = [
-+                    { value: 'default', label: 'default' },
++                    { value: 'default', label: 'off' },
 +                    { value: 'on', label: 'on' },
 +                ],
 +                getStaticExperimentNames = () => {
