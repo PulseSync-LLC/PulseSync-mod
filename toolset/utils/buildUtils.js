@@ -261,7 +261,13 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             modernize: false,
         },
     ) {
-        let workPath = srcPath;
+        let workPath = await extractUtils.resolvePathShortcut(srcPath);
+
+        if (!workPath) {
+            console.error('Прервано. Не удалось резолвнуть --src');
+            return false;
+        }
+
         const cleanupPaths = [];
 
         await buildMiniPlayer();

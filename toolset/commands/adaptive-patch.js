@@ -5,7 +5,11 @@ module.exports = {
     usage: 'adaptive-patch (--src=<path> | --version=<semver>) [--patchFile=<path> | --patchDir=<path>] [--dryRun]',
     flags: ['src', 'version', 'patchFile', 'patchDir', 'dryRun'],
     async execute({ args, core, options }) {
-        const targetPath = args.version ? await core.patchUtils.resolveExtractedVersionPath(args.version) : options.src;
+        let version = args.version;
+
+        if (version === 'latest') version = core.extractUtils.getLatestExtractedVersion();
+
+        const targetPath = version ? await core.patchUtils.resolveExtractedVersionPath(version) : options.src;
         if (!targetPath) {
             throw new Error('Для adaptive-patch требуется --src=<path> или --version=<semver>');
         }

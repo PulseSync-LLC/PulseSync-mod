@@ -261,7 +261,7 @@ function createExtractUtils(runtime) {
         return extractIfNotExist(`${version}@pure`, force, asarPath);
     }
 
-    async function getLatestExtractedSrcDir(toPatched = false) {
+    async function getLatestExtractedVersion() {
         const versions = (await fsp.readdir(EXTRACTED_DIR_PATH, { withFileTypes: true }))
             .filter((dirent) => dirent.isDirectory() && dirent.name.endsWith('@pure'))
             .map((dirent) => dirent.name.replace('@pure', ''));
@@ -276,7 +276,45 @@ function createExtractUtils(runtime) {
             return undefined;
         }
 
-        return path.join(EXTRACTED_DIR_PATH, `${version}${toPatched ? '' : '@pure'}`);
+        return version;
+    }
+
+    async function getLatestExtractedSrcDir(toPatched = false) {
+        return path.join(EXTRACTED_DIR_PATH, `${await getLatestExtractedVersion()}${toPatched ? '' : '@pure'}`);
+    }
+
+    async function resolvePathShortcut(pathShortcut) {
+        const unresolvedPath = pathShortcut;
+        pathShortcut = pathShortcut.replaceAll('\\', '/');
+        if (pathShortcut[0] === '/') pathShortcut.shift();
+
+        if (pathShortcut.length === 0) return SRC_PATH;
+
+        const [scope, versionType] = pathShortcut.split('/');
+        const [version, type] = versionType?.split('@') ?? [undefined, undefined];
+
+        if (scope && scope === 'src') return SRC_PATH;
+
+        if (scope === 'extracted') {
+            let verdir = version;
+            if (version === 'latest') verdir = await getLatestExtractedVersion();
+            const resolvedPath = path.join(EXTRACTED_DIR_PATH, `${verdir}${type ? '@'.concat(type) : ''}`);
+
+            if (!fs.existsSync(resolvedPath)) {
+                console.error('Путь по шорткату', pathShortcut, 'не существует.');
+                return undefined;
+            }
+            console.log('Резолвнуто:', pathShortcut, '->', resolvedPath);
+            return resolvedPath;
+        }
+
+        if (fs.existsSync(unresolvedPath)) {
+            console.log('Шорткат не обнаружен. Прямой резолв', unresolvedPath);
+            return unresolvedPath;
+        }
+
+        console.error('Неудалось резолвнуть в путь:', pathShortcut);
+        return undefined;
     }
 
     async function getLatestYMVersion(type = 'direct', srcPath = undefined) {
@@ -382,6 +420,8 @@ function createExtractUtils(runtime) {
         resolveYmDownloadInfo,
         downloadAndExtractYm,
         getLatestExtractedSrcDir,
+        getLatestExtractedVersion,
+        resolvePathShortcut,
         getLatestYMVersion,
         extractIfNotExist,
         extractBuild,

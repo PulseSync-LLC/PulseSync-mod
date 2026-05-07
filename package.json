@@ -13,7 +13,8 @@
         "downloadLatest": "node toolset.js download",
         "migrateReport": "node toolset.js migrate-report",
         "migrateTodo": "node toolset.js migrate-todo",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "onUpdate": "node toolset.js extract && node toolset.js pretty && node toolset.js adaptive-patch --version=latest && node toolset.js rebuild --src=\"extracted\\latest@pretty\""
     },
     "author": "PulseSync <contact@pulsesync.dev>",
     "license": "GPL-3.0+",
