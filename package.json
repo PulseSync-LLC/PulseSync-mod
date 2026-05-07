@@ -1,6 +1,6 @@
 {
     "name": "pulsesync-asar",
-    "version": "1.26.2",
+    "version": "1.26.3",
     "description": "Mod for Yandex Music Desktop",
     "main": "index.js",
     "scripts": {
@@ -14,7 +14,8 @@
         "migrateReport": "node toolset.js migrate-report",
         "migrateTodo": "node toolset.js migrate-todo",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "onUpdate": "node toolset.js extract && node toolset.js pretty && node toolset.js adaptive-patch --version=latest && node toolset.js rebuild --src=\"extracted\\latest@pretty\""
+        "onUpdate": "node toolset.js extract && node toolset.js pretty && node toolset.js adaptive-patch --version=latest && node toolset.js rebuild --src=\"extracted\\latest@pretty\"",
+        "onUpdate:noAP": "node toolset.js extract && node toolset.js pretty && node toolset.js rebuild --src=\"extracted\\latest@pretty\""
     },
     "author": "PulseSync <contact@pulsesync.dev>",
     "license": "GPL-3.0+",
