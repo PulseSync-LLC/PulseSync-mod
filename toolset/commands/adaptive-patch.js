@@ -7,7 +7,7 @@ module.exports = {
     async execute({ args, core, options }) {
         let version = args.version;
 
-        if (version === 'latest') version = core.extractUtils.getLatestExtractedVersion();
+        if (version === 'latest') version = await core.extractUtils.getLatestExtractedVersion();
 
         const targetPath = version ? await core.patchUtils.resolveExtractedVersionPath(version) : options.src;
         if (!targetPath) {
