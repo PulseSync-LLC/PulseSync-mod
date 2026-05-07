@@ -1030,7 +1030,7 @@
                     );
                 }, [S]);
                 let I = (0, d.c)((e) => {
-                        w(e), null == f || f(e);
+                        (w(e), null == f || f(e));
                     }),
                     E = (0, d.c)(async () => {
                         await b(T);
@@ -1070,6 +1070,15 @@
                                             'margin-inline': 'auto',
                                             width: 'fit-content',
                                             top: '0.7rem',
+                                            textShadow:
+                                                '-1px -1px 0 #000,\n' +
+                                                '1px -1px 0 #000,\n' +
+                                                '-1px 1px 0 #000,\n' +
+                                                '1px 1px 0 #000,\n' +
+                                                '-1px 0px 0 #000,\n' +
+                                                '0px 0px 0 #000,\n' +
+                                                '0px -1px 0 #000,\n' +
+                                                '0px 1px 0 #000',
                                         },
                                     }),
                                     (0, n.jsx)('div', {
