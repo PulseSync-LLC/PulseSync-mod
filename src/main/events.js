@@ -230,6 +230,9 @@ const handleApplicationEvents = (window) => {
 
     const handlePlayerReadyTimeout = () => {
         playerReadyTimeout && clearTimeout(playerReadyTimeout);
+        safeModeRestartInterval && clearInterval(safeModeRestartInterval);
+        appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
+
         playerReadyTimeout = setTimeout(() => {
             if (!isSafeMode) {
                 eventsLogger.error('PLAYER_READY event timeout reached. Prompt safe mode restart.');
@@ -538,7 +541,7 @@ const handleApplicationEvents = (window) => {
 
         isPlayerReady = false;
 
-        if (mainWindow?.isVisible()) {
+        if (mainWindow?.isFocused()) {
             handlePlayerReadyTimeout();
         } else {
             schedulePlayerReadyTimeout();
