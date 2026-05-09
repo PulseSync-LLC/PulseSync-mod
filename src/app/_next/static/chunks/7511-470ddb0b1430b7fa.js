@@ -978,7 +978,7 @@
             'use strict';
             a.d(t, { r: () => x, q: () => i });
             var i = (function (e) {
-                    return (e.VERTICAL = 'vertical'), (e.HORIZONTAL = 'horizontal'), e;
+                    return ((e.VERTICAL = 'vertical'), (e.HORIZONTAL = 'horizontal'), e);
                 })({}),
                 n = a(62936),
                 r = a(79950),
@@ -1009,6 +1009,7 @@
                     } = e,
                     { formatMessage: j } = (0, l.A)(),
                     A = (0, y.eGp)(),
+                    { theme: theme } = (0, y.DPo)(),
                     { state: P, toggleTrue: N, toggleFalse: S } = (0, m.e)(!1),
                     T = Math.round((null != C ? C : 1) * 100) / 100,
                     w = (0, d.c)((e) => {
@@ -1071,14 +1072,16 @@
                                             width: 'fit-content',
                                             top: '0.7rem',
                                             textShadow:
-                                                '-1px -1px 0 #000,\n' +
-                                                '1px -1px 0 #000,\n' +
-                                                '-1px 1px 0 #000,\n' +
-                                                '1px 1px 0 #000,\n' +
-                                                '-1px 0px 0 #000,\n' +
-                                                '0px 0px 0 #000,\n' +
-                                                '0px -1px 0 #000,\n' +
-                                                '0px 1px 0 #000',
+                                                theme === y.Sxu.Dark
+                                                    ? '-1px -1px 0 #000,\n' +
+                                                      '1px -1px 0 #000,\n' +
+                                                      '-1px 1px 0 #000,\n' +
+                                                      '1px 1px 0 #000,\n' +
+                                                      '-1px 0px 0 #000,\n' +
+                                                      '0px 0px 0 #000,\n' +
+                                                      '0px -1px 0 #000,\n' +
+                                                      '0px 1px 0 #000'
+                                                    : undefined,
                                         },
                                     }),
                                     (0, n.jsx)('div', {
