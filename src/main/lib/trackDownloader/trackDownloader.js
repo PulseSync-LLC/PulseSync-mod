@@ -189,7 +189,14 @@ class TrackDownloader {
         const [{ downloadInfo: trackDownloadInfo }, tracksMeta] = await Promise.all([
             this.tracksAPI.getFileInfo(trackId, { codecs: useMP3 ? ['mp3'] : undefined }),
             this.tracksAPI.getTracksMeta(trackId),
-        ]);
+        ]).catch(() => {
+            return [{ downloadInfo: null }, null];
+        });
+
+        if (!trackDownloadInfo || !tracksMeta) {
+            this.logger.error(`Failed download track: ${trackId}`);
+            return callback(-1.0, -1.0);
+        }
 
         const data = {
             downloadURL: trackDownloadInfo.url,
