@@ -7473,7 +7473,7 @@
                                     (0, l.jsxs)('div', {
                                         className: (0, c.$)(al().sonata, { [al().sonata_withReversedControls]: J }),
                                         children: [
-                                            !window.CHANGE_DISLIKE_BUTTON_POS?.()
+                                            window.CHANGE_DISLIKE_BUTTON_POS?.()
                                                 ? (0, l.jsx)(h.aQ, {
                                                       fallback: (0, l.jsx)(h._I, { disabled: !i || b.isAdvertShown, isDisliked: s, onClick: d, iconSize: 'xs' }),
                                                   })
@@ -7487,7 +7487,7 @@
                                                 isMobile: !1,
                                                 entityMeta: i,
                                             }),
-                                            !window.CHANGE_DISLIKE_BUTTON_POS?.()
+                                            window.CHANGE_DISLIKE_BUTTON_POS?.()
                                                 ? (0, l.jsx)(h.aQ, {
                                                       fallback: (0, l.jsx)(h.cy, { disabled: !i || b.isAdvertShown, isLiked: r, onClick: o, iconSize: 'xs' }),
                                                   })
