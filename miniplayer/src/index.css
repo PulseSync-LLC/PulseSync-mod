@@ -15,4 +15,10 @@ body {
     flex-direction: column;
     position: absolute;
     inset: 0;
+    transition: opacity 0.2s ease-out 0.2s;
+    opacity: 1;
+
+    @starting-style {
+        opacity: 0;
+    }
 }
