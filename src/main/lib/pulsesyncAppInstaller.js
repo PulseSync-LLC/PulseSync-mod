@@ -218,43 +218,6 @@ class PulseSyncAppInstaller {
         }
 
         if (this.platform === 'linux') {
-            const home = app.getPath('home');
-            const desktopCandidates = [
-                ...this.names.desktopNames.map((name) => path.join(home, '.local', 'share', 'applications', name)),
-                ...this.names.desktopNames.map((name) => path.join('/usr', 'share', 'applications', name)),
-            ];
-            for (const desktopFile of desktopCandidates) {
-                const desktopDir = path.dirname(desktopFile);
-                let entries = [];
-                try {
-                    entries = await fsPromise.readdir(desktopDir, { withFileTypes: true });
-                } catch {
-                    continue;
-                }
-                const fileNames = new Set(entries.filter((entry) => entry.isFile()).map((entry) => entry.name));
-                const baseName = path.basename(desktopFile);
-                if (!fileNames.has(baseName)) continue;
-                const execPath = await readDesktopExecPath(desktopFile);
-                if (execPath && (await fileExists(execPath))) {
-                    return execPath;
-                }
-            }
-
-            const pathDirs = (process.env.PATH || '').split(path.delimiter).filter(Boolean);
-            for (const dir of pathDirs) {
-                let entries = [];
-                try {
-                    entries = await fsPromise.readdir(dir, { withFileTypes: true });
-                } catch {
-                    continue;
-                }
-                const fileNames = new Set(entries.filter((entry) => entry.isFile()).map((entry) => entry.name));
-                for (const binName of this.names.linuxBinaryNames) {
-                    if (fileNames.has(binName)) {
-                        return path.join(dir, binName);
-                    }
-                }
-            }
             return null;
         }
 
@@ -262,6 +225,9 @@ class PulseSyncAppInstaller {
     }
 
     async isInstalled() {
+
+        if (this.platform === 'linux') return true;
+
         const found = await this.findInstalledPath();
         return Boolean(found);
     }
