@@ -7,8 +7,14 @@ const { artists2string, LRC2SYLT, escapeRestrictedShellChars } = require('../uti
 const NodeID3 = require('node-id3');
 const { getFfmpegUpdater } = require('../ffmpegInstaller.js');
 
-function runProcess(command, args, logger) {
+function runProcess(command, args, logger, options = {}) {
     return new Promise((resolve, reject) => {
+        const { signal } = options;
+        if (signal?.aborted) {
+            reject(signal.reason ?? new Error('ffmpeg aborted'));
+            return;
+        }
+
         const child = spawn(command, args, {
             windowsHide: true,
             stdio: ['ignore', 'pipe', 'pipe'],
@@ -16,17 +22,31 @@ function runProcess(command, args, logger) {
 
         let stdout = '';
         let stderr = '';
+        let settled = false;
+        const finish = (fn, value) => {
+            if (settled) return;
+            settled = true;
+            signal?.removeEventListener('abort', abortProcess);
+            fn(value);
+        };
+
+        const abortProcess = () => {
+            child.kill('SIGTERM');
+            finish(reject, signal.reason ?? new Error('ffmpeg aborted'));
+        };
+
+        signal?.addEventListener('abort', abortProcess, { once: true });
 
         child.stdout.on('data', (d) => (stdout += d.toString()));
         child.stderr.on('data', (d) => (stderr += d.toString()));
 
-        child.on('error', (err) => reject(err));
+        child.on('error', (err) => finish(reject, err));
         child.on('close', (code) => {
             if (stdout) logger.info(stdout);
             if (stderr) logger.warn(stderr);
 
-            if (code === 0) resolve({ stdout, stderr });
-            else reject(new Error(`ffmpeg exited with code ${code}`));
+            if (code === 0) finish(resolve, { stdout, stderr });
+            else finish(reject, new Error(`ffmpeg exited with code ${code}`));
         });
     });
 }
@@ -38,8 +58,10 @@ class FfmpegWrapper {
         this.ffmpegPath = this._updater.installPath;
     }
 
-    async extractFromMp4(data, finalFilepath, tempDirPath, tempFilepath, fileExtension = undefined, lrc = undefined) {
-        if (!fsSync.existsSync(tempDirPath) || !fsSync.existsSync(tempFilepath)) return;
+    async extractFromMp4(data, finalFilepath, tempDirPath, tempFilepath, fileExtension = undefined, lrc = undefined, options = {}) {
+        if (!fsSync.existsSync(tempDirPath) || !fsSync.existsSync(tempFilepath)) {
+            throw new Error(`Temporary ffmpeg input is missing: ${tempFilepath}`);
+        }
 
         let withCover = false;
         const coverPath = path.join(tempDirPath, '400x400.jpg');
@@ -96,9 +118,10 @@ class FfmpegWrapper {
         this.logger.info(`ReEncoding: ${this.ffmpegPath} ${args.join(' ')}`);
 
         try {
-            await runProcess(this.ffmpegPath, args, this.logger);
+            await runProcess(this.ffmpegPath, args, this.logger, options);
         } catch (error) {
             this.logger.error(`ffmpeg error: ${error.message}`);
+            throw error;
         }
 
         if (fileExtension === 'mp3') {
@@ -131,8 +154,7 @@ class FfmpegWrapper {
 
             const status = NodeID3.write(tags, finalFilepath);
             if (!status) {
-                this.logger.error('Failed to write ID3 tags');
-                return;
+                throw new Error('Failed to write ID3 tags');
             }
             this.logger.info('Added ID3 tags');
         } else {

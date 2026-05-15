@@ -32,7 +32,7 @@ class TracksApiWrapper {
         });
     }
 
-    request(method, route, { body, headers = {}, searchParams, formData } = {}) {
+    request(method, route, { body, headers = {}, searchParams, formData, signal } = {}) {
         const url = new URL(route, this.prefixUrl);
         if (searchParams) {
             if (searchParams instanceof URLSearchParams) {
@@ -50,6 +50,7 @@ class TracksApiWrapper {
 
         const opts = {
             method: (method || 'GET').toUpperCase(),
+            signal,
             headers: {
                 ...this.getRequestHeaders(),
                 ...headers,
@@ -116,7 +117,7 @@ class TracksApiWrapper {
         });
     }
 
-    async getTracksMeta(ids, { removeDuplicates = false, withProgress = false } = {}) {
+    async getTracksMeta(ids, { removeDuplicates = false, withProgress = false, signal } = {}) {
         return (
             await this.request('POST', 'tracks', {
                 formData: {
@@ -124,11 +125,12 @@ class TracksApiWrapper {
                     removeDuplicates,
                     withProgress,
                 },
+                signal,
             })
         ).data;
     }
 
-    async getFileInfo(trackId, { quality = 'lossless', codecs = this.codecs, transports = ['encraw'] } = {}) {
+    async getFileInfo(trackId, { quality = 'lossless', codecs = this.codecs, transports = ['encraw'], signal } = {}) {
         const timestamp = Math.floor(Date.now() / 1e3);
         const signStr = ''.concat(timestamp).concat(trackId).concat(quality).concat(codecs.join('')).concat(transports.join(''));
         const sign = await this.getSign(signStr);
@@ -143,11 +145,12 @@ class TracksApiWrapper {
                     transports: transports.join(','),
                     sign: sign,
                 },
+                signal,
             })
         ).data;
     }
 
-    async getFileInfoBatch(trackIds, { quality = 'lossless', codecs = this.codecs, transports = ['encraw'] } = {}) {
+    async getFileInfoBatch(trackIds, { quality = 'lossless', codecs = this.codecs, transports = ['encraw'], signal } = {}) {
         const timestamp = Math.floor(Date.now() / 1e3);
         const signStr = ''.concat(timestamp).concat(trackIds.join(',')).concat(quality).concat(codecs.join('')).concat(transports.join(''));
         const sign = await this.getSign(signStr);
@@ -162,11 +165,12 @@ class TracksApiWrapper {
                     transports: transports.join(','),
                     sign: sign,
                 },
+                signal,
             })
         ).data;
     }
 
-    async getSyncLyrics(trackId, { format = 'LRC' } = {}) {
+    async getSyncLyrics(trackId, { format = 'LRC', signal } = {}) {
         const timestamp = Math.floor(Date.now() / 1e3);
         const signStr = ''.concat(trackId).concat(timestamp);
         const sign = await this.getSign(signStr, false);
@@ -178,16 +182,17 @@ class TracksApiWrapper {
                     format: format,
                     sign: sign,
                 },
+                signal,
             })
         ).data;
-        meta.lrc = await (await fetch(meta.downloadUrl)).text();
+        meta.lrc = await (await fetch(meta.downloadUrl, { signal })).text();
         return meta;
     }
 
-    async fetchTrackCover(track, size = 400) {
+    async fetchTrackCover(track, size = 400, options = {}) {
         let coverRes, coverBuffer;
         if (track?.coverUri) {
-            coverRes = await fetch('https://' + track?.coverUri.replace('%%', `${size}x${size}`));
+            coverRes = await fetch('https://' + track?.coverUri.replace('%%', `${size}x${size}`), { signal: options.signal });
             coverBuffer = Buffer.from(await coverRes.arrayBuffer());
         }
         return coverBuffer;

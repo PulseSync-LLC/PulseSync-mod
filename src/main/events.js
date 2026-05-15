@@ -69,6 +69,7 @@ let mainWindow = undefined;
 let isPlayerReady = false;
 let downloadQueue = Promise.resolve();
 let isGlobalShortcutsRecordingActive = false;
+let toastOperationNonce = 0;
 
 const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 
@@ -278,16 +279,17 @@ const handleApplicationEvents = (window) => {
     });
 
     electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_TRACK, async (event, trackId, trackName = '') => {
-        sendBasicToastCreate(window, `trackDownload|${trackId}`, trackName ? 'Загрузка трека: ' + trackName : 'Загрузка трека...', false);
+        const toastID = `trackDownload|${trackId}`;
+        const toastNonce = sendBasicToastCreate(window, toastID, trackName ? 'Загрузка трека: ' + trackName : 'Загрузка трека...', false);
 
         let callback = (progressRenderer, progressWindow) => {
-            sendProgressBarChange(window, `trackDownload|${trackId}`, progressRenderer * 100);
+            sendProgressBarChange(window, toastID, progressRenderer * 100, undefined, toastNonce);
             window.setProgressBar(progressWindow);
         };
 
         eventsLogger.info('Event received', events_js_1.Events.DOWNLOAD_TRACK);
         await trackDownloader.downloadSingleTrack(trackId, throttle(callback, PROGRESS_BAR_THROTTLE_MS));
-        setTimeout(() => sendBasicToastDismiss(window, `trackDownload|${trackId}`), 2000);
+        setTimeout(() => sendBasicToastDismiss(window, toastID, toastNonce), 2000);
     });
 
     electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_TRACKS, (event, trackIds, dirType = undefined, dirName = undefined) => {
@@ -321,12 +323,13 @@ const handleApplicationEvents = (window) => {
             }
         }
 
-        sendBasicToastCreate(window, `trackDownload|${hash}`, message, false);
+        const toastID = `trackDownload|${hash}`;
+        const toastNonce = sendBasicToastCreate(window, toastID, message, false);
 
         eventsLogger.info('Event received', events_js_1.Events.DOWNLOAD_TRACKS);
 
         const callback = (progressRenderer, progressWindow, statusLabel) => {
-            sendProgressBarChange(window, `trackDownload|${hash}`, progressRenderer * 100, statusLabel);
+            sendProgressBarChange(window, toastID, progressRenderer * 100, statusLabel, toastNonce);
             window.setProgressBar(progressWindow);
         };
 
@@ -338,7 +341,7 @@ const handleApplicationEvents = (window) => {
                     eventsLogger.error('Error downloading multiple tracks:', e, e.stack);
                 } finally {
                     setTimeout(() => {
-                        sendBasicToastDismiss(window, `trackDownload|${hash}`);
+                        sendBasicToastDismiss(window, toastID, toastNonce);
                     }, 2000);
                 }
             })
@@ -348,6 +351,7 @@ const handleApplicationEvents = (window) => {
     });
 
     electron_1.app.on('will-quit', () => {
+        trackDownloader.abortActiveDownloads(new Error('Application is closing'));
         electron_1.globalShortcut.unregisterAll();
     });
 
@@ -406,10 +410,10 @@ const handleApplicationEvents = (window) => {
         const toastID = `trackImport|${crypto.createHash('md5').update(`${link}|${Date.now()}`).digest('hex')}`;
 
         eventsLogger.info('Event received playlist-import-track-from-link', link);
-        sendBasicToastCreate(window, toastID, 'Импорт треков по ссылке | #s', false);
+        const toastNonce = sendBasicToastCreate(window, toastID, 'Импорт треков по ссылке | #s', false);
 
         const progressCallback = (progressRenderer, progressWindow, statusLabel) => {
-            sendProgressBarChange(window, toastID, Math.max(progressRenderer, 0) * 100, statusLabel);
+            sendProgressBarChange(window, toastID, Math.max(progressRenderer, 0) * 100, statusLabel, toastNonce);
             window.setProgressBar(progressWindow);
         };
 
@@ -433,7 +437,7 @@ const handleApplicationEvents = (window) => {
 
             progressCallback(1, 1, successLabel);
             setTimeout(() => {
-                sendBasicToastDismiss(window, toastID);
+                sendBasicToastDismiss(window, toastID, toastNonce);
                 window.setProgressBar(-1);
             }, 2000);
 
@@ -456,10 +460,10 @@ const handleApplicationEvents = (window) => {
                 .filter(Boolean)
                 .at(-1);
 
-            sendProgressBarChange(window, toastID, 0, 'Ошибка');
+            sendProgressBarChange(window, toastID, 0, 'Ошибка', toastNonce);
             window.setProgressBar(-1);
             setTimeout(() => {
-                sendBasicToastDismiss(window, toastID);
+                sendBasicToastDismiss(window, toastID, toastNonce);
             }, 2500);
             eventsLogger.error('Error importing tracks from link:', error, error?.stack);
             throw new Error(errorMessage || 'Не удалось импортировать треки по ссылке');
@@ -609,22 +613,22 @@ const handleApplicationEvents = (window) => {
         const ffmpegInstaller = getFfmpegUpdater();
 
         if (!(await ffmpegInstaller.isInstalled())) {
-            sendBasicToastCreate(window, 'ffmpeg', 'Обновление компонента: ffmpeg', false);
+            const ffmpegToastNonce = sendBasicToastCreate(window, 'ffmpeg', 'Обновление компонента: ffmpeg', false);
 
             let callback = (progressRenderer, progressWindow) => {
-                sendProgressBarChange(window, 'ffmpeg', progressRenderer * 100);
+                sendProgressBarChange(window, 'ffmpeg', progressRenderer * 100, undefined, ffmpegToastNonce);
                 window.setProgressBar(progressWindow);
             };
             ffmpegInstaller
                 .ensureInstalled(throttle(callback, PROGRESS_BAR_THROTTLE_MS))
                 .then(() => {
-                    sendBasicToastDismiss(window, 'ffmpeg');
+                    sendBasicToastDismiss(window, 'ffmpeg', ffmpegToastNonce);
                 })
                 .catch((err) => {
-                    sendProgressBarChange(window, 'ffmpeg', -1);
+                    sendProgressBarChange(window, 'ffmpeg', -1, undefined, ffmpegToastNonce);
                     eventsLogger.error(err);
                     setTimeout(() => {
-                        sendBasicToastDismiss(window, 'ffmpeg');
+                        sendBasicToastDismiss(window, 'ffmpeg', ffmpegToastNonce);
                     }, 2500);
                 });
         }
@@ -633,22 +637,22 @@ const handleApplicationEvents = (window) => {
         if (await ytDlpInstaller.hasInstalledBinary()) {
             const isInstalled = await ytDlpInstaller.isInstalled();
             if (!isInstalled) {
-                sendBasicToastCreate(window, 'yt-dlp', 'Обновление компонента: yt-dlp', false);
+                const ytDlpToastNonce = sendBasicToastCreate(window, 'yt-dlp', 'Обновление компонента: yt-dlp', false);
 
                 let callback = (progressRenderer, progressWindow) => {
-                    sendProgressBarChange(window, 'yt-dlp', progressRenderer * 100);
+                    sendProgressBarChange(window, 'yt-dlp', progressRenderer * 100, undefined, ytDlpToastNonce);
                     window.setProgressBar(progressWindow);
                 };
                 ytDlpInstaller
                     .ensureInstalled(throttle(callback, PROGRESS_BAR_THROTTLE_MS))
                     .then(() => {
-                        sendBasicToastDismiss(window, 'yt-dlp');
+                        sendBasicToastDismiss(window, 'yt-dlp', ytDlpToastNonce);
                     })
                     .catch((err) => {
-                        sendProgressBarChange(window, 'yt-dlp', -1);
+                        sendProgressBarChange(window, 'yt-dlp', -1, undefined, ytDlpToastNonce);
                         eventsLogger.error(err);
                         setTimeout(() => {
-                            sendBasicToastDismiss(window, 'yt-dlp');
+                            sendBasicToastDismiss(window, 'yt-dlp', ytDlpToastNonce);
                         }, 2500);
                     });
             }
@@ -656,9 +660,9 @@ const handleApplicationEvents = (window) => {
 
         const pulseSyncInstaller = getPulseSyncAppInstaller();
         if (!(await pulseSyncInstaller.isInstalled())) {
-            sendBasicToastCreate(window, 'pulsesync-app', 'Установка PulseSync', false);
+            const pulseSyncAppToastNonce = sendBasicToastCreate(window, 'pulsesync-app', 'Установка PulseSync', false);
             let callback = (progressRenderer, progressWindow) => {
-                sendProgressBarChange(window, 'pulsesync-app', progressRenderer * 100);
+                sendProgressBarChange(window, 'pulsesync-app', progressRenderer * 100, undefined, pulseSyncAppToastNonce);
                 window.setProgressBar(progressWindow);
             };
             try {
@@ -666,7 +670,7 @@ const handleApplicationEvents = (window) => {
             } catch (e) {
                 eventsLogger.error('PulseSync app installation failed:', e, e.stack);
             } finally {
-                sendBasicToastDismiss(window, 'pulsesync-app');
+                sendBasicToastDismiss(window, 'pulsesync-app', pulseSyncAppToastNonce);
             }
         }
     });
@@ -847,8 +851,8 @@ const handleApplicationEvents = (window) => {
         }
     });
 };
-const sendProgressBarChange = (window, elementType, progress, statusLabel) => {
-    window.webContents.send(events_js_1.Events.PROGRESS_BAR_CHANGE, elementType, progress, Date.now(), statusLabel);
+const sendProgressBarChange = (window, elementType, progress, statusLabel, operationNonce) => {
+    window.webContents.send(events_js_1.Events.PROGRESS_BAR_CHANGE, elementType, progress, Date.now(), statusLabel, operationNonce);
     eventsLogger.info('Event sent', events_js_1.Events.PROGRESS_BAR_CHANGE, elementType, progress);
 };
 
@@ -885,12 +889,14 @@ const sendModUpdateAvailable = (window, currVersion, newVersion) => {
 };
 exports.sendModUpdateAvailable = sendModUpdateAvailable;
 const sendBasicToastCreate = (window = mainWindow, toastID, message, dismissable) => {
-    window.webContents.send(events_js_1.Events.BASIC_TOAST_CREATE, toastID, message, dismissable, Date.now());
+    const operationNonce = `${Date.now()}:${++toastOperationNonce}`;
+    window.webContents.send(events_js_1.Events.BASIC_TOAST_CREATE, toastID, message, dismissable, operationNonce);
     eventsLogger.info('Event sent', events_js_1.Events.BASIC_TOAST_CREATE, toastID, message);
+    return operationNonce;
 };
 exports.sendBasicToastCreate = sendBasicToastCreate;
-const sendBasicToastDismiss = (window = mainWindow, toastID) => {
-    window.webContents.send(events_js_1.Events.BASIC_TOAST_DISMISS, toastID, Date.now());
+const sendBasicToastDismiss = (window = mainWindow, toastID, operationNonce) => {
+    window.webContents.send(events_js_1.Events.BASIC_TOAST_DISMISS, toastID, Date.now(), operationNonce);
     eventsLogger.info('Event sent', events_js_1.Events.BASIC_TOAST_DISMISS, toastID);
 };
 exports.sendBasicToastDismiss = sendBasicToastDismiss;

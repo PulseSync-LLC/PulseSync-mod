@@ -677,7 +677,7 @@
                     );
                 },
                 toastWithProgress = (e) => {
-                    let { closeToast: s, toastID: o, message: i, buttonLabel: h, onButtonClick: b, disabled: P = !1, dismissOnButtonClick: C = !1 } = e,
+                    let { closeToast: s, toastID: o, message: i, buttonLabel: h, onButtonClick: b, disabled: P = !1, dismissOnButtonClick: C = !1, createNonce: R = 0 } = e,
                         [A, g] = (0, r.useState)(-1),
                         [E, w] = (0, r.useState)('Ожидание...'),
                         N = '__pulseToastProgressCache',
@@ -712,8 +712,9 @@
                             [P, h, i, f, E],
                         ),
                         p = (0, r.useCallback)(
-                            (e, s, i, n = 0, r = void 0) => {
+                            (e, s, i, n = 0, r = void 0, l = 0) => {
                                 if (s !== o) return;
+                                if (l && R && l !== R) return;
                                 if (window.dedupeNonces && window.dedupeNonces[s] === n) return;
                                 window.dedupeNonces || (window.dedupeNonces = {}),
                                     n && (window.dedupeNonces[s] = n),
@@ -722,14 +723,15 @@
                                     g(i),
                                     r && w(r);
                             },
-                            [o],
+                            [o, R],
                         ),
                         y = (0, r.useCallback)(
-                            (e, i, n = 0) => {
+                            (e, i, n = 0, r = 0) => {
+                                if (r && R && r !== R) return;
                                 if (window['onBasicToastDismiss' + o] === n) return;
                                 n && (window['onBasicToastDismiss' + o] = n), i === o && (window[N] && delete window[N][o], null == s || s());
                             },
-                            [s, o],
+                            [s, o, R],
                         );
                     return (
                         (0, r.useEffect)(() => {
@@ -847,12 +849,16 @@
                             (e, s, o, r, i = 0) => {
                                 if (window['onBasicToastCreate' + s] === i) return;
                                 i && (window['onBasicToastCreate' + s] = i),
+                                    window['onBasicToastDismiss' + s] && delete window['onBasicToastDismiss' + s],
+                                    window.dedupeNonces && delete window.dedupeNonces[s],
+                                    window.__pulseToastProgressCache && delete window.__pulseToastProgressCache[s],
                                     v(
                                         (0, n.jsx)(toastWithProgress, {
                                             toastID: s,
                                             message: o,
                                             buttonLabel: r || void 0,
                                             dismissOnButtonClick: !!r,
+                                            createNonce: i,
                                         }),
                                         { containerId: t.uQT.IMPORTANT },
                                     );

@@ -781,12 +781,21 @@
                     );
                 },
                 toastWithProgress = (e) => {
-                    let { closeToast: t, toastID: a, message: l, buttonLabel: u, onButtonClick: p, disabled: h = !1, dismissOnButtonClick: m = !1 } = e,
+                    let {
+                            closeToast: t,
+                            toastID: a,
+                            message: l,
+                            buttonLabel: u,
+                            onButtonClick: p,
+                            disabled: h = !1,
+                            dismissOnButtonClick: m = !1,
+                            createNonce: Cn = 0,
+                        } = e,
                         [b, P] = (0, o.useState)(-1),
                         [C, A] = (0, o.useState)('Ожидание...'),
                         y = '__pulseToastProgressCache',
                         g = (0, o.useCallback)(() => {
-                            null == p || p(), m && (null == t || t());
+                            (null == p || p(), m && (null == t || t()));
                         }, [m, p, t]),
                         E = (0, o.useMemo)(
                             () =>
@@ -816,24 +825,26 @@
                             [h, u, l, g, C],
                         ),
                         N = (0, o.useCallback)(
-                            (e, t, l, s = 0, o = void 0) => {
+                            (e, t, l, s = 0, o = void 0, r = 0) => {
                                 if (t !== a) return;
+                                if (r && Cn && r !== Cn) return;
                                 if (window.dedupeNonces && window.dedupeNonces[t] === s) return;
-                                window.dedupeNonces || (window.dedupeNonces = {}),
+                                (window.dedupeNonces || (window.dedupeNonces = {}),
                                     s && (window.dedupeNonces[t] = s),
                                     window[y] || (window[y] = {}),
                                     (window[y][t] = { progress: l, label: o }),
                                     P(l),
-                                    o && A(o);
+                                    o && A(o));
                             },
-                            [a],
+                            [a, Cn],
                         ),
                         f = (0, o.useCallback)(
-                            (e, l, s = 0) => {
+                            (e, l, s = 0, o = 0) => {
+                                if (o && Cn && o !== Cn) return;
                                 if (window['onBasicToastDismiss' + a] === s) return;
-                                s && (window['onBasicToastDismiss' + a] = s), l === a && (window[y] && delete window[y][a], null == t || t());
+                                (s && (window['onBasicToastDismiss' + a] = s), l === a && (window[y] && delete window[y][a], null == t || t()));
                             },
-                            [t, a],
+                            [t, a, Cn],
                         );
                     return (
                         (0, o.useEffect)(() => {
@@ -903,10 +914,10 @@
                         w = (0, o.useCallback)(
                             (t, o, r, l = 0) => {
                                 if (window.modUpdateAvailableEventDedupeNonce === l) return;
-                                l && (window.modUpdateAvailableEventDedupeNonce = l),
+                                (l && (window.modUpdateAvailableEventDedupeNonce = l),
                                     modUpdateNotify((0, s.jsx)(modUpdateToast, { formatMessage: e, version: `${o} -> ${r}`, closeToast: modUpdateDismiss }), {
                                         containerId: n.uQT.IMPORTANT,
-                                    });
+                                    }));
                             },
                             [e, modUpdateNotify, modUpdateDismiss],
                         ),
@@ -916,7 +927,7 @@
                         f = (0, o.useCallback)(
                             (e, t = 'GPU_STALL', a = 0) => {
                                 if (window.onGPUStallEventDedupeNonce === a) return;
-                                a && (window.onGPUStallEventDedupeNonce = a),
+                                (a && (window.onGPUStallEventDedupeNonce = a),
                                     gpuStallNotify(
                                         (0, s.jsx)(toastWithProgress, {
                                             toastID: 'GPU_STALL',
@@ -925,7 +936,7 @@
                                             onButtonClick: N,
                                         }),
                                         { containerId: n.uQT.IMPORTANT },
-                                    );
+                                    ));
                             },
                             [gpuStallNotify, N],
                         ),
@@ -935,7 +946,7 @@
                         b = (0, o.useCallback)(
                             (e, t = 0) => {
                                 if (window.onAppStallStallDedupeNonce === t) return;
-                                t && (window.onAppStallStallDedupeNonce = t),
+                                (t && (window.onAppStallStallDedupeNonce = t),
                                     appStallNotify(
                                         (0, s.jsx)(toastWithProgress, {
                                             toastID: 'safeModeRestart',
@@ -945,23 +956,27 @@
                                             dismissOnButtonClick: !0,
                                         }),
                                         { containerId: n.uQT.IMPORTANT },
-                                    );
+                                    ));
                             },
                             [appStallNotify, k],
                         ),
                         P = (0, o.useCallback)(
                             (e, t, a, o, r = 0) => {
                                 if (window['onBasicToastCreate' + t] === r) return;
-                                r && (window['onBasicToastCreate' + t] = r),
+                                (r && (window['onBasicToastCreate' + t] = r),
+                                    window['onBasicToastDismiss' + t] && delete window['onBasicToastDismiss' + t],
+                                    window.dedupeNonces && delete window.dedupeNonces[t],
+                                    window.__pulseToastProgressCache && delete window.__pulseToastProgressCache[t],
                                     basicToastNotify(
                                         (0, s.jsx)(toastWithProgress, {
                                             toastID: t,
                                             message: a,
                                             buttonLabel: o || void 0,
                                             dismissOnButtonClick: !!o,
+                                            createNonce: r,
                                         }),
                                         { containerId: n.uQT.IMPORTANT },
-                                    );
+                                    ));
                             },
                             [basicToastNotify],
                         );

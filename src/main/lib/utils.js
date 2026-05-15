@@ -56,9 +56,11 @@ exports.throttle = throttle;
  * @param {string} outputPath - Путь для сохранения файла
  * @param {(progress: number) => void} [onProgress] - Колбэк прогресса (0..1)
  * @param {(input: ReadableStream) => ReadableStream | Promise<ReadableStream>} [transformStream] - Опциональная функция-трансформер
+ * @param {{ signal?: AbortSignal }} [options] - Опции выполнения
  */
-async function downloadFileWithProgress(url, outputPath, onProgress, transformStream) {
-    const response = await fetch(url);
+async function downloadFileWithProgress(url, outputPath, onProgress, transformStream, options = {}) {
+    const { signal } = options;
+    const response = await fetch(url, { signal });
     if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
 
     const total = parseInt(response.headers.get('content-length') || '0', 10);
@@ -97,7 +99,14 @@ async function downloadFileWithProgress(url, outputPath, onProgress, transformSt
         },
     });
 
-    await baseStream.pipeTo(writable);
+    const abortFileStream = () => fileStream.destroy(signal.reason ?? new Error('Download aborted'));
+
+    try {
+        signal?.addEventListener('abort', abortFileStream, { once: true });
+        await baseStream.pipeTo(writable, { signal });
+    } finally {
+        signal?.removeEventListener('abort', abortFileStream);
+    }
 }
 
 exports.downloadFileWithProgress = downloadFileWithProgress;
