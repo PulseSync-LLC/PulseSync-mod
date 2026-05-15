@@ -323,6 +323,8 @@ const initField = (fieldKey, defaultValue, force = false) => {
     }
     if (force || typeof store.get(fieldKey) === 'undefined') {
         store.set(fieldKey, defaultValue);
+        cachedStore.set(fieldKey, defaultValue);
+        storeRevision += 1;
         logger.log('Inited', fieldKey, 'to', defaultValue);
         return;
     }
