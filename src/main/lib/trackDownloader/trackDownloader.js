@@ -181,7 +181,7 @@ class TrackDownloader extends EventEmitter {
 
     async removeIfExistsDir(dirPath) {
         if (!fsSync.existsSync(dirPath)) return;
-        await fs.rm(dirPath, { recursive: true });
+        await fs.rm(dirPath, { recursive: true, force: true, maxRetries: 5, retryDelay: 150 });
         this.logger.log('Deleted temp track directory.', dirPath);
     }
 
@@ -365,12 +365,25 @@ class TrackDownloader extends EventEmitter {
     }
 
     async cleanupJobTemp(job) {
-        if (!job?.tempDir) return;
+        if (!job?.tempDir) return true;
 
         try {
             await this.removeIfExistsDir(job.tempDir);
+            return !fsSync.existsSync(job.tempDir);
         } catch (error) {
             this.logger.warn(`Failed to cleanup temp directory for ${job.trackId}:`, error);
+            return false;
+        }
+    }
+
+    async cleanupJobsTemp(jobs) {
+        const cleanupResults = await Promise.all(jobs.map((job) => this.cleanupJobTemp(job)));
+        const remainingTempDirs = jobs.filter((job, index) => job?.tempDir && cleanupResults[index] === false && fsSync.existsSync(job.tempDir));
+
+        if (remainingTempDirs.length > 0) {
+            this.logger.warn('Some track temp directories were not deleted', {
+                tempDirs: remainingTempDirs.map((job) => job.tempDir),
+            });
         }
     }
 
@@ -608,7 +621,7 @@ class TrackDownloader extends EventEmitter {
             await ffmpegStage.onIdle();
         } finally {
             if (pipelineOptions.signal?.aborted) {
-                await Promise.all(jobs.map((job) => this.cleanupJobTemp(job)));
+                await this.cleanupJobsTemp(jobs);
             }
             if (controller) {
                 this.activeAbortControllers.delete(controller);

@@ -334,7 +334,17 @@ const handleApplicationEvents = (window) => {
 
         eventsLogger.info('Event received', events_js_1.Events.DOWNLOAD_TRACKS);
 
+        const resetProgress = (statusLabel) => {
+            sendProgressBarChange(window, toastID, -1, statusLabel, toastNonce);
+            window.setProgressBar(-1);
+        };
+
         const callback = (progressRenderer, progressWindow, statusLabel) => {
+            if (abortController.signal.aborted || progressRenderer < 0 || progressWindow < 0) {
+                resetProgress(statusLabel);
+                return;
+            }
+
             sendProgressBarChange(window, toastID, progressRenderer * 100, statusLabel, toastNonce);
             window.setProgressBar(progressWindow);
         };
@@ -357,6 +367,7 @@ const handleApplicationEvents = (window) => {
                     }
                 } finally {
                     activeTrackDownloadControllers.delete(toastNonce);
+                    resetProgress(abortController.signal.aborted ? 'Отменено' : undefined);
                     setTimeout(() => {
                         sendBasicToastDismiss(window, toastID, toastNonce);
                     }, 2000);
@@ -379,10 +390,18 @@ const handleApplicationEvents = (window) => {
 
         eventsLogger.info('Canceling multiple track download:', toastID);
         abortController.abort(new Error('Multiple track download canceled by user'));
+        sendProgressBarChange(window, toastID, -1, 'Отменено', operationNonce);
+        window.setProgressBar(-1);
         activeTrackDownloadControllers.delete(operationNonce);
     });
 
     electron_1.app.on('will-quit', () => {
+        activeTrackDownloadControllers.forEach((abortController) => {
+            if (!abortController.signal.aborted) {
+                abortController.abort(new Error('Application is closing'));
+            }
+        });
+        activeTrackDownloadControllers.clear();
         trackDownloader.abortActiveDownloads(new Error('Application is closing'));
         electron_1.globalShortcut.unregisterAll();
     });
