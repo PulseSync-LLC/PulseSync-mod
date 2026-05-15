@@ -154,6 +154,24 @@ class TrackDownloader extends EventEmitter {
         return filePath;
     }
 
+    async handleOutputDirDialog(defaultPath) {
+        const dialogOptions = {
+            properties: ['openDirectory', 'createDirectory'],
+        };
+
+        if (defaultPath) {
+            dialogOptions.defaultPath = defaultPath;
+        }
+
+        const { canceled, filePaths } = await electron_1.dialog.showOpenDialog(dialogOptions);
+        if (canceled || !filePaths?.[0]) {
+            this.logger.info('Track download output directory selection canceled');
+            return;
+        }
+
+        return filePaths[0];
+    }
+
     async removeIfExistsDir(dirPath) {
         if (!fsSync.existsSync(dirPath)) return;
         await fs.rm(dirPath, { recursive: true });
@@ -161,21 +179,21 @@ class TrackDownloader extends EventEmitter {
     }
 
     async getFinalTrackPath(data, fileExtension) {
-        const defaultDirPath = store_js_1.getModSettings()?.downloader?.defaultPath;
+        const downloaderSettings = store_js_1.getModSettings()?.downloader;
+        const defaultDirPath = downloaderSettings?.useDefaultPath && downloaderSettings?.defaultPath ? downloaderSettings.defaultPath : undefined;
+        const outputDirPath = data.outputDir ?? defaultDirPath;
         const defaultFilepath = getTrackFilename(data.track) + '.' + fileExtension;
 
-        if (data.subDirName && store_js_1.getModSettings()?.downloader?.useDefaultPath && defaultDirPath) {
+        if (data.subDirName && outputDirPath) {
             try {
-                await createDirIfNotExist(path.join(defaultDirPath, data.subDirName));
-                this.logger.warn('Created directory:', path.join(defaultDirPath, data.subDirName));
+                await createDirIfNotExist(path.join(outputDirPath, data.subDirName));
+                this.logger.warn('Created directory:', path.join(outputDirPath, data.subDirName));
             } catch (e) {
                 this.logger.warn('Failed to create directory:', e);
             }
         }
 
-        return store_js_1.getModSettings()?.downloader?.useDefaultPath && defaultDirPath
-            ? path.join(defaultDirPath, data.subDirName ?? '', defaultFilepath)
-            : await this.handleSaveDialog(data, defaultFilepath);
+        return outputDirPath ? path.join(outputDirPath, data.subDirName ?? '', defaultFilepath) : await this.handleSaveDialog(data, defaultFilepath);
     }
 
     async createTempDirPath(data) {
@@ -241,6 +259,7 @@ class TrackDownloader extends EventEmitter {
             transport: job.transport,
             key: job.key,
             subDirName: job.subDirName,
+            outputDir: job.outputDir,
             tempDirId: job.tempDirId,
         };
     }
@@ -505,6 +524,7 @@ class TrackDownloader extends EventEmitter {
             sourceTrackId: trackId,
             status: 'queued',
             subDirName: normalizedSubDirName,
+            outputDir: pipelineOptions.outputDir,
             retries: {},
             progress: 0,
         }));
@@ -547,16 +567,33 @@ class TrackDownloader extends EventEmitter {
     async downloadMultipleTracks(trackIds, subDirName, callback, options = {}) {
         await this.waitUntilReady();
 
-        if (!(store_js_1.getModSettings()?.downloader?.useDefaultPath || store_js_1.getModSettings()?.downloader?.defaultPath)) {
-            this.logger.log('No default path set, canceling multiple track download.');
-            return;
+        const downloaderSettings = store_js_1.getModSettings()?.downloader;
+        const hasDefaultOutputPath = downloaderSettings?.useDefaultPath && downloaderSettings?.defaultPath;
+        let outputDir = options.outputDir;
+
+        if (!hasDefaultOutputPath && !outputDir) {
+            this.logger.log('No default output path set, asking user to select output directory.');
+            callback(0, 0, 'Выберите папку...');
+            outputDir = await this.handleOutputDirDialog(downloaderSettings?.defaultPath);
+            if (!outputDir) {
+                setTimeout(() => callback(-1, -1), 1000);
+                return;
+            }
         }
 
         this.logger.log(`Downloading multiple tracks: ${trackIds?.length}`);
 
         callback(0, 0, 'Подготовка...');
 
-        await this.runTrackPipeline(trackIds, subDirName, callback, options);
+        await this.runTrackPipeline(trackIds, subDirName, callback, {
+            ...options,
+            outputDir,
+        });
+        if (options.signal?.aborted) {
+            this.logger.info('Multiple track download canceled');
+            return;
+        }
+
         this.logger.log('All tracks downloaded');
 
         setTimeout(() => callback(-1, -1), 5000);

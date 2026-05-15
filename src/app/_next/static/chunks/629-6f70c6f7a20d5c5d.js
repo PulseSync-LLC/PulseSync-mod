@@ -961,7 +961,7 @@
                             [appStallNotify, k],
                         ),
                         P = (0, o.useCallback)(
-                            (e, t, a, o, r = 0) => {
+                            (e, t, a, o, r = 0, i, d) => {
                                 if (window['onBasicToastCreate' + t] === r) return;
                                 (r && (window['onBasicToastCreate' + t] = r),
                                     window['onBasicToastDismiss' + t] && delete window['onBasicToastDismiss' + t],
@@ -972,6 +972,7 @@
                                             toastID: t,
                                             message: a,
                                             buttonLabel: o || void 0,
+                                            onButtonClick: i ? () => window.desktopEvents?.send(i, d) : void 0,
                                             dismissOnButtonClick: !!o,
                                             createNonce: r,
                                         }),

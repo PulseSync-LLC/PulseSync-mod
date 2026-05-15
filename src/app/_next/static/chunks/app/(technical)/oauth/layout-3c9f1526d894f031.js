@@ -1119,7 +1119,7 @@
                             [a, E],
                         ),
                         N = (0, r.useCallback)(
-                            (e, s, o, r, i = 0) => {
+                            (e, s, o, r, i = 0, d, a) => {
                                 if (window['onBasicToastCreate' + s] === i) return;
                                 (i && (window['onBasicToastCreate' + s] = i),
                                     window['onBasicToastDismiss' + s] && delete window['onBasicToastDismiss' + s],
@@ -1130,6 +1130,7 @@
                                             toastID: s,
                                             message: o,
                                             buttonLabel: r || void 0,
+                                            onButtonClick: d ? () => window.desktopEvents?.send(d, a) : void 0,
                                             dismissOnButtonClick: !!r,
                                             createNonce: i,
                                         }),

@@ -70,6 +70,7 @@ let isPlayerReady = false;
 let downloadQueue = Promise.resolve();
 let isGlobalShortcutsRecordingActive = false;
 let toastOperationNonce = 0;
+const activeTrackDownloadControllers = new Map();
 
 const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 
@@ -324,7 +325,12 @@ const handleApplicationEvents = (window) => {
         }
 
         const toastID = `trackDownload|${hash}`;
-        const toastNonce = sendBasicToastCreate(window, toastID, message, false);
+        const abortController = new AbortController();
+        const toastNonce = sendBasicToastCreate(window, toastID, message, 'Отменить', events_js_1.Events.DOWNLOAD_TRACKS_CANCEL, (operationNonce) => ({
+            toastID,
+            operationNonce,
+        }));
+        activeTrackDownloadControllers.set(toastNonce, abortController);
 
         eventsLogger.info('Event received', events_js_1.Events.DOWNLOAD_TRACKS);
 
@@ -336,10 +342,21 @@ const handleApplicationEvents = (window) => {
         downloadQueue = downloadQueue
             .then(async () => {
                 try {
-                    await trackDownloader.downloadMultipleTracks(trackIds, dirName, throttle(callback, PROGRESS_BAR_THROTTLE_MS));
+                    if (abortController.signal.aborted) {
+                        return;
+                    }
+
+                    await trackDownloader.downloadMultipleTracks(trackIds, dirName, throttle(callback, PROGRESS_BAR_THROTTLE_MS), {
+                        signal: abortController.signal,
+                    });
                 } catch (e) {
-                    eventsLogger.error('Error downloading multiple tracks:', e, e.stack);
+                    if (abortController.signal.aborted) {
+                        eventsLogger.info('Multiple track download canceled:', toastID);
+                    } else {
+                        eventsLogger.error('Error downloading multiple tracks:', e, e.stack);
+                    }
                 } finally {
+                    activeTrackDownloadControllers.delete(toastNonce);
                     setTimeout(() => {
                         sendBasicToastDismiss(window, toastID, toastNonce);
                     }, 2000);
@@ -348,6 +365,21 @@ const handleApplicationEvents = (window) => {
             .catch((err) => {
                 eventsLogger.error('Download queue error:', err);
             });
+    });
+
+    electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_TRACKS_CANCEL, (event, payload = {}) => {
+        const toastID = payload?.toastID;
+        const operationNonce = payload?.operationNonce;
+        const abortController = operationNonce ? activeTrackDownloadControllers.get(operationNonce) : undefined;
+
+        if (!abortController) {
+            eventsLogger.warn('No active multiple track download to cancel:', toastID, operationNonce);
+            return;
+        }
+
+        eventsLogger.info('Canceling multiple track download:', toastID);
+        abortController.abort(new Error('Multiple track download canceled by user'));
+        activeTrackDownloadControllers.delete(operationNonce);
     });
 
     electron_1.app.on('will-quit', () => {
@@ -888,9 +920,10 @@ const sendModUpdateAvailable = (window, currVersion, newVersion) => {
     eventsLogger.info('Event sent', events_js_1.Events.MOD_UPDATE_AVAILABLE, currVersion, newVersion);
 };
 exports.sendModUpdateAvailable = sendModUpdateAvailable;
-const sendBasicToastCreate = (window = mainWindow, toastID, message, dismissable) => {
+const sendBasicToastCreate = (window = mainWindow, toastID, message, dismissable, actionEvent, actionPayload) => {
     const operationNonce = `${Date.now()}:${++toastOperationNonce}`;
-    window.webContents.send(events_js_1.Events.BASIC_TOAST_CREATE, toastID, message, dismissable, operationNonce);
+    const resolvedActionPayload = typeof actionPayload === 'function' ? actionPayload(operationNonce) : actionPayload;
+    window.webContents.send(events_js_1.Events.BASIC_TOAST_CREATE, toastID, message, dismissable, operationNonce, actionEvent, resolvedActionPayload);
     eventsLogger.info('Event sent', events_js_1.Events.BASIC_TOAST_CREATE, toastID, message);
     return operationNonce;
 };
