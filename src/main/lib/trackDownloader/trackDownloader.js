@@ -33,6 +33,13 @@ const DEFAULT_PIPELINE_OPTIONS = {
     ffmpegRetries: 1,
     retryDelayMs: 750,
 };
+// Queue progress is weighted per track so fast metadata work does not dominate the
+// aggregate progress bar and slow ffmpeg work keeps its own visible budget.
+const PIPELINE_PROGRESS_WEIGHTS = {
+    metadata: 0.2,
+    download: 0.4,
+    ffmpeg: 0.4,
+};
 
 function getTrackFilename(track) {
     if (!track) return 'unknown_track';
@@ -281,15 +288,46 @@ class TrackDownloader extends EventEmitter {
         this.emit('stage-transition', payload);
     }
 
-    updateJobProgress(job, progress, reporter) {
+    getWeightedJobProgress(job) {
+        return Object.entries(PIPELINE_PROGRESS_WEIGHTS).reduce((total, [stage, weight]) => total + (job.stageProgress?.[stage] ?? 0) * weight, 0);
+    }
+
+    updateJobProgress(job, stage, progress, reporter) {
         const safeProgress = Math.min(Math.max(progress, 0), 1);
-        job.progress = safeProgress;
-        reporter?.(job, safeProgress);
+        job.stageProgress = {
+            metadata: 0,
+            download: 0,
+            ffmpeg: 0,
+            ...job.stageProgress,
+            [stage]: safeProgress,
+        };
+
+        const weightedProgress = Math.min(Math.max(this.getWeightedJobProgress(job), 0), 1);
+        job.progress = weightedProgress;
+        reporter?.(job, weightedProgress);
         this.emit('progress', {
             trackId: job.trackId,
             sourceTrackId: job.sourceTrackId,
             status: job.status,
-            progress: safeProgress,
+            stage,
+            stageProgress: safeProgress,
+            progress: weightedProgress,
+        });
+    }
+
+    completeJobProgress(job, reporter) {
+        job.stageProgress = {
+            metadata: 1,
+            download: 1,
+            ffmpeg: 1,
+        };
+        job.progress = 1;
+        reporter?.(job, 1);
+        this.emit('progress', {
+            trackId: job.trackId,
+            sourceTrackId: job.sourceTrackId,
+            status: job.status,
+            progress: 1,
         });
     }
 
@@ -322,7 +360,7 @@ class TrackDownloader extends EventEmitter {
     async handleJobFailure(job, error, reporter) {
         job.status = 'failed';
         job.error = error;
-        this.updateJobProgress(job, 1, reporter);
+        this.completeJobProgress(job, reporter);
         await this.cleanupJobTemp(job);
     }
 
@@ -334,6 +372,23 @@ class TrackDownloader extends EventEmitter {
         } catch (error) {
             this.logger.warn(`Failed to cleanup temp directory for ${job.trackId}:`, error);
         }
+    }
+
+    async writePlaylistM3U(jobs, subDirName) {
+        const completedJobs = jobs.filter((job) => job.status === 'done' && job.outputFile);
+        if (completedJobs.length === 0) return;
+
+        const playlistDir = path.dirname(completedJobs[0].outputFile);
+        const playlistName = removeInvalidCharsFromFilename(subDirName || 'playlist');
+        const playlistPath = path.join(playlistDir, `${playlistName}.m3u`);
+        const lines = ['#EXTM3U'];
+
+        completedJobs.forEach((job) => {
+            lines.push(path.basename(job.outputFile).replaceAll('\\', '/'));
+        });
+
+        await fs.writeFile(playlistPath, lines.join('\n') + '\n', 'utf8');
+        this.logger.info('Playlist M3U saved', { playlistPath, tracks: completedJobs.length });
     }
 
     createPipelineStages({ options, useMP3, downloadReporter }) {
@@ -410,7 +465,7 @@ class TrackDownloader extends EventEmitter {
     async processMetadataJob(job, { signal, metrics, useMP3, reporter, downloadStage }) {
         throwIfAborted(signal);
         this.updateJobStatus(job, 'fetching', { stage: 'metadata', metrics });
-        this.updateJobProgress(job, 0.05, reporter);
+        this.updateJobProgress(job, 'metadata', 0.25, reporter);
 
         const [{ downloadInfo }, tracksMeta] = await Promise.all([
             this.tracksAPI.getFileInfo(job.sourceTrackId, { codecs: useMP3 ? ['mp3'] : undefined, signal }),
@@ -443,7 +498,7 @@ class TrackDownloader extends EventEmitter {
             }
         }
 
-        this.updateJobProgress(job, 0.1, reporter);
+        this.updateJobProgress(job, 'metadata', 1, reporter);
         await downloadStage.push(job);
     }
 
@@ -463,14 +518,14 @@ class TrackDownloader extends EventEmitter {
         }
 
         job.tempFile = path.join(job.tempDir, removeInvalidCharsFromFilename(`${job.trackId}.${job.codec}`));
-        this.updateJobProgress(job, 0.12, reporter);
+        this.updateJobProgress(job, 'download', 0.05, reporter);
 
         const downloaded = await this.downloadTrackFile(
             data,
             job.tempFile,
             (progressRenderer) => {
                 const downloadProgress = Math.min(Math.max(progressRenderer / 0.8, 0), 1);
-                this.updateJobProgress(job, 0.12 + downloadProgress * 0.76, reporter);
+                this.updateJobProgress(job, 'download', 0.05 + downloadProgress * 0.85, reporter);
             },
             { signal },
         );
@@ -489,18 +544,19 @@ class TrackDownloader extends EventEmitter {
             this.logger.info('Cover saved to temp directory');
         }
 
-        this.updateJobProgress(job, 0.9, reporter);
+        this.updateJobProgress(job, 'download', 1, reporter);
         await ffmpegStage.push(job);
     }
 
     async processFfmpegJob(job, { signal, metrics, reporter }) {
         throwIfAborted(signal);
         this.updateJobStatus(job, 'ffmpeg', { stage: 'ffmpeg', metrics });
+        this.updateJobProgress(job, 'ffmpeg', 0, reporter);
 
         await this.ffmpeg.extractFromMp4(this.getJobData(job), job.outputFile, job.tempDir, job.tempFile, job.fileExtension, job.lyricsMeta?.lrc, { signal });
 
         this.updateJobStatus(job, 'done', { stage: 'ffmpeg', metrics });
-        this.updateJobProgress(job, 1, reporter);
+        this.updateJobProgress(job, 'ffmpeg', 1, reporter);
         this.logger.info('Track downloaded', { trackId: job.trackId, outputFile: job.outputFile });
 
         await this.cleanupJobTemp(job);
@@ -527,9 +583,14 @@ class TrackDownloader extends EventEmitter {
             outputDir: pipelineOptions.outputDir,
             retries: {},
             progress: 0,
+            stageProgress: {
+                metadata: 0,
+                download: 0,
+                ffmpeg: 0,
+            },
         }));
 
-        jobs.forEach((job) => this.updateJobProgress(job, 0, reporter));
+        jobs.forEach((job) => this.updateJobProgress(job, 'metadata', 0, reporter));
 
         const { metadataStage, downloadStage, ffmpegStage } = this.createPipelineStages({
             options: pipelineOptions,
@@ -585,13 +646,17 @@ class TrackDownloader extends EventEmitter {
 
         callback(0, 0, 'Подготовка...');
 
-        await this.runTrackPipeline(trackIds, subDirName, callback, {
+        const jobs = await this.runTrackPipeline(trackIds, subDirName, callback, {
             ...options,
             outputDir,
         });
         if (options.signal?.aborted) {
             this.logger.info('Multiple track download canceled');
             return;
+        }
+
+        if (downloaderSettings?.addM3UToPlaylists) {
+            await this.writePlaylistM3U(jobs, subDirName);
         }
 
         this.logger.log('All tracks downloaded');

@@ -2909,6 +2909,9 @@
                         useDefaultPathState = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.useDefaultPath') ?? !1),
                         useDefaultPath = useDefaultPathState[0],
                         setUseDefaultPath = useDefaultPathState[1],
+                        addM3UToPlaylistsState = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.addM3UToPlaylists') ?? !1),
+                        addM3UToPlaylists = addM3UToPlaylistsState[0],
+                        setAddM3UToPlaylists = addM3UToPlaylistsState[1],
                         customPathForSessionStorageState = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.customPathForSessionStorage') ?? ''),
                         customPathForSessionStorage = customPathForSessionStorageState[0],
                         setCustomPathForSessionStorage = customPathForSessionStorageState[1],
@@ -2931,6 +2934,11 @@
                         onUseSyncLyricsToggle = (0, v.useCallback)(async (e) => {
                             console.log('useSyncLyrics toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.downloader.useSyncLyrics', e);
+                        }, []),
+                        onAddM3UToPlaylistsToggle = (0, v.useCallback)(async (e) => {
+                            console.log('addM3UToPlaylists toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.downloader.addM3UToPlaylists', e);
+                            setAddM3UToPlaylists(e);
                         }, []),
                         onUseCustomPathForSessionStorageToggle = (0, v.useCallback)(
                             async (e) => {
@@ -2976,7 +2984,7 @@
                             labelClose: e({ id: 'interface-actions.close' }),
                             children: (0, n.jsxs)('ul', {
                                 className: $().root,
-                                style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
+                                style: { width: '32.125rem', gap: 0 },
                                 children: [
                                     (0, n.jsx)('li', {
                                         className: $().item,
@@ -3008,6 +3016,17 @@
                                             description: 'Если возможно, записывать синхронный текст трека в метаданные файла',
                                             onChange: onUseSyncLyricsToggle,
                                             isChecked: window.nativeSettings.getAsync('modSettings.downloader.useSyncLyrics'),
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(Q, {
+                                            title: 'Создавать M3U для плейлистов',
+                                            description: addM3UToPlaylists
+                                                ? 'После скачивания плейлиста будет создан .m3u файл'
+                                                : 'Плейлисты будут скачиваться без .m3u файла',
+                                            onChange: onAddM3UToPlaylistsToggle,
+                                            isChecked: addM3UToPlaylists,
                                         }),
                                     }),
                                     (0, n.jsx)('li', {

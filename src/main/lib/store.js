@@ -239,6 +239,7 @@ const init = () => {
             useCustomPathForSessionStorage: false,
             customPathForSessionStorage: '',
             useSyncLyrics: true,
+            addM3UToPlaylists: false,
             ytDlpCookiesBrowserSource: null,
         },
         lrclib: {

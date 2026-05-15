@@ -130,7 +130,7 @@ class TracksApiWrapper {
         ).data;
     }
 
-    async getFileInfo(trackId, { quality = 'lossless', codecs = this.codecs, transports = ['encraw'], signal } = {}) {
+    async getFileInfo(trackId, { quality = 'lossless', codecs = this.codecs, transports = ['encraw', 'raw'], signal } = {}) {
         const timestamp = Math.floor(Date.now() / 1e3);
         const signStr = ''.concat(timestamp).concat(trackId).concat(quality).concat(codecs.join('')).concat(transports.join(''));
         const sign = await this.getSign(signStr);
@@ -150,7 +150,7 @@ class TracksApiWrapper {
         ).data;
     }
 
-    async getFileInfoBatch(trackIds, { quality = 'lossless', codecs = this.codecs, transports = ['encraw'], signal } = {}) {
+    async getFileInfoBatch(trackIds, { quality = 'lossless', codecs = this.codecs, transports = ['encraw', 'raw'], signal } = {}) {
         const timestamp = Math.floor(Date.now() / 1e3);
         const signStr = ''.concat(timestamp).concat(trackIds.join(',')).concat(quality).concat(codecs.join('')).concat(transports.join(''));
         const sign = await this.getSign(signStr);
