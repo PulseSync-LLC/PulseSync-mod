@@ -22,24 +22,43 @@ const { createDirIfNotExist } = require('../utils.js');
 
 const TMP_PATH = process.platform === 'linux' ? path.join(electron.app.getPath('userData'), 'temp') : path.join(electron.app.getAppPath(), '../../', '\\temp');
 const DEFAULT_PIPELINE_OPTIONS = {
-    metadataConcurrency: 16,
-    metadataMaxQueued: 100,
-    downloadConcurrency: 10,
-    downloadMaxQueued: 50,
-    ffmpegConcurrency: 8,
-    ffmpegMaxQueued: 30,
+    metadataConcurrency: 8,
+    metadataMaxQueued: 128,
+    downloadConcurrency: 12,
+    downloadMaxQueued: 64,
+    ffmpegConcurrency: 2,
+    ffmpegMaxQueued: 32,
     metadataRetries: 2,
     downloadRetries: 2,
     ffmpegRetries: 1,
     retryDelayMs: 750,
+    adaptiveConcurrency: true,
+    adaptiveConcurrencyIntervalMs: 3000,
+    adaptiveConcurrencyCooldownMs: 6000,
+    metadataMinConcurrency: 4,
+    metadataMaxConcurrency: 16,
+    downloadMinConcurrency: 4,
+    downloadMaxConcurrency: 24,
+    ffmpegMinConcurrency: 1,
+    ffmpegMaxConcurrency: 6,
+};
+const ADAPTIVE_CONCURRENCY_CAPS = {
+    metadata: 16,
+    download: 24,
+    ffmpeg: 6,
 };
 // Queue progress is weighted per track so fast metadata work does not dominate the
 // aggregate progress bar and slow ffmpeg work keeps its own visible budget.
 const PIPELINE_PROGRESS_WEIGHTS = {
-    metadata: 0.2,
-    download: 0.4,
-    ffmpeg: 0.4,
+    metadata: 0.1,
+    download: 0.6,
+    ffmpeg: 0.3,
 };
+const FILE_INFO_BATCH_SIZE = 50;
+
+function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
 
 function getTrackFilename(track) {
     if (!track) return 'unknown_track';
@@ -234,10 +253,23 @@ class TrackDownloader extends EventEmitter {
     }
 
     createPipelineOptions(options = {}) {
-        return {
+        const pipelineOptions = {
             ...DEFAULT_PIPELINE_OPTIONS,
             ...options,
         };
+
+        ['metadata', 'download', 'ffmpeg'].forEach((stageName) => {
+            const minKey = `${stageName}MinConcurrency`;
+            const maxKey = `${stageName}MaxConcurrency`;
+            const concurrencyKey = `${stageName}Concurrency`;
+            const hardMax = ADAPTIVE_CONCURRENCY_CAPS[stageName];
+
+            pipelineOptions[minKey] = Math.max(1, Math.min(pipelineOptions[minKey], hardMax));
+            pipelineOptions[maxKey] = Math.max(pipelineOptions[minKey], Math.min(pipelineOptions[maxKey], hardMax));
+            pipelineOptions[concurrencyKey] = clamp(pipelineOptions[concurrencyKey], pipelineOptions[minKey], pipelineOptions[maxKey]);
+        });
+
+        return pipelineOptions;
     }
 
     abortActiveDownloads(reason = new Error('Track downloader aborted')) {
@@ -269,6 +301,76 @@ class TrackDownloader extends EventEmitter {
             outputDir: job.outputDir,
             tempDirId: job.tempDirId,
         };
+    }
+
+    createFileInfoBatches(jobs) {
+        for (let i = 0; i < jobs.length; i += FILE_INFO_BATCH_SIZE) {
+            const trackIds = jobs.slice(i, i + FILE_INFO_BATCH_SIZE).map((job) => job.sourceTrackId);
+            const batch = {
+                trackIds,
+                fileInfoBySourceTrackId: new Map(),
+                fileInfoByTrackId: new Map(),
+                promise: null,
+                ready: false,
+            };
+
+            jobs.slice(i, i + FILE_INFO_BATCH_SIZE).forEach((job) => {
+                job.fileInfoBatch = batch;
+            });
+        }
+    }
+
+    getBatchDownloadInfos(batchResponse) {
+        const downloadInfos = batchResponse?.downloadInfos ?? batchResponse?.downloadInfo ?? batchResponse;
+        if (!Array.isArray(downloadInfos)) {
+            throw new Error('Invalid getFileInfoBatch response');
+        }
+
+        return downloadInfos.map((item) => item?.downloadInfo ?? item);
+    }
+
+    async fillFileInfoBatch(batch, { useMP3, signal }) {
+        const batchResponse = await this.tracksAPI.getFileInfoBatch(batch.trackIds, { codecs: useMP3 ? ['mp3'] : undefined, signal });
+        const downloadInfos = this.getBatchDownloadInfos(batchResponse);
+
+        downloadInfos.forEach((downloadInfo, index) => {
+            if (!downloadInfo) return;
+
+            const sourceTrackId = batch.trackIds[index];
+            batch.fileInfoBySourceTrackId.set(sourceTrackId, downloadInfo);
+
+            if (downloadInfo.trackId) {
+                batch.fileInfoByTrackId.set(`${downloadInfo.trackId}`, downloadInfo);
+            }
+        });
+
+        batch.ready = true;
+        this.logger.info('Fetched track file info batch', { tracks: batch.trackIds.length, resolved: downloadInfos.filter(Boolean).length });
+    }
+
+    async getJobFileInfo(job, { useMP3, signal }) {
+        const batch = job.fileInfoBatch;
+        if (!batch) {
+            return (await this.tracksAPI.getFileInfo(job.sourceTrackId, { codecs: useMP3 ? ['mp3'] : undefined, signal })).downloadInfo;
+        }
+
+        if (!batch.ready) {
+            if (!batch.promise) {
+                batch.promise = this.fillFileInfoBatch(batch, { useMP3, signal }).catch((error) => {
+                    batch.promise = null;
+                    throw error;
+                });
+            }
+
+            await batch.promise;
+        }
+
+        const trackId = `${job.sourceTrackId}`.split(':')[0];
+        const downloadInfo = batch.fileInfoBySourceTrackId.get(job.sourceTrackId) ?? batch.fileInfoByTrackId.get(trackId);
+        if (downloadInfo) return downloadInfo;
+
+        this.logger.warn('Track file info missing in batch response, falling back to single request', { trackId: job.sourceTrackId });
+        return (await this.tracksAPI.getFileInfo(job.sourceTrackId, { codecs: useMP3 ? ['mp3'] : undefined, signal })).downloadInfo;
     }
 
     updateJobStatus(job, status, extra = {}) {
@@ -341,6 +443,9 @@ class TrackDownloader extends EventEmitter {
         });
         stage.on('failed', (job, error, metrics) => {
             this.logger.error('Track pipeline failed', { stage: stage.name, trackId: job.trackId, error: error?.message, stack: error?.stack, metrics });
+        });
+        stage.on('concurrency-change', (changedStage, previousConcurrency, nextConcurrency, reason, metrics) => {
+            this.logger.info('Track pipeline concurrency changed', { stage: changedStage.name, previousConcurrency, nextConcurrency, reason, metrics });
         });
     }
 
@@ -475,17 +580,127 @@ class TrackDownloader extends EventEmitter {
         };
     }
 
+    logPipelineQueueMetrics(stages, jobs) {
+        const stageMetrics = Object.fromEntries(stages.map((stage) => [stage.name, stage.getStats()]));
+
+        this.logger.info('Track pipeline queue metrics', {
+            tracksCount: jobs.length,
+            completed: jobs.filter((job) => job.status === 'done').length,
+            failed: jobs.filter((job) => job.status === 'failed').length,
+            stages: stageMetrics,
+        });
+    }
+
+    startAdaptiveConcurrency(stages, options) {
+        if (!options.adaptiveConcurrency) return () => {};
+
+        const stageConfigs = {
+            metadata: {
+                min: options.metadataMinConcurrency,
+                max: options.metadataMaxConcurrency,
+                step: 2,
+                increaseUtilization: 0.85,
+                decreaseUtilization: 0.35,
+            },
+            download: {
+                min: options.downloadMinConcurrency,
+                max: options.downloadMaxConcurrency,
+                step: 4,
+                increaseUtilization: 0.85,
+                decreaseUtilization: 0.35,
+            },
+            ffmpeg: {
+                min: options.ffmpegMinConcurrency,
+                max: options.ffmpegMaxConcurrency,
+                step: 1,
+                increaseUtilization: 0.75,
+                decreaseUtilization: 0.35,
+            },
+        };
+        const state = new Map(
+            stages.map((stage) => [
+                stage.name,
+                {
+                    stats: stage.getStats(),
+                    throughput: 0,
+                    lastDirection: null,
+                    lastChangedAt: 0,
+                },
+            ]),
+        );
+
+        const tuneStage = (stage) => {
+            const config = stageConfigs[stage.name];
+            const stageState = state.get(stage.name);
+            if (!config || !stageState) return;
+
+            const stats = stage.getStats();
+            const previousStats = stageState.stats;
+            const durationMs = stats.durationMs - previousStats.durationMs;
+            if (durationMs <= 0) return;
+
+            const workerBusyMs = stats.workerBusyMs - previousStats.workerBusyMs;
+            const totalWorkerMs = stats.totalWorkerMs - previousStats.totalWorkerMs;
+            const finishedJobs = stats.finishedJobs - previousStats.finishedJobs;
+            const failedJobs = stats.failedJobs - previousStats.failedJobs;
+            const retries = stats.retries - previousStats.retries;
+            const backpressureWaitMs = stats.backpressureWaitMs - previousStats.backpressureWaitMs;
+            const fullQueueWaits = stats.fullQueueWaits - previousStats.fullQueueWaits;
+            const utilization = totalWorkerMs > 0 ? workerBusyMs / totalWorkerMs : 0;
+            const throughput = finishedJobs / (durationMs / 1000);
+            const hasPressure = stats.finalQueued > 0 || stats.finalRunning >= stage.concurrency || backpressureWaitMs > 0 || fullQueueWaits > 0;
+            const hasErrors = failedJobs > 0 || retries > 0;
+            const now = Date.now();
+            const isCoolingDown = now - stageState.lastChangedAt < options.adaptiveConcurrencyCooldownMs;
+            let nextConcurrency = stage.concurrency;
+            let reason;
+
+            if (hasErrors && stage.concurrency > config.min) {
+                nextConcurrency = Math.max(config.min, stage.concurrency - config.step);
+                reason = 'errors';
+            } else if (!isCoolingDown) {
+                if (stageState.lastDirection === 'up' && stageState.throughput > 0 && throughput < stageState.throughput * 0.95 && stage.concurrency > config.min) {
+                    nextConcurrency = Math.max(config.min, stage.concurrency - config.step);
+                    reason = 'throughput-drop';
+                } else if (hasPressure && utilization >= config.increaseUtilization && stage.concurrency < config.max) {
+                    nextConcurrency = Math.min(config.max, stage.concurrency + config.step);
+                    reason = 'pressure';
+                } else if (!hasPressure && utilization <= config.decreaseUtilization && stats.finalRunning < stage.concurrency && stage.concurrency > config.min) {
+                    nextConcurrency = Math.max(config.min, stage.concurrency - config.step);
+                    reason = 'underutilized';
+                }
+            }
+
+            if (nextConcurrency !== stage.concurrency) {
+                const previousConcurrency = stage.concurrency;
+                stage.setConcurrency(nextConcurrency, reason);
+                stageState.lastDirection = nextConcurrency > previousConcurrency ? 'up' : 'down';
+                stageState.lastChangedAt = now;
+            }
+
+            stageState.stats = stage.getStats();
+            stageState.throughput = throughput;
+        };
+
+        const interval = setInterval(() => {
+            if (options.signal?.aborted) return;
+            stages.forEach(tuneStage);
+        }, options.adaptiveConcurrencyIntervalMs);
+        interval.unref?.();
+
+        return () => clearInterval(interval);
+    }
+
     async processMetadataJob(job, { signal, metrics, useMP3, reporter, downloadStage }) {
         throwIfAborted(signal);
         this.updateJobStatus(job, 'fetching', { stage: 'metadata', metrics });
         this.updateJobProgress(job, 'metadata', 0.25, reporter);
 
-        const [{ downloadInfo }, tracksMeta] = await Promise.all([
-            this.tracksAPI.getFileInfo(job.sourceTrackId, { codecs: useMP3 ? ['mp3'] : undefined, signal }),
+        const [trackDownloadInfo, tracksMeta] = await Promise.all([
+            this.getJobFileInfo(job, { useMP3, signal }),
             this.tracksAPI.getTracksMeta(job.sourceTrackId, { signal }),
         ]);
 
-        const trackDownloadInfo = downloadInfo;
         const trackMeta = tracksMeta?.[0];
 
         if (!trackDownloadInfo?.url || !trackMeta) {
@@ -603,6 +818,7 @@ class TrackDownloader extends EventEmitter {
             },
         }));
 
+        this.createFileInfoBatches(jobs);
         jobs.forEach((job) => this.updateJobProgress(job, 'metadata', 0, reporter));
 
         const { metadataStage, downloadStage, ffmpegStage } = this.createPipelineStages({
@@ -610,6 +826,8 @@ class TrackDownloader extends EventEmitter {
             useMP3,
             downloadReporter: reporter,
         });
+        const stages = [metadataStage, downloadStage, ffmpegStage];
+        const stopAdaptiveConcurrency = this.startAdaptiveConcurrency(stages, pipelineOptions);
 
         try {
             for (const job of jobs) {
@@ -617,9 +835,15 @@ class TrackDownloader extends EventEmitter {
             }
 
             await metadataStage.onIdle();
+            metadataStage.stopMetrics();
             await downloadStage.onIdle();
+            downloadStage.stopMetrics();
             await ffmpegStage.onIdle();
+            ffmpegStage.stopMetrics();
         } finally {
+            stopAdaptiveConcurrency();
+            stages.forEach((stage) => stage.stopMetrics());
+            this.logPipelineQueueMetrics(stages, jobs);
             if (pipelineOptions.signal?.aborted) {
                 await this.cleanupJobsTemp(jobs);
             }
