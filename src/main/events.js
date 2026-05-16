@@ -54,7 +54,7 @@ const getSortedDescReleaseNotesKeys_js_1 = require('./lib/releaseNotes/getSorted
 const removeNewerReleaseNotes_js_1 = require('./lib/releaseNotes/removeNewerReleaseNotes.js');
 const formatters_js_1 = require('./lib/i18n/formatters.js');
 const stringToAST_js_1 = require('./lib/i18n/stringToAST.js');
-const { sendFeaturesMetric, sendDownloadTracksMetric } = require('./lib/metrics.js');
+const { sendFeaturesMetric, sendDownloadTracksMetric, sendExperimentsMetric } = require('./lib/metrics.js');
 const gt_js_1 = __importDefault(require('semver/functions/gt.js'));
 const valid_js_1 = __importDefault(require('semver/functions/valid.js'));
 const i18nKeys_js_1 = require('./constants/i18nKeys.js');
@@ -898,6 +898,10 @@ const handleApplicationEvents = (window) => {
     electron_1.ipcMain.on(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, value);
         setNativeStoreValue(key, value);
+    });
+    electron_1.ipcMain.on(events_js_1.Events.EXPERIMENTS_METRIC, (event, experiments) => {
+        eventsLogger.info(`Event received`, events_js_1.Events.EXPERIMENTS_METRIC);
+        void sendExperimentsMetric(experiments);
     });
     electron_1.ipcMain.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {
         eventsLogger.info(`Event received`, events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, value);

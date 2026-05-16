@@ -2219,6 +2219,9 @@
                     if (this.cacheController.shouldGetCache) return this.cacheController.get(r, 6048e5);
                     try {
                         let a = await super.experimentsDetails(t, e);
+                        try {
+                            window.desktopEvents?.send?.('EXPERIMENTS_METRIC', a);
+                        } catch (t) {}
                         return this.cacheController.put({ requestId: r, response: a, priority: s.MEDIUM }), a;
                     } catch (t) {
                         return this.cacheController.handleError(t, r, 6048e5);

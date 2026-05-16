@@ -201,6 +201,7 @@ let heartbeatInFlight = false;
 let teardownBound = false;
 let metricsRuntimeConfig = null;
 const FEATURE_METRIC_STATE_VERSION = 5;
+const EXPERIMENT_METRIC_STATE_VERSION = 1;
 
 function isPlainObject(value) {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -260,6 +261,13 @@ function buildDownloadTracksEndpoint(endpointUrl) {
     const trimmed = endpointUrl.endsWith('/') ? endpointUrl.slice(0, -1) : endpointUrl;
     if (trimmed.endsWith('/download-tracks')) return trimmed;
     return `${trimmed}/download-tracks`;
+}
+
+function buildExperimentsEndpoint(endpointUrl) {
+    if (!endpointUrl) return '';
+    const trimmed = endpointUrl.endsWith('/') ? endpointUrl.slice(0, -1) : endpointUrl;
+    if (trimmed.endsWith('/experiments')) return trimmed;
+    return `${trimmed}/experiments`;
 }
 
 function normalizeFeatureTree(value, pathParts = []) {
@@ -417,6 +425,100 @@ function buildFeatureStateUpdate(state, metricType, features) {
         last_features_sent_at_ms: nowMs(),
         feature_metrics_state_version: FEATURE_METRIC_STATE_VERSION,
     };
+}
+
+function normalizeExperimentMetricValue(value, depth = 0) {
+    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {
+        return value;
+    }
+
+    if (depth >= 4) {
+        return null;
+    }
+
+    if (Array.isArray(value)) {
+        return value.slice(0, 50).map((item) => normalizeExperimentMetricValue(item, depth + 1));
+    }
+
+    if (!isPlainObject(value)) {
+        return null;
+    }
+
+    const normalized = {};
+    for (const [key, nestedValue] of Object.entries(value).slice(0, 50)) {
+        if (typeof key !== 'string' || key.length === 0) {
+            continue;
+        }
+        normalized[key] = normalizeExperimentMetricValue(nestedValue, depth + 1);
+    }
+
+    return normalized;
+}
+
+function normalizeExperimentDetails(details) {
+    if (!isPlainObject(details)) {
+        return null;
+    }
+
+    const normalized = {};
+
+    for (const [key, rawExperiment] of Object.entries(details)) {
+        const experimentKey = String(key || '').trim();
+        if (!experimentKey || experimentKey.length > 191 || !isPlainObject(rawExperiment)) {
+            continue;
+        }
+
+        const rawGroup = rawExperiment.group;
+        const group = typeof rawGroup === 'string' && rawGroup.trim() ? rawGroup.trim().slice(0, 128) : null;
+
+        normalized[experimentKey] = {
+            group,
+            value: normalizeExperimentMetricValue(rawExperiment.value),
+        };
+    }
+
+    return Object.keys(normalized).length > 0 ? normalized : null;
+}
+
+function normalizeExperimentMetricsState(state) {
+    const version = typeof state?.experiment_metrics_state_version === 'number' ? state.experiment_metrics_state_version : 0;
+
+    if (version === EXPERIMENT_METRIC_STATE_VERSION) {
+        return state;
+    }
+
+    logger.info(`Resetting cached experiment metrics state due to schema change (${version} -> ${EXPERIMENT_METRIC_STATE_VERSION})`);
+
+    return {
+        ...state,
+        last_sent_experiments_by_metric_type: {},
+        experiment_metrics_state_version: EXPERIMENT_METRIC_STATE_VERSION,
+    };
+}
+
+function getMetricScopedExperimentState(state, metricType) {
+    const experimentStates = isPlainObject(state.last_sent_experiments_by_metric_type) ? state.last_sent_experiments_by_metric_type : {};
+    const metricState = experimentStates[metricType];
+    return isPlainObject(metricState) ? metricState : {};
+}
+
+function buildExperimentStateUpdate(state, metricType, experiments) {
+    const experimentStates = isPlainObject(state.last_sent_experiments_by_metric_type) ? cloneFeatureTree(state.last_sent_experiments_by_metric_type) : {};
+    experimentStates[metricType] = experiments;
+    return {
+        ...state,
+        last_sent_experiments_by_metric_type: experimentStates,
+        last_experiments_sent_at_ms: nowMs(),
+        experiment_metrics_state_version: EXPERIMENT_METRIC_STATE_VERSION,
+    };
+}
+
+function areExperimentStatesEqual(left, right) {
+    try {
+        return JSON.stringify(left || {}) === JSON.stringify(right || {});
+    } catch {
+        return false;
+    }
 }
 
 function stopHeartbeatScheduler() {
@@ -698,9 +800,63 @@ async function sendDownloadTracksMetric(downloadTracksMetric, overrides = {}) {
     }
 }
 
+async function sendExperimentsMetric(experiments, overrides = {}) {
+    if (!metricsRuntimeConfig?.endpointUrl || !experiments || typeof experiments !== 'object' || Array.isArray(experiments)) {
+        return;
+    }
+
+    try {
+        await app.whenReady();
+
+        const statePath = getMetricsStatePath();
+        const { state: rawState, installId } = await getOrCreateInstallId(statePath);
+        const state = normalizeExperimentMetricsState(rawState);
+        const metricType = overrides.metricType || metricsRuntimeConfig.metricType || 'mod';
+        const normalizedExperiments = normalizeExperimentDetails(experiments);
+
+        if (!normalizedExperiments) {
+            return;
+        }
+
+        const lastSentExperiments = getMetricScopedExperimentState(state, metricType);
+
+        if (areExperimentStatesEqual(lastSentExperiments, normalizedExperiments)) {
+            logger.debug('Skipping experiments metric send because experiment state did not change');
+            return;
+        }
+
+        const endpointUrl = buildExperimentsEndpoint(overrides.endpointUrl || metricsRuntimeConfig.endpointUrl);
+        const fallbackUrl = buildExperimentsEndpoint(overrides.fallbackUrl || metricsRuntimeConfig.fallbackUrl);
+        const payload = {
+            experiments: normalizedExperiments,
+            ...buildCommonPayload({
+                installId,
+                appName: overrides.appName || metricsRuntimeConfig.appName,
+                modVersion: overrides.modVersion || metricsRuntimeConfig.modVersion,
+                metricType,
+            }),
+        };
+
+        await sendEventWithFallback({
+            primaryUrl: endpointUrl,
+            fallbackUrl,
+            apiKey: overrides.apiKey || metricsRuntimeConfig.apiKey,
+            payload,
+            timeoutMs: overrides.timeoutMs || metricsRuntimeConfig.timeoutMs,
+            maxRetries: overrides.maxRetries || metricsRuntimeConfig.maxRetries,
+        });
+
+        const latestState = normalizeExperimentMetricsState((await readJsonSafe(statePath)) || state);
+        await writeJsonAtomic(statePath, buildExperimentStateUpdate(latestState, metricType, normalizedExperiments));
+    } catch (error) {
+        logger.warn('Failed to send experiments metric:', error?.message || error);
+    }
+}
+
 module.exports = {
     initUserCountMetric,
     stopHeartbeatScheduler,
     sendFeaturesMetric,
     sendDownloadTracksMetric,
+    sendExperimentsMetric,
 };

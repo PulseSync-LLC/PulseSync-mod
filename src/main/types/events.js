@@ -56,4 +56,5 @@ var Events;
     Events['PULSESYNC_API'] = 'PULSESYNC_API';
     Events['PULSESYNC_SETTINGS'] = 'PULSESYNC_SETTINGS';
     Events['PULSESYNC_SETTINGS_SNAPSHOT'] = 'PULSESYNC_SETTINGS_SNAPSHOT';
+    Events['EXPERIMENTS_METRIC'] = 'EXPERIMENTS_METRIC';
 })(Events || (exports.Events = Events = {}));
