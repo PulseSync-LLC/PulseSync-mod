@@ -54,7 +54,7 @@ const getSortedDescReleaseNotesKeys_js_1 = require('./lib/releaseNotes/getSorted
 const removeNewerReleaseNotes_js_1 = require('./lib/releaseNotes/removeNewerReleaseNotes.js');
 const formatters_js_1 = require('./lib/i18n/formatters.js');
 const stringToAST_js_1 = require('./lib/i18n/stringToAST.js');
-const { sendFeaturesMetric } = require('./lib/metrics.js');
+const { sendFeaturesMetric, sendDownloadTracksMetric } = require('./lib/metrics.js');
 const gt_js_1 = __importDefault(require('semver/functions/gt.js'));
 const valid_js_1 = __importDefault(require('semver/functions/valid.js'));
 const i18nKeys_js_1 = require('./constants/i18nKeys.js');
@@ -354,13 +354,14 @@ const handleApplicationEvents = (window) => {
             .then(async () => {
                 const startedAt = Date.now();
                 let failed = false;
+                let downloadResult;
 
                 try {
                     if (abortController.signal.aborted) {
                         return;
                     }
 
-                    await trackDownloader.downloadMultipleTracks(trackIds, dirName, throttle(callback, PROGRESS_BAR_THROTTLE_MS), {
+                    downloadResult = await trackDownloader.downloadMultipleTracks(trackIds, dirName, throttle(callback, PROGRESS_BAR_THROTTLE_MS), {
                         signal: abortController.signal,
                     });
                 } catch (e) {
@@ -372,7 +373,7 @@ const handleApplicationEvents = (window) => {
                     }
                 } finally {
                     const elapsedMs = Date.now() - startedAt;
-                    eventsLogger.info('DOWNLOAD_TRACKS timing', {
+                    const timingMetric = {
                         toastID,
                         dirType,
                         dirName,
@@ -382,7 +383,29 @@ const handleApplicationEvents = (window) => {
                         queueWaitMs: startedAt - queuedAt,
                         canceled: abortController.signal.aborted,
                         failed,
-                    });
+                    };
+                    eventsLogger.info('DOWNLOAD_TRACKS timing', timingMetric);
+
+                    const downloaderSettings = store_js_1.getModSettings()?.downloader ?? {};
+                    if (downloadResult?.queueMetrics || timingMetric.canceled || timingMetric.failed) {
+                        void sendDownloadTracksMetric({
+                            timing: {
+                                dirType,
+                                tracksCount: trackIds.length,
+                                elapsedMs: timingMetric.elapsedMs,
+                                elapsedSeconds: timingMetric.elapsedSeconds,
+                                queueWaitMs: timingMetric.queueWaitMs,
+                                canceled: timingMetric.canceled,
+                                failed: timingMetric.failed,
+                            },
+                            pipeline: downloadResult?.queueMetrics ?? null,
+                            settings: {
+                                concurrencyPreset: downloaderSettings.concurrencyPreset ?? 'adaptive',
+                                useMP3: downloaderSettings.useMP3 ?? false,
+                                addM3UToPlaylists: downloaderSettings.addM3UToPlaylists ?? false,
+                            },
+                        });
+                    }
                     activeTrackDownloadControllers.delete(toastNonce);
                     resetProgress(abortController.signal.aborted ? 'Отменено' : undefined);
                     setTimeout(() => {

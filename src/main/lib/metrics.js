@@ -255,6 +255,13 @@ function buildFeaturesEndpoint(endpointUrl) {
     return `${trimmed}/features`;
 }
 
+function buildDownloadTracksEndpoint(endpointUrl) {
+    if (!endpointUrl) return '';
+    const trimmed = endpointUrl.endsWith('/') ? endpointUrl.slice(0, -1) : endpointUrl;
+    if (trimmed.endsWith('/download-tracks')) return trimmed;
+    return `${trimmed}/download-tracks`;
+}
+
 function normalizeFeatureTree(value, pathParts = []) {
     if (!isPlainObject(value)) {
         return null;
@@ -654,8 +661,46 @@ async function sendFeaturesMetric(features, overrides = {}) {
     }
 }
 
+async function sendDownloadTracksMetric(downloadTracksMetric, overrides = {}) {
+    if (!metricsRuntimeConfig?.endpointUrl || !downloadTracksMetric || typeof downloadTracksMetric !== 'object' || Array.isArray(downloadTracksMetric)) {
+        return;
+    }
+
+    try {
+        await app.whenReady();
+
+        const statePath = getMetricsStatePath();
+        const { installId } = await getOrCreateInstallId(statePath);
+        const metricType = overrides.metricType || metricsRuntimeConfig.metricType || 'mod';
+        const endpointUrl = buildDownloadTracksEndpoint(overrides.endpointUrl || metricsRuntimeConfig.endpointUrl);
+        const fallbackUrl = buildDownloadTracksEndpoint(overrides.fallbackUrl || metricsRuntimeConfig.fallbackUrl);
+        const payload = {
+            event: 'mod_download_tracks',
+            download_tracks: downloadTracksMetric,
+            ...buildCommonPayload({
+                installId,
+                appName: overrides.appName || metricsRuntimeConfig.appName,
+                modVersion: overrides.modVersion || metricsRuntimeConfig.modVersion,
+                metricType,
+            }),
+        };
+
+        await sendEventWithFallback({
+            primaryUrl: endpointUrl,
+            fallbackUrl,
+            apiKey: overrides.apiKey || metricsRuntimeConfig.apiKey,
+            payload,
+            timeoutMs: overrides.timeoutMs || metricsRuntimeConfig.timeoutMs,
+            maxRetries: overrides.maxRetries || metricsRuntimeConfig.maxRetries,
+        });
+    } catch (error) {
+        logger.warn('Failed to send download tracks metric:', error?.message || error);
+    }
+}
+
 module.exports = {
     initUserCountMetric,
     stopHeartbeatScheduler,
     sendFeaturesMetric,
+    sendDownloadTracksMetric,
 };

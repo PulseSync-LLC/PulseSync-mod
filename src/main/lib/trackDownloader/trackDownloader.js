@@ -605,13 +605,15 @@ class TrackDownloader extends EventEmitter {
 
     logPipelineQueueMetrics(stages, jobs) {
         const stageMetrics = Object.fromEntries(stages.map((stage) => [stage.name, stage.getStats()]));
-
-        this.logger.info('Track pipeline queue metrics', {
+        const queueMetrics = {
             tracksCount: jobs.length,
             completed: jobs.filter((job) => job.status === 'done').length,
             failed: jobs.filter((job) => job.status === 'failed').length,
             stages: stageMetrics,
-        });
+        };
+
+        this.logger.info('Track pipeline queue metrics', queueMetrics);
+        return queueMetrics;
     }
 
     startAdaptiveConcurrency(stages, options) {
@@ -855,6 +857,7 @@ class TrackDownloader extends EventEmitter {
         });
         const stages = [metadataStage, downloadStage, ffmpegStage];
         const stopAdaptiveConcurrency = this.startAdaptiveConcurrency(stages, pipelineOptions);
+        let queueMetrics;
 
         try {
             for (const job of jobs) {
@@ -870,7 +873,7 @@ class TrackDownloader extends EventEmitter {
         } finally {
             stopAdaptiveConcurrency();
             stages.forEach((stage) => stage.stopMetrics());
-            this.logPipelineQueueMetrics(stages, jobs);
+            queueMetrics = this.logPipelineQueueMetrics(stages, jobs);
             if (pipelineOptions.signal?.aborted) {
                 await this.cleanupJobsTemp(jobs);
             }
@@ -886,7 +889,10 @@ class TrackDownloader extends EventEmitter {
             });
         }
 
-        return jobs;
+        return {
+            jobs,
+            queueMetrics,
+        };
     }
 
     async downloadMultipleTracks(trackIds, subDirName, callback, options = {}) {
@@ -910,13 +916,14 @@ class TrackDownloader extends EventEmitter {
 
         callback(0, 0, 'Подготовка...');
 
-        const jobs = await this.runTrackPipeline(trackIds, subDirName, callback, {
+        const pipelineResult = await this.runTrackPipeline(trackIds, subDirName, callback, {
             ...options,
             outputDir,
         });
+        const { jobs } = pipelineResult;
         if (options.signal?.aborted) {
             this.logger.info('Multiple track download canceled');
-            return;
+            return pipelineResult;
         }
 
         if (downloaderSettings?.addM3UToPlaylists) {
@@ -926,6 +933,7 @@ class TrackDownloader extends EventEmitter {
         this.logger.log('All tracks downloaded');
 
         setTimeout(() => callback(-1, -1), 5000);
+        return pipelineResult;
     }
 
     async importTracksFromUrl(
