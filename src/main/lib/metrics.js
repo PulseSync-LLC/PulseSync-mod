@@ -464,6 +464,10 @@ function normalizeExperimentDetails(details) {
 
     for (const [key, rawExperiment] of Object.entries(details)) {
         const experimentKey = String(key || '').trim();
+        if (experimentKey === 'ABTestIds') {
+            continue;
+        }
+
         if (!experimentKey || experimentKey.length > 191 || !isPlainObject(rawExperiment)) {
             continue;
         }
