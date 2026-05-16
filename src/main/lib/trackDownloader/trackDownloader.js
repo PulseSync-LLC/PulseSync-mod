@@ -34,7 +34,7 @@ const DEFAULT_PIPELINE_OPTIONS = {
     retryDelayMs: 750,
     adaptiveConcurrency: true,
     adaptiveConcurrencyIntervalMs: 3000,
-    adaptiveConcurrencyCooldownMs: 6000,
+    adaptiveConcurrencyCooldownMs: 9000,
     metadataMinConcurrency: 4,
     metadataMaxConcurrency: 16,
     downloadMinConcurrency: 4,
@@ -46,6 +46,26 @@ const ADAPTIVE_CONCURRENCY_CAPS = {
     metadata: 16,
     download: 24,
     ffmpeg: 6,
+};
+const DOWNLOAD_CONCURRENCY_PRESETS = {
+    minimal: {
+        metadataConcurrency: 4,
+        downloadConcurrency: 4,
+        ffmpegConcurrency: 1,
+        adaptiveConcurrency: false,
+    },
+    adaptive: {
+        metadataConcurrency: 12,
+        downloadConcurrency: 16,
+        ffmpegConcurrency: 3,
+        adaptiveConcurrency: true,
+    },
+    maximum: {
+        metadataConcurrency: 16,
+        downloadConcurrency: 24,
+        ffmpegConcurrency: 6,
+        adaptiveConcurrency: false,
+    },
 };
 // Queue progress is weighted per track so fast metadata work does not dominate the
 // aggregate progress bar and slow ffmpeg work keeps its own visible budget.
@@ -253,8 +273,11 @@ class TrackDownloader extends EventEmitter {
     }
 
     createPipelineOptions(options = {}) {
+        const concurrencyPresetName = options.concurrencyPreset ?? store_js_1.getModSettings()?.downloader?.concurrencyPreset ?? 'adaptive';
+        const concurrencyPreset = DOWNLOAD_CONCURRENCY_PRESETS[concurrencyPresetName] ?? DOWNLOAD_CONCURRENCY_PRESETS.adaptive;
         const pipelineOptions = {
             ...DEFAULT_PIPELINE_OPTIONS,
+            ...concurrencyPreset,
             ...options,
         };
 
@@ -607,14 +630,16 @@ class TrackDownloader extends EventEmitter {
                 max: options.downloadMaxConcurrency,
                 step: 4,
                 increaseUtilization: 0.85,
-                decreaseUtilization: 0.35,
+                decreaseUtilization: 0.25,
+                underutilizedWindowsToDecrease: 3,
             },
             ffmpeg: {
                 min: options.ffmpegMinConcurrency,
                 max: options.ffmpegMaxConcurrency,
                 step: 1,
                 increaseUtilization: 0.75,
-                decreaseUtilization: 0.35,
+                decreaseUtilization: 0.25,
+                underutilizedWindowsToDecrease: 3,
             },
         };
         const state = new Map(
@@ -625,6 +650,7 @@ class TrackDownloader extends EventEmitter {
                     throughput: 0,
                     lastDirection: null,
                     lastChangedAt: 0,
+                    underutilizedWindows: 0,
                 },
             ]),
         );
@@ -650,22 +676,22 @@ class TrackDownloader extends EventEmitter {
             const throughput = finishedJobs / (durationMs / 1000);
             const hasPressure = stats.finalQueued > 0 || stats.finalRunning >= stage.concurrency || backpressureWaitMs > 0 || fullQueueWaits > 0;
             const hasErrors = failedJobs > 0 || retries > 0;
+            const isUnderutilized = !hasPressure && utilization <= config.decreaseUtilization && stats.finalRunning < stage.concurrency;
             const now = Date.now();
             const isCoolingDown = now - stageState.lastChangedAt < options.adaptiveConcurrencyCooldownMs;
             let nextConcurrency = stage.concurrency;
             let reason;
 
+            stageState.underutilizedWindows = isUnderutilized ? stageState.underutilizedWindows + 1 : 0;
+
             if (hasErrors && stage.concurrency > config.min) {
                 nextConcurrency = Math.max(config.min, stage.concurrency - config.step);
                 reason = 'errors';
             } else if (!isCoolingDown) {
-                if (stageState.lastDirection === 'up' && stageState.throughput > 0 && throughput < stageState.throughput * 0.95 && stage.concurrency > config.min) {
-                    nextConcurrency = Math.max(config.min, stage.concurrency - config.step);
-                    reason = 'throughput-drop';
-                } else if (hasPressure && utilization >= config.increaseUtilization && stage.concurrency < config.max) {
+                if (hasPressure && utilization >= config.increaseUtilization && stage.concurrency < config.max) {
                     nextConcurrency = Math.min(config.max, stage.concurrency + config.step);
                     reason = 'pressure';
-                } else if (!hasPressure && utilization <= config.decreaseUtilization && stats.finalRunning < stage.concurrency && stage.concurrency > config.min) {
+                } else if (stageState.underutilizedWindows >= config.underutilizedWindowsToDecrease && stage.concurrency > config.min) {
                     nextConcurrency = Math.max(config.min, stage.concurrency - config.step);
                     reason = 'underutilized';
                 }
@@ -676,6 +702,7 @@ class TrackDownloader extends EventEmitter {
                 stage.setConcurrency(nextConcurrency, reason);
                 stageState.lastDirection = nextConcurrency > previousConcurrency ? 'up' : 'down';
                 stageState.lastChangedAt = now;
+                stageState.underutilizedWindows = 0;
             }
 
             stageState.stats = stage.getStats();

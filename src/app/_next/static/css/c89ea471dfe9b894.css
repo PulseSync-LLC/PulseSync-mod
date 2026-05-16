@@ -200,6 +200,7 @@
     justify-content: space-between;
     padding-block-end: var(--ym-spacer-size-xxxs);
     padding-block-start: var(--ym-spacer-size-xxxs);
+    gap: 10px;
 }
 .SettingsListToggleItem_textContainer__tRjyt {
     display: flex;

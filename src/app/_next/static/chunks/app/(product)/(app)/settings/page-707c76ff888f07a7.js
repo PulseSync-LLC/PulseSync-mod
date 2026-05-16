@@ -2912,6 +2912,9 @@
                         addM3UToPlaylistsState = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.addM3UToPlaylists') ?? !1),
                         addM3UToPlaylists = addM3UToPlaylistsState[0],
                         setAddM3UToPlaylists = addM3UToPlaylistsState[1],
+                        concurrencyPresetState = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.concurrencyPreset') ?? 'adaptive'),
+                        concurrencyPreset = concurrencyPresetState[0],
+                        setConcurrencyPreset = concurrencyPresetState[1],
                         customPathForSessionStorageState = (0, v.useState)(window.nativeSettings?.get('modSettings.downloader.customPathForSessionStorage') ?? ''),
                         customPathForSessionStorage = customPathForSessionStorageState[0],
                         setCustomPathForSessionStorage = customPathForSessionStorageState[1],
@@ -2939,6 +2942,11 @@
                             console.log('addM3UToPlaylists toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.downloader.addM3UToPlaylists', e);
                             setAddM3UToPlaylists(e);
+                        }, []),
+                        onConcurrencyPresetChange = (0, v.useCallback)(async (e) => {
+                            console.log('concurrencyPreset changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.downloader.concurrencyPreset', e);
+                            setConcurrencyPreset(e);
                         }, []),
                         onUseCustomPathForSessionStorageToggle = (0, v.useCallback)(
                             async (e) => {
@@ -2971,7 +2979,7 @@
                         }, [o]),
                         (0, n.jsx)(T.a, {
                             className: K().root,
-                            style: { 'max-width': '34.375rem', height: 'auto' },
+                            style: { 'max-width': '34.375rem', height: 'auto', maxHeight: 'unset' },
                             title: 'Скачивание треков',
                             headerClassName: K().modalHeader,
                             contentClassName: K().modalContent,
@@ -2988,16 +2996,27 @@
                                 children: [
                                     (0, n.jsx)('li', {
                                         className: $().item,
-                                        children: (0, n.jsx)(toggleBarWithPathChooser, {
-                                            title: 'Путь для кеша',
-                                            description: useCustomPathForSessionStorage
-                                                ? 'Использовать путь ниже для кеша (в т.ч. ванильного скачивания треков)'
-                                                : 'Использовать путь по умолчанию для кеша (в т.ч. ванильного скачивания треков)',
-                                            onChange: onUseCustomPathForSessionStorageToggle,
-                                            isChecked: useCustomPathForSessionStorage,
-                                            placeholder: 'Укажите путь кнопкой справа',
-                                            inputValue: customPathForSessionStorage,
-                                            onClick: onCustomPathForSessionStorageExploreClick,
+                                        children: (0, n.jsx)(settingBarWithDropdown, {
+                                            title: 'Конкурентность загрузки',
+                                            value: concurrencyPreset,
+                                            onChange: onConcurrencyPresetChange,
+                                            options: [
+                                                {
+                                                    value: 'minimal',
+                                                    label: 'Минимальная',
+                                                    description: 'Использует минимум ресурсов; Значительно медленнее (до ~50 мбит/с)',
+                                                },
+                                                {
+                                                    value: 'adaptive',
+                                                    label: 'Адаптивная',
+                                                    description: 'Автоматически подбирает потоки, в границах максимального и минимального пресета',
+                                                },
+                                                {
+                                                    value: 'maximum',
+                                                    label: 'Максимальная',
+                                                    description: 'Использует максимум ресурсов. Значительно быстрее (до ~300 мбит/с)',
+                                                },
+                                            ],
                                         }),
                                     }),
                                     (0, n.jsx)('li', {
@@ -3041,6 +3060,20 @@
                                             placeholder: 'Укажите путь кнопкой справа',
                                             inputValue: defaultPath,
                                             onClick: onDefaultPathExploreClick,
+                                        }),
+                                    }),
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(toggleBarWithPathChooser, {
+                                            title: 'Путь для кеша',
+                                            description: useCustomPathForSessionStorage
+                                                ? 'Использовать путь ниже для кеша (в т.ч. ванильного скачивания треков)'
+                                                : 'Использовать путь по умолчанию для кеша (в т.ч. ванильного скачивания треков)',
+                                            onChange: onUseCustomPathForSessionStorageToggle,
+                                            isChecked: useCustomPathForSessionStorage,
+                                            placeholder: 'Укажите путь кнопкой справа',
+                                            inputValue: customPathForSessionStorage,
+                                            onClick: onCustomPathForSessionStorageExploreClick,
                                         }),
                                     }),
                                 ],

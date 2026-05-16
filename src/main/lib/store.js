@@ -240,6 +240,7 @@ const init = () => {
             customPathForSessionStorage: '',
             useSyncLyrics: true,
             addM3UToPlaylists: false,
+            concurrencyPreset: 'adaptive',
             ytDlpCookiesBrowserSource: null,
         },
         lrclib: {

@@ -3529,7 +3529,6 @@
 
 .ToggleBarWithPathChooser_input {
     flex: 1;
-    margin-right: 15px;
 }
 .settingBarWithDropdown_button {
     color: var(--ym-controls-color-primary-text-enabled_variant);
