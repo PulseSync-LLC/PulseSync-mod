@@ -349,8 +349,12 @@ const handleApplicationEvents = (window) => {
             window.setProgressBar(progressWindow);
         };
 
+        const queuedAt = Date.now();
         downloadQueue = downloadQueue
             .then(async () => {
+                const startedAt = Date.now();
+                let failed = false;
+
                 try {
                     if (abortController.signal.aborted) {
                         return;
@@ -363,9 +367,22 @@ const handleApplicationEvents = (window) => {
                     if (abortController.signal.aborted) {
                         eventsLogger.info('Multiple track download canceled:', toastID);
                     } else {
+                        failed = true;
                         eventsLogger.error('Error downloading multiple tracks:', e, e.stack);
                     }
                 } finally {
+                    const elapsedMs = Date.now() - startedAt;
+                    eventsLogger.info('DOWNLOAD_TRACKS timing', {
+                        toastID,
+                        dirType,
+                        dirName,
+                        tracksCount: trackIds.length,
+                        elapsedMs,
+                        elapsedSeconds: Number((elapsedMs / 1000).toFixed(3)),
+                        queueWaitMs: startedAt - queuedAt,
+                        canceled: abortController.signal.aborted,
+                        failed,
+                    });
                     activeTrackDownloadControllers.delete(toastNonce);
                     resetProgress(abortController.signal.aborted ? 'Отменено' : undefined);
                     setTimeout(() => {
