@@ -46,6 +46,329 @@ window.findCssRuleByPartialName = function (pName) {
             return left === right;
         }
     };
+    const YANDEX_STATION_EVENTS = {
+        selectSpeaker: 'YANDEX_STATION_SELECT_SPEAKER',
+        clearSpeaker: 'YANDEX_STATION_CLEAR_SPEAKER',
+        control: 'YANDEX_STATION_CONTROL',
+    };
+    const YANDEX_STATION_BACK_THRESHOLD_SECONDS = 5;
+    const yandexStationOriginalPlayerMethods = new WeakMap();
+    const yandexStationOriginalMediaState = new WeakMap();
+    const yandexStationOriginalGainState = new WeakMap();
+    const yandexStationOriginalPlayerVolumeState = new WeakMap();
+
+    const getEntityIdParts = (value) => {
+        const rawId =
+            value?.idWithContext ??
+            value?.id ??
+            value?.entityId ??
+            value?.entityData?.meta?.idWithContext ??
+            value?.entityData?.meta?.id ??
+            value?.data?.meta?.idWithContext ??
+            value?.data?.meta?.id ??
+            value?.meta?.idWithContext ??
+            value?.meta?.id;
+        const [trackId, albumId] = String(rawId ?? '').split(':');
+
+        return {
+            trackId: trackId || undefined,
+            albumId: albumId || value?.albumId || value?.entityData?.meta?.albumId || value?.data?.meta?.albumId,
+        };
+    };
+
+    const getQueueEntityAt = (playerInst, index) => {
+        const queue = playerInst?.state?.queueState?.entityList?.value ?? [];
+
+        return queue[index]?.entity ?? queue[index] ?? null;
+    };
+
+    const getCurrentQueueIndex = (playerInst) => Number(playerInst?.state?.queueState?.index?.value ?? 0);
+    const getCurrentProgressPosition = (playerInst) => Number(playerInst?.state?.playerState?.progress?.value?.position ?? 0);
+
+    const collectGainNodes = (root) => {
+        const result = new Set();
+        const seen = new WeakSet();
+        const queue = [{ value: root, depth: 0 }];
+
+        while (queue.length) {
+            const { value, depth } = queue.shift();
+            if (!value || typeof value !== 'object') continue;
+            if (seen.has(value)) continue;
+            seen.add(value);
+
+            if (value.gain && typeof value.gain.value === 'number') {
+                result.add(value);
+            }
+
+            if (depth >= 5) continue;
+
+            for (const key of Object.keys(value)) {
+                if (key === 'parentNode' || key === 'ownerDocument' || key === 'document' || key === 'window') continue;
+
+                try {
+                    const child = value[key];
+                    if (child && typeof child === 'object') queue.push({ value: child, depth: depth + 1 });
+                } catch {}
+            }
+        }
+
+        return Array.from(result);
+    };
+
+    const setLocalGainMuted = (muted) => {
+        const playerInst = getPlayerInstance();
+
+        collectGainNodes(playerInst).forEach((node) => {
+            if (!yandexStationOriginalGainState.has(node)) {
+                yandexStationOriginalGainState.set(node, node.gain.value);
+            }
+
+            if (muted) {
+                node.gain.value = 0;
+                return;
+            }
+
+            const originalValue = yandexStationOriginalGainState.get(node);
+            if (typeof originalValue !== 'number') return;
+
+            node.gain.value = originalValue;
+            yandexStationOriginalGainState.delete(node);
+        });
+    };
+
+    const setLocalPlayerVolumeMuted = (muted) => {
+        const playerInst = getPlayerInstance();
+        if (!playerInst) return;
+
+        if (muted) {
+            if (!yandexStationOriginalPlayerVolumeState.has(playerInst)) {
+                yandexStationOriginalPlayerVolumeState.set(playerInst, {
+                    volume: playerInst?.state?.playerState?.volume?.value,
+                    exponentVolume: playerInst?.state?.playerState?.exponentVolume?.value,
+                });
+            }
+
+            if (typeof playerInst.setVolume === 'function') {
+                Promise.resolve(playerInst.setVolume(0)).catch(() => {});
+                return;
+            }
+
+            if (playerInst?.state?.playerState?.volume) {
+                playerInst.state.playerState.volume.value = 0;
+            }
+            return;
+        }
+
+        const original = yandexStationOriginalPlayerVolumeState.get(playerInst);
+        if (!original) return;
+
+        if (typeof playerInst.setVolume === 'function' && typeof original.volume === 'number') {
+            Promise.resolve(playerInst.setVolume(original.volume)).catch(() => {});
+        } else if (typeof playerInst.setExponentVolume === 'function' && typeof original.exponentVolume === 'number') {
+            Promise.resolve(playerInst.setExponentVolume(original.exponentVolume)).catch(() => {});
+        } else if (playerInst?.state?.playerState?.volume && typeof original.volume === 'number') {
+            playerInst.state.playerState.volume.value = original.volume;
+        }
+
+        yandexStationOriginalPlayerVolumeState.delete(playerInst);
+    };
+
+    const setLocalMediaMuted = (muted) => {
+        document.querySelectorAll('audio, video').forEach((media) => {
+            if (!yandexStationOriginalMediaState.has(media)) {
+                yandexStationOriginalMediaState.set(media, {
+                    muted: media.muted,
+                    volume: media.volume,
+                });
+            }
+
+            if (muted) {
+                media.muted = true;
+                media.volume = 0;
+                return;
+            }
+
+            const original = yandexStationOriginalMediaState.get(media);
+            if (!original) return;
+
+            media.muted = original.muted;
+            media.volume = original.volume;
+            yandexStationOriginalMediaState.delete(media);
+        });
+        setLocalPlayerVolumeMuted(muted);
+        setLocalGainMuted(muted);
+    };
+
+    const notifyYandexStationCastChange = (detail) => {
+        window.dispatchEvent(new CustomEvent('pulse-sync-yandex-station-cast-change', { detail }));
+    };
+
+    const createYandexStationCastBridge = () => ({
+        activeSpeakerId: null,
+        muteTimer: null,
+        isActive() {
+            return Boolean(this.activeSpeakerId);
+        },
+        startMuteGuard() {
+            clearInterval(this.muteTimer);
+            setLocalMediaMuted(true);
+            this.muteTimer = setInterval(() => setLocalMediaMuted(true), 1000);
+        },
+        stopMuteGuard() {
+            clearInterval(this.muteTimer);
+            this.muteTimer = null;
+            setLocalMediaMuted(false);
+        },
+        async activate(iotDeviceId) {
+            const result = await window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.selectSpeaker, iotDeviceId);
+            if (!result?.ok) return result;
+
+            this.activeSpeakerId = iotDeviceId;
+            this.startMuteGuard();
+            this.sendCurrentTrack();
+            notifyYandexStationCastChange({ activeSpeakerId: this.activeSpeakerId });
+
+            return result;
+        },
+        async clear() {
+            this.activeSpeakerId = null;
+            this.stopMuteGuard();
+            notifyYandexStationCastChange({ activeSpeakerId: null });
+
+            return await window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.clearSpeaker);
+        },
+        sendCommand(action, payload = {}) {
+            if (!this.isActive()) return Promise.resolve({ ok: false, reason: 'Yandex Station cast is not active' });
+
+            const request = window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.control, action, payload) ?? Promise.resolve({ ok: false });
+
+            return request.catch((error) => {
+                console.warn('Yandex Station command failed', error);
+                return { ok: false, reason: error?.message };
+            });
+        },
+        sendTrackFromEntity(entity) {
+            const { trackId } = getEntityIdParts(entity);
+            if (!trackId) return Promise.resolve({ ok: false, reason: 'Track id is missing' });
+
+            return this.sendCommand('PLAY_TRACK', {
+                type: 'track',
+                trackId,
+            });
+        },
+        sendCurrentTrack() {
+            const playerInst = getPlayerInstance();
+            const entity = playerInst?.state?.queueState?.currentEntity?.value?.entity;
+
+            return this.sendTrackFromEntity(entity);
+        },
+    });
+
+    const ensureYandexStationCastBridge = () => {
+        if (!window.pulseSyncYandexStationCast) {
+            window.pulseSyncYandexStationCast = createYandexStationCastBridge();
+        }
+
+        return window.pulseSyncYandexStationCast;
+    };
+
+    const callOriginalPlayerMethod = (playerInst, methodName, args) => {
+        const originals = yandexStationOriginalPlayerMethods.get(playerInst);
+        const method = originals?.[methodName];
+
+        return typeof method === 'function' ? method.apply(playerInst, args) : undefined;
+    };
+
+    const wrapYandexStationPlayerMethod = (playerInst, methodName, handler) => {
+        if (typeof playerInst?.[methodName] !== 'function') return;
+
+        const originals = yandexStationOriginalPlayerMethods.get(playerInst) ?? {};
+        if (originals[methodName]) return;
+
+        originals[methodName] = playerInst[methodName];
+        yandexStationOriginalPlayerMethods.set(playerInst, originals);
+
+        playerInst[methodName] = function (...args) {
+            return handler(playerInst, args);
+        };
+    };
+
+    const installYandexStationPlayerProxy = (playerInst) => {
+        if (!playerInst || yandexStationOriginalPlayerMethods.has(playerInst)) return;
+
+        wrapYandexStationPlayerMethod(playerInst, 'togglePause', (playerInst, args) => {
+            const bridge = ensureYandexStationCastBridge();
+            if (bridge.isActive()) {
+                const action = playerInst?.state?.playerState?.status?.value === 'playing' ? 'PAUSE' : 'PLAY';
+                void bridge.sendCommand(action);
+                setLocalMediaMuted(true);
+            }
+
+            return callOriginalPlayerMethod(playerInst, 'togglePause', args);
+        });
+
+        wrapYandexStationPlayerMethod(playerInst, 'moveForward', (playerInst, args) => {
+            const bridge = ensureYandexStationCastBridge();
+            if (bridge.isActive()) {
+                const nextEntity = getQueueEntityAt(playerInst, getCurrentQueueIndex(playerInst) + 1);
+                void (nextEntity ? bridge.sendTrackFromEntity(nextEntity) : bridge.sendCommand('MOVE_FORWARD'));
+                setLocalMediaMuted(true);
+            }
+
+            return callOriginalPlayerMethod(playerInst, 'moveForward', args);
+        });
+
+        wrapYandexStationPlayerMethod(playerInst, 'moveBackward', (playerInst, args) => {
+            const bridge = ensureYandexStationCastBridge();
+            if (bridge.isActive()) {
+                const position = getCurrentProgressPosition(playerInst);
+
+                if (position > YANDEX_STATION_BACK_THRESHOLD_SECONDS) {
+                    void bridge.sendCommand('SET_PROGRESS', { position: 0 });
+                } else {
+                    void bridge.sendCommand('MOVE_BACKWARD');
+                }
+                setLocalMediaMuted(true);
+            }
+
+            return callOriginalPlayerMethod(playerInst, 'moveBackward', args);
+        });
+
+        wrapYandexStationPlayerMethod(playerInst, 'setProgress', (playerInst, args) => {
+            const bridge = ensureYandexStationCastBridge();
+            if (bridge.isActive()) {
+                void bridge.sendCommand('SET_PROGRESS', {
+                    position: Math.max(Number(args[0]) || 0, 0),
+                });
+                setLocalMediaMuted(true);
+            }
+
+            return callOriginalPlayerMethod(playerInst, 'setProgress', args);
+        });
+
+        wrapYandexStationPlayerMethod(playerInst, 'setEntityByIndex', (playerInst, args) => {
+            const bridge = ensureYandexStationCastBridge();
+            if (bridge.isActive()) {
+                const entity = getQueueEntityAt(playerInst, Number(args[0]));
+                void bridge.sendTrackFromEntity(entity);
+                setLocalMediaMuted(true);
+            }
+
+            return callOriginalPlayerMethod(playerInst, 'setEntityByIndex', args);
+        });
+
+        wrapYandexStationPlayerMethod(playerInst, 'playContext', (playerInst, args) => {
+            const bridge = ensureYandexStationCastBridge();
+            if (bridge.isActive()) {
+                const payload = args[0];
+                const entity = payload?.entitiesData?.[0] ?? payload?.queueParams ?? payload?.contextData?.meta;
+                void bridge.sendTrackFromEntity(entity);
+                setLocalMediaMuted(true);
+            }
+
+            return callOriginalPlayerMethod(playerInst, 'playContext', args);
+        });
+    };
 
     const callWithPlayer = (callback) => {
         const api = window.pulsesyncApi;
@@ -150,6 +473,7 @@ window.findCssRuleByPartialName = function (pName) {
 
     const ensureApi = () => {
         if (window.pulsesyncApi) {
+            window.__pulseSyncPendingPlayerInstance && installYandexStationPlayerProxy(window.__pulseSyncPendingPlayerInstance);
             return window.pulsesyncApi;
         }
         window.pulsesyncApi = {
@@ -334,6 +658,7 @@ window.findCssRuleByPartialName = function (pName) {
                 };
             },
             setPlayerInstance: (playerInst) => {
+                installYandexStationPlayerProxy(playerInst);
                 window.pulsesyncApi.playerInstance = playerInst;
                 while (window.pulsesyncApi._pendingCalls.length > 0) {
                     const callback = window.pulsesyncApi._pendingCalls.shift();
@@ -341,6 +666,7 @@ window.findCssRuleByPartialName = function (pName) {
                 }
             },
         };
+        window.__pulseSyncPendingPlayerInstance && window.pulsesyncApi.setPlayerInstance(window.__pulseSyncPendingPlayerInstance);
         return window.pulsesyncApi;
     };
 

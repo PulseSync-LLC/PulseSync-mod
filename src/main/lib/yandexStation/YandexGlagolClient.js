@@ -198,6 +198,45 @@ class YandexGlagolClient {
             command: 'softwareVersion',
         });
     }
+
+    async play(connectionInfo) {
+        return await this.sendCommand(connectionInfo, {
+            command: 'play',
+        });
+    }
+
+    async pause(connectionInfo) {
+        return await this.sendCommand(connectionInfo, {
+            command: 'stop',
+        });
+    }
+
+    async next(connectionInfo) {
+        return await this.sendCommand(connectionInfo, {
+            command: 'next',
+        });
+    }
+
+    async previous(connectionInfo) {
+        return await this.sendCommand(connectionInfo, {
+            command: 'prev',
+        });
+    }
+
+    async seek(connectionInfo, position) {
+        return await this.sendCommand(connectionInfo, {
+            command: 'rewind',
+            position: Math.max(0, Number(position) || 0),
+        });
+    }
+
+    async playMusic(connectionInfo, { type = 'track', id }) {
+        return await this.sendCommand(connectionInfo, {
+            command: 'playMusic',
+            type,
+            id: String(id),
+        });
+    }
 }
 
 module.exports = {

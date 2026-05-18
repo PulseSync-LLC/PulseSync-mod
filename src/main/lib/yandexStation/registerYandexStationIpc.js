@@ -19,6 +19,22 @@ function registerYandexStationIpc(ipcMain, options = {}) {
         return runtime.getLocalSpeakersCache();
     });
 
+    ipcMain.handle(Events.YANDEX_STATION_SELECT_SPEAKER, async (event, iotDeviceId) => {
+        return await runtime.selectSpeaker(iotDeviceId);
+    });
+
+    ipcMain.handle(Events.YANDEX_STATION_CLEAR_SPEAKER, () => {
+        return runtime.clearSpeaker();
+    });
+
+    ipcMain.handle(Events.YANDEX_STATION_GET_ACTIVE_SPEAKER, () => {
+        return runtime.getActiveSpeaker();
+    });
+
+    ipcMain.handle(Events.YANDEX_STATION_CONTROL, async (event, action, payload = {}) => {
+        return await runtime.sendMediaCommand(action, payload);
+    });
+
     return runtime;
 }
 

@@ -7211,6 +7211,7 @@
                     [castPopoverMounted, setCastPopoverMounted] = (0, u.useState)(!1),
                     [castDeviceRows, setCastDeviceRows] = (0, u.useState)([]),
                     [castHoveredDeviceKey, setCastHoveredDeviceKey] = (0, u.useState)(null),
+                    [castActiveSpeakerId, setCastActiveSpeakerId] = (0, u.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
                     [castDevicesLoading, setCastDevicesLoading] = (0, u.useState)(!1),
                     [castDevicesLoaded, setCastDevicesLoaded] = (0, u.useState)(!1),
                     castControlRef = (0, u.useRef)(null),
@@ -7237,11 +7238,13 @@
                     loadCastDevices = (0, u.useCallback)(async () => {
                         try {
                             setCastDevicesLoading(!0);
-                            const [e, t] = await Promise.all([
+                            const [e, t, a] = await Promise.all([
                                 window.desktopEvents?.invoke?.('GET_ACCOUNT_SPEAKERS') ?? Promise.resolve([]),
                                 window.desktopEvents?.invoke?.('GET_LOCAL_SPEAKERS') ?? Promise.resolve([]),
+                                window.desktopEvents?.invoke?.('YANDEX_STATION_GET_ACTIVE_SPEAKER') ?? Promise.resolve(null),
                             ]);
-                            setCastDeviceRows(pulseSyncBuildCastDeviceRows(Array.isArray(e) ? e : [], Array.isArray(t) ? t : []));
+                            setCastActiveSpeakerId(a?.accountSpeaker?.id ?? window.pulseSyncYandexStationCast?.activeSpeakerId ?? null);
+                            setCastDeviceRows([{ isThisDevice: !0 }, ...pulseSyncBuildCastDeviceRows(Array.isArray(e) ? e : [], Array.isArray(t) ? t : [])]);
                         } catch (e) {
                             (console.warn('Failed to load Yandex Station cast devices', e), setCastDeviceRows([]));
                         } finally {
@@ -7378,54 +7381,74 @@
                                               'aria-label': S({ id: 'player-actions.cast' }),
                                               icon: (0, l.jsx)(F.Icon, { variant: 'cast', size: 'xs' }),
                                               onClick: toggleCastPopover,
+                                              style: castActiveSpeakerId ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
                                           }),
                                           castPopoverMounted &&
                                               (0, l.jsx)('div', {
+                                                  className: 'PulseSync_castPopover',
                                                   style: {
-                                                      position: 'absolute',
-                                                      right: 'calc(50% - 130px)',
-                                                      bottom: 'calc(100% + 10px)',
-                                                      width: '260px',
-                                                      maxHeight: '320px',
-                                                      overflowY: 'auto',
-                                                      padding: '8px',
-                                                      border: '0.0625rem solid #ffffff0a',
-                                                      borderRadius: '8px',
-                                                      background: 'var(--ym-background-color-primary-enabled-popover)',
-                                                      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.28)',
-                                                      color: 'var(--ym-controls-color-primary-text-enabled)',
-                                                      zIndex: 'var(--ym-z-index-popover)',
                                                       opacity: castPopoverOpen ? 1 : 0,
                                                       transform: castPopoverOpen ? 'translateY(0)' : 'translateY(10px)',
-                                                      transition: 'opacity 160ms ease, transform 160ms ease',
                                                       pointerEvents: castPopoverOpen ? 'auto' : 'none',
                                                   },
                                                   children: castDevicesLoading
                                                       ? (0, l.jsx)('div', { style: { padding: '10px 12px', fontSize: '13px' }, children: 'Поиск устройств...' })
                                                       : castDeviceRows.length
                                                         ? castDeviceRows.map((e) => {
-                                                              const t = !e.canUseLocal,
-                                                                  a = e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName,
-                                                                  i = e.canUseLocal ? 'В сети' : 'Вне локальной сети',
-                                                                  n = e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId;
+                                                              const t = !e.isThisDevice && !e.canUseLocal,
+                                                                  a = e.isThisDevice ? void 0 : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
+                                                                  r = e.accountSpeaker?.id,
+                                                                  isConnected =
+                                                                      (e.isThisDevice && !castActiveSpeakerId) || (!e.isThisDevice && castActiveSpeakerId === r),
+                                                                  i = e.isThisDevice
+                                                                      ? castActiveSpeakerId
+                                                                          ? 'Отключить колонку'
+                                                                          : 'Сейчас выбрано'
+                                                                      : castActiveSpeakerId === r
+                                                                        ? 'Подключено'
+                                                                        : e.canUseLocal
+                                                                          ? 'В сети'
+                                                                          : 'Вне локальной сети',
+                                                                  n = e.isThisDevice
+                                                                      ? 'pulse-sync-this-device'
+                                                                      : (e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId);
                                                               return (0, l.jsxs)('button', {
                                                                   key: n,
                                                                   type: 'button',
                                                                   disabled: t,
-                                                                  onClick: t ? void 0 : () => {},
+                                                                  onClick: t
+                                                                      ? void 0
+                                                                      : async () => {
+                                                                            if (e.isThisDevice) {
+                                                                                await window.pulseSyncYandexStationCast?.clear?.();
+                                                                                setCastActiveSpeakerId(null);
+                                                                                closeCastPopover();
+                                                                                return;
+                                                                            }
+                                                                            const t = e.accountSpeaker?.id;
+                                                                            if (!t) return;
+                                                                            try {
+                                                                                const e = window.pulseSyncYandexStationCast?.activate
+                                                                                    ? await window.pulseSyncYandexStationCast.activate(t)
+                                                                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', t);
+                                                                                e?.ok && (setCastActiveSpeakerId(t), closeCastPopover());
+                                                                            } catch (e) {
+                                                                                console.warn('Failed to select Yandex Station cast device', e);
+                                                                            }
+                                                                        },
                                                                   onMouseEnter: t ? void 0 : () => setCastHoveredDeviceKey(n),
                                                                   onMouseLeave: t ? void 0 : () => setCastHoveredDeviceKey(null),
                                                                   style: {
                                                                       width: '100%',
                                                                       display: 'flex',
-                                                                      flexDirection: 'column',
-                                                                      alignItems: 'flex-start',
-                                                                      gap: '2px',
+                                                                      flexDirection: 'row',
+                                                                      alignItems: 'center',
+                                                                      justifyContent: 'space-between',
                                                                       padding: '9px 10px',
                                                                       border: 0,
                                                                       borderRadius: '6px',
                                                                       background:
-                                                                          !t && castHoveredDeviceKey === n
+                                                                          castActiveSpeakerId === r || (!t && castHoveredDeviceKey === n)
                                                                               ? 'var(--ym-controls-color-secondary-default-hovered)'
                                                                               : 'transparent',
                                                                       color: 'inherit',
@@ -7435,32 +7458,66 @@
                                                                       transition: 'background 120ms ease, opacity 120ms ease',
                                                                   },
                                                                   children: [
-                                                                      (0, l.jsx)('span', {
+                                                                      (0, l.jsx)('div', {
                                                                           style: {
-                                                                              maxWidth: '100%',
-                                                                              overflow: 'hidden',
-                                                                              textOverflow: 'ellipsis',
-                                                                              whiteSpace: 'nowrap',
-                                                                              fontSize: '13px',
+                                                                              display: 'flex',
+                                                                              alignItems: 'flex-start',
+                                                                              flexDirection: 'column',
+                                                                              gap: '2px',
                                                                           },
-                                                                          children: e.accountSpeaker?.name ?? e.accountSpeaker?.id ?? 'Yandex Station',
+                                                                          children: [
+                                                                              (0, l.jsx)('span', {
+                                                                                  style: {
+                                                                                      display: 'flex',
+                                                                                      gap: '5px',
+                                                                                      alignItems: 'baseline',
+                                                                                  },
+                                                                                  children: [
+                                                                                      (0, l.jsx)('span', {
+                                                                                          style: {
+                                                                                              maxWidth: '100%',
+                                                                                              overflow: 'hidden',
+                                                                                              textOverflow: 'ellipsis',
+                                                                                              whiteSpace: 'nowrap',
+                                                                                              fontSize: '13px',
+                                                                                              color: !t && 'var(--ym-controls-color-primary-text-enabled_variant)',
+                                                                                          },
+                                                                                          children: e.isThisDevice
+                                                                                              ? 'Это устройство'
+                                                                                              : (e.accountSpeaker?.name ?? e.accountSpeaker?.id ?? 'Yandex Station'),
+                                                                                      }),
+                                                                                      a &&
+                                                                                          (0, l.jsx)('span', {
+                                                                                              style: {
+                                                                                                  maxWidth: '100%',
+                                                                                                  overflow: 'hidden',
+                                                                                                  textOverflow: 'ellipsis',
+                                                                                                  whiteSpace: 'nowrap',
+                                                                                                  fontSize: '11px',
+                                                                                                  color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                                              },
+                                                                                              children: a,
+                                                                                          }),
+                                                                                  ],
+                                                                              }),
+                                                                              (0, l.jsx)('span', {
+                                                                                  style: { fontSize: '11px', color: 'var(--ym-controls-color-secondary-text-enabled)' },
+                                                                                  children: i,
+                                                                              }),
+                                                                          ],
                                                                       }),
-                                                                      a &&
+                                                                      isConnected &&
                                                                           (0, l.jsx)('span', {
-                                                                              style: {
-                                                                                  maxWidth: '100%',
-                                                                                  overflow: 'hidden',
-                                                                                  textOverflow: 'ellipsis',
-                                                                                  whiteSpace: 'nowrap',
-                                                                                  fontSize: '11px',
-                                                                                  color: 'var(--ym-controls-color-secondary-text-enabled)',
-                                                                              },
-                                                                              children: a,
+                                                                              children: (0, l.jsx)('svg', {
+                                                                                  width: '16',
+                                                                                  height: '16',
+                                                                                  fill: 'currentColor',
+                                                                                  xmlns: 'http://www.w3.org/2000/svg',
+                                                                                  children: (0, l.jsx)('path', {
+                                                                                      d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z',
+                                                                                  }),
+                                                                              }),
                                                                           }),
-                                                                      (0, l.jsx)('span', {
-                                                                          style: { fontSize: '11px', color: 'var(--ym-controls-color-secondary-text-enabled)' },
-                                                                          children: i,
-                                                                      }),
                                                                   ],
                                                               });
                                                           })
@@ -7472,6 +7529,8 @@
                             b.isAdvertShown,
                             S,
                             toggleCastPopover,
+                            closeCastPopover,
+                            castActiveSpeakerId,
                             castPopoverOpen,
                             castPopoverMounted,
                             castDevicesLoading,
@@ -7551,6 +7610,17 @@
                 (0, u.useEffect)(() => {
                     void loadCastDevices();
                 }, [loadCastDevices]);
+                (0, u.useEffect)(() => {
+                    const e = (e) => {
+                        setCastActiveSpeakerId(e.detail?.activeSpeakerId ?? null);
+                    };
+                    return (
+                        window.addEventListener('pulse-sync-yandex-station-cast-change', e),
+                        () => {
+                            window.removeEventListener('pulse-sync-yandex-station-cast-change', e);
+                        }
+                    );
+                }, []);
                 (0, u.useEffect)(() => () => clearTimeout(castCloseTimerRef.current), []);
                 (0, u.useEffect)(() => {
                     if (!castPopoverMounted) return;

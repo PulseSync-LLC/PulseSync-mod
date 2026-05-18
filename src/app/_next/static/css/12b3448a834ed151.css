@@ -1041,6 +1041,27 @@
 .Modal_content_no_right_padding {
     padding-inline-end: 2px !important;
 }
+
+.PulseSync_castPopover {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xxs);
+    right: calc(50% - 130px);
+    bottom: calc(100% + 10px);
+    width: 260px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: var(--ym-spacer-size-xxs);
+    border: 0.0625rem solid #ffffff0a;
+    border-radius: 8px;
+    background: var(--ym-background-color-primary-enabled-popover);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    color: var(--ym-controls-color-primary-text-enabled);
+    z-index: var(--ym-z-index-popover);
+    transition: opacity 160ms ease, transform 160ms ease;
+}
+
 .PulseSync_experimentsListScroll {
     overscroll-behavior: contain;
     scrollbar-gutter: stable;

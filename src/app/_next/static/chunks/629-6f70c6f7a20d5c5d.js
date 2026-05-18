@@ -1420,7 +1420,7 @@
                         });
                     };
                 (0, s.useEffect)(() => {
-                    t && window.pulsesyncApi?.setPlayerInstance?.(t);
+                    t && ((window.__pulseSyncPendingPlayerInstance = t), window.pulsesyncApi?.setPlayerInstance?.(t));
                     let e,
                         a,
                         s =

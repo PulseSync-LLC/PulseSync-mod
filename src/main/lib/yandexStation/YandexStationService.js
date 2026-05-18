@@ -125,6 +125,7 @@ class YandexStationService {
         this.requestTimeoutMs = options.requestTimeoutMs ?? DEFAULTS.requestTimeoutMs;
         this.cookies = null;
         this.authTokens = null;
+        this.connectionInfoCache = new Map();
 
         this.quasarClient = new YandexQuasarClient({
             getCookies: () => this.cookies,
@@ -150,6 +151,7 @@ class YandexStationService {
     setCookies(cookies) {
         this.cookies = cookies;
         this.authTokens = null;
+        this.connectionInfoCache.clear();
     }
 
     /**
@@ -277,12 +279,17 @@ class YandexStationService {
         const localSpeaker = speaker?.localSpeaker;
         const deviceId = accountSpeaker?.configuration?.glagolDeviceId;
         const platform = accountSpeaker?.configuration?.platform;
+        const cacheKey = [deviceId, platform, localSpeaker?.host, localSpeaker?.port].join('|');
 
         if (!deviceId || !platform || !localSpeaker?.host || !localSpeaker?.port) {
             throw new YandexGlagolError({
                 code: 'GLAGOL_CONNECTION_INFO_INCOMPLETE',
                 message: 'Resolved Yandex speaker does not include the required local Glagol fields',
             });
+        }
+
+        if (this.connectionInfoCache.has(cacheKey)) {
+            return this.connectionInfoCache.get(cacheKey);
         }
 
         const { musicToken } = await this.getAuthTokensFromCookies();
@@ -292,13 +299,16 @@ class YandexStationService {
             musicToken,
         });
 
-        return {
+        const connectionInfo = {
             conversationToken,
             host: localSpeaker.host,
             port: localSpeaker.port,
             deviceId,
             platform,
         };
+        this.connectionInfoCache.set(cacheKey, connectionInfo);
+
+        return connectionInfo;
     }
 
     /**
@@ -310,6 +320,48 @@ class YandexStationService {
     async probeLocalSpeaker(speaker) {
         const connectionInfo = await this.getGlagolConnectionInfo(speaker);
         return await this.glagolClient.probeSoftwareVersion(connectionInfo);
+    }
+
+    /**
+     * Send a minimal local media-control command to a resolved Yandex Station.
+     *
+     * @param {ResolvedSpeaker} speaker
+     * @param {'PLAY'|'PAUSE'|'MOVE_FORWARD'|'MOVE_BACKWARD'|'SET_PROGRESS'|'PLAY_TRACK'} action
+     * @param {{ position?: number, trackId?: string | number, type?: string }=} payload
+     * @returns {Promise<object>}
+     */
+    async sendLocalMediaCommand(speaker, action, payload = {}) {
+        const connectionInfo = await this.getGlagolConnectionInfo(speaker);
+
+        switch (action) {
+            case 'PLAY':
+                return await this.glagolClient.play(connectionInfo);
+            case 'PAUSE':
+                return await this.glagolClient.pause(connectionInfo);
+            case 'MOVE_FORWARD':
+                return await this.glagolClient.next(connectionInfo);
+            case 'MOVE_BACKWARD':
+                return await this.glagolClient.previous(connectionInfo);
+            case 'SET_PROGRESS':
+                return await this.glagolClient.seek(connectionInfo, payload.position);
+            case 'PLAY_TRACK':
+                if (!payload.trackId) {
+                    throw new YandexGlagolError({
+                        code: 'TRACK_ID_REQUIRED',
+                        message: 'Yandex Station playMusic requires a track id',
+                    });
+                }
+
+                return await this.glagolClient.playMusic(connectionInfo, {
+                    type: payload.type ?? 'track',
+                    id: payload.trackId,
+                });
+            default:
+                throw new YandexGlagolError({
+                    code: 'UNSUPPORTED_MEDIA_COMMAND',
+                    message: 'Yandex Station media command is not supported',
+                });
+        }
     }
 }
 

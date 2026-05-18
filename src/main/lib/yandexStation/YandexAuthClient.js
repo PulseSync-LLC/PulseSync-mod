@@ -20,12 +20,9 @@ function normalizeCookieInput(cookies) {
             }
         });
 
-        const clientHost =
-            cookies.find((cookie) => typeof cookie?.domain === 'string' && cookie.domain.includes('yandex.'))?.domain?.replace(/^\./, '') ?? 'passport.yandex.ru';
-
         return {
             cookieHeader: Array.from(cookieHeaderByName.values()).join('; '),
-            clientHost,
+            clientHost: 'passport.yandex.ru',
         };
     }
 

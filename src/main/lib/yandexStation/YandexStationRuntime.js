@@ -51,6 +51,7 @@ class YandexStationRuntime {
         this.localSpeakersRefreshIntervalMs = options.localSpeakersRefreshIntervalMs ?? DEFAULTS.localSpeakersRefreshIntervalMs;
         this.localSpeakersRefreshInterval = null;
         this.localSpeakersLastLoggedCount = null;
+        this.activeSpeakerId = null;
         this.cookieRefreshTimer = null;
         this.cookieChangedHandler = null;
     }
@@ -76,6 +77,113 @@ class YandexStationRuntime {
 
     getLocalSpeakersCache() {
         return cloneCache(this.localSpeakersCache);
+    }
+
+    getResolvedSpeakersCache() {
+        const usedLocalSpeakers = new Set();
+
+        return this.accountSpeakersCache.map((accountSpeaker) => {
+            const localSpeaker = this.service.findMatchingLocalSpeaker(accountSpeaker, this.localSpeakersCache, usedLocalSpeakers);
+            if (localSpeaker) usedLocalSpeakers.add(localSpeaker);
+
+            return {
+                accountSpeaker,
+                localSpeaker: localSpeaker ?? undefined,
+                canUseCloud: true,
+                canUseLocal: Boolean(localSpeaker),
+                canCast: Boolean(localSpeaker && accountSpeaker.isCastCandidate),
+                reason: localSpeaker ? undefined : 'No matching local _yandexio._tcp.local speaker was discovered',
+            };
+        });
+    }
+
+    getActiveSpeaker() {
+        if (!this.activeSpeakerId) return null;
+
+        return this.getResolvedSpeakersCache().find((speaker) => speaker.accountSpeaker?.id === this.activeSpeakerId) ?? null;
+    }
+
+    async selectSpeaker(iotDeviceId) {
+        const speaker = this.getResolvedSpeakersCache().find((speaker) => speaker.accountSpeaker?.id === iotDeviceId);
+
+        if (!speaker?.canUseLocal) {
+            return {
+                ok: false,
+                reason: 'Yandex Station is not available in the local network',
+            };
+        }
+
+        try {
+            await this.service.getGlagolConnectionInfo(speaker);
+        } catch (error) {
+            this.logger.warn?.(
+                'Yandex Station speaker selection failed',
+                sanitizeJson({
+                    code: error.code,
+                    statusCode: error.statusCode,
+                    endpoint: error.endpoint,
+                    message: error.message,
+                }),
+            );
+
+            return {
+                ok: false,
+                code: error.code,
+                reason: error.message,
+            };
+        }
+
+        this.activeSpeakerId = iotDeviceId;
+
+        return {
+            ok: true,
+            speaker: cloneCache(speaker),
+        };
+    }
+
+    clearSpeaker() {
+        this.activeSpeakerId = null;
+
+        return {
+            ok: true,
+        };
+    }
+
+    async sendMediaCommand(action, payload = {}) {
+        const speaker = this.getActiveSpeaker();
+
+        if (!speaker?.canUseLocal) {
+            return {
+                ok: false,
+                reason: 'No active local Yandex Station speaker',
+            };
+        }
+
+        try {
+            const response = await this.service.sendLocalMediaCommand(speaker, action, payload);
+
+            return {
+                ok: true,
+                response,
+            };
+        } catch (error) {
+            this.logger.warn?.(
+                'Yandex Station media command failed',
+                sanitizeJson({
+                    action,
+                    code: error.code,
+                    statusCode: error.statusCode,
+                    endpoint: error.endpoint,
+                    message: error.message,
+                }),
+            );
+
+            return {
+                ok: false,
+                code: error.code,
+                reason: error.message,
+            };
+        }
     }
 
     async getYandexCookiesFromSession() {
