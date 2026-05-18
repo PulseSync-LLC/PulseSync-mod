@@ -38,12 +38,14 @@
         "js-yaml": "^4.1.1",
         "listr2": "^7.0.2",
         "minimist": "^1.2.8",
+        "multicast-dns": "^7.2.5",
         "node-gyp": "^12.3.0",
         "plist": "^3.1.0",
         "prettier": "^3.8.3",
         "readline-sync": "^1.4.10",
         "semver": "^7.7.4",
         "terser": "^5.46.2",
+        "ws": "^8.20.1",
         "zstd-codec": "^0.1.5"
     }
 }

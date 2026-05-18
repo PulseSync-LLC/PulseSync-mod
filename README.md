@@ -305,6 +305,41 @@ _Диапазон масштабов: 75% - 200%._
 
 </details>
 
+### Инфраструктура Яндекс Станций
+
+<details>
+   <summary>Пример main-process и IPC использования</summary>
+
+```js
+const { YandexStationService } = require('./src/main/lib/yandexStation');
+
+const service = new YandexStationService({ logger: console });
+
+service.setCookies(cookiesFromRenderer);
+
+const accountSpeakers = await service.getAccountSpeakers();
+const localSpeakers = await service.discoverLocalSpeakers();
+const resolvedSpeakers = await service.resolveSpeakers();
+
+const localReady = resolvedSpeakers.filter((speaker) => speaker.canUseLocal);
+
+if (localReady[0]) {
+    const response = await service.probeLocalSpeaker(localReady[0]);
+    console.log(response);
+}
+```
+
+В runtime приложения renderer читает уже прогретый main-process кеш:
+
+```js
+const accountSpeakers = await window.electron.ipcRenderer.invoke('GET_ACCOUNT_SPEAKERS');
+const localSpeakers = await window.electron.ipcRenderer.invoke('GET_LOCAL_SPEAKERS');
+```
+
+Подробности по неофициальному Quasar/Glagol flow описаны в `docs/yandex-station-api.md`.
+
+</details>
+
 ## Настройки
 
 Настройки можно найти в `%appdata%\YandexMusic\config.json`.

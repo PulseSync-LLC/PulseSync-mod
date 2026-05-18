@@ -29,7 +29,9 @@
         "sharp": "^0.34.5",
         "socket.io-client": "^4.8.3",
         "tar": "^7.5.13",
-        "uuid": "~13.0.0"
+        "uuid": "~13.0.0",
+        "ws": "^8.20.1",
+        "multicast-dns": "^7.2.5"
     },
     "appConfig": {
         "enableDevTools": false,

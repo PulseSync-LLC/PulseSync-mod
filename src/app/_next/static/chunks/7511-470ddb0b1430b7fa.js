@@ -7155,6 +7155,36 @@
                 as = (0, u.forwardRef)((e, t) => (0, l.jsx)(ar, { forwardRef: t, ...e }));
             var ao = a(26141),
                 al = a.n(ao);
+            const pulseSyncNormalizeStationText = (e) =>
+                    String(e ?? '')
+                        .trim()
+                        .toLowerCase()
+                        .replace(/\s+/g, ' '),
+                pulseSyncStationNamesMatch = (e, t) => {
+                    const a = pulseSyncNormalizeStationText(e),
+                        i = pulseSyncNormalizeStationText(t);
+                    return !!a && !!i && (a.includes(i) || i.includes(a));
+                },
+                pulseSyncFindLocalStation = (e, t, a) => {
+                    const i = pulseSyncNormalizeStationText(e?.configuration?.glagolDeviceId);
+                    if (i) {
+                        const e = t.find((e) => !a.has(e) && pulseSyncNormalizeStationText(e?.deviceId) === i);
+                        if (e) return e;
+                    }
+                    const n = pulseSyncNormalizeStationText(e?.configuration?.platform);
+                    return n
+                        ? (t.find(
+                              (t) => !a.has(t) && pulseSyncNormalizeStationText(t?.platform) === n && pulseSyncStationNamesMatch(e?.name, t?.name ?? t?.instanceName),
+                          ) ?? null)
+                        : null;
+                },
+                pulseSyncBuildCastDeviceRows = (e = [], t = []) => {
+                    const a = new Set();
+                    return e.map((e) => {
+                        const i = pulseSyncFindLocalStation(e, t, a);
+                        return (i && a.add(i), { accountSpeaker: e, localSpeaker: i ?? void 0, canUseLocal: !!i });
+                    });
+                };
             let ac = (0, d.PA)((e) => {
                 var t;
                 let [, forcePlayerBarRerender] = (0, u.useReducer)((e) => e + 1, 0);
@@ -7177,6 +7207,14 @@
                     [realBitrate, setRealBitrate] = (0, u.useState)(null),
                     [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, u.useState)(window.isRemoteDeviceConnected ?? !1),
                     [remoteDevice, setRemoteDevice] = (0, u.useState)(window.remoteDevice ?? null),
+                    [castPopoverOpen, setCastPopoverOpen] = (0, u.useState)(!1),
+                    [castPopoverMounted, setCastPopoverMounted] = (0, u.useState)(!1),
+                    [castDeviceRows, setCastDeviceRows] = (0, u.useState)([]),
+                    [castHoveredDeviceKey, setCastHoveredDeviceKey] = (0, u.useState)(null),
+                    [castDevicesLoading, setCastDevicesLoading] = (0, u.useState)(!1),
+                    [castDevicesLoaded, setCastDevicesLoaded] = (0, u.useState)(!1),
+                    castControlRef = (0, u.useRef)(null),
+                    castCloseTimerRef = (0, u.useRef)(null),
                     { formatMessage: S } = (0, R.A)(),
                     T = !v.isGenerativeContext,
                     I = v.canSpeed && (null == i ? void 0 : i.isNonMusic),
@@ -7196,6 +7234,37 @@
                     onDownloadClick = (0, u.useCallback)(() => {
                         i?.id && electronBridgeModule.sendDownloadCurrentTrack(i.id);
                     }, [i]),
+                    loadCastDevices = (0, u.useCallback)(async () => {
+                        try {
+                            setCastDevicesLoading(!0);
+                            const [e, t] = await Promise.all([
+                                window.desktopEvents?.invoke?.('GET_ACCOUNT_SPEAKERS') ?? Promise.resolve([]),
+                                window.desktopEvents?.invoke?.('GET_LOCAL_SPEAKERS') ?? Promise.resolve([]),
+                            ]);
+                            setCastDeviceRows(pulseSyncBuildCastDeviceRows(Array.isArray(e) ? e : [], Array.isArray(t) ? t : []));
+                        } catch (e) {
+                            (console.warn('Failed to load Yandex Station cast devices', e), setCastDeviceRows([]));
+                        } finally {
+                            (setCastDevicesLoaded(!0), setCastDevicesLoading(!1));
+                        }
+                    }, []),
+                    closeCastPopover = (0, u.useCallback)(() => {
+                        setCastPopoverOpen(!1);
+                        clearTimeout(castCloseTimerRef.current);
+                        castCloseTimerRef.current = setTimeout(() => {
+                            setCastPopoverMounted(!1);
+                            setCastHoveredDeviceKey(null);
+                        }, 160);
+                    }, []),
+                    openCastPopover = (0, u.useCallback)(() => {
+                        clearTimeout(castCloseTimerRef.current);
+                        void loadCastDevices();
+                        setCastPopoverMounted(!0);
+                        requestAnimationFrame(() => setCastPopoverOpen(!0));
+                    }, [loadCastDevices]),
+                    toggleCastPopover = (0, u.useCallback)(() => {
+                        castPopoverOpen ? closeCastPopover() : openCastPopover();
+                    }, [castPopoverOpen, closeCastPopover, openCastPopover]),
                     updateRealBitrate = (0, u.useCallback)(() => {
                         const instance = window?.Ya?.YaspAudioElement?.instances?.find((e) => e.yaspSrc);
                         if (!instance) {
@@ -7293,6 +7362,124 @@
                                   : (0, l.jsx)(h.Zr, { isEnabled: !m.isAuthorized, placement: 'top', textVariant: 'sync-lyrics', renderChildren: Q }),
                         [null == i ? void 0 : i.isNonMusic, b.isAdvertShown, m.isAuthorized, Q, m.hasPlus],
                     ),
+                    castControl = (0, u.useMemo)(
+                        () =>
+                            b.isAdvertShown
+                                ? null
+                                : (0, l.jsxs)('div', {
+                                      ref: castControlRef,
+                                      style: { position: 'relative', display: 'flex', alignItems: 'center' },
+                                      children: [
+                                          (0, l.jsx)(p.$, {
+                                              radius: 'round',
+                                              size: 'xxxs',
+                                              variant: 'text',
+                                              withRipple: !1,
+                                              'aria-label': S({ id: 'player-actions.cast' }),
+                                              icon: (0, l.jsx)(F.Icon, { variant: 'cast', size: 'xs' }),
+                                              onClick: toggleCastPopover,
+                                          }),
+                                          castPopoverMounted &&
+                                              (0, l.jsx)('div', {
+                                                  style: {
+                                                      position: 'absolute',
+                                                      right: 'calc(50% - 130px)',
+                                                      bottom: 'calc(100% + 10px)',
+                                                      width: '260px',
+                                                      maxHeight: '320px',
+                                                      overflowY: 'auto',
+                                                      padding: '8px',
+                                                      border: '0.0625rem solid #ffffff0a',
+                                                      borderRadius: '8px',
+                                                      background: 'var(--ym-background-color-primary-enabled-popover)',
+                                                      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.28)',
+                                                      color: 'var(--ym-controls-color-primary-text-enabled)',
+                                                      zIndex: 'var(--ym-z-index-popover)',
+                                                      opacity: castPopoverOpen ? 1 : 0,
+                                                      transform: castPopoverOpen ? 'translateY(0)' : 'translateY(10px)',
+                                                      transition: 'opacity 160ms ease, transform 160ms ease',
+                                                      pointerEvents: castPopoverOpen ? 'auto' : 'none',
+                                                  },
+                                                  children: castDevicesLoading
+                                                      ? (0, l.jsx)('div', { style: { padding: '10px 12px', fontSize: '13px' }, children: 'Поиск устройств...' })
+                                                      : castDeviceRows.length
+                                                        ? castDeviceRows.map((e) => {
+                                                              const t = !e.canUseLocal,
+                                                                  a = e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName,
+                                                                  i = e.canUseLocal ? 'В сети' : 'Вне локальной сети',
+                                                                  n = e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId;
+                                                              return (0, l.jsxs)('button', {
+                                                                  key: n,
+                                                                  type: 'button',
+                                                                  disabled: t,
+                                                                  onClick: t ? void 0 : () => {},
+                                                                  onMouseEnter: t ? void 0 : () => setCastHoveredDeviceKey(n),
+                                                                  onMouseLeave: t ? void 0 : () => setCastHoveredDeviceKey(null),
+                                                                  style: {
+                                                                      width: '100%',
+                                                                      display: 'flex',
+                                                                      flexDirection: 'column',
+                                                                      alignItems: 'flex-start',
+                                                                      gap: '2px',
+                                                                      padding: '9px 10px',
+                                                                      border: 0,
+                                                                      borderRadius: '6px',
+                                                                      background:
+                                                                          !t && castHoveredDeviceKey === n
+                                                                              ? 'var(--ym-controls-color-secondary-default-hovered)'
+                                                                              : 'transparent',
+                                                                      color: 'inherit',
+                                                                      textAlign: 'left',
+                                                                      cursor: t ? 'default' : 'pointer',
+                                                                      opacity: t ? 0.48 : 1,
+                                                                      transition: 'background 120ms ease, opacity 120ms ease',
+                                                                  },
+                                                                  children: [
+                                                                      (0, l.jsx)('span', {
+                                                                          style: {
+                                                                              maxWidth: '100%',
+                                                                              overflow: 'hidden',
+                                                                              textOverflow: 'ellipsis',
+                                                                              whiteSpace: 'nowrap',
+                                                                              fontSize: '13px',
+                                                                          },
+                                                                          children: e.accountSpeaker?.name ?? e.accountSpeaker?.id ?? 'Yandex Station',
+                                                                      }),
+                                                                      a &&
+                                                                          (0, l.jsx)('span', {
+                                                                              style: {
+                                                                                  maxWidth: '100%',
+                                                                                  overflow: 'hidden',
+                                                                                  textOverflow: 'ellipsis',
+                                                                                  whiteSpace: 'nowrap',
+                                                                                  fontSize: '11px',
+                                                                                  color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                              },
+                                                                              children: a,
+                                                                          }),
+                                                                      (0, l.jsx)('span', {
+                                                                          style: { fontSize: '11px', color: 'var(--ym-controls-color-secondary-text-enabled)' },
+                                                                          children: i,
+                                                                      }),
+                                                                  ],
+                                                              });
+                                                          })
+                                                        : (0, l.jsx)('div', { style: { padding: '10px 12px', fontSize: '13px' }, children: 'Устройства не найдены' }),
+                                              }),
+                                      ],
+                                  }),
+                        [
+                            b.isAdvertShown,
+                            S,
+                            toggleCastPopover,
+                            castPopoverOpen,
+                            castPopoverMounted,
+                            castDevicesLoading,
+                            castDevicesLoaded,
+                            castDeviceRows,
+                            castHoveredDeviceKey,
+                        ],
+                    ),
                     Y = (0, u.useCallback)(
                         (e) => {
                             let { isPopoverEnabled: t } = e,
@@ -7361,6 +7548,22 @@
                             C.checkExperiment(n.zal.WebNextNewWaveTabRedesign, 'on')) ||
                         window.CHANGE_DISLIKE_BUTTON_POS?.();
                 updateRealBitrate();
+                (0, u.useEffect)(() => {
+                    void loadCastDevices();
+                }, [loadCastDevices]);
+                (0, u.useEffect)(() => () => clearTimeout(castCloseTimerRef.current), []);
+                (0, u.useEffect)(() => {
+                    if (!castPopoverMounted) return;
+                    const e = (e) => {
+                        castControlRef.current?.contains?.(e.target) || closeCastPopover();
+                    };
+                    return (
+                        document.addEventListener('pointerdown', e, !0),
+                        () => {
+                            document.removeEventListener('pointerdown', e, !0);
+                        }
+                    );
+                }, [castPopoverMounted, closeCastPopover]);
                 (0, u.useEffect)(() => {
                     let e = (e, t, a) => {
                         'trackDownloadCurrent' === t && setDownloadProgress(a);
@@ -7514,6 +7717,7 @@
                                                 (0, l.jsxs)(l.Fragment, {
                                                     children: [
                                                         I && (0, l.jsx)(h.ig, { iconSize: 'l' }),
+                                                        castControl,
                                                         G,
                                                         H,
                                                         (0, l.jsx)(h.hj, {

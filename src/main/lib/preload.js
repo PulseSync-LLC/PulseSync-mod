@@ -12,6 +12,7 @@ const hostnamePatterns_js_1 = require('../constants/hostnamePatterns.js');
 const deviceInfo = (0, deviceInfo_js_1.getDeviceInfo)();
 const store_js_1 = require('./store.js');
 const events_js_1 = require('../types/events.js');
+const events = require('node:events');
 const PULSESYNC_TITLEBAR_STYLE_ID = 'pulsesync-non-premium-titlebar-guard';
 const PULSESYNC_TITLEBAR_TEXT_CLASS = 'TitleBar_pulseText__FhYv';
 const PULSESYNC_TITLEBAR_TEXT_SELECTOR =
@@ -247,6 +248,7 @@ registerNativeStoreUpdateCacheSync();
 electron_1.contextBridge.exposeInMainWorld('IS_PREMIUM_USER', () => electron_1.ipcRenderer.invoke('isPremiumUser'));
 electron_1.contextBridge.exposeInMainWorld('HIDE_PULSESYNC_VERSION_IN_TITLEBAR', () => shouldHidePulseSyncVersionInTitleBar());
 electron_1.contextBridge.exposeInMainWorld('IS_DEVTOOLS_ENABLED', Boolean(store_js_1.getDevMode()));
+electron_1.contextBridge.exposeInMainWorld('EVENTS', events_js_1);
 
 electron_1.contextBridge.exposeInMainWorld('DISPLAY_MAX_FPS', store_js_1.getDisplayMaxFps());
 electron_1.contextBridge.exposeInMainWorld('ENABLE_YNISON_REMOTE_CONTROL', Boolean(store_js_1.getEnableYnisonRemoteControl()));
@@ -309,6 +311,7 @@ electron_1.contextBridge.exposeInMainWorld('desktopEvents', {
         console.debug('emitted', name, ...args);
         return electron_1.ipcRenderer.emit(name, ...args);
     },
+    EVENTS: { ...events_js_1.Events },
 });
 electron_1.contextBridge.exposeInMainWorld('nativeSettings', {
     set(key, value) {

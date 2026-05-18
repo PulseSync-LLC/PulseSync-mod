@@ -46,6 +46,8 @@ const scrobbleManager_js_1 = require('./lib/scrobble/index.js');
 const { getPulseSyncManager } = require('./lib/pulsesync/PulseSyncManager.js');
 const miniPlayer_js_1 = require('./lib/miniplayer/miniplayer.js');
 const discordRichPresence_js_1 = require('./lib/discordRichPresence.js');
+const { getYandexStationRuntime } = require('./lib/yandexStation/YandexStationRuntime.js');
+const { registerYandexStationIpc } = require('./lib/yandexStation/registerYandexStationIpc.js');
 
 const playerActions_js_1 = require('./types/playerActions.js');
 const platform_js_1 = require('./types/platform.js');
@@ -61,6 +63,7 @@ const i18nKeys_js_1 = require('./constants/i18nKeys.js');
 const dateToDDMonthYYYYProps_js_1 = require('./lib/date/dateToDDMonthYYYYProps.js');
 const eventsLogger = new Logger_js_1.Logger('Events');
 const saveFileToLocalDiskLogger = new Logger_js_1.Logger('SaveFileToLocalDisk');
+const yandexStationLogger = new Logger_js_1.Logger('YandexStation');
 const { throttle } = require('./lib/utils.js');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -262,6 +265,15 @@ const handleApplicationEvents = (window) => {
 
     const updater = (0, updater_js_1.getUpdater)();
     const trackDownloader = new trackDownloader_js_1.TrackDownloader(window);
+    const yandexStationRuntime = getYandexStationRuntime({
+        logger: yandexStationLogger,
+        session: window.webContents.session,
+    });
+
+    registerYandexStationIpc(electron_1.ipcMain, {
+        runtime: yandexStationRuntime,
+    });
+    yandexStationRuntime.start();
 
     updateGlobalShortcuts();
 
