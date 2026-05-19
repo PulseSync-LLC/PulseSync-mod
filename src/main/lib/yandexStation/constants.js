@@ -33,6 +33,9 @@ const DEFAULTS = {
     localSpeakersRefreshIntervalMs: 30000,
     requestTimeoutMs: 15000,
     glagolResponseTimeoutMs: 8000,
+    glagolStateTimeoutMs: 1500,
+    glagolLatencyTimeoutMs: 1500,
+    glagolLatencyCacheMs: 30000,
 };
 
 module.exports = {

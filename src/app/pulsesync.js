@@ -54,6 +54,9 @@ window.findCssRuleByPartialName = function (pName) {
     const YANDEX_STATION_BACK_THRESHOLD_SECONDS = 5;
     const YANDEX_STATION_CROSSFADE_EVENT = 'ShouldAutomoveForward';
     const YANDEX_STATION_SYNC_SEEK_DELAY_MS = 500;
+    const YANDEX_STATION_LOCAL_TRACK_START_DELAY_CAP_MS = 750;
+    const YANDEX_STATION_VOLUME_STEP = 5;
+    const YANDEX_STATION_VOLUME_THROTTLE_MS = 250;
     const yandexStationOriginalPlayerMethods = new WeakMap();
     const yandexStationAutomaticTrackSyncState = new WeakMap();
     const yandexStationAudioGraphConnections = new WeakMap();
@@ -88,9 +91,35 @@ window.findCssRuleByPartialName = function (pName) {
         return queue[index]?.entity ?? queue[index] ?? null;
     };
 
+    const isPlayerPlaying = (playerInst) => playerInst?.state?.playerState?.status?.value === 'playing';
     const getCurrentQueueIndex = (playerInst) => Number(playerInst?.state?.queueState?.index?.value ?? 0);
     const getCurrentProgressPosition = (playerInst) => Number(playerInst?.state?.playerState?.progress?.value?.position ?? 0);
+    const getCurrentPlayerVolume = (playerInst) => {
+        const volume = Number(playerInst?.state?.playerState?.exponentVolume?.value ?? playerInst?.state?.playerState?.volume?.value);
+        return Number.isFinite(volume) ? clamp(volume, 0, 1) : undefined;
+    };
+    const setPlayerVolume = (playerInst, volume) => {
+        const normalizedVolume = Number(volume);
+        if (!playerInst || !Number.isFinite(normalizedVolume)) return;
+
+        playerInst.setExponentVolume?.(clamp(normalizedVolume, 0, 1));
+    };
     const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const runAfterStationStart = (stationStartPromise, callback) => {
+        return Promise.race([Promise.resolve(stationStartPromise).catch(() => undefined), wait(YANDEX_STATION_LOCAL_TRACK_START_DELAY_CAP_MS)]).then(callback);
+    };
+    const normalizeYandexStationVolume = (value) => {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue)) return null;
+
+        const percentValue = clamp(numericValue > 1 ? numericValue : numericValue * 100, 0, 100);
+        const steppedPercent = clamp(Math.round(percentValue / YANDEX_STATION_VOLUME_STEP) * YANDEX_STATION_VOLUME_STEP, 0, 100);
+
+        return {
+            percent: steppedPercent,
+            normalized: steppedPercent / 100,
+        };
+    };
 
     const getEntityStableId = (entity) => {
         const { trackId, albumId } = getEntityIdParts(entity);
@@ -290,6 +319,13 @@ window.findCssRuleByPartialName = function (pName) {
     const createYandexStationCastBridge = () => ({
         activeSpeakerId: null,
         muteTimer: null,
+        initialTrackSent: false,
+        lastVolumePercent: null,
+        pendingVolume: null,
+        volumeThrottleTimer: null,
+        lastVolumeSentAt: 0,
+        savedClientVolume: undefined,
+        suppressVolumeSync: false,
         isActive() {
             return Boolean(this.activeSpeakerId);
         },
@@ -307,34 +343,126 @@ window.findCssRuleByPartialName = function (pName) {
             const result = await window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.selectSpeaker, iotDeviceId);
             if (!result?.ok) return result;
 
+            const playerInst = getPlayerInstance();
+            const stationVolume = Number(result.volume ?? result.state?.volume);
+            if (this.savedClientVolume === undefined) {
+                this.savedClientVolume = getCurrentPlayerVolume(playerInst);
+            }
+            if (Number.isFinite(stationVolume)) {
+                this.suppressVolumeSync = true;
+                try {
+                    setPlayerVolume(playerInst, stationVolume);
+                } finally {
+                    this.suppressVolumeSync = false;
+                }
+
+                const normalizedStationVolume = normalizeYandexStationVolume(stationVolume);
+                this.lastVolumePercent = normalizedStationVolume?.percent ?? null;
+            } else {
+                this.lastVolumePercent = null;
+            }
+
             this.activeSpeakerId = iotDeviceId;
-            this.startMuteGuard();
-            void this.sendCurrentTrack({ syncPosition: true });
+            this.initialTrackSent = false;
+            this.pendingVolume = null;
+            clearTimeout(this.volumeThrottleTimer);
+            this.volumeThrottleTimer = null;
+            this.lastVolumeSentAt = 0;
+
+            if (isPlayerPlaying(getPlayerInstance())) {
+                this.startMuteGuard();
+                void this.sendInitialCurrentTrack();
+            }
+
             notifyYandexStationCastChange({ activeSpeakerId: this.activeSpeakerId });
 
             return result;
         },
         async clear() {
-            await this.sendCommand('PAUSE');
+            const playerInst = getPlayerInstance();
+            const volumeToRestore = this.savedClientVolume;
+
+            this.pendingVolume = null;
+            clearTimeout(this.volumeThrottleTimer);
+            this.volumeThrottleTimer = null;
+            this.lastVolumeSentAt = 0;
+
+            await this.sendCommand('PAUSE', {}, { syncLocalPlayback: false });
             this.activeSpeakerId = null;
+            this.initialTrackSent = false;
+            this.lastVolumePercent = null;
+            this.savedClientVolume = undefined;
             this.stopMuteGuard();
+            if (volumeToRestore !== undefined) {
+                this.suppressVolumeSync = true;
+                try {
+                    setPlayerVolume(playerInst, volumeToRestore);
+                } finally {
+                    this.suppressVolumeSync = false;
+                }
+            }
             notifyYandexStationCastChange({ activeSpeakerId: null });
 
             return await window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.clearSpeaker);
         },
-        sendCommand(action, payload = {}) {
+        sendCommand(action, payload = {}, options = {}) {
             if (!this.isActive()) return Promise.resolve({ ok: false, reason: 'Yandex Station cast is not active' });
 
             const request = window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.control, action, payload) ?? Promise.resolve({ ok: false });
 
             return request
                 .then((result) => {
+                    if (result?.ok && options.syncLocalPlayback !== false) {
+                        if (action === 'PLAY') syncLocalPlaybackState(true);
+                        if (action === 'PAUSE') syncLocalPlaybackState(false);
+                    }
+
                     return result;
                 })
                 .catch((error) => {
                     console.warn('Yandex Station command failed', error);
                     return { ok: false, reason: error?.message };
                 });
+        },
+        flushPendingVolume() {
+            this.volumeThrottleTimer = null;
+
+            const nextVolume = this.pendingVolume;
+            this.pendingVolume = null;
+            if (!nextVolume || nextVolume.percent === this.lastVolumePercent) return;
+
+            this.lastVolumePercent = nextVolume.percent;
+            this.lastVolumeSentAt = Date.now();
+            void this.sendCommand('SET_VOLUME', { volume: nextVolume.normalized });
+            this.startMuteGuard();
+        },
+        sendVolume(value) {
+            const volume = normalizeYandexStationVolume(value);
+            if (!volume) return;
+            if (volume.percent === this.lastVolumePercent) {
+                this.pendingVolume = null;
+                return;
+            }
+
+            const elapsedSinceLastSend = Date.now() - this.lastVolumeSentAt;
+            if (!this.lastVolumeSentAt || elapsedSinceLastSend >= YANDEX_STATION_VOLUME_THROTTLE_MS) {
+                clearTimeout(this.volumeThrottleTimer);
+                this.volumeThrottleTimer = null;
+                this.pendingVolume = null;
+
+                this.lastVolumePercent = volume.percent;
+                this.lastVolumeSentAt = Date.now();
+                void this.sendCommand('SET_VOLUME', { volume: volume.normalized });
+                this.startMuteGuard();
+                return;
+            }
+
+            this.pendingVolume = volume;
+            if (this.volumeThrottleTimer) return;
+
+            this.volumeThrottleTimer = setTimeout(() => {
+                this.flushPendingVolume();
+            }, YANDEX_STATION_VOLUME_THROTTLE_MS - elapsedSinceLastSend);
         },
         async sendTrackFromEntity(entity, options = {}) {
             const { trackId, albumId } = getEntityIdParts(entity);
@@ -344,12 +472,25 @@ window.findCssRuleByPartialName = function (pName) {
                 type: 'track',
                 trackId: createEntityId(trackId, albumId),
             });
-            const position = Math.max(Number(options.position) || 0, 0);
+            if (response?.ok) this.initialTrackSent = true;
+
+            const position = options.syncPosition ? Math.max(Number(options.position) || 0, 0) : 0;
+            const positionSampledAt = Number(options.positionSampledAt) || undefined;
 
             if (response?.ok && position > 0) {
                 await wait(YANDEX_STATION_SYNC_SEEK_DELAY_MS);
-                return await this.sendCommand('SET_PROGRESS', { position });
+                return await this.sendCommand('SET_PROGRESS', {
+                    position,
+                    positionSampledAt,
+                    compensateLatency: true,
+                });
             }
+
+            return response;
+        },
+        async sendInitialCurrentTrack() {
+            const response = await this.sendCurrentTrack({ syncPosition: true });
+            if (response?.ok) this.initialTrackSent = true;
 
             return response;
         },
@@ -357,8 +498,9 @@ window.findCssRuleByPartialName = function (pName) {
             const playerInst = getPlayerInstance();
             const entity = playerInst?.state?.queueState?.currentEntity?.value?.entity;
             const position = options.syncPosition ? getCurrentProgressPosition(playerInst) : options.position;
+            const positionSampledAt = options.syncPosition ? Date.now() : options.positionSampledAt;
 
-            return this.sendTrackFromEntity(entity, { position });
+            return this.sendTrackFromEntity(entity, { position, positionSampledAt, syncPosition: Boolean(options.syncPosition) });
         },
     });
 
@@ -375,6 +517,19 @@ window.findCssRuleByPartialName = function (pName) {
         const method = originals?.[methodName];
 
         return typeof method === 'function' ? method.apply(playerInst, args) : undefined;
+    };
+
+    const syncLocalPlaybackState = (shouldPlay) => {
+        const playerInst = getPlayerInstance();
+        if (!playerInst) return;
+
+        const isPlaying = isPlayerPlaying(playerInst);
+        if (isPlaying === shouldPlay) return;
+
+        const result = callOriginalPlayerMethod(playerInst, 'togglePause', []);
+        if (result === undefined && !yandexStationOriginalPlayerMethods.has(playerInst)) {
+            playerInst.togglePause?.();
+        }
     };
 
     const wrapYandexStationPlayerMethod = (playerInst, methodName, handler) => {
@@ -446,9 +601,14 @@ window.findCssRuleByPartialName = function (pName) {
         wrapYandexStationPlayerMethod(playerInst, 'togglePause', (playerInst, args) => {
             const bridge = ensureYandexStationCastBridge();
             if (bridge.isActive()) {
-                const action = playerInst?.state?.playerState?.status?.value === 'playing' ? 'PAUSE' : 'PLAY';
-                void bridge.sendCommand(action);
+                const action = isPlayerPlaying(playerInst) ? 'PAUSE' : 'PLAY';
                 bridge.startMuteGuard();
+
+                if (action === 'PLAY' && !bridge.initialTrackSent) {
+                    return runAfterStationStart(bridge.sendInitialCurrentTrack(), () => callOriginalPlayerMethod(playerInst, 'togglePause', args));
+                }
+
+                void bridge.sendCommand(action);
             }
 
             return callOriginalPlayerMethod(playerInst, 'togglePause', args);
@@ -458,8 +618,10 @@ window.findCssRuleByPartialName = function (pName) {
             const bridge = ensureYandexStationCastBridge();
             if (bridge.isActive()) {
                 const nextEntity = getQueueEntityAt(playerInst, getCurrentQueueIndex(playerInst) + 1);
-                void (nextEntity ? bridge.sendTrackFromEntity(nextEntity) : Promise.resolve({ ok: false, reason: 'Next queue entity is missing' }));
+                const stationStartPromise = nextEntity ? bridge.sendTrackFromEntity(nextEntity) : Promise.resolve({ ok: false, reason: 'Next queue entity is missing' });
                 bridge.startMuteGuard();
+
+                return runAfterStationStart(stationStartPromise, () => callOriginalPlayerMethod(playerInst, 'moveForward', args));
             }
 
             return callOriginalPlayerMethod(playerInst, 'moveForward', args);
@@ -474,7 +636,10 @@ window.findCssRuleByPartialName = function (pName) {
                     void bridge.sendCommand('SET_PROGRESS', { position: 0 });
                 } else {
                     const prevEntity = getQueueEntityAt(playerInst, getCurrentQueueIndex(playerInst) - 1);
-                    void (prevEntity ? bridge.sendTrackFromEntity(prevEntity) : Promise.resolve({ ok: false, reason: 'Previous queue entity is missing' }));
+                    const stationStartPromise = prevEntity ? bridge.sendTrackFromEntity(prevEntity) : Promise.resolve({ ok: false, reason: 'Previous queue entity is missing' });
+                    bridge.startMuteGuard();
+
+                    return runAfterStationStart(stationStartPromise, () => callOriginalPlayerMethod(playerInst, 'moveBackward', args));
                 }
                 bridge.startMuteGuard();
             }
@@ -487,6 +652,7 @@ window.findCssRuleByPartialName = function (pName) {
             if (bridge.isActive()) {
                 void bridge.sendCommand('SET_PROGRESS', {
                     position: Math.max(Number(args[0]) || 0, 0),
+                    compensateLatency: true,
                 });
                 bridge.startMuteGuard();
             }
@@ -494,12 +660,32 @@ window.findCssRuleByPartialName = function (pName) {
             return callOriginalPlayerMethod(playerInst, 'setProgress', args);
         });
 
+        wrapYandexStationPlayerMethod(playerInst, 'setVolume', (playerInst, args) => {
+            const bridge = ensureYandexStationCastBridge();
+            if (bridge.isActive() && !bridge.suppressVolumeSync) {
+                bridge.sendVolume(args[0]);
+            }
+
+            return callOriginalPlayerMethod(playerInst, 'setVolume', args);
+        });
+
+        wrapYandexStationPlayerMethod(playerInst, 'setExponentVolume', (playerInst, args) => {
+            const bridge = ensureYandexStationCastBridge();
+            if (bridge.isActive() && !bridge.suppressVolumeSync) {
+                bridge.sendVolume(args[0]);
+            }
+
+            return callOriginalPlayerMethod(playerInst, 'setExponentVolume', args);
+        });
+
         wrapYandexStationPlayerMethod(playerInst, 'setEntityByIndex', (playerInst, args) => {
             const bridge = ensureYandexStationCastBridge();
             if (bridge.isActive()) {
                 const entity = getQueueEntityAt(playerInst, Number(args[0]));
-                void bridge.sendTrackFromEntity(entity);
+                const stationStartPromise = bridge.sendTrackFromEntity(entity);
                 bridge.startMuteGuard();
+
+                return runAfterStationStart(stationStartPromise, () => callOriginalPlayerMethod(playerInst, 'setEntityByIndex', args));
             }
 
             return callOriginalPlayerMethod(playerInst, 'setEntityByIndex', args);
@@ -512,7 +698,7 @@ window.findCssRuleByPartialName = function (pName) {
             if (bridge.isActive()) {
                 const syncAfterContextChange = () => {
                     setTimeout(() => {
-                        void bridge.sendCurrentTrack({ syncPosition: true });
+                        void bridge.sendCurrentTrack();
                     }, 0);
                 };
                 typeof result?.then === 'function' ? void Promise.resolve(result).then(syncAfterContextChange, syncAfterContextChange) : syncAfterContextChange();

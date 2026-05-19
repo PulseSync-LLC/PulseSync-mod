@@ -22,10 +22,18 @@ async function readJsonResponse(response) {
 }
 
 class YandexGlagolClient {
-    constructor({ logger, requestTimeoutMs = DEFAULTS.requestTimeoutMs, responseTimeoutMs = DEFAULTS.glagolResponseTimeoutMs } = {}) {
+    constructor({
+        logger,
+        requestTimeoutMs = DEFAULTS.requestTimeoutMs,
+        responseTimeoutMs = DEFAULTS.glagolResponseTimeoutMs,
+        stateTimeoutMs = DEFAULTS.glagolStateTimeoutMs,
+        latencyTimeoutMs = DEFAULTS.glagolLatencyTimeoutMs,
+    } = {}) {
         this.logger = logger ?? console;
         this.requestTimeoutMs = requestTimeoutMs;
         this.responseTimeoutMs = responseTimeoutMs;
+        this.stateTimeoutMs = stateTimeoutMs;
+        this.latencyTimeoutMs = latencyTimeoutMs;
     }
 
     async requestJson(url, options = {}) {
@@ -193,6 +201,159 @@ class YandexGlagolClient {
         });
     }
 
+    measureLatency(connectionInfo, options = {}) {
+        const timeoutMs = options.timeoutMs ?? this.latencyTimeoutMs;
+
+        return new Promise((resolve, reject) => {
+            const socket = this.connect(connectionInfo);
+            let settled = false;
+            let startedAt = 0;
+
+            const cleanup = () => {
+                clearTimeout(timeout);
+                socket.removeAllListeners();
+                if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+                    socket.close();
+                }
+            };
+
+            const settle = (callback, value) => {
+                if (settled) return;
+                settled = true;
+                cleanup();
+                callback(value);
+            };
+
+            const timeout = setTimeout(() => {
+                settle(
+                    reject,
+                    new YandexGlagolError({
+                        code: 'GLAGOL_LATENCY_TIMEOUT',
+                        message: 'Yandex Glagol latency probe timed out',
+                    }),
+                );
+            }, timeoutMs);
+
+            socket.on('open', () => {
+                startedAt = Date.now();
+                socket.ping();
+            });
+
+            socket.on('pong', () => {
+                settle(resolve, Date.now() - startedAt);
+            });
+
+            socket.on('error', (error) => {
+                settle(
+                    reject,
+                    new YandexGlagolError({
+                        code: 'GLAGOL_LATENCY_PROBE_FAILED',
+                        message: 'Yandex Glagol latency probe failed',
+                        cause: error,
+                    }),
+                );
+            });
+
+            socket.on('close', () => {
+                if (!settled) {
+                    settle(
+                        reject,
+                        new YandexGlagolError({
+                            code: 'GLAGOL_LATENCY_SOCKET_CLOSED',
+                            message: 'Yandex Glagol latency probe socket closed before pong',
+                        }),
+                    );
+                }
+            });
+        });
+    }
+
+    getStateSnapshot(connectionInfo, options = {}) {
+        const timeoutMs = options.timeoutMs ?? this.stateTimeoutMs;
+
+        return new Promise((resolve, reject) => {
+            const socket = this.connect(connectionInfo);
+            const id = options.id ?? randomUUID();
+            let settled = false;
+
+            const cleanup = () => {
+                clearTimeout(timeout);
+                socket.removeAllListeners();
+                if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+                    socket.close();
+                }
+            };
+
+            const settle = (callback, value) => {
+                if (settled) return;
+                settled = true;
+                cleanup();
+                callback(value);
+            };
+
+            const timeout = setTimeout(() => {
+                settle(
+                    reject,
+                    new YandexGlagolError({
+                        code: 'GLAGOL_STATE_TIMEOUT',
+                        message: 'Yandex Glagol state snapshot timed out',
+                    }),
+                );
+            }, timeoutMs);
+
+            socket.on('open', () => {
+                socket.send(
+                    JSON.stringify({
+                        conversationToken: connectionInfo.conversationToken,
+                        id,
+                        payload: {
+                            command: 'softwareVersion',
+                        },
+                        sentTime: Date.now(),
+                    }),
+                );
+            });
+
+            socket.on('message', (data) => {
+                let message;
+
+                try {
+                    message = JSON.parse(data.toString());
+                } catch (error) {
+                    this.logger.warn?.('Yandex Glagol state snapshot response is not valid JSON');
+                    return;
+                }
+
+                if (message?.state && typeof message.state === 'object') {
+                    settle(resolve, message);
+                }
+            });
+
+            socket.on('error', (error) => {
+                settle(
+                    reject,
+                    new YandexGlagolError({
+                        code: 'GLAGOL_STATE_SOCKET_ERROR',
+                        message: 'Yandex Glagol state snapshot WebSocket failed',
+                        cause: error,
+                    }),
+                );
+            });
+
+            socket.on('close', () => {
+                if (!settled) {
+                    settle(
+                        reject,
+                        new YandexGlagolError({
+                            code: 'GLAGOL_STATE_SOCKET_CLOSED',
+                            message: 'Yandex Glagol state snapshot socket closed before state',
+                        }),
+                    );
+                }
+            });
+        });
+    }
+
     async probeSoftwareVersion(connectionInfo) {
         return await this.sendCommand(connectionInfo, {
             command: 'softwareVersion',
@@ -227,6 +388,23 @@ class YandexGlagolClient {
         return await this.sendCommand(connectionInfo, {
             command: 'rewind',
             position: Math.max(0, Number(position) || 0),
+        });
+    }
+
+    async setVolume(connectionInfo, volume) {
+        const numericVolume = Number(volume);
+        if (!Number.isFinite(numericVolume)) {
+            throw new YandexGlagolError({
+                code: 'VOLUME_REQUIRED',
+                message: 'Yandex Station setVolume requires a numeric volume',
+            });
+        }
+
+        const normalizedVolume = Math.max(0, Math.min(1, numericVolume));
+
+        return await this.sendCommand(connectionInfo, {
+            command: 'setVolume',
+            volume: normalizedVolume,
         });
     }
 

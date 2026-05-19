@@ -118,6 +118,11 @@ function matchesLocalSpeakerByName(accountSpeaker, localSpeaker) {
     return accountName.includes(localName) || localName.includes(accountName);
 }
 
+function extractStateVolume(stateSnapshot) {
+    const volume = Number(stateSnapshot?.state?.volume ?? stateSnapshot?.volume);
+    return Number.isFinite(volume) ? Math.max(0, Math.min(1, volume)) : undefined;
+}
+
 class YandexStationService {
     constructor(options = {}) {
         this.logger = options.logger ?? console;
@@ -126,6 +131,8 @@ class YandexStationService {
         this.cookies = null;
         this.authTokens = null;
         this.connectionInfoCache = new Map();
+        this.latencyCache = new Map();
+        this.glagolLatencyCacheMs = options.glagolLatencyCacheMs ?? DEFAULTS.glagolLatencyCacheMs;
 
         this.quasarClient = new YandexQuasarClient({
             getCookies: () => this.cookies,
@@ -152,6 +159,7 @@ class YandexStationService {
         this.cookies = cookies;
         this.authTokens = null;
         this.connectionInfoCache.clear();
+        this.latencyCache.clear();
     }
 
     /**
@@ -322,12 +330,80 @@ class YandexStationService {
         return await this.glagolClient.probeSoftwareVersion(connectionInfo);
     }
 
+    async warmUpLocalSpeaker(speaker) {
+        const connectionInfo = await this.getGlagolConnectionInfo(speaker);
+        let stateSnapshot;
+
+        try {
+            stateSnapshot = await this.glagolClient.getStateSnapshot(connectionInfo);
+        } catch (error) {
+            this.logger.debug?.('Yandex Station local state snapshot skipped', {
+                code: error.code,
+                message: error.message,
+            });
+        }
+
+        try {
+            await this.getGlagolLatencyMs(connectionInfo);
+        } catch (error) {
+            this.logger.debug?.('Yandex Station latency warm-up skipped', {
+                code: error.code,
+                message: error.message,
+            });
+        }
+
+        return {
+            connectionInfo,
+            state: stateSnapshot?.state,
+            volume: extractStateVolume(stateSnapshot),
+        };
+    }
+
+    getLatencyCacheKey(connectionInfo) {
+        return [connectionInfo.host, connectionInfo.port, connectionInfo.deviceId, connectionInfo.platform].join('|');
+    }
+
+    async getGlagolLatencyMs(connectionInfo) {
+        const cacheKey = this.getLatencyCacheKey(connectionInfo);
+        const cachedLatency = this.latencyCache.get(cacheKey);
+
+        if (cachedLatency && Date.now() - cachedLatency.measuredAt <= this.glagolLatencyCacheMs) {
+            return cachedLatency.latencyMs;
+        }
+
+        const latencyMs = await this.glagolClient.measureLatency(connectionInfo);
+        this.latencyCache.set(cacheKey, {
+            latencyMs,
+            measuredAt: Date.now(),
+        });
+
+        return latencyMs;
+    }
+
+    async getLatencyCompensatedPosition(connectionInfo, payload) {
+        const basePosition = Math.max(0, Number(payload.position) || 0);
+        const sampledAt = Number(payload.positionSampledAt);
+        const getElapsedSinceSampleSeconds = () => (Number.isFinite(sampledAt) && sampledAt > 0 ? Math.max(0, Date.now() - sampledAt) / 1000 : 0);
+
+        try {
+            const latencyMs = await this.getGlagolLatencyMs(connectionInfo);
+            return basePosition + getElapsedSinceSampleSeconds() + latencyMs / 2000;
+        } catch (error) {
+            this.logger.debug?.('Yandex Station latency compensation skipped', {
+                code: error.code,
+                message: error.message,
+            });
+
+            return basePosition + getElapsedSinceSampleSeconds();
+        }
+    }
+
     /**
      * Send a minimal local media-control command to a resolved Yandex Station.
      *
      * @param {ResolvedSpeaker} speaker
-     * @param {'PLAY'|'PAUSE'|'MOVE_FORWARD'|'MOVE_BACKWARD'|'SET_PROGRESS'|'PLAY_TRACK'} action
-     * @param {{ position?: number, trackId?: string | number, type?: string }=} payload
+     * @param {'PLAY'|'PAUSE'|'MOVE_FORWARD'|'MOVE_BACKWARD'|'SET_PROGRESS'|'SET_VOLUME'|'PLAY_TRACK'} action
+     * @param {{ position?: number, positionSampledAt?: number, compensateLatency?: boolean, volume?: number, trackId?: string | number, type?: string }=} payload
      * @returns {Promise<object>}
      */
     async sendLocalMediaCommand(speaker, action, payload = {}) {
@@ -343,7 +419,12 @@ class YandexStationService {
             case 'MOVE_BACKWARD':
                 return await this.glagolClient.previous(connectionInfo);
             case 'SET_PROGRESS':
-                return await this.glagolClient.seek(connectionInfo, payload.position);
+                return await this.glagolClient.seek(
+                    connectionInfo,
+                    payload.compensateLatency ? await this.getLatencyCompensatedPosition(connectionInfo, payload) : payload.position,
+                );
+            case 'SET_VOLUME':
+                return await this.glagolClient.setVolume(connectionInfo, payload.volume);
             case 'PLAY_TRACK':
                 if (!payload.trackId) {
                     throw new YandexGlagolError({

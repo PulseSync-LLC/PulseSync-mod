@@ -113,8 +113,10 @@ class YandexStationRuntime {
             };
         }
 
+        let warmUpResult;
+
         try {
-            await this.service.getGlagolConnectionInfo(speaker);
+            warmUpResult = await this.service.warmUpLocalSpeaker(speaker);
         } catch (error) {
             this.logger.warn?.(
                 'Yandex Station speaker selection failed',
@@ -138,6 +140,8 @@ class YandexStationRuntime {
         return {
             ok: true,
             speaker: cloneCache(speaker),
+            state: warmUpResult?.state ? cloneCache(warmUpResult.state) : undefined,
+            volume: warmUpResult?.volume,
         };
     }
 
