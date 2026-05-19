@@ -141,7 +141,24 @@ class YandexStationRuntime {
         };
     }
 
-    clearSpeaker() {
+    async clearSpeaker() {
+        const speaker = this.getActiveSpeaker();
+        if (speaker?.canUseLocal) {
+            try {
+                await this.service.sendLocalMediaCommand(speaker, 'PAUSE');
+            } catch (error) {
+                this.logger.warn?.(
+                    'Yandex Station speaker clear stop failed',
+                    sanitizeJson({
+                        code: error.code,
+                        statusCode: error.statusCode,
+                        endpoint: error.endpoint,
+                        message: error.message,
+                    }),
+                );
+            }
+        }
+
         this.activeSpeakerId = null;
 
         return {

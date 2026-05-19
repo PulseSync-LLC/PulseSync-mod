@@ -52,10 +52,16 @@ window.findCssRuleByPartialName = function (pName) {
         control: 'YANDEX_STATION_CONTROL',
     };
     const YANDEX_STATION_BACK_THRESHOLD_SECONDS = 5;
+    const YANDEX_STATION_CROSSFADE_EVENT = 'ShouldAutomoveForward';
+    const YANDEX_STATION_SYNC_SEEK_DELAY_MS = 500;
     const yandexStationOriginalPlayerMethods = new WeakMap();
-    const yandexStationOriginalMediaState = new WeakMap();
-    const yandexStationOriginalGainState = new WeakMap();
-    const yandexStationOriginalPlayerVolumeState = new WeakMap();
+    const yandexStationAutomaticTrackSyncState = new WeakMap();
+    const yandexStationAudioGraphConnections = new WeakMap();
+    const yandexStationAudioGraphNodes = new Set();
+    const yandexStationAudioMuteGainByContext = new WeakMap();
+    const yandexStationAudioMuteGainNodes = new WeakSet();
+    const yandexStationMutedAudioConnections = [];
+    let yandexStationLocalAudioMuted = false;
 
     const getEntityIdParts = (value) => {
         const rawId =
@@ -84,120 +90,198 @@ window.findCssRuleByPartialName = function (pName) {
 
     const getCurrentQueueIndex = (playerInst) => Number(playerInst?.state?.queueState?.index?.value ?? 0);
     const getCurrentProgressPosition = (playerInst) => Number(playerInst?.state?.playerState?.progress?.value?.position ?? 0);
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    const collectGainNodes = (root) => {
-        const result = new Set();
-        const seen = new WeakSet();
-        const queue = [{ value: root, depth: 0 }];
+    const getEntityStableId = (entity) => {
+        const { trackId, albumId } = getEntityIdParts(entity);
+        return trackId ? createEntityId(trackId, albumId) : null;
+    };
 
-        while (queue.length) {
-            const { value, depth } = queue.shift();
-            if (!value || typeof value !== 'object') continue;
-            if (seen.has(value)) continue;
-            seen.add(value);
+    const getQueuePairEntity = (pair) => pair?.entity ?? pair ?? null;
 
-            if (value.gain && typeof value.gain.value === 'number') {
-                result.add(value);
-            }
+    const getNextQueuePair = (playerInst) => {
+        return playerInst?.state?.queueState?.nextEntity?.value ?? playerInst?.state?.queueState?.entityList?.value?.[getCurrentQueueIndex(playerInst) + 1] ?? null;
+    };
 
-            if (depth >= 5) continue;
+    const rememberAudioConnection = (source, args) => {
+        const destination = args[0];
+        if (!source || !destination || typeof source !== 'object' || typeof destination !== 'object') return;
 
-            for (const key of Object.keys(value)) {
-                if (key === 'parentNode' || key === 'ownerDocument' || key === 'document' || key === 'window') continue;
+        const records = yandexStationAudioGraphConnections.get(source) ?? [];
+        records.push({ source, destination, args });
+        yandexStationAudioGraphConnections.set(source, records);
+        yandexStationAudioGraphNodes.add(source);
+    };
 
+    const forgetAudioConnections = (source, args) => {
+        const records = yandexStationAudioGraphConnections.get(source);
+        if (!records) return;
+
+        if (!args.length) {
+            yandexStationAudioGraphConnections.set(source, []);
+            return;
+        }
+
+        const [destinationOrOutput] = args;
+        if (typeof destinationOrOutput === 'number') {
+            return;
+        }
+
+        yandexStationAudioGraphConnections.set(
+            source,
+            records.filter((record) => record.destination !== destinationOrOutput),
+        );
+    };
+
+    const getOriginalAudioConnect = () => window.__pulseSyncYandexStationOriginalAudioNodeConnect ?? window.AudioNode?.prototype?.connect;
+    const getOriginalAudioDisconnect = () => window.__pulseSyncYandexStationOriginalAudioNodeDisconnect ?? window.AudioNode?.prototype?.disconnect;
+
+    const isAudioDestination = (source, destination) => {
+        return Boolean(
+            destination &&
+                typeof destination === 'object' &&
+                ((typeof AudioDestinationNode !== 'undefined' && destination instanceof AudioDestinationNode) || destination === source?.context?.destination),
+        );
+    };
+
+    const getMuteGainNode = (context) => {
+        if (!context?.createGain) return null;
+
+        let gainNode = yandexStationAudioMuteGainByContext.get(context);
+        if (gainNode) return gainNode;
+
+        gainNode = context.createGain();
+        gainNode.gain.value = 0;
+        yandexStationAudioMuteGainNodes.add(gainNode);
+        yandexStationAudioMuteGainByContext.set(context, gainNode);
+
+        return gainNode;
+    };
+
+    const routeAudioConnectionThroughMute = (source, args, shouldDisconnectOriginal = true) => {
+        const destination = args[0];
+        if (!isAudioDestination(source, destination) || yandexStationAudioMuteGainNodes.has(source)) return false;
+        if (yandexStationMutedAudioConnections.some((connection) => connection.source === source && connection.destination === destination)) return true;
+
+        const originalConnect = getOriginalAudioConnect();
+        const originalDisconnect = getOriginalAudioDisconnect();
+        const muteGain = getMuteGainNode(source.context);
+        if (!originalConnect || !originalDisconnect || !muteGain) return false;
+
+        const output = typeof args[1] === 'number' ? args[1] : 0;
+        const input = typeof args[2] === 'number' ? args[2] : 0;
+
+        if (shouldDisconnectOriginal) {
+            try {
+                originalDisconnect.apply(source, args);
+            } catch {
                 try {
-                    const child = value[key];
-                    if (child && typeof child === 'object') queue.push({ value: child, depth: depth + 1 });
+                    originalDisconnect.call(source, destination);
                 } catch {}
             }
         }
 
-        return Array.from(result);
+        try {
+            originalConnect.call(source, muteGain, output, 0);
+            originalConnect.call(muteGain, destination, 0, input);
+            yandexStationMutedAudioConnections.push({ source, destination, args, muteGain, output, input });
+            return true;
+        } catch {
+            return false;
+        }
     };
 
-    const setLocalGainMuted = (muted) => {
-        const playerInst = getPlayerInstance();
+    const unrouteMutedAudioConnection = (connection, restoreOriginal = true) => {
+        const originalConnect = getOriginalAudioConnect();
+        const originalDisconnect = getOriginalAudioDisconnect();
+        if (!originalConnect || !originalDisconnect) return;
 
-        collectGainNodes(playerInst).forEach((node) => {
-            if (!yandexStationOriginalGainState.has(node)) {
-                yandexStationOriginalGainState.set(node, node.gain.value);
-            }
+        try {
+            originalDisconnect.call(connection.source, connection.muteGain);
+        } catch {}
 
-            if (muted) {
-                node.gain.value = 0;
-                return;
-            }
+        try {
+            originalDisconnect.call(connection.muteGain, connection.destination);
+        } catch {}
 
-            const originalValue = yandexStationOriginalGainState.get(node);
-            if (typeof originalValue !== 'number') return;
-
-            node.gain.value = originalValue;
-            yandexStationOriginalGainState.delete(node);
-        });
+        if (restoreOriginal) {
+            try {
+                originalConnect.apply(connection.source, connection.args);
+                rememberAudioConnection(connection.source, connection.args);
+            } catch {}
+        }
     };
 
-    const setLocalPlayerVolumeMuted = (muted) => {
-        const playerInst = getPlayerInstance();
-        if (!playerInst) return;
+    const removeMutedAudioConnections = (source, args) => {
+        const destination = args[0];
+        let removed = false;
+        for (let index = yandexStationMutedAudioConnections.length - 1; index >= 0; index -= 1) {
+            const connection = yandexStationMutedAudioConnections[index];
+            if (connection.source !== source) continue;
+            if (args.length && destination && connection.destination !== destination && connection.muteGain !== destination) continue;
 
-        if (muted) {
-            if (!yandexStationOriginalPlayerVolumeState.has(playerInst)) {
-                yandexStationOriginalPlayerVolumeState.set(playerInst, {
-                    volume: playerInst?.state?.playerState?.volume?.value,
-                    exponentVolume: playerInst?.state?.playerState?.exponentVolume?.value,
-                });
+            yandexStationMutedAudioConnections.splice(index, 1);
+            unrouteMutedAudioConnection(connection, false);
+            removed = true;
+        }
+
+        return removed;
+    };
+
+    const installWebAudioGraphMonitor = () => {
+        if (!window.AudioNode?.prototype || window.__pulseSyncYandexStationAudioGraphMonitorInstalled) return;
+
+        const originalConnect = window.AudioNode.prototype.connect;
+        const originalDisconnect = window.AudioNode.prototype.disconnect;
+        window.__pulseSyncYandexStationAudioGraphMonitorInstalled = true;
+        window.__pulseSyncYandexStationOriginalAudioNodeConnect = originalConnect;
+        window.__pulseSyncYandexStationOriginalAudioNodeDisconnect = originalDisconnect;
+
+        window.AudioNode.prototype.connect = function (...args) {
+            if (yandexStationLocalAudioMuted && routeAudioConnectionThroughMute(this, args, false)) {
+                rememberAudioConnection(this, args);
+                return args[0];
             }
 
-            if (typeof playerInst.setVolume === 'function') {
-                Promise.resolve(playerInst.setVolume(0)).catch(() => {});
-                return;
+            const result = originalConnect.apply(this, args);
+            rememberAudioConnection(this, args);
+            return result;
+        };
+
+        window.AudioNode.prototype.disconnect = function (...args) {
+            const removedMutedConnection = removeMutedAudioConnections(this, args);
+            if (removedMutedConnection && args.length && typeof args[0] !== 'number') {
+                forgetAudioConnections(this, args);
+                return undefined;
             }
 
-            if (playerInst?.state?.playerState?.volume) {
-                playerInst.state.playerState.volume.value = 0;
+            const result = originalDisconnect.apply(this, args);
+            forgetAudioConnections(this, args);
+            return result;
+        };
+    };
+
+    const setLocalAudioMuted = (muted) => {
+        installWebAudioGraphMonitor();
+        yandexStationLocalAudioMuted = muted;
+
+        if (!muted) {
+            while (yandexStationMutedAudioConnections.length) {
+                const connection = yandexStationMutedAudioConnections.shift();
+                unrouteMutedAudioConnection(connection, true);
             }
             return;
         }
 
-        const original = yandexStationOriginalPlayerVolumeState.get(playerInst);
-        if (!original) return;
-
-        if (typeof playerInst.setVolume === 'function' && typeof original.volume === 'number') {
-            Promise.resolve(playerInst.setVolume(original.volume)).catch(() => {});
-        } else if (typeof playerInst.setExponentVolume === 'function' && typeof original.exponentVolume === 'number') {
-            Promise.resolve(playerInst.setExponentVolume(original.exponentVolume)).catch(() => {});
-        } else if (playerInst?.state?.playerState?.volume && typeof original.volume === 'number') {
-            playerInst.state.playerState.volume.value = original.volume;
-        }
-
-        yandexStationOriginalPlayerVolumeState.delete(playerInst);
-    };
-
-    const setLocalMediaMuted = (muted) => {
-        document.querySelectorAll('audio, video').forEach((media) => {
-            if (!yandexStationOriginalMediaState.has(media)) {
-                yandexStationOriginalMediaState.set(media, {
-                    muted: media.muted,
-                    volume: media.volume,
-                });
-            }
-
-            if (muted) {
-                media.muted = true;
-                media.volume = 0;
-                return;
-            }
-
-            const original = yandexStationOriginalMediaState.get(media);
-            if (!original) return;
-
-            media.muted = original.muted;
-            media.volume = original.volume;
-            yandexStationOriginalMediaState.delete(media);
+        yandexStationAudioGraphNodes.forEach((source) => {
+            const records = yandexStationAudioGraphConnections.get(source) ?? [];
+            records.forEach((record) => {
+                routeAudioConnectionThroughMute(source, record.args, true);
+            });
         });
-        setLocalPlayerVolumeMuted(muted);
-        setLocalGainMuted(muted);
     };
+
+    installWebAudioGraphMonitor();
 
     const notifyYandexStationCastChange = (detail) => {
         window.dispatchEvent(new CustomEvent('pulse-sync-yandex-station-cast-change', { detail }));
@@ -211,13 +295,13 @@ window.findCssRuleByPartialName = function (pName) {
         },
         startMuteGuard() {
             clearInterval(this.muteTimer);
-            setLocalMediaMuted(true);
-            this.muteTimer = setInterval(() => setLocalMediaMuted(true), 1000);
+            setLocalAudioMuted(true);
+            this.muteTimer = setInterval(() => setLocalAudioMuted(true), 3000);
         },
         stopMuteGuard() {
             clearInterval(this.muteTimer);
             this.muteTimer = null;
-            setLocalMediaMuted(false);
+            setLocalAudioMuted(false);
         },
         async activate(iotDeviceId) {
             const result = await window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.selectSpeaker, iotDeviceId);
@@ -225,12 +309,13 @@ window.findCssRuleByPartialName = function (pName) {
 
             this.activeSpeakerId = iotDeviceId;
             this.startMuteGuard();
-            this.sendCurrentTrack();
+            void this.sendCurrentTrack({ syncPosition: true });
             notifyYandexStationCastChange({ activeSpeakerId: this.activeSpeakerId });
 
             return result;
         },
         async clear() {
+            await this.sendCommand('PAUSE');
             this.activeSpeakerId = null;
             this.stopMuteGuard();
             notifyYandexStationCastChange({ activeSpeakerId: null });
@@ -242,25 +327,38 @@ window.findCssRuleByPartialName = function (pName) {
 
             const request = window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.control, action, payload) ?? Promise.resolve({ ok: false });
 
-            return request.catch((error) => {
-                console.warn('Yandex Station command failed', error);
-                return { ok: false, reason: error?.message };
-            });
+            return request
+                .then((result) => {
+                    return result;
+                })
+                .catch((error) => {
+                    console.warn('Yandex Station command failed', error);
+                    return { ok: false, reason: error?.message };
+                });
         },
-        sendTrackFromEntity(entity) {
-            const { trackId } = getEntityIdParts(entity);
+        async sendTrackFromEntity(entity, options = {}) {
+            const { trackId, albumId } = getEntityIdParts(entity);
             if (!trackId) return Promise.resolve({ ok: false, reason: 'Track id is missing' });
 
-            return this.sendCommand('PLAY_TRACK', {
+            const response = await this.sendCommand('PLAY_TRACK', {
                 type: 'track',
-                trackId,
+                trackId: createEntityId(trackId, albumId),
             });
+            const position = Math.max(Number(options.position) || 0, 0);
+
+            if (response?.ok && position > 0) {
+                await wait(YANDEX_STATION_SYNC_SEEK_DELAY_MS);
+                return await this.sendCommand('SET_PROGRESS', { position });
+            }
+
+            return response;
         },
-        sendCurrentTrack() {
+        sendCurrentTrack(options = {}) {
             const playerInst = getPlayerInstance();
             const entity = playerInst?.state?.queueState?.currentEntity?.value?.entity;
+            const position = options.syncPosition ? getCurrentProgressPosition(playerInst) : options.position;
 
-            return this.sendTrackFromEntity(entity);
+            return this.sendTrackFromEntity(entity, { position });
         },
     });
 
@@ -293,15 +391,64 @@ window.findCssRuleByPartialName = function (pName) {
         };
     };
 
+    const syncYandexStationNextTrack = (playerInst, reason) => {
+        const bridge = ensureYandexStationCastBridge();
+        if (!bridge.isActive()) return;
+
+        const currentPair = playerInst?.state?.queueState?.currentEntity?.value;
+        const nextPair = getNextQueuePair(playerInst);
+        const currentEntity = getQueuePairEntity(currentPair);
+        const nextEntity = getQueuePairEntity(nextPair);
+        const currentId = getEntityStableId(currentEntity);
+        const nextId = getEntityStableId(nextEntity);
+        if (!nextId) return;
+
+        const state = yandexStationAutomaticTrackSyncState.get(playerInst) ?? {};
+        const syncKey = `${currentId ?? 'unknown'}->${nextId}`;
+        if (state.lastSentKey === syncKey) return;
+
+        state.lastSentKey = syncKey;
+        state.lastSentReason = reason;
+        yandexStationAutomaticTrackSyncState.set(playerInst, state);
+
+        void bridge.sendTrackFromEntity(nextEntity);
+        bridge.startMuteGuard();
+    };
+
+    const installYandexStationAutomaticTrackSync = (playerInst) => {
+        if (!playerInst || yandexStationAutomaticTrackSyncState.has(playerInst)) return;
+
+        const state = {
+            lastSentKey: null,
+            unsubscribers: [],
+        };
+        yandexStationAutomaticTrackSyncState.set(playerInst, state);
+
+        const eventUnsubscribe = playerInst?.state?.playerState?.event?.onChange?.((event) => {
+            if (event === YANDEX_STATION_CROSSFADE_EVENT) {
+                syncYandexStationNextTrack(playerInst, 'crossfade-event');
+            }
+        });
+        const currentEntityUnsubscribe = playerInst?.state?.queueState?.currentEntity?.onChange?.(() => {
+            state.lastSentKey = null;
+        });
+
+        [eventUnsubscribe, currentEntityUnsubscribe].forEach((unsubscribe) => {
+            if (typeof unsubscribe === 'function') state.unsubscribers.push(unsubscribe);
+        });
+    };
+
     const installYandexStationPlayerProxy = (playerInst) => {
-        if (!playerInst || yandexStationOriginalPlayerMethods.has(playerInst)) return;
+        if (!playerInst) return;
+        installYandexStationAutomaticTrackSync(playerInst);
+        if (yandexStationOriginalPlayerMethods.has(playerInst)) return;
 
         wrapYandexStationPlayerMethod(playerInst, 'togglePause', (playerInst, args) => {
             const bridge = ensureYandexStationCastBridge();
             if (bridge.isActive()) {
                 const action = playerInst?.state?.playerState?.status?.value === 'playing' ? 'PAUSE' : 'PLAY';
                 void bridge.sendCommand(action);
-                setLocalMediaMuted(true);
+                bridge.startMuteGuard();
             }
 
             return callOriginalPlayerMethod(playerInst, 'togglePause', args);
@@ -311,8 +458,8 @@ window.findCssRuleByPartialName = function (pName) {
             const bridge = ensureYandexStationCastBridge();
             if (bridge.isActive()) {
                 const nextEntity = getQueueEntityAt(playerInst, getCurrentQueueIndex(playerInst) + 1);
-                void (nextEntity ? bridge.sendTrackFromEntity(nextEntity) : bridge.sendCommand('MOVE_FORWARD'));
-                setLocalMediaMuted(true);
+                void (nextEntity ? bridge.sendTrackFromEntity(nextEntity) : Promise.resolve({ ok: false, reason: 'Next queue entity is missing' }));
+                bridge.startMuteGuard();
             }
 
             return callOriginalPlayerMethod(playerInst, 'moveForward', args);
@@ -326,9 +473,10 @@ window.findCssRuleByPartialName = function (pName) {
                 if (position > YANDEX_STATION_BACK_THRESHOLD_SECONDS) {
                     void bridge.sendCommand('SET_PROGRESS', { position: 0 });
                 } else {
-                    void bridge.sendCommand('MOVE_BACKWARD');
+                    const prevEntity = getQueueEntityAt(playerInst, getCurrentQueueIndex(playerInst) - 1);
+                    void (prevEntity ? bridge.sendTrackFromEntity(prevEntity) : Promise.resolve({ ok: false, reason: 'Previous queue entity is missing' }));
                 }
-                setLocalMediaMuted(true);
+                bridge.startMuteGuard();
             }
 
             return callOriginalPlayerMethod(playerInst, 'moveBackward', args);
@@ -340,7 +488,7 @@ window.findCssRuleByPartialName = function (pName) {
                 void bridge.sendCommand('SET_PROGRESS', {
                     position: Math.max(Number(args[0]) || 0, 0),
                 });
-                setLocalMediaMuted(true);
+                bridge.startMuteGuard();
             }
 
             return callOriginalPlayerMethod(playerInst, 'setProgress', args);
@@ -351,7 +499,7 @@ window.findCssRuleByPartialName = function (pName) {
             if (bridge.isActive()) {
                 const entity = getQueueEntityAt(playerInst, Number(args[0]));
                 void bridge.sendTrackFromEntity(entity);
-                setLocalMediaMuted(true);
+                bridge.startMuteGuard();
             }
 
             return callOriginalPlayerMethod(playerInst, 'setEntityByIndex', args);
@@ -359,14 +507,19 @@ window.findCssRuleByPartialName = function (pName) {
 
         wrapYandexStationPlayerMethod(playerInst, 'playContext', (playerInst, args) => {
             const bridge = ensureYandexStationCastBridge();
+            const result = callOriginalPlayerMethod(playerInst, 'playContext', args);
+
             if (bridge.isActive()) {
-                const payload = args[0];
-                const entity = payload?.entitiesData?.[0] ?? payload?.queueParams ?? payload?.contextData?.meta;
-                void bridge.sendTrackFromEntity(entity);
-                setLocalMediaMuted(true);
+                const syncAfterContextChange = () => {
+                    setTimeout(() => {
+                        void bridge.sendCurrentTrack({ syncPosition: true });
+                    }, 0);
+                };
+                typeof result?.then === 'function' ? void Promise.resolve(result).then(syncAfterContextChange, syncAfterContextChange) : syncAfterContextChange();
+                bridge.startMuteGuard();
             }
 
-            return callOriginalPlayerMethod(playerInst, 'playContext', args);
+            return result;
         });
     };
 

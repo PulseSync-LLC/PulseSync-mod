@@ -7420,7 +7420,9 @@
                                                                       ? void 0
                                                                       : async () => {
                                                                             if (e.isThisDevice) {
-                                                                                await window.pulseSyncYandexStationCast?.clear?.();
+                                                                                window.pulseSyncYandexStationCast?.clear
+                                                                                    ? await window.pulseSyncYandexStationCast.clear()
+                                                                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_CLEAR_SPEAKER');
                                                                                 setCastActiveSpeakerId(null);
                                                                                 closeCastPopover();
                                                                                 return;
@@ -7448,7 +7450,7 @@
                                                                       border: 0,
                                                                       borderRadius: '6px',
                                                                       background:
-                                                                          castActiveSpeakerId === r || (!t && castHoveredDeviceKey === n)
+                                                                          isConnected || (!t && castHoveredDeviceKey === n)
                                                                               ? 'var(--ym-controls-color-secondary-default-hovered)'
                                                                               : 'transparent',
                                                                       color: 'inherit',
@@ -7480,7 +7482,9 @@
                                                                                               textOverflow: 'ellipsis',
                                                                                               whiteSpace: 'nowrap',
                                                                                               fontSize: '13px',
-                                                                                              color: !t && 'var(--ym-controls-color-primary-text-enabled_variant)',
+                                                                                              color: !t
+                                                                                                  ? 'var(--ym-controls-color-primary-text-enabled_variant)'
+                                                                                                  : void 0,
                                                                                           },
                                                                                           children: e.isThisDevice
                                                                                               ? 'Это устройство'

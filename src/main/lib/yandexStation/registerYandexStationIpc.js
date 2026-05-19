@@ -23,8 +23,8 @@ function registerYandexStationIpc(ipcMain, options = {}) {
         return await runtime.selectSpeaker(iotDeviceId);
     });
 
-    ipcMain.handle(Events.YANDEX_STATION_CLEAR_SPEAKER, () => {
-        return runtime.clearSpeaker();
+    ipcMain.handle(Events.YANDEX_STATION_CLEAR_SPEAKER, async () => {
+        return await runtime.clearSpeaker();
     });
 
     ipcMain.handle(Events.YANDEX_STATION_GET_ACTIVE_SPEAKER, () => {
