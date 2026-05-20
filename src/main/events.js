@@ -273,7 +273,9 @@ const handleApplicationEvents = (window) => {
     registerYandexStationIpc(electron_1.ipcMain, {
         runtime: yandexStationRuntime,
     });
-    yandexStationRuntime.start();
+    if (store_js_1.getModSettings()?.playerBarEnhancement?.enableYandexStationCast ?? true) {
+        yandexStationRuntime.start();
+    }
 
     updateGlobalShortcuts();
 
@@ -891,6 +893,13 @@ const handleApplicationEvents = (window) => {
         store_js_1.set(key, value);
         if ('string' == typeof key && ('modSettings.globalShortcuts' === key || key.startsWith('modSettings.globalShortcuts.'))) {
             updateGlobalShortcuts();
+        }
+        if (key === 'modSettings.playerBarEnhancement.enableYandexStationCast') {
+            if (value) {
+                yandexStationRuntime.start();
+            } else {
+                void yandexStationRuntime.stop();
+            }
         }
         MiniPlayer.updateSettingsState(store_js_1.getModSettings());
         const featurePatch = buildFeaturesPatch(key, value);

@@ -1856,6 +1856,7 @@
                             sonataState: sonataState,
                         } = (0, m.Pjs)(),
                         { notify: o } = (0, m.lkh)(),
+                        [isYandexStationCastToggleLocked, setIsYandexStationCastToggleLocked] = (0, v.useState)(!1),
                         onSwapDislikeToggle = (0, v.useCallback)(async (e) => {
                             console.log('modSettings.playerBarEnhancement.changeDislikeButtonPos toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.playerBarEnhancement.changeDislikeButtonPos', e);
@@ -1887,6 +1888,24 @@
                                 window.forcePlayerBarRerender?.();
                             }, 100);
                         }, []),
+                        onYandexStationCastToggle = (0, v.useCallback)(async (e) => {
+                            if (isYandexStationCastToggleLocked) return;
+                            setIsYandexStationCastToggleLocked(!0);
+                            try {
+                                console.log('modSettings.playerBarEnhancement.enableYandexStationCast toggled. Value: ', e);
+                                window.__pulseSyncYandexStationCastEnabled = e;
+                                window.dispatchEvent?.(new CustomEvent('pulse-sync-yandex-station-cast-setting-change', { detail: { enabled: e } }));
+                                e || (await window.pulseSyncYandexStationCast?.clear?.());
+                                await window.nativeSettings.set('modSettings.playerBarEnhancement.enableYandexStationCast', e);
+                                setTimeout(() => {
+                                    window.forcePlayerBarRerender?.();
+                                }, 100);
+                            } finally {
+                                setTimeout(() => {
+                                    setIsYandexStationCastToggleLocked(!1);
+                                }, 800);
+                            }
+                        }, [isYandexStationCastToggleLocked]),
                         onAlwaysWideBarToggle = (0, v.useCallback)(
                             async (e) => {
                                 console.log('modSettings.playerBarEnhancement.alwaysWideBar toggled. Value: ', e);
@@ -1972,6 +1991,16 @@
                                         description: 'Панель перестанет перекрашиваться под каждый трек',
                                         onChange: onDisablePerTrackColorsToggle,
                                         isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.disablePerTrackColors'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Кнопка Cast и поиск в колонок',
+                                        description: 'Показывает кнопку Cast и включает поиск Яндекс Станций в локальной сети.',
+                                        onChange: onYandexStationCastToggle,
+                                        isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.enableYandexStationCast').then((e) => e ?? !0),
+                                        disabled: isYandexStationCastToggleLocked,
                                     }),
                                 }),
                                 (0, n.jsx)('li', {

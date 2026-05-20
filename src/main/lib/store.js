@@ -201,6 +201,7 @@ const init = () => {
             alwaysShowTimestamps: false,
             changeDislikeButtonPos: true,
             disablePerTrackColors: false,
+            enableYandexStationCast: true,
             alwaysWideBar: false,
             playButtonType: 'yellow',
         },

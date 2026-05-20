@@ -944,6 +944,27 @@
                 description: 'WordsCardPopoverDisclaimer_description__0RhrR',
             };
         },
+        19953: (e) => {
+            e.exports = {
+                root: 'VibePlayerbarMeta_root___dH5G',
+                timecodeOverlay: 'VibePlayerbarMeta_timecodeOverlay__JhnCy',
+                trackName: 'VibePlayerbarMeta_trackName__eyhTE',
+                'fade-in': 'VibePlayerbarMeta_fade-in__rycjr',
+                center: 'VibePlayerbarMeta_center__6kbMi',
+                center_active: 'VibePlayerbarMeta_center_active__a1rFN',
+                center_withTimecode: 'VibePlayerbarMeta_center_withTimecode__hoQVg',
+                center_withExplicitMark: 'VibePlayerbarMeta_center_withExplicitMark__emag_',
+                center_withExplicitMark_playing: 'VibePlayerbarMeta_center_withExplicitMark_playing__SCPvO',
+                explicitMarkContainer: 'VibePlayerbarMeta_explicitMarkContainer__d0pfO',
+                center_withoutExplicitMark: 'VibePlayerbarMeta_center_withoutExplicitMark__OrzGP',
+                center_withoutExplicitMark_playing: 'VibePlayerbarMeta_center_withoutExplicitMark_playing__KnEhn',
+                scrollingTrackName: 'VibePlayerbarMeta_scrollingTrackName__gl_Cl',
+                trackNameText: 'VibePlayerbarMeta_trackNameText__9IgY2',
+                slider: 'VibePlayerbarMeta_slider__pyonb',
+                slider_active: 'VibePlayerbarMeta_slider_active__H1uGz',
+                explicitMark: 'VibePlayerbarMeta_explicitMark__G8dYl',
+            };
+        },
         20641: (e) => {
             e.exports = {
                 root: 'VibePage_root__dGvPX',
@@ -7184,6 +7205,13 @@
                         const i = pulseSyncFindLocalStation(e, t, a);
                         return (i && a.add(i), { accountSpeaker: e, localSpeaker: i ?? void 0, canUseLocal: !!i });
                     });
+                },
+                pulseSyncIsYandexStationCastEnabled = () => {
+                    try {
+                        return window.__pulseSyncYandexStationCastEnabled ?? window.ENABLE_YANDEX_STATION_CAST?.() ?? !0;
+                    } catch (e) {
+                        return !0;
+                    }
                 };
             let ac = (0, d.PA)((e) => {
                 var t;
@@ -7214,6 +7242,7 @@
                     [castActiveSpeakerId, setCastActiveSpeakerId] = (0, u.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
                     [castDevicesLoading, setCastDevicesLoading] = (0, u.useState)(!1),
                     [castDevicesLoaded, setCastDevicesLoaded] = (0, u.useState)(!1),
+                    [isYandexStationCastEnabled, setIsYandexStationCastEnabled] = (0, u.useState)(pulseSyncIsYandexStationCastEnabled()),
                     castControlRef = (0, u.useRef)(null),
                     castCloseTimerRef = (0, u.useRef)(null),
                     { formatMessage: S } = (0, R.A)(),
@@ -7236,6 +7265,12 @@
                         i?.id && electronBridgeModule.sendDownloadCurrentTrack(i.id);
                     }, [i]),
                     loadCastDevices = (0, u.useCallback)(async () => {
+                        if (!isYandexStationCastEnabled) {
+                            setCastDeviceRows([]);
+                            setCastDevicesLoaded(!0);
+                            setCastDevicesLoading(!1);
+                            return;
+                        }
                         try {
                             setCastDevicesLoading(!0);
                             const [e, t, a] = await Promise.all([
@@ -7250,7 +7285,7 @@
                         } finally {
                             (setCastDevicesLoaded(!0), setCastDevicesLoading(!1));
                         }
-                    }, []),
+                    }, [isYandexStationCastEnabled]),
                     closeCastPopover = (0, u.useCallback)(() => {
                         setCastPopoverOpen(!1);
                         clearTimeout(castCloseTimerRef.current);
@@ -7368,6 +7403,7 @@
                     castControl = (0, u.useMemo)(
                         () =>
                             b.isAdvertShown
+                                || !isYandexStationCastEnabled
                                 ? null
                                 : (0, l.jsxs)('div', {
                                       ref: castControlRef,
@@ -7531,6 +7567,7 @@
                                   }),
                         [
                             b.isAdvertShown,
+                            isYandexStationCastEnabled,
                             S,
                             toggleCastPopover,
                             closeCastPopover,
@@ -7625,6 +7662,19 @@
                         }
                     );
                 }, []);
+                (0, u.useEffect)(() => {
+                    const e = (e) => {
+                        const t = e.detail?.enabled ?? pulseSyncIsYandexStationCastEnabled();
+                        setIsYandexStationCastEnabled(t);
+                        t || (closeCastPopover(), setCastDeviceRows([]), setCastActiveSpeakerId(null));
+                    };
+                    return (
+                        window.addEventListener('pulse-sync-yandex-station-cast-setting-change', e),
+                        () => {
+                            window.removeEventListener('pulse-sync-yandex-station-cast-setting-change', e);
+                        }
+                    );
+                }, [closeCastPopover]);
                 (0, u.useEffect)(() => () => clearTimeout(castCloseTimerRef.current), []);
                 (0, u.useEffect)(() => {
                     if (!castPopoverMounted) return;
@@ -8750,7 +8800,110 @@
                 });
             });
             var aO = a(85218),
-                aR = a.n(aO);
+                aR = a.n(aO),
+                aH = a(53030),
+                aY = a(19953),
+                aJ = a.n(aY);
+            let aX = (0, d.PA)(() => {
+                var e, t, a, i;
+                let {
+                        sonataState: r,
+                        advert: s,
+                        fullscreenPlayer: o,
+                    } = (0, n.Pjs)(),
+                    { formatMessage: d } = (0, R.A)(),
+                    m = (0, n.NKK)(),
+                    _ = (0, n.eGp)(),
+                    p = r.entityMeta,
+                    v = !r.isPlaying && r.isVibeContext,
+                    y = null != (t = r.position) ? t : 0,
+                    A0 = null != (a = r.duration) ? a : 0,
+                    [g, x] = (0, u.useState)(null),
+                    b = (0, u.useRef)(!1),
+                    { state: f, toggleTrue: C, toggleFalse: k } = (0, G.e)(!1),
+                    j = !!A0 && !r.isGenerativeContext && f,
+                    A = b.current && null != g ? g : y,
+                    N = A0 > 0 ? (Math.min(A, A0) / A0) * 100 : 0,
+                    S = (0, n.E4p)(Math.round(A), Math.round(A0)),
+                    T = (0, n.E4p)(Math.round(A0), Math.round(A0)),
+                    w = (0, n.PMf)(A),
+                    I = (0, n.PMf)(A0),
+                    E = { '--track-progress': ''.concat(N, '%'), '--progress-transition': b.current ? 'none' : void 0 },
+                    L = (0, $.c)((e, t) => {
+                        s.isAdvertShown || ((b.current = !t), t ? null == _ || _.setProgress(e) : x(e));
+                    }),
+                    B = (0, $.c)((e) => {
+                        2 !== e.detail || !p || r.isGenerativeContext || s.isAdvertShown || (o.showFullscreenPlayerModal(), m({ to: tw.QT.PlayerScreen }));
+                    }),
+                    M = (0, et.L)(() => {
+                        if (r.isGenerativeContext) return (0, l.jsx)(F.Icon, { size: 'xs', variant: 'infinity' });
+                        let e = [];
+                        return (
+                            v && p && (e.push((0, aA.XV)(p.artists)), e.push(' — ')),
+                            (null == p ? void 0 : p.title) && e.push(p.title),
+                            !(null == p ? void 0 : p.isRemoved) && (null == p ? void 0 : p.version) && e.push('('.concat(p.version, ')')),
+                            e.join(' ')
+                        );
+                    });
+                return (0, l.jsx)('div', {
+                    className: aJ().root,
+                    style: E,
+                    children: (0, l.jsxs)('div', {
+                        className: (0, c.$)(aJ().center, {
+                            [aJ().center_withExplicitMark]: null == p ? void 0 : p.explicitDisclaimer,
+                            [aJ().center_withExplicitMark_playing]: r.isPlaying,
+                            [aJ().center_withoutExplicitMark]: !(null == p ? void 0 : p.explicitDisclaimer),
+                            [aJ().center_withoutExplicitMark_playing]: r.isPlaying,
+                            [aJ().center_withTimecode]: j,
+                            [aJ().center_active]: !r.isGenerativeContext,
+                        }),
+                        onMouseEnter: C,
+                        onMouseLeave: k,
+                        onClick: B,
+                        children: [
+                            (0, l.jsx)(
+                                aj,
+                                {
+                                    className: aJ().trackName,
+                                    scrollingClassName: aJ().scrollingTrackName,
+                                    contentClassName: aJ().trackNameText,
+                                    pauseOnHover: !1,
+                                    speed: 35,
+                                    gap: 32,
+                                    children: M,
+                                },
+                                ''.concat(null != (i = null == (e = r.entityMeta) ? void 0 : e.idWithContext) ? i : 'default', '-').concat(v),
+                            ),
+                            (null == p ? void 0 : p.explicitDisclaimer) &&
+                                (0, l.jsx)(h.Nq, {
+                                    containerClassName: aJ().explicitMarkContainer,
+                                    getDescriptionTexts: p.getDescriptionTexts,
+                                    size: 'xxxs',
+                                    variant: p.explicitDisclaimer,
+                                    className: aJ().explicitMark,
+                                    trackId: p.id,
+                                }),
+                            !r.isGenerativeContext && (0, l.jsx)('span', { className: aJ().timecodeOverlay, 'aria-hidden': !0, children: ''.concat(S, ' / ').concat(T) }),
+                            !r.isGenerativeContext &&
+                                (0, l.jsx)(aH.A, {
+                                    className: (0, c.$)(aJ().slider, { [aJ().slider_active]: !r.isGenerativeContext }),
+                                    'aria-label': d({ id: 'player-actions.timecode-control' }),
+                                    'aria-valuetext': ''.concat(w, ' / ').concat(I),
+                                    disabled: !p || s.isAdvertShown,
+                                    onChange: L,
+                                    onFocus: C,
+                                    onBlur: k,
+                                    maxValue: Math.round(A0),
+                                    mode: 'deferred',
+                                    value: Math.round(A),
+                                    showThumbVariant: 'never',
+                                    trackSize: 's',
+                                    thumbSize: 's',
+                                }),
+                        ],
+                    }),
+                });
+            });
             let aD = (0, d.PA)((e) => {
                 var t, a, i, r;
                 let { hoveredButtonClassName: s } = e,
@@ -8761,7 +8914,7 @@
                         settings: { isMobile: _ },
                     } = (0, n.Pjs)(),
                     theState = (0, n.eGp)(),
-                    { formatMessage: p } = (0, R.A)(),
+                    { formatMessage: waveFormatMessage } = (0, R.A)(),
                     v = (0, n.zwV)(),
                     y = (0, P.d0)(),
                     { isLiked: g, handleLike: x, isDisliked: b, handleDislike: f } = t0(),
@@ -8773,6 +8926,15 @@
                     S = null != (i = o.duration) ? i : 0,
                     T = S > 0 ? (Math.min(N, S) / S) * 100 : 0,
                     w = !o.isPlaying && !k,
+                    [waveCastPopoverOpen, setWaveCastPopoverOpen] = (0, u.useState)(!1),
+                    [waveCastPopoverMounted, setWaveCastPopoverMounted] = (0, u.useState)(!1),
+                    [waveCastDeviceRows, setWaveCastDeviceRows] = (0, u.useState)([]),
+                    [waveCastHoveredDeviceKey, setWaveCastHoveredDeviceKey] = (0, u.useState)(null),
+                    [waveCastActiveSpeakerId, setWaveCastActiveSpeakerId] = (0, u.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
+                    [waveCastDevicesLoading, setWaveCastDevicesLoading] = (0, u.useState)(!1),
+                    [isWaveYandexStationCastEnabled, setIsWaveYandexStationCastEnabled] = (0, u.useState)(pulseSyncIsYandexStationCastEnabled()),
+                    waveCastControlRef = (0, u.useRef)(null),
+                    waveCastCloseTimerRef = (0, u.useRef)(null),
                     I = (0, $.c)(() => {
                         if (o.entityMeta) {
                             if (m.modal.isOpened) return void m.modal.close();
@@ -8835,10 +8997,262 @@
                     M = (0, $.c)(async (e) => {
                         await y(o, e);
                     }),
+                    loadWaveCastDevices = (0, u.useCallback)(async () => {
+                        if (!isWaveYandexStationCastEnabled) {
+                            setWaveCastDeviceRows([]);
+                            setWaveCastDevicesLoading(!1);
+                            return;
+                        }
+                        try {
+                            setWaveCastDevicesLoading(!0);
+                            const [e, t, a] = await Promise.all([
+                                window.desktopEvents?.invoke?.('GET_ACCOUNT_SPEAKERS') ?? Promise.resolve([]),
+                                window.desktopEvents?.invoke?.('GET_LOCAL_SPEAKERS') ?? Promise.resolve([]),
+                                window.desktopEvents?.invoke?.('YANDEX_STATION_GET_ACTIVE_SPEAKER') ?? Promise.resolve(null),
+                            ]);
+                            setWaveCastActiveSpeakerId(a?.accountSpeaker?.id ?? window.pulseSyncYandexStationCast?.activeSpeakerId ?? null);
+                            setWaveCastDeviceRows([{ isThisDevice: !0 }, ...pulseSyncBuildCastDeviceRows(Array.isArray(e) ? e : [], Array.isArray(t) ? t : [])]);
+                        } catch (e) {
+                            (console.warn('Failed to load Yandex Station cast devices', e), setWaveCastDeviceRows([]));
+                        } finally {
+                            setWaveCastDevicesLoading(!1);
+                        }
+                    }, [isWaveYandexStationCastEnabled]),
+                    closeWaveCastPopover = (0, u.useCallback)(() => {
+                        setWaveCastPopoverOpen(!1);
+                        clearTimeout(waveCastCloseTimerRef.current);
+                        waveCastCloseTimerRef.current = setTimeout(() => {
+                            setWaveCastPopoverMounted(!1);
+                            setWaveCastHoveredDeviceKey(null);
+                        }, 160);
+                    }, []),
+                    openWaveCastPopover = (0, u.useCallback)(() => {
+                        clearTimeout(waveCastCloseTimerRef.current);
+                        void loadWaveCastDevices();
+                        setWaveCastPopoverMounted(!0);
+                        requestAnimationFrame(() => setWaveCastPopoverOpen(!0));
+                    }, [loadWaveCastDevices]),
+                    toggleWaveCastPopover = (0, u.useCallback)(() => {
+                        waveCastPopoverOpen ? closeWaveCastPopover() : openWaveCastPopover();
+                    }, [waveCastPopoverOpen, closeWaveCastPopover, openWaveCastPopover]),
+                    waveCastControl = (0, u.useMemo)(
+                        () =>
+                            d.isAdvertShown
+                                || !isWaveYandexStationCastEnabled
+                                ? null
+                                : (0, l.jsxs)('div', {
+                                      ref: waveCastControlRef,
+                                      style: { position: 'relative', display: 'flex', alignItems: 'center' },
+                                      children: [
+                                          (0, l.jsx)(p.$, {
+                                              className: aR().button,
+                                              radius: 'round',
+                                              size: 'xxxs',
+                                              variant: 'text',
+                                              withRipple: !1,
+                                              'aria-label': waveFormatMessage({ id: 'player-actions.cast' }),
+                                              icon: (0, l.jsx)(F.Icon, { variant: 'cast', size: 'xs' }),
+                                              onClick: toggleWaveCastPopover,
+                                              style: waveCastActiveSpeakerId ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
+                                          }),
+                                          waveCastPopoverMounted &&
+                                              (0, l.jsx)('div', {
+                                                  className: 'PulseSync_castPopover',
+                                                  style: {
+                                                      opacity: waveCastPopoverOpen ? 1 : 0,
+                                                      transform: waveCastPopoverOpen ? 'translateY(0)' : 'translateY(10px)',
+                                                      pointerEvents: waveCastPopoverOpen ? 'auto' : 'none',
+                                                  },
+                                                  children: waveCastDevicesLoading
+                                                      ? (0, l.jsx)('div', { style: { padding: '10px 12px', fontSize: '13px' }, children: 'Поиск устройств...' })
+                                                      : waveCastDeviceRows.length
+                                                        ? waveCastDeviceRows.map((e) => {
+                                                              const t = !e.isThisDevice && !e.canUseLocal,
+                                                                  a = e.isThisDevice ? void 0 : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
+                                                                  i = e.accountSpeaker?.id,
+                                                                  r =
+                                                                      (e.isThisDevice && !waveCastActiveSpeakerId) ||
+                                                                      (!e.isThisDevice && waveCastActiveSpeakerId === i),
+                                                                  s = e.isThisDevice
+                                                                      ? waveCastActiveSpeakerId
+                                                                          ? 'Отключить колонку'
+                                                                          : 'Сейчас выбрано'
+                                                                      : waveCastActiveSpeakerId === i
+                                                                        ? 'Подключено'
+                                                                        : e.canUseLocal
+                                                                          ? 'В сети'
+                                                                          : 'Вне локальной сети',
+                                                                  o = e.isThisDevice
+                                                                      ? 'pulse-sync-wave-this-device'
+                                                                      : (e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId);
+                                                              return (0, l.jsxs)('button', {
+                                                                  key: o,
+                                                                  type: 'button',
+                                                                  disabled: t,
+                                                                  onClick: t
+                                                                      ? void 0
+                                                                      : async () => {
+                                                                            if (e.isThisDevice) {
+                                                                                window.pulseSyncYandexStationCast?.clear
+                                                                                    ? await window.pulseSyncYandexStationCast.clear()
+                                                                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_CLEAR_SPEAKER');
+                                                                                setWaveCastActiveSpeakerId(null);
+                                                                                closeWaveCastPopover();
+                                                                                return;
+                                                                            }
+                                                                            const t = e.accountSpeaker?.id;
+                                                                            if (!t) return;
+                                                                            try {
+                                                                                const e = window.pulseSyncYandexStationCast?.activate
+                                                                                    ? await window.pulseSyncYandexStationCast.activate(t)
+                                                                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', t);
+                                                                                e?.ok && (setWaveCastActiveSpeakerId(t), closeWaveCastPopover());
+                                                                            } catch (e) {
+                                                                                console.warn('Failed to select Yandex Station cast device', e);
+                                                                            }
+                                                                        },
+                                                                  onMouseEnter: t ? void 0 : () => setWaveCastHoveredDeviceKey(o),
+                                                                  onMouseLeave: t ? void 0 : () => setWaveCastHoveredDeviceKey(null),
+                                                                  style: {
+                                                                      width: '100%',
+                                                                      display: 'flex',
+                                                                      flexDirection: 'row',
+                                                                      alignItems: 'center',
+                                                                      justifyContent: 'space-between',
+                                                                      padding: '9px 10px',
+                                                                      border: 0,
+                                                                      borderRadius: '6px',
+                                                                      background:
+                                                                          r || (!t && waveCastHoveredDeviceKey === o)
+                                                                              ? 'var(--ym-controls-color-secondary-default-hovered)'
+                                                                              : 'transparent',
+                                                                      color: 'inherit',
+                                                                      textAlign: 'left',
+                                                                      cursor: t ? 'default' : 'pointer',
+                                                                      opacity: t ? 0.48 : 1,
+                                                                      transition: 'background 120ms ease, opacity 120ms ease',
+                                                                  },
+                                                                  children: [
+                                                                      (0, l.jsx)('div', {
+                                                                          style: {
+                                                                              display: 'flex',
+                                                                              alignItems: 'flex-start',
+                                                                              flexDirection: 'column',
+                                                                              gap: '2px',
+                                                                          },
+                                                                          children: [
+                                                                              (0, l.jsx)('span', {
+                                                                                  style: { display: 'flex', gap: '5px', alignItems: 'baseline' },
+                                                                                  children: [
+                                                                                      (0, l.jsx)('span', {
+                                                                                          style: {
+                                                                                              maxWidth: '100%',
+                                                                                              overflow: 'hidden',
+                                                                                              textOverflow: 'ellipsis',
+                                                                                              whiteSpace: 'nowrap',
+                                                                                              fontSize: '13px',
+                                                                                              color: !t
+                                                                                                  ? 'var(--ym-controls-color-primary-text-enabled_variant)'
+                                                                                                  : void 0,
+                                                                                          },
+                                                                                          children: e.isThisDevice
+                                                                                              ? 'Это устройство'
+                                                                                              : (e.accountSpeaker?.name ?? e.accountSpeaker?.id ?? 'Yandex Station'),
+                                                                                      }),
+                                                                                      a &&
+                                                                                          (0, l.jsx)('span', {
+                                                                                              style: {
+                                                                                                  maxWidth: '100%',
+                                                                                                  overflow: 'hidden',
+                                                                                                  textOverflow: 'ellipsis',
+                                                                                                  whiteSpace: 'nowrap',
+                                                                                                  fontSize: '11px',
+                                                                                                  color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                                              },
+                                                                                              children: a,
+                                                                                          }),
+                                                                                  ],
+                                                                              }),
+                                                                              (0, l.jsx)('span', {
+                                                                                  style: { fontSize: '11px', color: 'var(--ym-controls-color-secondary-text-enabled)' },
+                                                                                  children: s,
+                                                                              }),
+                                                                          ],
+                                                                      }),
+                                                                      r &&
+                                                                          (0, l.jsx)('span', {
+                                                                              children: (0, l.jsx)('svg', {
+                                                                                  width: '16',
+                                                                                  height: '16',
+                                                                                  fill: 'currentColor',
+                                                                                  xmlns: 'http://www.w3.org/2000/svg',
+                                                                                  children: (0, l.jsx)('path', {
+                                                                                      d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z',
+                                                                                  }),
+                                                                              }),
+                                                                          }),
+                                                                  ],
+                                                              });
+                                                          })
+                                                        : (0, l.jsx)('div', { style: { padding: '10px 12px', fontSize: '13px' }, children: 'Устройства не найдены' }),
+                                              }),
+                                      ],
+                                  }),
+                        [
+                            d.isAdvertShown,
+                            isWaveYandexStationCastEnabled,
+                            waveFormatMessage,
+                            toggleWaveCastPopover,
+                            closeWaveCastPopover,
+                            waveCastActiveSpeakerId,
+                            waveCastPopoverOpen,
+                            waveCastPopoverMounted,
+                            waveCastDevicesLoading,
+                            waveCastDeviceRows,
+                            waveCastHoveredDeviceKey,
+                        ],
+                    ),
                     O = { '--track-progress': ''.concat(T, '%') };
+                (0, u.useEffect)(() => {
+                    const e = (e) => {
+                        setWaveCastActiveSpeakerId(e.detail?.activeSpeakerId ?? null);
+                    };
+                    return (
+                        window.addEventListener('pulse-sync-yandex-station-cast-change', e),
+                        () => {
+                            window.removeEventListener('pulse-sync-yandex-station-cast-change', e);
+                        }
+                    );
+                }, []);
+                (0, u.useEffect)(() => {
+                    const e = (e) => {
+                        const t = e.detail?.enabled ?? pulseSyncIsYandexStationCastEnabled();
+                        setIsWaveYandexStationCastEnabled(t);
+                        t || (closeWaveCastPopover(), setWaveCastDeviceRows([]), setWaveCastActiveSpeakerId(null));
+                    };
+                    return (
+                        window.addEventListener('pulse-sync-yandex-station-cast-setting-change', e),
+                        () => {
+                            window.removeEventListener('pulse-sync-yandex-station-cast-setting-change', e);
+                        }
+                    );
+                }, [closeWaveCastPopover]);
+                (0, u.useEffect)(() => () => clearTimeout(waveCastCloseTimerRef.current), []);
+                (0, u.useEffect)(() => {
+                    if (!waveCastPopoverMounted) return;
+                    const e = (e) => {
+                        waveCastControlRef.current?.contains?.(e.target) || closeWaveCastPopover();
+                    };
+                    return (
+                        document.addEventListener('pointerdown', e, !0),
+                        () => {
+                            document.removeEventListener('pointerdown', e, !0);
+                        }
+                    );
+                }, [waveCastPopoverMounted, closeWaveCastPopover]);
                 return (0, l.jsxs)('section', {
                     role: 'region',
-                    'aria-label': p({ id: 'a11y-regions.player' }),
+                    'aria-label': waveFormatMessage({ id: 'a11y-regions.player' }),
                     className: aR().root,
                     style: O,
                     children: [
@@ -8858,39 +9272,9 @@
                                         onVolumeClick: M,
                                     }),
                                 (0, l.jsx)(h._I, { className: aR().button, disabled: !k || d.isAdvertShown, isDisliked: b, onClick: f, iconSize: 'xs' }),
-                                (0, l.jsxs)('div', {
-                                    className: (0, c.$)(aR().center, { [aR().center_withExplicitMark]: null == k ? void 0 : k.explicitDisclaimer }),
-                                    onClick: L,
-                                    onKeyDown: B,
-                                    role: 'button',
-                                    tabIndex: 0,
-                                    'aria-label': p({ id: 'player-actions.fullscreen-button' }),
-                                    children: [
-                                        (0, l.jsx)(
-                                            aj,
-                                            {
-                                                className: aR().trackName,
-                                                scrollingClassName: aR().scrollingTrackName,
-                                                contentClassName: aR().trackNameText,
-                                                pauseOnHover: !1,
-                                                speed: 35,
-                                                gap: 32,
-                                                children: E,
-                                            },
-                                            ''.concat(null != (r = null == (t = o.entityMeta) ? void 0 : t.idWithContext) ? r : 'default', '-').concat(A),
-                                        ),
-                                        (null == k ? void 0 : k.explicitDisclaimer) &&
-                                            (0, l.jsx)(h.Nq, {
-                                                containerClassName: aR().explicitMarkContainer,
-                                                getDescriptionTexts: k.getDescriptionTexts,
-                                                size: 'xxxs',
-                                                variant: k.explicitDisclaimer,
-                                                className: aR().explicitMark,
-                                                trackId: k.id,
-                                            }),
-                                    ],
-                                }),
+                                (0, l.jsx)(aX, {}),
                                 (0, l.jsx)(h.cy, { className: aR().button, disabled: !k || d.isAdvertShown, isLiked: g, onClick: x, iconSize: 'xs' }),
+                                waveCastControl,
                                 !_ && (0, l.jsx)(aM, { buttonClassName: (0, c.$)(aR().button, aR().important) }),
                                 (0, l.jsx)(t3, {}),
                             ],

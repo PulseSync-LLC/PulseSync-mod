@@ -57,6 +57,7 @@ window.findCssRuleByPartialName = function (pName) {
     const YANDEX_STATION_LOCAL_TRACK_START_DELAY_CAP_MS = 750;
     const YANDEX_STATION_VOLUME_STEP = 5;
     const YANDEX_STATION_VOLUME_THROTTLE_MS = 250;
+    const YANDEX_STATION_CAST_SETTING_KEY = 'modSettings.playerBarEnhancement.enableYandexStationCast';
     const yandexStationOriginalPlayerMethods = new WeakMap();
     const yandexStationAutomaticTrackSyncState = new WeakMap();
     const yandexStationAudioGraphConnections = new WeakMap();
@@ -119,6 +120,17 @@ window.findCssRuleByPartialName = function (pName) {
             percent: steppedPercent,
             normalized: steppedPercent / 100,
         };
+    };
+    const isYandexStationCastEnabled = () => {
+        try {
+            if (typeof window.ENABLE_YANDEX_STATION_CAST === 'function') {
+                return window.ENABLE_YANDEX_STATION_CAST() !== false;
+            }
+
+            return window.nativeSettings?.get?.(YANDEX_STATION_CAST_SETTING_KEY) !== false;
+        } catch {
+            return true;
+        }
     };
 
     const getEntityStableId = (entity) => {
@@ -327,7 +339,7 @@ window.findCssRuleByPartialName = function (pName) {
         savedClientVolume: undefined,
         suppressVolumeSync: false,
         isActive() {
-            return Boolean(this.activeSpeakerId);
+            return isYandexStationCastEnabled() && Boolean(this.activeSpeakerId);
         },
         startMuteGuard() {
             clearInterval(this.muteTimer);
@@ -340,6 +352,10 @@ window.findCssRuleByPartialName = function (pName) {
             setLocalAudioMuted(false);
         },
         async activate(iotDeviceId) {
+            if (!isYandexStationCastEnabled()) {
+                return { ok: false, reason: 'Yandex Station cast is disabled' };
+            }
+
             const result = await window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.selectSpeaker, iotDeviceId);
             if (!result?.ok) return result;
 
@@ -387,7 +403,9 @@ window.findCssRuleByPartialName = function (pName) {
             this.volumeThrottleTimer = null;
             this.lastVolumeSentAt = 0;
 
-            await this.sendCommand('PAUSE', {}, { syncLocalPlayback: false });
+            if (this.activeSpeakerId) {
+                await this.sendCommand('PAUSE', {}, { syncLocalPlayback: false, ignoreEnabled: true });
+            }
             this.activeSpeakerId = null;
             this.initialTrackSent = false;
             this.lastVolumePercent = null;
@@ -406,7 +424,8 @@ window.findCssRuleByPartialName = function (pName) {
             return await window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.clearSpeaker);
         },
         sendCommand(action, payload = {}, options = {}) {
-            if (!this.isActive()) return Promise.resolve({ ok: false, reason: 'Yandex Station cast is not active' });
+            if (!options.ignoreEnabled && !isYandexStationCastEnabled()) return Promise.resolve({ ok: false, reason: 'Yandex Station cast is disabled' });
+            if (!this.activeSpeakerId) return Promise.resolve({ ok: false, reason: 'Yandex Station cast is not active' });
 
             const request = window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.control, action, payload) ?? Promise.resolve({ ok: false });
 
@@ -1051,6 +1070,15 @@ window.findCssRuleByPartialName = function (pName) {
 
             if (payload.type === 'update') {
                 applyAddonSettingsUpdate(payload.addon, payload.settings);
+            }
+        });
+        window.desktopEvents.on('NATIVE_STORE_UPDATE', (event, key, value) => {
+            if (key !== YANDEX_STATION_CAST_SETTING_KEY) return;
+
+            window.__pulseSyncYandexStationCastEnabled = value !== false;
+            window.dispatchEvent(new CustomEvent('pulse-sync-yandex-station-cast-setting-change', { detail: { enabled: value !== false } }));
+            if (value === false) {
+                void ensureYandexStationCastBridge().clear();
             }
         });
     };

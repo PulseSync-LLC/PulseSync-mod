@@ -54,12 +54,16 @@ class YandexStationRuntime {
         this.activeSpeakerId = null;
         this.cookieRefreshTimer = null;
         this.cookieChangedHandler = null;
+        this.enabled = false;
+        this.runId = 0;
     }
 
     start() {
         if (this.started) return;
 
         this.started = true;
+        this.enabled = true;
+        this.runId += 1;
         this.attachCookieRefresh();
 
         void this.refreshAccountSpeakers();
@@ -71,15 +75,48 @@ class YandexStationRuntime {
         this.localSpeakersRefreshInterval.unref?.();
     }
 
+    async stop() {
+        if (!this.started && !this.enabled) return;
+
+        try {
+            await this.clearSpeaker();
+        } catch (error) {
+            this.logger.warn?.(
+                'Yandex Station runtime stop clear failed',
+                sanitizeJson({
+                    code: error.code,
+                    statusCode: error.statusCode,
+                    endpoint: error.endpoint,
+                    message: error.message,
+                }),
+            );
+        }
+
+        this.enabled = false;
+        this.runId += 1;
+        this.dispose();
+        this.started = false;
+        this.accountSpeakersCache = [];
+        this.localSpeakersCache = [];
+        this.localSpeakersLastLoggedCount = null;
+        this.accountSpeakersPromise = null;
+        this.localSpeakersPromise = null;
+        this.activeSpeakerId = null;
+        this.logger.info?.('Yandex Station runtime stopped');
+    }
+
     getAccountSpeakersCache() {
+        if (!this.enabled) return [];
         return cloneCache(this.accountSpeakersCache);
     }
 
     getLocalSpeakersCache() {
+        if (!this.enabled) return [];
         return cloneCache(this.localSpeakersCache);
     }
 
     getResolvedSpeakersCache() {
+        if (!this.enabled) return [];
         const usedLocalSpeakers = new Set();
 
         return this.accountSpeakersCache.map((accountSpeaker) => {
@@ -104,6 +141,13 @@ class YandexStationRuntime {
     }
 
     async selectSpeaker(iotDeviceId) {
+        if (!this.enabled) {
+            return {
+                ok: false,
+                reason: 'Yandex Station cast is disabled',
+            };
+        }
+
         const speaker = this.getResolvedSpeakersCache().find((speaker) => speaker.accountSpeaker?.id === iotDeviceId);
 
         if (!speaker?.canUseLocal) {
@@ -171,6 +215,13 @@ class YandexStationRuntime {
     }
 
     async sendMediaCommand(action, payload = {}) {
+        if (!this.enabled) {
+            return {
+                ok: false,
+                reason: 'Yandex Station cast is disabled',
+            };
+        }
+
         const speaker = this.getActiveSpeaker();
 
         if (!speaker?.canUseLocal) {
@@ -224,11 +275,16 @@ class YandexStationRuntime {
     }
 
     async refreshAccountSpeakers() {
+        if (!this.enabled) return this.accountSpeakersCache;
         if (this.accountSpeakersPromise) return await this.accountSpeakersPromise;
 
         this.accountSpeakersPromise = (async () => {
+            const runId = this.runId;
             try {
+                if (!this.enabled || runId !== this.runId) return this.accountSpeakersCache;
                 const cookies = await this.getYandexCookiesFromSession();
+
+                if (!this.enabled || runId !== this.runId) return this.accountSpeakersCache;
 
                 if (!cookies.length) {
                     this.logger.info?.('Yandex Station account speakers prewarm skipped: no Yandex cookies in Electron session');
@@ -237,7 +293,9 @@ class YandexStationRuntime {
 
                 this.logger.info?.('Yandex Station account speakers prewarm started', { cookies: cookies.length });
                 this.service.setCookies(cookies);
-                this.accountSpeakersCache = await this.service.getAccountSpeakers();
+                const accountSpeakers = await this.service.getAccountSpeakers();
+                if (!this.enabled || runId !== this.runId) return this.accountSpeakersCache;
+                this.accountSpeakersCache = accountSpeakers;
                 this.logger.info?.('Yandex Station account speakers cache updated', { count: this.accountSpeakersCache.length });
 
                 return this.accountSpeakersCache;
@@ -262,11 +320,16 @@ class YandexStationRuntime {
     }
 
     async refreshLocalSpeakers() {
+        if (!this.enabled) return this.localSpeakersCache;
         if (this.localSpeakersPromise) return await this.localSpeakersPromise;
 
         this.localSpeakersPromise = (async () => {
+            const runId = this.runId;
             try {
-                this.localSpeakersCache = await this.service.discoverLocalSpeakers();
+                if (!this.enabled || runId !== this.runId) return this.localSpeakersCache;
+                const localSpeakers = await this.service.discoverLocalSpeakers();
+                if (!this.enabled || runId !== this.runId) return this.localSpeakersCache;
+                this.localSpeakersCache = localSpeakers;
                 const count = this.localSpeakersCache.length;
 
                 if (this.localSpeakersLastLoggedCount !== count) {
@@ -296,6 +359,7 @@ class YandexStationRuntime {
     }
 
     scheduleAccountSpeakersRefresh() {
+        if (!this.enabled) return;
         clearTimeout(this.cookieRefreshTimer);
         this.cookieRefreshTimer = setTimeout(() => {
             void this.refreshAccountSpeakers();
