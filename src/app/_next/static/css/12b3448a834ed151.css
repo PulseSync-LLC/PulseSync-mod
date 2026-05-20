@@ -1048,7 +1048,7 @@
     flex-direction: column;
     gap: var(--ym-spacer-size-xxs);
     right: calc(50% - 130px);
-    bottom: calc(100% + 10px);
+    bottom: calc(100% + 20px);
     width: 260px;
     max-height: 320px;
     overflow-y: auto;
