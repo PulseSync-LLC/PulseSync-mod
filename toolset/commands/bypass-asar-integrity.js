@@ -4,7 +4,14 @@ module.exports = {
     order: 70,
     usage: 'bypass-asar-integrity [--dest=<path>] [--oldYMHashOverride=<hash>]',
     flags: ['dest', 'oldYMHashOverride'],
-    async execute({ core, options }) {
-        await core.integrityUtils.bypassAsarIntegrity(options.dest);
+    createTasks({ options }) {
+        return [
+            {
+                title: 'Обход проверки целостности app.asar',
+                task: async ({ core }) => {
+                    await core.integrityUtils.bypassAsarIntegrity(options.dest);
+                },
+            },
+        ];
     },
 };

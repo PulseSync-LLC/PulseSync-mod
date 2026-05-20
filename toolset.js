@@ -5,6 +5,8 @@ const { createToolsetCore } = require('./toolset/core.js');
 const { loadCommands } = require('./toolset/utils/loadCommands.js');
 const { resolveCommandOptions } = require('./toolset/utils/options.js');
 const { printHelp } = require('./toolset/utils/help.js');
+const { runCommand } = require('./toolset/utils/taskRunner.js');
+const { createForceOpenTask } = require('./toolset/utils/commandTasks.js');
 
 installToolsetConsoleStyles();
 
@@ -25,33 +27,29 @@ installToolsetConsoleStyles();
         console.warn('Неизвестная команда:', rawCommandName, '\nИнтерпретирую как help...');
     }
 
-    const shouldMeasureExecutionTime = rawCommandName && command.name !== 'help';
-
-    if (shouldMeasureExecutionTime) {
-        console.time(`${rawCommandName} исполнен за`);
+    if (command.name === 'help') {
+        await command.execute({
+            args,
+            core,
+            commands,
+            printHelp,
+        });
+        return;
     }
 
-    try {
-        const options = await resolveCommandOptions(command.name, args, core);
-        await command.execute({
+    const options = await resolveCommandOptions(command.name, args, core);
+    const afterTasks = options.forceOpen ? [createForceOpenTask()] : [];
+
+    await runCommand(
+        command,
+        {
             args,
             core,
             options,
             commands,
             printHelp,
-        });
-
-        if (options.forceOpen) {
-            const isYmRunning = await core.appControlUtils.isYandexMusicRunning();
-            if (!isYmRunning) {
-                console.log('Запуск Яндекс Музыки...');
-                await core.appControlUtils.launchYandexMusic();
-                console.log('Яндекс Музыка запущена');
-            }
-        }
-    } finally {
-        if (shouldMeasureExecutionTime) {
-            console.timeEnd(`${rawCommandName} исполнен за`);
-        }
-    }
+            state: {},
+        },
+        { afterTasks },
+    );
 })();

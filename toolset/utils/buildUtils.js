@@ -86,7 +86,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             .digest('hex');
     }
 
-    async function buildNativeModule(moduleName) {
+    function getNativeModuleBuildInfo(moduleName) {
         const nativeDir = path.join(REPO_ROOT, 'native', moduleName);
         const gypPath = path.join(nativeDir, 'binding.gyp');
 
@@ -111,31 +111,54 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         const destNode = path.join(destDir, `${targetName}.node`);
         const metaPath = path.join(destDir, '.build-meta.json');
         const buildKey = getNativeBuildKey(nativeDir);
+        const upToDate = fs.existsSync(destNode) && fs.existsSync(metaPath) && JSON.parse(fs.readFileSync(metaPath, 'utf8')).buildKey === buildKey;
 
-        if (fs.existsSync(destNode) && fs.existsSync(metaPath) && JSON.parse(fs.readFileSync(metaPath, 'utf8')).buildKey === buildKey) {
-            console.log(`Нативный модуль ${targetName} актуален, сборка пропущена`);
+        return {
+            buildKey,
+            destDir,
+            destNode,
+            gypPath,
+            metaPath,
+            moduleName,
+            nativeDir,
+            targetName,
+            upToDate,
+        };
+    }
+
+    async function getNativeModuleBuildInfos() {
+        const nativeDir = path.join(REPO_ROOT, 'native');
+        const modules = (await fsp.readdir(nativeDir, { withFileTypes: true })).filter((dirent) => dirent.isDirectory()).map((dirent) => dirent.name);
+        return modules.map(getNativeModuleBuildInfo);
+    }
+
+    async function buildNativeModule(moduleName) {
+        const info = getNativeModuleBuildInfo(moduleName);
+
+        if (info.upToDate) {
+            console.log(`Нативный модуль ${info.targetName} актуален, сборка пропущена`);
             return;
         }
 
-        console.log(`Сборка нативного модуля: ${targetName}`);
-        execSync('yarn run build', { cwd: nativeDir, stdio: 'inherit' });
+        console.log(`Сборка нативного модуля: ${info.targetName}`);
+        execSync('yarn run build', { cwd: info.nativeDir, stdio: 'pipe' });
 
-        const builtNode = path.join(nativeDir, 'build', 'Release', `${targetName}.node`);
-        await fsp.mkdir(destDir, { recursive: true });
-        await fsp.copyFile(builtNode, destNode);
+        const builtNode = path.join(info.nativeDir, 'build', 'Release', `${info.targetName}.node`);
+        await fsp.mkdir(info.destDir, { recursive: true });
+        await fsp.copyFile(builtNode, info.destNode);
 
-        const jsDir = path.join(nativeDir, 'js');
+        const jsDir = path.join(info.nativeDir, 'js');
         if (fs.existsSync(jsDir)) {
             for (const file of await fsp.readdir(jsDir)) {
-                await fsp.copyFile(path.join(jsDir, file), path.join(destDir, file));
+                await fsp.copyFile(path.join(jsDir, file), path.join(info.destDir, file));
             }
         }
 
         fs.writeFileSync(
-            metaPath,
+            info.metaPath,
             JSON.stringify(
                 {
-                    buildKey,
+                    buildKey: info.buildKey,
                     builtAt: new Date().toISOString(),
                 },
                 null,
@@ -143,26 +166,30 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             ),
         );
 
-        console.log(`Модуль ${targetName} собран`);
+        console.log(`Модуль ${info.targetName} собран`);
     }
 
     async function buildNativeModules() {
         console.log('Собираю нативные модули');
-        const nativeDir = path.join(REPO_ROOT, 'native');
-        const modules = (await fsp.readdir(nativeDir, { withFileTypes: true })).filter((dirent) => dirent.isDirectory()).map((dirent) => dirent.name);
+        const modules = await getNativeModuleBuildInfos();
 
-        for (const moduleName of modules) {
-            await buildNativeModule(moduleName);
+        for (const moduleInfo of modules) {
+            await buildNativeModule(moduleInfo.moduleName);
         }
     }
 
-    async function buildMiniPlayer(force = false) {
+    function getMiniPlayerBuildInfo(force = false) {
         const miniPlayerDir = path.join(REPO_ROOT, 'miniplayer');
         const metaPath = path.join(miniPlayerDir, '.build-meta.json');
 
         if (!fs.existsSync(miniPlayerDir)) {
-            console.log('Миниплеер не найден, сборка пропущена');
-            return;
+            return {
+                exists: false,
+                force,
+                metaPath,
+                miniPlayerDir,
+                upToDate: false,
+            };
         }
 
         const buildKey = crypto
@@ -177,34 +204,57 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             )
             .digest('hex');
 
+        let upToDate = false;
         if (!force && fs.existsSync(metaPath)) {
             const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
             if (meta.buildKey === buildKey) {
-                console.log('Миниплеер актуален, сборка пропущена');
-                return;
+                upToDate = true;
             }
+        }
+
+        return {
+            buildKey,
+            exists: true,
+            force,
+            metaPath,
+            miniPlayerDir,
+            upToDate,
+        };
+    }
+
+    async function buildMiniPlayer(force = false) {
+        const info = getMiniPlayerBuildInfo(force);
+
+        if (!info.exists) {
+            console.log('Миниплеер не найден, сборка пропущена');
+            return;
+        }
+
+        if (info.upToDate) {
+            console.log('Миниплеер актуален, сборка пропущена');
+            return;
         }
 
         console.log('Сборка миниплеера...');
         console.time('Миниплеер собран');
 
         execSync('yarn', {
-            cwd: miniPlayerDir,
-            stdio: 'inherit',
+            cwd: info.miniPlayerDir,
+            stdio: 'pipe',
         });
 
         execSync('yarn run build', {
-            cwd: miniPlayerDir,
-            stdio: 'inherit',
+            cwd: info.miniPlayerDir,
+            stdio: 'pipe',
         });
 
         console.timeEnd('Миниплеер собран');
 
         fs.writeFileSync(
-            metaPath,
+            info.metaPath,
             JSON.stringify(
                 {
-                    buildKey,
+                    buildKey: info.buildKey,
                     builtAt: new Date().toISOString(),
                 },
                 null,
@@ -252,6 +302,38 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return summary;
     }
 
+    async function resolveBuildSource(srcPath = SRC_PATH) {
+        const workPath = await extractUtils.resolvePathShortcut(srcPath);
+
+        if (!workPath) {
+            console.error('Прервано. Не удалось резолвнуть --src');
+            return undefined;
+        }
+
+        return workPath;
+    }
+
+    async function prepareModernizedBuildSource(workPath) {
+        await prepareModernizedSource(workPath, MODERNIZED_SRC_PATH);
+        return MODERNIZED_SRC_PATH;
+    }
+
+    async function prepareMinifiedBuildSource(workPath) {
+        await fsp.rm(MINIFIED_SRC_PATH, { recursive: true, force: true });
+        await minifyDir(workPath, MINIFIED_SRC_PATH);
+        return MINIFIED_SRC_PATH;
+    }
+
+    async function archiveAsar(workPath, destDir) {
+        await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}/**/*' });
+    }
+
+    async function cleanupBuildArtifacts(cleanupPaths) {
+        for (const cleanupPath of cleanupPaths.reverse()) {
+            await fsp.rm(cleanupPath, { recursive: true, force: true });
+        }
+    }
+
     async function build(
         { srcPath = SRC_PATH, destDir = DEFAULT_DIST_PATH, noMinify = false, noNativeModules = false, modernize = false } = {
             srcPath: SRC_PATH,
@@ -261,10 +343,9 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             modernize: false,
         },
     ) {
-        let workPath = await extractUtils.resolvePathShortcut(srcPath);
+        let workPath = await resolveBuildSource(srcPath);
 
         if (!workPath) {
-            console.error('Прервано. Не удалось резолвнуть --src');
             return false;
         }
 
@@ -281,7 +362,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             if (modernize) {
                 console.log('Модернизация...');
                 console.time('Модернизация завершена');
-                await prepareModernizedSource(workPath, MODERNIZED_SRC_PATH);
+                await prepareModernizedBuildSource(workPath);
                 console.timeEnd('Модернизация завершена');
                 workPath = MODERNIZED_SRC_PATH;
                 cleanupPaths.push(MODERNIZED_SRC_PATH);
@@ -290,8 +371,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             if (!noMinify) {
                 console.log('Минификация...');
                 console.time('Минификация завершена');
-                await fsp.rm(MINIFIED_SRC_PATH, { recursive: true, force: true });
-                await minifyDir(workPath, MINIFIED_SRC_PATH);
+                await prepareMinifiedBuildSource(workPath);
                 console.timeEnd('Минификация завершена');
                 workPath = MINIFIED_SRC_PATH;
                 cleanupPaths.push(MINIFIED_SRC_PATH);
@@ -299,12 +379,10 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
             console.log(`Архивация из ${workPath} в ${destDir}`);
             console.time('Архивация завершена');
-            await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}/**/*' });
+            await archiveAsar(workPath, destDir);
             console.timeEnd('Архивация завершена');
         } finally {
-            for (const cleanupPath of cleanupPaths.reverse()) {
-                await fsp.rm(cleanupPath, { recursive: true, force: true });
-            }
+            await cleanupBuildArtifacts(cleanupPaths);
 
             if (cleanupPaths.includes(MINIFIED_SRC_PATH)) {
                 console.log('Временный минифицированный код удалён');
@@ -416,7 +494,17 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
     return {
         build,
+        archiveAsar,
+        buildMiniPlayer,
+        buildNativeModule,
+        buildNativeModules,
+        cleanupBuildArtifacts,
+        getMiniPlayerBuildInfo,
+        getNativeModuleBuildInfos,
         prepareReleaseAsarArtifact,
+        prepareMinifiedBuildSource,
+        prepareModernizedBuildSource,
+        resolveBuildSource,
         buildDirectly,
         spoof,
         modernizeSource,

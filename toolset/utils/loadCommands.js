@@ -8,10 +8,10 @@ async function loadCommands(commandsDir) {
     for (const entry of entries) {
         if (!entry.isFile() || path.extname(entry.name) !== '.js') continue;
 
-        const commandPath = path.join(commandsDir, entry.name);
+        const commandPath = path.resolve(commandsDir, entry.name);
         const command = require(commandPath);
 
-        if (!command?.name || typeof command.execute !== 'function') {
+        if (!command?.name || (typeof command.execute !== 'function' && typeof command.createTasks !== 'function')) {
             throw new Error(`Invalid command module: ${commandPath}`);
         }
 

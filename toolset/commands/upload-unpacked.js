@@ -4,9 +4,16 @@ module.exports = {
     order: 31,
     usage: 'upload-unpacked [--src=<path>]',
     flags: ['src'],
-    async execute({ core, options }) {
-        await core.releaseUtils.uploadUnpacked({
-            sourcePath: options.src,
-        });
+    createTasks({ options }) {
+        return [
+            {
+                title: 'Упаковка и загрузка app.asar.unpacked',
+                task: async ({ core }) => {
+                    await core.releaseUtils.uploadUnpacked({
+                        sourcePath: options.src,
+                    });
+                },
+            },
+        ];
     },
 };

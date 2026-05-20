@@ -1,5 +1,5 @@
 async function createRuntime() {
-    require('dotenv').config();
+    require('dotenv').config({ quiet: true });
 
     const asar = require('@electron/asar');
     const fs = require('fs');
@@ -21,6 +21,7 @@ async function createRuntime() {
 
     const execAsync = promisify(exec);
     const REPO_ROOT = path.resolve(__dirname, '..', '..');
+    const runtimeMessages = [];
 
     const constants = {
         REPO_ROOT,
@@ -46,20 +47,20 @@ async function createRuntime() {
 
     if (process.platform === 'darwin') {
         if (!fs.existsSync(constants.DIRECT_DIST_PATH)) {
-            console.warn('Не удалось найти директорию с Яндекс Музыкой:', constants.DIRECT_DIST_PATH, '\nПереопределите MAC_APP_PATH в toolset_v3.js');
+            runtimeMessages.push(`Не удалось найти директорию с Яндекс Музыкой: ${constants.DIRECT_DIST_PATH}\nПереопределите MAC_APP_PATH в toolset_v3.js`);
         }
         if (!fs.existsSync(constants.INFO_PLIST_PATH)) {
-            console.warn('Не удалось найти Info.plist:', constants.INFO_PLIST_PATH, '\nПереопределите MAC_APP_PATH в toolset_v3.js');
+            runtimeMessages.push(`Не удалось найти Info.plist: ${constants.INFO_PLIST_PATH}\nПереопределите MAC_APP_PATH в toolset_v3.js`);
         }
     }
 
     if (!fs.existsSync(constants.DIRECT_DIST_PATH)) {
-        console.warn('Не удалось найти директорию с Яндекс Музыкой:', constants.DIRECT_DIST_PATH, '\nПереопределите WINDOWS_APP_PATH в toolset_v3.js');
+        runtimeMessages.push(`Не удалось найти директорию с Яндекс Музыкой: ${constants.DIRECT_DIST_PATH}\nПереопределите WINDOWS_APP_PATH в toolset_v3.js`);
     }
 
     if (!fs.existsSync(constants.TEMP_DIR)) {
         fs.mkdirSync(constants.TEMP_DIR, { recursive: true });
-        console.log('Создана временная директория:', constants.TEMP_DIR);
+        runtimeMessages.push(`Создана временная директория: ${constants.TEMP_DIR}`);
     }
 
     return {
@@ -95,6 +96,7 @@ async function createRuntime() {
         state: {
             oldYMHash: null,
             oldYMHashOverride: null,
+            runtimeMessages,
         },
     };
 }

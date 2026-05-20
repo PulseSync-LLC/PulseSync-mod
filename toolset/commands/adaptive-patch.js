@@ -1,33 +1,67 @@
+const { COLLAPSED_SUBTASKS_OPTIONS, createWorkflowTask } = require('../utils/commandTasks.js');
+const { wrapTaskDefinitions } = require('../utils/listrOutput.js');
+
 module.exports = {
     name: 'adaptive-patch',
     description: 'адаптивно переносит unified diff на другую версию билда, подбирая chunk и module id по контексту',
     order: 65,
     usage: 'adaptive-patch (--src=<path> | --version=<semver>) [--patchFile=<path> | --patchDir=<path>] [--dryRun]',
     flags: ['src', 'version', 'patchFile', 'patchDir', 'dryRun'],
-    async execute({ args, core, options }) {
-        let version = args.version;
+    createTasks({ args, options }) {
+        return [
+            createWorkflowTask('Workflow adaptive-patch', [
+                {
+                    title: 'Разрешение target',
+                    task: async (context, task) => {
+                        let version = args.version;
 
-        if (version === 'latest') version = await core.extractUtils.getLatestExtractedVersion();
+                        if (version === 'latest') version = await context.core.extractUtils.getLatestExtractedVersion();
 
-        const targetPath = version ? await core.patchUtils.resolveExtractedVersionPath(version) : options.src;
-        if (!targetPath) {
-            throw new Error('Для adaptive-patch требуется --src=<path> или --version=<semver>');
-        }
+                        const targetPath = version ? await context.core.patchUtils.resolveExtractedVersionPath(version) : options.src;
+                        if (!targetPath) {
+                            throw new Error('Для adaptive-patch требуется --src=<path> или --version=<semver>');
+                        }
 
-        const patchFiles = await core.patchUtils.resolvePatchInput({
-            patchFile: args.patchFile,
-            patchDir: args.patchDir,
-        });
+                        context.state.targetPath = targetPath;
+                        task.output = targetPath;
+                    },
+                },
+                {
+                    title: 'Разрешение patch input',
+                    task: async (context, task) => {
+                        context.state.patchFiles = await context.core.patchUtils.resolvePatchInput({
+                            patchFile: args.patchFile,
+                            patchDir: args.patchDir,
+                        });
 
-        for (const patchFile of patchFiles) {
-            console.log(`Применяю patch: ${patchFile}`);
-            const summary = await core.patchUtils.applyAdaptivePatchFile(targetPath, patchFile, {
-                dryRun: args.dryRun ?? false,
-            });
+                        task.output = `${context.state.patchFiles.length} patch-файлов`;
+                    },
+                },
+                {
+                    title: 'Применение patch-файлов',
+                    skip: (context) => (context.state.patchFiles.length ? false : 'patch-файлы не найдены'),
+                    task: (context, task) =>
+                        task.newListr(
+                            () =>
+                                wrapTaskDefinitions(
+                                    context.state.patchFiles.map((patchFile) => ({
+                                        title: patchFile,
+                                        task: async (ctx, patchTask) => {
+                                            const summary = await ctx.core.patchUtils.applyAdaptivePatchFile(ctx.state.targetPath, patchFile, {
+                                                dryRun: args.dryRun ?? false,
+                                            });
 
-            for (const entry of summary) {
-                console.log(`${entry.dryRun ? '[dry-run]' : '[применён]'} ${entry.sourcePath} -> ${entry.targetPath}`);
-            }
-        }
+                                            patchTask.output = `${summary.length} изменений`;
+                                            for (const entry of summary) {
+                                                console.log(`${entry.dryRun ? '[dry-run]' : '[применён]'} ${entry.sourcePath} -> ${entry.targetPath}`);
+                                            }
+                                        },
+                                    })),
+                                ),
+                            COLLAPSED_SUBTASKS_OPTIONS,
+                        ),
+                },
+            ]),
+        ];
     },
 };
