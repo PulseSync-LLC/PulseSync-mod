@@ -1755,6 +1755,7 @@
                         SETTINGS_EQUALIZER_BUTTON: 'SETTINGS_EQUALIZER_BUTTON',
                         SETTINGS_EQUALIZER_BUTTON_DESCRIPTION: 'SETTINGS_EQUALIZER_BUTTON_DESCRIPTION',
                         SETTINGS_KIDS_BUTTON: 'SETTINGS_KIDS_BUTTON',
+                        SETTINGS_AI_CONTENT_REDUCTION_BUTTON: 'SETTINGS_AI_CONTENT_REDUCTION_BUTTON',
                     },
                     wizard: {
                         WIZARD_MODAL: 'WIZARD_MODAL',
@@ -18128,6 +18129,7 @@
                     (e.WebNextErrorAutoSkip = 'WebNextErrorAutoSkip'),
                     (e.WebNextConcertsLocation = 'WebNextConcertsLocation'),
                     (e.WebNextDesktopWebFreemium = 'WebNextDesktopWebFreemium'),
+                    (e.WebNextAIContentReductionSetting = 'WebNextAIContentReductionSetting'),
                     e
                 );
             })({});
