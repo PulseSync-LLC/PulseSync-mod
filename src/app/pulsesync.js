@@ -56,6 +56,7 @@ window.findCssRuleByPartialName = function (pName) {
     const YANDEX_STATION_CROSSFADE_EVENT = 'ShouldAutomoveForward';
     const YANDEX_STATION_SYNC_SEEK_DELAY_MS = 500;
     const YANDEX_STATION_LOCAL_TRACK_START_DELAY_CAP_MS = 750;
+    const YANDEX_STATION_INITIAL_PAUSE_SYNC_GUARD_MS = 2000;
     const YANDEX_STATION_VOLUME_STEP = 5;
     const YANDEX_STATION_VOLUME_THROTTLE_MS = 250;
     const YANDEX_STATION_CAST_SETTING_KEY = 'modSettings.playerBarEnhancement.enableYandexStationCast';
@@ -336,6 +337,8 @@ window.findCssRuleByPartialName = function (pName) {
         lastVolumePercent: null,
         pendingVolume: null,
         volumeThrottleTimer: null,
+        initialPauseSyncGuardTimer: null,
+        ignoreInitialStationPause: false,
         lastVolumeSentAt: 0,
         savedClientVolume: undefined,
         suppressVolumeSync: false,
@@ -352,6 +355,19 @@ window.findCssRuleByPartialName = function (pName) {
             this.muteTimer = null;
             setLocalAudioMuted(false);
         },
+        startInitialPauseSyncGuard() {
+            clearTimeout(this.initialPauseSyncGuardTimer);
+            this.ignoreInitialStationPause = true;
+            this.initialPauseSyncGuardTimer = setTimeout(() => {
+                this.ignoreInitialStationPause = false;
+                this.initialPauseSyncGuardTimer = null;
+            }, YANDEX_STATION_INITIAL_PAUSE_SYNC_GUARD_MS);
+        },
+        stopInitialPauseSyncGuard() {
+            clearTimeout(this.initialPauseSyncGuardTimer);
+            this.initialPauseSyncGuardTimer = null;
+            this.ignoreInitialStationPause = false;
+        },
         async activate(iotDeviceId) {
             if (!isYandexStationCastEnabled()) {
                 return { ok: false, reason: 'Yandex Station cast is disabled' };
@@ -359,6 +375,8 @@ window.findCssRuleByPartialName = function (pName) {
 
             const result = await window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.selectSpeaker, iotDeviceId);
             if (!result?.ok) return result;
+
+            this.stopInitialPauseSyncGuard();
 
             const playerInst = getPlayerInstance();
             const stationVolume = Number(result.volume ?? result.state?.volume);
@@ -387,6 +405,7 @@ window.findCssRuleByPartialName = function (pName) {
             this.lastVolumeSentAt = 0;
 
             if (isPlayerPlaying(getPlayerInstance())) {
+                this.startInitialPauseSyncGuard();
                 this.startMuteGuard();
                 void this.sendInitialCurrentTrack();
             }
@@ -411,6 +430,7 @@ window.findCssRuleByPartialName = function (pName) {
             this.initialTrackSent = false;
             this.lastVolumePercent = null;
             this.savedClientVolume = undefined;
+            this.stopInitialPauseSyncGuard();
             this.stopMuteGuard();
             if (volumeToRestore !== undefined) {
                 this.suppressVolumeSync = true;
@@ -1108,7 +1128,13 @@ window.findCssRuleByPartialName = function (pName) {
             }
 
             if (payload?.playbackState === 'paused') {
+                if (bridge.ignoreInitialStationPause) return;
                 syncLocalPlaybackState(false);
+                return;
+            }
+
+            if (payload?.playbackState === 'playing') {
+                bridge.stopInitialPauseSyncGuard();
             }
         });
     };

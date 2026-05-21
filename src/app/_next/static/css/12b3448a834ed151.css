@@ -1048,9 +1048,9 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    right: calc(50% - 130px);
+    right: calc(50% - 160px);
     bottom: calc(100% + 10px);
-    width: 260px;
+    width: 320px;
     max-height: 320px;
     overflow-y: auto;
     padding: var(--ym-spacer-size-s);
@@ -1189,11 +1189,12 @@
 
 .PulseSync_castPopoverItemTitle {
     color: inherit;
+    flex: 0 0 auto;
     font-size: inherit;
     line-height: inherit;
-    max-width: 14rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    min-width: 0;
+    overflow: visible;
+    overflow-wrap: anywhere;
     white-space: nowrap;
 }
 
@@ -1201,9 +1202,36 @@
     color: hsla(0, 0%, 100%, 0.5);
     font-size: var(--ym-font-size-label-xs);
     line-height: var(--ym-font-line-height-label-xs);
-    max-width: 14rem;
+    max-width: 17rem;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.PulseSync_castPopoverItemRoom {
+    display: block;
+    flex: 1 1 auto;
+    max-width: min(7.5rem, 100%);
+    min-width: 0;
+}
+
+.PulseSync_castPopoverItemRoomText {
+    animation: PulseSync_castPopoverRoomMarquee 5200ms linear infinite;
+    display: inline-block;
+    min-width: 100%;
+    padding-inline-end: 1.5rem;
+    transform: translateX(0);
+}
+
+@keyframes PulseSync_castPopoverRoomMarquee {
+    0%,
+    20% {
+        transform: translateX(0);
+    }
+    80%,
+    100% {
+        transform: translateX(min(0px, calc(-100% + 7.5rem)));
+    }
 }
 
 .PulseSync_experimentsListScroll {

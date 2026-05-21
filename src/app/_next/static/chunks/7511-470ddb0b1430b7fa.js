@@ -7226,7 +7226,7 @@
                 pulseSyncGetCastPopoverShift = (e) => {
                     const t = e?.getBoundingClientRect?.();
                     if (!t) return 0;
-                    const a = 260,
+                    const a = 320,
                         i = 12,
                         r = window.innerWidth || document.documentElement?.clientWidth || a,
                         n = t.left + t.width / 2,
@@ -7429,8 +7429,7 @@
                     ),
                     castControl = (0, u.useMemo)(
                         () =>
-                            b.isAdvertShown
-                                || !isYandexStationCastEnabled
+                            b.isAdvertShown || !isYandexStationCastEnabled
                                 ? null
                                 : (0, l.jsxs)('div', {
                                       ref: castControlRef,
@@ -7451,124 +7450,160 @@
                                                   className: 'PulseSync_castPopover',
                                                   style: {
                                                       opacity: castPopoverOpen ? 1 : 0,
-                                                      transform: 'translateX('.concat(castPopoverShift, 'px) ').concat(castPopoverOpen ? 'translateY(0)' : 'translateY(10px)'),
+                                                      transform: 'translateX('
+                                                          .concat(castPopoverShift, 'px) ')
+                                                          .concat(castPopoverOpen ? 'translateY(0)' : 'translateY(10px)'),
                                                       pointerEvents: castPopoverOpen ? 'auto' : 'none',
                                                   },
                                                   children: !castDevicesLoaded
-                                                      ? (0, l.jsx)('div', { className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_shimmer', children: 'Поиск устройств...' })
-                                                      : (0, l.jsxs)('div', {
-                                                            className: 'PulseSync_castPopoverContent',
-                                                            children: [
-                                                            (0, l.jsx)(
-                                                                'div',
-                                                                {
-                                                                    className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_refreshing'.concat(
-                                                                        castDevicesLoading ? ' PulseSync_castPopoverStatus_visible' : '',
-                                                                    ),
-                                                                    children: 'Обновляем список устройств...',
-                                                                },
-                                                                'cast-refreshing',
-                                                            ),
-                                                            castDeviceRows.length
-                                                                ? castDeviceRows.map((e) => {
-                                                              const t = !e.isThisDevice && !e.canUseLocal,
-                                                                  a = e.isThisDevice ? void 0 : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
-                                                                  r = e.accountSpeaker?.id,
-                                                                  isConnected =
-                                                                      (e.isThisDevice && !castActiveSpeakerId) || (!e.isThisDevice && castActiveSpeakerId === r),
-                                                                  i = e.isThisDevice
-                                                                      ? castActiveSpeakerId
-                                                                          ? 'Отключить колонку'
-                                                                          : 'Сейчас выбрано'
-                                                                      : castActiveSpeakerId === r
-                                                                        ? 'Подключено'
-                                                                        : e.canUseLocal
-                                                                          ? 'В сети'
-                                                                          : 'Вне локальной сети',
-                                                                  n = e.isThisDevice
-                                                                      ? 'pulse-sync-this-device'
-                                                                      : (e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId);
-                                                              return (0, l.jsxs)('button', {
-                                                                  key: n,
-                                                                  type: 'button',
-                                                                  className: 'PulseSync_castPopoverItem'.concat(isConnected || (!t && castHoveredDeviceKey === n) ? ' PulseSync_castPopoverItem_active' : ''),
-                                                                  disabled: t,
-                                                                  onClick: t
-                                                                      ? void 0
-                                                                      : async () => {
-                                                                            if (e.isThisDevice) {
-                                                                                window.pulseSyncYandexStationCast?.clear
-                                                                                    ? await window.pulseSyncYandexStationCast.clear()
-                                                                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_CLEAR_SPEAKER');
-                                                                                setCastActiveSpeakerId(null);
-                                                                                closeCastPopover();
-                                                                                return;
-                                                                            }
-                                                                            const t = e.accountSpeaker?.id;
-                                                                            if (!t) return;
-                                                                            try {
-                                                                                const e = window.pulseSyncYandexStationCast?.activate
-                                                                                    ? await window.pulseSyncYandexStationCast.activate(t)
-                                                                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', t);
-                                                                                e?.ok && (setCastActiveSpeakerId(t), closeCastPopover());
-                                                                            } catch (e) {
-                                                                                console.warn('Failed to select Yandex Station cast device', e);
-                                                                            }
+                                                      ? (0, l.jsx)('div', {
+                                                            className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_shimmer',
+                                                            children: 'Поиск устройств...',
+                                                        })
+                                                      : (0, l.jsxs)(
+                                                            'div',
+                                                            {
+                                                                className: 'PulseSync_castPopoverContent',
+                                                                children: [
+                                                                    (0, l.jsx)(
+                                                                        'div',
+                                                                        {
+                                                                            className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_refreshing'.concat(
+                                                                                castDevicesLoading ? ' PulseSync_castPopoverStatus_visible' : '',
+                                                                            ),
+                                                                            children: 'Обновляем список устройств...',
                                                                         },
-                                                                  onMouseEnter: t ? void 0 : () => setCastHoveredDeviceKey(n),
-                                                                  onMouseLeave: t ? void 0 : () => setCastHoveredDeviceKey(null),
-                                                                  children: [
-                                                                      (0, l.jsx)('div', {
-                                                                          style: {
-                                                                              display: 'flex',
-                                                                              alignItems: 'flex-start',
-                                                                              flexDirection: 'column',
-                                                                              gap: '2px',
-                                                                          },
-                                                                          children: [
-                                                                              (0, l.jsx)('span', {
-                                                                                  style: {
-                                                                                      display: 'flex',
-                                                                                      gap: '5px',
-                                                                                      alignItems: 'baseline',
-                                                                                  },
+                                                                        'cast-refreshing',
+                                                                    ),
+                                                                    castDeviceRows.length
+                                                                        ? castDeviceRows.map((e) => {
+                                                                              const t = !e.isThisDevice && !e.canUseLocal,
+                                                                                  a = e.isThisDevice
+                                                                                      ? void 0
+                                                                                      : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
+                                                                                  r = e.accountSpeaker?.id,
+                                                                                  isConnected =
+                                                                                      (e.isThisDevice && !castActiveSpeakerId) ||
+                                                                                      (!e.isThisDevice && castActiveSpeakerId === r),
+                                                                                  i = e.isThisDevice
+                                                                                      ? castActiveSpeakerId
+                                                                                          ? 'Отключить колонку'
+                                                                                          : 'Сейчас выбрано'
+                                                                                      : castActiveSpeakerId === r
+                                                                                        ? 'Подключено'
+                                                                                        : e.canUseLocal
+                                                                                          ? 'В сети'
+                                                                                          : 'Вне локальной сети',
+                                                                                  n = e.isThisDevice
+                                                                                      ? 'pulse-sync-this-device'
+                                                                                      : (e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId);
+                                                                              return (0, l.jsxs)('button', {
+                                                                                  key: n,
+                                                                                  type: 'button',
+                                                                                  className: 'PulseSync_castPopoverItem'.concat(
+                                                                                      isConnected || (!t && castHoveredDeviceKey === n)
+                                                                                          ? ' PulseSync_castPopoverItem_active'
+                                                                                          : '',
+                                                                                  ),
+                                                                                  disabled: t,
+                                                                                  onClick: t
+                                                                                      ? void 0
+                                                                                      : async () => {
+                                                                                            if (e.isThisDevice) {
+                                                                                                window.pulseSyncYandexStationCast?.clear
+                                                                                                    ? await window.pulseSyncYandexStationCast.clear()
+                                                                                                    : await window.desktopEvents?.invoke?.(
+                                                                                                          'YANDEX_STATION_CLEAR_SPEAKER',
+                                                                                                      );
+                                                                                                setCastActiveSpeakerId(null);
+                                                                                                closeCastPopover();
+                                                                                                return;
+                                                                                            }
+                                                                                            const t = e.accountSpeaker?.id;
+                                                                                            if (!t) return;
+                                                                                            try {
+                                                                                                const e = window.pulseSyncYandexStationCast?.activate
+                                                                                                    ? await window.pulseSyncYandexStationCast.activate(t)
+                                                                                                    : await window.desktopEvents?.invoke?.(
+                                                                                                          'YANDEX_STATION_SELECT_SPEAKER',
+                                                                                                          t,
+                                                                                                      );
+                                                                                                e?.ok && (setCastActiveSpeakerId(t), closeCastPopover());
+                                                                                            } catch (e) {
+                                                                                                console.warn('Failed to select Yandex Station cast device', e);
+                                                                                            }
+                                                                                        },
+                                                                                  onMouseEnter: t ? void 0 : () => setCastHoveredDeviceKey(n),
+                                                                                  onMouseLeave: t ? void 0 : () => setCastHoveredDeviceKey(null),
                                                                                   children: [
-                                                                                      (0, l.jsx)('span', {
-                                                                                          className: 'PulseSync_castPopoverItemTitle',
-                                                                                          children: e.isThisDevice
-                                                                                              ? 'Это устройство'
-                                                                                              : (e.accountSpeaker?.name ?? e.accountSpeaker?.id ?? 'Yandex Station'),
+                                                                                      (0, l.jsx)('div', {
+                                                                                          style: {
+                                                                                              display: 'flex',
+                                                                                              alignItems: 'flex-start',
+                                                                                              flexDirection: 'column',
+                                                                                              minWidth: 0,
+                                                                                              flex: '1 1 auto',
+                                                                                              gap: '2px',
+                                                                                          },
+                                                                                          children: [
+                                                                                              (0, l.jsx)('span', {
+                                                                                                  style: {
+                                                                                                      display: 'flex',
+                                                                                                      gap: '5px',
+                                                                                                      alignItems: 'baseline',
+                                                                                                      minWidth: 0,
+                                                                                                      maxWidth: '100%',
+                                                                                                  },
+                                                                                                  children: [
+                                                                                                      (0, l.jsx)('span', {
+                                                                                                          className: 'PulseSync_castPopoverItemTitle',
+                                                                                                          children: e.isThisDevice
+                                                                                                              ? 'Это устройство'
+                                                                                                              : (e.accountSpeaker?.name ??
+                                                                                                                e.accountSpeaker?.id ??
+                                                                                                                'Yandex Station'),
+                                                                                                      }),
+                                                                                                      a &&
+                                                                                                          (0, l.jsx)('span', {
+                                                                                                              className:
+                                                                                                                  'PulseSync_castPopoverItemMeta PulseSync_castPopoverItemRoom',
+                                                                                                              children: (0, l.jsx)('span', {
+                                                                                                                  className: 'PulseSync_castPopoverItemRoomText',
+                                                                                                                  children: a,
+                                                                                                              }),
+                                                                                                          }),
+                                                                                                  ],
+                                                                                              }),
+                                                                                              (0, l.jsx)('span', {
+                                                                                                  className: 'PulseSync_castPopoverItemMeta',
+                                                                                                  children: i,
+                                                                                              }),
+                                                                                          ],
                                                                                       }),
-                                                                                      a &&
+                                                                                      isConnected &&
                                                                                           (0, l.jsx)('span', {
-                                                                                              className: 'PulseSync_castPopoverItemMeta',
-                                                                                              children: a,
+                                                                                              children: (0, l.jsx)('svg', {
+                                                                                                  width: '16',
+                                                                                                  height: '16',
+                                                                                                  fill: 'currentColor',
+                                                                                                  xmlns: 'http://www.w3.org/2000/svg',
+                                                                                                  children: (0, l.jsx)('path', {
+                                                                                                      d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z',
+                                                                                                  }),
+                                                                                              }),
                                                                                           }),
                                                                                   ],
-                                                                              }),
-                                                                              (0, l.jsx)('span', {
-                                                                                  className: 'PulseSync_castPopoverItemMeta',
-                                                                                  children: i,
-                                                                              }),
-                                                                          ],
-                                                                      }),
-                                                                      isConnected &&
-                                                                          (0, l.jsx)('span', {
-                                                                              children: (0, l.jsx)('svg', {
-                                                                                  width: '16',
-                                                                                  height: '16',
-                                                                                  fill: 'currentColor',
-                                                                                  xmlns: 'http://www.w3.org/2000/svg',
-                                                                                  children: (0, l.jsx)('path', {
-                                                                                      d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z',
-                                                                                  }),
-                                                                              }),
-                                                                          }),
-                                                                  ],
-                                                              });
-                                                          })
-                                                        : (0, l.jsx)('div', { className: 'PulseSync_castPopoverStatus', children: 'Устройства не найдены' }, 'cast-empty'),
-                                                        ] }, 'cast-content'),
+                                                                              });
+                                                                          })
+                                                                        : (0, l.jsx)(
+                                                                              'div',
+                                                                              { className: 'PulseSync_castPopoverStatus', children: 'Устройства не найдены' },
+                                                                              'cast-empty',
+                                                                          ),
+                                                                ],
+                                                            },
+                                                            'cast-content',
+                                                        ),
                                               }),
                                       ],
                                   }),
@@ -9046,7 +9081,10 @@
                                 setDevicesLoading: setWaveCastDevicesLoading,
                             });
                         } catch (e) {
-                            (console.warn('Failed to load Yandex Station cast devices', e), setWaveCastDeviceRows([]), setWaveCastDevicesLoaded(!1), setWaveCastDevicesLoading(!1));
+                            (console.warn('Failed to load Yandex Station cast devices', e),
+                                setWaveCastDeviceRows([]),
+                                setWaveCastDevicesLoaded(!1),
+                                setWaveCastDevicesLoading(!1));
                         }
                     }, [isWaveYandexStationCastEnabled]),
                     closeWaveCastPopover = (0, u.useCallback)(() => {
@@ -9073,8 +9111,7 @@
                     }, [waveCastPopoverOpen, closeWaveCastPopover, openWaveCastPopover]),
                     waveCastControl = (0, u.useMemo)(
                         () =>
-                            d.isAdvertShown
-                                || !isWaveYandexStationCastEnabled
+                            d.isAdvertShown || !isWaveYandexStationCastEnabled
                                 ? null
                                 : (0, l.jsxs)('div', {
                                       ref: waveCastControlRef,
@@ -9096,121 +9133,160 @@
                                                   className: 'PulseSync_castPopover',
                                                   style: {
                                                       opacity: waveCastPopoverOpen ? 1 : 0,
-                                                      transform: 'translateX('.concat(waveCastPopoverShift, 'px) ').concat(waveCastPopoverOpen ? 'translateY(0)' : 'translateY(10px)'),
+                                                      transform: 'translateX('
+                                                          .concat(waveCastPopoverShift, 'px) ')
+                                                          .concat(waveCastPopoverOpen ? 'translateY(0)' : 'translateY(10px)'),
                                                       pointerEvents: waveCastPopoverOpen ? 'auto' : 'none',
                                                   },
                                                   children: !waveCastDevicesLoaded
-                                                      ? (0, l.jsx)('div', { className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_shimmer', children: 'Поиск устройств...' })
-                                                      : (0, l.jsxs)('div', {
-                                                            className: 'PulseSync_castPopoverContent',
-                                                            children: [
-                                                            (0, l.jsx)(
-                                                                'div',
-                                                                {
-                                                                    className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_refreshing'.concat(
-                                                                        waveCastDevicesLoading ? ' PulseSync_castPopoverStatus_visible' : '',
-                                                                    ),
-                                                                    children: 'Обновляем список устройств...',
-                                                                },
-                                                                'wave-cast-refreshing',
-                                                            ),
-                                                            waveCastDeviceRows.length
-                                                                ? waveCastDeviceRows.map((e) => {
-                                                              const t = !e.isThisDevice && !e.canUseLocal,
-                                                                  a = e.isThisDevice ? void 0 : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
-                                                                  i = e.accountSpeaker?.id,
-                                                                  r =
-                                                                      (e.isThisDevice && !waveCastActiveSpeakerId) ||
-                                                                      (!e.isThisDevice && waveCastActiveSpeakerId === i),
-                                                                  s = e.isThisDevice
-                                                                      ? waveCastActiveSpeakerId
-                                                                          ? 'Отключить колонку'
-                                                                          : 'Сейчас выбрано'
-                                                                      : waveCastActiveSpeakerId === i
-                                                                        ? 'Подключено'
-                                                                        : e.canUseLocal
-                                                                          ? 'В сети'
-                                                                          : 'Вне локальной сети',
-                                                                  o = e.isThisDevice
-                                                                      ? 'pulse-sync-wave-this-device'
-                                                                      : (e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId);
-                                                              return (0, l.jsxs)('button', {
-                                                                  key: o,
-                                                                  type: 'button',
-                                                                  className: 'PulseSync_castPopoverItem'.concat(r || (!t && waveCastHoveredDeviceKey === o) ? ' PulseSync_castPopoverItem_active' : ''),
-                                                                  disabled: t,
-                                                                  onClick: t
-                                                                      ? void 0
-                                                                      : async () => {
-                                                                            if (e.isThisDevice) {
-                                                                                window.pulseSyncYandexStationCast?.clear
-                                                                                    ? await window.pulseSyncYandexStationCast.clear()
-                                                                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_CLEAR_SPEAKER');
-                                                                                setWaveCastActiveSpeakerId(null);
-                                                                                closeWaveCastPopover();
-                                                                                return;
-                                                                            }
-                                                                            const t = e.accountSpeaker?.id;
-                                                                            if (!t) return;
-                                                                            try {
-                                                                                const e = window.pulseSyncYandexStationCast?.activate
-                                                                                    ? await window.pulseSyncYandexStationCast.activate(t)
-                                                                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', t);
-                                                                                e?.ok && (setWaveCastActiveSpeakerId(t), closeWaveCastPopover());
-                                                                            } catch (e) {
-                                                                                console.warn('Failed to select Yandex Station cast device', e);
-                                                                            }
+                                                      ? (0, l.jsx)('div', {
+                                                            className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_shimmer',
+                                                            children: 'Поиск устройств...',
+                                                        })
+                                                      : (0, l.jsxs)(
+                                                            'div',
+                                                            {
+                                                                className: 'PulseSync_castPopoverContent',
+                                                                children: [
+                                                                    (0, l.jsx)(
+                                                                        'div',
+                                                                        {
+                                                                            className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_refreshing'.concat(
+                                                                                waveCastDevicesLoading ? ' PulseSync_castPopoverStatus_visible' : '',
+                                                                            ),
+                                                                            children: 'Обновляем список устройств...',
                                                                         },
-                                                                  onMouseEnter: t ? void 0 : () => setWaveCastHoveredDeviceKey(o),
-                                                                  onMouseLeave: t ? void 0 : () => setWaveCastHoveredDeviceKey(null),
-                                                                  children: [
-                                                                      (0, l.jsx)('div', {
-                                                                          style: {
-                                                                              display: 'flex',
-                                                                              alignItems: 'flex-start',
-                                                                              flexDirection: 'column',
-                                                                              gap: '2px',
-                                                                          },
-                                                                          children: [
-                                                                              (0, l.jsx)('span', {
-                                                                                  style: { display: 'flex', gap: '5px', alignItems: 'baseline' },
+                                                                        'wave-cast-refreshing',
+                                                                    ),
+                                                                    waveCastDeviceRows.length
+                                                                        ? waveCastDeviceRows.map((e) => {
+                                                                              const t = !e.isThisDevice && !e.canUseLocal,
+                                                                                  a = e.isThisDevice
+                                                                                      ? void 0
+                                                                                      : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
+                                                                                  i = e.accountSpeaker?.id,
+                                                                                  r =
+                                                                                      (e.isThisDevice && !waveCastActiveSpeakerId) ||
+                                                                                      (!e.isThisDevice && waveCastActiveSpeakerId === i),
+                                                                                  s = e.isThisDevice
+                                                                                      ? waveCastActiveSpeakerId
+                                                                                          ? 'Отключить колонку'
+                                                                                          : 'Сейчас выбрано'
+                                                                                      : waveCastActiveSpeakerId === i
+                                                                                        ? 'Подключено'
+                                                                                        : e.canUseLocal
+                                                                                          ? 'В сети'
+                                                                                          : 'Вне локальной сети',
+                                                                                  o = e.isThisDevice
+                                                                                      ? 'pulse-sync-wave-this-device'
+                                                                                      : (e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId);
+                                                                              return (0, l.jsxs)('button', {
+                                                                                  key: o,
+                                                                                  type: 'button',
+                                                                                  className: 'PulseSync_castPopoverItem'.concat(
+                                                                                      r || (!t && waveCastHoveredDeviceKey === o)
+                                                                                          ? ' PulseSync_castPopoverItem_active'
+                                                                                          : '',
+                                                                                  ),
+                                                                                  disabled: t,
+                                                                                  onClick: t
+                                                                                      ? void 0
+                                                                                      : async () => {
+                                                                                            if (e.isThisDevice) {
+                                                                                                window.pulseSyncYandexStationCast?.clear
+                                                                                                    ? await window.pulseSyncYandexStationCast.clear()
+                                                                                                    : await window.desktopEvents?.invoke?.(
+                                                                                                          'YANDEX_STATION_CLEAR_SPEAKER',
+                                                                                                      );
+                                                                                                setWaveCastActiveSpeakerId(null);
+                                                                                                closeWaveCastPopover();
+                                                                                                return;
+                                                                                            }
+                                                                                            const t = e.accountSpeaker?.id;
+                                                                                            if (!t) return;
+                                                                                            try {
+                                                                                                const e = window.pulseSyncYandexStationCast?.activate
+                                                                                                    ? await window.pulseSyncYandexStationCast.activate(t)
+                                                                                                    : await window.desktopEvents?.invoke?.(
+                                                                                                          'YANDEX_STATION_SELECT_SPEAKER',
+                                                                                                          t,
+                                                                                                      );
+                                                                                                e?.ok && (setWaveCastActiveSpeakerId(t), closeWaveCastPopover());
+                                                                                            } catch (e) {
+                                                                                                console.warn('Failed to select Yandex Station cast device', e);
+                                                                                            }
+                                                                                        },
+                                                                                  onMouseEnter: t ? void 0 : () => setWaveCastHoveredDeviceKey(o),
+                                                                                  onMouseLeave: t ? void 0 : () => setWaveCastHoveredDeviceKey(null),
                                                                                   children: [
-                                                                                      (0, l.jsx)('span', {
-                                                                                          className: 'PulseSync_castPopoverItemTitle',
-                                                                                          children: e.isThisDevice
-                                                                                              ? 'Это устройство'
-                                                                                              : (e.accountSpeaker?.name ?? e.accountSpeaker?.id ?? 'Yandex Station'),
+                                                                                      (0, l.jsx)('div', {
+                                                                                          style: {
+                                                                                              display: 'flex',
+                                                                                              alignItems: 'flex-start',
+                                                                                              flexDirection: 'column',
+                                                                                              minWidth: 0,
+                                                                                              flex: '1 1 auto',
+                                                                                              gap: '2px',
+                                                                                          },
+                                                                                          children: [
+                                                                                              (0, l.jsx)('span', {
+                                                                                                  style: {
+                                                                                                      display: 'flex',
+                                                                                                      gap: '5px',
+                                                                                                      alignItems: 'baseline',
+                                                                                                      minWidth: 0,
+                                                                                                      maxWidth: '100%',
+                                                                                                  },
+                                                                                                  children: [
+                                                                                                      (0, l.jsx)('span', {
+                                                                                                          className: 'PulseSync_castPopoverItemTitle',
+                                                                                                          children: e.isThisDevice
+                                                                                                              ? 'Это устройство'
+                                                                                                              : (e.accountSpeaker?.name ??
+                                                                                                                e.accountSpeaker?.id ??
+                                                                                                                'Yandex Station'),
+                                                                                                      }),
+                                                                                                      a &&
+                                                                                                          (0, l.jsx)('span', {
+                                                                                                              className:
+                                                                                                                  'PulseSync_castPopoverItemMeta PulseSync_castPopoverItemRoom',
+                                                                                                              children: (0, l.jsx)('span', {
+                                                                                                                  className: 'PulseSync_castPopoverItemRoomText',
+                                                                                                                  children: a,
+                                                                                                              }),
+                                                                                                          }),
+                                                                                                  ],
+                                                                                              }),
+                                                                                              (0, l.jsx)('span', {
+                                                                                                  className: 'PulseSync_castPopoverItemMeta',
+                                                                                                  children: s,
+                                                                                              }),
+                                                                                          ],
                                                                                       }),
-                                                                                      a &&
+                                                                                      r &&
                                                                                           (0, l.jsx)('span', {
-                                                                                              className: 'PulseSync_castPopoverItemMeta',
-                                                                                              children: a,
+                                                                                              children: (0, l.jsx)('svg', {
+                                                                                                  width: '16',
+                                                                                                  height: '16',
+                                                                                                  fill: 'currentColor',
+                                                                                                  xmlns: 'http://www.w3.org/2000/svg',
+                                                                                                  children: (0, l.jsx)('path', {
+                                                                                                      d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z',
+                                                                                                  }),
+                                                                                              }),
                                                                                           }),
                                                                                   ],
-                                                                              }),
-                                                                              (0, l.jsx)('span', {
-                                                                                  className: 'PulseSync_castPopoverItemMeta',
-                                                                                  children: s,
-                                                                              }),
-                                                                          ],
-                                                                      }),
-                                                                      r &&
-                                                                          (0, l.jsx)('span', {
-                                                                              children: (0, l.jsx)('svg', {
-                                                                                  width: '16',
-                                                                                  height: '16',
-                                                                                  fill: 'currentColor',
-                                                                                  xmlns: 'http://www.w3.org/2000/svg',
-                                                                                  children: (0, l.jsx)('path', {
-                                                                                      d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z',
-                                                                                  }),
-                                                                              }),
-                                                                          }),
-                                                                  ],
-                                                              });
-                                                              })
-                                                            : (0, l.jsx)('div', { className: 'PulseSync_castPopoverStatus', children: 'Устройства не найдены' }, 'wave-cast-empty'),
-                                                        ] }, 'wave-cast-content'),
+                                                                              });
+                                                                          })
+                                                                        : (0, l.jsx)(
+                                                                              'div',
+                                                                              { className: 'PulseSync_castPopoverStatus', children: 'Устройства не найдены' },
+                                                                              'wave-cast-empty',
+                                                                          ),
+                                                                ],
+                                                            },
+                                                            'wave-cast-content',
+                                                        ),
                                               }),
                                       ],
                                   }),
