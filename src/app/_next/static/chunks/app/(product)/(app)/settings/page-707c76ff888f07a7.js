@@ -1881,35 +1881,48 @@
                                 window.forcePlayerBarRerender?.();
                             }, 100);
                         }, []),
-                        onDisablePerTrackColorsToggle = (0, v.useCallback)(async (e) => {
+                        ((onDisablePerTrackColorsToggle = (0, v.useCallback)(async (e) => {
                             console.log('modSettings.playerBarEnhancement.disablePerTrackColors toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.playerBarEnhancement.disablePerTrackColors', e);
                             setTimeout(() => {
                                 window.forcePlayerBarRerender?.();
                             }, 100);
-                        }, []),
-                        onYandexStationCastToggle = (0, v.useCallback)(async (e) => {
-                            if (isYandexStationCastToggleLocked) return;
-                            setIsYandexStationCastToggleLocked(!0);
-                            try {
-                                console.log('modSettings.playerBarEnhancement.enableYandexStationCast toggled. Value: ', e);
-                                window.__pulseSyncYandexStationCastEnabled = e;
-                                window.dispatchEvent?.(new CustomEvent('pulse-sync-yandex-station-cast-setting-change', { detail: { enabled: e } }));
-                                e || (await window.pulseSyncYandexStationCast?.clear?.());
-                                await window.nativeSettings.set('modSettings.playerBarEnhancement.enableYandexStationCast', e);
-                                setTimeout(() => {
-                                    window.forcePlayerBarRerender?.();
-                                }, 100);
-                            } finally {
-                                setTimeout(() => {
-                                    setIsYandexStationCastToggleLocked(!1);
-                                }, 800);
-                            }
-                        }, [isYandexStationCastToggleLocked]),
+                        }, [])),
+                            (onYandexStationCastToggle = (0, v.useCallback)(
+                                async (e) => {
+                                    if (isYandexStationCastToggleLocked) return;
+                                    setIsYandexStationCastToggleLocked(!0);
+                                    try {
+                                        console.log('modSettings.playerBarEnhancement.enableYandexStationCast toggled. Value: ', e);
+                                        window.__pulseSyncYandexStationCastEnabled = e;
+                                        window.dispatchEvent?.(new CustomEvent('pulse-sync-yandex-station-cast-setting-change', { detail: { enabled: e } }));
+                                        e || (await window.pulseSyncYandexStationCast?.clear?.());
+                                        await window.nativeSettings.set('modSettings.playerBarEnhancement.enableYandexStationCast', e);
+                                        setTimeout(() => {
+                                            window.forcePlayerBarRerender?.();
+                                        }, 100);
+                                    } finally {
+                                        setTimeout(() => {
+                                            setIsYandexStationCastToggleLocked(!1);
+                                        }, 800);
+                                    }
+                                },
+                                [isYandexStationCastToggleLocked],
+                            )));,
                         onAlwaysWideBarToggle = (0, v.useCallback)(
                             async (e) => {
                                 console.log('modSettings.playerBarEnhancement.alwaysWideBar toggled. Value: ', e);
                                 window.nativeSettings.set('modSettings.playerBarEnhancement.alwaysWideBar', e);
+                                o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: m.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        ),
+                        onShowOldPlayerBarOnNewWaveToggle = (0, v.useCallback)(
+                            async (e) => {
+                                console.log('modSettings.playerBarEnhancement.showOldPlayerBarOnNewWave toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.playerBarEnhancement.showOldPlayerBarOnNewWave', e);
                                 o((0, n.jsx)(w.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
                                     containerId: m.uQT.ERROR,
                                 });
@@ -1941,7 +1954,7 @@
                         labelClose: e({ id: 'interface-actions.close' }),
                         children: (0, n.jsxs)('ul', {
                             className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
-                            style: { width: '29.125rem', gap: 0 },
+                            style: { width: '29.125rem', gap: 0, maxHeight: 'min(36rem, calc(100vh - 12rem))' },
                             children: [
                                 (0, n.jsx)('li', {
                                     className: $().item,
@@ -2010,6 +2023,15 @@
                                         description: 'Панель будет всегда широкой, независимо от размера окна приложения',
                                         onChange: onAlwaysWideBarToggle,
                                         isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.alwaysWideBar'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Старая панель в новой Волне',
+                                        description: 'Возвращает классическую панель плеера на новую страницу Моей волны, не скрывая новую.',
+                                        onChange: onShowOldPlayerBarOnNewWaveToggle,
+                                        isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.showOldPlayerBarOnNewWave'),
                                     }),
                                 }),
                             ],

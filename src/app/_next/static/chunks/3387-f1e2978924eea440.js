@@ -449,10 +449,16 @@
                                                     externalSetIsCollapsed: eu,
                                                 }),
                                             (0, i.jsx)(v.UC, {
-                                                className: (0, r.$)(p().content, { [p().content_withPlayerBar]: H && !c, [p().content_withAxeBanner]: ea.isVisible }),
+                                                className: (0, r.$)(p().content, {
+                                                    [p().content_withPlayerBar]: H && (!c || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()),
+                                                    [p().content_withAxeBanner]: ea.isVisible,
+                                                }),
                                                 children: (0, i.jsxs)(K.tH, { fallback: M.w, children: [a, (0, i.jsx)(ei.m, {})] }, T),
                                             }),
-                                            !H && ey && !d && (0, i.jsx)(h.nVz, { pageId: h._Q$.PLAYER, children: (0, i.jsx)(A.LN, { className: p().playerBar }) }),
+                                            !H &&
+                                                ey &&
+                                                (!d || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
+                                                (0, i.jsx)(h.nVz, { pageId: h._Q$.PLAYER, children: (0, i.jsx)(A.LN, { className: p().playerBar }) }),
                                             H &&
                                                 ey &&
                                                 (0, i.jsxs)('div', {
@@ -460,7 +466,8 @@
                                                     className: (0, r.$)(p().compositePlayerBar, { [p().compositePlayerBar_withNewWave]: d }),
                                                     children: [
                                                         ev && (0, i.jsx)(K.jg, {}),
-                                                        !d && (0, i.jsx)(h.nVz, { pageId: h._Q$.PLAYER, children: (0, i.jsx)(A.LN, { className: p().playerBar }) }),
+                                                        (!d || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
+                                                            (0, i.jsx)(h.nVz, { pageId: h._Q$.PLAYER, children: (0, i.jsx)(A.LN, { className: p().playerBar }) }),
                                                         (0, i.jsx)(y.Fp, {
                                                             className: (0, r.$)(u.navbar, {
                                                                 [u.navbar_application_windows]: q,
@@ -538,10 +545,10 @@
                     D = eo().root;
                 if (k) {
                     let e = E.isShuffleVibe && w.isVibeContext;
-                    (m = (0, u.OH)(e || null == (s = w.entityMeta) ? void 0 : s.averageColor)),
+                    ((m = (0, u.OH)(e || null == (s = w.entityMeta) ? void 0 : s.averageColor)),
                         (_ = (0, a.ak)({ palette: m, isPlaying: w.isPlaying })),
                         (P = eo().rootNewWave_withBarBelow),
-                        (D = eo().rootNewWave);
+                        (D = eo().rootNewWave));
                 }
                 let O = (0, r.$)(
                         p().root,
@@ -551,6 +558,7 @@
                             [P]: M,
                             [p().root_withAxeBanner]: j.isVisible,
                             ['modSettings_alwaysWideBar']: window.ALWAYS_WIDE_BAR?.(),
+                            ['modSettings_showOldPlayerBarOnNewWave']: window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.(),
                         },
                         f,
                     ),

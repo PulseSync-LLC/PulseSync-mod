@@ -359,6 +359,10 @@ class YandexStationService {
         };
     }
 
+    connectLocalStateEvents(connectionInfo, onState) {
+        return this.glagolClient.connectStateEvents(connectionInfo, onState);
+    }
+
     getLatencyCacheKey(connectionInfo) {
         return [connectionInfo.host, connectionInfo.port, connectionInfo.deviceId, connectionInfo.platform].join('|');
     }

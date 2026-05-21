@@ -30,7 +30,7 @@ const MDNS = {
 
 const DEFAULTS = {
     mdnsTimeoutMs: 15000,
-    localSpeakersRefreshIntervalMs: 30000,
+    localSpeakersRefreshIntervalMs: 120000,
     requestTimeoutMs: 15000,
     glagolResponseTimeoutMs: 8000,
     glagolStateTimeoutMs: 1500,

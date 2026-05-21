@@ -273,6 +273,16 @@ const handleApplicationEvents = (window) => {
     registerYandexStationIpc(electron_1.ipcMain, {
         runtime: yandexStationRuntime,
     });
+    yandexStationRuntime.on('stateChanged', (state) => {
+        if (window?.webContents && typeof window.webContents.send === 'function') {
+            window.webContents.send(events_js_1.Events.YANDEX_STATION_STATE, state);
+        }
+    });
+    yandexStationRuntime.on('playbackStateChanged', (state) => {
+        if (window?.webContents && typeof window.webContents.send === 'function') {
+            window.webContents.send(events_js_1.Events.YANDEX_STATION_PLAYBACK_STATE, state);
+        }
+    });
     if (store_js_1.getModSettings()?.playerBarEnhancement?.enableYandexStationCast ?? true) {
         yandexStationRuntime.start();
     }

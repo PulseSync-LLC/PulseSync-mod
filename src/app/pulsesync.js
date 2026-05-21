@@ -50,6 +50,7 @@ window.findCssRuleByPartialName = function (pName) {
         selectSpeaker: 'YANDEX_STATION_SELECT_SPEAKER',
         clearSpeaker: 'YANDEX_STATION_CLEAR_SPEAKER',
         control: 'YANDEX_STATION_CONTROL',
+        playbackState: 'YANDEX_STATION_PLAYBACK_STATE',
     };
     const YANDEX_STATION_BACK_THRESHOLD_SECONDS = 5;
     const YANDEX_STATION_CROSSFADE_EVENT = 'ShouldAutomoveForward';
@@ -482,6 +483,23 @@ window.findCssRuleByPartialName = function (pName) {
             this.volumeThrottleTimer = setTimeout(() => {
                 this.flushPendingVolume();
             }, YANDEX_STATION_VOLUME_THROTTLE_MS - elapsedSinceLastSend);
+        },
+        applyStationVolume(value) {
+            const volume = normalizeYandexStationVolume(value);
+            if (!volume || volume.percent === this.lastVolumePercent) return;
+
+            const playerInst = getPlayerInstance();
+            this.lastVolumePercent = volume.percent;
+            this.pendingVolume = null;
+            clearTimeout(this.volumeThrottleTimer);
+            this.volumeThrottleTimer = null;
+
+            this.suppressVolumeSync = true;
+            try {
+                setPlayerVolume(playerInst, volume.normalized);
+            } finally {
+                this.suppressVolumeSync = false;
+            }
         },
         async sendTrackFromEntity(entity, options = {}) {
             const { trackId, albumId } = getEntityIdParts(entity);
@@ -1079,6 +1097,18 @@ window.findCssRuleByPartialName = function (pName) {
             window.dispatchEvent(new CustomEvent('pulse-sync-yandex-station-cast-setting-change', { detail: { enabled: value !== false } }));
             if (value === false) {
                 void ensureYandexStationCastBridge().clear();
+            }
+        });
+        window.desktopEvents.on(YANDEX_STATION_EVENTS.playbackState, (event, payload) => {
+            const bridge = ensureYandexStationCastBridge();
+            if (!bridge.isActive() || payload?.speakerId !== bridge.activeSpeakerId) return;
+
+            if (Number.isFinite(Number(payload?.volume))) {
+                bridge.applyStationVolume(payload.volume);
+            }
+
+            if (payload?.playbackState === 'paused') {
+                syncLocalPlaybackState(false);
             }
         });
     };

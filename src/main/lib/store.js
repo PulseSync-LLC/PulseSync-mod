@@ -203,6 +203,7 @@ const init = () => {
             disablePerTrackColors: false,
             enableYandexStationCast: true,
             alwaysWideBar: false,
+            showOldPlayerBarOnNewWave: false,
             playButtonType: 'yellow',
         },
         playlist: {

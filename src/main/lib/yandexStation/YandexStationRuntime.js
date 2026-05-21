@@ -1,10 +1,11 @@
 const { session: electronSession } = require('electron');
+const { EventEmitter } = require('events');
 const { DEFAULTS } = require('./constants.js');
 const { YandexStationService } = require('./YandexStationService.js');
 const { sanitizeJson } = require('./sanitize.js');
 
 const YANDEX_COOKIE_DOMAIN_PATTERN = /(^|\.)yandex\.|(^|\.)ya\.ru$/i;
-const COOKIE_REFRESH_DEBOUNCE_MS = 3000;
+const COOKIE_REFRESH_DEBOUNCE_MS = 15000;
 const YANDEX_COOKIE_URLS = [
     'https://iot.quasar.yandex.ru',
     'https://quasar.yandex.net',
@@ -31,8 +32,115 @@ function getCookieKey(cookie) {
     return [cookie.name, cookie.domain, cookie.path].join('|');
 }
 
-class YandexStationRuntime {
+function normalizePlaybackStateValue(value) {
+    if (typeof value !== 'string') return null;
+
+    const state = value.toLowerCase();
+    if (['playing', 'play', 'running'].includes(state)) return 'playing';
+    if (['paused', 'pause', 'stopped', 'stop', 'idle'].includes(state)) return 'paused';
+
+    return null;
+}
+
+function extractStationPlaybackState(value, depth = 0) {
+    if (!value || typeof value !== 'object' || depth > 4) return null;
+
+    const directCandidates = [
+        value.playerState?.status?.value,
+        value.playerState?.status,
+        value.player_state?.status?.value,
+        value.player_state?.status,
+        value.playbackState?.value,
+        value.playbackState,
+        value.playback_state?.value,
+        value.playback_state,
+        value.status?.value,
+        value.status,
+    ];
+
+    for (const candidate of directCandidates) {
+        const normalized = normalizePlaybackStateValue(candidate);
+        if (normalized) return normalized;
+    }
+
+    for (const [key, nestedValue] of Object.entries(value)) {
+        const normalizedKey = key.toLowerCase();
+
+        if ((normalizedKey === 'playing' || normalizedKey === 'isplaying') && typeof nestedValue === 'boolean') {
+            return nestedValue ? 'playing' : 'paused';
+        }
+
+        if ((normalizedKey === 'paused' || normalizedKey === 'ispaused') && typeof nestedValue === 'boolean') {
+            return nestedValue ? 'paused' : 'playing';
+        }
+
+        if (/playback|player|status|playing|paused/.test(normalizedKey)) {
+            const normalized = normalizePlaybackStateValue(nestedValue);
+            if (normalized) return normalized;
+
+            const nested = extractStationPlaybackState(nestedValue, depth + 1);
+            if (nested) return nested;
+        }
+    }
+
+    return null;
+}
+
+function normalizeStationVolume(value) {
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) return null;
+
+    return Math.max(0, Math.min(1, numericValue > 1 ? numericValue / 100 : numericValue));
+}
+
+function extractStationVolume(value, depth = 0) {
+    if (!value || typeof value !== 'object' || depth > 4) return null;
+
+    const directCandidates = [
+        value.volume?.value,
+        value.volume,
+        value.playerState?.volume?.value,
+        value.playerState?.volume,
+        value.playerState?.exponentVolume?.value,
+        value.playerState?.exponentVolume,
+        value.player_state?.volume?.value,
+        value.player_state?.volume,
+        value.playbackState?.volume?.value,
+        value.playbackState?.volume,
+        value.playback_state?.volume?.value,
+        value.playback_state?.volume,
+    ];
+
+    for (const candidate of directCandidates) {
+        const normalized = normalizeStationVolume(candidate);
+        if (normalized !== null) return normalized;
+    }
+
+    for (const [key, nestedValue] of Object.entries(value)) {
+        const normalizedKey = key.toLowerCase();
+
+        if (/volume/.test(normalizedKey)) {
+            const normalized = normalizeStationVolume(nestedValue);
+            if (normalized !== null) return normalized;
+        }
+
+        if (/playback|player|state/.test(normalizedKey)) {
+            const nested = extractStationVolume(nestedValue, depth + 1);
+            if (nested !== null) return nested;
+        }
+    }
+
+    return null;
+}
+
+function getVolumePercent(volume) {
+    const normalized = normalizeStationVolume(volume);
+    return normalized === null ? null : Math.round(normalized * 100);
+}
+
+class YandexStationRuntime extends EventEmitter {
     constructor(options = {}) {
+        super();
         this.logger = options.logger ?? console;
         this.session = options.session ?? electronSession.defaultSession;
         this.service =
@@ -56,15 +164,32 @@ class YandexStationRuntime {
         this.cookieChangedHandler = null;
         this.enabled = false;
         this.runId = 0;
+        this.accountSpeakersReady = false;
+        this.localSpeakersReady = false;
+        this.accountSpeakersRefreshing = false;
+        this.localSpeakersRefreshing = false;
+        this.activeConnectionInfo = null;
+        this.stateMonitorSocket = null;
+        this.stateMonitorReconnectTimer = null;
+        this.stateMonitorToken = 0;
+        this.lastStationPlaybackState = null;
+        this.lastStationVolumePercent = null;
     }
 
     start() {
-        if (this.started) return;
+        if (this.started) {
+            this.enabled = true;
+            this.emitStateChanged();
+            return;
+        }
 
         this.started = true;
         this.enabled = true;
         this.runId += 1;
+        this.accountSpeakersReady = false;
+        this.localSpeakersReady = false;
         this.attachCookieRefresh();
+        this.emitStateChanged();
 
         void this.refreshAccountSpeakers();
         void this.refreshLocalSpeakers();
@@ -102,7 +227,43 @@ class YandexStationRuntime {
         this.accountSpeakersPromise = null;
         this.localSpeakersPromise = null;
         this.activeSpeakerId = null;
+        this.activeConnectionInfo = null;
+        this.stopActiveStateMonitor();
+        this.accountSpeakersReady = false;
+        this.localSpeakersReady = false;
+        this.accountSpeakersRefreshing = false;
+        this.localSpeakersRefreshing = false;
         this.logger.info?.('Yandex Station runtime stopped');
+        this.emitStateChanged();
+    }
+
+    getState() {
+        const accountSpeakers = this.getAccountSpeakersCache();
+        const localSpeakers = this.getLocalSpeakersCache();
+
+        return {
+            enabled: this.enabled,
+            accountSpeakers,
+            localSpeakers,
+            activeSpeaker: this.getActiveSpeaker(),
+            accountSpeakersReady: this.enabled && this.accountSpeakersReady,
+            localSpeakersReady: this.enabled && this.localSpeakersReady,
+            firstFlowCompleted: this.enabled && this.accountSpeakersReady && this.localSpeakersReady,
+            accountSpeakersRefreshing: this.enabled && this.accountSpeakersRefreshing,
+            localSpeakersRefreshing: this.enabled && this.localSpeakersRefreshing,
+            refreshing: this.enabled && (this.accountSpeakersRefreshing || this.localSpeakersRefreshing),
+        };
+    }
+
+    emitStateChanged() {
+        this.emit('stateChanged', this.getState());
+    }
+
+    emitPlaybackStateChanged(detail) {
+        this.emit('playbackStateChanged', {
+            speakerId: this.activeSpeakerId,
+            ...detail,
+        });
     }
 
     getAccountSpeakersCache() {
@@ -179,7 +340,13 @@ class YandexStationRuntime {
             };
         }
 
+        this.stopActiveStateMonitor();
         this.activeSpeakerId = iotDeviceId;
+        this.activeConnectionInfo = warmUpResult?.connectionInfo ?? null;
+        this.lastStationPlaybackState = extractStationPlaybackState(warmUpResult?.state) ?? null;
+        this.lastStationVolumePercent = getVolumePercent(warmUpResult?.volume ?? extractStationVolume(warmUpResult?.state));
+        this.startActiveStateMonitor();
+        this.emitStateChanged();
 
         return {
             ok: true,
@@ -208,6 +375,9 @@ class YandexStationRuntime {
         }
 
         this.activeSpeakerId = null;
+        this.activeConnectionInfo = null;
+        this.stopActiveStateMonitor();
+        this.emitStateChanged();
 
         return {
             ok: true,
@@ -233,6 +403,12 @@ class YandexStationRuntime {
 
         try {
             const response = await this.service.sendLocalMediaCommand(speaker, action, payload);
+            if (action === 'PLAY' || action === 'PAUSE' || action === 'PLAY_TRACK') {
+                this.lastStationPlaybackState = action === 'PAUSE' ? 'paused' : 'playing';
+            }
+            if (action === 'SET_VOLUME') {
+                this.lastStationVolumePercent = getVolumePercent(payload.volume);
+            }
 
             return {
                 ok: true,
@@ -258,6 +434,76 @@ class YandexStationRuntime {
         }
     }
 
+    startActiveStateMonitor() {
+        if (!this.enabled || !this.activeSpeakerId || !this.activeConnectionInfo) return;
+
+        const monitorToken = ++this.stateMonitorToken;
+        let socket;
+
+        try {
+            socket = this.service.connectLocalStateEvents(this.activeConnectionInfo, (message) => {
+                if (monitorToken !== this.stateMonitorToken || !this.enabled || !this.activeSpeakerId) return;
+
+                const playbackState = extractStationPlaybackState(message?.state);
+                const volume = extractStationVolume(message?.state);
+                const volumePercent = getVolumePercent(volume);
+                const detail = {};
+
+                if (playbackState && playbackState !== this.lastStationPlaybackState) {
+                    this.lastStationPlaybackState = playbackState;
+                    detail.playbackState = playbackState;
+                }
+
+                if (volumePercent !== null && volumePercent !== this.lastStationVolumePercent) {
+                    this.lastStationVolumePercent = volumePercent;
+                    detail.volume = volumePercent / 100;
+                    detail.volumePercent = volumePercent;
+                }
+
+                if (detail.playbackState || detail.volumePercent !== undefined) {
+                    this.emitPlaybackStateChanged(detail);
+                }
+            });
+        } catch (error) {
+            this.logger.debug?.('Yandex Station state monitor start failed', sanitizeJson({ code: error.code, message: error.message }));
+            return;
+        }
+
+        this.stateMonitorSocket = socket;
+
+        socket.on('error', (error) => {
+            this.logger.debug?.('Yandex Station state monitor socket failed', sanitizeJson({ message: error.message }));
+        });
+
+        socket.on('close', () => {
+            if (monitorToken !== this.stateMonitorToken || !this.enabled || !this.activeSpeakerId || !this.activeConnectionInfo) return;
+
+            clearTimeout(this.stateMonitorReconnectTimer);
+            this.stateMonitorReconnectTimer = setTimeout(() => {
+                if (monitorToken === this.stateMonitorToken) this.startActiveStateMonitor();
+            }, 3000);
+            this.stateMonitorReconnectTimer.unref?.();
+        });
+    }
+
+    stopActiveStateMonitor() {
+        this.stateMonitorToken += 1;
+        clearTimeout(this.stateMonitorReconnectTimer);
+        this.stateMonitorReconnectTimer = null;
+
+        const socket = this.stateMonitorSocket;
+        this.stateMonitorSocket = null;
+        this.lastStationPlaybackState = null;
+        this.lastStationVolumePercent = null;
+
+        if (socket) {
+            socket.removeAllListeners();
+            if (socket.readyState === 0 || socket.readyState === 1) {
+                socket.close();
+            }
+        }
+    }
+
     async getYandexCookiesFromSession() {
         const cookiesByKey = new Map();
 
@@ -280,6 +526,8 @@ class YandexStationRuntime {
 
         this.accountSpeakersPromise = (async () => {
             const runId = this.runId;
+            this.accountSpeakersRefreshing = true;
+            this.emitStateChanged();
             try {
                 if (!this.enabled || runId !== this.runId) return this.accountSpeakersCache;
                 const cookies = await this.getYandexCookiesFromSession();
@@ -288,6 +536,8 @@ class YandexStationRuntime {
 
                 if (!cookies.length) {
                     this.logger.info?.('Yandex Station account speakers prewarm skipped: no Yandex cookies in Electron session');
+                    this.accountSpeakersReady = true;
+                    this.emitStateChanged();
                     return this.accountSpeakersCache;
                 }
 
@@ -296,7 +546,9 @@ class YandexStationRuntime {
                 const accountSpeakers = await this.service.getAccountSpeakers();
                 if (!this.enabled || runId !== this.runId) return this.accountSpeakersCache;
                 this.accountSpeakersCache = accountSpeakers;
+                this.accountSpeakersReady = true;
                 this.logger.info?.('Yandex Station account speakers cache updated', { count: this.accountSpeakersCache.length });
+                this.emitStateChanged();
 
                 return this.accountSpeakersCache;
             } catch (error) {
@@ -310,8 +562,17 @@ class YandexStationRuntime {
                     }),
                 );
 
+                if (this.enabled && runId === this.runId) {
+                    this.accountSpeakersReady = true;
+                    this.emitStateChanged();
+                }
+
                 return this.accountSpeakersCache;
             } finally {
+                if (this.enabled && runId === this.runId) {
+                    this.accountSpeakersRefreshing = false;
+                    this.emitStateChanged();
+                }
                 this.accountSpeakersPromise = null;
             }
         })();
@@ -325,11 +586,14 @@ class YandexStationRuntime {
 
         this.localSpeakersPromise = (async () => {
             const runId = this.runId;
+            this.localSpeakersRefreshing = true;
+            this.emitStateChanged();
             try {
                 if (!this.enabled || runId !== this.runId) return this.localSpeakersCache;
                 const localSpeakers = await this.service.discoverLocalSpeakers();
                 if (!this.enabled || runId !== this.runId) return this.localSpeakersCache;
                 this.localSpeakersCache = localSpeakers;
+                this.localSpeakersReady = true;
                 const count = this.localSpeakersCache.length;
 
                 if (this.localSpeakersLastLoggedCount !== count) {
@@ -338,6 +602,8 @@ class YandexStationRuntime {
                 } else {
                     this.logger.debug?.('Yandex Station local speakers cache refreshed', { count });
                 }
+
+                this.emitStateChanged();
 
                 return this.localSpeakersCache;
             } catch (error) {
@@ -349,8 +615,17 @@ class YandexStationRuntime {
                     }),
                 );
 
+                if (this.enabled && runId === this.runId) {
+                    this.localSpeakersReady = true;
+                    this.emitStateChanged();
+                }
+
                 return this.localSpeakersCache;
             } finally {
+                if (this.enabled && runId === this.runId) {
+                    this.localSpeakersRefreshing = false;
+                    this.emitStateChanged();
+                }
                 this.localSpeakersPromise = null;
             }
         })();

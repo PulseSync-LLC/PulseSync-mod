@@ -354,6 +354,41 @@ class YandexGlagolClient {
         });
     }
 
+    connectStateEvents(connectionInfo, onState) {
+        const socket = this.connect(connectionInfo);
+        const id = randomUUID();
+
+        socket.on('open', () => {
+            socket.send(
+                JSON.stringify({
+                    conversationToken: connectionInfo.conversationToken,
+                    id,
+                    payload: {
+                        command: 'softwareVersion',
+                    },
+                    sentTime: Date.now(),
+                }),
+            );
+        });
+
+        socket.on('message', (data) => {
+            let message;
+
+            try {
+                message = JSON.parse(data.toString());
+            } catch (error) {
+                this.logger.warn?.('Yandex Glagol state event is not valid JSON');
+                return;
+            }
+
+            if (message?.state && typeof message.state === 'object') {
+                onState(message);
+            }
+        });
+
+        return socket;
+    }
+
     async probeSoftwareVersion(connectionInfo) {
         return await this.sendCommand(connectionInfo, {
             command: 'softwareVersion',

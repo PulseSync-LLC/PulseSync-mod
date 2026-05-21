@@ -19,6 +19,10 @@ function registerYandexStationIpc(ipcMain, options = {}) {
         return runtime.getLocalSpeakersCache();
     });
 
+    ipcMain.handle(Events.YANDEX_STATION_STATE, () => {
+        return runtime.getState();
+    });
+
     ipcMain.handle(Events.YANDEX_STATION_SELECT_SPEAKER, async (event, iotDeviceId) => {
         return await runtime.selectSpeaker(iotDeviceId);
     });

@@ -1027,6 +1027,7 @@
                         onVolumeSet: f,
                         sonataVolume: C,
                         buttonClassName: k,
+                        style: D,
                     } = e,
                     { formatMessage: j } = (0, l.A)(),
                     A = (0, y.eGp)(),
@@ -1127,6 +1128,7 @@
                     });
                 return (0, n.jsxs)('div', {
                     className: (0, r.$)(g().root, t),
+                    style: D,
                     children: [
                         R,
                         (0, n.jsx)(_.$, {
@@ -7212,6 +7214,27 @@
                     } catch (e) {
                         return !0;
                     }
+                },
+                pulseSyncApplyYandexStationState = (e, t) => {
+                    const a = Array.isArray(e?.accountSpeakers) ? e.accountSpeakers : [],
+                        i = Array.isArray(e?.localSpeakers) ? e.localSpeakers : [];
+                    t.setActiveSpeakerId(e?.activeSpeaker?.accountSpeaker?.id ?? window.pulseSyncYandexStationCast?.activeSpeakerId ?? null);
+                    t.setDeviceRows([{ isThisDevice: !0 }, ...pulseSyncBuildCastDeviceRows(a, i)]);
+                    t.setDevicesLoaded(Boolean(e?.firstFlowCompleted));
+                    t.setDevicesLoading(Boolean(e?.refreshing));
+                },
+                pulseSyncGetCastPopoverShift = (e) => {
+                    const t = e?.getBoundingClientRect?.();
+                    if (!t) return 0;
+                    const a = 260,
+                        i = 12,
+                        r = window.innerWidth || document.documentElement?.clientWidth || a,
+                        n = t.left + t.width / 2,
+                        s = n - a / 2,
+                        o = n + a / 2;
+                    if (s < i) return i - s;
+                    if (o > r - i) return r - i - o;
+                    return 0;
                 };
             let ac = (0, d.PA)((e) => {
                 var t;
@@ -7237,6 +7260,7 @@
                     [remoteDevice, setRemoteDevice] = (0, u.useState)(window.remoteDevice ?? null),
                     [castPopoverOpen, setCastPopoverOpen] = (0, u.useState)(!1),
                     [castPopoverMounted, setCastPopoverMounted] = (0, u.useState)(!1),
+                    [castPopoverShift, setCastPopoverShift] = (0, u.useState)(0),
                     [castDeviceRows, setCastDeviceRows] = (0, u.useState)([]),
                     [castHoveredDeviceKey, setCastHoveredDeviceKey] = (0, u.useState)(null),
                     [castActiveSpeakerId, setCastActiveSpeakerId] = (0, u.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
@@ -7267,23 +7291,21 @@
                     loadCastDevices = (0, u.useCallback)(async () => {
                         if (!isYandexStationCastEnabled) {
                             setCastDeviceRows([]);
-                            setCastDevicesLoaded(!0);
+                            setCastDevicesLoaded(!1);
                             setCastDevicesLoading(!1);
                             return;
                         }
                         try {
                             setCastDevicesLoading(!0);
-                            const [e, t, a] = await Promise.all([
-                                window.desktopEvents?.invoke?.('GET_ACCOUNT_SPEAKERS') ?? Promise.resolve([]),
-                                window.desktopEvents?.invoke?.('GET_LOCAL_SPEAKERS') ?? Promise.resolve([]),
-                                window.desktopEvents?.invoke?.('YANDEX_STATION_GET_ACTIVE_SPEAKER') ?? Promise.resolve(null),
-                            ]);
-                            setCastActiveSpeakerId(a?.accountSpeaker?.id ?? window.pulseSyncYandexStationCast?.activeSpeakerId ?? null);
-                            setCastDeviceRows([{ isThisDevice: !0 }, ...pulseSyncBuildCastDeviceRows(Array.isArray(e) ? e : [], Array.isArray(t) ? t : [])]);
+                            const e = await (window.desktopEvents?.invoke?.('YANDEX_STATION_STATE') ?? Promise.resolve(null));
+                            pulseSyncApplyYandexStationState(e, {
+                                setActiveSpeakerId: setCastActiveSpeakerId,
+                                setDeviceRows: setCastDeviceRows,
+                                setDevicesLoaded: setCastDevicesLoaded,
+                                setDevicesLoading: setCastDevicesLoading,
+                            });
                         } catch (e) {
-                            (console.warn('Failed to load Yandex Station cast devices', e), setCastDeviceRows([]));
-                        } finally {
-                            (setCastDevicesLoaded(!0), setCastDevicesLoading(!1));
+                            (console.warn('Failed to load Yandex Station cast devices', e), setCastDeviceRows([]), setCastDevicesLoaded(!1), setCastDevicesLoading(!1));
                         }
                     }, [isYandexStationCastEnabled]),
                     closeCastPopover = (0, u.useCallback)(() => {
@@ -7294,12 +7316,17 @@
                             setCastHoveredDeviceKey(null);
                         }, 160);
                     }, []),
+                    updateCastPopoverShift = (0, u.useCallback)(() => {
+                        setCastPopoverShift(pulseSyncGetCastPopoverShift(castControlRef.current));
+                    }, []),
                     openCastPopover = (0, u.useCallback)(() => {
                         clearTimeout(castCloseTimerRef.current);
-                        void loadCastDevices();
                         setCastPopoverMounted(!0);
-                        requestAnimationFrame(() => setCastPopoverOpen(!0));
-                    }, [loadCastDevices]),
+                        requestAnimationFrame(() => {
+                            updateCastPopoverShift();
+                            setCastPopoverOpen(!0);
+                        });
+                    }, [updateCastPopoverShift]),
                     toggleCastPopover = (0, u.useCallback)(() => {
                         castPopoverOpen ? closeCastPopover() : openCastPopover();
                     }, [castPopoverOpen, closeCastPopover, openCastPopover]),
@@ -7424,13 +7451,26 @@
                                                   className: 'PulseSync_castPopover',
                                                   style: {
                                                       opacity: castPopoverOpen ? 1 : 0,
-                                                      transform: castPopoverOpen ? 'translateY(0)' : 'translateY(10px)',
+                                                      transform: 'translateX('.concat(castPopoverShift, 'px) ').concat(castPopoverOpen ? 'translateY(0)' : 'translateY(10px)'),
                                                       pointerEvents: castPopoverOpen ? 'auto' : 'none',
                                                   },
-                                                  children: castDevicesLoading
-                                                      ? (0, l.jsx)('div', { style: { padding: '10px 12px', fontSize: '13px' }, children: 'Поиск устройств...' })
-                                                      : castDeviceRows.length
-                                                        ? castDeviceRows.map((e) => {
+                                                  children: !castDevicesLoaded
+                                                      ? (0, l.jsx)('div', { className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_shimmer', children: 'Поиск устройств...' })
+                                                      : (0, l.jsxs)('div', {
+                                                            className: 'PulseSync_castPopoverContent',
+                                                            children: [
+                                                            (0, l.jsx)(
+                                                                'div',
+                                                                {
+                                                                    className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_refreshing'.concat(
+                                                                        castDevicesLoading ? ' PulseSync_castPopoverStatus_visible' : '',
+                                                                    ),
+                                                                    children: 'Обновляем список устройств...',
+                                                                },
+                                                                'cast-refreshing',
+                                                            ),
+                                                            castDeviceRows.length
+                                                                ? castDeviceRows.map((e) => {
                                                               const t = !e.isThisDevice && !e.canUseLocal,
                                                                   a = e.isThisDevice ? void 0 : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
                                                                   r = e.accountSpeaker?.id,
@@ -7451,6 +7491,7 @@
                                                               return (0, l.jsxs)('button', {
                                                                   key: n,
                                                                   type: 'button',
+                                                                  className: 'PulseSync_castPopoverItem'.concat(isConnected || (!t && castHoveredDeviceKey === n) ? ' PulseSync_castPopoverItem_active' : ''),
                                                                   disabled: t,
                                                                   onClick: t
                                                                       ? void 0
@@ -7476,25 +7517,6 @@
                                                                         },
                                                                   onMouseEnter: t ? void 0 : () => setCastHoveredDeviceKey(n),
                                                                   onMouseLeave: t ? void 0 : () => setCastHoveredDeviceKey(null),
-                                                                  style: {
-                                                                      width: '100%',
-                                                                      display: 'flex',
-                                                                      flexDirection: 'row',
-                                                                      alignItems: 'center',
-                                                                      justifyContent: 'space-between',
-                                                                      padding: '9px 10px',
-                                                                      border: 0,
-                                                                      borderRadius: '6px',
-                                                                      background:
-                                                                          isConnected || (!t && castHoveredDeviceKey === n)
-                                                                              ? 'var(--ym-controls-color-secondary-default-hovered)'
-                                                                              : 'transparent',
-                                                                      color: 'inherit',
-                                                                      textAlign: 'left',
-                                                                      cursor: t ? 'default' : 'pointer',
-                                                                      opacity: t ? 0.48 : 1,
-                                                                      transition: 'background 120ms ease, opacity 120ms ease',
-                                                                  },
                                                                   children: [
                                                                       (0, l.jsx)('div', {
                                                                           style: {
@@ -7512,36 +7534,20 @@
                                                                                   },
                                                                                   children: [
                                                                                       (0, l.jsx)('span', {
-                                                                                          style: {
-                                                                                              maxWidth: '100%',
-                                                                                              overflow: 'hidden',
-                                                                                              textOverflow: 'ellipsis',
-                                                                                              whiteSpace: 'nowrap',
-                                                                                              fontSize: '13px',
-                                                                                              color: !t
-                                                                                                  ? 'var(--ym-controls-color-primary-text-enabled_variant)'
-                                                                                                  : void 0,
-                                                                                          },
+                                                                                          className: 'PulseSync_castPopoverItemTitle',
                                                                                           children: e.isThisDevice
                                                                                               ? 'Это устройство'
                                                                                               : (e.accountSpeaker?.name ?? e.accountSpeaker?.id ?? 'Yandex Station'),
                                                                                       }),
                                                                                       a &&
                                                                                           (0, l.jsx)('span', {
-                                                                                              style: {
-                                                                                                  maxWidth: '100%',
-                                                                                                  overflow: 'hidden',
-                                                                                                  textOverflow: 'ellipsis',
-                                                                                                  whiteSpace: 'nowrap',
-                                                                                                  fontSize: '11px',
-                                                                                                  color: 'var(--ym-controls-color-secondary-text-enabled)',
-                                                                                              },
+                                                                                              className: 'PulseSync_castPopoverItemMeta',
                                                                                               children: a,
                                                                                           }),
                                                                                   ],
                                                                               }),
                                                                               (0, l.jsx)('span', {
-                                                                                  style: { fontSize: '11px', color: 'var(--ym-controls-color-secondary-text-enabled)' },
+                                                                                  className: 'PulseSync_castPopoverItemMeta',
                                                                                   children: i,
                                                                               }),
                                                                           ],
@@ -7561,7 +7567,8 @@
                                                                   ],
                                                               });
                                                           })
-                                                        : (0, l.jsx)('div', { style: { padding: '10px 12px', fontSize: '13px' }, children: 'Устройства не найдены' }),
+                                                        : (0, l.jsx)('div', { className: 'PulseSync_castPopoverStatus', children: 'Устройства не найдены' }, 'cast-empty'),
+                                                        ] }, 'cast-content'),
                                               }),
                                       ],
                                   }),
@@ -7574,6 +7581,7 @@
                             castActiveSpeakerId,
                             castPopoverOpen,
                             castPopoverMounted,
+                            castPopoverShift,
                             castDevicesLoading,
                             castDevicesLoaded,
                             castDeviceRows,
@@ -7652,6 +7660,17 @@
                     void loadCastDevices();
                 }, [loadCastDevices]);
                 (0, u.useEffect)(() => {
+                    const e = (e, t) => {
+                        pulseSyncApplyYandexStationState(t, {
+                            setActiveSpeakerId: setCastActiveSpeakerId,
+                            setDeviceRows: setCastDeviceRows,
+                            setDevicesLoaded: setCastDevicesLoaded,
+                            setDevicesLoading: setCastDevicesLoading,
+                        });
+                    };
+                    return window.desktopEvents?.on?.('YANDEX_STATION_STATE', e);
+                }, []);
+                (0, u.useEffect)(() => {
                     const e = (e) => {
                         setCastActiveSpeakerId(e.detail?.activeSpeakerId ?? null);
                     };
@@ -7666,7 +7685,7 @@
                     const e = (e) => {
                         const t = e.detail?.enabled ?? pulseSyncIsYandexStationCastEnabled();
                         setIsYandexStationCastEnabled(t);
-                        t || (closeCastPopover(), setCastDeviceRows([]), setCastActiveSpeakerId(null));
+                        t ? (setCastDevicesLoaded(!1), void loadCastDevices()) : (closeCastPopover(), setCastDeviceRows([]), setCastActiveSpeakerId(null), setCastDevicesLoaded(!1), setCastDevicesLoading(!1));
                     };
                     return (
                         window.addEventListener('pulse-sync-yandex-station-cast-setting-change', e),
@@ -7674,7 +7693,7 @@
                             window.removeEventListener('pulse-sync-yandex-station-cast-setting-change', e);
                         }
                     );
-                }, [closeCastPopover]);
+                }, [closeCastPopover, loadCastDevices]);
                 (0, u.useEffect)(() => () => clearTimeout(castCloseTimerRef.current), []);
                 (0, u.useEffect)(() => {
                     if (!castPopoverMounted) return;
@@ -7688,6 +7707,17 @@
                         }
                     );
                 }, [castPopoverMounted, closeCastPopover]);
+                (0, u.useEffect)(() => {
+                    if (!castPopoverMounted) return;
+                    const e = () => updateCastPopoverShift();
+                    return (
+                        updateCastPopoverShift(),
+                        window.addEventListener('resize', e),
+                        () => {
+                            window.removeEventListener('resize', e);
+                        }
+                    );
+                }, [castPopoverMounted, updateCastPopoverShift]);
                 (0, u.useEffect)(() => {
                     let e = (e, t, a) => {
                         'trackDownloadCurrent' === t && setDownloadProgress(a);
@@ -8928,10 +8958,12 @@
                     w = !o.isPlaying && !k,
                     [waveCastPopoverOpen, setWaveCastPopoverOpen] = (0, u.useState)(!1),
                     [waveCastPopoverMounted, setWaveCastPopoverMounted] = (0, u.useState)(!1),
+                    [waveCastPopoverShift, setWaveCastPopoverShift] = (0, u.useState)(0),
                     [waveCastDeviceRows, setWaveCastDeviceRows] = (0, u.useState)([]),
                     [waveCastHoveredDeviceKey, setWaveCastHoveredDeviceKey] = (0, u.useState)(null),
                     [waveCastActiveSpeakerId, setWaveCastActiveSpeakerId] = (0, u.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
                     [waveCastDevicesLoading, setWaveCastDevicesLoading] = (0, u.useState)(!1),
+                    [waveCastDevicesLoaded, setWaveCastDevicesLoaded] = (0, u.useState)(!1),
                     [isWaveYandexStationCastEnabled, setIsWaveYandexStationCastEnabled] = (0, u.useState)(pulseSyncIsYandexStationCastEnabled()),
                     waveCastControlRef = (0, u.useRef)(null),
                     waveCastCloseTimerRef = (0, u.useRef)(null),
@@ -9000,22 +9032,21 @@
                     loadWaveCastDevices = (0, u.useCallback)(async () => {
                         if (!isWaveYandexStationCastEnabled) {
                             setWaveCastDeviceRows([]);
+                            setWaveCastDevicesLoaded(!1);
                             setWaveCastDevicesLoading(!1);
                             return;
                         }
                         try {
                             setWaveCastDevicesLoading(!0);
-                            const [e, t, a] = await Promise.all([
-                                window.desktopEvents?.invoke?.('GET_ACCOUNT_SPEAKERS') ?? Promise.resolve([]),
-                                window.desktopEvents?.invoke?.('GET_LOCAL_SPEAKERS') ?? Promise.resolve([]),
-                                window.desktopEvents?.invoke?.('YANDEX_STATION_GET_ACTIVE_SPEAKER') ?? Promise.resolve(null),
-                            ]);
-                            setWaveCastActiveSpeakerId(a?.accountSpeaker?.id ?? window.pulseSyncYandexStationCast?.activeSpeakerId ?? null);
-                            setWaveCastDeviceRows([{ isThisDevice: !0 }, ...pulseSyncBuildCastDeviceRows(Array.isArray(e) ? e : [], Array.isArray(t) ? t : [])]);
+                            const e = await (window.desktopEvents?.invoke?.('YANDEX_STATION_STATE') ?? Promise.resolve(null));
+                            pulseSyncApplyYandexStationState(e, {
+                                setActiveSpeakerId: setWaveCastActiveSpeakerId,
+                                setDeviceRows: setWaveCastDeviceRows,
+                                setDevicesLoaded: setWaveCastDevicesLoaded,
+                                setDevicesLoading: setWaveCastDevicesLoading,
+                            });
                         } catch (e) {
-                            (console.warn('Failed to load Yandex Station cast devices', e), setWaveCastDeviceRows([]));
-                        } finally {
-                            setWaveCastDevicesLoading(!1);
+                            (console.warn('Failed to load Yandex Station cast devices', e), setWaveCastDeviceRows([]), setWaveCastDevicesLoaded(!1), setWaveCastDevicesLoading(!1));
                         }
                     }, [isWaveYandexStationCastEnabled]),
                     closeWaveCastPopover = (0, u.useCallback)(() => {
@@ -9026,12 +9057,17 @@
                             setWaveCastHoveredDeviceKey(null);
                         }, 160);
                     }, []),
+                    updateWaveCastPopoverShift = (0, u.useCallback)(() => {
+                        setWaveCastPopoverShift(pulseSyncGetCastPopoverShift(waveCastControlRef.current));
+                    }, []),
                     openWaveCastPopover = (0, u.useCallback)(() => {
                         clearTimeout(waveCastCloseTimerRef.current);
-                        void loadWaveCastDevices();
                         setWaveCastPopoverMounted(!0);
-                        requestAnimationFrame(() => setWaveCastPopoverOpen(!0));
-                    }, [loadWaveCastDevices]),
+                        requestAnimationFrame(() => {
+                            updateWaveCastPopoverShift();
+                            setWaveCastPopoverOpen(!0);
+                        });
+                    }, [updateWaveCastPopoverShift]),
                     toggleWaveCastPopover = (0, u.useCallback)(() => {
                         waveCastPopoverOpen ? closeWaveCastPopover() : openWaveCastPopover();
                     }, [waveCastPopoverOpen, closeWaveCastPopover, openWaveCastPopover]),
@@ -9060,13 +9096,26 @@
                                                   className: 'PulseSync_castPopover',
                                                   style: {
                                                       opacity: waveCastPopoverOpen ? 1 : 0,
-                                                      transform: waveCastPopoverOpen ? 'translateY(0)' : 'translateY(10px)',
+                                                      transform: 'translateX('.concat(waveCastPopoverShift, 'px) ').concat(waveCastPopoverOpen ? 'translateY(0)' : 'translateY(10px)'),
                                                       pointerEvents: waveCastPopoverOpen ? 'auto' : 'none',
                                                   },
-                                                  children: waveCastDevicesLoading
-                                                      ? (0, l.jsx)('div', { style: { padding: '10px 12px', fontSize: '13px' }, children: 'Поиск устройств...' })
-                                                      : waveCastDeviceRows.length
-                                                        ? waveCastDeviceRows.map((e) => {
+                                                  children: !waveCastDevicesLoaded
+                                                      ? (0, l.jsx)('div', { className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_shimmer', children: 'Поиск устройств...' })
+                                                      : (0, l.jsxs)('div', {
+                                                            className: 'PulseSync_castPopoverContent',
+                                                            children: [
+                                                            (0, l.jsx)(
+                                                                'div',
+                                                                {
+                                                                    className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_refreshing'.concat(
+                                                                        waveCastDevicesLoading ? ' PulseSync_castPopoverStatus_visible' : '',
+                                                                    ),
+                                                                    children: 'Обновляем список устройств...',
+                                                                },
+                                                                'wave-cast-refreshing',
+                                                            ),
+                                                            waveCastDeviceRows.length
+                                                                ? waveCastDeviceRows.map((e) => {
                                                               const t = !e.isThisDevice && !e.canUseLocal,
                                                                   a = e.isThisDevice ? void 0 : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
                                                                   i = e.accountSpeaker?.id,
@@ -9088,6 +9137,7 @@
                                                               return (0, l.jsxs)('button', {
                                                                   key: o,
                                                                   type: 'button',
+                                                                  className: 'PulseSync_castPopoverItem'.concat(r || (!t && waveCastHoveredDeviceKey === o) ? ' PulseSync_castPopoverItem_active' : ''),
                                                                   disabled: t,
                                                                   onClick: t
                                                                       ? void 0
@@ -9113,25 +9163,6 @@
                                                                         },
                                                                   onMouseEnter: t ? void 0 : () => setWaveCastHoveredDeviceKey(o),
                                                                   onMouseLeave: t ? void 0 : () => setWaveCastHoveredDeviceKey(null),
-                                                                  style: {
-                                                                      width: '100%',
-                                                                      display: 'flex',
-                                                                      flexDirection: 'row',
-                                                                      alignItems: 'center',
-                                                                      justifyContent: 'space-between',
-                                                                      padding: '9px 10px',
-                                                                      border: 0,
-                                                                      borderRadius: '6px',
-                                                                      background:
-                                                                          r || (!t && waveCastHoveredDeviceKey === o)
-                                                                              ? 'var(--ym-controls-color-secondary-default-hovered)'
-                                                                              : 'transparent',
-                                                                      color: 'inherit',
-                                                                      textAlign: 'left',
-                                                                      cursor: t ? 'default' : 'pointer',
-                                                                      opacity: t ? 0.48 : 1,
-                                                                      transition: 'background 120ms ease, opacity 120ms ease',
-                                                                  },
                                                                   children: [
                                                                       (0, l.jsx)('div', {
                                                                           style: {
@@ -9145,36 +9176,20 @@
                                                                                   style: { display: 'flex', gap: '5px', alignItems: 'baseline' },
                                                                                   children: [
                                                                                       (0, l.jsx)('span', {
-                                                                                          style: {
-                                                                                              maxWidth: '100%',
-                                                                                              overflow: 'hidden',
-                                                                                              textOverflow: 'ellipsis',
-                                                                                              whiteSpace: 'nowrap',
-                                                                                              fontSize: '13px',
-                                                                                              color: !t
-                                                                                                  ? 'var(--ym-controls-color-primary-text-enabled_variant)'
-                                                                                                  : void 0,
-                                                                                          },
+                                                                                          className: 'PulseSync_castPopoverItemTitle',
                                                                                           children: e.isThisDevice
                                                                                               ? 'Это устройство'
                                                                                               : (e.accountSpeaker?.name ?? e.accountSpeaker?.id ?? 'Yandex Station'),
                                                                                       }),
                                                                                       a &&
                                                                                           (0, l.jsx)('span', {
-                                                                                              style: {
-                                                                                                  maxWidth: '100%',
-                                                                                                  overflow: 'hidden',
-                                                                                                  textOverflow: 'ellipsis',
-                                                                                                  whiteSpace: 'nowrap',
-                                                                                                  fontSize: '11px',
-                                                                                                  color: 'var(--ym-controls-color-secondary-text-enabled)',
-                                                                                              },
+                                                                                              className: 'PulseSync_castPopoverItemMeta',
                                                                                               children: a,
                                                                                           }),
                                                                                   ],
                                                                               }),
                                                                               (0, l.jsx)('span', {
-                                                                                  style: { fontSize: '11px', color: 'var(--ym-controls-color-secondary-text-enabled)' },
+                                                                                  className: 'PulseSync_castPopoverItemMeta',
                                                                                   children: s,
                                                                               }),
                                                                           ],
@@ -9193,8 +9208,9 @@
                                                                           }),
                                                                   ],
                                                               });
-                                                          })
-                                                        : (0, l.jsx)('div', { style: { padding: '10px 12px', fontSize: '13px' }, children: 'Устройства не найдены' }),
+                                                              })
+                                                            : (0, l.jsx)('div', { className: 'PulseSync_castPopoverStatus', children: 'Устройства не найдены' }, 'wave-cast-empty'),
+                                                        ] }, 'wave-cast-content'),
                                               }),
                                       ],
                                   }),
@@ -9207,12 +9223,28 @@
                             waveCastActiveSpeakerId,
                             waveCastPopoverOpen,
                             waveCastPopoverMounted,
+                            waveCastPopoverShift,
                             waveCastDevicesLoading,
+                            waveCastDevicesLoaded,
                             waveCastDeviceRows,
                             waveCastHoveredDeviceKey,
                         ],
                     ),
                     O = { '--track-progress': ''.concat(T, '%') };
+                (0, u.useEffect)(() => {
+                    void loadWaveCastDevices();
+                }, [loadWaveCastDevices]);
+                (0, u.useEffect)(() => {
+                    const e = (e, t) => {
+                        pulseSyncApplyYandexStationState(t, {
+                            setActiveSpeakerId: setWaveCastActiveSpeakerId,
+                            setDeviceRows: setWaveCastDeviceRows,
+                            setDevicesLoaded: setWaveCastDevicesLoaded,
+                            setDevicesLoading: setWaveCastDevicesLoading,
+                        });
+                    };
+                    return window.desktopEvents?.on?.('YANDEX_STATION_STATE', e);
+                }, []);
                 (0, u.useEffect)(() => {
                     const e = (e) => {
                         setWaveCastActiveSpeakerId(e.detail?.activeSpeakerId ?? null);
@@ -9228,7 +9260,7 @@
                     const e = (e) => {
                         const t = e.detail?.enabled ?? pulseSyncIsYandexStationCastEnabled();
                         setIsWaveYandexStationCastEnabled(t);
-                        t || (closeWaveCastPopover(), setWaveCastDeviceRows([]), setWaveCastActiveSpeakerId(null));
+                        t ? (setWaveCastDevicesLoaded(!1), void loadWaveCastDevices()) : (closeWaveCastPopover(), setWaveCastDeviceRows([]), setWaveCastActiveSpeakerId(null), setWaveCastDevicesLoaded(!1), setWaveCastDevicesLoading(!1));
                     };
                     return (
                         window.addEventListener('pulse-sync-yandex-station-cast-setting-change', e),
@@ -9236,7 +9268,7 @@
                             window.removeEventListener('pulse-sync-yandex-station-cast-setting-change', e);
                         }
                     );
-                }, [closeWaveCastPopover]);
+                }, [closeWaveCastPopover, loadWaveCastDevices]);
                 (0, u.useEffect)(() => () => clearTimeout(waveCastCloseTimerRef.current), []);
                 (0, u.useEffect)(() => {
                     if (!waveCastPopoverMounted) return;
@@ -9250,6 +9282,17 @@
                         }
                     );
                 }, [waveCastPopoverMounted, closeWaveCastPopover]);
+                (0, u.useEffect)(() => {
+                    if (!waveCastPopoverMounted) return;
+                    const e = () => updateWaveCastPopoverShift();
+                    return (
+                        updateWaveCastPopoverShift(),
+                        window.addEventListener('resize', e),
+                        () => {
+                            window.removeEventListener('resize', e);
+                        }
+                    );
+                }, [waveCastPopoverMounted, updateWaveCastPopoverShift]);
                 return (0, l.jsxs)('section', {
                     role: 'region',
                     'aria-label': waveFormatMessage({ id: 'a11y-regions.player' }),
@@ -9270,6 +9313,7 @@
                                         sonataVolume: o.volume,
                                         onVolumeSet: o.setVolume,
                                         onVolumeClick: M,
+                                        style: isWaveYandexStationCastEnabled ? { marginLeft: 'calc(48px + 0.25rem)' } : undefined,
                                     }),
                                 (0, l.jsx)(h._I, { className: aR().button, disabled: !k || d.isAdvertShown, isDisliked: b, onClick: f, iconSize: 'xs' }),
                                 (0, l.jsx)(aX, {}),
