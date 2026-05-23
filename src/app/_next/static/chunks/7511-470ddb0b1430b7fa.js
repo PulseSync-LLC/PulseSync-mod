@@ -7254,9 +7254,9 @@
                         'm8.2522,6.6265 l2.4062,1.2031c0.8445,0.4223 1.8387,0.4223 2.6832,0l2.4062,-1.2031c0.5159,-0.258 0.5159,-0.9942 0,-1.2522l-2.4062,-1.2031c-0.8445,-0.4223 -1.8387,-0.4223 -2.6832,0l-2.4062,1.2031c-0.5159,0.258 -0.5159,0.9942 0,1.2522zM12,10.2496c-1.4143,0 -3.3087,-0.7801 -5.6832,-2.3403 -0.1386,-0.0911 -0.3009,-0.1396 -0.4668,-0.1396 -0.4694,0 -0.85,0.3806 -0.85,0.85v6.6321c0,0.8018 0.3845,1.5549 1.0339,2.025 2.5073,1.8153 4.4961,2.7229 5.9661,2.7229s3.4587,-0.9076 5.9661,-2.7229c0.6494,-0.4701 1.0339,-1.2232 1.0339,-2.025v-6.632c0,-0.1659 -0.0485,-0.3282 -0.1396,-0.4668 -0.2578,-0.3923 -0.7849,-0.5014 -1.1772,-0.2436 -2.3745,1.5602 -4.2689,2.3403 -5.6832,2.3403z',
                     mini: 'm17.939,8.0749c0,1.64 -2.659,2.9695 -5.939,2.9695 -3.2799,0 -5.9389,-1.3295 -5.9389,-2.9695s2.6589,-2.9695 5.9389,-2.9695c3.28,0 5.939,1.3295 5.939,2.9695zM19.8807,11.0635c0.0781,0.1264 0.1194,0.272 0.1194,0.4206v4.3451c0,2.2093 -3.5817,4 -7.9999,4 -4.4183,0 -8.0001,-1.7908 -8.0001,-4v-4.3451c-0.0002,-0.1486 0.0411,-0.2944 0.1191,-0.4208 0.0781,-0.1265 0.1898,-0.2287 0.3227,-0.2952s0.2817,-0.0946 0.4298,-0.0813c0.148,0.0134 0.2894,0.0678 0.4082,0.1571 2.005,1.2692 4.3492,1.8975 6.7203,1.8011 2.371,0.0964 4.7151,-0.5319 6.7201,-1.8011 0.1189,-0.0891 0.2602,-0.1433 0.4081,-0.1566 0.148,-0.0133 0.2967,0.0148 0.4296,0.0813 0.1329,0.0664 0.2446,0.1686 0.3227,0.2949z',
                 },
-                pulseSyncRenderCastDeviceIcon = (e) =>
+                pulseSyncRenderCastDeviceIcon = (e, t = '') =>
                     (0, l.jsx)('span', {
-                        className: 'PulseSync_castPopoverItemIcon',
+                        className: 'PulseSync_castPopoverItemIcon'.concat(t ? ' '.concat(t) : ''),
                         'aria-hidden': !0,
                         children: (0, l.jsx)('svg', {
                             width: '32',
@@ -7507,7 +7507,7 @@
                                               withRipple: !1,
                                               'aria-label': S({ id: 'player-actions.cast' }),
                                               icon: castActiveSpeakerId
-                                                  ? pulseSyncRenderCastDeviceIcon(pulseSyncGetActiveCastDeviceRow(castDeviceRows, castActiveSpeakerId))
+                                                  ? pulseSyncRenderCastDeviceIcon(pulseSyncGetActiveCastDeviceRow(castDeviceRows, castActiveSpeakerId), 'PulseSync_castPlayerButtonIcon')
                                                   : (0, l.jsx)(F.Icon, { variant: 'cast', size: 'xs' }),
                                               onClick: toggleCastPopover,
                                               style: castActiveSpeakerId ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
@@ -7611,7 +7611,6 @@
                                                                                               flexDirection: 'column',
                                                                                               minWidth: 0,
                                                                                               flex: '1 1 auto',
-                                                                                              gap: '2px',
                                                                                           },
                                                                                           children: [
                                                                                               (0, l.jsx)('span', {
@@ -9193,7 +9192,7 @@
                                               withRipple: !1,
                                               'aria-label': waveFormatMessage({ id: 'player-actions.cast' }),
                                               icon: waveCastActiveSpeakerId
-                                                  ? pulseSyncRenderCastDeviceIcon(pulseSyncGetActiveCastDeviceRow(waveCastDeviceRows, waveCastActiveSpeakerId))
+                                                  ? pulseSyncRenderCastDeviceIcon(pulseSyncGetActiveCastDeviceRow(waveCastDeviceRows, waveCastActiveSpeakerId), 'PulseSync_castPlayerButtonIcon')
                                                   : (0, l.jsx)(F.Icon, { variant: 'cast', size: 'xs' }),
                                               onClick: toggleWaveCastPopover,
                                               style: waveCastActiveSpeakerId ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
@@ -9297,7 +9296,6 @@
                                                                                               flexDirection: 'column',
                                                                                               minWidth: 0,
                                                                                               flex: '1 1 auto',
-                                                                                              gap: '2px',
                                                                                           },
                                                                                           children: [
                                                                                               (0, l.jsx)('span', {

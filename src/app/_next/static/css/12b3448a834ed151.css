@@ -1175,15 +1175,28 @@
     align-items: center;
     color: inherit;
     display: inline-flex;
-    flex: 0 0 2rem;
-    height: 2rem;
+    flex: 0 0 2.25rem;
+    height: 2.25rem;
     justify-content: center;
     opacity: 0.9;
-    width: 2rem;
+    width: 2.25rem;
 }
 
 .PulseSync_castPopoverItemIcon svg {
     display: block;
+    height: 2.25rem;
+    width: 2.25rem;
+}
+
+.PulseSync_castPlayerButtonIcon {
+    flex-basis: var(--ym-icon-size-xs);
+    height: var(--ym-icon-size-xs);
+    width: var(--ym-icon-size-xs);
+}
+
+.PulseSync_castPlayerButtonIcon svg {
+    height: var(--ym-icon-size-xs);
+    width: var(--ym-icon-size-xs);
 }
 
 .PulseSync_castPopoverItem > span:last-child:not(.PulseSync_castPopoverItemIcon) {
