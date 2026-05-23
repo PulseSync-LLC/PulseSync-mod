@@ -1156,7 +1156,8 @@
     font-size: var(--ym-font-size-label-l);
     font-style: normal;
     font-weight: var(--ym-font-weight-medium);
-    justify-content: space-between;
+    gap: var(--ym-spacer-size-xs);
+    justify-content: flex-start;
     letter-spacing: normal;
     line-height: var(--ym-font-line-height-label-m);
     padding-block-end: var(--ym-spacer-size-xs);
@@ -1168,6 +1169,26 @@
     background-color var(--ym-duration-transition),
     opacity var(--ym-duration-transition);
     width: 100%;
+}
+
+.PulseSync_castPopoverItemIcon {
+    align-items: center;
+    color: inherit;
+    display: inline-flex;
+    flex: 0 0 2rem;
+    height: 2rem;
+    justify-content: center;
+    opacity: 0.9;
+    width: 2rem;
+}
+
+.PulseSync_castPopoverItemIcon svg {
+    display: block;
+}
+
+.PulseSync_castPopoverItem > span:last-child:not(.PulseSync_castPopoverItemIcon) {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
 }
 
 .PulseSync_castPopoverItem:hover,
@@ -1201,9 +1222,11 @@
 .PulseSync_castPopoverItemMeta {
     color: hsla(0, 0%, 100%, 0.5);
     font-size: var(--ym-font-size-label-xs);
-    line-height: var(--ym-font-line-height-label-xs);
+    line-height: calc(var(--ym-font-line-height-label-xs) + 0.25rem);
     max-width: 17rem;
     overflow: hidden;
+    padding-block-end: 0.125rem;
+    padding-block-start: 0.125rem;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
