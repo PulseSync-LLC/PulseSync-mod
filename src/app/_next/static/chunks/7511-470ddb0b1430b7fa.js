@@ -7273,6 +7273,25 @@
                         }),
                     }),
                 pulseSyncGetActiveCastDeviceRow = (e, t) => (t ? e.find((e) => !e.isThisDevice && e.accountSpeaker?.id === t) : null),
+                pulseSyncCastConnectDelay = (e) => new Promise((t) => setTimeout(t, e)),
+                pulseSyncSelectYandexStationSpeaker = async (e) => {
+                    let t = null;
+                    for (let a = 0; a <= 3; a += 1) {
+                        try {
+                            if (
+                                ((t = window.pulseSyncYandexStationCast?.activate
+                                    ? await window.pulseSyncYandexStationCast.activate(e)
+                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', e)),
+                                t?.ok)
+                            )
+                                return t;
+                        } catch (e) {
+                            t = { ok: !1, error: e };
+                        }
+                        a < 3 && (await pulseSyncCastConnectDelay(600));
+                    }
+                    return t ?? { ok: !1 };
+                },
                 pulseSyncIsYandexStationCastEnabled = () => {
                     try {
                         return window.__pulseSyncYandexStationCastEnabled ?? window.ENABLE_YANDEX_STATION_CAST?.() ?? !0;
@@ -7329,6 +7348,8 @@
                     [castDeviceRows, setCastDeviceRows] = (0, u.useState)([]),
                     [castHoveredDeviceKey, setCastHoveredDeviceKey] = (0, u.useState)(null),
                     [castActiveSpeakerId, setCastActiveSpeakerId] = (0, u.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
+                    [castConnectingSpeakerId, setCastConnectingSpeakerId] = (0, u.useState)(null),
+                    [castConnectionErrorSpeakerId, setCastConnectionErrorSpeakerId] = (0, u.useState)(null),
                     [castDevicesLoading, setCastDevicesLoading] = (0, u.useState)(!1),
                     [castDevicesLoaded, setCastDevicesLoaded] = (0, u.useState)(!1),
                     [isYandexStationCastEnabled, setIsYandexStationCastEnabled] = (0, u.useState)(pulseSyncIsYandexStationCastEnabled()),
@@ -7549,6 +7570,15 @@
                                                                                       ? void 0
                                                                                       : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
                                                                                   r = e.accountSpeaker?.id,
+                                                                                  isConnecting =
+                                                                                      !e.isThisDevice &&
+                                                                                      castConnectingSpeakerId === r &&
+                                                                                      castActiveSpeakerId !== r,
+                                                                                  hasConnectionError =
+                                                                                      !e.isThisDevice &&
+                                                                                      castConnectionErrorSpeakerId === r &&
+                                                                                      castActiveSpeakerId !== r,
+                                                                                  isDisabled = t || !!castConnectingSpeakerId,
                                                                                   isConnected =
                                                                                       (e.isThisDevice && !castActiveSpeakerId) ||
                                                                                       (!e.isThisDevice && castActiveSpeakerId === r),
@@ -7556,6 +7586,10 @@
                                                                                       ? castActiveSpeakerId
                                                                                           ? 'Отключить колонку'
                                                                                           : 'Сейчас выбрано'
+                                                                                      : isConnecting
+                                                                                        ? 'Подключение...'
+                                                                                        : hasConnectionError
+                                                                                          ? 'Ошибка подключения'
                                                                                       : castActiveSpeakerId === r
                                                                                         ? 'Подключено'
                                                                                         : e.canUseLocal
@@ -7568,12 +7602,12 @@
                                                                                   key: n,
                                                                                   type: 'button',
                                                                                   className: 'PulseSync_castPopoverItem'.concat(
-                                                                                      isConnected || (!t && castHoveredDeviceKey === n)
+                                                                                      isConnected || (!isDisabled && castHoveredDeviceKey === n)
                                                                                           ? ' PulseSync_castPopoverItem_active'
                                                                                           : '',
                                                                                   ),
-                                                                                  disabled: t,
-                                                                                  onClick: t
+                                                                                  disabled: isDisabled,
+                                                                                  onClick: isDisabled
                                                                                       ? void 0
                                                                                       : async () => {
                                                                                             if (e.isThisDevice) {
@@ -7583,25 +7617,35 @@
                                                                                                           'YANDEX_STATION_CLEAR_SPEAKER',
                                                                                                       );
                                                                                                 setCastActiveSpeakerId(null);
+                                                                                                setCastConnectingSpeakerId(null);
+                                                                                                setCastConnectionErrorSpeakerId(null);
                                                                                                 closeCastPopover();
                                                                                                 return;
                                                                                             }
                                                                                             const t = e.accountSpeaker?.id;
                                                                                             if (!t) return;
+                                                                                            setCastConnectingSpeakerId(t);
+                                                                                            setCastConnectionErrorSpeakerId(null);
                                                                                             try {
-                                                                                                const e = window.pulseSyncYandexStationCast?.activate
-                                                                                                    ? await window.pulseSyncYandexStationCast.activate(t)
-                                                                                                    : await window.desktopEvents?.invoke?.(
-                                                                                                          'YANDEX_STATION_SELECT_SPEAKER',
-                                                                                                          t,
-                                                                                                      );
-                                                                                                e?.ok && (setCastActiveSpeakerId(t), closeCastPopover());
+                                                                                                const e = await pulseSyncSelectYandexStationSpeaker(t);
+                                                                                                e?.ok
+                                                                                                    ? (setCastActiveSpeakerId(t),
+                                                                                                      setCastConnectionErrorSpeakerId(null),
+                                                                                                      closeCastPopover())
+                                                                                                    : (setCastConnectionErrorSpeakerId(t),
+                                                                                                      console.warn(
+                                                                                                          'Failed to select Yandex Station cast device',
+                                                                                                          e,
+                                                                                                      ));
                                                                                             } catch (e) {
+                                                                                                setCastConnectionErrorSpeakerId(t);
                                                                                                 console.warn('Failed to select Yandex Station cast device', e);
+                                                                                            } finally {
+                                                                                                setCastConnectingSpeakerId(null);
                                                                                             }
                                                                                         },
-                                                                                  onMouseEnter: t ? void 0 : () => setCastHoveredDeviceKey(n),
-                                                                                  onMouseLeave: t ? void 0 : () => setCastHoveredDeviceKey(null),
+                                                                                  onMouseEnter: isDisabled ? void 0 : () => setCastHoveredDeviceKey(n),
+                                                                                  onMouseLeave: isDisabled ? void 0 : () => setCastHoveredDeviceKey(null),
                                                                                   children: [
                                                                                       pulseSyncRenderCastDeviceIcon(e),
                                                                                       (0, l.jsx)('div', {
@@ -7642,7 +7686,17 @@
                                                                                                   ],
                                                                                               }),
                                                                                               (0, l.jsx)('span', {
-                                                                                                  className: 'PulseSync_castPopoverItemMeta',
+                                                                                                  className: 'PulseSync_castPopoverItemMeta'
+                                                                                                      .concat(
+                                                                                                          isConnecting
+                                                                                                              ? ' PulseSync_castPopoverItemMeta_shimmer'
+                                                                                                              : '',
+                                                                                                      )
+                                                                                                      .concat(
+                                                                                                          hasConnectionError
+                                                                                                              ? ' PulseSync_castPopoverItemMeta_error'
+                                                                                                              : '',
+                                                                                                      ),
                                                                                                   children: i,
                                                                                               }),
                                                                                           ],
@@ -7688,6 +7742,8 @@
                             castDevicesLoaded,
                             castDeviceRows,
                             castHoveredDeviceKey,
+                            castConnectingSpeakerId,
+                            castConnectionErrorSpeakerId,
                         ],
                     ),
                     Y = (0, u.useCallback)(
@@ -9064,6 +9120,8 @@
                     [waveCastDeviceRows, setWaveCastDeviceRows] = (0, u.useState)([]),
                     [waveCastHoveredDeviceKey, setWaveCastHoveredDeviceKey] = (0, u.useState)(null),
                     [waveCastActiveSpeakerId, setWaveCastActiveSpeakerId] = (0, u.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
+                    [waveCastConnectingSpeakerId, setWaveCastConnectingSpeakerId] = (0, u.useState)(null),
+                    [waveCastConnectionErrorSpeakerId, setWaveCastConnectionErrorSpeakerId] = (0, u.useState)(null),
                     [waveCastDevicesLoading, setWaveCastDevicesLoading] = (0, u.useState)(!1),
                     [waveCastDevicesLoaded, setWaveCastDevicesLoaded] = (0, u.useState)(!1),
                     [isWaveYandexStationCastEnabled, setIsWaveYandexStationCastEnabled] = (0, u.useState)(pulseSyncIsYandexStationCastEnabled()),
@@ -9234,6 +9292,15 @@
                                                                                       ? void 0
                                                                                       : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
                                                                                   i = e.accountSpeaker?.id,
+                                                                                  isConnecting =
+                                                                                      !e.isThisDevice &&
+                                                                                      waveCastConnectingSpeakerId === i &&
+                                                                                      waveCastActiveSpeakerId !== i,
+                                                                                  hasConnectionError =
+                                                                                      !e.isThisDevice &&
+                                                                                      waveCastConnectionErrorSpeakerId === i &&
+                                                                                      waveCastActiveSpeakerId !== i,
+                                                                                  isDisabled = t || !!waveCastConnectingSpeakerId,
                                                                                   r =
                                                                                       (e.isThisDevice && !waveCastActiveSpeakerId) ||
                                                                                       (!e.isThisDevice && waveCastActiveSpeakerId === i),
@@ -9241,6 +9308,10 @@
                                                                                       ? waveCastActiveSpeakerId
                                                                                           ? 'Отключить колонку'
                                                                                           : 'Сейчас выбрано'
+                                                                                      : isConnecting
+                                                                                        ? 'Подключение...'
+                                                                                        : hasConnectionError
+                                                                                          ? 'Ошибка подключения'
                                                                                       : waveCastActiveSpeakerId === i
                                                                                         ? 'Подключено'
                                                                                         : e.canUseLocal
@@ -9253,12 +9324,12 @@
                                                                                   key: o,
                                                                                   type: 'button',
                                                                                   className: 'PulseSync_castPopoverItem'.concat(
-                                                                                      r || (!t && waveCastHoveredDeviceKey === o)
+                                                                                      r || (!isDisabled && waveCastHoveredDeviceKey === o)
                                                                                           ? ' PulseSync_castPopoverItem_active'
                                                                                           : '',
                                                                                   ),
-                                                                                  disabled: t,
-                                                                                  onClick: t
+                                                                                  disabled: isDisabled,
+                                                                                  onClick: isDisabled
                                                                                       ? void 0
                                                                                       : async () => {
                                                                                             if (e.isThisDevice) {
@@ -9268,25 +9339,35 @@
                                                                                                           'YANDEX_STATION_CLEAR_SPEAKER',
                                                                                                       );
                                                                                                 setWaveCastActiveSpeakerId(null);
+                                                                                                setWaveCastConnectingSpeakerId(null);
+                                                                                                setWaveCastConnectionErrorSpeakerId(null);
                                                                                                 closeWaveCastPopover();
                                                                                                 return;
                                                                                             }
                                                                                             const t = e.accountSpeaker?.id;
                                                                                             if (!t) return;
+                                                                                            setWaveCastConnectingSpeakerId(t);
+                                                                                            setWaveCastConnectionErrorSpeakerId(null);
                                                                                             try {
-                                                                                                const e = window.pulseSyncYandexStationCast?.activate
-                                                                                                    ? await window.pulseSyncYandexStationCast.activate(t)
-                                                                                                    : await window.desktopEvents?.invoke?.(
-                                                                                                          'YANDEX_STATION_SELECT_SPEAKER',
-                                                                                                          t,
-                                                                                                      );
-                                                                                                e?.ok && (setWaveCastActiveSpeakerId(t), closeWaveCastPopover());
+                                                                                                const e = await pulseSyncSelectYandexStationSpeaker(t);
+                                                                                                e?.ok
+                                                                                                    ? (setWaveCastActiveSpeakerId(t),
+                                                                                                      setWaveCastConnectionErrorSpeakerId(null),
+                                                                                                      closeWaveCastPopover())
+                                                                                                    : (setWaveCastConnectionErrorSpeakerId(t),
+                                                                                                      console.warn(
+                                                                                                          'Failed to select Yandex Station cast device',
+                                                                                                          e,
+                                                                                                      ));
                                                                                             } catch (e) {
+                                                                                                setWaveCastConnectionErrorSpeakerId(t);
                                                                                                 console.warn('Failed to select Yandex Station cast device', e);
+                                                                                            } finally {
+                                                                                                setWaveCastConnectingSpeakerId(null);
                                                                                             }
                                                                                         },
-                                                                                  onMouseEnter: t ? void 0 : () => setWaveCastHoveredDeviceKey(o),
-                                                                                  onMouseLeave: t ? void 0 : () => setWaveCastHoveredDeviceKey(null),
+                                                                                  onMouseEnter: isDisabled ? void 0 : () => setWaveCastHoveredDeviceKey(o),
+                                                                                  onMouseLeave: isDisabled ? void 0 : () => setWaveCastHoveredDeviceKey(null),
                                                                                   children: [
                                                                                       pulseSyncRenderCastDeviceIcon(e),
                                                                                       (0, l.jsx)('div', {
@@ -9327,7 +9408,17 @@
                                                                                                   ],
                                                                                               }),
                                                                                               (0, l.jsx)('span', {
-                                                                                                  className: 'PulseSync_castPopoverItemMeta',
+                                                                                                  className: 'PulseSync_castPopoverItemMeta'
+                                                                                                      .concat(
+                                                                                                          isConnecting
+                                                                                                              ? ' PulseSync_castPopoverItemMeta_shimmer'
+                                                                                                              : '',
+                                                                                                      )
+                                                                                                      .concat(
+                                                                                                          hasConnectionError
+                                                                                                              ? ' PulseSync_castPopoverItemMeta_error'
+                                                                                                              : '',
+                                                                                                      ),
                                                                                                   children: s,
                                                                                               }),
                                                                                           ],
@@ -9373,6 +9464,8 @@
                             waveCastDevicesLoaded,
                             waveCastDeviceRows,
                             waveCastHoveredDeviceKey,
+                            waveCastConnectingSpeakerId,
+                            waveCastConnectionErrorSpeakerId,
                         ],
                     ),
                     O = { '--track-progress': ''.concat(T, '%') };

@@ -1244,6 +1244,32 @@
     white-space: nowrap;
 }
 
+.PulseSync_castPopoverItemMeta_shimmer {
+    animation: PulseSync_castPopoverStatusTextShimmer 1600ms linear infinite;
+    background: linear-gradient(90deg, hsla(0, 0%, 100%, 0.42), #fff, hsla(0, 0%, 100%, 0.42));
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.PulseSync_castPopoverItemMeta_error {
+    color: #ff6b6b;
+}
+
+.PulseSync_castPopoverItem:disabled .PulseSync_castPopoverItemMeta_shimmer {
+    opacity: 1;
+}
+
+@keyframes PulseSync_castPopoverStatusTextShimmer {
+    0% {
+        background-position-x: 110%;
+    }
+    100% {
+        background-position-x: -110%;
+    }
+}
+
 .PulseSync_castPopoverItemRoom {
     display: block;
     flex: 1 1 auto;
