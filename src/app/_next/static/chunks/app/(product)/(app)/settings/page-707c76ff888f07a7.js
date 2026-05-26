@@ -2009,7 +2009,7 @@
                                 (0, n.jsx)('li', {
                                     className: $().item,
                                     children: (0, n.jsx)(Q, {
-                                        title: 'Кнопка Cast и поиск в колонок',
+                                        title: 'Кнопка Cast и поиск колонок',
                                         description: 'Показывает кнопку Cast и включает поиск Яндекс Станций в локальной сети.',
                                         onChange: onYandexStationCastToggle,
                                         isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.enableYandexStationCast').then((e) => e ?? !0),
