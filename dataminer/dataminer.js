@@ -28,6 +28,7 @@ console.log(`Используемые версии: ${versionList.join(', ')}`);
 const ROOT = process.argv[2] ?? (versionList?.[0] ? path.join(EXTRACTED, versionList?.[0]).concat('@pretty') : undefined) ?? './src';
 const APP_CHUNKS_ROOT = path.join(ROOT, '/app/_next/static/chunks');
 const MAIN_INDEX_JS_PATH = path.join(ROOT, '/index.js');
+const SPRITE_SVG_PATH = path.join(ROOT, '/app/icons/sprite.svg');
 const OUTPUT =
     process.argv[3] ??
     path.join(
@@ -43,9 +44,18 @@ const OUTPUT =
     );
 
 const HTTP_METHODS = ['get', 'post', 'put', 'delete', 'patch', 'head', 'options'];
+const MOBX_CHAIN_METHODS = new Set(['model', 'props', 'views', 'actions', 'named']);
 
 // === experiments ===
 const experiments = [];
+
+// === icons ===
+const iconsCollectionBySize = {};
+const iconUsages = [];
+const dynamicIconUsages = [];
+
+// === mobx-state-tree ===
+const mobxConstructs = [];
 
 function isHttpMethodCallee(node) {
     if (node?.type !== 'MemberExpression') return false;
@@ -348,6 +358,251 @@ function getEnclosingFunctionName(callPath) {
     return null;
 }
 
+function getMemberPropertyName(node) {
+    if (!node || node.type !== 'MemberExpression') return null;
+    if (!node.computed && node.property?.type === 'Identifier') return node.property.name;
+    if (node.computed && node.property?.type === 'StringLiteral') return node.property.value;
+    return null;
+}
+
+function getPropertyKeyName(prop) {
+    const key = prop?.key;
+    if (!key) return null;
+    if (key.type === 'Identifier') return key.name;
+    if (key.type === 'StringLiteral' || key.type === 'NumericLiteral') return String(key.value);
+    return generate(key, { concise: true }).code;
+}
+
+function getStaticStringValue(node) {
+    if (!node) return null;
+    if (node.type === 'StringLiteral') return node.value;
+    if (node.type === 'TemplateLiteral' && node.expressions.length === 0) return node.quasis.map((q) => q.value.cooked).join('');
+    return null;
+}
+
+function getObjectExpressionKeys(node) {
+    if (!node || node.type !== 'ObjectExpression') return [];
+
+    return node.properties
+        .map((prop) => {
+            if (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod') return getPropertyKeyName(prop);
+            if (prop.type === 'SpreadElement') return `...${generate(prop.argument, { concise: true }).code}`;
+            return null;
+        })
+        .filter(Boolean);
+}
+
+function getReturnedObjectExpression(fnNode) {
+    if (!fnNode) return null;
+    if ((fnNode.type === 'ArrowFunctionExpression' || fnNode.type === 'FunctionExpression') && fnNode.body?.type === 'ObjectExpression') return fnNode.body;
+
+    if ((fnNode.type === 'ArrowFunctionExpression' || fnNode.type === 'FunctionExpression') && fnNode.body?.type === 'BlockStatement') {
+        for (const statement of fnNode.body.body) {
+            if (statement.type === 'ReturnStatement' && statement.argument?.type === 'ObjectExpression') return statement.argument;
+        }
+    }
+
+    return null;
+}
+
+function extractKeysFromMobxCallback(argNode) {
+    const returnedObject = getReturnedObjectExpression(argNode);
+    return getObjectExpressionKeys(returnedObject);
+}
+
+function normalizeIconSize(size) {
+    return size === '' || size == null ? 'default' : size;
+}
+
+function addIconToCollection(iconName, size) {
+    if (!iconName) return;
+    const normalizedSize = normalizeIconSize(size);
+    iconsCollectionBySize[normalizedSize] ??= new Set();
+    iconsCollectionBySize[normalizedSize].add(iconName);
+}
+
+function extractIconCollectionFromObject(objNode) {
+    if (!objNode || objNode.type !== 'ObjectExpression') return;
+
+    for (const prop of objNode.properties) {
+        if (prop.type !== 'ObjectProperty') continue;
+
+        const size = normalizeIconSize(getPropertyKeyName(prop));
+        if (prop.value?.type === 'ArrayExpression') {
+            for (const element of prop.value.elements) {
+                const iconName = getStaticStringValue(element);
+                if (iconName) addIconToCollection(iconName, size);
+            }
+        }
+    }
+}
+
+function isIconComponentNode(node) {
+    if (!node) return false;
+    if (node.type === 'Identifier') return node.name === 'Icon';
+    if (node.type === 'MemberExpression') return getMemberPropertyName(node) === 'Icon';
+    if (node.type === 'JSXIdentifier') return node.name === 'Icon';
+    if (node.type === 'JSXMemberExpression') return node.property?.name === 'Icon';
+    return false;
+}
+
+function getObjectPropValue(objNode, keyName) {
+    if (!objNode || objNode.type !== 'ObjectExpression') return null;
+    for (const prop of objNode.properties) {
+        if (prop.type !== 'ObjectProperty') continue;
+        if (getPropertyKeyName(prop) === keyName) return prop.value;
+    }
+    return null;
+}
+
+function createIconUsage(variantNode, sizeNode, position) {
+    const variant = getStaticStringValue(variantNode);
+    const size = getStaticStringValue(sizeNode) ?? null;
+
+    if (variant) {
+        return {
+            variant,
+            size,
+            key: size ? `${variant}_${size}` : variant,
+            position,
+        };
+    }
+
+    return {
+        variant: variantNode ? generate(variantNode, { concise: true }).code : null,
+        size: sizeNode ? generate(sizeNode, { concise: true }).code : null,
+        dynamic: true,
+        position,
+    };
+}
+
+function extractIconUsageFromJsxCall(callNode, position) {
+    const componentNode = callNode.arguments?.[0];
+    const propsNode = callNode.arguments?.[1];
+    if (!isIconComponentNode(componentNode) || propsNode?.type !== 'ObjectExpression') return null;
+
+    return createIconUsage(getObjectPropValue(propsNode, 'variant'), getObjectPropValue(propsNode, 'size'), position);
+}
+
+function extractIconUsageFromJsxElement(node, position) {
+    if (!isIconComponentNode(node.openingElement?.name)) return null;
+
+    let variantNode = null;
+    let sizeNode = null;
+
+    for (const attr of node.openingElement.attributes) {
+        if (attr.type !== 'JSXAttribute') continue;
+        const attrName = attr.name?.name;
+        if (attrName !== 'variant' && attrName !== 'size') continue;
+
+        const valueNode = attr.value?.type === 'JSXExpressionContainer' ? attr.value.expression : attr.value;
+        if (attrName === 'variant') variantNode = valueNode;
+        if (attrName === 'size') sizeNode = valueNode;
+    }
+
+    return createIconUsage(variantNode, sizeNode, position);
+}
+
+function getMobxChainSteps(node) {
+    if (!node || node.type !== 'CallExpression' || node.callee?.type !== 'MemberExpression') return [];
+
+    const method = getMemberPropertyName(node.callee);
+
+    if (method === 'compose') {
+        return getMobxChainSteps(node.arguments?.[0]);
+    }
+
+    const chain = getMobxChainSteps(node.callee.object);
+    if (MOBX_CHAIN_METHODS.has(method)) chain.push({ method, args: node.arguments, node });
+    return chain;
+}
+
+function isTopLevelMobxChainCall(callPath) {
+    const steps = getMobxChainSteps(callPath.node);
+    if (!steps.length) return false;
+
+    const parent = callPath.parentPath;
+    const grandParent = parent?.parentPath;
+    if (
+        parent?.node?.type === 'MemberExpression' &&
+        parent.node.object === callPath.node &&
+        MOBX_CHAIN_METHODS.has(getMemberPropertyName(parent.node)) &&
+        grandParent?.node?.type === 'CallExpression' &&
+        grandParent.node.callee === parent.node
+    ) {
+        return false;
+    }
+
+    return true;
+}
+
+function getAssignedMobxName(callPath) {
+    let p = callPath.parentPath;
+    while (p) {
+        const node = p.node;
+        if (node.type === 'VariableDeclarator' && node.id.type === 'Identifier') return node.id.name;
+        if (node.type === 'AssignmentExpression') {
+            if (node.left.type === 'Identifier') return node.left.name;
+            if (node.left.type === 'MemberExpression') return generate(node.left, { concise: true }).code;
+        }
+        if (node.type === 'ExpressionStatement' || node.type === 'Program') break;
+        p = p.parentPath;
+    }
+    return null;
+}
+
+function extractMobxConstruct(callPath, relPath) {
+    if (!isTopLevelMobxChainCall(callPath)) return null;
+
+    const steps = getMobxChainSteps(callPath.node);
+    const construct = {
+        name: null,
+        assignedName: getAssignedMobxName(callPath),
+        props: [],
+        views: [],
+        actions: [],
+        chain: steps.map((step) => step.method),
+        position: {
+            file: relPath,
+            line: callPath.node.loc?.start.line ?? null,
+            column: callPath.node.loc?.start.column ?? null,
+        },
+    };
+
+    for (const step of steps) {
+        if (step.method === 'model') {
+            const [firstArg, secondArg] = step.args;
+            const modelName = getStaticStringValue(firstArg);
+            if (modelName) construct.name = modelName;
+            const propsNode = modelName ? secondArg : firstArg;
+            construct.props.push(...getObjectExpressionKeys(propsNode));
+        }
+
+        if (step.method === 'props') {
+            construct.props.push(...getObjectExpressionKeys(step.args?.[0]));
+        }
+
+        if (step.method === 'views') {
+            construct.views.push(...extractKeysFromMobxCallback(step.args?.[0]));
+        }
+
+        if (step.method === 'actions') {
+            construct.actions.push(...extractKeysFromMobxCallback(step.args?.[0]));
+        }
+
+        if (step.method === 'named') {
+            const namedValue = getStaticStringValue(step.args?.[0]);
+            if (namedValue) construct.name = namedValue;
+        }
+    }
+
+    construct.props = [...new Set(construct.props)].sort((a, b) => a.localeCompare(b));
+    construct.views = [...new Set(construct.views)].sort((a, b) => a.localeCompare(b));
+    construct.actions = [...new Set(construct.actions)].sort((a, b) => a.localeCompare(b));
+
+    return construct.name || construct.assignedName || construct.props.length || construct.views.length || construct.actions.length ? construct : null;
+}
+
 function generateSimpleRoutesListFromResults(results) {
     if (!results) return null;
 
@@ -376,6 +631,163 @@ function generateSimpleRoutesListFromResults(results) {
     }
 
     return routes;
+}
+
+function generateSimpleIconsList() {
+    const icons = {};
+
+    for (const [size, iconNames] of Object.entries(iconsCollectionBySize)) {
+        for (const iconName of iconNames) {
+            icons[iconName] ??= [];
+            icons[iconName].push(size);
+        }
+    }
+
+    return Object.fromEntries(
+        Object.entries(icons)
+            .map(([iconName, sizes]) => [iconName, [...new Set(sizes)].sort((a, b) => a.localeCompare(b))])
+            .sort(([a], [b]) => a.localeCompare(b)),
+    );
+}
+
+function generateIconUsageSummary(usages) {
+    const summary = {};
+
+    for (const usage of usages) {
+        if (!usage.key) continue;
+        summary[usage.key] ??= {
+            variant: usage.variant,
+            size: normalizeIconSize(usage.size),
+            count: 0,
+        };
+        summary[usage.key].count++;
+    }
+
+    return Object.fromEntries(Object.entries(summary).sort(([a], [b]) => a.localeCompare(b)));
+}
+
+function getAttributeValue(attrs, name) {
+    const match = attrs.match(new RegExp(`\\b${name}=("|')([^"']*)\\1`));
+    return match?.[2] ?? null;
+}
+
+function removeAttribute(attrs, name) {
+    return attrs.replace(new RegExp(`\\s*\\b${name}=("|')[^"']*\\1`, 'g'), '');
+}
+
+function getReferencedIds(svgContent) {
+    return [...svgContent.matchAll(/url\(#([^)]+)\)|(?:href|xlink:href)=("|')#([^"']+)\2/g)].map((match) => match[1] ?? match[3]).filter(Boolean);
+}
+
+function extractSvgDefinitions(spriteContent) {
+    const definitions = {};
+    const definitionRegex = /<(clipPath|linearGradient|radialGradient|mask|filter|pattern)\b[^>]*\bid=("|')([^"']+)\2[^>]*>[\s\S]*?<\/\1>/g;
+
+    for (const match of spriteContent.matchAll(definitionRegex)) {
+        definitions[match[3]] = match[0];
+    }
+
+    return definitions;
+}
+
+function extractSvgSymbolsFromSprite(spriteContent) {
+    const definitions = extractSvgDefinitions(spriteContent);
+    const symbols = {};
+    const symbolRegex = /<symbol\b([^>]*)\bid=("|')([^"']+)\2([^>]*)>([\s\S]*?)<\/symbol>/g;
+
+    for (const match of spriteContent.matchAll(symbolRegex)) {
+        const attrs = `${match[1]} ${match[4]}`;
+        const id = match[3];
+        const viewBox = getAttributeValue(attrs, 'viewBox');
+        const fill = getAttributeValue(attrs, 'fill');
+        const extraAttrs = removeAttribute(removeAttribute(removeAttribute(attrs, 'id'), 'viewBox'), 'fill').trim();
+        const body = match[5].trim();
+        const referencedDefs = [...new Set(getReferencedIds(body))]
+            .map((refId) => definitions[refId])
+            .filter(Boolean)
+            .join('\n');
+
+        symbols[id] = [
+            `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"${viewBox ? ` viewBox="${viewBox}"` : ''}${fill ? ` fill="${fill}"` : ''}${extraAttrs ? ` ${extraAttrs}` : ''}>`,
+            referencedDefs ? `<defs>\n${referencedDefs}\n</defs>` : null,
+            body,
+            '</svg>',
+            '',
+        ]
+            .filter(Boolean)
+            .join('\n');
+    }
+
+    return symbols;
+}
+
+function writeIconSvgFiles() {
+    if (!fs.existsSync(SPRITE_SVG_PATH)) {
+        console.warn(`⚠️  Не найден sprite.svg для экспорта иконок: ${SPRITE_SVG_PATH}`);
+        return 0;
+    }
+
+    const iconsDir = path.join(OUTPUT, 'icons');
+    const spriteContent = fs.readFileSync(SPRITE_SVG_PATH, 'utf8');
+    const symbols = extractSvgSymbolsFromSprite(spriteContent);
+    const knownIconKeys = new Set();
+
+    for (const [iconName, sizes] of Object.entries(generateSimpleIconsList())) {
+        for (const size of sizes) {
+            knownIconKeys.add(size === 'default' ? iconName : `${iconName}_${size}`);
+        }
+    }
+
+    fs.rmSync(iconsDir, { recursive: true, force: true });
+    fs.mkdirSync(iconsDir, { recursive: true });
+
+    let writtenCount = 0;
+    for (const iconKey of [...knownIconKeys].sort((a, b) => a.localeCompare(b))) {
+        const svg = symbols[iconKey];
+        if (!svg) continue;
+        fs.writeFileSync(path.join(iconsDir, `${iconKey}.svg`), svg, 'utf8');
+        writtenCount++;
+    }
+
+    return writtenCount;
+}
+
+function generateSimpleMobxConstructs(constructs) {
+    const summary = {};
+    const summaryFiles = {};
+
+    for (const construct of constructs) {
+        const baseName = construct.name ?? construct.assignedName ?? `${construct.position.file}:${construct.position.line}`;
+        let uniqueName = baseName;
+        let counter = 1;
+
+        while (summary[uniqueName] && summaryFiles[uniqueName] !== construct.position.file) {
+            counter++;
+            uniqueName = `${baseName} (${counter})`;
+        }
+
+        summary[uniqueName] ??= {
+            props: [],
+            views: [],
+            actions: [],
+            chains: [],
+        };
+        summaryFiles[uniqueName] ??= construct.position.file;
+
+        summary[uniqueName].props.push(...construct.props);
+        summary[uniqueName].views.push(...construct.views);
+        summary[uniqueName].actions.push(...construct.actions);
+        summary[uniqueName].chains.push(construct.chain.join('.'));
+    }
+
+    for (const item of Object.values(summary)) {
+        item.props = [...new Set(item.props)].sort((a, b) => a.localeCompare(b));
+        item.views = [...new Set(item.views)].sort((a, b) => a.localeCompare(b));
+        item.actions = [...new Set(item.actions)].sort((a, b) => a.localeCompare(b));
+        item.chains = [...new Set(item.chains)].sort((a, b) => a.localeCompare(b));
+    }
+
+    return Object.fromEntries(Object.entries(summary).sort(([a], [b]) => a.localeCompare(b)));
 }
 
 function isBranchNode(el) {
@@ -554,42 +966,72 @@ function createOutputJson(data, fileName) {
         try {
             traverse(ast, {
                 CallExpression(callPath) {
-                    if (!isHttpMethodCallee(callPath.node.callee)) return;
-                    if (!isDirectlyAwaited(callPath)) return;
+                    if (isHttpMethodCallee(callPath.node.callee) && isDirectlyAwaited(callPath)) {
+                        const { endpoint, searchParams, searchParamsFormatted, json, jsonFormatted, unsureEndpoint, endpointSource } = extractEndpointAndOptions(
+                            callPath.node,
+                            callPath,
+                        );
+                        const functionName = getEnclosingFunctionName(callPath);
+                        const result = {
+                            name: functionName,
+                            method: (callPath.node.callee.property.name ?? callPath.node.callee.property.value).toUpperCase(),
+                            endpoint,
+                            searchParamKeys: searchParams,
+                            jsonBodyKeys: json,
+                            formated: {
+                                endpoint: '/'.concat(endpoint),
+                                searchParamKeys: searchParamsFormatted,
+                                jsonBodyKeys: jsonFormatted,
+                            },
+                            position: {
+                                file: relPath,
+                                line: callPath.node.loc?.start.line ?? null,
+                                column: callPath.node.loc?.start.column ?? null,
+                            },
+                        };
 
-                    const { endpoint, searchParams, searchParamsFormatted, json, jsonFormatted, unsureEndpoint, endpointSource } = extractEndpointAndOptions(
-                        callPath.node,
-                        callPath,
-                    );
-                    const functionName = getEnclosingFunctionName(callPath);
-                    const result = {
-                        name: functionName,
-                        method: (callPath.node.callee.property.name ?? callPath.node.callee.property.value).toUpperCase(),
-                        endpoint,
-                        searchParamKeys: searchParams,
-                        jsonBodyKeys: json,
-                        formated: {
-                            endpoint: '/'.concat(endpoint),
-                            searchParamKeys: searchParamsFormatted,
-                            jsonBodyKeys: jsonFormatted,
-                        },
-                        position: {
-                            file: relPath,
-                            line: callPath.node.loc?.start.line ?? null,
-                            column: callPath.node.loc?.start.column ?? null,
-                        },
-                    };
+                        if (unsureEndpoint) {
+                            result.unsureEndpoint = true;
+                            result.endpointSource = endpointSource;
+                        }
 
-                    if (unsureEndpoint) {
-                        result.unsureEndpoint = true;
-                        result.endpointSource = endpointSource;
+                        results.push(result);
                     }
 
-                    results.push(result);
+                    const position = {
+                        file: relPath,
+                        line: callPath.node.loc?.start.line ?? null,
+                        column: callPath.node.loc?.start.column ?? null,
+                    };
+                    const iconUsage = extractIconUsageFromJsxCall(callPath.node, position);
+                    if (iconUsage) {
+                        if (iconUsage.dynamic) dynamicIconUsages.push(iconUsage);
+                        else iconUsages.push(iconUsage);
+                    }
+
+                    const mobxConstruct = extractMobxConstruct(callPath, relPath);
+                    if (mobxConstruct) mobxConstructs.push(mobxConstruct);
+                },
+
+                JSXElement(jsxPath) {
+                    const position = {
+                        file: relPath,
+                        line: jsxPath.node.loc?.start.line ?? null,
+                        column: jsxPath.node.loc?.start.column ?? null,
+                    };
+                    const iconUsage = extractIconUsageFromJsxElement(jsxPath.node, position);
+                    if (!iconUsage) return;
+                    if (iconUsage.dynamic) dynamicIconUsages.push(iconUsage);
+                    else iconUsages.push(iconUsage);
                 },
 
                 AssignmentExpression(path) {
                     const { node } = path;
+
+                    const assignedProperty = getMemberPropertyName(node.left);
+                    if (assignedProperty === 'iconsCollectionBySize' && node.right.type === 'ObjectExpression') {
+                        extractIconCollectionFromObject(node.right);
+                    }
 
                     // Ищем присваивание вида ANY.WebNext = "WebNext"
                     const isWebNextMarker =
@@ -646,12 +1088,17 @@ function createOutputJson(data, fileName) {
 
     console.log(`\n\n\n✅ Готово\n🌐 Роутов найдено: ${results.length}`);
     console.log(`🔬 Экспериментов найдено: ${experiments.length}`);
+    console.log(`🎨 Иконок найдено: ${Object.keys(generateSimpleIconsList()).length}, использований: ${iconUsages.length}, динамических использований: ${dynamicIconUsages.length}`);
+    console.log(`🧩 MobX-конструкций найдено: ${mobxConstructs.length}`);
     if (compiled) console.log(`💬 Локализованных сообщений: ${Object.keys(compiled).length}`);
 
     console.log(`\nСортирую результаты...`);
     console.time(`Сортировка завершена`);
     results.sort((a, b) => (a.formated.endpoint ?? '').localeCompare(b.formated.endpoint ?? ''));
     experiments.sort((a, b) => a.localeCompare(b));
+    iconUsages.sort((a, b) => a.key.localeCompare(b.key) || a.position.file.localeCompare(b.position.file) || (a.position.line ?? 0) - (b.position.line ?? 0));
+    dynamicIconUsages.sort((a, b) => a.position.file.localeCompare(b.position.file) || (a.position.line ?? 0) - (b.position.line ?? 0));
+    mobxConstructs.sort((a, b) => (a.name ?? a.assignedName ?? '').localeCompare(b.name ?? b.assignedName ?? '') || a.position.file.localeCompare(b.position.file));
     console.timeEnd(`Сортировка завершена`);
     console.timeEnd('Анализ завершён за');
 
@@ -662,6 +1109,11 @@ function createOutputJson(data, fileName) {
         createOutputJson(results, 'detailedRoutes.json');
         createOutputJson(generateSimpleRoutesListFromResults(results), 'simpleRoutes.json');
         createOutputJson([...new Set(experiments)], 'experiments.json');
+        createOutputJson(generateSimpleIconsList(), 'icons.json');
+        createOutputJson({ usages: iconUsages, usageSummary: generateIconUsageSummary(iconUsages), dynamicUsages: dynamicIconUsages }, 'detailedIcons.json');
+        createOutputJson(generateSimpleMobxConstructs(mobxConstructs), 'mobxConstructs.json');
+        createOutputJson(mobxConstructs, 'detailedMobx.json');
+        console.log(`💾 SVG-иконок сохранено: ${writeIconSvgFiles()}`);
         if (compiled) createOutputJson(compiled, 'formatted_ru.json');
         console.log(`\n💾 Результаты сохранёны в ${OUTPUT}`);
     } catch (err) {
