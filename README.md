@@ -33,6 +33,26 @@
 
 </details>
 
+### Трансляция музыки на Яндекс Станции
+
+<details>
+   <summary>Подробнее</summary>
+
+Добавляет поддержку передачи у управления воспроизведением с приложения на колонки Яндекса.
+
+<img width="336" height="217" alt="image" src="https://github.com/user-attachments/assets/c06562f6-aaf4-4e14-884c-5bfdbf6e5279" />
+
+<details>
+   <summary>Настройки</summary>
+
+Можно выключить в настройках внутри приложения:
+
+<img width="491" height="125" alt="image" src="https://github.com/user-attachments/assets/f0feacbd-5236-4fb6-92ae-9824df39efe1" />
+
+</details>
+
+</details>
+
 ### Управление плеером с других устройств
 
 <details>
@@ -67,6 +87,8 @@
 
 Добавляет поддержку скробблинга в Last.FM. Трек заскробблится, если вы прослушаете хотя бы его половину (но при этом
 запрос скроббла отправиться при смене трека).
+
+Кроме того обязательно нужно проксировать запросы к Last.FM. Ибо они перестали принимать запросы с ру IP адресов.
 
 <img width="550" alt="Страница пользователя Last.FM с заскроббленными треками" src="https://github.com/user-attachments/assets/9a47a37b-b895-4a06-8538-fb94eb009290">
 
@@ -132,24 +154,8 @@ https://github.com/user-attachments/assets/079f8b38-ca6b-4fef-b6a2-efa853fd583f
 <details>
    <summary>Настройки</summary>
 
-Гайд по настройке глобальных хоткеев: https://pulsesync.dev/wiki/main/mod/global-shortcuts
+<img width="611" height="572" alt="image" src="https://github.com/user-attachments/assets/2b5daa75-e1c4-40cb-b9c0-9715d0fe5f01" />
 
-Пример конфига:
-
-```json
-{
-  "globalShortcuts": {
-    "TOGGLE_PLAY": "Ctrl+/",
-    "MOVE_FORWARD": "Ctrl+,",
-    "MOVE_BACKWARD": "Ctrl+.",
-    "TOGGLE_SHUFFLE": "Ctrl+'",
-    "REPEAT_NONE": "",
-    "REPEAT_CONTEXT": "",
-    "TOGGLE_LIKE": "",
-    "TOGGLE_DISLIKE": ""
-  }
-}
-```
 
 </details>
 
@@ -162,7 +168,7 @@ https://github.com/user-attachments/assets/079f8b38-ca6b-4fef-b6a2-efa853fd583f
 
 Добавляет поддержку расширений панели задач (Taskbar Extensions).
 
-![browser_Y2f5KiyCYN](https://github.com/user-attachments/assets/877f5c77-f196-4702-bd44-7da60e1a0d93)
+<img width="222" height="271" alt="GfbYwzKOSs" src="https://github.com/user-attachments/assets/a0aea0e7-c55b-47bf-83f6-6dac9e1f91f8" />
 
 </details>
 
@@ -200,11 +206,11 @@ https://github.com/user-attachments/assets/079f8b38-ca6b-4fef-b6a2-efa853fd583f
 
 _До:_
 
-https://github.com/user-attachments/assets/23a8da4d-3d6a-43c6-a5f5-965e065ed912
+https://github.com/user-attachments/assets/3e4dac3a-7b34-4177-9be9-3a4c6f6e0ce1
 
 _После:_
 
-https://github.com/user-attachments/assets/b062a3ee-d05e-4cf3-8e03-b6f8bf66525c
+https://github.com/user-attachments/assets/85a009b6-bd41-4018-bf50-81fc0c7584fd
 
 </details>
 
@@ -302,41 +308,6 @@ _Диапазон масштабов: 75% - 200%._
 ![electron_L6SeZLnSAH](https://github.com/TheKing-OfTime/YandexMusicModClient/assets/68960526/ae841087-d910-45e5-a007-3fd869a493e1)
 
 ![electron_y6aOeckPLH](https://github.com/TheKing-OfTime/YandexMusicModClient/assets/68960526/4bde4785-9196-4ac6-ad3b-9ac5db5b61c8)
-
-</details>
-
-### Инфраструктура Яндекс Станций
-
-<details>
-   <summary>Пример main-process и IPC использования</summary>
-
-```js
-const { YandexStationService } = require('./src/main/lib/yandexStation');
-
-const service = new YandexStationService({ logger: console });
-
-service.setCookies(cookiesFromRenderer);
-
-const accountSpeakers = await service.getAccountSpeakers();
-const localSpeakers = await service.discoverLocalSpeakers();
-const resolvedSpeakers = await service.resolveSpeakers();
-
-const localReady = resolvedSpeakers.filter((speaker) => speaker.canUseLocal);
-
-if (localReady[0]) {
-    const response = await service.probeLocalSpeaker(localReady[0]);
-    console.log(response);
-}
-```
-
-В runtime приложения renderer читает уже прогретый main-process кеш:
-
-```js
-const accountSpeakers = await window.electron.ipcRenderer.invoke('GET_ACCOUNT_SPEAKERS');
-const localSpeakers = await window.electron.ipcRenderer.invoke('GET_LOCAL_SPEAKERS');
-```
-
-Подробности по неофициальному Quasar/Glagol flow описаны в `docs/yandex-station-api.md`.
 
 </details>
 
