@@ -134,6 +134,10 @@ const buildFeaturesPatch = (path, value) => {
         return null;
     }
 
+    if (path.startsWith('modSettings.globalShortcuts.') && path !== 'modSettings.globalShortcuts.enable' && path !== 'modSettings.globalShortcuts.enabled') {
+        return null;
+    }
+
     const patch = {};
     const keys = path.split('.');
     const lastKey = keys.pop();

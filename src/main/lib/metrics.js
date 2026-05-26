@@ -224,6 +224,15 @@ function shouldSkipFeaturePath(pathParts) {
         return false;
     }
 
+    const featurePath = getFeatureValueKey(pathParts);
+    if (
+        featurePath.startsWith('modSettings.globalShortcuts.') &&
+        featurePath !== 'modSettings.globalShortcuts.enable' &&
+        featurePath !== 'modSettings.globalShortcuts.enabled'
+    ) {
+        return true;
+    }
+
     const lastKey = pathParts[pathParts.length - 1];
     const parentKey = pathParts[pathParts.length - 2];
     const isWindowGeometryKey = lastKey === 'width' || lastKey === 'height' || lastKey === 'x' || lastKey === 'y';
