@@ -2535,11 +2535,15 @@
                         onEnableEndlessMusicToggle = (0, v.useCallback)(async (e) => {
                             console.log('modSettings.vibeAnimationEnhancement.enableEndlessMusic toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.enableEndlessMusic', e);
+                        }, []),
+                        onImprovedWaveLayoutToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.improvedWaveLayout toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.improvedWaveLayout', e);
                         }, []);
                     return (0, n.jsx)(T.a, {
                         className: K().list,
                         style: { maxWidth: '34.375rem', height: 'auto' },
-                        title: 'Поведение Моей Волны',
+                        title: 'Поведение Волны',
                         headerClassName: K().modalHeader,
                         contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
                         open: t.isOpened,
@@ -2569,6 +2573,15 @@
                                         description: 'После окончания воспроизведения очереди, запустится волна',
                                         onChange: onEnableEndlessMusicToggle,
                                         isChecked: window.nativeSettings.getAsync('modSettings.vibeAnimationEnhancement.enableEndlessMusic'),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Улучшенный layout страницы Волны',
+                                        description: 'Включает обновленное расположение кнопок и дополнительные элементы управления на странице Волны',
+                                        onChange: onImprovedWaveLayoutToggle,
+                                        isChecked: window.nativeSettings.getAsync('modSettings.vibeAnimationEnhancement.improvedWaveLayout').then((e) => e ?? !0),
                                     }),
                                 }),
                             ],
@@ -3802,8 +3815,8 @@
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
-                                title: 'Поведение Моей Волны',
-                                description: 'Настройка поведения Моей Волны',
+                                title: 'Поведение Волны',
+                                description: 'Настройка поведения Волны',
                                 onClick: myVibeParamsSettingsModal.open,
                             }),
                         }),

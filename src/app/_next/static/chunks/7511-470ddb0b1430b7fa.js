@@ -7299,6 +7299,14 @@
                         return !0;
                     }
                 },
+                pulseSyncImprovedWaveLayoutSettingKey = 'modSettings.vibeAnimationEnhancement.improvedWaveLayout',
+                pulseSyncIsImprovedWaveLayoutEnabled = () => {
+                    try {
+                        return window.IMPROVED_WAVE_LAYOUT?.() ?? window.nativeSettings?.get?.(pulseSyncImprovedWaveLayoutSettingKey) ?? !0;
+                    } catch (e) {
+                        return !0;
+                    }
+                },
                 pulseSyncApplyYandexStationState = (e, t) => {
                     const a = Array.isArray(e?.accountSpeakers) ? e.accountSpeakers : [],
                         i = Array.isArray(e?.localSpeakers) ? e.localSpeakers : [];
@@ -8736,16 +8744,25 @@
                         C = (0, n.brA)(),
                         k = (0, n.rs2)(),
                         j = (0, n.mFl)(),
+                        q = (0, P.AA)(),
+                        V = (0, P.e9)(),
+                        [H, Y] = (0, u.useState)(pulseSyncIsImprovedWaveLayoutEnabled()),
                         { togglePlay: A } = (0, n.B0S)({
                             seeds: null != (i = null == (t = d.meta) ? void 0 : t.seeds) ? i : [],
                             pageIdForFrom: n._Q$.HOME,
                             blockIdForFrom: n.hf$.RUP_MAIN_RADIO,
                             onPlayInterrupted: y.open,
                         }),
-                        P = (0, aP.r_)(null == s ? void 0 : s.type),
-                        N = ''.concat(P, ' ').concat(null == s ? void 0 : s.title),
+                        z = (0, aP.r_)(null == s ? void 0 : s.type),
+                        N = ''.concat(z, ' ').concat(null == s ? void 0 : s.title),
                         S = m.entityMeta,
                         M = O.checkExperiment(n.zal.WebNextPlayerBarYellowButton, 'on'),
+                        U = (0, $.c)((e) => {
+                            (e.stopPropagation(), V(m), j({ actionType: tw.X2.ChangeShuffle }));
+                        }),
+                        Q = (0, $.c)((e) => {
+                            (e.stopPropagation(), q(m), j({ actionType: tw.X2.ChangeRepeatSettings }));
+                        }),
                         T = (0, $.c)((e) => {
                             (e.stopPropagation(), null == x || x.moveForward(), j({ actionType: tw.X2.Skip }));
                         }),
@@ -8774,10 +8791,31 @@
                             ),
                             [I, b],
                         ),
+                        (0, u.useEffect)(() => {
+                            const e = (e, t, a) => {
+                                t === pulseSyncImprovedWaveLayoutSettingKey && Y(a !== !1);
+                            };
+                            return window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', e);
+                        }, []),
                         (0, l.jsxs)('div', {
                             className: (0, c.$)(aS().root, { [aS().root_withYellowPlayButton]: M }),
                             'aria-label': N,
                             children: [
+                                H &&
+                                    !m.isGenerativeContext &&
+                                    (m.canShuffle || m.canChangeRepeatMode) &&
+                                    (0, l.jsx)(p.$, {
+                                        className: (0, c.$)(aS().button, o),
+                                        variant: 'text',
+                                        radius: 'round',
+                                        disabled: !m.canShuffle,
+                                        'aria-hidden': !m.canShuffle,
+                                        withRipple: !1,
+                                        'aria-label': g({ id: 'player-actions.shuffle' }),
+                                        icon: (0, l.jsx)(F.Icon, { variant: 'shuffle', size: 'xs' }),
+                                        onClick: U,
+                                        style: m.shuffle ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
+                                    }),
                                 !m.isGenerativeContext &&
                                     (0, l.jsx)(p.$, {
                                         className: (0, c.$)(aS().button, aS().button_backward, o),
@@ -8833,6 +8871,21 @@
                                         icon: (0, l.jsx)(F.Icon, { variant: 'next', size: 'xs' }),
                                         onClick: T,
                                         ...(0, D.Am)(D.Kq.sonata.NEXT_TRACK_BUTTON),
+                                    }),
+                                H &&
+                                    !m.isGenerativeContext &&
+                                    (m.canShuffle || m.canChangeRepeatMode) &&
+                                    (0, l.jsx)(p.$, {
+                                        className: (0, c.$)(aS().button, o),
+                                        variant: 'text',
+                                        radius: 'round',
+                                        disabled: !m.canChangeRepeatMode,
+                                        'aria-hidden': !m.canChangeRepeatMode,
+                                        withRipple: !1,
+                                        'aria-label': (0, P.zM)(m.repeatMode, g),
+                                        icon: (0, l.jsx)(F.Icon, { variant: m.repeatMode === aI.pM.ONE ? 'repeat_one' : 'repeat', size: 'xs' }),
+                                        onClick: Q,
+                                        style: m.repeatMode !== aI.pM.NONE ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
                                     }),
                             ],
                         })
@@ -9125,6 +9178,7 @@
                     [waveCastDevicesLoading, setWaveCastDevicesLoading] = (0, u.useState)(!1),
                     [waveCastDevicesLoaded, setWaveCastDevicesLoaded] = (0, u.useState)(!1),
                     [isWaveYandexStationCastEnabled, setIsWaveYandexStationCastEnabled] = (0, u.useState)(pulseSyncIsYandexStationCastEnabled()),
+                    [isImprovedWaveLayoutEnabled, setIsImprovedWaveLayoutEnabled] = (0, u.useState)(pulseSyncIsImprovedWaveLayoutEnabled()),
                     waveCastControlRef = (0, u.useRef)(null),
                     waveCastCloseTimerRef = (0, u.useRef)(null),
                     I = (0, $.c)(() => {
@@ -9146,6 +9200,12 @@
                             }
                         );
                 }, [f, x, v, o.isGenerativeContext, o.entityMeta, I]);
+                (0, u.useEffect)(() => {
+                    const e = (e, t, a) => {
+                        t === pulseSyncImprovedWaveLayoutSettingKey && setIsImprovedWaveLayoutEnabled(a !== !1);
+                    };
+                    return window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', e);
+                }, []);
                 (0, u.useEffect)(() => {
                     let e = null == k ? void 0 : k.id,
                         t = null != k && !1 === k.hasSyncLyrics,
@@ -9170,7 +9230,49 @@
                     m.syncLyrics,
                     theState,
                 ]);
-                let E = (0, et.L)(() => {
+                let waveSyncLyricsAvailable = (0, u.useMemo)(() => {
+                        var e;
+                        let t = null == (e = k) ? void 0 : e.id;
+                        return (
+                            !!(null == k ? void 0 : k.isSyncLyricsAvailable) ||
+                            !!(null == k ? void 0 : k.isSyncLyricsAvailableWithOfflineFeature) ||
+                            !!(null == k ? void 0 : k.hasSyncLyrics) ||
+                            !!(null == k ? void 0 : k.hasLyrics) ||
+                            (!!t && m.syncLyrics.hasLyricsForTrack(t))
+                        );
+                    }, [
+                        null == k ? void 0 : k.id,
+                        null == k ? void 0 : k.isSyncLyricsAvailable,
+                        null == k ? void 0 : k.isSyncLyricsAvailableWithOfflineFeature,
+                        null == k ? void 0 : k.hasSyncLyrics,
+                        null == k ? void 0 : k.hasLyrics,
+                        m.syncLyrics.currentTrackId,
+                        m.syncLyrics.lines,
+                        m.syncLyrics.isResolved,
+                    ]),
+                    openWaveSyncLyrics = (0, $.c)(() => {
+                        (m.showSyncLyrics(), C({ to: tw.QT.PlayerScreen }));
+                    }),
+                    waveSyncLyricsControl = (0, u.useMemo)(() => {
+                        let e = ''
+                            .concat(waveFormatMessage({ id: 'interface-actions.open-sync-lyrics' }), ' ')
+                            .concat(waveFormatMessage({ id: 'warning-messages.can-break-accessibility' }));
+                        return (null == k ? void 0 : k.isNonMusic) || d.isAdvertShown
+                            ? null
+                            : (0, l.jsx)(p.$, {
+                                  className: aR().button,
+                                  radius: 'round',
+                                  size: 'xxxs',
+                                  variant: 'text',
+                                  disabled: !waveSyncLyricsAvailable || o.isGenerativeContext,
+                                  'aria-hidden': !waveSyncLyricsAvailable,
+                                  withRipple: !1,
+                                  'aria-label': e,
+                                  icon: (0, l.jsx)(F.Icon, { variant: 'syncLyrics', size: 'xs' }),
+                                  onClick: openWaveSyncLyrics,
+                              });
+                    }, [waveFormatMessage, null == k ? void 0 : k.isNonMusic, d.isAdvertShown, waveSyncLyricsAvailable, o.isGenerativeContext, openWaveSyncLyrics]),
+                    E = (0, et.L)(() => {
                         if (o.isGenerativeContext) return (0, l.jsx)(F.Icon, { size: 'xs', variant: 'infinity' });
                         let e = [];
                         return (
@@ -9250,7 +9352,10 @@
                                               withRipple: !1,
                                               'aria-label': waveFormatMessage({ id: 'player-actions.cast' }),
                                               icon: waveCastActiveSpeakerId
-                                                  ? pulseSyncRenderCastDeviceIcon(pulseSyncGetActiveCastDeviceRow(waveCastDeviceRows, waveCastActiveSpeakerId), 'PulseSync_castPlayerButtonIcon')
+                                                  ? pulseSyncRenderCastDeviceIcon(
+                                                        pulseSyncGetActiveCastDeviceRow(waveCastDeviceRows, waveCastActiveSpeakerId),
+                                                        'PulseSync_castPlayerButtonIcon',
+                                                    )
                                                   : (0, l.jsx)(F.Icon, { variant: 'cast', size: 'xs' }),
                                               onClick: toggleWaveCastPopover,
                                               style: waveCastActiveSpeakerId ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
@@ -9312,11 +9417,11 @@
                                                                                         ? 'Подключение...'
                                                                                         : hasConnectionError
                                                                                           ? 'Ошибка подключения'
-                                                                                      : waveCastActiveSpeakerId === i
-                                                                                        ? 'Подключено'
-                                                                                        : e.canUseLocal
-                                                                                          ? 'В сети'
-                                                                                          : 'Вне локальной сети',
+                                                                                          : waveCastActiveSpeakerId === i
+                                                                                            ? 'Подключено'
+                                                                                            : e.canUseLocal
+                                                                                              ? 'В сети'
+                                                                                              : 'Вне локальной сети',
                                                                                   o = e.isThisDevice
                                                                                       ? 'pulse-sync-wave-this-device'
                                                                                       : (e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId);
@@ -9355,10 +9460,7 @@
                                                                                                       setWaveCastConnectionErrorSpeakerId(null),
                                                                                                       closeWaveCastPopover())
                                                                                                     : (setWaveCastConnectionErrorSpeakerId(t),
-                                                                                                      console.warn(
-                                                                                                          'Failed to select Yandex Station cast device',
-                                                                                                          e,
-                                                                                                      ));
+                                                                                                      console.warn('Failed to select Yandex Station cast device', e));
                                                                                             } catch (e) {
                                                                                                 setWaveCastConnectionErrorSpeakerId(t);
                                                                                                 console.warn('Failed to select Yandex Station cast device', e);
@@ -9410,9 +9512,7 @@
                                                                                               (0, l.jsx)('span', {
                                                                                                   className: 'PulseSync_castPopoverItemMeta'
                                                                                                       .concat(
-                                                                                                          isConnecting
-                                                                                                              ? ' PulseSync_castPopoverItemMeta_shimmer'
-                                                                                                              : '',
+                                                                                                          isConnecting ? ' PulseSync_castPopoverItemMeta_shimmer' : '',
                                                                                                       )
                                                                                                       .concat(
                                                                                                           hasConnectionError
@@ -9542,6 +9642,18 @@
                             className: (0, c.$)(aR().progress, { [aR().progress_visible]: !w }),
                             style: O,
                             children: [
+                                isImprovedWaveLayoutEnabled &&
+                                    (0, l.jsx)(p.$, {
+                                        className: aR().button,
+                                        radius: 'round',
+                                        size: 'xxxs',
+                                        variant: 'text',
+                                        disabled: !k || o.isGenerativeContext || d.isAdvertShown,
+                                        withRipple: !1,
+                                        'aria-label': waveFormatMessage({ id: 'player-actions.fullscreen-button' }),
+                                        icon: (0, l.jsx)(F.Icon, { variant: 'fullscreen', size: 'xs' }),
+                                        onClick: L,
+                                    }),
                                 !_ &&
                                     (0, l.jsx)(at.r, {
                                         className: aR().changeVolume,
@@ -9551,12 +9663,12 @@
                                         sonataVolume: o.volume,
                                         onVolumeSet: o.setVolume,
                                         onVolumeClick: M,
-                                        style: isWaveYandexStationCastEnabled ? { marginLeft: 'calc(48px + 0.25rem)' } : undefined,
+                                        style: !isImprovedWaveLayoutEnabled && isWaveYandexStationCastEnabled ? { marginLeft: 'calc(48px + 0.25rem)' } : undefined,
                                     }),
                                 (0, l.jsx)(h._I, { className: aR().button, disabled: !k || d.isAdvertShown, isDisliked: b, onClick: f, iconSize: 'xs' }),
                                 (0, l.jsx)(aX, {}),
                                 (0, l.jsx)(h.cy, { className: aR().button, disabled: !k || d.isAdvertShown, isLiked: g, onClick: x, iconSize: 'xs' }),
-                                waveCastControl,
+                                isImprovedWaveLayoutEnabled ? (isWaveYandexStationCastEnabled ? waveCastControl : waveSyncLyricsControl) : waveCastControl,
                                 !_ && (0, l.jsx)(aM, { buttonClassName: (0, c.$)(aR().button, aR().important) }),
                                 (0, l.jsx)(t3, {}),
                             ],

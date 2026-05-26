@@ -221,6 +221,7 @@ const init = () => {
             disableRendering: false,
             autoLaunchOnAppStartup: false,
             enableEndlessMusic: true,
+            improvedWaveLayout: true,
         },
         appAutoUpdates: {
             enableAppAutoUpdate: store.get(store_js_1.StoreKeys.AUTO_UPDATES) ?? true,

@@ -283,6 +283,7 @@ electron_1.contextBridge.exposeInMainWorld('DISABLE_PER_TRACK_COLORS', () => sto
 electron_1.contextBridge.exposeInMainWorld('ALWAYS_WIDE_BAR', () => store_js_1.getModSettings()?.playerBarEnhancement?.alwaysWideBar);
 electron_1.contextBridge.exposeInMainWorld('SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE', () => store_js_1.getModSettings()?.playerBarEnhancement?.showOldPlayerBarOnNewWave);
 electron_1.contextBridge.exposeInMainWorld('ENABLE_YANDEX_STATION_CAST', () => store_js_1.getModSettings()?.playerBarEnhancement?.enableYandexStationCast ?? true);
+electron_1.contextBridge.exposeInMainWorld('IMPROVED_WAVE_LAYOUT', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.improvedWaveLayout ?? true);
 electron_1.contextBridge.exposeInMainWorld('DEFAULT_MUSIC_EXPERIMENT_OVERRIDES', () => store_js_1.getDefaultExperimentOverrides());
 electron_1.contextBridge.exposeInMainWorld('ENABLE_ENDLESS_MUSIC', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.enableEndlessMusic);
 electron_1.contextBridge.exposeInMainWorld('ALLOWED_URLS', {
