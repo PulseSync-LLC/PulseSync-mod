@@ -960,6 +960,23 @@ window.findCssRuleByPartialName = function (pName) {
                     }
                 });
             },
+            playPlaylistById: (playlistId, options = {}) => {
+                callWithPlayer((playerInst) => {
+                    if (typeof playerInst?.playContext === 'function') {
+                        const from = options?.from || playerInst?.state?.currentContext?.value?.contextData?.from || 'external';
+                        const meta = options?.uuid ? { id: playlistId, uuid: options.uuid } : { id: playlistId };
+                        playerInst.playContext({
+                            contextData: {
+                                type: 'playlist',
+                                meta,
+                                from,
+                                ...(options?.utmLink ? { utmLink: options.utmLink } : {}),
+                            },
+                            loadContextMeta: true,
+                        });
+                    }
+                });
+            },
             addTrackToQueueById: (trackId, options = {}) => {
                 callWithPlayer((playerInst) => {
                     const entityId = createEntityId(trackId, options?.albumId);
@@ -1080,7 +1097,7 @@ window.findCssRuleByPartialName = function (pName) {
             if (!pulseSyncApi || !payload?.action) {
                 return;
             }
-            const { action, trackId, albumId, options, args } = payload;
+            const { action, trackId, playlistId, albumId, options, args } = payload;
             const apiMethod = pulseSyncApi[action];
             if (typeof apiMethod !== 'function') {
                 return;
@@ -1091,6 +1108,10 @@ window.findCssRuleByPartialName = function (pName) {
             }
             if (typeof trackId !== 'undefined') {
                 apiMethod(trackId, { ...options, albumId });
+                return;
+            }
+            if (typeof playlistId !== 'undefined') {
+                apiMethod(playlistId, options);
                 return;
             }
             apiMethod(options);
