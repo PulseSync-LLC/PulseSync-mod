@@ -3983,6 +3983,8 @@
                         return [];
                     }
                 },
+                normalizePlaceholderLyricsText = (e) => ('string' == typeof e ? e.trim().replace(/\s+/g, '') : ''),
+                isPlaceholderSyncLyrics = (e) => Array.isArray(e) && e.length > 0 && e.every((e) => !normalizePlaceholderLyricsText(e.text).replace(/[.\-\u2013\u2014]/g, '')),
                 normalizeSyncedTiming = (e, t) => {
                     if (!Array.isArray(e) || !e.length || !t || t <= 0) return e;
                     let a = e.at(-1),
@@ -4428,7 +4430,7 @@
                                             if (!c) throw new Error('Sync lyrics are not available');
                                             let h = yield t.downloadSyncLyrics(c, o, a);
                                             if (isStale(o, a)) return;
-                                            if (!(null == h ? void 0 : h.length)) throw new Error('Sync lyrics are not available');
+                                            if (!(null == h ? void 0 : h.length) || isPlaceholderSyncLyrics(h)) throw new Error('Sync lyrics are not available');
                                             return (
                                                 (e.major = (0, I.LT)(u)),
                                                 (e.externalLyricId = m),
@@ -4472,7 +4474,7 @@
                                                 : lrclibSyncPrefetchNoResultByTrackId.set(m, Date.now()));
                                         if (null != _ && _.syncedLyrics) {
                                             let i = normalizeSyncedTiming(parseLrc(_.syncedLyrics), null == u ? void 0 : u.duration);
-                                            if (i.length > 0)
+                                            if (i.length > 0 && !isPlaceholderSyncLyrics(i))
                                                 return (
                                                     (e.major = (0, I.LT)({ id: 1337, name: 'LRCLIB', prettyName: 'LRCLIB' })),
                                                     (e.externalLyricId = null == _.id ? null : String(_.id)),

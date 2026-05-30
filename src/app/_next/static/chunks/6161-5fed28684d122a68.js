@@ -2454,6 +2454,11 @@
                         e.delete(t.value);
                     }
                 },
+                normalizePlaceholderLyricsText = (e) => ('string' == typeof e ? e.trim().replace(/\s+/g, '') : ''),
+                isPlaceholderTextLyrics = (e) => {
+                    let t = normalizePlaceholderLyricsText(e);
+                    return !!t && !t.replace(/[.\-\u2013\u2014]/g, '');
+                },
                 lrclibPlainFromSynced = (e) => {
                     if (!e || 'string' != typeof e) return null;
                     let t = e
@@ -2706,7 +2711,7 @@
                                         if (!l) throw new Error('Lyrics are not available');
                                         let C = yield e.downloadLyrics(l, requestToken, i);
                                         if (isStale(requestToken, i)) return;
-                                        if (!C) throw new Error('Lyrics are not available');
+                                        if (!C || isPlaceholderTextLyrics(C)) throw new Error('Lyrics are not available');
                                         return (
                                             (t.major = (0, n.LT)(s)),
                                             (t.externalLyricId = f),
@@ -2760,7 +2765,7 @@
                                         if (isStale(requestToken, i)) return;
                                         if (U && (U.plainLyrics || U.syncedLyrics)) {
                                             let e = U.plainLyrics || lrclibPlainFromSynced(U.syncedLyrics);
-                                            if (!e) throw new Error('Lyrics are not available');
+                                            if (!e || isPlaceholderTextLyrics(e)) throw new Error('Lyrics are not available');
                                             return (
                                                 (t.major = (0, n.LT)({ id: 1337, name: 'LRCLIB', prettyName: 'LRCLIB' })),
                                                 (t.externalLyricId = null == U.id ? null : String(U.id)),
