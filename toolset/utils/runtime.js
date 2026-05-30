@@ -7,7 +7,7 @@ async function createRuntime() {
     const path = require('path');
     const semver = require('semver');
     const crypto = require('crypto');
-    const plist = require('plist');
+    const plist = await import('plist');
     const { minify } = require('terser');
     const axios = require('axios');
     const yaml = require('js-yaml');
