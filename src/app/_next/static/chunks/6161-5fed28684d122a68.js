@@ -2684,7 +2684,7 @@
                                 getLyrics: (0, a.L3)(function* (i) {
                                     let { tracksResource: r, modelActionsLogger: l } = (0, a._$)(t);
                                     let s = null != t.currentTrackId && String(t.currentTrackId) === String(i);
-                                    if (!i || (s && (t.isLoading || t.isResolved || t.isRejected))) return;
+                                    if (!i || (s && (t.isLoading || t.isResolved))) return;
                                     let requestToken = ++t.requestToken;
                                     try {
                                         (t.loadingState = u.GuX.PENDING),

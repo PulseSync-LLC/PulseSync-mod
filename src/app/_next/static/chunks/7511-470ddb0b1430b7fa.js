@@ -6555,9 +6555,16 @@
                         N = (0, u.useCallback)(() => {
                             p && !f && o && d();
                         }, [d, p, o, f]),
+                        fullscreenSyncLyricsTrackId = null == b ? void 0 : b.id,
+                        canOpenFullscreenSyncLyrics =
+                            !!(null == b ? void 0 : b.isSyncLyricsAvailable) ||
+                            !!(null == b ? void 0 : b.isSyncLyricsAvailableWithOfflineFeature) ||
+                            !!(null == b ? void 0 : b.hasSyncLyrics) ||
+                            !!(null == b ? void 0 : b.hasLyrics) ||
+                            (!!fullscreenSyncLyricsTrackId && x.hasLyricsForTrack(fullscreenSyncLyricsTrackId)),
                         S = (0, u.useCallback)(() => {
-                            if (null == b ? void 0 : b.isSyncLyricsAvailable) return p ? y() : v();
-                        }, [null == b ? void 0 : b.isSyncLyricsAvailable, y, p, v]),
+                            return canOpenFullscreenSyncLyrics ? (p ? y() : v()) : void 0;
+                        }, [canOpenFullscreenSyncLyrics, y, p, v]),
                         T = (0, u.useMemo)(() => {
                             if (b)
                                 return k
