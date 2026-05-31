@@ -286,7 +286,7 @@ function createExtractUtils(runtime) {
     async function resolvePathShortcut(pathShortcut) {
         const unresolvedPath = pathShortcut;
         pathShortcut = pathShortcut.replaceAll('\\', '/');
-        if (pathShortcut[0] === '/') pathShortcut.shift();
+        if (pathShortcut[0] === '/') pathShortcut = pathShortcut.slice(1);
 
         if (pathShortcut.length === 0) return SRC_PATH;
 
