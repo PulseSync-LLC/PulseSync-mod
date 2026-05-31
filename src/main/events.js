@@ -262,13 +262,6 @@ const handleApplicationEvents = (window) => {
         }, 20 * 1000);
     };
 
-    const scheduleApplicationInitFinishedTimeout = () => {
-        if (!mainWindow || isApplicationInitFinished) return;
-
-        mainWindow.removeListener('focus', handleApplicationInitFinishedTimeout);
-        mainWindow.once('focus', handleApplicationInitFinishedTimeout);
-    };
-
     const updater = (0, updater_js_1.getUpdater)();
     const trackDownloader = new trackDownloader_js_1.TrackDownloader(window);
     const yandexStationRuntime = getYandexStationRuntime({
@@ -668,11 +661,7 @@ const handleApplicationEvents = (window) => {
         isApplicationInitFinished = Date.now() - applicationInitFinishedAt < 3000;
 
         if (!isApplicationInitFinished) {
-            if (mainWindow?.isFocused()) {
-                handleApplicationInitFinishedTimeout();
-            } else {
-                scheduleApplicationInitFinishedTimeout();
-            }
+            handleApplicationInitFinishedTimeout();
         }
 
         (0, pulseSyncManager_js_1.readyEvent)();
