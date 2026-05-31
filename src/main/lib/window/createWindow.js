@@ -62,6 +62,7 @@ const createWindow = async () => {
             nodeIntegration: false,
             contextIsolation: true,
             autoplayPolicy: 'no-user-gesture-required',
+            backgroundThrottling: false,
             preload: node_path_1.default.join(__dirname, '..', 'preload.js'),
         },
     });

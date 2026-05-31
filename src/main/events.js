@@ -70,6 +70,8 @@ const fs = require('fs');
 
 let mainWindow = undefined;
 let isPlayerReady = false;
+let isApplicationInitFinished = false;
+let applicationInitFinishedAt = 0;
 let downloadQueue = Promise.resolve();
 let isGlobalShortcutsRecordingActive = false;
 let toastOperationNonce = 0;
@@ -233,38 +235,38 @@ const handleApplicationEvents = (window) => {
             restartApplication(true);
         }
     }, 5000);
-    let playerReadyTimeout;
+    let applicationInitFinishedTimeout;
     let appSafeModeRestartTimeout;
     let safeModeRestartInterval;
 
-    const handlePlayerReadyTimeout = () => {
-        playerReadyTimeout && clearTimeout(playerReadyTimeout);
+    const handleApplicationInitFinishedTimeout = () => {
+        applicationInitFinishedTimeout && clearTimeout(applicationInitFinishedTimeout);
         safeModeRestartInterval && clearInterval(safeModeRestartInterval);
         appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
 
-        playerReadyTimeout = setTimeout(() => {
+        applicationInitFinishedTimeout = setTimeout(() => {
             if (!isSafeMode) {
-                eventsLogger.error('PLAYER_READY event timeout reached. Prompt safe mode restart.');
+                eventsLogger.error('APPLICATION_INIT_FINISHED event timeout reached. Prompt safe mode restart.');
                 mainWindow.webContents.send(events_js_1.Events.APP_STALL);
                 let progress = 0;
                 safeModeRestartInterval = setInterval(() => {
-                    sendProgressBarChange(window, 'safeModeRestart', progress, `${Math.round(10 - progress / 10)} сек`);
+                    sendProgressBarChange(window, 'safeModeRestart', progress, `${Math.round(20 - progress / 10)} сек`);
                     progress += 1;
                 }, 100);
                 appSafeModeRestartTimeout = setTimeout(() => {
                     eventsLogger.error('Safe mode restart timeout reached. Restarting in safe mode.');
                     clearInterval(safeModeRestartInterval);
                     restartApplication(true);
-                }, 11000);
+                }, 21000);
             }
-        }, 30 * 1000);
+        }, 20 * 1000);
     };
 
-    const schedulePlayerReadyTimeout = () => {
-        if (!mainWindow || isPlayerReady) return;
+    const scheduleApplicationInitFinishedTimeout = () => {
+        if (!mainWindow || isApplicationInitFinished) return;
 
-        mainWindow.removeListener('focus', handlePlayerReadyTimeout);
-        mainWindow.once('focus', handlePlayerReadyTimeout);
+        mainWindow.removeListener('focus', handleApplicationInitFinishedTimeout);
+        mainWindow.once('focus', handleApplicationInitFinishedTimeout);
     };
 
     const updater = (0, updater_js_1.getUpdater)();
@@ -663,11 +665,14 @@ const handleApplicationEvents = (window) => {
         applicationReadyTimeOut && clearTimeout(applicationReadyTimeOut);
 
         isPlayerReady = false;
+        isApplicationInitFinished = Date.now() - applicationInitFinishedAt < 3000;
 
-        if (mainWindow?.isFocused()) {
-            handlePlayerReadyTimeout();
-        } else {
-            schedulePlayerReadyTimeout();
+        if (!isApplicationInitFinished) {
+            if (mainWindow?.isFocused()) {
+                handleApplicationInitFinishedTimeout();
+            } else {
+                scheduleApplicationInitFinishedTimeout();
+            }
         }
 
         (0, pulseSyncManager_js_1.readyEvent)();
@@ -793,6 +798,18 @@ const handleApplicationEvents = (window) => {
             }
         }
     });
+    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_INIT_FINISHED, () => {
+        eventsLogger.info('Event received', events_js_1.Events.APPLICATION_INIT_FINISHED);
+
+        isApplicationInitFinished = true;
+        applicationInitFinishedAt = Date.now();
+        applicationInitFinishedTimeout && clearTimeout(applicationInitFinishedTimeout);
+        appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
+        safeModeRestartInterval && clearInterval(safeModeRestartInterval);
+        sendBasicToastDismiss(window, 'safeModeRestart');
+
+        if (isSafeMode) sendBasicToastCreate(window, 'safeModeNoticeToast', 'Безопасный режим. Аддоны отключены.', 'Ясно');
+    });
     electron_1.ipcMain.on(events_js_1.Events.APPLICATION_THEME, (event, backgroundColor) => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_THEME);
         window.setBackgroundColor(backgroundColor);
@@ -863,11 +880,6 @@ const handleApplicationEvents = (window) => {
 
         if (data.track && !isPlayerReady) {
             isPlayerReady = true;
-            playerReadyTimeout && clearTimeout(playerReadyTimeout);
-            appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
-            sendBasicToastDismiss(window, 'safeModeRestart');
-
-            if (isSafeMode) sendBasicToastCreate(window, 'safeModeNoticeToast', 'Безопасный режим. Аддоны отключены.', 'Ясно');
 
             if (store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
                 eventsLogger.info('Auto launch enabled: toggling play');

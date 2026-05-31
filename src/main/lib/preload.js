@@ -44,6 +44,112 @@ const getTitlebarVisibilitySettings = () => {
 const resetTitlebarVisibilitySettings = () => {
     cachedTitlebarVisibilitySettings = null;
 };
+const registerApplicationInitFinishedEvent = () => {
+    if (window.__pulsesyncApplicationInitFinishedRegistered) {
+        return;
+    }
+    window.__pulsesyncApplicationInitFinishedRegistered = true;
+
+    const splashSelector = '[class*="SplashScreen_root"]';
+    const shimmerSelector = '[class*="MainSuspenseLoader_icon"]';
+    const splashMountGraceMs = 1000;
+    const shimmerMaxWaitMs = 10000;
+    const stableWaitMs = 500;
+    const startedAt = Date.now();
+    let sent = false;
+    let observedSplash = false;
+    let splashFinishedAt = null;
+    let stableTimer = null;
+    let observer = null;
+
+    const isVisible = (element) => {
+        const rect = element.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return false;
+
+        const style = window.getComputedStyle(element);
+        return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity) !== 0;
+    };
+    const hasSplash = () => {
+        const splashElements = Array.from(window.document.querySelectorAll(splashSelector));
+        if (splashElements.length > 0) {
+            observedSplash = true;
+        }
+
+        return splashElements.length > 0;
+    };
+    const hasVisibleShimmer = () => {
+        return Array.from(window.document.querySelectorAll(shimmerSelector)).some((element) => {
+            return !element.closest(splashSelector) && isVisible(element);
+        });
+    };
+    const clearStableTimer = () => {
+        if (!stableTimer) return;
+        clearTimeout(stableTimer);
+        stableTimer = null;
+    };
+    const sendApplicationInitFinished = () => {
+        if (sent) return;
+
+        sent = true;
+        clearStableTimer();
+        observer?.disconnect();
+        electron_1.ipcRenderer.send(events_js_1.Events.APPLICATION_INIT_FINISHED);
+    };
+    const checkApplicationInitFinished = () => {
+        if (sent || !window.document.body) return;
+
+        if (hasSplash()) {
+            splashFinishedAt = null;
+            clearStableTimer();
+            return;
+        }
+
+        if (!observedSplash && Date.now() - startedAt < splashMountGraceMs) {
+            return;
+        }
+
+        if (splashFinishedAt === null) {
+            splashFinishedAt = Date.now();
+        }
+
+        const waitedForShimmerMs = Date.now() - splashFinishedAt;
+        if (hasVisibleShimmer() && waitedForShimmerMs < shimmerMaxWaitMs) {
+            clearStableTimer();
+            return;
+        }
+
+        if (stableTimer) return;
+        stableTimer = setTimeout(() => {
+            if (hasSplash()) return;
+            if (hasVisibleShimmer() && Date.now() - splashFinishedAt < shimmerMaxWaitMs) return;
+
+            sendApplicationInitFinished();
+        }, stableWaitMs);
+    };
+    const startObserver = () => {
+        const rootElement = window.document.documentElement;
+        if (!rootElement) {
+            setTimeout(startObserver, 0);
+            return;
+        }
+
+        observer = new MutationObserver(checkApplicationInitFinished);
+        observer.observe(rootElement, {
+            attributes: true,
+            attributeFilter: ['class', 'style', 'hidden'],
+            childList: true,
+            subtree: true,
+        });
+        checkApplicationInitFinished();
+    };
+
+    window.addEventListener('load', checkApplicationInitFinished, { once: true });
+    window.document.addEventListener('readystatechange', checkApplicationInitFinished);
+    startObserver();
+    setTimeout(checkApplicationInitFinished, splashMountGraceMs);
+    setTimeout(checkApplicationInitFinished, splashMountGraceMs + shimmerMaxWaitMs);
+    requestAnimationFrame(checkApplicationInitFinished);
+};
 const nativeStoreUpdateListeners = new Set();
 const registerNativeStoreUpdateCacheSync = () => {
     if (window.__pulsesyncNativeStoreUpdateCacheSyncRegistered) {
@@ -59,6 +165,7 @@ const registerNativeStoreUpdateCacheSync = () => {
         nativeStoreUpdateListeners.forEach((callback) => callback(key, value));
     });
 };
+registerApplicationInitFinishedEvent();
 const shouldHidePulseSyncVersionInTitleBar = () => {
     try {
         return getTitlebarVisibilitySettings().shouldHidePulseSyncVersion;
