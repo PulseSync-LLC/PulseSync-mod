@@ -31,7 +31,7 @@ const DEFAULT_PIPELINE_OPTIONS = {
     metadataRetries: 2,
     downloadRetries: 2,
     ffmpegRetries: 1,
-    retryDelayMs: 750,
+    retryDelayMs: 500,
     adaptiveConcurrency: true,
     adaptiveConcurrencyIntervalMs: 3000,
     adaptiveConcurrencyCooldownMs: 9000,
