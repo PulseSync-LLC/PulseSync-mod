@@ -28,21 +28,36 @@
     min-width: 6.875rem;
 }
 .NotificationUpdate_root__hpSQi.NotificationUpdate_important___0WHj {
+    max-width: min(42rem, calc(100vw - 2rem));
+    min-width: 26rem;
     padding: var(--ym-spacer-size-xxs);
     padding-inline-start: var(--ym-spacer-size-l);
 }
 .NotificationUpdate_text__YylYD {
     color: var(--ym-controls-color-primary-text-enabled_variant);
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 .NotificationUpdate_button__F3O16 {
+    flex-shrink: 0;
     min-width: 7.875rem;
 }
 .NotificationUpdate_message__rLYpW {
-    z-index: 2;
-    position: relative;
     align-items: center;
     display: flex;
+    gap: var(--ym-spacer-size-m);
     justify-content: space-between;
+    position: relative;
+    width: 100%;
+    z-index: 2;
+}
+
+@media only screen and (max-width: 480px) {
+    .NotificationUpdate_root__hpSQi.NotificationUpdate_important___0WHj {
+        min-width: 0;
+        width: calc(100vw - var(--ym-spacer-size-l) - var(--ym-spacer-size-l));
+    }
 }
 .ReleaseNotesModal_root__RSw1p {
     height: 100%;

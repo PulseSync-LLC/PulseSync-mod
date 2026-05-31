@@ -10,6 +10,9 @@ exports.throttle =
 
 const fs = require('fs');
 const fsp = require('fs').promises;
+const crypto = require('crypto');
+const { Readable, Transform } = require('stream');
+const { pipeline } = require('stream/promises');
 
 async function createDirIfNotExist(target) {
     if (!fs.existsSync(target)) {
@@ -55,58 +58,47 @@ exports.throttle = throttle;
  * @param {string} url - Ссылка на файл
  * @param {string} outputPath - Путь для сохранения файла
  * @param {(progress: number) => void} [onProgress] - Колбэк прогресса (0..1)
- * @param {(input: ReadableStream) => ReadableStream | Promise<ReadableStream>} [transformStream] - Опциональная функция-трансформер
+ * @param {(() => import('stream').Transform | Promise<import('stream').Transform>)} [transformStream] - Опциональная функция-трансформер
  * @param {{ signal?: AbortSignal }} [options] - Опции выполнения
  */
 async function downloadFileWithProgress(url, outputPath, onProgress, transformStream, options = {}) {
     const { signal } = options;
+    const startedAt = Date.now();
     const response = await fetch(url, { signal });
     if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+    if (!response.body) throw new Error('Response body is empty');
 
     const total = parseInt(response.headers.get('content-length') || '0', 10);
-    const reader = response.body.getReader();
-    const fileStream = fs.createWriteStream(outputPath);
-
     let downloaded = 0;
+    let lastChunkAt = startedAt;
 
-    // Базовый поток, только считает прогресс
-    let baseStream = new ReadableStream({
-        async pull(controller) {
-            const { done, value } = await reader.read();
-            if (done) {
-                controller.close();
-                return;
-            }
-
-            downloaded += value.length;
-            if (onProgress && total) onProgress(downloaded / total);
-
-            controller.enqueue(value);
+    const progressStream = new Transform({
+        transform(chunk, encoding, callback) {
+            downloaded += chunk.length;
+            lastChunkAt = Date.now();
+            if (onProgress) onProgress(total ? downloaded / total : 0, downloaded, total || null);
+            callback(null, chunk);
         },
     });
 
-    // Пропускаем поток через трансформер (если передан)
+    const streams = [Readable.fromWeb(response.body), progressStream];
     if (typeof transformStream === 'function') {
-        baseStream = await transformStream(baseStream);
+        const stream = await transformStream();
+        if (stream) streams.push(stream);
     }
 
-    const writable = new WritableStream({
-        write(chunk) {
-            fileStream.write(Buffer.from(chunk));
-        },
-        close() {
-            fileStream.end();
-        },
-    });
+    streams.push(fs.createWriteStream(outputPath));
 
-    const abortFileStream = () => fileStream.destroy(signal.reason ?? new Error('Download aborted'));
+    await pipeline(...streams, { signal });
 
-    try {
-        signal?.addEventListener('abort', abortFileStream, { once: true });
-        await baseStream.pipeTo(writable, { signal });
-    } finally {
-        signal?.removeEventListener('abort', abortFileStream);
-    }
+    const finishedAt = Date.now();
+    return {
+        bytes: downloaded,
+        contentLength: total || null,
+        downloadMs: Math.max(lastChunkAt - startedAt, 0),
+        writeFinishMs: Math.max(finishedAt - lastChunkAt, 0),
+        elapsedMs: Math.max(finishedAt - startedAt, 0),
+    };
 }
 
 exports.downloadFileWithProgress = downloadFileWithProgress;
@@ -145,102 +137,20 @@ function numberToUint8Counter(num) {
 exports.numberToUint8Counter = numberToUint8Counter;
 
 /**
- * Делает трансформер, который расшифровывает входной ReadableStream (AES-CTR).
+ * Делает Node.js stream-трансформер, который расшифровывает входной поток (AES-CTR).
  * @param {string} keyHex - AES key в hex
- * @returns {(stream: ReadableStream) => Promise<ReadableStream>}
+ * @returns {() => import('stream').Transform}
  */
 function makeDecryptor(keyHex) {
-    return async function decryptTransform(stream) {
-        const keyBytes = hexStringToUint8Array(keyHex);
-        const cryptoKey = await crypto.subtle.importKey('raw', keyBytes, { name: 'AES-CTR' }, false, ['decrypt']);
+    const key = Buffer.from(keyHex, 'hex');
+    if (![16, 24, 32].includes(key.length)) {
+        throw new Error(`Invalid AES key length: ${key.length}`);
+    }
 
-        let loadedBytes = 0; // абсолютный офсет уже обработанных байт
-        let reader;
+    const algorithm = `aes-${key.length * 8}-ctr`;
 
-        // Внутренний буфер для выравнивания по 16 байтам
-        let buffer = new Uint8Array(0);
-
-        function concatUint8Arrays(a, b) {
-            const out = new Uint8Array(a.length + b.length);
-            out.set(a, 0);
-            out.set(b, a.length);
-            return out;
-        }
-
-        return new ReadableStream({
-            async start(controller) {
-                reader = stream.getReader();
-            },
-
-            async pull(controller) {
-                try {
-                    const { done, value } = await reader.read();
-
-                    // Если получили кусок, привести его к Uint8Array и добавить в буфер
-                    if (!done && value) {
-                        const chunk = value instanceof Uint8Array ? value : value instanceof ArrayBuffer ? new Uint8Array(value) : new Uint8Array(value.buffer || value);
-                        buffer = concatUint8Arrays(buffer, chunk);
-                    }
-
-                    // Если нет достаточных данных и поток ещё не завершён — ждём следующего pull
-                    // Но если поток завершён (done) — нужно обработать остаток (включая неполный блок)
-                    if (!done) {
-                        // Обрабатываем все полные 16-байтовые блоки (можно обрабатывать N*16 байт)
-                        const fullBlocks = Math.floor(buffer.length / 16);
-                        if (fullBlocks === 0) {
-                            // нечего отправить пока — дождёмся следующего чанка
-                            return;
-                        }
-
-                        const processLen = fullBlocks * 16;
-                        const toProcess = buffer.subarray(0, processLen);
-
-                        // counter = numberToUint8Counter(floor(loadedBytes / 16))
-                        const blockNumber = Math.floor(loadedBytes / 16);
-                        const counter = numberToUint8Counter(blockNumber);
-
-                        const decryptedBuf = await crypto.subtle.decrypt({ name: 'AES-CTR', counter, length: 128 }, cryptoKey, toProcess);
-
-                        // Отправляем расшифрованные байты
-                        controller.enqueue(new Uint8Array(decryptedBuf));
-
-                        // Обновляем loadedBytes и буфер (оставляем хвост <16 байт)
-                        loadedBytes += processLen;
-                        buffer = buffer.subarray(processLen);
-
-                        return;
-                    } else {
-                        // done === true: поток входа закончился
-                        if (buffer.length > 0) {
-                            // Расшифровываем остаток (возможно <16 байт) — это корректно для финального фрагмента
-                            const blockNumber = Math.floor(loadedBytes / 16);
-                            const counter = numberToUint8Counter(blockNumber);
-
-                            const decryptedBuf = await crypto.subtle.decrypt({ name: 'AES-CTR', counter, length: 128 }, cryptoKey, buffer);
-
-                            controller.enqueue(new Uint8Array(decryptedBuf));
-                            loadedBytes += buffer.length;
-                            buffer = new Uint8Array(0);
-                        }
-
-                        controller.close();
-                        return;
-                    }
-                } catch (err) {
-                    controller.error(err);
-                }
-            },
-
-            async cancel(reason) {
-                if (reader) {
-                    try {
-                        await reader.cancel(reason);
-                    } catch (e) {
-                        /* ignore */
-                    }
-                }
-            },
-        });
+    return function decryptTransform() {
+        return crypto.createDecipheriv(algorithm, key, Buffer.alloc(16));
     };
 }
 

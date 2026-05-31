@@ -3,8 +3,7 @@ const fs = require('fs').promises;
 const fsSync = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
-const { artists2string, LRC2SYLT, escapeRestrictedShellChars } = require('../utils.js');
-const NodeID3 = require('node-id3');
+const { artists2string, escapeRestrictedShellChars } = require('../utils.js');
 const { getFfmpegUpdater } = require('../ffmpegInstaller.js');
 
 function runProcess(command, args, logger, options = {}) {
@@ -58,7 +57,12 @@ class FfmpegWrapper {
         this.ffmpegPath = this._updater.installPath;
     }
 
-    async extractFromMp4(data, finalFilepath, tempDirPath, tempFilepath, fileExtension = undefined, lrc = undefined, options = {}) {
+    pushMetadata(args, key, value) {
+        if (value === undefined || value === null || value === '') return;
+        args.push('-metadata', `${key}=${escapeRestrictedShellChars(String(value))}`);
+    }
+
+    async writeTrackFile(data, finalFilepath, tempDirPath, tempFilepath, fileExtension = undefined, lrc = undefined, options = {}) {
         if (!fsSync.existsSync(tempDirPath) || !fsSync.existsSync(tempFilepath)) {
             throw new Error(`Temporary ffmpeg input is missing: ${tempFilepath}`);
         }
@@ -72,50 +76,40 @@ class FfmpegWrapper {
         // Input
         args.push('-i', tempFilepath);
 
-        // Cover only if not mp3 and cover exists
-        if (fileExtension !== 'mp3' && withCover) {
+        // Cover
+        if (withCover) {
             args.push('-i', coverPath);
         }
 
         // Maps
         args.push('-map', '0:a');
-        if (fileExtension !== 'mp3' && withCover) {
-            args.push('-map', '1');
+        if (withCover) {
+            args.push('-map', '1:v');
         }
 
-        // Audio codec rules
+        // Keep the downloaded audio bitstream. For raw MP3 this avoids a useless decode/re-encode pass.
+        args.push('-c:a', 'copy');
+
         if (fileExtension === 'mp3') {
-            args.push('-codec:a', 'libmp3lame', '-id3v2_version', '4', '-b:a', `${data.bitrate ?? 320}k`);
-        } else {
-            args.push('-c:a', 'copy');
+            args.push('-id3v2_version', '4');
         }
 
-        // Cover embedding for non-mp3
-        if (fileExtension !== 'mp3' && withCover) {
+        // Cover embedding
+        if (withCover) {
             args.push('-c:v', 'mjpeg', '-metadata:s:v', 'title=Album cover', '-metadata:s:v', 'comment=Cover (front)', '-disposition:v', 'attached_pic');
         }
 
-        // Metadata (only for non-mp3 as in your logic)
-        if (fileExtension !== 'mp3' && data.track?.artists?.length > 0) {
-            args.push('-metadata', `artist=${artists2string(data.track.artists)}`);
-        }
-        if (fileExtension !== 'mp3' && data.track?.title) {
-            args.push('-metadata', `title=${escapeRestrictedShellChars(data.track.title)}`);
-        }
-        if (fileExtension !== 'mp3' && data.track?.albums?.[0]?.title) {
-            args.push('-metadata', `album=${escapeRestrictedShellChars(data.track.albums[0].title)}`);
-        }
-        if (fileExtension !== 'mp3' && data.track?.albums?.[0]?.year) {
-            args.push('-metadata', `year=${data.track.albums[0].year}`);
-        }
-        if (fileExtension !== 'mp3' && data.track?.albums?.[0]?.genre) {
-            args.push('-metadata', `genre=${data.track.albums[0].genre}`);
-        }
+        this.pushMetadata(args, 'artist', artists2string(data.track?.artists));
+        this.pushMetadata(args, 'title', data.track?.title);
+        this.pushMetadata(args, 'album', data.track?.albums?.[0]?.title);
+        this.pushMetadata(args, 'year', data.track?.albums?.[0]?.year);
+        this.pushMetadata(args, 'genre', data.track?.albums?.[0]?.genre);
+        this.pushMetadata(args, 'ISRC', data.track?.isrc);
 
         // Overwrite + output
         args.push('-y', finalFilepath);
 
-        this.logger.info(`ReEncoding: ${this.ffmpegPath} ${args.join(' ')}`);
+        this.logger.info(`Writing track file: ${this.ffmpegPath} ${args.join(' ')}`);
 
         try {
             await runProcess(this.ffmpegPath, args, this.logger, options);
@@ -124,46 +118,16 @@ class FfmpegWrapper {
             throw error;
         }
 
-        if (fileExtension === 'mp3') {
-            const SYLT = lrc ? LRC2SYLT(lrc) : undefined;
-
-            const tags = {
-                title: data.track?.title,
-                artist: artists2string(data.track?.artists),
-                album: data.track?.albums?.[0]?.title,
-                image: withCover ? coverPath : undefined,
-                year: data.track?.albums?.[0]?.year?.toString(),
-                genre: data.track?.albums?.[0]?.genre,
-                ISRC: data.track?.isrc,
-            };
-
-            if (SYLT) {
-                tags.unsynchronisedLyrics = {
-                    language: 'eng',
-                    text: SYLT.reduce((acc, curr) => acc + curr.text + '\n', '').trim(),
-                };
-                tags.synchronisedLyrics = [
-                    {
-                        language: 'eng',
-                        timeStampFormat: NodeID3.TagConstants.TimeStampFormat.MILLISECONDS,
-                        contentType: NodeID3.TagConstants.SynchronisedLyrics.ContentType.LYRICS,
-                        synchronisedText: SYLT,
-                    },
-                ];
-            }
-
-            const status = NodeID3.write(tags, finalFilepath);
-            if (!status) {
-                throw new Error('Failed to write ID3 tags');
-            }
-            this.logger.info('Added ID3 tags');
-        } else {
-            if (lrc) {
-                const ext = path.extname(finalFilepath);
-                const lrcPath = `${finalFilepath.slice(0, -ext.length)}.lrc`;
-                await fs.writeFile(lrcPath, lrc);
-            }
+        if (lrc) {
+            // FFmpeg CLI cannot preserve ID3 SYLT timing frames reliably, so keep timed lyrics as a sidecar.
+            const ext = path.extname(finalFilepath);
+            const lrcPath = `${finalFilepath.slice(0, -ext.length)}.lrc`;
+            await fs.writeFile(lrcPath, lrc);
         }
+    }
+
+    async extractFromMp4(...args) {
+        return this.writeTrackFile(...args);
     }
 }
 
