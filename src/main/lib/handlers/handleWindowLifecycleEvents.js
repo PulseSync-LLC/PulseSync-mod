@@ -14,6 +14,7 @@ const store_js_1 = require('../store.js');
 const tray_js_1 = require('../tray.js');
 const lifecycleLogger = new Logger_js_1.Logger('WindowLifecycle');
 const USER_ID_IFRAME_URL_REGEXP = /^https:\/\/yandex.\w{2,3}\/user-id/;
+const NAVIGATION_ABORTED_ERROR_CODE = -3;
 const CONNECTION_ERROR_CODES = [-15, -21];
 const checkAndUpdateApplicationData = (window) => {
     const diff = Date.now() - state_js_1.state.lastWindowBlurredOrHiddenTime;
@@ -136,6 +137,10 @@ const handleWindowLifecycleEvents = (window) => {
     });
     const webContents = window.webContents;
     webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedUrl) => {
+        if (errorCode === NAVIGATION_ABORTED_ERROR_CODE) {
+            return;
+        }
+
         const message = `Failed to load ${validatedUrl}: ${errorDescription} (${errorCode})`;
         lifecycleLogger.error(message);
         if ((errorCode <= -100 || CONNECTION_ERROR_CODES.includes(errorCode)) && !USER_ID_IFRAME_URL_REGEXP.test(validatedUrl)) {

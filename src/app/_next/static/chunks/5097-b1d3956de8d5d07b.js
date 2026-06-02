@@ -641,7 +641,7 @@
                 t = n.n(o);
         },
         51788: (e, r, n) => {
-            Promise.resolve().then(n.bind(n, 24571)),
+            (Promise.resolve().then(n.bind(n, 24571)),
                 Promise.resolve().then(n.bind(n, 46950)),
                 Promise.resolve().then(n.bind(n, 21153)),
                 Promise.resolve().then(n.bind(n, 85742)),
@@ -1015,7 +1015,7 @@
                 Promise.resolve().then(n.bind(n, 41817)),
                 Promise.resolve().then(n.bind(n, 87413)),
                 Promise.resolve().then(n.bind(n, 40739)),
-                Promise.resolve().then(n.t.bind(n, 60738, 23));
+                Promise.resolve().then(n.t.bind(n, 60738, 23)));
         },
         54368: (e, r, n) => {
             'use strict';
@@ -1031,7 +1031,7 @@
                 v = n(49124);
             let h = (e) => {
                 let { children: r } = e,
-                    { state: n, toggleTrue: m } = (0, s.e)(!1),
+                    { state: n, toggleTrue: m } = (0, s.e)(Boolean(window.nativeSettings?.get?.('modSettings.window.minimizedStart'))),
                     { state: h, toggleTrue: b } = (0, s.e)(!1),
                     { getThemeFromStorage: P } = (0, a.QDo)(new l.si()),
                     u = (0, i.useMemo)(() => {

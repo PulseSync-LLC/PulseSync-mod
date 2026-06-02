@@ -3132,7 +3132,7 @@
                                           children: em,
                                       });
                         }),
-                        eC = H.hasPlus && !h && o.isFavouritePlaylist && o.isOwnPlaylist,
+                        eC = H.hasPlus && !h && ((o.isFavouritePlaylist && o.isOwnPlaylist) || true), // Add dwonload button to all playlists
                         eP = (0, c.useMemo)(
                             () =>
                                 (0, l.jsxs)('div', {

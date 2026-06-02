@@ -75,7 +75,7 @@ const registerApplicationInitFinishedEvent = () => {
             observedSplash = true;
         }
 
-        return splashElements.length > 0;
+        return splashElements.some(isVisible);
     };
     const hasVisibleShimmer = () => {
         return Array.from(window.document.querySelectorAll(shimmerSelector)).some((element) => {
