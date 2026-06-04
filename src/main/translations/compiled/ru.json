@@ -9404,18 +9404,6 @@
             "value": "Плавные переходы между треками"
         }
     ],
-    "settings.ai-content-reduction": [
-        {
-            "type": 0,
-            "value": "Показывать меньше ИИ-контента"
-        }
-    ],
-    "settings.ai-content-reduction-description": [
-        {
-            "type": 0,
-            "value": "Останется только качественная ИИ-музыка"
-        }
-    ],
     "settings.failed-to-change-child-mode": [
         {
             "type": 0,

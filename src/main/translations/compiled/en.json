@@ -9256,18 +9256,6 @@
             "value": "Smooth transitions between tracks"
         }
     ],
-    "settings.ai-content-reduction": [
-        {
-            "type": 0,
-            "value": "Show less AI content"
-        }
-    ],
-    "settings.ai-content-reduction-description": [
-        {
-            "type": 0,
-            "value": "Only high-quality AI music will remain"
-        }
-    ],
     "settings.failed-to-change-child-mode": [
         {
             "type": 0,

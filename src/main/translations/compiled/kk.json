@@ -8966,18 +8966,6 @@
             "value": "Тректер арасында жатық ауысу"
         }
     ],
-    "settings.ai-content-reduction": [
-        {
-            "type": 0,
-            "value": "ЖИ контентін аз көрсету"
-        }
-    ],
-    "settings.ai-content-reduction-description": [
-        {
-            "type": 0,
-            "value": "Сапалы ЖИ музыкасы ғана қалады"
-        }
-    ],
     "settings.failed-to-change-child-mode": [
         {
             "type": 0,

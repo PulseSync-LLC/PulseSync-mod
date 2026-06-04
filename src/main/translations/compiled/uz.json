@@ -8540,18 +8540,6 @@
             "value": "Taronalararo ravon o‘tishlar"
         }
     ],
-    "settings.ai-content-reduction": [
-        {
-            "type": 0,
-            "value": "AI kontentni kamroq koʻrsatish"
-        }
-    ],
-    "settings.ai-content-reduction-description": [
-        {
-            "type": 0,
-            "value": "Faqat sifatli AI musiqasi qoladi"
-        }
-    ],
     "settings.failed-to-change-child-mode": [
         {
             "type": 0,
