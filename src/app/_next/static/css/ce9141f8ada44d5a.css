@@ -1,0 +1,200 @@
+.VibeContext_root__dbiNv {
+    gap: var(--ym-spacer-size-l);
+    justify-content: center;
+}
+.VibeContext_context__Z_82k,
+.VibeContext_root__dbiNv {
+    align-items: center;
+    display: flex;
+}
+.VibeContext_context__Z_82k {
+    -webkit-backdrop-filter: blur(3.125rem);
+    backdrop-filter: blur(3.125rem);
+    background-color: var(--ym-controls-color-secondary-default-enabled);
+    border-radius: var(--ym-radius-size-xxxl);
+    color: var(--ym-controls-color-secondary-on_default-enabled);
+    gap: var(--ym-spacer-size-xxxs);
+    max-width: 100%;
+    padding-block-end: 0.875rem;
+    padding-block-start: 0.875rem;
+    padding-inline-end: var(--ym-spacer-size-l);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 379.98px) {
+    .VibeContext_context__Z_82k {
+        max-width: 80%;
+    }
+}
+.VibeContext_pinButton__b6SNF {
+    -webkit-backdrop-filter: blur(3.125rem);
+    backdrop-filter: blur(3.125rem);
+    flex-shrink: 0;
+}
+.VibeContext_resetButton__9KK4S {
+    color: var(--ym-controls-color-primary-text-enabled);
+    flex-shrink: 0;
+    outline: none;
+}
+.VibeContext_resetButton__9KK4S:not(:disabled):focus-visible,
+.VibeContext_resetButton__9KK4S:not(:disabled):hover {
+    box-shadow: none;
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.VibeDynamicArtists_root__Wbigy {
+    height: 100%;
+    min-width: 0;
+}
+.VibeDynamicArtists_root__Wbigy,
+.VibeResetButton_root__ju8pE {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.VibeResetButton_root__ju8pE {
+    height: var(--reset-button-height);
+    max-width: min(100%, 18.75rem);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+.VibeResetButton_root_visible__OHA1w {
+    animation: VibeResetButton_fade-in__4Dgxq 0.5s ease-in-out;
+    opacity: 1;
+    pointer-events: auto;
+}
+.VibeResetButton_root_q2v__K9GdD {
+    position: relative;
+}
+.VibeResetButton_root_q2v__K9GdD:after {
+    aspect-ratio: var(--q2v-glow-aspect-ratio);
+    background-image: var(--q2v-glow-image);
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: auto 8rem;
+    content: '';
+    height: 8rem;
+    pointer-events: none;
+    position: absolute;
+    width: auto;
+    z-index: -1;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .VibeResetButton_root_visible__OHA1w {
+        animation: none;
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .VibeResetButton_root__ju8pE {
+        animation: none;
+    }
+}
+@media only screen and (max-width: 959.98px) {
+    .VibeResetButton_root__ju8pE {
+        max-width: min(100%, 15.625rem);
+    }
+}
+.VibeResetButton_container__JO2j1 {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.VibeResetButton_icon__2FkgG {
+    flex-shrink: 0;
+    transition: transform var(--ym-duration-transition) ease-in-out;
+}
+.VibeResetButton_button__i8Cvy {
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: var(--ym-radius-size-xxxl);
+    color: var(--ym-logo-color-primary-player);
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--ym-spacer-size-xs);
+    justify-content: center;
+    max-width: 100%;
+    padding-block-end: var(--ym-spacer-size-m);
+    padding-block-start: var(--ym-spacer-size-m);
+    padding-inline-end: var(--ym-spacer-size-m);
+    padding-inline-start: var(--ym-spacer-size-xl);
+    transition: background-color var(--ym-duration-transition) ease-in-out;
+    width: -moz-fit-content;
+    width: fit-content;
+}
+.VibeResetButton_button__i8Cvy:has(:focus-visible),
+.VibeResetButton_button__i8Cvy:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.VibeResetButton_button__i8Cvy:has(:focus-visible) .VibeResetButton_icon__2FkgG,
+.VibeResetButton_button__i8Cvy:hover .VibeResetButton_icon__2FkgG {
+    transform: scale(1.02);
+}
+.VibeResetButton_button__i8Cvy:active {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+.VibeResetButton_button_q2v__NX6iG {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: none;
+    color: var(--ym-controls-color-secondary-on_default-hovered);
+    overflow: visible;
+    overflow: initial;
+}
+.VibeResetButton_button_q2v__NX6iG:has(:focus-visible),
+.VibeResetButton_button_q2v__NX6iG:hover {
+    background: none;
+}
+.VibeResetButton_button_q2v__NX6iG:has(:focus-visible) .VibeResetButton_icon__2FkgG,
+.VibeResetButton_button_q2v__NX6iG:hover .VibeResetButton_icon__2FkgG {
+    transform: scale(1.02);
+}
+@supports not selector(:has(*)) {
+    .VibeResetButton_button_q2v__NX6iG:focus-within,
+    .VibeResetButton_button_q2v__NX6iG:hover {
+        background: none;
+    }
+    .VibeResetButton_button_q2v__NX6iG:focus-within .VibeResetButton_icon__2FkgG,
+    .VibeResetButton_button_q2v__NX6iG:hover .VibeResetButton_icon__2FkgG {
+        transform: scale(1.02);
+    }
+}
+@supports not selector(:has(*)) {
+    .VibeResetButton_button__i8Cvy:focus-within,
+    .VibeResetButton_button__i8Cvy:hover {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+    .VibeResetButton_button__i8Cvy:focus-within .VibeResetButton_icon__2FkgG,
+    .VibeResetButton_button__i8Cvy:hover .VibeResetButton_icon__2FkgG {
+        transform: scale(1.02);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .VibeResetButton_button__i8Cvy {
+        transition: none;
+    }
+}
+.VibeResetButton_context__hsTlv {
+    color: var(--ym-logo-color-primary-player);
+    text-align: center;
+}
+.VibeResetButton_context_q2v__OVhK6 {
+    color: var(--ym-controls-color-secondary-on_default-hovered);
+}
+.VibeResetButton_context__hsTlv {
+    font-family: var(--ym-font-heading);
+    font-size: var(--dynamic-font-size);
+    font-style: normal;
+    font-weight: var(--ym-font-weight-bold);
+    letter-spacing: normal;
+    line-height: var(--dynamic-line-height);
+}
+@keyframes VibeResetButton_fade-in__4Dgxq {
+    0% {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

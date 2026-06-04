@@ -1,0 +1,353 @@
+.GenresPage_root__LhP_S {
+    padding: 0;
+    position: relative;
+}
+.GenresPage_shimmerTitle__4j8uH {
+    height: 1.875rem;
+    width: 9.375rem;
+}
+.GenresPage_content__yhKrQ {
+    height: calc(100% - var(--subpage-sticky-header-height));
+    padding: 0;
+}
+.GenresPage_list__l2Cuc {
+    column-count: 3;
+    column-gap: var(--ym-spacer-size-xxxxl);
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-block-end: var(--ym-spacer-size-xxxxl);
+    padding-inline-end: var(--ym-spacer-size-xxxxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 1279.98px) {
+    .GenresPage_list__l2Cuc {
+        column-count: 2;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .GenresPage_list__l2Cuc {
+        column-count: 1;
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.KidsCategoryPage_root__bk7_R {
+    padding: 0;
+}
+.KidsCategoryPage_content__LN0NB {
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+}
+.KidsCategoryPage_content__LN0NB,
+.KidsCategoryPage_header__Agys3 {
+    display: flex;
+    justify-content: space-between;
+}
+.KidsCategoryPage_header__Agys3 {
+    align-items: center;
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    width: 100%;
+}
+.KidsCategoryPage_landing__aSDYw {
+    margin-block-start: var(--subpage-sticky-header-height);
+}
+.KidsCategoryPage_landing_onlyWizard__3EC9N {
+    margin-block-start: var(--ym-spacer-size-xxxxl);
+}
+.KidsCategoryPage_footer__BQhqi {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .KidsCategoryPage_footer__BQhqi {
+        padding-inline-end: var(--ym-spacer-size-l);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .KidsCategoryPage_footer__BQhqi {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.KidsCategoryPage_error__tSXF7 {
+    height: auto;
+    margin-block-start: var(--ym-spacer-size-xxxxl);
+}
+.KidsCategoryPageShimmer_root__0V_bC {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xxl);
+    margin: 0;
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    scroll-padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .KidsCategoryPageShimmer_root__0V_bC {
+        padding-inline-end: var(--ym-spacer-size-l);
+    }
+}
+@media only screen and (max-width: 768px) {
+    .KidsCategoryPageShimmer_root__0V_bC {
+        gap: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+        scroll-padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.KidsEditorialAlbumsPage_root__7rHF8 {
+    container-name: non-music-category-playlists-page;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+.KidsEditorialAlbumsPage_scrollContainer__nQVlt.KidsEditorialAlbumsPage_important__hmmxn {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .KidsEditorialAlbumsPage_scrollContainer__nQVlt.KidsEditorialAlbumsPage_important__hmmxn {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+.KidsEditorialAlbumsPage_footer__6rwU1 {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .KidsEditorialAlbumsPage_footer__6rwU1 {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .KidsEditorialAlbumsPage_footer__6rwU1 {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .KidsEditorialAlbumsPage_footer__6rwU1 {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.KidsEditorialAlbumsPage_item__Wc243 {
+    display: flex;
+    min-width: 8.75rem;
+}
+.KidsEditorialAlbumsPage_content__u3zcW {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .KidsEditorialAlbumsPage_content__u3zcW {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .KidsEditorialAlbumsPage_content__u3zcW {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .KidsEditorialAlbumsPage_content__u3zcW {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.KidsEditorialAlbumsPage_content__u3zcW {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .KidsEditorialAlbumsPage_content__u3zcW {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .KidsEditorialAlbumsPage_content__u3zcW {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .KidsEditorialAlbumsPage_content__u3zcW {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .KidsEditorialAlbumsPage_content__u3zcW {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .KidsEditorialAlbumsPage_content__u3zcW {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .KidsEditorialAlbumsPage_content__u3zcW {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container non-music-category-playlists-page (width >= 618px) {
+        .KidsEditorialAlbumsPage_content__u3zcW {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container non-music-category-playlists-page (width >= 815px) {
+        .KidsEditorialAlbumsPage_content__u3zcW {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container non-music-category-playlists-page (width >= 1010px) {
+        .KidsEditorialAlbumsPage_content__u3zcW {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container non-music-category-playlists-page (width >= 1206px) {
+        .KidsEditorialAlbumsPage_content__u3zcW {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .KidsEditorialAlbumsPage_content__u3zcW {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+.KidsEditorialPlaylistsPage_root__HeHqc {
+    container-name: non-music-category-playlists-page;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+.KidsEditorialPlaylistsPage_scrollContainer__Hy6HY.KidsEditorialPlaylistsPage_important__283cd {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .KidsEditorialPlaylistsPage_scrollContainer__Hy6HY.KidsEditorialPlaylistsPage_important__283cd {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+.KidsEditorialPlaylistsPage_footer___UaP5 {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .KidsEditorialPlaylistsPage_footer___UaP5 {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .KidsEditorialPlaylistsPage_footer___UaP5 {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .KidsEditorialPlaylistsPage_footer___UaP5 {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.KidsEditorialPlaylistsPage_item__0wBk2 {
+    display: flex;
+    min-width: 8.75rem;
+}
+.KidsEditorialPlaylistsPage_content__6wWkP {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .KidsEditorialPlaylistsPage_content__6wWkP {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .KidsEditorialPlaylistsPage_content__6wWkP {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .KidsEditorialPlaylistsPage_content__6wWkP {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.KidsEditorialPlaylistsPage_content__6wWkP {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .KidsEditorialPlaylistsPage_content__6wWkP {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .KidsEditorialPlaylistsPage_content__6wWkP {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .KidsEditorialPlaylistsPage_content__6wWkP {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .KidsEditorialPlaylistsPage_content__6wWkP {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .KidsEditorialPlaylistsPage_content__6wWkP {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .KidsEditorialPlaylistsPage_content__6wWkP {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container non-music-category-playlists-page (width >= 618px) {
+        .KidsEditorialPlaylistsPage_content__6wWkP {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container non-music-category-playlists-page (width >= 815px) {
+        .KidsEditorialPlaylistsPage_content__6wWkP {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container non-music-category-playlists-page (width >= 1010px) {
+        .KidsEditorialPlaylistsPage_content__6wWkP {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container non-music-category-playlists-page (width >= 1206px) {
+        .KidsEditorialPlaylistsPage_content__6wWkP {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .KidsEditorialPlaylistsPage_content__6wWkP {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}

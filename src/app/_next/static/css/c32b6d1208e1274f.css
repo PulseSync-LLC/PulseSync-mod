@@ -1,0 +1,342 @@
+.TopConcertsCarousel_root__opMbb {
+    --concert-card-aspect-ratio: 0.963;
+}
+.TopConcertsCarousel_root__opMbb:hover .TopConcertsCarousel_controls__c92PW {
+    opacity: 1;
+}
+.TopConcertsCarousel_header__3h3Zn {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-m);
+}
+@media only screen and (max-width: 767.98px) {
+    .TopConcertsCarousel_header__3h3Zn {
+        padding-block-end: var(--ym-spacer-size-xs);
+        padding-block-start: var(--ym-spacer-size-l);
+    }
+}
+.TopConcertsCarousel_carousel__uMke6 {
+    scroll-padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .TopConcertsCarousel_carousel__uMke6 {
+        scroll-padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.TopConcertsCarousel_carousel__uMke6,
+.TopConcertsCarousel_header__3h3Zn {
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .TopConcertsCarousel_carousel__uMke6,
+    .TopConcertsCarousel_header__3h3Zn {
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+    max-width: 20.625rem;
+    min-width: 19.375rem;
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+        max-width: 18.75rem;
+        min-width: 18.125rem;
+    }
+}
+@media only screen and (max-width: 479.98px) {
+    .TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+        max-width: 15.625rem;
+        min-width: 15rem;
+    }
+}
+@media only screen and (min-width: 1240px) and (max-width: 1450px) {
+    .TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(33.33333% - var(--ym-spacer-size-l) * 2 / 3);
+    }
+}
+@media only screen and (min-width: 1450px) and (max-width: 1850px) {
+    .TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(25% - var(--ym-spacer-size-l) * 3 / 4);
+    }
+}
+@media only screen and (min-width: 1850px) and (max-width: 1920px) {
+    .TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(20% - var(--ym-spacer-size-l) * 4 / 5);
+    }
+}
+.LocationDialog_root__mAfDO {
+    border-radius: var(--ym-radius-size-xxl);
+    height: 100%;
+    max-height: calc(100vh - 11.5rem);
+    max-height: calc(100dvh - 11.5rem);
+    overflow: visible;
+    width: 33.75rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .LocationDialog_root__mAfDO {
+        border-radius: 0;
+        border-end-end-radius: 0;
+        border-end-start-radius: 0;
+        inset-block-end: 0;
+        inset-block-start: 0;
+        max-height: 100%;
+        position: fixed;
+        width: 100%;
+    }
+}
+.LocationDialog_closeButton__gecsT {
+    align-self: center;
+}
+.LocationDialog_desktopCloseButton__jzdnV {
+    background: var(--ym-background-color-primary-enabled-popover);
+    color: var(--ym-controls-color-secondary-on_outline-enabled_variant);
+    inset-block-start: 0;
+    inset-inline-start: calc(100% + var(--ym-spacer-size-s));
+    position: absolute;
+}
+.LocationDialog_desktopCloseButton__jzdnV:focus-visible,
+.LocationDialog_desktopCloseButton__jzdnV:hover {
+    background: var(--ym-background-color-secondary-enabled-blur);
+}
+.LocationDialog_header__Se7S8 {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-xxl);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .LocationDialog_header__Se7S8 {
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    .LocationDialog_header__Se7S8:before {
+        background-color: var(--ym-controls-color-primary-text-enabled);
+        border-radius: var(--ym-radius-size-xxxl);
+        content: '';
+        height: 0.25rem;
+        inset-block-start: var(--ym-spacer-size-xs);
+        inset-inline-start: 50%;
+        position: absolute;
+        transform: translateX(-50%);
+        width: 2.8125rem;
+    }
+}
+.LocationDialogListItem_item__a0z5H {
+    align-items: center;
+    border-radius: var(--ym-border-radius-m);
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    padding-block-end: var(--ym-spacer-size-xl);
+    padding-block-start: var(--ym-spacer-size-xl);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    pointer-events: auto;
+    transition: background-color 0.15s ease;
+}
+.LocationDialogListItem_item__a0z5H:hover {
+    color: var(--ym-controls-color-primary-text-enabled);
+    outline: none;
+}
+.LocationDialogListItem_item__a0z5H:focus-visible {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+@media only screen and (max-width: 767.98px) {
+    .LocationDialogListItem_item__a0z5H {
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .LocationDialogListItem_item__a0z5H {
+        transition: none;
+    }
+}
+.LocationDialogListItem_itemText__t5XG5 {
+    flex: 1 1;
+}
+.LocationDialogListItem_checkIcon__AfJMx {
+    flex-shrink: 0;
+}
+.LocationDialogList_root__BjLJb {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    overflow-y: auto;
+    padding: 0;
+    pointer-events: none;
+    transition: scrollbar-color 0.2s ease-in-out;
+}
+.LocationDialogList_root__BjLJb::-webkit-scrollbar-thumb {
+    background-clip: content-box;
+    border: 0.5rem solid transparent;
+    border-radius: var(--ym-radius-size-l);
+    min-height: 3.125rem;
+}
+.LocationDialogList_root__BjLJb {
+    scrollbar-width: none;
+}
+.LocationDialogList_root__BjLJb::-webkit-scrollbar {
+    display: none;
+    height: 0;
+    width: 0;
+}
+.LocationDialogList_root__BjLJb {
+    --scrollbar-hidden: transparent;
+}
+@supports selector(scrollbar-width:auto) {
+    .LocationDialogList_root__BjLJb {
+        scrollbar-color: var(--scrollbar-hidden) transparent;
+        scrollbar-gutter: stable;
+    }
+}
+@supports selector(::-webkit-scrollbar) {
+    .LocationDialogList_root__BjLJb::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-hidden);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .LocationDialogList_root__BjLJb {
+        transition: none;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .LocationDialogList_root__BjLJb::-webkit-scrollbar-thumb {
+        border: 0.1875rem solid transparent;
+    }
+}
+.LocationDialogContent_root__BH0fV {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 16.625rem);
+    height: calc(100dvh - 16.625rem);
+    overflow-y: auto;
+}
+@media only screen and (max-width: 767.98px) {
+    .LocationDialogContent_root__BH0fV {
+        height: calc(100vh - 5rem);
+        height: calc(100dvh - 5rem);
+    }
+}
+.LocationDialogContent_emptyState__HKHWl {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xs);
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+}
+.LocationDialogContent_emptyStateTitle__OP1_t {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.LocationDialogContent_emptyStateSubtitle__SRjAW {
+    color: var(--ym-controls-color-secondary-on_outline-enabled_variant);
+}
+.LocationDialogSearchField_root__eYUkc {
+    align-items: center;
+    display: flex;
+    flex: 1 1;
+}
+@media only screen and (max-width: 767.98px) {
+    .LocationDialogSearchField_root__eYUkc {
+        gap: var(--ym-spacer-size-m);
+        margin-inline-end: var(--ym-spacer-size-m);
+    }
+}
+.LocationDialogSearchField_searchInput__7O9xi {
+    flex: 1 1;
+}
+.LocationSelector_root__ZHQJl {
+    color: var(--ym-controls-color-secondary-on_outline-enabled);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+    padding-block-end: 0;
+    padding-block-start: 0;
+    padding-inline-start: 0;
+    position: relative;
+    width: -moz-fit-content;
+    width: fit-content;
+    z-index: 1;
+}
+.LocationSelector_root__ZHQJl:focus-visible,
+.LocationSelector_root__ZHQJl:hover {
+    color: var(--ym-controls-color-secondary-on_outline-enabled_variant);
+}
+.LocationSelector_root_disabled__pvwot {
+    color: var(--ym-controls-color-secondary-text-enabled_variant);
+    pointer-events: none;
+}
+@media only screen and (max-width: 767.98px) {
+    .LocationSelector_root__ZHQJl {
+        margin-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.LocationSelector_icon__4o_En {
+    margin-inline-start: 0;
+}
+.LocationSelector_text__ZgYJ0 {
+    max-width: 25rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .LocationSelector_text__ZgYJ0 {
+        max-width: 17.5rem;
+    }
+}
+.LocationSelector_shimmer__NKWIA {
+    height: 1.5rem;
+    width: 6.25rem;
+}
+.ConcertsPage_root__olabl {
+    padding: 0;
+}
+.ConcertsPage_container__qS7xA {
+    padding: 0;
+    row-gap: var(--ym-spacer-size-xxl);
+}
+.ConcertsPage_container__qS7xA,
+.ConcertsPage_pageHeader__KyDH4 {
+    display: flex;
+    flex-direction: column;
+}
+.ConcertsPage_pageHeader__KyDH4 {
+    gap: var(--ym-spacer-size-xs);
+    padding-block-end: 0;
+    padding-block-start: var(--ym-spacer-size-xxl);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertsPage_pageHeader__KyDH4 {
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.ConcertsPage_pageTitle__VViQV {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.ConcertsPage_locationSelector__izo2S {
+    margin-inline-start: 0;
+}
+.ConcertsPage_footer__GYRwF {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertsPage_footer__GYRwF {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}

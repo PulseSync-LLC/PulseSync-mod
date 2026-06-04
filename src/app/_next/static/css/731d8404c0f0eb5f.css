@@ -1,0 +1,82 @@
+.SonataFullscreenControlsMobile_root__H6MQ7 {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-xxxl);
+    justify-content: center;
+    margin-block-start: var(--ym-spacer-size-xxxxl);
+}
+@media only screen and (min-width: 768.02px) {
+    .SonataFullscreenControlsMobile_root__H6MQ7 {
+        gap: 3rem;
+        margin-block-start: var(--ym-spacer-size-xxxl);
+    }
+}
+@media only screen and (max-width: 339.98px) {
+    .SonataFullscreenControlsMobile_root__H6MQ7 {
+        gap: var(--ym-spacer-size-l);
+    }
+}
+@media only screen and (max-height: 479.98px) {
+    .SonataFullscreenControlsMobile_root__H6MQ7 {
+        margin-block-start: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-height: 339.98px) {
+    .SonataFullscreenControlsMobile_root__H6MQ7 {
+        margin-block-start: var(--ym-spacer-size-m);
+    }
+}
+@media only screen and (max-height: 768px) and (min-height: 480px) {
+    .SonataFullscreenControlsMobile_root__H6MQ7 {
+        margin-block-start: var(--ym-spacer-size-xxl);
+    }
+}
+.SonataFullscreenControlsMobile_sonataButtons__hLf19 {
+    align-items: center;
+    display: flex;
+    gap: 0;
+}
+@media only screen and (min-width: 768.02px) {
+    .SonataFullscreenControlsMobile_sonataButtons__hLf19 {
+        gap: var(--ym-spacer-size-xxxl);
+    }
+}
+.SonataFullscreenControlsMobile_sonataButton__UGQ_U {
+    align-items: center;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    color: var(--ym-controls-color-secondary-text-enabled_variant);
+    display: flex;
+    justify-content: center;
+}
+.SonataFullscreenControlsMobile_sonataButton__UGQ_U:disabled {
+    color: var(--ym-controls-color-secondary-text-disabled);
+}
+.SonataFullscreenControlsMobile_sonataButton__UGQ_U:focus-visible,
+.SonataFullscreenControlsMobile_sonataButton__UGQ_U:hover {
+    transform: scale(1.05);
+}
+@media (prefers-reduced-motion: reduce) {
+    .SonataFullscreenControlsMobile_sonataButton__UGQ_U {
+        transition: none;
+    }
+}
+.SonataFullscreenControlsMobile_playPauseButtonIcon__e5ygU {
+    color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-text-enabled_variant));
+}
+.SonataFullscreenControlsMobile_buttonContainer__5ITqM {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    min-width: var(--ym-icon-size-l);
+    width: 100%;
+}
+.SonataFullscreenControlsMobile_buttonContainer__5ITqM:first-child {
+    justify-content: end;
+}
+.SonataFullscreenControlsMobile_buttonContainer__5ITqM:last-child {
+    justify-content: start;
+}
+.SonataVideoControls_root__mHglL {
+    --yellow-play-button-color: var(--ym-logo-color-primary-player);
+}

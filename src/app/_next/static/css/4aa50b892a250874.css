@@ -1,0 +1,40 @@
+.NotificationPlayQueue_entityTitle__XCIsa {
+    max-width: 7.5rem;
+}
+.NotificationPlayQueue_entityLink__O7tHL,
+.NotificationPlayQueue_entityTitle__XCIsa {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.NotificationPlayQueue_entityLink__O7tHL:focus-visible .NotificationPlayQueue_entityTitle__XCIsa,
+.NotificationPlayQueue_entityLink__O7tHL:hover .NotificationPlayQueue_entityTitle__XCIsa {
+    color: var(--ym-controls-color-primary-text-hovered);
+}
+.NotificationPlayQueue_text___1DWX {
+    align-items: center;
+    color: var(--ym-controls-color-primary-text-enabled);
+    display: flex;
+    flex-wrap: wrap;
+}
+.NotificationPlayQueue_image__SLXsp {
+    height: 100%;
+    width: 100%;
+}
+.ListeningProgress_root__Rvlcn {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-xs);
+    justify-content: left;
+}
+@media only screen and (max-width: 1365.98px) {
+    .ListeningProgress_text_withoutTimeLeft__eAmOF {
+        display: none;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ListeningProgress_text_withoutTimeLeft__eAmOF {
+        display: block;
+    }
+}
+.ListeningProgress_checkIcon___yh49 {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}

@@ -1,0 +1,29 @@
+.Login_root__VtFg_ {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin-block-start: 28vh;
+    padding: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .Login_root__VtFg_ {
+        padding: var(--ym-spacer-size-l);
+    }
+}
+.Login_title__dqQz1 {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    text-align: center;
+}
+.Login_title__dqQz1.Login_important__Z8S9I {
+    margin-block-end: var(--ym-spacer-size-xxs);
+}
+.Login_text__1uju5 {
+    max-width: 26.875rem;
+    text-align: center;
+}
+.Login_text__1uju5.Login_important__Z8S9I {
+    padding-block-end: var(--ym-spacer-size-xxxxl);
+}
+.Login_button__ZYvZY {
+    min-width: 6.875rem;
+}

@@ -693,7 +693,9 @@ window.findCssRuleByPartialName = function (pName) {
                     void bridge.sendCommand('SET_PROGRESS', { position: 0 });
                 } else {
                     const prevEntity = getQueueEntityAt(playerInst, getCurrentQueueIndex(playerInst) - 1);
-                    const stationStartPromise = prevEntity ? bridge.sendTrackFromEntity(prevEntity) : Promise.resolve({ ok: false, reason: 'Previous queue entity is missing' });
+                    const stationStartPromise = prevEntity
+                        ? bridge.sendTrackFromEntity(prevEntity)
+                        : Promise.resolve({ ok: false, reason: 'Previous queue entity is missing' });
                     bridge.startMuteGuard();
 
                     return runAfterStationStart(stationStartPromise, () => callOriginalPlayerMethod(playerInst, 'moveBackward', args));
