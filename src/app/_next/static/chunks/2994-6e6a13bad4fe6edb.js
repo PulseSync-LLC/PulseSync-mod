@@ -5813,11 +5813,14 @@
                         { formatMessage: C } = (0, R.A)(),
                         k = (0, n.eGp)(),
                         P = (0, n.zwV)(),
-                        N = (0, n.PT7)(),
+                        playGuard = (0, n.PT7)(),
                         j = (0, n.brA)(),
                         S = (0, n.rs2)(),
                         E = (0, n.mFl)(),
                         T = (0, n.NKK)(),
+                        shuffleSetter = 'function' == typeof N.e9 ? (0, N.e9)() : null,
+                        repeatSetter = 'function' == typeof N.AA ? (0, N.AA)() : null,
+                        [isImprovedWaveLayoutEnabled, setIsImprovedWaveLayoutEnabled] = (0, u.useState)(pulseSyncIsImprovedWaveLayoutEnabled()),
                         { togglePlay: I } = (0, n.B0S)({
                             seeds: null != (i = null == (t = d.meta) ? void 0 : t.seeds) ? i : [],
                             pageIdForFrom: n._Q$.HOME,
@@ -5827,11 +5830,18 @@
                         w = (0, ax.r_)(null == l ? void 0 : l.type),
                         L = ''.concat(w, ' ').concat(null == l ? void 0 : l.title),
                         M = _.entityMeta,
+                        repeatIconVariant = _.repeatMode === aP.pM.ONE ? 'repeat_one' : 'repeat',
                         B = (0, Y.c)((e) => {
                             e.stopPropagation(), (0, eo.P)(e, af().ripple), null == k || k.moveForward(), E({ actionType: tT.X2.Skip });
                         }),
                         O = (0, Y.c)((e) => {
                             e.stopPropagation(), (0, eo.P)(e, af().ripple), null == k || k.moveBackward(), E({ actionType: tT.X2.Backskip });
+                        }),
+                        shuffleClick = (0, Y.c)((e) => {
+                            e.stopPropagation(), null == shuffleSetter || shuffleSetter(_), E({ actionType: tT.X2.ChangeShuffle });
+                        }),
+                        repeatClick = (0, Y.c)((e) => {
+                            e.stopPropagation(), null == repeatSetter || repeatSetter(_), E({ actionType: tT.X2.ChangeRepeatSettings });
                         }),
                         V = (0, Y.c)(() => {
                             if (m.isAdvertShown) {
@@ -5847,7 +5857,7 @@
                                 }
                         }),
                         K = (0, Y.c)(() => {
-                            N() || V();
+                            playGuard() || V();
                         }),
                         z = !M && !b.hasPlus && A,
                         U = (0, u.useCallback)(
@@ -5884,10 +5894,31 @@
                             ),
                             [V, P],
                         ),
+                        (0, u.useEffect)(() => {
+                            const e = (e, t, a) => {
+                                t === pulseSyncImprovedWaveLayoutSettingKey && setIsImprovedWaveLayoutEnabled(a !== !1);
+                            };
+                            return window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', e);
+                        }, []),
                         (0, o.jsxs)('div', {
-                            className: af().root,
+                            className: (0, c.$)(af().root, { [af().root_withYellowPlayButton]: f }),
                             'aria-label': L,
                             children: [
+                                isImprovedWaveLayoutEnabled &&
+                                    !_.isGenerativeContext &&
+                                    (_.canShuffle || _.canChangeRepeatMode) &&
+                                    (0, o.jsx)(p.$, {
+                                        className: (0, c.$)(af().button, s),
+                                        variant: 'text',
+                                        radius: 'round',
+                                        disabled: !_.canShuffle,
+                                        'aria-hidden': !_.canShuffle,
+                                        withRipple: !1,
+                                        'aria-label': C({ id: 'player-actions.shuffle' }),
+                                        icon: (0, o.jsx)(F.Icon, { variant: 'shuffle', size: 'xs' }),
+                                        onClick: shuffleClick,
+                                        style: _.shuffle ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
+                                    }),
                                 !_.isGenerativeContext &&
                                     (0, o.jsx)(p.$, {
                                         className: (0, c.$)(af().button, af().button_backward),
@@ -5944,6 +5975,21 @@
                                         icon: (0, o.jsx)(F.Icon, { variant: 'next', size: 'xs' }),
                                         onClick: B,
                                         ...(0, D.Am)(D.Kq.sonata.NEXT_TRACK_BUTTON),
+                                    }),
+                                isImprovedWaveLayoutEnabled &&
+                                    !_.isGenerativeContext &&
+                                    (_.canShuffle || _.canChangeRepeatMode) &&
+                                    (0, o.jsx)(p.$, {
+                                        className: (0, c.$)(af().button, s),
+                                        variant: 'text',
+                                        radius: 'round',
+                                        disabled: !_.canChangeRepeatMode,
+                                        'aria-hidden': !_.canChangeRepeatMode,
+                                        withRipple: !1,
+                                        'aria-label': (0, N.zM)(_.repeatMode, C),
+                                        icon: (0, o.jsx)(F.Icon, { variant: repeatIconVariant, size: 'xs' }),
+                                        onClick: repeatClick,
+                                        style: _.repeatMode !== aP.pM.NONE ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
                                     }),
                             ],
                         })
@@ -6033,6 +6079,14 @@
                                 trackAlbumId: w.albumId,
                             };
                     }),
+                    trackDownloadName = (0, et.L)(() => {
+                        let e = ((null == w ? void 0 : w.artists) || []).map((e) => e.name).filter(Boolean).join(', ');
+                        return [e, null == w ? void 0 : w.title].filter(Boolean).join(' — ');
+                    }),
+                    downloadTrackToFile = (0, Y.c)(() => {
+                        var e;
+                        (null == w ? void 0 : w.id) && (null == (e = window.desktopEvents) || e.send(n.EE.DOWNLOAD_TRACK, w.id, trackDownloadName)), S();
+                    }),
                     ev = ''.concat(A({ id: 'interface-actions.open-sync-lyrics' }), ' ').concat(A({ id: 'warning-messages.can-break-accessibility' })),
                     ey = (0, et.L)(() => {
                         let e = [];
@@ -6064,6 +6118,19 @@
                     eg = (0, et.L)(() => {
                         let e = [];
                         return (
+                            w &&
+                                e.push(
+                                    (0, o.jsx)(
+                                        tj.Dr,
+                                        {
+                                            onClick: downloadTrackToFile,
+                                            disabled: !(null == w ? void 0 : w.id),
+                                            icon: (0, o.jsx)(F.Icon, { variant: 'download', size: 'xxs' }),
+                                            children: 'Скачать в файл',
+                                        },
+                                        'download-to-file',
+                                    ),
+                                ),
                             w && e.push((0, o.jsx)(T.$e, { track: w }, 'add-to-playlist')),
                             ep && (null == w ? void 0 : w.isNonUserGenerated) && e.push((0, o.jsx)(h.Ht, { shareLink: e_, entityMeta: ep }, 'share')),
                             e.length > 0 && e.unshift((0, o.jsx)('div', { className: aE().divider }, 'bottom-divider')),
@@ -11533,6 +11600,7 @@
                 playButtonContainer_playing: 'AlbumCover_playButtonContainer_playing__mL2J3',
                 playButtonContainer_withoutBackground: 'AlbumCover_playButtonContainer_withoutBackground__ChM8o',
                 root: 'AlbumCover_root__hkDPz',
+                root_withYellowPlayButton: 'AlbumCover_root_withYellowPlayButton__lK9nW',
                 coverContainer: 'AlbumCover_coverContainer__NOd_o',
                 cover: 'AlbumCover_cover__bif8b',
                 cover_visible: 'AlbumCover_cover_visible___8hK9',
