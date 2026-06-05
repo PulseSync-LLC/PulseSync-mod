@@ -3335,7 +3335,7 @@
                                           children: ep,
                                       });
                         }),
-                        eP = H.hasPlus && !h && o.isFavouritePlaylist && o.isOwnPlaylist,
+                        eP = H.hasPlus && !h, // && o.isFavouritePlaylist && o.isOwnPlaylist Add dwonload button to all playlists,
                         ef = (0, c.useMemo)(
                             () =>
                                 (0, l.jsxs)('div', {
