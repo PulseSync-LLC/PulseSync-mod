@@ -648,7 +648,7 @@
 }
 .TimecodeGroup_timecode_end__kzP5g {
     inset-inline-end: 0;
-    z-index: var(--toastify-z-index);
+    z-index: 399;
 }
 .TimecodeGroup_timecode_end_hidden__BxQ5h {
     filter: opacity(0);
