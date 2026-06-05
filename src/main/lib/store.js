@@ -120,6 +120,7 @@ let defaultExperimentOverrides = {
     WebNextWaveScreenWordsInWave: 'on',
     WebNextNewWaveTabFeedbackForm: 'on',
     WebNextNewWaveTabRedesign: 'on',
+    WebNextNewWaveTab: 'on',
 };
 
 const useCachedValue = (key) => {
