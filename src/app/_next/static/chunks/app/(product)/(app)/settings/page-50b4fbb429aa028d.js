@@ -828,31 +828,33 @@
                                                     '--settingBarWithDropdown-offset-y': 'bottom' === s ? '-6px' : '6px',
                                                     '--settingBarWithDropdown-origin': 'bottom' === s ? 'top right' : 'bottom right',
                                                 },
-                                                children: r.map((e) =>
-                                                    (0, n.jsxs)(
-                                                        'li',
-                                                        {
-                                                            role: 'menuitem',
-                                                            className: 'settingBarWithDropdown_menuItem',
-                                                            id: e.value,
-                                                            'aria-selected': l === e.value,
-                                                            onClick: (t) => {
-                                                                t.stopPropagation(), x(e.value);
+                                                children: r.map(
+                                                    (e) =>
+                                                        e &&
+                                                        (0, n.jsxs)(
+                                                            'li',
+                                                            {
+                                                                role: 'menuitem',
+                                                                className: 'settingBarWithDropdown_menuItem',
+                                                                id: e.value,
+                                                                'aria-selected': l === e.value,
+                                                                onClick: (t) => {
+                                                                    (t.stopPropagation(), x(e.value));
+                                                                },
+                                                                children: [
+                                                                    (0, n.jsx)('span', { children: e.label }),
+                                                                    l === e.value &&
+                                                                        (0, n.jsx)('svg', {
+                                                                            width: '16',
+                                                                            height: '16',
+                                                                            fill: 'currentColor',
+                                                                            xmlns: 'http://www.w3.org/2000/svg',
+                                                                            children: (0, n.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
+                                                                        }),
+                                                                ],
                                                             },
-                                                            children: [
-                                                                (0, n.jsx)('span', { children: e.label }),
-                                                                l === e.value &&
-                                                                    (0, n.jsx)('svg', {
-                                                                        width: '16',
-                                                                        height: '16',
-                                                                        fill: 'currentColor',
-                                                                        xmlns: 'http://www.w3.org/2000/svg',
-                                                                        children: (0, n.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
-                                                                    }),
-                                                            ],
-                                                        },
-                                                        e.value,
-                                                    ),
+                                                            e.value,
+                                                        ),
                                                 ),
                                             }),
                                     ],
@@ -1885,7 +1887,7 @@
                     return (0, n.jsx)(w.a, {
                         className: K().list,
                         headerClassName: K().modalHeader,
-                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        contentClassName: ''.concat(K().modalContent),
                         title: 'Системные настройки',
                         open: t.isOpened,
                         onOpenChange: t.onOpenChange,
@@ -1895,7 +1897,7 @@
                         overlayColor: 'full',
                         labelClose: e({ id: 'interface-actions.close' }),
                         children: (0, n.jsxs)('ul', {
-                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            className: ''.concat($().root, ' ').concat(K().list),
                             style: { width: '34.125rem', maxHeight: '37.5rem', gap: 0 },
                             children: [
                                 (0, n.jsx)('li', {
@@ -2203,7 +2205,7 @@
                         style: { maxWidth: '34.375rem', height: 'auto' },
                         title: 'Настройки аудио',
                         headerClassName: K().modalHeader,
-                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        contentClassName: ''.concat(K().modalContent),
                         open: t.isOpened,
                         onOpenChange: t.onOpenChange,
                         onClose: t.close,
@@ -2212,7 +2214,7 @@
                         overlayColor: 'full',
                         labelClose: e({ id: 'interface-actions.close' }),
                         children: (0, n.jsxs)('ul', {
-                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            className: ''.concat($().root, ' ').concat(K().list),
                             style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
                             children: [
                                 (0, n.jsx)('li', {
@@ -2299,7 +2301,7 @@
                     return (0, n.jsx)(w.a, {
                         className: K().list,
                         headerClassName: K().modalHeader,
-                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        contentClassName: ''.concat(K().modalContent),
                         title: 'Поведение окна',
                         open: t.isOpened,
                         onOpenChange: t.onOpenChange,
@@ -2309,7 +2311,7 @@
                         overlayColor: 'full',
                         labelClose: e({ id: 'interface-actions.close' }),
                         children: (0, n.jsxs)('ul', {
-                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            className: ''.concat($().root, ' ').concat(K().list),
                             style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
                             children: [
                                 (0, n.jsx)('li', {
@@ -2323,8 +2325,9 @@
                                         options: [
                                             { value: '/', label: 'Главная' },
                                             { value: '/search', label: 'Поиск' },
-                                            { value: '/non-music', label: 'Подкасты и книги' },
+                                            window.nativeSettings?.get('modSettings.showNonMusicPage') && { value: '/non-music', label: 'Подкасты и книги' },
                                             { value: '/collection', label: 'Коллекция' },
+                                            window.nativeSettings?.get('modSettings.showConcertsTab') && { value: '/concerts', label: 'Концерты' },
                                         ],
                                     }),
                                 }),
@@ -2421,7 +2424,7 @@
                     return (0, n.jsx)(w.a, {
                         className: K().list,
                         headerClassName: K().modalHeader,
-                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        contentClassName: ''.concat(K().modalContent),
                         title: 'Миниплеер',
                         open: t.isOpened,
                         onOpenChange: t.onOpenChange,
@@ -2431,7 +2434,7 @@
                         overlayColor: 'full',
                         labelClose: e({ id: 'interface-actions.close' }),
                         children: (0, n.jsxs)('ul', {
-                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            className: ''.concat($().root, ' ').concat(K().list),
                             style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
                             children: [
                                 (0, n.jsx)('li', {
@@ -2474,20 +2477,13 @@
                         }),
                     });
                 });
-            let myVibeSettings = (0, l.PA)(() => {
+            let myVibeAnimationPerformanceSettings = (0, l.PA)(() => {
                     let { formatMessage: e } = (0, i.A)(),
                         {
-                            modals: { myVibeSettingsModal: t },
+                            modals: { myVibeAnimationPerformanceSettingsModal: t },
                         } = (0, m.Pjs)(),
                         [o, setMaxFPS] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.maxFPS')),
                         [r, s] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.disableRendering')),
-                        [a, d] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.useDynamicEnergy')),
-                        [u, p] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergy')),
-                        [h, f] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.vibeIntensityCoefficient')),
-                        [x, setSmoothDynamicEnergyCoefficient] = (0, v.useState)(
-                            window.nativeSettings.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergyCoefficient'),
-                        ),
-                        [j, C] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.useVibeWidgetColors') ?? !0),
                         onDisableVibeRenderingToggle = (0, v.useCallback)(async (e) => {
                             console.log('modSettings.vibeAnimationEnhancement.disableRendering toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.disableRendering', e);
@@ -2498,7 +2494,63 @@
                             setMaxFPS(t);
                             console.log('modSettings.vibeAnimationEnhancement.maxFPS changed. Value: ', t);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.maxFPS', t);
-                        }, []),
+                        }, []);
+                    return (0, n.jsx)(w.a, {
+                        className: K().list,
+                        style: { maxWidth: '34.375rem' },
+                        title: 'Производительность Моей Волны',
+                        headerClassName: K().modalHeader,
+                        contentClassName: ''.concat(K().modalContent),
+                        open: t.isOpened,
+                        onOpenChange: t.onOpenChange,
+                        onClose: t.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        overlayColor: 'full',
+                        labelClose: e({ id: 'interface-actions.close' }),
+                        children: (0, n.jsxs)('ul', {
+                            className: ''.concat($().root, ' ').concat(K().list),
+                            style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
+                            children: [
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Отключить отрисовку анимации Волны',
+                                        description: 'Значительно увеличивает производительность на слабом железе',
+                                        onChange: onDisableVibeRenderingToggle,
+                                        isChecked: r,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithSlider, {
+                                        title: 'Ограничение FPS',
+                                        description: 'Верхняя граница FPS. Чем больше, тем плавнее анимация',
+                                        onChange: onMaxFPSchange,
+                                        value: o,
+                                        maxValue: Math.max(window?.DISPLAY_MAX_FPS ?? 60, o),
+                                        minValue: 1,
+                                        step: 1,
+                                        disabled: !!r,
+                                    }),
+                                }),
+                            ],
+                        }),
+                    });
+                }),
+                myVibeAnimationAppearanceSettings = (0, l.PA)(() => {
+                    let { formatMessage: e } = (0, i.A)(),
+                        {
+                            modals: { myVibeAnimationAppearanceSettingsModal: t },
+                        } = (0, m.Pjs)(),
+                        [r, s] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.disableRendering')),
+                        [a, d] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.useDynamicEnergy')),
+                        [u, p] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergy')),
+                        [h, f] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.vibeIntensityCoefficient')),
+                        [x, setSmoothDynamicEnergyCoefficient] = (0, v.useState)(
+                            window.nativeSettings.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergyCoefficient'),
+                        ),
+                        [j, C] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.useVibeWidgetColors') ?? !0),
                         onIntensityCoefficientChange = (0, v.useCallback)(async (e) => {
                             let t = Math.min(Math.max(e, 0), 2.5);
                             f(t);
@@ -2533,9 +2585,9 @@
                     return (0, n.jsx)(w.a, {
                         className: K().list,
                         style: { maxWidth: '34.375rem' },
-                        title: 'Анимация Моей Волны',
+                        title: 'Вид анимации Моей Волны',
                         headerClassName: K().modalHeader,
-                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        contentClassName: ''.concat(K().modalContent),
                         open: t.isOpened,
                         onOpenChange: t.onOpenChange,
                         onClose: t.close,
@@ -2544,18 +2596,9 @@
                         overlayColor: 'full',
                         labelClose: e({ id: 'interface-actions.close' }),
                         children: (0, n.jsxs)('ul', {
-                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            className: ''.concat($().root, ' ').concat(K().list),
                             style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
                             children: [
-                                (0, n.jsx)('li', {
-                                    className: $().item,
-                                    children: (0, n.jsx)(Q, {
-                                        title: 'Отключить отрисовку анимации Волны',
-                                        description: 'Значительно увеличивает производительность на слабом железе',
-                                        onChange: onDisableVibeRenderingToggle,
-                                        isChecked: r,
-                                    }),
-                                }),
                                 (0, n.jsx)('li', {
                                     className: $().item,
                                     children: (0, n.jsx)(Q, {
@@ -2573,19 +2616,6 @@
                                         description: 'Переключение между радужным и одноцветным градиентом Волны',
                                         onChange: onUseVibeWidgetColorsToggle,
                                         isChecked: j,
-                                        disabled: !!r,
-                                    }),
-                                }),
-                                (0, n.jsx)('li', {
-                                    className: $().item,
-                                    children: (0, n.jsx)(settingBarWithSlider, {
-                                        title: 'Ограничение FPS',
-                                        description: 'Верхняя граница FPS. Чем больше, тем плавнее анимация',
-                                        onChange: onMaxFPSchange,
-                                        value: o,
-                                        maxValue: Math.max(window?.DISPLAY_MAX_FPS ?? 60, o),
-                                        minValue: 1,
-                                        step: 1,
                                         disabled: !!r,
                                     }),
                                 }),
@@ -2661,7 +2691,7 @@
                         style: { maxWidth: '34.375rem', height: 'auto' },
                         title: 'Поведение Волны',
                         headerClassName: K().modalHeader,
-                        contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                        contentClassName: ''.concat(K().modalContent),
                         open: t.isOpened,
                         onOpenChange: t.onOpenChange,
                         onClose: t.close,
@@ -2670,7 +2700,7 @@
                         overlayColor: 'full',
                         labelClose: e({ id: 'interface-actions.close' }),
                         children: (0, n.jsxs)('ul', {
-                            className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                            className: ''.concat($().root, ' ').concat(K().list),
                             style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
                             children: [
                                 (0, n.jsx)('li', {
@@ -3017,7 +3047,7 @@
                     style: { 'max-width': '34.375rem', height: 'auto' },
                     title: 'Настройки LRCLib',
                     headerClassName: K().modalHeader,
-                    contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                    contentClassName: ''.concat(K().modalContent),
                     open: t.isOpened,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
@@ -3026,7 +3056,7 @@
                     overlayColor: 'full',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, n.jsxs)('ul', {
-                        className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                        className: ''.concat($().root, ' ').concat(K().list),
                         style: { width: '32.125rem', gap: 0 },
                         children: [
                             (0, n.jsx)('li', {
@@ -3474,7 +3504,7 @@
                             className: K().list,
                             title: 'Скробблинг',
                             headerClassName: K().modalHeader,
-                            contentClassName: ''.concat(K().modalContent, ' Modal_content_no_right_padding'),
+                            contentClassName: ''.concat(K().modalContent),
                             open: t.isOpened,
                             onOpenChange: t.onOpenChange,
                             onClose: t.close,
@@ -3484,7 +3514,7 @@
                             style: { height: 'auto', minWidth: '430px' },
                             labelClose: e({ id: 'interface-actions.close' }),
                             children: (0, n.jsxs)('ul', {
-                                className: ''.concat($().root, ' ').concat(K().list, ' PulseSync_experimentsListScroll'),
+                                className: ''.concat($().root, ' ').concat(K().list),
                                 style: { width: '-webkit-fill-available', gap: 0 },
                                 children: [
                                     (0, n.jsx)('li', {
@@ -3582,7 +3612,8 @@
                             windowSettingsModal: se,
                             playerSettingsModal: aeModal,
                             audioSettingsModal: audioSettingsModal,
-                            myVibeSettingsModal: myVibeSettingsModal,
+                            myVibeAnimationAppearanceSettingsModal: myVibeAnimationAppearanceSettingsModal,
+                            myVibeAnimationPerformanceSettingsModal: myVibeAnimationPerformanceSettingsModal,
                             appUpdatesSettingsModal: appUpdatesSettingsModal,
                             systemSettingsModal: deModal,
                             globalShortcutsSettingsModal: globalShortcutsSettingsModal,
@@ -3663,22 +3694,22 @@
                     ),
                     Gt = (0, v.useCallback)(
                         (e) => {
-                            window.nativeSettings?.set('modSettings.showNonMusicPage', e), ce(e), oe();
+                            (window.nativeSettings?.set('modSettings.showNonMusicPage', e), ce(e), oe());
                         },
                         [oe],
                     ),
                     Qt = (0, v.useCallback)(
                         (e) => {
-                            window.nativeSettings?.set('modSettings.showConcertsTab', e), ue(e), oe();
+                            (window.nativeSettings?.set('modSettings.showConcertsTab', e), ue(e), oe());
                         },
                         [oe],
                     ),
                     togglePlaylistAddTrackToEnd = (0, v.useCallback)((e) => {
-                        window.nativeSettings?.set('modSettings.playlist.addTracksToEndFromContextMenu', e), setAppendPlaylistTracksToEnd(e);
+                        (window.nativeSettings?.set('modSettings.playlist.addTracksToEndFromContextMenu', e), setAppendPlaylistTracksToEnd(e));
                     }, []),
                     Xt = (0, v.useCallback)(
                         (e) => {
-                            window.nativeSettings?.set('devMode', e), pe(e), oe();
+                            (window.nativeSettings?.set('devMode', e), pe(e), oe());
                         },
                         [oe],
                     ),
@@ -3883,96 +3914,7 @@
                                 className: $().item,
                                 children: [(0, n.jsx)(D, { title: x({ id: 'settings.about-app' }), description: E, onClick: aboutAppModal.open }), (0, n.jsx)(A, {})],
                             }),
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: 'Discord RPC',
-                                description: 'Интеграция с Discord',
-                                onClick: discordRpcSettingsModal.open,
-                            }),
-                        }),
-                        (0, n.jsx)(discordRpcSettings, {}),
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: 'Системные настройки',
-                                description: 'Автозапуск, аппаратное ускорение и т.п.',
-                                onClick: deModal.open,
-                            }),
-                        }),
-                        (0, n.jsx)(systemSettings, {}),
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: 'Анимация Моей Волны',
-                                description: 'Настройка анимации Моей Волны',
-                                onClick: myVibeSettingsModal.open,
-                            }),
-                        }),
-                        (0, n.jsx)(myVibeSettings, {}),
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: 'Поведение Волны',
-                                description: 'Настройка поведения Волны',
-                                onClick: myVibeParamsSettingsModal.open,
-                            }),
-                        }),
-                        (0, n.jsx)(myVibeParamsSettings, {}),
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: 'Панель плеера',
-                                description: 'Настройки элементов на панели плеера',
-                                onClick: aeModal.open,
-                            }),
-                        }),
-                        (0, n.jsx)(playerSettings, {}),
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: ['Настройки LRCLib', (0, n.jsx)(labeledBubble, { label: 'ALPHA' })],
-                                description: 'Поиск текста песен в LRCLib и режимы отображения',
-                                onClick: lrclibSettingsModal.open,
-                            }),
-                        }),
-                        (0, n.jsx)(lrclibSettings, {}),
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: 'Настройки аудио',
-                                description: 'Нормализация громкости и пространственный звук',
-                                onClick: audioSettingsModal.open,
-                            }),
-                        }),
-                        (0, n.jsx)(audioSettings, {}),
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: 'Поведение окна',
-                                description: 'Настройки поведения окна приложения',
-                                onClick: se.open,
-                            }),
-                        }),
-                        (0, n.jsx)(windowSettings, {}),
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: 'Миниплеер',
-                                description: 'Настройки поведения миниплеера',
-                                onClick: ueModal.open,
-                            }),
-                        }),
-                        (0, n.jsx)(miniPlayerSettings, {}),
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: 'Скробблинг',
-                                description: 'Авторизация в Last.fm и другие настройки',
-                                onClick: scrobblersSettingsModal.open,
-                            }),
-                        }),
-                        (0, n.jsx)(scrobblersSettings, {}),
+
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
@@ -3981,25 +3923,124 @@
                                 onClick: downloaderSettingsModal.open,
                             }),
                         }),
-                        (0, n.jsx)(downloaderSettings, {}),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Discord RPC',
+                                description: 'Интеграция с Discord',
+                                onClick: discordRpcSettingsModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Производительность анимации Моей Волны',
+                                description: 'Отключение анимации, FPS, разрешение и т.п.',
+                                onClick: myVibeAnimationPerformanceSettingsModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Вид анимации Моей Волны',
+                                description: 'Настройка визуального вида Моей Волны',
+                                onClick: myVibeAnimationAppearanceSettingsModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Поведение Волны',
+                                description: 'Настройка поведения Волны',
+                                onClick: myVibeParamsSettingsModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Поведение окна',
+                                description: 'Настройки поведения окна приложения',
+                                onClick: se.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Панель плеера',
+                                description: 'Настройки элементов на панели плеера',
+                                onClick: aeModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Настройки аудио',
+                                description: 'Нормализация громкости и пространственный звук',
+                                onClick: audioSettingsModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Миниплеер',
+                                description: 'Настройки поведения миниплеера',
+                                onClick: ueModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Скробблинг',
+                                description: 'Авторизация в Last.fm и другие настройки',
+                                onClick: scrobblersSettingsModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: ['Настройки LRCLib', (0, n.jsx)(labeledBubble, { label: 'BETA' })],
+                                description: 'Поиск текста песен в LRCLib и режимы отображения',
+                                onClick: lrclibSettingsModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Системные настройки',
+                                description: 'Автозапуск, аппаратное ускорение и т.п.',
+                                onClick: deModal.open,
+                            }),
+                        }),
+
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
                                 title: 'Обновления',
-                                description: 'Настройки обновлений программы',
+                                description: 'Настройки обновлений программы и мода',
                                 onClick: appUpdatesSettingsModal.open,
                             }),
                         }),
-                        (0, n.jsx)(appUpdatesSettings, {}),
+
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
                                 title: ['Ynison Remote', (0, n.jsx)(labeledBubble, { label: 'BETA' })],
-                                description: 'Настройки кроссплеерного управления',
+                                description: 'Настройки удалённого управления',
                                 onClick: ynisonSettingsModal.open,
                             }),
                         }),
-                        (0, n.jsx)(ynisonSettings, {}),
+
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(Q, {
@@ -4017,6 +4058,21 @@
                                 onClick: Zt,
                             }),
                         }),
+
+                        (0, n.jsx)(systemSettings, {}),
+                        (0, n.jsx)(myVibeAnimationPerformanceSettings, {}),
+                        (0, n.jsx)(myVibeAnimationAppearanceSettings, {}),
+                        (0, n.jsx)(myVibeParamsSettings, {}),
+                        (0, n.jsx)(playerSettings, {}),
+                        (0, n.jsx)(lrclibSettings, {}),
+                        (0, n.jsx)(audioSettings, {}),
+                        (0, n.jsx)(windowSettings, {}),
+                        (0, n.jsx)(miniPlayerSettings, {}),
+                        (0, n.jsx)(scrobblersSettings, {}),
+                        (0, n.jsx)(downloaderSettings, {}),
+                        (0, n.jsx)(appUpdatesSettings, {}),
+                        (0, n.jsx)(discordRpcSettings, {}),
+                        (0, n.jsx)(ynisonSettings, {}),
                     ],
                 });
             });
