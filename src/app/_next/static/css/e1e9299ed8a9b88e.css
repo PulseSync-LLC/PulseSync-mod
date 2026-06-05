@@ -292,10 +292,6 @@
     padding-block-end: 12px;
 }
 
-.modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe__MSDOn
-.CommonLayout_playerBar__zXRxq.PlayerBarDesktopWithBackgroundProgressBar_root__bpmwN.PlayerBarDesktopWithBackgroundProgressBar_important__HzXrK {
-    margin-block-start: 0 !important;
-}
 @media (prefers-reduced-motion: reduce) {
     .DefaultLayout_rootNewVibe__MSDOn {
         transition: none;
