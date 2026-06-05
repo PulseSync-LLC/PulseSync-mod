@@ -727,7 +727,6 @@
 .Content_rootOld__g85_m {
     display: flex;
     justify-content: space-between;
-    overflow: hidden;
 }
 .Content_rootOld_newVibe__4CZFU {
     margin-block-end: calc(var(--ym-spacer-size-m) * -1);
