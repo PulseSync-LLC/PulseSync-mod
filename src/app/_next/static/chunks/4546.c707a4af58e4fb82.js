@@ -106,6 +106,7 @@
                                 collectionHue: Q() ? void 0 : R.collectionHue,
                                 shaderOptions: void 0,
                                 fps: window.VIBE_ANIMATION_MAX_FPS?.() ?? 25,
+                                resolution: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.canvasResolution') ?? 650,
                                 onMessage: D,
                                 onError: U,
                             });

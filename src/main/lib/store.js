@@ -211,6 +211,7 @@ const init = () => {
         },
         vibeAnimationEnhancement: {
             maxFPS: 60,
+            canvasResolution: 650,
             vibeIntensityCoefficient: 1.3,
             useDynamicEnergy: true,
             smoothDynamicEnergy: false,

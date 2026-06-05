@@ -17128,6 +17128,108 @@
                 canReusePendingPlayContextRequest(e) {
                     return void 0 === e.entitiesData && void 0 === e.queueParams;
                 }
+                constructor(e) {
+                    var t;
+                    ((0, T._)(this, 'id', void 0),
+                        (0, T._)(this, 'isBlocking', void 0),
+                        (0, T._)(this, 'playbackState', void 0),
+                        (0, T._)(this, 'queueController', void 0),
+                        (0, T._)(this, 'contextController', void 0),
+                        (0, T._)(this, 'mediaController', void 0),
+                        (0, T._)(
+                            this,
+                            'hooks',
+                            (function () {
+                                let e = {
+                                    afterPlaybackCheckBlockingStatus: new J.AsyncSeriesHook(),
+                                    beforeContextSet: new J.AsyncSeriesHook(),
+                                    afterContextSet: new J.SyncHook(),
+                                    afterContextEnd: new J.AsyncSeriesHook(['method']),
+                                    afterSetupQueue: new J.SyncHook(),
+                                    beforeEntityPlayingProcessStart: new J.AsyncSeriesHook(),
+                                    entityPlayingProcessStartError: new J.AsyncSeriesHook(),
+                                    beforeEntityReloadProcessStart: new J.AsyncSeriesHook(['reloadReason']),
+                                    beforeMediaSourceContentReload: new J.AsyncSeriesHook(),
+                                    afterMediaSourceContentReload: new J.AsyncSeriesHook(),
+                                    beforeEntityPreloadProcessStart: new J.AsyncSeriesHook(['entity']),
+                                    beforeMediaSourceContentPreload: new J.AsyncSeriesHook(['entity']),
+                                    afterMediaSourceContentPreload: new J.AsyncSeriesHook(['entity']),
+                                    beforeMediaStartPlaying: new J.AsyncSeriesHook(),
+                                    afterMediaStartPlaying: new J.AsyncSeriesHook(),
+                                    beforeMediaResume: new J.AsyncSeriesHook(),
+                                    afterMediaResume: new J.AsyncSeriesHook(),
+                                    beforeMediaPause: new J.AsyncSeriesHook(),
+                                    afterMediaPause: new J.AsyncSeriesHook(),
+                                    afterMediaEndPlaying: new J.AsyncSeriesHook(),
+                                    beforeFindPlayableEntityIndex: new J.AsyncSeriesHook(['findData']),
+                                    beforeEntityChange: new J.AsyncSeriesHook(['changeData']),
+                                    afterError: new J.AsyncSeriesHook(['error']),
+                                    afterErrorProcessed: new J.AsyncSeriesHook(['error']),
+                                    beforeDestroy: new J.AsyncSeriesHook(),
+                                    afterEntityRemove: new J.AsyncSeriesHook(),
+                                    beforeInject: new J.SyncWaterfallHook(['injectData']),
+                                    afterInject: new J.SyncWaterfallHook(['afterInjectData']),
+                                };
+                                return (
+                                    e.afterError.tapPromise({ name: 'afterErrorProcessedBridge', stage: Number.MAX_SAFE_INTEGER }, (t) =>
+                                        e.afterErrorProcessed.promise(t),
+                                    ),
+                                    e
+                                );
+                            })(),
+                        ),
+                        (0, T._)(this, 'playbackInitializationTime', Date.now()),
+                        (0, T._)(this, 'lastStableContext', void 0),
+                        (0, T._)(this, 'pendingPlayContextRequest', void 0),
+                        (this.id = e.id),
+                        (this.isBlocking = null != (t = e.isBlocking) && t));
+                    let {
+                        queueController: r,
+                        contextController: s,
+                        mediaController: n,
+                    } = (function (e) {
+                        try {
+                            let { mediaPlayerParams: t, factory: r, hooks: s, entityProvider: n, playbackConfig: a, variables: i } = e,
+                                l = new f.Di({
+                                    prevIndex: null,
+                                    index: 0,
+                                    nextIndex: null,
+                                    entityList: [],
+                                    order: [],
+                                    repeat: { ...f.pM }.NONE,
+                                    shuffle: !1,
+                                    filterParams: {},
+                                }),
+                                o = new Z(h),
+                                c = new x(r),
+                                d = new N({
+                                    contextController: c,
+                                    playerQueue: l,
+                                    playerState: o,
+                                    hooks: s,
+                                    entityProvider: n,
+                                    windowPaginationConfig: { setupQueueWindowSize: a.setupQueueWindowSize, windowSize: a.windowSize },
+                                    factory: r,
+                                }),
+                                u = { mediaElementErrorReloadCount: a.mediaElementErrorReloadCount, burstDebounceConfig: a.burstDebounceConfig },
+                                _ = new j({ queueState: l.state, hooks: s, config: u, mediaPlayerParams: t, state: o, variables: i });
+                            return { contextController: c, queueController: d, mediaController: _ };
+                        } catch (e) {
+                            throw new L('Error in createPlaybackControllers', { code: 'E_CREATE_PLAYER_CONTROLLERS', cause: e });
+                        }
+                    })({ ...e, hooks: this.hooks });
+                    ((this.queueController = r),
+                        (this.mediaController = n),
+                        (this.contextController = s),
+                        (this.playbackState = {
+                            playerState: this.mediaController.state,
+                            currentMediaPlayer: this.mediaController.currentMediaPlayer,
+                            mediaPlayersStore: this.mediaController.mediaPlayersStore,
+                            queueState: this.queueController.queue.state,
+                            currentContext: this.contextController.currentContextObservable,
+                        }));
+                }
+
                 playContext(e) {
                     try {
                         var t, r, s;
@@ -17163,7 +17265,7 @@
                                     var t;
                                     (null == (t = this.pendingPlayContextRequest) ? void 0 : t.promise) === e && (this.pendingPlayContextRequest = void 0);
                                 });
-                            return T && (this.pendingPlayContextRequest = { key: T, promise: e }), e;
+                            return (T && (this.pendingPlayContextRequest = { key: T, promise: e }), e);
                         }
                         let { entity: m } = d;
                         if (void 0 === a || void 0 === h || -1 === h) {
@@ -17178,8 +17280,9 @@
                         return Promise.reject(e);
                     }
                 }
+
                 setContext(e) {
-                    this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1);
+                    (this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1));
                     let { context: t, entitiesData: r, queueParams: s, loadContextMeta: n = !0 } = e;
                     return this.hooks.beforeContextSet
                         .promise()
@@ -17187,13 +17290,13 @@
                             this.hooks.afterError.promise(e);
                         })
                         .finally(() => {
-                            (this.contextController.currentContext = t), this.hooks.afterContextSet.call();
+                            ((this.contextController.currentContext = t), this.hooks.afterContextSet.call());
                             let e = () =>
                                     this.contextController.currentContextObservable.value !== t
                                         ? Promise.reject(new q())
                                         : this.queueController.setupQueue({ entitiesData: r, queueParams: s }).then(() => {
                                               if (this.contextController.currentContextObservable.value !== t) throw new q();
-                                              (this.lastStableContext = t), (this.mediaController.listenQueueState = !0), this.hooks.afterSetupQueue.call();
+                                              ((this.lastStableContext = t), (this.mediaController.listenQueueState = !0), this.hooks.afterSetupQueue.call());
                                           }),
                                 a = (e) => (
                                     e instanceof q ||
@@ -17209,8 +17312,24 @@
                                 : e().catch(a);
                         });
                 }
+                reloadEntity(e) {
+                    return this.mediaController.reload(e).catch((e) => {
+                        this.hooks.afterError.promise(e);
+                    });
+                }
+                preloadSrc(e) {
+                    return this.mediaController.preloadSrc(e).catch((e) => {
+                        this.hooks.afterError.promise(new k('Preload src error', { code: o.PRE_FETCH, cause: e }));
+                    });
+                }
+                releaseSrc(e) {
+                    return this.mediaController.releaseSrc(e).catch((e) => {
+                        this.hooks.afterError.promise(e);
+                    });
+                }
+
                 restartContext(e) {
-                    this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1);
+                    (this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1));
                     let { playAfterRestart: t = !0, entitiesData: r, queueParams: s } = e;
                     return this.hooks.beforeEntityChange
                         .promise({ method: a.RESTART_CONTEXT, index: this.queueController.queue.state.index.value })
@@ -17228,24 +17347,6 @@
                                           : Promise.resolve(),
                                 ),
                         );
-                }
-                reloadEntity(e) {
-                    return this.mediaController.reload(e).catch((e) => {
-                        this.hooks.afterError.promise(e);
-                    });
-                }
-                preloadSrc(e) {
-                    return this.mediaController.preloadSrc(e).catch((e) => {
-                        this.hooks.afterError.promise(new k('Preload src error', { code: o.PRE_FETCH, cause: e }));
-                    });
-                }
-                releaseSrc(e) {
-                    return this.mediaController.releaseSrc(e).catch((e) => {
-                        this.hooks.afterError.promise(e);
-                    });
-                }
-                play() {
-                    return this.mediaController.cancelPendingBurstDebounce(), this.mediaController.play();
                 }
                 moveForward(e) {
                     return this.queueController
@@ -17276,8 +17377,9 @@
                                   throw (this.mediaController.cancelPendingBurstDebounce(), e);
                               });
                 }
-                setEntityByIndex(e, t) {
-                    return t && (this.mediaController.listenQueueState = !1), this.mediaController.cancelPendingBurstDebounce(), this.queueController.setIndex(e);
+
+                play() {
+                    return (this.mediaController.cancelPendingBurstDebounce(), this.mediaController.play());
                 }
                 inject(e) {
                     this.queueController.inject(e);
@@ -17309,8 +17411,9 @@
                     let e = this.mediaController.isPendingBurstDebounce;
                     return (this.mediaController.cancelPendingBurstDebounce(), e) ? this.mediaController.stop() : this.mediaController.pause();
                 }
-                resume() {
-                    return this.mediaController.cancelPendingBurstDebounce(), this.mediaController.resume();
+
+                setEntityByIndex(e, t) {
+                    return (t && (this.mediaController.listenQueueState = !1), this.mediaController.cancelPendingBurstDebounce(), this.queueController.setIndex(e));
                 }
                 togglePause() {
                     let e = this.mediaController.isPendingBurstDebounce;
@@ -17366,14 +17469,16 @@
                 bindPlayer() {
                     this.mediaController.listenQueueState = !0;
                 }
-                unbindPlayer() {
-                    this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1);
+
+                resume() {
+                    return (this.mediaController.cancelPendingBurstDebounce(), this.mediaController.resume());
                 }
                 setRepeatMode(e) {
                     this.queueController.setRepeat(e);
                 }
-                stop() {
-                    return this.mediaController.cancelPendingBurstDebounce(), this.mediaController.stop();
+
+                unbindPlayer() {
+                    (this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1));
                 }
                 getEntityByIndex(e) {
                     return this.queueController.getEntityByIndex(e);
@@ -17387,106 +17492,9 @@
                 destroyVideoCore() {
                     this.mediaController.destroyVideoCore();
                 }
-                constructor(e) {
-                    var t;
-                    (0, T._)(this, 'id', void 0),
-                        (0, T._)(this, 'isBlocking', void 0),
-                        (0, T._)(this, 'playbackState', void 0),
-                        (0, T._)(this, 'queueController', void 0),
-                        (0, T._)(this, 'contextController', void 0),
-                        (0, T._)(this, 'mediaController', void 0),
-                        (0, T._)(
-                            this,
-                            'hooks',
-                            (function () {
-                                let e = {
-                                    afterPlaybackCheckBlockingStatus: new J.AsyncSeriesHook(),
-                                    beforeContextSet: new J.AsyncSeriesHook(),
-                                    afterContextSet: new J.SyncHook(),
-                                    afterContextEnd: new J.AsyncSeriesHook(['method']),
-                                    afterSetupQueue: new J.SyncHook(),
-                                    beforeEntityPlayingProcessStart: new J.AsyncSeriesHook(),
-                                    entityPlayingProcessStartError: new J.AsyncSeriesHook(),
-                                    beforeEntityReloadProcessStart: new J.AsyncSeriesHook(['reloadReason']),
-                                    beforeMediaSourceContentReload: new J.AsyncSeriesHook(),
-                                    afterMediaSourceContentReload: new J.AsyncSeriesHook(),
-                                    beforeEntityPreloadProcessStart: new J.AsyncSeriesHook(['entity']),
-                                    beforeMediaSourceContentPreload: new J.AsyncSeriesHook(['entity']),
-                                    afterMediaSourceContentPreload: new J.AsyncSeriesHook(['entity']),
-                                    beforeMediaStartPlaying: new J.AsyncSeriesHook(),
-                                    afterMediaStartPlaying: new J.AsyncSeriesHook(),
-                                    beforeMediaResume: new J.AsyncSeriesHook(),
-                                    afterMediaResume: new J.AsyncSeriesHook(),
-                                    beforeMediaPause: new J.AsyncSeriesHook(),
-                                    afterMediaPause: new J.AsyncSeriesHook(),
-                                    afterMediaEndPlaying: new J.AsyncSeriesHook(),
-                                    beforeFindPlayableEntityIndex: new J.AsyncSeriesHook(['findData']),
-                                    beforeEntityChange: new J.AsyncSeriesHook(['changeData']),
-                                    afterError: new J.AsyncSeriesHook(['error']),
-                                    afterErrorProcessed: new J.AsyncSeriesHook(['error']),
-                                    beforeDestroy: new J.AsyncSeriesHook(),
-                                    afterEntityRemove: new J.AsyncSeriesHook(),
-                                    beforeInject: new J.SyncWaterfallHook(['injectData']),
-                                    afterInject: new J.SyncWaterfallHook(['afterInjectData']),
-                                };
-                                return (
-                                    e.afterError.tapPromise({ name: 'afterErrorProcessedBridge', stage: Number.MAX_SAFE_INTEGER }, (t) =>
-                                        e.afterErrorProcessed.promise(t),
-                                    ),
-                                    e
-                                );
-                            })(),
-                        ),
-                        (0, T._)(this, 'playbackInitializationTime', Date.now()),
-                        (0, T._)(this, 'lastStableContext', void 0),
-                        (0, T._)(this, 'pendingPlayContextRequest', void 0),
-                        (this.id = e.id),
-                        (this.isBlocking = null != (t = e.isBlocking) && t);
-                    let {
-                        queueController: r,
-                        contextController: s,
-                        mediaController: n,
-                    } = (function (e) {
-                        try {
-                            let { mediaPlayerParams: t, factory: r, hooks: s, entityProvider: n, playbackConfig: a, variables: i } = e,
-                                l = new f.Di({
-                                    prevIndex: null,
-                                    index: 0,
-                                    nextIndex: null,
-                                    entityList: [],
-                                    order: [],
-                                    repeat: { ...f.pM }.NONE,
-                                    shuffle: !1,
-                                    filterParams: {},
-                                }),
-                                o = new Z(h),
-                                c = new x(r),
-                                d = new N({
-                                    contextController: c,
-                                    playerQueue: l,
-                                    playerState: o,
-                                    hooks: s,
-                                    entityProvider: n,
-                                    windowPaginationConfig: { setupQueueWindowSize: a.setupQueueWindowSize, windowSize: a.windowSize },
-                                    factory: r,
-                                }),
-                                u = { mediaElementErrorReloadCount: a.mediaElementErrorReloadCount, burstDebounceConfig: a.burstDebounceConfig },
-                                _ = new j({ queueState: l.state, hooks: s, config: u, mediaPlayerParams: t, state: o, variables: i });
-                            return { contextController: c, queueController: d, mediaController: _ };
-                        } catch (e) {
-                            throw new L('Error in createPlaybackControllers', { code: 'E_CREATE_PLAYER_CONTROLLERS', cause: e });
-                        }
-                    })({ ...e, hooks: this.hooks });
-                    (this.queueController = r),
-                        (this.mediaController = n),
-                        (this.contextController = s),
-                        (this.playbackState = {
-                            playerState: this.mediaController.state,
-                            currentMediaPlayer: this.mediaController.currentMediaPlayer,
-                            mediaPlayersStore: this.mediaController.mediaPlayersStore,
-                            queueState: this.queueController.queue.state,
-                            currentContext: this.contextController.currentContextObservable,
-                        });
+
+                stop() {
+                    return (this.mediaController.cancelPendingBurstDebounce(), this.mediaController.stop());
                 }
             }
             function ee(e) {
@@ -17585,14 +17593,14 @@
                         this.onError && this.worker.removeEventListener('error', this.onError),
                         this.worker.terminate();
                 }
-                constructor({ offscreenCanvas: e, state: t, collectionHue: r, fps: maxFps, shaderOptions: s, onError: n, onMessage: a }) {
+                constructor({ offscreenCanvas: e, state: t, collectionHue: r, fps: maxFps, resolution: resolution, shaderOptions: s, onError: n, onMessage: a }) {
                     (0, l._)(this, 'worker', void 0),
                         (0, l._)(this, 'onMessage', void 0),
                         (0, l._)(this, 'onError', void 0),
                         (this.worker = new o()),
                         a && ((this.onMessage = a), this.worker.addEventListener('message', this.onMessage)),
                         n && ((this.onError = n), this.worker.addEventListener('error', this.onError)),
-                        this.invoke(i.INIT, { canvas: e, state: t, collectionHue: r, fps: maxFps, shaderOptions: s }, [e]);
+                        this.invoke(i.INIT, { canvas: e, state: t, collectionHue: r, fps: maxFps, resolution: resolution, shaderOptions: s }, [e]);
                 }
             }
             let d = 25,

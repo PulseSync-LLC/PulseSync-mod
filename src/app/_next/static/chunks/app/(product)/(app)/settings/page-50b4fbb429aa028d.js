@@ -2484,6 +2484,12 @@
                         } = (0, m.Pjs)(),
                         [o, setMaxFPS] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.maxFPS')),
                         [r, s] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.disableRendering')),
+                        [canvasResolution, setCanvasResolution] = (0, v.useState)(window.nativeSettings.get('modSettings.vibeAnimationEnhancement.canvasResolution')),
+                        onCanvasResolutionChange = (0, v.useCallback)(async (e) => {
+                            console.log('canvasResolution changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.canvasResolution', e);
+                            setCanvasResolution(e);
+                        }, []),
                         onDisableVibeRenderingToggle = (0, v.useCallback)(async (e) => {
                             console.log('modSettings.vibeAnimationEnhancement.disableRendering toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.disableRendering', e);
@@ -2531,6 +2537,21 @@
                                         maxValue: Math.max(window?.DISPLAY_MAX_FPS ?? 60, o),
                                         minValue: 1,
                                         step: 1,
+                                        disabled: !!r,
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(settingBarWithDropdown, {
+                                        title: 'Разрешение анимации Моей волны',
+                                        onChange: onCanvasResolutionChange,
+                                        value: canvasResolution,
+                                        direction: 'top',
+                                        options: [
+                                            { value: 300, label: 'Низкое', description: '300x300' },
+                                            { value: 650, label: 'Среднее', description: '650x650. По умолчанию. Как в ванильном приложении' },
+                                            { value: 1400, label: 'Высокое', description: '1400x1400' },
+                                        ],
                                         disabled: !!r,
                                     }),
                                 }),
