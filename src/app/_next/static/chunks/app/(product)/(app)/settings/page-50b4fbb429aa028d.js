@@ -3613,7 +3613,6 @@
                     b = (0, m.gQL)(),
                     j = h.isAvailable && !_.isMobile,
                     C = a.checkExperiment(m.zal.WebNextCrossMediaPlayer, 'on'),
-                    aiContentReductionSettingEnabled = a.checkExperiment(m.zal.WebNextAIContentReductionSetting, 'on'),
                     y = d.hasPlus,
                     N = a.checkExperiment(m.zal.WebNextLiteVersion, 'on') && _.isLiteVersionModeAvailableForToggle && !0,
                     S = a.checkExperiment(m.zal.WebNextCustomThumb, 'on') && !_.isMobile,
@@ -3643,13 +3642,6 @@
                         async (e) => {
                             (await d.setSettings({ isChildModeEnabled: e })) === m.FlZ.ERROR &&
                                 f((0, n.jsx)(T.hT, { error: x({ id: 'settings.failed-to-change-child-mode' }) }), { containerId: m.uQT.ERROR });
-                        },
-                        [d, x, f],
-                    ),
-                    aiContentReductionToggle = (0, v.useCallback)(
-                        async (e) => {
-                            (await d.setSettings({ aiContentReductionEnabled: e })) === m.FlZ.ERROR &&
-                                f((0, n.jsx)(T.hT, { error: x({ id: 'error-messages.error-during-action' }) }), { containerId: m.uQT.ERROR });
                         },
                         [d, x, f],
                     ),
@@ -3833,17 +3825,6 @@
                             (0, n.jsx)('li', {
                                 className: $().item,
                                 children: (0, n.jsx)(Q, { title: x({ id: 'settings.crossfade' }), onChange: te, isChecked: p.isCrossFadeEnabled }),
-                            }),
-                        aiContentReductionSettingEnabled &&
-                            (0, n.jsx)('li', {
-                                className: $().item,
-                                children: (0, n.jsx)(Q, {
-                                    title: x({ id: 'settings.ai-content-reduction' }),
-                                    description: x({ id: 'settings.ai-content-reduction-description' }),
-                                    onChange: aiContentReductionToggle,
-                                    isChecked: d.settings.aiContentReductionEnabled,
-                                    dataTestId: (0, s.Am)(s.e8.settings.SETTINGS_AI_CONTENT_REDUCTION_BUTTON),
-                                }),
                             }),
                         (0, n.jsx)('li', {
                             className: $().item,

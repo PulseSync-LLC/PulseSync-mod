@@ -12959,7 +12959,6 @@
                         SETTINGS_EQUALIZER_BUTTON_DESCRIPTION: 'SETTINGS_EQUALIZER_BUTTON_DESCRIPTION',
                         SETTINGS_KIDS_BUTTON: 'SETTINGS_KIDS_BUTTON',
                         OFFLINE_MODE_TOGGLE: 'OFFLINE_MODE_TOGGLE',
-                        SETTINGS_AI_CONTENT_REDUCTION_BUTTON: 'SETTINGS_AI_CONTENT_REDUCTION_BUTTON',
                     },
                     wizard: {
                         WIZARD_MODAL: 'WIZARD_MODAL',
@@ -18134,7 +18133,6 @@
                     (e.WebNextConcertsLocation = 'WebNextConcertsLocation'),
                     (e.WebNextConcertsLocationAll = 'WebNextConcertsLocationAll'),
                     (e.WebNextDesktopWebFreemium = 'WebNextDesktopWebFreemium'),
-                    (e.WebNextAIContentReductionSetting = 'WebNextAIContentReductionSetting'),
                     (e.WebNextFlushDeferredFeedbacksOnContextSwitch = 'WebNextFlushDeferredFeedbacksOnContextSwitch'),
                     (e.WebNextBatchFeedbacksOnVibeSettingsChange = 'WebNextBatchFeedbacksOnVibeSettingsChange'),
                     (e.WebNextSendRadioStartedOnVibeSettingsChange = 'WebNextSendRadioStartedOnVibeSettingsChange'),

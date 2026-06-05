@@ -34,7 +34,6 @@
                         userCollectionHue: e.userCollectionHue,
                         isChildModeEnabled: !!e.childModEnabled,
                         userMusicVisibility: null != (r = null == (t = e.userMusicVisibility) ? void 0 : t.toLowerCase()) ? r : c.L.PUBLIC,
-                        aiContentReductionEnabled: !!e.aiContentReductionEnabled,
                     });
                 },
                 u = n.gK.compose(
@@ -43,7 +42,6 @@
                         userCollectionHue: n.gK.maybe(n.gK.number),
                         isChildModeEnabled: n.gK.optional(n.gK.boolean, !1),
                         userMusicVisibility: n.gK.optional(n.gK.string, c.L.PUBLIC),
-                        aiContentReductionEnabled: n.gK.optional(n.gK.boolean, !1),
                     }),
                     a.XT,
                 ),
@@ -125,16 +123,14 @@
                                 }
                         }),
                         setSettings: (0, n.L3)(function* (t) {
-                            let { isChildModeEnabled: r, userMusicVisibility: s, aiContentReductionEnabled: a } = t,
+                            let { isChildModeEnabled: r, userMusicVisibility: s } = t,
                                 { accountResource: l, modelActionsLogger: i } = (0, n._$)(e);
                             try {
                                 let t = {};
                                 'boolean' == typeof r && ((t.childModEnabled = r), (e.settings.isChildModeEnabled = r)),
-                                    s && ((t.userMusicVisibility = s), (e.settings.userMusicVisibility = s)),
-                                    'boolean' == typeof a && ((t.aiContentReductionEnabled = a), (e.settings.aiContentReductionEnabled = a));
+                                    s && ((t.userMusicVisibility = s), (e.settings.userMusicVisibility = s));
                                 let n = yield l.settings(t);
-                                if (((e.settings = f(n)), ('boolean' == typeof r && n.childModEnabled !== r) || ('boolean' == typeof a && n.aiContentReductionEnabled !== a)))
-                                    return o.FlZ.ERROR;
+                                if (((e.settings = f(n)), 'boolean' == typeof r && n.childModEnabled !== r)) return o.FlZ.ERROR;
                                 return o.FlZ.OK;
                             } catch (e) {
                                 return i.error(e), o.FlZ.ERROR;
