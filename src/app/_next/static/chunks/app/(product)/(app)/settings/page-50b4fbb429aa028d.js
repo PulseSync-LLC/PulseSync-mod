@@ -464,19 +464,20 @@
                         l = (0, m.jRO)(),
                         s = (0, v.useCallback)(() => {
                             l.clearAll().then(() => {
-                                t.close(),
-                                    o(
-                                        (0, n.jsx)(T.$W, {
-                                            message: (0, n.jsx)(c.Caption, {
-                                                className: z().message,
-                                                variant: 'div',
-                                                type: 'controls',
-                                                size: 'm',
-                                                children: (0, n.jsx)(r.A, { id: 'offline.memory-cleared' }),
-                                            }),
+                                t.close();
+                                window.onDownloadedTracksDeleted();
+                                o(
+                                    (0, n.jsx)(T.$W, {
+                                        message: (0, n.jsx)(c.Caption, {
+                                            className: z().message,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: (0, n.jsx)(r.A, { id: 'offline.memory-cleared' }),
                                         }),
-                                        { containerId: m.uQT.INFO },
-                                    );
+                                    }),
+                                    { containerId: m.uQT.INFO },
+                                );
                             });
                         }, [t, o, l]);
                     return (0, n.jsxs)(w.a, {
