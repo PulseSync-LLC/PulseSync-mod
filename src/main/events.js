@@ -239,6 +239,11 @@ const handleApplicationEvents = (window) => {
     let appSafeModeRestartTimeout;
     let safeModeRestartInterval;
 
+    const isMainWindowBackgrounded = () => {
+        const startsMinimized = store_js_1.getModSettings()?.window?.minimizedStart ?? false;
+        return state_js_1.state.isWindowHidden || state_js_1.state.isMinimized || mainWindow?.isMinimized?.() || (startsMinimized && mainWindow?.isVisible?.() === false);
+    };
+
     const handleApplicationInitFinishedTimeout = () => {
         applicationInitFinishedTimeout && clearTimeout(applicationInitFinishedTimeout);
         safeModeRestartInterval && clearInterval(safeModeRestartInterval);
@@ -658,7 +663,7 @@ const handleApplicationEvents = (window) => {
         applicationReadyTimeOut && clearTimeout(applicationReadyTimeOut);
 
         isPlayerReady = false;
-        isApplicationInitFinished = Date.now() - applicationInitFinishedAt < 3000;
+        isApplicationInitFinished = isMainWindowBackgrounded() || Date.now() - applicationInitFinishedAt < 3000;
 
         if (!isApplicationInitFinished) {
             handleApplicationInitFinishedTimeout();

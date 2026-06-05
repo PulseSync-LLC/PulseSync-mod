@@ -55,11 +55,16 @@ const registerApplicationInitFinishedEvent = () => {
     const splashMountGraceMs = 1000;
     const shimmerMaxWaitMs = 10000;
     const stableWaitMs = 500;
+    const observerCleanupMs = 45000;
     const startedAt = Date.now();
     let sent = false;
     let observedSplash = false;
     let splashFinishedAt = null;
     let stableTimer = null;
+    let observerCheckTimer = null;
+    let splashMountTimer = null;
+    let shimmerMaxWaitTimer = null;
+    let cleanupTimer = null;
     let observer = null;
 
     const isVisible = (element) => {
@@ -87,12 +92,30 @@ const registerApplicationInitFinishedEvent = () => {
         clearTimeout(stableTimer);
         stableTimer = null;
     };
+    const clearObserverCheckTimer = () => {
+        if (!observerCheckTimer) return;
+        clearTimeout(observerCheckTimer);
+        observerCheckTimer = null;
+    };
+    const cleanupApplicationInitFinishedWatchers = () => {
+        clearStableTimer();
+        clearObserverCheckTimer();
+        splashMountTimer && clearTimeout(splashMountTimer);
+        shimmerMaxWaitTimer && clearTimeout(shimmerMaxWaitTimer);
+        cleanupTimer && clearTimeout(cleanupTimer);
+        splashMountTimer = null;
+        shimmerMaxWaitTimer = null;
+        cleanupTimer = null;
+        observer?.disconnect();
+        observer = null;
+        window.removeEventListener('load', checkApplicationInitFinished);
+        window.document.removeEventListener('readystatechange', checkApplicationInitFinished);
+    };
     const sendApplicationInitFinished = () => {
         if (sent) return;
 
         sent = true;
-        clearStableTimer();
-        observer?.disconnect();
+        cleanupApplicationInitFinishedWatchers();
         electron_1.ipcRenderer.send(events_js_1.Events.APPLICATION_INIT_FINISHED);
     };
     const checkApplicationInitFinished = () => {
@@ -126,6 +149,14 @@ const registerApplicationInitFinishedEvent = () => {
             sendApplicationInitFinished();
         }, stableWaitMs);
     };
+    const scheduleApplicationInitFinishedCheck = () => {
+        if (sent || observerCheckTimer) return;
+
+        observerCheckTimer = setTimeout(() => {
+            observerCheckTimer = null;
+            checkApplicationInitFinished();
+        }, 50);
+    };
     const startObserver = () => {
         const rootElement = window.document.documentElement;
         if (!rootElement) {
@@ -133,7 +164,7 @@ const registerApplicationInitFinishedEvent = () => {
             return;
         }
 
-        observer = new MutationObserver(checkApplicationInitFinished);
+        observer = new MutationObserver(scheduleApplicationInitFinishedCheck);
         observer.observe(rootElement, {
             attributes: true,
             attributeFilter: ['class', 'style', 'hidden'],
@@ -146,8 +177,9 @@ const registerApplicationInitFinishedEvent = () => {
     window.addEventListener('load', checkApplicationInitFinished, { once: true });
     window.document.addEventListener('readystatechange', checkApplicationInitFinished);
     startObserver();
-    setTimeout(checkApplicationInitFinished, splashMountGraceMs);
-    setTimeout(checkApplicationInitFinished, splashMountGraceMs + shimmerMaxWaitMs);
+    splashMountTimer = setTimeout(checkApplicationInitFinished, splashMountGraceMs);
+    shimmerMaxWaitTimer = setTimeout(checkApplicationInitFinished, splashMountGraceMs + shimmerMaxWaitMs);
+    cleanupTimer = setTimeout(cleanupApplicationInitFinishedWatchers, observerCleanupMs);
     requestAnimationFrame(checkApplicationInitFinished);
 };
 const nativeStoreUpdateListeners = new Set();
