@@ -3688,27 +3688,27 @@
                 (0, v.useEffect)(() => {
                     let e = async () => {
                         let o = async (e) => {
-                                let t = 0;
+                                let t = { tracksCount: 0, tracksSize: 0 };
                                 for await (let n of e.values())
-                                    if ('directory' === n.kind) t += await o(n);
-                                    else if ('file' === n.kind)
+                                    if ('directory' === n.kind) {
+                                        let e = await o(n);
+                                        (t.tracksCount += e.tracksCount), (t.tracksSize += e.tracksSize);
+                                    } else if ('file' === n.kind && !n.name.endsWith('.crswap'))
                                         try {
                                             let e = await n.getFile();
-                                            t += e.size;
+                                            (t.tracksCount += 1), (t.tracksSize += e.size);
                                         } catch (e) {
                                             console.warn('Track file is in use. Skipping...', e);
                                         }
                                 return t;
                             },
                             t = async (e) => {
-                                let o = 0;
-                                for await (let n of e.values())
-                                    'directory' === n.kind && 'tracks' === n.name ? (o = await t(n)) : 'file' === n.kind && !n.name.endsWith('.crswap') && (o += 1);
-                                return o;
+                                for await (let n of e.values()) if ('directory' === n.kind && 'tracks' === n.name) return o(n);
+                                return { tracksCount: 0, tracksSize: 0 };
                             };
                         if (!window.navigator?.storage?.getDirectory) return;
                         let n = await window.navigator.storage.getDirectory();
-                        setDownloadedTracksInfo({ tracksCount: await t(n), tracksSize: await o(n) });
+                        setDownloadedTracksInfo(await t(n));
                     };
                     return (
                         (window.onDownloadedTracksDeleted = () => {

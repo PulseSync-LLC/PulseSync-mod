@@ -40,6 +40,7 @@
                     (e.KIDS = 'KIDS'),
                     (e.COLLECTION = 'COLLECTION'),
                     (e.PLUS = 'PLUS'),
+                    (e.SETTINGS = 'SETTINGS'),
                     e
                 );
             })({});
@@ -2573,6 +2574,14 @@
                             ]);
                         });
                     },
+                    9901: (e, t, r) => {
+                        var s = r(810);
+                        e.exports = s.forwardRef(function (e, t) {
+                            return s.createElement('svg', Object.assign({}, e, { ref: t }), [
+                                s.createElement('use', { key: 'settingsGear_xs', xlinkHref: '/icons/sprite.svg#settingsGear_xs' }),
+                            ]);
+                        });
+                    },
                     1758: (e, t, r) => {
                         var s = r(810);
                         e.exports = s.forwardRef(function (e, t) {
@@ -3112,6 +3121,7 @@
                             tm = s(r(4892)),
                             tR = s(r(3366)),
                             tS = s(r(5034)),
+                            tSettingsGear = s(r(9901)),
                             tx = s(r(5792)),
                             tA = s(r(9545)),
                             tL = s(r(3362)),
@@ -3366,6 +3376,7 @@
                                 'rewindForward',
                                 'search',
                                 'settings',
+                                'settingsGear',
                                 'shuffle',
                                 'site',
                                 'speed_1_25x_centered',
@@ -3611,6 +3622,7 @@
                                 rewindForward_xs: tm.default,
                                 search_xs: tR.default,
                                 settings_xs: tS.default,
+                                settingsGear_xs: tSettingsGear.default,
                                 shuffle_xs: tx.default,
                                 site_xs: tA.default,
                                 speed_1_25x_centered_xs: tL.default,
@@ -12810,6 +12822,7 @@
                         NAVBAR_NAVIGATION_ITEM_PLUS: 'NAVBAR_NAVIGATION_ITEM_PLUS',
                         NAVBAR_NAVIGATION_ITEM_FOR_YOU_AND_TRENDS: 'NAVBAR_NAVIGATION_ITEM_FOR_YOU_AND_TRENDS',
                         NAVBAR_NAVIGATION_ITEM_CONCERTS: 'NAVBAR_NAVIGATION_ITEM_CONCERTS',
+                        NAVBAR_NAVIGATION_ITEM_SETTINGS: 'NAVBAR_NAVIGATION_ITEM_SETTINGS',
                         PIN_LIST: 'PIN_LIST',
                         PIN_ITEM: 'PIN_ITEM',
                         PIN_COVER: 'PIN_COVER',
@@ -13896,6 +13909,18 @@
                                 availablePaths: [u.Z.collection.href, u.Z.mymusic.href],
                                 isEnabled: !0,
                                 analyticsParams: { to: a.QT.CollectionLandingScreen, entityType: a.LA.Collection },
+                            }),
+                        e.isAuthorized &&
+                            s.push({
+                                icon: 'settingsGear',
+                                iconSelected: 'settingsGear',
+                                iconNewVersion: 'settingsGear',
+                                iconNewVersionSelected: 'settingsGear',
+                                id: _.R.SETTINGS,
+                                path: u.Z.settings.href,
+                                availablePaths: [u.Z.settings.href],
+                                isEnabled: !0,
+                                analyticsParams: { to: a.QT.SettingsScreen, entityType: a.LA.Profile },
                             }),
                         t.checkExperiment(c.z.WebNextDisablePlus, 'on') || t.checkExperiment(c.z.WebNextPlusOptionsMarketplace, 'on'),
                         s
@@ -19994,6 +20019,14 @@
                             ]);
                         });
                     },
+                    9901: (e, t, r) => {
+                        var s = r(810);
+                        e.exports = s.forwardRef(function (e, t) {
+                            return s.createElement('svg', Object.assign({}, e, { ref: t }), [
+                                s.createElement('use', { key: 'settingsGear_xs', xlinkHref: '/icons/sprite.svg#settingsGear_xs' }),
+                            ]);
+                        });
+                    },
                     1758: (e, t, r) => {
                         var s = r(810);
                         e.exports = s.forwardRef(function (e, t) {
@@ -20533,6 +20566,7 @@
                             tm = s(r(4892)),
                             tR = s(r(3366)),
                             tS = s(r(5034)),
+                            tSettingsGear = s(r(9901)),
                             tx = s(r(5792)),
                             tA = s(r(9545)),
                             tL = s(r(3362)),
@@ -20787,6 +20821,7 @@
                                 'rewindForward',
                                 'search',
                                 'settings',
+                                'settingsGear',
                                 'shuffle',
                                 'site',
                                 'speed_1_25x_centered',
@@ -21032,6 +21067,7 @@
                                 rewindForward_xs: tm.default,
                                 search_xs: tR.default,
                                 settings_xs: tS.default,
+                                settingsGear_xs: tSettingsGear.default,
                                 shuffle_xs: tx.default,
                                 site_xs: tA.default,
                                 speed_1_25x_centered_xs: tL.default,

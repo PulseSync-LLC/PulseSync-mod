@@ -604,6 +604,7 @@
                     [b.RnV.KIDS]: K.e8.navbar.NAVBAR_NAVIGATION_ITEM_KIDS,
                     [b.RnV.COLLECTION]: K.e8.navbar.NAVBAR_NAVIGATION_ITEM_COLLECTION,
                     [b.RnV.PLUS]: K.e8.navbar.NAVBAR_NAVIGATION_ITEM_PLUS,
+                    [b.RnV.SETTINGS]: K.e8.navbar.NAVBAR_NAVIGATION_ITEM_SETTINGS,
                 },
                 eu = (e) => {
                     let { padding: t, placement: a } = e;
@@ -1988,7 +1989,9 @@
                         ev = (0, _.useMemo)(() => (o ? p({ id: 'sidebar.uncollapse' }) : p({ id: 'sidebar.collapse' })), [o, p]),
                         eh = (0, _.useCallback)(
                             (e, t) =>
-                                e.id === b.RnV.CONCERTS && h.checkExperiment(b.zal.WebNextConcertsTicketIcon, 'on')
+                                e.id === b.RnV.SETTINGS
+                                    ? (0, w.jsx)(H.Icon, { variant: 'settingsGear', size: 'xs' })
+                                    : e.id === b.RnV.CONCERTS && h.checkExperiment(b.zal.WebNextConcertsTicketIcon, 'on')
                                     ? (0, w.jsx)(e4, { isSelected: t })
                                     : z
                                       ? (0, w.jsx)(H.Icon, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
@@ -2008,6 +2011,7 @@
                                 [b.RnV.KIDS]: p({ id: 'kids.for-kids' }),
                                 [b.RnV.CONCERTS]: p({ id: 'entity-names.concerts' }),
                                 [b.RnV.PLUS]: p({ id: 'navigation.page-plus' }),
+                                [b.RnV.SETTINGS]: p({ id: 'page.settings' }),
                             }),
                             [p, z],
                         ),
@@ -2020,7 +2024,7 @@
                                     ei,
                                     {
                                         className: (0, B.$)({ [e3().navigationGroup]: z }),
-                                        children: f.map((e) => {
+                                        children: f.filter((e) => e.id !== b.RnV.SETTINGS).map((e) => {
                                             let t = m(e.availablePaths),
                                                 a = e.id === b.RnV.COLLECTION && !!Q && e.isEnabled,
                                                 i = eN(e.analyticsParams.entityType, e.analyticsParams.to),
@@ -2087,6 +2091,68 @@
                                 ),
                             [m, o, h, h.loadingState, d, ex, f, eN, eh, Q, ee],
                         ),
+                        eSettings = (0, _.useMemo)(() => {
+                            let e = f.find((e) => e.id === b.RnV.SETTINGS);
+                            if (!e) return null;
+                            let t = m(e.availablePaths),
+                                a = eN(e.analyticsParams.entityType, e.analyticsParams.to),
+                                i = e.isEnabled && !t;
+                            return (0, w.jsx)(ea, {
+                                className: (0, B.$)(e3().navigation, { [e3().navigation_new]: z, [e3().navigation_gapFill]: !1 }),
+                                collapsed: o,
+                                'aria-label': ex[e.id],
+                                children: (0, w.jsx)(ei, {
+                                    className: (0, B.$)({ [e3().navigationGroup]: z }),
+                                    children: (0, w.jsx)(eb, {
+                                        config: e.onboardingConfig,
+                                        children: (0, w.jsx)(en, {
+                                            'data-intersection-property-id': b.NZ,
+                                            selected: t,
+                                            shownAnimation: d,
+                                            variant: 'main',
+                                            isNewVisualVersion: z,
+                                            withRipple: z && e.isEnabled && !t,
+                                            children: (0, w.jsxs)(eo.N_, {
+                                                href: i ? e.path : void 0,
+                                                role: 'link',
+                                                'aria-disabled': !e.isEnabled,
+                                                tabIndex: e.isEnabled ? 0 : -1,
+                                                className: (0, B.$)({ [e3().disabledNavigationItem]: !e.isEnabled }),
+                                                onClick: a,
+                                                ...(0, K.Am)(ec[e.id]),
+                                                children: [
+                                                    (0, w.jsxs)(el.m_, {
+                                                        ...em,
+                                                        enabled: o,
+                                                        children: [
+                                                            eh(e, t),
+                                                            (0, w.jsx)(el.ZI, {
+                                                                children: (0, w.jsx)(er.Caption, {
+                                                                    variant: 'span',
+                                                                    type: 'text',
+                                                                    size: 's',
+                                                                    weight: 'medium',
+                                                                    children: ex[e.id],
+                                                                }),
+                                                            }),
+                                                        ],
+                                                    }),
+                                                    (0, w.jsx)(er.Caption, {
+                                                        variant: 'span',
+                                                        type: 'controls',
+                                                        size: 'm',
+                                                        weight: 'medium',
+                                                        lineClamp: 1,
+                                                        className: (0, B.$)({ [e3().title_animate]: d, [e3().title_collapsed]: o }),
+                                                        children: ex[e.id],
+                                                    }),
+                                                ],
+                                            }),
+                                        }),
+                                    }),
+                                }),
+                            });
+                        }, [m, o, d, ex, f, eN, eh, z]),
                         eS = (0, _.useMemo)(
                             () =>
                                 u
@@ -2159,6 +2225,7 @@
                                     ],
                                 }),
                             }),
+                            eSettings,
                             (0, w.jsx)(tK, { withUserProfileAnimation: d, isCollapsed: o }),
                             e_ &&
                                 null !== et &&
@@ -2219,12 +2286,15 @@
                                 [b.RnV.NON_MUSIC]: n({ id: 'entity-names.podcasts-and-books' }),
                                 [b.RnV.KIDS]: n({ id: 'kids.for-kids' }),
                                 [b.RnV.CONCERTS]: n({ id: 'entity-names.concerts' }),
+                                [b.RnV.SETTINGS]: n({ id: 'page.settings' }),
                             }),
                             [n, o],
                         ),
                         c = (0, _.useCallback)(
                             (e, t) =>
-                                e.id === b.RnV.CONCERTS && a.checkExperiment(b.zal.WebNextConcertsTicketIcon, 'on')
+                                e.id === b.RnV.SETTINGS
+                                    ? (0, w.jsx)(H.Icon, { variant: 'settingsGear', size: 'xs' })
+                                    : e.id === b.RnV.CONCERTS && a.checkExperiment(b.zal.WebNextConcertsTicketIcon, 'on')
                                     ? (0, w.jsx)(e4, { isSelected: t || o })
                                     : o
                                       ? (0, w.jsx)(H.Icon, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
@@ -2243,7 +2313,7 @@
                             children: (0, w.jsx)(ei, {
                                 children: (0, w.jsxs)(w.Fragment, {
                                     children: [
-                                        l.map((e) => {
+                                        l.filter((e) => e.id !== b.RnV.SETTINGS).map((e) => {
                                             let t = i(e.availablePaths);
                                             return (0, w.jsx)(
                                                 eb,
@@ -5364,7 +5434,7 @@
                                             children: (0, c.jsx)(s.xe, {
                                                 lyrics: p.lyrics,
                                                 authors: p.writersNames,
-                                                source: null == (r = p.major) ? void 0 : l.prettyName,
+                                                source: null == (r = p.major) ? void 0 : r.prettyName,
                                                 isShimmerVisible: p.isShimmerVisible,
                                                 isShimmerActive: p.isLoading,
                                             }),
