@@ -245,10 +245,16 @@
                                                     externalSetIsCollapsed: ec,
                                                 }),
                                             (0, i.jsx)(_.UC, {
-                                                className: (0, r.$)(h().content, { [h().content_withPlayerBar]: U && !c, [h().content_withAxeBanner]: eo.isVisible }),
+                                                className: (0, r.$)(h().content, {
+                                                    [h().content_withPlayerBar]: U && (!c || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()),
+                                                    [h().content_withAxeBanner]: eo.isVisible,
+                                                }),
                                                 children: (0, i.jsxs)(W.tH, { fallback: M.w, children: [a, (0, i.jsx)(et.m, {})] }, j),
                                             }),
-                                            !U && eb && !c && (0, i.jsx)(d.nVz, { pageId: d._Q$.PLAYER, children: (0, i.jsx)(y.LN, { className: h().playerBar }) }),
+                                            !U &&
+                                                eb &&
+                                                (!c || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
+                                                 (0, i.jsx)(d.nVz, { pageId: d._Q$.PLAYER, children: (0, i.jsx)(y.LN, { className: h().playerBar }) }),
                                             U &&
                                                 eb &&
                                                 (0, i.jsxs)('div', {
@@ -256,7 +262,8 @@
                                                     className: (0, r.$)(h().compositePlayerBar, { [h().compositePlayerBar_withNewVibe]: c }),
                                                     children: [
                                                         e_ && (0, i.jsx)(W.jg, {}),
-                                                        !c && (0, i.jsx)(d.nVz, { pageId: d._Q$.PLAYER, children: (0, i.jsx)(y.LN, { className: h().playerBar }) }),
+                                                        (!c || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
+                                                            (0, i.jsx)(d.nVz, { pageId: d._Q$.PLAYER, children: (0, i.jsx)(y.LN, { className: h().playerBar }) }),
                                                         (0, i.jsx)(b.Fp, {
                                                             className: (0, r.$)(u.navbar, {
                                                                 [u.navbar_application_windows]: Y,
@@ -338,8 +345,25 @@
                         (N = er().rootNewVibe_withBarBelow),
                         (k = er().rootNewVibe);
                 }
-                let L = (0, r.$)(h().root, k, { [er().root_applicationPreserveTitleBar]: x || b, [N]: E, [h().root_withAxeBanner]: C.isVisible }, p);
-                return (0, i.jsxs)(en, { isNewWaveMainTabActive: T, layoutChromeStyles: M, rootClassName: L, rootStyle: m, children: [_, T && (0, i.jsx)(a.zP, {})] });
+                let L = (0, r.$)(
+                    h().root,
+                    k,
+                    {
+                        [er().root_applicationPreserveTitleBar]: x || b,
+                        [N]: E,
+                        [h().root_withAxeBanner]: C.isVisible,
+                        ['modSettings_alwaysWideBar']: window.ALWAYS_WIDE_BAR?.(),
+                        ['modSettings_showOldPlayerBarOnNewWave']: window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.(),
+                    },
+                    p,
+                );
+                return (0, i.jsxs)(en, {
+                    isNewWaveMainTabActive: T,
+                    layoutChromeStyles: M,
+                    rootClassName: L,
+                    rootStyle: m,
+                    children: [_, T && (0, i.jsx)(a.zP, {})],
+                });
             });
         },
         25121: (e, t, n) => {

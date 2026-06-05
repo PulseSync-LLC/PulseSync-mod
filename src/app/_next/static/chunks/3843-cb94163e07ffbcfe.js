@@ -585,7 +585,7 @@
             var d = i(33797);
             let u = (t) => {
                 var e, i;
-                return (0, l.wg)({ ...(0, o.jX)(t), artists: null != (i = null == t || null == (e = t.artists) ? void 0 : e.map(d.dM)) ? i : [] });
+                return (0, l.wg)({ ...(0, o.jX)(t), artists: null != (i = null == t || null == (e = t.substituted?.artists ?? t.artists) ? void 0 : e.map(d.dM)) ? i : [] });
             };
             var m = i(93510);
             let y = (t) => {
@@ -761,6 +761,20 @@
                 P = i(13931),
                 f = i(19740),
                 h = i(78822);
+            let downloadPlaylistToFile = ({ playlist: t }) => {
+                let e = Array.isArray(t?.trackIds) ? t.trackIds : [],
+                    i = (0, u.c)(() => {
+                        var e;
+                        t?.title && t?.trackIds?.length && (null == (e = window.desktopEvents) || e.send(k.EE.DOWNLOAD_TRACKS, t.trackIds, 'playlist', t.title));
+                    });
+                return e.length
+                    ? (0, l.jsx)(f.Dr, {
+                          onClick: i,
+                          icon: (0, l.jsx)(p.Icon, { variant: 'download', size: 'xxs' }),
+                          children: 'Скачать в файл',
+                      })
+                    : null;
+            };
             let j = (0, r.PA)((t) => {
                 var e;
                 let { playlist: i, onOpenChange: a, open: r, ...s } = t,
@@ -796,6 +810,7 @@
                         b && (0, l.jsx)(h.dx, { entityVariant: k.DwC.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : N }),
                         !p && (0, l.jsx)(C.L1, { onClick: P, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, l.jsx)(C.TW, { onClick: g, isLiked: i.isLiked, disabled: !_.isAuthorized }),
+                        (0, l.jsx)(downloadPlaylistToFile, { playlist: i }),
                         (null == (e = i.trailer) ? void 0 : e.isAvailable) && (0, l.jsx)(C.No, { onClick: K, disabled: !i.isAvailable }),
                     ],
                 });

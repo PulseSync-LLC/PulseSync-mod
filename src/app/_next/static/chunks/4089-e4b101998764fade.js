@@ -7724,17 +7724,17 @@
                     var r, n, l, o, c, u, d, f, x, _;
                     e = e || {};
                     let { isSmartPreview: p, hasEverFinished: m } = t || {},
-                        v = (0, a.QBb)(null == e ? void 0 : e.derivedColors),
+                        v = (0, a.QBb)(null == e ? void 0 : (e?.substituted?.derivedColors ?? e.derivedColors)),
                         g = p ? (null == (r = e.smartPreviewParams) ? void 0 : r.durationMs) : null == e ? void 0 : e.durationMs,
                         y = (0, i.wg)({ available: !!(null == (n = e.specialAudioResources) ? void 0 : n.includes(s.SMART_PREVIEW)) });
                     return (0, i.wg)({
                         id: (e.id || 0).toString(),
                         isAvailable: !!(null == e ? void 0 : e.available),
                         isRemoved: (null == e ? void 0 : e.error) === 'not-found',
-                        title: null != (x = null == e ? void 0 : e.title) ? x : '',
-                        version: null == e ? void 0 : e.version,
+                        title: e?.substituted?.title ?? e?.title ?? '',
+                        version: e?.version ?? (e?.substituted ? (e.substituted?.version ?? 'Подменённые данные трека были восстановлены') : undefined),
                         durationMs: g,
-                        coverUri: null == e ? void 0 : e.coverUri,
+                        coverUri: e?.substituted?.coverUri ?? e?.coverUri,
                         averageColor: v,
                         trackParameters: ((e) =>
                             (0, i.wg)({
@@ -7758,7 +7758,7 @@
                             }))(null == e ? void 0 : e.streamProgress, { hasEverFinished: m }),
                         shortDescription: null != (_ = e.shortDescription) ? _ : '',
                         trailer: y,
-                        clipIds: e.clipIds,
+                        clipIds: e?.substituted?.clipIds ?? e.clipIds,
                         major: e.major,
                         genre: null == (f = e.albums) || null == (d = f[0]) ? void 0 : d.genre,
                         realId: e.realId,

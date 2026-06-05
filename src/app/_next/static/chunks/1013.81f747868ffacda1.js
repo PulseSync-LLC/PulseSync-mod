@@ -201,7 +201,8 @@
                     return i || n
                         ? { top: A(r, a + 15, s + 10), middle: A(r, a + 15, s + 5), bottom: A(r, a, s) }
                         : { top: A(50, 100, 50), middle: A(330, 100, 50), bottom: A(300, 100, 50) };
-                };
+                },
+                Q = () => !window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.() ?? !1;
             var E = i(60196);
             let V = { transparent: !0 },
                 y = (0, r.PA)((e) => {
@@ -210,7 +211,7 @@
                         [f, m] = (0, h.d)(),
                         [A, y] = (0, h.d)(),
                         [k, L] = (0, a.useState)(!1),
-                        { sonataState: N, settings: P, vibe: j } = (0, u.Pjs)(),
+                        { user: B, sonataState: N, settings: P, vibe: j } = (0, u.Pjs)(),
                         S = (0, u.UlF)(),
                         w = (0, u.iIU)(),
                         C = (0, o.c)((e) => {
@@ -226,23 +227,40 @@
                     let I = (0, o.c)(() => {
                         if (!(null == w ? void 0 : w.analyser)) return;
                         let [e, t, i] = w.analyser.getAverageFrequencies([
-                            { low: 0, high: 250 },
-                            { low: 500, high: 2e3 },
-                            { low: 2e3, high: 4e3 },
+                            { low: 0, high: 450 },
+                            { low: 400, high: 5e3 },
+                            { low: 5e3, high: 2e4 },
                         ]);
-                        null == c || c.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != i ? i : 0 });
+                        let rms = w.analyser.getRMS(),
+                            rmsAlt = w.analyser.getRMSAlt(),
+                            energy = ((rms + rmsAlt) / 2) * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
+                            energyNormalized = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? energy : (N?.entityMeta?.trackParameters?.energy ?? 1);
+                        null == c || c.updateEnergy(energyNormalized),
+                            null == c || c.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != i ? i : 0 });
                     });
                     (0, a.useEffect)(() => {
+                        var a, s;
                         if (!f || c) return;
                         if (!f.transferControlToOffscreen) return void M();
                         let e = f.transferControlToOffscreen(),
-                            i = new p.a6({ offscreenCanvas: e, state: t, shaderOptions: V, onMessage: C, onError: M });
+                            i = new p.a6({
+                                offscreenCanvas: e,
+                                state: t,
+                                collectionHue: Q() ? void 0 : B.collectionHue,
+                                shaderOptions: V,
+                                fps: window.VIBE_ANIMATION_MAX_FPS?.() ?? 25,
+                                onMessage: C,
+                                onError: M,
+                            }),
+                            n = null == (s = N.entityMeta) || null == (a = s.trackParameters) ? void 0 : a.hue;
                         d(i),
                             y(new p.Rv(p.p4, I)),
-                            i.applySettings({
-                                customColors: x({ averageColor: r, isPlaying: N.isPlaying, isShuffleVibeActive: !!(j.isShuffleVibe && N.isVibeContext) }),
-                            });
-                    }, [r, f, M, C, y, d, N.isPlaying, N.isVibeContext, I, j.isShuffleVibe, t, c]);
+                            Q()
+                                ? i.applySettings({
+                                      customColors: x({ averageColor: r, isPlaying: N.isPlaying, isShuffleVibeActive: !!(j.isShuffleVibe && N.isVibeContext) }),
+                                  })
+                                : i.applySettings({ hue: n, collectionHue: B.collectionHue });
+                    }, [r, f, M, C, y, d, N.isPlaying, N.isVibeContext, I, j.isShuffleVibe, t, c, B.collectionHue, null == N.entityMeta ? void 0 : N.entityMeta.trackParameters]);
                     let T = (0, o.c)(() => {
                         null == c || c.destroy(), d(null), null == A || A.stop(), y(null);
                     });
@@ -253,14 +271,38 @@
                         [T],
                     ),
                     (0, a.useEffect)(() => {
-                        null == c ||
-                            c.applySettings({
-                                customColors: x({ averageColor: r, isPlaying: N.isPlaying, isShuffleVibeActive: !!(j.isShuffleVibe && N.isVibeContext) }),
-                            });
-                    }, [r, N.isPlaying, N.isVibeContext, j.isShuffleVibe, c]),
+                        var e, t;
+                        let i = null == (t = N.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue;
+                        Q()
+                            ? null == c ||
+                              c.applySettings({
+                                  customColors: x({ averageColor: r, isPlaying: N.isPlaying, isShuffleVibeActive: !!(j.isShuffleVibe && N.isVibeContext) }),
+                              })
+                            : null == c || c.applySettings({ hue: i, collectionHue: B.collectionHue });
+                    }, [r, N.isPlaying, N.isVibeContext, j.isShuffleVibe, c, B.collectionHue, null == N.entityMeta ? void 0 : N.entityMeta.trackParameters]),
                     (0, a.useEffect)(() => {
-                        i && N.isPlaying ? (null == c || c.playAnimation({}), null == A || A.start()) : (null == c || c.idleAnimation(), null == A || A.stop());
-                    }, [A, i, N.isPlaying, c]),
+                        var e, t, n, a, oA;
+                        let s = null == (t = N.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
+                            l = null == (a = N.entityMeta) || null == (n = a.trackParameters) ? void 0 : n.energy,
+                            o = null == (oA = N.entityMeta) ? void 0 : oA.trackParameters;
+                        o && o.userCollectionHue && B.setUserCollectionHue(o.userCollectionHue),
+                            i && N.isPlaying
+                                ? (null == c ||
+                                      c.playAnimation(
+                                          Q()
+                                              ? {
+                                                    energy: l,
+                                                    customColors: x({
+                                                        averageColor: r,
+                                                        isPlaying: N.isPlaying,
+                                                        isShuffleVibeActive: !!(j.isShuffleVibe && N.isVibeContext),
+                                                    }),
+                                                }
+                                              : { hue: s, energy: l, collectionHue: o && o.userCollectionHue },
+                                      ),
+                                  null == A || A.start())
+                                : (null == c || c.idleAnimation(), null == A || A.stop());
+                    }, [A, i, N.isPlaying, c, B, r, N.isVibeContext, j.isShuffleVibe, null == N.entityMeta ? void 0 : N.entityMeta.trackParameters]),
                     (0, a.useEffect)(() => {
                         i ? null == c || c.enable() : null == c || c.disable();
                     }, [i, c]),

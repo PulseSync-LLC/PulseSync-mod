@@ -5306,49 +5306,72 @@
                         var e;
                         (null == (e = u.meta) ? void 0 : e.id) && x && v && p.getLyrics(u.meta.id);
                     }, [v, x, p, null == (n = u.meta) ? void 0 : n.id]),
+                        (0, m.useEffect)(() => {
+                            let e = null == l ? void 0 : r.id,
+                                t = null == l ? void 0 : l.isAvailable,
+                                a = null == l ? void 0 : l.isLyricsAvailable,
+                                n = _.currentTrackId ? String(_.currentTrackId) : null,
+                                r = e ? String(e) : null,
+                                s = !!(p.lyrics && String(p.lyrics).trim().length > 0),
+                                o = s && (!_.currentTrackId || (r && n && r === n));
+                            if (!e || !1 === t || a || p.isLoading || o) return;
+                            _.setTrack(l), p.getLyrics(e);
+                        }, [
+                            null == l ? void 0 : r.id,
+                            null == l ? void 0 : l.isAvailable,
+                            null == l ? void 0 : l.isLyricsAvailable,
+                            _.currentTrackId,
+                            p.isLoading,
+                            p.lyrics,
+                            _,
+                        ]),
                         p.shouldShowErrorNotification &&
                             (d((0, c.jsx)(A.hT, { error: o({ id: 'error-messages.error-during-action' }) }), { containerId: i.uQT.ERROR }), p.resetShouldShowError());
                     let N = (0, I.c)((e) => {
                         g(e), e && r && p.sendViews({ trackId: r.id, albumId: r.albumId });
                     });
-                    return p.isShimmerVisible || !p.lyrics || u.isShimmerVisible
+                    let L = !!(p.lyrics && String(p.lyrics).trim().length > 0),
+                        W = p.isShimmerVisible || u.isShimmerVisible || (p.isLoading && !L);
+                    return W
                         ? (0, c.jsx)(D, { isShimmerActive: p.isLoading || u.isLoading })
-                        : (0, c.jsxs)('div', {
-                              className: M().root,
-                              ...(0, h.Am)(h.Xk.track.TRACK_PAGE_LYRICS),
-                              children: [
-                                  (0, c.jsx)(S.Heading, {
-                                      variant: 'h2',
-                                      size: 'm',
-                                      lineClamp: 1,
-                                      className: M().title,
-                                      ...(0, h.Am)(h.e8.content.TRACK_LYRICS_TITLE),
-                                      children: o({ id: 'entity-names.text' }),
-                                  }),
-                                  (0, c.jsx)(R.K, {
-                                      moreText: o({ id: 'track-modal.read-more' }),
-                                      buttonClassName: M().button,
-                                      open: _,
-                                      onOpenChange: N,
-                                      lineClamp: 4,
-                                      withFade: !0,
-                                      children: (0, c.jsx)(S.Caption, {
-                                          variant: 'div',
-                                          className: M().lyrics,
-                                          size: 'l',
-                                          weight: 'medium',
-                                          ...(0, h.Am)(h.e8.content.TRACK_LYRICS_TEXT),
-                                          children: (0, c.jsx)(s.xe, {
-                                              lyrics: p.lyrics,
-                                              authors: p.writersNames,
-                                              source: null == (l = p.major) ? void 0 : l.prettyName,
-                                              isShimmerVisible: p.isShimmerVisible,
-                                              isShimmerActive: p.isLoading,
-                                          }),
-                                      }),
-                                  }),
-                              ],
-                          });
+                        : !L
+                          ? null
+                          : (0, c.jsxs)('div', {
+                                className: M().root,
+                                ...(0, h.Am)(h.Xk.track.TRACK_PAGE_LYRICS),
+                                children: [
+                                    (0, c.jsx)(S.Heading, {
+                                        variant: 'h2',
+                                        size: 'm',
+                                        lineClamp: 1,
+                                        className: M().title,
+                                        ...(0, h.Am)(h.e8.content.TRACK_LYRICS_TITLE),
+                                        children: o({ id: 'entity-names.text' }),
+                                    }),
+                                    (0, c.jsx)(R.K, {
+                                        moreText: o({ id: 'track-modal.read-more' }),
+                                        buttonClassName: M().button,
+                                        open: p,
+                                        onOpenChange: N,
+                                        lineClamp: 4,
+                                        withFade: !0,
+                                        children: (0, c.jsx)(S.Caption, {
+                                            variant: 'div',
+                                            className: M().lyrics,
+                                            size: 'l',
+                                            weight: 'medium',
+                                            ...(0, h.Am)(h.e8.content.TRACK_LYRICS_TEXT),
+                                            children: (0, c.jsx)(s.xe, {
+                                                lyrics: p.lyrics,
+                                                authors: p.writersNames,
+                                                source: null == (r = p.major) ? void 0 : l.prettyName,
+                                                isShimmerVisible: p.isShimmerVisible,
+                                                isShimmerActive: p.isLoading,
+                                            }),
+                                        }),
+                                    }),
+                                ],
+                            });
                 });
             var U = a(71483),
                 V = a(6488),
@@ -5646,7 +5669,8 @@
                                     ...(0, h.Am)(h.Xk.track.TRACK_PAGE_CONTENT),
                                     children: [
                                         (0, c.jsx)(P, { onModalClose: T }),
-                                        (null == (o = g.meta) ? void 0 : o.isLyricsAvailable) && (0, c.jsx)(K, { track: g.meta }, g.meta.id),
+                                        ((null == (o = g.meta) ? void 0 : o.isLyricsAvailable) || (null == (o = g.meta) ? void 0 : o.isAvailable)) &&
+                                            (0, c.jsx)(K, { track: g.meta }, g.meta.id),
                                         C &&
                                             g.similarTracks &&
                                             (0, c.jsx)(G, {

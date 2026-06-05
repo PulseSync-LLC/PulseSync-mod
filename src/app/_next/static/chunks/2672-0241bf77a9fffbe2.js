@@ -521,7 +521,7 @@
             var m = t(33797);
             let v = (e) => {
                 var i, t;
-                return (0, r.wg)({ ...(0, a.jX)(e), artists: null != (t = null == e || null == (i = e.artists) ? void 0 : i.map(m.dM)) ? t : [] });
+                return (0, r.wg)({ ...(0, a.jX)(e), artists: null != (t = null == e || null == (i = e.substituted?.artists ?? e.artists) ? void 0 : i.map(m.dM)) ? t : [] });
             };
             var h = t(93510);
             let c = (e) => {
@@ -1196,6 +1196,20 @@
                 g = t(13931),
                 x = t(19740),
                 k = t(78822);
+            let downloadPlaylistToFile = ({ playlist: e }) => {
+                let i = Array.isArray(e?.trackIds) ? e.trackIds : [],
+                    t = (0, v.c)(() => {
+                        var i;
+                        e?.title && e?.trackIds?.length && (null == (i = window.desktopEvents) || i.send(y.EE.DOWNLOAD_TRACKS, e.trackIds, 'playlist', e.title));
+                    });
+                return i.length
+                    ? (0, r.jsx)(x.Dr, {
+                          onClick: t,
+                          icon: (0, r.jsx)(P.Icon, { variant: 'download', size: 'xxs' }),
+                          children: 'Скачать в файл',
+                      })
+                    : null;
+            };
             let C = (0, s.PA)((e) => {
                 var i;
                 let { playlist: t, onOpenChange: n, open: s, ...o } = e,
@@ -1231,6 +1245,7 @@
                         L && (0, r.jsx)(k.dx, { entityVariant: y.DwC.PLAYLIST, adminUrl: t.isFavouritePlaylist ? void 0 : A }),
                         !P && (0, r.jsx)(f.L1, { onClick: g, isPinned: t.isPinned }),
                         !t.isFavouritePlaylist && (0, r.jsx)(f.TW, { onClick: p, isLiked: t.isLiked, disabled: !b.isAuthorized }),
+                        (0, r.jsx)(downloadPlaylistToFile, { playlist: t }),
                         (null == (i = t.trailer) ? void 0 : i.isAvailable) && (0, r.jsx)(f.No, { onClick: w, disabled: !t.isAvailable }),
                     ],
                 });
