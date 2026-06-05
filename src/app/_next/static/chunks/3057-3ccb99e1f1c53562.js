@@ -9,6 +9,7 @@
                 icon: 'TitleBar_icon__8Wji9',
                 icon_withSecondaryColor: 'TitleBar_icon_withSecondaryColor__vuw6G',
                 closeButton: 'TitleBar_closeButton__Epxh7',
+                pulseText: 'TitleBar_pulseText__FhYv',
             };
         },
         7200: (e, t, a) => {
@@ -117,33 +118,189 @@
                 o = (function (e) {
                     return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
                 })(o || {});
+            const sendPlayerStateDefault = (e) => {
+                let t;
+                const a =
+                        (e.state.queueState.index.value ?? 0) - 1 >= 0
+                            ? e.state.queueState?.entityList.value?.[e.state.queueState.index.value - 1]?.entity?.entityData?.meta
+                            : void 0,
+                    s =
+                        (e.state.queueState.index.value ?? 0) + 1 >= 0
+                            ? e.state.queueState?.entityList.value?.[e.state.queueState.index.value + 1]?.entity?.entityData?.meta
+                            : void 0;
+                null == (t = window.desktopEvents) ||
+                    t.send(l.EE.PLAYER_STATE, {
+                        status: e.state.playerState.status.value,
+                        isPlaying: 'playing' === e.state.playerState.status.value,
+                        canMoveForward: e.state.currentContext.value?.availableActions.moveForward.value,
+                        canMoveBackward: e.state.currentContext.value?.availableActions.moveBackward.value,
+                        track: e.state.queueState.currentEntity.value?.entity.entityData.meta,
+                        progress: e.state.playerState.progress.value,
+                        availableActions: {
+                            moveBackward: e.state.currentContext.value?.availableActions.moveBackward.value,
+                            moveForward: e.state.currentContext.value?.availableActions.moveForward.value,
+                            repeat: e.state.currentContext.value?.availableActions.repeat.value,
+                            shuffle: e.state.currentContext.value?.availableActions.shuffle.value,
+                            speed: e.state.currentContext.value?.availableActions.speed.value,
+                        },
+                        actionsStore: {
+                            repeat: e.state.queueState.repeat.value,
+                            shuffle: e.state.queueState.shuffle.value,
+                            isLiked: e.state.queueState.currentEntity.value?.entity.likeStore.isTrackLiked(e.state.queueState.currentEntity.value?.entity.entityData?.meta.id),
+                            isDisliked: e.state.queueState.currentEntity.value?.entity.likeStore.isTrackDisliked(e.state.queueState.currentEntity.value?.entity.entityData?.meta.id),
+                        },
+                        previousTrack: a,
+                        nextTrack: s,
+                        volume: e.state.playerState.exponentVolume.value,
+                    });
+            };
             let n = (e) => {
-                let t = (0, s.useCallback)(
-                    (t, a) => {
-                        switch (a) {
-                            case 'PLAY':
-                            case 'PAUSE':
-                                null == e || e.togglePause();
-                                break;
-                            case 'MOVE_BACKWARD':
-                                null == e || e.moveBackward();
-                                break;
-                            case 'MOVE_FORWARD':
-                                null == e || e.moveForward();
-                        }
-                    },
-                    [e],
-                );
+                let { sonataState: t } = (0, l.Pjs)(),
+                    a = (0, s.useCallback)(
+                        async (a) => {
+                            let s = t.entityMeta;
+                            if (!e || !s) return;
+                            switch (a) {
+                                case 'TOGGLE_LIKE':
+                                    null == s || (await s.toggleLike?.());
+                                    break;
+                                case 'LIKE':
+                                    s.isLiked || null == s || (await s.toggleLike?.());
+                                    break;
+                                case 'LIKE_NONE':
+                                    s.isLiked && (null == s || (await s.toggleLike?.()));
+                            }
+                            sendPlayerStateDefault?.(e);
+                        },
+                        [e, t.entityMeta],
+                    ),
+                    r = (0, s.useCallback)(
+                        async (a) => {
+                            let s,
+                                l,
+                                o = t.entityMeta;
+                            if (!e || !o) return;
+                            let n = !1;
+                            switch (a) {
+                                case 'TOGGLE_DISLIKE':
+                                    n = !0;
+                                    break;
+                                case 'DISLIKE':
+                                    n = !o.isDisliked;
+                                    break;
+                                case 'DISLIKE_NONE':
+                                    n = !!o.isDisliked;
+                            }
+                            n && (null == o || (await o.toggleDislike?.())),
+                                n &&
+                                    !o.isDisliked &&
+                                    o.id === (null == e || null == (s = e.state.queueState.currentEntity.value) || null == (l = s.entity) ? void 0 : l.data.meta.id) &&
+                                    (null == e || e.moveForward()),
+                                sendPlayerStateDefault?.(e);
+                        },
+                        [e, t.entityMeta],
+                    ),
+                    i = (0, s.useCallback)(
+                        (t, o, n, s = 1) => {
+                            if (window.playerActionEventDedupeNonce === s) return;
+                            if (s) window.playerActionEventDedupeNonce = s;
+                            switch (o) {
+                                case 'PLAY':
+                                case 'PAUSE':
+                                case 'TOGGLE_PLAY':
+                                    null == e || e.togglePause();
+                                    break;
+                                case 'MOVE_BACKWARD':
+                                    null == e || e.moveBackward();
+                                    break;
+                                case 'MOVE_FORWARD':
+                                    null == e || e.moveForward();
+                                    break;
+                                case 'REPEAT_NONE':
+                                    null == e || e.setRepeatMode('none');
+                                    break;
+                                case 'REPEAT_CONTEXT':
+                                    null == e || e.setRepeatMode('context');
+                                    break;
+                                case 'REPEAT_ONE':
+                                    null == e || e.setRepeatMode('one');
+                                    break;
+                                case 'TOGGLE_REPEAT':
+                                    let t = 'none';
+                                    switch (e?.state?.queueState?.repeat?.value) {
+                                        case 'none':
+                                            t = e?.state?.currentContext?.value?.contextData?.type === 'vibe' ? 'one' : 'context';
+                                            break;
+                                        case 'context':
+                                            t = 'one';
+                                            break;
+                                        case 'one':
+                                        default:
+                                            t = 'none';
+                                    }
+                                    null == e || e.setRepeatMode(t);
+                                    break;
+                                case 'TOGGLE_SHUFFLE':
+                                    null == e || e.toggleShuffle();
+                                    break;
+                                case 'TOGGLE_LIKE':
+                                case 'LIKE':
+                                case 'LIKE_NONE':
+                                    a(o);
+                                    break;
+                                case 'DISLIKE':
+                                case 'DISLIKE_NONE':
+                                case 'TOGGLE_DISLIKE':
+                                    r(o);
+                                    break;
+                                case 'SET_VOLUME':
+                                    null == e || e.setExponentVolume(Math.min(Math.max(n, 0), 100));
+                                    break;
+                                case 'SET_PROGRESS':
+                                    null == e || e.setProgress(Math.max(n, 0));
+                            }
+                        },
+                        [e, a, r],
+                    );
                 (0, s.useEffect)(() => {
                     var e;
                     return (
-                        null == (e = window.desktopEvents) || e.on(l.EE.PLAYER_ACTION, t),
+                        null == (e = window.desktopEvents) || e.on(l.EE.PLAYER_ACTION, i),
                         () => {
                             var e;
-                            null == (e = window.desktopEvents) || e.off(l.EE.PLAYER_ACTION, t);
+                            null == (e = window.desktopEvents) || e.off(l.EE.PLAYER_ACTION, i);
                         }
                     );
-                }, [t]);
+                }, [i]),
+                    (0, s.useEffect)(() => {
+                        const e = (e, t) => {
+                                const a = window.pulsesyncApi;
+                                if (!a || !t?.action) return;
+                                const { action: s, trackId: l, albumId: o, options: n, args: r } = t,
+                                    i = a[s];
+                                if ('function' != typeof i) return;
+                                if (Array.isArray(r)) {
+                                    i(...r);
+                                    return;
+                                }
+                                if ('undefined' != typeof l) {
+                                    i(l, { ...n, albumId: o });
+                                    return;
+                                }
+                                i(n);
+                            },
+                            t = window.desktopEvents?.on(l.EE.PULSESYNC_API, e);
+                        return () => {
+                            null == t || t();
+                        };
+                    }, []),
+                    (0, s.useEffect)(() => {
+                        window.pulsesyncApi &&
+                            ((window.pulsesyncApi.likeTrack = () => a('LIKE')),
+                            (window.pulsesyncApi.unlikeTrack = () => a('LIKE_NONE')),
+                            (window.pulsesyncApi.dislikeTrack = () => r('DISLIKE')),
+                            (window.pulsesyncApi.undislikeTrack = () => r('DISLIKE_NONE')));
+                    }, [a, r]);
             };
         },
         19338: (e, t, a) => {
@@ -347,14 +504,77 @@
                         }, []),
                         m = (0, n.useCallback)(() => {
                             (0, d.N5)();
-                        }, []);
+                        }, []),
+                        onMiniPlayerToggle = (0, n.useCallback)(() => {
+                            (0, d.toggleMiniPlayer)();
+                        }, []),
+                        E = (0, n.useCallback)((e) => {
+                            if (e.target.closest('button')) return;
+                            (0, d.LO)();
+                        }, []),
+                        [w, N] = (0, n.useState)(window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() ?? !1);
+                    (0, n.useEffect)(() => {
+                        const e = (event, key, value) => {
+                            'modSettings.window.hidePulseSyncVersionInTitleBar' === key && N(value);
+                        };
+                        return window.desktopEvents?.on('NATIVE_STORE_UPDATE', e), () => window.desktopEvents?.off?.('NATIVE_STORE_UPDATE', e);
+                    }, []);
                     return (0, s.jsx)('div', {
                         className: u().root,
-                        onDoubleClick: p,
+                        onDoubleClick: E,
                         children:
                             o &&
                             (0, s.jsxs)(s.Fragment, {
                                 children: [
+                                    !w &&
+                                        (0, s.jsx)('span', {
+                                            className: u().pulseText,
+                                            children: `PulseSync ${window.PULSE_VERSION}`,
+                                        }),
+                                    (0, s.jsx)(_, {
+                                        onClick: onMiniPlayerToggle,
+                                        ariaLabel: 'miniplayer',
+                                        withSecondaryColor: t,
+                                        children: (0, s.jsx)('svg', {
+                                            width: '12',
+                                            height: '12',
+                                            viewBox: '0 0 12 12',
+                                            xmlns: 'http://www.w3.org/2000/svg',
+                                            className: (0, l.$)(u().icon, {
+                                                [u().icon_withSecondaryColor]: t,
+                                            }),
+                                            children: [
+                                                (0, s.jsx)('path', {
+                                                    i: 'M1.49805 11C1.42969 11 1.36458 10.987 1.30273 10.961C1.24414 10.935 1.19206 10.8992 1.14648 10.8537C1.10091 10.8081 1.0651 10.7561 1.03906 10.6976C1.01302 10.6358 1 10.5707 1 10.5024C1 10.4341 1.01302 10.3707 1.03906 10.3122C1.0651 10.2504 1.10091 10.1967 1.14648 10.1512C1.19206 10.1024 1.24414 10.065 1.30273 10.039C1.36458 10.013 1.42969 10 1.49805 10H10.502C10.5703 10 10.6338 10.013 10.6924 10.039C10.7542 10.065 10.8079 10.1024 10.8535 10.1512C10.8991 10.1967 10.9349 10.2504 10.9609 10.3122C10.987 10.3707 11 10.4341 11 10.5024C11 10.5707 10.987 10.6358 10.9609 10.6976C10.9349 10.7561 10.8991 10.8081 10.8535 10.8537C10.8079 10.8992 10.7542 10.935 10.6924 10.961C10.6338 10.987 10.5703 11 10.502 11H1.49805Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, s.jsx)('path', {
+                                                    i: 'M1.24902 2C1.21484 2 1.18229 1.98699 1.15137 1.96098C1.12207 1.93496 1.09603 1.89919 1.07324 1.85366C1.05046 1.80813 1.03255 1.7561 1.01953 1.69756C1.00651 1.63577 1 1.57073 1 1.50244C1 1.43415 1.00651 1.37073 1.01953 1.31219C1.03255 1.25041 1.05046 1.19675 1.07324 1.15122C1.09603 1.10244 1.12207 1.06504 1.15137 1.03902C1.18229 1.01301 1.21484 1 1.24902 1H5.75098C5.78516 1 5.81689 1.01301 5.84619 1.03902C5.87711 1.06504 5.90397 1.10244 5.92676 1.15122C5.94955 1.19675 5.96745 1.25041 5.98047 1.31219C5.99349 1.37073 6 1.43415 6 1.50244C6 1.57073 5.99349 1.63577 5.98047 1.69756C5.96745 1.7561 5.94955 1.80813 5.92676 1.85366C5.90397 1.89919 5.87711 1.93496 5.84619 1.96098C5.81689 1.98699 5.78516 2 5.75098 2H1.24902Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, s.jsx)('path', {
+                                                    i: 'M10 6.24902C10 6.21484 10.013 6.18229 10.039 6.15137C10.065 6.12207 10.1008 6.09603 10.1463 6.07324C10.1919 6.05046 10.2439 6.03255 10.3024 6.01953C10.3642 6.00651 10.4293 6 10.4976 6C10.5659 6 10.6293 6.00651 10.6878 6.01953C10.7496 6.03255 10.8033 6.05046 10.8488 6.07324C10.8976 6.09603 10.935 6.12207 10.961 6.15137C10.987 6.18229 11 6.21484 11 6.24902L11 10.751C11 10.7852 10.987 10.8169 10.961 10.8462C10.935 10.8771 10.8976 10.904 10.8488 10.9268C10.8033 10.9495 10.7496 10.9675 10.6878 10.9805C10.6293 10.9935 10.5659 11 10.4976 11C10.4293 11 10.3642 10.9935 10.3024 10.9805C10.2439 10.9675 10.1919 10.9495 10.1463 10.9268C10.1008 10.904 10.065 10.8771 10.039 10.8462C10.013 10.8169 10 10.7852 10 10.751L10 6.24902Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, s.jsx)('path', {
+                                                    i: 'M9.85698 1.4045C9.89078 1.37069 9.93219 1.34771 9.98121 1.33556C10.0286 1.32502 10.0797 1.3246 10.1345 1.33432C10.1893 1.34404 10.2439 1.3632 10.2982 1.3918C10.3549 1.4227 10.4074 1.46234 10.4558 1.51072C10.5042 1.55911 10.5427 1.61048 10.5713 1.66483C10.6022 1.72148 10.6225 1.77721 10.6322 1.832C10.6442 1.8891 10.645 1.94135 10.6344 1.98876C10.6223 2.03778 10.5993 2.07919 10.5655 2.11299L6.11287 6.56559C6.07907 6.5994 6.03846 6.62158 5.99105 6.63212C5.94203 6.64427 5.88898 6.64434 5.83188 6.63231C5.77708 6.62259 5.72136 6.60228 5.6647 6.57139C5.61035 6.54279 5.55899 6.5043 5.5106 6.45591C5.46222 6.40753 5.42257 6.35501 5.39167 6.29835C5.36308 6.244 5.34392 6.18943 5.3342 6.13464C5.32448 6.07984 5.3257 6.02794 5.33785 5.97892C5.3484 5.93151 5.37057 5.8909 5.40438 5.8571L9.85698 1.4045Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, s.jsx)('path', {
+                                                    i: 'M10 1.19922C10 1.17188 10.013 1.14583 10.039 1.12109C10.065 1.09766 10.1008 1.07682 10.1463 1.05859C10.1919 1.04036 10.2439 1.02604 10.3024 1.01562C10.3642 1.00521 10.4293 1 10.4976 1C10.5659 1 10.6293 1.00521 10.6878 1.01562C10.7496 1.02604 10.8033 1.04036 10.8488 1.05859C10.8976 1.07682 10.935 1.09766 10.961 1.12109C10.987 1.14583 11 1.17188 11 1.19922L11 4.80078C11 4.82812 10.987 4.85352 10.961 4.87695C10.935 4.90169 10.8976 4.92318 10.8488 4.94141C10.8033 4.95964 10.7496 4.97396 10.6878 4.98438C10.6293 4.99479 10.5659 5 10.4976 5C10.4293 5 10.3642 4.99479 10.3024 4.98438C10.2439 4.97396 10.1919 4.95964 10.1463 4.94141C10.1008 4.92318 10.065 4.90169 10.039 4.87695C10.013 4.85352 10 4.82812 10 4.80078L10 1.19922Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, s.jsx)('path', {
+                                                    i: 'M10.8008 1C10.8281 1 10.8542 1.01301 10.8789 1.03902C10.9023 1.06504 10.9232 1.10081 10.9414 1.14634C10.9596 1.19187 10.974 1.2439 10.9844 1.30244C10.9948 1.36423 11 1.42927 11 1.49756C11 1.56585 10.9948 1.62927 10.9844 1.68781C10.974 1.74959 10.9596 1.80325 10.9414 1.84878C10.9232 1.89756 10.9023 1.93496 10.8789 1.96098C10.8542 1.98699 10.8281 2 10.8008 2L7.19922 2C7.17188 2 7.14648 1.98699 7.12305 1.96098C7.09831 1.93496 7.07682 1.89756 7.05859 1.84878C7.04036 1.80325 7.02604 1.74959 7.01562 1.68781C7.00521 1.62927 7 1.56585 7 1.49756C7 1.42927 7.00521 1.36423 7.01562 1.30244C7.02604 1.2439 7.04036 1.19187 7.05859 1.14634C7.07682 1.10081 7.09831 1.06504 7.12305 1.03902C7.14648 1.01301 7.17188 1 7.19922 1L10.8008 1Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, s.jsx)('path', {
+                                                    i: 'M1 1.49805C1 1.42969 1.01301 1.36458 1.03902 1.30273C1.06504 1.24414 1.10081 1.19206 1.14634 1.14648C1.19187 1.10091 1.2439 1.0651 1.30244 1.03906C1.36423 1.01302 1.42927 1 1.49756 1C1.56585 1 1.62927 1.01302 1.68781 1.03906C1.74959 1.0651 1.80325 1.10091 1.84878 1.14648C1.89756 1.19206 1.93496 1.24414 1.96098 1.30273C1.98699 1.36458 2 1.42969 2 1.49805L2 10.502C2 10.5703 1.98699 10.6338 1.96098 10.6924C1.93496 10.7542 1.89756 10.8079 1.84878 10.8535C1.80325 10.8991 1.74959 10.9349 1.68781 10.9609C1.62927 10.987 1.56585 11 1.49756 11C1.42927 11 1.36423 10.987 1.30244 10.9609C1.2439 10.9349 1.19187 10.8991 1.14634 10.8535C1.10081 10.8079 1.06504 10.7542 1.03902 10.6924C1.01301 10.6338 1 10.5703 1 10.502L1 1.49805Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                            ],
+                                        }),
+                                    }),
                                     (0, s.jsx)(_, {
                                         onClick: h,
                                         ariaLabel: c({ id: 'windows-menu.roll-up' }),
@@ -366,7 +586,7 @@
                                             xmlns: 'http://www.w3.org/2000/svg',
                                             className: (0, l.$)(u().icon, { [u().icon_withSecondaryColor]: t }),
                                             children: (0, s.jsx)('path', {
-                                                d: 'M0.498047 1C0.429688 1 0.364583 0.986979 0.302734 0.960938C0.244141 0.934896 0.192057 0.899089 0.146484 0.853516C0.100911 0.807943 0.0651042 0.755859 0.0390625 0.697266C0.0130208 0.635417 0 0.570312 0 0.501953C0 0.433594 0.0130208 0.370117 0.0390625 0.311523C0.0651042 0.249674 0.100911 0.195964 0.146484 0.150391C0.192057 0.101562 0.244141 0.0641276 0.302734 0.0380859C0.364583 0.0120443 0.429688 -0.000976562 0.498047 -0.000976562H9.50195C9.57031 -0.000976562 9.63379 0.0120443 9.69238 0.0380859C9.75423 0.0641276 9.80794 0.101562 9.85352 0.150391C9.89909 0.195964 9.9349 0.249674 9.96094 0.311523C9.98698 0.370117 10 0.433594 10 0.501953C10 0.570312 9.98698 0.635417 9.96094 0.697266C9.9349 0.755859 9.89909 0.807943 9.85352 0.853516C9.80794 0.899089 9.75423 0.934896 9.69238 0.960938C9.63379 0.986979 9.57031 1 9.50195 1H0.498047Z',
+                                                i: 'M0.498047 1C0.429688 1 0.364583 0.986979 0.302734 0.960938C0.244141 0.934896 0.192057 0.899089 0.146484 0.853516C0.100911 0.807943 0.0651042 0.755859 0.0390625 0.697266C0.0130208 0.635417 0 0.570312 0 0.501953C0 0.433594 0.0130208 0.370117 0.0390625 0.311523C0.0651042 0.249674 0.100911 0.195964 0.146484 0.150391C0.192057 0.101562 0.244141 0.0641276 0.302734 0.0380859C0.364583 0.0120443 0.429688 -0.000976562 0.498047 -0.000976562H9.50195C9.57031 -0.000976562 9.63379 0.0120443 9.69238 0.0380859C9.75423 0.0641276 9.80794 0.101562 9.85352 0.150391C9.89909 0.195964 9.9349 0.249674 9.96094 0.311523C9.98698 0.370117 10 0.433594 10 0.501953C10 0.570312 9.98698 0.635417 9.96094 0.697266C9.9349 0.755859 9.89909 0.807943 9.85352 0.853516C9.80794 0.899089 9.75423 0.934896 9.69238 0.960938C9.63379 0.986979 9.57031 1 9.50195 1H0.498047Z',
                                                 fill: 'currentColor',
                                             }),
                                         }),
@@ -382,7 +602,7 @@
                                             xmlns: 'http://www.w3.org/2000/svg',
                                             className: (0, l.$)(u().icon, { [u().icon_withSecondaryColor]: t }),
                                             children: (0, s.jsx)('path', {
-                                                d: 'M1.47461 10C1.2793 10 1.09212 9.96094 0.913086 9.88281C0.734049 9.80143 0.576172 9.69401 0.439453 9.56055C0.30599 9.42383 0.198568 9.26595 0.117188 9.08691C0.0390625 8.90788 0 8.7207 0 8.52539V1.47461C0 1.2793 0.0390625 1.09212 0.117188 0.913086C0.198568 0.734049 0.30599 0.577799 0.439453 0.444336C0.576172 0.307617 0.734049 0.200195 0.913086 0.12207C1.09212 0.0406901 1.2793 0 1.47461 0H8.52539C8.7207 0 8.90788 0.0406901 9.08691 0.12207C9.26595 0.200195 9.4222 0.307617 9.55566 0.444336C9.69238 0.577799 9.7998 0.734049 9.87793 0.913086C9.95931 1.09212 10 1.2793 10 1.47461V8.52539C10 8.7207 9.95931 8.90788 9.87793 9.08691C9.7998 9.26595 9.69238 9.42383 9.55566 9.56055C9.4222 9.69401 9.26595 9.80143 9.08691 9.88281C8.90788 9.96094 8.7207 10 8.52539 10H1.47461ZM8.50098 8.99902C8.56934 8.99902 8.63281 8.986 8.69141 8.95996C8.75326 8.93392 8.80697 8.89811 8.85254 8.85254C8.89811 8.80697 8.93392 8.75488 8.95996 8.69629C8.986 8.63444 8.99902 8.56934 8.99902 8.50098V1.49902C8.99902 1.43066 8.986 1.36719 8.95996 1.30859C8.93392 1.24674 8.89811 1.19303 8.85254 1.14746C8.80697 1.10189 8.75326 1.06608 8.69141 1.04004C8.63281 1.014 8.56934 1.00098 8.50098 1.00098H1.49902C1.43066 1.00098 1.36556 1.014 1.30371 1.04004C1.24512 1.06608 1.19303 1.10189 1.14746 1.14746C1.10189 1.19303 1.06608 1.24674 1.04004 1.30859C1.014 1.36719 1.00098 1.43066 1.00098 1.49902V8.50098C1.00098 8.56934 1.014 8.63444 1.04004 8.69629C1.06608 8.75488 1.10189 8.80697 1.14746 8.85254C1.19303 8.89811 1.24512 8.93392 1.30371 8.95996C1.36556 8.986 1.43066 8.99902 1.49902 8.99902H8.50098Z',
+                                                i: 'M1.47461 10C1.2793 10 1.09212 9.96094 0.913086 9.88281C0.734049 9.80143 0.576172 9.69401 0.439453 9.56055C0.30599 9.42383 0.198568 9.26595 0.117188 9.08691C0.0390625 8.90788 0 8.7207 0 8.52539V1.47461C0 1.2793 0.0390625 1.09212 0.117188 0.913086C0.198568 0.734049 0.30599 0.577799 0.439453 0.444336C0.576172 0.307617 0.734049 0.200195 0.913086 0.12207C1.09212 0.0406901 1.2793 0 1.47461 0H8.52539C8.7207 0 8.90788 0.0406901 9.08691 0.12207C9.26595 0.200195 9.4222 0.307617 9.55566 0.444336C9.69238 0.577799 9.7998 0.734049 9.87793 0.913086C9.95931 1.09212 10 1.2793 10 1.47461V8.52539C10 8.7207 9.95931 8.90788 9.87793 9.08691C9.7998 9.26595 9.69238 9.42383 9.55566 9.56055C9.4222 9.69401 9.26595 9.80143 9.08691 9.88281C8.90788 9.96094 8.7207 10 8.52539 10H1.47461ZM8.50098 8.99902C8.56934 8.99902 8.63281 8.986 8.69141 8.95996C8.75326 8.93392 8.80697 8.89811 8.85254 8.85254C8.89811 8.80697 8.93392 8.75488 8.95996 8.69629C8.986 8.63444 8.99902 8.56934 8.99902 8.50098V1.49902C8.99902 1.43066 8.986 1.36719 8.95996 1.30859C8.93392 1.24674 8.89811 1.19303 8.85254 1.14746C8.80697 1.10189 8.75326 1.06608 8.69141 1.04004C8.63281 1.014 8.56934 1.00098 8.50098 1.00098H1.49902C1.43066 1.00098 1.36556 1.014 1.30371 1.04004C1.24512 1.06608 1.19303 1.10189 1.14746 1.14746C1.10189 1.19303 1.06608 1.24674 1.04004 1.30859C1.014 1.36719 1.00098 1.43066 1.00098 1.49902V8.50098C1.00098 8.56934 1.014 8.63444 1.04004 8.69629C1.06608 8.75488 1.10189 8.80697 1.14746 8.85254C1.19303 8.89811 1.24512 8.93392 1.30371 8.95996C1.36556 8.986 1.43066 8.99902 1.49902 8.99902H8.50098Z',
                                                 fill: 'currentColor',
                                             }),
                                         }),
@@ -398,7 +618,7 @@
                                             xmlns: 'http://www.w3.org/2000/svg',
                                             className: (0, l.$)(u().icon, { [u().icon_withSecondaryColor]: t }),
                                             children: (0, s.jsx)('path', {
-                                                d: 'M5 5.70801L0.854492 9.85352C0.756836 9.95117 0.639648 10 0.50293 10C0.359701 10 0.239258 9.9528 0.141602 9.8584C0.0472005 9.76074 0 9.6403 0 9.49707C0 9.36035 0.0488281 9.24316 0.146484 9.14551L4.29199 5L0.146484 0.854492C0.0488281 0.756836 0 0.638021 0 0.498047C0 0.429688 0.0130208 0.364583 0.0390625 0.302734C0.0651042 0.240885 0.100911 0.188802 0.146484 0.146484C0.192057 0.100911 0.245768 0.0651042 0.307617 0.0390625C0.369466 0.0130208 0.43457 0 0.50293 0C0.639648 0 0.756836 0.0488281 0.854492 0.146484L5 4.29199L9.14551 0.146484C9.24316 0.0488281 9.36198 0 9.50195 0C9.57031 0 9.63379 0.0130208 9.69238 0.0390625C9.75423 0.0651042 9.80794 0.100911 9.85352 0.146484C9.89909 0.192057 9.9349 0.245768 9.96094 0.307617C9.98698 0.366211 10 0.429688 10 0.498047C10 0.638021 9.95117 0.756836 9.85352 0.854492L5.70801 5L9.85352 9.14551C9.95117 9.24316 10 9.36035 10 9.49707C10 9.56543 9.98698 9.63053 9.96094 9.69238C9.9349 9.75423 9.89909 9.80794 9.85352 9.85352C9.8112 9.89909 9.75911 9.9349 9.69727 9.96094C9.63542 9.98698 9.57031 10 9.50195 10C9.36198 10 9.24316 9.95117 9.14551 9.85352L5 5.70801Z',
+                                                i: 'M5 5.70801L0.854492 9.85352C0.756836 9.95117 0.639648 10 0.50293 10C0.359701 10 0.239258 9.9528 0.141602 9.8584C0.0472005 9.76074 0 9.6403 0 9.49707C0 9.36035 0.0488281 9.24316 0.146484 9.14551L4.29199 5L0.146484 0.854492C0.0488281 0.756836 0 0.638021 0 0.498047C0 0.429688 0.0130208 0.364583 0.0390625 0.302734C0.0651042 0.240885 0.100911 0.188802 0.146484 0.146484C0.192057 0.100911 0.245768 0.0651042 0.307617 0.0390625C0.369466 0.0130208 0.43457 0 0.50293 0C0.639648 0 0.756836 0.0488281 0.854492 0.146484L5 4.29199L9.14551 0.146484C9.24316 0.0488281 9.36198 0 9.50195 0C9.57031 0 9.63379 0.0130208 9.69238 0.0390625C9.75423 0.0651042 9.80794 0.100911 9.85352 0.146484C9.89909 0.192057 9.9349 0.245768 9.96094 0.307617C9.98698 0.366211 10 0.429688 10 0.498047C10 0.638021 9.95117 0.756836 9.85352 0.854492L5.70801 5L9.85352 9.14551C9.95117 9.24316 10 9.36035 10 9.49707C10 9.56543 9.98698 9.63053 9.96094 9.69238C9.9349 9.75423 9.89909 9.80794 9.85352 9.85352C9.8112 9.89909 9.75911 9.9349 9.69727 9.96094C9.63542 9.98698 9.57031 10 9.50195 10C9.36198 10 9.24316 9.95117 9.14551 9.85352L5 5.70801Z',
                                                 fill: 'currentColor',
                                             }),
                                         }),
@@ -536,7 +756,7 @@
         },
         45801: (e, t, a) => {
             'use strict';
-            a.d(t, { LO: () => o, N5: () => n, vZ: () => l });
+            a.d(t, { LO: () => o, N5: () => n, toggleMiniPlayer: () => r, vZ: () => l });
             var s = a(49574);
             let l = () => {
                     var e;
@@ -549,6 +769,10 @@
                 n = () => {
                     var e;
                     null == (e = window.desktopEvents) || e.send(s.EE.WINDOW_CLOSE);
+                },
+                r = () => {
+                    var e;
+                    null == (e = window.desktopEvents) || e.send(s.EE.TOGGLE_MINIPLAYER);
                 };
         },
         51402: (e, t, a) => {
@@ -855,39 +1079,135 @@
                     a = (0, l.c)((e) => {
                         var t;
                         let { isPlaying: a, canMoveBackward: s, canMoveForward: l } = e;
-                        null == (t = window.desktopEvents) || t.send(n.EE.PLAYER_STATE, { isPlaying: a, canMoveBackward: s, canMoveForward: l });
-                    });
+                        null == (t = window.desktopEvents) ||
+                            t.send(n.EE.PLAYER_STATE, {
+                                isPlaying: a,
+                                canMoveBackward: s,
+                                canMoveForward: l,
+                                status: e.status,
+                                track: e.track,
+                                progress: e.progress,
+                                availableActions: e.availableActions,
+                                actionsStore: e.actionsStore,
+                                previousTrack: e.previousTrack,
+                                nextTrack: e.nextTrack,
+                                volume: e.volume,
+                            });
+                    }),
+                    i = (e) => {
+                        let t = e?.state?.queueState?.index?.value ?? 0,
+                            a = e?.state?.queueState?.order?.value,
+                            s = e?.state?.queueState?.entityList?.value,
+                            l = t - 1 >= 0 ? (a?.[t - 1] ?? t - 1) : null,
+                            o = t + 1 >= 0 ? (a?.[t + 1] ?? t + 1) : null;
+                        return {
+                            previousTrack: null == l ? void 0 : s?.[l]?.entity?.entityData?.meta,
+                            nextTrack: null == o ? void 0 : s?.[o]?.entity?.entityData?.meta,
+                        };
+                    },
+                    d = (e, s) => {
+                        let { previousTrack: l, nextTrack: r } = i(e);
+                        a({
+                            status: s,
+                            isPlaying: s === o.MT.PLAYING,
+                            canMoveForward: e?.state?.currentContext?.value?.availableActions.moveForward.value,
+                            canMoveBackward: e?.state?.currentContext?.value?.availableActions.moveBackward.value,
+                            track: e?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta,
+                            progress: e?.state?.playerState?.progress?.value,
+                            availableActions: {
+                                moveBackward: e?.state?.currentContext?.value?.availableActions.moveBackward.value,
+                                moveForward: e?.state?.currentContext?.value?.availableActions.moveForward.value,
+                                repeat: e?.state?.currentContext?.value?.availableActions.repeat?.value,
+                                shuffle: e?.state?.currentContext?.value?.availableActions.shuffle?.value,
+                                speed: e?.state?.currentContext?.value?.availableActions.speed?.value,
+                            },
+                            actionsStore: {
+                                repeat: e?.state?.queueState?.repeat?.value,
+                                shuffle: e?.state?.queueState?.shuffle?.value,
+                                isLiked: !!e?.state?.queueState?.currentEntity?.value?.entity?.likeStore?.isTrackLiked?.(
+                                    e?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta?.id,
+                                ),
+                                isDisliked: !!e?.state?.queueState?.currentEntity?.value?.entity?.likeStore?.isTrackDisliked?.(
+                                    e?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta?.id,
+                                ),
+                            },
+                            previousTrack: l,
+                            nextTrack: r,
+                            volume: e?.state?.playerState?.exponentVolume?.value,
+                        });
+                    };
                 (0, s.useEffect)(() => {
+                    t && window.pulsesyncApi?.setPlayerInstance?.(t);
                     let e,
-                        s,
-                        l =
+                        l,
+                        r =
                             null == t
                                 ? void 0
                                 : t.state.playerState.status.onChange((e) => {
-                                      e && a({ isPlaying: e === o.MT.PLAYING });
+                                      e && d(t, e);
                                   }),
-                        n =
+                        i = t?.state?.queueState?.currentEntity?.onChange((e) => {
+                            e && d(t, o.MT.PLAYING);
+                        }),
+                        c = t?.state?.playerState?.event?.onChange(() => {
+                            let e = t?.state?.playerState?.event?.value;
+                            ('SET_PROGRESS' === e || e === o.Iu?.SET_PROGRESS) && d(t, t?.state?.playerState?.status?.value);
+                        }),
+                        u = t?.state?.queueState?.entityList?.onChange(() => {
+                            d(t, t?.state?.playerState?.status?.value);
+                        }),
+                        _ = t?.state?.currentContext?.value?.availableActions.repeat?.onChange(() => {
+                            d(t, t?.state?.playerState?.status?.value);
+                        }),
+                        h = t?.state?.currentContext?.value?.availableActions.shuffle?.onChange(() => {
+                            d(t, t?.state?.playerState?.status?.value);
+                        }),
+                        p = t?.state?.queueState?.repeat?.onChange(() => {
+                            d(t, t?.state?.playerState?.status?.value);
+                        }),
+                        m = t?.state?.queueState?.shuffle?.onChange(() => {
+                            d(t, t?.state?.playerState?.status?.value);
+                        }),
+                        C = t?.state?.playerState?.exponentVolume?.onChange(() => {
+                            d(t, t?.state?.playerState?.status?.value);
+                        }),
+                        v = window.desktopEvents?.on(n.EE.GET_CURRENT_TRACK, () => {
+                            d(t, t?.state?.playerState?.status?.value);
+                        }),
+                        A =
                             null == t
                                 ? void 0
                                 : t.state.currentContext.onChange(() => {
-                                      var l, o;
+                                      var a, s;
                                       null == e || e(),
-                                          null == s || s(),
+                                          null == l || l(),
                                           (e =
-                                              null == t || null == (l = t.state.currentContext.value)
+                                              null == t || null == (a = t.state.currentContext.value)
                                                   ? void 0
-                                                  : l.availableActions.moveBackward.onChange((e) => {
-                                                        a({ canMoveBackward: !!e });
+                                                  : a.availableActions.moveBackward.onChange(() => {
+                                                        d(t, t?.state?.playerState?.status?.value);
                                                     })),
-                                          (s =
-                                              null == t || null == (o = t.state.currentContext.value)
+                                          (l =
+                                              null == t || null == (s = t.state.currentContext.value)
                                                   ? void 0
-                                                  : o.availableActions.moveForward.onChange((e) => {
-                                                        a({ canMoveForward: !!e });
+                                                  : s.availableActions.moveForward.onChange(() => {
+                                                        d(t, t?.state?.playerState?.status?.value);
                                                     }));
                                   });
                     return () => {
-                        null == l || l(), null == n || n(), null == s || s(), null == s || s();
+                        null == r || r(),
+                            null == A || A(),
+                            null == i || i(),
+                            null == v || v(),
+                            null == c || c(),
+                            null == u || u(),
+                            null == _ || _(),
+                            null == h || h(),
+                            null == p || p(),
+                            null == m || m(),
+                            null == C || C(),
+                            null == l || l(),
+                            null == l || l();
                     };
                 }, [a, null == t ? void 0 : t.state.currentContext, null == t ? void 0 : t.state.playerState.status]);
             };

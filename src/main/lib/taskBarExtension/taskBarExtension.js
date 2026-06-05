@@ -549,8 +549,11 @@ const setIconicThumbnail = async (playerState, { force = false } = {}) => {
             `thumbnail draw call: ${width}x${height}, isRepeatOne: ${isRepeatOne}, hasPrevious: ${!!previousImageBuffer}, hasNext: ${!!nextImageBuffer}`,
         );
 
+        const nextRenderStateKey = getThumbnailRenderStateKey(nextRenderState);
+
         if (activeThumbnailAnimation) {
-            if (activeThumbnailAnimation.targetRenderStateKey === getThumbnailRenderStateKey(nextRenderState)) {
+            if (activeThumbnailAnimation.targetRenderStateKey === nextRenderStateKey || activeThumbnailAnimation.targetTrackId === nextRenderState.trackId) {
+                activeThumbnailAnimation.targetRenderStateKey = nextRenderStateKey;
                 activeThumbnailAnimation.finalRenderState = nextRenderState;
                 return;
             }
@@ -581,7 +584,8 @@ const setIconicThumbnail = async (playerState, { force = false } = {}) => {
 
             activeThumbnailAnimation = {
                 token: animationToken,
-                targetRenderStateKey: getThumbnailRenderStateKey(nextRenderState),
+                targetTrackId: nextRenderState.trackId,
+                targetRenderStateKey: nextRenderStateKey,
                 finalRenderState: nextRenderState,
             };
 
