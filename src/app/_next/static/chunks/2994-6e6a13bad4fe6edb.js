@@ -2236,6 +2236,24 @@
                                     );
                                 if (closeMatches.length) results = closeMatches;
                             }
+                            if (durationSec && durationSec > 0) {
+                                let withDuration = results.filter((e) => 'number' == typeof e.duration);
+                                if (withDuration.length > 0) {
+                                    let closeMatches = withDuration.filter((e) => Math.abs(e.duration - durationSec) <= 10);
+                                    if (!closeMatches.length)
+                                        return (
+                                            writeLrclibSyncCache(
+                                                lrclibSyncSearchNoResultCache,
+                                                cacheKey,
+                                                !0,
+                                                LRCLIB_SYNC_SEARCH_NO_RESULT_TTL_MS,
+                                                LRCLIB_SYNC_SEARCH_CACHE_MAX_SIZE,
+                                            ),
+                                            null
+                                        );
+                                    results = closeMatches;
+                                }
+                            }
                             let selected = results[0];
                             if (durationSec && durationSec > 0) {
                                 let byDuration = results.map((e) => ({ item: e, delta: Math.abs(e.duration - durationSec) })).sort((e, t) => e.delta - t.delta);
