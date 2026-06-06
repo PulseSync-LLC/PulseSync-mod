@@ -4031,6 +4031,7 @@
 }
 .NotificationUpdate_button__F3O16 {
     min-width: 7.875rem;
+    -webkit-app-region: no-drag;
 }
 .NotificationUpdate_message__rLYpW {
     max-width: min(42rem, calc(100vw - 2rem));
@@ -4039,10 +4040,6 @@
     display: flex;
     justify-content: space-between;
 }
-    flex: 1 1 auto;
-    min-width: 0;
-    overflow-wrap: anywhere;
-    flex-shrink: 0;
 .NotificationDislike_message__R2jfZ {
     align-items: center;
     gap: var(--ym-spacer-size-m);
