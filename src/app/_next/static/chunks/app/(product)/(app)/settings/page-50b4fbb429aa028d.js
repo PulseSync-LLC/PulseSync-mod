@@ -2544,7 +2544,7 @@
                                 (0, n.jsx)('li', {
                                     className: $().item,
                                     children: (0, n.jsx)(settingBarWithDropdown, {
-                                        title: 'Разрешение анимации Моей волны',
+                                        title: 'Разрешение анимации Волны',
                                         onChange: onCanvasResolutionChange,
                                         value: canvasResolution,
                                         direction: 'top',
@@ -2607,7 +2607,7 @@
                     return (0, n.jsx)(w.a, {
                         className: K().list,
                         style: { maxWidth: '34.375rem' },
-                        title: 'Вид анимации Моей Волны',
+                        title: 'Вид анимации Волны',
                         headerClassName: K().modalHeader,
                         contentClassName: ''.concat(K().modalContent),
                         open: t.isOpened,
@@ -3958,7 +3958,7 @@
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
-                                title: 'Производительность анимации Моей Волны',
+                                title: 'Производительность анимации Волны',
                                 description: 'Отключение анимации, FPS, разрешение и т.п.',
                                 onClick: myVibeAnimationPerformanceSettingsModal.open,
                             }),
@@ -3967,7 +3967,7 @@
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
-                                title: 'Вид анимации Моей Волны',
+                                title: 'Вид анимации Волны',
                                 description: 'Настройка визуального вида Моей Волны',
                                 onClick: myVibeAnimationAppearanceSettingsModal.open,
                             }),
