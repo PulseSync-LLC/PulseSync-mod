@@ -3650,6 +3650,11 @@
     transition: background-color var(--ym-duration-transition);
     width: var(--seek-before-width);
 }
+
+.JkKcxRVvjK7lcakkEliC:disabled:before {
+    background-color: var(--ym-slider-color-primary-disabled);
+}
+
 @media (prefers-reduced-motion: reduce) {
     .JkKcxRVvjK7lcakkEliC:before {
         transition: none;

@@ -379,7 +379,7 @@ ul {
         --ym-controls-color-primary-outline-focused_stroke: rgba(255, 238, 0, 0.5);
         --ym-controls-color-primary-on_outline-disabled: #ccc;
         --ym-controls-color-primary-on_outline-enabled: #1a1a1a;
-        --ym-controls-color-primary-text-disabled: #4d4d4d;
+        --ym-controls-color-primary-text-disabled: #9a9a9a;
         --ym-controls-color-primary-text-enabled: #666;
         --ym-controls-color-primary-text-enabled_variant: #1a1a1a;
         --ym-controls-color-primary-text-hovered: #0449c8;
@@ -754,7 +754,7 @@ ul {
     --ym-controls-color-primary-outline-focused_stroke: rgba(255, 238, 0, 0.5);
     --ym-controls-color-primary-on_outline-disabled: #ccc;
     --ym-controls-color-primary-on_outline-enabled: #1a1a1a;
-    --ym-controls-color-primary-text-disabled: #4d4d4d;
+    --ym-controls-color-primary-text-disabled: #9a9a9a;
     --ym-controls-color-primary-text-enabled: #666;
     --ym-controls-color-primary-text-enabled_variant: #1a1a1a;
     --ym-controls-color-primary-text-hovered: #0449c8;
@@ -814,7 +814,7 @@ ul {
     --ym-surface-color-primary-enabled-entity: rgba(77, 77, 77, 0.5);
     --ym-slider-color-primary-disabled: rgba(0, 0, 0, 0.08);
     --ym-slider-color-primary-progress: rgba(0, 0, 0, 0.16);
-    --ym-slider-color-primary-enabled: #e6e6e6;
+    --ym-slider-color-primary-enabled: #3b3b3b;
     --ym-shadow-xxs: rgba(0, 0, 0, 0.12);
     --ym-shadow-xs: hsla(0, 0%, 100%, 0.16);
     --ym-shadow-s: hsla(0, 0%, 100%, 0.24);
