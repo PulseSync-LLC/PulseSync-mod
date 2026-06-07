@@ -719,6 +719,55 @@
                               children: t,
                           });
                 },
+                settingsCategorySeparator = (e) => {
+                    let { text: t } = e;
+                    return (0, n.jsx)('li', {
+                        className: $().item,
+                        style: { paddingBlockEnd: 'var(--ym-spacer-size-m)' },
+                        children: (0, n.jsxs)('div', {
+                            role: 'separator',
+                            'aria-label': t,
+                            style: {
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 'var(--ym-spacer-size-xs)',
+                                width: '100%',
+                                paddingBlock: 'var(--ym-spacer-size-xxxs)',
+                            },
+                            children: [
+                                (0, n.jsx)('div', {
+                                    style: {
+                                        height: '1px',
+                                        flex: '1 1 auto',
+                                        background: 'var(--ym-controls-color-secondary-outline-enabled_stroke)',
+                                        opacity: 0.6,
+                                    },
+                                }),
+                                t &&
+                                    (0, n.jsx)(c.Caption, {
+                                        variant: 'div',
+                                        type: 'text',
+                                        size: 'xs',
+                                        weight: 'medium',
+                                        style: {
+                                            color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                            opacity: 0.72,
+                                            whiteSpace: 'nowrap',
+                                        },
+                                        children: t,
+                                    }),
+                                (0, n.jsx)('div', {
+                                    style: {
+                                        height: '1px',
+                                        flex: '1 1 auto',
+                                        background: 'var(--ym-controls-color-secondary-outline-enabled_stroke)',
+                                        opacity: 0.6,
+                                    },
+                                }),
+                            ],
+                        }),
+                    });
+                },
                 settingBarWithDropdown = (e) => {
                     let { title: t, description: o, onChange: i, value: l, options: r, direction: s = 'bottom', disabled: a = !1, buttonStyle: buttonStyle = {} } = e,
                         [d, u] = (0, v.useState)(!1),
@@ -728,7 +777,7 @@
                         f = r.find((e) => e.value === l),
                         x = (0, v.useCallback)(
                             (e) => {
-                                i(e), u(!1);
+                                (i(e), u(!1));
                             },
                             [i],
                         ),
@@ -931,7 +980,7 @@
                 },
                 getKeybindModifiers = (e) => {
                     let t = [];
-                    return e.ctrlKey && t.push('Ctrl'), e.altKey && t.push('Alt'), e.shiftKey && t.push('Shift'), e.metaKey && t.push('Super'), t;
+                    return (e.ctrlKey && t.push('Ctrl'), e.altKey && t.push('Alt'), e.shiftKey && t.push('Shift'), e.metaKey && t.push('Super'), t);
                 },
                 getKeybindModifierPreview = (e, t) => {
                     let o = getKeybindModifiers(e);
@@ -975,21 +1024,21 @@
                             r ||
                                 p((e) => {
                                     let t = !e;
-                                    return f(a), t;
+                                    return (f(a), t);
                                 });
                         }, [r, a]),
                         b = (0, v.useCallback)(() => {
-                            p(!1), f(a);
+                            (p(!1), f(a));
                         }, [a]),
                         j = (0, v.useCallback)(
                             (e) => {
                                 if ((e.preventDefault(), e.stopPropagation(), e.repeat)) return;
                                 if (['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) return void f(getKeybindModifierPreview(e, a));
                                 if (!e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey && ('Escape' === e.key || 'Esc' === e.key)) return void b();
-                                if (!e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey && ('Backspace' === e.key || 'Delete' === e.key)) return i(''), void b();
+                                if (!e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey && ('Backspace' === e.key || 'Delete' === e.key)) return (i(''), void b());
                                 let t = getKeybindTokenFromEvent(e);
                                 if (!t) return void f(getKeybindModifierPreview(e, a));
-                                i(buildKeybindFromEvent(e, t)), b();
+                                (i(buildKeybindFromEvent(e, t)), b());
                             },
                             [i, b, a],
                         ),
@@ -1014,10 +1063,10 @@
                                 document.addEventListener('mousedown', e, !0),
                                 window.addEventListener('blur', t),
                                 () => {
-                                    document.removeEventListener('keydown', j, !0),
+                                    (document.removeEventListener('keydown', j, !0),
                                         document.removeEventListener('keyup', C, !0),
                                         document.removeEventListener('mousedown', e, !0),
-                                        window.removeEventListener('blur', t);
+                                        window.removeEventListener('blur', t));
                                 }
                             );
                         }, [u, j, C, b]),
@@ -1478,9 +1527,9 @@
                         actionOptions = (0, v.useMemo)(() => buildGlobalShortcutActionOptions(extraActions), [extraActions]),
                         syncGlobalShortcutsFromStore = (0, v.useCallback)(() => {
                             let e = window.nativeSettings.get('modSettings.globalShortcuts') ?? {};
-                            (isGlobalShortcutsEnabledRef.current = Boolean(e.enable)),
+                            ((isGlobalShortcutsEnabledRef.current = Boolean(e.enable)),
                                 setIsGlobalShortcutsEnabled(Boolean(e.enable)),
-                                setShortcutItems(parseGlobalShortcutsConfig(e));
+                                setShortcutItems(parseGlobalShortcutsConfig(e)));
                         }, []),
                         persistShortcutItems = (0, v.useCallback)((e, t) => {
                             window.nativeSettings.set(
@@ -1492,13 +1541,15 @@
                             (e) => {
                                 setShortcutItems((t) => {
                                     let o = 'function' == typeof e ? e(t) : e;
-                                    return persistShortcutItems(o), o;
+                                    return (persistShortcutItems(o), o);
                                 });
                             },
                             [persistShortcutItems],
                         ),
                         onGlobalShortcutsEnabledChange = (0, v.useCallback)((e) => {
-                            (isGlobalShortcutsEnabledRef.current = e), setIsGlobalShortcutsEnabled(e), window.nativeSettings.set('modSettings.globalShortcuts.enable', e);
+                            ((isGlobalShortcutsEnabledRef.current = e),
+                                setIsGlobalShortcutsEnabled(e),
+                                window.nativeSettings.set('modSettings.globalShortcuts.enable', e));
                         }, []),
                         onRecorderStateChange = (0, v.useCallback)((e, t) => {
                             let o = recordingIdsRef.current;
@@ -1959,7 +2010,7 @@
                                     className: $().item,
                                     children: (0, n.jsx)(Q, {
                                         title: 'Отправлять анонимную статистику',
-                                        description: 'Отключит отправку стаитстики Мода его разработчику. Не влияет на метрику Яндекса',
+                                        description: 'Отключит отправку статистики Мода его разработчику. Не влияет на метрику Яндекса',
                                         onChange: onSendAnonymizedMetricsToggle,
                                         isChecked: window.nativeSettings.getAsync('sendModAnonymizedMetrics'),
                                     }),
@@ -3811,25 +3862,6 @@
                                     dataTestId: (0, s.Am)(s.e8.settings.OFFLINE_MODE_TOGGLE),
                                 }),
                             }),
-                        y &&
-                            (0, n.jsxs)('li', {
-                                className: $().item,
-                                children: (() => {
-                                    let e = downloadedTracksInfo.tracksCount ?? 0;
-                                    return [
-                                        (0, n.jsx)(D, {
-                                            title: x({ id: 'offline.clear-memory' }),
-                                            description: 'Скачан'
-                                                .concat(e % 10 === 1 && e % 100 !== 11 ? '' : 'о', ' ')
-                                                .concat(e, ' ')
-                                                .concat(getTrackWordForm(e), ' (')
-                                                .concat(formatBytes(downloadedTracksInfo.tracksSize), ')'),
-                                            onClick: Y,
-                                        }),
-                                        (0, n.jsx)(R, {}),
-                                    ];
-                                })(),
-                            }),
                         N &&
                             (0, n.jsx)('li', {
                                 className: $().item,
@@ -3888,6 +3920,40 @@
                                 isChecked: appendPlaylistTracksToEnd,
                             }),
                         }),
+
+                        (0, n.jsx)(settingsCategorySeparator, { text: 'Скачивание и Кеш' }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Скачивание треков',
+                                description: 'Настройки оффлайн прослушивания, а также скачивания в файл',
+                                onClick: downloaderSettingsModal.open,
+                            }),
+                        }),
+
+                        y &&
+                            (0, n.jsxs)('li', {
+                                className: $().item,
+                                children: (() => {
+                                    let e = downloadedTracksInfo.tracksCount ?? 0;
+                                    return [
+                                        (0, n.jsx)(D, {
+                                            title: x({ id: 'offline.clear-memory' }),
+                                            description: 'Скачан'
+                                                .concat(e % 10 === 1 && e % 100 !== 11 ? '' : 'о', ' ')
+                                                .concat(e, ' ')
+                                                .concat(getTrackWordForm(e), ' (')
+                                                .concat(formatBytes(downloadedTracksInfo.tracksSize), ')'),
+                                            onClick: Y,
+                                        }),
+                                        (0, n.jsx)(R, {}),
+                                    ];
+                                })(),
+                            }),
+
+                        (0, n.jsx)(settingsCategorySeparator, { text: 'Отключение разделов' }),
+
                         (0, n.jsx)(T.aQ, {
                             fallback:
                                 !a.checkExperiment(m.zal.WebNextDisableKids, 'on') &&
@@ -3917,6 +3983,9 @@
                                 isChecked: de,
                             }),
                         }),
+
+                        (0, n.jsx)(settingsCategorySeparator, { text: 'Горячие клавиши' }),
+
                         (0, n.jsxs)('li', {
                             className: $().item,
                             children: [(0, n.jsx)(D, { title: x({ id: 'settings.shortcuts' }), onClick: o.open }), (0, n.jsx)(J, {})],
@@ -3931,20 +4000,8 @@
                         }),
                         (0, n.jsx)(globalShortcutsSettings, {}),
                         S && (0, n.jsx)('li', { className: $().item, children: (0, n.jsx)(k, {}) }),
-                        E &&
-                            (0, n.jsxs)('li', {
-                                className: $().item,
-                                children: [(0, n.jsx)(D, { title: x({ id: 'settings.about-app' }), description: E, onClick: aboutAppModal.open }), (0, n.jsx)(A, {})],
-                            }),
 
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
-                                title: 'Скачивание треков',
-                                description: 'Настройки оффлайн прослушивания, а также скачивания в файл',
-                                onClick: downloaderSettingsModal.open,
-                            }),
-                        }),
+                        (0, n.jsx)(settingsCategorySeparator, { text: 'Моя Волна' }),
 
                         (0, n.jsx)('li', {
                             className: $().item,
@@ -3973,6 +4030,8 @@
                             }),
                         }),
 
+                        (0, n.jsx)(settingsCategorySeparator, { text: 'UI и Плеер' }),
+
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
@@ -3994,20 +4053,13 @@
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
-                                title: 'Настройки аудио',
-                                description: 'Нормализация громкости и пространственный звук',
-                                onClick: audioSettingsModal.open,
-                            }),
-                        }),
-
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
                                 title: 'Миниплеер',
                                 description: 'Настройки поведения миниплеера',
                                 onClick: ueModal.open,
                             }),
                         }),
+
+                        (0, n.jsx)(settingsCategorySeparator, { text: 'Интеграции' }),
 
                         (0, n.jsx)('li', {
                             className: $().item,
@@ -4036,12 +4088,23 @@
                             }),
                         }),
 
+                        (0, n.jsx)(settingsCategorySeparator, { text: 'Система и Синхронизация' }),
+
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
                                 title: 'Системные настройки',
                                 description: 'Автозапуск, аппаратное ускорение и т.п.',
                                 onClick: deModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
+                                title: 'Настройки аудио',
+                                description: 'Нормализация громкости и пространственный звук',
+                                onClick: audioSettingsModal.open,
                             }),
                         }),
 
@@ -4062,6 +4125,14 @@
                                 onClick: appUpdatesSettingsModal.open,
                             }),
                         }),
+
+                        E &&
+                            (0, n.jsxs)('li', {
+                                className: $().item,
+                                children: [(0, n.jsx)(D, { title: x({ id: 'settings.about-app' }), description: E, onClick: aboutAppModal.open }), (0, n.jsx)(A, {})],
+                            }),
+
+                        (0, n.jsx)(settingsCategorySeparator, { text: 'Прочие' }),
 
                         (0, n.jsx)('li', {
                             className: $().item,
