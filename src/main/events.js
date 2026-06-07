@@ -255,7 +255,7 @@ const handleApplicationEvents = (window) => {
                 mainWindow.webContents.send(events_js_1.Events.APP_STALL);
                 let progress = 0;
                 safeModeRestartInterval = setInterval(() => {
-                    sendProgressBarChange(window, 'safeModeRestart', progress, `${Math.round(20 - progress / 20)} сек`);
+                    sendProgressBarChange(window, 'safeModeRestart', Math.round(progress / 2), `${Math.round(20 - (progress / 10))} сек`);
                     progress += 1;
                 }, 100);
                 appSafeModeRestartTimeout = setTimeout(() => {
