@@ -3949,15 +3949,6 @@
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
-                                title: 'Discord RPC',
-                                description: 'Интеграция с Discord',
-                                onClick: discordRpcSettingsModal.open,
-                            }),
-                        }),
-
-                        (0, n.jsx)('li', {
-                            className: $().item,
-                            children: (0, n.jsx)(D, {
                                 title: 'Производительность анимации Волны',
                                 description: 'Отключение анимации, FPS, разрешение и т.п.',
                                 onClick: myVibeAnimationPerformanceSettingsModal.open,
@@ -4021,6 +4012,15 @@
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
+                                title: 'Discord RPC',
+                                description: 'Интеграция с Discord',
+                                onClick: discordRpcSettingsModal.open,
+                            }),
+                        }),
+
+                        (0, n.jsx)('li', {
+                            className: $().item,
+                            children: (0, n.jsx)(D, {
                                 title: 'Скробблинг',
                                 description: 'Авторизация в Last.fm и другие настройки',
                                 onClick: scrobblersSettingsModal.open,
@@ -4048,18 +4048,18 @@
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
-                                title: 'Обновления',
-                                description: 'Настройки обновлений программы и мода',
-                                onClick: appUpdatesSettingsModal.open,
+                                title: ['Ynison Remote', (0, n.jsx)(labeledBubble, { label: 'BETA' })],
+                                description: 'Настройки удалённого управления',
+                                onClick: ynisonSettingsModal.open,
                             }),
                         }),
 
                         (0, n.jsx)('li', {
                             className: $().item,
                             children: (0, n.jsx)(D, {
-                                title: ['Ynison Remote', (0, n.jsx)(labeledBubble, { label: 'BETA' })],
-                                description: 'Настройки удалённого управления',
-                                onClick: ynisonSettingsModal.open,
+                                title: 'Обновления',
+                                description: 'Настройки обновлений программы и мода',
+                                onClick: appUpdatesSettingsModal.open,
                             }),
                         }),
 
