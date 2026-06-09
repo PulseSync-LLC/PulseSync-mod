@@ -223,6 +223,8 @@ const init = () => {
             autoLaunchOnAppStartup: false,
             enableEndlessMusic: true,
             improvedWaveLayout: true,
+            forceOldSettingsInWheel: true,
+            swapVibeAnimationAndWheel: false,
         },
         appAutoUpdates: {
             enableAppAutoUpdate: store.get(store_js_1.StoreKeys.AUTO_UPDATES) ?? true,

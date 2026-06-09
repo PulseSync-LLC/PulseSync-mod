@@ -259,6 +259,9 @@
                         N = (0, j.l$t)({ mainObjectType: I.ky.Track }),
                         { resetSettings: S } = (0, j.B0S)({ seeds: [j.M19], pageIdForFrom: C, blockIdForFrom: P }),
                         { isEnabled: E } = (0, j.e8U)(),
+                        [swapVibeAnimationAndWheel, setSwapVibeAnimationAndWheel] = (0, s.useState)(
+                            window?.nativeSettings?.get('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel') ?? false,
+                        ),
                         T = (() => {
                             var e, t, a, i, n, r;
                             let { sonataState: l } = (0, j.Pjs)(),
@@ -347,18 +350,29 @@
                             (g.checkExperiment(j.zal.WebNextWaveScreenWordsInWave, 'on') || g.checkExperiment(j.zal.WebNextWaveScreenWordsInWave, 'on_with_onyx')),
                         em = A.isShuffleVibe && h.isVibeContext,
                         ep = (0, F.OH)(em || null == (d = h.entityMeta) ? void 0 : d.averageColor);
-                    (0, s.useEffect)(() => {
+                    ((0, s.useEffect)(() => {
                         ea || eo(!1);
                     }, [eo, ea]),
                         (0, s.useEffect)(() => {
                             k && N(!0);
                         }, [N, k]),
+                        (0, s.useEffect)(() => {
+                            const e = (event, key, value) => {
+                                'modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel' === key && setSwapVibeAnimationAndWheel(value);
+                            };
+
+                            const unsub = window.desktopEvents?.on('NATIVE_STORE_UPDATE', e);
+
+                            return () => {
+                                unsub();
+                            };
+                        }, []),
                         (0, s.useEffect)(
                             () => () => {
                                 N(!1);
                             },
                             [N],
-                        );
+                        ));
                     let ev = (0, m.L)(() =>
                             g.checkExperiment(j.zal.WebNextShaderFallbackEnabled, 'on')
                                 ? (0, i.jsx)(O.LW, { className: U().vibeAnimation })
@@ -420,6 +434,9 @@
                             E && (0, i.jsx)(B.Td, {}),
                             (0, i.jsxs)('div', {
                                 className: (0, n.$)(U().root, { [U().root_reshuffle]: em, [U().root_withoutPlus]: !b.hasPlus }),
+                                style: {
+                                    flexDirection: swapVibeAnimationAndWheel ? 'row-reverse' : 'row',
+                                },
                                 children: [
                                     (0, i.jsx)(M.Q, { className: U().wheel }),
                                     (0, i.jsxs)('div', {
@@ -8331,8 +8348,25 @@
                 d = a(44240),
                 u = a(16486),
                 _ = a(57318);
-            let m = (e) =>
-                e.items
+
+            const settingItem = {
+                id: 'setting',
+                type: 'SETTING',
+                style: 'CONTROL',
+                data: {
+                    title: 'Настроить Мою волну',
+                    cover: {
+                        uri: 'avatars.mds.yandex.net/get-music-misc/30221/img.6a02b79f69c75168250b2889/%%',
+                    },
+                },
+            };
+
+            let m = (e) => {
+                if (window.nativeSettings?.get?.('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel') ?? false) {
+                    e.items = e.items.filter((item) => item.type !== 'SETTING');
+                    e.items = [e.items.shift(), settingItem, ...e.items];
+                }
+                return e.items
                     .map((e, t) => {
                         var a, i, n, l;
                         switch (e.type) {
@@ -8380,6 +8414,7 @@
                         }
                     })
                     .filter((e) => null !== e);
+            };
             var p = a(12388);
             !(function (e) {
                 (e.CLICK = 'CLICK'), (e.VIEW = 'VIEW');

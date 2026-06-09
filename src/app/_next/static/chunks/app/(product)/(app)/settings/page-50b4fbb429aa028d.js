@@ -2755,10 +2755,18 @@
                             console.log('modSettings.vibeAnimationEnhancement.enableEndlessMusic toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.enableEndlessMusic', e);
                         }, []),
-                        onImprovedWaveLayoutToggle = (0, v.useCallback)(async (e) => {
+                        ((onImprovedWaveLayoutToggle = (0, v.useCallback)(async (e) => {
                             console.log('modSettings.vibeAnimationEnhancement.improvedWaveLayout toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.improvedWaveLayout', e);
-                        }, []);
+                        }, [])),
+                            (onForceOldSettingsInWheelToggle = (0, v.useCallback)(async (e) => {
+                                console.log('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel', e);
+                            }, [])),
+                            (onSwapVibeAnimationAndWheelToggle = (0, v.useCallback)(async (e) => {
+                                console.log('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel', e);
+                            }, [])));;
                     return (0, n.jsx)(w.a, {
                         className: K().list,
                         style: { maxWidth: '34.375rem', height: 'auto' },
@@ -2801,6 +2809,23 @@
                                         description: 'Включает обновленное расположение кнопок и дополнительные элементы управления на странице Волны',
                                         onChange: onImprovedWaveLayoutToggle,
                                         isChecked: window.nativeSettings.getAsync('modSettings.vibeAnimationEnhancement.improvedWaveLayout').then((e) => e ?? !0),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Форсировать старые настройки в колесе Волн',
+                                        description: 'Когда включено, добавляет кнопку на первый элемент колеса, кнопку открывающую старые настройки Волны',
+                                        onChange: onForceOldSettingsInWheelToggle,
+                                        isChecked: window.nativeSettings.getAsync('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel').then((e) => e ?? !0),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Поменять местами Анимацию Волны и Колесо Волн',
+                                        onChange: onSwapVibeAnimationAndWheelToggle,
+                                        isChecked: window.nativeSettings.getAsync('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel').then((e) => e ?? !0),
                                     }),
                                 }),
                             ],

@@ -517,7 +517,12 @@
                         const e = (event, key, value) => {
                             'modSettings.window.hidePulseSyncVersionInTitleBar' === key && N(value);
                         };
-                        return window.desktopEvents?.on('NATIVE_STORE_UPDATE', e), () => window.desktopEvents?.off?.('NATIVE_STORE_UPDATE', e);
+
+                        const unsub = window.desktopEvents?.on('NATIVE_STORE_UPDATE', e);
+
+                        return () => {
+                            unsub();
+                        }
                     }, []);
                     return (0, s.jsx)('div', {
                         className: u().root,
