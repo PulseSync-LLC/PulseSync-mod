@@ -2755,18 +2755,18 @@
                             console.log('modSettings.vibeAnimationEnhancement.enableEndlessMusic toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.enableEndlessMusic', e);
                         }, []),
-                        ((onImprovedWaveLayoutToggle = (0, v.useCallback)(async (e) => {
+                        onImprovedWaveLayoutToggle = (0, v.useCallback)(async (e) => {
                             console.log('modSettings.vibeAnimationEnhancement.improvedWaveLayout toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.improvedWaveLayout', e);
-                        }, [])),
-                            (onForceOldSettingsInWheelToggle = (0, v.useCallback)(async (e) => {
-                                console.log('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel toggled. Value: ', e);
-                                window.nativeSettings.set('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel', e);
-                            }, [])),
-                            (onSwapVibeAnimationAndWheelToggle = (0, v.useCallback)(async (e) => {
-                                console.log('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel toggled. Value: ', e);
-                                window.nativeSettings.set('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel', e);
-                            }, [])));;
+                        }, []),
+                        onForceOldSettingsInWheelToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel', e);
+                        }, []),
+                        onSwapVibeAnimationAndWheelToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel', e);
+                        }, []);
                     return (0, n.jsx)(w.a, {
                         className: K().list,
                         style: { maxWidth: '34.375rem', height: 'auto' },
