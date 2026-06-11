@@ -6742,6 +6742,12 @@
                         yandex_tv: 'tv',
                         saturn: 'chiron',
                         cucumber: 'cucumber',
+                        bergamot: 'mini',
+                        plum: 'mini',
+                        orion: 'station',
+                        monet: 'tv',
+                        magritte: 'tv',
+                        goya: 'tv',
                     };
                     if (a[t]) return a[t];
                     if (/computer|desktop|windows|win32|darwin|mac|linux|electron/.test(t)) return 'computer';
