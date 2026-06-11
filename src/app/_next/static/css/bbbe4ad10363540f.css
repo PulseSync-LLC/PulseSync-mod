@@ -4032,6 +4032,7 @@
 .NotificationUpdate_button__F3O16 {
     min-width: 7.875rem;
     -webkit-app-region: no-drag;
+    z-index: 2;
 }
 .NotificationUpdate_message__rLYpW {
     max-width: min(42rem, calc(100vw - 2rem));
