@@ -378,13 +378,13 @@
                                     children: (0, n.jsx)(T.N_, {
                                         className: P().link,
                                         target: '_blank',
-                                        href: 'https://boosty.to/evt',
+                                        href: 'https://pulsesync.dev/subscription',
                                         children: (0, n.jsx)(c.Caption, {
                                             type: 'controls',
                                             variant: 'span',
                                             size: 'l',
                                             weight: 'medium',
-                                            children: 'Поддержать проект на Boosty',
+                                            children: 'Поддержать проект оформив подписку',
                                         }),
                                     }),
                                 }),
@@ -2389,10 +2389,10 @@
                                         title: [
                                             'Скрывать версию PulseSync в TitleBar',
                                             (0, n.jsx)(labeledBubble, {
-                                                label: 'Boosty',
+                                                label: 'Basic',
                                                 tooltip: {
                                                     title: 'Премиум функция',
-                                                    description: a ? 'У вас есть подписка на Boosty' : 'Подпишитесь на Boosty, чтобы разблокировать',
+                                                    description: a ? 'У вас есть подписка Basic' : 'Оформите Basic подписку, чтобы разблокировать',
                                                 },
                                                 disabled: !a,
                                             }),
@@ -2963,10 +2963,10 @@
                                     title: [
                                         'Скрыть брендинг PulseSync в статусе',
                                         (0, n.jsx)(labeledBubble, {
-                                            label: 'Boosty',
+                                            label: 'Basic',
                                             tooltip: {
                                                 title: 'Премиум функция',
-                                                description: isPremium ? 'У вас есть подписка на Boosty' : 'Подпишитесь на Boosty, чтобы разблокировать',
+                                                description: isPremium ? 'У вас есть подписка Basic' : 'Оформите Basic подписку, чтобы разблокировать',
                                             },
                                             disabled: !isDiscordStatusEnabled,
                                         }),
