@@ -3548,20 +3548,20 @@
                         {
                             modals: { scrobblersSettingsModal: t },
                         } = (0, m.Pjs)(),
-                        userInfoState = (0, v.useState)(null),
-                        userInfo = userInfoState[0],
-                        setUserInfo = userInfoState[1],
-                        unauthorizedProbeState = (0, v.useState)(!1),
-                        unauthorizedProbe = unauthorizedProbeState[0],
-                        setUnauthorizedProbe = unauthorizedProbeState[1],
-                        isLastFmEnabledState = (0, v.useState)(window.nativeSettings.get('modSettings.scrobblers.lastfm.enable')),
-                        isLastFmEnabled = isLastFmEnabledState[0],
-                        separatorTypeState = (0, v.useState)(window.nativeSettings.get('modSettings.scrobblers.lastfm.separatorType')),
-                        separatorType = separatorTypeState[0],
-                        setSeparatorType = separatorTypeState[1],
+                        [userInfo, setUserInfo] = (0, v.useState)(null),
+                        [lastFmLoginError, setLastFmLoginError] = (0, v.useState)(!1),
+                        [unauthorizedProbe, setUnauthorizedProbe] = (0, v.useState)(!1),
+                        [isLastFmEnabled, setIsLastFmEnabledState] = (0, v.useState)(window.nativeSettings.get('modSettings.scrobblers.lastfm.enable')),
+                        [separatorType, setSeparatorType] = (0, v.useState)(window.nativeSettings.get('modSettings.scrobblers.lastfm.separatorType')),
                         onLastFMLoginClick = (0, v.useCallback)(async () => {
                             console.log('scrobble-lastfm-login triggered.');
-                            await window.scrobble.lastfmLogin();
+                            setLastFmLoginError(!1);
+                            try {
+                                await window.scrobble.lastfmLogin();
+                            } catch (error) {
+                                console.error('scrobble-lastfm-login failed.', error);
+                                setLastFmLoginError(!0);
+                            }
                         }, []),
                         onLastFMLogoutClick = (0, v.useCallback)(async () => {
                             console.log('scrobble-lastfm-logout triggered.');
@@ -3570,6 +3570,7 @@
                         onLastFmScrobblingToggle = (0, v.useCallback)(async (e) => {
                             console.log('modSettings.scrobblers.lastfm.enable toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.scrobblers.lastfm.enable', e);
+                            setIsLastFmEnabledState(e);
                         }, []),
                         onSeparatorTypeChange = (0, v.useCallback)(async (e) => {
                             console.log('separatorType changed. Value: ', e);
@@ -3638,7 +3639,21 @@
                                                 title: userInfo
                                                     ? ''.concat(userInfo.user.name, ' (').concat(Number(userInfo.user.playcount).toLocaleString().replace(' ', ','), ')')
                                                     : 'LastFM',
-                                                description: userInfo ? 'Выйти из LastFM' : 'Авторизоваться в LastFM',
+                                                description: userInfo
+                                                    ? 'Выйти из LastFM'
+                                                    : lastFmLoginError
+                                                      ? (0, n.jsxs)(n.Fragment, {
+                                                            children: [
+                                                                'Не удалось авторизоваться в LastFM',
+                                                                (0, n.jsx)('br', {}),
+                                                                'Убедитесь, что домены ниже проксируются:',
+                                                                (0, n.jsx)('br', {}),
+                                                                'last.fm',
+                                                                (0, n.jsx)('br', {}),
+                                                                'ws.audioscrobbler.com',
+                                                            ],
+                                                        })
+                                                      : 'Авторизоваться в LastFM',
                                                 onClick: userInfo ? onLastFMLogoutClick : onLastFMLoginClick,
                                             }),
                                         ],
@@ -3688,7 +3703,7 @@
                                             ],
                                             description: unauthorizedProbe
                                                 ? 'Скробблить проигрывания даже с других устройств'
-                                                : 'Недоступно в вашем регионе или включён VPN',
+                                                : 'Недоступно в вашем регионе или регионе VPN',
                                             disabled: !(userInfo && isLastFmEnabled && unauthorizedProbe),
                                             onChange: onLastFmFromYnisonToggle,
                                             isChecked: window.nativeSettings.getAsync('modSettings.scrobblers.lastfm.fromYnison'),
