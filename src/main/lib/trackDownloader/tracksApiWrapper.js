@@ -1,5 +1,20 @@
 const config_js_1 = require('../../config.js');
 
+function normalizeTrackMetadata(track) {
+    if (!track) return track;
+
+    const substituted = track.substituted;
+    return {
+        ...track,
+        title: substituted?.title ?? track.title,
+        artists: substituted?.artists ?? track.artists,
+        version: substituted?.version ?? track.version,
+        derivedColors: substituted?.derivedColors ?? track.derivedColors,
+        ogImage: substituted?.ogImage ?? substituted?.coverUri ?? track.ogImage,
+        coverUri: substituted?.coverUri ?? substituted?.ogImage ?? substituted?.albums?.[0]?.coverUri ?? track.coverUri ?? track.ogImage ?? track.albums?.[0]?.coverUri,
+    };
+}
+
 class TracksApiWrapper {
     constructor(token, userAgent) {
         this.token = token;
@@ -118,7 +133,7 @@ class TracksApiWrapper {
     }
 
     async getTracksMeta(ids, { removeDuplicates = false, withProgress = false, signal } = {}) {
-        return (
+        const tracks = (
             await this.request('POST', 'tracks', {
                 formData: {
                     trackIds: ids,
@@ -128,6 +143,8 @@ class TracksApiWrapper {
                 signal,
             })
         ).data;
+
+        return Array.isArray(tracks) ? tracks.map(normalizeTrackMetadata) : tracks;
     }
 
     async getFileInfo(trackId, { quality = 'lossless', codecs = this.codecs, transports = ['encraw', 'raw'], signal } = {}) {

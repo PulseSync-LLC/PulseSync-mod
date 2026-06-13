@@ -92,6 +92,23 @@ const isBoolean = (value) => {
 
 const getLastFmScrobbler = () => scrobbleManager_js_1.scrobblerManager.getScrobblerByType('Last.fm');
 
+const normalizeSubstitutedTrack = (track) => {
+    if (!track) return;
+
+    const substituted = track.substituted;
+    if (substituted) {
+        track.title = substituted.title ?? track.title;
+        track.artists = substituted.artists ?? track.artists;
+        track.version = substituted.version ?? track.version;
+        track.derivedColors = substituted.derivedColors ?? track.derivedColors;
+        track.ogImage = substituted.ogImage ?? substituted.coverUri ?? track.ogImage;
+        track.isSubstituted = true;
+    }
+
+    track.coverUri =
+        substituted?.coverUri ?? substituted?.ogImage ?? substituted?.albums?.[0]?.coverUri ?? track.coverUri ?? track.ogImage ?? track.albums?.[0]?.coverUri;
+};
+
 const getLastFmScrobblingState = () => {
     const lastFmEnabled = Boolean(store_js_1.getModSettings()?.scrobblers?.lastfm?.enable);
     if (!lastFmEnabled) {
@@ -863,20 +880,9 @@ const handleApplicationEvents = (window) => {
                 state_js_1.state.player.canMoveForward = data.canMoveForward;
             }
 
-            if (data?.track?.substituted) {
-                data.track.coverUri = data.track.substituted.coverUri ?? data.track.coverUri;
-                data.track.derivedColors = data.track.substituted.derivedColors ?? data.track.derivedColors;
-            }
-
-            if (data?.previousTrack?.substituted) {
-                data.previousTrack.coverUri = data.previousTrack.substituted.coverUri ?? data.previousTrack.coverUri;
-                data.previousTrack.derivedColors = data.previousTrack.substituted.derivedColors ?? data.previousTrack.derivedColors;
-            }
-
-            if (data?.nextTrack?.substituted) {
-                data.nextTrack.coverUri = data.nextTrack.substituted.coverUri ?? data.nextTrack.coverUri;
-                data.nextTrack.derivedColors = data.nextTrack.substituted.derivedColors ?? data.nextTrack.derivedColors;
-            }
+            normalizeSubstitutedTrack(data?.track);
+            normalizeSubstitutedTrack(data?.previousTrack);
+            normalizeSubstitutedTrack(data?.nextTrack);
 
             const isActiveState = ['paused', 'playing'].includes(data?.status);
             const isPlayable = isPlayerReady && data.status !== 'idle' && isActiveState;

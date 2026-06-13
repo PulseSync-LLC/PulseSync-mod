@@ -6544,17 +6544,17 @@
                 var a = (aL[e] = { exports: {} });
                 return aw[e].call(a.exports, a, a.exports, aM), a.exports;
             }
-            (aM.d = (e, t) => {
+            ((aM.d = (e, t) => {
                 for (var a in t) aM.o(t, a) && !aM.o(e, a) && Object.defineProperty(e, a, { enumerable: !0, get: t[a] });
             }),
                 (aM.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (aM.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var aB = {};
             (() => {
-                Object.defineProperty(aB, 'X', { value: !0 }), (aB.W = void 0);
+                (Object.defineProperty(aB, 'X', { value: !0 }), (aB.W = void 0));
                 var e = aM(9598);
                 Object.defineProperty(aB, 'W', {
                     enumerable: !0,
@@ -6624,9 +6624,9 @@
                         style: L,
                         children: (0, o.jsxs)('div', {
                             className: (0, c.$)(aV().center, {
-                                [aV().center_withExplicitMark]: null == v ? void 0 : v.explicitDisclaimer,
+                                [aV().center_withExplicitMark]: (null == v ? void 0 : v.explicitDisclaimer) || (null == v ? void 0 : v.isSubstituted),
                                 [aV().center_withExplicitMark_playing]: r.isPlaying,
-                                [aV().center_withoutExplicitMark]: !(null == v ? void 0 : v.explicitDisclaimer),
+                                [aV().center_withoutExplicitMark]: !((null == v ? void 0 : v.explicitDisclaimer) || (null == v ? void 0 : v.isSubstituted)),
                                 [aV().center_withoutExplicitMark_playing]: r.isPlaying,
                                 [aV().center_withTimecode]: N,
                                 [aV().center_active]: !r.isGenerativeContext,
@@ -6658,6 +6658,14 @@
                                         variant: v.explicitDisclaimer,
                                         className: aV().explicitMark,
                                         trackId: v.id,
+                                    }),
+                                (null == v ? void 0 : v.isSubstituted) &&
+                                    (0, o.jsx)(F.Icon, {
+                                        className: aV().explicitMark,
+                                        variant: 'info',
+                                        size: 'xxxs',
+                                        title: 'Подменённые данные трека были восстановлены',
+                                        'aria-label': 'Подменённые данные трека были восстановлены',
                                     }),
                                 !r.isGenerativeContext &&
                                     (0, o.jsx)('span', {

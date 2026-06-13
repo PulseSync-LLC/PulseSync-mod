@@ -164,7 +164,9 @@ class LastFmScrobbler {
     }
 
     checkIfTrackStatesSynced(playingState) {
-        if (this.nowPlayingLastFmTrack.name !== playingState.track.title && this.nowPlayingLastFmTrack.artist.name !== playingState.track.artists[0].name) {
+        const title = playingState.track.substituted?.title ?? playingState.track.title;
+        const mainArtist = (playingState.track.substituted?.artists ?? playingState.track.artists)?.[0]?.name;
+        if (this.nowPlayingLastFmTrack.name !== title && this.nowPlayingLastFmTrack.artist.name !== mainArtist) {
             this.logger.debug('Track states are not synced');
             return false;
         }

@@ -7732,9 +7732,16 @@
                         isAvailable: !!(null == e ? void 0 : e.available),
                         isRemoved: (null == e ? void 0 : e.error) === 'not-found',
                         title: e?.substituted?.title ?? e?.title ?? '',
-                        version: e?.version ?? (e?.substituted ? (e.substituted?.version ?? 'Подменённые данные трека были восстановлены') : undefined),
+                        version: e?.substituted?.version ?? e?.version,
+                        isSubstituted: !!e?.substituted,
                         durationMs: g,
-                        coverUri: e?.substituted?.coverUri ?? e?.coverUri,
+                        coverUri:
+                            e?.substituted?.coverUri ??
+                            e?.substituted?.ogImage ??
+                            e?.substituted?.albums?.[0]?.coverUri ??
+                            e?.coverUri ??
+                            e?.ogImage ??
+                            e?.albums?.[0]?.coverUri,
                         averageColor: v,
                         trackParameters: ((e) =>
                             (0, i.wg)({
@@ -7844,6 +7851,7 @@
                             title: i.gK.string,
                             trackSource: i.gK.maybe(i.gK.enumeration(Object.values(O.J))),
                             version: i.gK.maybe(i.gK.string),
+                            isSubstituted: i.gK.maybe(i.gK.boolean),
                             durationMs: i.gK.maybe(i.gK.number),
                             coverUri: i.gK.maybe(i.gK.string),
                             averageColor: i.gK.maybe(i.gK.string),

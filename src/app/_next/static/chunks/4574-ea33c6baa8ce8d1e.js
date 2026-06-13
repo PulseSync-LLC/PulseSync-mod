@@ -19072,6 +19072,7 @@
                         description: f,
                         getDescriptionTexts: x,
                         explicitMarkVariant: _,
+                        isSubstituted: T,
                         className: p,
                         version: m,
                         title: v,
@@ -19148,6 +19149,14 @@
                                     ],
                                 }),
                                 _ && (0, n.jsx)(u.ExplicitMarkIcon, { className: d().explicitMark, getDescriptionTexts: x, variant: _ }),
+                                T &&
+                                    (0, n.jsx)(l.Icon, {
+                                        className: d().explicitMark,
+                                        variant: 'info',
+                                        size: 'xxs',
+                                        title: 'Подменённые данные трека были восстановлены',
+                                        'aria-label': 'Подменённые данные трека были восстановлены',
+                                    }),
                             ],
                         }),
                         f &&

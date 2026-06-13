@@ -1402,11 +1402,11 @@
                                     return (
                                         Object.getOwnPropertyNames(t).forEach((s) => {
                                             let i = t[s];
-                                            ('number' == typeof i || 'string' == typeof i || 'boolean' == typeof i) && e.append(s, String(i)),
+                                            (('number' == typeof i || 'string' == typeof i || 'boolean' == typeof i) && e.append(s, String(i)),
                                                 Array.isArray(i) &&
                                                     i.forEach((t) => {
                                                         ('number' == typeof t || 'string' == typeof t) && e.append(s, String(t));
-                                                    });
+                                                    }));
                                         }),
                                         e
                                     );
@@ -1417,16 +1417,20 @@
                     ).json();
 
                     tracksMeta.forEach((t) => {
-                        t.substituted?.artists && t.artists ? (t.artists = t.substituted.artists) : undefined;
-                        t.substituted?.ogImage && t.ogImage ? (t.ogImage = t.substituted.ogImage) : undefined;
-                        t.substituted?.coverUri && t.coverUri ? (t.coverUri = t.substituted.coverUri) : undefined;
-                        t.substituted?.title && t.title ? (t.title = t.substituted.title) : undefined;
-                        t.substituted?.derivedColors && t.derivedColors ? (t.derivedColors = t.substituted.derivedColors) : undefined;
-                        t.substituted?.version && t.version
-                            ? (t.version = t.substituted.version)
-                            : t.substituted
-                              ? 'Подменённые данные трека были восстановлены'
-                              : undefined;
+                        if (t.substituted) {
+                            t.artists = t.substituted.artists ?? t.artists;
+                            t.ogImage = t.substituted.ogImage ?? t.substituted.coverUri ?? t.ogImage;
+                            t.title = t.substituted.title ?? t.title;
+                            t.derivedColors = t.substituted.derivedColors ?? t.derivedColors;
+                            t.version = t.substituted.version ?? t.version;
+                        }
+                        t.coverUri =
+                            t.substituted?.coverUri ??
+                            t.substituted?.ogImage ??
+                            t.substituted?.albums?.[0]?.coverUri ??
+                            t.coverUri ??
+                            t.ogImage ??
+                            t.albums?.[0]?.coverUri;
                     });
 
                     return tracksMeta;

@@ -2631,6 +2631,7 @@
                 k = i(33797),
                 _ = i(49574),
                 p = i(44574),
+                W = i(82586),
                 v = i(25649),
                 C = i(24760),
                 x = i(84141),
@@ -2769,6 +2770,14 @@
                                             variant: l.explicitDisclaimer,
                                             className: g().explicitMark,
                                             trackId: l.id,
+                                        }),
+                                    l.isSubstituted &&
+                                        (0, a.jsx)(W.Icon, {
+                                            className: g().explicitMark,
+                                            variant: 'info',
+                                            size: b,
+                                            title: 'Подменённые данные трека были восстановлены',
+                                            'aria-label': 'Подменённые данные трека были восстановлены',
                                         }),
                                     E,
                                 ],

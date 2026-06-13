@@ -20,17 +20,20 @@ exports.getTrackInfo = getTrackInfo;
  * @returns Last.fm compatible track information
  */
 function getTrackInfo(track) {
-    const mainArtist = track.artists?.[0];
-    if (!track.title || !mainArtist?.name) {
+    const title = track.substituted?.title ?? track.title;
+    const artists = track.substituted?.artists ?? track.artists;
+    const albums = track.substituted?.albums ?? track.albums;
+    const mainArtist = artists?.[0];
+    if (!title || !mainArtist?.name) {
         throw new Error('Missing required track information');
     }
     return {
-        artist: getArtists(structuredClone(track.artists)),
-        track: track.title,
+        artist: getArtists(structuredClone(artists)),
+        track: title,
         duration: Math.floor(track.durationMs / 1000),
-        album: track.albums?.[0]?.title,
-        albumArtist: track.albums?.[0]?.artists?.[0]?.name,
-        trackNumber: track.albums?.[0]?.trackPosition?.index,
+        album: albums?.[0]?.title,
+        albumArtist: albums?.[0]?.artists?.[0]?.name,
+        trackNumber: albums?.[0]?.trackPosition?.index,
     };
 }
 
