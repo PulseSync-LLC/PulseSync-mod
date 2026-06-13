@@ -105,7 +105,7 @@
                 }
             }
             !(function (e) {
-                (e.MODAL = 'modal'),
+                ((e.MODAL = 'modal'),
                     (e.FOREIGN_AGENT = 'foreignAgent'),
                     (e.INFORMATIONAL = 'informational'),
                     (e.AGE_18 = 'age18'),
@@ -115,7 +115,8 @@
                     (e.AGE_16_ICON = 'age16Icon'),
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
-                    (e.EXCLAMATION_ICON = 'exclamationIcon');
+                    (e.EXCLAMATION_ICON = 'exclamationIcon'),
+                    (e.SUBSTITUTED_ICON = 'substitutedIcon'));
             })(s || (s = {}));
             let h = (e) => {
                     let t = [];
@@ -137,7 +138,7 @@
                 loadingPromise;
                 isDestroyed;
                 constructor(e) {
-                    (this.dataSource = e.dataSource),
+                    ((this.dataSource = e.dataSource),
                         (this.itemsObservable = new n(null)),
                         (this.isLoadingObservable = new n(!1)),
                         (this.errorObservable = new n(null)),
@@ -145,12 +146,12 @@
                         (this.isDestroyed = !1),
                         (this.items = this.itemsObservable),
                         (this.isLoading = this.isLoadingObservable),
-                        (this.error = this.errorObservable);
+                        (this.error = this.errorObservable));
                 }
                 async load() {
                     if (this.isDestroyed) return;
                     if (this.loadingPromise) return void (await this.loadingPromise);
-                    (this.isLoadingObservable.value = !0), (this.errorObservable.value = null);
+                    ((this.isLoadingObservable.value = !0), (this.errorObservable.value = null));
                     let e = this.dataSource
                         .loadAll()
                         .then((e) => {
@@ -163,7 +164,7 @@
                         .finally(() => {
                             this.loadingPromise = null;
                         });
-                    (this.loadingPromise = e), await e;
+                    ((this.loadingPromise = e), await e);
                 }
                 async getById(e) {
                     let t = this.findItemById(e);
@@ -190,16 +191,16 @@
                     for (let e of r)
                         if (e) {
                             let t = s[e.disclaimerType] ?? [];
-                            t.push(e.disclaimerItem), (s[e.disclaimerType] = t);
+                            (t.push(e.disclaimerItem), (s[e.disclaimerType] = t));
                         }
                     return s;
                 }
                 destroy() {
-                    (this.isDestroyed = !0),
+                    ((this.isDestroyed = !0),
                         (this.loadingPromise = null),
                         (this.itemsObservable.value = null),
                         (this.isLoadingObservable.value = !1),
-                        (this.errorObservable.value = null);
+                        (this.errorObservable.value = null));
                 }
                 findItemById(e) {
                     let t = this.itemsObservable.value;
@@ -207,7 +208,7 @@
                 }
             }
             !(function (e) {
-                (e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!');
+                (e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted');
             })(i || (i = {}));
             let c = new Map([
                     [s.EXPLICIT_ICON, i.E],
@@ -215,8 +216,9 @@
                     [s.AGE_16_ICON, i.AGE_16],
                     [s.AGE_12_ICON, i.AGE_12],
                     [s.EXCLAMATION_ICON, i.EXCLAMATION],
+                    [s.SUBSTITUTED_ICON, i.SUBSTITUTED],
                 ]),
-                d = [s.EXPLICIT_ICON, s.AGE_18_ICON, s.AGE_16_ICON, s.AGE_12_ICON, s.EXCLAMATION_ICON],
+                d = [s.EXPLICIT_ICON, s.AGE_18_ICON, s.AGE_16_ICON, s.AGE_12_ICON, s.SUBSTITUTED_ICON, s.EXCLAMATION_ICON],
                 b = (e) => {
                     let t = ((e, t) => {
                         for (let r of t) {

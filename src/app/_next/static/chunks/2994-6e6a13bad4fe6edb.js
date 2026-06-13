@@ -6635,9 +6635,9 @@
                         style: L,
                         children: (0, o.jsxs)('div', {
                             className: (0, c.$)(aV().center, {
-                                [aV().center_withExplicitMark]: (null == v ? void 0 : v.explicitDisclaimer) || (null == v ? void 0 : v.isSubstituted),
+                                [aV().center_withExplicitMark]: null == v ? void 0 : v.explicitDisclaimer,
                                 [aV().center_withExplicitMark_playing]: r.isPlaying,
-                                [aV().center_withoutExplicitMark]: !((null == v ? void 0 : v.explicitDisclaimer) || (null == v ? void 0 : v.isSubstituted)),
+                                [aV().center_withoutExplicitMark]: !(null == v ? void 0 : v.explicitDisclaimer),
                                 [aV().center_withoutExplicitMark_playing]: r.isPlaying,
                                 [aV().center_withTimecode]: N,
                                 [aV().center_active]: !r.isGenerativeContext,
@@ -6669,14 +6669,6 @@
                                         variant: v.explicitDisclaimer,
                                         className: aV().explicitMark,
                                         trackId: v.id,
-                                    }),
-                                (null == v ? void 0 : v.isSubstituted) &&
-                                    (0, o.jsx)(F.Icon, {
-                                        className: aV().explicitMark,
-                                        variant: 'info',
-                                        size: 'xxs',
-                                        title: 'Подменённые данные трека были восстановлены',
-                                        'aria-label': 'Подменённые данные трека были восстановлены',
                                     }),
                                 !r.isGenerativeContext &&
                                     (0, o.jsx)('span', {

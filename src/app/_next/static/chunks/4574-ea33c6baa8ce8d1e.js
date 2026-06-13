@@ -907,14 +907,38 @@
                     enabled: O,
                     children: (0, n.jsx)('span', {
                         className: _,
-                        children: (0, n.jsx)(f.Icon, {
-                            className: (0, s.$)(p().explicitMark, t),
-                            'aria-label': R,
-                            variant: E,
-                            size: v,
-                            ...g,
-                            ...(0, c.Am)(c.S7.EXPLICIT_MARK_ICON),
-                        }),
+                        children:
+                            m === l.JU.SUBSTITUTED
+                                ? (0, n.jsxs)('svg', {
+                                      className: (0, s.$)(p().explicitMark, t),
+                                      viewBox: '0 0 16 16',
+                                      role: 'img',
+                                      'aria-label': R,
+                                      style: { width: 'var(--ym-icon-size-'.concat(v, ')'), height: 'var(--ym-icon-size-'.concat(v, ')') },
+                                      ...g,
+                                      ...(0, c.Am)(c.S7.EXPLICIT_MARK_ICON),
+                                      children: [
+                                          (0, n.jsx)('circle', { cx: '8', cy: '8', r: '5.5', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5' }),
+                                          (0, n.jsx)('text', {
+                                              x: '8',
+                                              y: '9',
+                                              fill: 'currentColor',
+                                              fontSize: '7',
+                                              fontWeight: '700',
+                                              textAnchor: 'middle',
+                                              dominantBaseline: 'middle',
+                                              children: 'S',
+                                          }),
+                                      ],
+                                  })
+                                : (0, n.jsx)(f.Icon, {
+                                      className: (0, s.$)(p().explicitMark, t),
+                                      'aria-label': R,
+                                      variant: E,
+                                      size: v,
+                                      ...g,
+                                      ...(0, c.Am)(c.S7.EXPLICIT_MARK_ICON),
+                                  }),
                     }),
                 });
             });
@@ -19072,7 +19096,6 @@
                         description: f,
                         getDescriptionTexts: x,
                         explicitMarkVariant: _,
-                        isSubstituted: T,
                         className: p,
                         version: m,
                         title: v,
@@ -19149,14 +19172,6 @@
                                     ],
                                 }),
                                 _ && (0, n.jsx)(u.ExplicitMarkIcon, { className: d().explicitMark, getDescriptionTexts: x, variant: _ }),
-                                T &&
-                                    (0, n.jsx)(l.Icon, {
-                                        className: d().explicitMark,
-                                        variant: 'info',
-                                        size: 'xxs',
-                                        title: 'Подменённые данные трека были восстановлены',
-                                        'aria-label': 'Подменённые данные трека были восстановлены',
-                                    }),
                             ],
                         }),
                         f &&

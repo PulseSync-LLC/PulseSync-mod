@@ -1554,7 +1554,6 @@
                         artistsComponent: _,
                         getDescriptionTexts: s.getDescriptionTexts,
                         explicitMarkVariant: s.explicitDisclaimer,
-                        isSubstituted: s.isSubstituted,
                         releaseYear: (null == (t = s.mainAlbum) ? void 0 : t.isNonMusic) ? s.mainAlbum.year : void 0,
                     }),
                     playButtonCellRender: u,

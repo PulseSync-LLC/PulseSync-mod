@@ -7733,7 +7733,7 @@
                         isRemoved: (null == e ? void 0 : e.error) === 'not-found',
                         title: e?.substituted?.title ?? e?.title ?? '',
                         version: e?.substituted?.version ?? e?.version,
-                        isSubstituted: !!e?.substituted,
+                        isSubstituted: !!(e?.isSubstituted || e?.substituted),
                         durationMs: g,
                         coverUri:
                             e?.substituted?.coverUri ||
@@ -7754,7 +7754,15 @@
                             }))(null == e ? void 0 : e.trackParameters),
                         trackSource: null == e ? void 0 : e.trackSource,
                         albumId: null == (o = e.albums) || null == (l = o[0]) ? void 0 : l.id,
-                        disclaimers: e.disclaimers,
+                        disclaimers: e?.isSubstituted || e?.substituted
+                            ? Array.from(
+                                  new Set([
+                                      ...(e.disclaimers ?? []),
+                                      'substitutedIcon:pulsesync-substituted',
+                                      'descriptionText:pulsesync-substituted',
+                                  ]),
+                              )
+                            : e.disclaimers,
                         type: e.type,
                         pubDate: e.pubDate,
                         hasLyrics: null == (c = e.lyricsInfo) ? void 0 : c.hasAvailableTextLyrics,

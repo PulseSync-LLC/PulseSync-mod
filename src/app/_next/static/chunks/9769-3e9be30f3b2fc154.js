@@ -573,7 +573,8 @@
                     (e.AGE_16_ICON = 'age16Icon'),
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
-                    (e.EXCLAMATION_ICON = 'exclamationIcon');
+                    (e.EXCLAMATION_ICON = 'exclamationIcon'),
+                    (e.SUBSTITUTED_ICON = 'substitutedIcon');
             })(r || (r = {}));
             let c = (e) => {
                     let t = [];
@@ -665,7 +666,7 @@
                 }
             }
             !(function (e) {
-                (e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!');
+                (e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted');
             })(o || (o = {}));
             let p = new Map([
                     [r.EXPLICIT_ICON, o.E],
@@ -673,8 +674,9 @@
                     [r.AGE_16_ICON, o.AGE_16],
                     [r.AGE_12_ICON, o.AGE_12],
                     [r.EXCLAMATION_ICON, o.EXCLAMATION],
+                    [r.SUBSTITUTED_ICON, o.SUBSTITUTED],
                 ]),
-                h = [r.EXPLICIT_ICON, r.AGE_18_ICON, r.AGE_16_ICON, r.AGE_12_ICON, r.EXCLAMATION_ICON],
+                h = [r.EXPLICIT_ICON, r.AGE_18_ICON, r.AGE_16_ICON, r.AGE_12_ICON, r.SUBSTITUTED_ICON, r.EXCLAMATION_ICON],
                 v = (e) => {
                     let t = ((e, t) => {
                         for (let n of t) {
