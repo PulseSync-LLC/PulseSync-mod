@@ -1425,12 +1425,14 @@
                             t.version = t.substituted.version ?? t.version;
                         }
                         t.coverUri =
-                            t.substituted?.coverUri ??
-                            t.substituted?.ogImage ??
-                            t.substituted?.albums?.[0]?.coverUri ??
-                            t.coverUri ??
-                            t.ogImage ??
-                            t.albums?.[0]?.coverUri;
+                            t.substituted?.coverUri ||
+                            t.substituted?.ogImage ||
+                            t.substituted?.cover?.uri ||
+                            t.substituted?.albums?.[0]?.coverUri ||
+                            t.albums?.[0]?.coverUri ||
+                            t.ogImage ||
+                            t.cover?.uri ||
+                            t.coverUri;
                     });
 
                     return tracksMeta;

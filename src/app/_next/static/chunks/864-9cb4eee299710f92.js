@@ -2775,7 +2775,7 @@
                                         (0, a.jsx)(W.Icon, {
                                             className: g().explicitMark,
                                             variant: 'info',
-                                            size: b,
+                                            size: 'xxs',
                                             title: 'Подменённые данные трека были восстановлены',
                                             'aria-label': 'Подменённые данные трека были восстановлены',
                                         }),

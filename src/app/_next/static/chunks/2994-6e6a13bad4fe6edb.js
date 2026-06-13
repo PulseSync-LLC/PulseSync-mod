@@ -3935,7 +3935,18 @@
                     radius: 'm',
                     className: (0, c.$)(tv().root, t),
                     ...(0, D.Am)(D.e8.player.FULLSCREEN_PLAYER_POSTER_CONTENT),
-                    children: [(0, o.jsx)(h.BW, { className: tv().cover, src: i, size: 400, fit: 'cover', withAvatarReplace: !0 }), a],
+                    children: [
+                        (0, o.jsx)(h.BW, {
+                            className: tv().cover,
+                            src: i || void 0,
+                            size: 400,
+                            fit: 'cover',
+                            withAvatarReplace: !0,
+                            fallbackIconSize: 'l',
+                            fallbackIconVariant: 'picture',
+                        }),
+                        a,
+                    ],
                 });
             };
             var th = a(61802),
@@ -5867,16 +5878,16 @@
                         M = _.entityMeta,
                         repeatIconVariant = _.repeatMode === aP.pM.ONE ? 'repeat_one' : 'repeat',
                         B = (0, Y.c)((e) => {
-                            e.stopPropagation(), (0, eo.P)(e, af().ripple), null == k || k.moveForward(), E({ actionType: tT.X2.Skip });
+                            (e.stopPropagation(), (0, eo.P)(e, af().ripple), null == k || k.moveForward(), E({ actionType: tT.X2.Skip }));
                         }),
                         O = (0, Y.c)((e) => {
-                            e.stopPropagation(), (0, eo.P)(e, af().ripple), null == k || k.moveBackward(), E({ actionType: tT.X2.Backskip });
+                            (e.stopPropagation(), (0, eo.P)(e, af().ripple), null == k || k.moveBackward(), E({ actionType: tT.X2.Backskip }));
                         }),
                         shuffleClick = (0, Y.c)((e) => {
-                            e.stopPropagation(), null == shuffleSetter || shuffleSetter(_), E({ actionType: tT.X2.ChangeShuffle });
+                            (e.stopPropagation(), null == shuffleSetter || shuffleSetter(_), E({ actionType: tT.X2.ChangeShuffle }));
                         }),
                         repeatClick = (0, Y.c)((e) => {
-                            e.stopPropagation(), null == repeatSetter || repeatSetter(_), E({ actionType: tT.X2.ChangeRepeatSettings });
+                            (e.stopPropagation(), null == repeatSetter || repeatSetter(_), E({ actionType: tT.X2.ChangeRepeatSettings }));
                         }),
                         V = (0, Y.c)(() => {
                             if (m.isAdvertShown) {
@@ -5885,10 +5896,10 @@
                                 return;
                             }
                             if (!x())
-                                if (M) null == k || k.togglePause(), E({ actionType: _.isPlaying ? tT.X2.Pause : tT.X2.Play });
+                                if (M) (null == k || k.togglePause(), E({ actionType: _.isPlaying ? tT.X2.Pause : tT.X2.Play }));
                                 else {
                                     if (f) return;
-                                    I(), j(!_.isPlaying);
+                                    (I(), j(!_.isPlaying));
                                 }
                         }),
                         K = (0, Y.c)(() => {
@@ -5916,9 +5927,9 @@
                             [z, U, b.isAuthorized, f],
                         ),
                         G = (0, Y.c)(() => {
-                            g.showFullscreenPlayerModal(), T({ to: tT.QT.PlayerScreen });
+                            (g.showFullscreenPlayerModal(), T({ to: tT.QT.PlayerScreen }));
                         }),
-                        q = (0, et.L)(() => (_.isGenerativeContext ? (null == M ? void 0 : M.coverUri) || aC : (null == l ? void 0 : l.coverUri) || aC));
+                        q = (0, et.L)(() => (null == M ? void 0 : M.coverUri) || (null == l ? void 0 : l.coverUri) || aC);
                     return (
                         (0, u.useEffect)(
                             () => (
@@ -6663,7 +6674,7 @@
                                     (0, o.jsx)(F.Icon, {
                                         className: aV().explicitMark,
                                         variant: 'info',
-                                        size: 'xxxs',
+                                        size: 'xxs',
                                         title: 'Подменённые данные трека были восстановлены',
                                         'aria-label': 'Подменённые данные трека были восстановлены',
                                     }),

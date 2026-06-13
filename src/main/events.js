@@ -106,7 +106,14 @@ const normalizeSubstitutedTrack = (track) => {
     }
 
     track.coverUri =
-        substituted?.coverUri ?? substituted?.ogImage ?? substituted?.albums?.[0]?.coverUri ?? track.coverUri ?? track.ogImage ?? track.albums?.[0]?.coverUri;
+        substituted?.coverUri ||
+        substituted?.ogImage ||
+        substituted?.cover?.uri ||
+        substituted?.albums?.[0]?.coverUri ||
+        track.albums?.[0]?.coverUri ||
+        track.ogImage ||
+        track.cover?.uri ||
+        track.coverUri;
 };
 
 const getLastFmScrobblingState = () => {

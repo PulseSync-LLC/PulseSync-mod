@@ -7736,12 +7736,14 @@
                         isSubstituted: !!e?.substituted,
                         durationMs: g,
                         coverUri:
-                            e?.substituted?.coverUri ??
-                            e?.substituted?.ogImage ??
-                            e?.substituted?.albums?.[0]?.coverUri ??
-                            e?.coverUri ??
-                            e?.ogImage ??
-                            e?.albums?.[0]?.coverUri,
+                            e?.substituted?.coverUri ||
+                            e?.substituted?.ogImage ||
+                            e?.substituted?.cover?.uri ||
+                            e?.substituted?.albums?.[0]?.coverUri ||
+                            e?.albums?.[0]?.coverUri ||
+                            e?.ogImage ||
+                            e?.cover?.uri ||
+                            e?.coverUri,
                         averageColor: v,
                         trackParameters: ((e) =>
                             (0, i.wg)({

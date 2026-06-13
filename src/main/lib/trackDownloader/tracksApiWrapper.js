@@ -11,7 +11,15 @@ function normalizeTrackMetadata(track) {
         version: substituted?.version ?? track.version,
         derivedColors: substituted?.derivedColors ?? track.derivedColors,
         ogImage: substituted?.ogImage ?? substituted?.coverUri ?? track.ogImage,
-        coverUri: substituted?.coverUri ?? substituted?.ogImage ?? substituted?.albums?.[0]?.coverUri ?? track.coverUri ?? track.ogImage ?? track.albums?.[0]?.coverUri,
+        coverUri:
+            substituted?.coverUri ||
+            substituted?.ogImage ||
+            substituted?.cover?.uri ||
+            substituted?.albums?.[0]?.coverUri ||
+            track.albums?.[0]?.coverUri ||
+            track.ogImage ||
+            track.cover?.uri ||
+            track.coverUri,
     };
 }
 
