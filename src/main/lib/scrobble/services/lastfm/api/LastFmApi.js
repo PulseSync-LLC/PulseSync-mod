@@ -324,6 +324,12 @@ class LastFmApi {
 
         this.logger.debug(`Response: "${text}"`);
 
+        if (response.status === 403) {
+            const error = new Error(response.statusText || 'Forbidden');
+            error.status = response.status;
+            throw error;
+        }
+
         let result;
 
         try {

@@ -75,6 +75,8 @@ let applicationInitFinishedAt = 0;
 let downloadQueue = Promise.resolve();
 let isGlobalShortcutsRecordingActive = false;
 let toastOperationNonce = 0;
+let isLastFmStartupAuthProbeHandled = false;
+let pendingLastFmStartupAuthErrorToast = false;
 const activeTrackDownloadControllers = new Map();
 
 const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
@@ -504,7 +506,24 @@ const handleApplicationEvents = (window) => {
     });
 
     electron_1.ipcMain.handle('scrobble-lastfm-get-user', () => {
-        return scrobbleManager_js_1.scrobblerManager.getScrobblerByType('Last.fm').api.getUserInfo();
+        const lastFmScrobbler = getLastFmScrobbler();
+        const isStartupAuthProbe = !isLastFmStartupAuthProbeHandled;
+        const hasStoredSession = lastFmScrobbler.isLoggedIn();
+        isLastFmStartupAuthProbeHandled = true;
+
+        return lastFmScrobbler.api.getUserInfo().catch((error) => {
+            if (!isStartupAuthProbe || !hasStoredSession || error?.status !== 403) {
+                throw error;
+            }
+
+            if (isApplicationInitFinished) {
+                sendBasicToastCreate(window, 'lastFmStartupAuthError', 'Не удалось авторизоваться в LastFM. Подробнее на странице настроек скробблинга', 'Ясно');
+            } else {
+                pendingLastFmStartupAuthErrorToast = true;
+            }
+
+            return undefined;
+        });
     });
     electron_1.ipcMain.handle('scrobble-lastfm-get-current-playing-track', (event, user) => {
         return scrobbleManager_js_1.scrobblerManager.getScrobblerByType('Last.fm').api.getCurrentPlayingTrack(user);
@@ -803,6 +822,10 @@ const handleApplicationEvents = (window) => {
         sendBasicToastDismiss(window, 'safeModeRestart');
 
         if (isSafeMode) sendBasicToastCreate(window, 'safeModeNoticeToast', 'Безопасный режим. Аддоны отключены.', 'Ясно');
+        if (pendingLastFmStartupAuthErrorToast) {
+            pendingLastFmStartupAuthErrorToast = false;
+            sendBasicToastCreate(window, 'lastFmStartupAuthError', 'Не удалось авторизоваться в LastFM. Подробнее на странице настроек скробблинга', 'Ясно');
+        }
     });
     electron_1.ipcMain.on(events_js_1.Events.APPLICATION_THEME, (event, backgroundColor) => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_THEME);
