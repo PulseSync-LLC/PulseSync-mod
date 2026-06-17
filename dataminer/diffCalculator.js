@@ -9,7 +9,9 @@ dotenv.config();
 
 const webhookUrl = process.env.DISCORD_DATAMINER_WEBHOOK_URL ?? process.env.DISCORD_WEBHOOK_URL;
 const OUTPUT = path.join(__dirname, 'output');
+const DISCORD_EMBED_DESCRIPTION_LIMIT = 2000;
 const DISCORD_MAX_FILES_PER_MESSAGE = 10;
+const MOBX_DIFF_CONTEXT_LINES = 3;
 
 if (!process.env.DISCORD_DATAMINER_WEBHOOK_URL) console.warn('DISCORD_DATAMINER_WEBHOOK_URL не установлена, используется DISCORD_WEBHOOK_URL');
 if (!webhookUrl) throw new Error('DISCORD_DATAMINER_WEBHOOK_URL и DISCORD_WEBHOOK_URL не установлена в .env файле');
@@ -69,17 +71,30 @@ function wrapDiffMarkdown(diff) {
     return `\`\`\`diff\n${diff}\n\`\`\`\n`;
 }
 
+function formatDiffSection(title, diff) {
+    return `## ${title}\n${wrapDiffMarkdown(diff)}`;
+}
+
 function formatDiff(diff) {
     let message = '';
 
     if (diff.added.length > 0) {
-        message += `## Добавлено\n${wrapDiffMarkdown(diff.added.map((item) => `+ ${item.key ?? item}${item.value ? `: ${item.value.replace(/(?<!\\)\n/g, '\n+ ')}` : ''}`).join('\n'))}`;
+        message += formatDiffSection(
+            'Добавлено',
+            diff.added.map((item) => `+ ${item.key ?? item}${item.value ? `: ${item.value.replace(/(?<!\\)\n/g, '\n+ ')}` : ''}`).join('\n'),
+        );
     }
     if (diff.changed && diff.changed.length > 0) {
-        message += `## Изменено\n${wrapDiffMarkdown(diff.changed.map((item) => `- ${item.key}: ${item.oldValue.replace(/(?<!\\)\n/g, '\n- ')}\n+ ${item.key}: ${item.newValue.replace(/(?<!\\)\n/g, '\n+ ')}`).join('\n\n'))}`;
+        message += formatDiffSection(
+            'Изменено',
+            diff.changed.map((item) => `- ${item.key}: ${item.oldValue.replace(/(?<!\\)\n/g, '\n- ')}\n+ ${item.key}: ${item.newValue.replace(/(?<!\\)\n/g, '\n+ ')}`).join('\n\n'),
+        );
     }
     if (diff.removed.length > 0) {
-        message += `## Удалено\n${wrapDiffMarkdown(diff.removed.map((item) => `- ${item.key ?? item}${item.value ? `: ${item.value.replace(/(?<!\\)\n/g, '\n- ')}` : ''}`).join('\n'))}`;
+        message += formatDiffSection(
+            'Удалено',
+            diff.removed.map((item) => `- ${item.key ?? item}${item.value ? `: ${item.value.replace(/(?<!\\)\n/g, '\n- ')}` : ''}`).join('\n'),
+        );
     }
     return message || undefined;
 }
@@ -88,20 +103,21 @@ function formatIconDiff(diff) {
     let message = '';
 
     if (diff.added.length > 0) {
-        message += `## Добавлено\n${wrapDiffMarkdown(
+        message += formatDiffSection(
+            'Добавлено',
             diff.added
                 .map((item) => {
                     const sizes = parseIconSizes(item.value);
                     return `+ ${item.key}${sizes.length ? `: ${sizes.join(', ')}` : ''}`;
                 })
                 .join('\n'),
-        )}`;
+        );
     }
     if (diff.changed && diff.changed.length > 0) {
-        message += `## Изменено\n${wrapDiffMarkdown(diff.changed.map((item) => `! ${item.key}`).join('\n'))}`;
+        message += formatDiffSection('Изменено', diff.changed.map((item) => `! ${item.key}`).join('\n'));
     }
     if (diff.removed.length > 0) {
-        message += `## Удалено\n${wrapDiffMarkdown(diff.removed.map((item) => `- ${item.key}`).join('\n'))}`;
+        message += formatDiffSection('Удалено', diff.removed.map((item) => `- ${item.key}`).join('\n'));
     }
 
     return message || undefined;
@@ -160,20 +176,228 @@ function formatOneSidedObjectDiff(item) {
         .join('\n');
 }
 
+function parseJsonValue(value) {
+    try {
+        return JSON.parse(value);
+    } catch (e) {
+        return null;
+    }
+}
+
+function hasDiffMarker(line) {
+    return line.startsWith('+') || line.startsWith('-');
+}
+
+function collapseDiffContext(lines, radius = MOBX_DIFF_CONTEXT_LINES) {
+    const changedIndexes = [];
+
+    lines.forEach((line, index) => {
+        if (hasDiffMarker(line)) changedIndexes.push(index);
+    });
+
+    if (!changedIndexes.length) return lines;
+
+    const keep = new Set();
+
+    for (const index of changedIndexes) {
+        for (let i = Math.max(0, index - radius); i <= Math.min(lines.length - 1, index + radius); i++) {
+            keep.add(i);
+        }
+    }
+
+    const result = [];
+    let hasEllipsis = false;
+
+    for (let i = 0; i < lines.length; i++) {
+        if (!keep.has(i)) {
+            if (!hasEllipsis) {
+                result.push('      ...');
+                hasEllipsis = true;
+            }
+            continue;
+        }
+
+        result.push(lines[i]);
+        hasEllipsis = false;
+    }
+
+    return result;
+}
+
+function formatJsonArrayDiff(oldItems, newItems) {
+    const oldLines = oldItems.map((item) => JSON.stringify(item));
+    const newLines = newItems.map((item) => JSON.stringify(item));
+    const diffLines = getLcsLineDiff(oldLines, newLines).map((line) => {
+        const prefix = line.type === 'added' ? '+' : line.type === 'removed' ? '-' : ' ';
+        return `${prefix}     ${line.line},`;
+    });
+
+    return collapseDiffContext(diffLines);
+}
+
+function formatCompactTextDiff(oldText, newText) {
+    const oldLines = String(oldText).split('\n');
+    const newLines = String(newText).split('\n');
+    const diffLines = getLcsLineDiff(oldLines, newLines).map((line) => {
+        if (line.type === 'added') return `+     ${line.line}`;
+        if (line.type === 'removed') return `-     ${line.line}`;
+        return `      ${line.line}`;
+    });
+
+    return collapseDiffContext(diffLines, 2);
+}
+
+function formatMobxChangedSection(key, oldValue, newValue, isLast) {
+    const suffix = isLast ? '' : ',';
+
+    if (Array.isArray(oldValue) && Array.isArray(newValue)) {
+        return [`  "${key}": [`, ...formatJsonArrayDiff(oldValue, newValue), `  ]${suffix}`].join('\n');
+    }
+
+    return [
+        `  "${key}":`,
+        ...formatCompactTextDiff(JSON.stringify(oldValue, null, 2), JSON.stringify(newValue, null, 2)),
+        suffix ? `  ${suffix}` : '',
+    ]
+        .filter(Boolean)
+        .join('\n');
+}
+
+function formatMobxConstructDiff(item) {
+    const oldValue = parseJsonValue(item.oldValue);
+    const newValue = parseJsonValue(item.newValue);
+
+    if (!oldValue || !newValue || typeof oldValue !== 'object' || typeof newValue !== 'object') {
+        return formatOneSidedObjectDiff(item);
+    }
+
+    const changedKeys = [...new Set([...Object.keys(oldValue), ...Object.keys(newValue)])].filter(
+        (key) => JSON.stringify(oldValue[key]) !== JSON.stringify(newValue[key]),
+    );
+
+    if (!changedKeys.length) return `  ${item.key}: без структурных изменений`;
+
+    const sections = changedKeys.map((key, index) => formatMobxChangedSection(key, oldValue[key], newValue[key], index === changedKeys.length - 1));
+
+    return [`  ${item.key}: {`, ...sections, '  }'].join('\n');
+}
+
 function formatMobxDiff(diff) {
     let message = '';
 
     if (diff.added.length > 0) {
-        message += `## Добавлено\n${wrapDiffMarkdown(diff.added.map((item) => `+ ${item.key}`).join('\n'))}`;
+        message += formatDiffSection('Добавлено', diff.added.map((item) => `+ ${item.key}`).join('\n'));
     }
     if (diff.changed && diff.changed.length > 0) {
-        message += `## Изменено\n${wrapDiffMarkdown(diff.changed.map(formatOneSidedObjectDiff).join('\n\n'))}`;
+        message += formatDiffSection('Изменено', diff.changed.map(formatMobxConstructDiff).join('\n\n'));
     }
     if (diff.removed.length > 0) {
-        message += `## Удалено\n${wrapDiffMarkdown(diff.removed.map((item) => `- ${item.key}`).join('\n'))}`;
+        message += formatDiffSection('Удалено', diff.removed.map((item) => `- ${item.key}`).join('\n'));
     }
 
     return message || undefined;
+}
+
+function splitLongLine(line, maxLength) {
+    const chunks = [];
+
+    for (let i = 0; i < line.length; i += maxLength) {
+        chunks.push(line.slice(i, i + maxLength));
+    }
+
+    return chunks;
+}
+
+function splitDiffTextByLines(text, maxLength) {
+    const chunks = [];
+    let current = '';
+
+    for (const line of text.split('\n')) {
+        const lines = line.length > maxLength ? splitLongLine(line, maxLength) : [line];
+
+        for (const part of lines) {
+            const candidate = current ? `${current}\n${part}` : part;
+
+            if (candidate.length > maxLength && current) {
+                chunks.push(current);
+                current = part;
+            } else {
+                current = candidate;
+            }
+        }
+    }
+
+    if (current) chunks.push(current);
+
+    return chunks;
+}
+
+function splitDiffTextByUnits(text, maxLength) {
+    const units = text.split(/\n{2,}/).filter(Boolean);
+
+    if (units.length <= 1) return splitDiffTextByLines(text, maxLength);
+
+    const chunks = [];
+    let current = '';
+
+    for (const unit of units) {
+        if (unit.length > maxLength) {
+            if (current) {
+                chunks.push(current);
+                current = '';
+            }
+            chunks.push(...splitDiffTextByLines(unit, maxLength));
+            continue;
+        }
+
+        const candidate = current ? `${current}\n\n${unit}` : unit;
+
+        if (candidate.length > maxLength && current) {
+            chunks.push(current);
+            current = unit;
+        } else {
+            current = candidate;
+        }
+    }
+
+    if (current) chunks.push(current);
+
+    return chunks;
+}
+
+function splitDiffSection(title, diffText, maxLength = DISCORD_EMBED_DESCRIPTION_LIMIT) {
+    const maxDiffLength = Math.max(1, maxLength - formatDiffSection(`${title} (999/999)`, '').length);
+
+    if (formatDiffSection(title, diffText).length <= maxLength) return [formatDiffSection(title, diffText)];
+
+    const diffChunks = splitDiffTextByUnits(diffText, maxDiffLength);
+
+    return diffChunks.map((chunk, index) => formatDiffSection(diffChunks.length > 1 ? `${title} (${index + 1}/${diffChunks.length})` : title, chunk));
+}
+
+function splitFormattedDiffMessage(message, maxLength = DISCORD_EMBED_DESCRIPTION_LIMIT) {
+    if (!message || message.length <= maxLength) return message ? [message] : [];
+
+    const sectionRegex = /## ([^\n]+)\n```diff\n([\s\S]*?)\n```\n?/g;
+    const sections = [];
+    let match;
+
+    while ((match = sectionRegex.exec(message))) {
+        sections.push({ title: match[1], diffText: match[2] });
+    }
+
+    if (!sections.length) return splitDiffTextByLines(message, maxLength);
+
+    return sections.flatMap((section) => splitDiffSection(section.title, section.diffText, maxLength));
+}
+
+async function sendDiscordDiffMessages(title, description, color = 0x378584) {
+    const chunks = splitFormattedDiffMessage(description);
+
+    for (let i = 0; i < chunks.length; i++) {
+        const suffix = chunks.length > 1 ? ` (${i + 1}/${chunks.length})` : '';
+        await sendDiscordMessage(getDiffTemplate(`${title}${suffix}`, chunks[i], color));
+    }
 }
 
 async function sendDiscordMessage(message, withComponents = true, files = []) {
@@ -236,6 +460,13 @@ function getExperimentsDiff(oldFolder, newFolder) {
 function getRoutesDiff(oldFolder, newFolder) {
     const oldData = readJson(path.join(oldFolder, 'simpleRoutes.json'));
     const newData = readJson(path.join(newFolder, 'simpleRoutes.json'));
+
+    return calculateObjectDiff(oldData, newData);
+}
+
+function getPagesDiff(oldFolder, newFolder) {
+    const oldData = readJsonOrDefault(path.join(oldFolder, 'simplePages.json'), {});
+    const newData = readJsonOrDefault(path.join(newFolder, 'simplePages.json'), {});
 
     return calculateObjectDiff(oldData, newData);
 }
@@ -426,6 +657,7 @@ async function run(command, options) {
             console.log(`oldFolder ${oldFolder}\nnewFolder ${newFolder}...`);
 
             const routesDiff = getRoutesDiff(oldFolder, newFolder);
+            const pagesDiff = getPagesDiff(oldFolder, newFolder);
             const experimentsDiff = getExperimentsDiff(oldFolder, newFolder);
             const ruLocalizationDiff = getRuLocalizationDiff(oldFolder, newFolder);
             const iconsDiff = getIconsDiff(oldFolder, newFolder);
@@ -433,6 +665,7 @@ async function run(command, options) {
 
             if (shouldShowRaw) {
                 console.log('Routes Diff:', JSON.stringify(routesDiff, null, 2));
+                console.log('Pages Diff:', JSON.stringify(pagesDiff, null, 2));
                 console.log('Experiments Diff:', JSON.stringify(experimentsDiff, null, 2));
                 console.log('Ru Localization Diff:', JSON.stringify(ruLocalizationDiff, null, 2));
                 console.log('Icons Diff:', JSON.stringify(iconsDiff, null, 2));
@@ -441,17 +674,19 @@ async function run(command, options) {
             }
 
             const routesDiffMessage = formatDiff(routesDiff);
+            const pagesDiffMessage = formatDiff(pagesDiff);
             const experimentsDiffMessage = formatDiff(experimentsDiff);
             const ruLocalizationDiffMessage = formatDiff(ruLocalizationDiff);
             const iconsDiffMessage = formatIconDiff(iconsDiff);
             const mobxConstructsDiffMessage = formatMobxDiff(mobxConstructsDiff);
 
-            if (!routesDiffMessage && !experimentsDiffMessage && !ruLocalizationDiffMessage && !iconsDiffMessage && !mobxConstructsDiffMessage) {
+            if (!routesDiffMessage && !pagesDiffMessage && !experimentsDiffMessage && !ruLocalizationDiffMessage && !iconsDiffMessage && !mobxConstructsDiffMessage) {
                 console.log('Изменений не обнаружено.');
                 break;
             }
 
             routesDiffMessage && console.log(routesDiffMessage);
+            pagesDiffMessage && console.log(pagesDiffMessage);
             experimentsDiffMessage && console.log(experimentsDiffMessage);
             ruLocalizationDiffMessage && console.log(ruLocalizationDiffMessage);
             iconsDiffMessage && console.log(iconsDiffMessage);
@@ -459,30 +694,23 @@ async function run(command, options) {
 
             if (shouldSend) {
                 if (routesDiffMessage) {
-                    await sendDiscordMessage({
-                        ...getDiffTemplate(`Эндпоинты изменились ${getVersionsString()}`, routesDiffMessage),
-                    });
+                    await sendDiscordDiffMessages(`Эндпоинты изменились ${getVersionsString()}`, routesDiffMessage);
+                }
+                if (pagesDiffMessage) {
+                    await sendDiscordDiffMessages(`Страницы изменились ${getVersionsString()}`, pagesDiffMessage);
                 }
                 if (experimentsDiffMessage) {
-                    await sendDiscordMessage({
-                        ...getDiffTemplate(`Эксперименты изменились ${getVersionsString()}`, experimentsDiffMessage),
-                    });
+                    await sendDiscordDiffMessages(`Эксперименты изменились ${getVersionsString()}`, experimentsDiffMessage);
                 }
                 if (ruLocalizationDiffMessage) {
-                    await sendDiscordMessage({
-                        ...getDiffTemplate(`Локализация изменилась ${getVersionsString()}`, ruLocalizationDiffMessage),
-                    });
+                    await sendDiscordDiffMessages(`Локализация изменилась ${getVersionsString()}`, ruLocalizationDiffMessage);
                 }
                 if (iconsDiffMessage) {
-                    await sendDiscordMessage({
-                        ...getDiffTemplate(`Иконки изменились ${getVersionsString()}`, iconsDiffMessage),
-                    });
+                    await sendDiscordDiffMessages(`Иконки изменились ${getVersionsString()}`, iconsDiffMessage);
                     await sendAddedIconImages(iconsDiff, newFolder, getVersionsString());
                 }
                 if (mobxConstructsDiffMessage) {
-                    await sendDiscordMessage({
-                        ...getDiffTemplate(`MobX-конструкции изменились ${getVersionsString()}`, mobxConstructsDiffMessage),
-                    });
+                    await sendDiscordDiffMessages(`MobX-конструкции изменились ${getVersionsString()}`, mobxConstructsDiffMessage);
                 }
             }
 

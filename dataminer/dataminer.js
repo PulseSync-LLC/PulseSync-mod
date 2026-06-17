@@ -45,6 +45,8 @@ const OUTPUT =
 
 const HTTP_METHODS = ['get', 'post', 'put', 'delete', 'patch', 'head', 'options'];
 const MOBX_CHAIN_METHODS = new Set(['model', 'props', 'views', 'actions', 'named']);
+const APP_PAGE_FILE_EXTENSIONS = new Set(['.html', '.txt']);
+const APP_PAGE_SOURCE_ORDER = ['registry', 'html', 'txt', 'chunk'];
 
 // === experiments ===
 const experiments = [];
@@ -633,6 +635,202 @@ function generateSimpleRoutesListFromResults(results) {
     return routes;
 }
 
+function toPosixPath(filePath) {
+    return filePath.replaceAll(path.sep, '/').replaceAll('\\', '/');
+}
+
+function normalizeAppPageRouteFromFile(relPath) {
+    const normalizedPath = toPosixPath(relPath);
+    if (!normalizedPath.startsWith('app/')) return null;
+    if (normalizedPath.startsWith('app/_next/') || normalizedPath.startsWith('app/icons/')) return null;
+
+    const ext = path.posix.extname(normalizedPath);
+    if (!APP_PAGE_FILE_EXTENSIONS.has(ext)) return null;
+
+    let route = normalizedPath.slice('app/'.length, -ext.length);
+    if (!route || route === 'index') return '/';
+    if (route.endsWith('/index')) route = route.slice(0, -'/index'.length);
+
+    return `/${route}`;
+}
+
+function normalizeNextRouteSegment(segment) {
+    if (!segment || segment.startsWith('_')) return false;
+    if (segment.startsWith('@')) return null;
+    if (segment.startsWith('(') && segment.endsWith(')')) return null;
+
+    const optionalCatchAllMatch = segment.match(/^\[\[\.\.\.(.+)\]\]$/);
+    if (optionalCatchAllMatch) return `:${optionalCatchAllMatch[1]}*?`;
+
+    const catchAllMatch = segment.match(/^\[\.\.\.(.+)\]$/);
+    if (catchAllMatch) return `:${catchAllMatch[1]}*`;
+
+    const dynamicMatch = segment.match(/^\[(.+)\]$/);
+    if (dynamicMatch) return `:${dynamicMatch[1]}`;
+
+    return segment;
+}
+
+function normalizeNextPageRouteFromChunk(relPath) {
+    const normalizedPath = toPosixPath(relPath);
+    const parts = normalizedPath.split('/');
+    const fileName = parts.at(-1);
+
+    if (!/^page-[^.]+\.js$/.test(fileName)) return null;
+
+    const appIndex = parts.indexOf('app');
+    if (appIndex === -1) return null;
+
+    const normalizedSegments = [];
+
+    for (const segment of parts.slice(appIndex + 1, -1)) {
+        const normalizedSegment = normalizeNextRouteSegment(segment);
+        if (normalizedSegment === false) return null;
+        if (normalizedSegment) normalizedSegments.push(normalizedSegment);
+    }
+
+    return normalizedSegments.length ? `/${normalizedSegments.join('/')}` : '/';
+}
+
+function getObjectPropertyKeyString(property) {
+    if (!property || property.computed) return null;
+    if (property.key?.type === 'StringLiteral') return property.key.value;
+    if (property.key?.type === 'Identifier') return property.key.name;
+    return null;
+}
+
+function extractAppPageRegistryFromObject(node, relPath) {
+    if (node?.type !== 'ObjectExpression' || node.properties.length < 10) return null;
+
+    const routes = [];
+
+    for (const property of node.properties) {
+        if (property.type !== 'ObjectProperty') return null;
+
+        const route = getObjectPropertyKeyString(property);
+        if (!route?.startsWith('/')) return null;
+
+        if (property.value?.type !== 'StringLiteral' || property.value.value !== '') return null;
+
+        routes.push({
+            route,
+            value: '',
+            sources: ['registry'],
+            files: [
+                {
+                    source: 'registry',
+                    path: toPosixPath(relPath),
+                    line: property.loc?.start.line ?? null,
+                    column: property.loc?.start.column ?? null,
+                },
+            ],
+        });
+    }
+
+    return routes;
+}
+
+function addAppPage(pagesByRoute, route, source, filePath) {
+    if (!route) return;
+
+    if (!pagesByRoute.has(route)) {
+        pagesByRoute.set(route, {
+            route,
+            value: source === 'registry' ? '' : undefined,
+            sources: [],
+            files: [],
+        });
+    }
+
+    const page = pagesByRoute.get(route);
+    if (!page.sources.includes(source)) page.sources.push(source);
+
+    const relPath = toPosixPath(path.relative(ROOT, filePath));
+    if (!page.files.some((file) => file.path === relPath && file.source === source)) {
+        page.files.push({ source, path: relPath });
+    }
+}
+
+function normalizeAppPages(pages) {
+    const pagesByRoute = new Map();
+
+    for (const page of pages) {
+        if (!page?.route) continue;
+
+        if (!pagesByRoute.has(page.route)) {
+            pagesByRoute.set(page.route, {
+                route: page.route,
+                value: page.value,
+                sources: [],
+                files: [],
+            });
+        }
+
+        const mergedPage = pagesByRoute.get(page.route);
+        if (mergedPage.value === undefined && page.value !== undefined) mergedPage.value = page.value;
+
+        for (const source of page.sources ?? []) {
+            if (!mergedPage.sources.includes(source)) mergedPage.sources.push(source);
+        }
+
+        for (const file of page.files ?? []) {
+            if (!mergedPage.files.some((item) => item.path === file.path && item.source === file.source && item.line === file.line)) {
+                mergedPage.files.push(file);
+            }
+        }
+    }
+
+    return [...pagesByRoute.values()]
+        .map((page) => ({
+            ...page,
+            sources: page.sources.sort((a, b) => APP_PAGE_SOURCE_ORDER.indexOf(a) - APP_PAGE_SOURCE_ORDER.indexOf(b)),
+            files: page.files.sort((a, b) => a.path.localeCompare(b.path) || a.source.localeCompare(b.source) || (a.line ?? 0) - (b.line ?? 0)),
+        }))
+        .sort((a, b) => a.route.localeCompare(b.route));
+}
+
+function collectAppPagesFromAssets() {
+    const pagesByRoute = new Map();
+
+    const pageAssetFiles = fg.sync(['app/**/*.html', 'app/**/*.txt'], {
+        cwd: ROOT,
+        ignore: ['app/_next/**', 'app/icons/**'],
+        onlyFiles: true,
+        absolute: true,
+    });
+
+    for (const file of pageAssetFiles) {
+        const relPath = path.relative(ROOT, file);
+        const route = normalizeAppPageRouteFromFile(relPath);
+        const source = path.extname(file).slice(1);
+        addAppPage(pagesByRoute, route, source, file);
+    }
+
+    const pageChunkFiles = fg.sync(['app/**/page-*.js'], {
+        cwd: APP_CHUNKS_ROOT,
+        onlyFiles: true,
+        absolute: true,
+    });
+
+    for (const file of pageChunkFiles) {
+        const relPath = path.relative(APP_CHUNKS_ROOT, file);
+        const route = normalizeNextPageRouteFromChunk(relPath);
+        addAppPage(pagesByRoute, route, 'chunk', file);
+    }
+
+    return normalizeAppPages([...pagesByRoute.values()]);
+}
+
+function collectAppPagesFromRegistry(registryPages) {
+    return normalizeAppPages(registryPages);
+}
+
+function generateSimplePagesListFromResults(pages) {
+    if (!pages) return null;
+
+    return Object.fromEntries(pages.map((page) => [page.route, page.value ?? page.sources.join(', ')]));
+}
+
 function generateSimpleIconsList() {
     const icons = {};
 
@@ -925,6 +1123,7 @@ function createOutputJson(data, fileName) {
     console.log(`📂 Найдено файлов: ${files.length}\n`);
 
     const results = [];
+    const appPageRegistryPages = [];
 
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -1025,6 +1224,14 @@ function createOutputJson(data, fileName) {
                     else iconUsages.push(iconUsage);
                 },
 
+                ObjectExpression(objectPath) {
+                    const registryPages = extractAppPageRegistryFromObject(objectPath.node, relPath);
+                    if (!registryPages) return;
+
+                    appPageRegistryPages.push(...registryPages);
+                    console.log(`\n\n📄 Найден реестр страниц приложения, всего маршрутов: ${registryPages.length}\n`);
+                },
+
                 AssignmentExpression(path) {
                     const { node } = path;
 
@@ -1064,6 +1271,8 @@ function createOutputJson(data, fileName) {
         }
     }
 
+    const appPages = appPageRegistryPages.length ? collectAppPagesFromRegistry(appPageRegistryPages) : collectAppPagesFromAssets();
+
     let compiled = null;
     try {
         console.log('Анализ файлов локализации...');
@@ -1087,8 +1296,11 @@ function createOutputJson(data, fileName) {
     }
 
     console.log(`\n\n\n✅ Готово\n🌐 Роутов найдено: ${results.length}`);
+    console.log(`📄 Страниц приложения найдено: ${appPages.length}`);
     console.log(`🔬 Экспериментов найдено: ${experiments.length}`);
-    console.log(`🎨 Иконок найдено: ${Object.keys(generateSimpleIconsList()).length}, использований: ${iconUsages.length}, динамических использований: ${dynamicIconUsages.length}`);
+    console.log(
+        `🎨 Иконок найдено: ${Object.keys(generateSimpleIconsList()).length}, использований: ${iconUsages.length}, динамических использований: ${dynamicIconUsages.length}`,
+    );
     console.log(`🧩 MobX-конструкций найдено: ${mobxConstructs.length}`);
     if (compiled) console.log(`💬 Локализованных сообщений: ${Object.keys(compiled).length}`);
 
@@ -1108,6 +1320,8 @@ function createOutputJson(data, fileName) {
         fs.mkdirSync(OUTPUT, { recursive: true });
         createOutputJson(results, 'detailedRoutes.json');
         createOutputJson(generateSimpleRoutesListFromResults(results), 'simpleRoutes.json');
+        createOutputJson(appPages, 'detailedPages.json');
+        createOutputJson(generateSimplePagesListFromResults(appPages), 'simplePages.json');
         createOutputJson([...new Set(experiments)], 'experiments.json');
         createOutputJson(generateSimpleIconsList(), 'icons.json');
         createOutputJson({ usages: iconUsages, usageSummary: generateIconUsageSummary(iconUsages), dynamicUsages: dynamicIconUsages }, 'detailedIcons.json');
