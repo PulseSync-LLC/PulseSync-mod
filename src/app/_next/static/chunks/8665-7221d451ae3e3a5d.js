@@ -2864,6 +2864,18 @@
             !(function (e) {
                 (e.BAR_BELOW = 'barBellow'), (e.FULLSCREEN = 'fullscreen');
             })(i || (i = {}));
+            let getCommunicationTriggersMode = () => {
+                    try {
+                        let e = window.nativeSettings?.get?.('modSettings.communicationTriggers.mode');
+                        return ['all', 'barBelow', 'fullscreen', 'disabled'].includes(e) ? e : 'disabled';
+                    } catch (e) {
+                        return 'disabled';
+                    }
+                },
+                isCommunicationTriggerAllowed = (e) => {
+                    let t = getCommunicationTriggersMode();
+                    return t === 'all' || (t === 'barBelow' && e === i.BAR_BELOW) || (t === 'fullscreen' && e === i.FULLSCREEN);
+                };
             var ep = a(17866),
                 ev = a(65969);
             let eS = l.gK.model('CommunicationList', { barBelow: ep.t5, modal: ev.k8 }),
@@ -2879,108 +2891,114 @@
                         let t = {
                             getData: (0, l.L3)(function* () {
                                 let { dynamicPagesResource: a, modelActionsLogger: r } = (0, l._$)(e);
-                                return (e.loadingState = c.GuX.RESOLVE);
-                                // if (e.loadingState !== c.GuX.PENDING && e.loadingState !== c.GuX.RESOLVE)
-                                //     try {
-                                //         var s;
-                                //         let r;
-                                //         if (
-                                //             (((e.loadingState = c.GuX.PENDING),
-                                //             (s = r =
-                                //                 e.withTriggersV2
-                                //                     ? yield a.getTriggersV2({ anchorIds: Object.values(ey.v) })
-                                //                     : yield a.getTriggers({ anchorIds: Object.values(ey.v) })) &&
-                                //                 s.triggers &&
-                                //                 Array.isArray(s.triggers) &&
-                                //                 s.triggers.every(
-                                //                     (e) =>
-                                //                         !!(
-                                //                             e &&
-                                //                             'object' == typeof e &&
-                                //                             'anchorId' in e &&
-                                //                             'triggers' in e &&
-                                //                             Array.isArray(e.triggers) &&
-                                //                             e.triggers.every(
-                                //                                 (e) =>
-                                //                                     !!(
-                                //                                         e &&
-                                //                                         'object' == typeof e &&
-                                //                                         'screenId' in e &&
-                                //                                         'feedbackToken' in e &&
-                                //                                         'data' in e &&
-                                //                                         'meta' in e
-                                //                                     ),
-                                //                             )
-                                //                         ),
-                                //                 ))
-                                //                 ? (e.list = ((e) => {
-                                //                       let t = [],
-                                //                           a = [];
-                                //                       return (
-                                //                           e.triggers.forEach((e) => {
-                                //                               var r;
-                                //                               switch (null == (r = e.triggers[0]) ? void 0 : r.meta.notificationId) {
-                                //                                   case i.BAR_BELOW:
-                                //                                       return void e.triggers.forEach((e) => {
-                                //                                           t.push((0, ep.S3)(e));
-                                //                                       });
-                                //                                   case i.FULLSCREEN:
-                                //                                       return void e.triggers.forEach((e) => {
-                                //                                           a.push((0, ev.fZ)(e));
-                                //                                       });
-                                //                               }
-                                //                           }),
-                                //                           (0, l.wg)({ barBelow: { list: t }, modal: { list: a } })
-                                //                       );
-                                //                   })(r))
-                                //                 : r &&
-                                //                   r.triggers &&
-                                //                   Array.isArray(r.triggers) &&
-                                //                   r.triggers.every(
-                                //                       (e) =>
-                                //                           !!(
-                                //                               e &&
-                                //                               'object' == typeof e &&
-                                //                               'anchorId' in e &&
-                                //                               'screenId' in e &&
-                                //                               'div' in e &&
-                                //                               'meta' in e &&
-                                //                               !('triggers' in e)
-                                //                           ),
-                                //                   ) &&
-                                //                   (e.list = ((e) => {
-                                //                       let t = [],
-                                //                           a = [];
-                                //                       return (
-                                //                           e.triggers.forEach((e) => {
-                                //                               switch (e.meta.notificationId) {
-                                //                                   case i.BAR_BELOW:
-                                //                                       t.push((0, ep.S3)(e));
-                                //                                       return;
-                                //                                   case i.FULLSCREEN:
-                                //                                       a.push((0, ev.fZ)(e));
-                                //                                       return;
-                                //                               }
-                                //                           }),
-                                //                           (0, l.wg)({ barBelow: { list: t }, modal: { list: a } })
-                                //                       );
-                                //                   })(r)),
-                                //             e.loadingState !== c.GuX.IDLE && (e.loadingState = c.GuX.RESOLVE),
-                                //             !e.list)
-                                //         )
-                                //             return;
-                                //         let { barBelow: n, modal: o } = e.list;
-                                //         n.setAnchorId(ey.v.ON_START_BAR_BELOW),
-                                //             n.barBelowItem && (n.show(), t.shown(n.barBelowItem.anchorId, n.barBelowItem.screenId, n.barBelowItem.feedbackToken)),
-                                //             o.setAnchorId(ey.v.ON_START_FULLSCREEN),
-                                //             o.modalItem && (o.open(), t.shown(o.modalItem.anchorId, o.modalItem.screenId, o.modalItem.feedbackToken));
-                                //     } catch (t) {
-                                //         r.error(t),
-                                //             t instanceof T.GX &&
-                                //                 (t.statusCode === T.X1.NOT_FOUND || t.statusCode === T.X1.BAD_REQUEST) &&
-                                //                 (e.errorStatusCode = T.X1.NOT_FOUND),
-                                //             e.loadingState !== c.GuX.IDLE && (e.loadingState = c.GuX.REJECT);
-                                //     }
+                                if (getCommunicationTriggersMode() === 'disabled') return (e.loadingState = c.GuX.RESOLVE);
+                                if (e.loadingState !== c.GuX.PENDING && e.loadingState !== c.GuX.RESOLVE)
+                                    try {
+                                        var s;
+                                        let n;
+                                        if (
+                                            (((e.loadingState = c.GuX.PENDING),
+                                            (s = n =
+                                                e.withTriggersV2
+                                                    ? yield a.getTriggersV2({ anchorIds: Object.values(ey.v) })
+                                                    : yield a.getTriggers({ anchorIds: Object.values(ey.v) })) &&
+                                                s.triggers &&
+                                                Array.isArray(s.triggers) &&
+                                                s.triggers.every(
+                                                    (e) =>
+                                                        !!(
+                                                            e &&
+                                                            'object' == typeof e &&
+                                                            'anchorId' in e &&
+                                                            'triggers' in e &&
+                                                            Array.isArray(e.triggers) &&
+                                                            e.triggers.every(
+                                                                (e) =>
+                                                                    !!(
+                                                                        e &&
+                                                                        'object' == typeof e &&
+                                                                        'screenId' in e &&
+                                                                        'feedbackToken' in e &&
+                                                                        'data' in e &&
+                                                                        'meta' in e
+                                                                    ),
+                                                            )
+                                                        ),
+                                                ))
+                                                ? (e.list = ((e) => {
+                                                      let t = [],
+                                                          a = [];
+                                                      return (
+                                                          e.triggers.forEach((e) => {
+                                                              var r;
+                                                              switch (null == (r = e.triggers[0]) ? void 0 : r.meta.notificationId) {
+                                                                  case i.BAR_BELOW:
+                                                                      return void (
+                                                                          isCommunicationTriggerAllowed(i.BAR_BELOW) &&
+                                                                          e.triggers.forEach((e) => {
+                                                                              t.push((0, ep.S3)(e));
+                                                                          })
+                                                                      );
+                                                                  case i.FULLSCREEN:
+                                                                      return void (
+                                                                          isCommunicationTriggerAllowed(i.FULLSCREEN) &&
+                                                                          e.triggers.forEach((e) => {
+                                                                              a.push((0, ev.fZ)(e));
+                                                                          })
+                                                                      );
+                                                              }
+                                                          }),
+                                                          (0, l.wg)({ barBelow: { list: t }, modal: { list: a } })
+                                                      );
+                                                  })(n))
+                                                : n &&
+                                                  n.triggers &&
+                                                  Array.isArray(n.triggers) &&
+                                                  n.triggers.every(
+                                                      (e) =>
+                                                          !!(
+                                                              e &&
+                                                              'object' == typeof e &&
+                                                              'anchorId' in e &&
+                                                              'screenId' in e &&
+                                                              'div' in e &&
+                                                              'meta' in e &&
+                                                              !('triggers' in e)
+                                                          ),
+                                                  ) &&
+                                                  (e.list = ((e) => {
+                                                      let t = [],
+                                                          a = [];
+                                                      return (
+                                                          e.triggers.forEach((e) => {
+                                                              switch (e.meta.notificationId) {
+                                                                  case i.BAR_BELOW:
+                                                                      isCommunicationTriggerAllowed(i.BAR_BELOW) && t.push((0, ep.S3)(e));
+                                                                      return;
+                                                                  case i.FULLSCREEN:
+                                                                      isCommunicationTriggerAllowed(i.FULLSCREEN) && a.push((0, ev.fZ)(e));
+                                                                      return;
+                                                              }
+                                                          }),
+                                                          (0, l.wg)({ barBelow: { list: t }, modal: { list: a } })
+                                                      );
+                                                  })(n)),
+                                            e.loadingState !== c.GuX.IDLE && (e.loadingState = c.GuX.RESOLVE),
+                                            !e.list)
+                                        )
+                                            return;
+                                        let { barBelow: o, modal: d } = e.list;
+                                        o.setAnchorId(ey.v.ON_START_BAR_BELOW),
+                                            o.barBelowItem && (o.show(), t.shown(o.barBelowItem.anchorId, o.barBelowItem.screenId, o.barBelowItem.feedbackToken)),
+                                            d.setAnchorId(ey.v.ON_START_FULLSCREEN),
+                                            d.modalItem && (d.open(), t.shown(d.modalItem.anchorId, d.modalItem.screenId, d.modalItem.feedbackToken));
+                                    } catch (t) {
+                                        r.error(t),
+                                            t instanceof T.GX &&
+                                                (t.statusCode === T.X1.NOT_FOUND || t.statusCode === T.X1.BAD_REQUEST) &&
+                                                (e.errorStatusCode = T.X1.NOT_FOUND),
+                                            e.loadingState !== c.GuX.IDLE && (e.loadingState = c.GuX.REJECT);
+                                    }
                             }),
                             shown: (0, l.L3)(function* (t, a, r) {
                                 let { dynamicPagesResource: i, modelActionsLogger: s } = (0, l._$)(e);

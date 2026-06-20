@@ -2102,10 +2102,21 @@
                     let playButtonType = (0, v.useState)(window.nativeSettings.get('modSettings.playerBarEnhancement.playButtonType') ?? 'yellow'),
                         playButtonTypeValue = playButtonType[0],
                         s = playButtonType[1],
+                        communicationTriggersMode = (0, v.useState)(window.nativeSettings.get('modSettings.communicationTriggers.mode') ?? 'disabled'),
+                        communicationTriggersModeValue = communicationTriggersMode[0],
+                        setCommunicationTriggersMode = communicationTriggersMode[1],
                         onPlayButtonTypeChange = (0, v.useCallback)(async (e) => {
                             console.log('playButtonType changed. Value: ', e);
                             window.nativeSettings.set('modSettings.playerBarEnhancement.playButtonType', e);
                             s(e);
+                            o((0, n.jsx)(T.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                containerId: m.uQT.ERROR,
+                            });
+                        }, []),
+                        onCommunicationTriggersModeChange = (0, v.useCallback)(async (e) => {
+                            console.log('communicationTriggers.mode changed. Value: ', e);
+                            window.nativeSettings.set('modSettings.communicationTriggers.mode', e);
+                            setCommunicationTriggersMode(e);
                             o((0, n.jsx)(T.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
                                 containerId: m.uQT.ERROR,
                             });
@@ -2142,6 +2153,22 @@
                                 }),
                                 (0, n.jsx)('li', {
                                     className: $().item,
+                                    children: (0, n.jsx)(settingBarWithDropdown, {
+                                        title: 'Стартовые предложения',
+                                        description: 'Управляет показом WebNextTriggersV2: нижняя плашка и полноэкранные предложения',
+                                        onChange: onCommunicationTriggersModeChange,
+                                        value: communicationTriggersModeValue,
+                                        direction: 'bottom',
+                                        options: [
+                                            { value: 'disabled', label: 'Отключены', description: 'Не показывать стартовые предложения' },
+                                            { value: 'all', label: 'Все', description: 'Показывать плашки и полноэкранные предложения' },
+                                            { value: 'barBelow', label: 'Только плашка', description: 'Показывать только предложение под панелью плеера' },
+                                            { value: 'fullscreen', label: 'Только fullscreen', description: 'Показывать только полноэкранное предложение' },
+                                        ],
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
                                     children: (0, n.jsx)(Q, {
                                         title: 'Поменять местами Дизлайк и Лайк',
                                         description: 'Чтобы их положение соответствовало остальным платформам',
@@ -2153,7 +2180,7 @@
                                     className: $().item,
                                     children: (0, n.jsx)(Q, {
                                         title: 'Отображать кодек',
-                                        description: 'Отображает кодек вместо качества трека.',
+                                        description: 'Отображает кодек вместо качества трека',
                                         onChange: onShowCodecToggle,
                                         isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.showCodecInsteadOfQualityMark'),
                                     }),
@@ -2162,7 +2189,7 @@
                                     className: $().item,
                                     children: (0, n.jsx)(Q, {
                                         title: 'Отображать временные метки',
-                                        description: 'Отображать метки независимо от положения курсора.',
+                                        description: 'Отображать метки независимо от положения курсора',
                                         onChange: onTimestampsToggle,
                                         isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.alwaysShowTimestamps'),
                                     }),
@@ -2180,7 +2207,7 @@
                                     className: $().item,
                                     children: (0, n.jsx)(Q, {
                                         title: 'Кнопка Cast и поиск колонок',
-                                        description: 'Показывает кнопку Cast и включает поиск Яндекс Станций в локальной сети.',
+                                        description: 'Показывает кнопку Cast и включает поиск Яндекс Станций в локальной сети',
                                         onChange: onYandexStationCastToggle,
                                         isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.enableYandexStationCast').then((e) => e ?? !0),
                                         disabled: isYandexStationCastToggleLocked,
@@ -2199,7 +2226,7 @@
                                     className: $().item,
                                     children: (0, n.jsx)(Q, {
                                         title: 'Старая панель в новой Волне',
-                                        description: 'Возвращает классическую панель плеера на новую страницу Моей волны, не скрывая новую.',
+                                        description: 'Возвращает классическую панель плеера на новую страницу Моей волны, не скрывая новую',
                                         onChange: onShowOldPlayerBarOnNewWaveToggle,
                                         isChecked: window.nativeSettings.getAsync('modSettings.playerBarEnhancement.showOldPlayerBarOnNewWave'),
                                     }),
