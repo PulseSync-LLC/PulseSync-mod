@@ -1,4 +1,5 @@
 const { io } = require('socket.io-client');
+const crypto = require('node:crypto');
 const net = require('net');
 const EventEmitter = require('node:events');
 const Logger_js_1 = require('../../packages/logger/Logger.js');
@@ -30,6 +31,40 @@ function mapExtensionsById(extensions) {
         mapped.set(sanitizeId(ext.addon || ext.name), ext);
     }
     return mapped;
+}
+
+function canonicalizeAddonState(theme, extensions) {
+    const normalizedTheme =
+        !theme || String(theme.name || '').toLowerCase() === 'default'
+            ? { name: 'default', css: '', script: '' }
+            : {
+                  name: String(theme.name || ''),
+                  css: typeof theme.css === 'string' ? theme.css : '',
+                  script: typeof theme.script === 'string' ? theme.script : '',
+              };
+    const normalizedExtensions = (Array.isArray(extensions) ? extensions : [])
+        .map((extension) => ({
+            addon: String(extension?.addon || ''),
+            name: String(extension?.name || ''),
+            directoryName: String(extension?.directoryName || ''),
+            id: String(extension?.id || ''),
+            css: typeof extension?.css === 'string' ? extension.css : '',
+            script: typeof extension?.script === 'string' ? extension.script : '',
+        }))
+        .sort((left, right) => {
+            const leftKey = JSON.stringify(left);
+            const rightKey = JSON.stringify(right);
+            return leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0;
+        });
+
+    return { theme: normalizedTheme, extensions: normalizedExtensions };
+}
+
+function hashAddonState(theme, extensions) {
+    return crypto
+        .createHash('sha256')
+        .update(JSON.stringify(canonicalizeAddonState(theme, extensions)))
+        .digest('hex');
 }
 
 let singletonInstance = null;
@@ -327,12 +362,9 @@ class PulseSyncManager extends EventEmitter {
             const newTheme = data.theme;
             const incoming = newTheme.name.toLowerCase();
             const prev = this.currentTheme?.name.toLowerCase() || null;
+            const themeChanged = prev !== incoming;
 
             if (incoming === 'default' && prev && prev !== 'default') {
-                const prevThemeId = sanitizeId(prev);
-                const prevThemeScriptKey = `theme-script-${prevThemeId}`;
-                const hadThemeScript = !!this.scriptContent[prevThemeScriptKey] || !!this.scriptKeys[prevThemeScriptKey];
-
                 for (const key of Object.keys(this.cssContent)) {
                     await removeCss(this.window, key, this.styleKeys);
                 }
@@ -341,9 +373,7 @@ class PulseSyncManager extends EventEmitter {
                 this.scriptContent = {};
                 this.scriptKeys = {};
                 this.currentTheme = null;
-                if (hadThemeScript) {
-                    this.safeReload('theme switched to default with script');
-                }
+                this.safeReload('theme switched to default');
                 return;
             }
 
@@ -352,7 +382,7 @@ class PulseSyncManager extends EventEmitter {
             }
 
             this.currentTheme = newTheme;
-            await this.handleTheme(newTheme);
+            await this.handleTheme(newTheme, themeChanged);
         });
 
         this.socket.on('GET_TRACK_INFO', async () => {
@@ -572,7 +602,7 @@ class PulseSyncManager extends EventEmitter {
         return false;
     }
 
-    async handleTheme({ css = '', name = 'theme', script = '' }) {
+    async handleTheme({ css = '', name = 'theme', script = '' }, themeChanged = false) {
         this.logger.info(process.argv);
 
         if (process.argv.includes('--safe-mode')) {
@@ -602,9 +632,9 @@ class PulseSyncManager extends EventEmitter {
             scriptChanged = true;
         }
 
-        if (!this.isReloading && name.toLowerCase() !== 'default' && scriptChanged && !this.hasReloadedOnTheme) {
+        if (!this.isReloading && name.toLowerCase() !== 'default' && (themeChanged || scriptChanged) && !this.hasReloadedOnTheme) {
             this.hasReloadedOnTheme = true;
-            this.safeReload(`theme script changed: ${name}`);
+            this.safeReload(`theme changed: ${name}`);
         }
     }
 
@@ -671,7 +701,10 @@ class PulseSyncManager extends EventEmitter {
 
     sendReadyEvent() {
         if (this.socket?.connected) {
-            this.socket.emit('READY');
+            this.socket.emit('READY', {
+                addonStateHashVersion: 1,
+                addonStateHash: hashAddonState(this.currentTheme, this.sourceExtensions),
+            });
             this.socket.emit('IS_PREMIUM_USER');
             this.readySent = true;
         } else {
