@@ -156,6 +156,7 @@
                 r = o(39407),
                 s = o(59824),
                 a = o(46049),
+                reactDom = o(51767),
                 c = o(71926),
                 d = o(96527),
                 u = o(83850),
@@ -771,10 +772,43 @@
                 settingBarWithDropdown = (e) => {
                     let { title: t, description: o, onChange: i, value: l, options: r, direction: s = 'bottom', disabled: a = !1, buttonStyle: buttonStyle = {} } = e,
                         [d, u] = (0, v.useState)(!1),
-                        [_, p] = (0, v.useState)(160),
+                        [menuPosition, setMenuPosition] = (0, v.useState)(null),
+                        [menuMaxHeight, setMenuMaxHeight] = (0, v.useState)(null),
                         [m, y] = (0, v.useState)(!1),
                         h = (0, v.useRef)(null),
+                        menuRef = (0, v.useRef)(null),
                         f = r.find((e) => e.value === l),
+                        updateMenuPosition = (0, v.useCallback)(() => {
+                            let e = h.current;
+                            if (!e) return;
+                            let t = e.getBoundingClientRect(),
+                                o = 'bottom' === s;
+                            setMenuPosition({
+                                left: Math.round(t.left),
+                                width: Math.round(t.width),
+                                top: o ? Math.round(t.bottom + 8) : 'auto',
+                                bottom: o ? 'auto' : Math.round(window.innerHeight - t.top + 8),
+                            });
+                        }, [s]),
+                        updateMenuMaxHeight = (0, v.useCallback)(() => {
+                            let e = menuRef.current;
+                            if (!e) return;
+                            let t = Array.from(e.querySelectorAll('.settingBarWithDropdown_menuItem')),
+                                o = window.getComputedStyle(e),
+                                i = ['borderTopWidth', 'borderBottomWidth', 'paddingTop', 'paddingBottom'].reduce(
+                                    (e, t) => e + (parseFloat(o[t]) || 0),
+                                    0,
+                                ),
+                                l = 16 * (parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16),
+                                r = Math.max(0, l - i),
+                                s = 0;
+                            for (let e of t) {
+                                let t = e.getBoundingClientRect().height;
+                                if (s && s + t > r) break;
+                                if (((s += t), s >= r)) break;
+                            }
+                            s && setMenuMaxHeight('border-box' === o.boxSizing ? s + i : s);
+                        }, []),
                         x = (0, v.useCallback)(
                             (e) => {
                                 (i(e), u(!1));
@@ -783,7 +817,9 @@
                         ),
                         closeDropdownOnOuterClick = (0, v.useCallback)(
                             (e) => {
-                                d && e.target !== h.current && (e.stopPropagation(), e.preventDefault(), u(!1));
+                                if (!d) return;
+                                let t = e.target;
+                                h.current?.contains(t) || menuRef.current?.contains(t) || u(!1);
                             },
                             [d],
                         );
@@ -795,19 +831,24 @@
                             };
                         }, [closeDropdownOnOuterClick]),
                         (0, v.useEffect)(() => {
-                            let e = h.current;
-                            if (!e) return;
-                            let t = new ResizeObserver(([e]) => {
-                                var t;
-                                p(null == (t = e.borderBoxSize[0]) ? void 0 : t.inlineSize);
-                            });
+                            if (!d) return;
+                            updateMenuPosition();
+                            window.addEventListener('resize', updateMenuPosition);
+                            document.addEventListener('scroll', updateMenuPosition, !0);
                             return (
-                                t.observe(e),
-                                () => {
-                                    t.disconnect();
-                                }
+                                () => (
+                                    window.removeEventListener('resize', updateMenuPosition), document.removeEventListener('scroll', updateMenuPosition, !0)
+                                )
                             );
-                        }, []),
+                        }, [d, updateMenuPosition]),
+                        (0, v.useEffect)(() => {
+                            if (!d || !m) return;
+                            updateMenuMaxHeight();
+                            window.addEventListener('resize', updateMenuMaxHeight);
+                            return () => {
+                                window.removeEventListener('resize', updateMenuMaxHeight);
+                            };
+                        }, [d, m, r.length, updateMenuMaxHeight]),
                         (0, v.useEffect)(() => {
                             d && y(!0);
                         }, [d]),
@@ -861,52 +902,65 @@
                                     children: [
                                         f?.label || 'Select...',
                                         m &&
-                                            (0, n.jsx)('ul', {
-                                                role: 'menu',
-                                                className: 'settingBarWithDropdown_menu'.concat(d ? '' : ' settingBarWithDropdown_menu__closed'),
-                                                style: {
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    width: ''.concat(_, 'px'),
-                                                    maxHeight: '16rem',
-                                                    overflowY: 'auto',
-                                                    overflowX: 'hidden',
-                                                    scrollbarWidth: 'thin',
-                                                    overscrollBehavior: 'contain',
-                                                    top: 'bottom' === s ? '120%' : 'unset',
-                                                    bottom: 'top' === s ? '120%' : 'unset',
-                                                    '--settingBarWithDropdown-offset-y': 'bottom' === s ? '-6px' : '6px',
-                                                    '--settingBarWithDropdown-origin': 'bottom' === s ? 'top right' : 'bottom right',
-                                                },
-                                                children: r.map(
-                                                    (e) =>
-                                                        e &&
-                                                        (0, n.jsxs)(
-                                                            'li',
-                                                            {
-                                                                role: 'menuitem',
-                                                                className: 'settingBarWithDropdown_menuItem',
-                                                                id: e.value,
-                                                                'aria-selected': l === e.value,
-                                                                onClick: (t) => {
-                                                                    (t.stopPropagation(), x(e.value));
+                                            menuPosition &&
+                                            reactDom.createPortal(
+                                                (0, n.jsx)('ul', {
+                                                    ref: menuRef,
+                                                    role: 'menu',
+                                                    className: 'settingBarWithDropdown_menu PulseSync_experimentsListScroll Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx'.concat(
+                                                        d ? '' : ' settingBarWithDropdown_menu__closed',
+                                                    ),
+                                                    style: {
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        position: 'fixed',
+                                                        left: ''.concat(menuPosition.left, 'px'),
+                                                        right: 'auto',
+                                                        width: ''.concat(menuPosition.width, 'px'),
+                                                        maxHeight: null == menuMaxHeight ? '16rem' : ''.concat(menuMaxHeight, 'px'),
+                                                        overflowY: 'auto',
+                                                        overflowX: 'hidden',
+                                                        scrollbarWidth: 'thin',
+                                                        overscrollBehavior: 'contain',
+                                                        top: 'number' == typeof menuPosition.top ? ''.concat(menuPosition.top, 'px') : menuPosition.top,
+                                                        bottom: 'number' == typeof menuPosition.bottom ? ''.concat(menuPosition.bottom, 'px') : menuPosition.bottom,
+                                                        '--settingBarWithDropdown-offset-y': 'bottom' === s ? '-6px' : '6px',
+                                                        '--settingBarWithDropdown-origin': 'bottom' === s ? 'top right' : 'bottom right',
+                                                    },
+                                                    children: r.map(
+                                                        (e) =>
+                                                            e &&
+                                                            (0, n.jsxs)(
+                                                                'li',
+                                                                {
+                                                                    role: 'menuitem',
+                                                                    className: 'settingBarWithDropdown_menuItem',
+                                                                    id: e.value,
+                                                                    style: { flexShrink: 0 },
+                                                                    'aria-selected': l === e.value,
+                                                                    onClick: (t) => {
+                                                                        (t.stopPropagation(), x(e.value));
+                                                                    },
+                                                                    children: [
+                                                                        (0, n.jsx)('span', { children: e.label }),
+                                                                        l === e.value &&
+                                                                            (0, n.jsx)('svg', {
+                                                                                width: '16',
+                                                                                height: '16',
+                                                                                fill: 'currentColor',
+                                                                                xmlns: 'http://www.w3.org/2000/svg',
+                                                                                children: (0, n.jsx)('path', {
+                                                                                    d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z',
+                                                                                }),
+                                                                            }),
+                                                                    ],
                                                                 },
-                                                                children: [
-                                                                    (0, n.jsx)('span', { children: e.label }),
-                                                                    l === e.value &&
-                                                                        (0, n.jsx)('svg', {
-                                                                            width: '16',
-                                                                            height: '16',
-                                                                            fill: 'currentColor',
-                                                                            xmlns: 'http://www.w3.org/2000/svg',
-                                                                            children: (0, n.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
-                                                                        }),
-                                                                ],
-                                                            },
-                                                            e.value,
-                                                        ),
-                                                ),
-                                            }),
+                                                                e.value,
+                                                            ),
+                                                    ),
+                                                }),
+                                                document.body,
+                                            ),
                                     ],
                                 }),
                             ],
@@ -1356,6 +1410,8 @@
                     'TOGGLE_DISLIKE',
                     'DISLIKE',
                     'DISLIKE_NONE',
+                    'INCREASE_VOLUME',
+                    'DECREASE_VOLUME',
                     'SET_VOLUME',
                     'SET_PROGRESS',
                 ],
@@ -1378,6 +1434,8 @@
                     TOGGLE_SHUFFLE: 'Переключить Шафл',
                     SHUFFLE: 'Включить шафл',
                     SHUFFLE_NONE: 'Выключить шафл',
+                    INCREASE_VOLUME: 'Увеличить громкость',
+                    DECREASE_VOLUME: 'Уменьшить громкость',
                     SET_VOLUME: 'Громкость',
                     SET_PROGRESS: 'Позиция',
                 },
@@ -1400,15 +1458,34 @@
                     TOGGLE_SHUFFLE: 'Переключает шафл.',
                     SHUFFLE: 'Включает шафл.',
                     SHUFFLE_NONE: 'Выключает шафл.',
+                    INCREASE_VOLUME: 'Увеличивает громкость на заданное ниже количество процентов.',
+                    DECREASE_VOLUME: 'Уменьшает громкость на заданное ниже количество процентов.',
                     SET_VOLUME: 'Устанавливает громкость. Ниже задаётся значение от 0 до 100.',
                     SET_PROGRESS: 'Перематывает трек. Ниже задаётся позиция в секундах.',
                 },
-                globalShortcutActionsWithValue = ['SET_VOLUME', 'SET_PROGRESS'],
-                globalShortcutActionDefaultValues = { SET_VOLUME: '50', SET_PROGRESS: '0' },
+                globalShortcutVolumePercentActions = ['SET_VOLUME', 'INCREASE_VOLUME', 'DECREASE_VOLUME'],
+                globalShortcutActionsWithValue = [...globalShortcutVolumePercentActions, 'SET_PROGRESS'],
+                globalShortcutActionDefaultValues = { SET_VOLUME: '50', INCREASE_VOLUME: '5', DECREASE_VOLUME: '5', SET_PROGRESS: '0' },
                 globalShortcutActionValueMeta = {
                     SET_VOLUME: {
                         description: 'Процент громкости от 0 до 100.',
                         placeholder: '50',
+                        min: 0,
+                        max: 100,
+                        step: 1,
+                        inputMode: 'numeric',
+                    },
+                    INCREASE_VOLUME: {
+                        description: 'Шаг увеличения громкости в процентах от 0 до 100.',
+                        placeholder: '5',
+                        min: 0,
+                        max: 100,
+                        step: 1,
+                        inputMode: 'numeric',
+                    },
+                    DECREASE_VOLUME: {
+                        description: 'Шаг уменьшения громкости в процентах от 0 до 100.',
+                        placeholder: '5',
                         min: 0,
                         max: 100,
                         step: 1,
@@ -1434,7 +1511,11 @@
                         r = i.length ? ''.concat(l, '.', i.join('')) : l;
                     if (!r) return '';
                     let s = Number(r);
-                    return Number.isFinite(s) ? ('SET_VOLUME' === e ? ''.concat(Math.min(Math.max(s, 0), 100)) : ''.concat(Math.max(s, 0))) : r;
+                    return Number.isFinite(s)
+                        ? globalShortcutVolumePercentActions.includes(e)
+                            ? ''.concat(Math.min(Math.max(s, 0), 100))
+                            : ''.concat(Math.max(s, 0))
+                        : r;
                 },
                 getAvailableGlobalShortcutActions = () => {
                     let e = window.PLAYER_ACTIONS ? Object.values(window.PLAYER_ACTIONS) : globalShortcutFallbackActions;

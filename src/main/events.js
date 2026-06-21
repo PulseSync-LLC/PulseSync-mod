@@ -212,8 +212,21 @@ const updateGlobalShortcuts = () => {
                 electron_1.globalShortcut.register(shortcut[1], () => {
                     const commands = shortcut[0].split(' ');
                     commands.forEach((command) => {
-                        const [action, value] = command.split('|');
-                        sendPlayerAction(mainWindow, playerActions_js_1.PlayerActions[action], value);
+                        const [actionName, value] = command.split('|');
+                        const action = playerActions_js_1.PlayerActions[actionName];
+                        const isVolumePercentAction = [
+                            playerActions_js_1.PlayerActions.SET_VOLUME,
+                            playerActions_js_1.PlayerActions.INCREASE_VOLUME,
+                            playerActions_js_1.PlayerActions.DECREASE_VOLUME,
+                        ].includes(action);
+
+                        if (isVolumePercentAction && !Number.isFinite(Number(value))) {
+                            eventsLogger.warn(`(GlobalShortcuts) ${command} is skipped. Invalid volume value: ${value}`);
+                            return;
+                        }
+
+                        const normalizedValue = isVolumePercentAction ? Math.min(Math.max(Number(value), 0), 100) / 100 : value;
+                        sendPlayerAction(mainWindow, action, normalizedValue);
                     });
                 });
             } else {

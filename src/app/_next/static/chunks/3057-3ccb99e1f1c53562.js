@@ -253,6 +253,12 @@
                                 case 'TOGGLE_DISLIKE':
                                     r(o);
                                     break;
+                                case 'INCREASE_VOLUME':
+                                    null == e || e.increaseExponentVolume(n);
+                                    break;
+                                case 'DECREASE_VOLUME':
+                                    null == e || e.decreaseExponentVolume(n);
+                                    break;
                                 case 'SET_VOLUME':
                                     null == e || e.setExponentVolume(Math.min(Math.max(n, 0), 100));
                                     break;
