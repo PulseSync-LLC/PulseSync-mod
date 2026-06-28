@@ -414,40 +414,57 @@
                             weight: 'medium',
                             dangerouslySetInnerHTML: { __html: d },
                         }),
-                        (0, n.jsx)(c.Caption, {
-                            className: P().companyText,
-                            type: 'controls',
-                            variant: 'div',
-                            size: 'xs',
-                            children: (0, n.jsx)(r.A, { id: 'about-app.app-name' }),
-                        }),
-                        (0, n.jsx)(c.Caption, {
+                        (0, n.jsx)('div', {
+                            style: {
+                                display: 'flex',
+                                gap: '10px',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            },
                             className: P().versionText,
-                            type: 'controls',
-                            variant: 'div',
-                            size: 'xs',
-                            children: e({ id: 'desktop.app-version-short' }, { version: l }),
+                            children: [
+                                (0, n.jsx)(c.Caption, {
+                                    type: 'controls',
+                                    variant: 'div',
+                                    size: 'xs',
+                                    children: (0, n.jsx)(r.A, { id: 'about-app.app-name' }),
+                                }),
+                                (0, n.jsx)(c.Caption, {
+                                    type: 'controls',
+                                    variant: 'div',
+                                    size: 'xs',
+                                    children: e({ id: 'desktop.app-version-short' }, { version: l }),
+                                }),
+                                (0, n.jsx)(c.Caption, {
+                                    type: 'controls',
+                                    variant: 'div',
+                                    size: 'xs',
+                                    children: e({ id: 'desktop.app-revision' }, { revision: s }),
+                                }),
+                            ],
                         }),
-                        (0, n.jsx)(c.Caption, {
+                        (0, n.jsx)('div', {
+                            style: {
+                                display: 'flex',
+                                gap: '10px',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            },
                             className: P().versionText,
-                            type: 'controls',
-                            variant: 'div',
-                            size: 'xs',
-                            children: e({ id: 'desktop.app-revision' }, { revision: s }),
-                        }),
-                        (0, n.jsx)(c.Caption, {
-                            className: P().versionText,
-                            type: 'controls',
-                            variant: 'div',
-                            size: 'xs',
-                            children: 'PulseSync ' + window.PULSE_VERSION,
-                        }),
-                        (0, n.jsx)(c.Caption, {
-                            className: P().versionText,
-                            type: 'controls',
-                            variant: 'div',
-                            size: 'xs',
-                            children: 'Host ' + window.HOST_VERSION,
+                            children: [
+                                (0, n.jsx)(c.Caption, {
+                                    type: 'controls',
+                                    variant: 'div',
+                                    size: 'xs',
+                                    children: 'PulseSync ' + window.PULSE_VERSION,
+                                }),
+                                (0, n.jsx)(c.Caption, {
+                                    type: 'controls',
+                                    variant: 'div',
+                                    size: 'xs',
+                                    children: 'Host ' + window.HOST_VERSION,
+                                }),
+                            ],
                         }),
                     ],
                 });
@@ -696,7 +713,7 @@
                                       'margin-inline': '5px',
                                       'background-color': o,
                                       color: 'black',
-                                      'border-radius': '50px',
+                                      'border-radius': '6px',
                                       'padding-inline': '6px',
                                       transition: 'opacity var(--ym-duration-transition)',
                                       ...(l ? { opacity: 0.3 } : {}),

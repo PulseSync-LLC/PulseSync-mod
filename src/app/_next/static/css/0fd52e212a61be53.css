@@ -3,7 +3,7 @@
     flex-direction: column;
     max-height: calc(100vh - var(--ym-spacer-size-xxxxl));
     max-height: calc(100dvh - var(--ym-spacer-size-xxxxl));
-    max-width: 26.875rem;
+    max-width: 41rem;
     overflow: hidden;
     width: 100%;
 }
