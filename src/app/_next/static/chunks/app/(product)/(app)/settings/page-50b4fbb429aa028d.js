@@ -1787,6 +1787,22 @@
                                             paddingRight: '0.35rem',
                                         },
                                         children: [
+                                            (0, n.jsx)('li', {
+                                                style: { listStyle: 'none', display: 'flex', justifyContent: 'flex-end' },
+                                                children: (0, n.jsx)(j.$, {
+                                                    style: { padding: 'var(--ym-spacer-size-xl)' },
+                                                    contentContainerClassName: 'justify_center',
+                                                    radius: 'm',
+                                                    color: 'secondary',
+                                                    size: 'm',
+                                                    isBlock: true,
+                                                    withOutline: true,
+                                                    variant: 'outline',
+                                                    icon: (0, n.jsx)(F.Icon, { variant: 'add', size: 'xxs' }),
+                                                    onClick: onAddShortcut,
+                                                    children: 'Добавить хоткей',
+                                                }),
+                                            }),
                                             !shortcutItems.length &&
                                                 (0, n.jsx)('li', {
                                                     style: {
@@ -1803,7 +1819,7 @@
                                                         children: 'Пока нет настроенных хоткеев.',
                                                     }),
                                                 }),
-                                            ...shortcutItems.map((shortcutItem, shortcutIndex) =>
+                                            ...shortcutItems.toReversed().map((shortcutItem, shortcutIndex) =>
                                                 (0, n.jsx)(
                                                     'li',
                                                     {
@@ -1819,11 +1835,26 @@
                                                         children: (0, n.jsxs)('div', {
                                                             style: { display: 'flex', flexDirection: 'column', gap: '0.75rem' },
                                                             children: [
-                                                                (0, n.jsx)(c.Caption, {
-                                                                    variant: 'div',
-                                                                    size: 'm',
-                                                                    weight: 'bold',
-                                                                    children: 'Хоткей '.concat(shortcutIndex + 1),
+                                                                (0, n.jsx)('div', {
+                                                                    style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' },
+                                                                    children: [
+                                                                        (0, n.jsx)(c.Caption, {
+                                                                            variant: 'div',
+                                                                            size: 'm',
+                                                                            weight: 'bold',
+                                                                            children: 'Хоткей '.concat(shortcutItems.length - shortcutIndex),
+                                                                        }),
+                                                                        (0, n.jsx)(j.$, {
+                                                                            radius: 'm',
+                                                                            color: 'secondary',
+                                                                            size: 'xxs',
+                                                                            icon: (0, n.jsx)(F.Icon, { variant: 'bucket', size: 'xxs' }),
+                                                                            onClick: () => {
+                                                                                onRemoveShortcut(shortcutItem.id);
+                                                                            },
+                                                                            children: 'Удалить хоткей',
+                                                                        }),
+                                                                    ],
                                                                 }),
                                                                 (0, n.jsx)(settingBarWithKeybindRecorder, {
                                                                     title: 'Сочетание',
@@ -1866,23 +1897,12 @@
                                                                                         }),
                                                                                         shortcutItem.commands.length > 1 &&
                                                                                             (0, n.jsx)(j.$, {
-                                                                                                radius: 'xxxl',
+                                                                                                radius: 'm',
                                                                                                 color: 'secondary',
-                                                                                                size: 'm',
-                                                                                                icon: (0, n.jsx)('svg', {
-                                                                                                    width: '14',
-                                                                                                    height: '14',
-                                                                                                    viewBox: '0 0 14 14',
-                                                                                                    fill: 'none',
-                                                                                                    xmlns: 'http://www.w3.org/2000/svg',
-                                                                                                    'aria-hidden': 'true',
-                                                                                                    children: (0, n.jsx)('path', {
-                                                                                                        d: 'M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5',
-                                                                                                        stroke: 'currentColor',
-                                                                                                        strokeWidth: '1.8',
-                                                                                                        strokeLinecap: 'round',
-                                                                                                    }),
-                                                                                                }),
+                                                                                                variant: 'outline',
+                                                                                                withHover: true,
+                                                                                                size: 'xxs',
+                                                                                                icon: (0, n.jsx)(F.Icon, { variant: 'bucket', size: 'xxs' }),
                                                                                                 'aria-label': 'Удалить действие',
                                                                                                 title: 'Удалить действие',
                                                                                                 onClick: () => {
@@ -1920,22 +1940,18 @@
                                                                     },
                                                                     children: [
                                                                         (0, n.jsx)(j.$, {
-                                                                            radius: 'xxxl',
+                                                                            contentContainerClassName: 'justify_center',
+                                                                            radius: 'm',
                                                                             color: 'secondary',
                                                                             size: 'm',
+                                                                            isBlock: true,
+                                                                            withOutline: true,
+                                                                            variant: 'outline',
+                                                                            icon: (0, n.jsx)(F.Icon, { variant: 'add', size: 'xxs' }),
                                                                             onClick: () => {
                                                                                 onAddActionToShortcut(shortcutItem.id);
                                                                             },
                                                                             children: 'Добавить действие',
-                                                                        }),
-                                                                        (0, n.jsx)(j.$, {
-                                                                            radius: 'xxxl',
-                                                                            color: 'secondary',
-                                                                            size: 'm',
-                                                                            onClick: () => {
-                                                                                onRemoveShortcut(shortcutItem.id);
-                                                                            },
-                                                                            children: 'Удалить хоткей',
                                                                         }),
                                                                     ],
                                                                 }),
@@ -1945,16 +1961,6 @@
                                                     shortcutItem.id,
                                                 ),
                                             ),
-                                            (0, n.jsx)('li', {
-                                                style: { listStyle: 'none', display: 'flex', justifyContent: 'flex-end' },
-                                                children: (0, n.jsx)(j.$, {
-                                                    radius: 'xxxl',
-                                                    color: 'secondary',
-                                                    size: 'm',
-                                                    onClick: onAddShortcut,
-                                                    children: 'Добавить хоткей',
-                                                }),
-                                            }),
                                         ],
                                     }),
                                 ],

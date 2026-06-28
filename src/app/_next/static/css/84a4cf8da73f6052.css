@@ -1799,6 +1799,10 @@
 .FullscreenPlayerDesktopContent_title__I2JrP {
     justify-content: center;
 }
+
+.justify_center { /* Костыль */
+    justify-content: center;
+}
 .FullscreenPlayerDesktopContent_meta__3jDTy {
     margin: auto;
     padding-block-end: var(--ym-spacer-size-m);
