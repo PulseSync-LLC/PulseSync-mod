@@ -5364,47 +5364,39 @@
                     });
                 },
                 K = (0, u.PA)((e) => {
-                    var t, a, n, l;
+                    var t, a, n;
                     let { track: r } = e,
                         { formatMessage: o } = (0, b.A)(),
                         { notify: d } = (0, i.lkh)(),
                         { track: u, trackLyrics: p } = (0, i.Pjs)(),
                         { state: _, setState: g } = (0, j.e)(!1),
                         v = p.currentTrackId !== (null == (t = u.meta) ? void 0 : t.id),
-                        x = u.isResolved && (null == (a = u.meta) ? void 0 : a.isLyricsAvailable);
+                        x = u.isResolved && (null == (a = u.meta) ? void 0 : a.isLyricsAvailable),
+                        N = null == r ? void 0 : r.id,
+                        L = null == r ? void 0 : r.isAvailable,
+                        W = null == r ? void 0 : r.isLyricsAvailable;
                     (0, m.useEffect)(() => {
                         var e;
-                        (null == (e = u.meta) ? void 0 : e.id) && x && v && p.getLyrics(u.meta.id);
+                        (null == (e = u.meta) ? void 0 : e.id) && x && v && (p.setTrack(u.meta), p.getLyrics(u.meta.id));
                     }, [v, x, p, null == (n = u.meta) ? void 0 : n.id]),
                         (0, m.useEffect)(() => {
-                            let e = null == l ? void 0 : r.id,
-                                t = null == l ? void 0 : l.isAvailable,
-                                a = null == l ? void 0 : l.isLyricsAvailable,
-                                n = _.currentTrackId ? String(_.currentTrackId) : null,
-                                r = e ? String(e) : null,
-                                s = !!(p.lyrics && String(p.lyrics).trim().length > 0),
-                                o = s && (!_.currentTrackId || (r && n && r === n));
-                            if (!e || !1 === t || a || p.isLoading || o) return;
-                            _.setTrack(l), p.getLyrics(e);
-                        }, [
-                            null == l ? void 0 : r.id,
-                            null == l ? void 0 : l.isAvailable,
-                            null == l ? void 0 : l.isLyricsAvailable,
-                            _.currentTrackId,
-                            p.isLoading,
-                            p.lyrics,
-                            _,
-                        ]),
+                            let e = null == p.currentTrackId ? null : String(p.currentTrackId),
+                                t = null == N ? null : String(N),
+                                a = !!(p.lyrics && String(p.lyrics).trim().length > 0),
+                                n = a && (!p.currentTrackId || (t && e && t === e));
+                            if (!N || !1 === L || W || p.isLoading || n || (t && e && t === e && p.isRejected)) return;
+                            p.setTrack(r), p.getLyrics(N);
+                        }, [N, L, W, p.currentTrackId, p.isRejected, p.isLoading, p.lyrics, p, r]),
                         p.shouldShowErrorNotification &&
                             (d((0, c.jsx)(A.hT, { error: o({ id: 'error-messages.error-during-action' }) }), { containerId: i.uQT.ERROR }), p.resetShouldShowError());
-                    let N = (0, I.c)((e) => {
+                    let X = (0, I.c)((e) => {
                         g(e), e && r && p.sendViews({ trackId: r.id, albumId: r.albumId });
                     });
-                    let L = !!(p.lyrics && String(p.lyrics).trim().length > 0),
-                        W = p.isShimmerVisible || u.isShimmerVisible || (p.isLoading && !L);
-                    return W
+                    let J = !!(p.lyrics && String(p.lyrics).trim().length > 0),
+                        Q = p.isShimmerVisible || u.isShimmerVisible || (p.isLoading && !J);
+                    return Q
                         ? (0, c.jsx)(D, { isShimmerActive: p.isLoading || u.isLoading })
-                        : !L
+                        : !J
                           ? null
                           : (0, c.jsxs)('div', {
                                 className: M().root,
@@ -5422,7 +5414,7 @@
                                         moreText: o({ id: 'track-modal.read-more' }),
                                         buttonClassName: M().button,
                                         open: p,
-                                        onOpenChange: N,
+                                        onOpenChange: X,
                                         lineClamp: 4,
                                         withFade: !0,
                                         children: (0, c.jsx)(S.Caption, {
@@ -5434,7 +5426,7 @@
                                             children: (0, c.jsx)(s.xe, {
                                                 lyrics: p.lyrics,
                                                 authors: p.writersNames,
-                                                source: null == (r = p.major) ? void 0 : r.prettyName,
+                                                source: null == (t = p.major) ? void 0 : t.prettyName,
                                                 isShimmerVisible: p.isShimmerVisible,
                                                 isShimmerActive: p.isLoading,
                                             }),

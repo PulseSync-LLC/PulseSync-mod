@@ -2049,7 +2049,7 @@
                         ? e
                               .trim()
                               .toLowerCase()
-                              .replace(/[\s\W_]+/g, '')
+                              .replace(/[^\p{L}\p{N}]+/gu, '')
                         : '',
                 makeLrclibSyncCacheKey = (e) => {
                     let t = normalizeLrclibSyncCachePart(null == e ? void 0 : e.trackName),
@@ -2172,7 +2172,7 @@
                                 }
                                 return attempt;
                             },
-                            normalizeTitle = (e) => ('string' != typeof e ? '' : e.toLowerCase().replace(/[\s\W_]+/g, '')),
+                            normalizeTitle = (e) => ('string' != typeof e ? '' : e.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '')),
                             splitTrackTitle = (e) => {
                                 if ('string' != typeof e) return null;
                                 let separators = [' - ', ' — ', ' – '];
@@ -2537,11 +2537,10 @@
                             let { sonataState: a } = (0, l.Zn)(e);
                             let i = null == a || null == (t = a.entityMeta) ? void 0 : t.id,
                                 n = i ? String(i) : null,
-                                r = null == a || null == (t = a.entityMeta) ? void 0 : t.hasLyrics,
-                                s = null == a || null == (t = a.entityMeta) ? void 0 : t.hasSyncLyrics,
-                                o = null == a || null == (t = a.entityMeta) ? void 0 : t.isSyncLyricsAvailableWithOfflineFeature,
-                                c = !!(n && e.syncLyrics.hasLyricsForTrack(n));
-                            return e.mode === C.SYNC_LYRICS && (!!(null == a || null == (t = a.entityMeta) ? void 0 : t.isSyncLyricsAvailable) || !!o || !!s || !!r || c);
+                                r = null == a || null == (t = a.entityMeta) ? void 0 : t.hasSyncLyrics,
+                                s = null == a || null == (t = a.entityMeta) ? void 0 : t.isSyncLyricsAvailableWithOfflineFeature,
+                                o = !!(n && e.syncLyrics.hasLyricsForTrack(n));
+                            return e.mode === C.SYNC_LYRICS && (!!(null == a || null == (t = a.entityMeta) ? void 0 : t.isSyncLyricsAvailable) || !!s || !!r || o);
                         },
                         get isPlayQueueMode() {
                             return e.mode === C.PLAY_QUEUE;
@@ -3675,15 +3674,22 @@
                         let e = null == _ ? void 0 : _.id,
                             t = null != _ && !0 === _.hasSyncLyrics,
                             a = null != _ && !1 === _.hasSyncLyrics,
-                            i = e && m.currentTrackId !== e && (t || a || !!(null == _ ? void 0 : _.hasLyrics) || 'UGC' === (null == _ ? void 0 : _.trackSource)),
+                            i = null == _ ? void 0 : _.trackSource,
+                            r = !!(null == _ ? void 0 : _.isNonMusic),
+                            s = !0;
+                        try {
+                            let e = 'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useText') : null;
+                            !1 === e && (s = !1);
+                        } catch (e) {}
+                        let o = e && m.currentTrackId !== e && (t || a || 'UGC' === i || (!r && s)),
                             n = getNextQueueTrackMeta(sonataRuntimeState);
                         lrclibSyncSonataStateRef = sonataRuntimeState;
-                        (i && m.getData(e), m.prefetchTrack(n));
+                        (o && m.getData(e), m.prefetchTrack(n));
                     }, [
                         null == _ ? void 0 : _.id,
                         null == _ ? void 0 : _.hasSyncLyrics,
-                        null == _ ? void 0 : _.hasLyrics,
                         null == _ ? void 0 : _.trackSource,
+                        null == _ ? void 0 : _.isNonMusic,
                         m.currentTrackId,
                         m,
                         sonataRuntimeState,
@@ -3703,7 +3709,6 @@
                                     !!(null == _ ? void 0 : _.isSyncLyricsAvailable) ||
                                     !!(null == _ ? void 0 : _.isSyncLyricsAvailableWithOfflineFeature) ||
                                     !!(null == _ ? void 0 : _.hasSyncLyrics) ||
-                                    !!(null == _ ? void 0 : _.hasLyrics) ||
                                     (!!t && m.hasLyricsForTrack(t));
                             if (m.isResolved) return (0, o.jsx)(e7, { key: null == m.currentTrackId ? 'sync-lyrics-no-track' : String(m.currentTrackId) });
                             if (!a && t && m.isLoadingForTrack(t)) return null;
@@ -3714,7 +3719,6 @@
                             null == _ ? void 0 : _.isSyncLyricsAvailable,
                             null == _ ? void 0 : _.isSyncLyricsAvailableWithOfflineFeature,
                             null == _ ? void 0 : _.hasSyncLyrics,
-                            null == _ ? void 0 : _.hasLyrics,
                             m.currentTrackId,
                             m.lines,
                             m.isLoading,
@@ -3856,7 +3860,6 @@
                             !!(null == l ? void 0 : l.isSyncLyricsAvailable) ||
                             !!(null == l ? void 0 : l.isSyncLyricsAvailableWithOfflineFeature) ||
                             !!(null == l ? void 0 : l.hasSyncLyrics) ||
-                            !!(null == l ? void 0 : l.hasLyrics) ||
                             (!!t && x.hasLyricsForTrack(t))
                         );
                     }, [
@@ -3864,7 +3867,6 @@
                         null == l ? void 0 : l.isSyncLyricsAvailable,
                         null == l ? void 0 : l.isSyncLyricsAvailableWithOfflineFeature,
                         null == l ? void 0 : l.hasSyncLyrics,
-                        null == l ? void 0 : l.hasLyrics,
                         x.currentTrackId,
                         x.lines,
                         x.isResolved,
@@ -4486,7 +4488,6 @@
                             !!(null == x ? void 0 : x.isSyncLyricsAvailable) ||
                             !!(null == x ? void 0 : x.isSyncLyricsAvailableWithOfflineFeature) ||
                             !!(null == x ? void 0 : x.hasSyncLyrics) ||
-                            !!(null == x ? void 0 : x.hasLyrics) ||
                             (!!fullscreenSyncLyricsTrackId && b.hasLyricsForTrack(fullscreenSyncLyricsTrackId)),
                         S = (0, u.useCallback)(() => {
                             return canOpenFullscreenSyncLyrics ? (p ? y() : v()) : void 0;
@@ -5154,7 +5155,6 @@
                             !!(null == i ? void 0 : i.isSyncLyricsAvailable) ||
                             !!(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) ||
                             !!(null == i ? void 0 : i.hasSyncLyrics) ||
-                            !!(null == i ? void 0 : i.hasLyrics) ||
                             (!!t && g.syncLyrics.hasLyricsForTrack(t))
                         );
                     }, [
@@ -5162,7 +5162,6 @@
                         null == i ? void 0 : i.isSyncLyricsAvailable,
                         null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature,
                         null == i ? void 0 : i.hasSyncLyrics,
-                        null == i ? void 0 : i.hasLyrics,
                         g.syncLyrics.currentTrackId,
                         g.syncLyrics.lines,
                         g.syncLyrics.isResolved,
@@ -5283,15 +5282,21 @@
                             t = null != i && !1 === i.hasSyncLyrics,
                             a = null != i && !0 === i.hasSyncLyrics,
                             n = null == i ? void 0 : i.trackSource,
-                            r = e && g.syncLyrics.currentTrackId !== e && (t || a || !!(null == i ? void 0 : i.hasLyrics) || 'UGC' === n),
-                            l = getNextQueueTrackMeta(theState);
+                            r = !!(null == i ? void 0 : i.isNonMusic),
+                            l = !0;
+                        try {
+                            let e = 'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useText') : null;
+                            !1 === e && (l = !1);
+                        } catch (e) {}
+                        let s = e && g.syncLyrics.currentTrackId !== e && (t || a || 'UGC' === n || (!r && l)),
+                            o = getNextQueueTrackMeta(theState);
                         lrclibSyncSonataStateRef = theState;
-                        (r && g.syncLyrics.getData(e), g.syncLyrics.prefetchTrack(l));
+                        (s && g.syncLyrics.getData(e), g.syncLyrics.prefetchTrack(o));
                     }, [
                         null == i ? void 0 : i.id,
                         null == i ? void 0 : i.hasSyncLyrics,
-                        null == i ? void 0 : i.hasLyrics,
                         null == i ? void 0 : i.trackSource,
+                        null == i ? void 0 : i.isNonMusic,
                         g.syncLyrics,
                         theState,
                     ]),
@@ -6236,7 +6241,6 @@
                                   ((null == w ? void 0 : w.isSyncLyricsAvailable) ||
                                       (null == w ? void 0 : w.isSyncLyricsAvailableWithOfflineFeature) ||
                                       (null == w ? void 0 : w.hasSyncLyrics) ||
-                                      (null == w ? void 0 : w.hasLyrics) ||
                                       ((null == w ? void 0 : w.id) && y.syncLyrics.hasLyricsForTrack(null == w ? void 0 : w.id))) &&
                                   (0, o.jsx)(tj.Dr, {
                                       'aria-label': ev,
@@ -7228,14 +7232,13 @@
                             let e = 'undefined' != typeof window && window.nativeSettings ? window.nativeSettings.get('modSettings.lrclib.useText') : null;
                             !1 === e && (s = !1);
                         } catch (e) {}
-                        let o = e && d.syncLyrics.currentTrackId !== e && (t || a || !!(null == E ? void 0 : E.hasLyrics) || 'UGC' === i || (!r && s)),
+                        let o = e && d.syncLyrics.currentTrackId !== e && (t || a || 'UGC' === i || (!r && s)),
                             c = getNextQueueTrackMeta(f);
                         lrclibSyncSonataStateRef = f;
                         (o && d.syncLyrics.getData(e), d.syncLyrics.prefetchTrack(c));
                     }, [
                         null == E ? void 0 : E.id,
                         null == E ? void 0 : E.hasSyncLyrics,
-                        null == E ? void 0 : E.hasLyrics,
                         null == E ? void 0 : E.trackSource,
                         null == E ? void 0 : E.isNonMusic,
                         d.syncLyrics,
@@ -7550,14 +7553,12 @@
                                 !!(null == E ? void 0 : E.isSyncLyricsAvailable) ||
                                 !!(null == E ? void 0 : E.isSyncLyricsAvailableWithOfflineFeature) ||
                                 !!(null == E ? void 0 : E.hasSyncLyrics) ||
-                                !!(null == E ? void 0 : E.hasLyrics) ||
                                 (!!(null == E ? void 0 : E.id) && d.syncLyrics.hasLyricsForTrack(null == E ? void 0 : E.id)),
                             [
                                 null == E ? void 0 : E.id,
                                 null == E ? void 0 : E.isSyncLyricsAvailable,
                                 null == E ? void 0 : E.isSyncLyricsAvailableWithOfflineFeature,
                                 null == E ? void 0 : E.hasSyncLyrics,
-                                null == E ? void 0 : E.hasLyrics,
                                 d.syncLyrics.currentTrackId,
                                 d.syncLyrics.lines,
                                 d.syncLyrics.isResolved,
