@@ -27,6 +27,7 @@ window.findCssRuleByPartialName = function (pName) {
     const createEntityId = (trackId, albumId) => (albumId ? ''.concat(trackId, ':').concat(albumId) : trackId);
     const getPlayerInstance = () => window.pulsesyncApi?.playerInstance ?? null;
     const normalizeAddonId = (addonId) => String(addonId ?? '').trim();
+    const DEFAULT_VIBE_SEEDS = ['user:onyourwave'];
     const isPlainObject = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
     const cloneValue = (value) => {
         if (typeof structuredClone === 'function') {
@@ -876,6 +877,36 @@ window.findCssRuleByPartialName = function (pName) {
         } catch {}
     };
 
+    const normalizeVibeSeeds = (params) => {
+        const seeds = Array.isArray(params?.seeds) ? params.seeds : typeof params?.seed === 'string' ? [params.seed] : [];
+        return seeds.map((seed) => String(seed ?? '').trim()).filter(Boolean);
+    };
+
+    const playVibeBySeeds = (params = {}) => {
+        const seeds = normalizeVibeSeeds(params);
+        const nextSeeds = seeds.length > 0 ? seeds : DEFAULT_VIBE_SEEDS;
+
+        callWithPlayer((playerInst) => {
+            if (typeof playerInst?.playContext !== 'function') {
+                return;
+            }
+
+            const from = params?.from || playerInst?.state?.currentContext?.value?.contextData?.from || 'external';
+            playerInst.playContext({
+                contextData: {
+                    type: 'vibe',
+                    meta: { id: nextSeeds.join(',') },
+                    seeds: nextSeeds,
+                    from,
+                    includeTracksInResponse: true,
+                    interactive: true,
+                    ...(params?.parentContextId ? { parentContextId: params.parentContextId } : {}),
+                },
+                loadContextMeta: true,
+            });
+        });
+    };
+
     const ensureApi = () => {
         if (window.pulsesyncApi) {
             window.__pulseSyncPendingPlayerInstance && installYandexStationPlayerProxy(window.__pulseSyncPendingPlayerInstance);
@@ -888,10 +919,18 @@ window.findCssRuleByPartialName = function (pName) {
             _addonSettingsListeners: new Map(),
             _waitForPlayer: callWithPlayer,
             playVibe: (params = { screen: 'landing' }) => {
+                if (normalizeVibeSeeds(params).length > 0) {
+                    playVibeBySeeds(params);
+                    return;
+                }
+
                 const nativeFn = window.pulsesyncApi?.playVibeNative;
                 if (typeof nativeFn === 'function') {
                     nativeFn(params);
+                    return;
                 }
+
+                playVibeBySeeds(params);
             },
             play: () => {
                 callWithPlayer((playerInst) => {

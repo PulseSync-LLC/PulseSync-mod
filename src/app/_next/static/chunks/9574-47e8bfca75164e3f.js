@@ -606,6 +606,14 @@
                     resetSettings: (0, c.c)(async () => {
                         M.setIsApplying(!0), W ? (await H([h.M1]), await B(!0)) : await U([h.M1]), M.setIsApplying(!1);
                     }),
+                    playSeeds: (0, c.c)(async (e) => {
+                        let t = Array.isArray(e) && e.length > 0 ? e : A;
+                        if (G || !k.isAuthorized) {
+                            null == g || g();
+                            return;
+                        }
+                        M.setIsApplying(!0), W ? (await H(t), await B(!0)) : await U(t), M.setIsApplying(!1);
+                    }),
                 };
             };
         },

@@ -9846,6 +9846,7 @@
                             isPlaying: U,
                             togglePlay: W,
                             resetSettings: Y,
+                            playSeeds: te,
                         } = (0, d.B0S)({ seeds: null != (n = null == (t = s.meta) ? void 0 : t.seeds) ? n : [], pageIdForFrom: v, blockIdForFrom: y }),
                         H = o.checkExperiment(d.zal.WebNextDisableVibeSettings, 'on') || b || !c.isAuthorized || A,
                         $ = (0, N.useCallback)(() => {
@@ -9900,6 +9901,25 @@
                             [R, o, et, B],
                         );
                     return (
+                        (0, N.useEffect)(() => {
+                            if (!window.pulsesyncApi) return;
+                            const e = (e = {}) => {
+                                const t = Array.isArray(null == e ? void 0 : e.seeds) ? e.seeds : 'string' == typeof (null == e ? void 0 : e.seed) ? [e.seed] : [],
+                                    a = t.filter((e) => 'string' == typeof e && e.length > 0);
+                                if (a.length > 0) {
+                                    if (b || !c.isAuthorized || A) return void X();
+                                    te(a);
+                                    return;
+                                }
+                                J();
+                            };
+                            return (
+                                (window.pulsesyncApi.playVibeNative = e),
+                                () => {
+                                    window.pulsesyncApi && window.pulsesyncApi.playVibeNative === e && delete window.pulsesyncApi.playVibeNative;
+                                }
+                            );
+                        }, [A, b, c.isAuthorized, J, te, X]),
                         (0, N.useEffect)(
                             () => () => {
                                 s.reset();
