@@ -1,4 +1,4 @@
-'use strict';
+ 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 global.requireIfExists = (path) => {
     try {
@@ -101,14 +101,11 @@ if (!(store_js_1.getModSettings()?.enableHardwareAcceleration ?? true)) {
 
 if (store_js_1.getModSettings()?.enableSurroundAudioCompatibility ?? false) {
     electron_1.app.commandLine.appendSwitch('try-supported-channel-layouts');
-    electron_1.app.commandLine.appendSwitch('force-wave-audio');
     electron_1.app.commandLine.appendSwitch('disable-audio-output-resampler');
 
     logger.log(
         '--try-supported-channel-layouts:',
         electron_1.app.commandLine.hasSwitch('try-supported-channel-layouts'),
-        '--force-wave-audio:',
-        electron_1.app.commandLine.hasSwitch('force-wave-audio'),
         '--disable-audio-output-resampler:',
         electron_1.app.commandLine.hasSwitch('disable-audio-output-resampler'),
     );

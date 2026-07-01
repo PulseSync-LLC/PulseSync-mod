@@ -61,6 +61,7 @@ window.findCssRuleByPartialName = function (pName) {
     const YANDEX_STATION_VOLUME_STEP = 5;
     const YANDEX_STATION_VOLUME_THROTTLE_MS = 250;
     const YANDEX_STATION_CAST_SETTING_KEY = 'modSettings.playerBarEnhancement.enableYandexStationCast';
+    const NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY = 'modSettings.nativeAudioOutput.enableYaspChunkTap';
     const yandexStationOriginalPlayerMethods = new WeakMap();
     const yandexStationAutomaticTrackSyncState = new WeakMap();
     const yandexStationAudioGraphConnections = new WeakMap();
@@ -326,6 +327,296 @@ window.findCssRuleByPartialName = function (pName) {
     };
 
     installWebAudioGraphMonitor();
+
+    const getNativeAudioSourceKey = (source) => {
+        try {
+            const url = new URL(String(source ?? ''));
+            url.searchParams.delete('index');
+            return url.href.replace(/#.+$/, '');
+        } catch {
+            return String(source ?? '');
+        }
+    };
+
+    const isNativeAudioChunkTapEnabled = () => {
+        if (window.__PULSESYNC_NATIVE_AUDIO_CHUNK_TAP === true) {
+            return true;
+        }
+
+        try {
+            if (window.nativeAudioOutput?.isYaspChunkTapEnabled?.()) {
+                return true;
+            }
+        } catch {}
+
+        try {
+            return Boolean(window.nativeSettings?.get?.(NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY));
+        } catch {
+            return false;
+        }
+    };
+
+    const isLikelyYaspWorkerUrl = (url) => {
+        const value = String(url ?? '').toLowerCase();
+        return (
+            value.startsWith('blob:') ||
+            value.includes('yasp') ||
+            value.includes('yandex-video-player') ||
+            value.includes('video-player-iframe-api-bundles') ||
+            value.includes('stream-player')
+        );
+    };
+
+    function pulseSyncYaspWorkerBootstrap(sourceUrl, inlineSource) {
+        const PULSE_SYNC_NATIVE_AUDIO_MESSAGE = '__pulseSyncNativeAudio';
+        const feederIds = new WeakMap();
+        let nextFeederId = 1;
+
+        const normalizeNumber = (value) => {
+            const number = Number(value);
+            return Number.isFinite(number) ? number : null;
+        };
+
+        const safeRead = (reader) => {
+            try {
+                return reader();
+            } catch {
+                return undefined;
+            }
+        };
+
+        const copyChunkToArrayBuffer = (chunk) => {
+            if (chunk instanceof ArrayBuffer) {
+                return chunk.slice(0);
+            }
+
+            if (ArrayBuffer.isView(chunk)) {
+                return chunk.buffer.slice(chunk.byteOffset, chunk.byteOffset + chunk.byteLength);
+            }
+
+            return null;
+        };
+
+        const getFeederId = (feeder) => {
+            if (!feeder || typeof feeder !== 'object') {
+                return 0;
+            }
+
+            let id = feederIds.get(feeder);
+            if (!id) {
+                id = nextFeederId++;
+                feederIds.set(feeder, id);
+            }
+            return id;
+        };
+
+        const postNativeAudioMessage = (message) => {
+            self.postMessage({
+                [PULSE_SYNC_NATIVE_AUDIO_MESSAGE]: true,
+                sourceUrl,
+                ...message,
+            });
+        };
+
+        self.__pulseSyncYaspNativeAudioTap = (feeder, stream, chunk) => {
+            try {
+                if (!stream || stream.type !== 'audio' || !chunk) {
+                    return;
+                }
+
+                const copiedChunk = copyChunkToArrayBuffer(chunk);
+                if (!copiedChunk) {
+                    return;
+                }
+
+                const mimeTypes = safeRead(() => feeder.timeline.getMimeTypes());
+                const mediaState = feeder?.mediaState ?? {};
+                const meta = {
+                    feederId: getFeederId(feeder),
+                    type: stream.type,
+                    currentTrack: stream.currentTrack ?? null,
+                    time: normalizeNumber(stream.time),
+                    nextTimeToSet: normalizeNumber(stream.nextTimeToSet),
+                    lastAddedSegmentNumber: stream.lastAddedSegmentNumber ?? null,
+                    lastTrackTimeOffset: normalizeNumber(stream.lastTrackTimeOffset),
+                    playbackTime: normalizeNumber(mediaState.currentTime),
+                    paused: Boolean(mediaState.paused),
+                    playbackRate: normalizeNumber(mediaState.playbackRate),
+                    mimeType: mimeTypes?.audio?.[0] ?? null,
+                    byteLength: copiedChunk.byteLength,
+                };
+
+                self.postMessage(
+                    {
+                        [PULSE_SYNC_NATIVE_AUDIO_MESSAGE]: true,
+                        event: 'chunk',
+                        sourceUrl,
+                        meta,
+                        chunk: copiedChunk,
+                    },
+                    [copiedChunk],
+                );
+            } catch (error) {
+                postNativeAudioMessage({
+                    event: 'tap-error',
+                    message: String(error?.message ?? error),
+                });
+            }
+        };
+
+        const patchWorkerSource = (source) => {
+            const appendChunkPattern = /(e\.prev\s*=\s*0\s*,\s*e\.next\s*=\s*3\s*,\s*)this\.mse\.appendBuffer\(t\.type,\s*r\)/;
+            const patched = source.replace(
+                appendChunkPattern,
+                '$1(self.__pulseSyncYaspNativeAudioTap&&self.__pulseSyncYaspNativeAudioTap(this,t,r),this.mse.appendBuffer(t.type,r))',
+            );
+
+            postNativeAudioMessage({
+                event: 'patch-status',
+                patched: patched !== source,
+                reason: patched === source ? 'appendChunk marker not found' : 'appendChunk patched',
+            });
+
+            return patched;
+        };
+
+        let workerSource = typeof inlineSource === 'string' ? inlineSource : '';
+        if (!workerSource) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', sourceUrl, false);
+            xhr.send(null);
+            workerSource = xhr.responseText;
+        }
+
+        if (!workerSource) {
+            throw new Error(`Failed to load worker source for PulseSync native audio tap: ${sourceUrl}`);
+        }
+
+        const patchedSource = patchWorkerSource(workerSource);
+        (0, eval)(`${patchedSource}\n//# sourceURL=${sourceUrl}?pulsesync-native-audio-tap`);
+    }
+
+    const readWorkerSourceSync = (sourceUrl) => {
+        try {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', sourceUrl, false);
+            xhr.send(null);
+            return xhr.responseText || null;
+        } catch (error) {
+            console.warn('[PulseSync] Failed to read YASP worker source for native audio tap:', error);
+            return null;
+        }
+    };
+
+    const createNativeAudioWorkerBootstrapSource = (sourceUrl, inlineSource) =>
+        `(${pulseSyncYaspWorkerBootstrap.toString()})(${JSON.stringify(sourceUrl)},${JSON.stringify(inlineSource)});`;
+
+    const handleNativeAudioWorkerMessage = (event) => {
+        const data = event?.data;
+        if (!data?.__pulseSyncNativeAudio) {
+            return;
+        }
+
+        if (data.event === 'chunk') {
+            window.nativeAudioOutput?.pushYaspChunk?.(
+                {
+                    sourceUrl: data.sourceUrl,
+                    meta: data.meta,
+                },
+                data.chunk,
+            );
+            return;
+        }
+
+        if (data.event === 'patch-status') {
+            const log = data.patched ? console.info : console.warn;
+            log('[PulseSync] YASP native audio worker patch:', data.reason, data.sourceUrl);
+            return;
+        }
+
+        if (data.event === 'tap-error') {
+            console.warn('[PulseSync] YASP native audio tap error:', data.message, data.sourceUrl);
+        }
+    };
+
+    const installYaspNativeAudioWorkerPatch = () => {
+        if (window.__pulseSyncYaspNativeAudioWorkerPatchInstalled || typeof window.Worker !== 'function') {
+            return;
+        }
+
+        const OriginalWorker = window.Worker;
+        const PatchedWorker = function (url, options) {
+            if (!isNativeAudioChunkTapEnabled() || options?.type === 'module' || !isLikelyYaspWorkerUrl(url)) {
+                return new OriginalWorker(url, options);
+            }
+
+            const sourceUrl = new URL(String(url), window.location.href).href;
+            const inlineSource = sourceUrl.startsWith('blob:') ? readWorkerSourceSync(sourceUrl) : null;
+            if (sourceUrl.startsWith('blob:') && !inlineSource) {
+                return new OriginalWorker(url, options);
+            }
+
+            const bootstrapSource = createNativeAudioWorkerBootstrapSource(sourceUrl, inlineSource);
+            const bootstrapUrl = URL.createObjectURL(new Blob([bootstrapSource], { type: 'application/javascript' }));
+
+            try {
+                const worker = new OriginalWorker(bootstrapUrl, options);
+                worker.addEventListener('message', handleNativeAudioWorkerMessage);
+                return worker;
+            } catch (error) {
+                console.warn('[PulseSync] Failed to create patched YASP worker, falling back to original worker:', error);
+                return new OriginalWorker(url, options);
+            } finally {
+                window.setTimeout(() => URL.revokeObjectURL(bootstrapUrl), 1000);
+            }
+        };
+
+        PatchedWorker.prototype = OriginalWorker.prototype;
+        Object.setPrototypeOf(PatchedWorker, OriginalWorker);
+        window.Worker = PatchedWorker;
+        window.__pulseSyncYaspNativeAudioWorkerPatchInstalled = true;
+    };
+
+    const installYaspNativeAudioSourceConfigHook = () => {
+        if (window.__pulseSyncYaspNativeAudioSourceConfigHookInstalled) {
+            return true;
+        }
+
+        const yaspAudioElement = window.Ya?.YaspAudioElement;
+        if (!yaspAudioElement || typeof yaspAudioElement.configureSource !== 'function') {
+            return false;
+        }
+
+        const originalConfigureSource = yaspAudioElement.configureSource;
+        yaspAudioElement.configureSource = function (source, config = {}) {
+            if (isNativeAudioChunkTapEnabled()) {
+                window.nativeAudioOutput?.configureYaspSource?.({
+                    source,
+                    sourceKey: getNativeAudioSourceKey(source),
+                    config: cloneValue(config),
+                });
+            }
+
+            return originalConfigureSource.apply(this, arguments);
+        };
+
+        window.__pulseSyncYaspNativeAudioSourceConfigHookInstalled = true;
+        return true;
+    };
+
+    const installYaspNativeAudioHooks = () => {
+        installYaspNativeAudioWorkerPatch();
+
+        if (installYaspNativeAudioSourceConfigHook()) {
+            return;
+        }
+
+        const timer = window.setInterval(() => {
+            if (installYaspNativeAudioSourceConfigHook()) {
+                window.clearInterval(timer);
+            }
+        }, 500);
+    };
 
     const notifyYandexStationCastChange = (detail) => {
         window.dispatchEvent(new CustomEvent('pulse-sync-yandex-station-cast-change', { detail }));
@@ -1180,6 +1471,12 @@ window.findCssRuleByPartialName = function (pName) {
             }
         });
         window.desktopEvents.on('NATIVE_STORE_UPDATE', (event, key, value) => {
+            if (key === NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY && value === true) {
+                installYaspNativeAudioHooks();
+                console.info('[PulseSync] YASP native audio chunk tap enabled. Reload the current source if the YASP worker already exists.');
+                return;
+            }
+
             if (key !== YANDEX_STATION_CAST_SETTING_KEY) return;
 
             window.__pulseSyncYandexStationCastEnabled = value !== false;
@@ -1211,6 +1508,7 @@ window.findCssRuleByPartialName = function (pName) {
         });
     };
 
+    installYaspNativeAudioHooks();
     ensureApi();
     registerDesktopListener();
     requestInitialAddonSettingsSnapshot();
