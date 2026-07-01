@@ -729,7 +729,7 @@
                                   'margin-inline': '5px',
                                   'background-color': o,
                                   color: 'black',
-                                  'border-radius': '50px',
+                                  'border-radius': '6px',
                                   'padding-inline': '6px',
                                   transition: 'opacity var(--ym-duration-transition)',
                                   ...(l ? { opacity: 0.3 } : {}),
