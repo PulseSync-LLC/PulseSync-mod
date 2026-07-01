@@ -207,6 +207,9 @@ const init = () => {
             showOldPlayerBarOnNewWave: false,
             playButtonType: 'yellow',
         },
+        nativeAudioOutput: {
+            enableYaspChunkTap: false,
+        },
         playlist: {
             addTracksToEndFromContextMenu: false,
         },

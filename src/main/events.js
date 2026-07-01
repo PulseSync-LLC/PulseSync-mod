@@ -48,6 +48,7 @@ const miniPlayer_js_1 = require('./lib/miniplayer/miniplayer.js');
 const discordRichPresence_js_1 = require('./lib/discordRichPresence.js');
 const { getYandexStationRuntime } = require('./lib/yandexStation/YandexStationRuntime.js');
 const { registerYandexStationIpc } = require('./lib/yandexStation/registerYandexStationIpc.js');
+const nativeAudioOutput = require('./lib/nativeAudioOutput.js');
 
 const playerActions_js_1 = require('./types/playerActions.js');
 const platform_js_1 = require('./types/platform.js');
@@ -992,6 +993,15 @@ const handleApplicationEvents = (window) => {
     electron_1.ipcMain.on(events_js_1.Events.EXPERIMENTS_METRIC, (event, experiments) => {
         eventsLogger.info(`Event received`, events_js_1.Events.EXPERIMENTS_METRIC);
         void sendExperimentsMetric(experiments);
+    });
+    electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_CONFIGURE_YASP_SOURCE, (event, payload) => {
+        nativeAudioOutput.configureYaspSource(payload);
+    });
+    electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_YASP_CHUNK, (event, payload, chunk) => {
+        nativeAudioOutput.receiveYaspChunk(payload, chunk);
+    });
+    electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_RESET_YASP_SOURCE, (event, payload) => {
+        nativeAudioOutput.resetYaspSource(payload);
     });
     electron_1.ipcMain.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {
         eventsLogger.info(`Event received`, events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, value);

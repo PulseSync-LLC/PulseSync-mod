@@ -469,6 +469,23 @@ electron_1.contextBridge.exposeInMainWorld('nativeSettings', {
         electron_1.ipcRenderer.invoke('setPathWithNativeDialog', key, defaultPath, properties);
     },
 });
+electron_1.contextBridge.exposeInMainWorld('nativeAudioOutput', {
+    isYaspChunkTapEnabled() {
+        return Boolean(store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap'));
+    },
+    configureYaspSource(payload) {
+        electron_1.ipcRenderer.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_CONFIGURE_YASP_SOURCE, payload);
+    },
+    pushYaspChunk(payload, chunk) {
+        if (!(chunk instanceof ArrayBuffer)) {
+            return;
+        }
+        electron_1.ipcRenderer.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_YASP_CHUNK, payload, Buffer.from(chunk));
+    },
+    resetYaspSource(payload) {
+        electron_1.ipcRenderer.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_RESET_YASP_SOURCE, payload);
+    },
+});
 electron_1.contextBridge.exposeInMainWorld('globalShortcutsControl', {
     setRecordingState(isRecording) {
         electron_1.ipcRenderer.send(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, Boolean(isRecording));
