@@ -13,9 +13,9 @@
     "description": "A native addon for Electron to set iconic thumbnails for taskbar.",
     "dependencies": {
         "bindings": "^1.5.0",
-        "node-addon-api": "^8.5.0"
+        "node-addon-api": "^8.9.0"
     },
     "devDependencies": {
-        "node-gyp": "^12.2.0"
+        "node-gyp": "^13.0.0"
     }
 }

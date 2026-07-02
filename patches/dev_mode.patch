@@ -1,19 +1,16 @@
-diff --git "a/app/_next/static/chunks/8740-77dc5d1f132740fd.js" "b/src/app/_next/static/chunks/8740-77dc5d1f132740fd.js"
-index ecc17d4..4716833 100644
---- "a/app/_next/static/chunks/8740-77dc5d1f132740fd.js"
-+++ "b/src/app/_next/static/chunks/8740-77dc5d1f132740fd.js"
-@@ -21888,79 +21940,234 @@
-                k = r(21949),
-                h = r(48467),
-                E = r(51862),
--                w = r.n(E);
--            let j = (0, s.PA)((e) => {
+diff --git "a/app/_next/static/chunks/4574-ea33c6baa8ce8d1e.js" "b/src/app/_next/static/chunks/4574-ea33c6baa8ce8d1e.js"
+index 9b0e092..7ac16f0 100644
+--- "a/app/_next/static/chunks/4574-ea33c6baa8ce8d1e.js"
++++ "b/src/app/_next/static/chunks/4574-ea33c6baa8ce8d1e.js"
+@@ -1,99 +1,339 @@
+ S = r.n(C);
+-            let A = (0, s.PA)((e) => {
 -                    let { experiment: t = { name: '', value: {} }, readOnly: r, deleteMode: s } = e,
--                        { experiments: i } = (0, u.useStore)(),
+-                        { experiments: o } = (0, u.useStore)(),
 -                        d = (0, c.useContainer)().get(l.oo),
 -                        x = (0, a.useRef)(null),
--                        p = (0, a.useRef)(null),
--                        _ = i.overwrittenExperiments,
+-                        _ = (0, a.useRef)(null),
+-                        p = o.overwrittenExperiments,
 -                        m = (0, a.useCallback)(
 -                            (e) => {
 -                                var t, r, n;
@@ -24,10 +21,8 @@ index ecc17d4..4716833 100644
 -                                try {
 -                                    s = JSON.parse(String(a.value || '{}'));
 -                                } catch (e) {
--                                    null == (r = p.current) || r.setCustomValidity('Невалидный JSON в поле value'), null == (n = p.current) || n.reportValidity();
+-                                    null == (r = _.current) || r.setCustomValidity('Невалидный JSON в поле value'), null == (n = _.current) || n.reportValidity();
 -                                    return;
-+                w = r.n(E),
-+                L0 = r(79169);
 +            let UNSET_EXPERIMENT_GROUP_VALUE = '__pulse_sync_unset__',
 +                IGNORED_EXPERIMENT_NAMES = new Set(['ABTestIds']),
 +                EXPERIMENT_VARIANTS_CACHE = new Map(),
@@ -37,12 +32,25 @@ index ecc17d4..4716833 100644
 +                    { value: 'default', label: 'off' },
 +                    { value: 'on', label: 'on' },
 +                ],
-+                getStaticExperimentNames = () => {
++                getExperimentEntries = (e) => {
++                    if (!e) return [];
++                    if ('function' == typeof e.entries) return [...e.entries()];
++                    return Array.isArray(e) ? e : 'object' == typeof e ? Object.entries(e) : [];
++                },
++                getExperimentValue = (e, t) => {
++                    if (!e) return;
++                    if ('function' == typeof e.get) return e.get(t);
++                    return 'object' == typeof e ? e[t] : void 0;
++                },
++                hasExperimentValue = (e, t) => !!e && ('function' == typeof e.has ? e.has(t) : 'object' == typeof e && Object.prototype.hasOwnProperty.call(e, t)),
++                getExperimentObject = (e) => Object.fromEntries(getExperimentEntries(e)),
++                getStaticExperimentNames = (e) => {
 +                    try {
-+                        let e = null == L0 ? void 0 : L0.zal;
-+                        return e && 'object' == typeof e ? Object.keys(e).filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e)) : [];
++                        return getExperimentEntries(null == e ? void 0 : e.experiments)
++                            .map((e) => e[0])
++                            .filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e));
 +                    } catch (e) {
-+                        return console.error('[PulseSync] Failed to get static experiment keys from module 79169', e), [];
++                        return console.error('[PulseSync] Failed to get experiment keys from store', e), [];
 +                    }
 +                },
 +                normalizeSearchValue = (e) =>
@@ -56,6 +64,22 @@ index ecc17d4..4716833 100644
 +                    if (n < 0) return Number.MAX_SAFE_INTEGER;
 +                    let s = r === t ? 0 : r.startsWith(t) ? 1 : 2;
 +                    return 1e3 * s + n;
++                },
++                OverwrittenExperimentsModalStyles = {
++                    root: 'OverwrittenExperimentsModal_root__amBOc',
++                    header: 'OverwrittenExperimentsModal_header__9LrO1',
++                    content: 'OverwrittenExperimentsModal_content__Eki5k',
++                    closeModalButton: 'OverwrittenExperimentsModal_closeModalButton__k0LqG',
++                    reloadButton: 'OverwrittenExperimentsModal_reloadButton__bskTH',
++                    overrideForm: 'OverwrittenExperimentsModal_overrideForm__cJ8PH',
++                    overrideInput: 'OverwrittenExperimentsModal_overrideInput__cYffP',
++                    row: 'OverwrittenExperimentsModal_row__W6A7r',
++                    textContainer: 'OverwrittenExperimentsModal_textContainer__5m84F',
++                    title: 'OverwrittenExperimentsModal_title__kMZ2J',
++                    description: 'OverwrittenExperimentsModal_description__m9r4M',
++                    selectButton: 'OverwrittenExperimentsModal_selectButton__P0v2_',
++                    experimentsList: 'OverwrittenExperimentsModal_experimentsList__PFRVV',
++                    overridedExperiment: 'OverwrittenExperimentsModal_overridedExperiment__w1bng',
 +                },
 +                buildExperimentOptions = (e, t) => {
 +                    let r = [UNSET_EXPERIMENT_GROUP_OPTION],
@@ -76,17 +100,17 @@ index ecc17d4..4716833 100644
 +                    );
 +                },
 +                settingBarWithDropdown = (e) => {
-+                    let { title: t, description: s, onChange: r, value: o, options: l, direction: c = 'bottom', disabled: u = !1, onOpen: f } = e,
++                    let { title: t, description: r, onChange: s, value: o, options: l, direction: c = 'bottom', disabled: u = !1, onOpen: f } = e,
 +                        [d, x] = a.useState(!1),
-+                        [p, _] = a.useState(160),
-+                        [h, b] = a.useState(!1),
-+                        m = a.useRef(null),
-+                        v = l.find((e) => e.value === o);
++                        [_, p] = a.useState(160),
++                        [m, v] = a.useState(!1),
++                        g = a.useRef(null),
++                        b = l.find((e) => e.value === o);
 +                    return (
 +                        a.useEffect(() => {
 +                            let e = (e) => {
 +                                var t;
-+                                d && !(null == (t = m.current) ? void 0 : t.contains(e.target)) && x(!1);
++                                d && !(null == (t = g.current) ? void 0 : t.contains(e.target)) && x(!1);
 +                            };
 +                            return (
 +                                document.addEventListener('click', e),
@@ -94,63 +118,12 @@ index ecc17d4..4716833 100644
 +                                    document.removeEventListener('click', e);
                                  }
 -                                null == (t = x.current) || t.reset();
--                                let o = (0, h.jU)({ name: String(a.name), group: String(a.group), value: s });
--                                d.set(f.c.OverwrittenExperiments, { ...Object.fromEntries((0, y.HO)(_)), ...o }), i.updateOverwrittenExperiments(a.name, o[a.name]);
--                            },
--                            [d, _, i],
--                        ),
--                        v = (0, a.useCallback)(() => {
--                            let e = Object.fromEntries((0, y.HO)(_));
--                            delete e[t.name], i.deleteOverwrittenExperiments(t.name), d.set(f.c.OverwrittenExperiments, { ...e });
--                        }, [_, t.name, i, d]),
--                        g = (0, a.useCallback)(() => {
--                            var e, t;
--                            null == (e = p.current) || e.setCustomValidity(''), null == (t = p.current) || t.reportValidity();
--                        }, []);
--                    return (0, n.jsxs)('form', {
--                        className: w().overrideForm,
--                        onSubmit: m,
--                        ref: x,
--                        children: [
--                            (0, n.jsx)(k.p, {
--                                containerClassName: w().overrideInput,
--                                type: 'text',
--                                name: 'name',
--                                placeholder: 'Experiment name',
--                                required: !0,
--                                defaultValue: t.name,
--                                readOnly: r,
--                            }),
--                            (0, n.jsx)(k.p, {
--                                containerClassName: w().overrideInput,
--                                type: 'text',
--                                name: 'group',
--                                placeholder: 'Experiment group',
--                                required: !0,
--                                defaultValue: t.value.group,
--                            }),
--                            (0, n.jsx)(k.p, {
--                                ref: p,
--                                containerClassName: w().overrideInput,
--                                inputClassName: w().valueInput,
--                                type: 'text',
--                                name: 'value',
--                                placeholder: 'Optional experiment value in JSON format',
--                                defaultValue: JSON.stringify(t.value.value),
--                                onInput: g,
--                            }),
--                            (0, n.jsx)(o.Button, {
--                                className: (0, b.$)({ [w().submitButton]: !s }),
--                                size: 'xxs',
--                                type: 'submit',
--                                children: s ? 'Обновить эксперимент' : 'Переопределить эксперимент',
--                            }),
--                            s && (0, n.jsx)(o.Button, { size: 'xxs', type: 'submit', onClick: v, children: 'Удалить эксперимент' }),
--                        ],
+-                                let i = (0, R.jU)({ name: String(a.name), group: String(a.group), value: s });
+-                                d.set(f.c.OverwrittenExperiments, { ...Object.fromEntries((0, j.HO)(p)), ...i }), o.updateOverwrittenExperiments(a.name, i[a.name]);
 +                            );
 +                        }, [d]),
 +                        a.useEffect(() => {
-+                            let e = m.current;
++                            let e = g.current;
 +                            if (!e || 'undefined' == typeof ResizeObserver) return;
 +                            let t = new ResizeObserver(([e]) => {
 +                                var t, r;
@@ -160,7 +133,7 @@ index ecc17d4..4716833 100644
 +                                        : null == (r = e.contentRect)
 +                                          ? void 0
 +                                          : r.width;
-+                                'number' == typeof n && n > 0 && _(n);
++                                'number' == typeof n && n > 0 && p(n);
 +                            });
 +                            return (
 +                                t.observe(e),
@@ -170,48 +143,37 @@ index ecc17d4..4716833 100644
 +                            );
 +                        }, []),
 +                        a.useEffect(() => {
-+                            d && b(!0);
++                            d && v(!0);
 +                        }, [d]),
 +                        a.useEffect(() => {
-+                            if (d || !h) return;
++                            if (d || !m) return;
 +                            let e = setTimeout(() => {
-+                                b(!1);
++                                v(!1);
 +                            }, 180);
 +                            return () => {
 +                                clearTimeout(e);
 +                            };
-+                        }, [d, h]),
++                        }, [d, m]),
 +                        (0, n.jsxs)('div', {
-+                            style: { display: 'flex', gap: '0.75rem', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' },
++                            className: OverwrittenExperimentsModalStyles.row,
 +                            children: [
 +                                (0, n.jsxs)('div', {
-+                                    style: { minWidth: 0, flex: '1 1 auto' },
++                                    className: OverwrittenExperimentsModalStyles.textContainer,
 +                                    children: [
 +                                        (0, n.jsx)('div', {
 +                                            'aria-hidden': !0,
-+                                            style: {
-+                                                color: '#fff',
-+                                                fontWeight: 700,
-+                                                fontSize: 'large',
-+                                                overflow: 'hidden',
-+                                                textOverflow: 'ellipsis',
-+                                                whiteSpace: 'nowrap',
-+                                            },
++                                            className: OverwrittenExperimentsModalStyles.title,
 +                                            children: t,
 +                                        }),
-+                                        s &&
-+                                            (0, n.jsx)(g.Caption, {
-+                                                variant: 'div',
-+                                                type: 'text',
-+                                                size: 'xs',
-+                                                weight: 'medium',
-+                                                lineClamp: 2,
-+                                                children: s,
++                                        r &&
++                                            (0, n.jsx)('div', {
++                                                className: OverwrittenExperimentsModalStyles.description,
++                                                children: r,
 +                                            }),
 +                                    ],
 +                                }),
-+                                (0, n.jsx)('div', {
-+                                    ref: m,
++                                (0, n.jsxs)('div', {
++                                    ref: g,
 +                                    role: 'button',
 +                                    tabIndex: u ? -1 : 0,
 +                                    onClick: () =>
@@ -231,26 +193,24 @@ index ecc17d4..4716833 100644
 +                                    },
 +                                    className: ''.concat(
 +                                        u ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button',
-+                                        ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
++                                        ' ',
++                                        OverwrittenExperimentsModalStyles.selectButton,
 +                                    ),
-+                                    style: { minWidth: '10rem' },
 +                                    children: [
-+                                        (null == v ? void 0 : v.label) || 'Select...',
-+                                        h &&
++                                        (null == b ? void 0 : b.label) || 'Select...',
++                                        m &&
 +                                            (0, n.jsx)('ul', {
 +                                                role: 'menu',
 +                                                className: 'settingBarWithDropdown_menu'.concat(d ? '' : ' settingBarWithDropdown_menu__closed'),
 +                                                style: {
-+                                                    display: 'flex',
-+                                                    flexDirection: 'column',
-+                                                    width: ''.concat(p, 'px'),
++                                                    width: ''.concat(_, 'px'),
 +                                                    top: 'bottom' === c ? '120%' : 'unset',
 +                                                    bottom: 'top' === c ? '120%' : 'unset',
 +                                                    '--settingBarWithDropdown-offset-y': 'bottom' === c ? '-6px' : '6px',
 +                                                    '--settingBarWithDropdown-origin': 'bottom' === c ? 'top right' : 'bottom right',
 +                                                },
 +                                                children: l.map((e) =>
-+                                                    (0, n.jsx)(
++                                                    (0, n.jsxs)(
 +                                                        'li',
 +                                                        {
 +                                                            role: 'menuitem',
@@ -258,7 +218,7 @@ index ecc17d4..4716833 100644
 +                                                            id: e.value,
 +                                                            'aria-selected': o === e.value,
 +                                                            onClick: (t) => {
-+                                                                t.stopPropagation(), r(e.value), x(!1);
++                                                                t.stopPropagation(), s(e.value), x(!1);
 +                                                            },
 +                                                            children: [
 +                                                                (0, n.jsx)('span', { children: e.label }),
@@ -282,76 +242,127 @@ index ecc17d4..4716833 100644
 +                        })
 +                    );
 +                },
-+                j = (0, s.PA)((e) => {
-+                    let { experimentName: t, selectedGroup: r, defaultGroup: a0, optionsState: p0, onSelect: o, onOpenDropdown: i } = e,
-+                        [l0, c0] = a.useState(r || UNSET_EXPERIMENT_GROUP_VALUE),
-+                        c = 'error' === (null == p0 ? void 0 : p0.status),
-+                        u0 = a0 ? 'С сервера: '.concat(a0) : 'С сервера: отсутствует',
-+                        f0 = r || l0,
-+                        u = c
-+                            ? 'Не удалось загрузить варианты. Попробуйте ещё раз. | '.concat(u0)
-+                            : f0 && f0 !== UNSET_EXPERIMENT_GROUP_VALUE
-+                              ? 'Перепоределено | '.concat(u0)
-+                              : u0,
-+                        f = buildExperimentOptions(p0, f0);
++                PulseSyncExperimentOverrideRow = (0, s.PA)((e) => {
++                    let { experimentName: t, selectedGroup: r, defaultGroup: o, optionsState: l, onSelect: c, onOpenDropdown: u } = e,
++                        [f, d] = a.useState(r || UNSET_EXPERIMENT_GROUP_VALUE),
++                        x = 'error' === (null == l ? void 0 : l.status),
++                        _ = o ? 'С сервера: '.concat(o) : 'С сервера: отсутствует',
++                        p = r || f,
++                        m = x ? 'Не удалось загрузить варианты. Попробуйте ещё раз. | '.concat(_) : p && p !== UNSET_EXPERIMENT_GROUP_VALUE ? 'Переопределено | '.concat(_) : _,
++                        v = buildExperimentOptions(l, p);
 +                    return (
 +                        a.useEffect(() => {
-+                            c0(r || UNSET_EXPERIMENT_GROUP_VALUE);
++                            d(r || UNSET_EXPERIMENT_GROUP_VALUE);
 +                        }, [r]),
 +                        (0, n.jsx)(settingBarWithDropdown, {
 +                            title: t,
-+                            description: u,
-+                            value: f0,
-+                            options: f,
++                            description: m,
++                            value: p,
++                            options: v,
 +                            onChange: (e) => {
-+                                c0(e), o(t, e);
-+                            },
-+                            onOpen: () => i(t),
++                                d(e), c(t, e);
+                             },
+-                            [d, p, o],
+-                        ),
+-                        v = (0, a.useCallback)(() => {
+-                            let e = Object.fromEntries((0, j.HO)(p));
+-                            delete e[t.name], o.deleteOverwrittenExperiments(t.name), d.set(f.c.OverwrittenExperiments, { ...e });
+-                        }, [p, t.name, o, d]),
+-                        g = (0, a.useCallback)(() => {
+-                            var e, t;
+-                            null == (e = _.current) || e.setCustomValidity(''), null == (t = _.current) || t.reportValidity();
+-                        }, []);
+-                    return (0, n.jsxs)('form', {
+-                        className: S().overrideForm,
+-                        onSubmit: m,
+-                        ref: x,
+-                        children: [
+-                            (0, n.jsx)(O.p, {
+-                                containerClassName: S().overrideInput,
+-                                type: 'text',
+-                                name: 'name',
+-                                placeholder: 'Experiment name',
+-                                required: !0,
+-                                defaultValue: t.name,
+-                                readOnly: r,
+-                            }),
+-                            (0, n.jsx)(O.p, {
+-                                containerClassName: S().overrideInput,
+-                                type: 'text',
+-                                name: 'group',
+-                                placeholder: 'Experiment group',
+-                                required: !0,
+-                                defaultValue: t.value.group,
+-                            }),
+-                            (0, n.jsx)(O.p, {
+-                                ref: _,
+-                                containerClassName: S().overrideInput,
+-                                inputClassName: S().valueInput,
+-                                type: 'text',
+-                                name: 'value',
+-                                placeholder: 'Optional experiment value in JSON format',
+-                                defaultValue: JSON.stringify(t.value.value),
+-                                onInput: g,
+-                            }),
+-                            (0, n.jsx)(i.$, {
+-                                className: (0, w.$)({ [S().submitButton]: !s }),
+-                                size: 'xxs',
+-                                type: 'submit',
+-                                children: s ? 'Обновить эксперимент' : 'Переопределить эксперимент',
+-                            }),
+-                            s && (0, n.jsx)(i.$, { size: 'xxs', type: 'submit', onClick: v, children: 'Удалить эксперимент' }),
+-                        ],
+-                    });
++                            onOpen: () => u(t),
 +                        })
 +                    );
                  }),
-                 O = { className: w().closeModalButton },
-@@ -21972,12 +22134,88 @@
+-                P = { className: S().closeModalButton },
+-                T = (0, s.PA)(() => {
++                PulseSyncCloseButtonProps = { className: OverwrittenExperimentsModalStyles.closeModalButton },
++                PulseSyncOverwrittenExperimentsModal = (0, s.PA)(() => {
+                     let {
+                             modals: { overwrittenExperimentsModal: e },
                              experiments: t,
                          } = (0, u.useStore)(),
-                         { formatMessage: r } = (0, p.A)(),
+                         { formatMessage: r } = (0, b.A)(),
 -                        s = (0, a.useCallback)(() => {
-+                        A0 = (0, c.useContainer)().get(l.oo),
-+                        [d, x] = a.useState(''),
-+                        [q0, G0] = a.useState({}),
-+                        y0 = a.useMemo(() => getStaticExperimentNames(), []),
-+                        k0 = a.useCallback(() => {
++                        s = (0, c.useContainer)().get(l.oo),
++                        [o, d] = a.useState(''),
++                        [x, _] = a.useState({}),
++                        p = a.useMemo(() => getStaticExperimentNames(t), [t.experiments]),
++                        m = (0, a.useCallback)(() => {
                              window.location.reload();
                          }, []),
--                        i = Array.from(t.overwrittenExperiments, (e) => {
+-                        o = Array.from(t.overwrittenExperiments, (e) => {
 -                            let [t, r] = e;
 -                            return { name: t, value: r };
-+                        h0 = a.useCallback(
++                        v = a.useCallback(
 +                            (e) => {
-+                                let r = Object.fromEntries((0, y.HO)(t.overwrittenExperiments));
-+                                delete r[e], t.deleteOverwrittenExperiments(e), A0.set(f.c.OverwrittenExperiments, { ...r });
++                                let r = getExperimentObject(t.overwrittenExperiments);
++                                delete r[e], t.deleteOverwrittenExperiments(e), s.set(f.c.OverwrittenExperiments, { ...r });
 +                            },
-+                            [t, A0],
++                            [t, s],
 +                        ),
-+                        E0 = a.useCallback(
++                        g = a.useCallback(
 +                            (e, r) => {
-+                                if (r === UNSET_EXPERIMENT_GROUP_VALUE) return void h0(e);
-+                                let n = null == q0[e] ? void 0 : q0[e].groups,
-+                                    s = null == n ? void 0 : n[r],
-+                                    a = (0, h.jU)({ name: e, group: r, value: s && 'object' == typeof s ? s : { title: r } });
-+                                A0.set(f.c.OverwrittenExperiments, { ...Object.fromEntries((0, y.HO)(t.overwrittenExperiments)), ...a }),
-+                                    t.updateOverwrittenExperiments(e, a[e]);
++                                if (r === UNSET_EXPERIMENT_GROUP_VALUE) return void v(e);
++                                let n = null == x[e] ? void 0 : x[e].groups,
++                                    a = null == n ? void 0 : n[r],
++                                    i = (0, R.jU)({ name: e, group: r, value: a && 'object' == typeof a ? a : { title: r } });
++                                s.set(f.c.OverwrittenExperiments, { ...getExperimentObject(t.overwrittenExperiments), ...i }),
++                                    t.updateOverwrittenExperiments(e, i[e]);
 +                            },
-+                            [h0, q0, A0, t],
++                            [v, x, s, t],
 +                        ),
-+                        w0 = a.useCallback(async (e) => {
++                        M0 = a.useCallback(async (e) => {
 +                            let r = EXPERIMENT_VARIANTS_CACHE.get(e);
 +                            if (r) {
-+                                G0((t) => ({ ...t, [e]: r }));
++                                _((t) => ({ ...t, [e]: r }));
 +                                return;
 +                            }
 +                            let t = !1;
-+                            G0((r) => {
++                            _((r) => {
 +                                let n = r[e];
 +                                return n && ('loading' === n.status || 'loaded' === n.status) ? r : ((t = !0), { ...r, [e]: { ...(n || {}), status: 'loading' } });
 +                            });
@@ -360,9 +371,9 @@ index ecc17d4..4716833 100644
 +                                try {
 +                                    await EXPERIMENT_VARIANTS_PENDING.get(e);
 +                                    let t = EXPERIMENT_VARIANTS_CACHE.get(e);
-+                                    t && G0((r) => ({ ...r, [e]: t }));
++                                    t && _((r) => ({ ...r, [e]: t }));
 +                                } catch (t) {
-+                                    G0((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'error' } }));
++                                    _((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'error' } }));
 +                                }
 +                                return;
 +                            }
@@ -379,123 +390,142 @@ index ecc17d4..4716833 100644
 +                                                return { value: t, label: n, description: n !== t ? t : void 0 };
 +                                            })
 +                                            .sort((e, t) => e.value.localeCompare(t.value)),
-+                                        o0 = { status: 'loaded', options: s, groups: n };
-+                                    return EXPERIMENT_VARIANTS_CACHE.set(e, o0), o0;
++                                        a = { status: 'loaded', options: s, groups: n };
++                                    return EXPERIMENT_VARIANTS_CACHE.set(e, a), a;
 +                                })();
 +                                EXPERIMENT_VARIANTS_PENDING.set(e, t);
 +                                let r = await t;
-+                                G0((t) => ({ ...t, [e]: r }));
++                                _((t) => ({ ...t, [e]: r }));
 +                            } catch (t) {
-+                                console.error('[PulseSync] Failed to load experiment variants', e, t), G0((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'error' } }));
++                                console.error('[PulseSync] Failed to load experiment variants', e, t), _((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'error' } }));
 +                            } finally {
 +                                EXPERIMENT_VARIANTS_PENDING.delete(e);
 +                            }
 +                        }, []),
-+                        j0 = normalizeSearchValue(d),
-+                        O0 = Array.from(t.overwrittenExperiments, (e) => e[0]),
-+                        R0 = Array.from(new Set([...y0, ...O0])).filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e)),
-+                        I0 = R0.filter((e) => !j0 || e.toLowerCase().includes(j0)).sort((e, r) => {
-+                            let n = t.overwrittenExperiments.has(e) ? 0 : 1,
-+                                s = t.overwrittenExperiments.has(r) ? 0 : 1;
++                        N0 = normalizeSearchValue(o),
++                        O0 = getExperimentEntries(t.overwrittenExperiments).map((e) => e[0]),
++                        I0 = [...new Set([...p, ...O0])].filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e)),
++                        W0 = I0.filter((e) => !N0 || e.toLowerCase().includes(N0)).sort((e, r) => {
++                            let n = hasExperimentValue(t.overwrittenExperiments, e) ? 0 : 1,
++                                s = hasExperimentValue(t.overwrittenExperiments, r) ? 0 : 1;
 +                            if (n !== s) return n - s;
-+                            let a = getSearchScore(e, j0),
-+                                o = getSearchScore(r, j0);
++                            let a = getSearchScore(e, N0),
++                                o = getSearchScore(r, N0);
 +                            return a !== o ? a - o : e.localeCompare(r);
                          });
-                     return (0, n.jsxs)(m.a, {
-                         className: w().root,
-@@ -21996,7 +22234,7 @@
+                     return (0, n.jsxs)(k.a, {
+-                        className: S().root,
+-                        headerClassName: S().header,
+-                        contentClassName: S().content,
+-                        closeButtonProps: P,
++                        className: OverwrittenExperimentsModalStyles.root,
++                        headerClassName: OverwrittenExperimentsModalStyles.header,
++                        contentClassName: OverwrittenExperimentsModalStyles.content,
++                        closeButtonProps: PulseSyncCloseButtonProps,
+                         title: 'Переопределение экспериментов',
+                         header: (0, n.jsx)(
+                             h.m_,
+@@ -102,11 +342,11 @@ S = r.n(C);
+                                 placement: 'left',
+                                 text: 'Перезагрузить страницу',
+                                 children: (0, n.jsx)(i.$, {
+-                                    className: S().reloadButton,
++                                    className: OverwrittenExperimentsModalStyles.reloadButton,
                                      size: 'xxs',
                                      radius: 'round',
-                                     icon: (0, n.jsx)(_.Icon, { variant: 'reset', size: 'xxs' }),
+                                     icon: (0, n.jsx)(y.Icon, { variant: 'reset', size: 'xxs' }),
 -                                    onClick: s,
-+                                    onClick: k0,
++                                    onClick: m,
                                  }),
                              },
                              'reloadTooltip',
-@@ -22008,37 +22246,61 @@
+@@ -118,37 +358,65 @@ S = r.n(C);
                          placement: 'center',
                          labelClose: r({ id: 'interface-actions.close' }),
                          children: [
--                            (0, n.jsx)(j, {}),
--                            (0, n.jsx)(g.Heading, {
+-                            (0, n.jsx)(A, {}),
+-                            (0, n.jsx)(E.Heading, {
 -                                variant: 'h1',
 -                                size: 's',
 -                                weight: 'bold',
--                                className: w().heading,
+-                                className: S().heading,
 -                                lineClamp: 2,
 -                                children: 'Список переопределенных экспериментов',
 +                            (0, n.jsx)('div', {
-+                                className: w().overrideForm,
-+                                children: (0, n.jsx)(k.p, {
-+                                    containerClassName: w().overrideInput,
++                                className: OverwrittenExperimentsModalStyles.overrideForm,
++                                children: (0, n.jsx)('input', {
++                                    className: OverwrittenExperimentsModalStyles.overrideInput,
 +                                    type: 'text',
 +                                    name: 'experimentSearch',
 +                                    placeholder: 'Поиск',
-+                                    value: d,
-+                                    onChange: (e) => x(e.target.value),
++                                    value: o,
++                                    onChange: (e) => d(e.target.value),
++                                    style: {
++                                        minHeight: '2.5rem',
++                                        width: '100%',
++                                        border: '1px solid var(--ym-controls-color-secondary-outline-enabled_stroke)',
++                                        borderRadius: 'var(--ym-radius-size-xs)',
++                                        background: 'transparent',
++                                        color: 'var(--ym-controls-color-primary-text-enabled_variant)',
++                                        padding: '0 0.75rem',
++                                    },
 +                                }),
                              }),
 -                            (0, n.jsxs)('ul', {
--                                className: w().experimentsList,
+-                                className: S().experimentsList,
 -                                children: [
--                                    i.map((e) =>
+-                                    o.map((e) =>
 -                                        (0, n.jsx)(
 -                                            'li',
--                                            { className: w().overridedExperiment, children: (0, n.jsx)(j, { experiment: e, readOnly: !0, deleteMode: !0 }) },
+-                                            { className: S().overridedExperiment, children: (0, n.jsx)(A, { experiment: e, readOnly: !0, deleteMode: !0 }) },
 -                                            e.name,
 -                                        ),
 -                                    ),
--                                    0 === i.length &&
+-                                    0 === o.length &&
 -                                        (0, n.jsx)('li', {
--                                            className: w().overridedExperiment,
--                                            children: (0, n.jsx)(g.Caption, {
+-                                            className: S().overridedExperiment,
+-                                            children: (0, n.jsx)(E.Caption, {
 -                                                variant: 'span',
 -                                                size: 'm',
 -                                                weight: 'medium',
 -                                                lineClamp: 2,
 -                                                children: 'Нет переопределенных экспериментов',
 -                                            }),
-+                            (0, n.jsx)(g.Caption, {
-+                                variant: 'div',
-+                                size: 'm',
-+                                weight: 'medium',
-+                                children: ''.concat(I0.length, ' / ').concat(R0.length, ' experiments'),
++                            (0, n.jsx)('div', {
++                                style: { color: 'var(--ym-controls-color-secondary-text-enabled)', fontSize: '0.875rem', fontWeight: 500 },
++                                children: ''.concat(W0.length, ' / ').concat(I0.length, ' experiments'),
 +                            }),
 +                            (0, n.jsx)('div', {
 +                                className: 'PulseSync_experimentsListScroll',
 +                                style: { flex: '1 1 auto', minHeight: '16rem', overflowY: 'auto' },
 +                                children: (0, n.jsxs)('ul', {
-+                                    className: w().experimentsList,
++                                    className: OverwrittenExperimentsModalStyles.experimentsList,
 +                                    children: [
-+                                        I0.map((e) => {
-+                                            let r = t.overwrittenExperiments.get(e),
-+                                                s = null == t.experiments ? void 0 : t.experiments.get(e);
++                                        W0.map((e) => {
++                                            let r = getExperimentValue(t.overwrittenExperiments, e),
++                                                s = getExperimentValue(t.experiments, e);
 +                                            return (0, n.jsx)(
 +                                                'li',
 +                                                {
-+                                                    className: w().overridedExperiment,
-+                                                    children: (0, n.jsx)(j, {
++                                                    className: OverwrittenExperimentsModalStyles.overridedExperiment,
++                                                    children: (0, n.jsx)(PulseSyncExperimentOverrideRow, {
 +                                                        experimentName: e,
 +                                                        selectedGroup: null == r ? void 0 : r.group,
 +                                                        defaultGroup: null == s ? void 0 : s.group,
-+                                                        optionsState: q0[e],
-+                                                        onSelect: E0,
-+                                                        onOpenDropdown: w0,
++                                                        optionsState: x[e],
++                                                        onSelect: g,
++                                                        onOpenDropdown: M0,
 +                                                    }),
 +                                                },
 +                                                e,
 +                                            );
                                          }),
 -                                ],
-+                                        0 === I0.length &&
++                                        0 === W0.length &&
 +                                            (0, n.jsx)('li', {
-+                                                className: w().overridedExperiment,
-+                                                children: (0, n.jsx)(g.Caption, {
-+                                                    variant: 'span',
-+                                                    size: 'm',
-+                                                    weight: 'medium',
-+                                                    lineClamp: 2,
++                                                className: OverwrittenExperimentsModalStyles.overridedExperiment,
++                                                children: (0, n.jsx)('span', {
++                                                    style: { color: 'var(--ym-controls-color-secondary-text-enabled)', fontSize: '0.875rem', fontWeight: 500 },
 +                                                    children: 'No experiments found',
 +                                                }),
 +                                            }),
@@ -504,44 +534,20 @@ index ecc17d4..4716833 100644
                              }),
                          ],
                      });
-diff --git "a/app/_next/static/css/b7bcbeebb5274a8e.css" "b/src/app/_next/static/css/b7bcbeebb5274a8e.css"
-index 0000000..0000000 100644
---- "a/app/_next/static/css/b7bcbeebb5274a8e.css"
-+++ "b/src/app/_next/static/css/b7bcbeebb5274a8e.css"
-@@ -478,12 +478,139 @@
- }
- .OverwrittenExperimentsModal_content__Eki5k::-webkit-scrollbar {
-     display: none;
-     height: 0;
-     width: 0;
- }
-+.PulseSync_experimentsListScroll {
-+    overscroll-behavior: contain;
-+    scrollbar-gutter: stable;
-+    scrollbar-width: thin !important;
-+    padding-right: 4px;
-+    scrollbar-color: var(--ym-controls-color-secondary-text-enabled, rgba(255, 255, 255, 0.35)) transparent;
-+}
-+
-+.PulseSync_experimentsListScroll::-webkit-scrollbar {
-+    width: 0.625rem;
-+}
-+
-+.PulseSync_experimentsListScroll::-webkit-scrollbar-track {
-+    background: transparent;
-+}
-+
-+.PulseSync_experimentsListScroll::-webkit-scrollbar-thumb {
-+    background-color: var(--ym-controls-color-secondary-text-enabled, rgba(255, 255, 255, 0.35));
-+    border: 0.125rem solid transparent;
-+    border-radius: 999px;
-+    background-clip: content-box;
-+}
-+
-+.PulseSync_experimentsListScroll::-webkit-scrollbar-thumb:hover {
-+    background-color: var(--ym-controls-color-primary-text-enabled_variant, rgba(255, 255, 255, 0.55));
-+}
-+
+@@ -303,7 +571,7 @@ S = r.n(C);
+                                           t && (0, n.jsx)(U, { togglePanel: f, isGeoWidgetShown: s, onToggleGeoWidget: d }),
+                                       ],
+                                   }),
+-                                  (0, n.jsx)(T, {}),
++                                  (0, n.jsx)(PulseSyncOverwrittenExperimentsModal, {}),
+                                   s && (0, n.jsx)(g, { onClose: _ }),
+                               ],
+                           })
+diff --git "a/app/_next/static/css/bbbe4ad10363540f.css" "b/src/app/_next/static/css/bbbe4ad10363540f.css"
+index d2ca7fa..4973217 100644
+--- "a/app/_next/static/css/bbbe4ad10363540f.css"
++++ "b/src/app/_next/static/css/bbbe4ad10363540f.css"
+@@ -1,7 +1,115 @@
 +.settingBarWithDropdown_button {
 +    color: var(--ym-controls-color-primary-text-enabled_variant);
 +    border: 1px solid var(--ym-controls-color-secondary-outline-enabled_stroke);
@@ -556,8 +562,13 @@ index 0000000..0000000 100644
 +        border 0.2s,
 +        color 0.2s,
 +        border 0.2s;
-+}
 +
++    &::-webkit-outer-spin-button,
++    &::-webkit-inner-spin-button {
++        -webkit-appearance: none;
++        margin: 0;
++    }
++}
 +.settingBarWithDropdown_button__disabled {
 +    color: var(--ym-controls-color-primary-text-disabled);
 +    border: 1px solid var(--ym-controls-color-secondary-outline-disabled_stroke);
@@ -572,12 +583,16 @@ index 0000000..0000000 100644
 +        border 0.2s,
 +        color 0.2s,
 +        border 0.2s;
-+}
 +
++    input::-webkit-outer-spin-button,
++    input::-webkit-inner-spin-button {
++        -webkit-appearance: none;
++        margin: 0;
++    }
++}
 +.settingBarWithDropdown_button:hover:not(:has(:hover)) {
 +    border: 1px solid var(--ym-controls-color-secondary-outline-hovered_stroke);
 +}
-+
 +.settingBarWithDropdown_menu {
 +    right: 0;
 +    border: 1px solid var(--ym-controls-color-secondary-outline-enabled_stroke);
@@ -617,7 +632,6 @@ index 0000000..0000000 100644
 +        transform 0.18s ease,
 +        visibility 0s linear 0.18s;
 +}
-+
 +.settingBarWithDropdown_menuItem {
 +    display: flex;
 +    justify-content: space-between;
@@ -631,7 +645,6 @@ index 0000000..0000000 100644
 +    color: var(--ym-controls-color-primary-text-enabled_variant);
 +    transition: background 0.2s;
 +}
-+
 +.settingBarWithDropdown_menuItem:hover {
 +    background-color: var(--ym-controls-color-secondary-default-hovered);
 +}
@@ -642,9 +655,121 @@ index 0000000..0000000 100644
 +        transition: none;
 +    }
 +}
- @supports selector(scrollbar-width:auto) {
-     .OverwrittenExperimentsModal_content__Eki5k {
-         scrollbar-color: var(--scrollbar-hidden) transparent;
-         scrollbar-gutter: stable;
-     }
++
+ .OverwrittenExperimentsModal_root__amBOc {
+     height: 100%;
+     max-height: 40.625rem;
+-    max-width: 58.125rem;
++    max-width: 52rem;
+     overflow: hidden;
+     width: 100%;
  }
+@@ -23,10 +131,88 @@
+     display: flex;
+     flex-direction: column;
+     gap: var(--ym-spacer-size-xxl);
+-    overflow-y: scroll;
++    min-height: 0;
++    overflow: hidden;
+     padding-block-end: var(--ym-spacer-size-m);
+     transition: scrollbar-color 0.2s ease-in-out;
+ }
++.OverwrittenExperimentsModal_row__W6A7r {
++    align-items: start;
++    display: grid;
++    gap: 0.75rem;
++    grid-template-columns: minmax(0, 1fr) 12rem;
++    min-height: 3.5rem;
++    width: 100%;
++}
++.OverwrittenExperimentsModal_textContainer__5m84F {
++    display: flex;
++    flex-direction: column;
++    min-width: 0;
++    padding-top: 0.125rem;
++}
++.OverwrittenExperimentsModal_title__kMZ2J {
++    color: var(--ym-controls-color-primary-text-enabled_variant);
++    display: block;
++    font-family: var(--ym-font-text);
++    font-size: var(--ym-font-size-label-l);
++    font-style: normal;
++    font-weight: var(--ym-font-weight-bold);
++    letter-spacing: normal;
++    line-height: var(--ym-font-line-height-label-l);
++    margin: 0;
++    min-height: var(--ym-font-line-height-label-l);
++    overflow: hidden;
++    text-overflow: ellipsis;
++    white-space: nowrap;
++}
++.OverwrittenExperimentsModal_description__m9r4M {
++    color: var(--ym-controls-color-primary-text-enabled);
++    margin-top: 0.25rem;
++}
++.OverwrittenExperimentsModal_selectButton__P0v2_ {
++    align-self: start;
++    justify-self: end;
++    margin-right: 0;
++    max-width: 100%;
++    min-width: 12rem;
++    width: 12rem;
++}
++@media only screen and (max-width: 767.98px) {
++    .OverwrittenExperimentsModal_row__W6A7r {
++        grid-template-columns: minmax(0, 1fr);
++    }
++    .OverwrittenExperimentsModal_selectButton__P0v2_ {
++        justify-self: stretch;
++        min-width: 0;
++        width: 100%;
++    }
++}
++
++.PulseSync_experimentsListScroll {
++    overscroll-behavior: contain;
++    scrollbar-gutter: stable;
++    scrollbar-width: thin !important;
++    overflow-x: hidden;
++    overflow-y: auto;
++    padding-right: 4px;
++    scrollbar-color: var(--ym-controls-color-secondary-text-enabled, rgba(255, 255, 255, 0.35)) transparent;
++}
++.PulseSync_experimentsListScroll::-webkit-scrollbar {
++    width: 0.625rem;
++}
++.PulseSync_experimentsListScroll::-webkit-scrollbar-track {
++    background: transparent;
++}
++.PulseSync_experimentsListScroll::-webkit-scrollbar-thumb {
++    background-color: var(--ym-controls-color-secondary-text-enabled, rgba(255, 255, 255, 0.35));
++    border: 0.125rem solid transparent;
++    border-radius: 999px;
++    background-clip: content-box;
++}
++.PulseSync_experimentsListScroll::-webkit-scrollbar-thumb:hover {
++    background-color: var(--ym-controls-color-primary-text-enabled_variant, rgba(255, 255, 255, 0.55));
++}
++
+ .OverwrittenExperimentsModal_content__Eki5k::-webkit-scrollbar-thumb {
+     background-clip: content-box;
+     border: 0.5rem solid transparent;
+@@ -109,13 +295,18 @@
+ .OverwrittenExperimentsModal_submitButton___VRmz {
+     grid-column: 1 / span 2;
+ }
++.OverwrittenExperimentsModal_listScroll__5D5cU {
++    min-height: 16rem;
++}
+ .OverwrittenExperimentsModal_experimentsList__PFRVV {
+     display: grid;
+     grid-gap: var(--ym-spacer-size-xxl);
+     gap: var(--ym-spacer-size-xxl);
++    width: 100%;
+ }
+ .OverwrittenExperimentsModal_overridedExperiment__w1bng {
+     list-style: none;
++    width: 100%;
+ }
+ @keyframes OverwrittenExperimentsModal_shake__mFxEK {
+     25% {
