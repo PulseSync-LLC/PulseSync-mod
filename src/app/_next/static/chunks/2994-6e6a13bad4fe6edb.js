@@ -5128,7 +5128,10 @@
                         await M(v, e);
                     }),
                     trackDownloadName = (0, u.useMemo)(() => {
-                        let e = (i?.artists ?? []).map((e) => e.name).filter(Boolean).join(', ');
+                        let e = (i?.artists ?? [])
+                            .map((e) => e.name)
+                            .filter(Boolean)
+                            .join(', ');
                         return [e, i?.title].filter(Boolean).join(' — ');
                     }, [i]),
                     onDownloadClick = (0, u.useCallback)(() => {
@@ -5142,7 +5145,7 @@
                     W = (0, Y.c)((e) => {
                         if (!v.isGenerativeContext && i) {
                             if (((0, eo.P)(e, ao().ripple), 2 === e.detail)) {
-                                A.close(), U(e);
+                                (A.close(), U(e));
                                 return;
                             }
                             1 === e.detail && (null == i ? void 0 : i.hasTrackLink) && !g.modal.isOpened && O();
@@ -5275,7 +5278,7 @@
                 };
                 let theState = (0, n.eGp)();
                 let [downloadInfo, setDownloadInfo] = (0, u.useState)(theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data);
-                let [realBitrate, setRealBitrate] = (0, u.useState)(null);
+                let [parsedTrackQualityInfo, setParsedTrackQualityInfo] = (0, u.useState)(null);
                 let syncLyricsPrefetchHook =
                     ((0, u.useEffect)(() => {
                         let e = null == i ? void 0 : i.id,
@@ -5302,28 +5305,21 @@
                     ]),
                     null);
 
-                const updateRealBitrate = (0, u.useCallback)(() => {
-                    const instance = window?.Ya?.YaspAudioElement?.instances?.find((instance) => instance.yaspSrc);
-                    if (!instance) {
-                        // Dirty workaround
-                        setTimeout(updateRealBitrate, 1000);
-                        return console.debug('YaspAudioElement not found, retrying...');
-                    }
-
-                    setTimeout(() => {
-                        // Dirty workaround
-                        instance.yaspRequestDebugInfo().then((info) => {
-                            const tracks = info.sources.find((src) => src.attached)?.abr?.abrDecisionsLog?.tracks;
-
-                            if (!tracks) return;
-                            let bitrate = Math.round((Object.values(tracks)?.[0]?.bitrate ?? 0) / 1000);
-
-                            setRealBitrate(bitrate);
-                            console.debug('Bitrate Updated:', bitrate);
+                const updateParsedTrackQualityInfo = (0, u.useCallback)(() => {
+                    window?.PulseSyncTrackQuality?.getCurrentInfo?.(downloadInfo)
+                        ?.then((info) => {
+                            setParsedTrackQualityInfo(info ?? null);
+                        })
+                        ?.catch?.((error) => {
+                            console.debug('YASP parsed quality update failed:', error);
+                            setParsedTrackQualityInfo(null);
                         });
-                    }, 100);
-                }, [setRealBitrate]);
-                updateRealBitrate();
+                }, [downloadInfo, setParsedTrackQualityInfo]);
+                (0, u.useEffect)(() => {
+                    updateParsedTrackQualityInfo();
+                    const intervalId = window.setInterval(updateParsedTrackQualityInfo, 1000);
+                    return () => window.clearInterval(intervalId);
+                }, [updateParsedTrackQualityInfo]);
                 (0, u.useEffect)(() => {
                     let e = (e, t, a) => {
                         'trackDownloadCurrent' === t && setDownloadProgress(a);
@@ -5376,180 +5372,182 @@
                         };
                     }),
                     (0, o.jsx)('section', {
-                    style: x.isAdvertShown ? void 0 : B,
-                    className: (0, c.$)(ao().root, ao().important, a),
-                    ...(0, D.Am)(D.e8.player.PLAYERBAR_DESKTOP),
-                    'aria-labelledby': aa,
-                    children: (0, o.jsxs)('div', {
-                        className: ao().playerBar,
-                        children: [
-                            !v.isGenerativeContext &&
-                                (0, o.jsx)(Q.J, { sliderClassName: ao().slider, progressbarClassName: ao().progressBar, disabled: !i, isMobile: !1 }),
-                            (0, o.jsxs)('div', {
-                                className: (0, c.$)(ao().player, { [ao().player_disabled]: !i }),
-                                children: [
-                                    (0, o.jsx)('div', { onClick: W, className: ao().triggerModal }),
-                                    (0, o.jsx)(tS.q, {
-                                        children: (0, o.jsx)(y.Heading, { variant: 'h3', id: aa, children: (0, o.jsx)(m.A, { id: 'a11y-regions.player' }) }),
-                                    }),
-                                    (0, o.jsx)('div', {
-                                        className: ao().info,
-                                        children: (0, o.jsx)('div', {
-                                            className: ao().infoCard,
-                                            children:
-                                                i &&
-                                                !x.isAdvertShown &&
-                                                (0, o.jsxs)(o.Fragment, {
-                                                    children: [
-                                                        (0, o.jsxs)(tm.Paper, {
-                                                            radius: 's',
-                                                            className: ao().coverContainer,
-                                                            ...(0, D.Am)(D.e8.player.PLAYERBAR_DESKTOP_COVER_CONTAINER),
-                                                            children: [
-                                                                (0, o.jsx)(h.BW, {
-                                                                    className: ao().cover,
-                                                                    src: i.coverUri,
-                                                                    size: 100,
-                                                                    fit: 'cover',
-                                                                    withAvatarReplace: !0,
-                                                                }),
-                                                                E &&
-                                                                    (0, o.jsxs)(ae.m_, {
-                                                                        placement: 'top',
-                                                                        offsetOptions: 4,
-                                                                        children: [
-                                                                            (0, o.jsx)(al, {
-                                                                                ariaLabel: S({ id: 'player-actions.fullscreen-button' }),
-                                                                                onClick: g.showFullscreenPlayerModal,
-                                                                            }),
-                                                                            (0, o.jsx)(ae.ZI, { children: (0, o.jsx)(m.A, { id: 'player-actions.fullscreen' }) }),
-                                                                        ],
-                                                                    }),
-                                                            ],
-                                                        }),
-                                                        (0, o.jsx)('div', { className: ao().description, children: Z }),
-                                                    ],
-                                                }),
+                        style: x.isAdvertShown ? void 0 : B,
+                        className: (0, c.$)(ao().root, ao().important, a),
+                        ...(0, D.Am)(D.e8.player.PLAYERBAR_DESKTOP),
+                        'aria-labelledby': aa,
+                        children: (0, o.jsxs)('div', {
+                            className: ao().playerBar,
+                            children: [
+                                !v.isGenerativeContext &&
+                                    (0, o.jsx)(Q.J, { sliderClassName: ao().slider, progressbarClassName: ao().progressBar, disabled: !i, isMobile: !1 }),
+                                (0, o.jsxs)('div', {
+                                    className: (0, c.$)(ao().player, { [ao().player_disabled]: !i }),
+                                    children: [
+                                        (0, o.jsx)('div', { onClick: W, className: ao().triggerModal }),
+                                        (0, o.jsx)(tS.q, {
+                                            children: (0, o.jsx)(y.Heading, { variant: 'h3', id: aa, children: (0, o.jsx)(m.A, { id: 'a11y-regions.player' }) }),
                                         }),
-                                    }),
-                                    (0, o.jsxs)('div', {
-                                        className: (0, c.$)(ao().sonata, { [ao().sonata_withReversedControls]: J }),
-                                        children: [
-                                            (0, o.jsx)(h.aQ, { fallback: (0, o.jsx)(h.cy, { disabled: !i || x.isAdvertShown, isLiked: r, onClick: s, iconSize: 'xs' }) }),
-                                            (0, o.jsx)(N.$u, {
-                                                className: (0, c.$)(ao().sonataControls, ao().important),
-                                                withRepeat: !0,
-                                                withShuffle: !0,
-                                                isMobile: !1,
-                                                entityMeta: i,
-                                            }),
-                                            (0, o.jsx)(h.aQ, {
-                                                fallback: (0, o.jsx)(h._I, { disabled: !i || x.isAdvertShown, isDisliked: l, onClick: d, iconSize: 'xs' }),
-                                            }),
-                                        ],
-                                    }),
-                                    (0, o.jsxs)('div', {
-                                        className: ao().meta,
-                                        children: [
-                                            !v.isGenerativeContext &&
-                                                !x.isAdvertShown &&
-                                                (0, o.jsxs)(o.Fragment, {
-                                                    children: [
-                                                        I && (0, o.jsx)(h.ig, { iconSize: 'l' }),
-                                                        q,
-                                                        $,
-                                                        (0, o.jsx)(pulseSyncYandexStationCastControl, { buttonClassName: ao().settingsButton, disabled: x.isAdvertShown }),
-                                                        (0, o.jsx)(h.hj, {
-                                                            title: 'Скачать трек в файл',
-                                                            description: i?.id ? 'Скачать трек в читаемый файл на вашем ПК' : 'Не удалось получить данные о треке',
-                                                            children: (0, o.jsxs)('button', {
-                                                                disabled: !i?.id,
-                                                                className: `cpeagBA1_PblpJn8Xgtv UDMYhpDjiAFT3xUx268O ${!i?.id ? '' : 'HbaqudSqu7Q3mv3zMPGr'} qU2apWBO1yyEK0lZ3lPO`,
-                                                                style: {
-                                                                    display: 'flex',
-                                                                    'flex-direction': 'column',
-                                                                    gap: '2px',
-                                                                    'align-self': 'center',
-                                                                    'padding-top': '5px',
-                                                                    'padding-inline': '2px',
-                                                                },
+                                        (0, o.jsx)('div', {
+                                            className: ao().info,
+                                            children: (0, o.jsx)('div', {
+                                                className: ao().infoCard,
+                                                children:
+                                                    i &&
+                                                    !x.isAdvertShown &&
+                                                    (0, o.jsxs)(o.Fragment, {
+                                                        children: [
+                                                            (0, o.jsxs)(tm.Paper, {
+                                                                radius: 's',
+                                                                className: ao().coverContainer,
+                                                                ...(0, D.Am)(D.e8.player.PLAYERBAR_DESKTOP_COVER_CONTAINER),
                                                                 children: [
-                                                                    (0, o.jsx)('span', {
-                                                                        className: 'JjlbHZ4FaP9EAcR_1DxF',
-                                                                        children: (0, o.jsx)(F.Icon, {
-                                                                            variant: 'download',
-                                                                            size: 'xxs',
+                                                                    (0, o.jsx)(h.BW, {
+                                                                        className: ao().cover,
+                                                                        src: i.coverUri,
+                                                                        size: 100,
+                                                                        fit: 'cover',
+                                                                        withAvatarReplace: !0,
+                                                                    }),
+                                                                    E &&
+                                                                        (0, o.jsxs)(ae.m_, {
+                                                                            placement: 'top',
+                                                                            offsetOptions: 4,
+                                                                            children: [
+                                                                                (0, o.jsx)(al, {
+                                                                                    ariaLabel: S({ id: 'player-actions.fullscreen-button' }),
+                                                                                    onClick: g.showFullscreenPlayerModal,
+                                                                                }),
+                                                                                (0, o.jsx)(ae.ZI, { children: (0, o.jsx)(m.A, { id: 'player-actions.fullscreen' }) }),
+                                                                            ],
+                                                                        }),
+                                                                ],
+                                                            }),
+                                                            (0, o.jsx)('div', { className: ao().description, children: Z }),
+                                                        ],
+                                                    }),
+                                            }),
+                                        }),
+                                        (0, o.jsxs)('div', {
+                                            className: (0, c.$)(ao().sonata, { [ao().sonata_withReversedControls]: J }),
+                                            children: [
+                                                (0, o.jsx)(h.aQ, {
+                                                    fallback: (0, o.jsx)(h.cy, { disabled: !i || x.isAdvertShown, isLiked: r, onClick: s, iconSize: 'xs' }),
+                                                }),
+                                                (0, o.jsx)(N.$u, {
+                                                    className: (0, c.$)(ao().sonataControls, ao().important),
+                                                    withRepeat: !0,
+                                                    withShuffle: !0,
+                                                    isMobile: !1,
+                                                    entityMeta: i,
+                                                }),
+                                                (0, o.jsx)(h.aQ, {
+                                                    fallback: (0, o.jsx)(h._I, { disabled: !i || x.isAdvertShown, isDisliked: l, onClick: d, iconSize: 'xs' }),
+                                                }),
+                                            ],
+                                        }),
+                                        (0, o.jsxs)('div', {
+                                            className: ao().meta,
+                                            children: [
+                                                !v.isGenerativeContext &&
+                                                    !x.isAdvertShown &&
+                                                    (0, o.jsxs)(o.Fragment, {
+                                                        children: [
+                                                            I && (0, o.jsx)(h.ig, { iconSize: 'l' }),
+                                                            q,
+                                                            $,
+                                                            (0, o.jsx)(pulseSyncYandexStationCastControl, {
+                                                                buttonClassName: ao().settingsButton,
+                                                                disabled: x.isAdvertShown,
+                                                            }),
+                                                            (0, o.jsx)(h.hj, {
+                                                                title: 'Скачать трек в файл',
+                                                                description: i?.id ? 'Скачать трек в читаемый файл на вашем ПК' : 'Не удалось получить данные о треке',
+                                                                children: (0, o.jsxs)('button', {
+                                                                    disabled: !i?.id,
+                                                                    className: `cpeagBA1_PblpJn8Xgtv UDMYhpDjiAFT3xUx268O ${!i?.id ? '' : 'HbaqudSqu7Q3mv3zMPGr'} qU2apWBO1yyEK0lZ3lPO`,
+                                                                    style: {
+                                                                        display: 'flex',
+                                                                        'flex-direction': 'column',
+                                                                        gap: '2px',
+                                                                        'align-self': 'center',
+                                                                        'padding-top': '5px',
+                                                                        'padding-inline': '2px',
+                                                                    },
+                                                                    children: [
+                                                                        (0, o.jsx)('span', {
+                                                                            className: 'JjlbHZ4FaP9EAcR_1DxF',
+                                                                            children: (0, o.jsx)(F.Icon, {
+                                                                                variant: 'download',
+                                                                                size: 'xxs',
+                                                                                style: {
+                                                                                    width: '24px',
+                                                                                    height: '24px',
+                                                                                },
+                                                                            }),
+                                                                        }),
+                                                                        (0, o.jsx)('div', {
                                                                             style: {
-                                                                                width: '24px',
-                                                                                height: '24px',
+                                                                                'background-color': 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                                width: `${downloadProgress === -100 ? 0 : downloadProgress}%`,
+                                                                                transition:
+                                                                                    downloadProgress >= 0 && downloadProgress < 100
+                                                                                        ? 'width 0.3s'
+                                                                                        : 'width 0.3s, opacity 0.3s linear 0.5s',
+                                                                                opacity: downloadProgress >= 0 && downloadProgress < 100 ? '1' : '0',
+                                                                                height: '2px',
+                                                                                'border-radius': '10px',
                                                                             },
                                                                         }),
-                                                                    }),
-                                                                    (0, o.jsx)('div', {
-                                                                        style: {
-                                                                            'background-color': 'var(--ym-controls-color-secondary-text-enabled)',
-                                                                            width: `${downloadProgress === -100 ? 0 : downloadProgress}%`,
-                                                                            transition:
-                                                                                downloadProgress >= 0 && downloadProgress < 100
-                                                                                    ? 'width 0.3s'
-                                                                                    : 'width 0.3s, opacity 0.3s linear 0.5s',
-                                                                            opacity: downloadProgress >= 0 && downloadProgress < 100 ? '1' : '0',
-                                                                            height: '2px',
-                                                                            'border-radius': '10px',
-                                                                        },
-                                                                    }),
-                                                                ],
-                                                                onClick: onDownloadClick,
-                                                            }),
-                                                        }),
-                                                        (0, o.jsx)(h.hj, {
-                                                            title: 'Качество трека',
-                                                            description: downloadInfo?.quality
-                                                                ? `${qualityMap[downloadInfo?.quality]}: ${codecMap[downloadInfo?.codec]}` +
-                                                                  (downloadInfo?.bitrate ? `-${downloadInfo?.bitrate}` : '') +
-                                                                  (downloadInfo?.codec !== 'mp3' && realBitrate ? ` ${realBitrate} kbps` : '')
-                                                                : 'Не удалось получить качество трека',
-                                                            children: (0, o.jsxs)('div', {
-                                                                className: 'cpeagBA1_PblpJn8Xgtv HbaqudSqu7Q3mv3zMPGr',
-                                                                children: (0, o.jsx)(tV, {
-                                                                    placement: 'bottom',
-                                                                    open: P,
-                                                                    onOpenChange: j,
-                                                                    icon: (
-                                                                        window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK()
-                                                                            ? codecMap[downloadInfo?.codec]
-                                                                            : qualityMap[downloadInfo?.quality]
-                                                                    )
-                                                                        ? (0, o.jsxs)('span', {
-                                                                              className: ao().settingsButton,
-                                                                              style: {
-                                                                                  width: 'auto',
-                                                                                  height: 'auto',
-                                                                                  'align-content': 'center',
-                                                                              },
-                                                                              children:
-                                                                                  (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK()
-                                                                                      ? codecMap[downloadInfo?.codec]
-                                                                                      : qualityMap[downloadInfo?.quality]) ?? 'NONE',
-                                                                          })
-                                                                        : (0, o.jsx)(F.Icon, {
-                                                                              variant: 'settings',
-                                                                              size: 'xs',
-                                                                          }),
-                                                                    size: 'xxxs',
-                                                                    referenceClassName: ao().settingsButton,
+                                                                    ],
+                                                                    onClick: onDownloadClick,
                                                                 }),
                                                             }),
-                                                        }),
-                                                    ],
-                                                }),
-                                            (0, o.jsx)(at.r, { variant: at.q.VERTICAL, sonataVolume: v.volume, onVolumeSet: v.setVolume, onVolumeClick: K }),
-                                        ],
-                                    }),
-                                ],
-                            }),
-                        ],
-                    }),
+                                                            (0, o.jsx)(h.hj, {
+                                                                title: 'Качество трека',
+                                                                description: parsedTrackQualityInfo?.label ?? 'Не удалось получить качество трека',
+                                                                children: (0, o.jsxs)('div', {
+                                                                    className: 'cpeagBA1_PblpJn8Xgtv HbaqudSqu7Q3mv3zMPGr',
+                                                                    children: (0, o.jsx)(tV, {
+                                                                        placement: 'bottom',
+                                                                        open: P,
+                                                                        onOpenChange: j,
+                                                                        icon: (
+                                                                            window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK()
+                                                                                ? (parsedTrackQualityInfo?.codec ?? codecMap[downloadInfo?.codec])
+                                                                                : (parsedTrackQualityInfo?.quality ?? qualityMap[downloadInfo?.quality])
+                                                                        )
+                                                                            ? (0, o.jsxs)('span', {
+                                                                                  className: ao().settingsButton,
+                                                                                  style: {
+                                                                                      width: 'auto',
+                                                                                      height: 'auto',
+                                                                                      'align-content': 'center',
+                                                                                  },
+                                                                                  children:
+                                                                                      (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK()
+                                                                                          ? (parsedTrackQualityInfo?.codec ?? codecMap[downloadInfo?.codec])
+                                                                                          : (parsedTrackQualityInfo?.quality ?? qualityMap[downloadInfo?.quality])) ??
+                                                                                      'NONE',
+                                                                              })
+                                                                            : (0, o.jsx)(F.Icon, {
+                                                                                  variant: 'settings',
+                                                                                  size: 'xs',
+                                                                              }),
+                                                                        size: 'xxxs',
+                                                                        referenceClassName: ao().settingsButton,
+                                                                    }),
+                                                                }),
+                                                            }),
+                                                        ],
+                                                    }),
+                                                (0, o.jsx)(at.r, { variant: at.q.VERTICAL, sonataVolume: v.volume, onVolumeSet: v.setVolume, onVolumeClick: K }),
+                                            ],
+                                        }),
+                                    ],
+                                }),
+                            ],
+                        }),
                     })
                 );
             });

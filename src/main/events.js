@@ -79,6 +79,7 @@ let toastOperationNonce = 0;
 let isLastFmStartupAuthProbeHandled = false;
 let pendingLastFmStartupAuthErrorToast = false;
 const activeTrackDownloadControllers = new Map();
+const WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY = 'modSettings.nativeAudioOutput.wasapiExclusiveDeviceId';
 
 const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 
@@ -1082,6 +1083,45 @@ const handleApplicationEvents = (window) => {
     });
     electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_RESET_YASP_SOURCE, (event, payload) => {
         nativeAudioOutput.resetYaspSource(payload);
+    });
+    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_YASP_AUDIO_FORMAT, () => {
+        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_YASP_AUDIO_FORMAT);
+        return nativeAudioOutput.getYaspAudioFormat();
+    });
+    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_STATUS, () => {
+        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_STATUS);
+        return {
+            ...nativeAudioOutput.getWasapiExclusiveStatus(),
+            selectedDeviceId: store_js_1.get(WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY) ?? null,
+        };
+    });
+    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_LIST_WASAPI_EXCLUSIVE_DEVICES, (event, options = {}) => {
+        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_LIST_WASAPI_EXCLUSIVE_DEVICES);
+        return nativeAudioOutput.listWasapiExclusiveDevices({
+            includeDisabled: Boolean(options?.includeDisabled),
+            includeFormats: options?.includeFormats !== false,
+        });
+    });
+    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_DEVICE, () => {
+        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_DEVICE);
+        return store_js_1.get(WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY) ?? null;
+    });
+    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_SELECT_WASAPI_EXCLUSIVE_DEVICE, (event, deviceId) => {
+        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_SELECT_WASAPI_EXCLUSIVE_DEVICE);
+        const normalizedDeviceId = typeof deviceId === 'string' && deviceId.trim() ? deviceId.trim() : null;
+
+        if (normalizedDeviceId) {
+            const device = nativeAudioOutput.listWasapiExclusiveDevices({ includeDisabled: true, includeFormats: false }).find((item) => item.id === normalizedDeviceId);
+            if (!device) {
+                throw new Error('WASAPI exclusive device not found');
+            }
+            if (device.state !== 'active') {
+                throw new Error(`WASAPI exclusive device is not active: ${device.state}`);
+            }
+        }
+
+        store_js_1.set(WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY, normalizedDeviceId);
+        return normalizedDeviceId;
     });
     electron_1.ipcMain.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {
         eventsLogger.info(`Event received`, events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, value);

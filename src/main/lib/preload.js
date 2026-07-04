@@ -469,9 +469,28 @@ electron_1.contextBridge.exposeInMainWorld('nativeSettings', {
         electron_1.ipcRenderer.invoke('setPathWithNativeDialog', key, defaultPath, properties);
     },
 });
+
 electron_1.contextBridge.exposeInMainWorld('nativeAudioOutput', {
     isYaspChunkTapEnabled() {
         return Boolean(store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap'));
+    },
+    getWasapiExclusiveStatus() {
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_STATUS);
+    },
+    getYaspAudioFormat() {
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_YASP_AUDIO_FORMAT);
+    },
+    listWasapiExclusiveDevices(options = {}) {
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_AUDIO_OUTPUT_LIST_WASAPI_EXCLUSIVE_DEVICES, {
+            includeDisabled: Boolean(options?.includeDisabled),
+            includeFormats: options?.includeFormats !== false,
+        });
+    },
+    getSelectedWasapiExclusiveDeviceId() {
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_DEVICE);
+    },
+    selectWasapiExclusiveDevice(deviceId) {
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_AUDIO_OUTPUT_SELECT_WASAPI_EXCLUSIVE_DEVICE, deviceId ?? null);
     },
     configureYaspSource(payload) {
         electron_1.ipcRenderer.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_CONFIGURE_YASP_SOURCE, payload);

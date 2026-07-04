@@ -62,6 +62,14 @@ window.findCssRuleByPartialName = function (pName) {
     const YANDEX_STATION_VOLUME_THROTTLE_MS = 250;
     const YANDEX_STATION_CAST_SETTING_KEY = 'modSettings.playerBarEnhancement.enableYandexStationCast';
     const NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY = 'modSettings.nativeAudioOutput.enableYaspChunkTap';
+    const YASP_AUDIO_TAP_MODE_OFF = 'off';
+    const YASP_AUDIO_TAP_MODE_METADATA = 'metadata';
+    const YASP_AUDIO_TAP_MODE_STREAM = 'stream';
+    const YASP_AUDIO_METADATA_PROBE_CHUNK_LIMIT = 8;
+    const TRACK_QUALITY_BETA_SLOT_SELECTOR = '.MainPage_betaSlot_bottom__2h4kk';
+    const TRACK_QUALITY_ELEMENT_ID = 'pulse-sync-track-quality';
+    const TRACK_QUALITY_STYLE_ID = 'pulse-sync-track-quality-style';
+    const TRACK_QUALITY_UPDATE_INTERVAL_MS = 1000;
     const yandexStationOriginalPlayerMethods = new WeakMap();
     const yandexStationAutomaticTrackSyncState = new WeakMap();
     const yandexStationAudioGraphConnections = new WeakMap();
@@ -135,6 +143,232 @@ window.findCssRuleByPartialName = function (pName) {
         } catch {
             return true;
         }
+    };
+
+    const normalizeTrackQualityCodec = (value) => {
+        const raw = String(value ?? '')
+            .trim()
+            .toLowerCase();
+        if (!raw) return null;
+
+        if (raw.includes('flac')) return 'FLAC';
+        if (raw.includes('mp3') || raw.includes('mpeg')) return 'MP3';
+        if (raw.includes('he-aac') || raw.includes('heaac') || raw.includes('mp4a.40.5') || raw.includes('mp4a.40.29')) return 'HE-AAC';
+        if (raw.includes('aac') || raw.includes('mp4a')) return 'AAC';
+        if (raw.includes('alac')) return 'ALAC';
+
+        return raw.toUpperCase();
+    };
+
+    const normalizeTrackQualityNumber = (value) => {
+        const number = Number(value);
+        return Number.isFinite(number) && number > 0 ? number : null;
+    };
+
+    const normalizeTrackQualityBitrateKbits = (value) => {
+        const number = normalizeTrackQualityNumber(value);
+        if (!number) return null;
+
+        return Math.round(number > 10000 ? number / 1000 : number);
+    };
+
+    const formatTrackQualitySampleRate = (value) => {
+        const sampleRate = normalizeTrackQualityNumber(value);
+        if (!sampleRate) return '?';
+
+        return String(Math.round(sampleRate / 100) / 10);
+    };
+
+    const normalizeTrackQualityRank = (format = {}, fallbackDownloadInfo = {}, bitrateKbits = null, codec = null) => {
+        const qualityMap = {
+            lq: 'LQ',
+            nq: 'NQ',
+            hq: 'HQ',
+            'hq+': 'HQ+',
+            hqplus: 'HQ+',
+            lossless: 'HQ+',
+        };
+        const rawQuality = String(format.quality ?? fallbackDownloadInfo?.quality ?? '')
+            .trim()
+            .toLowerCase();
+        if (qualityMap[rawQuality]) return qualityMap[rawQuality];
+
+        if (format.lossless === true || codec === 'FLAC' || codec === 'ALAC') return 'HQ+';
+        if (!bitrateKbits) return null;
+        if (bitrateKbits >= 256) return 'HQ';
+        if (bitrateKbits >= 128) return 'NQ';
+        return 'LQ';
+    };
+
+    const getCurrentTrackDownloadInfo = () => {
+        try {
+            return getPlayerInstance()?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data ?? null;
+        } catch {
+            return null;
+        }
+    };
+
+    const buildTrackQualityInfo = (format = null, fallbackDownloadInfo = null) => {
+        const sourceFormat = format && typeof format === 'object' ? format : {};
+        const fallback = fallbackDownloadInfo && typeof fallbackDownloadInfo === 'object' ? fallbackDownloadInfo : {};
+        const codec = normalizeTrackQualityCodec(sourceFormat.codec ?? fallback.codec);
+        const bitrateKbits = normalizeTrackQualityBitrateKbits(sourceFormat.bitrate ?? fallback.bitrate);
+        const bitsPerSample = normalizeTrackQualityNumber(sourceFormat.bitsPerSample);
+        const sampleRate = normalizeTrackQualityNumber(sourceFormat.sampleRate);
+        const quality = normalizeTrackQualityRank(sourceFormat, fallback, bitrateKbits, codec);
+        const hasAnyData = Boolean(quality || codec || bitrateKbits || bitsPerSample || sampleRate);
+        if (!hasAnyData) return null;
+
+        const resolution = bitsPerSample || sampleRate ? `${bitsPerSample ?? '?'}/${formatTrackQualitySampleRate(sampleRate)}` : '';
+        const label = `${quality ?? '?'}: ${codec ?? '?'} ${resolution && resolution.concat(' ')}${bitrateKbits ?? '?'} kbits/s`;
+
+        return {
+            quality,
+            codec,
+            bitsPerSample,
+            sampleRate,
+            bitrateKbits,
+            label,
+            source: sourceFormat.source ?? null,
+            updatedAt: sourceFormat.updatedAt ?? null,
+        };
+    };
+
+    const readYaspAudioFormat = async () => {
+        try {
+            return (await window.nativeAudioOutput?.getYaspAudioFormat?.()) ?? null;
+        } catch (error) {
+            console.debug('[PulseSync] Failed to read YASP audio format:', error);
+            return null;
+        }
+    };
+
+    const ensurePulseSyncTrackQualityApi = () => {
+        let lastInfo = window.PulseSyncTrackQuality?.getLastInfo?.() ?? null;
+        window.PulseSyncTrackQuality = {
+            buildInfo: buildTrackQualityInfo,
+            format: (format, fallbackDownloadInfo = null) => buildTrackQualityInfo(format, fallbackDownloadInfo)?.label ?? null,
+            getLastInfo: () => lastInfo,
+            getCurrentInfo: async (fallbackDownloadInfo = null) => {
+                const format = await readYaspAudioFormat();
+                const info = buildTrackQualityInfo(format, fallbackDownloadInfo ?? getCurrentTrackDownloadInfo());
+                if (info) {
+                    lastInfo = info;
+                }
+                return info;
+            },
+            getCurrentLabel: async (fallbackDownloadInfo = null) => {
+                const info = await window.PulseSyncTrackQuality.getCurrentInfo(fallbackDownloadInfo);
+                return info?.label ?? null;
+            },
+        };
+    };
+
+    const ensureTrackQualityStyle = () => {
+        if (document.getElementById(TRACK_QUALITY_STYLE_ID)) return;
+
+        const style = document.createElement('style');
+        style.id = TRACK_QUALITY_STYLE_ID;
+        style.textContent = `
+#${TRACK_QUALITY_ELEMENT_ID} {
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 12px;
+    
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-s);
+    font-style: normal;
+    font-weight: var(--ym-font-weight-medium);
+    letter-spacing: normal;
+    line-height: var(--ym-font-line-height-label-s);
+    
+    backdrop-filter: saturate(180%) blur(0.9375rem);
+    background-color: var(--ym-controls-color-secondary-default-enabled);
+    border-radius: var(--ym-radius-size-xl);
+    color: white;
+    cursor: default;
+    padding-block-end: var(--ym-spacer-size-xxxs);
+    padding-block-start: var(--ym-spacer-size-xxxs);
+    padding-inline-end: var(--ym-spacer-size-xs);
+    padding-inline-start: var(--ym-spacer-size-xs);
+    width: fit-content;
+    
+}
+
+#${TRACK_QUALITY_ELEMENT_ID}[hidden] {
+    display: none !important;
+}
+`;
+        document.head?.appendChild(style);
+    };
+
+    const getTrackQualityBetaSlotElement = () => {
+        const container = document.querySelector(TRACK_QUALITY_BETA_SLOT_SELECTOR);
+        if (!container) return null;
+
+        let element = document.getElementById(TRACK_QUALITY_ELEMENT_ID);
+        if (!element) {
+            element = document.createElement('span');
+            element.id = TRACK_QUALITY_ELEMENT_ID;
+            element.className = 'PulseSync_trackQualityBetaSlot';
+        }
+
+        if (element.parentElement !== container) {
+            container.insertBefore(element, container.firstChild);
+        }
+
+        return element;
+    };
+
+    const updateTrackQualityBetaSlot = async () => {
+        const element = getTrackQualityBetaSlotElement();
+        if (!element) return;
+
+        const info = await window.PulseSyncTrackQuality?.getCurrentInfo?.();
+        if (!info?.label) {
+            element.hidden = true;
+            element.textContent = '';
+            element.title = '';
+            return;
+        }
+
+        element.hidden = false;
+        element.textContent = info.label;
+        element.title = info.label;
+    };
+
+    const installTrackQualityBetaSlot = () => {
+        if (window.__pulseSyncTrackQualityBetaSlotInstalled) return;
+        window.__pulseSyncTrackQualityBetaSlotInstalled = true;
+        ensurePulseSyncTrackQualityApi();
+        ensureTrackQualityStyle();
+
+        let pendingUpdate = false;
+        const scheduleUpdate = () => {
+            if (pendingUpdate) return;
+            pendingUpdate = true;
+            ensureTrackQualityStyle();
+            window.requestAnimationFrame?.(async () => {
+                pendingUpdate = false;
+                await updateTrackQualityBetaSlot();
+            }) ??
+                window.setTimeout(async () => {
+                    pendingUpdate = false;
+                    await updateTrackQualityBetaSlot();
+                }, 0);
+        };
+
+        scheduleUpdate();
+        window.setInterval(scheduleUpdate, TRACK_QUALITY_UPDATE_INTERVAL_MS);
+        if (document.body && typeof MutationObserver === 'function') {
+            const observer = new MutationObserver(scheduleUpdate);
+            observer.observe(document.body, { childList: true, subtree: true });
+            window.__pulseSyncTrackQualityBetaSlotObserver = observer;
+        }
+        document.addEventListener?.('visibilitychange', scheduleUpdate);
     };
 
     const getEntityStableId = (entity) => {
@@ -356,6 +590,18 @@ window.findCssRuleByPartialName = function (pName) {
         }
     };
 
+    const getYaspAudioTapMode = () => {
+        if (isNativeAudioChunkTapEnabled()) {
+            return YASP_AUDIO_TAP_MODE_STREAM;
+        }
+
+        if (window.__PULSESYNC_YASP_AUDIO_FORMAT_TAP === false) {
+            return YASP_AUDIO_TAP_MODE_OFF;
+        }
+
+        return YASP_AUDIO_TAP_MODE_METADATA;
+    };
+
     const isLikelyYaspWorkerUrl = (url) => {
         const value = String(url ?? '').toLowerCase();
         return (
@@ -367,14 +613,28 @@ window.findCssRuleByPartialName = function (pName) {
         );
     };
 
-    function pulseSyncYaspWorkerBootstrap(sourceUrl, inlineSource) {
+    let nativeAudioWorkerIdCounter = 0;
+    const createNativeAudioWorkerId = () => {
+        nativeAudioWorkerIdCounter += 1;
+        return `${Date.now().toString(36)}-${nativeAudioWorkerIdCounter.toString(36)}`;
+    };
+
+    function pulseSyncYaspWorkerBootstrap(sourceUrl, inlineSource, workerId, tapMode, metadataProbeChunkLimit) {
         const PULSE_SYNC_NATIVE_AUDIO_MESSAGE = '__pulseSyncNativeAudio';
+        const nativeAudioTapMode = tapMode === 'stream' ? 'stream' : 'metadata';
+        const nativeAudioMetadataProbeChunkLimit = Number.isFinite(Number(metadataProbeChunkLimit)) ? Number(metadataProbeChunkLimit) : 8;
         const feederIds = new WeakMap();
+        const metadataProbeChunkCounts = new Map();
         let nextFeederId = 1;
 
         const normalizeNumber = (value) => {
             const number = Number(value);
             return Number.isFinite(number) ? number : null;
+        };
+
+        const normalizeBitsPerSample = (value) => {
+            const number = normalizeNumber(value);
+            return [8, 16, 24, 32].includes(number) ? number : null;
         };
 
         const safeRead = (reader) => {
@@ -410,10 +670,69 @@ window.findCssRuleByPartialName = function (pName) {
             return id;
         };
 
+        const shouldPostNativeAudioChunk = (feederId, currentTrack) => {
+            if (nativeAudioTapMode === 'stream') {
+                return true;
+            }
+
+            const key = `${feederId}:${currentTrack ?? 'unknown'}`;
+            const count = metadataProbeChunkCounts.get(key) ?? 0;
+            if (count >= nativeAudioMetadataProbeChunkLimit) {
+                return false;
+            }
+
+            metadataProbeChunkCounts.set(key, count + 1);
+            return true;
+        };
+
+        const getCurrentAudioTrack = (feeder, stream) => {
+            const timeline = feeder?.timeline;
+            const currentTrack = stream?.currentTrack;
+            if (!timeline || currentTrack == null) {
+                return null;
+            }
+
+            return safeRead(() => timeline.findTrackById(currentTrack, 'audio')) ?? safeRead(() => timeline.audio?.find((track) => track?.id === currentTrack)) ?? null;
+        };
+
+        const getAudioTrackMetadata = (track, mimeType) => {
+            if (!track) {
+                return null;
+            }
+
+            return {
+                id: track.id ?? null,
+                language: track.language ?? null,
+                label: track.label ?? track.name ?? null,
+                mimeType: track.mimeType ?? mimeType ?? null,
+                codec: track.codecs ?? track.codec ?? null,
+                bitrate: normalizeNumber(track.bitrate ?? track.bandwidth),
+                channels: normalizeNumber(track.channels),
+                sampleRate: normalizeNumber(track.sampleRate ?? track.audioSamplingRate ?? track.samplerate),
+                bitsPerSample: normalizeBitsPerSample(track.bitsPerSample ?? track.bitDepth ?? track.bit_depth),
+            };
+        };
+
+        const getAudioFormatMetadata = (trackMetadata) => {
+            if (!trackMetadata) {
+                return null;
+            }
+
+            return {
+                mimeType: trackMetadata.mimeType,
+                codec: trackMetadata.codec,
+                bitrate: trackMetadata.bitrate,
+                channels: trackMetadata.channels,
+                sampleRate: trackMetadata.sampleRate,
+                bitsPerSample: trackMetadata.bitsPerSample,
+            };
+        };
+
         const postNativeAudioMessage = (message) => {
             self.postMessage({
                 [PULSE_SYNC_NATIVE_AUDIO_MESSAGE]: true,
                 sourceUrl,
+                workerId,
                 ...message,
             });
         };
@@ -424,6 +743,11 @@ window.findCssRuleByPartialName = function (pName) {
                     return;
                 }
 
+                const feederId = getFeederId(feeder);
+                if (!shouldPostNativeAudioChunk(feederId, stream.currentTrack)) {
+                    return;
+                }
+
                 const copiedChunk = copyChunkToArrayBuffer(chunk);
                 if (!copiedChunk) {
                     return;
@@ -431,10 +755,15 @@ window.findCssRuleByPartialName = function (pName) {
 
                 const mimeTypes = safeRead(() => feeder.timeline.getMimeTypes());
                 const mediaState = feeder?.mediaState ?? {};
+                const audioTrack = getAudioTrackMetadata(getCurrentAudioTrack(feeder, stream), mimeTypes?.audio?.[0] ?? null);
                 const meta = {
-                    feederId: getFeederId(feeder),
+                    workerId,
+                    feederId,
+                    tapMode: nativeAudioTapMode,
                     type: stream.type,
                     currentTrack: stream.currentTrack ?? null,
+                    audioTrack,
+                    audioFormat: getAudioFormatMetadata(audioTrack),
                     time: normalizeNumber(stream.time),
                     nextTimeToSet: normalizeNumber(stream.nextTimeToSet),
                     lastAddedSegmentNumber: stream.lastAddedSegmentNumber ?? null,
@@ -451,6 +780,7 @@ window.findCssRuleByPartialName = function (pName) {
                         [PULSE_SYNC_NATIVE_AUDIO_MESSAGE]: true,
                         event: 'chunk',
                         sourceUrl,
+                        workerId,
                         meta,
                         chunk: copiedChunk,
                     },
@@ -464,9 +794,23 @@ window.findCssRuleByPartialName = function (pName) {
             }
         };
 
+        const patchYaspAudioTrackMetadata = (source) => {
+            let patched = source;
+            patched = patched.replace(/(bitrate:\s*n\.bandwidth,\s*)language:\s*e\.lang/, '$1sampleRate:n.audioSamplingRate,language:e.lang');
+            patched = patched.replace(/(V\(G\(r\),\s*"channels",\s*void 0\),)/, '$1V(G(r),"sampleRate",void 0),');
+            patched = patched.replace(/(r\.channels\s*=\s*e\.channels,\s*)r(\s*)/, '$1r.sampleRate=e.sampleRate||e.audioSamplingRate,$2r');
+            patched = patched.replace(
+                /(this\.bitrate\s*=\s*e\.bitrate,\s*)this\.initialization/,
+                '$1this.sampleRate=e.sampleRate||e.audioSamplingRate||this.sampleRate,this.initialization',
+            );
+            patched = patched.replace(/channels:\s*r\.channels/g, 'channels:r.channels,sampleRate:r.sampleRate');
+            return patched;
+        };
+
         const patchWorkerSource = (source) => {
+            const metadataPatchedSource = patchYaspAudioTrackMetadata(source);
             const appendChunkPattern = /(e\.prev\s*=\s*0\s*,\s*e\.next\s*=\s*3\s*,\s*)this\.mse\.appendBuffer\(t\.type,\s*r\)/;
-            const patched = source.replace(
+            const patched = metadataPatchedSource.replace(
                 appendChunkPattern,
                 '$1(self.__pulseSyncYaspNativeAudioTap&&self.__pulseSyncYaspNativeAudioTap(this,t,r),this.mse.appendBuffer(t.type,r))',
             );
@@ -474,7 +818,10 @@ window.findCssRuleByPartialName = function (pName) {
             postNativeAudioMessage({
                 event: 'patch-status',
                 patched: patched !== source,
-                reason: patched === source ? 'appendChunk marker not found' : 'appendChunk patched',
+                reason:
+                    patched === source
+                        ? 'appendChunk marker not found'
+                        : `appendChunk patched, track metadata ${metadataPatchedSource === source ? 'not patched' : 'patched'}`,
             });
 
             return patched;
@@ -508,8 +855,12 @@ window.findCssRuleByPartialName = function (pName) {
         }
     };
 
-    const createNativeAudioWorkerBootstrapSource = (sourceUrl, inlineSource) =>
-        `(${pulseSyncYaspWorkerBootstrap.toString()})(${JSON.stringify(sourceUrl)},${JSON.stringify(inlineSource)});`;
+    const createNativeAudioWorkerBootstrapSource = (sourceUrl, inlineSource, workerId, tapMode) =>
+        `(${pulseSyncYaspWorkerBootstrap.toString()})(${JSON.stringify(sourceUrl)},${JSON.stringify(inlineSource)},${JSON.stringify(workerId)},${JSON.stringify(tapMode)},${JSON.stringify(
+            YASP_AUDIO_METADATA_PROBE_CHUNK_LIMIT,
+        )});`;
+
+    const hasNativeAudioAppendChunkMarker = (source) => /(e\.prev\s*=\s*0\s*,\s*e\.next\s*=\s*3\s*,\s*)this\.mse\.appendBuffer\(t\.type,\s*r\)/.test(source);
 
     const handleNativeAudioWorkerMessage = (event) => {
         const data = event?.data;
@@ -517,10 +868,15 @@ window.findCssRuleByPartialName = function (pName) {
             return;
         }
 
+        event.stopImmediatePropagation?.();
+        event.stopPropagation?.();
+        event.preventDefault?.();
+
         if (data.event === 'chunk') {
             window.nativeAudioOutput?.pushYaspChunk?.(
                 {
                     sourceUrl: data.sourceUrl,
+                    workerId: data.workerId,
                     meta: data.meta,
                 },
                 data.chunk,
@@ -546,7 +902,8 @@ window.findCssRuleByPartialName = function (pName) {
 
         const OriginalWorker = window.Worker;
         const PatchedWorker = function (url, options) {
-            if (!isNativeAudioChunkTapEnabled() || options?.type === 'module' || !isLikelyYaspWorkerUrl(url)) {
+            const tapMode = getYaspAudioTapMode();
+            if (tapMode === YASP_AUDIO_TAP_MODE_OFF || options?.type === 'module' || !isLikelyYaspWorkerUrl(url)) {
                 return new OriginalWorker(url, options);
             }
 
@@ -555,13 +912,17 @@ window.findCssRuleByPartialName = function (pName) {
             if (sourceUrl.startsWith('blob:') && !inlineSource) {
                 return new OriginalWorker(url, options);
             }
+            if (sourceUrl.startsWith('blob:') && !hasNativeAudioAppendChunkMarker(inlineSource)) {
+                return new OriginalWorker(url, options);
+            }
 
-            const bootstrapSource = createNativeAudioWorkerBootstrapSource(sourceUrl, inlineSource);
+            const workerId = createNativeAudioWorkerId();
+            const bootstrapSource = createNativeAudioWorkerBootstrapSource(sourceUrl, inlineSource, workerId, tapMode);
             const bootstrapUrl = URL.createObjectURL(new Blob([bootstrapSource], { type: 'application/javascript' }));
 
             try {
                 const worker = new OriginalWorker(bootstrapUrl, options);
-                worker.addEventListener('message', handleNativeAudioWorkerMessage);
+                worker.addEventListener('message', handleNativeAudioWorkerMessage, true);
                 return worker;
             } catch (error) {
                 console.warn('[PulseSync] Failed to create patched YASP worker, falling back to original worker:', error);
@@ -589,7 +950,7 @@ window.findCssRuleByPartialName = function (pName) {
 
         const originalConfigureSource = yaspAudioElement.configureSource;
         yaspAudioElement.configureSource = function (source, config = {}) {
-            if (isNativeAudioChunkTapEnabled()) {
+            if (getYaspAudioTapMode() !== YASP_AUDIO_TAP_MODE_OFF) {
                 window.nativeAudioOutput?.configureYaspSource?.({
                     source,
                     sourceKey: getNativeAudioSourceKey(source),
@@ -1508,6 +1869,8 @@ window.findCssRuleByPartialName = function (pName) {
         });
     };
 
+    ensurePulseSyncTrackQualityApi();
+    installTrackQualityBetaSlot();
     installYaspNativeAudioHooks();
     ensureApi();
     registerDesktopListener();
