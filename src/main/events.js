@@ -78,6 +78,7 @@ let isGlobalShortcutsRecordingActive = false;
 let toastOperationNonce = 0;
 let isLastFmStartupAuthProbeHandled = false;
 let pendingLastFmStartupAuthErrorToast = false;
+let unsubscribeYaspAudioFormatChanged = null;
 const activeTrackDownloadControllers = new Map();
 const WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY = 'modSettings.nativeAudioOutput.wasapiExclusiveDeviceId';
 
@@ -353,6 +354,12 @@ const handleApplicationEvents = (window) => {
     yandexStationRuntime.on('playbackStateChanged', (state) => {
         if (window?.webContents && typeof window.webContents.send === 'function') {
             window.webContents.send(events_js_1.Events.YANDEX_STATION_PLAYBACK_STATE, state);
+        }
+    });
+    unsubscribeYaspAudioFormatChanged?.();
+    unsubscribeYaspAudioFormatChanged = nativeAudioOutput.onYaspAudioFormatChanged((format) => {
+        if (window?.webContents && typeof window.webContents.send === 'function') {
+            window.webContents.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED, format);
         }
     });
     if (store_js_1.getModSettings()?.playerBarEnhancement?.enableYandexStationCast ?? true) {

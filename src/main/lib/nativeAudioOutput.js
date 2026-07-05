@@ -3,6 +3,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.resetYaspSource =
     exports.getYaspAudioFormat =
+    exports.onYaspAudioFormatChanged =
     exports.receiveYaspChunk =
     exports.configureYaspSource =
     exports.createWasapiExclusiveRenderer =
@@ -12,11 +13,14 @@ exports.resetYaspSource =
 
 const { Logger } = require('../packages/logger/Logger.js');
 const crypto = require('crypto');
+const { EventEmitter } = require('events');
 
 const logger = new Logger('NativeAudioOutput');
 const sources = new Map();
 const chunkStats = new Map();
+const nativeAudioOutputEvents = new EventEmitter();
 let lastYaspAudioFormat = null;
+let lastYaspAudioFormatSignature = '';
 const WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY = 'modSettings.nativeAudioOutput.wasapiExclusiveDeviceId';
 const WASAPI_EXCLUSIVE_MODULE_PATH = '../native_modules/wasapi_exclusive';
 const requireIfExists =
@@ -143,6 +147,44 @@ const getSourceKey = (source) => {
         return String(source ?? '');
     }
 };
+
+const getYaspAudioFormatSignature = (format) => {
+    if (!format) {
+        return '';
+    }
+
+    return JSON.stringify({
+        mimeType: format.mimeType ?? null,
+        codec: format.codec ?? null,
+        bitrate: format.bitrate ?? null,
+        channels: format.channels ?? null,
+        sampleRate: format.sampleRate ?? null,
+        bitsPerSample: format.bitsPerSample ?? null,
+        container: format.container ?? null,
+        source: format.source ?? null,
+        lossless: format.lossless ?? null,
+        currentTrack: format.currentTrack ?? null,
+        sourceHash: format.sourceHash ?? null,
+        workerId: format.workerId ?? null,
+    });
+};
+
+const setLastYaspAudioFormat = (format) => {
+    const signature = getYaspAudioFormatSignature(format);
+    const didChange = signature !== lastYaspAudioFormatSignature;
+    lastYaspAudioFormatSignature = signature;
+    lastYaspAudioFormat = format;
+
+    if (didChange) {
+        nativeAudioOutputEvents.emit('yaspAudioFormatChanged', lastYaspAudioFormat);
+    }
+};
+
+const onYaspAudioFormatChanged = (listener) => {
+    nativeAudioOutputEvents.on('yaspAudioFormatChanged', listener);
+    return () => nativeAudioOutputEvents.off('yaspAudioFormatChanged', listener);
+};
+exports.onYaspAudioFormatChanged = onYaspAudioFormatChanged;
 
 const getChunkStatKey = (payload) => {
     const sourceKey = payload?.sourceKey || payload?.meta?.sourceKey || 'unknown-source';
@@ -605,7 +647,7 @@ const configureYaspSource = (payload = {}) => {
     });
 
     if (lastYaspAudioFormat?.sourceHash !== hashValue(sourceKey)) {
-        lastYaspAudioFormat = null;
+        setLastYaspAudioFormat(null);
     }
 
     logger.info('YASP native audio source configured', {
@@ -652,7 +694,7 @@ const receiveYaspChunk = (payload = {}, chunk) => {
     };
     if (hasAudioFormatData(audioFormat)) {
         stat.audioFormat = audioFormat;
-        lastYaspAudioFormat = {
+        const nextYaspAudioFormat = {
             ...audioFormat,
             currentTrack: payload?.meta?.currentTrack ?? null,
             sourceHash: hashValue(payload?.sourceKey || payload?.meta?.sourceKey || payload?.sourceUrl),
@@ -660,9 +702,10 @@ const receiveYaspChunk = (payload = {}, chunk) => {
             updatedAt: now,
         };
 
-        if (!lastYaspAudioFormat.channels || !lastYaspAudioFormat.sampleRate || !lastYaspAudioFormat.bitsPerSample) {
-            lastYaspAudioFormat.parseDebug = stat.lastParseDebug;
+        if (!nextYaspAudioFormat.channels || !nextYaspAudioFormat.sampleRate || !nextYaspAudioFormat.bitsPerSample) {
+            nextYaspAudioFormat.parseDebug = stat.lastParseDebug;
         }
+        setLastYaspAudioFormat(nextYaspAudioFormat);
     }
 
     if (stat.chunks === 1 || stat.chunks % 256 === 0 || now - stat.lastLogAt > 10000) {
@@ -688,7 +731,7 @@ const resetYaspSource = (payload = {}) => {
     }
 
     if (lastYaspAudioFormat?.sourceHash === hashValue(sourceKey)) {
-        lastYaspAudioFormat = null;
+        setLastYaspAudioFormat(null);
     }
 
     sources.delete(sourceKey);

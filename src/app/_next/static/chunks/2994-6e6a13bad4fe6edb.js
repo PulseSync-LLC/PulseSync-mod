@@ -526,6 +526,7 @@
                         Q = (0, j.ZpR)(null != (a = null == (t = E.specialHeader) ? void 0 : t.url) ? a : ''),
                         Y = w.checkExperiment(j.zal.WebNextNewWaveTabFeedbackForm, 'on'),
                         $ = (0, j.ZpR)('/slides/special/my_vibe_onboarding');
+                    let [pulseSyncTrackQualityInfo, setPulseSyncTrackQualityInfo] = (0, s.useState)(window?.PulseSyncTrackQuality?.getLastInfo?.() ?? null);
                     (0, s.useEffect)(() => {
                         var e, t;
                         if (!r || !U) return;
@@ -541,12 +542,53 @@
                             },
                             [E, E.landing, q],
                         ),
+                        (0, s.useEffect)(() => {
+                            const updatePulseSyncTrackQualityInfo = (format) => {
+                                setPulseSyncTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(format) ?? null);
+                            };
+                            const lastInfo = window?.PulseSyncTrackQuality?.getLastInfo?.();
+                            if (lastInfo) {
+                                setPulseSyncTrackQualityInfo(lastInfo);
+                            }
+                            window?.nativeAudioOutput?.getYaspAudioFormat?.()
+                                ?.then?.((format) => {
+                                    updatePulseSyncTrackQualityInfo(format);
+                                })
+                                ?.catch?.(() => {});
+                            const unsubscribe = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED', (event, format) => {
+                                updatePulseSyncTrackQualityInfo(format);
+                            });
+                            return () => {
+                                if (typeof unsubscribe === 'function') unsubscribe();
+                            };
+                        }, []),
                         (0, j.Jzs)(E.landing.isResolved);
                     let X = w.checkExperiment(j.zal.WebNextDisableVibe, 'on'),
                         Z = (0, s.useCallback)(() => {
                             L.isReady && L.modal.open();
                         }, [L.isReady, L.modal]),
                         J = (0, s.useMemo)(() => (X ? { 'margin-block-start': '1vh' } : {}), [X]),
+                        ef = (0, s.useMemo)(
+                            () =>
+                                pulseSyncTrackQualityInfo?.label
+                                    ? (0, i.jsx)(p.$, {
+                                          color: 'secondary',
+                                          radius: 'xl',
+                                          'aria-label': 'Качество трека: '.concat(pulseSyncTrackQualityInfo.label),
+                                          className: T().beta,
+                                          style: { marginInlineEnd: 'var(--ym-spacer-size-xs)', color: 'white' },
+                                          withHover: !1,
+                                          children: (0, i.jsx)(b.Caption, {
+                                              variant: 'div',
+                                              type: 'text',
+                                              size: 's',
+                                              weight: 'medium',
+                                              children: pulseSyncTrackQualityInfo.label,
+                                          }),
+                                      })
+                                    : null,
+                            [pulseSyncTrackQualityInfo],
+                        ),
                         ee = (0, s.useMemo)(() => {
                             if (w.checkExperiment(j.zal.WebNextBetaLabel, 'off')) return null;
                             {
@@ -661,7 +703,7 @@
                                                   children: [O && (0, i.jsx)(N.YS, { withMeta: !1, variant: 'mobile', className: T().userProfile }), et],
                                               }),
                                               (0, i.jsx)(H, {}),
-                                              (0, i.jsx)('div', { className: ea, children: ee }),
+                                              (0, i.jsxs)('div', { className: ea, children: [ef, ee] }),
                                           ],
                                       }),
                                   }),
@@ -678,7 +720,7 @@
                                           ...(0, d.Am)(d.Xk.main.MAIN_PAGE),
                                           children: [
                                               en,
-                                              (0, i.jsx)('div', { className: ea, children: ee }),
+                                              (0, i.jsxs)('div', { className: ea, children: [ef, ee] }),
                                               !X &&
                                                   (0, i.jsx)(j.FoH, {
                                                       blockIdForFrom: j.hf$.RUP_MAIN_RADIO,
@@ -5305,20 +5347,27 @@
                     ]),
                     null);
 
-                const updateParsedTrackQualityInfo = (0, u.useCallback)(() => {
-                    window?.PulseSyncTrackQuality?.getCurrentInfo?.(downloadInfo)
-                        ?.then((info) => {
-                            setParsedTrackQualityInfo(info ?? null);
-                        })
-                        ?.catch?.((error) => {
-                            console.debug('YASP parsed quality update failed:', error);
-                            setParsedTrackQualityInfo(null);
-                        });
+                const updateParsedTrackQualityInfo = (0, u.useCallback)((format, useFallback = true) => {
+                    setParsedTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(format, useFallback ? downloadInfo : null) ?? null);
                 }, [downloadInfo, setParsedTrackQualityInfo]);
                 (0, u.useEffect)(() => {
-                    updateParsedTrackQualityInfo();
-                    const intervalId = window.setInterval(updateParsedTrackQualityInfo, 1000);
-                    return () => window.clearInterval(intervalId);
+                    const lastInfo = window?.PulseSyncTrackQuality?.getLastInfo?.();
+                    if (lastInfo) {
+                        setParsedTrackQualityInfo(lastInfo);
+                    } else {
+                        updateParsedTrackQualityInfo(null, true);
+                    }
+                    window?.nativeAudioOutput?.getYaspAudioFormat?.()
+                        ?.then?.((format) => {
+                            updateParsedTrackQualityInfo(format, true);
+                        })
+                        ?.catch?.(() => {});
+                    const unsubscribe = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED', (event, format) => {
+                        updateParsedTrackQualityInfo(format, Boolean(format));
+                    });
+                    return () => {
+                        if (typeof unsubscribe === 'function') unsubscribe();
+                    };
                 }, [updateParsedTrackQualityInfo]);
                 (0, u.useEffect)(() => {
                     let e = (e, t, a) => {

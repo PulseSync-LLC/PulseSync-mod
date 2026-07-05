@@ -66,10 +66,6 @@ window.findCssRuleByPartialName = function (pName) {
     const YASP_AUDIO_TAP_MODE_METADATA = 'metadata';
     const YASP_AUDIO_TAP_MODE_STREAM = 'stream';
     const YASP_AUDIO_METADATA_PROBE_CHUNK_LIMIT = 8;
-    const TRACK_QUALITY_BETA_SLOT_SELECTOR = '.MainPage_betaSlot_bottom__2h4kk';
-    const TRACK_QUALITY_ELEMENT_ID = 'pulse-sync-track-quality';
-    const TRACK_QUALITY_STYLE_ID = 'pulse-sync-track-quality-style';
-    const TRACK_QUALITY_UPDATE_INTERVAL_MS = 1000;
     const yandexStationOriginalPlayerMethods = new WeakMap();
     const yandexStationAutomaticTrackSyncState = new WeakMap();
     const yandexStationAudioGraphConnections = new WeakMap();
@@ -195,7 +191,8 @@ window.findCssRuleByPartialName = function (pName) {
 
         if (format.lossless === true || codec === 'FLAC' || codec === 'ALAC') return 'HQ+';
         if (!bitrateKbits) return null;
-        if (bitrateKbits >= 256) return 'HQ';
+        if (bitrateKbits >= 256) return 'HQ+';
+        if (bitrateKbits >= 192) return 'HQ';
         if (bitrateKbits >= 128) return 'NQ';
         return 'LQ';
     };
@@ -213,8 +210,9 @@ window.findCssRuleByPartialName = function (pName) {
         const fallback = fallbackDownloadInfo && typeof fallbackDownloadInfo === 'object' ? fallbackDownloadInfo : {};
         const codec = normalizeTrackQualityCodec(sourceFormat.codec ?? fallback.codec);
         const bitrateKbits = normalizeTrackQualityBitrateKbits(sourceFormat.bitrate ?? fallback.bitrate);
-        const bitsPerSample = normalizeTrackQualityNumber(sourceFormat.bitsPerSample);
+        const parsedBitsPerSample = normalizeTrackQualityNumber(sourceFormat.bitsPerSample);
         const sampleRate = normalizeTrackQualityNumber(sourceFormat.sampleRate);
+        const bitsPerSample = parsedBitsPerSample ?? (codec && !['FLAC', 'ALAC'].includes(codec) ? 16 : null);
         const quality = normalizeTrackQualityRank(sourceFormat, fallback, bitrateKbits, codec);
         const hasAnyData = Boolean(quality || codec || bitrateKbits || bitsPerSample || sampleRate);
         if (!hasAnyData) return null;
@@ -245,130 +243,24 @@ window.findCssRuleByPartialName = function (pName) {
 
     const ensurePulseSyncTrackQualityApi = () => {
         let lastInfo = window.PulseSyncTrackQuality?.getLastInfo?.() ?? null;
+        const updateFromFormat = (format, fallbackDownloadInfo = null) => {
+            lastInfo = buildTrackQualityInfo(format, fallbackDownloadInfo);
+            return lastInfo;
+        };
         window.PulseSyncTrackQuality = {
             buildInfo: buildTrackQualityInfo,
+            updateFromFormat,
             format: (format, fallbackDownloadInfo = null) => buildTrackQualityInfo(format, fallbackDownloadInfo)?.label ?? null,
             getLastInfo: () => lastInfo,
             getCurrentInfo: async (fallbackDownloadInfo = null) => {
                 const format = await readYaspAudioFormat();
-                const info = buildTrackQualityInfo(format, fallbackDownloadInfo ?? getCurrentTrackDownloadInfo());
-                if (info) {
-                    lastInfo = info;
-                }
-                return info;
+                return updateFromFormat(format, fallbackDownloadInfo ?? getCurrentTrackDownloadInfo());
             },
             getCurrentLabel: async (fallbackDownloadInfo = null) => {
                 const info = await window.PulseSyncTrackQuality.getCurrentInfo(fallbackDownloadInfo);
                 return info?.label ?? null;
             },
         };
-    };
-
-    const ensureTrackQualityStyle = () => {
-        if (document.getElementById(TRACK_QUALITY_STYLE_ID)) return;
-
-        const style = document.createElement('style');
-        style.id = TRACK_QUALITY_STYLE_ID;
-        style.textContent = `
-#${TRACK_QUALITY_ELEMENT_ID} {
-    display: inline-flex;
-    align-items: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-right: 12px;
-    
-    font-family: var(--ym-font-text);
-    font-size: var(--ym-font-size-label-s);
-    font-style: normal;
-    font-weight: var(--ym-font-weight-medium);
-    letter-spacing: normal;
-    line-height: var(--ym-font-line-height-label-s);
-    
-    backdrop-filter: saturate(180%) blur(0.9375rem);
-    background-color: var(--ym-controls-color-secondary-default-enabled);
-    border-radius: var(--ym-radius-size-xl);
-    color: white;
-    cursor: default;
-    padding-block-end: var(--ym-spacer-size-xxxs);
-    padding-block-start: var(--ym-spacer-size-xxxs);
-    padding-inline-end: var(--ym-spacer-size-xs);
-    padding-inline-start: var(--ym-spacer-size-xs);
-    width: fit-content;
-    
-}
-
-#${TRACK_QUALITY_ELEMENT_ID}[hidden] {
-    display: none !important;
-}
-`;
-        document.head?.appendChild(style);
-    };
-
-    const getTrackQualityBetaSlotElement = () => {
-        const container = document.querySelector(TRACK_QUALITY_BETA_SLOT_SELECTOR);
-        if (!container) return null;
-
-        let element = document.getElementById(TRACK_QUALITY_ELEMENT_ID);
-        if (!element) {
-            element = document.createElement('span');
-            element.id = TRACK_QUALITY_ELEMENT_ID;
-            element.className = 'PulseSync_trackQualityBetaSlot';
-        }
-
-        if (element.parentElement !== container) {
-            container.insertBefore(element, container.firstChild);
-        }
-
-        return element;
-    };
-
-    const updateTrackQualityBetaSlot = async () => {
-        const element = getTrackQualityBetaSlotElement();
-        if (!element) return;
-
-        const info = await window.PulseSyncTrackQuality?.getCurrentInfo?.();
-        if (!info?.label) {
-            element.hidden = true;
-            element.textContent = '';
-            element.title = '';
-            return;
-        }
-
-        element.hidden = false;
-        element.textContent = info.label;
-        element.title = info.label;
-    };
-
-    const installTrackQualityBetaSlot = () => {
-        if (window.__pulseSyncTrackQualityBetaSlotInstalled) return;
-        window.__pulseSyncTrackQualityBetaSlotInstalled = true;
-        ensurePulseSyncTrackQualityApi();
-        ensureTrackQualityStyle();
-
-        let pendingUpdate = false;
-        const scheduleUpdate = () => {
-            if (pendingUpdate) return;
-            pendingUpdate = true;
-            ensureTrackQualityStyle();
-            window.requestAnimationFrame?.(async () => {
-                pendingUpdate = false;
-                await updateTrackQualityBetaSlot();
-            }) ??
-                window.setTimeout(async () => {
-                    pendingUpdate = false;
-                    await updateTrackQualityBetaSlot();
-                }, 0);
-        };
-
-        scheduleUpdate();
-        window.setInterval(scheduleUpdate, TRACK_QUALITY_UPDATE_INTERVAL_MS);
-        if (document.body && typeof MutationObserver === 'function') {
-            const observer = new MutationObserver(scheduleUpdate);
-            observer.observe(document.body, { childList: true, subtree: true });
-            window.__pulseSyncTrackQualityBetaSlotObserver = observer;
-        }
-        document.addEventListener?.('visibilitychange', scheduleUpdate);
     };
 
     const getEntityStableId = (entity) => {
@@ -1870,7 +1762,6 @@ window.findCssRuleByPartialName = function (pName) {
     };
 
     ensurePulseSyncTrackQualityApi();
-    installTrackQualityBetaSlot();
     installYaspNativeAudioHooks();
     ensureApi();
     registerDesktopListener();
