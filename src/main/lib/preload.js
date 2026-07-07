@@ -472,7 +472,13 @@ electron_1.contextBridge.exposeInMainWorld('nativeSettings', {
 
 electron_1.contextBridge.exposeInMainWorld('nativeAudioOutput', {
     isYaspChunkTapEnabled() {
-        return Boolean(store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap'));
+        return Boolean(store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap') || store_js_1.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput'));
+    },
+    isWasapiExclusiveOutputEnabled() {
+        return Boolean(store_js_1.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput'));
+    },
+    setWasapiExclusiveOutputEnabled(enabled) {
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_STORE_SET, 'modSettings.nativeAudioOutput.enableWasapiExclusiveOutput', Boolean(enabled));
     },
     getWasapiExclusiveStatus() {
         return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_STATUS);

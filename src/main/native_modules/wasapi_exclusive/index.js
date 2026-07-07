@@ -1,6 +1,7 @@
 'use strict';
 
 const native = process.platform === 'win32' ? require('./wasapi_exclusive.node') : null;
+const { createYaspStreamSession: createYaspStreamSessionInternal, YaspWasapiExclusiveStreamSession } = require('./stream-session');
 
 class WasapiExclusiveError extends Error {
     constructor(message) {
@@ -23,12 +24,38 @@ const normalizePcmBitsPerSample = (value, fallback = 16) => {
     return [16, 24, 32].includes(bitsPerSample) ? bitsPerSample : fallback;
 };
 
+const normalizePcmContainerBitsPerSample = (value, bitsPerSample, sampleFormat) => {
+    if (bitsPerSample === 24 && String(sampleFormat ?? '').toLowerCase() === 'pcm24in32') {
+        return 32;
+    }
+
+    const containerBitsPerSample = normalizePositiveInteger(value, bitsPerSample, 16, 32);
+    return containerBitsPerSample === bitsPerSample || (bitsPerSample === 24 && containerBitsPerSample === 32) ? containerBitsPerSample : bitsPerSample;
+};
+
+const getSampleFormatName = (bitsPerSample, containerBitsPerSample, floatPcm) => {
+    if (floatPcm) {
+        return 'float32';
+    }
+
+    if (bitsPerSample === 24 && containerBitsPerSample === 32) {
+        return 'pcm24in32';
+    }
+
+    return `pcm${bitsPerSample}`;
+};
+
 const normalizeOptions = (options = {}) => {
     const floatPcm = options.float === true;
+    const bitsPerSample = floatPcm ? 32 : normalizePcmBitsPerSample(options.bitsPerSample, 16);
+    const containerBitsPerSample = floatPcm ? 32 : normalizePcmContainerBitsPerSample(options.containerBitsPerSample, bitsPerSample, options.sampleFormat);
     const normalized = {
         sampleRate: normalizePositiveInteger(options.sampleRate, 48000, 8000, 384000),
         channels: normalizePositiveInteger(options.channels, 2, 1, 2),
-        bitsPerSample: floatPcm ? 32 : normalizePcmBitsPerSample(options.bitsPerSample, 16),
+        bitsPerSample,
+        validBitsPerSample: bitsPerSample,
+        containerBitsPerSample,
+        sampleFormat: getSampleFormatName(bitsPerSample, containerBitsPerSample, floatPcm),
         float: floatPcm,
         bufferMs: normalizePositiveInteger(options.bufferMs, 50, 10, 500),
         maxQueuedMs: normalizePositiveInteger(options.maxQueuedMs, 1000, 50, 10000),
@@ -39,7 +66,7 @@ const normalizeOptions = (options = {}) => {
     }
 
     return normalized;
-};
+};;
 
 const isSupported = () => process.platform === 'win32' && Boolean(native?.isSupported?.());
 
@@ -89,6 +116,14 @@ const scoreSupportedFormat = (format, desired) => {
         score -= Math.abs(format.bitsPerSample - desired.bitsPerSample) * 10;
     }
 
+    const formatContainerBitsPerSample = format.containerBitsPerSample ?? format.bitsPerSample;
+    const desiredContainerBitsPerSample = desired.containerBitsPerSample ?? desired.bitsPerSample;
+    if (formatContainerBitsPerSample === desiredContainerBitsPerSample) {
+        score += 50;
+    } else if (format.bitsPerSample === desired.bitsPerSample) {
+        score -= Math.abs(formatContainerBitsPerSample - desiredContainerBitsPerSample);
+    }
+
     return score;
 };
 
@@ -115,6 +150,7 @@ const getClosestSupportedFormat = (options = {}) => {
 
     return {
         device,
+        containerExact: (format.containerBitsPerSample ?? format.bitsPerSample) === (desired.containerBitsPerSample ?? desired.bitsPerSample),
         exact:
             format.sampleRate === desired.sampleRate &&
             format.channels === desired.channels &&
@@ -127,6 +163,9 @@ const getClosestSupportedFormat = (options = {}) => {
             sampleRate: format.sampleRate,
             channels: format.channels,
             bitsPerSample: format.bitsPerSample,
+            validBitsPerSample: format.validBitsPerSample ?? format.bitsPerSample,
+            containerBitsPerSample: format.containerBitsPerSample ?? format.bitsPerSample,
+            sampleFormat: format.sampleFormat,
             float: format.float,
         },
         requestedOptions: desired,
@@ -156,6 +195,14 @@ class WasapiExclusiveRenderer {
         return this.renderer.write(buffer);
     }
 
+    flush() {
+        if (this.closed) {
+            return 0;
+        }
+
+        return this.renderer.flush();
+    }
+
     getState() {
         if (this.closed) {
             return {
@@ -178,13 +225,23 @@ class WasapiExclusiveRenderer {
 }
 
 const createRenderer = (options = {}) => new WasapiExclusiveRenderer(options);
+const createEncodedTrackBuffer = native?.YaspEncodedTrackBuffer ? (options = {}) => new native.YaspEncodedTrackBuffer(options) : null;
+const createYaspStreamSession = (options = {}) =>
+    createYaspStreamSessionInternal({
+        ...options,
+        createEncodedTrackBuffer,
+        createRenderer,
+        getClosestSupportedFormat,
+    });
 
 module.exports = {
     createRenderer,
+    createYaspStreamSession,
     getClosestSupportedFormat,
     isSupported,
     listDevices,
     normalizeOptions,
     WasapiExclusiveError,
     WasapiExclusiveRenderer,
+    YaspWasapiExclusiveStreamSession,
 };

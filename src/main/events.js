@@ -79,8 +79,10 @@ let toastOperationNonce = 0;
 let isLastFmStartupAuthProbeHandled = false;
 let pendingLastFmStartupAuthErrorToast = false;
 let unsubscribeYaspAudioFormatChanged = null;
+let unsubscribeWasapiExclusiveOutputStateChanged = null;
 const activeTrackDownloadControllers = new Map();
 const WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY = 'modSettings.nativeAudioOutput.wasapiExclusiveDeviceId';
+const WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY = 'modSettings.nativeAudioOutput.enableWasapiExclusiveOutput';
 
 const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 
@@ -360,6 +362,12 @@ const handleApplicationEvents = (window) => {
     unsubscribeYaspAudioFormatChanged = nativeAudioOutput.onYaspAudioFormatChanged((format) => {
         if (window?.webContents && typeof window.webContents.send === 'function') {
             window.webContents.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED, format);
+        }
+    });
+    unsubscribeWasapiExclusiveOutputStateChanged?.();
+    unsubscribeWasapiExclusiveOutputStateChanged = nativeAudioOutput.onWasapiExclusiveOutputStateChanged((state) => {
+        if (window?.webContents && typeof window.webContents.send === 'function') {
+            window.webContents.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED, state);
         }
     });
     if (store_js_1.getModSettings()?.playerBarEnhancement?.enableYandexStationCast ?? true) {
@@ -978,6 +986,7 @@ const handleApplicationEvents = (window) => {
         eventsLogger.info('Event received', events_js_1.Events.PLAYER_STATE, { status: data?.status, trackId: data?.track?.id });
 
         try {
+            nativeAudioOutput.updateWasapiExclusivePlayerState(data);
             if (isBoolean(data.isPlaying)) {
                 state_js_1.state.player.isPlaying = data.isPlaying;
                 (0, appSuspension_js_1.toggleAppSuspension)(data.isPlaying, (store_js_1.getModSettings()?.window?.preventDisplaySleep ?? false) && window.isVisible());
@@ -1059,6 +1068,12 @@ const handleApplicationEvents = (window) => {
                 void yandexStationRuntime.stop();
             }
         }
+        if (key === WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY && value !== true) {
+            nativeAudioOutput.stopWasapiExclusiveOutput('output disabled');
+        }
+        if (key === WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY) {
+            nativeAudioOutput.stopWasapiExclusiveOutput('device changed');
+        }
         MiniPlayer.updateSettingsState(store_js_1.getModSettings());
         const featurePatch = buildFeaturesPatch(key, value);
         if (featurePatch) {
@@ -1128,6 +1143,7 @@ const handleApplicationEvents = (window) => {
         }
 
         store_js_1.set(WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY, normalizedDeviceId);
+        nativeAudioOutput.stopWasapiExclusiveOutput('device changed');
         return normalizedDeviceId;
     });
     electron_1.ipcMain.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {

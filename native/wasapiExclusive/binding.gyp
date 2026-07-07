@@ -4,6 +4,7 @@
       "target_name": "wasapi_exclusive",
       "sources": [
         "src/wasapi_exclusive.cc",
+        "src/yasp_encoded_buffer.cc",
       ],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")",

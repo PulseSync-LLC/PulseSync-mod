@@ -17,6 +17,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <utility>
 #include <vector>
 
 #pragma comment(lib, "ole32.lib")
@@ -208,18 +209,20 @@ DWORD GetChannelMask(uint32_t channels) {
     }
 }
 
-WAVEFORMATEXTENSIBLE BuildWaveFormat(uint32_t sampleRate, uint32_t channels, uint32_t bitsPerSample, bool floatPcm) {
+WAVEFORMATEXTENSIBLE BuildWaveFormat(uint32_t sampleRate, uint32_t channels, uint32_t bitsPerSample, bool floatPcm, uint32_t containerBitsPerSample = 0) {
     WAVEFORMATEXTENSIBLE waveFormat{};
-    const uint32_t blockAlign = channels * (bitsPerSample / 8);
+    const uint32_t validBitsPerSample = floatPcm ? 32 : bitsPerSample;
+    const uint32_t containerBits = floatPcm ? 32 : (containerBitsPerSample ? containerBitsPerSample : bitsPerSample);
+    const uint32_t blockAlign = channels * (containerBits / 8);
 
     waveFormat.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
     waveFormat.Format.nChannels = static_cast<WORD>(channels);
     waveFormat.Format.nSamplesPerSec = sampleRate;
-    waveFormat.Format.wBitsPerSample = static_cast<WORD>(bitsPerSample);
+    waveFormat.Format.wBitsPerSample = static_cast<WORD>(containerBits);
     waveFormat.Format.nBlockAlign = static_cast<WORD>(blockAlign);
     waveFormat.Format.nAvgBytesPerSec = sampleRate * blockAlign;
     waveFormat.Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
-    waveFormat.Samples.wValidBitsPerSample = static_cast<WORD>(bitsPerSample);
+    waveFormat.Samples.wValidBitsPerSample = static_cast<WORD>(validBitsPerSample);
     waveFormat.dwChannelMask = GetChannelMask(channels);
     waveFormat.SubFormat = floatPcm ? PULSE_SYNC_KSDATAFORMAT_SUBTYPE_IEEE_FLOAT : PULSE_SYNC_KSDATAFORMAT_SUBTYPE_PCM;
 
@@ -241,13 +244,30 @@ Napi::Array ToNumberArray(Napi::Env env, const std::vector<uint32_t>& values) {
     return array;
 }
 
-Napi::Object CreateFormatInfo(Napi::Env env, uint32_t sampleRate, uint32_t channels, uint32_t bitsPerSample, bool floatPcm) {
+std::string GetSampleFormatName(uint32_t bitsPerSample, uint32_t containerBitsPerSample, bool floatPcm) {
+    if (floatPcm) {
+        return "float32";
+    }
+
+    if (bitsPerSample == 24 && containerBitsPerSample == 32) {
+        return "pcm24in32";
+    }
+
+    return "pcm" + std::to_string(bitsPerSample);
+}
+
+Napi::Object CreateFormatInfo(Napi::Env env, uint32_t sampleRate, uint32_t channels, uint32_t bitsPerSample, uint32_t containerBitsPerSample, bool floatPcm) {
     Napi::Object format = Napi::Object::New(env);
     format.Set("sampleRate", sampleRate);
     format.Set("channels", channels);
     format.Set("bitsPerSample", bitsPerSample);
+    format.Set("validBitsPerSample", bitsPerSample);
+    format.Set("containerBitsPerSample", containerBitsPerSample);
+    format.Set("bytesPerSample", containerBitsPerSample / 8);
+    format.Set("blockAlign", channels * (containerBitsPerSample / 8));
+    format.Set("packed", !floatPcm && bitsPerSample == containerBitsPerSample);
     format.Set("float", floatPcm);
-    format.Set("sampleFormat", floatPcm ? "float32" : "pcm");
+    format.Set("sampleFormat", GetSampleFormatName(bitsPerSample, containerBitsPerSample, floatPcm));
     return format;
 }
 
@@ -255,6 +275,7 @@ Napi::Object ProbeSupportedFormats(Napi::Env env, IMMDevice* device) {
     Napi::Object result = Napi::Object::New(env);
     std::vector<uint32_t> supportedChannels;
     std::vector<uint32_t> supportedBitsPerSample;
+    std::vector<uint32_t> supportedContainerBitsPerSample;
     std::vector<uint32_t> supportedSampleRates;
     Napi::Array formats = Napi::Array::New(env);
     uint32_t formatIndex = 0;
@@ -265,6 +286,7 @@ Napi::Object ProbeSupportedFormats(Napi::Env env, IMMDevice* device) {
         result.Set("formats", formats);
         result.Set("channels", ToNumberArray(env, supportedChannels));
         result.Set("bitsPerSample", ToNumberArray(env, supportedBitsPerSample));
+        result.Set("containerBitsPerSample", ToNumberArray(env, supportedContainerBitsPerSample));
         result.Set("sampleRates", ToNumberArray(env, supportedSampleRates));
         result.Set("probeError", HResultToString(hr));
         return result;
@@ -272,28 +294,29 @@ Napi::Object ProbeSupportedFormats(Napi::Env env, IMMDevice* device) {
 
     const uint32_t probeChannels[] = {1, 2};
     const uint32_t probeSampleRates[] = {8000, 11025, 16000, 22050, 32000, 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000};
-    const uint32_t probePcmBits[] = {16, 24, 32};
+    const std::pair<uint32_t, uint32_t> probePcmFormats[] = {{16, 16}, {24, 24}, {24, 32}, {32, 32}};
 
-    const auto probeFormat = [&](uint32_t sampleRate, uint32_t channels, uint32_t bitsPerSample, bool floatPcm) {
-        WAVEFORMATEXTENSIBLE waveFormat = BuildWaveFormat(sampleRate, channels, bitsPerSample, floatPcm);
+    const auto probeFormat = [&](uint32_t sampleRate, uint32_t channels, uint32_t bitsPerSample, uint32_t containerBitsPerSample, bool floatPcm) {
+        WAVEFORMATEXTENSIBLE waveFormat = BuildWaveFormat(sampleRate, channels, bitsPerSample, floatPcm, containerBitsPerSample);
         HRESULT formatHr = audioClient->IsFormatSupported(AUDCLNT_SHAREMODE_EXCLUSIVE, reinterpret_cast<WAVEFORMATEX*>(&waveFormat), nullptr);
         if (formatHr != S_OK) {
             return;
         }
 
-        formats.Set(formatIndex, CreateFormatInfo(env, sampleRate, channels, bitsPerSample, floatPcm));
+        formats.Set(formatIndex, CreateFormatInfo(env, sampleRate, channels, bitsPerSample, containerBitsPerSample, floatPcm));
         formatIndex += 1;
         PushUnique(supportedChannels, channels);
         PushUnique(supportedBitsPerSample, bitsPerSample);
+        PushUnique(supportedContainerBitsPerSample, containerBitsPerSample);
         PushUnique(supportedSampleRates, sampleRate);
     };
 
     for (uint32_t channels : probeChannels) {
         for (uint32_t sampleRate : probeSampleRates) {
-            for (uint32_t bitsPerSample : probePcmBits) {
-                probeFormat(sampleRate, channels, bitsPerSample, false);
+            for (const auto& format : probePcmFormats) {
+                probeFormat(sampleRate, channels, format.first, format.second, false);
             }
-            probeFormat(sampleRate, channels, 32, true);
+            probeFormat(sampleRate, channels, 32, 32, true);
         }
     }
 
@@ -302,6 +325,7 @@ Napi::Object ProbeSupportedFormats(Napi::Env env, IMMDevice* device) {
     result.Set("formats", formats);
     result.Set("channels", ToNumberArray(env, supportedChannels));
     result.Set("bitsPerSample", ToNumberArray(env, supportedBitsPerSample));
+    result.Set("containerBitsPerSample", ToNumberArray(env, supportedContainerBitsPerSample));
     result.Set("sampleRates", ToNumberArray(env, supportedSampleRates));
     return result;
 }
@@ -384,6 +408,20 @@ public:
         return size_;
     }
 
+    size_t Capacity() const {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return capacity_;
+    }
+
+    size_t Clear() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        const size_t cleared = size_;
+        readPosition_ = 0;
+        writePosition_ = 0;
+        size_ = 0;
+        return cleared;
+    }
+
     uint64_t DroppedBytes() const {
         std::lock_guard<std::mutex> lock(mutex_);
         return droppedBytes_;
@@ -420,6 +458,7 @@ public:
             "WasapiExclusiveRenderer",
             {
                 InstanceMethod("write", &WasapiExclusiveRenderer::Write),
+                InstanceMethod("flush", &WasapiExclusiveRenderer::Flush),
                 InstanceMethod("getState", &WasapiExclusiveRenderer::GetState),
                 InstanceMethod("close", &WasapiExclusiveRenderer::Close),
             }
@@ -438,6 +477,7 @@ public:
         channels_ = GetUintOption(options, "channels", 2, 1, 2);
         floatPcm_ = GetBoolOption(options, "float", false);
         bitsPerSample_ = floatPcm_ ? 32 : GetUintOption(options, "bitsPerSample", 16, 16, 32);
+        containerBitsPerSample_ = floatPcm_ ? 32 : GetUintOption(options, "containerBitsPerSample", bitsPerSample_, 16, 32);
         bufferMs_ = GetUintOption(options, "bufferMs", 50, 10, 500);
         maxQueuedMs_ = GetUintOption(options, "maxQueuedMs", 1000, 50, 10000);
         requestedDeviceId_ = GetStringOption(options, "deviceId");
@@ -447,7 +487,12 @@ public:
             return;
         }
 
-        blockAlign_ = channels_ * (bitsPerSample_ / 8);
+        if (!floatPcm_ && containerBitsPerSample_ != bitsPerSample_ && !(bitsPerSample_ == 24 && containerBitsPerSample_ == 32)) {
+            Napi::RangeError::New(env, "containerBitsPerSample must match bitsPerSample, except 24-bit PCM may use a 32-bit container").ThrowAsJavaScriptException();
+            return;
+        }
+
+        blockAlign_ = channels_ * (containerBitsPerSample_ / 8);
         HRESULT hr = Open();
         if (FAILED(hr)) {
             CloseInternal();
@@ -582,7 +627,7 @@ private:
     }
 
     void BuildWaveFormat() {
-        waveFormat_ = ::BuildWaveFormat(sampleRate_, channels_, bitsPerSample_, floatPcm_);
+        waveFormat_ = ::BuildWaveFormat(sampleRate_, channels_, bitsPerSample_, floatPcm_, containerBitsPerSample_);
     }
 
     HRESULT PrimeSilence() {
@@ -622,14 +667,21 @@ private:
     }
 
     void RenderAvailableFrames() {
+        std::lock_guard<std::mutex> audioLock(audioMutex_);
+        if (!audioClient_ || !renderClient_) {
+            return;
+        }
+
         UINT32 padding = 0;
         HRESULT hr = audioClient_->GetCurrentPadding(&padding);
         if (FAILED(hr)) {
             lastRenderHr_.store(hr);
             return;
         }
+        paddingFrames_.store(padding);
 
         if (padding >= bufferFrames_) {
+            lastRenderHr_.store(S_OK);
             return;
         }
 
@@ -643,9 +695,11 @@ private:
 
         const size_t bytesNeeded = static_cast<size_t>(framesAvailable) * blockAlign_;
         const size_t bytesRead = queue_.Read(data, bytesNeeded, blockAlign_);
+        const UINT32 framesRead = static_cast<UINT32>(bytesRead / blockAlign_);
         if (bytesRead < bytesNeeded) {
             std::memset(data + bytesRead, 0, bytesNeeded - bytesRead);
             underruns_.fetch_add(1);
+            underrunFrames_.fetch_add(framesAvailable - framesRead);
         }
 
         hr = renderClient_->ReleaseBuffer(framesAvailable, 0);
@@ -654,6 +708,7 @@ private:
             return;
         }
 
+        playedFrames_.fetch_add(framesRead);
         renderedFrames_.fetch_add(framesAvailable);
         lastRenderHr_.store(S_OK);
     }
@@ -700,15 +755,103 @@ private:
 
         Napi::Buffer<uint8_t> buffer = info[0].As<Napi::Buffer<uint8_t>>();
         size_t written = queue_.Write(buffer.Data(), buffer.Length(), blockAlign_);
+        writtenFrames_.fetch_add(written / blockAlign_);
+        if (written > 0 && renderEvent_) {
+            SetEvent(renderEvent_);
+        }
         return Napi::Number::New(env, static_cast<double>(written));
+    }
+
+    HRESULT ResetAudioClientBufferAfterFlush() {
+        std::lock_guard<std::mutex> audioLock(audioMutex_);
+        if (!audioClient_ || !renderClient_ || !started_.load()) {
+            return S_OK;
+        }
+
+        HRESULT hr = audioClient_->Stop();
+        if (FAILED(hr)) {
+            lastRenderHr_.store(hr);
+            return hr;
+        }
+
+        hr = audioClient_->Reset();
+        if (FAILED(hr)) {
+            lastRenderHr_.store(hr);
+            HRESULT startHr = audioClient_->Start();
+            if (FAILED(startHr)) {
+                lastRenderHr_.store(startHr);
+            }
+            return hr;
+        }
+
+        hr = PrimeSilence();
+        if (FAILED(hr)) {
+            lastRenderHr_.store(hr);
+            return hr;
+        }
+
+        paddingFrames_.store(bufferFrames_);
+        hr = audioClient_->Start();
+        if (FAILED(hr)) {
+            lastRenderHr_.store(hr);
+            return hr;
+        }
+
+        lastRenderHr_.store(S_OK);
+        return S_OK;
+    }
+
+    Napi::Value Flush(const Napi::CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        if (stopping_.load()) {
+            return Napi::Number::New(env, 0);
+        }
+
+        const size_t cleared = queue_.Clear();
+        flushes_.fetch_add(1);
+
+        HRESULT hr = ResetAudioClientBufferAfterFlush();
+        if (FAILED(hr)) {
+            Napi::Error::New(env, "Failed to flush WASAPI exclusive renderer: " + HResultToString(hr)).ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+
+        if (renderEvent_) {
+            SetEvent(renderEvent_);
+        }
+
+        return Napi::Number::New(env, static_cast<double>(cleared));
     }
 
     Napi::Value GetState(const Napi::CallbackInfo& info) {
         Napi::Env env = info.Env();
         Napi::Object state = Napi::Object::New(env);
+        const size_t queuedBytes = queue_.Size();
+        const size_t queueCapacityBytes = queue_.Capacity();
+        HRESULT lastHr = static_cast<HRESULT>(lastRenderHr_.load());
+        UINT32 currentPaddingFrames = paddingFrames_.load();
+
+        if (!stopping_.load()) {
+            std::lock_guard<std::mutex> audioLock(audioMutex_);
+            UINT32 padding = 0;
+            if (audioClient_) {
+                HRESULT paddingHr = audioClient_->GetCurrentPadding(&padding);
+                if (SUCCEEDED(paddingHr)) {
+                    currentPaddingFrames = padding;
+                    paddingFrames_.store(padding);
+                } else {
+                    lastHr = paddingHr;
+                    lastRenderHr_.store(paddingHr);
+                }
+            }
+        }
+
         state.Set("sampleRate", sampleRate_);
         state.Set("channels", channels_);
         state.Set("bitsPerSample", bitsPerSample_);
+        state.Set("validBitsPerSample", bitsPerSample_);
+        state.Set("containerBitsPerSample", containerBitsPerSample_);
+        state.Set("sampleFormat", GetSampleFormatName(bitsPerSample_, containerBitsPerSample_, floatPcm_));
         state.Set("float", floatPcm_);
         state.Set("bufferMs", bufferMs_);
         state.Set("maxQueuedMs", maxQueuedMs_);
@@ -716,11 +859,21 @@ private:
         state.Set("deviceName", deviceName_);
         state.Set("blockAlign", blockAlign_);
         state.Set("bufferFrames", bufferFrames_);
-        state.Set("queuedBytes", static_cast<double>(queue_.Size()));
+        state.Set("paddingFrames", currentPaddingFrames);
+        state.Set("queuedBytes", static_cast<double>(queuedBytes));
+        state.Set("queuedFrames", static_cast<double>(queuedBytes / blockAlign_));
+        state.Set("queueCapacityBytes", static_cast<double>(queueCapacityBytes));
+        state.Set("queueCapacityFrames", static_cast<double>(queueCapacityBytes / blockAlign_));
         state.Set("droppedBytes", static_cast<double>(queue_.DroppedBytes()));
+        state.Set("writtenFrames", static_cast<double>(writtenFrames_.load()));
+        state.Set("playedFrames", static_cast<double>(playedFrames_.load()));
         state.Set("renderedFrames", static_cast<double>(renderedFrames_.load()));
         state.Set("underruns", static_cast<double>(underruns_.load()));
-        state.Set("lastRenderHr", HResultToString(static_cast<HRESULT>(lastRenderHr_.load())));
+        state.Set("underrunFrames", static_cast<double>(underrunFrames_.load()));
+        state.Set("flushes", static_cast<double>(flushes_.load()));
+        state.Set("lastHRESULT", HResultToString(lastHr));
+        state.Set("lastHRESULTCode", static_cast<double>(lastHr));
+        state.Set("lastRenderHr", HResultToString(lastHr));
         state.Set("closed", stopping_.load());
         return state;
     }
@@ -737,6 +890,7 @@ private:
     std::thread renderThread_;
     ByteRingBuffer queue_;
     WAVEFORMATEXTENSIBLE waveFormat_{};
+    std::mutex audioMutex_;
     bool comInitialized_ = false;
     std::wstring requestedDeviceId_;
     std::wstring resolvedDeviceId_;
@@ -744,6 +898,7 @@ private:
     uint32_t sampleRate_ = 48000;
     uint32_t channels_ = 2;
     uint32_t bitsPerSample_ = 32;
+    uint32_t containerBitsPerSample_ = 32;
     uint32_t blockAlign_ = 8;
     uint32_t bufferMs_ = 50;
     uint32_t maxQueuedMs_ = 1000;
@@ -751,8 +906,13 @@ private:
     bool floatPcm_ = true;
     std::atomic<bool> stopping_{true};
     std::atomic<bool> started_{false};
+    std::atomic<uint64_t> writtenFrames_{0};
+    std::atomic<uint64_t> playedFrames_{0};
     std::atomic<uint64_t> renderedFrames_{0};
     std::atomic<uint64_t> underruns_{0};
+    std::atomic<uint64_t> underrunFrames_{0};
+    std::atomic<uint64_t> flushes_{0};
+    std::atomic<UINT32> paddingFrames_{0};
     std::atomic<long> lastRenderHr_{S_OK};
 };
 
@@ -850,6 +1010,7 @@ Napi::Value ListDevices(const Napi::CallbackInfo& info) {
             item.Set("supportedFormats", formatInfo.Get("formats"));
             item.Set("supportedChannels", formatInfo.Get("channels"));
             item.Set("supportedBitsPerSample", formatInfo.Get("bitsPerSample"));
+            item.Set("supportedContainerBitsPerSample", formatInfo.Get("containerBitsPerSample"));
             item.Set("supportedSampleRates", formatInfo.Get("sampleRates"));
             if (formatInfo.Has("probeError")) {
                 item.Set("formatProbeError", formatInfo.Get("probeError"));
@@ -858,6 +1019,7 @@ Napi::Value ListDevices(const Napi::CallbackInfo& info) {
             item.Set("supportedFormats", Napi::Array::New(env));
             item.Set("supportedChannels", Napi::Array::New(env));
             item.Set("supportedBitsPerSample", Napi::Array::New(env));
+            item.Set("supportedContainerBitsPerSample", Napi::Array::New(env));
             item.Set("supportedSampleRates", Napi::Array::New(env));
         }
 
@@ -885,6 +1047,7 @@ Napi::Value CreateRenderer(const Napi::CallbackInfo& info) {
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     WasapiExclusiveRenderer::InitClass(env, exports);
+    InitYaspEncodedTrackBuffer(env, exports);
     exports.Set(Napi::String::New(env, "isSupported"), Napi::Function::New(env, IsSupported));
     exports.Set(Napi::String::New(env, "listDevices"), Napi::Function::New(env, ListDevices));
     exports.Set(Napi::String::New(env, "createRenderer"), Napi::Function::New(env, CreateRenderer));

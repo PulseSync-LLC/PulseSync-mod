@@ -527,6 +527,7 @@
                         Y = w.checkExperiment(j.zal.WebNextNewWaveTabFeedbackForm, 'on'),
                         $ = (0, j.ZpR)('/slides/special/my_vibe_onboarding');
                     let [pulseSyncTrackQualityInfo, setPulseSyncTrackQualityInfo] = (0, s.useState)(window?.PulseSyncTrackQuality?.getLastInfo?.() ?? null);
+                    let [pulseSyncWasapiExclusiveOutputState, setPulseSyncWasapiExclusiveOutputState] = (0, s.useState)(null);
                     (0, s.useEffect)(() => {
                         var e, t;
                         if (!r || !U) return;
@@ -562,6 +563,22 @@
                                 if (typeof unsubscribe === 'function') unsubscribe();
                             };
                         }, []),
+                        (0, s.useEffect)(() => {
+                            const updatePulseSyncWasapiExclusiveOutputState = (state) => {
+                                setPulseSyncWasapiExclusiveOutputState(state ?? null);
+                            };
+                            window?.nativeAudioOutput?.getWasapiExclusiveStatus?.()
+                                ?.then?.((status) => {
+                                    updatePulseSyncWasapiExclusiveOutputState(status?.outputState ?? null);
+                                })
+                                ?.catch?.(() => {});
+                            const unsubscribe = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED', (event, state) => {
+                                updatePulseSyncWasapiExclusiveOutputState(state);
+                            });
+                            return () => {
+                                if (typeof unsubscribe === 'function') unsubscribe();
+                            };
+                        }, []),
                         (0, j.Jzs)(E.landing.isResolved);
                     let X = w.checkExperiment(j.zal.WebNextDisableVibe, 'on'),
                         Z = (0, s.useCallback)(() => {
@@ -589,6 +606,27 @@
                                     : null,
                             [pulseSyncTrackQualityInfo],
                         ),
+                        eg = (0, s.useMemo)(() => {
+                            const isActive =
+                                pulseSyncWasapiExclusiveOutputState?.active === true || pulseSyncWasapiExclusiveOutputState?.session?.state === 'running';
+                            return isActive
+                                ? (0, i.jsx)(p.$, {
+                                      color: 'secondary',
+                                      radius: 'xl',
+                                      'aria-label': 'WASAPI Exclusive активен',
+                                      className: T().beta,
+                                      style: { marginInlineEnd: 'var(--ym-spacer-size-xs)', color: 'white' },
+                                      withHover: !1,
+                                      children: (0, i.jsx)(b.Caption, {
+                                          variant: 'div',
+                                          type: 'text',
+                                          size: 's',
+                                          weight: 'medium',
+                                          children: 'WASAPI Exclusive',
+                                      }),
+                                  })
+                                : null;
+                        }, [pulseSyncWasapiExclusiveOutputState]),
                         ee = (0, s.useMemo)(() => {
                             if (w.checkExperiment(j.zal.WebNextBetaLabel, 'off')) return null;
                             {
@@ -600,6 +638,7 @@
                                     offsetOptions: 4,
                                     children: [
                                         (0, i.jsx)(p.$, {
+                                            style: { color: 'white' },
                                             color: 'secondary',
                                             radius: 'xl',
                                             'aria-label': e ? t : 'Beta '.concat(t),
@@ -703,7 +742,7 @@
                                                   children: [O && (0, i.jsx)(N.YS, { withMeta: !1, variant: 'mobile', className: T().userProfile }), et],
                                               }),
                                               (0, i.jsx)(H, {}),
-                                              (0, i.jsxs)('div', { className: ea, children: [ef, ee] }),
+                                              (0, i.jsxs)('div', { className: ea, children: [eg, ef, ee] }),
                                           ],
                                       }),
                                   }),
@@ -720,7 +759,7 @@
                                           ...(0, d.Am)(d.Xk.main.MAIN_PAGE),
                                           children: [
                                               en,
-                                              (0, i.jsxs)('div', { className: ea, children: [ef, ee] }),
+                                              (0, i.jsxs)('div', { className: ea, children: [eg, ef, ee] }),
                                               !X &&
                                                   (0, i.jsx)(j.FoH, {
                                                       blockIdForFrom: j.hf$.RUP_MAIN_RADIO,

@@ -209,6 +209,7 @@ const init = () => {
         },
         nativeAudioOutput: {
             enableYaspChunkTap: false,
+            enableWasapiExclusiveOutput: false,
             wasapiExclusiveDeviceId: null,
         },
         playlist: {
