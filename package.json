@@ -1,6 +1,6 @@
 {
     "name": "pulsesync-asar",
-    "version": "1.30.8",
+    "version": "1.30.9",
     "description": "Mod for Yandex Music Desktop",
     "main": "index.js",
     "scripts": {
@@ -8,7 +8,7 @@
         "buildMod": "node toolset.js build -d",
         "buildModProd": "node toolset.js build -m --modernize",
         "rebuildMod": "node toolset.js rebuild",
-        "buildModTest": "node toolset.js build -m -d",
+        "buildModTest": "node toolset.js build -m --modernize -d",
         "buildMin": "node toolset.js build -d -m",
         "downloadLatest": "node toolset.js download",
         "migrateReport": "node toolset.js migrate-report",
