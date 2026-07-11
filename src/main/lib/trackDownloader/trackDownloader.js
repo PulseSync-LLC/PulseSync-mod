@@ -496,7 +496,19 @@ class TrackDownloader extends EventEmitter {
             throw new Error('Invalid getFileInfoBatch response');
         }
 
-        return downloadInfos.map((item) => this.selectDownloadInfo(item));
+        return downloadInfos.map((item) => {
+            const downloadInfo = this.selectDownloadInfo(item);
+            const trackId = downloadInfo?.trackId ?? item?.trackId;
+
+            if (downloadInfo && trackId && !downloadInfo.trackId) {
+                return {
+                    ...downloadInfo,
+                    trackId,
+                };
+            }
+
+            return downloadInfo;
+        });
     }
 
     getDownloadInfoCandidates(item) {
@@ -532,14 +544,16 @@ class TrackDownloader extends EventEmitter {
         const batchResponse = await this.tracksAPI.getFileInfoBatch(batch.trackIds, getFileInfoRequestOptions(useMP3, signal));
         const downloadInfos = this.getBatchDownloadInfos(batchResponse);
 
-        downloadInfos.forEach((downloadInfo, index) => {
-            if (!downloadInfo) return;
+        downloadInfos.forEach((downloadInfo) => {
+            if (!downloadInfo?.trackId) return;
+            batch.fileInfoByTrackId.set(`${downloadInfo.trackId}`, downloadInfo);
+        });
 
-            const sourceTrackId = batch.trackIds[index];
-            batch.fileInfoBySourceTrackId.set(sourceTrackId, downloadInfo);
-
-            if (downloadInfo.trackId) {
-                batch.fileInfoByTrackId.set(`${downloadInfo.trackId}`, downloadInfo);
+        batch.trackIds.forEach((sourceTrackId) => {
+            const sourceBaseTrackId = `${sourceTrackId}`.split(':')[0];
+            const downloadInfo = batch.fileInfoByTrackId.get(sourceBaseTrackId);
+            if (downloadInfo) {
+                batch.fileInfoBySourceTrackId.set(sourceTrackId, downloadInfo);
             }
         });
 

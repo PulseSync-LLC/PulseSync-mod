@@ -161,6 +161,6 @@ temp
 !src/node_modules/
 !src/node_modules/**/*
 
-native/setIconicThumbnail/node_modules
+native/**/node_modules
 /modernized/**
 overlay-runtime
