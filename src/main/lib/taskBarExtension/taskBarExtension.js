@@ -46,6 +46,7 @@ let initiated = false;
 const THUMBNAIL_TRANSITION_DURATION_MS = 300;
 const THUMBNAIL_PLAY_STATE_TRANSITION_DURATION_MS = 100;
 const THUMBNAIL_TRANSITION_FPS = 60;
+const THUMBNAIL_ANIMATION_GRACE_MS = 5000;
 
 let thumbnailRenderRequestId = 0;
 let thumbnailAnimationToken = 0;
@@ -54,14 +55,14 @@ let lastThumbnailPresentationMode = null;
 let lastThumbnailRequestStateKey = null;
 let activeThumbnailAnimation = null;
 let nativeThemeListener = null;
+let lastThumbarStateKey = null;
 const defaultTrackCoverBufferCache = new Map();
 let defaultTrackCoverTemplate = null;
 const DEFAULT_TRACK_COVER_SIZE = 200;
 
-const TRANSITION_ANIMATION_DEADLINE_PUSH_SIZE = 15 * 1000;
 let transitionAnimationDeadline = 0;
 
-const pushTransitionAnimationDeadline = (value = TRANSITION_ANIMATION_DEADLINE_PUSH_SIZE) => {
+const pushTransitionAnimationDeadline = (value = THUMBNAIL_ANIMATION_GRACE_MS) => {
     transitionAnimationDeadline = Date.now() + value;
 };
 
@@ -135,6 +136,7 @@ class LRUCache {
  * value = Buffer
  */
 const imageBufferCache = new LRUCache(100);
+const renderedThumbnailBufferCache = new LRUCache(24);
 
 /**
  * Хранилище активных запросов.
@@ -291,6 +293,9 @@ const createThumbnailRenderState = (playerState, currentTrackBuffer, previousTra
         trackId: playerState.track?.id ?? null,
         previousTrackId: isRepeatOne ? (playerState.track?.id ?? null) : (playerState.previousTrack?.id ?? null),
         nextTrackId: isRepeatOne ? (playerState.track?.id ?? null) : (playerState.nextTrack?.id ?? null),
+        trackImageKey: getTrackCoverUrl(playerState.track) ?? null,
+        previousTrackImageKey: isRepeatOne ? (getTrackCoverUrl(playerState.track) ?? null) : (getTrackCoverUrl(playerState.previousTrack) ?? null),
+        nextTrackImageKey: isRepeatOne ? (getTrackCoverUrl(playerState.track) ?? null) : (getTrackCoverUrl(playerState.nextTrack) ?? null),
     };
 };
 
@@ -299,7 +304,19 @@ const getThumbnailRenderStateKey = (renderState) => {
         return null;
     }
 
-    return [renderState.trackId ?? '', renderState.previousTrackId ?? '', renderState.nextTrackId ?? '', renderState.isPlaying ? '1' : '0'].join(':');
+    return [
+        renderState.trackId ?? '',
+        renderState.trackImageKey ?? '',
+        renderState.previousTrackId ?? '',
+        renderState.previousTrackImageKey ?? '',
+        renderState.nextTrackId ?? '',
+        renderState.nextTrackImageKey ?? '',
+        renderState.isPlaying ? '1' : '0',
+    ].join(':');
+};
+
+const getRenderedThumbnailCacheKey = (width, height, renderState) => {
+    return `${systemTheme}:${width}x${height}:${getThumbnailRenderStateKey(renderState)}`;
 };
 
 const getThumbnailRequestStateKey = (playerState) => {
@@ -313,8 +330,11 @@ const getThumbnailRequestStateKey = (playerState) => {
     return [
         systemTheme,
         playerState.track?.id ?? '',
+        getTrackCoverUrl(playerState.track) ?? '',
         isRepeatOne ? (playerState.track?.id ?? '') : (playerState.previousTrack?.id ?? ''),
+        isRepeatOne ? (getTrackCoverUrl(playerState.track) ?? '') : (getTrackCoverUrl(playerState.previousTrack) ?? ''),
         isRepeatOne ? (playerState.track?.id ?? '') : (playerState.nextTrack?.id ?? ''),
+        isRepeatOne ? (getTrackCoverUrl(playerState.track) ?? '') : (getTrackCoverUrl(playerState.nextTrack) ?? ''),
         playerState.isPaused ? '0' : '1',
     ].join(':');
 };
@@ -332,6 +352,9 @@ const createFallbackThumbnailRenderState = (renderState) => {
         trackId: renderState.trackId,
         previousTrackId: null,
         nextTrackId: null,
+        trackImageKey: renderState.trackImageKey,
+        previousTrackImageKey: null,
+        nextTrackImageKey: null,
     };
 };
 
@@ -370,14 +393,20 @@ const getThumbnailTransitionDirection = (fromRenderState, toRenderState) => {
 };
 
 const renderThumbnailState = async (iconicThumbnail, width, height, renderState) => {
-    const thumbnailBuffer = await thumbnailDrawner.drawThumbnail(
-        width,
-        height,
-        renderState.previousTrack,
-        renderState.currentTrack,
-        renderState.nextTrack,
-        renderState.isPlaying,
-    );
+    const cacheKey = getRenderedThumbnailCacheKey(width, height, renderState);
+    let thumbnailBufferPromise = renderedThumbnailBufferCache.get(cacheKey);
+
+    if (!thumbnailBufferPromise) {
+        thumbnailBufferPromise = thumbnailDrawner
+            .drawThumbnail(width, height, renderState.previousTrack, renderState.currentTrack, renderState.nextTrack, renderState.isPlaying)
+            .catch((error) => {
+                renderedThumbnailBufferCache.delete(cacheKey);
+                throw error;
+            });
+        renderedThumbnailBufferCache.set(cacheKey, thumbnailBufferPromise);
+    }
+
+    const thumbnailBuffer = await thumbnailBufferPromise;
 
     if (!thumbnailBuffer) {
         taskBarExtensionLogger.warn(`Thumbnail buffer is null fallbacking to cover image ${width}x${height}`);
@@ -406,10 +435,10 @@ const taskBarExtension = (window) => {
 
     if (native) {
         const iconicThumbnail = native.getDWMIconicThumbnailInstance(window);
-        iconicThumbnail.onIconicThumbnailRequested = () => {
+        iconicThumbnail.onIconicThumbnailRequested = ({ requiresRender = false } = {}) => {
             pushTransitionAnimationDeadline();
 
-            if (lastThumbnailPresentationMode !== 'fallback' || !playerState?.track) {
+            if ((!requiresRender && lastThumbnailPresentationMode !== 'fallback') || !playerState?.track) {
                 return;
             }
 
@@ -424,8 +453,7 @@ const onPlayerStateChange = (window, newPlayerState) => {
     if (!(settings?.enable ?? true)) return;
 
     if (typeof newPlayerState !== 'undefined') {
-        playerState = structuredClone(newPlayerState);
-        playerState.isPaused = playerState.status === 'paused';
+        playerState = createTaskbarPlayerStateSnapshot(newPlayerState);
     }
 
     updateTaskbarExtension(window);
@@ -472,7 +500,70 @@ const getActionsStoreObject = (actionsStore) => {
     };
 };
 
+const createTaskbarTrackSnapshot = (track) => {
+    if (!track) return undefined;
+
+    return {
+        id: track.id,
+        title: track.title,
+        version: track.version,
+        coverUri: track.coverUri,
+        imageUrl: track.imageUrl,
+        artists: track.artists?.map((artist) => ({ name: artist.name })),
+    };
+};
+
+const createTaskbarPlayerStateSnapshot = (nextPlayerState) => {
+    return {
+        status: nextPlayerState?.status,
+        isPaused: nextPlayerState?.status === 'paused',
+        track: createTaskbarTrackSnapshot(nextPlayerState?.track),
+        previousTrack: createTaskbarTrackSnapshot(nextPlayerState?.previousTrack),
+        nextTrack: createTaskbarTrackSnapshot(nextPlayerState?.nextTrack),
+        availableActions: nextPlayerState?.availableActions
+            ? {
+                  moveBackward: nextPlayerState.availableActions.moveBackward,
+                  moveForward: nextPlayerState.availableActions.moveForward,
+                  repeat: nextPlayerState.availableActions.repeat,
+                  shuffle: nextPlayerState.availableActions.shuffle,
+              }
+            : undefined,
+        actionsStore: {
+            repeat: nextPlayerState?.actionsStore?.repeat,
+            shuffle: nextPlayerState?.actionsStore?.shuffle,
+            isLiked: nextPlayerState?.actionsStore?.isLiked,
+            isDisliked: nextPlayerState?.actionsStore?.isDisliked,
+        },
+    };
+};
+
+const getThumbarStateKey = (state) => {
+    const availability = getActionsAvailabilityObject(state?.availableActions);
+    const store = getActionsStoreObject(state?.actionsStore);
+    const artists = state?.track?.artists?.map((artist) => artist.name).join(',') ?? '';
+    const dislikeButtonPosition = store_js_1.getModSettings()?.playerBarEnhancement?.changeDislikeButtonPos ? 'changed' : 'default';
+
+    return [
+        systemTheme,
+        state?.track?.id ?? '',
+        state?.track?.title ?? '',
+        state?.track?.version ?? '',
+        artists,
+        state?.isPaused ? 'paused' : 'playing',
+        availability?.previousUnavailable ? '0' : '1',
+        availability?.nextUnavailable ? '0' : '1',
+        availability?.repeatUnavailable ? '0' : '1',
+        availability?.shuffleUnavailable ? '0' : '1',
+        store?.repeat ?? '',
+        store?.shuffle ? '1' : '0',
+        store?.liked ? '1' : '0',
+        store?.disliked ? '1' : '0',
+        dislikeButtonPosition,
+    ].join(':');
+};
+
 const clearTaskbarExtension = (window) => {
+    lastThumbarStateKey = null;
     taskBarExtensionLogger.log(window.setThumbarButtons([]));
 };
 
@@ -510,7 +601,7 @@ const setIconicThumbnail = async (playerState, { force = false } = {}) => {
         return;
     }
 
-    if (!force && !activeThumbnailAnimation && nextThumbnailRequestStateKey && nextThumbnailRequestStateKey === lastThumbnailRequestStateKey) {
+    if (!force && nextThumbnailRequestStateKey && nextThumbnailRequestStateKey === lastThumbnailRequestStateKey) {
         taskBarExtensionLogger.log('Skipping thumbnail update because visual state is unchanged.');
         return;
     }
@@ -593,8 +684,6 @@ const setIconicThumbnail = async (playerState, { force = false } = {}) => {
                 `Animating thumbnail transition: ${transitionFromState.trackId} -> ${nextRenderState.trackId} (${transitionDirection}, ${transitionDurationMs}ms)`,
             );
 
-            let nextFramePromise = null;
-
             const renderFrame = (frameIndex) => {
                 return thumbnailDrawner.drawThumbnailTransition(
                     width,
@@ -607,19 +696,16 @@ const setIconicThumbnail = async (playerState, { force = false } = {}) => {
                 );
             };
 
-            // Pre-render first frame
-            nextFramePromise = renderFrame(1);
-
-            for (let frameIndex = 1; frameIndex <= frameCount; frameIndex++) {
+            let frameIndex = 1;
+            while (frameIndex <= frameCount) {
                 if (animationToken !== thumbnailAnimationToken) {
                     return;
                 }
 
-                const frameBuffer = await nextFramePromise;
+                const frameBuffer = await renderFrame(frameIndex);
 
-                // Pre-render next frame in parallel
-                if (frameIndex < frameCount) {
-                    nextFramePromise = renderFrame(frameIndex + 1);
+                if (animationToken !== thumbnailAnimationToken) {
+                    return;
                 }
 
                 if (frameBuffer) {
@@ -628,13 +714,19 @@ const setIconicThumbnail = async (playerState, { force = false } = {}) => {
                 }
 
                 if (frameIndex < frameCount) {
-                    const targetNextFrameAt = animationStartedAt + frameIndex * frameDelayMs;
+                    const elapsedMs = performance.now() - animationStartedAt;
+                    const nextFrameIndex = Math.min(frameCount, Math.max(frameIndex + 1, Math.floor(elapsedMs / frameDelayMs) + 1));
+                    const targetNextFrameAt = animationStartedAt + (nextFrameIndex - 1) * frameDelayMs;
 
                     const waitMs = Math.max(0, targetNextFrameAt - performance.now());
 
                     if (waitMs > 0) {
                         await wait(waitMs);
                     }
+
+                    frameIndex = nextFrameIndex;
+                } else {
+                    break;
                 }
             }
 
@@ -685,6 +777,15 @@ const clearIconicThumbnail = async () => {
 
 const updateTaskbarExtension = (window) => {
     if (!playerState?.availableActions) return;
+
+    const nextThumbarStateKey = getThumbarStateKey(playerState);
+    if (nextThumbarStateKey === lastThumbarStateKey) {
+        if ((settings?.coverAsThumbnail ?? true) && native) {
+            void setIconicThumbnail(playerState);
+        }
+        return;
+    }
+    lastThumbarStateKey = nextThumbarStateKey;
 
     const availability = getActionsAvailabilityObject(playerState.availableActions);
     const store = getActionsStoreObject(playerState.actionsStore);
@@ -818,7 +919,7 @@ const updateTaskbarExtension = (window) => {
     window.setThumbnailToolTip(getTooltipString());
 
     if ((settings?.coverAsThumbnail ?? true) && native) {
-        setIconicThumbnail(playerState);
+        void setIconicThumbnail(playerState);
     }
 
     taskBarExtensionLogger.log('ThumbarButtons set:', taskButtonStatus ? 'success' : 'failed');

@@ -886,7 +886,7 @@ const handleApplicationEvents = (window) => {
         return getAllowedUrls();
     });
     electron_1.ipcMain.on(events_js_1.Events.PLAYER_STATE, (event, data) => {
-        eventsLogger.info(`Event received`, events_js_1.Events.PLAYER_STATE, data);
+        eventsLogger.info('Event received', events_js_1.Events.PLAYER_STATE, { status: data?.status, trackId: data?.track?.id });
 
         try {
             if (isBoolean(data.isPlaying)) {
@@ -908,7 +908,7 @@ const handleApplicationEvents = (window) => {
             const isPlayable = isPlayerReady && data.status !== 'idle' && isActiveState;
 
             MiniPlayer.updatePlayerState(structuredClone(data));
-            (0, taskBarExtension_js_1.onPlayerStateChange)(window, structuredClone(data));
+            (0, taskBarExtension_js_1.onPlayerStateChange)(window, data);
 
             if (isPlayable) {
                 (0, tray_js_1.updateTrayMenu)(window);
