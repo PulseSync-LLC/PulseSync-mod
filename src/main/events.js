@@ -85,12 +85,39 @@ MiniPlayer.updateSettingsState(store_js_1.getModSettings());
 
 const PROGRESS_BAR_THROTTLE_MS = 200;
 const PLAYLIST_LINK_IMPORT_TRACK_READY = 'PLAYLIST_LINK_IMPORT_TRACK_READY';
+const PLAYLIST_LINK_IMPORT_UPLOAD_STATE = 'PLAYLIST_LINK_IMPORT_UPLOAD_STATE';
+const PLAYLIST_LINK_IMPORT_UPLOAD_TIMEOUT_MS = 15 * 60 * 1000;
+const PLAYLIST_LINK_IMPORT_MAX_FILE_SIZE_BYTES = 0x19000000;
+const playlistLinkImportUploadWaiters = new Map();
 let pulseSyncManager_js_1;
 const isBoolean = (value) => {
     return typeof value === 'boolean';
 };
 
 const getLastFmScrobbler = () => scrobbleManager_js_1.scrobblerManager.getScrobblerByType('Last.fm');
+
+const waitForPlaylistLinkImportUpload = (trackToken) => {
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+            playlistLinkImportUploadWaiters.delete(trackToken);
+            reject(new Error('Истекло время ожидания загрузки трека в Яндекс Музыку'));
+        }, PLAYLIST_LINK_IMPORT_UPLOAD_TIMEOUT_MS);
+        timeout.unref?.();
+
+        playlistLinkImportUploadWaiters.set(trackToken, {
+            resolve: (payload) => {
+                clearTimeout(timeout);
+                playlistLinkImportUploadWaiters.delete(trackToken);
+                resolve(payload);
+            },
+            reject: (error) => {
+                clearTimeout(timeout);
+                playlistLinkImportUploadWaiters.delete(trackToken);
+                reject(error);
+            },
+        });
+    });
+};
 
 const normalizeSubstitutedTrack = (track) => {
     if (!track) return;
@@ -579,6 +606,33 @@ const handleApplicationEvents = (window) => {
 
         sendNativeStoreUpdate(key, filePaths[0], mainWindow);
     });
+    electron_1.ipcMain.on(PLAYLIST_LINK_IMPORT_UPLOAD_STATE, (event, payload) => {
+        const trackToken = payload?.trackToken;
+        const status = payload?.status;
+        if (!trackToken || !status) return;
+
+        eventsLogger.info('Playlist link import upload state', {
+            trackToken,
+            status,
+            attempt: payload?.attempt,
+            stage: payload?.stage,
+            fileSize: payload?.fileSize,
+            timeoutMs: payload?.timeoutMs,
+            error: payload?.error,
+        });
+        const waiter = playlistLinkImportUploadWaiters.get(trackToken);
+        if (!waiter || status === 'accepted' || status === 'uploading' || status === 'attempt-failed') return;
+
+        if (status === 'uploaded') {
+            waiter.resolve(payload);
+            return;
+        }
+
+        if (status === 'failed' || status === 'cancelled') {
+            const errorMessage = payload?.error || (status === 'cancelled' ? 'Загрузка трека отменена' : 'Не удалось загрузить трек в Яндекс Музыку');
+            waiter.reject(new Error(errorMessage));
+        }
+    });
     electron_1.ipcMain.handle('playlist-import-track-from-link', async (event, payload) => {
         const link = payload?.url;
         const importID = payload?.importID;
@@ -592,23 +646,49 @@ const handleApplicationEvents = (window) => {
             window.setProgressBar(progressWindow);
         };
 
+        let importedTrackIndex = 0;
+
         try {
             const importedTracks = await trackDownloader.importTracksFromUrl(link, throttle(progressCallback, PROGRESS_BAR_THROTTLE_MS), {
                 collectTracks: false,
-                onTrackReady: (importedTrack) => {
+                onTrackReady: async (importedTrack) => {
                     if (!importID) {
                         return;
                     }
+                    if (importedTrack.buffer.byteLength > PLAYLIST_LINK_IMPORT_MAX_FILE_SIZE_BYTES) {
+                        throw new Error('Файл слишком большой для загрузки в Яндекс Музыку');
+                    }
 
-                    window.webContents.send(PLAYLIST_LINK_IMPORT_TRACK_READY, {
-                        importID,
-                        fileName: importedTrack.fileName,
-                        mimeType: importedTrack.mimeType,
-                        bufferBase64: importedTrack.buffer.toString('base64'),
-                    });
+                    importedTrackIndex += 1;
+                    const trackToken = `${importID}|${importedTrackIndex}|${crypto.randomUUID()}`;
+                    const uploadResultPromise = waitForPlaylistLinkImportUpload(trackToken);
+                    const arrayBuffer = importedTrack.buffer.buffer.slice(
+                        importedTrack.buffer.byteOffset,
+                        importedTrack.buffer.byteOffset + importedTrack.buffer.byteLength,
+                    );
+
+                    progressCallback(0.99, 0.99, `Загрузка в Яндекс Музыку: ${importedTrack.fileName}`);
+                    try {
+                        window.webContents.send(PLAYLIST_LINK_IMPORT_TRACK_READY, {
+                            importID,
+                            trackToken,
+                            fileName: importedTrack.fileName,
+                            mimeType: importedTrack.mimeType,
+                            arrayBuffer,
+                        });
+                    } catch (error) {
+                        playlistLinkImportUploadWaiters.get(trackToken)?.reject(error);
+                    }
+
+                    await uploadResultPromise;
                 },
             });
-            const successLabel = importedTracks.totalCount > 1 ? `${importedTracks.importedCount} / ${importedTracks.totalCount}` : 'Готово';
+            const successLabel =
+                importedTracks.failedCount > 0
+                    ? importedTracks.importedCount > 0
+                        ? `${importedTracks.importedCount} / ${importedTracks.totalCount}`
+                        : 'Ошибка'
+                    : 'Готово';
 
             progressCallback(1, 1, successLabel);
             setTimeout(() => {

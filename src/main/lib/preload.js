@@ -496,6 +496,7 @@ electron_1.contextBridge.exposeInMainWorld('openConfigFile', () => electron_1.ip
 electron_1.contextBridge.exposeInMainWorld('playlistLinkImporter', {
     prefetchTrack: (url) => electron_1.ipcRenderer.invoke('playlist-prefetch-track-from-link', { url }),
     importTrack: (url, importID) => electron_1.ipcRenderer.invoke('playlist-import-track-from-link', { url, importID }),
+    reportUploadState: (payload) => electron_1.ipcRenderer.send('PLAYLIST_LINK_IMPORT_UPLOAD_STATE', payload),
     onTrackImported: (callback) => {
         const listener = (event, payload) => {
             callback(payload);

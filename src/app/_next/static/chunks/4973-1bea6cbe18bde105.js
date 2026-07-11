@@ -2723,12 +2723,6 @@
                         },
                         [t, o, closeImportModal],
                     ),
-                    decodeBase64 = (0, c.useCallback)((e) => {
-                        let t = atob(e),
-                            a = new Uint8Array(t.length);
-                        for (let e = 0; e < t.length; e++) a[e] = t.charCodeAt(e);
-                        return a;
-                    }, []),
                     onLinkChange = (0, c.useCallback)((e) => {
                         b(e.target.value);
                     }, []),
@@ -2765,15 +2759,23 @@
                     if (!(null == window ? void 0 : window.playlistLinkImporter) || !window.playlistLinkImporter.onTrackImported) return;
                     return window.playlistLinkImporter.onTrackImported((e) => {
                         if (!e || e.importID !== activeImportSessionRef.current) return;
+                        let trackToken = e.trackToken;
                         try {
-                            let a = decodeBase64(e.bufferBase64);
-                            o.appendFiles([new File([a], e.fileName || 'imported_track.mp3', { type: e.mimeType || 'audio/mpeg' })], t);
+                            let a = new File([e.arrayBuffer], e.fileName || 'imported_track.mp3', { type: e.mimeType || 'audio/mpeg' });
+                            Object.defineProperty(a, 'pulseSyncImportToken', { value: trackToken, configurable: !0 }),
+                                window.playlistLinkImporter?.reportUploadState?.({ trackToken, status: 'accepted' }),
+                                o.appendFiles([a], t);
                         } catch (e) {
                             let t = e instanceof Error ? e.message : 'Не удалось обработать импортированный трек';
+                            window.playlistLinkImporter?.reportUploadState?.({
+                                trackToken,
+                                status: 'failed',
+                                error: t,
+                            }),
                             u((0, l.jsx)(C.hT, { error: t }), { containerId: fullscreenPlayer.modal.isOpened ? i.uQT.FULLSCREEN_ERROR : i.uQT.ERROR });
                         }
                     });
-                }, [decodeBase64, o, t, u, fullscreenPlayer.modal.isOpened]);
+                }, [o, t, u, fullscreenPlayer.modal.isOpened]);
                 (0, c.useEffect)(() => {
                     if (prefetchTimerRef.current) {
                         clearTimeout(prefetchTimerRef.current);

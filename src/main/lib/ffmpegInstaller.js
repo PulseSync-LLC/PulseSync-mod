@@ -11,6 +11,8 @@ const tar = require('tar');
 const { pipeline } = require('stream/promises');
 const Logger_js_1 = require('../packages/logger/Logger.js');
 
+const HASH_REQUEST_TIMEOUT_MS = 5000;
+
 function getBaseDirNearAsar() {
     const appPath = electron.app.getAppPath();
     return appPath.includes('app.asar') ? path.dirname(appPath) : appPath;
@@ -49,6 +51,7 @@ class FfmpegUpdater {
         this.repo = repo;
         this.tagName = tagName;
         this.requireHash = requireHash === true;
+        this.isInstalledValidated = false;
 
         this.platform = mapPlatform();
         this.arch = mapArch(this.platform);
@@ -125,6 +128,7 @@ class FfmpegUpdater {
             const resp = await axios.get(this.getHashUrl(), {
                 httpsAgent: agent,
                 responseType: 'text',
+                timeout: HASH_REQUEST_TIMEOUT_MS,
                 headers: { 'User-Agent': 'Electron-FFmpeg-Updater' },
                 validateStatus: (s) => s === 200 || s === 404,
             });
@@ -252,12 +256,20 @@ class FfmpegUpdater {
      */
     async ensureInstalled(callback, { force = false } = {}) {
         if (!force) {
+            if (this.isInstalledValidated && (await this.fileExists(this.installPath))) {
+                this.logger.log('FFmpeg already installed (cached validation)');
+                return this.installPath;
+            }
+
             const ok = await this.isInstalled();
             if (ok) {
+                this.isInstalledValidated = true;
                 this.logger.log('FFmpeg already installed');
                 return this.installPath;
             }
         }
+
+        this.isInstalledValidated = false;
 
         try {
             this.logger.log('Downloading:', this.assetName);
@@ -282,6 +294,8 @@ class FfmpegUpdater {
 
             // ✅ Очистка кеша после успешной установки
             await this.clearCache();
+
+            this.isInstalledValidated = true;
 
             return this.installPath;
         } catch (e) {

@@ -12,6 +12,14 @@ const { throttle } = require('../utils');
 const TARGET_AUDIO_EXTENSION = 'mp3';
 const TARGET_AUDIO_QUALITY = '320K';
 const YT_DLP_COOKIES_BROWSER_SOURCE_STORE_KEY = 'modSettings.downloader.ytDlpCookiesBrowserSource';
+const READY_FILE_LINE_PREFIX = '__PULSESYNC_READY_FILE__:';
+
+function isCookieRetryableError(error) {
+    const output = `${error?.message ?? ''}\n${error?.stderr ?? ''}\n${error?.stdout ?? ''}`.toLowerCase();
+    return /sign in|log[ -]?in required|authentication required|confirm you(?:'|’)re not a bot|http error 403|forbidden|age.?restricted|members.?only|private video|cookies?.*(required|needed)|use --cookies/.test(
+        output,
+    );
+}
 
 function getMimeTypeFromExtension(fileExtension = '') {
     switch (String(fileExtension).toLowerCase()) {
@@ -507,20 +515,14 @@ class YtDlpWrapper {
 
     async getYouTubeCookieBrowserSources() {
         const defaultCookieSource = await getDefaultBrowserCookieSource();
-        const otherCookieSources = [];
+        const cookieSources = [];
 
-        pushUniqueValue(otherCookieSources, process.env.YT_DLP_COOKIES_FROM_BROWSER);
-        pushUniqueValue(otherCookieSources, this.getPreferredYouTubeCookieSource());
-        pushUniqueValue(otherCookieSources, await getYandexBrowserCookieSource());
+        pushUniqueValue(cookieSources, this.getPreferredYouTubeCookieSource());
+        pushUniqueValue(cookieSources, process.env.YT_DLP_COOKIES_FROM_BROWSER);
+        pushUniqueValue(cookieSources, defaultCookieSource);
+        pushUniqueValue(cookieSources, await getYandexBrowserCookieSource());
 
-        ['chrome', 'edge', 'brave', 'vivaldi', 'opera', 'firefox', 'chromium'].forEach((browserName) => {
-            pushUniqueValue(otherCookieSources, browserName);
-        });
-
-        return {
-            defaultCookieSource,
-            otherCookieSources: otherCookieSources.filter((cookieSource) => cookieSource !== defaultCookieSource),
-        };
+        return cookieSources;
     }
 
     async runYtDlpProcess(rawURL, args, { onAttemptStart, onAttemptFailure, onAttemptSuccess, ...runOptions } = {}) {
@@ -529,17 +531,8 @@ class YtDlpWrapper {
         const attempts = [{ label: 'no browser cookies', args, cookieSource: null }];
 
         if (shouldUseBrowserCookies) {
-            const { defaultCookieSource, otherCookieSources } = await this.getYouTubeCookieBrowserSources();
-
-            if (defaultCookieSource) {
-                attempts.push({
-                    label: `default browser cookies: ${defaultCookieSource}`,
-                    args: ['--cookies-from-browser', defaultCookieSource, ...args],
-                    cookieSource: defaultCookieSource,
-                });
-            }
-
-            otherCookieSources.forEach((cookieSource) => {
+            const cookieSources = await this.getYouTubeCookieBrowserSources();
+            cookieSources.forEach((cookieSource) => {
                 attempts.push({
                     label: `browser cookies: ${cookieSource}`,
                     args: ['--cookies-from-browser', cookieSource, ...args],
@@ -582,6 +575,10 @@ class YtDlpWrapper {
                     throw error;
                 }
 
+                if (!isCookieRetryableError(error)) {
+                    throw error;
+                }
+
                 let shouldContinue = true;
                 if (typeof onAttemptFailure === 'function') {
                     shouldContinue = (await onAttemptFailure({ ...attempt, attemptIndex, attemptsCount: attempts.length }, error)) !== false;
@@ -596,24 +593,6 @@ class YtDlpWrapper {
         }
 
         throw lastError;
-    }
-
-    async findDownloadedAudioFiles(tempDirPath) {
-        const entries = await fs.readdir(tempDirPath, { withFileTypes: true });
-        const files = [];
-
-        for (const entry of entries) {
-            if (!entry.isFile()) continue;
-            const fullPath = path.join(tempDirPath, entry.name);
-            const extension = path.extname(entry.name).slice(1).toLowerCase();
-            if (extension !== TARGET_AUDIO_EXTENSION) continue;
-
-            const stats = await fs.stat(fullPath);
-            files.push({ fullPath, modifiedAt: stats.mtimeMs, size: stats.size });
-        }
-
-        files.sort((a, b) => a.modifiedAt - b.modifiedAt);
-        return files;
     }
 
     async clearDirectoryContents(directoryPath) {
@@ -637,44 +616,30 @@ class YtDlpWrapper {
         };
     }
 
-    async emitReadyDownloadedTracks(tempDirPath, processedFilePaths, pendingFileStates, importState, { force = false, onTrackReady, collectTracks = true } = {}) {
-        const fileEntries = await this.findDownloadedAudioFiles(tempDirPath);
-        const existingFilePaths = new Set(fileEntries.map((fileEntry) => fileEntry.fullPath));
-
-        for (const filePath of pendingFileStates.keys()) {
-            if (!existingFilePaths.has(filePath) || processedFilePaths.has(filePath)) {
-                pendingFileStates.delete(filePath);
-            }
+    async emitReadyDownloadedTrack(downloadedFilePath, importState, { onTrackReady, collectTracks = true } = {}) {
+        const resolvedFilePath = path.resolve(downloadedFilePath);
+        const fileExtension = path.extname(resolvedFilePath).slice(1).toLowerCase();
+        if (fileExtension !== TARGET_AUDIO_EXTENSION) {
+            throw new Error(`yt-dlp produced an unexpected file type: ${resolvedFilePath}`);
         }
 
-        for (const fileEntry of fileEntries) {
-            if (processedFilePaths.has(fileEntry.fullPath)) {
-                continue;
-            }
+        const importedTrack = await this.readImportedTrack(resolvedFilePath);
 
-            const fileStateSignature = `${fileEntry.size}:${fileEntry.modifiedAt}`;
-            if (!force) {
-                const previousSignature = pendingFileStates.get(fileEntry.fullPath);
-                pendingFileStates.set(fileEntry.fullPath, fileStateSignature);
-                if (previousSignature !== fileStateSignature) {
-                    continue;
-                }
+        try {
+            if (typeof onTrackReady === 'function') {
+                await onTrackReady(importedTrack, {
+                    importedCount: importState.importedCount + 1,
+                });
             }
-
-            pendingFileStates.delete(fileEntry.fullPath);
-            const importedTrack = await this.readImportedTrack(fileEntry.fullPath);
-            processedFilePaths.add(fileEntry.fullPath);
-            importState.importedCount += 1;
 
             if (collectTracks) {
                 importState.tracks.push(importedTrack);
             }
-
-            if (typeof onTrackReady === 'function') {
-                await onTrackReady(importedTrack, {
-                    importedCount: importState.importedCount,
-                });
-            }
+            importState.importedCount += 1;
+        } catch (error) {
+            const errorMessage = error?.message || String(error);
+            importState.deliveryErrors.push(errorMessage);
+            this.logger.warn(`Failed to deliver imported track ${resolvedFilePath}: ${errorMessage}`);
         }
     }
 
@@ -704,33 +669,40 @@ class YtDlpWrapper {
         const referer = `${parsedURL.origin}/`;
         const progressTracker = createYtDlpProgressTracker(progressCallback);
         const processedFilePaths = new Set();
-        const pendingFileStates = new Map();
         const importState = {
             importedCount: 0,
             tracks: [],
+            deliveryErrors: [],
         };
-        let scanQueue = Promise.resolve();
-        let scanInterval = null;
+        let readyFileQueue = Promise.resolve();
 
-        const scanReadyDownloadedTracks = (force = false) => {
-            const nextScan = scanQueue.then(
-                () =>
-                    this.emitReadyDownloadedTracks(tempDirPath, processedFilePaths, pendingFileStates, importState, {
-                        force,
+        const enqueueReadyFile = (reportedFilePath) => {
+            const resolvedFilePath = path.resolve(tempDirPath, reportedFilePath);
+            if (processedFilePaths.has(resolvedFilePath)) return;
+            processedFilePaths.add(resolvedFilePath);
+
+            readyFileQueue = readyFileQueue.then(async () => {
+                try {
+                    await this.emitReadyDownloadedTrack(resolvedFilePath, importState, {
                         onTrackReady,
                         collectTracks,
-                    }),
-                () =>
-                    this.emitReadyDownloadedTracks(tempDirPath, processedFilePaths, pendingFileStates, importState, {
-                        force,
-                        onTrackReady,
-                        collectTracks,
-                    }),
-            );
-            scanQueue = nextScan.catch((error) => {
-                this.logger.warn(`Failed to process imported track from ${tempDirPath}: ${error}`);
+                    });
+                } catch (error) {
+                    const errorMessage = error?.message || String(error);
+                    importState.deliveryErrors.push(errorMessage);
+                    this.logger.warn(`Failed to process completed yt-dlp file ${resolvedFilePath}: ${errorMessage}`);
+                }
             });
-            return nextScan;
+        };
+
+        const handleOutputLine = (line) => {
+            if (line.startsWith(READY_FILE_LINE_PREFIX)) {
+                const reportedFilePath = line.slice(READY_FILE_LINE_PREFIX.length).trim();
+                if (reportedFilePath) enqueueReadyFile(reportedFilePath);
+                return;
+            }
+
+            progressTracker.handleLine(line);
         };
 
         if (typeof progressCallback === 'function') {
@@ -739,11 +711,6 @@ class YtDlpWrapper {
 
         try {
             let processError = null;
-            scanInterval = setInterval(() => {
-                scanReadyDownloadedTracks().catch((error) => {
-                    this.logger.warn(`Failed background scan for imported tracks: ${error}`);
-                });
-            }, 350);
 
             try {
                 await this.runYtDlpProcess(
@@ -753,6 +720,7 @@ class YtDlpWrapper {
                         '--no-warnings',
                         '--ignore-errors',
                         '--newline',
+                        '--progress',
                         '--restrict-filenames',
                         '--format',
                         'bestaudio/best',
@@ -773,6 +741,8 @@ class YtDlpWrapper {
                         this.window.webContents.getUserAgent(),
                         '--no-write-info-json',
                         '--no-write-playlist-metafiles',
+                        '--print',
+                        `after_move:${READY_FILE_LINE_PREFIX}%(filepath)s`,
                         '-o',
                         path.join(tempDirPath, '%(title).180B [%(id)s].%(ext)s'),
                         rawURL,
@@ -780,16 +750,16 @@ class YtDlpWrapper {
                     {
                         cwd: tempDirPath,
                         shouldLogOutput: false,
-                        onStdoutLine: progressTracker.handleLine,
+                        onStdoutLine: handleOutputLine,
                         onStderrLine: progressTracker.handleLine,
                         onAttemptStart: async ({ attemptIndex }) => {
                             if (attemptIndex <= 0) {
                                 return;
                             }
 
+                            await readyFileQueue;
                             progressTracker.reset();
                             processedFilePaths.clear();
-                            pendingFileStates.clear();
                             await this.clearDirectoryContents(tempDirPath);
 
                             if (typeof progressCallback === 'function') {
@@ -797,28 +767,25 @@ class YtDlpWrapper {
                             }
                         },
                         onAttemptFailure: async () => {
-                            return importState.importedCount <= 0;
+                            await readyFileQueue;
+                            return processedFilePaths.size === 0;
                         },
                     },
                 );
             } catch (error) {
                 processError = error;
             } finally {
-                if (scanInterval) {
-                    clearInterval(scanInterval);
-                    scanInterval = null;
-                }
-                await scanReadyDownloadedTracks(true);
+                await readyFileQueue;
             }
 
             const progressState = progressTracker.getSnapshot();
-            const errors = [...progressState.errors];
+            const errors = [...new Set([...progressState.errors, ...importState.deliveryErrors])];
 
-            if (processError && importState.importedCount > 0 && !errors.length) {
+            if (processError && processedFilePaths.size > 0 && !errors.includes(processError.message)) {
                 errors.push(processError.message);
             }
 
-            if (!importState.importedCount) {
+            if (!processedFilePaths.size && !errors.length) {
                 throw processError ?? new Error(`yt-dlp did not produce any ${TARGET_AUDIO_EXTENSION} files`);
             }
 
@@ -826,7 +793,7 @@ class YtDlpWrapper {
             const failedCount = Math.max(errors.length, totalCount - importState.importedCount);
 
             if (typeof progressCallback === 'function') {
-                const completedLabel = totalCount > 1 ? `${importState.importedCount} / ${totalCount}` : 'Готово';
+                const completedLabel = failedCount > 0 ? (importState.importedCount > 0 ? `${importState.importedCount} / ${totalCount}` : 'Ошибка') : 'Готово';
                 progressCallback(1, 1, completedLabel);
             }
 
@@ -838,9 +805,7 @@ class YtDlpWrapper {
                 errors,
             };
         } finally {
-            if (scanInterval) {
-                clearInterval(scanInterval);
-            }
+            await readyFileQueue;
             await fs.rm(tempDirPath, { recursive: true, force: true });
         }
     }
