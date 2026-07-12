@@ -91,6 +91,7 @@ const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 MiniPlayer.updateSettingsState(store_js_1.getModSettings());
 
 const PROGRESS_BAR_THROTTLE_MS = 200;
+const PULSESYNC_APP_AUTO_INSTALL_ENABLED = false;
 const PLAYLIST_LINK_IMPORT_TRACK_READY = 'PLAYLIST_LINK_IMPORT_TRACK_READY';
 const PLAYLIST_LINK_IMPORT_UPLOAD_STATE = 'PLAYLIST_LINK_IMPORT_UPLOAD_STATE';
 const PLAYLIST_LINK_IMPORT_UPLOAD_TIMEOUT_MS = 15 * 60 * 1000;
@@ -931,19 +932,21 @@ const handleApplicationEvents = (window) => {
             }
         }
 
-        const pulseSyncInstaller = getPulseSyncAppInstaller();
-        if (!(await pulseSyncInstaller.isInstalled())) {
-            const pulseSyncAppToastNonce = sendBasicToastCreate(window, 'pulsesync-app', 'Установка PulseSync', false);
-            let callback = (progressRenderer, progressWindow) => {
-                sendProgressBarChange(window, 'pulsesync-app', progressRenderer * 100, undefined, pulseSyncAppToastNonce);
-                window.setProgressBar(progressWindow);
-            };
-            try {
-                await pulseSyncInstaller.ensureInstalled(throttle(callback, PROGRESS_BAR_THROTTLE_MS));
-            } catch (e) {
-                eventsLogger.error('PulseSync app installation failed:', e, e.stack);
-            } finally {
-                sendBasicToastDismiss(window, 'pulsesync-app', pulseSyncAppToastNonce);
+        if (PULSESYNC_APP_AUTO_INSTALL_ENABLED) {
+            const pulseSyncInstaller = getPulseSyncAppInstaller();
+            if (!(await pulseSyncInstaller.isInstalled())) {
+                const pulseSyncAppToastNonce = sendBasicToastCreate(window, 'pulsesync-app', 'Установка PulseSync', false);
+                let callback = (progressRenderer, progressWindow) => {
+                    sendProgressBarChange(window, 'pulsesync-app', progressRenderer * 100, undefined, pulseSyncAppToastNonce);
+                    window.setProgressBar(progressWindow);
+                };
+                try {
+                    await pulseSyncInstaller.ensureInstalled(throttle(callback, PROGRESS_BAR_THROTTLE_MS));
+                } catch (e) {
+                    eventsLogger.error('PulseSync app installation failed:', e, e.stack);
+                } finally {
+                    sendBasicToastDismiss(window, 'pulsesync-app', pulseSyncAppToastNonce);
+                }
             }
         }
     });
