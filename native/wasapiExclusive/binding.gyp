@@ -5,6 +5,8 @@
       "sources": [
         "src/wasapi_exclusive.cc",
         "src/yasp_encoded_buffer.cc",
+        "src/pcm_volume.cc",
+        "src/yasp_track_store.cc",
       ],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")",

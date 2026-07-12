@@ -787,7 +787,17 @@
                     });
                 },
                 settingBarWithDropdown = (e) => {
-                    let { title: t, description: o, onChange: i, value: l, options: r, direction: s = 'bottom', disabled: a = !1, buttonStyle: buttonStyle = {} } = e,
+                    let {
+                            title: t,
+                            description: o,
+                            onChange: i,
+                            value: l,
+                            options: r,
+                            direction: s = 'bottom',
+                            disabled: a = !1,
+                            buttonStyle: buttonStyle = {},
+                            layout: dropdownLayout = 'row',
+                        } = e,
                         [d, u] = (0, v.useState)(!1),
                         [menuPosition, setMenuPosition] = (0, v.useState)(null),
                         [menuMaxHeight, setMenuMaxHeight] = (0, v.useState)(null),
@@ -795,6 +805,7 @@
                         h = (0, v.useRef)(null),
                         menuRef = (0, v.useRef)(null),
                         f = r.find((e) => e.value === l),
+                        isColumnLayout = dropdownLayout === 'column',
                         updateMenuPosition = (0, v.useCallback)(() => {
                             let e = h.current;
                             if (!e) return;
@@ -880,9 +891,13 @@
                         }, [d, m]),
                         (0, n.jsxs)('div', {
                             className: G().root,
+                            style: isColumnLayout
+                                ? { alignItems: 'stretch', flexDirection: 'column', gap: 'var(--ym-spacer-size-xs)', width: '100%' }
+                                : void 0,
                             children: [
                                 (0, n.jsxs)('div', {
                                     className: G().textContainer,
+                                    style: isColumnLayout ? { width: '100%' } : void 0,
                                     children: [
                                         (0, n.jsx)(c.Caption, {
                                             className: a ? G().titleDisabled : G().title,
@@ -897,10 +912,11 @@
                                             (0, n.jsx)(c.Caption, {
                                                 variant: 'div',
                                                 type: 'text',
-                                                size: 'xs',
-                                                weight: 'medium',
-                                                className: a ? G().descriptionDisabled : G().description,
-                                                children: f?.description ?? o,
+                                                 size: 'xs',
+                                                 weight: 'medium',
+                                                 className: a ? G().descriptionDisabled : G().description,
+                                                 style: { whiteSpace: 'pre-line' },
+                                                 children: f?.description ?? o,
                                             }),
                                     ],
                                 }),
@@ -914,6 +930,7 @@
                                         ' Ai2iRN9elHpk_u5splD6 _3_Mxw7Si7j2g4kWjlpR _MWOVuZRvUQdXKTMcOPx',
                                     ),
                                     style: {
+                                        ...(isColumnLayout ? { width: '100%', alignSelf: 'stretch' } : {}),
                                         ...buttonStyle,
                                     },
                                     children: [
@@ -953,17 +970,40 @@
                                                                     role: 'menuitem',
                                                                     className: 'settingBarWithDropdown_menuItem',
                                                                     id: e.value,
-                                                                    style: { flexShrink: 0 },
+                                                                    style: { flexShrink: 0, alignItems: 'flex-start' },
                                                                     'aria-selected': l === e.value,
                                                                     onClick: (t) => {
                                                                         (t.stopPropagation(), x(e.value));
                                                                     },
                                                                     children: [
-                                                                        (0, n.jsx)('span', { children: e.label }),
+                                                                        (0, n.jsxs)('div', {
+                                                                            style: {
+                                                                                display: 'flex',
+                                                                                flex: '1 1 auto',
+                                                                                flexDirection: 'column',
+                                                                                gap: '0.125rem',
+                                                                                minWidth: 0,
+                                                                            },
+                                                                            children: [
+                                                                                (0, n.jsx)('span', { children: e.label }),
+                                                                                e.description &&
+                                                                                    (0, n.jsx)('span', {
+                                                                                        style: {
+                                                                                            color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                                            fontSize: '0.75rem',
+                                                                                            lineHeight: 1.35,
+                                                                                            opacity: 0.72,
+                                                                                            whiteSpace: 'pre-line',
+                                                                                        },
+                                                                                        children: e.description,
+                                                                                    }),
+                                                                            ],
+                                                                        }),
                                                                         l === e.value &&
                                                                             (0, n.jsx)('svg', {
                                                                                 width: '16',
                                                                                 height: '16',
+                                                                                style: { flex: '0 0 auto', marginTop: '0.125rem' },
                                                                                 fill: 'currentColor',
                                                                                 xmlns: 'http://www.w3.org/2000/svg',
                                                                                 children: (0, n.jsx)('path', {
@@ -2347,6 +2387,45 @@
                         } = (0, m.Pjs)(),
                         a = (0, m.iIU)(),
                         { notify: o } = (0, m.lkh)(),
+                        isWindows = window.PLATFORM === 'win32',
+                        [yaspTapEnabled, setYaspTapEnabled] = (0, v.useState)(() =>
+                            Boolean(window.nativeSettings.get('modSettings.nativeAudioOutput.enableYaspChunkTap')),
+                        ),
+                        [wasapiEnabled, setWasapiEnabled] = (0, v.useState)(() =>
+                            Boolean(window.nativeSettings.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput')),
+                        ),
+                        [wasapiStatus, setWasapiStatus] = (0, v.useState)(null),
+                        [wasapiDevices, setWasapiDevices] = (0, v.useState)([]),
+                        [selectedWasapiDeviceId, setSelectedWasapiDeviceId] = (0, v.useState)(''),
+                        onYaspTapToggle = (0, v.useCallback)((e) => {
+                            setYaspTapEnabled(e);
+                            Promise.resolve(
+                                window.nativeAudioOutput?.setYaspChunkTapEnabled?.(e) ??
+                                    window.nativeSettings.set('modSettings.nativeAudioOutput.enableYaspChunkTap', e),
+                            ).catch((t) => {
+                                setYaspTapEnabled(!e);
+                                console.error('Failed to change YASP Tap setting:', t);
+                            });
+                        }, []),
+                        onWasapiExclusiveToggle = (0, v.useCallback)((e) => {
+                            setWasapiEnabled(e);
+                            Promise.resolve(window.nativeAudioOutput?.setWasapiExclusiveOutputEnabled?.(e)).catch((t) => {
+                                setWasapiEnabled(!e);
+                                console.error('Failed to change WASAPI Exclusive setting:', t);
+                            });
+                        }, []),
+                        onWasapiFullVolumeToggle = (0, v.useCallback)((e) => {
+                            window.nativeSettings.set('modSettings.nativeAudioOutput.forceWasapiExclusiveFullVolume', e);
+                        }, []),
+                        onWasapiDeviceChange = (0, v.useCallback)(async (e) => {
+                            let t = e || null;
+                            try {
+                                await window.nativeAudioOutput?.selectWasapiExclusiveDevice?.(t);
+                                setSelectedWasapiDeviceId(t ?? '');
+                            } catch (e) {
+                                console.error('Failed to select WASAPI Exclusive device:', e);
+                            }
+                        }, []),
                         onSurroundAudioCompatibilityToggle = (0, v.useCallback)(
                             (e) => {
                                 console.log('enableSurroundAudioCompatibility toggled. Value: ', e);
@@ -2383,6 +2462,130 @@
                             },
                             [a, sonataState],
                         );
+                    (0, v.useEffect)(() => {
+                        if (!t.isOpened) return;
+                        setYaspTapEnabled(Boolean(window.nativeSettings.get('modSettings.nativeAudioOutput.enableYaspChunkTap')));
+                        setWasapiEnabled(Boolean(window.nativeSettings.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput')));
+                        if (!isWindows) return;
+
+                        let e = !1;
+                        Promise.all([
+                            window.nativeAudioOutput?.getWasapiExclusiveStatus?.(),
+                            window.nativeAudioOutput?.listWasapiExclusiveDevices?.({ includeDisabled: !0, includeFormats: !0 }),
+                            window.nativeAudioOutput?.getSelectedWasapiExclusiveDeviceId?.(),
+                        ])
+                            .then(([t, o, n]) => {
+                                if (e) return;
+                                setWasapiStatus(t ?? null);
+                                setWasapiDevices(Array.isArray(o) ? o : []);
+                                setSelectedWasapiDeviceId(n ?? '');
+                            })
+                            .catch((t) => {
+                                if (e) return;
+                                setWasapiStatus({ available: !1, supported: !1, loadError: String(t?.message ?? t) });
+                                setWasapiDevices([]);
+                            });
+                        return () => {
+                            e = !0;
+                        };
+                    }, [t.isOpened, isWindows]);
+                    (0, v.useEffect)(() => {
+                        if (!t.isOpened || !isWindows) return;
+                        let e = null,
+                            o = !1;
+                        const refreshDefaultDevice = (t) => {
+                            const i = t?.detail?.defaultDeviceChangedAt,
+                                n = Number(i);
+                            if (null == i || !Number.isFinite(n) || n === e) return;
+                            e = n;
+                            Promise.resolve(window.nativeAudioOutput?.listWasapiExclusiveDevices?.({ includeDisabled: !0, includeFormats: !0 }))
+                                .then((e) => {
+                                    o || setWasapiDevices(Array.isArray(e) ? e : []);
+                                })
+                                .catch((e) => {
+                                    o || console.error('Failed to refresh the system default WASAPI device:', e);
+                                });
+                        };
+                        window.addEventListener('pulse-sync-wasapi-exclusive-output-state-change', refreshDefaultDevice);
+                        return () => {
+                            o = !0;
+                            window.removeEventListener('pulse-sync-wasapi-exclusive-output-state-change', refreshDefaultDevice);
+                        };
+                    }, [t.isOpened, isWindows]);
+
+                    let wasapiSupported = Boolean(isWindows && wasapiStatus?.available && wasapiStatus?.supported),
+                        wasapiSectionDisabled = !wasapiSupported || !yaspTapEnabled,
+                        supports24Bit48000 = (e) =>
+                            Array.isArray(e?.supportedFormats) &&
+                            e.supportedFormats.some(
+                                (e) => e?.sampleRate === 48000 && e?.bitsPerSample === 24 && e?.channels === 2 && e?.float !== !0,
+                            ),
+                        unsupportedDeviceDescription =
+                            '\nУстройство не поддерживает 24 бит / 48 кГц.\nНекоторые треки будут воспроизводиться обычным способом.',
+                        formatWasapiSampleRate = (e) => ''.concat(String(Number(e) / 1000).replace('.', ','), ' кГц'),
+                        getMaximumWasapiFormat = (e) => {
+                            let t = Array.isArray(e?.supportedFormats)
+                                ? e.supportedFormats.filter(
+                                      (e) =>
+                                          e?.float !== !0 &&
+                                          Number(e?.sampleRate) > 0 &&
+                                          Number(e?.bitsPerSample) > 0 &&
+                                          Number(e?.channels) > 0 &&
+                                          Number.isFinite(Number(e?.sampleRate)) &&
+                                          Number.isFinite(Number(e?.bitsPerSample)) &&
+                                          Number.isFinite(Number(e?.channels)),
+                                  )
+                                : [];
+                            const o = t.filter((e) => Number(e.channels) === 2);
+                            if (o.length) t = o;
+                            return (
+                                t
+                                    .slice()
+                                    .sort(
+                                        (e, t) =>
+                                            Number(t.sampleRate) - Number(e.sampleRate) ||
+                                            Number(t.bitsPerSample) - Number(e.bitsPerSample) ||
+                                            Number(t.containerBitsPerSample ?? t.bitsPerSample) - Number(e.containerBitsPerSample ?? e.bitsPerSample),
+                                    )[0] ?? null
+                            );
+                        },
+                        getWasapiDeviceFormatDescription = (e) => {
+                            const t = getMaximumWasapiFormat(e);
+                            if (!t) return 'Поддерживаемые PCM-форматы не определены.';
+                            const o = Number(t.bitsPerSample),
+                                n = Number(t.containerBitsPerSample ?? o),
+                                i = Number(t.channels),
+                                l = n !== o ? ''.concat(o, ' бит (контейнер ').concat(n, ' бит)') : ''.concat(o, ' бит');
+                            return 'До: '.concat(l, ' / ').concat(formatWasapiSampleRate(t.sampleRate));
+                        },
+                        getWasapiDeviceDescription = (e, t = !1) => {
+                            if (!e) return 'Системное устройство вывода будет определено автоматически.';
+                            const o = [t ? 'Сейчас: '.concat(e.name, '.\n') : null, getWasapiDeviceFormatDescription(e),
+                                supports24Bit48000(e) ? null : unsupportedDeviceDescription];
+                            return o.filter(Boolean).join(' ');
+                        },
+                        activeWasapiDevices = wasapiDevices.filter((e) => e?.state === 'active'),
+                        defaultWasapiDevice =
+                            activeWasapiDevices.find((e) => e.isDefault) ??
+                            activeWasapiDevices.find((e) => e.isDefaultConsole) ??
+                            null,
+                        wasapiDeviceOptions = [
+                            {
+                                value: '',
+                                label: 'По умолчанию',
+                                description: getWasapiDeviceDescription(defaultWasapiDevice, !0),
+                            },
+                            ...activeWasapiDevices.map((e) => ({
+                                value: e.id,
+                                label: e.name,
+                                description: getWasapiDeviceDescription(e),
+                            })),
+                        ],
+                        wasapiAvailabilityDescription = !wasapiStatus
+                            ? 'Проверяем поддержку WASAPI Exclusive...'
+                            : wasapiSupported
+                              ? 'Открывает выбранное устройство в эксклюзивном режиме.'
+                              : 'WASAPI Exclusive недоступен в этой системе.';
                     return (0, n.jsx)(w.a, {
                         className: K().list,
                         style: { maxWidth: '34.375rem', height: 'auto' },
@@ -2418,6 +2621,74 @@
                                         isChecked: window.nativeSettings.getAsync('modSettings.enableSurroundAudioCompatibility') ?? !1,
                                     }),
                                 }),
+                                (0, n.jsx)(settingsCategorySeparator, { text: 'YASP' }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: ['YASP Tap', (0, n.jsx)(labeledBubble, { label: 'ALPHA' })],
+                                        description: 'Перехватывает расшифрованные аудиосегменты для анализа качества и нативного вывода.',
+                                        onChange: onYaspTapToggle,
+                                        isChecked: yaspTapEnabled,
+                                    }),
+                                }),
+                                isWindows && (0, n.jsx)(settingsCategorySeparator, { text: 'WASAPI Exclusive' }),
+                                isWindows &&
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(c.Caption, {
+                                            variant: 'div',
+                                            type: 'text',
+                                            size: 's',
+                                            weight: 'medium',
+                                            style: {
+                                                padding: 'var(--ym-spacer-size-xs) var(--ym-spacer-size-s)',
+                                                color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                opacity: wasapiSupported ? 0.82 : 0.4,
+                                                'white-space': 'pre-line',
+                                            },
+                                            children:
+                                                'WASAPI Exclusive обеспечивает bit-perfect вывод без системного микшера.\nВ этом режиме только Яндекс Музыка сможет выводить звук на выбранное утсройство\nКроме того не работают кроссфейд и нормализация громкости.',
+                                        }),
+                                    }),
+                                isWindows &&
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(Q, {
+                                            title: ['Включить WASAPI Exclusive', (0, n.jsx)(labeledBubble, { label: 'ALPHA', disabled: wasapiSectionDisabled })],
+                                            description: yaspTapEnabled ? wasapiAvailabilityDescription : 'Сначала включите YASP Tap.',
+                                            onChange: onWasapiExclusiveToggle,
+                                            isChecked: wasapiEnabled,
+                                            disabled: wasapiSectionDisabled,
+                                        }),
+                                    }),
+                                isWindows &&
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(Q, {
+                                            title: 'Форсировать громкость 100%',
+                                            description: 'Отключает синхронизацию громкости с плеером и выводит WASAPI Exclusive с полной громкостью.',
+                                            onChange: onWasapiFullVolumeToggle,
+                                            isChecked: window.nativeSettings
+                                                .getAsync('modSettings.nativeAudioOutput.forceWasapiExclusiveFullVolume')
+                                                .then((e) => e ?? !1),
+                                            disabled: wasapiSectionDisabled,
+                                        }),
+                                    }),
+                                isWindows &&
+                                    (0, n.jsx)('li', {
+                                        className: $().item,
+                                        children: (0, n.jsx)(settingBarWithDropdown, {
+                                            title: 'Устройство вывода',
+                                            description: 'Устройство, которое будет открыто в эксклюзивном режиме.',
+                                            direction: 'top',
+                                            value: selectedWasapiDeviceId,
+                                            options: wasapiDeviceOptions,
+                                            onChange: onWasapiDeviceChange,
+                                            disabled: wasapiSectionDisabled,
+                                            layout: 'column',
+                                            buttonStyle: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+                                        }),
+                                    }),
                             ],
                         }),
                     });
@@ -2897,6 +3168,10 @@
                         onSwapVibeAnimationAndWheelToggle = (0, v.useCallback)(async (e) => {
                             console.log('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel', e);
+                        }, []),
+                        onShowAudioQualityOnNewWaveToggle = (0, v.useCallback)(async (e) => {
+                            console.log('modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave toggled. Value: ', e);
+                            window.nativeSettings.set('modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave', e);
                         }, []);
                     return (0, n.jsx)(w.a, {
                         className: K().list,
@@ -2940,6 +3215,18 @@
                                         description: 'Включает обновленное расположение кнопок и дополнительные элементы управления на странице Волны',
                                         onChange: onImprovedWaveLayoutToggle,
                                         isChecked: window.nativeSettings.getAsync('modSettings.vibeAnimationEnhancement.improvedWaveLayout').then((e) => e ?? !0),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: $().item,
+                                    children: (0, n.jsx)(Q, {
+                                        title: 'Показывать качество на странице новой Волны',
+                                        description:
+                                            'Показывает формат и качество текущего трека. При активном WASAPI Exclusive формат отображается всегда.',
+                                        onChange: onShowAudioQualityOnNewWaveToggle,
+                                        isChecked: window.nativeSettings
+                                            .getAsync('modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave')
+                                            .then((e) => e ?? !0),
                                     }),
                                 }),
                                 (0, n.jsx)('li', {

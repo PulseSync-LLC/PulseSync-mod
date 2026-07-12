@@ -526,8 +526,12 @@
                         Q = (0, j.ZpR)(null != (a = null == (t = E.specialHeader) ? void 0 : t.url) ? a : ''),
                         Y = w.checkExperiment(j.zal.WebNextNewWaveTabFeedbackForm, 'on'),
                         $ = (0, j.ZpR)('/slides/special/my_vibe_onboarding');
+                    const pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave';
                     let [pulseSyncTrackQualityInfo, setPulseSyncTrackQualityInfo] = (0, s.useState)(window?.PulseSyncTrackQuality?.getLastInfo?.() ?? null);
                     let [pulseSyncWasapiExclusiveOutputState, setPulseSyncWasapiExclusiveOutputState] = (0, s.useState)(null);
+                    let [pulseSyncShowAudioQualityOnNewWave, setPulseSyncShowAudioQualityOnNewWave] = (0, s.useState)(
+                        () => window.nativeSettings?.get?.(pulseSyncShowAudioQualityOnNewWaveSettingKey) !== !1,
+                    );
                     (0, s.useEffect)(() => {
                         var e, t;
                         if (!r || !U) return;
@@ -579,16 +583,29 @@
                                 if (typeof unsubscribe === 'function') unsubscribe();
                             };
                         }, []),
+                        (0, s.useEffect)(() => {
+                            const updatePulseSyncShowAudioQualityOnNewWave = (event, key, value) => {
+                                if (key === pulseSyncShowAudioQualityOnNewWaveSettingKey) {
+                                    setPulseSyncShowAudioQualityOnNewWave(value !== !1);
+                                }
+                            };
+                            const unsubscribe = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', updatePulseSyncShowAudioQualityOnNewWave);
+                            return () => {
+                                if (typeof unsubscribe === 'function') unsubscribe();
+                            };
+                        }, []),
                         (0, j.Jzs)(E.landing.isResolved);
                     let X = w.checkExperiment(j.zal.WebNextDisableVibe, 'on'),
                         Z = (0, s.useCallback)(() => {
                             L.isReady && L.modal.open();
                         }, [L.isReady, L.modal]),
                         J = (0, s.useMemo)(() => (X ? { 'margin-block-start': '1vh' } : {}), [X]),
-                        ef = (0, s.useMemo)(
-                            () =>
-                                pulseSyncTrackQualityInfo?.label
-                                    ? (0, i.jsx)(p.$, {
+                        ef = (0, s.useMemo)(() => {
+                            const isWasapiActive =
+                                pulseSyncWasapiExclusiveOutputState?.active === true ||
+                                pulseSyncWasapiExclusiveOutputState?.session?.state === 'running';
+                            return pulseSyncTrackQualityInfo?.label && (pulseSyncShowAudioQualityOnNewWave || isWasapiActive)
+                                ? (0, i.jsx)(p.$, {
                                           color: 'secondary',
                                           radius: 'xl',
                                           'aria-label': 'Качество трека: '.concat(pulseSyncTrackQualityInfo.label),
@@ -603,9 +620,8 @@
                                               children: pulseSyncTrackQualityInfo.label,
                                           }),
                                       })
-                                    : null,
-                            [pulseSyncTrackQualityInfo],
-                        ),
+                                : null;
+                        }, [pulseSyncTrackQualityInfo, pulseSyncShowAudioQualityOnNewWave, pulseSyncWasapiExclusiveOutputState]),
                         eg = (0, s.useMemo)(() => {
                             const isActive =
                                 pulseSyncWasapiExclusiveOutputState?.active === true || pulseSyncWasapiExclusiveOutputState?.session?.state === 'running';
@@ -623,6 +639,39 @@
                                           size: 's',
                                           weight: 'medium',
                                           children: 'WASAPI Exclusive',
+                                      }),
+                                  })
+                                : null;
+                        }, [pulseSyncWasapiExclusiveOutputState]),
+                        pulseSyncWasapiDeviceBubble = (0, s.useMemo)(() => {
+                            const isActive =
+                                    pulseSyncWasapiExclusiveOutputState?.active === true ||
+                                    pulseSyncWasapiExclusiveOutputState?.session?.state === 'running',
+                                deviceName =
+                                    pulseSyncWasapiExclusiveOutputState?.session?.rendererState?.deviceName ??
+                                    pulseSyncWasapiExclusiveOutputState?.session?.lastRendererServiceState?.deviceName ??
+                                    null;
+                            return isActive && deviceName
+                                ? (0, i.jsx)(p.$, {
+                                      color: 'secondary',
+                                      radius: 'xl',
+                                      'aria-label': 'Устройство WASAPI Exclusive: '.concat(deviceName),
+                                      title: deviceName,
+                                      className: T().beta,
+                                      style: {
+                                          marginInlineEnd: 'var(--ym-spacer-size-xs)',
+                                          color: 'white',
+                                          maxWidth: '15rem',
+                                          overflow: 'hidden',
+                                      },
+                                      withHover: !1,
+                                      children: (0, i.jsx)(b.Caption, {
+                                          variant: 'div',
+                                          type: 'text',
+                                          size: 's',
+                                          weight: 'medium',
+                                          style: { maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+                                          children: deviceName,
                                       }),
                                   })
                                 : null;
@@ -742,7 +791,7 @@
                                                   children: [O && (0, i.jsx)(N.YS, { withMeta: !1, variant: 'mobile', className: T().userProfile }), et],
                                               }),
                                               (0, i.jsx)(H, {}),
-                                              (0, i.jsxs)('div', { className: ea, children: [eg, ef, ee] }),
+                                              (0, i.jsxs)('div', { className: ea, children: [eg, pulseSyncWasapiDeviceBubble, ef, ee] }),
                                           ],
                                       }),
                                   }),
@@ -759,7 +808,7 @@
                                           ...(0, d.Am)(d.Xk.main.MAIN_PAGE),
                                           children: [
                                               en,
-                                              (0, i.jsxs)('div', { className: ea, children: [eg, ef, ee] }),
+                                              (0, i.jsxs)('div', { className: ea, children: [eg, pulseSyncWasapiDeviceBubble, ef, ee] }),
                                               !X &&
                                                   (0, i.jsx)(j.FoH, {
                                                       blockIdForFrom: j.hf$.RUP_MAIN_RADIO,
@@ -5037,6 +5086,14 @@
                 }, [i.modal.isOpened]);
                 let r128Audio = 'function' == typeof n.iIU ? (0, n.iIU)() : null,
                     [r128Enabled, setR128Enabled] = (0, u.useState)(() => window.nativeSettings.get('modSettings.r128Normalization') ?? !0),
+                    isPulseSyncWindows = window.PLATFORM === 'win32',
+                    [wasapiQuickEnabled, setWasapiQuickEnabled] = (0, u.useState)(() =>
+                        Boolean(window.nativeSettings.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput')),
+                    ),
+                    [yaspTapQuickEnabled, setYaspTapQuickEnabled] = (0, u.useState)(() =>
+                        Boolean(window.nativeSettings.get('modSettings.nativeAudioOutput.enableYaspChunkTap')),
+                    ),
+                    [wasapiQuickSupported, setWasapiQuickSupported] = (0, u.useState)(!1),
                     onR128NormalizationToggle = (0, u.useCallback)(
                         (e) => {
                             var a, i, r, l, o;
@@ -5052,6 +5109,13 @@
                         },
                         [t.state, r128Audio],
                     ),
+                    onWasapiQuickToggle = (0, u.useCallback)((e) => {
+                        setWasapiQuickEnabled(e);
+                        Promise.resolve(window.nativeAudioOutput?.setWasapiExclusiveOutputEnabled?.(e)).catch((t) => {
+                            setWasapiQuickEnabled(!e);
+                            console.error('Failed to change WASAPI Exclusive setting:', t);
+                        });
+                    }, []),
                     N = !a.hasPlus,
                     j = (0, u.useMemo)(
                         () =>
@@ -5086,6 +5150,25 @@
                                 v,
                             );
                     }, [v, s, e, r.isEnabled, r.isAvailable]);
+                (0, u.useEffect)(() => {
+                    if (!i.modal.isOpened || !isPulseSyncWindows) return;
+                    setWasapiQuickEnabled(Boolean(window.nativeSettings.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput')));
+                    setYaspTapQuickEnabled(Boolean(window.nativeSettings.get('modSettings.nativeAudioOutput.enableYaspChunkTap')));
+                    let e = !1;
+                    Promise.resolve(window.nativeAudioOutput?.getWasapiExclusiveStatus?.())
+                        .then((t) => {
+                            if (e) return;
+                            setWasapiQuickSupported(Boolean(t?.available && t?.supported));
+                            setWasapiQuickEnabled(Boolean(t?.outputEnabled));
+                            setYaspTapQuickEnabled(Boolean(t?.yaspTapEnabled));
+                        })
+                        .catch(() => {
+                            e || setWasapiQuickSupported(!1);
+                        });
+                    return () => {
+                        e = !0;
+                    };
+                }, [i.modal.isOpened, isPulseSyncWindows]);
                 let X = (0, u.useMemo)(() => {
                     if (e || !r.isAvailable) return null;
                     return (0, o.jsxs)('div', {
@@ -5110,6 +5193,37 @@
                         ],
                     });
                 }, [e, r.isAvailable, r128Enabled, onR128NormalizationToggle]);
+                let pulseSyncWasapiQuickToggle = (0, u.useMemo)(() => {
+                    if (e || !isPulseSyncWindows) return null;
+                    let t = !wasapiQuickSupported || !yaspTapQuickEnabled;
+                    return (0, o.jsxs)('div', {
+                        className: tR().equalizer,
+                        title: !wasapiQuickSupported ? 'WASAPI Exclusive недоступен' : yaspTapQuickEnabled ? void 0 : 'Сначала включите YASP Tap в настройках аудио',
+                        style: {
+                            display: 'flex',
+                            'align-items': 'center',
+                            'justify-content': 'space-between',
+                            gap: '0.5rem',
+                            opacity: t ? 0.45 : 1,
+                        },
+                        children: [
+                            (0, o.jsx)(y.Caption, {
+                                className: tR().item_option,
+                                style: { width: 'unset' },
+                                variant: 'span',
+                                size: 'l',
+                                weight: 'medium',
+                                children: 'WASAPI Exclusive',
+                            }),
+                            (0, o.jsx)(tSwitch.l, {
+                                isChecked: wasapiQuickEnabled,
+                                onChange: onWasapiQuickToggle,
+                                disabled: t,
+                                'aria-label': 'WASAPI Exclusive',
+                            }),
+                        ],
+                    });
+                }, [e, isPulseSyncWindows, wasapiQuickEnabled, wasapiQuickSupported, yaspTapQuickEnabled, onWasapiQuickToggle]);
                 return (0, o.jsxs)(V.a, {
                     size: 'fitContent',
                     placement: e ? 'default' : 'right',
@@ -5143,6 +5257,7 @@
                         }),
                         j,
                         X,
+                        pulseSyncWasapiQuickToggle,
                         S,
                     ],
                 });

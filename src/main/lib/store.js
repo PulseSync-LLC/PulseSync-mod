@@ -208,8 +208,9 @@ const init = () => {
             playButtonType: 'yellow',
         },
         nativeAudioOutput: {
-            enableYaspChunkTap: false,
+            enableYaspChunkTap: true,
             enableWasapiExclusiveOutput: false,
+            forceWasapiExclusiveFullVolume: false,
             wasapiExclusiveDeviceId: null,
         },
         playlist: {
@@ -230,6 +231,7 @@ const init = () => {
             improvedWaveLayout: true,
             forceOldSettingsInWheel: true,
             swapVibeAnimationAndWheel: false,
+            showAudioQualityOnNewWave: true,
         },
         appAutoUpdates: {
             enableAppAutoUpdate: store.get(store_js_1.StoreKeys.AUTO_UPDATES) ?? true,

@@ -1,8 +1,11 @@
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
-exports.resetYaspSource =
+exports.refreshWasapiExclusiveDefaultDeviceMonitor =
+    exports.refreshWasapiExclusiveVolumePolicy =
+    exports.resetYaspSource =
     exports.stopWasapiExclusiveOutput =
+    exports.updateWasapiExclusiveAudioParkingState =
     exports.updateWasapiExclusivePlayerState =
     exports.getWasapiExclusiveOutputState =
     exports.onWasapiExclusiveOutputStateChanged =
@@ -24,28 +27,40 @@ const { getFfmpegUpdater } = require('./ffmpegInstaller.js');
 const logger = new Logger('NativeAudioOutput');
 const sources = new Map();
 const chunkStats = new Map();
+const yaspPreloadedStreams = new Map();
 const nativeAudioOutputEvents = new EventEmitter();
 const YASP_AUDIO_FORMAT_CHANGED_EVENT = 'yaspAudioFormatChanged';
 const WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED_EVENT = 'wasapiExclusiveOutputStateChanged';
 const WASAPI_EXCLUSIVE_OUTPUT_START_DELAY_MS = 250;
-const WASAPI_EXCLUSIVE_START_PREBUFFER_MS = 350;
-const WASAPI_EXCLUSIVE_NATIVE_QUEUE_TARGET_MS = 750;
-const WASAPI_EXCLUSIVE_NATIVE_QUEUE_MIN_MS = 250;
+const WASAPI_EXCLUSIVE_START_PREBUFFER_MS = 2500;
+const WASAPI_EXCLUSIVE_NATIVE_QUEUE_TARGET_MS = 2500;
+const WASAPI_EXCLUSIVE_NATIVE_QUEUE_MIN_MS = 1000;
 const WASAPI_EXCLUSIVE_PCM_PUMP_INTERVAL_MS = 20;
 const WASAPI_EXCLUSIVE_PCM_PUMP_WAIT_MS = 10;
-const WASAPI_EXCLUSIVE_PLAYER_HOLD_TIMEOUT_MS = 3000;
+const WASAPI_EXCLUSIVE_PLAYER_HOLD_TIMEOUT_MS = 8000;
 const YASP_WASAPI_DECODER_FIRST_PCM_TIMEOUT_MS = 5000;
 const WASAPI_EXCLUSIVE_PROGRESS_DRIFT_THRESHOLD_SECONDS = 2;
 const WASAPI_EXCLUSIVE_PROGRESS_SEEK_THRESHOLD_SECONDS = 1.5;
+const WASAPI_EXCLUSIVE_PLAYER_CLOCK_STALL_MAX_DELTA_SECONDS = 0.25;
+const WASAPI_EXCLUSIVE_PLAYER_CLOCK_STALL_MIN_INTERVAL_MS = 1000;
+const WASAPI_EXCLUSIVE_PCM_WINDOW_POSITION_TOLERANCE_SECONDS = 0.5;
 const WASAPI_EXCLUSIVE_FAILED_SIGNATURE_RETRY_MS = 15000;
+const WASAPI_EXCLUSIVE_DEVICE_AVAILABILITY_TTL_MS = 1000;
+const WASAPI_EXCLUSIVE_DEFAULT_DEVICE_POLL_MS = 1000;
 const WASAPI_EXCLUSIVE_TRANSIENT_PLAYER_STATUSES = new Set(['buffering', 'loading']);
 let lastYaspAudioFormat = null;
 let lastYaspAudioFormatSignature = '';
 const WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY = 'modSettings.nativeAudioOutput.wasapiExclusiveDeviceId';
 const WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY = 'modSettings.nativeAudioOutput.enableWasapiExclusiveOutput';
+const WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY = 'modSettings.nativeAudioOutput.forceWasapiExclusiveFullVolume';
+const YASP_CHUNK_TAP_ENABLED_SETTING_KEY = 'modSettings.nativeAudioOutput.enableYaspChunkTap';
 const WASAPI_EXCLUSIVE_MODULE_PATH = '../native_modules/wasapi_exclusive';
 const YASP_WASAPI_DECODER_BUFFER_LIMIT_BYTES = 16 * 1024 * 1024;
 const YASP_WASAPI_INIT_CHUNK_LIMIT_BYTES = 4 * 1024 * 1024;
+const YASP_WASAPI_PRELOAD_STREAM_LIMIT = 4;
+const YASP_WASAPI_PRELOAD_MAX_BYTES = 32 * 1024 * 1024;
+const YASP_WASAPI_PRELOAD_TTL_MS = 2 * 60 * 1000;
+const YASP_WASAPI_PRELOAD_DURATION_TOLERANCE_MS = 1500;
 const requireIfExists =
     (typeof globalThis !== 'undefined' && globalThis.requireIfExists) ||
     (typeof global !== 'undefined' && global.requireIfExists) ||
@@ -70,6 +85,11 @@ let lastFailedWasapiExclusiveOutputSignature = null;
 let lastFailedWasapiExclusiveOutputAt = 0;
 let lastWasapiExclusiveOutputSkipReason = null;
 let lastWasapiExclusivePlayerState = null;
+let wasapiExclusiveDeviceAvailabilityCache = null;
+let wasapiExclusiveDefaultDeviceMonitorTimer = null;
+let wasapiExclusiveDefaultDeviceMonitorInitialized = false;
+let lastWasapiExclusiveDefaultDeviceId = null;
+let lastWasapiExclusiveDefaultDeviceChangedAt = null;
 
 function emitWasapiExclusiveOutputStateChanged() {
     nativeAudioOutputEvents.emit(WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED_EVENT, getWasapiExclusiveOutputState());
@@ -87,15 +107,34 @@ const getPlayerStateProgressPosition = (playerState = {}) => {
     return toFiniteNumber(progress.position ?? progress.currentTime ?? playerState.position);
 };
 
-const getPlayerTrackId = (playerState = {}) => {
-    const track = playerState.track && typeof playerState.track === 'object' ? playerState.track : {};
+const clampUnitInterval = (value) => Math.min(Math.max(value, 0), 1);
+
+const exponentVolumeToLinearGain = (value) => {
+    const exponentVolume = toFiniteNumber(value);
+    if (!Number.isFinite(exponentVolume)) {
+        return null;
+    }
+
+    const linearGain = Math.pow(0.01, 1 - clampUnitInterval(exponentVolume));
+    return linearGain > 0.01 ? linearGain : 0;
+};
+
+const getTrackId = (track = {}) => {
     const rawId = track.idWithContext ?? track.id ?? track.realId ?? track.trackId ?? track.entityId;
     const [trackId] = String(rawId ?? '').split(':');
     return trackId || null;
 };
 
+const getTrackDurationMs = (track = {}) => toFiniteNumber(track.durationMs ?? track.duration);
+
+const getPlayerTrackId = (playerState = {}) => {
+    const track = playerState.track && typeof playerState.track === 'object' ? playerState.track : {};
+    return getTrackId(track);
+};
+
 const normalizeWasapiExclusivePlayerState = (playerState = {}, updatedAt = Date.now()) => {
     const status = typeof playerState.status === 'string' ? playerState.status : null;
+    const exponentVolume = toFiniteNumber(playerState.exponentVolume?.value ?? playerState.exponentVolume ?? playerState.volume?.value ?? playerState.volume);
     return {
         raw: playerState,
         status,
@@ -103,6 +142,8 @@ const normalizeWasapiExclusivePlayerState = (playerState = {}, updatedAt = Date.
         isPlaying: playerState.isPlaying === true || status === 'playing',
         position: getPlayerStateProgressPosition(playerState),
         trackId: getPlayerTrackId(playerState),
+        exponentVolume: Number.isFinite(exponentVolume) ? clampUnitInterval(exponentVolume) : null,
+        volumeGain: exponentVolumeToLinearGain(exponentVolume),
         updatedAt,
     };
 };
@@ -543,6 +584,9 @@ class YaspWasapiExclusiveOutputSession {
 
     async start() {
         try {
+            if (lastWasapiExclusivePlayerState?.isPlaying) {
+                this.requestPlayerHold();
+            }
             await wait(WASAPI_EXCLUSIVE_OUTPUT_START_DELAY_MS);
             if (this.state === 'closed' || wasapiExclusiveOutputSession !== this) {
                 return;
@@ -906,7 +950,7 @@ class YaspWasapiExclusiveOutputSession {
 
             const targetQueueBytes = this.getByteLengthForMs(WASAPI_EXCLUSIVE_NATIVE_QUEUE_TARGET_MS);
             const minimumQueueBytes = this.getByteLengthForMs(WASAPI_EXCLUSIVE_NATIVE_QUEUE_MIN_MS);
-            const maxWriteBytes = this.getByteLengthForMs(250);
+            const maxWriteBytes = this.getByteLengthForMs(500);
             let rendererState = this.renderer.getState?.() ?? null;
             this.lastPumpState = rendererState;
             this.logRendererUnderruns(rendererState);
@@ -972,6 +1016,14 @@ class YaspWasapiExclusiveOutputSession {
                 this.firstPcmTimer = null;
                 const startPosition = getEstimatedPlayerPosition(lastWasapiExclusivePlayerState, Date.now());
                 if (Number.isFinite(startPosition)) {
+                    if (startPosition + WASAPI_EXCLUSIVE_PCM_WINDOW_POSITION_TOLERANCE_SECONDS < this.pcmBasePosition) {
+                        this.fail(
+                            new Error(
+                                `Captured PCM window starts at ${this.pcmBasePosition.toFixed(3)}s, ahead of player position ${startPosition.toFixed(3)}s`,
+                            ),
+                        );
+                        return;
+                    }
                     this.playbackByteOffset = this.getByteOffsetForPosition(startPosition);
                     this.syncStartPosition = startPosition;
                     this.syncStartedAt = Date.now();
@@ -1090,31 +1142,50 @@ class YaspWasapiExclusiveOutputSession {
     }
 }
 
+const getFfmpegPathForNativeAudio = async () => {
+    const updater = getFfmpegUpdater();
+    if (await updater.fileExists(updater.installPath)) {
+        return updater.installPath;
+    }
+    return updater.ensureInstalled();
+};
+
 const createWasapiExclusiveOutputSession = (sessionOptions) => {
     const wasapiExclusive = getWasapiExclusiveModule();
     if (typeof wasapiExclusive?.createYaspStreamSession === 'function') {
-        try {
-            return wasapiExclusive.createYaspStreamSession({
-                ...sessionOptions,
-                getFfmpegPath: () => getFfmpegUpdater().ensureInstalled(),
-                onStateChange: () => emitWasapiExclusiveOutputStateChanged(),
-                onError: (error, session) => {
-                    lastWasapiExclusiveOutputError = String(error?.message ?? error);
-                    lastFailedWasapiExclusiveOutputSignature = session?.signature ?? sessionOptions.signature;
-                    lastFailedWasapiExclusiveOutputAt = Date.now();
-                    logger.error('YASP WASAPI exclusive native-module session failed:', lastWasapiExclusiveOutputError);
-                },
-                onLog: (level, message, payload) => {
-                    const logFn = typeof logger?.[level] === 'function' ? logger[level].bind(logger) : logger.info.bind(logger);
-                    logFn(message, payload);
-                },
-            });
-        } catch (error) {
-            logger.error('Failed to create native-module WASAPI stream session, falling back to main session:', error);
-        }
+        return wasapiExclusive.createYaspStreamSession({
+            ...sessionOptions,
+            getFfmpegPath: getFfmpegPathForNativeAudio,
+            onStateChange: (sessionState) => {
+                if (sessionState?.state === 'running') {
+                    lastWasapiExclusiveOutputError = null;
+                    lastWasapiExclusiveOutputSkipReason = null;
+                    if (lastFailedWasapiExclusiveOutputSignature === sessionOptions.signature) {
+                        lastFailedWasapiExclusiveOutputSignature = null;
+                        lastFailedWasapiExclusiveOutputAt = 0;
+                    }
+                }
+                emitWasapiExclusiveOutputStateChanged();
+            },
+            onError: (error, session) => {
+                lastWasapiExclusiveOutputError = String(error?.message ?? error);
+                lastFailedWasapiExclusiveOutputSignature = session?.signature ?? sessionOptions.signature;
+                lastFailedWasapiExclusiveOutputAt = Date.now();
+                logger.error('YASP WASAPI exclusive native-module session failed:', lastWasapiExclusiveOutputError);
+                if (wasapiExclusiveOutputSession === session) {
+                    session.close(`native session error: ${lastWasapiExclusiveOutputError}`);
+                    wasapiExclusiveOutputSession = null;
+                    emitWasapiExclusiveOutputStateChanged();
+                }
+            },
+            onLog: (level, message, payload) => {
+                const logFn = typeof logger?.[level] === 'function' ? logger[level].bind(logger) : logger.info.bind(logger);
+                logFn(message, payload);
+            },
+        });
     }
 
-    return new YaspWasapiExclusiveOutputSession(sessionOptions);
+    throw new Error('Native WASAPI stream session is unavailable');
 };
 
 const loadWasapiExclusiveModule = () => {
@@ -1167,7 +1238,183 @@ const getStoreModule = () => {
 };
 
 const getSelectedWasapiExclusiveDeviceId = () => getStoreModule()?.get?.(WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY) ?? null;
-const isWasapiExclusiveOutputEnabled = () => getStoreModule()?.get?.(WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY) === true;
+const isYaspChunkTapEnabled = () => getStoreModule()?.get?.(YASP_CHUNK_TAP_ENABLED_SETTING_KEY) === true;
+const isWasapiExclusiveOutputConfigured = () => getStoreModule()?.get?.(WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY) === true;
+const isWasapiExclusiveOutputEnabled = () => isWasapiExclusiveOutputConfigured() && isYaspChunkTapEnabled();
+const isWasapiExclusiveFullVolumeForced = () => getStoreModule()?.get?.(WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY) === true;
+const getWasapiExclusiveVolumeGain = (exponentVolume) =>
+    isWasapiExclusiveFullVolumeForced() ? 1 : (exponentVolumeToLinearGain(exponentVolume) ?? 1);
+
+const getWasapiExclusiveDeviceAvailability = (forceRefresh = false) => {
+    const requestedDeviceId = getSelectedWasapiExclusiveDeviceId();
+    const now = Date.now();
+    if (
+        !forceRefresh &&
+        wasapiExclusiveDeviceAvailabilityCache?.requestedDeviceId === requestedDeviceId &&
+        now - wasapiExclusiveDeviceAvailabilityCache.checkedAt <= WASAPI_EXCLUSIVE_DEVICE_AVAILABILITY_TTL_MS
+    ) {
+        return wasapiExclusiveDeviceAvailabilityCache;
+    }
+
+    const wasapiExclusive = getWasapiExclusiveModule();
+    if (!wasapiExclusive?.isSupported?.()) {
+        wasapiExclusiveDeviceAvailabilityCache = {
+            requestedDeviceId,
+            resolvedDeviceId: null,
+            available: false,
+            device: null,
+            reason: 'WASAPI exclusive module is unavailable',
+            validationError: null,
+            checkedAt: now,
+        };
+        return wasapiExclusiveDeviceAvailabilityCache;
+    }
+
+    try {
+        const devices = wasapiExclusive.listDevices({ includeDisabled: true, includeFormats: false });
+        const device = requestedDeviceId
+            ? (devices.find((item) => item.id === requestedDeviceId) ?? null)
+            : (devices.find((item) => item.isDefault && item.state === 'active') ??
+              devices.find((item) => item.isDefaultConsole && item.state === 'active') ??
+              null);
+        const available = device?.state === 'active';
+        const reason = available
+            ? null
+            : requestedDeviceId
+              ? device
+                  ? `Selected WASAPI device is not active: ${device.state}`
+                  : 'Selected WASAPI device is no longer present'
+              : 'No active default WASAPI render device is available';
+        wasapiExclusiveDeviceAvailabilityCache = {
+            requestedDeviceId,
+            resolvedDeviceId: device?.id ?? null,
+            available,
+            device,
+            reason,
+            validationError: null,
+            checkedAt: now,
+        };
+    } catch (error) {
+        wasapiExclusiveDeviceAvailabilityCache = {
+            requestedDeviceId,
+            resolvedDeviceId: requestedDeviceId,
+            available: null,
+            device: null,
+            reason: null,
+            validationError: String(error?.message ?? error),
+            checkedAt: now,
+        };
+    }
+
+    return wasapiExclusiveDeviceAvailabilityCache;
+};
+
+const stopWasapiExclusiveDefaultDeviceMonitor = () => {
+    if (wasapiExclusiveDefaultDeviceMonitorTimer) {
+        clearInterval(wasapiExclusiveDefaultDeviceMonitorTimer);
+        wasapiExclusiveDefaultDeviceMonitorTimer = null;
+    }
+};
+
+const shouldMonitorWasapiExclusiveDefaultDevice = () =>
+    process.platform === 'win32' &&
+    isWasapiExclusiveOutputEnabled() &&
+    !getSelectedWasapiExclusiveDeviceId();
+
+const pollWasapiExclusiveDefaultDevice = () => {
+    if (!shouldMonitorWasapiExclusiveDefaultDevice()) {
+        stopWasapiExclusiveDefaultDeviceMonitor();
+        return;
+    }
+
+    const availability = getWasapiExclusiveDeviceAvailability(true);
+    const nextDeviceId = availability.available === true ? availability.resolvedDeviceId : null;
+    if (!wasapiExclusiveDefaultDeviceMonitorInitialized) {
+        wasapiExclusiveDefaultDeviceMonitorInitialized = true;
+        lastWasapiExclusiveDefaultDeviceId = nextDeviceId;
+        return;
+    }
+    if (nextDeviceId === lastWasapiExclusiveDefaultDeviceId) {
+        return;
+    }
+
+    const previousDeviceId = lastWasapiExclusiveDefaultDeviceId;
+    lastWasapiExclusiveDefaultDeviceId = nextDeviceId;
+    lastWasapiExclusiveDefaultDeviceChangedAt = Date.now();
+    logger.info('System default WASAPI output device changed', {
+        previousDeviceId,
+        deviceId: nextDeviceId,
+        deviceName: availability.device?.name ?? null,
+    });
+
+    if (!nextDeviceId) {
+        if (wasapiExclusiveOutputSession) {
+            stopWasapiExclusiveOutput(availability.reason ?? 'default output device unavailable');
+        } else {
+            emitWasapiExclusiveOutputStateChanged();
+        }
+        return;
+    }
+
+    const session = wasapiExclusiveOutputSession;
+    if (!session) {
+        emitWasapiExclusiveOutputStateChanged();
+        return;
+    }
+    const switched = session?.switchOutputDevice?.(nextDeviceId, 'system default output device changed') === true;
+    if (!switched && wasapiExclusiveOutputSession === session) {
+        stopWasapiExclusiveOutput('failed to switch to new system default output device');
+    }
+};
+
+const ensureWasapiExclusiveDefaultDeviceMonitor = () => {
+    if (!shouldMonitorWasapiExclusiveDefaultDevice()) {
+        stopWasapiExclusiveDefaultDeviceMonitor();
+        return;
+    }
+    if (wasapiExclusiveDefaultDeviceMonitorTimer) {
+        return;
+    }
+
+    pollWasapiExclusiveDefaultDevice();
+    if (!shouldMonitorWasapiExclusiveDefaultDevice()) {
+        return;
+    }
+    wasapiExclusiveDefaultDeviceMonitorTimer = setInterval(pollWasapiExclusiveDefaultDevice, WASAPI_EXCLUSIVE_DEFAULT_DEVICE_POLL_MS);
+    wasapiExclusiveDefaultDeviceMonitorTimer.unref?.();
+};
+
+const refreshWasapiExclusiveDefaultDeviceMonitor = () => {
+    wasapiExclusiveDeviceAvailabilityCache = null;
+    wasapiExclusiveDefaultDeviceMonitorInitialized = false;
+    lastWasapiExclusiveDefaultDeviceId = null;
+    stopWasapiExclusiveDefaultDeviceMonitor();
+    ensureWasapiExclusiveDefaultDeviceMonitor();
+    return getWasapiExclusiveOutputState();
+};
+exports.refreshWasapiExclusiveDefaultDeviceMonitor = refreshWasapiExclusiveDefaultDeviceMonitor;
+
+const skipUnavailableWasapiExclusiveDevice = (availability) => {
+    if (availability?.available !== false) {
+        return false;
+    }
+
+    const reason = availability.reason ?? 'Selected WASAPI device is unavailable';
+    const didChange = lastWasapiExclusiveOutputSkipReason !== reason || lastWasapiExclusiveOutputError !== null;
+    lastWasapiExclusiveOutputSkipReason = reason;
+    lastWasapiExclusiveOutputError = null;
+    lastFailedWasapiExclusiveOutputSignature = null;
+    lastFailedWasapiExclusiveOutputAt = 0;
+    if (wasapiExclusiveOutputSession) {
+        stopWasapiExclusiveOutput(reason);
+    } else if (didChange) {
+        emitWasapiExclusiveOutputStateChanged();
+    }
+    if (didChange) {
+        logger.warn('YASP WASAPI exclusive output skipped because the selected device is unavailable', availability);
+    }
+    return true;
+};
 
 const normalizeWasapiOutputInteger = (value, allowedValues = null) => {
     const number = Number(value);
@@ -1208,8 +1455,12 @@ const getWasapiOutputRendererOptions = (format = {}) => {
         validBitsPerSample: bitsPerSample,
         containerBitsPerSample: bitsPerSample,
         float: false,
-        bufferMs: 100,
-        maxQueuedMs: 3000,
+        bufferMs: 40,
+        maxQueuedMs: 10000,
+        renderMode: 'timer',
+        timerPollMs: 5,
+        timerPeriodMs: 10,
+        timerBufferPeriods: 4,
     };
 
     const deviceId = getSelectedWasapiExclusiveDeviceId();
@@ -1220,24 +1471,242 @@ const getWasapiOutputRendererOptions = (format = {}) => {
     return options;
 };
 
+const getYaspStreamIdentity = (format = {}) =>
+    format.workerId && format.feederId != null && format.currentTrack
+        ? `${format.workerId}:${format.feederId}:${format.currentTrack}`
+        : (format.currentTrack ?? format.sourceHash ?? null);
+
+const getYaspTrackDurationMs = (format = {}) => {
+    const match = String(format.currentTrack ?? '').match(/_([0-9]+(?:\.[0-9]+)?)$/);
+    return match ? toFiniteNumber(match[1]) : null;
+};
+
+const getYaspPreloadTarget = (format, playerState = lastWasapiExclusivePlayerState) => {
+    const streamDurationMs = getYaspTrackDurationMs(format);
+    const currentTrack = playerState?.raw?.track && typeof playerState.raw.track === 'object' ? playerState.raw.track : {};
+    const nextTrack = playerState?.raw?.nextTrack && typeof playerState.raw.nextTrack === 'object' ? playerState.raw.nextTrack : {};
+    const nextTrackId = getTrackId(nextTrack);
+    const currentDurationMs = getTrackDurationMs(currentTrack);
+    const nextDurationMs = getTrackDurationMs(nextTrack);
+    if (!nextTrackId || !Number.isFinite(streamDurationMs) || !Number.isFinite(nextDurationMs)) {
+        return null;
+    }
+
+    const matchesNext = Math.abs(streamDurationMs - nextDurationMs) <= YASP_WASAPI_PRELOAD_DURATION_TOLERANCE_MS;
+    const matchesCurrent = Number.isFinite(currentDurationMs) && Math.abs(streamDurationMs - currentDurationMs) <= YASP_WASAPI_PRELOAD_DURATION_TOLERANCE_MS;
+    return matchesNext && !matchesCurrent
+        ? {
+              trackId: nextTrackId,
+              durationMs: nextDurationMs,
+          }
+        : null;
+};
+
+const pruneYaspPreloadedStreams = (now = Date.now()) => {
+    for (const [identity, entry] of yaspPreloadedStreams) {
+        if (now - entry.updatedAt > YASP_WASAPI_PRELOAD_TTL_MS) {
+            yaspPreloadedStreams.delete(identity);
+        }
+    }
+
+    while (yaspPreloadedStreams.size > YASP_WASAPI_PRELOAD_STREAM_LIMIT) {
+        const oldest = Array.from(yaspPreloadedStreams.entries()).sort((left, right) => left[1].updatedAt - right[1].updatedAt)[0];
+        if (!oldest) {
+            break;
+        }
+        yaspPreloadedStreams.delete(oldest[0]);
+    }
+};
+
+const cacheYaspPreloadedChunk = (format, chunkBuffer, options = {}) => {
+    const identity = getYaspStreamIdentity(format);
+    if (!identity || !Buffer.isBuffer(chunkBuffer) || !chunkBuffer.byteLength) {
+        return null;
+    }
+
+    const now = Date.now();
+    const preloadTarget = getYaspPreloadTarget(format);
+    pruneYaspPreloadedStreams(now);
+    let entry = yaspPreloadedStreams.get(identity);
+    if (!entry) {
+        entry = {
+            identity,
+            format: { ...format },
+            chunks: [],
+            chunkKeys: new Set(),
+            bytes: 0,
+            basePosition: null,
+            hasInitSegment: false,
+            hasMediaSegment: false,
+            capturedPlayerTrackId: lastWasapiExclusivePlayerState?.trackId ?? null,
+            targetPlayerTrackId: preloadTarget?.trackId ?? null,
+            durationMs: getYaspTrackDurationMs(format),
+            createdAt: now,
+            updatedAt: now,
+            truncated: false,
+        };
+        yaspPreloadedStreams.set(identity, entry);
+    } else {
+        entry.format = { ...entry.format, ...format };
+        entry.targetPlayerTrackId ??= preloadTarget?.trackId ?? null;
+        entry.updatedAt = now;
+    }
+
+    const chunkMeta = options.chunkMeta && typeof options.chunkMeta === 'object' ? options.chunkMeta : {};
+    const mp4ChunkInfo = options.mp4ChunkInfo && typeof options.mp4ChunkInfo === 'object' ? options.mp4ChunkInfo : {};
+    const appendSequence = toFiniteNumber(chunkMeta.appendSequence);
+    const timelineStartMs = toFiniteNumber(chunkMeta.timelineStartMs);
+    const timelineStartSeconds = toFiniteNumber(
+        options.streamPosition ?? chunkMeta.timelineStartSeconds ?? (Number.isFinite(timelineStartMs) ? timelineStartMs / 1000 : null),
+    );
+    const chunkKey = Number.isFinite(appendSequence)
+        ? `sequence:${appendSequence}`
+        : `segment:${chunkMeta.segmentNumber ?? 'unknown'}:${mp4ChunkInfo.hasInitSegment === true}:${mp4ChunkInfo.hasMediaSegment === true}:${
+              timelineStartSeconds ?? 'unknown'
+          }:${chunkBuffer.byteLength}`;
+    if (entry.chunkKeys.has(chunkKey)) {
+        return entry;
+    }
+
+    const cachedInitChunk = Buffer.isBuffer(options.initChunk) ? options.initChunk : null;
+    if (!entry.hasInitSegment && cachedInitChunk?.byteLength && mp4ChunkInfo.hasInitSegment !== true) {
+        if (entry.bytes + cachedInitChunk.byteLength > YASP_WASAPI_PRELOAD_MAX_BYTES) {
+            entry.truncated = true;
+            return entry;
+        }
+
+        entry.chunkKeys.add('cached-init');
+        entry.chunks.push({
+            buffer: Buffer.from(cachedInitChunk),
+            appendSequence: Number.isFinite(appendSequence) ? appendSequence - 0.5 : null,
+            timelineStartSeconds: null,
+            hasInitSegment: true,
+            hasMediaSegment: false,
+        });
+        entry.bytes += cachedInitChunk.byteLength;
+        entry.hasInitSegment = true;
+    }
+
+    if (entry.bytes + chunkBuffer.byteLength > YASP_WASAPI_PRELOAD_MAX_BYTES) {
+        entry.truncated = true;
+        return entry;
+    }
+
+    entry.chunkKeys.add(chunkKey);
+    entry.chunks.push({
+        buffer: Buffer.from(chunkBuffer),
+        appendSequence,
+        timelineStartSeconds,
+        hasInitSegment: mp4ChunkInfo.hasInitSegment === true,
+        hasMediaSegment: mp4ChunkInfo.hasMediaSegment === true,
+    });
+    entry.bytes += chunkBuffer.byteLength;
+    entry.hasInitSegment ||= mp4ChunkInfo.hasInitSegment === true;
+    entry.hasMediaSegment ||= mp4ChunkInfo.hasMediaSegment === true;
+    if (mp4ChunkInfo.hasMediaSegment === true && Number.isFinite(timelineStartSeconds)) {
+        entry.basePosition = Number.isFinite(entry.basePosition) ? Math.min(entry.basePosition, timelineStartSeconds) : timelineStartSeconds;
+    }
+    pruneYaspPreloadedStreams(now);
+    return entry;
+};
+
+const getYaspPreloadedStream = (identity) => {
+    pruneYaspPreloadedStreams();
+    return identity ? (yaspPreloadedStreams.get(identity) ?? null) : null;
+};
+
+const consumeYaspPreloadedStream = (identity) => {
+    const entry = getYaspPreloadedStream(identity);
+    if (entry) {
+        yaspPreloadedStreams.delete(identity);
+    }
+    return entry;
+};
+
+const selectYaspPreloadedStreamForPlayerTrack = (previousPlayerState, nextPlayerState) => {
+    pruneYaspPreloadedStreams();
+    let candidates = Array.from(yaspPreloadedStreams.values()).filter(
+        (entry) => entry.hasMediaSegment && (!previousPlayerState?.trackId || entry.capturedPlayerTrackId === previousPlayerState.trackId),
+    );
+    if (!candidates.length) {
+        return null;
+    }
+
+    const directTrackMatches = nextPlayerState?.trackId ? candidates.filter((entry) => entry.targetPlayerTrackId === nextPlayerState.trackId) : [];
+    if (directTrackMatches.length) {
+        return directTrackMatches.sort((left, right) => right.updatedAt - left.updatedAt)[0];
+    }
+
+    candidates = candidates.filter((entry) => !entry.targetPlayerTrackId);
+    if (!candidates.length) {
+        return null;
+    }
+
+    const playerDurationMs = toFiniteNumber(nextPlayerState?.raw?.track?.durationMs ?? nextPlayerState?.raw?.track?.duration);
+    if (Number.isFinite(playerDurationMs)) {
+        candidates = candidates
+            .map((entry) => ({ entry, durationDelta: Number.isFinite(entry.durationMs) ? Math.abs(entry.durationMs - playerDurationMs) : Number.POSITIVE_INFINITY }))
+            .filter(({ durationDelta }) => durationDelta <= YASP_WASAPI_PRELOAD_DURATION_TOLERANCE_MS)
+            .sort((left, right) => left.durationDelta - right.durationDelta || right.entry.updatedAt - left.entry.updatedAt)
+            .map(({ entry }) => entry);
+        if (!candidates.length) {
+            return null;
+        }
+    } else if (candidates.length !== 1) {
+        return null;
+    }
+
+    return candidates.sort((left, right) => right.updatedAt - left.updatedAt)[0] ?? null;
+};
+
+const getYaspPreloadedStreamStates = () => {
+    pruneYaspPreloadedStreams();
+    return Array.from(yaspPreloadedStreams.values()).map((entry) => ({
+        identity: entry.identity,
+        currentTrack: entry.format.currentTrack ?? null,
+        capturedPlayerTrackId: entry.capturedPlayerTrackId,
+        targetPlayerTrackId: entry.targetPlayerTrackId,
+        durationMs: entry.durationMs,
+        chunks: entry.chunks.length,
+        bytes: entry.bytes,
+        basePosition: entry.basePosition,
+        hasInitSegment: entry.hasInitSegment,
+        hasMediaSegment: entry.hasMediaSegment,
+        truncated: entry.truncated,
+        updatedAt: entry.updatedAt,
+    }));
+};
+
 const getWasapiOutputSignature = (format, rendererOptions) =>
     JSON.stringify({
-        sourceHash: format?.sourceHash ?? null,
+        streamIdentity: getYaspStreamIdentity(format),
         codec: format?.codec ?? null,
         sampleRate: rendererOptions.sampleRate,
         channels: rendererOptions.channels,
         bitsPerSample: rendererOptions.bitsPerSample,
         containerBitsPerSample: rendererOptions.containerBitsPerSample ?? rendererOptions.bitsPerSample,
+        renderMode: rendererOptions.renderMode ?? 'event',
+        timerPeriodMs: rendererOptions.timerPeriodMs ?? null,
+        timerBufferPeriods: rendererOptions.timerBufferPeriods ?? null,
         deviceId: rendererOptions.deviceId ?? null,
     });
 
 const getWasapiExclusiveStatus = () => {
     const wasapiExclusive = getWasapiExclusiveModule();
+    const deviceAvailability = getWasapiExclusiveDeviceAvailability(true);
+    ensureWasapiExclusiveDefaultDeviceMonitor();
     return {
         available: Boolean(wasapiExclusive),
         supported: Boolean(wasapiExclusive?.isSupported?.()),
         selectedDeviceId: getSelectedWasapiExclusiveDeviceId(),
-        outputEnabled: isWasapiExclusiveOutputEnabled(),
+        resolvedDeviceId: deviceAvailability.resolvedDeviceId,
+        selectedDeviceAvailable: deviceAvailability.available,
+        selectedDevice: deviceAvailability.device,
+        selectedDeviceUnavailableReason: deviceAvailability.reason,
+        deviceValidationError: deviceAvailability.validationError,
+        outputEnabled: isWasapiExclusiveOutputConfigured(),
+        effectiveOutputEnabled: isWasapiExclusiveOutputEnabled(),
+        yaspTapEnabled: isYaspChunkTapEnabled(),
         outputState: getWasapiExclusiveOutputState(),
         loadPath: wasapiExclusiveLoadPath,
         loadError: wasapiExclusiveLoadError ? String(wasapiExclusiveLoadError?.message ?? wasapiExclusiveLoadError) : null,
@@ -1306,8 +1775,8 @@ const getYaspAudioFormatSignature = (format) => {
         source: format.source ?? null,
         lossless: format.lossless ?? null,
         currentTrack: format.currentTrack ?? null,
-        sourceHash: format.sourceHash ?? null,
         workerId: format.workerId ?? null,
+        feederId: format.feederId ?? null,
     });
 };
 
@@ -1335,9 +1804,9 @@ const onWasapiExclusiveOutputStateChanged = (listener) => {
 exports.onWasapiExclusiveOutputStateChanged = onWasapiExclusiveOutputStateChanged;
 
 const getChunkStatKey = (payload) => {
-    const sourceKey = getPayloadSourceKey(payload) || 'unknown-source';
+    const workerId = payload?.workerId || payload?.meta?.workerId || 'unknown-worker';
     const feederId = payload?.meta?.feederId || 'unknown-feeder';
-    return `${sourceKey}:${feederId}`;
+    return `${workerId}:${feederId}`;
 };
 
 const toChunkBuffer = (chunk) => {
@@ -1410,7 +1879,10 @@ const normalizeYaspAudioFormat = (meta = {}) => {
     return hasAudioFormatData(audioFormat) ? audioFormat : null;
 };
 
-const getYaspChunkPlaybackPosition = (payload = {}) => normalizeNumber(payload?.meta?.playbackTime ?? payload?.meta?.time ?? payload?.meta?.nextTimeToSet);
+const getYaspChunkTimelinePosition = (payload = {}) => {
+    const timelineStartMs = normalizeNumber(payload?.meta?.timelineStartMs ?? payload?.meta?.time);
+    return Number.isFinite(timelineStartMs) ? timelineStartMs / 1000 : null;
+};
 
 const readMp4BoxHeader = (buffer, offset, end) => {
     if (!Buffer.isBuffer(buffer) || offset + 8 > end) {
@@ -1835,47 +2307,198 @@ const stopWasapiExclusiveOutput = (reason = 'stopped') => {
     }
 
     if (!wasapiExclusiveOutputSession) {
+        if (!shouldMonitorWasapiExclusiveDefaultDevice()) {
+            stopWasapiExclusiveDefaultDeviceMonitor();
+        }
         return;
     }
 
     wasapiExclusiveOutputSession.close(reason);
     wasapiExclusiveOutputSession = null;
+    if (!shouldMonitorWasapiExclusiveDefaultDevice()) {
+        stopWasapiExclusiveDefaultDeviceMonitor();
+    }
     emitWasapiExclusiveOutputStateChanged();
 };
 exports.stopWasapiExclusiveOutput = stopWasapiExclusiveOutput;
 
-const getWasapiExclusiveOutputState = () => ({
-    enabled: isWasapiExclusiveOutputEnabled(),
-    active: wasapiExclusiveOutputSession?.state === 'running',
-    captureActive: wasapiExclusiveOutputSession?.state === 'starting' || wasapiExclusiveOutputSession?.state === 'running',
-    lastError: lastWasapiExclusiveOutputError,
-    lastFailedSignature: lastFailedWasapiExclusiveOutputSignature,
-    lastFailedAt: lastFailedWasapiExclusiveOutputAt || null,
-    lastSkipReason: lastWasapiExclusiveOutputSkipReason,
-    playerState: lastWasapiExclusivePlayerState
-        ? {
-              status: lastWasapiExclusivePlayerState.status,
-              isPlaying: lastWasapiExclusivePlayerState.isPlaying,
-              position: lastWasapiExclusivePlayerState.position,
-              trackId: lastWasapiExclusivePlayerState.trackId,
-              updatedAt: lastWasapiExclusivePlayerState.updatedAt,
-          }
-        : null,
-    session: wasapiExclusiveOutputSession?.getState?.() ?? null,
-});
+const getWasapiExclusiveOutputState = () => {
+    const sessionState = wasapiExclusiveOutputSession?.getState?.() ?? null;
+    return {
+        enabled: isWasapiExclusiveOutputEnabled(),
+        configured: isWasapiExclusiveOutputConfigured(),
+        yaspTapEnabled: isYaspChunkTapEnabled(),
+        forceFullVolume: isWasapiExclusiveFullVolumeForced(),
+        active: wasapiExclusiveOutputSession?.state === 'running',
+        captureActive:
+            wasapiExclusiveOutputSession?.state === 'running' ||
+            (wasapiExclusiveOutputSession?.state === 'starting' && sessionState?.exclusiveEndpointRequested === true),
+        lastError: lastWasapiExclusiveOutputError,
+        lastFailedSignature: lastFailedWasapiExclusiveOutputSignature,
+        lastFailedAt: lastFailedWasapiExclusiveOutputAt || null,
+        lastSkipReason: lastWasapiExclusiveOutputSkipReason,
+        selectedDeviceId: getSelectedWasapiExclusiveDeviceId(),
+        resolvedDeviceId: wasapiExclusiveDeviceAvailabilityCache?.resolvedDeviceId ?? null,
+        defaultDeviceChangedAt: lastWasapiExclusiveDefaultDeviceChangedAt,
+        preloadedStreams: getYaspPreloadedStreamStates(),
+        playerState: lastWasapiExclusivePlayerState
+            ? {
+                  status: lastWasapiExclusivePlayerState.status,
+                  isPlaying: lastWasapiExclusivePlayerState.isPlaying,
+                  position: lastWasapiExclusivePlayerState.position,
+                  trackId: lastWasapiExclusivePlayerState.trackId,
+                  exponentVolume: lastWasapiExclusivePlayerState.exponentVolume,
+                  volumeGain: lastWasapiExclusivePlayerState.volumeGain,
+                  updatedAt: lastWasapiExclusivePlayerState.updatedAt,
+              }
+            : null,
+        session: sessionState,
+    };
+};
 exports.getWasapiExclusiveOutputState = getWasapiExclusiveOutputState;
+
+const updateWasapiExclusiveAudioParkingState = (payload = {}) => {
+    if (!wasapiExclusiveOutputSession || typeof wasapiExclusiveOutputSession.setAudioParkingState !== 'function') {
+        return getWasapiExclusiveOutputState();
+    }
+
+    const signature = typeof payload.signature === 'string' ? payload.signature : null;
+    if (signature && signature !== wasapiExclusiveOutputSession.signature) {
+        return getWasapiExclusiveOutputState();
+    }
+
+    wasapiExclusiveOutputSession.setAudioParkingState({
+        ready: payload.ready === true,
+        error: payload.error ? String(payload.error) : null,
+        contextCount: normalizeNumber(payload.contextCount),
+        updatedAt: normalizeNumber(payload.updatedAt) ?? Date.now(),
+    });
+    return getWasapiExclusiveOutputState();
+};
+exports.updateWasapiExclusiveAudioParkingState = updateWasapiExclusiveAudioParkingState;
+
+const getWasapiSessionFormat = (format = {}) => ({
+    mimeType: format.mimeType ?? null,
+    codec: format.codec ?? null,
+    bitrate: format.bitrate ?? null,
+    channels: format.channels ?? null,
+    sampleRate: format.sampleRate ?? null,
+    bitsPerSample: format.bitsPerSample ?? null,
+    container: format.container ?? null,
+    source: format.source ?? null,
+    lossless: format.lossless ?? null,
+    currentTrack: format.currentTrack ?? null,
+    sourceHash: format.sourceHash ?? null,
+    workerId: format.workerId ?? null,
+    feederId: format.feederId ?? null,
+});
+
+const activateYaspPreloadedStream = (previousPlayerState, nextPlayerState) => {
+    if (!isWasapiExclusiveOutputEnabled() || wasapiExclusiveOutputSession) {
+        return false;
+    }
+
+    if (skipUnavailableWasapiExclusiveDevice(getWasapiExclusiveDeviceAvailability())) {
+        return false;
+    }
+
+    const entry = selectYaspPreloadedStreamForPlayerTrack(previousPlayerState, nextPlayerState);
+    if (!entry?.chunks?.length) {
+        return false;
+    }
+
+    const rendererOptions = getWasapiOutputRendererOptions(entry.format);
+    if (!rendererOptions) {
+        return false;
+    }
+
+    const signature = getWasapiOutputSignature(entry.format, rendererOptions);
+    if (
+        lastFailedWasapiExclusiveOutputSignature === signature &&
+        lastFailedWasapiExclusiveOutputAt &&
+        Date.now() - lastFailedWasapiExclusiveOutputAt <= WASAPI_EXCLUSIVE_FAILED_SIGNATURE_RETRY_MS
+    ) {
+        return false;
+    }
+
+    const initialChunks = entry.chunks
+        .slice()
+        .sort((left, right) => {
+            if (Number.isFinite(left.appendSequence) && Number.isFinite(right.appendSequence)) {
+                return left.appendSequence - right.appendSequence;
+            }
+            return 0;
+        })
+        .map((chunk) => chunk.buffer);
+    const pcmBasePosition = Number.isFinite(entry.basePosition) ? entry.basePosition : 0;
+
+    try {
+        wasapiExclusiveOutputSession = createWasapiExclusiveOutputSession({
+            signature,
+            format: getWasapiSessionFormat(entry.format),
+            rendererOptions,
+            initialChunks,
+            pcmBasePosition,
+            startPosition: pcmBasePosition,
+            playerState: nextPlayerState,
+            requireAudioParking: true,
+        });
+    } catch (error) {
+        lastWasapiExclusiveOutputError = String(error?.message ?? error);
+        lastFailedWasapiExclusiveOutputSignature = signature;
+        lastFailedWasapiExclusiveOutputAt = Date.now();
+        lastWasapiExclusiveOutputSkipReason = 'preloaded native stream session unavailable';
+        logger.error('Failed to activate preloaded YASP WASAPI stream:', error);
+        emitWasapiExclusiveOutputStateChanged();
+        return false;
+    }
+
+    consumeYaspPreloadedStream(entry.identity);
+    lastWasapiExclusiveOutputError = null;
+    setLastYaspAudioFormat({
+        ...entry.format,
+        updatedAt: Date.now(),
+    });
+    lastWasapiExclusiveOutputSkipReason = null;
+    logger.info('YASP WASAPI preloaded stream activated', {
+        identity: entry.identity,
+        currentTrack: entry.format.currentTrack,
+        playerTrackId: nextPlayerState?.trackId ?? null,
+        playerDurationMs: toFiniteNumber(nextPlayerState?.raw?.track?.durationMs),
+        streamDurationMs: entry.durationMs,
+        initialChunks: initialChunks.length,
+        initialBytes: entry.bytes,
+        pcmBasePosition,
+    });
+    emitWasapiExclusiveOutputStateChanged();
+    ensureWasapiExclusiveDefaultDeviceMonitor();
+    void wasapiExclusiveOutputSession.start();
+    return true;
+};
 
 const updateWasapiExclusivePlayerState = (playerState = {}) => {
     const now = Date.now();
     const previousState = lastWasapiExclusivePlayerState;
     const nextState = normalizeWasapiExclusivePlayerState(playerState, now);
-    let stopReason = null;
+    if (!Number.isFinite(nextState.exponentVolume) && previousState) {
+        nextState.exponentVolume = previousState.exponentVolume;
+    }
+    nextState.volumeGain = getWasapiExclusiveVolumeGain(nextState.exponentVolume);
+    const playerTrackChanged = Boolean(previousState?.trackId && nextState.trackId && previousState.trackId !== nextState.trackId);
+    let stopReason = playerTrackChanged ? 'player track changed' : null;
 
-    if (previousState && Number.isFinite(previousState.position) && Number.isFinite(nextState.position)) {
+    if (!playerTrackChanged && previousState && Number.isFinite(previousState.position) && Number.isFinite(nextState.position)) {
         const expectedPosition = getEstimatedPlayerPosition(previousState, now);
         if (Number.isFinite(expectedPosition)) {
             const jumpSeconds = nextState.position - expectedPosition;
-            if (Math.abs(jumpSeconds) > WASAPI_EXCLUSIVE_PROGRESS_SEEK_THRESHOLD_SECONDS) {
+            const rawPositionDelta = nextState.position - previousState.position;
+            const updateIntervalMs = now - previousState.updatedAt;
+            const playerClockStalled =
+                previousState.isPlaying &&
+                nextState.isPlaying &&
+                updateIntervalMs >= WASAPI_EXCLUSIVE_PLAYER_CLOCK_STALL_MIN_INTERVAL_MS &&
+                Math.abs(rawPositionDelta) <= WASAPI_EXCLUSIVE_PLAYER_CLOCK_STALL_MAX_DELTA_SECONDS;
+            if (!playerClockStalled && Math.abs(jumpSeconds) > WASAPI_EXCLUSIVE_PROGRESS_SEEK_THRESHOLD_SECONDS) {
                 if (wasapiExclusiveOutputSession) {
                     lastWasapiExclusiveOutputSkipReason = `player progress seek ${jumpSeconds.toFixed(3)}s`;
                     if (!wasapiExclusiveOutputSession.seekToPosition(nextState.position, now, lastWasapiExclusiveOutputSkipReason)) {
@@ -1887,10 +2510,6 @@ const updateWasapiExclusivePlayerState = (playerState = {}) => {
             }
         }
     }
-    if (!stopReason && previousState?.trackId && nextState.trackId && previousState.trackId !== nextState.trackId) {
-        stopReason = 'player track changed';
-    }
-
     lastWasapiExclusivePlayerState = nextState;
     if (wasapiExclusiveOutputSession?.playerHoldActive && nextState.isPlaying) {
         wasapiExclusiveOutputSession.releasePlayerHold('player resumed', now);
@@ -1903,13 +2522,26 @@ const updateWasapiExclusivePlayerState = (playerState = {}) => {
     if (stopReason) {
         lastWasapiExclusiveOutputSkipReason = stopReason;
         stopWasapiExclusiveOutput(stopReason);
+        if (playerTrackChanged) {
+            activateYaspPreloadedStream(previousState, nextState);
+        }
     } else if (wasapiExclusiveOutputSession && (nextState.isPlaying || wasapiExclusiveOutputSession.isPlayerHoldPausedState(nextState, now))) {
-        wasapiExclusiveOutputSession.schedulePcmPump(0);
+        wasapiExclusiveOutputSession.scheduleRendererService?.(0);
     }
 
     return getWasapiExclusiveOutputState();
 };
 exports.updateWasapiExclusivePlayerState = updateWasapiExclusivePlayerState;
+
+const refreshWasapiExclusiveVolumePolicy = () => {
+    if (lastWasapiExclusivePlayerState) {
+        lastWasapiExclusivePlayerState.volumeGain = getWasapiExclusiveVolumeGain(lastWasapiExclusivePlayerState.exponentVolume);
+        wasapiExclusiveOutputSession?.updatePlayerState?.(lastWasapiExclusivePlayerState);
+    }
+    emitWasapiExclusiveOutputStateChanged();
+    return getWasapiExclusiveOutputState();
+};
+exports.refreshWasapiExclusiveVolumePolicy = refreshWasapiExclusiveVolumePolicy;
 
 const feedWasapiExclusiveOutput = (format, chunkBuffer, options = {}) => {
     if (!isWasapiExclusiveOutputEnabled()) {
@@ -1920,6 +2552,23 @@ const feedWasapiExclusiveOutput = (format, chunkBuffer, options = {}) => {
 
     if (!format || !Buffer.isBuffer(chunkBuffer)) {
         lastWasapiExclusiveOutputSkipReason = !format ? 'missing format' : 'invalid chunk';
+        return;
+    }
+
+    const mp4ChunkInfo = options.mp4ChunkInfo && typeof options.mp4ChunkInfo === 'object' ? options.mp4ChunkInfo : {};
+    const initChunk = Buffer.isBuffer(options.initChunk) ? options.initChunk : null;
+    const streamPosition = Number.isFinite(options.streamPosition) ? options.streamPosition : null;
+    const isMp4Format = isMp4OutputFormat(format, mp4ChunkInfo);
+    const incomingStreamIdentity = getYaspStreamIdentity(format);
+    const activeStreamIdentity = getYaspStreamIdentity(wasapiExclusiveOutputSession?.format);
+    const preloadTarget = getYaspPreloadTarget(format);
+    const isFutureTrackPreload = Boolean(preloadTarget?.trackId && preloadTarget.trackId !== lastWasapiExclusivePlayerState?.trackId);
+    if (
+        incomingStreamIdentity &&
+        ((wasapiExclusiveOutputSession?.state !== 'closed' && activeStreamIdentity && incomingStreamIdentity !== activeStreamIdentity) ||
+            (isFutureTrackPreload && incomingStreamIdentity !== activeStreamIdentity))
+    ) {
+        cacheYaspPreloadedChunk(format, chunkBuffer, { ...options, streamPosition });
         return;
     }
 
@@ -1945,6 +2594,10 @@ const feedWasapiExclusiveOutput = (format, chunkBuffer, options = {}) => {
     }
 
     const signature = getWasapiOutputSignature(format, rendererOptions);
+    const hasReusableSession = wasapiExclusiveOutputSession && wasapiExclusiveOutputSession.signature === signature && wasapiExclusiveOutputSession.state !== 'closed';
+    if (!hasReusableSession && skipUnavailableWasapiExclusiveDevice(getWasapiExclusiveDeviceAvailability())) {
+        return;
+    }
     if (lastFailedWasapiExclusiveOutputSignature === signature) {
         if (!lastFailedWasapiExclusiveOutputAt || Date.now() - lastFailedWasapiExclusiveOutputAt > WASAPI_EXCLUSIVE_FAILED_SIGNATURE_RETRY_MS) {
             lastFailedWasapiExclusiveOutputSignature = null;
@@ -1955,18 +2608,15 @@ const feedWasapiExclusiveOutput = (format, chunkBuffer, options = {}) => {
         }
     }
 
-    const mp4ChunkInfo = options.mp4ChunkInfo && typeof options.mp4ChunkInfo === 'object' ? options.mp4ChunkInfo : {};
-    const initChunk = Buffer.isBuffer(options.initChunk) ? options.initChunk : null;
-    const streamPosition = Number.isFinite(options.streamPosition) ? options.streamPosition : null;
-    const isMp4Format = isMp4OutputFormat(format, mp4ChunkInfo);
-    const hasReusableSession = wasapiExclusiveOutputSession && wasapiExclusiveOutputSession.signature === signature && wasapiExclusiveOutputSession.state !== 'closed';
+    const preloadedEntry = !hasReusableSession ? getYaspPreloadedStream(incomingStreamIdentity) : null;
 
     if (!hasReusableSession && isMp4Format && mp4ChunkInfo.hasInitSegment && !mp4ChunkInfo.hasMediaSegment) {
+        cacheYaspPreloadedChunk(format, chunkBuffer, { ...options, streamPosition });
         lastWasapiExclusiveOutputSkipReason = 'waiting for mp4 media chunk';
         return;
     }
 
-    if (!hasReusableSession && isMp4Format && mp4ChunkInfo.hasMediaSegment && !mp4ChunkInfo.hasInitSegment && !initChunk) {
+    if (!hasReusableSession && isMp4Format && mp4ChunkInfo.hasMediaSegment && !mp4ChunkInfo.hasInitSegment && !initChunk && !preloadedEntry?.hasInitSegment) {
         lastWasapiExclusiveOutputSkipReason = 'missing mp4 init chunk';
         return;
     }
@@ -1986,32 +2636,65 @@ const feedWasapiExclusiveOutput = (format, chunkBuffer, options = {}) => {
 
     if (!hasReusableSession) {
         stopWasapiExclusiveOutput('format changed');
-        wasapiExclusiveOutputSession = createWasapiExclusiveOutputSession({
-            signature,
-            format: {
-                mimeType: format.mimeType ?? null,
-                codec: format.codec ?? null,
-                bitrate: format.bitrate ?? null,
-                channels: format.channels ?? null,
-                sampleRate: format.sampleRate ?? null,
-                bitsPerSample: format.bitsPerSample ?? null,
-                container: format.container ?? null,
-                source: format.source ?? null,
-                lossless: format.lossless ?? null,
-                currentTrack: format.currentTrack ?? null,
-                sourceHash: format.sourceHash ?? null,
-            },
-            rendererOptions,
-            initialChunks: isMp4Format && !mp4ChunkInfo.hasInitSegment && initChunk ? [initChunk] : [],
-            startPosition: streamPosition,
-        });
+        const initialChunks = preloadedEntry
+            ? preloadedEntry.chunks
+                  .slice()
+                  .sort((left, right) => {
+                      if (Number.isFinite(left.appendSequence) && Number.isFinite(right.appendSequence)) {
+                          return left.appendSequence - right.appendSequence;
+                      }
+                      return 0;
+                  })
+                  .map((chunk) => chunk.buffer)
+            : [];
+        if (isMp4Format && !mp4ChunkInfo.hasInitSegment && initChunk && !preloadedEntry?.hasInitSegment) {
+            initialChunks.unshift(initChunk);
+        }
+        const pcmBasePosition = Number.isFinite(preloadedEntry?.basePosition) ? preloadedEntry.basePosition : streamPosition;
+        try {
+            wasapiExclusiveOutputSession = createWasapiExclusiveOutputSession({
+                signature,
+                format: getWasapiSessionFormat(format),
+                rendererOptions,
+                initialChunks,
+                pcmBasePosition,
+                startPosition: pcmBasePosition,
+                playerState: lastWasapiExclusivePlayerState,
+                requireAudioParking: true,
+            });
+        } catch (error) {
+            lastWasapiExclusiveOutputError = String(error?.message ?? error);
+            lastFailedWasapiExclusiveOutputSignature = signature;
+            lastFailedWasapiExclusiveOutputAt = Date.now();
+            lastWasapiExclusiveOutputSkipReason = 'native stream session unavailable';
+            logger.error('Failed to create native-module WASAPI stream session; keeping regular YASP output:', error);
+            emitWasapiExclusiveOutputStateChanged();
+            return;
+        }
+        if (preloadedEntry) {
+            consumeYaspPreloadedStream(incomingStreamIdentity);
+            logger.info('YASP WASAPI cached preload attached to stream session', {
+                identity: incomingStreamIdentity,
+                chunks: initialChunks.length,
+                bytes: preloadedEntry.bytes,
+                pcmBasePosition,
+            });
+        }
+        lastWasapiExclusiveOutputError = null;
         emitWasapiExclusiveOutputStateChanged();
+        ensureWasapiExclusiveDefaultDeviceMonitor();
         void wasapiExclusiveOutputSession.start();
     }
 
     lastWasapiExclusiveOutputSkipReason = null;
     wasapiExclusiveOutputSession.updateFormat(format);
-    wasapiExclusiveOutputSession.writeEncodedChunk(decoderChunkBuffer, options.chunkMeta ?? null);
+    const timelineEndMs = normalizeNumber(options.chunkMeta?.timelineEndMs ?? options.chunkMeta?.nextTimeToSet);
+    wasapiExclusiveOutputSession.writeEncodedChunk(decoderChunkBuffer, {
+        ...(options.chunkMeta ?? {}),
+        timelineStartSeconds: streamPosition,
+        timelineEndSeconds: Number.isFinite(timelineEndMs) ? timelineEndMs / 1000 : null,
+    });
+    ensureWasapiExclusiveDefaultDeviceMonitor();
 };
 
 const configureYaspSource = (payload = {}) => {
@@ -2025,11 +2708,6 @@ const configureYaspSource = (payload = {}) => {
         hasAudioDecodingKey: Boolean(config.audioDecodingKey),
         mirrorUrlCount: Array.isArray(config.mirrorUrls) ? config.mirrorUrls.length : 0,
     });
-
-    if (lastYaspAudioFormat?.sourceHash !== hashValue(sourceKey)) {
-        setLastYaspAudioFormat(null);
-        stopWasapiExclusiveOutput('source changed');
-    }
 
     logger.info('YASP native audio source configured', {
         sourceHash: hashValue(sourceKey),
@@ -2092,7 +2770,7 @@ const receiveYaspChunk = (payload = {}, chunk) => {
     const metadataAudioFormat = normalizeYaspAudioFormat(payload.meta);
     const containerAudioFormat = parseMp4AudioFormat(chunkBuffer, payload.meta);
     const audioFormat = mergeAudioFormats(stat.audioFormat, metadataAudioFormat, containerAudioFormat);
-    const streamPosition = getYaspChunkPlaybackPosition(payload);
+    const streamPosition = getYaspChunkTimelinePosition(payload);
     stat.lastParseDebug = {
         chunkConstructor: chunk?.constructor?.name ?? null,
         bufferByteLength: chunkBuffer.byteLength,
@@ -2107,6 +2785,10 @@ const receiveYaspChunk = (payload = {}, chunk) => {
         outOfOrderChunkCount: stat.outOfOrderChunkCount ?? 0,
         lastOutOfOrderChunk: stat.lastOutOfOrderChunk ?? null,
         parsedContainerSource: containerAudioFormat?.source ?? null,
+        timelineStartMs: normalizeNumber(payload?.meta?.timelineStartMs),
+        timelineEndMs: normalizeNumber(payload?.meta?.timelineEndMs),
+        segmentNumber: payload?.meta?.segmentNumber ?? null,
+        streamPosition,
     };
     if (hasAudioFormatData(audioFormat)) {
         stat.audioFormat = audioFormat;
@@ -2115,13 +2797,16 @@ const receiveYaspChunk = (payload = {}, chunk) => {
             currentTrack: payload?.meta?.currentTrack ?? null,
             sourceHash: hashValue(payloadSourceKey),
             workerId: payload?.workerId || payload?.meta?.workerId || null,
+            feederId: payload?.meta?.feederId ?? null,
             updatedAt: now,
         };
 
         if (!nextYaspAudioFormat.channels || !nextYaspAudioFormat.sampleRate || !nextYaspAudioFormat.bitsPerSample) {
             nextYaspAudioFormat.parseDebug = stat.lastParseDebug;
         }
-        setLastYaspAudioFormat(nextYaspAudioFormat);
+        if (!getYaspPreloadTarget(nextYaspAudioFormat)) {
+            setLastYaspAudioFormat(nextYaspAudioFormat);
+        }
         feedWasapiExclusiveOutput(nextYaspAudioFormat, chunkBuffer, {
             initChunk: stat.initChunk,
             chunkMeta: payload.meta ?? null,
@@ -2149,6 +2834,11 @@ const receiveYaspChunk = (payload = {}, chunk) => {
             outOfOrderChunkCount: stat.outOfOrderChunkCount ?? 0,
             lastOutOfOrderChunk: stat.lastOutOfOrderChunk ?? null,
             currentTrack: payload?.meta?.currentTrack,
+            workerId: payload?.workerId || payload?.meta?.workerId || null,
+            feederId: payload?.meta?.feederId ?? null,
+            segmentNumber: payload?.meta?.segmentNumber ?? null,
+            timelineStartMs: normalizeNumber(payload?.meta?.timelineStartMs),
+            timelineEndMs: normalizeNumber(payload?.meta?.timelineEndMs),
             playbackTime: payload?.meta?.playbackTime,
             streamPosition,
         });
@@ -2158,6 +2848,7 @@ exports.receiveYaspChunk = receiveYaspChunk;
 
 const resetYaspSource = (payload = {}) => {
     const sourceKey = payload.sourceKey || getSourceKey(payload.sourceUrl ?? payload.source);
+    const workerId = payload.workerId || payload?.meta?.workerId || null;
     if (!sourceKey) {
         return;
     }
@@ -2169,11 +2860,17 @@ const resetYaspSource = (payload = {}) => {
 
     sources.delete(sourceKey);
     for (const key of Array.from(chunkStats.keys())) {
-        if (key.startsWith(`${sourceKey}:`)) {
+        if ((workerId && key.startsWith(`${workerId}:`)) || key.startsWith(`${sourceKey}:`)) {
             chunkStats.delete(key);
         }
     }
+    const sourceHash = hashValue(sourceKey);
+    for (const [identity, entry] of yaspPreloadedStreams) {
+        if ((workerId && identity.startsWith(`${workerId}:`)) || entry.format.sourceHash === sourceHash) {
+            yaspPreloadedStreams.delete(identity);
+        }
+    }
 
-    logger.info('YASP native audio source reset', { sourceHash: hashValue(sourceKey) });
+    logger.info('YASP native audio source reset', { sourceHash, workerId });
 };
 exports.resetYaspSource = resetYaspSource;

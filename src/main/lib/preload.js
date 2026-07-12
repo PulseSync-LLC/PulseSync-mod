@@ -472,10 +472,15 @@ electron_1.contextBridge.exposeInMainWorld('nativeSettings', {
 
 electron_1.contextBridge.exposeInMainWorld('nativeAudioOutput', {
     isYaspChunkTapEnabled() {
-        return Boolean(store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap') || store_js_1.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput'));
+        return Boolean(store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap'));
+    },
+    setYaspChunkTapEnabled(enabled) {
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_STORE_SET, 'modSettings.nativeAudioOutput.enableYaspChunkTap', Boolean(enabled));
     },
     isWasapiExclusiveOutputEnabled() {
-        return Boolean(store_js_1.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput'));
+        return Boolean(
+            store_js_1.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput') && store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap'),
+        );
     },
     setWasapiExclusiveOutputEnabled(enabled) {
         return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_STORE_SET, 'modSettings.nativeAudioOutput.enableWasapiExclusiveOutput', Boolean(enabled));
@@ -497,6 +502,9 @@ electron_1.contextBridge.exposeInMainWorld('nativeAudioOutput', {
     },
     selectWasapiExclusiveDevice(deviceId) {
         return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_AUDIO_OUTPUT_SELECT_WASAPI_EXCLUSIVE_DEVICE, deviceId ?? null);
+    },
+    reportWasapiExclusiveAudioParking(payload = {}) {
+        electron_1.ipcRenderer.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_AUDIO_PARKING_STATE, payload);
     },
     configureYaspSource(payload) {
         electron_1.ipcRenderer.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_CONFIGURE_YASP_SOURCE, payload);

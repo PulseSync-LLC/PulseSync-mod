@@ -19,6 +19,8 @@ const normalizePositiveInteger = (value, fallback, min, max) => {
     return Math.min(Math.max(Math.round(number), min), max);
 };
 
+const normalizeBufferMs = (value) => (Number(value) === 0 ? 0 : normalizePositiveInteger(value, 50, 10, 500));
+
 const normalizePcmBitsPerSample = (value, fallback = 16) => {
     const bitsPerSample = normalizePositiveInteger(value, fallback, 16, 32);
     return [16, 24, 32].includes(bitsPerSample) ? bitsPerSample : fallback;
@@ -49,6 +51,10 @@ const normalizeOptions = (options = {}) => {
     const floatPcm = options.float === true;
     const bitsPerSample = floatPcm ? 32 : normalizePcmBitsPerSample(options.bitsPerSample, 16);
     const containerBitsPerSample = floatPcm ? 32 : normalizePcmContainerBitsPerSample(options.containerBitsPerSample, bitsPerSample, options.sampleFormat);
+    const renderMode = options.renderMode === 'timer' ? 'timer' : 'event';
+    const timerPollMs = normalizePositiveInteger(options.timerPollMs, 5, 1, 50);
+    const timerPeriodMs = normalizePositiveInteger(options.timerPeriodMs, Math.max(timerPollMs * 2, 2), 2, 100);
+    const timerBufferPeriods = normalizePositiveInteger(options.timerBufferPeriods, 4, 2, 16);
     const normalized = {
         sampleRate: normalizePositiveInteger(options.sampleRate, 48000, 8000, 384000),
         channels: normalizePositiveInteger(options.channels, 2, 1, 2),
@@ -57,8 +63,13 @@ const normalizeOptions = (options = {}) => {
         containerBitsPerSample,
         sampleFormat: getSampleFormatName(bitsPerSample, containerBitsPerSample, floatPcm),
         float: floatPcm,
-        bufferMs: normalizePositiveInteger(options.bufferMs, 50, 10, 500),
-        maxQueuedMs: normalizePositiveInteger(options.maxQueuedMs, 1000, 50, 10000),
+        bufferMs: renderMode === 'timer' ? timerPeriodMs * timerBufferPeriods : normalizeBufferMs(options.bufferMs),
+        maxQueuedMs: normalizePositiveInteger(options.maxQueuedMs, 1000, 50, 60000),
+        renderMode,
+        timerPollMs,
+        timerPeriodMs,
+        timerBufferPeriods,
+        deferStart: options.deferStart === true,
     };
 
     if (typeof options.deviceId === 'string' && options.deviceId.trim()) {
@@ -86,7 +97,7 @@ const getDeviceForOptions = (devices, options = {}) => {
         return devices.find((device) => device.id === options.deviceId) ?? null;
     }
 
-    return devices.find((device) => device.isDefaultConsole) ?? devices.find((device) => device.isDefault) ?? devices[0] ?? null;
+    return devices.find((device) => device.isDefault) ?? devices.find((device) => device.isDefaultConsole) ?? null;
 };
 
 const scoreSupportedFormat = (format, desired) => {
@@ -195,6 +206,43 @@ class WasapiExclusiveRenderer {
         return this.renderer.write(buffer);
     }
 
+    attachPcmSource(trackStore, byteOffset = 0) {
+        if (this.closed || typeof this.renderer.attachPcmSource !== 'function') {
+            return false;
+        }
+
+        return this.renderer.attachPcmSource(trackStore, byteOffset);
+    }
+
+    seekPcmSource(byteOffset) {
+        if (this.closed || typeof this.renderer.seekPcmSource !== 'function') {
+            return false;
+        }
+
+        return this.renderer.seekPcmSource(byteOffset);
+    }
+
+    start() {
+        if (this.closed) {
+            return false;
+        }
+
+        return typeof this.renderer.start === 'function' ? this.renderer.start() : true;
+    }
+
+    setVolumeGain(gain) {
+        if (this.closed || typeof this.renderer.setVolumeGain !== 'function') {
+            return false;
+        }
+
+        const normalizedGain = Number(gain);
+        if (!Number.isFinite(normalizedGain)) {
+            throw new TypeError('Volume gain must be a finite number');
+        }
+
+        return this.renderer.setVolumeGain(Math.min(Math.max(normalizedGain, 0), 1));
+    }
+
     flush() {
         if (this.closed) {
             return 0;
@@ -226,16 +274,24 @@ class WasapiExclusiveRenderer {
 
 const createRenderer = (options = {}) => new WasapiExclusiveRenderer(options);
 const createEncodedTrackBuffer = native?.YaspEncodedTrackBuffer ? (options = {}) => new native.YaspEncodedTrackBuffer(options) : null;
-const createYaspStreamSession = (options = {}) =>
-    createYaspStreamSessionInternal({
+const createTrackStore = native?.YaspTrackStore ? (options = {}) => new native.YaspTrackStore(options) : null;
+const createYaspStreamSession = (options = {}) => {
+    if (!createTrackStore) {
+        throw new WasapiExclusiveError('Native YaspTrackStore is unavailable; rebuild the WASAPI addon before starting a stream session');
+    }
+
+    return createYaspStreamSessionInternal({
         ...options,
         createEncodedTrackBuffer,
+        createTrackStore,
         createRenderer,
         getClosestSupportedFormat,
     });
+};
 
 module.exports = {
     createRenderer,
+    createTrackStore,
     createYaspStreamSession,
     getClosestSupportedFormat,
     isSupported,

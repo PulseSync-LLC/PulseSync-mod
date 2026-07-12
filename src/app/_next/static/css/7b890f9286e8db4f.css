@@ -743,6 +743,7 @@
     inset-block-end: 0;
     inset-block-start: auto;
     inset-inline-end: 0;
+    display: flex;
 }
 .MainPage_specialHeaderContainer__L3C6E {
     align-items: center;

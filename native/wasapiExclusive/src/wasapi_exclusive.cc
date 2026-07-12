@@ -1,4 +1,6 @@
 #include "wasapi_exclusive.h"
+#include "pcm_volume.h"
+#include "yasp_track_store.h"
 
 #include <windows.h>
 #include <mmdeviceapi.h>
@@ -9,10 +11,12 @@
 
 #include <algorithm>
 #include <atomic>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <iomanip>
+#include <limits>
 #include <mutex>
 #include <sstream>
 #include <string>
@@ -28,6 +32,10 @@ namespace {
 
 constexpr REFERENCE_TIME REFTIMES_PER_SEC = 10000000;
 constexpr REFERENCE_TIME REFTIMES_PER_MILLISEC = 10000;
+
+#ifndef CREATE_WAITABLE_TIMER_HIGH_RESOLUTION
+#define CREATE_WAITABLE_TIMER_HIGH_RESOLUTION 0x00000002
+#endif
 
 const GUID PULSE_SYNC_KSDATAFORMAT_SUBTYPE_PCM = {0x00000001, 0x0000, 0x0010, {0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}};
 const GUID PULSE_SYNC_KSDATAFORMAT_SUBTYPE_IEEE_FLOAT = {0x00000003, 0x0000, 0x0010, {0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}};
@@ -341,6 +349,8 @@ public:
         writePosition_ = 0;
         size_ = 0;
         droppedBytes_ = 0;
+        rejectedBytes_ = 0;
+        partialWrites_ = 0;
     }
 
     size_t Write(const uint8_t* data, size_t length, size_t alignment) {
@@ -349,21 +359,19 @@ public:
             return 0;
         }
 
-        length = AlignDown(length, alignment);
-        if (!length) {
+        const size_t requestedLength = AlignDown(length, alignment);
+        if (!requestedLength) {
             return 0;
         }
 
-        if (length > capacity_) {
-            const size_t skip = AlignDown(length - capacity_, alignment);
-            data += skip;
-            length -= skip;
-            DropNoLock(size_);
+        const size_t available = AlignDown(capacity_ - size_, alignment);
+        length = std::min(requestedLength, available);
+        if (length < requestedLength) {
+            rejectedBytes_ += requestedLength - length;
+            partialWrites_ += 1;
         }
-
-        const size_t missingSpace = length > capacity_ - size_ ? length - (capacity_ - size_) : 0;
-        if (missingSpace > 0) {
-            DropNoLock(AlignUp(missingSpace, alignment));
+        if (!length) {
+            return 0;
         }
 
         const size_t firstCopy = std::min(length, capacity_ - writePosition_);
@@ -427,6 +435,16 @@ public:
         return droppedBytes_;
     }
 
+    uint64_t RejectedBytes() const {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return rejectedBytes_;
+    }
+
+    uint64_t PartialWrites() const {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return partialWrites_;
+    }
+
 private:
     void DropNoLock(size_t length) {
         length = std::min(length, size_);
@@ -446,6 +464,8 @@ private:
     size_t writePosition_ = 0;
     size_t size_ = 0;
     uint64_t droppedBytes_ = 0;
+    uint64_t rejectedBytes_ = 0;
+    uint64_t partialWrites_ = 0;
 };
 
 class WasapiExclusiveRenderer : public Napi::ObjectWrap<WasapiExclusiveRenderer> {
@@ -458,6 +478,10 @@ public:
             "WasapiExclusiveRenderer",
             {
                 InstanceMethod("write", &WasapiExclusiveRenderer::Write),
+                InstanceMethod("attachPcmSource", &WasapiExclusiveRenderer::AttachPcmSource),
+                InstanceMethod("seekPcmSource", &WasapiExclusiveRenderer::SeekPcmSource),
+                InstanceMethod("start", &WasapiExclusiveRenderer::Start),
+                InstanceMethod("setVolumeGain", &WasapiExclusiveRenderer::SetVolumeGain),
                 InstanceMethod("flush", &WasapiExclusiveRenderer::Flush),
                 InstanceMethod("getState", &WasapiExclusiveRenderer::GetState),
                 InstanceMethod("close", &WasapiExclusiveRenderer::Close),
@@ -478,8 +502,13 @@ public:
         floatPcm_ = GetBoolOption(options, "float", false);
         bitsPerSample_ = floatPcm_ ? 32 : GetUintOption(options, "bitsPerSample", 16, 16, 32);
         containerBitsPerSample_ = floatPcm_ ? 32 : GetUintOption(options, "containerBitsPerSample", bitsPerSample_, 16, 32);
-        bufferMs_ = GetUintOption(options, "bufferMs", 50, 10, 500);
-        maxQueuedMs_ = GetUintOption(options, "maxQueuedMs", 1000, 50, 10000);
+        bufferMs_ = GetUintOption(options, "bufferMs", 50, 0, 500);
+        maxQueuedMs_ = GetUintOption(options, "maxQueuedMs", 1000, 50, 60000);
+        timerDriven_ = GetStringOption(options, "renderMode") == L"timer";
+        timerPollMs_ = GetUintOption(options, "timerPollMs", 5, 1, 50);
+        timerPeriodMs_ = GetUintOption(options, "timerPeriodMs", std::max(timerPollMs_ * 2, 2u), 2, 100);
+        timerBufferPeriods_ = GetUintOption(options, "timerBufferPeriods", 4, 2, 16);
+        deferStart_ = GetBoolOption(options, "deferStart", false);
         requestedDeviceId_ = GetStringOption(options, "deviceId");
 
         if (!floatPcm_ && bitsPerSample_ != 16 && bitsPerSample_ != 24 && bitsPerSample_ != 32) {
@@ -540,15 +569,26 @@ private:
             return FAILED(hr) ? hr : AUDCLNT_E_UNSUPPORTED_FORMAT;
         }
 
-        REFERENCE_TIME defaultPeriod = 0;
-        REFERENCE_TIME minimumPeriod = 0;
-        hr = audioClient_->GetDevicePeriod(&defaultPeriod, &minimumPeriod);
+        hr = audioClient_->GetDevicePeriod(&defaultDevicePeriod_, &minimumDevicePeriod_);
         if (FAILED(hr)) {
             return hr;
         }
 
-        REFERENCE_TIME bufferDuration = std::max<REFERENCE_TIME>(static_cast<REFERENCE_TIME>(bufferMs_) * REFTIMES_PER_MILLISEC, minimumPeriod);
-        hr = InitializeAudioClient(bufferDuration);
+        // Match the SDK timer-driven sample: a multi-period endpoint buffer, polled at half-period cadence.
+        REFERENCE_TIME periodicity = timerDriven_
+            ? std::max<REFERENCE_TIME>(static_cast<REFERENCE_TIME>(timerPeriodMs_) * REFTIMES_PER_MILLISEC, minimumDevicePeriod_)
+            : 0;
+        REFERENCE_TIME bufferDuration = timerDriven_
+            ? periodicity * timerBufferPeriods_
+            : bufferMs_ == 0
+                ? std::max(defaultDevicePeriod_, minimumDevicePeriod_)
+                : std::max<REFERENCE_TIME>(static_cast<REFERENCE_TIME>(bufferMs_) * REFTIMES_PER_MILLISEC, minimumDevicePeriod_);
+        if (!timerDriven_) {
+            periodicity = bufferDuration;
+        }
+        requestedBufferDuration_ = bufferDuration;
+        requestedPeriodicity_ = periodicity;
+        hr = InitializeAudioClient(bufferDuration, periodicity);
         if (hr == AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED) {
             UINT32 alignedFrames = 0;
             HRESULT alignedHr = audioClient_->GetBufferSize(&alignedFrames);
@@ -563,21 +603,42 @@ private:
             }
 
             bufferDuration = static_cast<REFERENCE_TIME>((static_cast<double>(REFTIMES_PER_SEC) * alignedFrames / sampleRate_) + 0.5);
-            hr = InitializeAudioClient(bufferDuration);
+            periodicity = timerDriven_
+                ? std::max<REFERENCE_TIME>(bufferDuration / timerBufferPeriods_, minimumDevicePeriod_)
+                : bufferDuration;
+            bufferAlignmentAdjusted_ = true;
+            hr = InitializeAudioClient(bufferDuration, periodicity);
         }
 
         if (FAILED(hr)) {
             return hr;
         }
+        initializedBufferDuration_ = bufferDuration;
+        initializedPeriodicity_ = periodicity;
 
-        renderEvent_ = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-        if (!renderEvent_) {
+        stopEvent_ = CreateEvent(nullptr, TRUE, FALSE, nullptr);
+        if (!stopEvent_) {
             return HRESULT_FROM_WIN32(GetLastError());
         }
 
-        hr = audioClient_->SetEventHandle(renderEvent_);
-        if (FAILED(hr)) {
-            return hr;
+        if (timerDriven_) {
+            renderTimer_ = CreateWaitableTimerExW(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
+            if (!renderTimer_) {
+                renderTimer_ = CreateWaitableTimerW(nullptr, FALSE, nullptr);
+            }
+            if (!renderTimer_) {
+                return HRESULT_FROM_WIN32(GetLastError());
+            }
+        } else {
+            renderEvent_ = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+            if (!renderEvent_) {
+                return HRESULT_FROM_WIN32(GetLastError());
+            }
+
+            hr = audioClient_->SetEventHandle(renderEvent_);
+            if (FAILED(hr)) {
+                return hr;
+            }
         }
 
         hr = audioClient_->GetService(__uuidof(IAudioRenderClient), reinterpret_cast<void**>(&renderClient_));
@@ -590,37 +651,22 @@ private:
             return hr;
         }
 
+        periodFrames_ = timerDriven_ ? std::max<UINT32>(bufferFrames_ / timerBufferPeriods_, 1) : bufferFrames_;
+
         const size_t queueCapacity = static_cast<size_t>(sampleRate_) * blockAlign_ * maxQueuedMs_ / 1000;
         queue_.Reset(queueCapacity, blockAlign_);
 
-        hr = PrimeSilence();
-        if (FAILED(hr)) {
-            return hr;
-        }
-
         stopping_.store(false);
-        renderThread_ = std::thread(&WasapiExclusiveRenderer::RenderLoop, this);
-
-        hr = audioClient_->Start();
-        if (FAILED(hr)) {
-            stopping_.store(true);
-            SetEvent(renderEvent_);
-            if (renderThread_.joinable()) {
-                renderThread_.join();
-            }
-            return hr;
-        }
-
-        started_.store(true);
-        return S_OK;
+        return deferStart_ ? S_OK : StartInternal();
     }
 
-    HRESULT InitializeAudioClient(REFERENCE_TIME bufferDuration) {
+    HRESULT InitializeAudioClient(REFERENCE_TIME bufferDuration, REFERENCE_TIME periodicity) {
+        const DWORD streamFlags = AUDCLNT_STREAMFLAGS_NOPERSIST | (timerDriven_ ? 0 : AUDCLNT_STREAMFLAGS_EVENTCALLBACK);
         return audioClient_->Initialize(
             AUDCLNT_SHAREMODE_EXCLUSIVE,
-            AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST,
+            streamFlags,
             bufferDuration,
-            bufferDuration,
+            periodicity,
             reinterpret_cast<WAVEFORMATEX*>(&waveFormat_),
             nullptr
         );
@@ -641,19 +687,138 @@ private:
         return renderClient_->ReleaseBuffer(bufferFrames_, AUDCLNT_BUFFERFLAGS_SILENT);
     }
 
+    size_t ReadRenderData(BYTE* destination, size_t length) {
+        if (pcmSource_) {
+            const size_t offset = static_cast<size_t>(pcmSourceOffset_.load());
+            const size_t bytesRead = pcmSource_->Read(offset, destination, length);
+            pcmSourceOffset_.fetch_add(bytesRead);
+            sourceReadFrames_.fetch_add(bytesRead / blockAlign_);
+            return bytesRead;
+        }
+
+        return queue_.Read(destination, length, blockAlign_);
+    }
+
+    void ApplyOutputGain(BYTE* data, UINT32 frames) {
+        if (!data || frames == 0) {
+            return;
+        }
+
+        const double startGain = currentVolumeGain_.load(std::memory_order_relaxed);
+        const double endGain = targetVolumeGain_.load(std::memory_order_relaxed);
+        ApplyPcmGain(data, frames, channels_, bitsPerSample_, containerBitsPerSample_, floatPcm_, startGain, endGain);
+        currentVolumeGain_.store(endGain, std::memory_order_relaxed);
+    }
+
+    HRESULT PrimeFromQueue() {
+        BYTE* data = nullptr;
+        HRESULT hr = renderClient_->GetBuffer(bufferFrames_, &data);
+        if (FAILED(hr)) {
+            return hr;
+        }
+
+        const size_t bytesNeeded = static_cast<size_t>(bufferFrames_) * blockAlign_;
+        const size_t bytesRead = ReadRenderData(data, bytesNeeded);
+        if (bytesRead < bytesNeeded) {
+            std::memset(data + bytesRead, 0, bytesNeeded - bytesRead);
+        }
+        if (bytesRead) {
+            ApplyOutputGain(data, bufferFrames_);
+        }
+
+        hr = renderClient_->ReleaseBuffer(bufferFrames_, bytesRead ? 0 : AUDCLNT_BUFFERFLAGS_SILENT);
+        if (SUCCEEDED(hr)) {
+            const uint64_t framesRead = bytesRead / blockAlign_;
+            playedFrames_.fetch_add(framesRead);
+            renderedFrames_.fetch_add(bufferFrames_);
+            primedFrames_.fetch_add(framesRead);
+            paddingFrames_.store(bufferFrames_);
+        }
+        return hr;
+    }
+
+    HRESULT StartInternal() {
+        std::lock_guard<std::mutex> audioLock(audioMutex_);
+        if (started_.load()) {
+            return S_OK;
+        }
+        if (!audioClient_ || !renderClient_ || stopping_.load()) {
+            return E_UNEXPECTED;
+        }
+
+        HRESULT hr = PrimeFromQueue();
+        if (FAILED(hr)) {
+            lastRenderHr_.store(hr);
+            return hr;
+        }
+
+        ResetEvent(stopEvent_);
+        if (timerDriven_) {
+            LARGE_INTEGER firstWakeup{};
+            firstWakeup.QuadPart = -static_cast<LONGLONG>(timerPollMs_) * REFTIMES_PER_MILLISEC;
+            if (!SetWaitableTimer(renderTimer_, &firstWakeup, static_cast<LONG>(timerPollMs_), nullptr, nullptr, FALSE)) {
+                hr = HRESULT_FROM_WIN32(GetLastError());
+                lastRenderHr_.store(hr);
+                return hr;
+            }
+        }
+
+        renderThread_ = std::thread(&WasapiExclusiveRenderer::RenderLoop, this);
+        hr = audioClient_->Start();
+        if (FAILED(hr)) {
+            stopping_.store(true);
+            SetEvent(stopEvent_);
+            if (renderThread_.joinable()) {
+                renderThread_.join();
+            }
+            if (renderTimer_) {
+                CancelWaitableTimer(renderTimer_);
+            }
+            lastRenderHr_.store(hr);
+            return hr;
+        }
+
+        started_.store(true);
+        lastRenderHr_.store(S_OK);
+        return S_OK;
+    }
+
     void RenderLoop() {
         HRESULT coHr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
         DWORD taskIndex = 0;
         HANDLE mmcssHandle = AvSetMmThreadCharacteristicsW(L"Pro Audio", &taskIndex);
+        std::chrono::steady_clock::time_point previousEventAt{};
+        bool hasPreviousEvent = false;
+        HANDLE waitHandles[] = {stopEvent_, timerDriven_ ? renderTimer_ : renderEvent_};
 
         while (!stopping_.load()) {
-            DWORD waitResult = WaitForSingleObject(renderEvent_, 2000);
+            DWORD waitResult = WaitForMultipleObjects(2, waitHandles, FALSE, 2000);
             if (stopping_.load()) {
                 break;
             }
 
-            if (waitResult == WAIT_OBJECT_0 || waitResult == WAIT_TIMEOUT) {
+            if (waitResult == WAIT_OBJECT_0) {
+                break;
+            }
+            if (waitResult == WAIT_OBJECT_0 + 1) {
+                const auto eventAt = std::chrono::steady_clock::now();
+                if (eventTimingResetRequested_.exchange(false)) {
+                    hasPreviousEvent = false;
+                }
+                if (hasPreviousEvent) {
+                    const auto intervalUs = std::chrono::duration_cast<std::chrono::microseconds>(eventAt - previousEventAt).count();
+                    if (intervalUs > 0) {
+                        TrackEventInterval(static_cast<uint64_t>(intervalUs));
+                    }
+                }
+                previousEventAt = eventAt;
+                hasPreviousEvent = true;
+                eventWakeups_.fetch_add(1);
                 RenderAvailableFrames();
+            } else if (waitResult == WAIT_TIMEOUT) {
+                waitTimeouts_.fetch_add(1);
+            } else if (waitResult == WAIT_FAILED) {
+                lastRenderHr_.store(HRESULT_FROM_WIN32(GetLastError()));
             }
         }
 
@@ -686,37 +851,60 @@ private:
         }
 
         const UINT32 framesAvailable = bufferFrames_ - padding;
+        UINT32 framesToWrite = framesAvailable;
+        if (timerDriven_) {
+            // Polling may wake early, but endpoint submissions must stay on complete device-period packets.
+            framesToWrite = periodFrames_ ? (framesAvailable / periodFrames_) * periodFrames_ : framesAvailable;
+            if (framesToWrite == 0) {
+                incompletePeriodWakeups_.fetch_add(1);
+                lastRenderHr_.store(S_OK);
+                return;
+            }
+        } else if (framesAvailable != bufferFrames_) {
+            incompleteEventBufferWakeups_.fetch_add(1);
+            lastRenderHr_.store(S_OK);
+            return;
+        }
+
+        if (framesToWrite != bufferFrames_) {
+            partialBufferWrites_.fetch_add(1);
+        }
         BYTE* data = nullptr;
-        hr = renderClient_->GetBuffer(framesAvailable, &data);
+        hr = renderClient_->GetBuffer(framesToWrite, &data);
         if (FAILED(hr)) {
             lastRenderHr_.store(hr);
             return;
         }
 
-        const size_t bytesNeeded = static_cast<size_t>(framesAvailable) * blockAlign_;
-        const size_t bytesRead = queue_.Read(data, bytesNeeded, blockAlign_);
+        const size_t bytesNeeded = static_cast<size_t>(framesToWrite) * blockAlign_;
+        const size_t bytesRead = ReadRenderData(data, bytesNeeded);
         const UINT32 framesRead = static_cast<UINT32>(bytesRead / blockAlign_);
         if (bytesRead < bytesNeeded) {
             std::memset(data + bytesRead, 0, bytesNeeded - bytesRead);
             underruns_.fetch_add(1);
-            underrunFrames_.fetch_add(framesAvailable - framesRead);
+            underrunFrames_.fetch_add(framesToWrite - framesRead);
+        }
+        if (bytesRead) {
+            ApplyOutputGain(data, framesToWrite);
         }
 
-        hr = renderClient_->ReleaseBuffer(framesAvailable, 0);
+        hr = renderClient_->ReleaseBuffer(framesToWrite, bytesRead ? 0 : AUDCLNT_BUFFERFLAGS_SILENT);
         if (FAILED(hr)) {
             lastRenderHr_.store(hr);
             return;
         }
 
         playedFrames_.fetch_add(framesRead);
-        renderedFrames_.fetch_add(framesAvailable);
+        renderedFrames_.fetch_add(framesToWrite);
+        periodPacketWrites_.fetch_add(timerDriven_ && periodFrames_ ? framesToWrite / periodFrames_ : 1);
+        paddingFrames_.store(std::min<UINT32>(padding + framesToWrite, bufferFrames_));
         lastRenderHr_.store(S_OK);
     }
 
     void CloseInternal() {
         bool wasStopping = stopping_.exchange(true);
-        if (!wasStopping && renderEvent_) {
-            SetEvent(renderEvent_);
+        if (!wasStopping && stopEvent_) {
+            SetEvent(stopEvent_);
         }
 
         if (renderThread_.joinable()) {
@@ -727,19 +915,204 @@ private:
             audioClient_->Stop();
         }
 
+        if (renderTimer_) {
+            CancelWaitableTimer(renderTimer_);
+        }
+
         SafeRelease(renderClient_);
         SafeRelease(audioClient_);
         SafeRelease(device_);
+        pcmSource_.reset();
 
         if (renderEvent_) {
             CloseHandle(renderEvent_);
             renderEvent_ = nullptr;
+        }
+        if (renderTimer_) {
+            CloseHandle(renderTimer_);
+            renderTimer_ = nullptr;
+        }
+        if (stopEvent_) {
+            CloseHandle(stopEvent_);
+            stopEvent_ = nullptr;
         }
 
         if (comInitialized_) {
             CoUninitialize();
             comInitialized_ = false;
         }
+    }
+
+    void ResetEventTimingMetrics() {
+        eventIntervalSamples_.store(0);
+        eventIntervalTotalUs_.store(0);
+        lastEventIntervalUs_.store(0);
+        minEventIntervalUs_.store(std::numeric_limits<uint64_t>::max());
+        maxEventIntervalUs_.store(0);
+        lateEventWakeups_.store(0);
+        eventTimingResetRequested_.store(true);
+    }
+
+    void TrackEventInterval(uint64_t intervalUs) {
+        eventIntervalSamples_.fetch_add(1);
+        eventIntervalTotalUs_.fetch_add(intervalUs);
+        lastEventIntervalUs_.store(intervalUs);
+
+        uint64_t minimum = minEventIntervalUs_.load();
+        while (intervalUs < minimum && !minEventIntervalUs_.compare_exchange_weak(minimum, intervalUs)) {
+        }
+
+        uint64_t maximum = maxEventIntervalUs_.load();
+        while (intervalUs > maximum && !maxEventIntervalUs_.compare_exchange_weak(maximum, intervalUs)) {
+        }
+
+        const double expectedIntervalUs = GetExpectedWakeupIntervalMs() * 1000.0;
+        if (expectedIntervalUs > 0.0 && static_cast<double>(intervalUs) > expectedIntervalUs * 1.25) {
+            lateEventWakeups_.fetch_add(1);
+        }
+    }
+
+    double GetExpectedWakeupIntervalMs() const {
+        if (timerDriven_) {
+            return static_cast<double>(timerPollMs_);
+        }
+        return sampleRate_ ? (static_cast<double>(bufferFrames_) * 1000.0 / sampleRate_) : 0.0;
+    }
+
+    void ResetPlaybackMetrics() {
+        playedFrames_.store(0);
+        renderedFrames_.store(0);
+        primedFrames_.store(0);
+        sourceReadFrames_.store(0);
+        paddingFrames_.store(0);
+        underruns_.store(0);
+        underrunFrames_.store(0);
+        periodPacketWrites_.store(0);
+        incompletePeriodWakeups_.store(0);
+        incompleteEventBufferWakeups_.store(0);
+        ResetEventTimingMetrics();
+    }
+
+    Napi::Value AttachPcmSource(const Napi::CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        if (info.Length() < 1) {
+            Napi::TypeError::New(env, "Expected attachPcmSource(trackStore, byteOffset?: number)").ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+
+        std::shared_ptr<YaspPcmStore> source = GetYaspPcmStore(info[0]);
+        if (!source) {
+            Napi::TypeError::New(env, "Expected a native YaspTrackStore PCM source").ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+
+        size_t byteOffset = 0;
+        if (info.Length() > 1 && info[1].IsNumber()) {
+            const double rawOffset = info[1].As<Napi::Number>().DoubleValue();
+            if (!std::isfinite(rawOffset) || rawOffset < 0) {
+                Napi::RangeError::New(env, "PCM source byte offset must be a non-negative finite number").ThrowAsJavaScriptException();
+                return env.Undefined();
+            }
+            byteOffset = AlignDown(static_cast<size_t>(rawOffset), blockAlign_);
+        }
+
+        std::lock_guard<std::mutex> audioLock(audioMutex_);
+        if (started_.load()) {
+            Napi::Error::New(env, "Cannot attach a PCM source after the WASAPI renderer has started").ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+
+        const YaspPcmStoreState sourceState = source->GetState();
+        if (byteOffset > sourceState.bytes) {
+            Napi::RangeError::New(env, "PCM source byte offset is beyond decoded audio").ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+
+        pcmSource_ = std::move(source);
+        pcmSourceStartOffset_.store(byteOffset);
+        pcmSourceOffset_.store(byteOffset);
+        ResetPlaybackMetrics();
+        return Napi::Boolean::New(env, true);
+    }
+
+    Napi::Value SeekPcmSource(const Napi::CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        if (!pcmSource_ || info.Length() < 1 || !info[0].IsNumber()) {
+            return Napi::Boolean::New(env, false);
+        }
+
+        const double rawOffset = info[0].As<Napi::Number>().DoubleValue();
+        if (!std::isfinite(rawOffset) || rawOffset < 0) {
+            return Napi::Boolean::New(env, false);
+        }
+
+        const size_t byteOffset = AlignDown(static_cast<size_t>(rawOffset), blockAlign_);
+        const YaspPcmStoreState sourceState = pcmSource_->GetState();
+        const size_t endpointBytes = static_cast<size_t>(bufferFrames_) * blockAlign_;
+        if (byteOffset > sourceState.bytes || sourceState.bytes - byteOffset < endpointBytes) {
+            return Napi::Boolean::New(env, false);
+        }
+
+        std::lock_guard<std::mutex> audioLock(audioMutex_);
+        const bool wasStarted = started_.load();
+        HRESULT hr = wasStarted ? audioClient_->Stop() : S_OK;
+        if (SUCCEEDED(hr) && wasStarted) {
+            hr = audioClient_->Reset();
+        }
+        if (FAILED(hr)) {
+            lastRenderHr_.store(hr);
+            Napi::Error::New(env, "Failed to reset WASAPI renderer for PCM seek: " + HResultToString(hr)).ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+
+        pcmSourceStartOffset_.store(byteOffset);
+        pcmSourceOffset_.store(byteOffset);
+        ResetPlaybackMetrics();
+        hr = PrimeFromQueue();
+        if (SUCCEEDED(hr) && wasStarted) {
+            hr = audioClient_->Start();
+        }
+        if (FAILED(hr)) {
+            lastRenderHr_.store(hr);
+            Napi::Error::New(env, "Failed to restart WASAPI renderer after PCM seek: " + HResultToString(hr)).ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+
+        flushes_.fetch_add(1);
+        lastRenderHr_.store(S_OK);
+        return Napi::Boolean::New(env, true);
+    }
+
+    Napi::Value Start(const Napi::CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        HRESULT hr = StartInternal();
+        if (FAILED(hr)) {
+            Napi::Error::New(env, "Failed to start WASAPI exclusive renderer: " + HResultToString(hr)).ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+
+        return Napi::Boolean::New(env, true);
+    }
+
+    Napi::Value SetVolumeGain(const Napi::CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        if (info.Length() < 1 || !info[0].IsNumber()) {
+            Napi::TypeError::New(env, "Expected setVolumeGain(gain: number)").ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+
+        double gain = info[0].As<Napi::Number>().DoubleValue();
+        if (!std::isfinite(gain)) {
+            Napi::RangeError::New(env, "Volume gain must be a finite number").ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+
+        gain = std::min(std::max(gain, 0.0), 1.0);
+        targetVolumeGain_.store(gain, std::memory_order_relaxed);
+        if (!started_.load()) {
+            currentVolumeGain_.store(gain, std::memory_order_relaxed);
+        }
+        return Napi::Number::New(env, gain);
     }
 
     Napi::Value Write(const Napi::CallbackInfo& info) {
@@ -756,9 +1129,6 @@ private:
         Napi::Buffer<uint8_t> buffer = info[0].As<Napi::Buffer<uint8_t>>();
         size_t written = queue_.Write(buffer.Data(), buffer.Length(), blockAlign_);
         writtenFrames_.fetch_add(written / blockAlign_);
-        if (written > 0 && renderEvent_) {
-            SetEvent(renderEvent_);
-        }
         return Napi::Number::New(env, static_cast<double>(written));
     }
 
@@ -791,6 +1161,7 @@ private:
         }
 
         paddingFrames_.store(bufferFrames_);
+        ResetEventTimingMetrics();
         hr = audioClient_->Start();
         if (FAILED(hr)) {
             lastRenderHr_.store(hr);
@@ -810,14 +1181,10 @@ private:
         const size_t cleared = queue_.Clear();
         flushes_.fetch_add(1);
 
-        HRESULT hr = ResetAudioClientBufferAfterFlush();
+        HRESULT hr = started_.load() ? ResetAudioClientBufferAfterFlush() : S_OK;
         if (FAILED(hr)) {
             Napi::Error::New(env, "Failed to flush WASAPI exclusive renderer: " + HResultToString(hr)).ThrowAsJavaScriptException();
             return env.Undefined();
-        }
-
-        if (renderEvent_) {
-            SetEvent(renderEvent_);
         }
 
         return Napi::Number::New(env, static_cast<double>(cleared));
@@ -826,12 +1193,22 @@ private:
     Napi::Value GetState(const Napi::CallbackInfo& info) {
         Napi::Env env = info.Env();
         Napi::Object state = Napi::Object::New(env);
-        const size_t queuedBytes = queue_.Size();
-        const size_t queueCapacityBytes = queue_.Capacity();
+        const bool hasPcmSource = static_cast<bool>(pcmSource_);
+        const YaspPcmStoreState pcmSourceState = hasPcmSource ? pcmSource_->GetState() : YaspPcmStoreState{};
+        const size_t pcmSourceOffset = static_cast<size_t>(pcmSourceOffset_.load());
+        const size_t pcmSourceStartOffset = static_cast<size_t>(pcmSourceStartOffset_.load());
+        const size_t sourceAvailableBytes = hasPcmSource && pcmSourceState.bytes > pcmSourceOffset ? pcmSourceState.bytes - pcmSourceOffset : 0;
+        const size_t queuedBytes = hasPcmSource ? sourceAvailableBytes : queue_.Size();
+        const size_t queueCapacityBytes = hasPcmSource ? pcmSourceState.maxBytes : queue_.Capacity();
         HRESULT lastHr = static_cast<HRESULT>(lastRenderHr_.load());
         UINT32 currentPaddingFrames = paddingFrames_.load();
+        const uint64_t eventIntervalSamples = eventIntervalSamples_.load();
+        const uint64_t eventIntervalTotalUs = eventIntervalTotalUs_.load();
+        const uint64_t minimumEventIntervalUs = minEventIntervalUs_.load();
+        const double expectedEventIntervalMs = GetExpectedWakeupIntervalMs();
+        const double averageEventIntervalMs = eventIntervalSamples ? (static_cast<double>(eventIntervalTotalUs) / eventIntervalSamples / 1000.0) : 0.0;
 
-        if (!stopping_.load()) {
+        if (!stopping_.load() && started_.load()) {
             std::lock_guard<std::mutex> audioLock(audioMutex_);
             UINT32 padding = 0;
             if (audioClient_) {
@@ -853,27 +1230,73 @@ private:
         state.Set("containerBitsPerSample", containerBitsPerSample_);
         state.Set("sampleFormat", GetSampleFormatName(bitsPerSample_, containerBitsPerSample_, floatPcm_));
         state.Set("float", floatPcm_);
+        state.Set("renderMode", timerDriven_ ? "timer" : "event");
+        state.Set("timerPollMs", timerPollMs_);
+        state.Set("timerPeriodMs", timerPeriodMs_);
+        state.Set("timerBufferPeriods", timerBufferPeriods_);
         state.Set("bufferMs", bufferMs_);
+        state.Set("bufferPeriodMode", bufferMs_ == 0 ? "device-default" : "explicit");
+        state.Set("requestedBufferDurationMs", static_cast<double>(requestedBufferDuration_) / REFTIMES_PER_MILLISEC);
+        state.Set("initializedBufferDurationMs", static_cast<double>(initializedBufferDuration_) / REFTIMES_PER_MILLISEC);
+        state.Set("requestedPeriodicityMs", static_cast<double>(requestedPeriodicity_) / REFTIMES_PER_MILLISEC);
+        state.Set("initializedPeriodicityMs", static_cast<double>(initializedPeriodicity_) / REFTIMES_PER_MILLISEC);
+        state.Set("defaultDevicePeriodMs", static_cast<double>(defaultDevicePeriod_) / REFTIMES_PER_MILLISEC);
+        state.Set("minimumDevicePeriodMs", static_cast<double>(minimumDevicePeriod_) / REFTIMES_PER_MILLISEC);
+        state.Set("actualBufferMs", sampleRate_ ? (static_cast<double>(bufferFrames_) * 1000.0 / sampleRate_) : 0.0);
+        state.Set("bufferAlignmentAdjusted", bufferAlignmentAdjusted_);
         state.Set("maxQueuedMs", maxQueuedMs_);
         state.Set("deviceId", WideToUtf8(resolvedDeviceId_));
         state.Set("deviceName", deviceName_);
         state.Set("blockAlign", blockAlign_);
         state.Set("bufferFrames", bufferFrames_);
+        state.Set("periodFrames", periodFrames_);
         state.Set("paddingFrames", currentPaddingFrames);
         state.Set("queuedBytes", static_cast<double>(queuedBytes));
         state.Set("queuedFrames", static_cast<double>(queuedBytes / blockAlign_));
         state.Set("queueCapacityBytes", static_cast<double>(queueCapacityBytes));
         state.Set("queueCapacityFrames", static_cast<double>(queueCapacityBytes / blockAlign_));
         state.Set("droppedBytes", static_cast<double>(queue_.DroppedBytes()));
-        state.Set("writtenFrames", static_cast<double>(writtenFrames_.load()));
+        state.Set("rejectedBytes", static_cast<double>(queue_.RejectedBytes()));
+        state.Set("partialWrites", static_cast<double>(queue_.PartialWrites()));
+        state.Set("writtenFrames", static_cast<double>(hasPcmSource ? pcmSourceState.totalReceivedBytes / blockAlign_ : writtenFrames_.load()));
         state.Set("playedFrames", static_cast<double>(playedFrames_.load()));
         state.Set("renderedFrames", static_cast<double>(renderedFrames_.load()));
+        state.Set("primedFrames", static_cast<double>(primedFrames_.load()));
+        state.Set("eventWakeups", static_cast<double>(eventWakeups_.load()));
+        state.Set("renderWakeups", static_cast<double>(eventWakeups_.load()));
+        state.Set("eventIntervalSamples", static_cast<double>(eventIntervalSamples));
+        state.Set("expectedEventIntervalMs", expectedEventIntervalMs);
+        state.Set("lastEventIntervalMs", static_cast<double>(lastEventIntervalUs_.load()) / 1000.0);
+        state.Set("averageEventIntervalMs", averageEventIntervalMs);
+        state.Set("minimumEventIntervalMs", eventIntervalSamples ? static_cast<double>(minimumEventIntervalUs) / 1000.0 : 0.0);
+        state.Set("maximumEventIntervalMs", static_cast<double>(maxEventIntervalUs_.load()) / 1000.0);
+        state.Set("eventCadenceRatio", expectedEventIntervalMs > 0.0 ? averageEventIntervalMs / expectedEventIntervalMs : 0.0);
+        state.Set("lateEventWakeups", static_cast<double>(lateEventWakeups_.load()));
+        state.Set("waitTimeouts", static_cast<double>(waitTimeouts_.load()));
+        state.Set("partialBufferWrites", static_cast<double>(partialBufferWrites_.load()));
+        state.Set("periodPacketWrites", static_cast<double>(periodPacketWrites_.load()));
+        state.Set("incompletePeriodWakeups", static_cast<double>(incompletePeriodWakeups_.load()));
+        state.Set("incompleteEventBufferWakeups", static_cast<double>(incompleteEventBufferWakeups_.load()));
         state.Set("underruns", static_cast<double>(underruns_.load()));
         state.Set("underrunFrames", static_cast<double>(underrunFrames_.load()));
         state.Set("flushes", static_cast<double>(flushes_.load()));
         state.Set("lastHRESULT", HResultToString(lastHr));
         state.Set("lastHRESULTCode", static_cast<double>(lastHr));
         state.Set("lastRenderHr", HResultToString(lastHr));
+        state.Set("pcmSourceAttached", hasPcmSource);
+        state.Set("pcmSourceBytes", static_cast<double>(pcmSourceState.bytes));
+        state.Set("pcmSourceStartByteOffset", static_cast<double>(pcmSourceStartOffset));
+        state.Set("pcmSourceByteOffset", static_cast<double>(pcmSourceOffset));
+        state.Set("pcmSourceAvailableBytes", static_cast<double>(sourceAvailableBytes));
+        state.Set("pcmSourceAvailableFrames", static_cast<double>(sourceAvailableBytes / blockAlign_));
+        state.Set("pcmSourceReadFrames", static_cast<double>(sourceReadFrames_.load()));
+        const double currentVolumeGain = currentVolumeGain_.load(std::memory_order_relaxed);
+        const double targetVolumeGain = targetVolumeGain_.load(std::memory_order_relaxed);
+        state.Set("volumeGain", currentVolumeGain);
+        state.Set("targetVolumeGain", targetVolumeGain);
+        state.Set("volumeProcessingActive", currentVolumeGain < 1.0 || targetVolumeGain < 1.0);
+        state.Set("started", started_.load());
+        state.Set("deferStart", deferStart_);
         state.Set("closed", stopping_.load());
         return state;
     }
@@ -886,9 +1309,12 @@ private:
     IMMDevice* device_ = nullptr;
     IAudioClient* audioClient_ = nullptr;
     IAudioRenderClient* renderClient_ = nullptr;
+    HANDLE stopEvent_ = nullptr;
     HANDLE renderEvent_ = nullptr;
+    HANDLE renderTimer_ = nullptr;
     std::thread renderThread_;
     ByteRingBuffer queue_;
+    std::shared_ptr<YaspPcmStore> pcmSource_;
     WAVEFORMATEXTENSIBLE waveFormat_{};
     std::mutex audioMutex_;
     bool comInitialized_ = false;
@@ -902,13 +1328,45 @@ private:
     uint32_t blockAlign_ = 8;
     uint32_t bufferMs_ = 50;
     uint32_t maxQueuedMs_ = 1000;
+    uint32_t timerPollMs_ = 5;
+    uint32_t timerPeriodMs_ = 10;
+    uint32_t timerBufferPeriods_ = 4;
+    REFERENCE_TIME defaultDevicePeriod_ = 0;
+    REFERENCE_TIME minimumDevicePeriod_ = 0;
+    REFERENCE_TIME requestedBufferDuration_ = 0;
+    REFERENCE_TIME initializedBufferDuration_ = 0;
+    REFERENCE_TIME requestedPeriodicity_ = 0;
+    REFERENCE_TIME initializedPeriodicity_ = 0;
     UINT32 bufferFrames_ = 0;
+    UINT32 periodFrames_ = 0;
+    bool bufferAlignmentAdjusted_ = false;
     bool floatPcm_ = true;
+    bool timerDriven_ = false;
+    bool deferStart_ = false;
     std::atomic<bool> stopping_{true};
     std::atomic<bool> started_{false};
     std::atomic<uint64_t> writtenFrames_{0};
+    std::atomic<uint64_t> pcmSourceStartOffset_{0};
+    std::atomic<uint64_t> pcmSourceOffset_{0};
+    std::atomic<uint64_t> sourceReadFrames_{0};
+    std::atomic<double> currentVolumeGain_{1.0};
+    std::atomic<double> targetVolumeGain_{1.0};
     std::atomic<uint64_t> playedFrames_{0};
     std::atomic<uint64_t> renderedFrames_{0};
+    std::atomic<uint64_t> primedFrames_{0};
+    std::atomic<uint64_t> eventWakeups_{0};
+    std::atomic<uint64_t> eventIntervalSamples_{0};
+    std::atomic<uint64_t> eventIntervalTotalUs_{0};
+    std::atomic<uint64_t> lastEventIntervalUs_{0};
+    std::atomic<uint64_t> minEventIntervalUs_{std::numeric_limits<uint64_t>::max()};
+    std::atomic<uint64_t> maxEventIntervalUs_{0};
+    std::atomic<uint64_t> lateEventWakeups_{0};
+    std::atomic<bool> eventTimingResetRequested_{false};
+    std::atomic<uint64_t> waitTimeouts_{0};
+    std::atomic<uint64_t> partialBufferWrites_{0};
+    std::atomic<uint64_t> periodPacketWrites_{0};
+    std::atomic<uint64_t> incompletePeriodWakeups_{0};
+    std::atomic<uint64_t> incompleteEventBufferWakeups_{0};
     std::atomic<uint64_t> underruns_{0};
     std::atomic<uint64_t> underrunFrames_{0};
     std::atomic<uint64_t> flushes_{0};
@@ -1048,6 +1506,7 @@ Napi::Value CreateRenderer(const Napi::CallbackInfo& info) {
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     WasapiExclusiveRenderer::InitClass(env, exports);
     InitYaspEncodedTrackBuffer(env, exports);
+    InitYaspTrackStore(env, exports);
     exports.Set(Napi::String::New(env, "isSupported"), Napi::Function::New(env, IsSupported));
     exports.Set(Napi::String::New(env, "listDevices"), Napi::Function::New(env, ListDevices));
     exports.Set(Napi::String::New(env, "createRenderer"), Napi::Function::New(env, CreateRenderer));

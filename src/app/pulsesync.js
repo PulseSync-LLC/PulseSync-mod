@@ -79,6 +79,11 @@ window.findCssRuleByPartialName = function (pName) {
     let yandexStationLocalAudioMuted = false;
     let wasapiExclusiveOutputActive = false;
     let lastWasapiExclusiveOutputState = null;
+    let wasapiExclusiveAudioParkingRequested = false;
+    let wasapiExclusiveAudioParkingSignature = null;
+    let wasapiExclusiveAudioParkingInFlightSignature = null;
+    let wasapiExclusiveAudioParkingAcknowledgedSignature = null;
+    let wasapiExclusiveAudioParkingGeneration = 0;
     const wasapiExclusivePlayerHoldState = {
         active: false,
         resumeOnRelease: false,
@@ -344,15 +349,18 @@ window.findCssRuleByPartialName = function (pName) {
     };
 
     const applyWebAudioContextSinkId = (context) => {
-        if (!context || typeof context.setSinkId !== 'function' || context.state === 'closed') return;
+        if (!context || context.state === 'closed') return Promise.resolve(false);
+        if (typeof context.setSinkId !== 'function') {
+            return wasapiExclusiveAudioParkingRequested
+                ? Promise.reject(new Error('AudioContext.setSinkId is unavailable; cannot release the exclusive endpoint'))
+                : Promise.resolve(false);
+        }
 
         rememberWebAudioContextSinkId(context);
-        const sinkId = wasapiExclusiveOutputActive ? { type: 'none' } : (yandexStationAudioContextOriginalSinkIds.get(context) ?? '');
-        if (areAudioSinkIdsEqual(context.sinkId, sinkId)) return;
+        const sinkId = wasapiExclusiveAudioParkingRequested ? { type: 'none' } : (yandexStationAudioContextOriginalSinkIds.get(context) ?? '');
+        if (areAudioSinkIdsEqual(context.sinkId, sinkId)) return Promise.resolve(false);
 
-        Promise.resolve(context.setSinkId(sinkId)).catch((error) => {
-            console.debug('[PulseSync] Failed to switch WebAudio output sink for WASAPI exclusive:', error);
-        });
+        return Promise.resolve(context.setSinkId(sinkId)).then(() => true);
     };
 
     const registerWebAudioContext = (context) => {
@@ -360,11 +368,21 @@ window.findCssRuleByPartialName = function (pName) {
 
         yandexStationAudioContexts.add(context);
         rememberWebAudioContextSinkId(context);
-        applyWebAudioContextSinkId(context);
+        void applyWebAudioContextSinkId(context).catch((error) => {
+            console.warn('[PulseSync] Failed to park a new WebAudio context for WASAPI exclusive:', error);
+            if (wasapiExclusiveAudioParkingRequested && wasapiExclusiveAudioParkingSignature) {
+                window.nativeAudioOutput?.reportWasapiExclusiveAudioParking?.({
+                    signature: wasapiExclusiveAudioParkingSignature,
+                    ready: false,
+                    error: String(error?.message ?? error),
+                    updatedAt: Date.now(),
+                });
+            }
+        });
     };
 
     const createAudioContextOptionsForWasapiExclusive = (options) => {
-        if (!wasapiExclusiveOutputActive) return options;
+        if (!wasapiExclusiveAudioParkingRequested) return options;
         if (options == null) return { sinkId: { type: 'none' } };
         if (typeof options !== 'object' || Array.isArray(options) || Object.prototype.hasOwnProperty.call(options, 'sinkId')) return options;
 
@@ -383,7 +401,8 @@ window.findCssRuleByPartialName = function (pName) {
             let context;
 
             try {
-                context = new OriginalAudioContext(...(args.length ? [options, ...args.slice(1)] : [options]));
+                const constructorArgs = args.length ? [options, ...args.slice(1)] : options === undefined ? [] : [options];
+                context = new OriginalAudioContext(...constructorArgs);
             } catch (error) {
                 if (options === args[0]) throw error;
                 context = new OriginalAudioContext(...args);
@@ -404,16 +423,82 @@ window.findCssRuleByPartialName = function (pName) {
         wrapAudioContextConstructor('webkitAudioContext');
     };
 
-    const syncWasapiExclusiveWebAudioSink = () => {
+    const syncWasapiExclusiveWebAudioSink = async () => {
         installWebAudioSilentSinkMonitor();
+        const contexts = [];
         yandexStationAudioContexts.forEach((context) => {
             if (context?.state === 'closed') {
                 yandexStationAudioContexts.delete(context);
                 return;
             }
-
-            applyWebAudioContextSinkId(context);
+            contexts.push(context);
         });
+
+        if (wasapiExclusiveAudioParkingRequested && !contexts.length) {
+            throw new Error('No live AudioContext was discovered for WASAPI parking');
+        }
+
+        await Promise.all(contexts.map((context) => applyWebAudioContextSinkId(context)));
+        return contexts.length;
+    };
+
+    const syncWasapiExclusiveAudioParking = (state) => {
+        const session = state?.session;
+        const shouldPark = Boolean(state?.captureActive === true && session?.audioParkingRequired === true && session?.signature);
+        if (!shouldPark) {
+            if (!wasapiExclusiveAudioParkingRequested) return;
+            wasapiExclusiveAudioParkingRequested = false;
+            wasapiExclusiveAudioParkingSignature = null;
+            wasapiExclusiveAudioParkingInFlightSignature = null;
+            wasapiExclusiveAudioParkingAcknowledgedSignature = null;
+            wasapiExclusiveAudioParkingGeneration += 1;
+            void syncWasapiExclusiveWebAudioSink().catch((error) => {
+                console.warn('[PulseSync] Failed to restore WebAudio sink after WASAPI exclusive:', error);
+            });
+            return;
+        }
+
+        const signature = session.signature;
+        if (wasapiExclusiveAudioParkingSignature !== signature) {
+            wasapiExclusiveAudioParkingRequested = true;
+            wasapiExclusiveAudioParkingSignature = signature;
+            wasapiExclusiveAudioParkingInFlightSignature = null;
+            wasapiExclusiveAudioParkingAcknowledgedSignature = null;
+            wasapiExclusiveAudioParkingGeneration += 1;
+        }
+
+        if (
+            session.waitingForAudioParking !== true ||
+            wasapiExclusiveAudioParkingInFlightSignature === signature ||
+            wasapiExclusiveAudioParkingAcknowledgedSignature === signature
+        ) {
+            return;
+        }
+
+        const generation = wasapiExclusiveAudioParkingGeneration;
+        wasapiExclusiveAudioParkingInFlightSignature = signature;
+        void syncWasapiExclusiveWebAudioSink()
+            .then((contextCount) => {
+                if (generation !== wasapiExclusiveAudioParkingGeneration || wasapiExclusiveAudioParkingSignature !== signature) return;
+                wasapiExclusiveAudioParkingInFlightSignature = null;
+                wasapiExclusiveAudioParkingAcknowledgedSignature = signature;
+                window.nativeAudioOutput?.reportWasapiExclusiveAudioParking?.({
+                    signature,
+                    ready: true,
+                    contextCount,
+                    updatedAt: Date.now(),
+                });
+            })
+            .catch((error) => {
+                if (generation !== wasapiExclusiveAudioParkingGeneration || wasapiExclusiveAudioParkingSignature !== signature) return;
+                wasapiExclusiveAudioParkingInFlightSignature = null;
+                window.nativeAudioOutput?.reportWasapiExclusiveAudioParking?.({
+                    signature,
+                    ready: false,
+                    error: String(error?.message ?? error),
+                    updatedAt: Date.now(),
+                });
+            });
     };
 
     const isAudioDestination = (source, destination) => {
@@ -544,7 +629,6 @@ window.findCssRuleByPartialName = function (pName) {
     };
 
     const syncLocalAudioGainMute = () => {
-        syncWasapiExclusiveWebAudioSink();
         installWebAudioGraphMonitor();
 
         if (!isLocalAudioGainMuted()) {
@@ -588,7 +672,9 @@ window.findCssRuleByPartialName = function (pName) {
         } catch {}
 
         try {
-            return Boolean(window.nativeSettings?.get?.(WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY));
+            return Boolean(
+                window.nativeSettings?.get?.(WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY) && window.nativeSettings?.get?.(NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY),
+            );
         } catch {
             return false;
         }
@@ -596,9 +682,7 @@ window.findCssRuleByPartialName = function (pName) {
 
     const isWasapiExclusiveOutputStateActive = (state) => {
         const enabled = typeof state?.enabled === 'boolean' ? state.enabled : isWasapiExclusiveOutputEnabled();
-        return Boolean(
-            enabled && (state?.captureActive === true || state?.active === true || state?.session?.state === 'starting' || state?.session?.state === 'running'),
-        );
+        return Boolean(enabled && (state?.captureActive === true || state?.active === true));
     };
 
     const isWasapiExclusivePlayerHoldRequested = (state) => {
@@ -638,6 +722,7 @@ window.findCssRuleByPartialName = function (pName) {
     const applyWasapiExclusiveOutputState = (state) => {
         lastWasapiExclusiveOutputState = state ?? null;
         wasapiExclusiveOutputActive = isWasapiExclusiveOutputStateActive(state);
+        syncWasapiExclusiveAudioParking(lastWasapiExclusiveOutputState);
         syncLocalAudioGainMute();
         syncWasapiExclusivePlayerHold(lastWasapiExclusiveOutputState);
         window.dispatchEvent(new CustomEvent('pulse-sync-wasapi-exclusive-output-state-change', { detail: state ?? null }));
@@ -672,7 +757,7 @@ window.findCssRuleByPartialName = function (pName) {
         } catch {}
 
         try {
-            return Boolean(window.nativeSettings?.get?.(NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY) || window.nativeSettings?.get?.(WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY));
+            return Boolean(window.nativeSettings?.get?.(NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY));
         } catch {
             return false;
         }
@@ -784,6 +869,25 @@ window.findCssRuleByPartialName = function (pName) {
             return safeRead(() => timeline.findTrackById(currentTrack, 'audio')) ?? safeRead(() => timeline.audio?.find((track) => track?.id === currentTrack)) ?? null;
         };
 
+        const getCurrentSegmentMetadata = (feeder, stream) => {
+            const timeline = feeder?.timeline;
+            const streamTime = normalizeNumber(stream?.time);
+            if (!timeline || !Number.isFinite(streamTime) || typeof timeline.getSegment !== 'function') {
+                return null;
+            }
+
+            const segment = safeRead(() => timeline.getSegment(stream.type, streamTime)?.segment);
+            if (!segment) {
+                return null;
+            }
+
+            return {
+                number: segment.number ?? null,
+                start: normalizeNumber(segment.start),
+                end: normalizeNumber(segment.end),
+            };
+        };
+
         const getAudioTrackMetadata = (track, mimeType) => {
             if (!track) {
                 return null;
@@ -844,6 +948,7 @@ window.findCssRuleByPartialName = function (pName) {
 
                 const mimeTypes = safeRead(() => feeder.timeline.getMimeTypes());
                 const mediaState = feeder?.mediaState ?? {};
+                const segment = getCurrentSegmentMetadata(feeder, stream);
                 const audioTrack = getAudioTrackMetadata(getCurrentAudioTrack(feeder, stream), mimeTypes?.audio?.[0] ?? null);
                 const meta = {
                     workerId,
@@ -857,6 +962,9 @@ window.findCssRuleByPartialName = function (pName) {
                     audioFormat: getAudioFormatMetadata(audioTrack),
                     time: normalizeNumber(stream.time),
                     nextTimeToSet: normalizeNumber(stream.nextTimeToSet),
+                    timelineStartMs: segment?.start ?? normalizeNumber(stream.time),
+                    timelineEndMs: segment?.end ?? normalizeNumber(stream.nextTimeToSet),
+                    segmentNumber: segment?.number ?? null,
                     lastAddedSegmentNumber: stream.lastAddedSegmentNumber ?? null,
                     lastTrackTimeOffset: normalizeNumber(stream.lastTrackTimeOffset),
                     playbackTime: normalizeNumber(mediaState.currentTime),
@@ -1937,7 +2045,7 @@ window.findCssRuleByPartialName = function (pName) {
             applyWasapiExclusiveOutputState(state);
         });
         window.desktopEvents.on('NATIVE_STORE_UPDATE', (event, key, value) => {
-            if ((key === NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY || key === WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY) && value === true) {
+            if (key === NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY && value === true) {
                 installYaspNativeAudioHooks();
                 syncLocalAudioGainMute();
                 console.info('[PulseSync] YASP native audio stream tap enabled. Reload the current source if the YASP worker already exists.');

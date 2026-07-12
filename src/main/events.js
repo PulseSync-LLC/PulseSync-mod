@@ -83,6 +83,8 @@ let unsubscribeWasapiExclusiveOutputStateChanged = null;
 const activeTrackDownloadControllers = new Map();
 const WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY = 'modSettings.nativeAudioOutput.wasapiExclusiveDeviceId';
 const WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY = 'modSettings.nativeAudioOutput.enableWasapiExclusiveOutput';
+const WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY = 'modSettings.nativeAudioOutput.forceWasapiExclusiveFullVolume';
+const YASP_CHUNK_TAP_ENABLED_SETTING_KEY = 'modSettings.nativeAudioOutput.enableYaspChunkTap';
 
 const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 
@@ -1071,8 +1073,21 @@ const handleApplicationEvents = (window) => {
         if (key === WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY && value !== true) {
             nativeAudioOutput.stopWasapiExclusiveOutput('output disabled');
         }
+        if (key === YASP_CHUNK_TAP_ENABLED_SETTING_KEY && value !== true) {
+            nativeAudioOutput.stopWasapiExclusiveOutput('YASP tap disabled');
+        }
         if (key === WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY) {
             nativeAudioOutput.stopWasapiExclusiveOutput('device changed');
+        }
+        if (
+            key === WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY ||
+            key === YASP_CHUNK_TAP_ENABLED_SETTING_KEY ||
+            key === WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY
+        ) {
+            nativeAudioOutput.refreshWasapiExclusiveDefaultDeviceMonitor();
+        }
+        if (key === WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY) {
+            nativeAudioOutput.refreshWasapiExclusiveVolumePolicy();
         }
         MiniPlayer.updateSettingsState(store_js_1.getModSettings());
         const featurePatch = buildFeaturesPatch(key, value);
@@ -1105,6 +1120,9 @@ const handleApplicationEvents = (window) => {
     });
     electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_RESET_YASP_SOURCE, (event, payload) => {
         nativeAudioOutput.resetYaspSource(payload);
+    });
+    electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_AUDIO_PARKING_STATE, (event, payload) => {
+        nativeAudioOutput.updateWasapiExclusiveAudioParkingState(payload);
     });
     electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_YASP_AUDIO_FORMAT, () => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_YASP_AUDIO_FORMAT);
@@ -1144,6 +1162,7 @@ const handleApplicationEvents = (window) => {
 
         store_js_1.set(WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY, normalizedDeviceId);
         nativeAudioOutput.stopWasapiExclusiveOutput('device changed');
+        nativeAudioOutput.refreshWasapiExclusiveDefaultDeviceMonitor();
         return normalizedDeviceId;
     });
     electron_1.ipcMain.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {

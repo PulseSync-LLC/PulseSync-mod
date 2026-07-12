@@ -162,5 +162,7 @@ temp
 !src/node_modules/**/*
 
 native/**/node_modules
+/src/main/native_modules/
+
 /modernized/**
 overlay-runtime
