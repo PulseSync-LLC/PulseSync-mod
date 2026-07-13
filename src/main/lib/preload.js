@@ -506,6 +506,9 @@ electron_1.contextBridge.exposeInMainWorld('nativeAudioOutput', {
     reportWasapiExclusiveAudioParking(payload = {}) {
         electron_1.ipcRenderer.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_AUDIO_PARKING_STATE, payload);
     },
+    reportWasapiExclusivePlayerSeek(payload = {}) {
+        electron_1.ipcRenderer.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_PLAYER_SEEK, payload);
+    },
     configureYaspSource(payload) {
         electron_1.ipcRenderer.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_CONFIGURE_YASP_SOURCE, payload);
     },

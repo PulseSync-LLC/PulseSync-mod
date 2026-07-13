@@ -988,7 +988,12 @@ const handleApplicationEvents = (window) => {
         return getAllowedUrls();
     });
     electron_1.ipcMain.on(events_js_1.Events.PLAYER_STATE, (event, data) => {
-        eventsLogger.info('Event received', events_js_1.Events.PLAYER_STATE, { status: data?.status, trackId: data?.track?.id });
+        eventsLogger.info('Event received', events_js_1.Events.PLAYER_STATE, {
+            status: data?.status,
+            trackId: data?.track?.id,
+            position: data?.progress?.position,
+            seekEventSequence: data?.seekEventSequence,
+        });
 
         try {
             nativeAudioOutput.updateWasapiExclusivePlayerState(data);
@@ -1126,6 +1131,10 @@ const handleApplicationEvents = (window) => {
     });
     electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_AUDIO_PARKING_STATE, (event, payload) => {
         nativeAudioOutput.updateWasapiExclusiveAudioParkingState(payload);
+    });
+    electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_PLAYER_SEEK, (event, payload) => {
+        eventsLogger.info('Event received', events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_PLAYER_SEEK, payload);
+        nativeAudioOutput.seekWasapiExclusiveOutput(payload);
     });
     electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_YASP_AUDIO_FORMAT, () => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_YASP_AUDIO_FORMAT);

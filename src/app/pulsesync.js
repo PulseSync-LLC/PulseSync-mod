@@ -88,6 +88,21 @@ window.findCssRuleByPartialName = function (pName) {
         active: false,
         resumeOnRelease: false,
     };
+    const wasapiExclusiveProgressSyncState = {
+        inFlight: false,
+        lastSyncAt: 0,
+    };
+    const wasapiExclusiveSeekProxyPlayers = new WeakSet();
+    const wasapiExclusiveCrossfadePolicyState = {
+        enabled: false,
+        restoreEnabled: null,
+        playerInstance: null,
+        crossfadePlayer: null,
+        crossfadeEnabledUnsubscribe: null,
+        currentMediaPlayerUnsubscribe: null,
+        mediaPlayersStoreUnsubscribe: null,
+        applying: false,
+    };
     let nativeAudioCurrentSourceKey = null;
 
     const getEntityIdParts = (value) => {
@@ -680,6 +695,118 @@ window.findCssRuleByPartialName = function (pName) {
         }
     };
 
+    const findWasapiCrossfadePlayer = (playerInst) => {
+        const currentMediaPlayer = playerInst?.state?.currentMediaPlayer?.value;
+        const mediaPlayers = Object.values(playerInst?.state?.mediaPlayersStore?.value ?? {});
+        return [currentMediaPlayer, ...mediaPlayers].find(
+            (mediaPlayer) =>
+                mediaPlayer && typeof mediaPlayer.forceStopCrossfade === 'function' && mediaPlayer.isEnabled && 'value' in mediaPlayer.isEnabled,
+        );
+    };
+
+    const enforceWasapiExclusiveCrossfadePolicy = () => {
+        const policy = wasapiExclusiveCrossfadePolicyState;
+        const crossfadePlayer = policy.crossfadePlayer;
+        if (!policy.enabled || !crossfadePlayer?.isEnabled) return;
+
+        if (policy.restoreEnabled === null) {
+            policy.restoreEnabled = Boolean(crossfadePlayer.isEnabled.value);
+        }
+
+        if (crossfadePlayer.isEnabled.value === false && !crossfadePlayer.isCrossfadeActive?.()) return;
+
+        policy.applying = true;
+        try {
+            crossfadePlayer.forceStopCrossfade();
+            if (crossfadePlayer.isEnabled.value !== false) {
+                crossfadePlayer.isEnabled.value = false;
+            }
+        } catch (error) {
+            console.warn('[PulseSync] Failed to force-disable crossfade for WASAPI exclusive:', error);
+        } finally {
+            policy.applying = false;
+        }
+    };
+
+    const bindWasapiExclusiveCrossfadePlayer = () => {
+        const policy = wasapiExclusiveCrossfadePolicyState;
+        const crossfadePlayer = findWasapiCrossfadePlayer(policy.playerInstance);
+        if (crossfadePlayer === policy.crossfadePlayer) {
+            enforceWasapiExclusiveCrossfadePolicy();
+            return;
+        }
+
+        policy.crossfadeEnabledUnsubscribe?.();
+        policy.crossfadeEnabledUnsubscribe = null;
+        policy.restoreEnabled = null;
+        policy.crossfadePlayer = crossfadePlayer ?? null;
+
+        if (!crossfadePlayer?.isEnabled?.onChange) return;
+
+        policy.crossfadeEnabledUnsubscribe = crossfadePlayer.isEnabled.onChange((enabled) => {
+            if (policy.applying || !policy.enabled || enabled === false) return;
+            policy.restoreEnabled = true;
+            queueMicrotask(enforceWasapiExclusiveCrossfadePolicy);
+        });
+        enforceWasapiExclusiveCrossfadePolicy();
+    };
+
+    const bindWasapiExclusiveCrossfadePlayerInstance = (playerInst) => {
+        const policy = wasapiExclusiveCrossfadePolicyState;
+        if (playerInst === policy.playerInstance) {
+            bindWasapiExclusiveCrossfadePlayer();
+            return;
+        }
+
+        policy.currentMediaPlayerUnsubscribe?.();
+        policy.mediaPlayersStoreUnsubscribe?.();
+        policy.crossfadeEnabledUnsubscribe?.();
+        policy.currentMediaPlayerUnsubscribe = null;
+        policy.mediaPlayersStoreUnsubscribe = null;
+        policy.crossfadeEnabledUnsubscribe = null;
+        policy.crossfadePlayer = null;
+        policy.playerInstance = playerInst ?? null;
+
+        if (playerInst?.state?.currentMediaPlayer?.onChange) {
+            policy.currentMediaPlayerUnsubscribe = playerInst.state.currentMediaPlayer.onChange(bindWasapiExclusiveCrossfadePlayer);
+        }
+        if (playerInst?.state?.mediaPlayersStore?.onChange) {
+            policy.mediaPlayersStoreUnsubscribe = playerInst.state.mediaPlayersStore.onChange(bindWasapiExclusiveCrossfadePlayer);
+        }
+        bindWasapiExclusiveCrossfadePlayer();
+    };
+
+    const syncWasapiExclusiveCrossfadePolicy = (enabled = isWasapiExclusiveOutputEnabled()) => {
+        const policy = wasapiExclusiveCrossfadePolicyState;
+        const shouldDisableCrossfade = enabled === true;
+        bindWasapiExclusiveCrossfadePlayerInstance(getPlayerInstance());
+
+        if (shouldDisableCrossfade === policy.enabled) {
+            enforceWasapiExclusiveCrossfadePolicy();
+            return;
+        }
+
+        policy.enabled = shouldDisableCrossfade;
+        if (shouldDisableCrossfade) {
+            enforceWasapiExclusiveCrossfadePolicy();
+            return;
+        }
+
+        const crossfadeEnabled = policy.crossfadePlayer?.isEnabled;
+        const restoreEnabled = policy.restoreEnabled;
+        policy.restoreEnabled = null;
+        if (!crossfadeEnabled || restoreEnabled === null) return;
+
+        policy.applying = true;
+        try {
+            crossfadeEnabled.value = restoreEnabled;
+        } catch (error) {
+            console.warn('[PulseSync] Failed to restore crossfade after WASAPI exclusive:', error);
+        } finally {
+            policy.applying = false;
+        }
+    };
+
     const isWasapiExclusiveOutputStateActive = (state) => {
         const enabled = typeof state?.enabled === 'boolean' ? state.enabled : isWasapiExclusiveOutputEnabled();
         return Boolean(enabled && (state?.captureActive === true || state?.active === true));
@@ -719,12 +846,81 @@ window.findCssRuleByPartialName = function (pName) {
         }
     };
 
+    const syncWasapiExclusivePlayerProgress = (state) => {
+        const playerInst = getPlayerInstance();
+        const nativePosition = Number(state?.session?.estimatedOutputPosition);
+        const playerProgress = playerInst?.state?.playerState?.progress?.value;
+        const playerPosition = Number(playerProgress?.position ?? playerProgress?.currentTime ?? playerProgress);
+        const now = Date.now();
+        if (
+            state?.active !== true ||
+            state?.session?.waitingForFirstRenderedFrame === true ||
+            state?.session?.playerHoldActive === true ||
+            !playerInst?.setProgress ||
+            !Number.isFinite(nativePosition) ||
+            !Number.isFinite(playerPosition) ||
+            Math.abs(nativePosition - playerPosition) < 1 ||
+            wasapiExclusiveProgressSyncState.inFlight ||
+            now - wasapiExclusiveProgressSyncState.lastSyncAt < 5000
+        ) {
+            return;
+        }
+
+        wasapiExclusiveProgressSyncState.inFlight = true;
+        wasapiExclusiveProgressSyncState.lastSyncAt = now;
+        window.__pulseSyncWasapiProgressSyncInFlight = true;
+        Promise.resolve(playerInst.setProgress(nativePosition))
+            .catch((error) => {
+                console.warn('[PulseSync] Failed to align muted YASP progress with WASAPI hardware clock:', error);
+            })
+            .finally(() => {
+                window.setTimeout(() => {
+                    window.__pulseSyncWasapiProgressSyncInFlight = false;
+                    wasapiExclusiveProgressSyncState.inFlight = false;
+                }, 1000);
+            });
+    };
+
+    const installWasapiExclusivePlayerSeekProxy = (playerInst) => {
+        if (!playerInst || wasapiExclusiveSeekProxyPlayers.has(playerInst) || typeof playerInst.setProgress !== 'function') return;
+
+        const originalSetProgress = playerInst.setProgress;
+        const wrappedSetProgress = function (...args) {
+            const result = originalSetProgress.apply(this, args);
+            const requestedPosition = Number(args[0]?.position ?? args[0]?.value ?? args[0]);
+            if (
+                !window.__pulseSyncWasapiProgressSyncInFlight &&
+                window.nativeAudioOutput?.isWasapiExclusiveOutputEnabled?.() &&
+                Number.isFinite(requestedPosition) &&
+                requestedPosition >= 0
+            ) {
+                window.nativeAudioOutput.reportWasapiExclusivePlayerSeek?.({
+                    position: requestedPosition,
+                    source: 'player.setProgress',
+                    updatedAt: Date.now(),
+                });
+            }
+            return result;
+        };
+
+        try {
+            playerInst.setProgress = wrappedSetProgress;
+            if (playerInst.setProgress === wrappedSetProgress) {
+                wasapiExclusiveSeekProxyPlayers.add(playerInst);
+            }
+        } catch (error) {
+            console.warn('[PulseSync] Failed to install WASAPI player seek proxy:', error);
+        }
+    };
+
     const applyWasapiExclusiveOutputState = (state) => {
         lastWasapiExclusiveOutputState = state ?? null;
         wasapiExclusiveOutputActive = isWasapiExclusiveOutputStateActive(state);
+        syncWasapiExclusiveCrossfadePolicy(typeof state?.enabled === 'boolean' ? state.enabled : isWasapiExclusiveOutputEnabled());
         syncWasapiExclusiveAudioParking(lastWasapiExclusiveOutputState);
         syncLocalAudioGainMute();
         syncWasapiExclusivePlayerHold(lastWasapiExclusiveOutputState);
+        syncWasapiExclusivePlayerProgress(lastWasapiExclusiveOutputState);
         window.dispatchEvent(new CustomEvent('pulse-sync-wasapi-exclusive-output-state-change', { detail: state ?? null }));
     };
 
@@ -796,7 +992,7 @@ window.findCssRuleByPartialName = function (pName) {
         const PULSE_SYNC_NATIVE_AUDIO_MESSAGE = '__pulseSyncNativeAudio';
         const nativeAudioTapMode = tapMode === 'stream' ? 'stream' : 'metadata';
         const nativeAudioMetadataProbeChunkLimit = Number.isFinite(Number(metadataProbeChunkLimit)) ? Number(metadataProbeChunkLimit) : 8;
-        const feederIds = new WeakMap();
+        const feederStates = new WeakMap();
         const metadataProbeChunkCounts = new Map();
         let nextFeederId = 1;
         let nextNativeAudioAppendSequence = 1;
@@ -831,17 +1027,33 @@ window.findCssRuleByPartialName = function (pName) {
             return null;
         };
 
-        const getFeederId = (feeder) => {
+        const getFeederIdentity = (feeder, currentTrack) => {
             if (!feeder || typeof feeder !== 'object') {
-                return 0;
+                return { feederId: 0, streamGeneration: 0 };
             }
 
-            let id = feederIds.get(feeder);
-            if (!id) {
-                id = nextFeederId++;
-                feederIds.set(feeder, id);
+            let state = feederStates.get(feeder);
+            if (!state) {
+                state = {
+                    feederId: nextFeederId++,
+                    currentTrack,
+                    streamGeneration: 1,
+                };
+                feederStates.set(feeder, state);
+            } else if (currentTrack == null && state.currentTrack != null) {
+                state.currentTrack = null;
+                state.streamGeneration += 1;
+            } else if (currentTrack != null && currentTrack !== state.currentTrack) {
+                if (state.currentTrack != null) {
+                    state.streamGeneration += 1;
+                }
+                state.currentTrack = currentTrack;
             }
-            return id;
+
+            return {
+                feederId: state.feederId,
+                streamGeneration: state.streamGeneration,
+            };
         };
 
         const shouldPostNativeAudioChunk = (feederId, currentTrack) => {
@@ -936,7 +1148,7 @@ window.findCssRuleByPartialName = function (pName) {
                     return;
                 }
 
-                const feederId = getFeederId(feeder);
+                const { feederId, streamGeneration } = getFeederIdentity(feeder, stream.currentTrack);
                 if (!shouldPostNativeAudioChunk(feederId, stream.currentTrack)) {
                     return;
                 }
@@ -953,6 +1165,7 @@ window.findCssRuleByPartialName = function (pName) {
                 const meta = {
                     workerId,
                     feederId,
+                    streamGeneration,
                     tapMode: nativeAudioTapMode,
                     type: stream.type,
                     tapStage,
@@ -1981,7 +2194,10 @@ window.findCssRuleByPartialName = function (pName) {
             },
             setPlayerInstance: (playerInst) => {
                 installYandexStationPlayerProxy(playerInst);
+                installWasapiExclusivePlayerSeekProxy(playerInst);
                 window.pulsesyncApi.playerInstance = playerInst;
+                bindWasapiExclusiveCrossfadePlayerInstance(playerInst);
+                syncWasapiExclusiveCrossfadePolicy();
                 syncWasapiExclusivePlayerHold(lastWasapiExclusiveOutputState);
                 while (window.pulsesyncApi._pendingCalls.length > 0) {
                     const callback = window.pulsesyncApi._pendingCalls.shift();
@@ -2045,14 +2261,18 @@ window.findCssRuleByPartialName = function (pName) {
             applyWasapiExclusiveOutputState(state);
         });
         window.desktopEvents.on('NATIVE_STORE_UPDATE', (event, key, value) => {
-            if (key === NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY && value === true) {
-                installYaspNativeAudioHooks();
-                syncLocalAudioGainMute();
-                console.info('[PulseSync] YASP native audio stream tap enabled. Reload the current source if the YASP worker already exists.');
+            if (key === NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY) {
+                syncWasapiExclusiveCrossfadePolicy(Boolean(value === true && window.nativeSettings?.get?.(WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY)));
+                if (value === true) {
+                    installYaspNativeAudioHooks();
+                    syncLocalAudioGainMute();
+                    console.info('[PulseSync] YASP native audio stream tap enabled. Reload the current source if the YASP worker already exists.');
+                }
                 return;
             }
 
             if (key === WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY) {
+                syncWasapiExclusiveCrossfadePolicy(Boolean(value === true && window.nativeSettings?.get?.(NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY)));
                 if (value !== true) {
                     applyWasapiExclusiveOutputState({ enabled: false, active: false, captureActive: false, session: null });
                     return;

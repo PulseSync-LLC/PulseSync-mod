@@ -1,20 +1,25 @@
 'use strict';
 
 const { spawn } = require('child_process');
+const { createHash } = require('crypto');
 
 const START_DELAY_MS = 250;
-const START_PREBUFFER_MS = 1000;
-const PLAYER_HOLD_TIMEOUT_MS = 8000;
-const FIRST_PCM_TIMEOUT_MS = 5000;
+const START_PREBUFFER_MIN_MS = 750;
+const START_PREBUFFER_MAX_MS = 2000;
+const START_PREBUFFER_PERIODS = 8;
+const PLAYER_HOLD_TIMEOUT_MS = 3000;
+const FIRST_PCM_TIMEOUT_MS = 3000;
 const AUDIO_PARKING_SETTLE_MS = 150;
 const PLAYER_CLOCK_STALL_MS = 1500;
 const PLAYER_CLOCK_PROGRESS_EPSILON_SECONDS = 0.05;
-const PCM_WINDOW_POSITION_TOLERANCE_SECONDS = 0.5;
 const PROGRESS_DRIFT_THRESHOLD_SECONDS = 2;
 const RENDERER_CADENCE_GRACE_MS = 3000;
 const RENDERER_CADENCE_MIN_RATIO = 0.8;
 const RENDERER_CADENCE_MAX_RATIO = 1.2;
-const TRANSIENT_PLAYER_STATUSES = new Set(['buffering', 'loading']);
+const RENDERER_HEALTH_INTERVAL_MS = 100;
+const RENDERER_STATE_BROADCAST_INTERVAL_MS = 1000;
+const RENDERER_CLOCK_START_TIMEOUT_MS = 2000;
+const TRANSIENT_PLAYER_STATUSES = new Set(['buffering', 'loading', 'loadingMediaSource']);
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const noop = () => {};
@@ -34,6 +39,14 @@ const exponentVolumeToLinearGain = (value) => {
 
     const linearGain = Math.pow(0.01, 1 - clampUnitInterval(exponentVolume));
     return linearGain > 0.01 ? linearGain : 0;
+};
+
+const getEncodedChunkFingerprint = (chunk) => {
+    if (!Buffer.isBuffer(chunk) || !chunk.byteLength) {
+        return null;
+    }
+
+    return `${chunk.byteLength}:${createHash('sha256').update(chunk).digest('hex')}`;
 };
 
 const getWasapiPlayerStopReason = (playerState) => {
@@ -71,7 +84,6 @@ class YaspWasapiExclusiveStreamSession {
         this.createRenderer = typeof options.createRenderer === 'function' ? options.createRenderer : null;
         this.getClosestSupportedFormat = typeof options.getClosestSupportedFormat === 'function' ? options.getClosestSupportedFormat : null;
         this.getFfmpegPath = typeof options.getFfmpegPath === 'function' ? options.getFfmpegPath : null;
-        this.createEncodedTrackBuffer = typeof options.createEncodedTrackBuffer === 'function' ? options.createEncodedTrackBuffer : null;
         this.createTrackStore = typeof options.createTrackStore === 'function' ? options.createTrackStore : null;
         this.onStateChange = typeof options.onStateChange === 'function' ? options.onStateChange : noop;
         this.onError = typeof options.onError === 'function' ? options.onError : noop;
@@ -86,13 +98,11 @@ class YaspWasapiExclusiveStreamSession {
         this.decoderExit = null;
         this.decoderStderr = '';
         this.decoderArgs = null;
-        this.pendingChunks = [];
         this.pendingBytes = 0;
         this.decoderEncodedChunkIndex = 0;
         this.decoderEncodedBytes = 0;
         this.decoderWriteBlocked = false;
         this.initialChunkBytes = 0;
-        this.pcmCacheChunks = [];
         this.pcmCacheBytes = 0;
         const pcmBasePosition = Number.isFinite(options.pcmBasePosition) ? options.pcmBasePosition : options.startPosition;
         this.pcmBasePosition = Number.isFinite(pcmBasePosition) ? Math.max(pcmBasePosition, 0) : 0;
@@ -100,7 +110,6 @@ class YaspWasapiExclusiveStreamSession {
         this.outputStartByteOffset = null;
         this.totalEncodedBytes = 0;
         this.totalPcmBytes = 0;
-        this.totalPcmWrittenBytes = 0;
         this.pcmRemainder = Buffer.alloc(0);
         this.decoder = null;
         this.renderer = null;
@@ -112,13 +121,22 @@ class YaspWasapiExclusiveStreamSession {
             maxPcmBytes: options.pcmBufferMaxBytes,
             pageSize: options.trackStorePageSize,
         });
-        this.encodedTrackBuffer = this.trackStore ? null : this.createEncodedTrackBuffer?.({ maxBytes: options.encodedBufferMaxBytes });
+        if (!this.trackStore) {
+            throw new Error('Native YaspTrackStore is required for WASAPI stream sessions');
+        }
         this.firstPcmTimer = null;
         this.startupTimer = null;
         this.rendererServiceTimer = null;
+        this.rendererHealthTimer = null;
+        this.waitingForFirstRenderedFrame = false;
+        this.lastRendererHealthAt = null;
+        this.lastRendererStateBroadcastAt = 0;
+        this.lastAudioClockElapsedFrames = null;
+        this.lastAudioClockAdvancedAt = null;
         this.syncStartPosition = null;
         this.syncStartedAt = null;
         this.lastSyncDriftSeconds = null;
+        this.lastSyncDriftWarningAt = 0;
         this.playerState = null;
         this.lastPlayerProgressPosition = null;
         this.lastPlayerProgressAdvancedAt = null;
@@ -141,6 +159,9 @@ class YaspWasapiExclusiveStreamSession {
         this.strippedInitSegmentChunks = 0;
         this.strippedInitSegmentBytes = 0;
         this.encodedSegmentCount = 0;
+        this.encodedChunkFingerprints = new Set();
+        this.duplicateEncodedChunks = 0;
+        this.duplicateEncodedBytes = 0;
         this.encodedTimelineGapWarnings = 0;
         this.lastEncodedSegmentNumber = null;
         this.lastEncodedTimelineStart = null;
@@ -159,13 +180,12 @@ class YaspWasapiExclusiveStreamSession {
                 continue;
             }
 
-            const queuedChunk = Buffer.from(chunk);
-            if (this.trackStore) {
-                this.appendEncodedToTrackStore(queuedChunk, { initialChunk: true });
-            } else {
-                this.pendingChunks.push(queuedChunk);
-                this.pendingBytes += queuedChunk.byteLength;
+            const queuedChunk = chunk;
+            const chunkFingerprint = getEncodedChunkFingerprint(queuedChunk);
+            if (chunkFingerprint) {
+                this.encodedChunkFingerprints.add(chunkFingerprint);
             }
+            this.appendEncodedToTrackStore(queuedChunk, { initialChunk: true });
             this.initialChunkBytes += queuedChunk.byteLength;
             this.totalEncodedBytes += queuedChunk.byteLength;
         }
@@ -203,6 +223,7 @@ class YaspWasapiExclusiveStreamSession {
             sourceHash: format.sourceHash ?? this.format?.sourceHash ?? null,
             workerId: format.workerId ?? this.format?.workerId ?? null,
             feederId: format.feederId ?? this.format?.feederId ?? null,
+            streamGeneration: format.streamGeneration ?? this.format?.streamGeneration ?? null,
         };
     }
 
@@ -297,6 +318,14 @@ class YaspWasapiExclusiveStreamSession {
         return this.alignByteOffset((this.getBytesPerSecond() * ms) / 1000);
     }
 
+    getStartPrebufferMs(rendererState = null) {
+        const configuredBufferMs = normalizeFiniteNumber(
+            rendererState?.actualBufferMs ?? this.rendererOptions.bufferMs ?? this.rendererOptions.timerPeriodMs * this.rendererOptions.timerBufferPeriods,
+            START_PREBUFFER_MIN_MS,
+        );
+        return Math.min(Math.max(configuredBufferMs * START_PREBUFFER_PERIODS, START_PREBUFFER_MIN_MS), START_PREBUFFER_MAX_MS);
+    }
+
     getByteOffsetForPosition(positionSeconds) {
         const relativeSeconds = Math.max(Number(positionSeconds) - this.pcmBasePosition, 0);
         return this.alignByteOffset(relativeSeconds * this.getBytesPerSecond());
@@ -317,8 +346,16 @@ class YaspWasapiExclusiveStreamSession {
 
         const currentRendererState = rendererState ?? this.renderer?.getState?.() ?? null;
         const sampleRate = Number(currentRendererState?.sampleRate ?? this.rendererOptions.sampleRate);
+        const audioClockElapsedFrames = Number(currentRendererState?.audioClockElapsedFrames);
+        if (sampleRate > 0 && currentRendererState?.audioClockValid === true && Number.isFinite(audioClockElapsedFrames)) {
+            return this.syncStartPosition + Math.max(audioClockElapsedFrames, 0) / sampleRate;
+        }
         const playedFrames = Number(currentRendererState?.playedFrames);
+        const renderedFrames = Number(currentRendererState?.renderedFrames);
         const paddingFrames = Number(currentRendererState?.paddingFrames);
+        if (sampleRate > 0 && Number.isFinite(renderedFrames) && Number.isFinite(paddingFrames)) {
+            return this.syncStartPosition + Math.max(renderedFrames - paddingFrames, 0) / sampleRate;
+        }
         if (sampleRate > 0 && Number.isFinite(playedFrames) && Number.isFinite(paddingFrames)) {
             return this.syncStartPosition + Math.max(playedFrames - paddingFrames, 0) / sampleRate;
         }
@@ -332,11 +369,12 @@ class YaspWasapiExclusiveStreamSession {
         }
 
         const playerPosition = getEstimatedPlayerPosition(this.playerState, now);
-        if (!Number.isFinite(playerPosition) || playerPosition + 0.5 < this.pcmBasePosition) {
+        if (!Number.isFinite(playerPosition)) {
             return false;
         }
 
-        const nextByteOffset = this.getByteOffsetForPosition(playerPosition);
+        const effectivePlayerPosition = Math.max(playerPosition, this.pcmBasePosition);
+        const nextByteOffset = this.getByteOffsetForPosition(effectivePlayerPosition);
         if (nextByteOffset > this.pcmCacheBytes) {
             return false;
         }
@@ -456,8 +494,14 @@ class YaspWasapiExclusiveStreamSession {
 
         const driftSeconds = outputPosition - playerPosition;
         this.lastSyncDriftSeconds = driftSeconds;
-        if (Math.abs(driftSeconds) > PROGRESS_DRIFT_THRESHOLD_SECONDS && !this.seekToPosition(playerPosition, now, `player progress drift ${driftSeconds.toFixed(3)}s`)) {
-            return `player progress drift ${driftSeconds.toFixed(3)}s outside pcm cache`;
+        if (Math.abs(driftSeconds) > PROGRESS_DRIFT_THRESHOLD_SECONDS && now - this.lastSyncDriftWarningAt > 5000) {
+            this.lastSyncDriftWarningAt = now;
+            this.log('warn', 'Muted YASP player drifted from the WASAPI hardware clock', {
+                signature: this.signature,
+                driftSeconds,
+                outputPosition,
+                playerPosition,
+            });
         }
 
         return null;
@@ -519,6 +563,8 @@ class YaspWasapiExclusiveStreamSession {
             return;
         }
 
+        clearInterval(this.rendererHealthTimer);
+        this.rendererHealthTimer = null;
         try {
             this.renderer.close();
         } catch {}
@@ -527,6 +573,7 @@ class YaspWasapiExclusiveStreamSession {
         this.rendererCreatedAt = null;
         this.rendererStartedAt = null;
         this.rendererStarted = false;
+        this.waitingForFirstRenderedFrame = false;
         this.outputStartByteOffset = null;
         if (this.state !== 'closed') {
             this.state = 'starting';
@@ -603,12 +650,25 @@ class YaspWasapiExclusiveStreamSession {
     getStartupBlockReason() {
         const availablePcmBytes = Math.max(this.pcmCacheBytes - this.playbackByteOffset, 0);
         const availablePcmMs = (availablePcmBytes * 1000) / this.getBytesPerSecond();
+        const startPrebufferMs = this.getStartPrebufferMs(this.lastRendererServiceState);
         const trackStoreState = this.trackStore?.getState?.() ?? null;
         if (!this.decoder) {
             return 'decoder process is not running';
         }
-        if (availablePcmMs < START_PREBUFFER_MS) {
-            return `decoded PCM prebuffer is ${availablePcmMs.toFixed(0)}ms/${START_PREBUFFER_MS}ms, encodedChunks=${trackStoreState?.encodedChunkCount ?? 'n/a'}`;
+        if (availablePcmMs < startPrebufferMs) {
+            const totalPcmMs = (this.pcmCacheBytes * 1000) / this.getBytesPerSecond();
+            const playbackOffsetMs = (this.playbackByteOffset * 1000) / this.getBytesPerSecond();
+            const decoderStderr = this.decoderStderr.trim().slice(-500);
+            return [
+                'available PCM ' + availablePcmMs.toFixed(0) + 'ms/' + startPrebufferMs.toFixed(0) + 'ms',
+                'totalPcm=' + totalPcmMs.toFixed(0) + 'ms',
+                'playbackOffset=' + playbackOffsetMs.toFixed(0) + 'ms',
+                'decoderChunks=' + this.decoderEncodedChunkIndex + '/' + (trackStoreState?.encodedChunkCount ?? 'n/a'),
+                'decoderBlocked=' + this.decoderWriteBlocked,
+                decoderStderr ? 'decoderStderr=' + decoderStderr : null,
+            ]
+                .filter(Boolean)
+                .join(', ');
         }
         if (this.waitingForPlayerHold) {
             return 'waiting for renderer player-hold acknowledgement';
@@ -860,31 +920,26 @@ class YaspWasapiExclusiveStreamSession {
             return;
         }
 
+        const chunkFingerprint = getEncodedChunkFingerprint(chunk);
+        if (chunkFingerprint && this.encodedChunkFingerprints.has(chunkFingerprint)) {
+            this.duplicateEncodedChunks += 1;
+            this.duplicateEncodedBytes += chunk.byteLength;
+            return;
+        }
+        if (chunkFingerprint) {
+            this.encodedChunkFingerprints.add(chunkFingerprint);
+        }
+
         this.totalEncodedBytes += chunk.byteLength;
         this.trackEncodedTimeline(meta ?? {});
-        if (this.trackStore) {
-            try {
-                this.appendEncodedToTrackStore(chunk, meta ?? {});
-                if (this.decoder?.stdin?.writable && this.state !== 'closed') {
-                    this.flushPendingChunks();
-                }
-            } catch (error) {
-                this.fail(error);
-            }
-            return;
-        }
-
         try {
-            this.encodedTrackBuffer?.push?.(chunk, meta ?? {});
-        } catch {}
-        if (this.decoder?.stdin?.writable && this.state !== 'closed') {
-            this.writeDecoderStdin(chunk);
-            return;
+            this.appendEncodedToTrackStore(chunk, meta ?? {});
+            if (this.decoder?.stdin?.writable && this.state !== 'closed') {
+                this.flushPendingChunks();
+            }
+        } catch (error) {
+            this.fail(error);
         }
-
-        const queuedChunk = Buffer.from(chunk);
-        this.pendingChunks.push(queuedChunk);
-        this.pendingBytes += queuedChunk.byteLength;
     }
 
     pushEncodedChunk(chunk, meta = null) {
@@ -917,32 +972,21 @@ class YaspWasapiExclusiveStreamSession {
             return;
         }
 
-        if (this.trackStore) {
-            if (this.decoderWriteBlocked) {
-                return;
-            }
-
-            const state = this.trackStore.getState?.() ?? null;
-            const chunkCount = Number(state?.encodedChunkCount) || 0;
-            while (this.decoderEncodedChunkIndex < chunkCount && !this.decoderWriteBlocked) {
-                const chunk = this.trackStore.readEncodedChunk?.(this.decoderEncodedChunkIndex);
-                if (!Buffer.isBuffer(chunk) || !chunk.byteLength || !this.writeDecoderStdin(chunk)) {
-                    break;
-                }
-                this.decoderEncodedChunkIndex += 1;
-                this.decoderEncodedBytes += chunk.byteLength;
-            }
-            this.pendingBytes = Math.max((Number(state?.encodedBytes) || 0) - this.decoderEncodedBytes, 0);
+        if (this.decoderWriteBlocked) {
             return;
         }
 
-        for (const chunk of this.pendingChunks) {
-            if (!this.writeDecoderStdin(chunk)) {
+        const state = this.trackStore.getState?.() ?? null;
+        const chunkCount = Number(state?.encodedChunkCount) || 0;
+        while (this.decoderEncodedChunkIndex < chunkCount && !this.decoderWriteBlocked) {
+            const chunk = this.trackStore.readEncodedChunk?.(this.decoderEncodedChunkIndex);
+            if (!Buffer.isBuffer(chunk) || !chunk.byteLength || !this.writeDecoderStdin(chunk)) {
                 break;
             }
+            this.decoderEncodedChunkIndex += 1;
+            this.decoderEncodedBytes += chunk.byteLength;
         }
-        this.pendingChunks = [];
-        this.pendingBytes = 0;
+        this.pendingBytes = Math.max((Number(state?.encodedBytes) || 0) - this.decoderEncodedBytes, 0);
     }
 
     appendEncodedToTrackStore(chunk, meta = null) {
@@ -959,56 +1003,12 @@ class YaspWasapiExclusiveStreamSession {
             return;
         }
 
-        if (this.trackStore) {
-            const result = this.trackStore.appendPcm?.(chunk);
-            if (!result?.accepted) {
-                throw new Error(`Native PCM track store rejected decoded audio: ${result?.reason ?? 'unknown reason'}`);
-            }
-            this.pcmCacheBytes = Number(result.pcmBytes) || 0;
-            this.totalPcmBytes += chunk.byteLength;
-            return;
+        const result = this.trackStore.appendPcm?.(chunk);
+        if (!result?.accepted) {
+            throw new Error(`Native PCM track store rejected decoded audio: ${result?.reason ?? 'unknown reason'}`);
         }
-
-        const cachedChunk = Buffer.from(chunk);
-        this.pcmCacheChunks.push(cachedChunk);
-        this.pcmCacheBytes += cachedChunk.byteLength;
-        this.totalPcmBytes += cachedChunk.byteLength;
-    }
-
-    readPcmCache(byteOffset, byteLength) {
-        const startOffset = this.alignByteOffset(byteOffset);
-        const endOffset = Math.min(startOffset + this.alignByteOffset(byteLength), this.pcmCacheBytes);
-        if (endOffset <= startOffset) {
-            return null;
-        }
-
-        if (this.trackStore) {
-            const output = this.trackStore.readPcm?.(startOffset, endOffset - startOffset);
-            return Buffer.isBuffer(output) && output.byteLength ? output : null;
-        }
-
-        const output = Buffer.alloc(endOffset - startOffset);
-        let chunkStart = 0;
-        let outputOffset = 0;
-
-        for (const chunk of this.pcmCacheChunks) {
-            const chunkEnd = chunkStart + chunk.byteLength;
-            if (chunkEnd <= startOffset) {
-                chunkStart = chunkEnd;
-                continue;
-            }
-            if (chunkStart >= endOffset) {
-                break;
-            }
-
-            const copyStart = Math.max(startOffset - chunkStart, 0);
-            const copyEnd = Math.min(endOffset - chunkStart, chunk.byteLength);
-            chunk.copy(output, outputOffset, copyStart, copyEnd);
-            outputOffset += copyEnd - copyStart;
-            chunkStart = chunkEnd;
-        }
-
-        return outputOffset === output.byteLength ? output : output.subarray(0, outputOffset);
+        this.pcmCacheBytes = Number(result.pcmBytes) || 0;
+        this.totalPcmBytes += chunk.byteLength;
     }
 
     canPumpPcm() {
@@ -1034,7 +1034,7 @@ class YaspWasapiExclusiveStreamSession {
         this.syncPlaybackOffsetToPlayer();
 
         const availableBytes = this.pcmCacheBytes - this.playbackByteOffset;
-        const startPrebufferBytes = this.getByteLengthForMs(START_PREBUFFER_MS);
+        const startPrebufferBytes = this.getByteLengthForMs(this.getStartPrebufferMs(this.lastRendererServiceState));
         if (availableBytes < startPrebufferBytes || !this.canPumpPcm()) {
             return false;
         }
@@ -1096,23 +1096,87 @@ class YaspWasapiExclusiveStreamSession {
         this.outputStartByteOffset = Number.isFinite(nativeSourceStartOffset) ? this.alignByteOffset(nativeSourceStartOffset) : this.playbackByteOffset;
         this.rendererStarted = true;
         this.rendererStartedAt = now;
-        this.state = 'running';
+        this.waitingForFirstRenderedFrame = true;
+        this.lastAudioClockAdvancedAt = now;
+        this.lastAudioClockElapsedFrames = 0;
         clearTimeout(this.startupTimer);
         this.startupTimer = null;
-        if (!this.startedAt) {
-            this.startedAt = now;
-        }
         this.syncStartedAt = now;
         this.syncStartPosition = this.getPositionForByteOffset(this.outputStartByteOffset);
-        this.releasePlayerHoldRequest('renderer started', now, false);
         this.log('info', 'YASP WASAPI exclusive renderer started after PCM prebuffer', {
             signature: this.signature,
             pcmBasePosition: this.pcmBasePosition,
             playbackByteOffset: this.playbackByteOffset,
             rendererState,
         });
+        this.startRendererHealthMonitor();
         this.emitStateChange();
         return true;
+    }
+
+    startRendererHealthMonitor() {
+        if (this.rendererHealthTimer || this.state === 'closed') {
+            return;
+        }
+
+        this.rendererHealthTimer = setInterval(() => this.serviceRendererHealth(), RENDERER_HEALTH_INTERVAL_MS);
+        this.rendererHealthTimer?.unref?.();
+    }
+
+    serviceRendererHealth(now = Date.now()) {
+        if (this.state === 'closed' || !this.rendererStarted || !this.renderer) {
+            return;
+        }
+
+        try {
+            const rendererState = this.renderer.getState?.() ?? null;
+            this.lastRendererHealthAt = now;
+            this.lastRendererServiceState = rendererState;
+
+            const lastHRESULTCode = Number(rendererState?.lastHRESULTCode);
+            if (Number.isFinite(lastHRESULTCode) && lastHRESULTCode < 0) {
+                throw new Error(`WASAPI render loop failed: ${rendererState?.lastHRESULT ?? lastHRESULTCode}`);
+            }
+            if (Number(rendererState?.waitTimeouts) > 0) {
+                throw new Error(`WASAPI render loop timed out: waitTimeouts=${rendererState.waitTimeouts}`);
+            }
+            if (Number(rendererState?.underruns) > 0) {
+                throw new Error(
+                    `WASAPI PCM underrun: underruns=${rendererState.underruns}, underrunFrames=${rendererState.underrunFrames ?? 'unknown'}`,
+                );
+            }
+
+            this.assertRendererCadence(rendererState, now);
+
+            const audioClockElapsedFrames = Number(rendererState?.audioClockElapsedFrames);
+            const fallbackConsumedFrames = Number(rendererState?.renderedFrames) - Number(rendererState?.paddingFrames);
+            const consumedFrames = rendererState?.audioClockValid === true && Number.isFinite(audioClockElapsedFrames)
+                ? audioClockElapsedFrames
+                : fallbackConsumedFrames;
+            if (Number.isFinite(consumedFrames) && consumedFrames > Number(this.lastAudioClockElapsedFrames ?? -1)) {
+                this.lastAudioClockElapsedFrames = consumedFrames;
+                this.lastAudioClockAdvancedAt = now;
+            }
+
+            if (this.waitingForFirstRenderedFrame && consumedFrames > 0) {
+                this.waitingForFirstRenderedFrame = false;
+                this.state = 'running';
+                this.startedAt ??= now;
+                this.releasePlayerHoldRequest('renderer clock started', now, false);
+                this.emitStateChange();
+            } else if (this.waitingForFirstRenderedFrame && now - this.rendererStartedAt > RENDERER_CLOCK_START_TIMEOUT_MS) {
+                throw new Error('WASAPI hardware clock did not advance after renderer start');
+            } else if (!this.waitingForFirstRenderedFrame && now - this.lastAudioClockAdvancedAt > RENDERER_CLOCK_START_TIMEOUT_MS) {
+                throw new Error('WASAPI hardware clock stalled');
+            }
+
+            if (now - this.lastRendererStateBroadcastAt >= RENDERER_STATE_BROADCAST_INTERVAL_MS) {
+                this.lastRendererStateBroadcastAt = now;
+                this.emitStateChange();
+            }
+        } catch (error) {
+            this.fail(error);
+        }
     }
 
     scheduleRendererService(delayMs = 0) {
@@ -1168,16 +1232,9 @@ class YaspWasapiExclusiveStreamSession {
                 this.firstPcmTimer = null;
                 const startPosition = getEstimatedPlayerPosition(this.playerState, Date.now());
                 if (Number.isFinite(startPosition)) {
-                    if (startPosition + PCM_WINDOW_POSITION_TOLERANCE_SECONDS < this.pcmBasePosition) {
-                        this.fail(
-                            new Error(
-                                `Captured PCM window starts at ${this.pcmBasePosition.toFixed(3)}s, ahead of player position ${startPosition.toFixed(3)}s`,
-                            ),
-                        );
-                        return;
-                    }
-                    this.playbackByteOffset = this.getByteOffsetForPosition(startPosition);
-                    this.syncStartPosition = startPosition;
+                    const effectiveStartPosition = Math.max(startPosition, this.pcmBasePosition);
+                    this.playbackByteOffset = this.getByteOffsetForPosition(effectiveStartPosition);
+                    this.syncStartPosition = effectiveStartPosition;
                     this.syncStartedAt = Date.now();
                 }
             }
@@ -1214,6 +1271,8 @@ class YaspWasapiExclusiveStreamSession {
         this.startupTimer = null;
         clearTimeout(this.rendererServiceTimer);
         this.rendererServiceTimer = null;
+        clearInterval(this.rendererHealthTimer);
+        this.rendererHealthTimer = null;
 
         try {
             this.decoder?.stdin?.destroy();
@@ -1225,11 +1284,10 @@ class YaspWasapiExclusiveStreamSession {
             this.renderer?.close();
         } catch {}
 
-        this.pendingChunks = [];
         this.pendingBytes = 0;
-        this.pcmCacheChunks = [];
         this.pcmCacheBytes = 0;
         this.pcmRemainder = Buffer.alloc(0);
+        this.encodedChunkFingerprints.clear();
         try {
             this.trackStore?.clear?.();
         } catch {}
@@ -1318,6 +1376,7 @@ class YaspWasapiExclusiveStreamSession {
             rendererCreatedAt: this.rendererCreatedAt,
             rendererStartedAt: this.rendererStartedAt,
             rendererStarted: this.rendererStarted,
+            waitingForFirstRenderedFrame: this.waitingForFirstRenderedFrame,
             createdAt: this.createdAt,
             startedAt: this.startedAt,
             closedAt: this.closedAt,
@@ -1328,7 +1387,7 @@ class YaspWasapiExclusiveStreamSession {
             pendingBytes,
             initialChunkBytes: this.initialChunkBytes,
             pcmCacheBytes: this.pcmCacheBytes,
-            bufferOwnership: this.trackStore ? 'native-direct-pcm-source' : 'javascript-fallback',
+            bufferOwnership: 'native-direct-pcm-source',
             trackStoreState,
             pcmBasePosition: this.pcmBasePosition,
             playbackByteOffset: this.playbackByteOffset,
@@ -1337,9 +1396,8 @@ class YaspWasapiExclusiveStreamSession {
             outputStartByteOffset: this.outputStartByteOffset,
             totalEncodedBytes: this.totalEncodedBytes,
             totalPcmBytes: this.totalPcmBytes,
-            totalPcmWrittenBytes: this.trackStore ? nativeSourceReadFrames * this.getBlockAlign() : this.totalPcmWrittenBytes,
+            totalPcmWrittenBytes: nativeSourceReadFrames * this.getBlockAlign(),
             decoderStderr: this.decoderStderr,
-            encodedTrackBufferState: this.encodedTrackBuffer?.getState?.() ?? null,
             syncStartPosition: this.syncStartPosition,
             syncStartedAt: this.syncStartedAt,
             estimatedOutputPosition: this.getEstimatedOutputPosition(now, rendererState),
@@ -1360,13 +1418,15 @@ class YaspWasapiExclusiveStreamSession {
             waitingForAudioParking: this.state === 'starting' && this.exclusiveEndpointRequested && this.audioParkingRequired && !this.audioParkingReady,
             audioParkingSettleMs: AUDIO_PARKING_SETTLE_MS,
             lastRendererServiceState: this.lastRendererServiceState,
-            rendererFeedMode: this.trackStore ? 'native-pull' : 'javascript-push',
-            startPrebufferMs: START_PREBUFFER_MS,
+            rendererFeedMode: 'native-pull',
+            startPrebufferMs: this.getStartPrebufferMs(rendererState),
             skippedInitOnlyChunks: this.skippedInitOnlyChunks,
             skippedInitOnlyBytes: this.skippedInitOnlyBytes,
             strippedInitSegmentChunks: this.strippedInitSegmentChunks,
             strippedInitSegmentBytes: this.strippedInitSegmentBytes,
             encodedSegmentCount: this.encodedSegmentCount,
+            duplicateEncodedChunks: this.duplicateEncodedChunks,
+            duplicateEncodedBytes: this.duplicateEncodedBytes,
             encodedTimelineGapWarnings: this.encodedTimelineGapWarnings,
             lastEncodedSegmentNumber: this.lastEncodedSegmentNumber,
             lastEncodedTimelineStart: this.lastEncodedTimelineStart,

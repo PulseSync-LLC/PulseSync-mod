@@ -2,6 +2,8 @@
 
 const native = process.platform === 'win32' ? require('./wasapi_exclusive.node') : null;
 const { createYaspStreamSession: createYaspStreamSessionInternal, YaspWasapiExclusiveStreamSession } = require('./stream-session');
+const DEVICE_FORMAT_CACHE_TTL_MS = 60 * 1000;
+let deviceFormatCache = null;
 
 class WasapiExclusiveError extends Error {
     constructor(message) {
@@ -70,6 +72,7 @@ const normalizeOptions = (options = {}) => {
         timerPeriodMs,
         timerBufferPeriods,
         deferStart: options.deferStart === true,
+        waveFormatExtensible: options.waveFormatExtensible !== false,
     };
 
     if (typeof options.deviceId === 'string' && options.deviceId.trim()) {
@@ -77,7 +80,7 @@ const normalizeOptions = (options = {}) => {
     }
 
     return normalized;
-};;
+};
 
 const isSupported = () => process.platform === 'win32' && Boolean(native?.isSupported?.());
 
@@ -86,10 +89,30 @@ const listDevices = (options = {}) => {
         return [];
     }
 
-    return native.listDevices({
+    const normalizedOptions = {
         includeDisabled: Boolean(options.includeDisabled),
         includeFormats: options.includeFormats !== false,
-    });
+    };
+    const devices = native.listDevices(normalizedOptions);
+    if (!normalizedOptions.includeDisabled && normalizedOptions.includeFormats) {
+        deviceFormatCache = {
+            devices,
+            updatedAt: Date.now(),
+        };
+    }
+    return devices;
+};
+
+const clearDeviceCache = () => {
+    deviceFormatCache = null;
+};
+
+const getDevicesWithFormats = () => {
+    if (deviceFormatCache && Date.now() - deviceFormatCache.updatedAt <= DEVICE_FORMAT_CACHE_TTL_MS) {
+        return deviceFormatCache.devices;
+    }
+
+    return listDevices({ includeDisabled: false, includeFormats: true });
 };
 
 const getDeviceForOptions = (devices, options = {}) => {
@@ -140,7 +163,7 @@ const scoreSupportedFormat = (format, desired) => {
 
 const getClosestSupportedFormat = (options = {}) => {
     const desired = normalizeOptions(options);
-    const devices = listDevices({ includeDisabled: false, includeFormats: true });
+    const devices = getDevicesWithFormats();
     const device = getDeviceForOptions(devices, desired);
     if (!device) {
         return null;
@@ -178,6 +201,7 @@ const getClosestSupportedFormat = (options = {}) => {
             containerBitsPerSample: format.containerBitsPerSample ?? format.bitsPerSample,
             sampleFormat: format.sampleFormat,
             float: format.float,
+            waveFormatExtensible: format.waveFormatExtensible !== false,
         },
         requestedOptions: desired,
     };
@@ -273,7 +297,6 @@ class WasapiExclusiveRenderer {
 }
 
 const createRenderer = (options = {}) => new WasapiExclusiveRenderer(options);
-const createEncodedTrackBuffer = native?.YaspEncodedTrackBuffer ? (options = {}) => new native.YaspEncodedTrackBuffer(options) : null;
 const createTrackStore = native?.YaspTrackStore ? (options = {}) => new native.YaspTrackStore(options) : null;
 const createYaspStreamSession = (options = {}) => {
     if (!createTrackStore) {
@@ -282,7 +305,6 @@ const createYaspStreamSession = (options = {}) => {
 
     return createYaspStreamSessionInternal({
         ...options,
-        createEncodedTrackBuffer,
         createTrackStore,
         createRenderer,
         getClosestSupportedFormat,
@@ -290,6 +312,7 @@ const createYaspStreamSession = (options = {}) => {
 };
 
 module.exports = {
+    clearDeviceCache,
     createRenderer,
     createTrackStore,
     createYaspStreamSession,

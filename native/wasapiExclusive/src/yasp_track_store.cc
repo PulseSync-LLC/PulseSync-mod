@@ -1,6 +1,9 @@
 #include "yasp_track_store.h"
 
+#include <windows.h>
+
 #include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -376,12 +379,44 @@ Napi::FunctionReference YaspTrackStore::constructor;
 } // namespace
 
 struct YaspPcmStore::Impl {
-    Impl(size_t maxBytes, size_t pageSize) : store(maxBytes, pageSize) {}
+    Impl(size_t maxBytesValue, size_t pageSizeValue) : maxBytes(maxBytesValue), pageSize(pageSizeValue) {
+        data = static_cast<uint8_t*>(VirtualAlloc(nullptr, maxBytes, MEM_RESERVE, PAGE_READWRITE));
+    }
 
-    mutable std::mutex mutex;
-    PagedByteStore store;
-    uint64_t totalReceivedBytes = 0;
-    uint64_t rejectedBytes = 0;
+    ~Impl() {
+        if (data) {
+            VirtualFree(data, 0, MEM_RELEASE);
+        }
+    }
+
+    bool EnsureCommitted(size_t requiredBytes) {
+        if (!data || requiredBytes > maxBytes) {
+            return false;
+        }
+        const size_t currentCommittedBytes = committedBytes.load(std::memory_order_relaxed);
+        if (requiredBytes <= currentCommittedBytes) {
+            return true;
+        }
+
+        const size_t targetBytes = std::min(((requiredBytes + pageSize - 1) / pageSize) * pageSize, maxBytes);
+        const size_t commitLength = targetBytes - currentCommittedBytes;
+        void* committed = VirtualAlloc(data + currentCommittedBytes, commitLength, MEM_COMMIT, PAGE_READWRITE);
+        if (!committed) {
+            return false;
+        }
+
+        committedBytes.store(targetBytes, std::memory_order_release);
+        return true;
+    }
+
+    uint8_t* data = nullptr;
+    const size_t maxBytes;
+    const size_t pageSize;
+    std::atomic<size_t> committedBytes{0};
+    mutable std::mutex writerMutex;
+    std::atomic<size_t> publishedBytes{0};
+    std::atomic<uint64_t> totalReceivedBytes{0};
+    std::atomic<uint64_t> rejectedBytes{0};
 };
 
 YaspPcmStore::YaspPcmStore(size_t maxBytes, size_t pageSize) : impl_(std::make_unique<Impl>(maxBytes, pageSize)) {}
@@ -389,37 +424,52 @@ YaspPcmStore::YaspPcmStore(size_t maxBytes, size_t pageSize) : impl_(std::make_u
 YaspPcmStore::~YaspPcmStore() = default;
 
 bool YaspPcmStore::Append(const uint8_t* data, size_t length) {
-    std::lock_guard<std::mutex> lock(impl_->mutex);
-    const bool accepted = impl_->store.Append(data, length);
-    if (accepted) {
-        impl_->totalReceivedBytes += length;
-    } else {
-        impl_->rejectedBytes += length;
+    if (!data || !length) {
+        return true;
     }
-    return accepted;
+
+    std::lock_guard<std::mutex> lock(impl_->writerMutex);
+    const size_t offset = impl_->publishedBytes.load(std::memory_order_relaxed);
+    if (length > impl_->maxBytes - offset || !impl_->EnsureCommitted(offset + length)) {
+        impl_->rejectedBytes.fetch_add(length, std::memory_order_relaxed);
+        return false;
+    }
+
+    std::memcpy(impl_->data + offset, data, length);
+    impl_->totalReceivedBytes.fetch_add(length, std::memory_order_relaxed);
+    impl_->publishedBytes.store(offset + length, std::memory_order_release);
+    return true;
 }
 
 size_t YaspPcmStore::Read(size_t offset, uint8_t* destination, size_t length) const {
-    std::lock_guard<std::mutex> lock(impl_->mutex);
-    return impl_->store.Read(offset, destination, length);
+    if (!destination || !length || !impl_->data) {
+        return 0;
+    }
+
+    const size_t publishedBytes = impl_->publishedBytes.load(std::memory_order_acquire);
+    if (offset >= publishedBytes) {
+        return 0;
+    }
+
+    const size_t readLength = std::min(length, publishedBytes - offset);
+    std::memcpy(destination, impl_->data + offset, readLength);
+    return readLength;
 }
 
 size_t YaspPcmStore::Clear() {
-    std::lock_guard<std::mutex> lock(impl_->mutex);
-    const size_t clearedBytes = impl_->store.Size();
-    impl_->store.Clear();
+    std::lock_guard<std::mutex> lock(impl_->writerMutex);
+    const size_t clearedBytes = impl_->publishedBytes.exchange(0, std::memory_order_acq_rel);
     return clearedBytes;
 }
 
 YaspPcmStoreState YaspPcmStore::GetState() const {
-    std::lock_guard<std::mutex> lock(impl_->mutex);
     YaspPcmStoreState state;
-    state.pageSize = impl_->store.PageSize();
-    state.maxBytes = impl_->store.MaxBytes();
-    state.bytes = impl_->store.Size();
-    state.pages = impl_->store.PageCount();
-    state.totalReceivedBytes = impl_->totalReceivedBytes;
-    state.rejectedBytes = impl_->rejectedBytes;
+    state.pageSize = impl_->pageSize;
+    state.maxBytes = impl_->maxBytes;
+    state.bytes = impl_->publishedBytes.load(std::memory_order_acquire);
+    state.pages = (state.bytes + impl_->pageSize - 1) / impl_->pageSize;
+    state.totalReceivedBytes = impl_->totalReceivedBytes.load(std::memory_order_relaxed);
+    state.rejectedBytes = impl_->rejectedBytes.load(std::memory_order_relaxed);
     return state;
 }
 

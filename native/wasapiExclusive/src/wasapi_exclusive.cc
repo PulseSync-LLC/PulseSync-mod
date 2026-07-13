@@ -237,6 +237,19 @@ WAVEFORMATEXTENSIBLE BuildWaveFormat(uint32_t sampleRate, uint32_t channels, uin
     return waveFormat;
 }
 
+WAVEFORMATEX BuildLegacyWaveFormat(uint32_t sampleRate, uint32_t channels, uint32_t bitsPerSample, bool floatPcm) {
+    WAVEFORMATEX waveFormat{};
+    const uint32_t blockAlign = channels * (bitsPerSample / 8);
+    waveFormat.wFormatTag = floatPcm ? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
+    waveFormat.nChannels = static_cast<WORD>(channels);
+    waveFormat.nSamplesPerSec = sampleRate;
+    waveFormat.wBitsPerSample = static_cast<WORD>(bitsPerSample);
+    waveFormat.nBlockAlign = static_cast<WORD>(blockAlign);
+    waveFormat.nAvgBytesPerSec = sampleRate * blockAlign;
+    waveFormat.cbSize = 0;
+    return waveFormat;
+}
+
 void PushUnique(std::vector<uint32_t>& values, uint32_t value) {
     if (std::find(values.begin(), values.end(), value) == values.end()) {
         values.push_back(value);
@@ -264,7 +277,15 @@ std::string GetSampleFormatName(uint32_t bitsPerSample, uint32_t containerBitsPe
     return "pcm" + std::to_string(bitsPerSample);
 }
 
-Napi::Object CreateFormatInfo(Napi::Env env, uint32_t sampleRate, uint32_t channels, uint32_t bitsPerSample, uint32_t containerBitsPerSample, bool floatPcm) {
+Napi::Object CreateFormatInfo(
+    Napi::Env env,
+    uint32_t sampleRate,
+    uint32_t channels,
+    uint32_t bitsPerSample,
+    uint32_t containerBitsPerSample,
+    bool floatPcm,
+    bool waveFormatExtensible
+) {
     Napi::Object format = Napi::Object::New(env);
     format.Set("sampleRate", sampleRate);
     format.Set("channels", channels);
@@ -275,6 +296,7 @@ Napi::Object CreateFormatInfo(Napi::Env env, uint32_t sampleRate, uint32_t chann
     format.Set("blockAlign", channels * (containerBitsPerSample / 8));
     format.Set("packed", !floatPcm && bitsPerSample == containerBitsPerSample);
     format.Set("float", floatPcm);
+    format.Set("waveFormatExtensible", waveFormatExtensible);
     format.Set("sampleFormat", GetSampleFormatName(bitsPerSample, containerBitsPerSample, floatPcm));
     return format;
 }
@@ -307,11 +329,16 @@ Napi::Object ProbeSupportedFormats(Napi::Env env, IMMDevice* device) {
     const auto probeFormat = [&](uint32_t sampleRate, uint32_t channels, uint32_t bitsPerSample, uint32_t containerBitsPerSample, bool floatPcm) {
         WAVEFORMATEXTENSIBLE waveFormat = BuildWaveFormat(sampleRate, channels, bitsPerSample, floatPcm, containerBitsPerSample);
         HRESULT formatHr = audioClient->IsFormatSupported(AUDCLNT_SHAREMODE_EXCLUSIVE, reinterpret_cast<WAVEFORMATEX*>(&waveFormat), nullptr);
+        bool waveFormatExtensible = formatHr == S_OK;
+        if (!waveFormatExtensible && channels <= 2 && bitsPerSample == containerBitsPerSample) {
+            WAVEFORMATEX legacyWaveFormat = BuildLegacyWaveFormat(sampleRate, channels, bitsPerSample, floatPcm);
+            formatHr = audioClient->IsFormatSupported(AUDCLNT_SHAREMODE_EXCLUSIVE, &legacyWaveFormat, nullptr);
+        }
         if (formatHr != S_OK) {
             return;
         }
 
-        formats.Set(formatIndex, CreateFormatInfo(env, sampleRate, channels, bitsPerSample, containerBitsPerSample, floatPcm));
+        formats.Set(formatIndex, CreateFormatInfo(env, sampleRate, channels, bitsPerSample, containerBitsPerSample, floatPcm, waveFormatExtensible));
         formatIndex += 1;
         PushUnique(supportedChannels, channels);
         PushUnique(supportedBitsPerSample, bitsPerSample);
@@ -509,6 +536,7 @@ public:
         timerPeriodMs_ = GetUintOption(options, "timerPeriodMs", std::max(timerPollMs_ * 2, 2u), 2, 100);
         timerBufferPeriods_ = GetUintOption(options, "timerBufferPeriods", 4, 2, 16);
         deferStart_ = GetBoolOption(options, "deferStart", false);
+        waveFormatExtensible_ = GetBoolOption(options, "waveFormatExtensible", true);
         requestedDeviceId_ = GetStringOption(options, "deviceId");
 
         if (!floatPcm_ && bitsPerSample_ != 16 && bitsPerSample_ != 24 && bitsPerSample_ != 32) {
@@ -519,6 +547,9 @@ public:
         if (!floatPcm_ && containerBitsPerSample_ != bitsPerSample_ && !(bitsPerSample_ == 24 && containerBitsPerSample_ == 32)) {
             Napi::RangeError::New(env, "containerBitsPerSample must match bitsPerSample, except 24-bit PCM may use a 32-bit container").ThrowAsJavaScriptException();
             return;
+        }
+        if (containerBitsPerSample_ != bitsPerSample_ || channels_ > 2) {
+            waveFormatExtensible_ = true;
         }
 
         blockAlign_ = channels_ * (containerBitsPerSample_ / 8);
@@ -564,7 +595,7 @@ private:
 
         BuildWaveFormat();
 
-        hr = audioClient_->IsFormatSupported(AUDCLNT_SHAREMODE_EXCLUSIVE, reinterpret_cast<WAVEFORMATEX*>(&waveFormat_), nullptr);
+        hr = audioClient_->IsFormatSupported(AUDCLNT_SHAREMODE_EXCLUSIVE, GetWaveFormat(), nullptr);
         if (hr != S_OK) {
             return FAILED(hr) ? hr : AUDCLNT_E_UNSUPPORTED_FORMAT;
         }
@@ -646,6 +677,15 @@ private:
             return hr;
         }
 
+        HRESULT clockHr = audioClient_->GetService(__uuidof(IAudioClock), reinterpret_cast<void**>(&audioClock_));
+        if (SUCCEEDED(clockHr)) {
+            clockHr = audioClock_->GetFrequency(&audioClockFrequency_);
+        }
+        if (FAILED(clockHr) || audioClockFrequency_ == 0) {
+            SafeRelease(audioClock_);
+            audioClockFrequency_ = 0;
+        }
+
         hr = audioClient_->GetBufferSize(&bufferFrames_);
         if (FAILED(hr)) {
             return hr;
@@ -667,13 +707,18 @@ private:
             streamFlags,
             bufferDuration,
             periodicity,
-            reinterpret_cast<WAVEFORMATEX*>(&waveFormat_),
+            GetWaveFormat(),
             nullptr
         );
     }
 
+    WAVEFORMATEX* GetWaveFormat() {
+        return waveFormatExtensible_ ? reinterpret_cast<WAVEFORMATEX*>(&waveFormat_) : &legacyWaveFormat_;
+    }
+
     void BuildWaveFormat() {
         waveFormat_ = ::BuildWaveFormat(sampleRate_, channels_, bitsPerSample_, floatPcm_, containerBitsPerSample_);
+        legacyWaveFormat_ = BuildLegacyWaveFormat(sampleRate_, channels_, bitsPerSample_, floatPcm_);
     }
 
     HRESULT PrimeSilence() {
@@ -779,8 +824,30 @@ private:
         }
 
         started_.store(true);
+        CaptureAudioClockBaseline();
         lastRenderHr_.store(S_OK);
         return S_OK;
+    }
+
+    void CaptureAudioClockBaseline() {
+        if (!audioClock_ || audioClockFrequency_ == 0) {
+            audioClockBaselineValid_.store(false);
+            return;
+        }
+
+        UINT64 position = 0;
+        UINT64 qpcPosition = 0;
+        HRESULT hr = audioClock_->GetPosition(&position, &qpcPosition);
+        if (FAILED(hr)) {
+            lastRenderHr_.store(hr);
+            audioClockBaselineValid_.store(false);
+            return;
+        }
+
+        audioClockStartPosition_.store(position);
+        audioClockPosition_.store(position);
+        audioClockQpcPosition_.store(qpcPosition);
+        audioClockBaselineValid_.store(true);
     }
 
     void RenderLoop() {
@@ -814,11 +881,16 @@ private:
                 previousEventAt = eventAt;
                 hasPreviousEvent = true;
                 eventWakeups_.fetch_add(1);
-                RenderAvailableFrames();
+                if (!RenderAvailableFrames()) {
+                    break;
+                }
             } else if (waitResult == WAIT_TIMEOUT) {
                 waitTimeouts_.fetch_add(1);
+                lastRenderHr_.store(HRESULT_FROM_WIN32(WAIT_TIMEOUT));
+                break;
             } else if (waitResult == WAIT_FAILED) {
                 lastRenderHr_.store(HRESULT_FROM_WIN32(GetLastError()));
+                break;
             }
         }
 
@@ -831,39 +903,39 @@ private:
         }
     }
 
-    void RenderAvailableFrames() {
+    bool RenderAvailableFrames() {
         std::lock_guard<std::mutex> audioLock(audioMutex_);
         if (!audioClient_ || !renderClient_) {
-            return;
+            lastRenderHr_.store(E_UNEXPECTED);
+            return false;
         }
 
         UINT32 padding = 0;
         HRESULT hr = audioClient_->GetCurrentPadding(&padding);
         if (FAILED(hr)) {
             lastRenderHr_.store(hr);
-            return;
+            return false;
         }
         paddingFrames_.store(padding);
 
         if (padding >= bufferFrames_) {
             lastRenderHr_.store(S_OK);
-            return;
+            return true;
         }
 
         const UINT32 framesAvailable = bufferFrames_ - padding;
         UINT32 framesToWrite = framesAvailable;
         if (timerDriven_) {
-            // Polling may wake early, but endpoint submissions must stay on complete device-period packets.
             framesToWrite = periodFrames_ ? (framesAvailable / periodFrames_) * periodFrames_ : framesAvailable;
             if (framesToWrite == 0) {
                 incompletePeriodWakeups_.fetch_add(1);
                 lastRenderHr_.store(S_OK);
-                return;
+                return true;
             }
         } else if (framesAvailable != bufferFrames_) {
             incompleteEventBufferWakeups_.fetch_add(1);
             lastRenderHr_.store(S_OK);
-            return;
+            return true;
         }
 
         if (framesToWrite != bufferFrames_) {
@@ -873,7 +945,7 @@ private:
         hr = renderClient_->GetBuffer(framesToWrite, &data);
         if (FAILED(hr)) {
             lastRenderHr_.store(hr);
-            return;
+            return false;
         }
 
         const size_t bytesNeeded = static_cast<size_t>(framesToWrite) * blockAlign_;
@@ -891,7 +963,7 @@ private:
         hr = renderClient_->ReleaseBuffer(framesToWrite, bytesRead ? 0 : AUDCLNT_BUFFERFLAGS_SILENT);
         if (FAILED(hr)) {
             lastRenderHr_.store(hr);
-            return;
+            return false;
         }
 
         playedFrames_.fetch_add(framesRead);
@@ -899,6 +971,7 @@ private:
         periodPacketWrites_.fetch_add(timerDriven_ && periodFrames_ ? framesToWrite / periodFrames_ : 1);
         paddingFrames_.store(std::min<UINT32>(padding + framesToWrite, bufferFrames_));
         lastRenderHr_.store(S_OK);
+        return true;
     }
 
     void CloseInternal() {
@@ -920,6 +993,7 @@ private:
         }
 
         SafeRelease(renderClient_);
+        SafeRelease(audioClock_);
         SafeRelease(audioClient_);
         SafeRelease(device_);
         pcmSource_.reset();
@@ -990,6 +1064,7 @@ private:
         periodPacketWrites_.store(0);
         incompletePeriodWakeups_.store(0);
         incompleteEventBufferWakeups_.store(0);
+        audioClockBaselineValid_.store(false);
         ResetEventTimingMetrics();
     }
 
@@ -1071,6 +1146,9 @@ private:
         hr = PrimeFromQueue();
         if (SUCCEEDED(hr) && wasStarted) {
             hr = audioClient_->Start();
+            if (SUCCEEDED(hr)) {
+                CaptureAudioClockBaseline();
+            }
         }
         if (FAILED(hr)) {
             lastRenderHr_.store(hr);
@@ -1207,6 +1285,10 @@ private:
         const uint64_t minimumEventIntervalUs = minEventIntervalUs_.load();
         const double expectedEventIntervalMs = GetExpectedWakeupIntervalMs();
         const double averageEventIntervalMs = eventIntervalSamples ? (static_cast<double>(eventIntervalTotalUs) / eventIntervalSamples / 1000.0) : 0.0;
+        UINT64 audioClockPosition = audioClockPosition_.load();
+        UINT64 audioClockQpcPosition = audioClockQpcPosition_.load();
+        const UINT64 audioClockStartPosition = audioClockStartPosition_.load();
+        bool audioClockValid = audioClockBaselineValid_.load();
 
         if (!stopping_.load() && started_.load()) {
             std::lock_guard<std::mutex> audioLock(audioMutex_);
@@ -1221,7 +1303,23 @@ private:
                     lastRenderHr_.store(paddingHr);
                 }
             }
+            if (audioClock_ && audioClockFrequency_ > 0) {
+                HRESULT clockHr = audioClock_->GetPosition(&audioClockPosition, &audioClockQpcPosition);
+                if (SUCCEEDED(clockHr)) {
+                    audioClockPosition_.store(audioClockPosition);
+                    audioClockQpcPosition_.store(audioClockQpcPosition);
+                    audioClockValid = audioClockBaselineValid_.load();
+                } else {
+                    lastHr = clockHr;
+                    lastRenderHr_.store(clockHr);
+                }
+            }
         }
+
+        const double audioClockElapsedFrames =
+            audioClockValid && audioClockFrequency_ > 0 && audioClockPosition >= audioClockStartPosition
+                ? static_cast<double>(audioClockPosition - audioClockStartPosition) * sampleRate_ / audioClockFrequency_
+                : 0.0;
 
         state.Set("sampleRate", sampleRate_);
         state.Set("channels", channels_);
@@ -1230,6 +1328,7 @@ private:
         state.Set("containerBitsPerSample", containerBitsPerSample_);
         state.Set("sampleFormat", GetSampleFormatName(bitsPerSample_, containerBitsPerSample_, floatPcm_));
         state.Set("float", floatPcm_);
+        state.Set("waveFormatExtensible", waveFormatExtensible_);
         state.Set("renderMode", timerDriven_ ? "timer" : "event");
         state.Set("timerPollMs", timerPollMs_);
         state.Set("timerPeriodMs", timerPeriodMs_);
@@ -1290,6 +1389,13 @@ private:
         state.Set("pcmSourceAvailableBytes", static_cast<double>(sourceAvailableBytes));
         state.Set("pcmSourceAvailableFrames", static_cast<double>(sourceAvailableBytes / blockAlign_));
         state.Set("pcmSourceReadFrames", static_cast<double>(sourceReadFrames_.load()));
+        state.Set("audioClockAvailable", audioClock_ && audioClockFrequency_ > 0);
+        state.Set("audioClockValid", audioClockValid);
+        state.Set("audioClockFrequency", static_cast<double>(audioClockFrequency_));
+        state.Set("audioClockStartPosition", static_cast<double>(audioClockStartPosition));
+        state.Set("audioClockPosition", static_cast<double>(audioClockPosition));
+        state.Set("audioClockQpcPosition", static_cast<double>(audioClockQpcPosition));
+        state.Set("audioClockElapsedFrames", audioClockElapsedFrames);
         const double currentVolumeGain = currentVolumeGain_.load(std::memory_order_relaxed);
         const double targetVolumeGain = targetVolumeGain_.load(std::memory_order_relaxed);
         state.Set("volumeGain", currentVolumeGain);
@@ -1309,6 +1415,7 @@ private:
     IMMDevice* device_ = nullptr;
     IAudioClient* audioClient_ = nullptr;
     IAudioRenderClient* renderClient_ = nullptr;
+    IAudioClock* audioClock_ = nullptr;
     HANDLE stopEvent_ = nullptr;
     HANDLE renderEvent_ = nullptr;
     HANDLE renderTimer_ = nullptr;
@@ -1316,6 +1423,7 @@ private:
     ByteRingBuffer queue_;
     std::shared_ptr<YaspPcmStore> pcmSource_;
     WAVEFORMATEXTENSIBLE waveFormat_{};
+    WAVEFORMATEX legacyWaveFormat_{};
     std::mutex audioMutex_;
     bool comInitialized_ = false;
     std::wstring requestedDeviceId_;
@@ -1343,6 +1451,7 @@ private:
     bool floatPcm_ = true;
     bool timerDriven_ = false;
     bool deferStart_ = false;
+    bool waveFormatExtensible_ = true;
     std::atomic<bool> stopping_{true};
     std::atomic<bool> started_{false};
     std::atomic<uint64_t> writtenFrames_{0};
@@ -1371,6 +1480,11 @@ private:
     std::atomic<uint64_t> underrunFrames_{0};
     std::atomic<uint64_t> flushes_{0};
     std::atomic<UINT32> paddingFrames_{0};
+    UINT64 audioClockFrequency_ = 0;
+    std::atomic<UINT64> audioClockStartPosition_{0};
+    std::atomic<UINT64> audioClockPosition_{0};
+    std::atomic<UINT64> audioClockQpcPosition_{0};
+    std::atomic<bool> audioClockBaselineValid_{false};
     std::atomic<long> lastRenderHr_{S_OK};
 };
 
@@ -1505,7 +1619,6 @@ Napi::Value CreateRenderer(const Napi::CallbackInfo& info) {
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     WasapiExclusiveRenderer::InitClass(env, exports);
-    InitYaspEncodedTrackBuffer(env, exports);
     InitYaspTrackStore(env, exports);
     exports.Set(Napi::String::New(env, "isSupported"), Napi::Function::New(env, IsSupported));
     exports.Set(Napi::String::New(env, "listDevices"), Napi::Function::New(env, ListDevices));

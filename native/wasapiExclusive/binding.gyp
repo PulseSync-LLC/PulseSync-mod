@@ -4,7 +4,6 @@
       "target_name": "wasapi_exclusive",
       "sources": [
         "src/wasapi_exclusive.cc",
-        "src/yasp_encoded_buffer.cc",
         "src/pcm_volume.cc",
         "src/yasp_track_store.cc",
       ],

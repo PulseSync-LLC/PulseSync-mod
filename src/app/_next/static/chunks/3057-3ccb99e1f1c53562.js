@@ -152,6 +152,7 @@
                         previousTrack: a,
                         nextTrack: s,
                         volume: e.state.playerState.exponentVolume.value,
+                        seekEventSequence: Number(window.__pulseSyncPlayerSeekEventSequence) || 0,
                     });
             };
             let n = (e) => {
@@ -1103,6 +1104,7 @@
                                 previousTrack: e.previousTrack,
                                 nextTrack: e.nextTrack,
                                 volume: e.volume,
+                                seekEventSequence: e.seekEventSequence,
                             });
                     }),
                     i = (e) => {
@@ -1145,6 +1147,7 @@
                             previousTrack: l,
                             nextTrack: r,
                             volume: e?.state?.playerState?.exponentVolume?.value,
+                            seekEventSequence: Number(window.__pulseSyncPlayerSeekEventSequence) || 0,
                         });
                     };
                 (0, s.useEffect)(() => {
@@ -1162,7 +1165,11 @@
                         }),
                         c = t?.state?.playerState?.event?.onChange(() => {
                             let e = t?.state?.playerState?.event?.value;
-                            ('SET_PROGRESS' === e || e === o.Iu?.SET_PROGRESS) && d(t, t?.state?.playerState?.status?.value);
+                            ('SET_PROGRESS' === e || e === o.Iu?.SET_PROGRESS) &&
+                                (window.__pulseSyncWasapiProgressSyncInFlight
+                                    ? (window.__pulseSyncWasapiProgressSyncInFlight = false)
+                                    : (window.__pulseSyncPlayerSeekEventSequence = (Number(window.__pulseSyncPlayerSeekEventSequence) || 0) + 1),
+                                d(t, t?.state?.playerState?.status?.value));
                         }),
                         u = t?.state?.queueState?.entityList?.onChange(() => {
                             d(t, t?.state?.playerState?.status?.value);
@@ -1217,7 +1224,7 @@
                             null == p || p(),
                             null == m || m(),
                             null == C || C(),
-                            null == l || l(),
+                            null == e || e(),
                             null == l || l();
                     };
                 }, [a, null == t ? void 0 : t.state.currentContext, null == t ? void 0 : t.state.playerState.status]);

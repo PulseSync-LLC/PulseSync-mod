@@ -4,6 +4,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 exports.refreshWasapiExclusiveDefaultDeviceMonitor =
     exports.refreshWasapiExclusiveVolumePolicy =
     exports.resetYaspSource =
+    exports.seekWasapiExclusiveOutput =
     exports.stopWasapiExclusiveOutput =
     exports.updateWasapiExclusiveAudioParkingState =
     exports.updateWasapiExclusivePlayerState =
@@ -21,7 +22,6 @@ exports.refreshWasapiExclusiveDefaultDeviceMonitor =
 const { Logger } = require('../packages/logger/Logger.js');
 const crypto = require('crypto');
 const { EventEmitter } = require('events');
-const { spawn } = require('child_process');
 const { getFfmpegUpdater } = require('./ffmpegInstaller.js');
 
 const logger = new Logger('NativeAudioOutput');
@@ -31,23 +31,13 @@ const yaspPreloadedStreams = new Map();
 const nativeAudioOutputEvents = new EventEmitter();
 const YASP_AUDIO_FORMAT_CHANGED_EVENT = 'yaspAudioFormatChanged';
 const WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED_EVENT = 'wasapiExclusiveOutputStateChanged';
-const WASAPI_EXCLUSIVE_OUTPUT_START_DELAY_MS = 250;
-const WASAPI_EXCLUSIVE_START_PREBUFFER_MS = 2500;
-const WASAPI_EXCLUSIVE_NATIVE_QUEUE_TARGET_MS = 2500;
-const WASAPI_EXCLUSIVE_NATIVE_QUEUE_MIN_MS = 1000;
-const WASAPI_EXCLUSIVE_PCM_PUMP_INTERVAL_MS = 20;
-const WASAPI_EXCLUSIVE_PCM_PUMP_WAIT_MS = 10;
-const WASAPI_EXCLUSIVE_PLAYER_HOLD_TIMEOUT_MS = 8000;
-const YASP_WASAPI_DECODER_FIRST_PCM_TIMEOUT_MS = 5000;
-const WASAPI_EXCLUSIVE_PROGRESS_DRIFT_THRESHOLD_SECONDS = 2;
 const WASAPI_EXCLUSIVE_PROGRESS_SEEK_THRESHOLD_SECONDS = 1.5;
 const WASAPI_EXCLUSIVE_PLAYER_CLOCK_STALL_MAX_DELTA_SECONDS = 0.25;
 const WASAPI_EXCLUSIVE_PLAYER_CLOCK_STALL_MIN_INTERVAL_MS = 1000;
-const WASAPI_EXCLUSIVE_PCM_WINDOW_POSITION_TOLERANCE_SECONDS = 0.1;
 const WASAPI_EXCLUSIVE_FAILED_SIGNATURE_RETRY_MS = 15000;
 const WASAPI_EXCLUSIVE_DEVICE_AVAILABILITY_TTL_MS = 1000;
 const WASAPI_EXCLUSIVE_DEFAULT_DEVICE_POLL_MS = 1000;
-const WASAPI_EXCLUSIVE_TRANSIENT_PLAYER_STATUSES = new Set(['buffering', 'loading']);
+const WASAPI_EXCLUSIVE_TRANSIENT_PLAYER_STATUSES = new Set(['buffering', 'loading', 'loadingMediaSource']);
 let lastYaspAudioFormat = null;
 let lastYaspAudioFormatSignature = '';
 const WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY = 'modSettings.nativeAudioOutput.wasapiExclusiveDeviceId';
@@ -55,12 +45,13 @@ const WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY = 'modSettings.nativeAudioOutp
 const WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY = 'modSettings.nativeAudioOutput.forceWasapiExclusiveFullVolume';
 const YASP_CHUNK_TAP_ENABLED_SETTING_KEY = 'modSettings.nativeAudioOutput.enableYaspChunkTap';
 const WASAPI_EXCLUSIVE_MODULE_PATH = '../native_modules/wasapi_exclusive';
-const YASP_WASAPI_DECODER_BUFFER_LIMIT_BYTES = 16 * 1024 * 1024;
 const YASP_WASAPI_INIT_CHUNK_LIMIT_BYTES = 4 * 1024 * 1024;
 const YASP_WASAPI_PRELOAD_STREAM_LIMIT = 4;
 const YASP_WASAPI_PRELOAD_MAX_BYTES = 32 * 1024 * 1024;
 const YASP_WASAPI_PRELOAD_TTL_MS = 2 * 60 * 1000;
 const YASP_WASAPI_PRELOAD_DURATION_TOLERANCE_MS = 1500;
+const YASP_CHUNK_STATS_TTL_MS = 5 * 60 * 1000;
+const YASP_CHUNK_STATS_LIMIT = 32;
 const requireIfExists =
     (typeof globalThis !== 'undefined' && globalThis.requireIfExists) ||
     (typeof global !== 'undefined' && global.requireIfExists) ||
@@ -83,6 +74,7 @@ let wasapiExclusiveOutputSession = null;
 let lastWasapiExclusiveOutputError = null;
 let lastFailedWasapiExclusiveOutputSignature = null;
 let lastFailedWasapiExclusiveOutputAt = 0;
+let lastFailedWasapiExclusiveOutputPermanent = false;
 let lastWasapiExclusiveOutputSkipReason = null;
 let lastWasapiExclusivePlayerState = null;
 let wasapiExclusiveDeviceAvailabilityCache = null;
@@ -142,6 +134,7 @@ const normalizeWasapiExclusivePlayerState = (playerState = {}, updatedAt = Date.
         isPlaying: playerState.isPlaying === true || status === 'playing',
         position: getPlayerStateProgressPosition(playerState),
         trackId: getPlayerTrackId(playerState),
+        seekEventSequence: toFiniteNumber(playerState.seekEventSequence),
         exponentVolume: Number.isFinite(exponentVolume) ? clampUnitInterval(exponentVolume) : null,
         volumeGain: exponentVolumeToLinearGain(exponentVolume),
         updatedAt,
@@ -174,974 +167,6 @@ const getWasapiExclusivePlayerStopReason = (playerState) => {
         : null;
 };
 
-class YaspWasapiExclusiveOutputSession {
-    constructor({ signature, format, rendererOptions, initialChunks = [], startPosition = null }) {
-        this.signature = signature;
-        this.format = format;
-        this.rendererOptions = rendererOptions;
-        this.state = 'starting';
-        this.createdAt = Date.now();
-        this.startedAt = null;
-        this.closedAt = null;
-        this.closeReason = null;
-        this.error = null;
-        this.decoderExit = null;
-        this.decoderStderr = '';
-        this.decoderArgs = null;
-        this.pendingChunks = [];
-        this.pendingBytes = 0;
-        this.initialChunkBytes = 0;
-        this.pcmCacheChunks = [];
-        this.pcmCacheBytes = 0;
-        this.pcmBasePosition = Number.isFinite(startPosition) ? Math.max(startPosition, 0) : 0;
-        this.playbackByteOffset = 0;
-        this.totalEncodedBytes = 0;
-        this.totalPcmBytes = 0;
-        this.totalPcmWrittenBytes = 0;
-        this.pcmRemainder = Buffer.alloc(0);
-        this.decoder = null;
-        this.renderer = null;
-        this.firstPcmTimer = null;
-        this.pumpTimer = null;
-        this.syncStartPosition = null;
-        this.syncStartedAt = null;
-        this.lastSyncDriftSeconds = null;
-        this.waitingForPlayerHold = false;
-        this.playerHoldActive = false;
-        this.playerHoldRequestedAt = null;
-        this.playerHoldReleasedAt = null;
-        this.playerHoldTimedOut = false;
-        this.playerHoldReleaseReason = null;
-        this.lastRendererUnderruns = 0;
-        this.lastRendererUnderrunFrames = 0;
-        this.lastRendererUnderrunLogAt = 0;
-        this.lastPumpState = null;
-        this.skippedInitOnlyChunks = 0;
-        this.skippedInitOnlyBytes = 0;
-        this.strippedInitSegmentChunks = 0;
-        this.strippedInitSegmentBytes = 0;
-        this.pcmBoundaryChecks = 0;
-        this.pcmBoundaryJumpWarnings = 0;
-        this.maxPcmBoundaryJump = 0;
-        this.lastPcmBoundaryJump = null;
-        this.lastPcmBoundaryWarning = null;
-        this.lastPcmFrameSamples = null;
-
-        for (const chunk of initialChunks) {
-            if (!Buffer.isBuffer(chunk) || this.pendingBytes + chunk.byteLength > YASP_WASAPI_DECODER_BUFFER_LIMIT_BYTES) {
-                continue;
-            }
-
-            const queuedChunk = Buffer.from(chunk);
-            this.pendingChunks.push(queuedChunk);
-            this.pendingBytes += queuedChunk.byteLength;
-            this.initialChunkBytes += queuedChunk.byteLength;
-            this.totalEncodedBytes += queuedChunk.byteLength;
-        }
-    }
-
-    updateFormat(format) {
-        if (!format || typeof format !== 'object') {
-            return;
-        }
-
-        this.format = {
-            ...this.format,
-            mimeType: format.mimeType ?? this.format?.mimeType ?? null,
-            codec: format.codec ?? this.format?.codec ?? null,
-            bitrate: format.bitrate ?? this.format?.bitrate ?? null,
-            channels: format.channels ?? this.format?.channels ?? null,
-            sampleRate: format.sampleRate ?? this.format?.sampleRate ?? null,
-            bitsPerSample: format.bitsPerSample ?? this.format?.bitsPerSample ?? null,
-            container: format.container ?? this.format?.container ?? null,
-            source: format.source ?? this.format?.source ?? null,
-            lossless: format.lossless ?? this.format?.lossless ?? null,
-            currentTrack: format.currentTrack ?? this.format?.currentTrack ?? null,
-            sourceHash: format.sourceHash ?? this.format?.sourceHash ?? null,
-        };
-    }
-
-    getEstimatedOutputPosition(now = Date.now()) {
-        if (!Number.isFinite(this.syncStartPosition) || !Number.isFinite(this.syncStartedAt)) {
-            return null;
-        }
-
-        if (this.state !== 'running') {
-            return this.syncStartPosition;
-        }
-
-        return this.syncStartPosition + Math.max(now - this.syncStartedAt, 0) / 1000;
-    }
-
-    getBlockAlign() {
-        const containerBitsPerSample = Number(this.rendererOptions.containerBitsPerSample ?? this.rendererOptions.bitsPerSample);
-        return Math.max(Number(this.rendererOptions.channels) * (containerBitsPerSample / 8), 1);
-    }
-
-    getBytesPerSample() {
-        return Math.max(this.getBlockAlign() / Math.max(Number(this.rendererOptions.channels) || 1, 1), 1);
-    }
-
-    getBytesPerSecond() {
-        return Math.max(Number(this.rendererOptions.sampleRate) * this.getBlockAlign(), 1);
-    }
-
-    getByteLengthForMs(milliseconds) {
-        return this.alignByteOffset((this.getBytesPerSecond() * Math.max(Number(milliseconds) || 0, 0)) / 1000);
-    }
-
-    alignByteOffset(byteOffset) {
-        const blockAlign = this.getBlockAlign();
-        return Math.max(Math.floor((Number(byteOffset) || 0) / blockAlign) * blockAlign, 0);
-    }
-
-    getByteOffsetForPosition(positionSeconds) {
-        return this.alignByteOffset(Math.max((Number(positionSeconds) || 0) - this.pcmBasePosition, 0) * this.getBytesPerSecond());
-    }
-
-    getPositionForByteOffset(byteOffset) {
-        return this.pcmBasePosition + this.alignByteOffset(byteOffset) / this.getBytesPerSecond();
-    }
-
-    getPcmSample(buffer, offset) {
-        const bytesPerSample = this.getBytesPerSample();
-        if (bytesPerSample === 2 && offset + 2 <= buffer.byteLength) {
-            return buffer.readInt16LE(offset);
-        }
-
-        if (bytesPerSample === 3 && offset + 3 <= buffer.byteLength) {
-            const value = buffer.readUIntLE(offset, 3);
-            return value & 0x800000 ? value - 0x1000000 : value;
-        }
-
-        if (bytesPerSample === 4 && offset + 4 <= buffer.byteLength) {
-            return buffer.readInt32LE(offset);
-        }
-
-        return null;
-    }
-
-    getPcmFrameSamples(buffer, frameOffset) {
-        const channels = Math.max(Number(this.rendererOptions.channels) || 1, 1);
-        const bytesPerSample = this.getBytesPerSample();
-        const samples = [];
-
-        for (let channel = 0; channel < channels; channel += 1) {
-            const sample = this.getPcmSample(buffer, frameOffset + channel * bytesPerSample);
-            if (!Number.isFinite(sample)) {
-                return null;
-            }
-            samples.push(sample);
-        }
-
-        return samples;
-    }
-
-    getPcmBoundaryJumpThreshold() {
-        const bitsPerSample = Number(this.rendererOptions.bitsPerSample) || 16;
-        return Math.max(Math.floor(2 ** Math.min(bitsPerSample - 1, 30) * 0.25), 1);
-    }
-
-    trackPcmBoundary(chunk) {
-        if (!Buffer.isBuffer(chunk) || chunk.byteLength < this.getBlockAlign()) {
-            return;
-        }
-
-        const firstFrame = this.getPcmFrameSamples(chunk, 0);
-        const lastFrame = this.getPcmFrameSamples(chunk, chunk.byteLength - this.getBlockAlign());
-        if (!firstFrame || !lastFrame) {
-            return;
-        }
-
-        if (this.lastPcmFrameSamples?.length === firstFrame.length) {
-            let jump = 0;
-            for (let index = 0; index < firstFrame.length; index += 1) {
-                jump = Math.max(jump, Math.abs(firstFrame[index] - this.lastPcmFrameSamples[index]));
-            }
-
-            this.pcmBoundaryChecks += 1;
-            this.lastPcmBoundaryJump = jump;
-            this.maxPcmBoundaryJump = Math.max(this.maxPcmBoundaryJump, jump);
-
-            if (jump > this.getPcmBoundaryJumpThreshold()) {
-                this.pcmBoundaryJumpWarnings += 1;
-                this.lastPcmBoundaryWarning = {
-                    jump,
-                    checks: this.pcmBoundaryChecks,
-                    totalPcmBytes: this.totalPcmBytes,
-                    firstFrame,
-                    previousFrame: this.lastPcmFrameSamples,
-                };
-            }
-        }
-
-        this.lastPcmFrameSamples = lastFrame;
-    }
-
-    syncPlaybackOffsetToPlayer(now = Date.now()) {
-        if (this.state === 'running') {
-            return false;
-        }
-
-        const playerPosition = getEstimatedPlayerPosition(lastWasapiExclusivePlayerState, now);
-        if (!Number.isFinite(playerPosition) || playerPosition + 0.5 < this.pcmBasePosition) {
-            return false;
-        }
-
-        const nextByteOffset = this.getByteOffsetForPosition(playerPosition);
-        if (nextByteOffset > this.pcmCacheBytes) {
-            return false;
-        }
-
-        if (Math.abs(nextByteOffset - this.playbackByteOffset) < this.getByteLengthForMs(20)) {
-            return true;
-        }
-
-        this.playbackByteOffset = nextByteOffset;
-        this.syncStartPosition = this.getPositionForByteOffset(this.playbackByteOffset);
-        this.syncStartedAt = now;
-        this.lastSyncDriftSeconds = null;
-        return true;
-    }
-
-    requestPlayerHold(now = Date.now()) {
-        if (this.waitingForPlayerHold) {
-            return;
-        }
-
-        this.waitingForPlayerHold = true;
-        this.playerHoldActive = true;
-        this.playerHoldRequestedAt = now;
-        this.playerHoldReleasedAt = null;
-        this.playerHoldReleaseReason = null;
-        this.playerHoldTimedOut = false;
-        logger.info('YASP WASAPI exclusive waiting for player hold', {
-            signature: this.signature,
-            playbackByteOffset: this.playbackByteOffset,
-            pcmCacheBytes: this.pcmCacheBytes,
-        });
-        emitWasapiExclusiveOutputStateChanged();
-    }
-
-    releasePlayerHoldRequest(reason = 'renderer started', now = Date.now(), emitState = true) {
-        if (!this.waitingForPlayerHold) {
-            return;
-        }
-
-        this.waitingForPlayerHold = false;
-        this.playerHoldReleasedAt = now;
-        this.playerHoldReleaseReason = reason;
-        if (emitState) {
-            emitWasapiExclusiveOutputStateChanged();
-        }
-    }
-
-    releasePlayerHold(reason = 'released', now = Date.now(), emitState = true) {
-        const changed = this.waitingForPlayerHold || this.playerHoldActive || this.playerHoldReleaseReason !== reason;
-        this.waitingForPlayerHold = false;
-        this.playerHoldActive = false;
-        this.playerHoldReleasedAt = now;
-        this.playerHoldReleaseReason = reason;
-        if (changed && emitState) {
-            emitWasapiExclusiveOutputStateChanged();
-        }
-    }
-
-    isPlayerHoldPausedState(playerState = lastWasapiExclusivePlayerState, now = Date.now()) {
-        if (!this.playerHoldActive || !playerState?.hasIsPlaying || playerState.isPlaying) {
-            return false;
-        }
-
-        if (!this.waitingForPlayerHold && Number.isFinite(this.playerHoldReleasedAt) && now - this.playerHoldReleasedAt > WASAPI_EXCLUSIVE_PLAYER_HOLD_TIMEOUT_MS) {
-            this.playerHoldTimedOut = true;
-            this.releasePlayerHold('resume timeout', now);
-            return false;
-        }
-
-        return true;
-    }
-
-    shouldWaitForPlayerHold(now = Date.now()) {
-        if (this.state !== 'starting' || this.renderer || this.startedAt) {
-            return false;
-        }
-
-        if (!lastWasapiExclusivePlayerState?.isPlaying) {
-            if (this.isPlayerHoldPausedState(lastWasapiExclusivePlayerState, now)) {
-                this.syncPlaybackOffsetToPlayer(now);
-            }
-            return false;
-        }
-
-        this.requestPlayerHold(now);
-        if (now - this.playerHoldRequestedAt > WASAPI_EXCLUSIVE_PLAYER_HOLD_TIMEOUT_MS) {
-            this.playerHoldTimedOut = true;
-            this.releasePlayerHold('hold timeout', now);
-            logger.warn('YASP WASAPI exclusive player hold timeout', {
-                signature: this.signature,
-                playerState: lastWasapiExclusivePlayerState,
-            });
-            return false;
-        }
-
-        return true;
-    }
-
-    seekToPosition(positionSeconds, now = Date.now(), reason = 'seek') {
-        const nextByteOffset = this.getByteOffsetForPosition(positionSeconds);
-        if (Number(positionSeconds) + 0.5 < this.pcmBasePosition || nextByteOffset > this.pcmCacheBytes + this.getBytesPerSecond()) {
-            return false;
-        }
-
-        if (Math.abs(nextByteOffset - this.playbackByteOffset) < this.getBytesPerSecond() * 0.1) {
-            return true;
-        }
-
-        this.playbackByteOffset = nextByteOffset;
-        this.syncStartPosition = this.getPositionForByteOffset(this.playbackByteOffset);
-        this.syncStartedAt = now;
-        this.lastSyncDriftSeconds = null;
-        if (this.renderer?.flush) {
-            try {
-                const flushedBytes = this.renderer.flush();
-                logger.info('YASP WASAPI exclusive renderer flushed', {
-                    reason,
-                    signature: this.signature,
-                    flushedBytes,
-                    playbackByteOffset: this.playbackByteOffset,
-                    pcmCacheBytes: this.pcmCacheBytes,
-                });
-            } catch (error) {
-                logger.error('YASP WASAPI exclusive renderer flush failed:', error);
-                this.closeRenderer(`pcm cache ${reason}`);
-            }
-        } else {
-            this.closeRenderer(`pcm cache ${reason}`);
-        }
-        this.schedulePcmPump(0);
-        return true;
-    }
-
-    closeRenderer(reason = 'renderer reset') {
-        if (!this.renderer) {
-            return;
-        }
-
-        try {
-            this.renderer.close();
-        } catch {}
-        this.renderer = null;
-        if (this.state !== 'closed') {
-            this.state = 'starting';
-            logger.info('YASP WASAPI exclusive renderer reset', {
-                reason,
-                signature: this.signature,
-                playbackByteOffset: this.playbackByteOffset,
-                pcmCacheBytes: this.pcmCacheBytes,
-            });
-            emitWasapiExclusiveOutputStateChanged();
-        }
-    }
-
-    getPlayerSyncStopReason(playerState, now = Date.now()) {
-        if (!playerState) {
-            return null;
-        }
-
-        if (this.isPlayerHoldPausedState(playerState, now)) {
-            return null;
-        }
-
-        const playerStopReason = getWasapiExclusivePlayerStopReason(playerState);
-        if (playerStopReason) {
-            return playerStopReason;
-        }
-
-        if (WASAPI_EXCLUSIVE_TRANSIENT_PLAYER_STATUSES.has(playerState.status)) {
-            return null;
-        }
-
-        if (this.state !== 'running') {
-            return null;
-        }
-
-        const outputPosition = this.getEstimatedOutputPosition(now);
-        const playerPosition = getEstimatedPlayerPosition(playerState, now);
-        if (!Number.isFinite(outputPosition) || !Number.isFinite(playerPosition)) {
-            return null;
-        }
-
-        const driftSeconds = outputPosition - playerPosition;
-        this.lastSyncDriftSeconds = driftSeconds;
-        if (Math.abs(driftSeconds) > WASAPI_EXCLUSIVE_PROGRESS_DRIFT_THRESHOLD_SECONDS) {
-            if (!this.seekToPosition(playerPosition, now, `player progress drift ${driftSeconds.toFixed(3)}s`)) {
-                return `player progress drift ${driftSeconds.toFixed(3)}s outside pcm cache`;
-            }
-        }
-
-        return null;
-    }
-
-    async start() {
-        try {
-            if (lastWasapiExclusivePlayerState?.isPlaying) {
-                this.requestPlayerHold();
-            }
-            await wait(WASAPI_EXCLUSIVE_OUTPUT_START_DELAY_MS);
-            if (this.state === 'closed' || wasapiExclusiveOutputSession !== this) {
-                return;
-            }
-
-            const wasapiExclusive = getWasapiExclusiveModule();
-            if (!wasapiExclusive?.isSupported?.()) {
-                throw new Error('WASAPI exclusive module is not available');
-            }
-
-            const closest = wasapiExclusive.getClosestSupportedFormat?.(this.rendererOptions);
-            if (closest && closest.exact === false) {
-                const requested = closest.requestedOptions ?? this.rendererOptions;
-                const supported = closest.format;
-                throw new Error(
-                    `Exact WASAPI format is not supported: requested ${requested.sampleRate}/${requested.channels}/${requested.bitsPerSample}/${
-                        requested.containerBitsPerSample ?? requested.bitsPerSample
-                    }/${requested.float ? 'float' : 'pcm'}, closest ${
-                        supported
-                            ? `${supported.sampleRate}/${supported.channels}/${supported.bitsPerSample}/${supported.containerBitsPerSample ?? supported.bitsPerSample}/${
-                                  supported.float ? 'float' : 'pcm'
-                              }`
-                            : 'none'
-                    }`,
-                );
-            }
-            if (closest?.rendererOptions) {
-                this.rendererOptions = {
-                    ...this.rendererOptions,
-                    ...closest.rendererOptions,
-                };
-            }
-
-            const ffmpegPath = await getFfmpegUpdater().ensureInstalled();
-            if (this.state === 'closed') {
-                return;
-            }
-
-            this.decoderArgs = this.createFfmpegArgs();
-            this.decoder = spawn(ffmpegPath, this.decoderArgs, {
-                windowsHide: true,
-                stdio: ['pipe', 'pipe', 'pipe'],
-            });
-
-            this.decoder.stdout.on('data', (chunk) => this.writePcm(chunk));
-            this.decoder.stderr.on('data', (chunk) => {
-                this.decoderStderr = `${this.decoderStderr}${chunk.toString()}`.slice(-8192);
-            });
-            this.decoder.stdin.on('error', (error) => {
-                if (this.state !== 'closed') {
-                    this.fail(error);
-                }
-            });
-            this.decoder.on('error', (error) => {
-                this.fail(error);
-            });
-            this.decoder.on('close', (code, signal) => {
-                this.decoderExit = { code, signal };
-                if (this.state !== 'closed') {
-                    const reason = `ffmpeg exited: code=${code}, signal=${signal}`;
-                    if (code !== 0 || signal) {
-                        this.error = reason;
-                        lastWasapiExclusiveOutputError = this.decoderStderr ? `${reason}: ${this.decoderStderr}` : reason;
-                        lastFailedWasapiExclusiveOutputSignature = this.signature;
-                        lastFailedWasapiExclusiveOutputAt = Date.now();
-                    }
-                    this.close(reason);
-                }
-            });
-
-            this.firstPcmTimer = setTimeout(() => {
-                if (this.state === 'starting' && !this.renderer) {
-                    this.fail(new Error('YASP WASAPI decoder did not produce PCM before timeout'));
-                }
-            }, YASP_WASAPI_DECODER_FIRST_PCM_TIMEOUT_MS);
-            this.firstPcmTimer?.unref?.();
-            this.flushPendingChunks();
-        } catch (error) {
-            this.fail(error);
-        }
-    }
-
-    createFfmpegArgs() {
-        const containerBitsPerSample = Number(this.rendererOptions.containerBitsPerSample ?? this.rendererOptions.bitsPerSample);
-        const pcmCodec = `pcm_s${containerBitsPerSample}le`;
-        const pcmFormat = `s${containerBitsPerSample}le`;
-        return [
-            '-hide_banner',
-            '-loglevel',
-            'warning',
-            '-i',
-            'pipe:0',
-            '-map',
-            '0:a:0',
-            '-vn',
-            '-ac',
-            String(this.rendererOptions.channels),
-            '-ar',
-            String(this.rendererOptions.sampleRate),
-            '-acodec',
-            pcmCodec,
-            '-f',
-            pcmFormat,
-            'pipe:1',
-        ];
-    }
-
-    writeDecoderStdin(chunk) {
-        const stdin = this.decoder?.stdin;
-        if (!stdin?.writable || stdin.destroyed || stdin.writableEnded) {
-            return false;
-        }
-
-        try {
-            stdin.write(chunk, (error) => {
-                if (error && this.state !== 'closed') {
-                    this.fail(error);
-                }
-            });
-            return true;
-        } catch (error) {
-            this.fail(error);
-            return false;
-        }
-    }
-
-    writeEncodedChunk(chunk) {
-        if (this.state === 'closed' || !Buffer.isBuffer(chunk)) {
-            return;
-        }
-
-        this.totalEncodedBytes += chunk.byteLength;
-        if (this.decoder?.stdin?.writable && this.state !== 'closed') {
-            this.writeDecoderStdin(chunk);
-            return;
-        }
-
-        if (this.pendingBytes + chunk.byteLength > YASP_WASAPI_DECODER_BUFFER_LIMIT_BYTES) {
-            const error = new Error('YASP WASAPI decoder input buffer overflow before ffmpeg start');
-            this.fail(error);
-            return;
-        }
-
-        this.pendingChunks.push(Buffer.from(chunk));
-        this.pendingBytes += chunk.byteLength;
-    }
-
-    skipEncodedChunk(chunk, reason = 'skipped') {
-        if (!Buffer.isBuffer(chunk)) {
-            return;
-        }
-
-        if (reason === 'mp4 init-only') {
-            this.skippedInitOnlyChunks += 1;
-            this.skippedInitOnlyBytes += chunk.byteLength;
-        }
-    }
-
-    stripInitSegment(originalChunk, mediaChunk) {
-        if (!Buffer.isBuffer(originalChunk) || !Buffer.isBuffer(mediaChunk) || mediaChunk.byteLength >= originalChunk.byteLength) {
-            return mediaChunk;
-        }
-
-        this.strippedInitSegmentChunks += 1;
-        this.strippedInitSegmentBytes += originalChunk.byteLength - mediaChunk.byteLength;
-        return mediaChunk;
-    }
-
-    flushPendingChunks() {
-        if (!this.decoder?.stdin?.writable) {
-            return;
-        }
-
-        for (const chunk of this.pendingChunks) {
-            if (!this.writeDecoderStdin(chunk)) {
-                break;
-            }
-        }
-        this.pendingChunks = [];
-        this.pendingBytes = 0;
-    }
-
-    appendPcmCache(chunk) {
-        if (!Buffer.isBuffer(chunk) || !chunk.byteLength) {
-            return;
-        }
-
-        const cachedChunk = Buffer.from(chunk);
-        this.pcmCacheChunks.push(cachedChunk);
-        this.pcmCacheBytes += cachedChunk.byteLength;
-        this.totalPcmBytes += cachedChunk.byteLength;
-    }
-
-    readPcmCache(byteOffset, byteLength) {
-        const startOffset = this.alignByteOffset(byteOffset);
-        const endOffset = Math.min(startOffset + this.alignByteOffset(byteLength), this.pcmCacheBytes);
-        if (endOffset <= startOffset) {
-            return null;
-        }
-
-        const output = Buffer.alloc(endOffset - startOffset);
-        let chunkStart = 0;
-        let outputOffset = 0;
-
-        for (const chunk of this.pcmCacheChunks) {
-            const chunkEnd = chunkStart + chunk.byteLength;
-            if (chunkEnd <= startOffset) {
-                chunkStart = chunkEnd;
-                continue;
-            }
-
-            if (chunkStart >= endOffset) {
-                break;
-            }
-
-            const copyStart = Math.max(startOffset - chunkStart, 0);
-            const copyEnd = Math.min(endOffset - chunkStart, chunk.byteLength);
-            chunk.copy(output, outputOffset, copyStart, copyEnd);
-            outputOffset += copyEnd - copyStart;
-            chunkStart = chunkEnd;
-        }
-
-        return outputOffset === output.byteLength ? output : output.subarray(0, outputOffset);
-    }
-
-    canPumpPcm() {
-        if (this.state === 'closed') {
-            return false;
-        }
-
-        const now = Date.now();
-        const playerHoldPaused = this.isPlayerHoldPausedState(lastWasapiExclusivePlayerState, now);
-        const playerStopReason = getWasapiExclusivePlayerStopReason(lastWasapiExclusivePlayerState);
-        if (playerStopReason && !playerHoldPaused) {
-            return false;
-        }
-
-        return !lastWasapiExclusivePlayerState || lastWasapiExclusivePlayerState.isPlaying || playerHoldPaused;
-    }
-
-    ensureRenderer() {
-        if (this.renderer) {
-            return true;
-        }
-
-        this.syncPlaybackOffsetToPlayer();
-
-        const availableBytes = this.pcmCacheBytes - this.playbackByteOffset;
-        const startPrebufferBytes = this.getByteLengthForMs(WASAPI_EXCLUSIVE_START_PREBUFFER_MS);
-        if (availableBytes < startPrebufferBytes || !this.canPumpPcm()) {
-            return false;
-        }
-
-        if (this.shouldWaitForPlayerHold()) {
-            return false;
-        }
-
-        this.renderer = createWasapiExclusiveRenderer(this.rendererOptions);
-        if (!this.renderer) {
-            throw new Error('Failed to create WASAPI exclusive renderer');
-        }
-
-        const rendererState = this.renderer.getState?.() ?? null;
-        this.lastRendererUnderruns = Number(rendererState?.underruns) || 0;
-        this.lastRendererUnderrunFrames = Number(rendererState?.underrunFrames) || 0;
-        this.lastRendererUnderrunLogAt = 0;
-
-        clearTimeout(this.firstPcmTimer);
-        this.firstPcmTimer = null;
-        this.state = 'running';
-        if (!this.startedAt) {
-            this.startedAt = Date.now();
-        }
-        const now = Date.now();
-        this.syncStartedAt = now;
-        this.syncStartPosition = this.getPositionForByteOffset(this.playbackByteOffset);
-        this.releasePlayerHoldRequest('renderer started', now, false);
-        lastWasapiExclusiveOutputError = null;
-        lastFailedWasapiExclusiveOutputSignature = null;
-        lastFailedWasapiExclusiveOutputAt = 0;
-        lastWasapiExclusiveOutputSkipReason = null;
-        emitWasapiExclusiveOutputStateChanged();
-        logger.info('YASP WASAPI exclusive output started', {
-            signature: this.signature,
-            rendererOptions: this.rendererOptions,
-            format: this.format,
-            playbackByteOffset: this.playbackByteOffset,
-            pcmCacheBytes: this.pcmCacheBytes,
-        });
-        return true;
-    }
-
-    schedulePcmPump(delayMs = WASAPI_EXCLUSIVE_PCM_PUMP_INTERVAL_MS) {
-        if (this.state === 'closed' || this.pumpTimer) {
-            return;
-        }
-
-        this.pumpTimer = setTimeout(() => {
-            this.pumpTimer = null;
-            this.pumpPcm();
-        }, delayMs);
-        this.pumpTimer?.unref?.();
-    }
-
-    getRendererQueuedBytes(state = null) {
-        const rendererState = state ?? this.renderer?.getState?.() ?? null;
-        const queuedFrames = Number(rendererState?.queuedFrames);
-        if (Number.isFinite(queuedFrames)) {
-            return this.alignByteOffset(queuedFrames * this.getBlockAlign());
-        }
-
-        return this.alignByteOffset(Number(rendererState?.queuedBytes) || 0);
-    }
-
-    logRendererUnderruns(state) {
-        if (!state) {
-            return;
-        }
-
-        const underruns = Number(state.underruns) || 0;
-        const underrunFrames = Number(state.underrunFrames) || 0;
-        if (underruns <= this.lastRendererUnderruns && underrunFrames <= this.lastRendererUnderrunFrames) {
-            return;
-        }
-
-        const now = Date.now();
-        if (now - this.lastRendererUnderrunLogAt > 1000) {
-            logger.warn('YASP WASAPI exclusive renderer underrun', {
-                signature: this.signature,
-                underruns,
-                underrunFrames,
-                queuedFrames: state.queuedFrames,
-                paddingFrames: state.paddingFrames,
-                bufferFrames: state.bufferFrames,
-                playedFrames: state.playedFrames,
-                renderedFrames: state.renderedFrames,
-                playbackByteOffset: this.playbackByteOffset,
-                pcmCacheBytes: this.pcmCacheBytes,
-            });
-            this.lastRendererUnderrunLogAt = now;
-        }
-
-        this.lastRendererUnderruns = underruns;
-        this.lastRendererUnderrunFrames = underrunFrames;
-    }
-
-    pumpPcm() {
-        if (this.state === 'closed') {
-            return;
-        }
-
-        try {
-            if (!this.canPumpPcm()) {
-                return;
-            }
-
-            if (!this.ensureRenderer()) {
-                this.schedulePcmPump(WASAPI_EXCLUSIVE_PCM_PUMP_WAIT_MS);
-                return;
-            }
-
-            const targetQueueBytes = this.getByteLengthForMs(WASAPI_EXCLUSIVE_NATIVE_QUEUE_TARGET_MS);
-            const minimumQueueBytes = this.getByteLengthForMs(WASAPI_EXCLUSIVE_NATIVE_QUEUE_MIN_MS);
-            const maxWriteBytes = this.getByteLengthForMs(500);
-            let rendererState = this.renderer.getState?.() ?? null;
-            this.lastPumpState = rendererState;
-            this.logRendererUnderruns(rendererState);
-            let queuedBytes = this.getRendererQueuedBytes(rendererState);
-            let availableBytes = this.pcmCacheBytes - this.playbackByteOffset;
-            let wroteBytes = 0;
-            let iterations = 0;
-
-            while (availableBytes > 0 && queuedBytes < targetQueueBytes && iterations < 8) {
-                const wantedBytes = Math.min(targetQueueBytes - queuedBytes, availableBytes, maxWriteBytes);
-                const pcm = this.readPcmCache(this.playbackByteOffset, wantedBytes);
-                if (!pcm?.byteLength) {
-                    break;
-                }
-
-                const written = this.renderer.writePcm(pcm);
-                const writtenBytes = Math.min(Number(written) || 0, pcm.byteLength);
-                if (writtenBytes <= 0) {
-                    break;
-                }
-
-                const alignedWrittenBytes = this.alignByteOffset(writtenBytes);
-                this.playbackByteOffset += alignedWrittenBytes;
-                this.totalPcmWrittenBytes += alignedWrittenBytes;
-                queuedBytes += alignedWrittenBytes;
-                wroteBytes += alignedWrittenBytes;
-                availableBytes = this.pcmCacheBytes - this.playbackByteOffset;
-                iterations += 1;
-            }
-
-            rendererState = this.renderer.getState?.() ?? rendererState;
-            this.lastPumpState = rendererState;
-            this.logRendererUnderruns(rendererState);
-            queuedBytes = this.getRendererQueuedBytes(rendererState);
-
-            if (availableBytes <= 0 || queuedBytes < minimumQueueBytes) {
-                this.schedulePcmPump(WASAPI_EXCLUSIVE_PCM_PUMP_WAIT_MS);
-                return;
-            }
-
-            this.schedulePcmPump(wroteBytes > 0 ? WASAPI_EXCLUSIVE_PCM_PUMP_INTERVAL_MS : WASAPI_EXCLUSIVE_PCM_PUMP_WAIT_MS);
-        } catch (error) {
-            this.fail(error);
-        }
-    }
-
-    writePcm(chunk) {
-        if (this.state === 'closed' || !Buffer.isBuffer(chunk)) {
-            return;
-        }
-
-        try {
-            const blockAlign = this.getBlockAlign();
-            const buffer = this.pcmRemainder.length ? Buffer.concat([this.pcmRemainder, chunk]) : chunk;
-            const alignedLength = buffer.byteLength - (buffer.byteLength % blockAlign);
-            if (alignedLength <= 0) {
-                this.pcmRemainder = Buffer.from(buffer);
-                return;
-            }
-
-            if (this.totalPcmBytes === 0) {
-                clearTimeout(this.firstPcmTimer);
-                this.firstPcmTimer = null;
-                const startPosition = getEstimatedPlayerPosition(lastWasapiExclusivePlayerState, Date.now());
-                if (Number.isFinite(startPosition)) {
-                    if (startPosition + WASAPI_EXCLUSIVE_PCM_WINDOW_POSITION_TOLERANCE_SECONDS < this.pcmBasePosition) {
-                        this.fail(
-                            new Error(
-                                `Captured PCM window starts at ${this.pcmBasePosition.toFixed(3)}s, ahead of player position ${startPosition.toFixed(3)}s`,
-                            ),
-                        );
-                        return;
-                    }
-                    this.playbackByteOffset = this.getByteOffsetForPosition(startPosition);
-                    this.syncStartPosition = startPosition;
-                    this.syncStartedAt = Date.now();
-                }
-            }
-
-            const alignedChunk = buffer.subarray(0, alignedLength);
-            this.trackPcmBoundary(alignedChunk);
-            this.appendPcmCache(alignedChunk);
-            this.pcmRemainder = alignedLength < buffer.byteLength ? Buffer.from(buffer.subarray(alignedLength)) : Buffer.alloc(0);
-            this.schedulePcmPump(0);
-        } catch (error) {
-            this.fail(error);
-        }
-    }
-
-    fail(error) {
-        this.error = String(error?.message ?? error);
-        lastWasapiExclusiveOutputError = this.error;
-        lastFailedWasapiExclusiveOutputSignature = this.signature;
-        lastFailedWasapiExclusiveOutputAt = Date.now();
-        logger.error('YASP WASAPI exclusive output failed:', this.error, this.decoderStderr);
-        this.close(`error: ${this.error}`);
-    }
-
-    close(reason = 'closed') {
-        if (this.state === 'closed') {
-            return;
-        }
-
-        this.state = 'closed';
-        this.closeReason = reason;
-        this.closedAt = Date.now();
-        this.releasePlayerHold(`closed: ${reason}`, this.closedAt, false);
-        clearTimeout(this.firstPcmTimer);
-        this.firstPcmTimer = null;
-        clearTimeout(this.pumpTimer);
-        this.pumpTimer = null;
-
-        try {
-            this.decoder?.stdin?.destroy();
-        } catch {}
-        try {
-            this.decoder?.kill('SIGTERM');
-        } catch {}
-        try {
-            this.renderer?.close();
-        } catch {}
-
-        this.pendingChunks = [];
-        this.pendingBytes = 0;
-        this.pcmCacheChunks = [];
-        this.pcmCacheBytes = 0;
-        this.pcmRemainder = Buffer.alloc(0);
-        logger.info('YASP WASAPI exclusive output closed', {
-            reason,
-            signature: this.signature,
-            totalEncodedBytes: this.totalEncodedBytes,
-            initialChunkBytes: this.initialChunkBytes,
-            totalPcmBytes: this.totalPcmBytes,
-            totalPcmWrittenBytes: this.totalPcmWrittenBytes,
-            decoderExit: this.decoderExit,
-            decoderStderr: this.decoderStderr,
-        });
-        emitWasapiExclusiveOutputStateChanged();
-    }
-
-    getState() {
-        return {
-            state: this.state,
-            signature: this.signature,
-            format: this.format,
-            rendererOptions: this.rendererOptions,
-            rendererState: this.renderer?.getState?.() ?? null,
-            createdAt: this.createdAt,
-            startedAt: this.startedAt,
-            closedAt: this.closedAt,
-            closeReason: this.closeReason,
-            error: this.error,
-            decoderExit: this.decoderExit,
-            decoderArgs: this.decoderArgs,
-            pendingBytes: this.pendingBytes,
-            initialChunkBytes: this.initialChunkBytes,
-            pcmCacheBytes: this.pcmCacheBytes,
-            pcmBasePosition: this.pcmBasePosition,
-            playbackByteOffset: this.playbackByteOffset,
-            totalEncodedBytes: this.totalEncodedBytes,
-            totalPcmBytes: this.totalPcmBytes,
-            totalPcmWrittenBytes: this.totalPcmWrittenBytes,
-            decoderStderr: this.decoderStderr,
-            syncStartPosition: this.syncStartPosition,
-            syncStartedAt: this.syncStartedAt,
-            estimatedOutputPosition: this.getEstimatedOutputPosition(),
-            lastSyncDriftSeconds: this.lastSyncDriftSeconds,
-            waitingForPlayerHold: this.waitingForPlayerHold,
-            playerHoldActive: this.playerHoldActive,
-            playerHoldRequestedAt: this.playerHoldRequestedAt,
-            playerHoldReleasedAt: this.playerHoldReleasedAt,
-            playerHoldTimedOut: this.playerHoldTimedOut,
-            playerHoldReleaseReason: this.playerHoldReleaseReason,
-            playerHoldTimeoutMs: WASAPI_EXCLUSIVE_PLAYER_HOLD_TIMEOUT_MS,
-            lastPumpState: this.lastPumpState,
-            queueTargetMs: WASAPI_EXCLUSIVE_NATIVE_QUEUE_TARGET_MS,
-            queueMinMs: WASAPI_EXCLUSIVE_NATIVE_QUEUE_MIN_MS,
-            startPrebufferMs: WASAPI_EXCLUSIVE_START_PREBUFFER_MS,
-            skippedInitOnlyChunks: this.skippedInitOnlyChunks,
-            skippedInitOnlyBytes: this.skippedInitOnlyBytes,
-            strippedInitSegmentChunks: this.strippedInitSegmentChunks,
-            strippedInitSegmentBytes: this.strippedInitSegmentBytes,
-            pcmBoundaryChecks: this.pcmBoundaryChecks,
-            pcmBoundaryJumpWarnings: this.pcmBoundaryJumpWarnings,
-            maxPcmBoundaryJump: this.maxPcmBoundaryJump,
-            lastPcmBoundaryJump: this.lastPcmBoundaryJump,
-            lastPcmBoundaryWarning: this.lastPcmBoundaryWarning,
-        };
-    }
-}
-
 const getFfmpegPathForNativeAudio = async () => {
     const updater = getFfmpegUpdater();
     if (await updater.fileExists(updater.installPath)) {
@@ -1158,11 +183,15 @@ const createWasapiExclusiveOutputSession = (sessionOptions) => {
             getFfmpegPath: getFfmpegPathForNativeAudio,
             onStateChange: (sessionState) => {
                 if (sessionState?.state === 'running') {
+                    if (sessionOptions.preloadIdentity) {
+                        consumeYaspPreloadedStream(sessionOptions.preloadIdentity);
+                    }
                     lastWasapiExclusiveOutputError = null;
                     lastWasapiExclusiveOutputSkipReason = null;
                     if (lastFailedWasapiExclusiveOutputSignature === sessionOptions.signature) {
                         lastFailedWasapiExclusiveOutputSignature = null;
                         lastFailedWasapiExclusiveOutputAt = 0;
+                        lastFailedWasapiExclusiveOutputPermanent = false;
                     }
                 }
                 emitWasapiExclusiveOutputStateChanged();
@@ -1171,6 +200,7 @@ const createWasapiExclusiveOutputSession = (sessionOptions) => {
                 lastWasapiExclusiveOutputError = String(error?.message ?? error);
                 lastFailedWasapiExclusiveOutputSignature = session?.signature ?? sessionOptions.signature;
                 lastFailedWasapiExclusiveOutputAt = Date.now();
+                lastFailedWasapiExclusiveOutputPermanent = isPermanentWasapiExclusiveFailure(error);
                 logger.error('YASP WASAPI exclusive native-module session failed:', lastWasapiExclusiveOutputError);
                 if (wasapiExclusiveOutputSession === session) {
                     session.close(`native session error: ${lastWasapiExclusiveOutputError}`);
@@ -1341,6 +371,7 @@ const pollWasapiExclusiveDefaultDevice = () => {
     const previousDeviceId = lastWasapiExclusiveDefaultDeviceId;
     lastWasapiExclusiveDefaultDeviceId = nextDeviceId;
     lastWasapiExclusiveDefaultDeviceChangedAt = Date.now();
+    getWasapiExclusiveModule()?.clearDeviceCache?.();
     logger.info('System default WASAPI output device changed', {
         previousDeviceId,
         deviceId: nextDeviceId,
@@ -1385,6 +416,7 @@ const ensureWasapiExclusiveDefaultDeviceMonitor = () => {
 };
 
 const refreshWasapiExclusiveDefaultDeviceMonitor = () => {
+    getWasapiExclusiveModule()?.clearDeviceCache?.();
     wasapiExclusiveDeviceAvailabilityCache = null;
     wasapiExclusiveDefaultDeviceMonitorInitialized = false;
     lastWasapiExclusiveDefaultDeviceId = null;
@@ -1405,6 +437,7 @@ const skipUnavailableWasapiExclusiveDevice = (availability) => {
     lastWasapiExclusiveOutputError = null;
     lastFailedWasapiExclusiveOutputSignature = null;
     lastFailedWasapiExclusiveOutputAt = 0;
+    lastFailedWasapiExclusiveOutputPermanent = false;
     if (wasapiExclusiveOutputSession) {
         stopWasapiExclusiveOutput(reason);
     } else if (didChange) {
@@ -1472,8 +505,8 @@ const getWasapiOutputRendererOptions = (format = {}) => {
 };
 
 const getYaspStreamIdentity = (format = {}) =>
-    format.workerId && format.feederId != null && format.currentTrack
-        ? `${format.workerId}:${format.feederId}:${format.currentTrack}`
+    format.workerId && format.feederId != null
+        ? `${format.workerId}:${format.feederId}:${format.streamGeneration ?? 0}`
         : (format.currentTrack ?? format.sourceHash ?? null);
 
 const getYaspTrackDurationMs = (format = {}) => {
@@ -1559,16 +592,16 @@ const cacheYaspPreloadedChunk = (format, chunkBuffer, options = {}) => {
     const timelineStartSeconds = toFiniteNumber(
         options.streamPosition ?? chunkMeta.timelineStartSeconds ?? (Number.isFinite(timelineStartMs) ? timelineStartMs / 1000 : null),
     );
-    const chunkKey = Number.isFinite(appendSequence)
-        ? `sequence:${appendSequence}`
-        : `segment:${chunkMeta.segmentNumber ?? 'unknown'}:${mp4ChunkInfo.hasInitSegment === true}:${mp4ChunkInfo.hasMediaSegment === true}:${
-              timelineStartSeconds ?? 'unknown'
-          }:${chunkBuffer.byteLength}`;
+    const cachedInitChunk = Buffer.isBuffer(options.initChunk) ? options.initChunk : null;
+    const cachedChunkBuffer =
+        mp4ChunkInfo.hasInitSegment === true && mp4ChunkInfo.hasMediaSegment !== true && cachedInitChunk?.byteLength ? cachedInitChunk : chunkBuffer;
+    const chunkKey = `segment:${chunkMeta.segmentNumber ?? 'unknown'}:${mp4ChunkInfo.hasInitSegment === true}:${
+        mp4ChunkInfo.hasMediaSegment === true
+    }:${timelineStartSeconds ?? 'unknown'}:${getYaspChunkFingerprint(cachedChunkBuffer)}`;
     if (entry.chunkKeys.has(chunkKey)) {
         return entry;
     }
 
-    const cachedInitChunk = Buffer.isBuffer(options.initChunk) ? options.initChunk : null;
     if (!entry.hasInitSegment && cachedInitChunk?.byteLength && mp4ChunkInfo.hasInitSegment !== true) {
         if (entry.bytes + cachedInitChunk.byteLength > YASP_WASAPI_PRELOAD_MAX_BYTES) {
             entry.truncated = true;
@@ -1587,20 +620,20 @@ const cacheYaspPreloadedChunk = (format, chunkBuffer, options = {}) => {
         entry.hasInitSegment = true;
     }
 
-    if (entry.bytes + chunkBuffer.byteLength > YASP_WASAPI_PRELOAD_MAX_BYTES) {
+    if (entry.bytes + cachedChunkBuffer.byteLength > YASP_WASAPI_PRELOAD_MAX_BYTES) {
         entry.truncated = true;
         return entry;
     }
 
     entry.chunkKeys.add(chunkKey);
     entry.chunks.push({
-        buffer: Buffer.from(chunkBuffer),
+        buffer: Buffer.from(cachedChunkBuffer),
         appendSequence,
         timelineStartSeconds,
         hasInitSegment: mp4ChunkInfo.hasInitSegment === true,
         hasMediaSegment: mp4ChunkInfo.hasMediaSegment === true,
     });
-    entry.bytes += chunkBuffer.byteLength;
+    entry.bytes += cachedChunkBuffer.byteLength;
     entry.hasInitSegment ||= mp4ChunkInfo.hasInitSegment === true;
     entry.hasMediaSegment ||= mp4ChunkInfo.hasMediaSegment === true;
     if (mp4ChunkInfo.hasMediaSegment === true && Number.isFinite(timelineStartSeconds)) {
@@ -1622,6 +655,22 @@ const consumeYaspPreloadedStream = (identity) => {
     }
     return entry;
 };
+
+const getYaspPreloadedDecoderChunks = (entry) =>
+    (entry?.chunks ?? [])
+        .slice()
+        .sort((left, right) => {
+            if (Number.isFinite(left.appendSequence) && Number.isFinite(right.appendSequence)) {
+                return left.appendSequence - right.appendSequence;
+            }
+            return 0;
+        })
+        .map((chunk) => {
+            if (chunk.hasInitSegment === true && chunk.hasMediaSegment !== true) {
+                return inspectMp4Chunk(chunk.buffer).initSegment ?? chunk.buffer;
+            }
+            return chunk.buffer;
+        });
 
 const selectYaspPreloadedStreamForPlayerTrack = (previousPlayerState, nextPlayerState) => {
     pruneYaspPreloadedStreams();
@@ -1649,7 +698,7 @@ const selectYaspPreloadedStreamForPlayerTrack = (previousPlayerState, nextPlayer
             .filter(({ durationDelta }) => durationDelta <= YASP_WASAPI_PRELOAD_DURATION_TOLERANCE_MS)
             .sort((left, right) => left.durationDelta - right.durationDelta || right.entry.updatedAt - left.entry.updatedAt)
             .map(({ entry }) => entry);
-        if (!candidates.length) {
+        if (candidates.length !== 1) {
             return null;
         }
     } else if (candidates.length !== 1) {
@@ -1664,6 +713,7 @@ const getYaspPreloadedStreamStates = () => {
     return Array.from(yaspPreloadedStreams.values()).map((entry) => ({
         identity: entry.identity,
         currentTrack: entry.format.currentTrack ?? null,
+        streamGeneration: entry.format.streamGeneration ?? null,
         capturedPlayerTrackId: entry.capturedPlayerTrackId,
         targetPlayerTrackId: entry.targetPlayerTrackId,
         durationMs: entry.durationMs,
@@ -1688,6 +738,7 @@ const getWasapiOutputSignature = (format, rendererOptions) =>
         renderMode: rendererOptions.renderMode ?? 'event',
         timerPeriodMs: rendererOptions.timerPeriodMs ?? null,
         timerBufferPeriods: rendererOptions.timerBufferPeriods ?? null,
+        waveFormatExtensible: rendererOptions.waveFormatExtensible !== false,
         deviceId: rendererOptions.deviceId ?? null,
     });
 
@@ -1777,6 +828,7 @@ const getYaspAudioFormatSignature = (format) => {
         currentTrack: format.currentTrack ?? null,
         workerId: format.workerId ?? null,
         feederId: format.feederId ?? null,
+        streamGeneration: format.streamGeneration ?? null,
     });
 };
 
@@ -1806,8 +858,30 @@ exports.onWasapiExclusiveOutputStateChanged = onWasapiExclusiveOutputStateChange
 const getChunkStatKey = (payload) => {
     const workerId = payload?.workerId || payload?.meta?.workerId || 'unknown-worker';
     const feederId = payload?.meta?.feederId || 'unknown-feeder';
-    return `${workerId}:${feederId}`;
+    const streamGeneration = payload?.meta?.streamGeneration ?? 0;
+    return `${workerId}:${feederId}:${streamGeneration}`;
 };
+
+const pruneYaspChunkStats = (now = Date.now()) => {
+    for (const [key, stat] of chunkStats) {
+        if (now - Number(stat.lastChunkAt ?? stat.firstChunkAt ?? 0) > YASP_CHUNK_STATS_TTL_MS) {
+            chunkStats.delete(key);
+        }
+    }
+
+    while (chunkStats.size > YASP_CHUNK_STATS_LIMIT) {
+        const oldest = Array.from(chunkStats.entries()).sort(
+            (left, right) => Number(left[1].lastChunkAt ?? left[1].firstChunkAt ?? 0) - Number(right[1].lastChunkAt ?? right[1].firstChunkAt ?? 0),
+        )[0];
+        if (!oldest) break;
+        chunkStats.delete(oldest[0]);
+    }
+};
+
+const isPermanentWasapiExclusiveFailure = (error) =>
+    /exact wasapi format is not supported|unsupported format|bitsPerSample must|containerBitsPerSample must|native yasptrackstore is unavailable/i.test(
+        String(error?.message ?? error),
+    );
 
 const toChunkBuffer = (chunk) => {
     if (Buffer.isBuffer(chunk)) {
@@ -1882,6 +956,14 @@ const normalizeYaspAudioFormat = (meta = {}) => {
 const getYaspChunkTimelinePosition = (payload = {}) => {
     const timelineStartMs = normalizeNumber(payload?.meta?.timelineStartMs ?? payload?.meta?.time);
     return Number.isFinite(timelineStartMs) ? timelineStartMs / 1000 : null;
+};
+
+const getYaspChunkFingerprint = (buffer) => {
+    if (!Buffer.isBuffer(buffer) || !buffer.byteLength) {
+        return 'empty';
+    }
+
+    return `${buffer.byteLength}:${crypto.createHash('sha256').update(buffer).digest('hex')}`;
 };
 
 const readMp4BoxHeader = (buffer, offset, end) => {
@@ -1968,7 +1050,7 @@ const inspectMp4Chunk = (buffer) => {
     });
 
     const initSegment = Number.isFinite(moovEnd) ? Buffer.from(buffer.subarray(0, moovEnd)) : null;
-    const mediaSegment = Number.isFinite(mediaStart) ? Buffer.from(buffer.subarray(mediaStart)) : null;
+    const mediaSegment = Number.isFinite(mediaStart) ? buffer.subarray(mediaStart) : null;
 
     return {
         topLevelBoxes,
@@ -2304,6 +1386,7 @@ const stopWasapiExclusiveOutput = (reason = 'stopped') => {
     if (reason !== 'format changed') {
         lastFailedWasapiExclusiveOutputSignature = null;
         lastFailedWasapiExclusiveOutputAt = 0;
+        lastFailedWasapiExclusiveOutputPermanent = false;
     }
 
     if (!wasapiExclusiveOutputSession) {
@@ -2336,6 +1419,7 @@ const getWasapiExclusiveOutputState = () => {
         lastError: lastWasapiExclusiveOutputError,
         lastFailedSignature: lastFailedWasapiExclusiveOutputSignature,
         lastFailedAt: lastFailedWasapiExclusiveOutputAt || null,
+        lastFailedPermanent: lastFailedWasapiExclusiveOutputPermanent,
         lastSkipReason: lastWasapiExclusiveOutputSkipReason,
         selectedDeviceId: getSelectedWasapiExclusiveDeviceId(),
         resolvedDeviceId: wasapiExclusiveDeviceAvailabilityCache?.resolvedDeviceId ?? null,
@@ -2347,6 +1431,7 @@ const getWasapiExclusiveOutputState = () => {
                   isPlaying: lastWasapiExclusivePlayerState.isPlaying,
                   position: lastWasapiExclusivePlayerState.position,
                   trackId: lastWasapiExclusivePlayerState.trackId,
+                  seekEventSequence: lastWasapiExclusivePlayerState.seekEventSequence,
                   exponentVolume: lastWasapiExclusivePlayerState.exponentVolume,
                   volumeGain: lastWasapiExclusivePlayerState.volumeGain,
                   updatedAt: lastWasapiExclusivePlayerState.updatedAt,
@@ -2391,6 +1476,7 @@ const getWasapiSessionFormat = (format = {}) => ({
     sourceHash: format.sourceHash ?? null,
     workerId: format.workerId ?? null,
     feederId: format.feederId ?? null,
+    streamGeneration: format.streamGeneration ?? null,
 });
 
 const activateYaspPreloadedStream = (previousPlayerState, nextPlayerState) => {
@@ -2415,21 +1501,13 @@ const activateYaspPreloadedStream = (previousPlayerState, nextPlayerState) => {
     const signature = getWasapiOutputSignature(entry.format, rendererOptions);
     if (
         lastFailedWasapiExclusiveOutputSignature === signature &&
-        lastFailedWasapiExclusiveOutputAt &&
-        Date.now() - lastFailedWasapiExclusiveOutputAt <= WASAPI_EXCLUSIVE_FAILED_SIGNATURE_RETRY_MS
+        (lastFailedWasapiExclusiveOutputPermanent ||
+            (lastFailedWasapiExclusiveOutputAt && Date.now() - lastFailedWasapiExclusiveOutputAt <= WASAPI_EXCLUSIVE_FAILED_SIGNATURE_RETRY_MS))
     ) {
         return false;
     }
 
-    const initialChunks = entry.chunks
-        .slice()
-        .sort((left, right) => {
-            if (Number.isFinite(left.appendSequence) && Number.isFinite(right.appendSequence)) {
-                return left.appendSequence - right.appendSequence;
-            }
-            return 0;
-        })
-        .map((chunk) => chunk.buffer);
+    const initialChunks = getYaspPreloadedDecoderChunks(entry);
     const pcmBasePosition = Number.isFinite(entry.basePosition) ? entry.basePosition : 0;
 
     try {
@@ -2442,18 +1520,19 @@ const activateYaspPreloadedStream = (previousPlayerState, nextPlayerState) => {
             startPosition: pcmBasePosition,
             playerState: nextPlayerState,
             requireAudioParking: true,
+            preloadIdentity: entry.identity,
         });
     } catch (error) {
         lastWasapiExclusiveOutputError = String(error?.message ?? error);
         lastFailedWasapiExclusiveOutputSignature = signature;
         lastFailedWasapiExclusiveOutputAt = Date.now();
+        lastFailedWasapiExclusiveOutputPermanent = isPermanentWasapiExclusiveFailure(error);
         lastWasapiExclusiveOutputSkipReason = 'preloaded native stream session unavailable';
         logger.error('Failed to activate preloaded YASP WASAPI stream:', error);
         emitWasapiExclusiveOutputStateChanged();
         return false;
     }
 
-    consumeYaspPreloadedStream(entry.identity);
     lastWasapiExclusiveOutputError = null;
     setLastYaspAudioFormat({
         ...entry.format,
@@ -2480,11 +1559,21 @@ const updateWasapiExclusivePlayerState = (playerState = {}) => {
     const now = Date.now();
     const previousState = lastWasapiExclusivePlayerState;
     const nextState = normalizeWasapiExclusivePlayerState(playerState, now);
+    if (!Number.isFinite(nextState.seekEventSequence) && previousState) {
+        nextState.seekEventSequence = previousState.seekEventSequence;
+    }
     if (!Number.isFinite(nextState.exponentVolume) && previousState) {
         nextState.exponentVolume = previousState.exponentVolume;
     }
     nextState.volumeGain = getWasapiExclusiveVolumeGain(nextState.exponentVolume);
     const playerTrackChanged = Boolean(previousState?.trackId && nextState.trackId && previousState.trackId !== nextState.trackId);
+    const explicitPlayerSeek = Boolean(
+        !playerTrackChanged &&
+        !WASAPI_EXCLUSIVE_TRANSIENT_PLAYER_STATUSES.has(nextState.status) &&
+        Number.isFinite(previousState?.seekEventSequence) &&
+        Number.isFinite(nextState.seekEventSequence) &&
+        nextState.seekEventSequence > previousState.seekEventSequence,
+    );
     let stopReason = playerTrackChanged ? 'player track changed' : null;
 
     if (!playerTrackChanged && previousState && Number.isFinite(previousState.position) && Number.isFinite(nextState.position)) {
@@ -2498,7 +1587,7 @@ const updateWasapiExclusivePlayerState = (playerState = {}) => {
                 nextState.isPlaying &&
                 updateIntervalMs >= WASAPI_EXCLUSIVE_PLAYER_CLOCK_STALL_MIN_INTERVAL_MS &&
                 Math.abs(rawPositionDelta) <= WASAPI_EXCLUSIVE_PLAYER_CLOCK_STALL_MAX_DELTA_SECONDS;
-            if (!playerClockStalled && Math.abs(jumpSeconds) > WASAPI_EXCLUSIVE_PROGRESS_SEEK_THRESHOLD_SECONDS) {
+            if (explicitPlayerSeek && !playerClockStalled && Math.abs(jumpSeconds) > WASAPI_EXCLUSIVE_PROGRESS_SEEK_THRESHOLD_SECONDS) {
                 if (wasapiExclusiveOutputSession) {
                     lastWasapiExclusiveOutputSkipReason = `player progress seek ${jumpSeconds.toFixed(3)}s`;
                     if (!wasapiExclusiveOutputSession.seekToPosition(nextState.position, now, lastWasapiExclusiveOutputSkipReason)) {
@@ -2511,6 +1600,9 @@ const updateWasapiExclusivePlayerState = (playerState = {}) => {
         }
     }
     lastWasapiExclusivePlayerState = nextState;
+    if (!stopReason && wasapiExclusiveOutputSession) {
+        wasapiExclusiveOutputSession.updatePlayerState?.(nextState);
+    }
     if (wasapiExclusiveOutputSession?.playerHoldActive && nextState.isPlaying) {
         wasapiExclusiveOutputSession.releasePlayerHold('player resumed', now);
     }
@@ -2532,6 +1624,42 @@ const updateWasapiExclusivePlayerState = (playerState = {}) => {
     return getWasapiExclusiveOutputState();
 };
 exports.updateWasapiExclusivePlayerState = updateWasapiExclusivePlayerState;
+
+const seekWasapiExclusiveOutput = (payload = {}) => {
+    const position = toFiniteNumber(typeof payload === 'object' ? payload?.position : payload);
+    if (!Number.isFinite(position) || position < 0) {
+        return getWasapiExclusiveOutputState();
+    }
+
+    const now = Date.now();
+    if (lastWasapiExclusivePlayerState) {
+        lastWasapiExclusivePlayerState = {
+            ...lastWasapiExclusivePlayerState,
+            position,
+            updatedAt: now,
+        };
+        wasapiExclusiveOutputSession?.updatePlayerState?.(lastWasapiExclusivePlayerState);
+    }
+
+    const session = wasapiExclusiveOutputSession;
+    if (!session) {
+        return getWasapiExclusiveOutputState();
+    }
+
+    const reason = `manual player seek to ${position.toFixed(3)}s`;
+    if (!session.seekToPosition(position, now, reason)) {
+        if (wasapiExclusiveOutputSession === session) {
+            lastWasapiExclusiveOutputSkipReason = `${reason} outside decoded PCM`;
+            stopWasapiExclusiveOutput(lastWasapiExclusiveOutputSkipReason);
+        }
+    } else {
+        lastWasapiExclusiveOutputSkipReason = null;
+        emitWasapiExclusiveOutputStateChanged();
+    }
+
+    return getWasapiExclusiveOutputState();
+};
+exports.seekWasapiExclusiveOutput = seekWasapiExclusiveOutput;
 
 const refreshWasapiExclusiveVolumePolicy = () => {
     if (lastWasapiExclusivePlayerState) {
@@ -2599,11 +1727,15 @@ const feedWasapiExclusiveOutput = (format, chunkBuffer, options = {}) => {
         return;
     }
     if (lastFailedWasapiExclusiveOutputSignature === signature) {
-        if (!lastFailedWasapiExclusiveOutputAt || Date.now() - lastFailedWasapiExclusiveOutputAt > WASAPI_EXCLUSIVE_FAILED_SIGNATURE_RETRY_MS) {
+        if (
+            !lastFailedWasapiExclusiveOutputPermanent &&
+            (!lastFailedWasapiExclusiveOutputAt || Date.now() - lastFailedWasapiExclusiveOutputAt > WASAPI_EXCLUSIVE_FAILED_SIGNATURE_RETRY_MS)
+        ) {
             lastFailedWasapiExclusiveOutputSignature = null;
             lastFailedWasapiExclusiveOutputAt = 0;
+            lastFailedWasapiExclusiveOutputPermanent = false;
         } else {
-            lastWasapiExclusiveOutputSkipReason = 'signature failed';
+            lastWasapiExclusiveOutputSkipReason = lastFailedWasapiExclusiveOutputPermanent ? 'signature permanently unsupported' : 'signature failed';
             return;
         }
     }
@@ -2636,17 +1768,7 @@ const feedWasapiExclusiveOutput = (format, chunkBuffer, options = {}) => {
 
     if (!hasReusableSession) {
         stopWasapiExclusiveOutput('format changed');
-        const initialChunks = preloadedEntry
-            ? preloadedEntry.chunks
-                  .slice()
-                  .sort((left, right) => {
-                      if (Number.isFinite(left.appendSequence) && Number.isFinite(right.appendSequence)) {
-                          return left.appendSequence - right.appendSequence;
-                      }
-                      return 0;
-                  })
-                  .map((chunk) => chunk.buffer)
-            : [];
+        const initialChunks = getYaspPreloadedDecoderChunks(preloadedEntry);
         if (isMp4Format && !mp4ChunkInfo.hasInitSegment && initChunk && !preloadedEntry?.hasInitSegment) {
             initialChunks.unshift(initChunk);
         }
@@ -2661,18 +1783,19 @@ const feedWasapiExclusiveOutput = (format, chunkBuffer, options = {}) => {
                 startPosition: pcmBasePosition,
                 playerState: lastWasapiExclusivePlayerState,
                 requireAudioParking: true,
+                preloadIdentity: preloadedEntry?.identity ?? null,
             });
         } catch (error) {
             lastWasapiExclusiveOutputError = String(error?.message ?? error);
             lastFailedWasapiExclusiveOutputSignature = signature;
             lastFailedWasapiExclusiveOutputAt = Date.now();
+            lastFailedWasapiExclusiveOutputPermanent = isPermanentWasapiExclusiveFailure(error);
             lastWasapiExclusiveOutputSkipReason = 'native stream session unavailable';
             logger.error('Failed to create native-module WASAPI stream session; keeping regular YASP output:', error);
             emitWasapiExclusiveOutputStateChanged();
             return;
         }
         if (preloadedEntry) {
-            consumeYaspPreloadedStream(incomingStreamIdentity);
             logger.info('YASP WASAPI cached preload attached to stream session', {
                 identity: incomingStreamIdentity,
                 chunks: initialChunks.length,
@@ -2729,6 +1852,7 @@ const receiveYaspChunk = (payload = {}, chunk) => {
     const payloadSourceKey = getPayloadSourceKey(payload) || 'unknown-source';
     const statKey = getChunkStatKey(payload);
     const now = Date.now();
+    pruneYaspChunkStats(now);
     const stat = chunkStats.get(statKey) ?? {
         chunks: 0,
         bytes: 0,
@@ -2798,6 +1922,7 @@ const receiveYaspChunk = (payload = {}, chunk) => {
             sourceHash: hashValue(payloadSourceKey),
             workerId: payload?.workerId || payload?.meta?.workerId || null,
             feederId: payload?.meta?.feederId ?? null,
+            streamGeneration: payload?.meta?.streamGeneration ?? null,
             updatedAt: now,
         };
 
