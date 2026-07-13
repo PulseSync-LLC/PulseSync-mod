@@ -129,6 +129,17 @@ https://github.com/user-attachments/assets/079f8b38-ca6b-4fef-b6a2-efa853fd583f
 
 </details>
 
+### WASAPI Exclusive
+
+<details>
+   <summary>Подробнее</summary>
+
+Добавляет поддержку вывода звука через WASAPI Exclusive. Это позволяет выводить бит-перфект аудио в обход микшера Windows.<br/>
+Включить/выключить можно в настройках аудио.<br/>
+Пока что экспериментально, из за чего может работать не стабильно.
+
+</details>
+
 ### Настраиваемая папка кеша
 
 <details>
