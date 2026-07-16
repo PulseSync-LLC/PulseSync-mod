@@ -3641,6 +3641,7 @@
                     })(v),
                     (0, u.useEffect)(() => {
                         if (!l) {
+                            _.update();
                             if (((i === eZ.INTRO || i === eZ.PREPARE) && _.slideTo(0), i === eZ.OUTRO)) {
                                 var e;
                                 _.slideTo(Number(null == (e = m.lines) ? void 0 : e.length));
