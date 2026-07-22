@@ -989,7 +989,7 @@
                                                                                 e.description &&
                                                                                     (0, n.jsx)('span', {
                                                                                         style: {
-                                                                                            color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                                            color: 'inherit',
                                                                                             fontSize: '0.75rem',
                                                                                             lineHeight: 1.35,
                                                                                             opacity: 0.72,
