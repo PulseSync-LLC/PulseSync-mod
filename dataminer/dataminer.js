@@ -49,7 +49,7 @@ const APP_PAGE_FILE_EXTENSIONS = new Set(['.html', '.txt']);
 const APP_PAGE_SOURCE_ORDER = ['registry', 'html', 'txt', 'chunk'];
 
 // === experiments ===
-const experiments = [];
+const experiments = new Set();
 
 // === icons ===
 const iconsCollectionBySize = {};
@@ -1255,15 +1255,15 @@ function createOutputJson(data, fileName) {
                     if (seqNode.type === 'SequenceExpression') {
                         for (const expr of seqNode.expressions) {
                             if (expr.type === 'AssignmentExpression' && expr.left.type === 'MemberExpression' && expr.left.property.type === 'Identifier') {
-                                experiments.push(expr.left.property.name);
+                                experiments.add(expr.left.property.name);
                             }
                         }
                     } else {
                         // Иногда присваивания идут без SequenceExpression (редко, но на всякий случай)
-                        experiments.push(node.left.property.name);
+                        experiments.add(node.left.property.name);
                     }
 
-                    console.log(`\n\n🔬 Найден реестр экспериментов, всего ключей: ${experiments.length}\n`);
+                    console.log(`\n\n🔬 Найден реестр экспериментов, всего уникальных ключей: ${experiments.size}\n`);
                 },
             });
         } catch (err) {
@@ -1297,7 +1297,7 @@ function createOutputJson(data, fileName) {
 
     console.log(`\n\n\n✅ Готово\n🌐 Роутов найдено: ${results.length}`);
     console.log(`📄 Страниц приложения найдено: ${appPages.length}`);
-    console.log(`🔬 Экспериментов найдено: ${experiments.length}`);
+    console.log(`🔬 Экспериментов найдено: ${experiments.size}`);
     console.log(
         `🎨 Иконок найдено: ${Object.keys(generateSimpleIconsList()).length}, использований: ${iconUsages.length}, динамических использований: ${dynamicIconUsages.length}`,
     );
@@ -1307,7 +1307,7 @@ function createOutputJson(data, fileName) {
     console.log(`\nСортирую результаты...`);
     console.time(`Сортировка завершена`);
     results.sort((a, b) => (a.formated.endpoint ?? '').localeCompare(b.formated.endpoint ?? ''));
-    experiments.sort((a, b) => a.localeCompare(b));
+    const sortedExperiments = [...experiments].sort((a, b) => a.localeCompare(b));
     iconUsages.sort((a, b) => a.key.localeCompare(b.key) || a.position.file.localeCompare(b.position.file) || (a.position.line ?? 0) - (b.position.line ?? 0));
     dynamicIconUsages.sort((a, b) => a.position.file.localeCompare(b.position.file) || (a.position.line ?? 0) - (b.position.line ?? 0));
     mobxConstructs.sort((a, b) => (a.name ?? a.assignedName ?? '').localeCompare(b.name ?? b.assignedName ?? '') || a.position.file.localeCompare(b.position.file));
@@ -1322,7 +1322,7 @@ function createOutputJson(data, fileName) {
         createOutputJson(generateSimpleRoutesListFromResults(results), 'simpleRoutes.json');
         createOutputJson(appPages, 'detailedPages.json');
         createOutputJson(generateSimplePagesListFromResults(appPages), 'simplePages.json');
-        createOutputJson([...new Set(experiments)], 'experiments.json');
+        createOutputJson(sortedExperiments, 'experiments.json');
         createOutputJson(generateSimpleIconsList(), 'icons.json');
         createOutputJson({ usages: iconUsages, usageSummary: generateIconUsageSummary(iconUsages), dynamicUsages: dynamicIconUsages }, 'detailedIcons.json');
         createOutputJson(generateSimpleMobxConstructs(mobxConstructs), 'mobxConstructs.json');
