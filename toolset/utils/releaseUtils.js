@@ -491,37 +491,16 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         }
     }
 
-    async function release({ dest, versions = undefined, onlyUploadAppAsar = false, onlySendPatchNotes = false }) {
+    async function prepareReleasePayload({ dest, versions = undefined }) {
         const version = await packageUtils.getModVersion();
         const { version: ymVersion } = await extractUtils.getLatestYMVersion();
         const patchNote = versions ? PatchNote.forSpoofPatch(versions.newVersion, version, versions.oldVersion) : new PatchNote(ymVersion, version, patchNoteStringMD);
 
-        if (onlyUploadAppAsar && onlySendPatchNotes) {
-            throw new Error('Release: onlyUploadAppAsar и onlySendPatchNotes нельзя использовать вместе');
-        }
+        return { dest, version, ymVersion, patchNote };
+    }
 
-        if (onlyUploadAppAsar) {
-            await uploadAppAsar({
-                targetPath: dest,
-                modVersion: version,
-                musicVersion: ymVersion,
-                spoof: true,
-                changelog: patchNote.patchNoteString,
-                unpackedPath: null,
-                multipartBasePath: '/cdn/upload/asar/multipart',
-            });
-            console.log('Релиз: включён режим onlyUploadAppAsar, релиз GitHub и Discord патчноут пропущены');
-            return;
-        }
-
-        if (onlySendPatchNotes) {
-            await sendPatchNoteToDiscord(patchNote);
-            console.log('Релиз: включён режим onlySendPatchNotes, релиз GitHub и загрузка app.asar пропущены');
-            return;
-        }
-
-        await createGitHubRelease(version, dest, patchNote);
-        await uploadAppAsar({
+    async function uploadReleaseAppAsar({ dest, version, ymVersion, patchNote }) {
+        return uploadAppAsar({
             targetPath: dest,
             modVersion: version,
             musicVersion: ymVersion,
@@ -530,11 +509,37 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             unpackedPath: null,
             multipartBasePath: '/cdn/upload/asar/multipart',
         });
-        await sendPatchNoteToDiscord(patchNote);
+    }
+
+    async function release({ dest, versions = undefined, onlyUploadAppAsar = false, onlySendPatchNotes = false }) {
+        const payload = await prepareReleasePayload({ dest, versions });
+
+        if (onlyUploadAppAsar && onlySendPatchNotes) {
+            throw new Error('Release: onlyUploadAppAsar и onlySendPatchNotes нельзя использовать вместе');
+        }
+
+        if (onlyUploadAppAsar) {
+            await uploadReleaseAppAsar(payload);
+            console.log('Релиз: включён режим onlyUploadAppAsar, релиз GitHub и Discord патчноут пропущены');
+            return;
+        }
+
+        if (onlySendPatchNotes) {
+            await sendPatchNoteToDiscord(payload.patchNote);
+            console.log('Релиз: включён режим onlySendPatchNotes, релиз GitHub и загрузка app.asar пропущены');
+            return;
+        }
+
+        await createGitHubRelease(payload.version, payload.dest, payload.patchNote);
+        await uploadReleaseAppAsar(payload);
+        await sendPatchNoteToDiscord(payload.patchNote);
     }
 
     return {
         release,
+        prepareReleasePayload,
+        uploadReleaseAppAsar,
+        sendPatchNoteToDiscord,
         uploadAppAsar,
         uploadUnpacked,
         createGitHubRelease,

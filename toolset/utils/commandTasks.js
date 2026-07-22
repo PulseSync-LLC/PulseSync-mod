@@ -1,3 +1,4 @@
+const { PRESET_TIMER } = require('listr2');
 const { dimSkipReason, SKIPPED_RENDERER_STYLE, wrapTaskDefinitions } = require('./listrOutput.js');
 
 const COLLAPSED_SUBTASKS_OPTIONS = {
@@ -7,6 +8,7 @@ const COLLAPSED_SUBTASKS_OPTIONS = {
         collapseSubtasks: true,
         showSkipMessage: true,
         suffixSkips: true,
+        timer: PRESET_TIMER,
     },
 };
 
@@ -15,6 +17,7 @@ const HIDDEN_SKIP_REASONS_OPTIONS = {
         ...SKIPPED_RENDERER_STYLE,
         collapseSkips: false,
         showSkipMessage: false,
+        timer: PRESET_TIMER,
     },
 };
 
@@ -25,6 +28,7 @@ const EXPANDED_SKIP_REASONS_OPTIONS = {
         collapseSubtasks: false,
         showSkipMessage: true,
         suffixSkips: true,
+        timer: PRESET_TIMER,
     },
 };
 
@@ -313,13 +317,49 @@ function createPrepareReleaseAsarTask({ title = 'Подготовка app.asar.z
 function createReleaseTask({ title = 'Публикация релиза', versions = () => undefined, dest = (context) => context.options.dest } = {}) {
     return {
         title,
-        task: async (context) => {
-            await context.core.releaseUtils.release({
-                dest: resolveValue(dest, context),
-                versions: resolveValue(versions, context),
-                onlyUploadAppAsar: context.options.onlyUploadAppAsar,
-                onlySendPatchNotes: context.options.onlySendPatchNotes,
-            });
+        task: (context, task) => {
+            if (context.options.onlyUploadAppAsar && context.options.onlySendPatchNotes) {
+                throw new Error('Release: onlyUploadAppAsar и onlySendPatchNotes нельзя использовать вместе');
+            }
+
+            return task.newListr(
+                wrapTaskDefinitions([
+                    {
+                        title: 'Подготовка release payload',
+                        task: async (ctx, payloadTask) => {
+                            ctx.state.releasePayload = await ctx.core.releaseUtils.prepareReleasePayload({
+                                dest: resolveValue(dest, ctx),
+                                versions: resolveValue(versions, ctx),
+                            });
+                            payloadTask.output = `PulseSync ${ctx.state.releasePayload.version}, Яндекс Музыка ${ctx.state.releasePayload.ymVersion}`;
+                        },
+                    },
+                    {
+                        title: 'Публикация GitHub release',
+                        skip: (ctx) =>
+                            ctx.options.onlyUploadAppAsar || ctx.options.onlySendPatchNotes ? 'отключено выбранным режимом release' : false,
+                        task: async (ctx) => {
+                            const payload = ctx.state.releasePayload;
+                            await ctx.core.releaseUtils.createGitHubRelease(payload.version, payload.dest, payload.patchNote);
+                        },
+                    },
+                    {
+                        title: 'Загрузка app.asar',
+                        skip: (ctx) => (ctx.options.onlySendPatchNotes ? 'отключено режимом onlySendPatchNotes' : false),
+                        task: async (ctx) => {
+                            await ctx.core.releaseUtils.uploadReleaseAppAsar(ctx.state.releasePayload);
+                        },
+                    },
+                    {
+                        title: 'Отправка патчноута в Discord',
+                        skip: (ctx) => (ctx.options.onlyUploadAppAsar ? 'отключено режимом onlyUploadAppAsar' : false),
+                        task: async (ctx) => {
+                            await ctx.core.releaseUtils.sendPatchNoteToDiscord(ctx.state.releasePayload.patchNote);
+                        },
+                    },
+                ]),
+                EXPANDED_SKIP_REASONS_OPTIONS,
+            );
         },
     };
 }

@@ -1,4 +1,4 @@
-const { Listr } = require('listr2');
+const { Listr, PRESET_TIMER } = require('listr2');
 const { installSkippedRendererStyle, SKIPPED_RENDERER_STYLE, wrapTaskDefinitions } = require('./listrOutput.js');
 
 function resolveRenderer() {
@@ -52,7 +52,7 @@ async function runCommand(command, context, { afterTasks = [] } = {}) {
             collapseSkips: false,
             clearOutput: false,
             showSkipMessage: true,
-            showTimer: true,
+            timer: PRESET_TIMER,
             suffixSkips: true,
         },
     });
