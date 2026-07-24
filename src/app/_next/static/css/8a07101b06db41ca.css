@@ -1,0 +1,35 @@
+.PlaylistPersonalDummyPage_root__tGxHG {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - var(--header-height) - var(--ym-spacer-size-l));
+    justify-content: center;
+    margin-block-start: calc(var(--header-height) + var(--ym-spacer-size-l));
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: 0;
+    padding-inline-end: var(--ym-spacer-size-xl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    text-align: center;
+}
+.PlaylistPersonalDummyPage_cover__XcCD1 {
+    height: 100%;
+    margin-block-end: var(--ym-spacer-size-xxxl);
+    max-height: 12.5rem;
+    max-width: 12.5rem;
+    width: 100%;
+}
+.PlaylistPersonalDummyPage_title__ZSf9O {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    text-align: center;
+}
+.PlaylistPersonalDummyPage_title__ZSf9O.PlaylistPersonalDummyPage_important__uEHGe {
+    margin-block-end: var(--ym-spacer-size-xs);
+}
+.PlaylistPersonalDummyPage_text__ci30d {
+    max-width: 31.25rem;
+    text-align: center;
+    width: 100%;
+}
+.PlaylistPersonalDummyPage_text__ci30d.PlaylistPersonalDummyPage_important__uEHGe {
+    padding-block-end: var(--ym-spacer-size-l);
+}

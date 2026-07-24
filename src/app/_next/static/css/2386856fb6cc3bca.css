@@ -1,0 +1,13 @@
+.SearchCorrectedText_root__ZM2f2 {
+    background-color: var(--ym-surface-color-primary-enabled-list);
+    border-radius: var(--ym-radius-size-l);
+    padding: var(--ym-spacer-size-l);
+    text-align: center;
+}
+.SearchCorrectedText_link__eORMG,
+.SearchCorrectedText_text__HKgvL {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.SearchCorrectedText_link__eORMG:hover {
+    color: var(--ym-controls-color-primary-text-hovered);
+}

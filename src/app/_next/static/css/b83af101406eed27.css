@@ -1,0 +1,179 @@
+.GenrePlaylistsPage_root__WZwkl {
+    container-name: genre-playlists-page;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+@media only screen and (max-width: 767.98px) {
+    .GenrePlaylistsPage_root__WZwkl {
+        container-type: normal;
+    }
+}
+.GenrePlaylistsPage_scrollContainer__N3BZw.GenrePlaylistsPage_important__986BX {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .GenrePlaylistsPage_scrollContainer__N3BZw.GenrePlaylistsPage_important__986BX {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .GenrePlaylistsPage_shimmerScrollContainer__3kUkA {
+        overflow-y: scroll;
+        transition: scrollbar-color 0.2s ease-in-out;
+    }
+    .GenrePlaylistsPage_shimmerScrollContainer__3kUkA::-webkit-scrollbar-thumb {
+        background-clip: content-box;
+        border: 0.5rem solid transparent;
+        border-radius: var(--ym-radius-size-l);
+        min-height: 3.125rem;
+    }
+    .GenrePlaylistsPage_shimmerScrollContainer__3kUkA::-webkit-scrollbar {
+        width: var(--ym-spacer-size-xxl);
+    }
+    .GenrePlaylistsPage_shimmerScrollContainer__3kUkA {
+        --scrollbar-hidden: transparent;
+    }
+    @supports selector(scrollbar-width:auto) {
+        .GenrePlaylistsPage_shimmerScrollContainer__3kUkA {
+            scrollbar-color: var(--scrollbar-hidden) transparent;
+            scrollbar-gutter: stable;
+        }
+    }
+    @supports selector(::-webkit-scrollbar) {
+        .GenrePlaylistsPage_shimmerScrollContainer__3kUkA::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-hidden);
+        }
+    }
+}
+@media only screen and (min-width: 768px) and (prefers-reduced-motion: reduce) {
+    .GenrePlaylistsPage_shimmerScrollContainer__3kUkA {
+        transition: none;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .GenrePlaylistsPage_shimmerScrollContainer__3kUkA::-webkit-scrollbar-thumb {
+        border: 0.1875rem solid transparent;
+    }
+    .GenrePlaylistsPage_shimmerScrollContainer__3kUkA::-webkit-scrollbar {
+        width: var(--ym-spacer-size-m);
+    }
+}
+.GenrePlaylistsPage_footer__aMDul {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .GenrePlaylistsPage_footer__aMDul {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .GenrePlaylistsPage_footer__aMDul {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .GenrePlaylistsPage_footer__aMDul {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.GenrePlaylistsPage_item__tUsqJ {
+    display: flex;
+    min-width: 8.75rem;
+}
+.GenrePlaylistsPage_content__2rKJY {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .GenrePlaylistsPage_content__2rKJY {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .GenrePlaylistsPage_content__2rKJY {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .GenrePlaylistsPage_content__2rKJY {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.GenrePlaylistsPage_content__2rKJY {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .GenrePlaylistsPage_content__2rKJY {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .GenrePlaylistsPage_content__2rKJY {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .GenrePlaylistsPage_content__2rKJY {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .GenrePlaylistsPage_content__2rKJY {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .GenrePlaylistsPage_content__2rKJY {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .GenrePlaylistsPage_content__2rKJY {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container genre-playlists-page (width >= 618px) {
+        .GenrePlaylistsPage_content__2rKJY {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container genre-playlists-page (width >= 815px) {
+        .GenrePlaylistsPage_content__2rKJY {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container genre-playlists-page (width >= 1010px) {
+        .GenrePlaylistsPage_content__2rKJY {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container genre-playlists-page (width >= 1206px) {
+        .GenrePlaylistsPage_content__2rKJY {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .GenrePlaylistsPage_content__2rKJY {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+.GenrePlaylistsPage_shimmerTitle__s4_Kt {
+    height: var(--ym-font-line-height-headline-xl);
+    width: 9.375rem;
+}

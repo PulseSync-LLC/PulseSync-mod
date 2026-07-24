@@ -1,0 +1,25 @@
+.CollectionDislikesPageEmpty_root__F9g35 {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-s);
+    height: calc(100% - var(--collection-header-with-tabs-height));
+    justify-content: center;
+    padding: var(--ym-spacer-size-xxl);
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionDislikesPageEmpty_root__F9g35 {
+        padding: var(--ym-spacer-size-l);
+    }
+}
+.CollectionDislikesPageEmpty_icon__hbz5L {
+    margin-block-end: var(--ym-spacer-size-xxs);
+}
+.CollectionDislikesPageEmpty_icon__hbz5L,
+.CollectionDislikesPageEmpty_title__AqUTM {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionDislikesPageEmpty_title__AqUTM {
+    text-align: center;
+}

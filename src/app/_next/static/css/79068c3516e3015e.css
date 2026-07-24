@@ -1,0 +1,78 @@
+.CollectionVibeRoomsPage_root__rXIRS {
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionVibeRoomsPage_root__rXIRS {
+        height: 100%;
+    }
+}
+.CollectionVibeRoomsPage_container__EjxoE {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    height: 100%;
+    margin-inline-end: var(--ym-spacer-size-xxl);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+    min-height: 100%;
+    padding: 0;
+    padding-block-start: calc(var(--header-height) + var(--ym-spacer-size-l));
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionVibeRoomsPage_container__EjxoE {
+        margin-inline-end: 0;
+        margin-inline-start: var(--ym-spacer-size-l);
+        min-height: calc(100vh - var(--header-height) - var(--player-bar-height));
+    }
+}
+.CollectionVibeRoomsPage_shimmerGrid__vgYVO {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+    grid-column-gap: 1rem;
+    column-gap: 1rem;
+    grid-row-gap: 1rem;
+    row-gap: 1rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionVibeRoomsPage_shimmerGrid__vgYVO {
+        grid-template-columns: 1fr;
+    }
+}
+.CollectionVibeRoomsPage_gridContent__Og3pw {
+    flex-grow: 1;
+}
+.CollectionVibeRoomsPage_emptyContent___1jjx {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+    padding: var(--ym-spacer-size-xxl);
+    row-gap: var(--ym-spacer-size-xxl);
+    text-align: center;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionVibeRoomsPage_emptyContent___1jjx {
+        padding: var(--ym-spacer-size-m);
+    }
+}
+.CollectionVibeRoomsPage_multivibeCoBrand__qm6aU {
+    align-self: center;
+    flex-shrink: 0;
+    padding-block-end: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionVibeRoomsPage_multivibeCoBrand__qm6aU {
+        padding-block-end: var(--ym-spacer-size-xs);
+    }
+}
+.CollectionVibeRoomsPage_multivibeImage__NFs_8 {
+    max-height: 7.25rem;
+    max-width: 7.25rem;
+}
+.CollectionVibeRoomsPage_emptyContentTitle__Hv_Vp {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    line-height: var(--ym-font-line-height-label-xl);
+    max-width: 37.5rem;
+}

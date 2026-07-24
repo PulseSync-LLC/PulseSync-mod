@@ -1,0 +1,101 @@
+.ReleaseNotesModal_root__RSw1p {
+    height: 100%;
+    max-height: 26.875rem;
+    max-width: 26.875rem;
+    width: 100%;
+    z-index: calc(var(--ym-z-index-loader) + 2);
+}
+@media only screen and (max-width: 767.98px) {
+    .ReleaseNotesModal_root__RSw1p {
+        position: fixed;
+    }
+}
+.ReleaseNotesModal_modalOverlay__GYUgU {
+    z-index: calc(var(--ym-z-index-loader) + 2);
+}
+.ReleaseNotesModal_modalHeader__gp9SA {
+    padding: var(--ym-spacer-size-m);
+}
+.ReleaseNotesModal_modalContent__g8OTu {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-block-end: var(--ym-spacer-size-m);
+    padding-inline-start: var(--ym-spacer-size-m);
+}
+.ReleaseNotesModal_scrollableContent__zGdbH.ReleaseNotesModal_important__u8yP4 {
+    padding: 0;
+}
+.ReleaseNotesModal_notes__bVAoa.ReleaseNotesModal_important__u8yP4 {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-l);
+    padding: 0;
+}
+.ReleaseNotesModal_date__s3_ux {
+    margin-block-end: var(--ym-spacer-size-l);
+}
+.ReleaseNotesModal_description__B_yLI,
+.ReleaseNotesModal_paragraph___laDJ {
+    margin: 0;
+    margin-block-end: var(--ym-spacer-size-xxxs);
+}
+.ReleaseNotesModal_note__S9E6z {
+    display: flex;
+    flex-direction: column;
+}
+.ReleaseNotesModal_note__S9E6z:not(:last-child) {
+    border-block-end: 0.0625rem solid var(--ym-controls-color-secondary-text-disabled);
+    padding-block-end: var(--ym-spacer-size-m);
+}
+.ReleaseNotesModal_version__4Mcd5.ReleaseNotesModal_important__u8yP4 {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    font-weight: var(--ym-font-weight-medium);
+}
+.ReleaseNotesModal_item___CYml,
+.ReleaseNotesModal_version__4Mcd5.ReleaseNotesModal_important__u8yP4 {
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-m);
+    font-style: normal;
+    letter-spacing: normal;
+    line-height: var(--ym-font-line-height-label-m);
+}
+.ReleaseNotesModal_item___CYml {
+    color: var(--ym-controls-color-primary-text-enabled);
+    margin-block-end: 0.125rem;
+    margin-inline-start: var(--ym-spacer-size-l);
+}
+.ReleaseNotesModal_code__Yv3QD,
+.ReleaseNotesModal_item___CYml {
+    font-weight: var(--ym-font-weight-normal);
+}
+.ReleaseNotesModal_code__Yv3QD {
+    background-color: var(--ym-controls-color-secondary-default-hovered);
+    border: 0.0625rem solid var(--ym-controls-color-primary-text-enabled);
+    border-radius: var(--ym-radius-size-xs);
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    display: inline-block;
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-s);
+    font-style: normal;
+    letter-spacing: normal;
+    line-height: var(--ym-font-line-height-label-s);
+    min-width: 1.5625rem;
+    padding-inline-end: 0.1875rem;
+    padding-inline-start: 0.1875rem;
+    text-align: center;
+}
+.NotificationsInitializer_toastClassName__ZVvrd {
+    margin-block-end: var(--ym-spacer-size-m) !important;
+}
+@media only screen and (max-width: 480px) {
+    .NotificationsInitializer_notificationContainer__oe1ot {
+        inset-block-start: var(--ym-spacer-size-m);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .NotificationsInitializer_notificationContainer__oe1ot {
+        inset-block-end: var(--ym-spacer-size-xxl);
+        width: 100%;
+    }
+}

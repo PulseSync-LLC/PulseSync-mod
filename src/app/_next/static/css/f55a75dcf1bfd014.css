@@ -1,0 +1,152 @@
+.SearchColumnShimmer_root__PDf3Y {
+    --fallback-cover-size: 3.25rem;
+    justify-content: space-between;
+    width: 100%;
+}
+.SearchColumnShimmer_infoContainer__cQ8_H,
+.SearchColumnShimmer_root__PDf3Y {
+    align-items: center;
+    display: flex;
+}
+.SearchColumnShimmer_infoContainer__cQ8_H {
+    gap: var(--ym-spacer-size-l);
+    width: 70%;
+}
+.SearchColumnShimmer_textContainer__IekgL {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-l);
+    width: 100%;
+}
+.SearchColumnShimmer_title__IorPg {
+    height: 0.75rem;
+    width: 40%;
+}
+.SearchColumnShimmer_description__nNupy {
+    height: 0.625rem;
+    width: 65%;
+}
+.SearchColumnShimmer_cover__58jV8 {
+    aspect-ratio: 1;
+    width: var(--cover-size, var(--fallback-cover-size));
+}
+.SearchColumnShimmer_action__JbJGl {
+    height: 0.75rem;
+    width: 10%;
+}
+.EntitiesListShimmer_root__Mq_tK {
+    --cover-size: 2.5rem;
+    min-height: 3.5rem;
+    padding-inline-end: var(--ym-spacer-size-xs);
+    padding-inline-start: var(--ym-spacer-size-xs);
+}
+.MixedEntitiesBlock_root__Zs8l2:hover .MixedEntitiesBlock_controls__mOhq7 {
+    opacity: 1;
+}
+.MixedEntitiesBlock_item__uRvxc {
+    max-width: 100%;
+    min-width: 100%;
+    width: 100%;
+}
+.MixedEntitiesBlock_item_withMultipleColumns__ziUqI {
+    max-width: none;
+    min-width: 0;
+    min-width: auto;
+    width: calc((100% - var(--ym-spacer-size-l)) / 2);
+}
+@media only screen and (max-width: 768px) {
+    .MixedEntitiesBlock_item_withMultipleColumns__ziUqI {
+        max-width: 90%;
+        min-width: 90%;
+    }
+}
+.MixedEntitiesBlock_column__sHpUC {
+    display: flex;
+    flex-direction: column;
+}
+.TextShimmer_root__qqWug {
+    align-items: center;
+    display: flex;
+    width: 100%;
+}
+.TextShimmer_text__z8oN9 {
+    height: 0.75rem;
+    width: 30%;
+}
+.SearchBestResultsShimmer_root__xMCOZ {
+    display: flex;
+    gap: var(--ym-spacer-size-xxl);
+    margin-block-end: var(--ym-spacer-size-m);
+    margin-block-start: var(--ym-spacer-size-xl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .SearchBestResultsShimmer_root__xMCOZ {
+        flex-direction: column;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.SearchBestResultsShimmer_container__Je48X {
+    align-items: center;
+    display: flex;
+    flex: 1 1;
+}
+.SearchBestResultsShimmer_entity____sr1.SearchBestResultsShimmer_important__vbFUa {
+    margin-inline-end: var(--ym-spacer-size-m);
+}
+.SearchBestResultsShimmer_cover__rzY5m.SearchBestResultsShimmer_important__vbFUa,
+.SearchBestResultsShimmer_entity____sr1.SearchBestResultsShimmer_important__vbFUa {
+    aspect-ratio: 1;
+    max-width: 5rem;
+}
+.SearchBestResultsShimmer_meta__GlLPe {
+    width: 100%;
+}
+.SearchBestResultsShimmer_title__AXYX8.SearchBestResultsShimmer_important__vbFUa {
+    margin-block-end: var(--ym-spacer-size-xxxs);
+    width: 6.25rem;
+}
+.SearchBestResultsShimmer_subtitle__IULSY.SearchBestResultsShimmer_important__vbFUa {
+    width: 3.75rem;
+}
+.SearchBestResults_root__12Tlp {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
+    grid-column-gap: var(--ym-spacer-size-l);
+    column-gap: var(--ym-spacer-size-l);
+    grid-row-gap: var(--ym-spacer-size-xs);
+    margin-block-end: var(--ym-spacer-size-xxxs);
+    margin-block-start: var(--ym-spacer-size-m);
+    padding-inline-start: var(--ym-spacer-size-l);
+    row-gap: var(--ym-spacer-size-xs);
+    scroll-padding-inline-start: var(--ym-spacer-size-xxl);
+}
+.SearchBestResults_root_withSingleResult__qAMCB {
+    grid-template-columns: auto;
+}
+@media only screen and (max-width: 767.98px) {
+    .SearchBestResults_root__12Tlp {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: repeat(auto-fit, minmax(0, 1fr));
+        padding-inline-start: var(--ym-spacer-size-xs);
+        row-gap: var(--ym-spacer-size-m);
+    }
+}
+.SearchBestResultsCommon_block__v11At {
+    --horizontal-card-height: auto;
+    padding-block-end: var(--ym-spacer-size-xs);
+    padding-block-start: var(--ym-spacer-size-xs);
+}
+.SearchBestResultsCommon_cover__ZHlYo {
+    --cover-size: 5rem;
+}
+.SearchBestResultsAlbumBlock_root__j7nJ4 {
+    container-name: best-results-album;
+    container-type: inline-size;
+}
+.SearchBestResultsArtistBlock_root__ZLcy4 {
+    container-name: best-results-artist;
+    container-type: inline-size;
+}

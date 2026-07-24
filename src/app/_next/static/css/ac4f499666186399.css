@@ -1,0 +1,71 @@
+.ConcertsDetailsPage_root__Uyap_ {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.ConcertsDetailsPage_scrollContainer__BKTRD {
+    --subpage-sticky-header-height: 5rem;
+    flex: 1 1;
+    overflow-y: auto;
+    padding: 0;
+}
+.ConcertsDetailsPage_content__WsuVk {
+    margin-block-start: var(--subpage-sticky-header-height);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertsDetailsPage_content__WsuVk {
+        margin-block-start: 0;
+        margin-inline-start: var(--ym-spacer-size-l);
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+.ConcertsDetailsPage_header__K7UVE {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-m);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertsDetailsPage_header__K7UVE {
+        padding-block-end: var(--ym-spacer-size-xs);
+        padding-block-start: var(--ym-spacer-size-l);
+    }
+}
+.ConcertsDetailsPage_container__swjuX {
+    height: var(--feed-concerts-height);
+    position: relative;
+}
+@supports (-webkit-hyphens: none) {
+    @media only screen and (max-width: 767.98px) {
+        .ConcertsDetailsPage_container__swjuX {
+            margin-inline-end: var(--ym-spacer-size-m);
+        }
+    }
+}
+.ConcertsDetailsPage_column__EB1kA {
+    --concert-card-aspect-ratio: 0.701;
+    max-width: 100%;
+}
+.ConcertsDetailsPage_row__oP8Xu {
+    display: grid;
+    grid-template-columns: repeat(var(--feed-concerts-column-count), minmax(0, 1fr));
+    grid-column-gap: var(--ym-spacer-size-l);
+    column-gap: var(--ym-spacer-size-l);
+    grid-row-gap: var(--ym-spacer-size-xxxl);
+    row-gap: var(--ym-spacer-size-xxxl);
+}
+.ConcertsDetailsPage_shimmerTitle__vjWfR {
+    height: 2.25rem;
+    max-width: 60%;
+    width: 20rem;
+}
+.ConcertsDetailsPage_footer__ooBj8 {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertsDetailsPage_footer__ooBj8 {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}

@@ -1,0 +1,87 @@
+.PageHeaderShimmer_root__kqSwa {
+    display: flex;
+    gap: var(--ym-spacer-size-xxl);
+    width: 100%;
+}
+@media only screen and (max-width: 1060px) {
+    .PageHeaderShimmer_root__kqSwa {
+        flex-direction: column;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderShimmer_root__kqSwa {
+        align-items: center;
+        gap: var(--ym-spacer-size-l);
+    }
+}
+.PageHeaderShimmer_cover__ay2cr {
+    aspect-ratio: 1;
+    display: block;
+    flex-grow: 0;
+    flex-shrink: 0;
+    max-width: 12.75rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderShimmer_cover__ay2cr {
+        max-width: 10.5rem;
+        width: 100%;
+    }
+}
+.PageHeaderShimmer_content__SdBKK {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xl);
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderShimmer_content__SdBKK {
+        padding: 0;
+    }
+    .PageHeaderShimmer_info__cZkS2 {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+    }
+}
+.PageHeaderShimmer_entityName__tlWnA {
+    height: 0.5625rem;
+    margin-block-end: 1.25rem;
+    margin-block-start: 0.5rem;
+    width: 4.625rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderShimmer_entityName__tlWnA {
+        display: none;
+    }
+}
+.PageHeaderShimmer_title__xKG4e {
+    font-family: var(--ym-font-heading);
+    height: 1.8125rem;
+    margin-block-end: 1.25rem;
+    max-width: 90%;
+    width: 22.8125rem;
+}
+.PageHeaderShimmer_meta__YWx0m {
+    height: 0.875rem;
+    margin-block-end: var(--ym-spacer-size-xxl);
+    width: 7.125rem;
+}
+.PageHeaderShimmer_controls__gPErM {
+    display: flex;
+    gap: var(--ym-spacer-size-m);
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderShimmer_controls__gPErM {
+        justify-content: center;
+        margin-block-start: var(--ym-spacer-size-xxl);
+    }
+}
+.PageHeaderShimmer_desktopPlayButton__R7EmH {
+    border-radius: var(--ym-radius-size-xxl);
+    height: 2.5rem;
+    width: 7rem;
+}
+.PageHeaderShimmer_button__13qrG {
+    height: 2.5rem;
+    width: 2.5rem;
+}

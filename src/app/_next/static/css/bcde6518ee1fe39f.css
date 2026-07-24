@@ -1,0 +1,45 @@
+.TabCarousel_root__8DoRy {
+    display: flex;
+    gap: var(--ym-spacer-size-xs);
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    transition: scrollbar-color 0.2s ease-in-out;
+}
+.TabCarousel_root__8DoRy::-webkit-scrollbar-thumb {
+    background-clip: content-box;
+    border: 0.5rem solid transparent;
+    border-radius: var(--ym-radius-size-l);
+    min-height: 3.125rem;
+}
+.TabCarousel_root__8DoRy {
+    scrollbar-width: none;
+}
+.TabCarousel_root__8DoRy::-webkit-scrollbar {
+    display: none;
+    height: 0;
+    width: 0;
+}
+.TabCarousel_root__8DoRy {
+    --scrollbar-hidden: transparent;
+}
+@supports selector(scrollbar-width:auto) {
+    .TabCarousel_root__8DoRy {
+        scrollbar-color: var(--scrollbar-hidden) transparent;
+        scrollbar-gutter: stable;
+    }
+}
+@supports selector(::-webkit-scrollbar) {
+    .TabCarousel_root__8DoRy::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-hidden);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .TabCarousel_root__8DoRy {
+        transition: none;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .TabCarousel_root__8DoRy::-webkit-scrollbar-thumb {
+        border: 0.1875rem solid transparent;
+    }
+}

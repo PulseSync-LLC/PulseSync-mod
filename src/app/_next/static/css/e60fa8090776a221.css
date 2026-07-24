@@ -1,0 +1,1104 @@
+.CollectionArtistsPage_root__EH25F {
+    container-name: collection-artists-page;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionArtistsPage_root__EH25F {
+        container-type: normal;
+    }
+}
+.CollectionArtistsPage_scrollContainer__tT6NQ.CollectionArtistsPage_important__MG_XV {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionArtistsPage_scrollContainer__tT6NQ.CollectionArtistsPage_important__MG_XV {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+.CollectionArtistsPage_footer__aZrx3 {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionArtistsPage_footer__aZrx3 {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionArtistsPage_footer__aZrx3 {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionArtistsPage_footer__aZrx3 {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionArtistsPage_item___cy_9 {
+    min-width: 8.75rem;
+}
+.CollectionArtistsPage_contentBlock__5QDcr {
+    container-name: artist-page-content;
+    container-type: inline-size;
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+.CollectionArtistsPage_contentBlock_withMarginTop__e4_VX {
+    margin-block-start: var(--subpage-sticky-header-height);
+}
+@supports (-moz-appearance: none) {
+    .CollectionArtistsPage_contentBlock__5QDcr {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionArtistsPage_contentBlock__5QDcr {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionArtistsPage_contentBlock__5QDcr {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionArtistsPage_gridLayout__00brJ {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .CollectionArtistsPage_gridLayout__00brJ {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .CollectionArtistsPage_gridLayout__00brJ {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .CollectionArtistsPage_gridLayout__00brJ {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .CollectionArtistsPage_gridLayout__00brJ {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .CollectionArtistsPage_gridLayout__00brJ {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .CollectionArtistsPage_gridLayout__00brJ {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container collection-artists-page (width >= 618px) {
+        .CollectionArtistsPage_gridLayout__00brJ {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container collection-artists-page (width >= 815px) {
+        .CollectionArtistsPage_gridLayout__00brJ {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container collection-artists-page (width >= 1010px) {
+        .CollectionArtistsPage_gridLayout__00brJ {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container collection-artists-page (width >= 1206px) {
+        .CollectionArtistsPage_gridLayout__00brJ {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .CollectionArtistsPage_gridLayout__00brJ {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+.CollectionArtistsPage_subTitle__My70z {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    padding-block-end: calc(var(--ym-spacer-size-m) * 2);
+    padding-block-start: calc(var(--ym-spacer-size-m) * 2);
+}
+.CollectionArtistsPageEmpty_root__D39tF {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+}
+.CollectionArtistsPageEmpty_emptyContent__oJc6T {
+    margin-block-end: var(--ym-spacer-size-xxxl);
+    padding-block-start: 20vh;
+    padding-block-start: 20dvh;
+    text-align: center;
+}
+.CollectionArtistsPageEmpty_emptyContentIcon__uZQwm {
+    margin-block-end: var(--ym-spacer-size-xxs);
+}
+.CollectionArtistsPageEmpty_emptyContentIcon__uZQwm,
+.CollectionArtistsPageEmpty_emptyContentTitle__Vqy_Q {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionArtistsPageEmpty_emptyContentTitle__Vqy_Q {
+    text-align: center;
+}
+.CollectionArtistsPageEmpty_footer__O_8aS {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionArtistsPageEmpty_footer__O_8aS {
+        padding-inline-end: var(--ym-spacer-size-l);
+    }
+}
+.HorizontalCardContainer_root__YoAAP {
+    --horizontal-card-fallback-height: 3.5rem;
+    --horizontal-card-fallback-background-color: var(--ym-surface-color-primary-enabled-list);
+    align-items: center;
+    display: flex;
+    height: 3.5rem;
+    height: var(--horizontal-card-height, var(--horizontal-card-fallback-height));
+    overflow: hidden;
+    position: relative;
+    transition: background-color var(--ym-duration-transition);
+    width: 100%;
+}
+@media only screen and (min-width: 768.02px) {
+    .HorizontalCardContainer_root__YoAAP:has(:focus-visible),
+    .HorizontalCardContainer_root__YoAAP:hover {
+        background-color: var(--horizontal-card-background-color, var(--horizontal-card-fallback-background-color));
+    }
+}
+@supports not selector(:has(*)) {
+    @media only screen and (min-width: 768.02px) {
+        .HorizontalCardContainer_root__YoAAP:focus-within,
+        .HorizontalCardContainer_root__YoAAP:hover {
+            background-color: var(--horizontal-card-background-color, var(--horizontal-card-fallback-background-color));
+        }
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .HorizontalCardContainer_root__YoAAP {
+        transition: none;
+    }
+}
+.Pin_root__UyplT {
+    border-radius: var(--ym-radius-size-m);
+}
+.Pin_root__UyplT .Pin_ripple__Vzpzs {
+    animation: Pin_ripple__Vzpzs 0.6s linear;
+    background-color: var(--ym-controls-color-secondary-default-pressed);
+    border-radius: var(--ym-radius-size-round);
+    position: absolute;
+    transform: scale(0);
+}
+@media (prefers-reduced-motion: reduce) {
+    .Pin_root__UyplT .Pin_ripple__Vzpzs {
+        animation: none;
+    }
+}
+@keyframes Pin_ripple__Vzpzs {
+    to {
+        opacity: 0;
+        transform: scale(4);
+    }
+}
+.Pin_root__UyplT[href] {
+    cursor: pointer;
+}
+.Pin_link__nz6I7 {
+    align-items: center;
+    border-radius: var(--ym-radius-size-m);
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+}
+.Pin_link__nz6I7,
+.Pin_root_withoutLink__fr1XH {
+    column-gap: var(--ym-spacer-size-xs);
+    padding-block-end: var(--ym-spacer-size-xs);
+    padding-block-start: var(--ym-spacer-size-xs);
+    padding-inline-end: var(--ym-spacer-size-m);
+    padding-inline-start: var(--ym-spacer-size-s);
+}
+.Pin_info__x_7Zx {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    opacity: 1;
+}
+.Pin_info_withContextMenu__7HX5A {
+    max-width: 75%;
+}
+.Pin_info_collapsed__bF9ac {
+    opacity: 0;
+}
+.Pin_info_animated__AQQZk {
+    animation: Pin_show__xSkOa var(--navbar-animation-show-duration) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+    .Pin_info_animated__AQQZk {
+        animation: none;
+    }
+}
+.Pin_info_collapsed__bF9ac.Pin_info_animated__AQQZk {
+    animation: Pin_hide__RCc9X var(--navbar-animation-hide-duration) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+    .Pin_info_collapsed__bF9ac.Pin_info_animated__AQQZk {
+        animation: none;
+    }
+}
+.Pin_meta__MzX_7 {
+    flex-grow: 1;
+    justify-content: space-between;
+    overflow: hidden;
+}
+.Pin_contextMenu__WGmhp,
+.Pin_meta__MzX_7 {
+    align-items: center;
+    display: flex;
+}
+.Pin_contextMenu__WGmhp {
+    inset-block-start: 50%;
+    inset-inline-end: var(--ym-spacer-size-xxxs);
+    position: absolute;
+    transform: translateY(-50%);
+}
+.Pin_contextMenu_hidden__xksGY {
+    display: none;
+}
+.Pin_title__Jw5WW {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.Pin_subtitle__rb8Gq {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.Pin_cover__7ofYY {
+    max-height: var(--ym-icon-size-l);
+    max-width: var(--ym-icon-size-l);
+    min-height: var(--ym-icon-size-l);
+    min-width: var(--ym-icon-size-l);
+}
+.Pin_cover_withAnimation__2Z2n6 {
+    animation: Pin_show_and_scale__VdNfj 0.3s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    .Pin_cover_withAnimation__2Z2n6 {
+        animation: none;
+    }
+}
+@keyframes Pin_hide__RCc9X {
+    0% {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+@keyframes Pin_show__xSkOa {
+    0% {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@keyframes Pin_show_and_scale__VdNfj {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+.PinItem_contextMenu__VwiFp {
+    color: var(--ym-controls-color-primary-text-enabled);
+    opacity: 0;
+}
+.PinItem_contextMenu__VwiFp:focus-visible,
+.PinItem_contextMenu__VwiFp:hover {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.PinItem_contextMenu_visible__Zgwkh {
+    opacity: 1;
+}
+.PinItem_root__WSoCn:has(:focus-visible) .PinItem_contextMenu__VwiFp,
+.PinItem_root__WSoCn:hover .PinItem_contextMenu__VwiFp {
+    opacity: 1;
+}
+@supports not selector(:has(*)) {
+    .PinItem_root__WSoCn:focus-within .PinItem_contextMenu__VwiFp,
+    .PinItem_root__WSoCn:hover .PinItem_contextMenu__VwiFp {
+        opacity: 1;
+    }
+}
+.PinItem_image__Ow56U {
+    transition: transform var(--ym-duration-transition) ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    .PinItem_image__Ow56U {
+        transition: none;
+    }
+}
+.PinItem_cover__9TcjE,
+.PinItem_image__Ow56U {
+    width: 100%;
+}
+@supports (-webkit-hyphens: none) {
+    .PinItem_cover__9TcjE,
+    .PinItem_image__Ow56U {
+        height: 100%;
+    }
+}
+.PinItem_cover__9TcjE,
+.PinItem_image__Ow56U {
+    aspect-ratio: 1;
+}
+.PinItem_tooltip__BGwBw {
+    max-width: 18.75rem;
+    width: -moz-fit-content;
+    width: fit-content;
+}
+.CommonControlsBar_root__N8b0F {
+    --text-enabled-color: var(--ym-controls-color-primary-text-enabled);
+    --text-hovered-color: var(--ym-controls-color-primary-text-enabled_variant);
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-l);
+    height: 100%;
+    justify-content: center;
+}
+.CommonControlsBar_root_withSecondaryColor__4Y1P_ {
+    --text-enabled-color: var(--ym-controls-color-secondary-text-enabled);
+    --text-hovered-color: var(--ym-controls-color-secondary-text-enabled_variant);
+}
+@container play-queue (width < 529px) {
+    .CommonControlsBar_root__N8b0F {
+        gap: var(--ym-spacer-size-xs);
+    }
+}
+.CommonControlsBar_item__qGErG {
+    align-items: center;
+    color: var(--text-enabled-color);
+    display: flex;
+    height: 2.5rem;
+    justify-content: center;
+    position: relative;
+    transition:
+        opacity var(--ym-duration-transition),
+        color var(--ym-duration-transition);
+    width: 2.5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+    .CommonControlsBar_item__qGErG {
+        transition: none;
+    }
+}
+.CommonControlsBar_contextMenu__EAq_c {
+    color: var(--text-enabled-color);
+    flex-shrink: 0;
+    opacity: 0;
+}
+.CommonControlsBar_contextMenu_visible__M0ry0:not(:disabled) {
+    opacity: 1;
+}
+.CommonControlsBar_contextMenu__EAq_c:not(:disabled):focus-visible,
+.CommonControlsBar_contextMenu__EAq_c:not(:disabled):hover {
+    color: var(--text-hovered-color);
+}
+.CommonControlsBar_contextMenu__EAq_c:not(:disabled):focus-visible {
+    outline: none;
+}
+.CommonControlsBar_contextMenu__EAq_c:not(:disabled):focus-visible:not(:disabled):focus-visible {
+    box-shadow: 0 0 0 var(--ym-spacer-size-xxxs) var(--ym-controls-color-secondary-default-focused_stroke);
+}
+.CommonControlsBar_contextMenuWrapper__XjkaL {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.CommonControlsBar_lightning__o7wrY,
+.CommonControlsBar_ugcIcon__OV0Cl {
+    color: var(--ym-controls-color-primary-text-enabled);
+    display: flex;
+    transition: color var(--ym-duration-transition);
+}
+@media (prefers-reduced-motion: reduce) {
+    .CommonControlsBar_lightning__o7wrY,
+    .CommonControlsBar_ugcIcon__OV0Cl {
+        transition: none;
+    }
+}
+.CommonControlsBar_lightning_withOffset__LGvUS {
+    margin-inline-end: var(--ym-spacer-size-xs);
+}
+.CommonControlsBar_duration__un38A {
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    opacity: 1;
+    position: absolute;
+    transform: translate3d(-50%, -50%, 0);
+    transition: opacity var(--ym-duration-transition);
+}
+[dir='rtl'] .CommonControlsBar_duration__un38A {
+    transform: translate3d(50%, -50%, 0);
+}
+.CommonControlsBar_duration_hidden__noQ4S {
+    opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+    .CommonControlsBar_duration__un38A {
+        transition: none;
+    }
+}
+.CommonControlsBar_duration__un38A.CommonControlsBar_alwaysVisibleDuration__3V6gl {
+    color: var(--text-enabled-color);
+}
+.CommonControlsBar_controls__QrogT .CommonControlsBar_trailerIcon__ZHSBo {
+    display: none;
+}
+.CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY {
+    opacity: 0;
+}
+.CommonControlsBar_controls_disabled__0RmLo .CommonControlsBar_contextMenu__EAq_c,
+.CommonControlsBar_controls_disabled__0RmLo .CommonControlsBar_explicitMark__3I_Op,
+.CommonControlsBar_controls_disabled__0RmLo .CommonControlsBar_item__qGErG,
+.CommonControlsBar_controls_disabled__0RmLo .CommonControlsBar_lightning__o7wrY,
+.CommonControlsBar_controls_disabled__0RmLo .CommonControlsBar_ugcIcon__OV0Cl {
+    color: var(--ym-controls-color-primary-text-disabled);
+}
+.CommonControlsBar_controls__QrogT .CommonControlsBar_item__qGErG:not(:disabled):focus-visible,
+.CommonControlsBar_controls__QrogT .CommonControlsBar_item__qGErG:not(:disabled):hover {
+    color: var(--text-hovered-color);
+}
+.CommonControlsBar_controls__QrogT .CommonControlsBar_item__qGErG:not(:disabled):focus-visible {
+    outline: none;
+}
+.CommonControlsBar_controls__QrogT .CommonControlsBar_item__qGErG:not(:disabled):focus-visible:not(:disabled):focus-visible {
+    box-shadow: 0 0 0 var(--ym-spacer-size-xxxs) var(--ym-controls-color-secondary-default-focused_stroke);
+}
+.CommonControlsBar_controls_dislikedControls__mMjKC .CommonControlsBar_likeIcon__YqgZY {
+    opacity: 0;
+}
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_contextMenu__EAq_c,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_explicitMark__3I_Op,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_item__qGErG,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_lightning__o7wrY,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_ugcIcon__OV0Cl {
+    color: var(--ym-controls-color-primary-text-disabled);
+}
+@supports not selector(:has(*)) {
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_contextMenu__EAq_c,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_explicitMark__3I_Op,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_item__qGErG,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_lightning__o7wrY,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_ugcIcon__OV0Cl {
+        color: var(--ym-controls-color-primary-text-disabled);
+    }
+}
+@supports (-webkit-hyphens: none) {
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_contextMenu__EAq_c,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_explicitMark__3I_Op,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_item__qGErG,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_lightning__o7wrY,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .CommonControlsBar_controls_dislikedColors__h5lev .CommonControlsBar_ugcIcon__OV0Cl {
+        color: var(--ym-controls-color-primary-text-disabled);
+    }
+}
+.HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_contextMenu__EAq_c,
+.HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+.HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+.HorizontalCardContainer_root__YoAAP:has(:focus-visible) .CommonControlsBar_controls__QrogT .CommonControlsBar_contextMenu__EAq_c,
+.HorizontalCardContainer_root__YoAAP:has(:focus-visible) .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+.HorizontalCardContainer_root__YoAAP:has(:focus-visible) .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+.HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_contextMenu__EAq_c,
+.HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+.HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY {
+    opacity: 1;
+}
+.HorizontalCardContainer_root__YoAAP:focus-within
+    .CommonControlsBar_controls__QrogT
+    .CommonControlsBar_duration__un38A:not(.CommonControlsBar_alwaysVisibleDuration__3V6gl),
+.HorizontalCardContainer_root__YoAAP:has(:focus-visible)
+    .CommonControlsBar_controls__QrogT
+    .CommonControlsBar_duration__un38A:not(.CommonControlsBar_alwaysVisibleDuration__3V6gl),
+.HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_duration__un38A:not(.CommonControlsBar_alwaysVisibleDuration__3V6gl) {
+    opacity: 0;
+}
+@container play-queue (width < 529px) {
+    @media only screen and (min-width: 768px) {
+        .HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+        .HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+        .HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_ugcIcon__OV0Cl,
+        .HorizontalCardContainer_root__YoAAP:has(:focus-visible) .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+        .HorizontalCardContainer_root__YoAAP:has(:focus-visible) .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+        .HorizontalCardContainer_root__YoAAP:has(:focus-visible) .CommonControlsBar_controls__QrogT .CommonControlsBar_ugcIcon__OV0Cl,
+        .HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+        .HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+        .HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_ugcIcon__OV0Cl {
+            display: flex;
+        }
+    }
+}
+@container play-queue (width < 529px) {
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_ugcIcon__OV0Cl {
+        display: none;
+    }
+}
+@container best-results-non-music (width > 240px) {
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_downloadIcon__2mM6m,
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_ugcIcon__OV0Cl {
+        display: none;
+    }
+}
+@container best-results-track (width > 240px) {
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_downloadIcon__2mM6m,
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_ugcIcon__OV0Cl {
+        display: none;
+    }
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_trailerIcon__ZHSBo {
+        display: flex;
+    }
+}
+@supports not selector(:has(*)) {
+    .HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_contextMenu__EAq_c,
+    .HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+    .HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+    .HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_contextMenu__EAq_c,
+    .HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+    .HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY {
+        opacity: 1;
+    }
+    .HorizontalCardContainer_root__YoAAP:focus-within
+        .CommonControlsBar_controls__QrogT
+        .CommonControlsBar_duration__un38A:not(.CommonControlsBar_alwaysVisibleDuration__3V6gl),
+    .HorizontalCardContainer_root__YoAAP:hover
+        .CommonControlsBar_controls__QrogT
+        .CommonControlsBar_duration__un38A:not(.CommonControlsBar_alwaysVisibleDuration__3V6gl) {
+        opacity: 0;
+    }
+    @container play-queue (width < 529px) {
+        @media only screen and (min-width: 768px) {
+            .HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+            .HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+            .HorizontalCardContainer_root__YoAAP:focus-within .CommonControlsBar_controls__QrogT .CommonControlsBar_ugcIcon__OV0Cl,
+            .HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+            .HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+            .HorizontalCardContainer_root__YoAAP:hover .CommonControlsBar_controls__QrogT .CommonControlsBar_ugcIcon__OV0Cl {
+                display: flex;
+            }
+        }
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_likeIcon__YqgZY,
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_removeButton__35xHY,
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_ugcIcon__OV0Cl {
+        display: none;
+    }
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_duration__un38A {
+        opacity: 0;
+    }
+    .CommonControlsBar_controls__QrogT .CommonControlsBar_contextMenu__EAq_c {
+        opacity: 1;
+    }
+}
+.CommonControlsBar_popover__6bmNd {
+    max-width: 18.75rem;
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .CommonControlsBar_popover__6bmNd {
+        max-height: 50vh;
+        max-width: 100%;
+        width: 100%;
+    }
+}
+.CommonControlsBar_ugcIcon__OV0Cl {
+    margin: var(--ym-spacer-size-s);
+}
+.CommonControlsBar_ugcIcon__OV0Cl:focus-visible,
+.CommonControlsBar_ugcIcon__OV0Cl:hover {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CommonControlsBar_ugcIcon__OV0Cl:focus-visible {
+    outline: none;
+}
+.CommonControlsBar_ugcIcon__OV0Cl:focus-visible:not(:disabled):focus-visible {
+    box-shadow: 0 0 0 var(--ym-spacer-size-xxxs) var(--ym-controls-color-secondary-default-focused_stroke);
+}
+.Chart_root__ODed_ {
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xxxs);
+    height: 100%;
+    width: 1.75rem;
+}
+.Chart_position__7UNY9,
+.Chart_root__ODed_ {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.Chart_position__7UNY9 {
+    color: var(--ym-controls-color-primary-text-enabled);
+    transition: color var(--ym-duration-transition);
+}
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .Chart_position_disliked__HzjC7 {
+    color: var(--ym-controls-color-primary-text-disabled);
+}
+@supports not selector(:has(*)) {
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Chart_position_disliked__HzjC7 {
+        color: var(--ym-controls-color-primary-text-disabled);
+    }
+}
+.Chart_position_disabled__poZzD {
+    color: var(--ym-controls-color-primary-text-disabled);
+}
+@media (prefers-reduced-motion: reduce) {
+    .Chart_position__7UNY9 {
+        transition: none;
+    }
+}
+.Chart_progress__sGj4s {
+    transition: color var(--ym-duration-transition);
+}
+.Chart_progress_up__y083c {
+    color: var(--ym-message-color-successful-text-enabled);
+}
+.Chart_progress_same__Cnbdb {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.Chart_progress_down__lv_ae {
+    color: var(--ym-message-color-error-text-enabled);
+}
+.Chart_progress_crown__o__Zm,
+.Chart_progress_new__7DobI {
+    color: var(--ym-controls-color-primary-default-enabled);
+}
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .Chart_progress_disliked__maVAk {
+    color: var(--ym-controls-color-primary-text-disabled);
+}
+@supports not selector(:has(*)) {
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Chart_progress_disliked__maVAk {
+        color: var(--ym-controls-color-primary-text-disabled);
+    }
+}
+.Chart_progress_disabled__JoFqG {
+    color: var(--ym-controls-color-primary-text-disabled);
+}
+@media (prefers-reduced-motion: reduce) {
+    .Chart_progress__sGj4s {
+        transition: none;
+    }
+}
+.Chart_positionShimmer__6Abak {
+    height: var(--ym-font-line-height-label-m);
+    width: var(--ym-spacer-size-s);
+}
+.CollectionArtistsPageTopArtists_subTitle__xJdoJ {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    padding-block-end: calc(var(--ym-spacer-size-m) * 2);
+}
+.CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container artist-page-content (width >= 618px) {
+        .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container artist-page-content (width >= 815px) {
+        .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container artist-page-content (width >= 1010px) {
+        .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container artist-page-content (width >= 1206px) {
+        .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .CollectionArtistsPageTopArtists_gridLayout__H2AR_ {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+.CollectionArtistsPageTopArtists_chart__inbPE {
+    flex-direction: row;
+    font-weight: var(--ym-font-weight-bold);
+    gap: 0;
+    margin-inline-end: auto;
+    margin-inline-start: auto;
+}
+.CollectionArtistsPageTopArtists_position__YDoRC {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionArtistsPageTopArtists_listenTime__NqxRf {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.TrackDownloadControl_downloadingProgress__wNg2W {
+    height: 1rem;
+    width: 1rem;
+}
+.TrackDownloadControl_progress__K_OhO {
+    stroke: var(--ym-controls-color-primary-default-enabled);
+}
+.Meta_artistCaption__JESZi,
+.Meta_link__IFDBA {
+    color: var(--text-enabled-color);
+    display: inline;
+}
+.Meta_link__IFDBA:focus-visible,
+.Meta_link__IFDBA:hover {
+    color: var(--text-hovered-color);
+}
+.Meta_link__IFDBA:focus-visible .Meta_artistCaption__JESZi,
+.Meta_link__IFDBA:hover .Meta_artistCaption__JESZi {
+    color: var(--text-hovered-color);
+}
+.Meta_link__IFDBA:focus-visible .Meta_albumTitle__mHeOs,
+.Meta_link__IFDBA:hover .Meta_albumTitle__mHeOs {
+    color: var(--text-hovered-color);
+}
+.Meta_root__R8n1h {
+    --text-enabled-color: var(--ym-controls-color-primary-text-enabled);
+    --text-hovered-color: var(--ym-controls-color-primary-text-enabled_variant);
+    --text-disabled-color: var(--ym-controls-color-primary-text-disabled);
+    align-items: center;
+    display: flex;
+    flex: 1 1;
+    overflow: hidden;
+}
+.Meta_root_withSecondaryColor___uENY {
+    --text-enabled-color: var(--ym-controls-color-secondary-text-enabled);
+    --text-hovered-color: var(--ym-controls-color-secondary-text-enabled_variant);
+    --text-disabled-color: var(--ym-controls-color-secondary-text-disabled);
+}
+.Meta_root_disabled__Dpx_M .Meta_albumLink__gASh6,
+.Meta_root_disabled__Dpx_M .Meta_artistCaption__JESZi,
+.Meta_root_disabled__Dpx_M .Meta_artists__VnR52,
+.Meta_root_disabled__Dpx_M .Meta_explicitMark__ocnCV,
+.Meta_root_disabled__Dpx_M .Meta_link__IFDBA,
+.Meta_root_disabled__Dpx_M .Meta_titleContainer__gDuXr,
+.Meta_root_disabled__Dpx_M .Meta_title__GGBnH,
+.Meta_root_disabled__Dpx_M .Meta_version__c2sHU {
+    color: var(--text-disabled-color);
+}
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .Meta_root_disliked__DrZ7_ .Meta_albumLink__gASh6,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .Meta_root_disliked__DrZ7_ .Meta_artistCaption__JESZi,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .Meta_root_disliked__DrZ7_ .Meta_artists__VnR52,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .Meta_root_disliked__DrZ7_ .Meta_explicitMark__ocnCV,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .Meta_root_disliked__DrZ7_ .Meta_link__IFDBA,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .Meta_root_disliked__DrZ7_ .Meta_titleContainer__gDuXr,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .Meta_root_disliked__DrZ7_ .Meta_title__GGBnH,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .Meta_root_disliked__DrZ7_ .Meta_version__c2sHU {
+    color: var(--text-disabled-color);
+}
+@supports not selector(:has(*)) {
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_albumLink__gASh6,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_artistCaption__JESZi,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_artists__VnR52,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_explicitMark__ocnCV,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_link__IFDBA,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_titleContainer__gDuXr,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_title__GGBnH,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_version__c2sHU {
+        color: var(--text-disabled-color);
+    }
+}
+@supports (-webkit-hyphens: none) {
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_albumLink__gASh6,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_artistCaption__JESZi,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_artists__VnR52,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_explicitMark__ocnCV,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_link__IFDBA,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_titleContainer__gDuXr,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_title__GGBnH,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .Meta_root_disliked__DrZ7_ .Meta_version__c2sHU {
+        color: var(--text-disabled-color);
+    }
+}
+.Meta_explicitMark__ocnCV,
+.Meta_text__Y5uYH {
+    transition: color var(--ym-duration-transition);
+}
+@media (prefers-reduced-motion: reduce) {
+    .Meta_explicitMark__ocnCV,
+    .Meta_text__Y5uYH {
+        transition: none;
+    }
+}
+.Meta_artists__VnR52,
+.Meta_explicitMark__ocnCV {
+    color: var(--text-enabled-color);
+}
+.Meta_explicitMark__ocnCV {
+    display: flex;
+    flex-shrink: 0;
+}
+.Meta_explicitMarkContainer__BxMQg {
+    z-index: 1;
+}
+.Meta_metaContainer__7i2dp {
+    overflow: hidden;
+}
+.Meta_titleContainer__gDuXr {
+    align-items: center;
+    color: var(--text-hovered-color);
+    display: flex;
+    overflow: hidden;
+}
+.Meta_titleContainer_withVersion__n7MdY {
+    color: var(--text-enabled-color);
+}
+.Meta_title__GGBnH {
+    color: var(--text-hovered-color);
+}
+.Meta_version__c2sHU {
+    color: var(--text-enabled-color);
+}
+.Meta_albumLink__gASh6 {
+    color: var(--text-hovered-color);
+    display: inline;
+}
+.Meta_albumLink__gASh6:focus-visible .Meta_title__GGBnH,
+.Meta_albumLink__gASh6:hover .Meta_title__GGBnH {
+    text-decoration: underline;
+}
+.EntityMeta_root__Zn4Th {
+    align-items: flex-start;
+    display: flex;
+    flex: 1 1;
+    flex-direction: column;
+    overflow: hidden;
+}
+.EntityMeta_root_disabled__u3DaR .EntityMeta_albumLink__vxRG7,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_artistCaption__3JqiO,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_artistLink__rMKgI,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_description__cSa2I,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_explicitMark__wOyns,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_likesCount__cw2GN,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_subtitle__yE1NK,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_titleContainer__WMe1r,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_title__6_ChR,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_version__7Z948 {
+    color: var(--ym-controls-color-primary-text-disabled);
+}
+.EntityMeta_root_disabled__u3DaR .EntityMeta_albumLink__vxRG7:focus-visible,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_albumLink__vxRG7:hover,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_artistCaption__3JqiO:focus-visible,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_artistCaption__3JqiO:hover,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_artistLink__rMKgI:focus-visible,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_artistLink__rMKgI:hover,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_description__cSa2I:focus-visible,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_description__cSa2I:hover,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_explicitMark__wOyns:focus-visible,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_explicitMark__wOyns:hover,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_likesCount__cw2GN:focus-visible,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_likesCount__cw2GN:hover,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_subtitle__yE1NK:focus-visible,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_subtitle__yE1NK:hover,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_titleContainer__WMe1r:focus-visible,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_titleContainer__WMe1r:hover,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_title__6_ChR:focus-visible,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_title__6_ChR:hover,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_version__7Z948:focus-visible,
+.EntityMeta_root_disabled__u3DaR .EntityMeta_version__7Z948:hover {
+    color: var(--ym-controls-color-primary-text-disabled);
+    text-decoration: none;
+}
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_albumLink__vxRG7,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistCaption__3JqiO,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistLink__rMKgI,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_description__cSa2I,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_explicitMark__wOyns,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_likesCount__cw2GN,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_subtitle__yE1NK,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_titleContainer__WMe1r,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_title__6_ChR,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_version__7Z948 {
+    color: var(--ym-controls-color-primary-text-disabled);
+}
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_albumLink__vxRG7:focus-visible,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_albumLink__vxRG7:hover,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistCaption__3JqiO:focus-visible,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistCaption__3JqiO:hover,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistLink__rMKgI:focus-visible,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistLink__rMKgI:hover,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_description__cSa2I:focus-visible,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_description__cSa2I:hover,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_explicitMark__wOyns:focus-visible,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_explicitMark__wOyns:hover,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_likesCount__cw2GN:focus-visible,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_likesCount__cw2GN:hover,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_subtitle__yE1NK:focus-visible,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_subtitle__yE1NK:hover,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_titleContainer__WMe1r:focus-visible,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_titleContainer__WMe1r:hover,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_title__6_ChR:focus-visible,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_title__6_ChR:hover,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_version__7Z948:focus-visible,
+.HorizontalCardContainer_root__YoAAP:not(:hover, :has(:focus-visible)) .EntityMeta_root_disliked__PhzHW .EntityMeta_version__7Z948:hover {
+    color: var(--ym-controls-color-primary-text-disabled);
+    text-decoration: none;
+}
+@supports not selector(:has(*)) {
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_albumLink__vxRG7,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistCaption__3JqiO,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistLink__rMKgI,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_description__cSa2I,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_explicitMark__wOyns,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_likesCount__cw2GN,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_subtitle__yE1NK,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_titleContainer__WMe1r,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_title__6_ChR,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_version__7Z948 {
+        color: var(--ym-controls-color-primary-text-disabled);
+    }
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_albumLink__vxRG7:focus-visible,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_albumLink__vxRG7:hover,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistCaption__3JqiO:focus-visible,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistCaption__3JqiO:hover,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistLink__rMKgI:focus-visible,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_artistLink__rMKgI:hover,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_description__cSa2I:focus-visible,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_description__cSa2I:hover,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_explicitMark__wOyns:focus-visible,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_explicitMark__wOyns:hover,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_likesCount__cw2GN:focus-visible,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_likesCount__cw2GN:hover,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_subtitle__yE1NK:focus-visible,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_subtitle__yE1NK:hover,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_titleContainer__WMe1r:focus-visible,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_titleContainer__WMe1r:hover,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_title__6_ChR:focus-visible,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_title__6_ChR:hover,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_version__7Z948:focus-visible,
+    .HorizontalCardContainer_root__YoAAP:not(:hover, :focus-within) .EntityMeta_root_disliked__PhzHW .EntityMeta_version__7Z948:hover {
+        color: var(--ym-controls-color-primary-text-disabled);
+        text-decoration: none;
+    }
+}
+.EntityMeta_titleContainer__WMe1r {
+    align-items: center;
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+}
+.EntityMeta_artistCaption__3JqiO,
+.EntityMeta_artistLink__rMKgI {
+    color: var(--ym-controls-color-primary-text-enabled);
+    display: inline;
+}
+.EntityMeta_artistLink__rMKgI:focus-visible .EntityMeta_artistCaption__3JqiO,
+.EntityMeta_artistLink__rMKgI:hover .EntityMeta_artistCaption__3JqiO {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.EntityMeta_title__6_ChR {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.EntityMeta_title_withVersion__rbXWv {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.EntityMeta_explicitMark__wOyns,
+.EntityMeta_text___lB4k {
+    transition: color var(--ym-duration-transition);
+}
+@media (prefers-reduced-motion: reduce) {
+    .EntityMeta_explicitMark__wOyns,
+    .EntityMeta_text___lB4k {
+        transition: none;
+    }
+}
+.EntityMeta_explicitMark__wOyns {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+}
+.EntityMeta_description__cSa2I,
+.EntityMeta_explicitMark__wOyns,
+.EntityMeta_version__7Z948 {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.EntityMeta_description__cSa2I,
+.EntityMeta_version__7Z948 {
+    display: inline;
+}
+.EntityMeta_subtitle__yE1NK {
+    align-items: center;
+    column-gap: var(--ym-spacer-size-xs);
+    display: flex;
+}
+.EntityMeta_likesCount__cw2GN {
+    white-space: nowrap;
+}
+.EntityMeta_icon__tTxs3 {
+    transform: translate(0.125rem, -0.0625rem);
+}

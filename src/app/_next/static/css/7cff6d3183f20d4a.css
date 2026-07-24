@@ -1,0 +1,163 @@
+.MixesGridBlock_shimmerWithSubcover__3EtzK {
+    gap: var(--ym-spacer-size-l);
+    height: auto;
+    margin-block-end: 0;
+    margin-block-start: 0;
+    width: 60%;
+}
+@media only screen and (max-width: 767.98px) {
+    .MixesGridBlock_shimmerWithSubcover__3EtzK {
+        gap: var(--ym-spacer-size-m);
+    }
+    .MixesGridBlock_header__wz5KI {
+        padding-block-end: var(--ym-spacer-size-m);
+    }
+}
+.MixesGridBlock_mixesGrid__LSeyw {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ym-spacer-size-l);
+}
+@media only screen and (max-width: 767.98px) {
+    .MixesGridBlock_mixesGrid__LSeyw {
+        gap: var(--ym-spacer-size-m);
+    }
+}
+@media only screen and (max-width: 479.98px) {
+    .MixesGridBlock_mixesGrid__LSeyw {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.MixesGridBlock_item__TVzNE.MixesGridBlock_important__DQE7T {
+    max-width: 13.125rem;
+    min-width: 10.625rem;
+    width: 100%;
+}
+@media only screen and (min-width: 1240px) and (max-width: 1400px) {
+    .MixesGridBlock_item__TVzNE.MixesGridBlock_important__DQE7T {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(20% - var(--ym-spacer-size-l) * 4 / 5);
+    }
+}
+@media only screen and (min-width: 1400px) and (max-width: 1690px) {
+    .MixesGridBlock_item__TVzNE.MixesGridBlock_important__DQE7T {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(16.66667% - var(--ym-spacer-size-l) * 5 / 6);
+    }
+}
+@media only screen and (min-width: 1690px) and (max-width: 1920px) {
+    .MixesGridBlock_item__TVzNE.MixesGridBlock_important__DQE7T {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(14.28571% - var(--ym-spacer-size-l) * 6 / 7);
+    }
+}
+@media only screen and (max-width: 479.98px) {
+    .MixesGridBlock_item__TVzNE.MixesGridBlock_important__DQE7T {
+        min-width: 10.25rem;
+        width: 100%;
+    }
+}
+.MixesMusic_item__9QVmW {
+    min-width: 13.75rem;
+    padding-block-start: var(--ym-spacer-size-s);
+}
+@media only screen and (max-width: 767.98px) {
+    .MixesMusic_item__9QVmW {
+        max-width: 12.5rem;
+        min-width: 10rem;
+    }
+}
+.MixesMusic_shimmer__rJ3xa {
+    width: 100%;
+}
+.Neuromusic_root__wTkG_:hover .Neuromusic_controls__8kH7t {
+    opacity: 1;
+}
+.Neuromusic_item__Q_JI_.Neuromusic_important__8Ib5E {
+    max-width: 21.25rem;
+    min-width: 18.75rem;
+    width: 100%;
+}
+@media only screen and (min-width: 1240px) and (max-width: 1550px) {
+    .Neuromusic_item__Q_JI_.Neuromusic_important__8Ib5E {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(33.33333% - var(--ym-spacer-size-l) * 2 / 3);
+    }
+}
+@media only screen and (min-width: 1550px) and (max-width: 1920px) {
+    .Neuromusic_item__Q_JI_.Neuromusic_important__8Ib5E {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(25% - var(--ym-spacer-size-l) * 3 / 4);
+    }
+}
+.NeuromusicButton_root__OMwq0 {
+    --neuromusic-button-height: 4rem;
+    border-radius: var(--ym-radius-size-xl);
+    min-height: 4rem;
+    min-height: var(--neuromusic-button-height);
+    overflow: hidden;
+    width: 100%;
+}
+.NeuromusicButton_root__OMwq0 .NeuromusicButton_ripple__B9e3A {
+    animation: NeuromusicButton_ripple__B9e3A 0.6s linear;
+    background-color: var(--ym-controls-color-secondary-default-pressed);
+    border-radius: var(--ym-radius-size-round);
+    position: absolute;
+    transform: scale(0);
+}
+@media (prefers-reduced-motion: reduce) {
+    .NeuromusicButton_root__OMwq0 .NeuromusicButton_ripple__B9e3A {
+        animation: none;
+    }
+}
+@keyframes NeuromusicButton_ripple__B9e3A {
+    to {
+        opacity: 0;
+        transform: scale(4);
+    }
+}
+.NeuromusicButton_textContainer__2rb8y {
+    align-items: center;
+    column-gap: var(--ym-spacer-size-xxxs);
+    display: flex;
+    max-width: 90%;
+    transition: transform var(--ym-duration-transition) ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    .NeuromusicButton_textContainer__2rb8y {
+        transition: none;
+    }
+}
+.NeuromusicButton_title__mTAB8 {
+    color: var(--neuromusic-button-color);
+    font-size: var(--ym-font-size-headline-xs);
+    width: 100%;
+}
+.NeuromusicButton_button__kT4GN {
+    align-items: center;
+    background-color: var(--neuromusic-button-background, var(--ym-controls-color-secondary-outline-enabled_stroke));
+    border: 0.0625rem solid var(--ym-outline-color-primary-disabled);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    position: relative;
+}
+.NeuromusicButton_button__kT4GN:focus-visible .NeuromusicButton_textContainer__2rb8y,
+.NeuromusicButton_button__kT4GN:hover .NeuromusicButton_textContainer__2rb8y {
+    transform: scale(1.02);
+}
+.NeuromusicButton_icon__HTDr2 {
+    color: var(--neuromusic-button-color);
+    flex-shrink: 0;
+}

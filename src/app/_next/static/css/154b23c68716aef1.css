@@ -1,0 +1,57 @@
+.ArtistConcertsPage_root__DDTmb {
+    height: 100%;
+}
+.ArtistConcertsPage_root__DDTmb,
+.ArtistConcertsPage_scrollableContent__aiEjd {
+    padding: 0;
+}
+.ArtistConcertsPage_container__ho6Fw {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+    padding: 0;
+}
+.ArtistConcertsPage_content__Ynto2 {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-xxxs);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+@supports (-moz-appearance: none) {
+    .ArtistConcertsPage_content__Ynto2 {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ArtistConcertsPage_content__Ynto2 {
+        padding-inline-start: var(--ym-spacer-size-xs);
+    }
+    @supports (-moz-appearance: none) {
+        .ArtistConcertsPage_content__Ynto2 {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.ArtistConcertsPage_footer__kQL7m {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-xxxs);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .ArtistConcertsPage_footer__kQL7m {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ArtistConcertsPage_footer__kQL7m {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .ArtistConcertsPage_footer__kQL7m {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}

@@ -1,0 +1,64 @@
+.CollectionPlaylistsPageHeader_root__GfGIl {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    inset-inline-start: 0;
+    padding: var(--ym-spacer-size-xxl);
+    padding-block-end: var(--ym-spacer-size-l);
+}
+.CollectionPlaylistsPageHeader_container__oh7C2 {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-l);
+}
+.CollectionPlaylistsPageHeader_title__2D23I {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionPlaylistsPageHeader_staticTabs__9c9yq {
+    gap: var(--ym-spacer-size-xs);
+    margin-block-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    scroll-padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 1024px) {
+    .CollectionPlaylistsPageHeader_staticTabs__9c9yq {
+        padding-inline-end: var(--ym-spacer-size-m);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionPlaylistsPageHeader_staticTabs__9c9yq {
+        padding-inline-start: var(--ym-spacer-size-l);
+        scroll-padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.CollectionPlaylistsPageHeader_stickyTabs__Iot6U {
+    overflow-x: scroll;
+}
+.CollectionPlaylistsPageHeader_tab__aNTOB {
+    flex-shrink: 0;
+    height: 100%;
+    list-style-type: none;
+    max-width: -moz-fit-content;
+    max-width: fit-content;
+    scroll-snap-align: start;
+}
+.CollectionPlaylistsPageHeader_tabsShimmer__u9JIN {
+    display: flex;
+    gap: var(--ym-spacer-size-xs);
+}
+.CollectionPlaylistsPageHeader_tabShimmer__ekXeT {
+    height: 1rem;
+    margin-block-end: var(--ym-spacer-size-s);
+    margin-block-start: var(--ym-spacer-size-s);
+    margin-inline-end: var(--ym-spacer-size-xs);
+    margin-inline-start: var(--ym-spacer-size-xs);
+    width: 6.25rem;
+}
+.CollectionPlaylistsPageHeader_staticHeader__lzc4l.CollectionPlaylistsPageHeader_important__uR36G {
+    display: none;
+}
+.CollectionPlaylistsPageHeader_stickyHeader__ojvbQ.CollectionPlaylistsPageHeader_important__uR36G {
+    height: auto;
+}

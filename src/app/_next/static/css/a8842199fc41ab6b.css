@@ -1,0 +1,128 @@
+.CollectionKidsPlaylistsPage_root__RXH06 {
+    container-name: artist-albums-page;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+.CollectionKidsPlaylistsPage_scrollContainer__F_oj2.CollectionKidsPlaylistsPage_important__5V_zc {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionKidsPlaylistsPage_scrollContainer__F_oj2.CollectionKidsPlaylistsPage_important__5V_zc {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+.CollectionKidsPlaylistsPage_footer__R41Ol {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionKidsPlaylistsPage_footer__R41Ol {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionKidsPlaylistsPage_footer__R41Ol {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionKidsPlaylistsPage_footer__R41Ol {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionKidsPlaylistsPage_item__ht83l {
+    display: flex;
+    min-width: 8.75rem;
+}
+.CollectionKidsPlaylistsPage_content__6Oo1m {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionKidsPlaylistsPage_content__6Oo1m {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionKidsPlaylistsPage_content__6Oo1m {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionKidsPlaylistsPage_content__6Oo1m {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionKidsPlaylistsPage_content__6Oo1m {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .CollectionKidsPlaylistsPage_content__6Oo1m {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .CollectionKidsPlaylistsPage_content__6Oo1m {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .CollectionKidsPlaylistsPage_content__6Oo1m {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .CollectionKidsPlaylistsPage_content__6Oo1m {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .CollectionKidsPlaylistsPage_content__6Oo1m {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .CollectionKidsPlaylistsPage_content__6Oo1m {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container artist-albums-page (width >= 618px) {
+        .CollectionKidsPlaylistsPage_content__6Oo1m {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container artist-albums-page (width >= 815px) {
+        .CollectionKidsPlaylistsPage_content__6Oo1m {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container artist-albums-page (width >= 1010px) {
+        .CollectionKidsPlaylistsPage_content__6Oo1m {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container artist-albums-page (width >= 1206px) {
+        .CollectionKidsPlaylistsPage_content__6Oo1m {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .CollectionKidsPlaylistsPage_content__6Oo1m {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}

@@ -1,0 +1,63 @@
+.TextField_root__RO2Hk {
+    --outline-width: 0.125rem;
+    background-color: transparent;
+    border: none;
+    border-radius: 0.125rem;
+    outline: none;
+    outline-offset: 0.0625rem;
+    padding: 0;
+    transition: outline var(--ym-duration-transition) ease-in-out;
+}
+.TextField_root_textarea__N0PF_ {
+    resize: none;
+    transition: scrollbar-color 0.2s ease-in-out;
+}
+.TextField_root_textarea__N0PF_::-webkit-scrollbar-thumb {
+    background-clip: content-box;
+    border: 0.5rem solid transparent;
+    border-radius: var(--ym-radius-size-l);
+    min-height: 3.125rem;
+}
+.TextField_root_textarea__N0PF_::-webkit-scrollbar {
+    width: var(--ym-spacer-size-xxl);
+}
+@supports selector(scrollbar-width:auto) {
+    .TextField_root_textarea__N0PF_ {
+        scrollbar-color: var(--ym-surface-color-primary-enabled-entity) transparent;
+        scrollbar-gutter: stable;
+    }
+}
+@supports selector(::-webkit-scrollbar) {
+    .TextField_root_textarea__N0PF_::-webkit-scrollbar-thumb {
+        background-color: var(--ym-controls-color-primary-default-disabled);
+    }
+    .TextField_root_textarea__N0PF_::-webkit-scrollbar-thumb:hover {
+        background-color: var(--ym-surface-color-primary-enabled-entity);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .TextField_root_textarea__N0PF_ {
+        transition: none;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .TextField_root_textarea__N0PF_::-webkit-scrollbar-thumb {
+        border: 0.1875rem solid transparent;
+    }
+    .TextField_root_textarea__N0PF_::-webkit-scrollbar {
+        width: var(--ym-spacer-size-m);
+    }
+}
+.TextField_root_outline__8JfQF {
+    outline: var(--outline-width) solid var(--ym-controls-color-primary-text-enabled);
+}
+.TextField_root_outline__8JfQF:active,
+.TextField_root_outline__8JfQF:focus,
+.TextField_root_outline__8JfQF:hover {
+    outline: var(--outline-width) solid var(--ym-controls-color-primary-text-enabled_variant);
+}
+@media (prefers-reduced-motion: reduce) {
+    .TextField_root__RO2Hk {
+        transition: none;
+    }
+}
