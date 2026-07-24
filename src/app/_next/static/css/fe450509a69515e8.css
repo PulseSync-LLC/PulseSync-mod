@@ -71,8 +71,12 @@
 }
 .NotificationUpdate_button__F3O16 {
     min-width: 7.875rem;
+    -webkit-app-region: no-drag;
+    z-index: 2;
 }
 .NotificationUpdate_message__rLYpW {
+    max-width: min(42rem, calc(100vw - 2rem));
+    min-width: 26rem;
     align-items: center;
     display: flex;
     justify-content: space-between;
@@ -591,6 +595,18 @@
 }
 .NotificationDislike_message__R2jfZ {
     align-items: center;
+    gap: var(--ym-spacer-size-m);
+    position: relative;
+    width: 100%;
+    z-index: 2;
+
+    @media only screen and (max-width: 480px) {
+        .NotificationUpdate_root__hpSQi.NotificationUpdate_important___0WHj {
+            min-width: 0;
+            width: calc(100vw - var(--ym-spacer-size-l) - var(--ym-spacer-size-l));
+        }
+    }
+
     column-gap: var(--ym-spacer-size-xs);
     display: flex;
 }
@@ -1395,6 +1411,9 @@
 }
 .EditContentModal_field__rexIL {
     margin-block-end: var(--ym-spacer-size-l);
+}
+.EditContentModal_content__6yEGM > .EditContentModal_field__rexIL:first-child > :nth-child(n + 3) {
+    display: none;
 }
 .EditContentModal_label__Cf3Kp {
     color: var(--ym-controls-color-primary-text-enabled);
