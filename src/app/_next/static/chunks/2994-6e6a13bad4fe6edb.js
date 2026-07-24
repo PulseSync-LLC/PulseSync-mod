@@ -8586,6 +8586,15 @@
                     e.items = e.items.filter((item) => item.type !== 'SETTING');
                     e.items = [e.items.shift(), settingItem, ...e.items];
                 }
+
+                const normalizeStyle = (style) => {
+                    if (!d.y[style]) {
+                        return d.y.DEFAULT;
+                    }
+
+                    return style ?? d.y.DEFAULT;
+                };
+
                 return e.items
                     .map((e, t) => {
                         var a, i, n, l;
@@ -8595,7 +8604,7 @@
                                     id: e.id,
                                     index: t,
                                     type: c.D.WAVE,
-                                    style: null != (a = e.style) ? a : d.y.DEFAULT,
+                                    style: null != (a = normalizeStyle(e.style)) ? a : d.y.DEFAULT,
                                     description: e.description,
                                     data: (0, _.lb)(e.data.wave, e.data.agent),
                                 });
@@ -8604,7 +8613,7 @@
                                     id: e.id,
                                     index: t,
                                     type: c.D.ALBUM,
-                                    style: null != (i = e.style) ? i : d.y.DEFAULT,
+                                    style: null != (i = normalizeStyle(e.style)) ? i : d.y.DEFAULT,
                                     description: e.description,
                                     data: (0, u.sK)({ album: e.data.album, artists: e.data.artists }),
                                 });
@@ -8613,7 +8622,7 @@
                                     id: e.id,
                                     index: t,
                                     type: c.D.PROMO_LINK,
-                                    style: null != (n = e.style) ? n : d.y.DEFAULT,
+                                    style: null != (n = normalizeStyle(e.style)) ? n : d.y.DEFAULT,
                                     description: e.description,
                                     data: ((e) =>
                                         (0, r.wg)({ id: e.id, title: e.title, description: e.description, url: e.action.weblink, cover: e.cover, color: e.color }))(
@@ -8625,7 +8634,7 @@
                                     id: e.id,
                                     index: t,
                                     type: c.D.SETTING,
-                                    style: null != (l = e.style) ? l : d.y.DEFAULT,
+                                    style: null != (l = normalizeStyle(e.style)) ? l : d.y.DEFAULT,
                                     description: e.description,
                                     data: { title: e.data.title, cover: e.data.cover },
                                 });
@@ -8633,7 +8642,7 @@
                                 return null;
                         }
                     })
-                    .filter((e) => null !== e);
+                    .filter((e) => ((null !== e) && ('waveForTwo' !== e.id))); // TODO ЗАПЛАТКА, УБРАТЬ ПРИ МИГРАЦИИ
             };
             var p = a(12388);
             !(function (e) {
