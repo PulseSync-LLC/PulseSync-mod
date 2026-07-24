@@ -354,6 +354,12 @@
     initial-value: #000;
     inherits: false;
 }
+.modSettings_alwaysWideBar {
+    grid-template:
+        'navbar content' minmax(auto, calc(100% - var(--player-bar-height) - var(--ym-spacer-size-m)))
+        'playerbar playerbar' auto
+        'barBelow barBelow' auto / auto 1fr !important;
+}
 .DefaultLayout_root__7J0wo {
     grid-template: 'navbar content' 1fr 'navbar playerbar' auto 'navbar barBelow' auto/auto 1fr;
     transition: grid-template var(--ym-duration-transition);
@@ -381,6 +387,19 @@
         grid-template: 'navbar content' 1fr 'playerbar playerbar' auto 'barBelow barBelow' auto/auto 1fr;
     }
 }
+
+.modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe__MSDOn {
+    grid-template: 'navbar content' minmax(auto, calc(100% - var(--player-bar-height))) 'navbar playerbar' auto/auto 1fr;
+    padding-block-end: 12px;
+}
+
+.modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe_withBarBelow__82_qG {
+    grid-template:
+        'navbar content' minmax(auto, calc(100% - var(--player-bar-height) - var(--balbelow-height) - var(--ym-spacer-size-m)))
+        'navbar playerbar' auto 'navbar barBelow' auto/auto 1fr;
+    padding-block-end: 12px;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .DefaultLayout_root__7J0wo {
         transition: none;
@@ -460,11 +479,26 @@
     .DefaultLayout_rootNewVibe_withBarBelow__82_qG {
         grid-template: 'navbar content' minmax(0, calc(100% - var(--balbelow-height) - var(--ym-spacer-size-m) * 2)) 'barBelow barBelow' auto/auto 1fr;
     }
+
+    .modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe__MSDOn {
+        grid-template:
+            'navbar content' minmax(auto, calc(100% - var(--player-bar-height)))
+            'playerbar playerbar' auto/auto 1fr;
+    }
+
+    .modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe_withBarBelow__82_qG {
+        grid-template:
+            'navbar content' minmax(auto, calc(100% - var(--player-bar-height) - var(--balbelow-height) - var(--ym-spacer-size-m)))
+            'playerbar playerbar' auto 'barBelow barBelow' auto/auto 1fr;
+    }
 }
 @media only screen and (max-width: 767.98px) {
     .DefaultLayout_rootNewVibe__MSDOn {
         --vibe-gradient-angle: 180deg;
         grid-template: 'content' 1fr 'barBelow' auto 'navbar' auto/1fr;
+    }
+    .modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe__MSDOn {
+        grid-template: 'content' 1fr 'playerbar' auto 'barBelow' auto 'navbar' auto/1fr;
     }
 }
 .DefaultLayout_barBelow__y6PFU {

@@ -201,6 +201,7 @@
                     (e.WebNextNewWaveTabFeedbackForm = 'WebNextNewWaveTabFeedbackForm'),
                     (e.WebNextNdaLabelOnWaveTab = 'WebNextNdaLabelOnWaveTab'),
                     (e.WebNextPaidPerformancePaywallTopSection = 'WebNextPaidPerformancePaywallTopSection'),
+                    (e.WebNextPlayerBarYellowButton = 'WebNextPlayerBarYellowButton'),
                     (e.WebNextPlusOptionsSidebar = 'WebNextPlusOptionsSidebar'),
                     (e.WebNextResetWaveSeeds = 'WebNextResetWaveSeeds'),
                     (e.WebNextConcertsIdentityEventType = 'WebNextConcertsIdentityEventType'),

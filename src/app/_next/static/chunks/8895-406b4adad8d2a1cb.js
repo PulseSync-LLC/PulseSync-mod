@@ -664,6 +664,7 @@
                 skipButton: 'VibePlayerControls_skipButton__z57B_',
                 playButtonIcon: 'VibePlayerControls_playButtonIcon__OXCWN',
                 playButton: 'VibePlayerControls_playButton__vnoer',
+                playButton_withYellowPlayButton: 'VibePlayerControls_withYellowPlayButton__vnoer',
                 playButton_playing: 'VibePlayerControls_playButton_playing__qPeBv',
             };
         },
@@ -2515,12 +2516,13 @@
                         E = (0, x.c)((e) => {
                             e || r.close();
                         }),
+                        PlayerYellowButton = o.checkExperiment(H.z.WebNextPlayerBarYellowButton, 'on'),
                         T = (0, v.useCallback)(
                             () =>
                                 (0, c.jsx)(ta.D, {
                                     className: (0, d.$)(t5().playButton, { [t5().playButton_playing]: n.isPlaying }),
                                     isPlaying: n.isPlaying,
-                                    iconClassName: t5().playButtonIcon,
+                                    iconClassName: (0, d.$)(t5().playButtonIcon, { [t5().playButton_withYellowPlayButton]: PlayerYellowButton }),
                                     color: 'secondary',
                                     onClick: w,
                                 }),
