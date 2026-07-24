@@ -1,0 +1,132 @@
+.BlockEntities_root__sHn14 {
+    container-name: block-entities;
+    container-type: inline-size;
+    height: 100%;
+}
+.BlockEntities_scrollableContent__4A0tK {
+    padding: 0;
+}
+.BlockEntities_scrollableContainer__KXyas {
+    height: calc(100% - var(--subpage-sticky-header-height));
+    padding: 0;
+}
+.BlockEntities_container__1XiOc {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    margin-block-start: var(--subpage-sticky-header-height);
+}
+.BlockEntities_content__bfoTn {
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .BlockEntities_content__bfoTn {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .BlockEntities_content__bfoTn {
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .BlockEntities_content__bfoTn {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.BlockEntities_content__bfoTn {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .BlockEntities_content__bfoTn {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .BlockEntities_content__bfoTn {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .BlockEntities_content__bfoTn {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .BlockEntities_content__bfoTn {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .BlockEntities_content__bfoTn {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .BlockEntities_content__bfoTn {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container block-entities (width >= 618px) {
+        .BlockEntities_content__bfoTn {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container block-entities (width >= 815px) {
+        .BlockEntities_content__bfoTn {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container block-entities (width >= 1010px) {
+        .BlockEntities_content__bfoTn {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container block-entities (width >= 1206px) {
+        .BlockEntities_content__bfoTn {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .BlockEntities_content__bfoTn {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+.BlockEntities_shimmerWithSubcover__dYd6P {
+    height: 60%;
+    margin-block-end: 0;
+    margin-block-start: 0;
+    margin-inline-end: auto;
+    margin-inline-start: auto;
+    width: 60%;
+}
+.BlockEntities_footer__eEuix {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .BlockEntities_footer__eEuix {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .BlockEntities_footer__eEuix {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .BlockEntities_footer__eEuix {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}

@@ -1,0 +1,93 @@
+.CollectionShelfNewEpisodes_title__y_SoT {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    margin-block-start: var(--ym-spacer-size-xxl);
+}
+.CollectionShelfNewEpisodes_root__VojSS {
+    height: 100%;
+}
+.CollectionShelfNewEpisodes_root_emptyList__jsjSW .CollectionShelfNewEpisodes_title__y_SoT {
+    max-width: 17.5rem;
+}
+.CollectionShelfNewEpisodes_wrapper__Z2EOe {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-s);
+    height: calc(100% - var(--header-height));
+    justify-content: center;
+    padding: var(--ym-spacer-size-xxl);
+    text-align: center;
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionShelfNewEpisodes_wrapper__Z2EOe {
+        padding: var(--ym-spacer-size-l);
+    }
+}
+.CollectionShelfNewEpisodes_iconBackground__K4Xui {
+    align-items: center;
+    background-color: var(--ym-controls-color-secondary-default-enabled);
+    border-radius: var(--ym-radius-size-round);
+    display: flex;
+    height: 4.75rem;
+    justify-content: center;
+    width: 4.75rem;
+}
+.CollectionShelfNewEpisodes_button__3DALk {
+    margin-block-start: var(--ym-spacer-size-xxl);
+    min-width: 7.375rem;
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+.CollectionShelfNewEpisodesPage_root__HTWkS {
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+.CollectionShelfNewEpisodesPage_scrollableContainer__xGZcJ {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - var(--subpage-sticky-header-height));
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+@supports (-moz-appearance: none) {
+    .CollectionShelfNewEpisodesPage_scrollableContainer__xGZcJ {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionShelfNewEpisodesPage_scrollableContainer__xGZcJ {
+        padding-inline-start: var(--ym-spacer-size-xs);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionShelfNewEpisodesPage_scrollableContainer__xGZcJ {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionShelfNewEpisodesPage_footer__0i466 {
+    margin-block-start: auto;
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionShelfNewEpisodesPage_footer__0i466 {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionShelfNewEpisodesPage_footer__0i466 {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionShelfNewEpisodesPage_footer__0i466 {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}

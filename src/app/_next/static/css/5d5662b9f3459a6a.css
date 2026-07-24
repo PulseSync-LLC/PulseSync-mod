@@ -1,0 +1,115 @@
+.CollectionClipsPageClipsWillLike_root__uS0_8 {
+    padding-block-end: var(--ym-spacer-size-m);
+    padding-block-start: var(--ym-spacer-size-xl);
+}
+.CollectionClipsPageClipsWillLike_carouselItem__0C0_W.CollectionClipsPageClipsWillLike_important__U_2ET {
+    max-width: none;
+    min-width: 0;
+    min-width: auto;
+}
+@media only screen and (min-width: 1920px) and (max-width: calc(infinity * 1px)) {
+    .CollectionClipsPageClipsWillLike_carouselItem__0C0_W.CollectionClipsPageClipsWillLike_important__U_2ET {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(25% - var(--ym-spacer-size-l) * 3 / 4);
+    }
+}
+@media only screen and (min-width: 1200px) and (max-width: 1920px) {
+    .CollectionClipsPageClipsWillLike_carouselItem__0C0_W.CollectionClipsPageClipsWillLike_important__U_2ET {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(33.33333% - var(--ym-spacer-size-l) * 2 / 3);
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 1200px) {
+    .CollectionClipsPageClipsWillLike_carouselItem__0C0_W.CollectionClipsPageClipsWillLike_important__U_2ET {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(50% - var(--ym-spacer-size-l) * 1 / 2);
+    }
+}
+.CollectionClipsPageClipsWillLike_carouselBlockHeader__wDnJp {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-m);
+}
+.CollectionClipsPageClipsWillLike_carouselBlock__La_8Q {
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    scroll-padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionClipsPageClipsWillLike_carouselBlock__La_8Q {
+        padding-inline-end: var(--ym-spacer-size-l);
+    }
+}
+.CollectionClipsPageEmpty_root__P29ns {
+    flex-grow: 1;
+    gap: var(--ym-spacer-size-xxxl);
+    margin-block-start: calc(var(--subpage-sticky-header-height) + var(--ym-spacer-size-xxxxl));
+    width: 100%;
+}
+.CollectionClipsPageEmpty_content__gIM_C,
+.CollectionClipsPageEmpty_root__P29ns {
+    display: flex;
+    flex-direction: column;
+}
+.CollectionClipsPageEmpty_content__gIM_C {
+    align-items: center;
+    justify-content: center;
+    padding-block-end: var(--ym-spacer-size-xxxxxl);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+.CollectionClipsPageEmpty_icon__jDAZP {
+    margin-block-end: var(--ym-spacer-size-xl);
+}
+.CollectionClipsPageEmpty_icon__jDAZP,
+.CollectionClipsPageEmpty_title__DKJ_3 {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionClipsPageEmpty_title__DKJ_3 {
+    margin-block-end: var(--ym-spacer-size-xs);
+}
+.CollectionClipsPageEmpty_text__F_Too,
+.CollectionClipsPageEmpty_title__DKJ_3 {
+    text-align: center;
+}
+.CollectionClipsPageClips_root__uB8s_ {
+    height: 100%;
+    position: relative;
+}
+.CollectionClipsPageClips_virtualScroll__o3uWm {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: var(--ym-spacer-size-l);
+    margin-block-end: var(--ym-spacer-size-xxxxxl);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+    position: relative;
+    width: calc(100% - var(--ym-spacer-size-xxl));
+}
+.CollectionClipsPageClips_virtualItem__UDzx8 {
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    position: absolute;
+    width: 100%;
+}
+.CollectionClipsPageClips_virtualItemRow__RPIOY {
+    display: grid;
+    grid-gap: var(--ym-spacer-size-l);
+    gap: var(--ym-spacer-size-l);
+    width: 100%;
+}
+.CollectionClipsPageClips_virtualItemRow_withTopBorder__Q6k2l {
+    border-block-start: 0.0625rem solid var(--ym-controls-color-primary-outline-enabled);
+    padding-block-start: var(--ym-spacer-size-xxxxl);
+}
+.CollectionClipsPageClips_virtualItemRow_withBottomBorder__D5Dep {
+    border-block-end: 0.0625rem solid var(--ym-controls-color-primary-outline-enabled);
+    padding-block-end: var(--ym-spacer-size-xxxxl);
+}
+.CollectionClipsPageClips_clipsWillLike__IhK8Q {
+    margin-inline-start: calc(var(--ym-spacer-size-xxl) * -1);
+}

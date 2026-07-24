@@ -1,0 +1,159 @@
+.CollectionPlaylistsPage_root__1QnBw {
+    container-name: collection-playlists-page-content;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionPlaylistsPage_root__1QnBw {
+        container-type: normal;
+    }
+}
+.CollectionPlaylistsPage_content__P3Br2 {
+    --footer-height: 8.875rem;
+    display: grid;
+    min-height: calc(100% - var(--collection-header-with-tabs-height) - 8.875rem);
+    min-height: calc(100% - var(--collection-header-with-tabs-height) - var(--footer-height));
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    position: relative;
+    width: 100%;
+}
+.CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container collection-playlists-page-content (width >= 618px) {
+        .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container collection-playlists-page-content (width >= 815px) {
+        .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container collection-playlists-page-content (width >= 1010px) {
+        .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container collection-playlists-page-content (width >= 1206px) {
+        .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .CollectionPlaylistsPage_content_withGridLayout__ytZKv {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+@supports (-moz-appearance: none) {
+    .CollectionPlaylistsPage_content__P3Br2 {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionPlaylistsPage_content__P3Br2 {
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionPlaylistsPage_content__P3Br2 {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionPlaylistsPage_footer__8nXuA {
+    margin-block-start: auto;
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionPlaylistsPage_footer__8nXuA {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionPlaylistsPage_footer__8nXuA {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionPlaylistsPage_footer__8nXuA {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionPlaylistsPage_item__SvtpO {
+    display: flex;
+    min-width: 8.75rem;
+}
+.CollectionPlaylistsPage_scrollContainer__ECphU.CollectionPlaylistsPage_important__YtxxZ {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+}
+.CollectionPlaylistsPageEmpty_root__mKZt2 {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-s);
+    height: 100%;
+    justify-content: center;
+    padding: var(--ym-spacer-size-xxl);
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionPlaylistsPageEmpty_root__mKZt2 {
+        padding: var(--ym-spacer-size-l);
+    }
+}
+.CollectionPlaylistsPageEmpty_icon__x9v_P {
+    margin-block-end: var(--ym-spacer-size-xxs);
+}
+.CollectionPlaylistsPageEmpty_icon__x9v_P,
+.CollectionPlaylistsPageEmpty_title__8RfSi {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionPlaylistsPageEmpty_title__8RfSi {
+    text-align: center;
+}

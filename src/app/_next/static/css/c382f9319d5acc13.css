@@ -1,0 +1,54 @@
+.GenreArtistsPage_root__PgtIz {
+    container-name: genre-artists-page;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+@media only screen and (max-width: 767.98px) {
+    .GenreArtistsPage_root__PgtIz {
+        container-type: normal;
+    }
+}
+.GenreArtistsPage_container__NruTu {
+    --subpage-sticky-header-height: 5rem;
+    display: flex;
+    flex-direction: column;
+    margin-block-start: 5rem;
+    margin-block-start: var(--subpage-sticky-header-height);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+    padding: 0;
+    row-gap: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .GenreArtistsPage_container__NruTu {
+        margin-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.GenreArtistsPage_shimmerTitle__K2uY9 {
+    height: var(--ym-font-line-height-headline-xl);
+    width: 9.375rem;
+}
+.GenreArtistsPage_footer__fYaCO {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .GenreArtistsPage_footer__fYaCO {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .GenreArtistsPage_footer__fYaCO {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .GenreArtistsPage_footer__fYaCO {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}

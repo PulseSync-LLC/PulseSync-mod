@@ -1,0 +1,186 @@
+.LabelAlbumsPage_root__xyWi4 {
+    container-name: label-albums-page;
+    container-type: inline-size;
+    height: 100%;
+    position: relative;
+}
+.LabelAlbumsPage_scrollContainer__zRUlM.LabelAlbumsPage_important__s18oL {
+    height: 100%;
+    padding: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .LabelAlbumsPage_scrollContainer__zRUlM.LabelAlbumsPage_important__s18oL {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .LabelAlbumsPage_shimmerScrollContainer__v_um_ {
+        overflow-y: scroll;
+        transition: scrollbar-color 0.2s ease-in-out;
+    }
+    .LabelAlbumsPage_shimmerScrollContainer__v_um_::-webkit-scrollbar-thumb {
+        background-clip: content-box;
+        border: 0.5rem solid transparent;
+        border-radius: var(--ym-radius-size-l);
+        min-height: 3.125rem;
+    }
+    .LabelAlbumsPage_shimmerScrollContainer__v_um_::-webkit-scrollbar {
+        width: var(--ym-spacer-size-xxl);
+    }
+    .LabelAlbumsPage_shimmerScrollContainer__v_um_ {
+        --scrollbar-hidden: transparent;
+    }
+    @supports selector(scrollbar-width:auto) {
+        .LabelAlbumsPage_shimmerScrollContainer__v_um_ {
+            scrollbar-color: var(--scrollbar-hidden) transparent;
+            scrollbar-gutter: stable;
+        }
+    }
+    @supports selector(::-webkit-scrollbar) {
+        .LabelAlbumsPage_shimmerScrollContainer__v_um_::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-hidden);
+        }
+    }
+}
+@media only screen and (min-width: 768px) and (prefers-reduced-motion: reduce) {
+    .LabelAlbumsPage_shimmerScrollContainer__v_um_ {
+        transition: none;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .LabelAlbumsPage_shimmerScrollContainer__v_um_::-webkit-scrollbar-thumb {
+        border: 0.1875rem solid transparent;
+    }
+    .LabelAlbumsPage_shimmerScrollContainer__v_um_::-webkit-scrollbar {
+        width: var(--ym-spacer-size-m);
+    }
+}
+.LabelAlbumsPage_footer__dcXFk {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .LabelAlbumsPage_footer__dcXFk {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .LabelAlbumsPage_footer__dcXFk {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .LabelAlbumsPage_footer__dcXFk {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.LabelAlbumsPage_item__Qjz9F {
+    display: flex;
+    min-width: 8.75rem;
+}
+.LabelAlbumsPage_content__jOWKZ {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .LabelAlbumsPage_content__jOWKZ {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .LabelAlbumsPage_content__jOWKZ {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .LabelAlbumsPage_content__jOWKZ {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.LabelAlbumsPage_content__jOWKZ {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .LabelAlbumsPage_content__jOWKZ {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .LabelAlbumsPage_content__jOWKZ {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .LabelAlbumsPage_content__jOWKZ {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .LabelAlbumsPage_content__jOWKZ {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .LabelAlbumsPage_content__jOWKZ {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .LabelAlbumsPage_content__jOWKZ {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container label-albums-page (width >= 618px) {
+        .LabelAlbumsPage_content__jOWKZ {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container label-albums-page (width >= 815px) {
+        .LabelAlbumsPage_content__jOWKZ {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container label-albums-page (width >= 1010px) {
+        .LabelAlbumsPage_content__jOWKZ {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container label-albums-page (width >= 1206px) {
+        .LabelAlbumsPage_content__jOWKZ {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .LabelAlbumsPage_content__jOWKZ {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+.LabelAlbumsPage_shimmerTitle__jbYXl {
+    height: var(--ym-font-line-height-headline-xl);
+    width: 9.375rem;
+}
+.LabelAlbumsPage_shimmerSortDropdown__LKtgF {
+    flex-shrink: 0;
+    height: 3rem;
+    margin-inline-end: var(--ym-spacer-size-l);
+    margin-inline-start: auto;
+    width: 16.125rem;
+}
+@media only screen and (max-width: 768px) {
+    .LabelAlbumsPage_shimmerSortDropdown__LKtgF {
+        margin-inline-end: 0;
+        width: 3rem;
+    }
+}

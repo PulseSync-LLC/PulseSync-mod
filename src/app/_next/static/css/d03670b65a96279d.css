@@ -1,0 +1,73 @@
+.CollectionShelfRecentlyPlayed_header__Nx7Cc {
+    padding-block-end: var(--ym-spacer-size-l);
+}
+.CollectionShelfRecentlyPlayed_shelfColumn__9xHhf.CollectionShelfRecentlyPlayed_important__HS0GM {
+    width: 100%;
+}
+.CollectionShelfPage_root__S0__c {
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+.CollectionShelfPage_scrollableContainer__9f317 {
+    height: calc(100% - var(--subpage-sticky-header-height));
+    padding-inline-start: 0;
+}
+.CollectionShelfPage_content__AG3r8 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+@supports (-moz-appearance: none) {
+    .CollectionShelfPage_content__AG3r8 {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionShelfPage_content__AG3r8 {
+        padding-inline-start: var(--ym-spacer-size-xs);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionShelfPage_content__AG3r8 {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionShelfPage_block__34jyy:not(:last-child) {
+    margin-block-end: var(--ym-spacer-size-xxxxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionShelfPage_block__34jyy:not(:last-child) {
+        margin-block-end: var(--ym-spacer-size-xl);
+    }
+}
+.CollectionShelfPage_blockHeader__Qjoln {
+    margin-inline-start: var(--ym-spacer-size-xs);
+}
+.CollectionShelfPage_footer__pgWKV {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionShelfPage_footer__pgWKV {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionShelfPage_footer__pgWKV {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionShelfPage_footer__pgWKV {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}

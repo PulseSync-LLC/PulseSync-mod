@@ -1,0 +1,73 @@
+.PlaylistWithTracksEmpty_root__secDB {
+    align-items: flex-start;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-l);
+}
+.PlaylistWithTracksEmpty_image__JH2uE {
+    height: 4.5rem;
+    margin-block-end: var(--ym-spacer-size-xl);
+    object-fit: fill;
+    width: 4.5rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .PlaylistWithTracksEmpty_image__JH2uE {
+        height: 8.75rem;
+        width: 8.75rem;
+    }
+}
+.PlaylistWithTracksEmpty_header__pD30X {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    margin-block-end: var(--ym-spacer-size-m);
+    text-align: center;
+    width: 90%;
+}
+@media only screen and (max-width: 767.98px) {
+    .PlaylistWithTracksEmpty_header__pD30X {
+        font-size: var(--ym-font-size-headline-xs);
+        line-height: var(--ym-font-line-height-headline-xs);
+    }
+}
+.PlaylistWithTracksEmpty_text__b69Q_ {
+    color: var(--ym-controls-color-primary-text-enabled);
+    margin-block-end: var(--ym-spacer-size-l);
+    max-width: 23.125rem;
+    text-align: center;
+    width: 90%;
+}
+@media only screen and (max-width: 767.98px) {
+    .PlaylistWithTracksEmpty_text__b69Q_ {
+        font-size: var(--ym-font-size-label-l);
+        font-weight: var(--ym-font-weight-medium);
+        line-height: var(--ym-font-line-height-label-l);
+    }
+}
+.PlaylistWithTracksEmpty_myWaveButton__Kswfl {
+    padding-inline-end: var(--ym-spacer-size-xxxl);
+    padding-inline-start: var(--ym-spacer-size-xxxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .PlaylistWithTracksEmpty_myWaveButtonText__AfIg9 {
+        font-size: var(--ym-font-size-label-l);
+        line-height: var(--ym-font-line-height-label-l);
+    }
+}
+.PlaylistWithTracks_trailer__dOp1u {
+    opacity: 0;
+    transition: opacity var(--ym-duration-transition);
+}
+@media only screen and (max-width: 767.98px) {
+    .PlaylistWithTracks_trailer__dOp1u {
+        opacity: 1;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .PlaylistWithTracks_trailer__dOp1u {
+        transition: none;
+    }
+}
+.PlaylistWithTracks_root__jchZL:hover .PlaylistWithTracks_trailer__dOp1u {
+    opacity: 1;
+}

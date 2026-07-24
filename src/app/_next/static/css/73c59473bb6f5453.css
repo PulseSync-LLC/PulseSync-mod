@@ -1,0 +1,48 @@
+.ArtistTracksPage_root__ad3rI {
+    height: 100%;
+    position: relative;
+}
+.ArtistTracksPage_footer__KN2i_ {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-start: var(--ym-spacer-size-xs);
+}
+@media only screen and (max-width: 767.98px) {
+    .ArtistTracksPage_footer__KN2i_ {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+    }
+}
+.ArtistTracksPage_scrollContainer__9iO2g.ArtistTracksPage_important__iulth {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .ArtistTracksPage_scrollContainer__9iO2g.ArtistTracksPage_important__iulth {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+.ArtistTracksPage_content__6LJJd {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .ArtistTracksPage_content__6LJJd {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ArtistTracksPage_content__6LJJd {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .ArtistTracksPage_content__6LJJd {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.ArtistTracksPage_shimmerItem__136_r {
+    height: 3.5rem;
+}

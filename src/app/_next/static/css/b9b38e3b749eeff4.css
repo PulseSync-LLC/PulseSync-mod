@@ -1,0 +1,178 @@
+.ChartPodcastsPage_root__J5lnx {
+    container-name: chart-podcasts-page;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+@media only screen and (max-width: 767.98px) {
+    .ChartPodcastsPage_root__J5lnx {
+        container-type: normal;
+    }
+}
+.ChartPodcastsPage_scrollContainer__WQTf7.ChartPodcastsPage_important__fW45m {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .ChartPodcastsPage_scrollContainer__WQTf7.ChartPodcastsPage_important__fW45m {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .ChartPodcastsPage_shimmerScrollContainer__nOO43 {
+        overflow-y: scroll;
+        transition: scrollbar-color 0.2s ease-in-out;
+    }
+    .ChartPodcastsPage_shimmerScrollContainer__nOO43::-webkit-scrollbar-thumb {
+        background-clip: content-box;
+        border: 0.5rem solid transparent;
+        border-radius: var(--ym-radius-size-l);
+        min-height: 3.125rem;
+    }
+    .ChartPodcastsPage_shimmerScrollContainer__nOO43::-webkit-scrollbar {
+        width: var(--ym-spacer-size-xxl);
+    }
+    .ChartPodcastsPage_shimmerScrollContainer__nOO43 {
+        --scrollbar-hidden: transparent;
+    }
+    @supports selector(scrollbar-width:auto) {
+        .ChartPodcastsPage_shimmerScrollContainer__nOO43 {
+            scrollbar-color: var(--scrollbar-hidden) transparent;
+            scrollbar-gutter: stable;
+        }
+    }
+    @supports selector(::-webkit-scrollbar) {
+        .ChartPodcastsPage_shimmerScrollContainer__nOO43::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-hidden);
+        }
+    }
+}
+@media only screen and (min-width: 768px) and (prefers-reduced-motion: reduce) {
+    .ChartPodcastsPage_shimmerScrollContainer__nOO43 {
+        transition: none;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .ChartPodcastsPage_shimmerScrollContainer__nOO43::-webkit-scrollbar-thumb {
+        border: 0.1875rem solid transparent;
+    }
+    .ChartPodcastsPage_shimmerScrollContainer__nOO43::-webkit-scrollbar {
+        width: var(--ym-spacer-size-m);
+    }
+}
+.ChartPodcastsPage_footer__7ytrT {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .ChartPodcastsPage_footer__7ytrT {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ChartPodcastsPage_footer__7ytrT {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .ChartPodcastsPage_footer__7ytrT {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.ChartPodcastsPage_item__vGRt8 {
+    display: flex;
+    min-width: 8.75rem;
+}
+.ChartPodcastsPage_content__NcV4M {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .ChartPodcastsPage_content__NcV4M {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ChartPodcastsPage_content__NcV4M {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .ChartPodcastsPage_content__NcV4M {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.ChartPodcastsPage_content__NcV4M {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .ChartPodcastsPage_content__NcV4M {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .ChartPodcastsPage_content__NcV4M {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .ChartPodcastsPage_content__NcV4M {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .ChartPodcastsPage_content__NcV4M {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .ChartPodcastsPage_content__NcV4M {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .ChartPodcastsPage_content__NcV4M {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container chart-podcasts-page (width >= 618px) {
+        .ChartPodcastsPage_content__NcV4M {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container chart-podcasts-page (width >= 815px) {
+        .ChartPodcastsPage_content__NcV4M {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container chart-podcasts-page (width >= 1010px) {
+        .ChartPodcastsPage_content__NcV4M {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container chart-podcasts-page (width >= 1206px) {
+        .ChartPodcastsPage_content__NcV4M {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .ChartPodcastsPage_content__NcV4M {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+.ChartPodcastsPage_shimmerTitle__Missw {
+    height: var(--ym-font-line-height-headline-xl);
+    width: 9.375rem;
+}

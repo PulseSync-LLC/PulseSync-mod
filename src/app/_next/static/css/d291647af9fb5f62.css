@@ -1,0 +1,26 @@
+.CollectionAlbumsPageEmpty_root__7yn1F {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-s);
+    height: calc(100% - var(--collection-header-with-tabs-height));
+    justify-content: center;
+    padding: var(--ym-spacer-size-xxl);
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionAlbumsPageEmpty_root__7yn1F {
+        padding: var(--ym-spacer-size-l);
+    }
+}
+.CollectionAlbumsPageEmpty_icon__XFf9x {
+    margin-block-end: var(--ym-spacer-size-xxs);
+}
+.CollectionAlbumsPageEmpty_icon__XFf9x,
+.CollectionAlbumsPageEmpty_title__hMQde {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionAlbumsPageEmpty_text__jp_lj,
+.CollectionAlbumsPageEmpty_title__hMQde {
+    text-align: center;
+}

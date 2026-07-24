@@ -1,0 +1,104 @@
+.PageHeaderAlbumControls_menuControl__wlqyr {
+    order: 5;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderAlbumControls_menuControl__wlqyr {
+        order: 1;
+    }
+}
+.PageHeaderAlbumControls_likeControl__eohAO {
+    order: 3;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderAlbumControls_likeControl__eohAO {
+        order: 3;
+    }
+}
+.PageHeaderAlbumControls_pinOrDonationControl__3aFUW {
+    order: 4;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderAlbumControls_pinOrDonationControl__3aFUW {
+        display: none;
+    }
+}
+.PageHeaderAlbumControls_trailerControl___HcW0 {
+    order: 2;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderAlbumControls_trailerControl___HcW0 {
+        display: none;
+    }
+}
+.PageHeaderAlbumMeta_meta__zsMI8 {
+    color: var(--ym-controls-color-primary-text-enabled);
+    font-weight: var(--ym-font-weight-medium);
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderAlbumMeta_meta__zsMI8 {
+        align-items: center;
+        display: flex;
+        gap: var(--ym-spacer-size-xxs);
+        justify-content: center;
+    }
+}
+.PageHeaderAlbumMeta_artistCover__L3jJ0 {
+    display: inline-flex;
+    height: 1.25rem;
+    inset-block-start: var(--ym-spacer-size-xxxs);
+    margin-inline-end: var(--ym-spacer-size-xxs);
+    position: relative;
+    width: 1.25rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderAlbumMeta_artistCover__L3jJ0 {
+        flex-grow: 0;
+        flex-shrink: 0;
+        inset-block-start: 0;
+        margin-block-start: 0;
+    }
+}
+.PageHeaderAlbumMeta_artistLabel__2WZSM,
+.PageHeaderAlbumMeta_year__2X3NO {
+    color: var(--ym-controls-color-primary-text-enabled);
+    font-size: var(--ym-font-size-label-m);
+    letter-spacing: var(--ym-letter-spacing-m);
+    line-height: var(--ym-font-line-height-label-m);
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderAlbumMeta_artistLabel__2WZSM,
+    .PageHeaderAlbumMeta_year__2X3NO {
+        flex-shrink: 0;
+    }
+}
+.PageHeaderAlbumMeta_artists__Nfdob {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+@media only screen and (min-width: 768px) {
+    .PageHeaderAlbumMeta_artists__Nfdob {
+        display: contents;
+    }
+}
+.PageHeaderAlbumMeta_artistsSpoiler__VOkfE {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.PageHeaderAlbumMeta_artistLink__eTSrZ:focus .PageHeaderAlbumMeta_artistLabel__2WZSM,
+.PageHeaderAlbumMeta_artistLink__eTSrZ:hover .PageHeaderAlbumMeta_artistLabel__2WZSM,
+.PageHeaderAlbumMeta_artistsSpoiler__VOkfE:focus,
+.PageHeaderAlbumMeta_artistsSpoiler__VOkfE:hover {
+    color: var(--ym-controls-color-primary-text-hovered);
+}
+.PageHeaderAlbumMeta_year__2X3NO,
+.PageHeaderAlbumMeta_year_dot__TrSFr:before {
+    display: inline-block;
+}
+.PageHeaderAlbumMeta_year_dot__TrSFr:before {
+    background-color: var(--ym-controls-color-primary-text-enabled);
+    border-radius: var(--ym-radius-size-round);
+    content: '';
+    height: 0.25rem;
+    margin-block-end: var(--ym-spacer-size-xxxs);
+    margin-inline-end: var(--ym-spacer-size-m);
+    margin-inline-start: var(--ym-spacer-size-m);
+    width: 0.25rem;
+}

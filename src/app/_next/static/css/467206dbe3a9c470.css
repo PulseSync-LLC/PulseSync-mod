@@ -1,0 +1,163 @@
+.MusicHistoryTrack_trackShimmer__yxcx9 {
+    height: 3.5rem;
+}
+.MusicHistoryBlock_header__sIFVC {
+    padding-block-end: var(--ym-spacer-size-m);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .MusicHistoryBlock_header__sIFVC {
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.MusicHistoryBlock_queryToVibeHeader__iRBjG {
+    --cover-size: 4.375rem;
+    --icon-size: 3rem;
+    --animation-extra-width: 3.75rem;
+    --animation-extra-height: 150%;
+    margin-inline-end: var(--ym-spacer-size-xxl);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+    padding-block-end: var(--ym-spacer-size-m);
+}
+@media only screen and (max-width: 767.98px) {
+    .MusicHistoryBlock_queryToVibeHeader__iRBjG {
+        margin-inline-end: var(--ym-spacer-size-l);
+        margin-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.MusicHistoryBlock_vibeHeader__HWzD5 {
+    --horizontal-card-height: 4.375rem;
+    --horizontal-card-background-color: transparent;
+    display: flex;
+    gap: var(--ym-spacer-size-m);
+}
+.MusicHistoryBlock_vibeCover__RnM_6 {
+    --cover-size: 3.625rem;
+}
+.MusicHistoryBlock_multivibeContainer__GTbRL {
+    margin-block-end: var(--ym-spacer-size-xxs);
+    --multivibe-avatar-size: 63%;
+    --multivibe-avatar-frame-scale: 1.01;
+    position: relative;
+}
+.MusicHistoryBlock_multivibeContainer__GTbRL:has(.MusicHistoryBlock_multivibeCover__rzU94):before {
+    background-image: url(https://avatars.mds.yandex.net/get-music-misc/70850/img.6a478b23f6366d20f6ed80c9/150x150);
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    content: '';
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
+}
+.MusicHistoryBlock_multivibeContainer__GTbRL .MusicHistoryBlock_multivibeCover__rzU94 {
+    background-color: transparent;
+    background-image: url(https://avatars.mds.yandex.net/get-music-misc/28592/img.6a477553e2dbd165f2f9922c/150x150);
+    overflow: hidden;
+    position: relative;
+}
+.MusicHistoryBlock_multivibeContainer__GTbRL .MusicHistoryBlock_multivibeCover__rzU94:has(.MusicHistoryBlock_multivibeAvatar__Tbme3):before {
+    border-radius: var(--ym-radius-size-round);
+    content: '';
+    height: var(--multivibe-avatar-size);
+    inset-block-start: 50%;
+    inset-inline-end: var(--ym-spacer-size-xxxs);
+    inset-inline-start: auto;
+    position: absolute;
+    transform: translateY(-50%);
+    width: var(--multivibe-avatar-size);
+}
+.MusicHistoryBlock_multivibeContainer__GTbRL .MusicHistoryBlock_multivibeCover__rzU94:after {
+    background-image: url(https://avatars.mds.yandex.net/get-music-misc/28052/img.6a478b19f6366d20f6ed80c7/100x100);
+    border-radius: var(--ym-radius-size-round);
+    content: '';
+    height: var(--multivibe-avatar-size);
+    inset-block-start: 50%;
+    inset-inline-end: var(--ym-spacer-size-xxxs);
+    pointer-events: none;
+    position: absolute;
+    transform: translateY(-50%) scale(var(--multivibe-avatar-frame-scale));
+    transform: translateY(-50%);
+    width: var(--multivibe-avatar-size);
+    z-index: 1;
+}
+.MusicHistoryBlock_multivibeContainer__GTbRL .MusicHistoryBlock_multivibeCover__rzU94,
+.MusicHistoryBlock_multivibeContainer__GTbRL .MusicHistoryBlock_multivibeCover__rzU94:after {
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.MusicHistoryBlock_multivibeContainer__GTbRL .MusicHistoryBlock_multivibeCover__rzU94 .MusicHistoryBlock_multivibeAvatar__Tbme3 {
+    border-radius: var(--ym-radius-size-round);
+    height: var(--multivibe-avatar-size);
+    inset-block-start: 50%;
+    inset-inline-end: var(--ym-spacer-size-xxxs);
+    position: absolute;
+    transform: translateY(-50%);
+    width: var(--multivibe-avatar-size);
+    z-index: 0;
+}
+.MusicHistoryBlock_multivibeContainer__GTbRL
+    .MusicHistoryBlock_multivibeCover__rzU94:has(.MusicHistoryBlock_multivibeAvatar__Tbme3)
+    .MusicHistoryBlock_multivibeAvatar__Tbme3
+    ~ .MusicHistoryBlock_multivibeControl__J85EM {
+    border-radius: var(--ym-radius-size-round);
+    height: var(--multivibe-avatar-size);
+    inset-block-start: 50%;
+    inset-inline-end: var(--ym-spacer-size-xxxs);
+    inset-inline-start: auto;
+    position: absolute;
+    transform: translateY(-50%);
+    width: var(--multivibe-avatar-size);
+}
+.MusicHistoryBlock_vibeTextBlock__nvhPk {
+    width: 100%;
+}
+.MusicHistoryBlock_heading__HEfmk {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.MusicHistoryBlock_header__sIFVC.MusicHistoryBlock_heading__HEfmk {
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-s);
+    font-style: normal;
+    font-weight: var(--ym-font-weight-medium);
+    letter-spacing: normal;
+    line-height: var(--ym-font-line-height-label-s);
+}
+.MusicHistoryBlock_headerTitle__Yhyst {
+    max-width: 100%;
+}
+.MusicHistoryBlock_content__S9lfi {
+    padding-inline-end: var(--ym-spacer-size-l);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+@media only screen and (max-width: 767.98px) {
+    .MusicHistoryBlock_content__S9lfi {
+        padding-inline-end: var(--ym-spacer-size-xs);
+        padding-inline-start: var(--ym-spacer-size-xs);
+    }
+}
+.MusicHistoryBlock_artists__AjuWP {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.MusicHistoryBlock_artistLink__yFHPE {
+    color: inherit;
+}
+.MusicHistoryBlock_artistLink__yFHPE:focus-visible,
+.MusicHistoryBlock_artistLink__yFHPE:hover {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.MusicHistoryBlock_shimmerTitle__Mx1IC {
+    height: 3.75rem;
+    margin-block-end: var(--ym-spacer-size-m);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+    width: 12.5rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .MusicHistoryBlock_shimmerTitle__Mx1IC {
+        margin-inline-start: var(--ym-spacer-size-l);
+    }
+}

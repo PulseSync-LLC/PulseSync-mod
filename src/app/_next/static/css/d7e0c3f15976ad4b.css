@@ -1,0 +1,28 @@
+.Genre_root__80dlk {
+    margin-block-end: var(--ym-spacer-size-xxxxl);
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.Genre_link__Wewaq {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.Genre_link__Wewaq:focus-visible,
+.Genre_link__Wewaq:hover {
+    text-decoration: underline;
+}
+.Genre_linkTitle__ORAsw {
+    white-space: normal;
+}
+.Genre_list__C2Pxf {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-l);
+    list-style: none;
+    margin-block-start: var(--ym-spacer-size-l);
+}
+@media only screen and (max-width: 767.98px) {
+    .Genre_list__C2Pxf {
+        gap: var(--ym-spacer-size-xxl);
+        margin-block-start: var(--ym-spacer-size-xxl);
+    }
+}

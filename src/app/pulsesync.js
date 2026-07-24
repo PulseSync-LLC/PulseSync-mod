@@ -687,9 +687,7 @@ window.findCssRuleByPartialName = function (pName) {
         } catch {}
 
         try {
-            return Boolean(
-                window.nativeSettings?.get?.(WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY) && window.nativeSettings?.get?.(NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY),
-            );
+            return Boolean(window.nativeSettings?.get?.(WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY) && window.nativeSettings?.get?.(NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY));
         } catch {
             return false;
         }
@@ -699,8 +697,7 @@ window.findCssRuleByPartialName = function (pName) {
         const currentMediaPlayer = playerInst?.state?.currentMediaPlayer?.value;
         const mediaPlayers = Object.values(playerInst?.state?.mediaPlayersStore?.value ?? {});
         return [currentMediaPlayer, ...mediaPlayers].find(
-            (mediaPlayer) =>
-                mediaPlayer && typeof mediaPlayer.forceStopCrossfade === 'function' && mediaPlayer.isEnabled && 'value' in mediaPlayer.isEnabled,
+            (mediaPlayer) => mediaPlayer && typeof mediaPlayer.forceStopCrossfade === 'function' && mediaPlayer.isEnabled && 'value' in mediaPlayer.isEnabled,
         );
     };
 

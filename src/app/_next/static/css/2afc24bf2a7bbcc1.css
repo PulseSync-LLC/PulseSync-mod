@@ -1,0 +1,85 @@
+.Tab_root__LUukY {
+    align-items: center;
+    border-radius: 4.375rem;
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--ym-spacer-size-xs);
+    padding-block-end: var(--ym-spacer-size-s);
+    padding-block-start: var(--ym-spacer-size-s);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-s);
+}
+.Tab_image__Hen3_ {
+    border-radius: var(--ym-radius-size-round);
+    height: 2.25rem;
+    max-height: 2.25rem;
+    max-width: 2.25rem;
+    width: 2.25rem;
+}
+.Tab_image__Hen3_:not(:first-child) {
+    margin-inline-start: calc(var(--ym-spacer-size-s) * -1);
+}
+.Tab_tab_size_s__zXitP {
+    border-radius: 3.125rem;
+    padding-block-end: var(--ym-spacer-size-xxs);
+    padding-block-start: var(--ym-spacer-size-xxs);
+    padding-inline-end: var(--ym-spacer-size-l);
+    padding-inline-start: var(--ym-spacer-size-xxs);
+}
+.Tab_tab_size_s__zXitP .Tab_image__Hen3_ {
+    height: 2rem;
+    max-height: 2rem;
+    max-width: 2rem;
+    width: 2rem;
+}
+.Tab_tab_size_m__c7tVg {
+    border-radius: 3.125rem;
+    padding-block-end: var(--ym-spacer-size-xs);
+    padding-block-start: var(--ym-spacer-size-xs);
+    padding-inline-end: var(--ym-spacer-size-l);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+.Tab_tab_size_l__goM4A {
+    border-radius: 3.75rem;
+    gap: var(--ym-spacer-size-s);
+    padding-block-end: var(--ym-spacer-size-s);
+    padding-block-start: var(--ym-spacer-size-s);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xs);
+}
+.Tab_tab_size_l__goM4A .Tab_image__Hen3_ {
+    height: 2.75rem;
+    max-height: 2.75rem;
+    max-width: 2.75rem;
+    width: 2.75rem;
+}
+.Tab_tab_withCovers__dJzMH {
+    min-height: 3.625rem;
+}
+.Tab_tab_withMissingCovers__RzwR0 {
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+.Tab_covers__cvYeI {
+    align-items: center;
+    display: flex;
+}
+.Tab_description__p1fTO {
+    max-width: 11.25rem;
+    text-align: start;
+}
+.Tab_title__hAYZk {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.Tab_subtitle__fLp9S,
+.Tab_title__hAYZk {
+    text-align: inherit;
+}
+.Tab_subtitle__fLp9S {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.Tab_shimmerTitle__eQFFI {
+    height: var(--ym-font-line-height-headline-xs);
+}
+.Tab_shimmerSubtitle__0Yf3E {
+    height: var(--ym-font-line-height-label-s);
+}

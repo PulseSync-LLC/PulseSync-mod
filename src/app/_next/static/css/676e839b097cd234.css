@@ -1,0 +1,45 @@
+.TrackModalAlbum_root__ux7J4 {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-l);
+    margin-inline-end: var(--ym-spacer-size-xxl);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+}
+.TrackModalAlbum_title__CtM2_ {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.TrackModalAlbumShimmer_root__iGoUU {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xl);
+    height: 100%;
+    margin-inline-start: var(--ym-spacer-size-xxl);
+    width: 100%;
+}
+.TrackModalAlbumShimmer_title__2jt8z {
+    height: var(--ym-font-size-headline-m);
+    width: 30%;
+}
+.TrackModalAlbumShimmer_coverBlock__PQFDQ {
+    display: flex;
+    gap: var(--ym-spacer-size-m);
+}
+.TrackModalAlbumShimmer_cover__AI0zt {
+    height: 3.625rem;
+    width: 3.625rem;
+}
+.TrackModalAlbumShimmer_linkBlock__yBLL4 {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.TrackModalAlbumShimmer_link__7_gHs {
+    height: var(--ym-font-size-label-l);
+    margin-block-start: var(--ym-spacer-size-s);
+    width: 50%;
+}
+.TrackModalAlbumShimmer_description__63Pnt {
+    height: var(--ym-font-size-label-m);
+    margin-block-start: var(--ym-spacer-size-xs);
+    width: 30%;
+}

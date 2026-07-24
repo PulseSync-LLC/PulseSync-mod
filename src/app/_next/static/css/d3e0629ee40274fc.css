@@ -1,0 +1,81 @@
+.ChartTracksPage_root__QMbqY {
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+.ChartTracksPage_scrollContainer__Pxe8S.ChartTracksPage_important__Lddyf {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .ChartTracksPage_scrollContainer__Pxe8S.ChartTracksPage_important__Lddyf {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+.ChartTracksPage_content__yyIAN {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .ChartTracksPage_content__yyIAN {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ChartTracksPage_content__yyIAN {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .ChartTracksPage_content__yyIAN {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.ChartTracksPage_footer__6sNBk {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .ChartTracksPage_footer__6sNBk {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ChartTracksPage_footer__6sNBk {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .ChartTracksPage_footer__6sNBk {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.ChartTracksPage_shimmerItem__YwM0h {
+    height: 3.5rem;
+}
+.ChartTracksPage_chartTrackShimmer__9ldEs {
+    align-items: center;
+    display: flex;
+    padding-inline-end: var(--ym-spacer-size-xs);
+    padding-inline-start: var(--ym-spacer-size-xs);
+    width: 100%;
+}
+.ChartTracksPage_chartCell__Ko_uE {
+    margin-inline-end: var(--ym-spacer-size-xs);
+}
+.ChartTracksPage_trackShimmer__9uNZ2 {
+    flex: 1 1;
+    padding-inline-end: 0;
+    padding-inline-start: 0;
+}
+.ChartTracksPage_shimmerTitle__TkGmf {
+    height: var(--ym-font-line-height-headline-xl);
+    width: 9.375rem;
+}

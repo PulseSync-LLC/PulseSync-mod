@@ -1,0 +1,180 @@
+.CollectionAlbumsPageHeader_root__87L_c {
+    align-items: flex-start;
+    flex-direction: column;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    inset-inline-start: 0;
+    padding: var(--ym-spacer-size-xxl);
+}
+.CollectionAlbumsPageHeader_container__96cIo,
+.CollectionAlbumsPageHeader_root__87L_c {
+    display: flex;
+    gap: var(--ym-spacer-size-l);
+}
+.CollectionAlbumsPageHeader_container__96cIo {
+    align-items: center;
+}
+.CollectionAlbumsPageHeader_title__1Ps8d {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionAlbumsPageHeader_tabs__P4GTY {
+    overflow: visible;
+}
+.CollectionAlbumsPageHeader_tab__JSFBc {
+    flex-shrink: 0;
+    height: 100%;
+    list-style-type: none;
+    max-width: -moz-fit-content;
+    max-width: fit-content;
+    scroll-snap-align: start;
+}
+.CollectionAlbumsPageHeader_tabsShimmer__fGlR0 {
+    display: flex;
+    gap: var(--ym-spacer-size-xs);
+}
+.CollectionAlbumsPageHeader_tabShimmer__9hCc6 {
+    height: 1rem;
+    margin-block-end: var(--ym-spacer-size-s);
+    margin-block-start: var(--ym-spacer-size-s);
+    margin-inline-end: var(--ym-spacer-size-xs);
+    margin-inline-start: var(--ym-spacer-size-xs);
+    width: 6.25rem;
+}
+.CollectionAlbumsPageHeader_staticHeader__YNfX4.CollectionAlbumsPageHeader_important__0dgC2 {
+    display: none;
+}
+.CollectionAlbumsPageHeader_stickyHeader__L_1IS.CollectionAlbumsPageHeader_important__0dgC2 {
+    height: auto;
+}
+.CollectionAlbumsPageContent_root__2Ya18 {
+    container-name: collection-albums-page-content;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionAlbumsPageContent_root__2Ya18 {
+        container-type: normal;
+    }
+}
+.CollectionAlbumsPageContent_scrollContainer__0TjJm.CollectionAlbumsPageContent_important__fixM8 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+}
+.CollectionAlbumsPageContent_content__jcwRU {
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionAlbumsPageContent_content__jcwRU {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionAlbumsPageContent_content__jcwRU {
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionAlbumsPageContent_content__jcwRU {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionAlbumsPageContent_content__jcwRU {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .CollectionAlbumsPageContent_content__jcwRU {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .CollectionAlbumsPageContent_content__jcwRU {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .CollectionAlbumsPageContent_content__jcwRU {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .CollectionAlbumsPageContent_content__jcwRU {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .CollectionAlbumsPageContent_content__jcwRU {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .CollectionAlbumsPageContent_content__jcwRU {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container collection-albums-page-content (width >= 618px) {
+        .CollectionAlbumsPageContent_content__jcwRU {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container collection-albums-page-content (width >= 815px) {
+        .CollectionAlbumsPageContent_content__jcwRU {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container collection-albums-page-content (width >= 1010px) {
+        .CollectionAlbumsPageContent_content__jcwRU {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container collection-albums-page-content (width >= 1206px) {
+        .CollectionAlbumsPageContent_content__jcwRU {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .CollectionAlbumsPageContent_content__jcwRU {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+.CollectionAlbumsPageContent_footer__ZkUKY {
+    margin-block-start: auto;
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionAlbumsPageContent_footer__ZkUKY {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionAlbumsPageContent_footer__ZkUKY {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionAlbumsPageContent_footer__ZkUKY {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionAlbumsPageContent_item__I_Wuz {
+    display: flex;
+    min-width: 8.75rem;
+}
+.CollectionAlbumsPageContent_tabPanel__0qXKZ {
+    height: 100%;
+    width: 100%;
+}

@@ -1,0 +1,53 @@
+.GenrePage_root___kL_v {
+    padding: 0;
+    position: relative;
+}
+.GenrePage_content__NRwAJ {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+}
+.GenrePage_shimmerTitle__hrgjK {
+    height: var(--ym-font-line-height-headline-xl);
+    width: 9.375rem;
+}
+.GenrePage_carouselBlocks__kR63B {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xxl);
+    margin-block-start: var(--subpage-sticky-header-height);
+}
+.GenrePage_carouselBlocks__kR63B:empty {
+    padding: 0;
+}
+@media only screen and (max-width: 768px) {
+    .GenrePage_carouselBlocks__kR63B {
+        gap: var(--ym-spacer-size-l);
+    }
+}
+.GenrePage_carouselBlock__QCkpK {
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    scroll-padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .GenrePage_carouselBlock__QCkpK {
+        padding-inline-end: var(--ym-spacer-size-l);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .GenrePage_carouselBlock__QCkpK {
+        padding-inline-start: var(--ym-spacer-size-l);
+        scroll-padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.GenrePage_carouselBlockHeader__u12sn {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-m);
+}
+@media only screen and (max-width: 767.98px) {
+    .GenrePage_carouselBlockHeader__u12sn {
+        padding-block-end: var(--ym-spacer-size-xs);
+        padding-block-start: var(--ym-spacer-size-l);
+    }
+}

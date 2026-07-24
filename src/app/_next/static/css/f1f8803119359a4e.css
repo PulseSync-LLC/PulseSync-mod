@@ -1,0 +1,38 @@
+.ArtistPick_artistLink__WYRFP {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.ArtistPick_artistLink__WYRFP:focus-visible,
+.ArtistPick_artistLink__WYRFP:hover {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.ArtistPick_artistsSpoiler__HBKka {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.ArtistPick_subTitle__5SJFj {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-xxxs);
+}
+.ArtistPick_text__sIhNG {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.ArtistPick_smallCoverContainer__iBgJu {
+    flex-shrink: 0;
+    height: 100%;
+    max-height: 1rem;
+    max-width: 1rem;
+    width: 100%;
+}
+.ArtistPick_cover__9utVr,
+.ArtistPick_smallCover__6NSnL {
+    width: 100%;
+}
+.ArtistPick_cover__9utVr {
+    height: 100%;
+    max-height: 4.625rem;
+    max-width: 4.625rem;
+}
+.ArtistPick_shimmerCover__HIauy {
+    height: 4.625rem;
+    width: 4.625rem;
+}

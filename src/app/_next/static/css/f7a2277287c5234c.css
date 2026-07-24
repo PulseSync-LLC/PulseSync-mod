@@ -1,0 +1,173 @@
+.LabelArtistsPage_root__smTJJ {
+    container-name: label-artists-page;
+    container-type: inline-size;
+    height: 100%;
+    position: relative;
+}
+.LabelArtistsPage_scrollContainer__alDjs.LabelArtistsPage_important__pOZpi {
+    height: 100%;
+    padding: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .LabelArtistsPage_scrollContainer__alDjs.LabelArtistsPage_important__pOZpi {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .LabelArtistsPage_shimmerScrollContainer__Znpy2 {
+        overflow-y: scroll;
+        transition: scrollbar-color 0.2s ease-in-out;
+    }
+    .LabelArtistsPage_shimmerScrollContainer__Znpy2::-webkit-scrollbar-thumb {
+        background-clip: content-box;
+        border: 0.5rem solid transparent;
+        border-radius: var(--ym-radius-size-l);
+        min-height: 3.125rem;
+    }
+    .LabelArtistsPage_shimmerScrollContainer__Znpy2::-webkit-scrollbar {
+        width: var(--ym-spacer-size-xxl);
+    }
+    .LabelArtistsPage_shimmerScrollContainer__Znpy2 {
+        --scrollbar-hidden: transparent;
+    }
+    @supports selector(scrollbar-width:auto) {
+        .LabelArtistsPage_shimmerScrollContainer__Znpy2 {
+            scrollbar-color: var(--scrollbar-hidden) transparent;
+            scrollbar-gutter: stable;
+        }
+    }
+    @supports selector(::-webkit-scrollbar) {
+        .LabelArtistsPage_shimmerScrollContainer__Znpy2::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-hidden);
+        }
+    }
+}
+@media only screen and (min-width: 768px) and (prefers-reduced-motion: reduce) {
+    .LabelArtistsPage_shimmerScrollContainer__Znpy2 {
+        transition: none;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .LabelArtistsPage_shimmerScrollContainer__Znpy2::-webkit-scrollbar-thumb {
+        border: 0.1875rem solid transparent;
+    }
+    .LabelArtistsPage_shimmerScrollContainer__Znpy2::-webkit-scrollbar {
+        width: var(--ym-spacer-size-m);
+    }
+}
+.LabelArtistsPage_footer__JU2P3 {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .LabelArtistsPage_footer__JU2P3 {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .LabelArtistsPage_footer__JU2P3 {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .LabelArtistsPage_footer__JU2P3 {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.LabelArtistsPage_item__kol2m {
+    display: flex;
+    min-width: 8.75rem;
+}
+.LabelArtistsPage_content__4hjcX {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .LabelArtistsPage_content__4hjcX {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .LabelArtistsPage_content__4hjcX {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .LabelArtistsPage_content__4hjcX {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.LabelArtistsPage_content__4hjcX {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .LabelArtistsPage_content__4hjcX {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .LabelArtistsPage_content__4hjcX {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .LabelArtistsPage_content__4hjcX {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .LabelArtistsPage_content__4hjcX {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .LabelArtistsPage_content__4hjcX {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .LabelArtistsPage_content__4hjcX {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container label-artists-page (width >= 618px) {
+        .LabelArtistsPage_content__4hjcX {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container label-artists-page (width >= 815px) {
+        .LabelArtistsPage_content__4hjcX {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container label-artists-page (width >= 1010px) {
+        .LabelArtistsPage_content__4hjcX {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container label-artists-page (width >= 1206px) {
+        .LabelArtistsPage_content__4hjcX {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .LabelArtistsPage_content__4hjcX {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+.LabelArtistsPage_shimmerTitle__hXk1g {
+    height: var(--ym-font-line-height-headline-xl);
+    width: 9.375rem;
+}

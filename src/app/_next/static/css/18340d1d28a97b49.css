@@ -1,0 +1,113 @@
+.LastEpisodes_root__4JPKj {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-m);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+@media only screen and (max-width: 767.98px) {
+    .LastEpisodes_root__4JPKj {
+        padding-block-end: var(--ym-spacer-size-xs);
+        padding-block-start: var(--ym-spacer-size-l);
+    }
+}
+.LastEpisodes_blockHeader__se7bd {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-inline-start: var(--ym-spacer-size-s);
+}
+.LastEpisodes_shimmerItem__Iirx5 {
+    height: 3.5rem;
+}
+.RelatedContent_root__Dl1Nr:not(:last-child) {
+    margin-block-end: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .RelatedContent_root__Dl1Nr:not(:last-child) {
+        margin-block-end: var(--ym-spacer-size-l);
+    }
+}
+.RelatedContent_carousel__pmv5c,
+.RelatedContent_header__527S3 {
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .RelatedContent_carousel__pmv5c,
+    .RelatedContent_header__527S3 {
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.RelatedContent_header__527S3 {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-m);
+}
+@media only screen and (max-width: 768px) {
+    .RelatedContent_header__527S3 {
+        padding-block-end: var(--ym-spacer-size-xs);
+        padding-block-start: var(--ym-spacer-size-l);
+    }
+}
+.RelatedContent_carousel__pmv5c {
+    scroll-padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .RelatedContent_carousel__pmv5c {
+        scroll-padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.PageHeaderNonMusic_meta__9DQPy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xs);
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderNonMusic_meta__9DQPy {
+        gap: var(--ym-spacer-size-xxl);
+    }
+}
+.PageHeaderNonMusic_infoNote__7xbV5 {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-xxs);
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderNonMusic_infoNote__7xbV5 {
+        border-block-end: 0.0625rem solid var(--ym-controls-color-secondary-default-disabled);
+        border-block-start: 0.0625rem solid var(--ym-controls-color-secondary-default-disabled);
+        flex-direction: column;
+        padding-block-end: var(--ym-spacer-size-l);
+        padding-block-start: var(--ym-spacer-size-l);
+    }
+}
+.PageHeaderNonMusic_infoNoteIcon__VDK7_ {
+    color: var(--ym-controls-color-primary-outline-selected_stroke);
+}
+.PageHeaderNonMusic_infoNoteText__DCQq8 {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderNonMusic_infoNoteText__DCQq8 {
+        max-width: 12.5rem;
+        text-align: center;
+    }
+}
+.PageHeaderNonMusic_plusPaywallButton__O7Tx_ {
+    order: 1;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderNonMusic_plusPaywallButton__O7Tx_ {
+        order: 2;
+    }
+}
+.PageHeaderNonMusic_booksLogo__4_TgU {
+    height: 0.875rem;
+    inset-block-start: -0.03125rem;
+    position: relative;
+    width: 6.25rem;
+}
+.PageHeaderNonMusic_controlsBlock__jta99 {
+    display: flex;
+    flex-direction: column;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderNonMusic_controlsBlock__jta99 {
+        flex-direction: column-reverse;
+    }
+}

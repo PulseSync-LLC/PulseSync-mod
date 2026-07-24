@@ -1,0 +1,38 @@
+.GenresPage_root__LhP_S {
+    padding: 0;
+    position: relative;
+}
+.GenresPage_shimmerTitle__4j8uH {
+    height: var(--ym-font-line-height-headline-xl);
+    width: 9.375rem;
+}
+.GenresPage_content__yhKrQ {
+    height: calc(100% - var(--subpage-sticky-header-height));
+    padding: 0;
+}
+.GenresPage_list__l2Cuc {
+    column-count: 3;
+    column-gap: var(--ym-spacer-size-xxxxl);
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-block-end: var(--ym-spacer-size-xxxxl);
+    padding-inline-end: var(--ym-spacer-size-xxxxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 1279.98px) {
+    .GenresPage_list__l2Cuc {
+        column-count: 2;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .GenresPage_list__l2Cuc {
+        column-count: 1;
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.GenresPage_genreShimmer__1x3bp {
+    display: block;
+    height: var(--ym-font-line-height-headline-m);
+    margin-block-end: var(--ym-spacer-size-l);
+    width: 100%;
+}

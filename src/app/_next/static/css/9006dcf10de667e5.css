@@ -1,0 +1,128 @@
+.CollectionKidsAlbumsPage_root__Fjk4C {
+    container-name: artist-albums-page;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+.CollectionKidsAlbumsPage_scrollContainer__OWiCy.CollectionKidsAlbumsPage_important__1ghiQ {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionKidsAlbumsPage_scrollContainer__OWiCy.CollectionKidsAlbumsPage_important__1ghiQ {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+.CollectionKidsAlbumsPage_footer__9niUH {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionKidsAlbumsPage_footer__9niUH {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionKidsAlbumsPage_footer__9niUH {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionKidsAlbumsPage_footer__9niUH {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionKidsAlbumsPage_item__A5TuB {
+    display: flex;
+    min-width: 8.75rem;
+}
+.CollectionKidsAlbumsPage_content__6w_jh {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .CollectionKidsAlbumsPage_content__6w_jh {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionKidsAlbumsPage_content__6w_jh {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .CollectionKidsAlbumsPage_content__6w_jh {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.CollectionKidsAlbumsPage_content__6w_jh {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 360px) {
+    .CollectionKidsAlbumsPage_content__6w_jh {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media only screen and (min-width: 500px) {
+    .CollectionKidsAlbumsPage_content__6w_jh {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 768px) {
+    .CollectionKidsAlbumsPage_content__6w_jh {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width: 890px) {
+    .CollectionKidsAlbumsPage_content__6w_jh {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media only screen and (min-width: 960px) {
+    .CollectionKidsAlbumsPage_content__6w_jh {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1920px) {
+    .CollectionKidsAlbumsPage_content__6w_jh {
+        --min-column-size: 10.75rem;
+        grid-template-columns: repeat(2, minmax(10.75rem, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(var(--min-column-size), 1fr)) !important;
+    }
+    @container artist-albums-page (width >= 618px) {
+        .CollectionKidsAlbumsPage_content__6w_jh {
+            grid-template-columns: repeat(3, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container artist-albums-page (width >= 815px) {
+        .CollectionKidsAlbumsPage_content__6w_jh {
+            grid-template-columns: repeat(4, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container artist-albums-page (width >= 1010px) {
+        .CollectionKidsAlbumsPage_content__6w_jh {
+            grid-template-columns: repeat(5, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+    @container artist-albums-page (width >= 1206px) {
+        .CollectionKidsAlbumsPage_content__6w_jh {
+            grid-template-columns: repeat(6, minmax(var(--min-column-size), 1fr)) !important;
+        }
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .CollectionKidsAlbumsPage_content__6w_jh {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}

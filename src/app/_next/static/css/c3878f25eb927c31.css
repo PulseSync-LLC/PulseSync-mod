@@ -1,0 +1,86 @@
+.ArtistClipsPage_root__3efVS {
+    container-name: artist-clips-page;
+    container-type: inline-size;
+    height: 100%;
+    padding: 0;
+    position: relative;
+}
+.ArtistClipsPage_scrollContainer___2pJZ.ArtistClipsPage_important__UBPcN {
+    height: 100%;
+    padding-inline-start: 0;
+}
+@media only screen and (max-width: 767.98px) {
+    .ArtistClipsPage_scrollContainer___2pJZ.ArtistClipsPage_important__UBPcN {
+        height: auto;
+        padding-block-start: var(--subpage-sticky-header-height);
+    }
+}
+.ArtistClipsPage_footer__mhu_A {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .ArtistClipsPage_footer__mhu_A {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ArtistClipsPage_footer__mhu_A {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .ArtistClipsPage_footer__mhu_A {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.ArtistClipsPage_item__fonRp {
+    display: flex;
+}
+.ArtistClipsPage_content__GFs51 {
+    margin-block-start: var(--subpage-sticky-header-height);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .ArtistClipsPage_content__GFs51 {
+        padding-inline-end: var(--ym-spacer-size-xxl);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ArtistClipsPage_content__GFs51 {
+        margin-block-start: 0;
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+    @supports (-moz-appearance: none) {
+        .ArtistClipsPage_content__GFs51 {
+            padding-inline-end: var(--ym-spacer-size-l);
+        }
+    }
+}
+.ArtistClipsPage_content__GFs51 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: min-content;
+    grid-gap: var(--ym-spacer-size-m);
+    gap: var(--ym-spacer-size-m);
+}
+@media only screen and (min-width: 960px) {
+    .ArtistClipsPage_content__GFs51 {
+        gap: calc(var(--ym-spacer-size-m) * 2);
+    }
+}
+@media only screen and (min-width: 1200px) {
+    .ArtistClipsPage_content__GFs51 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .ArtistClipsPage_content__GFs51 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
