@@ -229,7 +229,35 @@
                 H = i(83755),
                 W = i(25160),
                 F = i(4820),
-                V = i(77712);
+                V = i(77712),
+                pulseSyncMst = i(60754);
+            let pulseSyncDownloadAlbumToFile = (0, s.PA)((e) => {
+                let { album: t } = e,
+                    i = (0, a.useCallback)(async () => {
+                        try {
+                            let { albumResource: e, modelActionsLogger: i } = (0, pulseSyncMst._$)(t),
+                                r = await e.getAlbumWithTracksIds({ albumId: t.id, resumeStream: !1 }),
+                                s = (r?.volumes || [])
+                                    .flat()
+                                    .map((e) => (e?.id ? ''.concat(e.id, ':').concat(t.id) : null))
+                                    .filter(Boolean),
+                                a = Array.isArray(t.artists) ? t.artists.map((e) => e.name).filter(Boolean).join(', ') : t.artistName,
+                                n = [t.title];
+                            ['album', 'single'].includes(t.type ?? 'album') && a && n.unshift(a),
+                                s.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', s, t.type ?? 'album', n.join(' — '));
+                        } catch (e) {
+                            try {
+                                (0, pulseSyncMst._$)(t).modelActionsLogger.error(e);
+                            } catch {}
+                        }
+                    }, [t]);
+                return (0, r.jsx)(u.Dr, {
+                    onClick: i,
+                    disabled: !t?.id,
+                    icon: (0, r.jsx)(R.I, { variant: 'download', size: 'xxs' }),
+                    children: 'Скачать в файл',
+                });
+            });
             let $ = (0, s.PA)((e) => {
                 var t, i;
                 let { album: s, children: P, onOpenChange: R, open: $, wrapperClassName: G, variant: Y, ...J } = e,
@@ -318,6 +346,7 @@
                         ey,
                         ej,
                         eT,
+                        (0, r.jsx)(pulseSyncDownloadAlbumToFile, { album: s }),
                         P,
                         eo && (0, r.jsx)(z, { onClick: eh, isFinished: s.listeningFinished }),
                         (0, r.jsx)(D.H, { shareLink: ev, entityMeta: eS }),

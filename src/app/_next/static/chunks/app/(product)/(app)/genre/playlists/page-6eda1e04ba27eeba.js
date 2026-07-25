@@ -1223,6 +1223,7 @@
                 m = i(6752),
                 _ = i(14934),
                 p = i(82586),
+                pulseSyncPlaylistDownloadIcons = i(82586),
                 h = i(86269),
                 v = i(71926),
                 x = i(41677),
@@ -1293,6 +1294,12 @@
                         j && (0, r.jsx)(Y.d, { entityVariant: W.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : P }),
                         !p && (0, r.jsx)(X.L, { onClick: f, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, r.jsx)($.T, { onClick: x, isLiked: i.isLiked, disabled: !v.isAuthorized }),
+                        (i.tracksCount ?? 1) > 0 &&
+                            (0, r.jsx)(B.Dr, {
+                                onClick: i.downloadToFile,
+                                icon: (0, r.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: 'download', size: 'xxs' }),
+                                children: 'Скачать в файл',
+                            }),
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, r.jsx)(G.N, { onClick: L, disabled: !i.isAvailable }),
                     ],
                 });

@@ -2103,6 +2103,7 @@
                 W = i(79406),
                 q = i(58237),
                 X = i(56367),
+                pulseSyncPlaylistDownloadIcons = i(82586),
                 Y = i(83755);
             let G = (0, n.PA)((e) => {
                 var t;
@@ -2139,6 +2140,12 @@
                         j && (0, r.jsx)(K.d, { entityVariant: $.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : N }),
                         !v && (0, r.jsx)(X.L, { onClick: g, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, r.jsx)(q.T, { onClick: h, isLiked: i.isLiked, disabled: !C.isAuthorized }),
+                        (i.tracksCount ?? 1) > 0 &&
+                            (0, r.jsx)(z.Dr, {
+                                onClick: i.downloadToFile,
+                                icon: (0, r.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: 'download', size: 'xxs' }),
+                                children: 'Скачать в файл',
+                            }),
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, r.jsx)(Y.N, { onClick: L, disabled: !i.isAvailable }),
                     ],
                 });

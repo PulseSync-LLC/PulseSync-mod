@@ -717,6 +717,19 @@
                         }
                         return (e.visibility = s), u.F.ERROR;
                     }),
+                    downloadToFile: (0, r.L3)(function* () {
+                        if (!(0, r._n)(e)) return;
+                        let { usersResource: i, modelActionsLogger: t } = (0, r._$)(e);
+                        try {
+                            let { tracks: r = [] } = yield i.getPlaylistWithTracksIds({ userId: String(e.uid), playlistKind: e.kind, resumeStream: !1 }),
+                                n = r
+                                    .map((e) => (null == e?.id ? null : e.albumId ? ''.concat(e.id, ':').concat(e.albumId) : String(e.id)))
+                                    .filter(Boolean);
+                            n.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', n, 'playlist', e.title || '');
+                        } catch (e) {
+                            t.error(e);
+                        }
+                    }),
                     getKey: (i) => ''.concat(i, '_').concat(e.id),
                 }));
         },

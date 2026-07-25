@@ -1431,6 +1431,7 @@
                 _ = i(6752),
                 m = i(14934),
                 p = i(82586),
+                pulseSyncPlaylistDownloadIcons = i(82586),
                 h = i(86269),
                 g = i(71926),
                 x = i(41677),
@@ -1501,6 +1502,12 @@
                         L && (0, s.jsx)(B.d, { entityVariant: $.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : j }),
                         !p && (0, s.jsx)(X.L, { onClick: f, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, s.jsx)(V.T, { onClick: x, isLiked: i.isLiked, disabled: !g.isAuthorized }),
+                        (i.tracksCount ?? 1) > 0 &&
+                            (0, s.jsx)(D.Dr, {
+                                onClick: i.downloadToFile,
+                                icon: (0, s.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: 'download', size: 'xxs' }),
+                                children: 'Скачать в файл',
+                            }),
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, s.jsx)(G.N, { onClick: P, disabled: !i.isAvailable }),
                     ],
                 });
