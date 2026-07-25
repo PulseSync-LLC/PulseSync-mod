@@ -2995,7 +2995,7 @@
                                           children: el,
                                       });
                         }),
-                        eA = k.hasPlus && !h && l.isFavouritePlaylist && l.isOwnPlaylist,
+                        eA = k.hasPlus && !h, // && o.isFavouritePlaylist && o.isOwnPlaylist Add download button to all playlists,
                         ex = (0, s.useMemo)(
                             () =>
                                 (0, r.jsxs)('div', {

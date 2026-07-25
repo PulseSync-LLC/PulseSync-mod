@@ -132,39 +132,7 @@
                 }),
                 P = (0, l.forwardRef)((e, t) => (0, i.jsx)(S, { forwardRef: t, ...e })),
                 j = { enter: m().enter, enterActive: m().enter_active, enterDone: m().enter_done, exit: m().exit, exitActive: m().exit_active, exitDone: m().exit_done },
-                I = (0, r.PA)((e) => {
-                    let { isIntersecting: t = !0, className: n } = e,
-                        r = (0, l.useRef)(null),
-                        v = (0, l.useRef)(null),
-                        [m, p] = (0, l.useState)(!1),
-                        { settings: g } = (0, c.g)();
-                    (0, f.f)();
-                    let E = (0, s.c)(() => {
-                        p('visible' === document.visibilityState);
-                    });
-                    (0, l.useEffect)(
-                        () => (
-                            E(),
-                            document.addEventListener('visibilitychange', E),
-                            () => {
-                                document.removeEventListener('visibilitychange', E);
-                            }
-                        ),
-                        [E],
-                    );
-                    let b = g.isLiteVersionModeEnabled,
-                        { isFallback: h, vibeAnimationState: x } = (0, d.I)({ isEnabled: m && t }),
-                        y = h || b || 'undefined' == typeof Worker,
-                        A = (0, u.L)(() =>
-                            y
-                                ? (0, i.jsx)(_.VibeFallbackAnimation, { ref: v, className: n })
-                                : (0, i.jsx)(P, { ref: r, vibeAnimationState: x, isIntersecting: m && t, className: n }),
-                        );
-                    return (0, i.jsx)(a.A, {
-                        mode: 'out-in',
-                        children: (0, i.jsx)(o.A, { nodeRef: y ? v : r, timeout: 1e3, appear: !0, classNames: j, children: A }, y ? 'fallback' : 'shader'),
-                    });
-                });
+                I = () => null;
         },
         38248: (e, t, n) => {
             'use strict';

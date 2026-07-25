@@ -9262,6 +9262,21 @@
                     overwrittenExperimentsModal: rw.q,
                     buySubscriptionModal: rw.q,
                     clearMemoryModal: rw.q,
+                    windowSettingsModal: rw.q,
+                    playerSettingsModal: rw.q,
+                    audioSettingsModal: rw.q,
+                    myVibeAnimationPerformanceSettingsModal: rw.q,
+                    myVibeAnimationAppearanceSettingsModal: rw.q,
+                    appUpdatesSettingsModal: rw.q,
+                    scrobblersSettingsModal: rw.q,
+                    downloaderSettingsModal: rw.q,
+                    systemSettingsModal: rw.q,
+                    globalShortcutsSettingsModal: rw.q,
+                    myVibeParamsSettingsModal: rw.q,
+                    miniPlayerSettingsModal: rw.q,
+                    ynisonSettingsModal: rw.q,
+                    lrclibSettingsModal: rw.q,
+                    discordRpcSettingsModal: rw.q,
                     imageSliderModal: nL,
                     promoLandingBuySubscriptionModal: rw.q,
                     artistAboutModal: nI,
@@ -13436,8 +13451,9 @@
                             getExperiment(a) {
                                 var i;
                                 let l = e.experiments[a],
-                                    r = t.getOverwrittenExperiments();
-                                return r && null != (i = r[a]) ? i : l;
+                                    r = t.getOverwrittenExperiments(),
+                                    s = e.overwrittenExperiments;
+                                return (null == s ? void 0 : s[a]) ?? (null == r ? void 0 : r[a]) ?? window?.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES?.()?.[a] ?? l;
                             },
                             isExperimentActive(e) {
                                 var a, i;
@@ -14472,6 +14488,21 @@
                         buySubscriptionModal: { isOpened: !0 },
                         promoLandingBuySubscriptionModal: {},
                         clearMemoryModal: {},
+                        windowSettingsModal: {},
+                        playerSettingsModal: {},
+                        audioSettingsModal: {},
+                        myVibeAnimationPerformanceSettingsModal: {},
+                        myVibeAnimationAppearanceSettingsModal: {},
+                        appUpdatesSettingsModal: {},
+                        scrobblersSettingsModal: {},
+                        downloaderSettingsModal: {},
+                        systemSettingsModal: {},
+                        globalShortcutsSettingsModal: {},
+                        myVibeParamsSettingsModal: {},
+                        miniPlayerSettingsModal: {},
+                        ynisonSettingsModal: {},
+                        lrclibSettingsModal: {},
+                        discordRpcSettingsModal: {},
                         imageSliderModal: { modal: {} },
                         artistAboutModal: { loadingState: ev.G.IDLE, modal: {} },
                         bestRecommedationModal: {},

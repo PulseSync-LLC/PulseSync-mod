@@ -238,8 +238,21 @@
                             rmsAlt = I.analyser.getRMSAlt(),
                             energy = ((rms + rmsAlt) / 2) * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
                             energyNormalized = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? energy : (w?.entityMeta?.trackParameters?.energy ?? 1);
-                        null == c || c.updateEnergy(energyNormalized),
+                            null == c || c.updateEnergy(energyNormalized),
                             null == c || c.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != i ? i : 0 });
+                        try {
+                            window.dispatchEvent(
+                                new CustomEvent('vibe:energy', {
+                                    detail: {
+                                        energy: energyNormalized,
+                                        rms: rms,
+                                        bands: { low: e ?? 0, middle: t ?? 0, high: n ?? 0 },
+                                        dynamic: !!window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.(),
+                                        ts: Date.now(),
+                                    },
+                                }),
+                            );
+                        } catch {}
                     });
                     (0, a.useEffect)(() => {
                         var a, s;

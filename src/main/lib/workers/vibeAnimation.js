@@ -2691,7 +2691,7 @@
         height = 0;
         shaderOptions;
         constructor(t, e) {
-            ((this.shaderOptions = e), (this.color = new gt(t)), this.updateSize());
+            (this.shaderOptions = e), (this.color = new gt(t)), this.updateSize();
         }
         switchToDefaultHue(t) {
             this.color.switchToDefaultHue(t);
@@ -2710,7 +2710,7 @@
         }
         updateSize() {
             const { width: t, height: e } = this.getDimensions();
-            ((this.width = t), (this.height = e));
+            (this.width = t), (this.height = e);
         }
         updatePlayingState(t) {
             t ? this.audioRatio.update(1) : this.audioRatio.update(0);
@@ -2756,7 +2756,7 @@
             return s;
         }
         update(t) {
-            (this.energy.next(t),
+            this.energy.next(t),
                 this.color.next(t),
                 this.reactTop.next(t),
                 this.reactMiddle.next(t),
@@ -2766,7 +2766,7 @@
                     (this.audioRatio.next(t),
                     (this.audioLow = this.getUpdatedAudioParam(this.audioLow, this.audioFrequencies.low) * this.audioRatio.value),
                     (this.audioMiddle = this.getUpdatedAudioParam(this.audioMiddle, this.audioFrequencies.middle) * this.audioRatio.value),
-                    (this.audioHigh = this.getUpdatedAudioParam(this.audioHigh, this.audioFrequencies.high) * this.audioRatio.value)));
+                    (this.audioHigh = this.getUpdatedAudioParam(this.audioHigh, this.audioFrequencies.high) * this.audioRatio.value));
         }
         get fragmentScale() {
             return this.isMobile ? this.baseScale * this.shaderOptions.canvasSize.mobileScale : this.baseScale * this.shaderOptions.canvasSize.desktopScale;
