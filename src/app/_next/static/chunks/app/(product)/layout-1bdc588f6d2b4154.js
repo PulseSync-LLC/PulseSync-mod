@@ -2173,7 +2173,7 @@
                             (0, r.jsx)(L, {}),
                             (0, r.jsx)(F, {}),
                             (0, r.jsx)(B, { togglePanel: t }),
-                            (0, r.jsx)(f, { isActive: a, onToggle: i }),
+                            // (0, r.jsx)(f, { isActive: a, onToggle: i }),
                         ],
                     });
                 },
