@@ -503,6 +503,14 @@
                         R.setIsApplying(!0), N ? (await U(e), await B(!0)) : await F(e), R.setIsApplying(!1);
                     }),
                     applySetting: X,
+                    playSeeds: (0, c.c)(async (e) => {
+                        let t = Array.isArray(e) && e.length > 0 ? e : w;
+                        if (k || !I.isAuthorized) {
+                            null == x || x();
+                            return;
+                        }
+                        R.setIsApplying(!0), N ? (await U(t), await B(!0)) : await F(t), R.setIsApplying(!1);
+                    }),
                 };
             };
         },

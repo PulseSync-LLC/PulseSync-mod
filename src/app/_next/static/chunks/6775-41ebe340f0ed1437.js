@@ -2584,6 +2584,7 @@
                         (e.KIDS = 'KIDS'),
                         (e.COLLECTION = 'COLLECTION'),
                         (e.PLUS = 'PLUS'),
+                        (e.SETTINGS = 'SETTINGS'),
                         e
                     );
                 })({}),

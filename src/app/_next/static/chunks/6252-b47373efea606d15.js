@@ -115,7 +115,8 @@
                     (e.AGE_16_ICON = 'age16Icon'),
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
-                    (e.EXCLAMATION_ICON = 'exclamationIcon');
+                    (e.EXCLAMATION_ICON = 'exclamationIcon'),
+                    (e.SUBSTITUTED_ICON = 'substitutedIcon');
             })(r || (r = {}));
             let d = (e) => {
                     let t = [];

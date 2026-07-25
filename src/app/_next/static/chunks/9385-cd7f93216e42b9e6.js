@@ -13462,13 +13462,16 @@
                             checkExperiment(t, a) {
                                 let i = e.experiments[t],
                                     { containerStorage: l, clientSafeConfig: r } = (0, f._$)(e);
+
                                 return ((e, t) => {
-                                    var a;
                                     let { containerStorage: i, name: l, value: r, experimentDetail: s } = e,
-                                        n = g3(i, t);
-                                    if (!n) return (null == s ? void 0 : s.group) === r;
-                                    let o = null == (a = n[l]) ? void 0 : a.group;
-                                    return o ? o === r : (null == s ? void 0 : s.group) === r;
+                                        n = g3(i, t),
+                                        o = typeof window !== 'undefined' ? window.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES?.() : void 0;
+
+                                    if (!n && !o) return (null == s ? void 0 : s.group) === r;
+
+                                    let c = n?.[l]?.group;
+                                    return (c ?? o?.[l] ?? (null == s ? void 0 : s.group)) === r;
                                 })({ containerStorage: l, name: t, value: a, experimentDetail: i }, r.get(g1.yc));
                             },
                             isRejected: () => e.loadingState === ev.G.REJECT,
