@@ -1631,7 +1631,7 @@
                         Y = (0, x.c)(() => {
                             l.showFullscreenPlayerModal(), w({ to: eJ.QT.PlayerScreen });
                         }),
-                        $ = (0, y.L)(() => (r.isGenerativeContext ? (null == B ? void 0 : B.coverUri) || t_ : (null == n ? void 0 : n.coverUri) || t_)),
+                        $ = (0, y.L)(() => (null == B ? void 0 : B.coverUri) || (null == n ? void 0 : n.coverUri) || t_),
                         Q = (0, x.c)(() => {
                             w({ to: eJ.QT.AlbumScreen });
                         }),
@@ -1900,6 +1900,16 @@
                                 trackAlbumId: T.albumId,
                             };
                     }),
+                    pulseSyncTrackDownloadName = (0, y.L)(() => {
+                        let e = (T?.artists || [])
+                            .map((e) => e.name)
+                            .filter(Boolean)
+                            .join(', ');
+                        return [e, T?.title].filter(Boolean).join(' — ');
+                    }),
+                    pulseSyncDownloadTrackToFile = (0, x.c)(() => {
+                        T?.id && window.desktopEvents?.send?.('DOWNLOAD_TRACK', T.id, pulseSyncTrackDownloadName), S();
+                    }),
                     ed = ''.concat(C({ id: 'interface-actions.open-sync-lyrics' }), ' ').concat(C({ id: 'warning-messages.can-break-accessibility' })),
                     eu = (0, y.L)(() => {
                         let e = [];
@@ -1932,7 +1942,19 @@
                         let e = [];
                         if (T) {
                             var t, i, n, a, r;
-                            e.push((0, c.jsx)(tC.$, { track: T }, 'add-to-playlist')),
+                            e.push(
+                                (0, c.jsx)(
+                                    tg.Dr,
+                                    {
+                                        onClick: pulseSyncDownloadTrackToFile,
+                                        disabled: !T.id,
+                                        icon: (0, c.jsx)(G.I, { variant: 'download', size: 'xxs' }),
+                                        children: 'Скачать в файл',
+                                    },
+                                    'download-to-file',
+                                ),
+                            ),
+                                e.push((0, c.jsx)(tC.$, { track: T }, 'add-to-playlist')),
                                 eo && T.isNonUserGenerated && e.push((0, c.jsx)(tw.H, { shareLink: er, entityMeta: eo }, 'share')),
                                 T.isNonUserGenerated &&
                                     T.isTrackMusic &&

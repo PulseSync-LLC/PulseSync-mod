@@ -2177,6 +2177,19 @@
                         }
                         return (e.visibility = s), c.F.ERROR;
                     }),
+                    downloadToFile: (0, r.L3)(function* () {
+                        if (!(0, r._n)(e)) return;
+                        let { usersResource: t, modelActionsLogger: i } = (0, r._$)(e);
+                        try {
+                            let { tracks: r = [] } = yield t.getPlaylistWithTracksIds({ userId: String(e.uid), playlistKind: e.kind, resumeStream: !1 }),
+                                a = r
+                                    .map((e) => (null == e?.id ? null : e.albumId ? ''.concat(e.id, ':').concat(e.albumId) : String(e.id)))
+                                    .filter(Boolean);
+                            a.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', a, 'playlist', e.title || '');
+                        } catch (e) {
+                            i.error(e);
+                        }
+                    }),
                     getKey: (t) => ''.concat(t, '_').concat(e.id),
                 }));
         },
@@ -2340,6 +2353,7 @@
                 g = i(6752),
                 _ = i(14934),
                 m = i(82586),
+                pulseSyncPlaylistDownloadIcons = i(82586),
                 p = i(86269),
                 h = i(71926),
                 v = i(41677),
@@ -2410,6 +2424,12 @@
                         P && (0, r.jsx)(H.d, { entityVariant: W.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : A }),
                         !m && (0, r.jsx)(V.L, { onClick: S, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, r.jsx)(X.T, { onClick: v, isLiked: i.isLiked, disabled: !h.isAuthorized }),
+                        (i.tracksCount ?? 1) > 0 &&
+                            (0, r.jsx)(U.Dr, {
+                                onClick: i.downloadToFile,
+                                icon: (0, r.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: 'download', size: 'xxs' }),
+                                children: 'Скачать в файл',
+                            }),
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, r.jsx)($.N, { onClick: R, disabled: !i.isAvailable }),
                     ],
                 });
