@@ -2705,6 +2705,18 @@
                                 isEnabled: !0,
                                 analyticsParams: { to: eg.QT.CollectionLandingScreen, entityType: eg.LA.Collection },
                             }),
+                        e.isAuthorized &&
+                            i.push({
+                                icon: 'settingsGear',
+                                iconSelected: 'settingsGear',
+                                iconNewVersion: 'settingsGear',
+                                iconNewVersionSelected: 'settingsGear',
+                                id: ez.SETTINGS,
+                                path: F.Z.settings.href,
+                                availablePaths: [F.Z.settings.href],
+                                isEnabled: !0,
+                                analyticsParams: { to: eg.QT.SettingsScreen, entityType: eg.LA.Profile },
+                            }),
                         t.checkExperiment(K.z.WebNextDisablePlus, 'on') || t.checkExperiment(K.z.WebNextPlusOptionsMarketplace, 'on'),
                         i
                     );
@@ -4345,6 +4357,7 @@
                                 [ez.KIDS]: h({ id: 'kids.for-kids' }),
                                 [ez.CONCERTS]: h({ id: 'entity-names.concerts' }),
                                 [ez.PLUS]: h({ id: 'navigation.page-plus' }),
+                                [ez.SETTINGS]: h({ id: 'page.settings' }),
                             }),
                             [h, Z],
                         ),
@@ -4357,7 +4370,7 @@
                                     eP,
                                     {
                                         className: (0, p.$)({ [at().navigationGroup]: Z }),
-                                        children: D.map((e) => {
+                                        children: D.filter((e) => e.id !== ez.SETTINGS).map((e) => {
                                             let t = _(e.availablePaths),
                                                 a = e.id === ez.COLLECTION && !!Q && e.isEnabled,
                                                 i = ec(e.analyticsParams.entityType, e.analyticsParams.to),
@@ -4424,6 +4437,81 @@
                                 ),
                             [_, l, f, f.loadingState, d, ed, D, ec, eo, Q, J],
                         ),
+                        eSettings = (0, b.useMemo)(() => {
+                            let e = D.find((e) => e.id === ez.SETTINGS);
+
+                            if (!e) return null;
+
+                            let t = _(e.availablePaths),
+                                a = ec(e.analyticsParams.entityType, e.analyticsParams.to),
+                                i = e.isEnabled && !t;
+
+                            return (0, m.jsx)(ek, {
+                                className: (0, p.$)(at().navigation, {
+                                    [at().navigation_new]: Z,
+                                    [at().navigation_gapFill]: !1,
+                                }),
+                                collapsed: l,
+                                'aria-label': ed[e.id],
+                                children: (0, m.jsx)(eP, {
+                                    className: (0, p.$)({
+                                        [at().navigationGroup]: Z,
+                                    }),
+                                    children: (0, m.jsx)(e7, {
+                                        config: e.onboardingConfig,
+                                        children: (0, m.jsx)(ew, {
+                                            'data-intersection-property-id': eU.N,
+                                            selected: t,
+                                            shownAnimation: d,
+                                            variant: 'main',
+                                            isNewVisualVersion: Z,
+                                            withRipple: Z && e.isEnabled && !t,
+                                            children: (0, m.jsxs)(eq.N, {
+                                                href: i ? e.path : void 0,
+                                                role: 'link',
+                                                'aria-disabled': !e.isEnabled,
+                                                tabIndex: e.isEnabled ? 0 : -1,
+                                                className: (0, p.$)({
+                                                    [at().disabledNavigationItem]: !e.isEnabled,
+                                                }),
+                                                onClick: a,
+                                                'data-test-id': eX[e.id],
+                                                children: [
+                                                    (0, m.jsxs)(B.m_, {
+                                                        ...e0,
+                                                        enabled: l,
+                                                        children: [
+                                                            eo(e, t),
+                                                            (0, m.jsx)(B.ZI, {
+                                                                children: (0, m.jsx)(I.HL, {
+                                                                    variant: 'span',
+                                                                    type: 'text',
+                                                                    size: 's',
+                                                                    weight: 'medium',
+                                                                    children: ed[e.id],
+                                                                }),
+                                                            }),
+                                                        ],
+                                                    }),
+                                                    (0, m.jsx)(I.HL, {
+                                                        variant: 'span',
+                                                        type: 'controls',
+                                                        size: 'm',
+                                                        weight: 'medium',
+                                                        lineClamp: 1,
+                                                        className: (0, p.$)({
+                                                            [at().title_animate]: d,
+                                                            [at().title_collapsed]: l,
+                                                        }),
+                                                        children: ed[e.id],
+                                                    }),
+                                                ],
+                                            }),
+                                        }),
+                                    }),
+                                }),
+                            });
+                        }, [_, l, d, ed, D, ec, eo, Z]),
                         e_ = (0, b.useMemo)(
                             () =>
                                 u
@@ -4496,6 +4584,7 @@
                                     ],
                                 }),
                             }),
+                            eSettings,
                             (0, m.jsx)(aZ, { withUserProfileAnimation: d, isCollapsed: l }),
                             ei &&
                                 null !== ee &&
@@ -4556,12 +4645,15 @@
                                 [ez.NON_MUSIC]: n({ id: 'entity-names.podcasts-and-books' }),
                                 [ez.KIDS]: n({ id: 'kids.for-kids' }),
                                 [ez.CONCERTS]: n({ id: 'entity-names.concerts' }),
+                                [ez.SETTINGS]: n({ id: 'page.settings' }),
                             }),
                             [n, l],
                         ),
                         c = (0, b.useCallback)(
                             (e, t) =>
-                                e.id === ez.CONCERTS && a.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
+                                e.id === ez.SETTINGS
+                                    ? (0, m.jsx)(E.I, { variant: 'settingsGear', size: 'xs' })
+                                    : e.id === ez.CONCERTS && a.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
                                     ? (0, m.jsx)(t8, { isSelected: t || l })
                                     : l
                                       ? (0, m.jsx)(E.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
@@ -4580,7 +4672,7 @@
                             children: (0, m.jsx)(eP, {
                                 children: (0, m.jsxs)(m.Fragment, {
                                     children: [
-                                        r.map((e) => {
+                                        r.filter((e) => e.id !== ez.SETTINGS).map((e) => {
                                             let t = i(e.availablePaths);
                                             return (0, m.jsx)(
                                                 e7,

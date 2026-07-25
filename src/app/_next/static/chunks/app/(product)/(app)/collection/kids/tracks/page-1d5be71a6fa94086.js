@@ -236,14 +236,48 @@
                     enabled: S,
                     children: (0, r.jsx)('span', {
                         className: p,
-                        children: (0, r.jsx)(u.I, {
-                            className: (0, a.$)(h().explicitMark, t),
-                            'aria-label': T,
-                            variant: C,
-                            size: v,
-                            ...g,
-                            'data-test-id': c.S7.EXPLICIT_MARK_ICON,
-                        }),
+                        children:
+                            x === o.JU.SUBSTITUTED
+                                ? (0, r.jsxs)('svg', {
+                                    className: (0, a.$)(h().explicitMark, t),
+                                    viewBox: '0 0 16 16',
+                                    role: 'img',
+                                    'aria-label': T,
+                                    style: {
+                                        width: 'var(--ym-icon-size-'.concat(v, ')'),
+                                        height: 'var(--ym-icon-size-'.concat(v, ')'),
+                                    },
+                                    ...g,
+                                    'data-test-id': c.S7.EXPLICIT_MARK_ICON,
+                                    children: [
+                                        (0, r.jsx)('circle', {
+                                            cx: '8',
+                                            cy: '8',
+                                            r: '5.5',
+                                            fill: 'none',
+                                            stroke: 'currentColor',
+                                            strokeWidth: '1.5',
+                                        }),
+                                        (0, r.jsx)('text', {
+                                            x: '8',
+                                            y: '9',
+                                            fill: 'currentColor',
+                                            fontSize: '7',
+                                            fontWeight: '700',
+                                            textAnchor: 'middle',
+                                            dominantBaseline: 'middle',
+                                            children: 'S',
+                                        }),
+                                    ],
+                                })
+                                : (0, r.jsx)(u.I, {
+                                    className: (0, a.$)(h().explicitMark, t),
+                                    'aria-label': T,
+                                    variant: C,
+                                    size: v,
+                                    ...g,
+                                    'data-test-id': c.S7.EXPLICIT_MARK_ICON,
+                                }),
                     }),
                 });
             });

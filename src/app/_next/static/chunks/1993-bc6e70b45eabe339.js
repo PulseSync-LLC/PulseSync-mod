@@ -339,6 +339,7 @@
                 });
             var h = r(378),
                 v = r(5240),
+                Tooltip = r(60244),
                 x = r.n(v);
             let S = (e) => {
                     let { minValue: t, maxValue: r, className: o, label: l, isDisabled: n, onChange: s, value: d, ...c } = e;
@@ -484,20 +485,31 @@
                                                                 f,
                                                             ),
                                                             r = Math.round(10 * e.value) / 10;
-                                                        return (0, a.jsx)(
-                                                            S,
-                                                            {
-                                                                isDisabled: E,
-                                                                minValue: -12,
-                                                                maxValue: 12,
-                                                                value: e.value,
-                                                                label: t,
-                                                                onChange: D(e.key),
-                                                                'aria-label': f({ id: 'equalizer.slider-frequency-label' }, { label: t, value: r }),
-                                                                'data-test-id': u.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER,
-                                                            },
-                                                            t,
-                                                        );
+                                                        return (0, a.jsx)(Tooltip.k, {
+                                                            title: `${(r ?? 0).toFixed(1)} dB`,
+                                                            children: (0, a.jsx)('div', {
+                                                                onWheel: (evt) => {
+                                                                    const delta = (evt.deltaY / 1000) * -1;
+                                                                    if (r === undefined) return;
+                                                                    let value = (parseFloat(r) + parseFloat(delta)).toFixed(1);
+                                                                    D(e.key)(Math.min(Math.max(value, -12), 12));
+                                                                },
+                                                                children: (0, a.jsx)(
+                                                                    S,
+                                                                    {
+                                                                        isDisabled: E,
+                                                                        minValue: -12,
+                                                                        maxValue: 12,
+                                                                        value: e.value,
+                                                                        label: t,
+                                                                        onChange: D(e.key),
+                                                                        'aria-label': f({ id: 'equalizer.slider-frequency-label' }, { label: t, value: r }),
+                                                                        'data-test-id': u.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER,
+                                                                    },
+                                                                    t,
+                                                                ),
+                                                            }),
+                                                        });
                                                     }),
                                                 }),
                                             ],

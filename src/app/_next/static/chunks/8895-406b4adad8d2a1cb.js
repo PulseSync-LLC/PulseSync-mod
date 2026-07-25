@@ -4593,6 +4593,9 @@
                         k = (0, ni.l)({ mainObjectType: eJ.ky.Track }),
                         { resetContext: I } = (0, U.B)({ seeds: [em.M1], pageIdForFrom: C, blockIdForFrom: ''.concat(eJ.LA.MyWave, '-').concat(eR.U.RADIO) }),
                         { isEnabled: P } = (0, tc.e)(),
+                        [swapVibeAnimationAndWheel, setSwapVibeAnimationAndWheel] = (0, v.useState)(
+                            window?.nativeSettings?.get('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel') ?? false,
+                        ),
                         N = (() => {
                             var e, t, i, n, a, r;
                             let { sonataState: s } = (0, z.g)(),
@@ -4708,6 +4711,17 @@
                         X || Z(!1);
                     }, [Z, X]),
                         (0, v.useEffect)(() => {
+                            const e = (event, key, value) => {
+                                'modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel' === key && setSwapVibeAnimationAndWheel(value);
+                            };
+
+                            const unsub = window.desktopEvents?.on('NATIVE_STORE_UPDATE', e);
+
+                            return () => {
+                                unsub();
+                            };
+                        }, []),
+                        (0, v.useEffect)(() => {
                             j && k(!0);
                         }, [k, j]),
                         (0, v.useEffect)(
@@ -4776,6 +4790,9 @@
                             P && (0, c.jsx)(iN, {}),
                             (0, c.jsxs)('div', {
                                 className: (0, d.$)(nO().root, { [nO().root_reshuffle]: en, [nO().root_withoutPlus]: !g.hasPlus }),
+                                style: {
+                                    flexDirection: swapVibeAnimationAndWheel ? 'row-reverse' : 'row',
+                                },
                                 children: [
                                     (0, c.jsx)(iC, { className: nO().wheel }),
                                     (0, c.jsxs)('div', {
@@ -4865,6 +4882,12 @@
                         D = (0, eH.Z)(null != (i = null == (t = a.specialHeader) ? void 0 : t.url) ? i : ''),
                         F = s.checkExperiment(H.z.WebNextNewWaveTabFeedbackForm, 'on'),
                         U = (0, eH.Z)('/slides/special/my_vibe_onboarding');
+                    const pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave';
+                    let [pulseSyncTrackQualityInfo, setPulseSyncTrackQualityInfo] = (0, v.useState)(window?.PulseSyncTrackQuality?.getLastInfo?.() ?? null);
+                    let [pulseSyncWasapiExclusiveOutputState, setPulseSyncWasapiExclusiveOutputState] = (0, v.useState)(null);
+                    let [pulseSyncShowAudioQualityOnNewWave, setPulseSyncShowAudioQualityOnNewWave] = (0, v.useState)(
+                        () => window.nativeSettings?.get?.(pulseSyncShowAudioQualityOnNewWaveSettingKey) !== !1,
+                    );
                     (0, v.useEffect)(() => {
                         var e, t;
                         if (!n || !R) return;
@@ -4880,6 +4903,53 @@
                             },
                             [a, a.landing, W],
                         ),
+                        (0, v.useEffect)(() => {
+                            const updatePulseSyncTrackQualityInfo = (format) => {
+                                setPulseSyncTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(format) ?? null);
+                            };
+                            const lastInfo = window?.PulseSyncTrackQuality?.getLastInfo?.();
+                            if (lastInfo) {
+                                setPulseSyncTrackQualityInfo(lastInfo);
+                            }
+                            window?.nativeAudioOutput?.getYaspAudioFormat?.()
+                                ?.then?.((format) => {
+                                updatePulseSyncTrackQualityInfo(format);
+                            })
+                                ?.catch?.(() => {});
+                            const unsubscribe = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED', (event, format) => {
+                                updatePulseSyncTrackQualityInfo(format);
+                            });
+                            return () => {
+                                if (typeof unsubscribe === 'function') unsubscribe();
+                            };
+                        }, []),
+                        (0, v.useEffect)(() => {
+                            const updatePulseSyncWasapiExclusiveOutputState = (state) => {
+                                setPulseSyncWasapiExclusiveOutputState(state ?? null);
+                            };
+                            window?.nativeAudioOutput?.getWasapiExclusiveStatus?.()
+                                ?.then?.((status) => {
+                                updatePulseSyncWasapiExclusiveOutputState(status?.outputState ?? null);
+                            })
+                                ?.catch?.(() => {});
+                            const unsubscribe = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED', (event, state) => {
+                                updatePulseSyncWasapiExclusiveOutputState(state);
+                            });
+                            return () => {
+                                if (typeof unsubscribe === 'function') unsubscribe();
+                            };
+                        }, []),
+                        (0, v.useEffect)(() => {
+                            const updatePulseSyncShowAudioQualityOnNewWave = (event, key, value) => {
+                                if (key === pulseSyncShowAudioQualityOnNewWaveSettingKey) {
+                                    setPulseSyncShowAudioQualityOnNewWave(value !== !1);
+                                }
+                            };
+                            const unsubscribe = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', updatePulseSyncShowAudioQualityOnNewWave);
+                            return () => {
+                                if (typeof unsubscribe === 'function') unsubscribe();
+                            };
+                        }, []),
                         (0, eU.J)(a.landing.isResolved);
                     let K = s.checkExperiment(H.z.WebNextDisableVibe, 'on'),
                         X = (0, x.c)(() => {
