@@ -1131,7 +1131,7 @@
                 }
             }
             !(function (e) {
-                (e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!');
+                (e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted');
             })(r || (r = {}));
             let _ = new Map([
                     [a.EXPLICIT_ICON, r.E],
@@ -1139,8 +1139,9 @@
                     [a.AGE_16_ICON, r.AGE_16],
                     [a.AGE_12_ICON, r.AGE_12],
                     [a.EXCLAMATION_ICON, r.EXCLAMATION],
+                    [a.SUBSTITUTED_ICON, r.SUBSTITUTED],
                 ]),
-                h = [a.EXPLICIT_ICON, a.AGE_18_ICON, a.AGE_16_ICON, a.AGE_12_ICON, a.EXCLAMATION_ICON],
+                h = [a.EXPLICIT_ICON, a.AGE_18_ICON, a.AGE_16_ICON, a.AGE_12_ICON, a.SUBSTITUTED_ICON, a.EXCLAMATION_ICON],
                 p = (e) => {
                     let t = ((e, t) => {
                         for (let i of t) {

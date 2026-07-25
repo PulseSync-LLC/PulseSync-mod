@@ -261,7 +261,7 @@
                             V(new E.Rv(E.p4, W)),
                             Q()
                                 ? i.applySettings({
-                                      customColors: x({ averageColor: r, isPlaying: w.isPlaying, isShuffleVibeActive: !!(M.isShuffleVibe && w.isVibeContext) }),
+                                      customColors: y({ averageColor: r, isPlaying: w.isPlaying, isShuffleVibeActive: !!(M.isShuffleVibe && w.isVibeContext) }),
                                   })
                                 : i.applySettings({ hue: n, collectionHue: B.collectionHue });
                     }, [
@@ -295,7 +295,7 @@
                         Q()
                             ? null == c ||
                               c.applySettings({
-                                  customColors: x({ averageColor: r, isPlaying: w.isPlaying, isShuffleVibeActive: !!(M.isShuffleVibe && w.isVibeContext) }),
+                                  customColors: y({ averageColor: r, isPlaying: w.isPlaying, isShuffleVibeActive: !!(M.isShuffleVibe && w.isVibeContext) }),
                               })
                             : null == c || c.applySettings({ hue: i, collectionHue: B.collectionHue });
                     }, [r, w.isPlaying, w.isVibeContext, M.isShuffleVibe, c, B.collectionHue, null == w.entityMeta ? void 0 : w.entityMeta.trackParameters]),
@@ -311,7 +311,7 @@
                                           Q()
                                               ? {
                                                     energy: l,
-                                                    customColors: x({
+                                                    customColors: y({
                                                         averageColor: r,
                                                         isPlaying: w.isPlaying,
                                                         isShuffleVibeActive: !!(M.isShuffleVibe && w.isVibeContext),
