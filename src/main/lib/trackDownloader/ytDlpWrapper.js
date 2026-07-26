@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
+const iconv = require('iconv-lite');
 const { getFfmpegUpdater } = require('../ffmpegInstaller.js');
 const { getYtDlpInstaller } = require('../ytDlpInstaller.js');
 const store_js_1 = require('../store.js');
@@ -86,6 +87,16 @@ function flushProcessLines(buffer, onLine) {
     }
 }
 
+function repairWindows1251Mojibake(value) {
+    const text = String(value || '');
+    if (!/(?:Р.|С.){2,}/.test(text)) {
+        return text;
+    }
+
+    const repaired = iconv.encode(text, 'windows-1251').toString('utf8');
+    return repaired && !repaired.includes('\uFFFD') ? repaired : text;
+}
+
 function getYtDlpFailureMessage(stdout, stderr, code) {
     const stderrLines = String(stderr || '')
         .split(/\r\n|[\r\n]/)
@@ -97,7 +108,7 @@ function getYtDlpFailureMessage(stdout, stderr, code) {
         .filter(Boolean);
     const detailedMessage = stderrLines.at(-1) || stdoutLines.at(-1);
 
-    return detailedMessage || `yt-dlp exited with code ${code}`;
+    return repairWindows1251Mojibake(detailedMessage) || `yt-dlp exited with code ${code}`;
 }
 
 function parseYtDlpJson(stdout) {

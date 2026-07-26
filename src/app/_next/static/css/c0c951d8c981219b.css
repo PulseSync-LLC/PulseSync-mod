@@ -62,7 +62,7 @@
     }
 }
 .SonataFullscreenControlsMobile_playPauseButtonIcon__e5ygU {
-    color: var(--ym-logo-color-primary-player);
+    color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-text-enabled_variant));
 }
 .SonataFullscreenControlsMobile_buttonContainer__5ITqM {
     align-items: center;

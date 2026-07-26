@@ -58,7 +58,7 @@
                     this.invoke(c.UPDATE_LAYOUT, { isMobile: d });
                 }
                 enable() {
-                    this.invoke(c.ENABLE);
+                    this.invoke(window?.VIBE_ANIMATION_DISABLE_RENDERING() ? c.DISABLE : c.ENABLE);
                 }
                 disable() {
                     this.invoke(c.DISABLE);

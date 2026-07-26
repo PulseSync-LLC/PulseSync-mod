@@ -1315,9 +1315,7 @@
                         let { usersResource: t, modelActionsLogger: i } = (0, n._$)(e);
                         try {
                             let { tracks: n = [] } = yield t.getPlaylistWithTracksIds({ userId: String(e.uid), playlistKind: e.kind, resumeStream: !1 }),
-                                r = n
-                                    .map((e) => (null == e?.id ? null : e.albumId ? ''.concat(e.id, ':').concat(e.albumId) : String(e.id)))
-                                    .filter(Boolean);
+                                r = n.map((e) => (null == e?.id ? null : e.albumId ? ''.concat(e.id, ':').concat(e.albumId) : String(e.id))).filter(Boolean);
                             r.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', r, 'playlist', e.title || '');
                         } catch (e) {
                             i.error(e);

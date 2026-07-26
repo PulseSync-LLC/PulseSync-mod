@@ -2182,9 +2182,7 @@
                         let { usersResource: t, modelActionsLogger: i } = (0, r._$)(e);
                         try {
                             let { tracks: r = [] } = yield t.getPlaylistWithTracksIds({ userId: String(e.uid), playlistKind: e.kind, resumeStream: !1 }),
-                                a = r
-                                    .map((e) => (null == e?.id ? null : e.albumId ? ''.concat(e.id, ':').concat(e.albumId) : String(e.id)))
-                                    .filter(Boolean);
+                                a = r.map((e) => (null == e?.id ? null : e.albumId ? ''.concat(e.id, ':').concat(e.albumId) : String(e.id))).filter(Boolean);
                             a.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', a, 'playlist', e.title || '');
                         } catch (e) {
                             i.error(e);

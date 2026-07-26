@@ -1413,10 +1413,11 @@
                         B = (0, D.N)().get(W.QG),
                         {
                             isVibeContext: G,
-                            isPlaying: Y,
-                            togglePlay: $,
-                            resetContext: Q,
-                        } = (0, U.B)({ seeds: null != (a = null == (t = o.meta) ? void 0 : t.seeds) ? a : [], pageIdForFrom: x, blockIdForFrom: y }),
+                             isPlaying: Y,
+                             togglePlay: $,
+                             resetContext: Q,
+                             playSeeds: pulseSyncPlaySeeds,
+                         } = (0, U.B)({ seeds: null != (a = null == (t = o.meta) ? void 0 : t.seeds) ? a : [], pageIdForFrom: x, blockIdForFrom: y }),
                         Z = l.checkExperiment(H.z.WebNextDisableVibeSettings, 'on') || A || !u.isAuthorized || C,
                         J = (0, v.useCallback)(() => {
                             G ? Q() : o.vibeResetLoadingState !== K.G.PENDING && o.vibeReset();
@@ -1447,8 +1448,32 @@
                             [l, O],
                         ),
                         es = (0, v.useMemo)(() => (0, c.jsx)(q.H, { size: 'l', className: ei().button }), []);
-                    return (
-                        (0, v.useEffect)(
+                     return (
+                         (0, v.useEffect)(() => {
+                             if (!window.pulsesyncApi) return;
+                             let e = function () {
+                                 let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
+                                     t = Array.isArray(null == e ? void 0 : e.seeds)
+                                         ? e.seeds
+                                         : 'string' == typeof (null == e ? void 0 : e.seed)
+                                           ? [e.seed]
+                                           : [],
+                                     i = t.filter((e) => 'string' == typeof e && e.length > 0);
+                                 if (i.length > 0) {
+                                     if (A || !u.isAuthorized || C) return void et();
+                                     pulseSyncPlaySeeds(i);
+                                     return;
+                                 }
+                                 ea();
+                             };
+                             return (
+                                 (window.pulsesyncApi.playVibeNative = e),
+                                 () => {
+                                     window.pulsesyncApi && window.pulsesyncApi.playVibeNative === e && delete window.pulsesyncApi.playVibeNative;
+                                 }
+                             );
+                         }, [A, C, u.isAuthorized, ea, et, pulseSyncPlaySeeds]),
+                         (0, v.useEffect)(
                             () => () => {
                                 o.reset();
                             },
@@ -1534,9 +1559,13 @@
                 e9 = i(78305),
                 e7 = i(12350),
                 e6 = i(2969),
-                e4 = i(55332),
-                e3 = i(95329),
-                te = i(53022),
+                 e4 = i(55332),
+                 e3 = i(95329),
+                 th = i(6612),
+                 tx = i(1613),
+                 tf = i(44782),
+                 ty = i(77035),
+                 te = i(53022),
                 tt = i(44128),
                 ti = i(41812),
                 tn = i(92744),
@@ -1551,8 +1580,255 @@
                 tm = i(90829),
                 tv = i(99711),
                 tb = i.n(tv);
-            let t_ = 'https://avatars.mds.yandex.net/get-music-misc/29541/img.698c9ec84f02b819695579e7/orig',
-                tp = (0, u.PA)((e) => {
+            let pulseSyncImprovedWaveLayoutSettingKey = 'modSettings.vibeAnimationEnhancement.improvedWaveLayout',
+                pulseSyncIsImprovedWaveLayoutEnabled = () => {
+                    try {
+                        return window.IMPROVED_WAVE_LAYOUT?.() ?? window.nativeSettings?.get?.(pulseSyncImprovedWaveLayoutSettingKey) ?? !0;
+                    } catch (e) {
+                        return !0;
+                    }
+                },
+                pulseSyncNormalizeStationText = (e) => String(null != e ? e : '').trim().toLowerCase().replace(/\s+/g, ' '),
+                pulseSyncBuildCastDeviceRows = function () {
+                    let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [],
+                        t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [],
+                        i = new Set();
+                    return e.map((e) => {
+                        let n = pulseSyncNormalizeStationText(null == e || null == e.configuration ? void 0 : e.configuration.glagolDeviceId),
+                            a = pulseSyncNormalizeStationText(null == e || null == e.configuration ? void 0 : e.configuration.platform),
+                            r = t.find((t) => {
+                                if (i.has(t)) return !1;
+                                let r = pulseSyncNormalizeStationText(null == t ? void 0 : t.deviceId),
+                                    s = pulseSyncNormalizeStationText(null == t ? void 0 : t.platform),
+                                    o = pulseSyncNormalizeStationText((null == t ? void 0 : t.name) || (null == t ? void 0 : t.instanceName)),
+                                    l = pulseSyncNormalizeStationText(null == e ? void 0 : e.name);
+                                return (!!n && n === r) || (!!a && a === s && !!l && !!o && (l.includes(o) || o.includes(l)));
+                            });
+                        return r && i.add(r), { accountSpeaker: e, localSpeaker: r, canUseLocal: !!r };
+                    });
+                },
+                pulseSyncIsYandexStationCastEnabled = () => {
+                    try {
+                        return window.__pulseSyncYandexStationCastEnabled ?? window.ENABLE_YANDEX_STATION_CAST?.() ?? !0;
+                    } catch (e) {
+                        return !0;
+                    }
+                },
+                pulseSyncSelectYandexStationSpeaker = async (e) => {
+                    let t = null;
+                    for (let i = 0; i < 4; i += 1) {
+                        try {
+                            if (
+                                ((t = window.pulseSyncYandexStationCast?.activate
+                                    ? await window.pulseSyncYandexStationCast.activate(e)
+                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', e)),
+                                null == t ? void 0 : t.ok)
+                            )
+                                return t;
+                        } catch (e) {
+                            t = { ok: !1, error: e };
+                        }
+                        i < 3 && (await new Promise((e) => setTimeout(e, 600)));
+                    }
+                    return null != t ? t : { ok: !1 };
+                },
+                pulseSyncCastDeviceIcon = (e) =>
+                    (0, c.jsx)('span', {
+                        className: 'PulseSync_castPopoverItemIcon',
+                        'aria-hidden': !0,
+                        children: (0, c.jsx)('svg', {
+                            width: '32',
+                            height: '32',
+                            viewBox: '0 0 24 24',
+                            fill: 'none',
+                            children: (0, c.jsx)('path', {
+                                fill: 'currentColor',
+                                fillRule: 'evenodd',
+                                d: e
+                                    ? 'M4 5h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-6v2h3v2H7v-2h3v-2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm0 2v9h16V7H4Z'
+                                    : 'M12 2c4.42 0 8 1.79 8 4v12c0 2.21-3.58 4-8 4s-8-1.79-8-4V6c0-2.21 3.58-4 8-4Zm0 2C8.69 4 6 4.9 6 6s2.69 2 6 2 6-.9 6-2-2.69-2-6-2Z',
+                            }),
+                        }),
+                    }),
+                pulseSyncWaveCastControl = (0, u.PA)((e) => {
+                    let { buttonClassName: t, disabled: i } = e,
+                        { formatMessage: n } = (0, _.A)(),
+                        [a, r] = (0, v.useState)(!1),
+                        [s, o] = (0, v.useState)([]),
+                        [l, d] = (0, v.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
+                        [m, b] = (0, v.useState)(null),
+                        [p, g] = (0, v.useState)(null),
+                        [f, C] = (0, v.useState)(!1),
+                        [j, k] = (0, v.useState)(!1),
+                        [I, P] = (0, v.useState)(pulseSyncIsYandexStationCastEnabled()),
+                        N = (0, v.useRef)(null),
+                        S = (0, v.useCallback)((e) => {
+                            let t = Array.isArray(null == e ? void 0 : e.accountSpeakers) ? e.accountSpeakers : [],
+                                i = Array.isArray(null == e ? void 0 : e.localSpeakers) ? e.localSpeakers : [];
+                            d((null == e || null == e.activeSpeaker || null == e.activeSpeaker.accountSpeaker ? void 0 : e.activeSpeaker.accountSpeaker.id) ?? window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
+                                o([{ isThisDevice: !0 }, ...pulseSyncBuildCastDeviceRows(t, i)]),
+                                k(Boolean(null == e ? void 0 : e.firstFlowCompleted)),
+                                C(Boolean(null == e ? void 0 : e.refreshing));
+                        }, []),
+                        w = (0, v.useCallback)(async () => {
+                            if (!I) return o([]), k(!1), C(!1);
+                            try {
+                                C(!0), S(await (window.desktopEvents?.invoke?.('YANDEX_STATION_STATE') ?? Promise.resolve(null)));
+                            } catch (e) {
+                                o([]), k(!1), C(!1);
+                            }
+                        }, [I, S]);
+                    (0, v.useEffect)(() => {
+                        void w();
+                    }, [w]),
+                        (0, v.useEffect)(() => {
+                            let e = (e, t) => S(t),
+                                i = window.desktopEvents?.on?.('YANDEX_STATION_STATE', e);
+                            return () => {
+                                'function' == typeof i && i();
+                            };
+                        }, [S]),
+                        (0, v.useEffect)(() => {
+                            let e = (e) => d((null == e || null == e.detail ? void 0 : e.detail.activeSpeakerId) ?? null),
+                                t = (e) => {
+                                    let t = (null == e || null == e.detail ? void 0 : e.detail.enabled) ?? pulseSyncIsYandexStationCastEnabled();
+                                    P(t), t ? void w() : (r(!1), o([]), d(null), k(!1), C(!1));
+                                };
+                            return (
+                                window.addEventListener('pulse-sync-yandex-station-cast-change', e),
+                                window.addEventListener('pulse-sync-yandex-station-cast-setting-change', t),
+                                () => {
+                                    window.removeEventListener('pulse-sync-yandex-station-cast-change', e),
+                                        window.removeEventListener('pulse-sync-yandex-station-cast-setting-change', t);
+                                }
+                            );
+                        }, [w]),
+                        (0, v.useEffect)(() => {
+                            if (!a) return;
+                            let e = (e) => {
+                                var t;
+                                (null == (t = N.current) ? void 0 : t.contains(e.target)) || r(!1);
+                            };
+                            return (
+                                document.addEventListener('pointerdown', e, !0),
+                                () => {
+                                    document.removeEventListener('pointerdown', e, !0);
+                                }
+                            );
+                        }, [a]);
+                    if (i || !I) return null;
+                    return (0, c.jsxs)('div', {
+                        ref: N,
+                        style: { position: 'relative', display: 'flex', alignItems: 'center' },
+                        children: [
+                            (0, c.jsx)(A.$, {
+                                className: t,
+                                radius: 'round',
+                                size: 'xxxs',
+                                variant: 'text',
+                                withRipple: !1,
+                                'aria-label': n({ id: 'player-actions.cast' }),
+                                icon: (0, c.jsx)(G.I, { variant: 'cast', size: 'xs' }),
+                                onClick: () => {
+                                    r((e) => !e), a || void w();
+                                },
+                                style: l ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
+                            }),
+                            a &&
+                                (0, c.jsx)('div', {
+                                    className: 'PulseSync_castPopover',
+                                    children: !j
+                                        ? (0, c.jsx)('div', { className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_shimmer', children: 'Поиск устройств...' })
+                                        : (0, c.jsxs)('div', {
+                                              className: 'PulseSync_castPopoverContent',
+                                              children: [
+                                                  (0, c.jsx)('div', {
+                                                      className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_refreshing'.concat(f ? ' PulseSync_castPopoverStatus_visible' : ''),
+                                                      children: 'Обновляем список устройств...',
+                                                  }),
+                                                  s.length
+                                                      ? s.map((e) => {
+                                                            let t = !e.isThisDevice && !e.canUseLocal,
+                                                                i = null == e.accountSpeaker ? void 0 : e.accountSpeaker.id,
+                                                                n = !e.isThisDevice && m === i && l !== i,
+                                                                a = !e.isThisDevice && p === i && l !== i,
+                                                                s = t || !!m,
+                                                                o = (e.isThisDevice && !l) || (!e.isThisDevice && l === i),
+                                                                v = e.isThisDevice
+                                                                    ? l
+                                                                        ? 'Отключить колонку'
+                                                                        : 'Сейчас выбрано'
+                                                                    : n
+                                                                      ? 'Подключение...'
+                                                                      : a
+                                                                        ? 'Ошибка подключения'
+                                                                        : o
+                                                                          ? 'Подключено'
+                                                                          : e.canUseLocal
+                                                                            ? 'В сети'
+                                                                            : 'Вне локальной сети',
+                                                                y = e.isThisDevice ? 'pulse-sync-this-device' : i || (null == e.accountSpeaker ? void 0 : e.accountSpeaker.name);
+                                                            return (0, c.jsxs)(
+                                                                'button',
+                                                                {
+                                                                    type: 'button',
+                                                                    className: 'PulseSync_castPopoverItem'.concat(o ? ' PulseSync_castPopoverItem_active' : ''),
+                                                                    disabled: s,
+                                                                    onClick: s
+                                                                        ? void 0
+                                                                        : async () => {
+                                                                              if (e.isThisDevice) {
+                                                                                  window.pulseSyncYandexStationCast?.clear
+                                                                                      ? await window.pulseSyncYandexStationCast.clear()
+                                                                                      : await window.desktopEvents?.invoke?.('YANDEX_STATION_CLEAR_SPEAKER');
+                                                                                  d(null), b(null), g(null), r(!1);
+                                                                                  return;
+                                                                              }
+                                                                              if (!i) return;
+                                                                              b(i), g(null);
+                                                                              try {
+                                                                                  let e = await pulseSyncSelectYandexStationSpeaker(i);
+                                                                                  (null == e ? void 0 : e.ok) ? (d(i), r(!1)) : g(i);
+                                                                              } catch (e) {
+                                                                                  g(i);
+                                                                              } finally {
+                                                                                  b(null);
+                                                                              }
+                                                                          },
+                                                                    children: [
+                                                                        pulseSyncCastDeviceIcon(e.isThisDevice),
+                                                                        (0, c.jsxs)('div', {
+                                                                            style: { display: 'flex', alignItems: 'flex-start', flexDirection: 'column', minWidth: 0, flex: '1 1 auto' },
+                                                                            children: [
+                                                                                (0, c.jsx)('span', {
+                                                                                    className: 'PulseSync_castPopoverItemTitle',
+                                                                                    children: e.isThisDevice
+                                                                                        ? 'Это устройство'
+                                                                                        : ((null == e.accountSpeaker ? void 0 : e.accountSpeaker.name) ?? i ?? 'Yandex Station'),
+                                                                                }),
+                                                                                (0, c.jsx)('span', {
+                                                                                    className: 'PulseSync_castPopoverItemMeta'
+                                                                                        .concat(n ? ' PulseSync_castPopoverItemMeta_shimmer' : '')
+                                                                                        .concat(a ? ' PulseSync_castPopoverItemMeta_error' : ''),
+                                                                                    children: v,
+                                                                                }),
+                                                                            ],
+                                                                        }),
+                                                                        o && (0, c.jsx)('span', { children: '✓' }),
+                                                                    ],
+                                                                },
+                                                                y,
+                                                            );
+                                                        })
+                                                      : (0, c.jsx)('div', { className: 'PulseSync_castPopoverStatus', children: 'Устройства не найдены' }),
+                                              ],
+                                          }),
+                                }),
+                        ],
+                    });
+                }),
+                t_ = 'https://avatars.mds.yandex.net/get-music-misc/29541/img.698c9ec84f02b819695579e7/orig',
+                 tp = (0, u.PA)((e) => {
                     var t, i;
                     let { album: n } = e,
                         {
@@ -1571,10 +1847,10 @@
                         k = (0, te.z)(),
                         I = (0, e5.P)(),
                         P = (0, e6.b)(),
-                        N = (0, e9.r)(),
-                        S = (0, e7.m)(),
-                        w = (0, tl.N)(),
-                        { pageId: E } = (0, L.$)(),
+                         N = (0, e9.r)(),
+                         S = (0, e7.m)(),
+                         w = (0, tl.N)(),
+                         { pageId: E } = (0, L.$)(),
                         { togglePlay: T } = (0, U.B)({
                             seeds: null != (i = null == (t = a.meta) ? void 0 : t.seeds) ? i : [],
                             pageIdForFrom: E,
@@ -1582,16 +1858,16 @@
                             onPlayInterrupted: o.open,
                         }),
                         M = (0, to.r)(null == n ? void 0 : n.type),
-                        O = (null == n ? void 0 : n.title) ? ''.concat(M, ' ').concat(n.title) : M,
-                        B = r.entityMeta,
-                        R = !r.isPlaying && (r.isVibeContext || !r.entityMeta),
-                        V = (0, x.c)((e) => {
+                         O = (null == n ? void 0 : n.title) ? ''.concat(M, ' ').concat(n.title) : M,
+                         B = r.entityMeta,
+                         R = !r.isPlaying && (r.isVibeContext || !r.entityMeta),
+                         V = (0, x.c)((e) => {
                             e.stopPropagation(), (0, ec.P)(e, tb().ripple), null == j || j.moveForward(), S({ actionType: eJ.X2.Skip });
                         }),
-                        W = (0, x.c)((e) => {
-                            e.stopPropagation(), (0, ec.P)(e, tb().ripple), null == j || j.moveBackward(), S({ actionType: eJ.X2.Backskip });
-                        }),
-                        D = (0, x.c)(() => {
+                         W = (0, x.c)((e) => {
+                             e.stopPropagation(), (0, ec.P)(e, tb().ripple), null == j || j.moveBackward(), S({ actionType: eJ.X2.Backskip });
+                         }),
+                         D = (0, x.c)(() => {
                             if (s.isAdvertShown) {
                                 var e;
                                 null == N || null == (e = N.audioAdvertPlayback) || e.togglePause();
@@ -1673,20 +1949,20 @@
                                   );
                         });
                     return (
-                        (0, v.useEffect)(
+                         (0, v.useEffect)(
                             () => (
                                 null == k || k.addShortcutsListener(e3.M.MAIN, e4.l.TOGGLE_PLAY, D),
                                 () => {
                                     null == k || k.removeShortcutsListener(e3.M.MAIN, e4.l.TOGGLE_PLAY);
                                 }
                             ),
-                            [D, k],
-                        ),
-                        (0, c.jsxs)('div', {
+                             [D, k],
+                         ),
+                         (0, c.jsxs)('div', {
                             className: tb().root,
-                            'aria-label': O,
-                            children: [
-                                !r.isGenerativeContext &&
+                             'aria-label': O,
+                             children: [
+                                 !r.isGenerativeContext &&
                                     m &&
                                     (0, c.jsx)(A.$, {
                                         className: (0, d.$)(tb().button, tb().button_backward),
@@ -1705,8 +1981,8 @@
                                     'data-test-id': h.e8.player.VIBE_ALBUM_COVER,
                                     children: [Z, m && !r.isPlaying && (0, c.jsx)('div', { className: tb().playButtonContainer, children: q })],
                                 }),
-                                !r.isGenerativeContext &&
-                                    m &&
+                                 !r.isGenerativeContext &&
+                                     m &&
                                     (0, c.jsx)(A.$, {
                                         className: (0, d.$)(tb().button, tb().button_forward),
                                         variant: 'text',
@@ -1717,18 +1993,14 @@
                                         'aria-label': f({ id: 'player-actions.next-track' }),
                                         icon: (0, c.jsx)(G.I, { variant: 'next', size: 'xs' }),
                                         onClick: V,
-                                        'data-test-id': h.Kq.sonata.NEXT_TRACK_BUTTON,
-                                    }),
-                            ],
-                        })
-                    );
-                });
-            var th = i(6612),
-                tg = i(19740),
-                tx = i(1613),
-                tf = i(44782),
-                ty = i(77035),
-                tA = i(3707),
+                                         'data-test-id': h.Kq.sonata.NEXT_TRACK_BUTTON,
+                                     }),
+                             ],
+                         })
+                     );
+                 });
+            var tg = i(19740),
+                 tA = i(3707),
                 tC = i(56117),
                 tj = i(46200),
                 tk = i(51675),
@@ -2361,6 +2633,18 @@
                 t0 = i.n(tJ);
             let t1 = (0, u.PA)(() => {
                 var e, t, i, n;
+                const deviceTypeMap = {
+                    UNSPECIFIED: 'Неизвестного устройства',
+                    WEB: 'Сайта',
+                    ANDROID: 'Android приложения',
+                    IOS: 'IOS приложения',
+                    SMART_SPEAKER: 'Умной колонки',
+                    WEB_TV: 'ТВ',
+                    ANDROID_TV: 'Android ТВ',
+                    APPLE_TV: 'Apple ТВ',
+                    ANDROID_WEAR: 'Android часов',
+                    WEB_DESKTOP: 'ПК приложения',
+                };
                 let {
                         sonataState: a,
                         advert: r,
@@ -2373,6 +2657,8 @@
                     b = null != (t = a.position) ? t : 0,
                     p = null != (i = a.duration) ? i : 0,
                     [g, f] = (0, v.useState)(null),
+                    [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, v.useState)(window.isRemoteDeviceConnected ?? !1),
+                    [remoteDevice, setRemoteDevice] = (0, v.useState)(window.remoteDevice ?? null),
                     A = (0, v.useRef)(!1),
                     { state: C, toggleTrue: j, toggleFalse: k } = (0, el.e)(!1),
                     I = !!p && !a.isGenerativeContext && C,
@@ -2417,6 +2703,22 @@
                             })
                         );
                     });
+                    (0, v.useEffect)(() => {
+                        let e = (device_info) => {
+                                (setIsRemoteDeviceConnected(!0), setRemoteDevice(device_info), (window.isRemoteDeviceConnected = !0), (window.remoteDevice = device_info));
+                            },
+                            t = () => {
+                                (setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null));
+                            };
+                        return (
+                            (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
+                                (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
+                                () => {
+                                    ((window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
+                                        (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t)));
+                                }
+                    );
+                }, []);
                 return (0, c.jsx)('div', {
                     className: t0().root,
                     style: M,
@@ -2479,6 +2781,23 @@
                                     trackSize: 's',
                                     thumbSize: 's',
                                 }),
+                            isRemoteDeviceConnected &&
+                            (0, c.jsx)('div', {
+                                style: {
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    color: 'var(--ym-controls-color-primary-default-enabled)',
+                                    fontSize: 'small',
+                                },
+                                children: (0, c.jsxs)('span', {
+                                    children: [
+                                        'Управление с ',
+                                        null != deviceTypeMap?.[remoteDevice?.info?.type] ? deviceTypeMap?.[remoteDevice?.info?.type] : '',
+                                        ': ',
+                                        remoteDevice?.info?.title,
+                                    ],
+                                }),
+                            }),
                         ],
                     }),
                 });
@@ -2502,9 +2821,12 @@
                         b = (0, tt.e)(),
                         p = (0, e5.P)(),
                         g = (0, e6.b)(),
-                        f = (0, e9.r)(),
-                        C = (0, e7.m)(),
-                        { pageId: j } = (0, L.$)();
+                         f = (0, e9.r)(),
+                         C = (0, e7.m)(),
+                         shuffleSetter = (0, ty.e)(),
+                         repeatSetter = (0, tf.A)(),
+                         [pulseSyncImprovedWaveLayoutEnabled, setPulseSyncImprovedWaveLayoutEnabled] = (0, v.useState)(pulseSyncIsImprovedWaveLayoutEnabled),
+                         { pageId: j } = (0, L.$)();
                     (0, t2.S)();
                     let { togglePlay: k } = (0, U.B)({
                             seeds: null != (t = null == (e = i.meta) ? void 0 : e.seeds) ? t : [],
@@ -2512,14 +2834,21 @@
                             blockIdForFrom: ''.concat(eJ.LA.MyWave, '-').concat(eR.U.RADIO),
                             onPlayInterrupted: r.open,
                         }),
-                        I = n.entityMeta,
-                        P = (0, x.c)((e) => {
+                         I = n.entityMeta,
+                         repeatIconVariant = n.repeatMode === th.pM.ONE ? 'repeat_one' : 'repeat',
+                         P = (0, x.c)((e) => {
                             e.stopPropagation(), null == b || b.moveForward(), C({ actionType: eJ.X2.Skip });
                         }),
-                        N = (0, x.c)((e) => {
-                            e.stopPropagation(), null == b || b.moveBackward(), C({ actionType: eJ.X2.Backskip });
-                        }),
-                        S = (0, x.c)(() => {
+                         N = (0, x.c)((e) => {
+                             e.stopPropagation(), null == b || b.moveBackward(), C({ actionType: eJ.X2.Backskip });
+                         }),
+                         pulseSyncShuffleClick = (0, x.c)((e) => {
+                             e.stopPropagation(), shuffleSetter(n), C({ actionType: eJ.X2.ChangeShuffle });
+                         }),
+                         pulseSyncRepeatClick = (0, x.c)((e) => {
+                             e.stopPropagation(), repeatSetter(n), C({ actionType: eJ.X2.ChangeRepeatSettings });
+                         }),
+                         S = (0, x.c)(() => {
                             if (a.isAdvertShown) {
                                 var e;
                                 null == f || null == (e = f.audioAdvertPlayback) || e.togglePause();
@@ -2542,9 +2871,12 @@
                         T = (0, v.useCallback)(
                             () =>
                                 (0, c.jsx)(ta.D, {
-                                    className: (0, d.$)(t5().playButton, { [t5().playButton_playing]: n.isPlaying }),
+                                    className: (0, d.$)(t5().playButton, {
+                                        [t5().playButton_playing]: n.isPlaying,
+                                        [t5().playButton_withYellowPlayButton]: PlayerYellowButton,
+                                    }),
                                     isPlaying: n.isPlaying,
-                                    iconClassName: (0, d.$)(t5().playButtonIcon, { [t5().playButton_withYellowPlayButton]: PlayerYellowButton }),
+                                    iconClassName: t5().playButtonIcon,
                                     color: 'secondary',
                                     onClick: w,
                                 }),
@@ -2572,11 +2904,35 @@
                                         renderChildren: T,
                                     })
                                   : (0, c.jsx)(tm.Z, { placement: 'top', textVariant: 'vibe', transform: !1, renderChildren: T }),
-                        );
-                    return (0, c.jsxs)('div', {
-                        className: t5().root,
-                        children: [
-                            !n.isGenerativeContext &&
+                         );
+                     (0, v.useEffect)(() => {
+                         let e = (e, t, i) => {
+                                 t === pulseSyncImprovedWaveLayoutSettingKey && setPulseSyncImprovedWaveLayoutEnabled(i !== !1);
+                             },
+                             t = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', e);
+                         return () => {
+                             'function' == typeof t && t();
+                         };
+                     }, []);
+                     return (0, c.jsxs)('div', {
+                         className: t5().root,
+                         children: [
+                             pulseSyncImprovedWaveLayoutEnabled &&
+                                 !n.isGenerativeContext &&
+                                 (n.canShuffle || n.canChangeRepeatMode) &&
+                                 (0, c.jsx)(A.$, {
+                                     className: t5().skipButton,
+                                     variant: 'text',
+                                     radius: 'round',
+                                     disabled: !n.canShuffle,
+                                     'aria-hidden': !n.canShuffle,
+                                     withRipple: !1,
+                                     'aria-label': m({ id: 'player-actions.shuffle' }),
+                                     icon: (0, c.jsx)(G.I, { variant: 'shuffle', size: 'xs' }),
+                                     onClick: pulseSyncShuffleClick,
+                                     style: n.shuffle ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
+                                 }),
+                             !n.isGenerativeContext &&
                                 (0, c.jsx)(A.$, {
                                     className: t5().skipButton,
                                     variant: 'text',
@@ -2601,9 +2957,24 @@
                                     'aria-label': m({ id: 'player-actions.next-track' }),
                                     icon: (0, c.jsx)(G.I, { variant: 'next', size: 'xs' }),
                                     onClick: P,
-                                    'data-test-id': h.Kq.sonata.NEXT_TRACK_BUTTON,
-                                }),
-                        ],
+                                     'data-test-id': h.Kq.sonata.NEXT_TRACK_BUTTON,
+                                 }),
+                             pulseSyncImprovedWaveLayoutEnabled &&
+                                 !n.isGenerativeContext &&
+                                 (n.canShuffle || n.canChangeRepeatMode) &&
+                                 (0, c.jsx)(A.$, {
+                                     className: t5().skipButton,
+                                     variant: 'text',
+                                     radius: 'round',
+                                     disabled: !n.canChangeRepeatMode,
+                                     'aria-hidden': !n.canChangeRepeatMode,
+                                     withRipple: !1,
+                                     'aria-label': (0, tx.z)(n.repeatMode, m),
+                                     icon: (0, c.jsx)(G.I, { variant: repeatIconVariant, size: 'xs' }),
+                                     onClick: pulseSyncRepeatClick,
+                                     style: n.repeatMode !== th.pM.NONE ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
+                                 }),
+                         ],
                     });
                 }),
                 t7 = (0, u.PA)(() => {
@@ -2620,12 +2991,14 @@
                         u = (0, te.z)(),
                         m = (0, e8.d)(),
                         { isLiked: b, handleLike: p, isDisliked: g, handleDislike: f } = (0, tr.f)(),
-                        A = (0, tt.e)(),
+                        sonataPlayer = (0, tt.e)(),
                         C = (0, e5.P)(),
                         j = (0, e6.b)(),
                         k = (0, e9.r)(),
-                        I = (0, e7.m)(),
-                        { pageId: P } = (0, L.$)(),
+                         I = (0, e7.m)(),
+                         screenNavigation = (0, tl.N)(),
+                         [pulseSyncImprovedWaveLayoutEnabled, setPulseSyncImprovedWaveLayoutEnabled] = (0, v.useState)(pulseSyncIsImprovedWaveLayoutEnabled),
+                         { pageId: P } = (0, L.$)(),
                         { togglePlay: N } = (0, U.B)({
                             seeds: null != (t = null == (e = i.meta) ? void 0 : e.seeds) ? t : [],
                             pageIdForFrom: P,
@@ -2634,14 +3007,23 @@
                         }),
                         S = n.entityMeta,
                         w = null == S ? void 0 : S.mainAlbum,
-                        E = !n.isPlaying && !S,
-                        T = (0, x.c)(() => {
+                         E = !n.isPlaying && !S,
+                         T = (0, x.c)(() => {
                             if (n.entityMeta) {
                                 if (r.modal.isOpened) return void r.modal.close();
-                                r.modal.open();
-                            }
-                        });
-                    (0, v.useEffect)(() => {
+                                 r.modal.open();
+                             }
+                         }),
+                         pulseSyncWaveSyncLyricsAvailable =
+                             !!(null == S ? void 0 : S.isSyncLyricsAvailable) ||
+                             !!(null == S ? void 0 : S.isSyncLyricsAvailableWithOfflineFeature) ||
+                             !!(null == S ? void 0 : S.hasSyncLyrics) ||
+                             (!!(null == S ? void 0 : S.id) && 'function' == typeof (null == r.syncLyrics ? void 0 : r.syncLyrics.hasLyricsForTrack) && r.syncLyrics.hasLyricsForTrack(S.id)),
+                         pulseSyncOpenWaveSyncLyrics = (0, x.c)(() => {
+                             r.showSyncLyrics(), screenNavigation({ to: eJ.QT.PlayerScreen });
+                         }),
+                         pulseSyncWaveSyncLyricsLabel = ''.concat(l({ id: 'interface-actions.open-sync-lyrics' }), ' ').concat(l({ id: 'warning-messages.can-break-accessibility' }));
+                     (0, v.useEffect)(() => {
                         if (!n.isGenerativeContext)
                             return (
                                 null == u || u.addShortcutsListener(e3.M.MAIN, e4.l.TOGGLE_FULLSCREEN_PLAYER, T),
@@ -2653,8 +3035,17 @@
                                         null == u || u.removeShortcutsListener(e3.M.MAIN, e4.l.DISLIKE);
                                 }
                             );
-                    }, [f, p, u, n.isGenerativeContext, n.entityMeta, T]);
-                    let M = (0, x.c)(async (e, t) => {
+                     }, [f, p, u, n.isGenerativeContext, n.entityMeta, T]);
+                     (0, v.useEffect)(() => {
+                         let e = (e, t, i) => {
+                                 t === pulseSyncImprovedWaveLayoutSettingKey && setPulseSyncImprovedWaveLayoutEnabled(i !== !1);
+                             },
+                             t = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', e);
+                         return () => {
+                             'function' == typeof t && t();
+                         };
+                     }, []);
+                     let M = (0, x.c)(async (e, t) => {
                             t && (0, ec.P)(t, tL().ripple), await m(n, e);
                         }),
                         O = (0, x.c)((e) => {
@@ -2669,7 +3060,9 @@
                                 null == k || null == (e = k.audioAdvertPlayback) || e.togglePause();
                                 return;
                             }
-                            S ? (null == A || A.togglePause(), I({ actionType: n.isPlaying ? eJ.X2.Pause : eJ.X2.Play })) : (N(), j(!n.isPlaying));
+                            S
+                                ? (null == sonataPlayer || sonataPlayer.togglePause(), I({ actionType: n.isPlaying ? eJ.X2.Pause : eJ.X2.Play }))
+                                : (N(), j(!n.isPlaying));
                         }),
                         V = (0, x.c)((e) => {
                             (0, ec.P)(e, tL().ripple), C() || R();
@@ -2701,19 +3094,48 @@
                         children: [
                             (0, c.jsx)(tp, { album: w }),
                             (0, c.jsxs)('div', {
-                                className: (0, d.$)(tL().progress, { [tL().progress_visible]: !E }),
-                                children: [
-                                    W,
+                                 className: (0, d.$)(tL().progress, { [tL().progress_visible]: !E }),
+                                 children: [
+                                     pulseSyncImprovedWaveLayoutEnabled &&
+                                         (0, c.jsx)(A.$, {
+                                             className: tL().button,
+                                             radius: 'round',
+                                             size: 'xxxs',
+                                             variant: 'text',
+                                             disabled: !S || n.isGenerativeContext || a.isAdvertShown,
+                                             withRipple: !1,
+                                             'aria-label': l({ id: 'player-actions.fullscreen-button' }),
+                                             icon: (0, c.jsx)(G.I, { variant: 'fullscreen', size: 'xs' }),
+                                             onClick: T,
+                                         }),
+                                     W,
                                     D,
                                     (0, c.jsx)(t1, {}),
-                                    (0, c.jsx)(tn.c, {
-                                        className: (0, d.$)(tL().button, { [tL().likeButton_mobilePaused]: s && !n.isPlaying }),
-                                        disabled: !S || a.isAdvertShown,
-                                        isLiked: b,
-                                        onClick: B,
-                                        iconSize: 'xs',
-                                    }),
-                                    !s &&
+                                     (0, c.jsx)(tn.c, {
+                                         className: (0, d.$)(tL().button, { [tL().likeButton_mobilePaused]: s && !n.isPlaying }),
+                                         disabled: !S || a.isAdvertShown,
+                                         isLiked: b,
+                                         onClick: B,
+                                         iconSize: 'xs',
+                                     }),
+                                     (0, c.jsx)(pulseSyncWaveCastControl, { buttonClassName: tL().button, disabled: a.isAdvertShown }),
+                                     pulseSyncImprovedWaveLayoutEnabled &&
+                                         !pulseSyncIsYandexStationCastEnabled() &&
+                                         !(null == S ? void 0 : S.isNonMusic) &&
+                                         !a.isAdvertShown &&
+                                         (0, c.jsx)(A.$, {
+                                             className: tL().button,
+                                             radius: 'round',
+                                             size: 'xxxs',
+                                             variant: 'text',
+                                             disabled: !pulseSyncWaveSyncLyricsAvailable || n.isGenerativeContext,
+                                             'aria-hidden': !pulseSyncWaveSyncLyricsAvailable,
+                                             withRipple: !1,
+                                             'aria-label': pulseSyncWaveSyncLyricsLabel,
+                                             icon: (0, c.jsx)(G.I, { variant: 'syncLyrics', size: 'xs' }),
+                                             onClick: pulseSyncOpenWaveSyncLyrics,
+                                         }),
+                                     !s &&
                                         (0, c.jsx)(tF, { buttonClassName: (0, d.$)(tL().button, tL().important), 'data-test-id': h.e8.player.VIBE_CONTEXT_MENU_BUTTON }),
                                     (0, c.jsx)(ts.e, {}),
                                 ],
@@ -4977,8 +5399,87 @@
                         X = (0, x.c)(() => {
                             o.isReady && o.modal.open();
                         }),
-                        q = (0, v.useMemo)(() => (K ? { 'margin-block-start': '1vh' } : {}), [K]),
-                        G = (0, v.useMemo)(() => {
+                         q = (0, v.useMemo)(() => (K ? { 'margin-block-start': '1vh' } : {}), [K]),
+                         pulseSyncWasapiIsActive =
+                             (null == pulseSyncWasapiExclusiveOutputState ? void 0 : pulseSyncWasapiExclusiveOutputState.active) === !0 ||
+                             (null == pulseSyncWasapiExclusiveOutputState || null == pulseSyncWasapiExclusiveOutputState.session
+                                 ? void 0
+                                 : pulseSyncWasapiExclusiveOutputState.session.state) === 'running',
+                         pulseSyncAudioQualityBubble = (0, v.useMemo)(() => {
+                             return (null == pulseSyncTrackQualityInfo ? void 0 : pulseSyncTrackQualityInfo.label) &&
+                                 (pulseSyncShowAudioQualityOnNewWave || pulseSyncWasapiIsActive)
+                                 ? (0, c.jsx)(A.$, {
+                                       color: 'secondary',
+                                       radius: 'xl',
+                                       'aria-label': 'Качество трека: '.concat(pulseSyncTrackQualityInfo.label),
+                                       className: eZ().beta,
+                                       style: { marginInlineEnd: 'var(--ym-spacer-size-xs)', color: 'white' },
+                                       withHover: !1,
+                                       children: (0, c.jsx)(P.HL, {
+                                           variant: 'div',
+                                           type: 'text',
+                                           size: 's',
+                                           weight: 'medium',
+                                           children: pulseSyncTrackQualityInfo.label,
+                                       }),
+                                   })
+                                 : null;
+                         }, [pulseSyncTrackQualityInfo, pulseSyncShowAudioQualityOnNewWave, pulseSyncWasapiIsActive]),
+                         pulseSyncWasapiStateBubble = (0, v.useMemo)(
+                             () =>
+                                 pulseSyncWasapiIsActive
+                                     ? (0, c.jsx)(A.$, {
+                                           color: 'secondary',
+                                           radius: 'xl',
+                                           'aria-label': 'WASAPI Exclusive активен',
+                                           className: eZ().beta,
+                                           style: { marginInlineEnd: 'var(--ym-spacer-size-xs)', color: 'white' },
+                                           withHover: !1,
+                                           children: (0, c.jsx)(P.HL, {
+                                               variant: 'div',
+                                               type: 'text',
+                                               size: 's',
+                                               weight: 'medium',
+                                               children: 'WASAPI Exclusive',
+                                           }),
+                                       })
+                                     : null,
+                             [pulseSyncWasapiIsActive],
+                         ),
+                         pulseSyncWasapiDeviceBubble = (0, v.useMemo)(() => {
+                             let e =
+                                 (null == pulseSyncWasapiExclusiveOutputState ||
+                                 null == pulseSyncWasapiExclusiveOutputState.session ||
+                                 null == pulseSyncWasapiExclusiveOutputState.session.rendererState
+                                     ? void 0
+                                     : pulseSyncWasapiExclusiveOutputState.session.rendererState.deviceName) ??
+                                 (null == pulseSyncWasapiExclusiveOutputState ||
+                                 null == pulseSyncWasapiExclusiveOutputState.session ||
+                                 null == pulseSyncWasapiExclusiveOutputState.session.lastRendererServiceState
+                                     ? void 0
+                                     : pulseSyncWasapiExclusiveOutputState.session.lastRendererServiceState.deviceName) ??
+                                 null;
+                             return pulseSyncWasapiIsActive && e
+                                 ? (0, c.jsx)(A.$, {
+                                       color: 'secondary',
+                                       radius: 'xl',
+                                       'aria-label': 'Устройство WASAPI Exclusive: '.concat(e),
+                                       title: e,
+                                       className: eZ().beta,
+                                       style: { marginInlineEnd: 'var(--ym-spacer-size-xs)', color: 'white', maxWidth: '15rem', overflow: 'hidden' },
+                                       withHover: !1,
+                                       children: (0, c.jsx)(P.HL, {
+                                           variant: 'div',
+                                           type: 'text',
+                                           size: 's',
+                                           weight: 'medium',
+                                           style: { maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+                                           children: e,
+                                       }),
+                                   })
+                                 : null;
+                         }, [pulseSyncWasapiExclusiveOutputState, pulseSyncWasapiIsActive]),
+                         G = (0, v.useMemo)(() => {
                             if (s.checkExperiment(H.z.WebNextBetaLabel, 'off')) return null;
                             {
                                 let e = s.checkExperiment(H.z.WebNextBetaLabel, 'version'),
@@ -5101,7 +5602,10 @@
                                                   children: [b && (0, c.jsx)(eT.F, { withMeta: !1, variant: 'mobile', className: eZ().userProfile }), Y],
                                               }),
                                               (0, c.jsx)(nF, {}),
-                                              (0, c.jsx)('div', { className: $, children: G }),
+                                               (0, c.jsxs)('div', {
+                                                   className: $,
+                                                   children: [pulseSyncWasapiStateBubble, pulseSyncWasapiDeviceBubble, pulseSyncAudioQualityBubble, G],
+                                               }),
                                           ],
                                       }),
                                   }),
@@ -5118,7 +5622,10 @@
                                           'data-test-id': h.Xk.main.MAIN_PAGE,
                                           children: [
                                               Z,
-                                              (0, c.jsx)('div', { className: $, children: G }),
+                                               (0, c.jsxs)('div', {
+                                                   className: $,
+                                                   children: [pulseSyncWasapiStateBubble, pulseSyncWasapiDeviceBubble, pulseSyncAudioQualityBubble, G],
+                                               }),
                                               !K &&
                                                   (0, c.jsx)(eW.F, {
                                                       blockIdForFrom: eL.h.RUP_MAIN_RADIO,

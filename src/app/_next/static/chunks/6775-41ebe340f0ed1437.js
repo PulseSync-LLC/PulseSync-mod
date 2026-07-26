@@ -601,7 +601,7 @@
                     if (!e) return;
                     let { h: t, s: a } = (0, i.hexToHsl)(e);
                     return 'hsl('.concat(t, ', ').concat(a, '%, 20%)');
-                })(null == e ? void 0 : e.averageColor),
+                })(null == e || (window.DISABLE_PER_TRACK_COLORS?.() ?? !1) ? void 0 : e.averageColor),
             });
         },
         11272: (e) => {
@@ -627,7 +627,8 @@
                 x = a(57594),
                 b = a(44782),
                 f = a(77035),
-                g = a(90326);
+                g = a(90326),
+                yellowExperimentIds = a(79406);
             let A = (e) => {
                 let { disabled: t, isPlaying: a, onClickPlayPause: n, className: r } = e;
                 return (0, i.jsx)(g.D, { className: r, size: 's', iconSize: 'xs', disabled: t, isPlaying: a, onClick: n });
@@ -659,10 +660,12 @@
                         canChangeRepeatMode: p,
                         shuffle: h,
                         className: v,
-                        onRepeatClick: x,
+                        onRepeatClick: pulseSyncOnRepeatClick,
                         onShuffleClick: b,
                     } = e,
-                    { formatMessage: f } = (0, y.A)();
+                    { formatMessage: f } = (0, y.A)(),
+                    { experiments: pulseSyncExperiments } = (0, x.g)(),
+                    pulseSyncYellowButtonEnabled = pulseSyncExperiments.checkExperiment(yellowExperimentIds.z.WebNextPlayerBarYellowButton, 'on');
                 return (0, i.jsxs)('div', {
                     className: (0, C.$)(k().root, v),
                     children: [
@@ -718,7 +721,9 @@
                                     color: 'secondary',
                                     buttonVariant: 'default',
                                     isPlaying: a,
-                                    iconClassName: k().playPauseButtonIcon,
+                                    iconClassName: (0, C.$)(k().playPauseButtonIcon, {
+                                        [k().playPauseButtonIcon_withYellowPlayButton]: pulseSyncYellowButtonEnabled,
+                                    }),
                                     onClick: m,
                                 }),
                                 (0, i.jsx)(E.$, {
@@ -759,7 +764,7 @@
                                         isDisabled: t,
                                         iconSize: 'xxs',
                                         repeatMode: n,
-                                        onClick: x,
+                                        onClick: pulseSyncOnRepeatClick,
                                     }),
                             ],
                         }),
@@ -903,13 +908,15 @@
                 }),
                 W = (0, n.PA)((e) => {
                     var t, a;
-                    let { isMobile: n, entityMeta: g, isFullscreen: C, className: y, withShuffle: T, withRepeat: E } = e,
+                    let { isMobile: n, entityMeta: g, isFullscreen: pulseSyncIsFullscreen, className: y, withShuffle: T, withRepeat: E } = e,
                         {
                             sonataState: S,
                             vibe: B,
                             advert: I,
                             modals: { popoverOverPlayer: j },
+                            experiments: pulseSyncExperiments,
                         } = (0, x.g)(),
+                        pulseSyncYellowButtonEnabled = pulseSyncExperiments.checkExperiment(yellowExperimentIds.z.WebNextPlayerBarYellowButton, 'on'),
                         k = (0, p.z)(),
                         w = (0, v.e)(),
                         { rewindBackwards: L, rewindForward: O } = (() => {
@@ -951,7 +958,7 @@
                             g ? null == w || w.togglePause() : U();
                         }),
                         H = (0, s.c)(() => {
-                            (C && F()) || (V(), R(!W));
+                            (pulseSyncIsFullscreen && F()) || (V(), R(!W));
                         }),
                         K = (0, s.c)(() => {
                             null == w || w.moveForward();
@@ -968,7 +975,7 @@
                             Y(S);
                         });
                     (0, r.useEffect)(() => {
-                        if (!C && (null == k || k.addShortcutsListener(m.M.MAIN, _.l.TOGGLE_PLAY, V), !I.isAdvertShown))
+                        if (!pulseSyncIsFullscreen && (null == k || k.addShortcutsListener(m.M.MAIN, _.l.TOGGLE_PLAY, V), !I.isAdvertShown))
                             return (
                                 null == k || k.addShortcutsListener(m.M.MAIN, _.l.TOGGLE_REPEAT, q),
                                 null == k || k.addShortcutsListener(m.M.MAIN, _.l.TOGGLE_SHUFFLE, Z),
@@ -979,10 +986,10 @@
                                             null == k || k.removeShortcutsListener(m.M.MAIN, _.l.TOGGLE_REPEAT));
                                 }
                             );
-                    }, [C, V, q, Z, k, I.isAdvertShown]);
-                    let Q = (0, r.useMemo)(() => (C ? (n ? z : P) : n ? A : N.Z), [n, C]);
+                    }, [pulseSyncIsFullscreen, V, q, Z, k, I.isAdvertShown]);
+                    let Q = (0, r.useMemo)(() => (pulseSyncIsFullscreen ? (n ? z : P) : n ? A : N.Z), [n, pulseSyncIsFullscreen]);
                     return (0, i.jsx)(Q, {
-                        className: y,
+                        className: (0, C.$)(y, { SonataControls_root__w8uqu: pulseSyncYellowButtonEnabled }),
                         disabled: null === S.entityMeta || (I.isAdvertShown && !n),
                         isPlaying: W || !1,
                         canMoveBackward: S.canMoveBackward && !I.isAdvertShown,
@@ -1027,6 +1034,7 @@
                     let { value: t, variant: a, className: r, forwardRef: l, ...c } = e,
                         u = 'start' === a ? s.Kq.changeTimecode.TIMECODE_TIME_START : s.Kq.changeTimecode.TIMECODE_TIME_END;
                     return (0, i.jsx)(o.HL, {
+                        style: window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.() ? { opacity: 1 } : void 0,
                         ref: l,
                         tabIndex: 0,
                         className: (0, n.$)(d().root, d()['root_'.concat(a)], r),
@@ -5165,11 +5173,16 @@
                         x = 0 !== s ? s - u : 0,
                         f = Math.min(Math.max(v - u / 2, 0), x),
                         g = (0, $.L)(() => {
-                            if (!o) return { '--timecode-position': ''.concat(f, 'px') };
+                            if (!o)
+                                return {
+                                    '--timecode-position': ''.concat(f, 'px'),
+                                    ...(window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.() ? { opacity: 1 } : {}),
+                                };
                         });
                     return (0, m.jsxs)(m.Fragment, {
                         children: [
                             (0, m.jsx)(iD.d, {
+                                style: window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.() ? { opacity: 1 } : void 0,
                                 role: 'text',
                                 'aria-label': d,
                                 value: h,
@@ -5403,10 +5416,265 @@
                 },
                 i4 = (0, b.forwardRef)((e, t) => (0, m.jsx)(i3, { forwardRef: t, ...e }));
             var i6 = a(10910),
-                i7 = a(55165),
-                i9 = a.n(i7);
-            let i8 = (0, h.PA)((e) => {
+                iTooltipWithTitle = a(60244),
+                 i7 = a(55165),
+                 i9 = a.n(i7);
+            let pulseSyncPlayerCastEnabled = () => {
+                    try {
+                        return window.__pulseSyncYandexStationCastEnabled ?? window.ENABLE_YANDEX_STATION_CAST?.() ?? !0;
+                    } catch (e) {
+                        return !0;
+                    }
+                },
+                pulseSyncPlayerCastRows = (e) => {
+                    let t = Array.isArray(null == e ? void 0 : e.accountSpeakers) ? e.accountSpeakers : [],
+                        a = Array.isArray(null == e ? void 0 : e.localSpeakers) ? e.localSpeakers : [],
+                        i = new Set(),
+                        n = (e) => String(null != e ? e : '').trim().toLowerCase().replace(/\s+/g, ' ');
+                    return [
+                        { isThisDevice: !0 },
+                        ...t.map((e) => {
+                            let t = n(null == e || null == e.configuration ? void 0 : e.configuration.glagolDeviceId),
+                                r = n(null == e || null == e.configuration ? void 0 : e.configuration.platform),
+                                s = a.find((a) => {
+                                    if (i.has(a)) return !1;
+                                    let s = n(null == a ? void 0 : a.deviceId),
+                                        o = n(null == a ? void 0 : a.platform),
+                                        l = n((null == a ? void 0 : a.name) || (null == a ? void 0 : a.instanceName)),
+                                        d = n(null == e ? void 0 : e.name);
+                                    return (!!t && t === s) || (!!r && r === o && !!d && !!l && (d.includes(l) || l.includes(d)));
+                                });
+                            return s && i.add(s), { accountSpeaker: e, localSpeaker: s, canUseLocal: !!s };
+                        }),
+                    ];
+                },
+                pulseSyncPlayerCastSelect = async (e) => {
+                    let t = null;
+                    for (let a = 0; a < 4; a += 1) {
+                        try {
+                            if (
+                                ((t = window.pulseSyncYandexStationCast?.activate
+                                    ? await window.pulseSyncYandexStationCast.activate(e)
+                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', e)),
+                                null == t ? void 0 : t.ok)
+                            )
+                                return t;
+                        } catch (e) {
+                            t = { ok: !1, error: e };
+                        }
+                        a < 3 && (await new Promise((e) => setTimeout(e, 600)));
+                    }
+                    return null != t ? t : { ok: !1 };
+                },
+                pulseSyncPlayerCastIcon = (e) =>
+                    (0, m.jsx)('span', {
+                        className: 'PulseSync_castPopoverItemIcon',
+                        'aria-hidden': !0,
+                        children: (0, m.jsx)('svg', {
+                            width: '32',
+                            height: '32',
+                            viewBox: '0 0 24 24',
+                            fill: 'none',
+                            children: (0, m.jsx)('path', {
+                                fill: 'currentColor',
+                                fillRule: 'evenodd',
+                                d: e
+                                    ? 'M4 5h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-6v2h3v2H7v-2h3v-2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm0 2v9h16V7H4Z'
+                                    : 'M12 2c4.42 0 8 1.79 8 4v12c0 2.21-3.58 4-8 4s-8-1.79-8-4V6c0-2.21 3.58-4 8-4Zm0 2C8.69 4 6 4.9 6 6s2.69 2 6 2 6-.9 6-2-2.69-2-6-2Z',
+                            }),
+                        }),
+                    }),
+                pulseSyncPlayerCastControl = (0, h.PA)((e) => {
+                    let { buttonClassName: t, disabled: a } = e,
+                        { formatMessage: i } = (0, g.A)(),
+                        [n, r] = (0, b.useState)(!1),
+                        [s, o] = (0, b.useState)([]),
+                        [l, d] = (0, b.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
+                        [c, u] = (0, b.useState)(null),
+                        [_, h] = (0, b.useState)(null),
+                        [v, x] = (0, b.useState)(!1),
+                        [f, C] = (0, b.useState)(!1),
+                        [S, j] = (0, b.useState)(pulseSyncPlayerCastEnabled()),
+                        k = (0, b.useRef)(null),
+                        P = (0, b.useCallback)((e) => {
+                            d((null == e || null == e.activeSpeaker || null == e.activeSpeaker.accountSpeaker ? void 0 : e.activeSpeaker.accountSpeaker.id) ?? window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
+                                o(pulseSyncPlayerCastRows(e)),
+                                C(Boolean(null == e ? void 0 : e.firstFlowCompleted)),
+                                x(Boolean(null == e ? void 0 : e.refreshing));
+                        }, []),
+                        w = (0, b.useCallback)(async () => {
+                            if (!S) return o([]), C(!1), x(!1);
+                            try {
+                                x(!0), P(await (window.desktopEvents?.invoke?.('YANDEX_STATION_STATE') ?? Promise.resolve(null)));
+                            } catch (e) {
+                                o([]), C(!1), x(!1);
+                            }
+                        }, [S, P]);
+                    (0, b.useEffect)(() => {
+                        void w();
+                    }, [w]),
+                        (0, b.useEffect)(() => {
+                            let e = (e, t) => P(t),
+                                a = window.desktopEvents?.on?.('YANDEX_STATION_STATE', e);
+                            return () => {
+                                'function' == typeof a && a();
+                            };
+                        }, [P]),
+                        (0, b.useEffect)(() => {
+                            let e = (e) => d((null == e || null == e.detail ? void 0 : e.detail.activeSpeakerId) ?? null),
+                                t = (e) => {
+                                    let t = (null == e || null == e.detail ? void 0 : e.detail.enabled) ?? pulseSyncPlayerCastEnabled();
+                                    j(t), t ? void w() : (r(!1), o([]), d(null), C(!1), x(!1));
+                                };
+                            return (
+                                window.addEventListener('pulse-sync-yandex-station-cast-change', e),
+                                window.addEventListener('pulse-sync-yandex-station-cast-setting-change', t),
+                                () => {
+                                    window.removeEventListener('pulse-sync-yandex-station-cast-change', e),
+                                        window.removeEventListener('pulse-sync-yandex-station-cast-setting-change', t);
+                                }
+                            );
+                        }, [w]),
+                        (0, b.useEffect)(() => {
+                            if (!n) return;
+                            let e = (e) => {
+                                var t;
+                                (null == (t = k.current) ? void 0 : t.contains(e.target)) || r(!1);
+                            };
+                            return (
+                                document.addEventListener('pointerdown', e, !0),
+                                () => {
+                                    document.removeEventListener('pointerdown', e, !0);
+                                }
+                            );
+                        }, [n]);
+                    if (a || !S) return null;
+                    return (0, m.jsxs)('div', {
+                        ref: k,
+                        style: { position: 'relative', display: 'flex', alignItems: 'center' },
+                        children: [
+                            (0, m.jsx)(T.$, {
+                                className: t,
+                                radius: 'round',
+                                size: 'xxxs',
+                                variant: 'text',
+                                withRipple: !1,
+                                'aria-label': i({ id: 'player-actions.cast' }),
+                                icon: (0, m.jsx)(E.I, { variant: 'cast', size: 'xs' }),
+                                onClick: () => {
+                                    r((e) => !e), n || void w();
+                                },
+                                style: l ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
+                            }),
+                            n &&
+                                (0, m.jsx)('div', {
+                                    className: 'PulseSync_castPopover',
+                                    children: !f
+                                        ? (0, m.jsx)('div', { className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_shimmer', children: 'Поиск устройств...' })
+                                        : (0, m.jsxs)('div', {
+                                              className: 'PulseSync_castPopoverContent',
+                                              children: [
+                                                  (0, m.jsx)('div', {
+                                                      className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_refreshing'.concat(v ? ' PulseSync_castPopoverStatus_visible' : ''),
+                                                      children: 'Обновляем список устройств...',
+                                                  }),
+                                                  s.length
+                                                      ? s.map((e) => {
+                                                            let t = !e.isThisDevice && !e.canUseLocal,
+                                                                a = null == e.accountSpeaker ? void 0 : e.accountSpeaker.id,
+                                                                i = !e.isThisDevice && c === a && l !== a,
+                                                                s = !e.isThisDevice && _ === a && l !== a,
+                                                                o = t || !!c,
+                                                                b = (e.isThisDevice && !l) || (!e.isThisDevice && l === a),
+                                                                g = e.isThisDevice
+                                                                    ? l
+                                                                        ? 'Отключить колонку'
+                                                                        : 'Сейчас выбрано'
+                                                                    : i
+                                                                      ? 'Подключение...'
+                                                                      : s
+                                                                        ? 'Ошибка подключения'
+                                                                        : b
+                                                                          ? 'Подключено'
+                                                                          : e.canUseLocal
+                                                                            ? 'В сети'
+                                                                            : 'Вне локальной сети',
+                                                                v = e.isThisDevice ? 'pulse-sync-this-device' : a || (null == e.accountSpeaker ? void 0 : e.accountSpeaker.name);
+                                                            return (0, m.jsxs)(
+                                                                'button',
+                                                                {
+                                                                    type: 'button',
+                                                                    className: 'PulseSync_castPopoverItem'.concat(b ? ' PulseSync_castPopoverItem_active' : ''),
+                                                                    disabled: o,
+                                                                    onClick: o
+                                                                        ? void 0
+                                                                        : async () => {
+                                                                              if (e.isThisDevice) {
+                                                                                  window.pulseSyncYandexStationCast?.clear
+                                                                                      ? await window.pulseSyncYandexStationCast.clear()
+                                                                                      : await window.desktopEvents?.invoke?.('YANDEX_STATION_CLEAR_SPEAKER');
+                                                                                  d(null), u(null), h(null), r(!1);
+                                                                                  return;
+                                                                              }
+                                                                              if (!a) return;
+                                                                              u(a), h(null);
+                                                                              try {
+                                                                                  let e = await pulseSyncPlayerCastSelect(a);
+                                                                                  (null == e ? void 0 : e.ok) ? (d(a), r(!1)) : h(a);
+                                                                              } catch (e) {
+                                                                                  h(a);
+                                                                              } finally {
+                                                                                  u(null);
+                                                                              }
+                                                                          },
+                                                                    children: [
+                                                                        pulseSyncPlayerCastIcon(e.isThisDevice),
+                                                                        (0, m.jsxs)('div', {
+                                                                            style: { display: 'flex', alignItems: 'flex-start', flexDirection: 'column', minWidth: 0, flex: '1 1 auto' },
+                                                                            children: [
+                                                                                (0, m.jsx)('span', {
+                                                                                    className: 'PulseSync_castPopoverItemTitle',
+                                                                                    children: e.isThisDevice
+                                                                                        ? 'Это устройство'
+                                                                                        : ((null == e.accountSpeaker ? void 0 : e.accountSpeaker.name) ?? a ?? 'Yandex Station'),
+                                                                                }),
+                                                                                (0, m.jsx)('span', {
+                                                                                    className: 'PulseSync_castPopoverItemMeta'
+                                                                                        .concat(i ? ' PulseSync_castPopoverItemMeta_shimmer' : '')
+                                                                                        .concat(s ? ' PulseSync_castPopoverItemMeta_error' : ''),
+                                                                                    children: g,
+                                                                                }),
+                                                                            ],
+                                                                        }),
+                                                                        b && (0, m.jsx)('span', { children: '✓' }),
+                                                                    ],
+                                                                },
+                                                                v,
+                                                            );
+                                                        })
+                                                      : (0, m.jsx)('div', { className: 'PulseSync_castPopoverStatus', children: 'Устройства не найдены' }),
+                                              ],
+                                          }),
+                                }),
+                        ],
+                    });
+                }),
+                i8 = (0, h.PA)((e) => {
                 var t;
+                let [, forcePlayerBarRerender] = (0, b.useReducer)((e) => e + 1, 0);
+                window.forcePlayerBarRerender = forcePlayerBarRerender;
+                    const deviceTypeMap = {
+                        UNSPECIFIED: 'Неизвестного устройства',
+                        WEB: 'Сайта',
+                        ANDROID: 'Android приложения',
+                        IOS: 'IOS приложения',
+                        SMART_SPEAKER: 'Умной колонки',
+                        WEB_TV: 'ТВ',
+                        ANDROID_TV: 'Android ТВ',
+                        APPLE_TV: 'Apple ТВ',
+                        ANDROID_WEAR: 'Android часов',
+                        WEB_DESKTOP: 'ПК приложения',
+                    };
                 let {
                         className: a,
                         entityMeta: i,
@@ -5435,6 +5703,7 @@
                     } = (0, L.g)(),
                     [R, M] = (0, b.useState)(!1),
                     [F, U] = (0, b.useState)(!1),
+                    [downloadProgress, setDownloadProgress] = (0, b.useState)(0),
                     { formatMessage: z } = (0, g.A)(),
                     W = _ && !j.isGenerativeContext,
                     V = j.canSpeed && (null == i ? void 0 : i.isNonMusic),
@@ -5451,6 +5720,16 @@
                     X = (0, C.c)(async (e) => {
                         await Y(j, e, x);
                     }),
+                    trackDownloadName = (0, b.useMemo)(() => {
+                        let e = ((null == i ? void 0 : i.artists) ?? [])
+                            .map((e) => e.name)
+                            .filter(Boolean)
+                            .join(', ');
+                        return [e, null == i ? void 0 : i.title].filter(Boolean).join(' — ');
+                    }, [i]),
+                    onDownloadClick = (0, b.useCallback)(() => {
+                        (null == i ? void 0 : i.id) && window.desktopEvents?.send?.('DOWNLOAD_TRACK', i.id, trackDownloadName);
+                    }, [i, trackDownloadName]),
                     J = (0, C.c)((e) => {
                         let t = e.target,
                             a = t instanceof Element && ['DIV', 'SECTION', 'SPAN'].includes(t.tagName);
@@ -5465,6 +5744,13 @@
                             _ && 1 === e.detail && (null == i ? void 0 : i.hasTrackLink) && !k.modal.isOpened && Z();
                         }
                     }),
+                    syncLyricsAvailable =
+                        !!(null == i ? void 0 : i.isSyncLyricsAvailable) ||
+                        !!(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) ||
+                        !!(null == i ? void 0 : i.hasSyncLyrics) ||
+                        (!!(null == i ? void 0 : i.id) &&
+                            'function' == typeof (null == k.syncLyrics ? void 0 : k.syncLyrics.hasLyricsForTrack) &&
+                            k.syncLyrics.hasLyricsForTrack(i.id)),
                     et = (0, b.useCallback)(
                         (e) => {
                             let { isPopoverEnabled: t } = e,
@@ -5474,8 +5760,8 @@
                                 radius: 'round',
                                 size: 'xxxs',
                                 variant: 'text',
-                                disabled: !(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) || P,
-                                'aria-hidden': !(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature),
+                                disabled: !syncLyricsAvailable || P,
+                                'aria-hidden': !syncLyricsAvailable,
                                 withRipple: !1,
                                 'aria-label': a,
                                 icon: (0, m.jsx)(E.I, { variant: 'syncLyrics', size: 'xs' }),
@@ -5483,7 +5769,7 @@
                                 'data-test-id': N.e8.player.PLAYERBAR_DESKTOP_SYNC_LYRICS_BUTTON,
                             });
                         },
-                        [z, k.showSyncLyrics, null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature, P],
+                        [z, k.showSyncLyrics, syncLyricsAvailable, P],
                     ),
                     ea = (0, b.useMemo)(
                         () =>
@@ -5567,6 +5853,19 @@
                                 : null,
                         [er, i, G, H, j.isGenerativeContext, v],
                     ),
+                    qualityMap = { lq: 'LQ', nq: 'NQ', hq: 'HQ', lossless: 'HQ+' },
+                    codecMap = { mp3: 'MP3', 'he-aac': 'HE-AAC', aac: 'AAC', flac: 'FLAC', 'aac-mp4': 'AAC', 'he-aac-mp4': 'HE-AAC', 'flac-mp4': 'FLAC' },
+                    theState = (0, ik.e)(),
+                    [downloadInfo, setDownloadInfo] = (0, b.useState)(theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data),
+                    [parsedTrackQualityInfo, setParsedTrackQualityInfo] = (0, b.useState)(null),
+                    [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, b.useState)(window.isRemoteDeviceConnected ?? !1),
+                    [remoteDevice, setRemoteDevice] = (0, b.useState)(window.remoteDevice ?? null),
+                    updateParsedTrackQualityInfo = (0, b.useCallback)(
+                        (e, t = !0) => {
+                            setParsedTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(e, t ? downloadInfo : null) ?? null);
+                        },
+                        [downloadInfo, setParsedTrackQualityInfo],
+                    ),
                     eo = (0, $.L)(() =>
                         l
                             ? l({ isMobile: !1, entityMeta: i })
@@ -5578,7 +5877,71 @@
                                   entityMeta: i,
                               }),
                     ),
-                    el = !0;
+                    el = window.CHANGE_DISLIKE_BUTTON_POS?.();
+                    (0, b.useEffect)(() => {
+                        let e = (e, t, a) => {
+                            'trackDownloadCurrent' === t && setDownloadProgress(a);
+                        };
+                        return (
+                            window.desktopEvents?.on?.('PROGRESS_BAR_CHANGE', e),
+                            () => {
+                                window.desktopEvents?.off?.('PROGRESS_BAR_CHANGE', e);
+                            }
+                        );
+                    }, []),
+                    (0, b.useEffect)(() => {
+                        let e = (device_info) => {
+                                (setIsRemoteDeviceConnected(!0), setRemoteDevice(device_info), (window.isRemoteDeviceConnected = !0), (window.remoteDevice = device_info));
+                            },
+                            t = () => {
+                                (setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null));
+                            };
+                        return (
+                            (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
+                                (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
+                                () => {
+                                    ((window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
+                                        (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t)));
+                                }
+                        );
+                    }, []),
+                    (0, b.useEffect)(() => {
+                        let e = window?.PulseSyncTrackQuality?.getLastInfo?.();
+                        e ? setParsedTrackQualityInfo(e) : updateParsedTrackQualityInfo(null, !0),
+                            window?.nativeAudioOutput
+                                ?.getYaspAudioFormat?.()
+                                ?.then?.((e) => {
+                                    updateParsedTrackQualityInfo(e, !0);
+                                })
+                                ?.catch?.(() => {});
+                        let t = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED', (e, t) => {
+                            updateParsedTrackQualityInfo(t, Boolean(t));
+                        });
+                        return () => {
+                            'function' == typeof t && t();
+                        };
+                    }, [updateParsedTrackQualityInfo]),
+                    (0, b.useEffect)(() => {
+                        let e;
+                        let t = theState?.state?.queueState?.currentEntity?.onChange?.(() => {
+                                let t = theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data;
+                                if (JSON.stringify(t) !== JSON.stringify(downloadInfo))
+                                    if (void 0 === t) {
+                                        let a = 5;
+                                        e = setInterval(() => {
+                                            let t = theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data;
+                                            (a <= 0 || void 0 !== t) && (setDownloadInfo(t), clearInterval(e));
+                                        }, 200);
+                                    } else setDownloadInfo(t);
+                            }),
+                            a = theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data;
+                        return (
+                            a && setDownloadInfo(a),
+                            () => {
+                                e && clearInterval(e), 'function' == typeof t && t();
+                            }
+                        );
+                    });
                 return (0, m.jsx)('section', {
                     style: w.isAdvertShown ? void 0 : q,
                     className: (0, p.$)(i9().root, i9().important, a, { [i9().root_interactive]: _ }),
@@ -5653,6 +6016,23 @@
                                                 (0, m.jsx)(eZ.WithOffline, {
                                                     fallback: (0, m.jsx)(iq._, { disabled: !i || w.isAdvertShown, isDisliked: r, onClick: o, iconSize: 'xs' }),
                                                 }),
+                                            isRemoteDeviceConnected &&
+                                            (0, m.jsx)('div', {
+                                                style: {
+                                                    position: 'absolute',
+                                                    bottom: 0,
+                                                    color: 'var(--ym-controls-color-primary-default-enabled)',
+                                                    fontSize: 'small',
+                                                },
+                                                children: (0, m.jsxs)('span', {
+                                                    children: [
+                                                        'Управление с ',
+                                                        null != deviceTypeMap?.[remoteDevice?.info?.type] ? deviceTypeMap?.[remoteDevice?.info?.type] : '',
+                                                        ': ',
+                                                        remoteDevice?.info?.title,
+                                                    ],
+                                                }),
+                                            }),
                                         ],
                                     }),
                                     (0, m.jsxs)('div', {
@@ -5663,20 +6043,88 @@
                                                 !w.isAdvertShown &&
                                                 (0, m.jsxs)(m.Fragment, {
                                                     children: [
-                                                        V && (0, m.jsx)(iJ.i, { iconSize: 'l' }),
-                                                        ea,
-                                                        en,
-                                                        (0, m.jsx)(i6.p$, {
-                                                            placement: 'bottom',
-                                                            open: F,
-                                                            onOpenChange: U,
-                                                            icon: (0, m.jsx)(E.I, { variant: 'settings', size: 'xs' }),
-                                                            size: 'xxxs',
-                                                            referenceClassName: i9().settingsButton,
-                                                        }),
+                                                         V && (0, m.jsx)(iJ.i, { iconSize: 'l' }),
+                                                         ea,
+                                                         en,
+                                                         (0, m.jsx)(pulseSyncPlayerCastControl, { buttonClassName: i9().settingsButton, disabled: w.isAdvertShown }),
+                                                         (0, m.jsx)(iTooltipWithTitle.k, {
+                                                             title: 'Скачать трек в файл',
+                                                             description: (null == i ? void 0 : i.id)
+                                                                 ? 'Скачать трек в читаемый файл на вашем ПК'
+                                                                 : 'Не удалось получить данные о треке',
+                                                             children: (0, m.jsxs)('button', {
+                                                                 disabled: !(null == i ? void 0 : i.id),
+                                                                 className: 'cpeagBA1_PblpJn8Xgtv UDMYhpDjiAFT3xUx268O '
+                                                                     .concat((null == i ? void 0 : i.id) ? 'HbaqudSqu7Q3mv3zMPGr' : '', ' qU2apWBO1yyEK0lZ3lPO'),
+                                                                 style: {
+                                                                     display: 'flex',
+                                                                     'flex-direction': 'column',
+                                                                     gap: '2px',
+                                                                     'align-self': 'center',
+                                                                     'padding-top': '5px',
+                                                                     'padding-inline': '2px',
+                                                                 },
+                                                                 children: [
+                                                                     (0, m.jsx)('span', {
+                                                                         className: 'JjlbHZ4FaP9EAcR_1DxF',
+                                                                         children: (0, m.jsx)(E.I, { variant: 'download', size: 'xxs', style: { width: '24px', height: '24px' } }),
+                                                                     }),
+                                                                     (0, m.jsx)('div', {
+                                                                         style: {
+                                                                             'background-color': 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                             width: ''.concat(-100 === downloadProgress ? 0 : downloadProgress, '%'),
+                                                                             transition:
+                                                                                 downloadProgress >= 0 && downloadProgress < 100
+                                                                                     ? 'width 0.3s'
+                                                                                     : 'width 0.3s, opacity 0.3s linear 0.5s',
+                                                                             opacity: downloadProgress >= 0 && downloadProgress < 100 ? '1' : '0',
+                                                                             height: '2px',
+                                                                             'border-radius': '10px',
+                                                                         },
+                                                                     }),
+                                                                 ],
+                                                                 onClick: onDownloadClick,
+                                                             }),
+                                                         }),
+                                                         (0, m.jsx)(iTooltipWithTitle.k, {
+                                                             title: 'Качество трека',
+                                                             description: (null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.label) ?? 'Не удалось получить качество трека',
+                                                             children: (0, m.jsx)('div', {
+                                                                 className: 'cpeagBA1_PblpJn8Xgtv HbaqudSqu7Q3mv3zMPGr',
+                                                                 children: (0, m.jsx)(i6.p$, {
+                                                                     placement: 'bottom',
+                                                                     open: F,
+                                                                     onOpenChange: U,
+                                                                     icon: (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK?.()
+                                                                         ? (null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.codec) ??
+                                                                           (null == downloadInfo ? void 0 : codecMap[downloadInfo.codec])
+                                                                         : (null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.quality) ??
+                                                                           (null == downloadInfo ? void 0 : qualityMap[downloadInfo.quality]))
+                                                                         ? (0, m.jsxs)('span', {
+                                                                               className: i9().settingsButton,
+                                                                               style: { width: 'auto', height: 'auto', 'align-content': 'center' },
+                                                                               children:
+                                                                                   (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK?.()
+                                                                                       ? (null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.codec) ??
+                                                                                         (null == downloadInfo ? void 0 : codecMap[downloadInfo.codec])
+                                                                                       : (null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.quality) ??
+                                                                                         (null == downloadInfo ? void 0 : qualityMap[downloadInfo.quality])) ?? 'NONE',
+                                                                           })
+                                                                         : (0, m.jsx)(E.I, { variant: 'settings', size: 'xs' }),
+                                                                     size: 'xxxs',
+                                                                     referenceClassName: i9().settingsButton,
+                                                                 }),
+                                                             }),
+                                                         }),
                                                     ],
                                                 }),
-                                            (0, m.jsx)(iW.r, { variant: iz.q.VERTICAL, sonataVolume: null != f ? f : j.volume, onVolumeClick: X, playbackId: x }),
+                                            (0, m.jsx)(iW.r, {
+                                                variant: iz.q.VERTICAL,
+                                                sonataVolume: null != f ? f : j.volume,
+                                                onVolumeSet: j.setVolume,
+                                                onVolumeClick: X,
+                                                playbackId: x,
+                                            }),
                                         ],
                                     }),
                                 ],
@@ -6812,10 +7260,16 @@
                                                         externalSetIsCollapsed: O,
                                                     }),
                                                 (0, m.jsx)(ep, {
-                                                    className: (0, p.$)(Y().content, { [Y().content_withPlayerBar]: x && !r, [Y().content_withAxeBanner]: j.isVisible }),
+                                                    className: (0, p.$)(Y().content, {
+                                                        [Y().content_withPlayerBar]: x && (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()),
+                                                        [Y().content_withAxeBanner]: j.isVisible,
+                                                    }),
                                                     children: (0, m.jsxs)(nJ.ErrorBoundary, { fallback: nl.SomethingWentWrong, children: [n, (0, m.jsx)(ri, {})] }, d),
                                                 }),
-                                                !x && V && !r && (0, m.jsx)(nw.n, { pageId: tG._Q.PLAYER, children: (0, m.jsx)(nn, { className: Y().playerBar }) }),
+                                                !x &&
+                                                    V &&
+                                                    (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
+                                                    (0, m.jsx)(nw.n, { pageId: tG._Q.PLAYER, children: (0, m.jsx)(nn, { className: Y().playerBar }) }),
                                                 x &&
                                                     V &&
                                                     (0, m.jsxs)('div', {
@@ -6823,7 +7277,8 @@
                                                         className: (0, p.$)(Y().compositePlayerBar, { [Y().compositePlayerBar_withNewVibe]: r }),
                                                         children: [
                                                             F && (0, m.jsx)(nZ, {}),
-                                                            !r && (0, m.jsx)(nw.n, { pageId: tG._Q.PLAYER, children: (0, m.jsx)(nn, { className: Y().playerBar }) }),
+                                                            (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
+                                                                (0, m.jsx)(nw.n, { pageId: tG._Q.PLAYER, children: (0, m.jsx)(nn, { className: Y().playerBar }) }),
                                                             (0, m.jsx)(a2, {
                                                                 className: (0, p.$)(s.navbar, {
                                                                     [s.navbar_application_windows]: f,
@@ -6887,7 +7342,18 @@
                         (y = ro().rootNewVibe_withBarBelow),
                         (T = ro().rootNewVibe);
                 }
-                let E = (0, p.$)(Y().root, T, { [ro().root_applicationPreserveTitleBar]: d || c, [y]: N, [Y().root_withAxeBanner]: h.isVisible }, r);
+                let E = (0, p.$)(
+                    Y().root,
+                    T,
+                    {
+                        [ro().root_applicationPreserveTitleBar]: d || c,
+                        [y]: N,
+                        [Y().root_withAxeBanner]: h.isVisible,
+                        modSettings_alwaysWideBar: window.ALWAYS_WIDE_BAR?.(),
+                        modSettings_showOldPlayerBarOnNewWave: window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.(),
+                    },
+                    r,
+                );
                 return (0, m.jsxs)(rr, { isNewWaveMainTabActive: A, layoutChromeStyles: C, rootClassName: E, rootStyle: n, children: [s, A && (0, m.jsx)(M, {})] });
             });
         },
@@ -7167,7 +7633,7 @@
                 E = (0, n.PA)((e) => {
                     var t, a, n;
                     let {
-                            disabled: h,
+                            disabled: pulseSyncDisabled,
                             isPlaying: v,
                             repeatMode: x,
                             canMoveForward: b,
@@ -7239,15 +7705,15 @@
                                   });
                         });
                     return (0, i.jsx)(y, {
-                        isDisabledRepeat: !B || h,
-                        isDisabledShuffle: !g || h,
-                        withShuffle: ((h || g) && !(null == L ? void 0 : L.isAdvertShown)) || !!j,
+                        isDisabledRepeat: !B || pulseSyncDisabled,
+                        isDisabledShuffle: !g || pulseSyncDisabled,
+                        withShuffle: ((pulseSyncDisabled || g) && !(null == L ? void 0 : L.isAdvertShown)) || !!j,
                         shuffle: A,
                         canMoveBackward: f,
                         canMoveForward: b,
                         onClickNext: N,
                         onClickPrev: E,
-                        withRepeat: ((h || B) && !(null == L ? void 0 : L.isAdvertShown)) || !!k,
+                        withRepeat: ((pulseSyncDisabled || B) && !(null == L ? void 0 : L.isAdvertShown)) || !!k,
                         repeatMode: x,
                         className: I,
                         playButton: K,
@@ -8712,6 +9178,7 @@
                 sonataButton: 'SonataFullscreenControlsDesktop_sonataButton__69FFc',
                 sonataPlayButton: 'SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp',
                 playPauseButtonIcon: 'SonataFullscreenControlsDesktop_playPauseButtonIcon__IkUNX',
+                playPauseButtonIcon_withYellowPlayButton: 'SonataFullscreenControlsDesktop_playPauseButtonIcon_withYellowPlayButton__osz8_',
                 buttonContainer: 'SonataFullscreenControlsDesktop_buttonContainer__SpXWc',
             };
         },

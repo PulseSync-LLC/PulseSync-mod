@@ -58,7 +58,7 @@
                 var r, l;
                 let o = null == (r = e.substituted?.artists ?? e.artists) ? void 0 : r.map(n.d),
                     u = null == (l = e.albums) ? void 0 : l.map(a.e);
-                if (e?.type === "MUSIC") e.type = e.type.toLowerCase();
+                if (e?.type === 'MUSIC') e.type = e.type.toLowerCase();
                 return (0, i.wg)({ ...(0, s.g)(e, t), artists: o, albums: u });
             };
         },

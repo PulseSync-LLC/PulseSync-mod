@@ -8782,12 +8782,26 @@
                 },
                 sw = (0, h.PA)(() => {
                     var e;
+                    const deviceTypeMap = {
+                        UNSPECIFIED: 'Неизвестного устройства',
+                        WEB: 'Сайта',
+                        ANDROID: 'Android приложения',
+                        IOS: 'IOS приложения',
+                        SMART_SPEAKER: 'Умной колонки',
+                        WEB_TV: 'ТВ',
+                        ANDROID_TV: 'Android ТВ',
+                        APPLE_TV: 'Apple ТВ',
+                        ANDROID_WEAR: 'Android часов',
+                        WEB_DESKTOP: 'ПК приложения',
+                    };
                     let { state: t, handleDebouncedToggle: a } = (0, l2.F)({ delay: 150, throttleTimeout: 100 }),
                         {
                             sonataState: { entityMeta: i },
                             fullscreenPlayer: l,
                         } = (0, S.g)(),
                         { state: n, toggleTrue: s } = (0, eh.e)(!1),
+                        [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, A.useState)(window.isRemoteDeviceConnected ?? !1),
+                        [remoteDevice, setRemoteDevice] = (0, A.useState)(window.remoteDevice ?? null),
                         r = (null == i ? void 0 : i.isTrackPodcast) || (null == i || null == (e = i.mainAlbum) ? void 0 : e.isPodcast),
                         o = null == i ? void 0 : i.isTrackAudiobook,
                         c = {
@@ -8850,6 +8864,22 @@
                             [i, null == i ? void 0 : i.id, r, o, l.isSplitMode],
                         );
                     return (
+                        (0, A.useEffect)(() => {
+                            let e = (device_info) => {
+                                    (setIsRemoteDeviceConnected(!0), setRemoteDevice(device_info), (window.isRemoteDeviceConnected = !0), (window.remoteDevice = device_info));
+                                },
+                                t = () => {
+                                    (setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null));
+                                };
+                            return (
+                                (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
+                                    (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
+                                    () => {
+                                        ((window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
+                                            (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t)));
+                                    }
+                            );
+                        }, []),
                         (0, A.useEffect)(
                             () => (
                                 window.addEventListener('resize', a),
@@ -8879,6 +8909,19 @@
                                     }),
                                     'data-test-id': q.e8.player.FULLSCREEN_PLAYER_FULLSCREEN_CONTENT,
                                     children: [
+                                        isRemoteDeviceConnected &&
+                                        (0, y.jsxs)('div', {
+                                            style: {
+                                                position: 'absolute',
+                                                top: '-25px',
+                                                color: 'var(--ym-controls-color-primary-default-enabled)',
+                                            },
+                                            children: [
+                                                (0, y.jsx)('span', {
+                                                    children: `Управление с ${deviceTypeMap?.[remoteDevice?.info?.type] ?? ''}: ${remoteDevice?.info?.title}`,
+                                                }),
+                                            ],
+                                        }),
                                         (0, y.jsx)(sE, {
                                             className: (0, eL.$)(sM().poster, sM().important),
                                             coverUri: null == i ? void 0 : i.coverUri,

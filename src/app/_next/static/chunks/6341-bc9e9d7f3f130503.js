@@ -1724,8 +1724,12 @@
                 return (0, s.c)(async (e) => {
                     var t;
                     let { playlist: i, track: a, withSuccessNotification: s = !0, withFailNotification: o = !0, withPageRefresh: u = !0 } = e,
+                        p = "undefined" != typeof window && window.nativeSettings?.get("modSettings.playlist.addTracksToEndFromContextMenu") === !0,
+                        v = null != i.tracksCount ? i.tracksCount : null != i.trackCount ? i.trackCount : null == i ? void 0 : i.meta?.tracksCount,
+                        h = null != v ? v : null == i ? void 0 : i.meta?.trackCount,
+                        g = p ? Number(null != h ? h : Array.isArray(i.tracks) ? i.tracks.length : 0) || 0 : 0,
                         m = await i.changePlaylist(
-                            (0, r.M)({ operation: n.y.INSERT, position: 0, tracks: [{ id: a.id, albumId: null == (t = a.mainAlbum) ? void 0 : t.id }] }),
+                            (0, r.M)({ operation: n.y.INSERT, position: g, tracks: [{ id: a.id, albumId: null == (t = a.mainAlbum) ? void 0 : t.id }] }),
                         );
                     return m === l.Y.OK ? c({ withSuccessNotification: s, withPageRefresh: u, playlist: i, track: a }) : d({ withFailNotification: o }), m;
                 });
