@@ -165,7 +165,7 @@ https://github.com/user-attachments/assets/079f8b38-ca6b-4fef-b6a2-efa853fd583f
 <details>
    <summary>Настройки</summary>
 
-<img width="611" height="572" alt="image" src="https://github.com/user-attachments/assets/2b5daa75-e1c4-40cb-b9c0-9715d0fe5f01" />
+<img width="613" height="582" alt="image" src="https://github.com/user-attachments/assets/17323cca-f11f-4721-ad3a-1d599e086a5e" />
 
 
 </details>
@@ -203,7 +203,7 @@ https://github.com/user-attachments/assets/079f8b38-ca6b-4fef-b6a2-efa853fd583f
 
 Отображает качество либо кодек текущего трека.
 
-![image](https://github.com/user-attachments/assets/424434fb-5e66-4a85-8ca2-90179cb7f357)
+<img width="236" height="52" alt="image" src="https://github.com/user-attachments/assets/d6bc994d-b314-47dd-b638-1ddb85b6479b" />
 
 </details>
 
@@ -260,7 +260,7 @@ https://github.com/user-attachments/assets/85a009b6-bd41-4018-bf50-81fc0c7584fd
 
 <img width="838" height="564" alt="image" src="https://github.com/user-attachments/assets/fa31d613-7d9f-4d6c-840e-b41c561f389f" />
 
-<img width="1266" height="105" alt="image" src="https://github.com/user-attachments/assets/b69ab3c6-7805-4a31-b703-5f48688f5284" />
+<img width="622" height="71" alt="image" src="https://github.com/user-attachments/assets/427cbdee-1362-4edf-a64a-2750dc821048" />
 
 <img width="557" height="317" alt="image" src="https://github.com/user-attachments/assets/1402cdf1-ebe0-4168-9013-f900a3702951" />
 
@@ -307,7 +307,7 @@ _Диапазон масштабов: 75% - 200%._
 
 Позволяет включать/выключать эксперименты. Для этого вам нужно включить **Режим разработчика**.
 
-![image](https://github.com/user-attachments/assets/b341e6cb-58e3-4dfa-b8b3-e6ece72539a5)
+<img width="831" height="654" alt="image" src="https://github.com/user-attachments/assets/515d3ff8-89d9-4e9a-9ad5-cb14b8be3682" />
 
 </details>
 
