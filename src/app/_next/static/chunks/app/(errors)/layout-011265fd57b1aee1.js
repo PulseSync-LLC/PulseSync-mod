@@ -102,7 +102,13 @@
         },
         25366: (e, t, a) => {
             'use strict';
-            a.d(t, { DesktopInitializer: () => j });
+            a.d(t, {
+                DesktopInitializer: () => j,
+                sendDownloadTrack: () => sendDownloadTrack,
+                sendDownloadCurrentTrack: () => sendDownloadCurrentTrack,
+                sendDownloadTracks: () => sendDownloadTracks,
+                sendYnisonState: () => sendYnisonState,
+            });
             var n = a(32290),
                 s = a(55178),
                 o = a(15808),
@@ -113,48 +119,64 @@
                 b = a(1204),
                 d = a(97201),
                 N = a(36477);
-            let u = [
-                [
-                    /^\/home\/([^/?]+)(\?.*)?$/,
-                    (e) => {
-                        let t = e.match(/^\/home\/([^/?]+)(\?.*)?$/);
-                        if (!t) return e;
-                        let a = t[1],
-                            n = t[2] || '';
-                        if (!a) return e;
-                        let s = new URLSearchParams(n.startsWith('?') ? n.substring(1) : '');
-                        return s.set('tab', a), '/?'.concat(s.toString());
-                    },
-                ],
-                [/^\/home$/, () => c.Z.main.href],
-                [/^\/users\/(.*)\/playlists$/, () => c.Z.collection.href],
-                [/^\/users\/(.*)\/artists$/, () => c.Z.collection.href],
-                [/^\/users\/(.*)\/albums$/, () => c.Z.collection.href],
-                [/^\/users\/(.*)\/tracks$/, () => c.Z.collection.href],
-                [/^\/users\/(.*)\/podcasts$/, () => c.Z.collection.href],
-                [/^\/users\/(.*)\/kids$/, () => c.Z.collection.href],
-                [/^\/users\/(.*)\/history$/, () => c.Z.musicHistory.href],
-                [
-                    /^\/play-vibe/,
-                    (e) => {
-                        let t = new URLSearchParams(e.split('?')[1]);
-                        t.set(d.K.DEEPLINK, b.v.PLAY_VIBE);
-                        let a = ((e, t) => {
-                            let a = new URLSearchParams();
-                            return (
-                                e.forEach((e, t) => {
-                                    a.append(t, e);
-                                }),
-                                t.forEach((e, t) => {
-                                    a.append(t, e);
-                                }),
-                                a
-                            );
-                        })(new URLSearchParams(window.location.search), t);
-                        return 'landing' === t.get(d.K.SCREEN) ? '/?'.concat(a.toString()) : ''.concat(window.location.pathname, '?').concat(a.toString());
-                    },
-                ],
-            ];
+            let sendDownloadTrack = (e, t) => {
+                    var a;
+                    null == (a = window.desktopEvents) || a.send(o.E.DOWNLOAD_TRACK, e, t);
+                },
+                sendDownloadCurrentTrack = (e) => {
+                    var t;
+                    null == (t = window.desktopEvents) || t.send(o.E.DOWNLOAD_CURRENT_TRACK, e);
+                },
+                sendDownloadTracks = (e, t, a) => {
+                    var n;
+                    null == (n = window.desktopEvents) || n.send(o.E.DOWNLOAD_TRACKS, e, t, a);
+                },
+                sendYnisonState = (e) => {
+                    var t;
+                    null == (t = window.desktopEvents) || t.send(o.E.YNISON_STATE, { rawData: e.rawData });
+                },
+                u = [
+                    [
+                        /^\/home\/([^/?]+)(\?.*)?$/,
+                        (e) => {
+                            let t = e.match(/^\/home\/([^/?]+)(\?.*)?$/);
+                            if (!t) return e;
+                            let a = t[1],
+                                n = t[2] || '';
+                            if (!a) return e;
+                            let s = new URLSearchParams(n.startsWith('?') ? n.substring(1) : '');
+                            return s.set('tab', a), '/?'.concat(s.toString());
+                        },
+                    ],
+                    [/^\/home$/, () => c.Z.main.href],
+                    [/^\/users\/(.*)\/playlists$/, () => c.Z.collection.href],
+                    [/^\/users\/(.*)\/artists$/, () => c.Z.collection.href],
+                    [/^\/users\/(.*)\/albums$/, () => c.Z.collection.href],
+                    [/^\/users\/(.*)\/tracks$/, () => c.Z.collection.href],
+                    [/^\/users\/(.*)\/podcasts$/, () => c.Z.collection.href],
+                    [/^\/users\/(.*)\/kids$/, () => c.Z.collection.href],
+                    [/^\/users\/(.*)\/history$/, () => c.Z.musicHistory.href],
+                    [
+                        /^\/play-vibe/,
+                        (e) => {
+                            let t = new URLSearchParams(e.split('?')[1]);
+                            t.set(d.K.DEEPLINK, b.v.PLAY_VIBE);
+                            let a = ((e, t) => {
+                                let a = new URLSearchParams();
+                                return (
+                                    e.forEach((e, t) => {
+                                        a.append(t, e);
+                                    }),
+                                    t.forEach((e, t) => {
+                                        a.append(t, e);
+                                    }),
+                                    a
+                                );
+                            })(new URLSearchParams(window.location.search), t);
+                            return 'landing' === t.get(d.K.SCREEN) ? '/?'.concat(a.toString()) : ''.concat(window.location.pathname, '?').concat(a.toString());
+                        },
+                    ],
+                ];
             var x = a(60900),
                 E = a(45477),
                 W = a(75582),
@@ -166,39 +188,233 @@
                 p = a(8623),
                 m = a.n(p);
             let S = (e) => {
-                let { version: t, formatMessage: a, closeToast: r } = e,
-                    l = (0, s.useCallback)(() => {
-                        var e;
-                        null == (e = window.desktopEvents) || e.send(o.E.INSTALL_UPDATE), null == r || r();
-                    }, [r]),
-                    i = (0, s.useMemo)(
-                        () =>
-                            (0, n.jsxs)('div', {
-                                className: m().message,
-                                children: [
-                                    (0, n.jsx)(T.HL, {
-                                        className: m().text,
-                                        variant: 'div',
-                                        type: 'controls',
-                                        size: 'm',
-                                        children: a({ id: 'desktop.on-update-available' }, { version: t }),
-                                    }),
-                                    (0, n.jsx)(A.$, {
-                                        className: m().button,
-                                        onClick: l,
-                                        variant: 'default',
-                                        color: 'secondary',
-                                        size: 'xs',
-                                        radius: 'xxxl',
-                                        'data-test-id': v.Kq.appUpdate.APP_UPDATE_NOTIFICATION_BUTTON,
-                                        children: (0, n.jsx)(T.HL, { variant: 'div', type: 'controls', size: 'm', children: a({ id: 'desktop.update' }) }),
-                                    }),
-                                ],
-                            }),
-                        [a, l, t],
+                    let { version: t, formatMessage: a, closeToast: r } = e,
+                        l = (0, s.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(o.E.INSTALL_UPDATE), null == r || r();
+                        }, [r]),
+                        i = (0, s.useMemo)(
+                            () =>
+                                (0, n.jsxs)('div', {
+                                    className: m().message,
+                                    children: [
+                                        (0, n.jsx)(T.HL, {
+                                            className: m().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: a({ id: 'desktop.on-update-available' }, { version: t }),
+                                        }),
+                                        (0, n.jsx)(A.$, {
+                                            className: m().button,
+                                            onClick: l,
+                                            variant: 'default',
+                                            color: 'secondary',
+                                            size: 'xs',
+                                            radius: 'xxxl',
+                                            'data-test-id': v.Kq.appUpdate.APP_UPDATE_NOTIFICATION_BUTTON,
+                                            children: (0, n.jsx)(T.HL, { variant: 'div', type: 'controls', size: 'm', children: a({ id: 'desktop.update' }) }),
+                                        }),
+                                    ],
+                                }),
+                            [a, l, t],
+                        );
+                    return (0, n.jsx)(I.$, { className: (0, _.$)(m().root, m().important), message: i });
+                },
+                modUpdateToast = (e) => {
+                    let { version: t, formatMessage: a, closeToast: r } = e,
+                        [l, i] = (0, s.useState)(-1),
+                        c = (0, s.useCallback)(() => {
+                            window.desktopEvents?.send?.(o.E.INSTALL_MOD_UPDATE), null == r || r();
+                        }, [r]),
+                        b = (0, s.useCallback)(() => {
+                            window.desktopEvents?.send?.(o.E.DOWNLOAD_MOD_UPDATE);
+                        }, []),
+                        d = (e) => {
+                            let t = a({ id: 'offline.download' });
+                            return e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Установить'), t;
+                        },
+                        N = (0, s.useMemo)(
+                            () =>
+                                (0, n.jsxs)('div', {
+                                    className: m().message,
+                                    children: [
+                                        (0, n.jsx)(T.HL, {
+                                            className: m().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: a({ id: 'desktop.on-mod-update-available' }, { version: t }),
+                                        }),
+                                        (0, n.jsx)(A.$, {
+                                            className: m().button,
+                                            onClick: l <= 100 ? b : c,
+                                            variant: 'default',
+                                            color: 'secondary',
+                                            size: 'xs',
+                                            radius: 'xxxl',
+                                            disabled: l <= 100 && l >= 0,
+                                            children: (0, n.jsx)(T.HL, { variant: 'div', type: 'controls', size: 'm', children: d(l) }),
+                                        }),
+                                    ],
+                                }),
+                            [a, c, t, l, b],
+                        ),
+                        u = (0, s.useCallback)((e, t, a, n = 0) => {
+                            if ('modUpdateToast' !== t) return;
+                            if (window.dedupeNonces && window.dedupeNonces[t] === n) return;
+                            window.dedupeNonces || (window.dedupeNonces = {}), n && (window.dedupeNonces[t] = n), i(a);
+                        }, []);
+                    return (
+                        (0, s.useEffect)(() => {
+                            return (
+                                window.desktopEvents?.on?.(o.E.PROGRESS_BAR_CHANGE, u),
+                                () => {
+                                    window.desktopEvents?.off?.(o.E.PROGRESS_BAR_CHANGE, u);
+                                }
+                            );
+                        }, [u]),
+                        (0, s.useEffect)(() => {
+                            let e = () => {
+                                null == r || r();
+                            };
+                            return (
+                                window.desktopEvents?.on?.(o.E.MOD_UPDATE_AVAILABLE, e),
+                                () => {
+                                    window.desktopEvents?.off?.(o.E.MOD_UPDATE_AVAILABLE, e);
+                                }
+                            );
+                        }, [r]),
+                        (0, n.jsxs)(I.$, {
+                            className: (0, _.$)(m().root, m().important),
+                            message: N,
+                            children: [
+                                (0, n.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: l + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: l <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
                     );
-                return (0, n.jsx)(I.$, { className: (0, _.$)(m().root, m().important), message: i });
-            };
+                },
+                toastWithProgress = (e) => {
+                    let {
+                            closeToast: t,
+                            toastID: a,
+                            message: r,
+                            buttonLabel: l,
+                            onButtonClick: i,
+                            disabled: c = !1,
+                            dismissOnButtonClick: b = !1,
+                            createNonce: d = 0,
+                        } = e,
+                        [N, u] = (0, s.useState)(-1),
+                        [x, E] = (0, s.useState)('Ожидание...'),
+                        W = '__pulseToastProgressCache',
+                        p = (0, s.useCallback)(() => {
+                            null == i || i(), b && (null == t || t());
+                        }, [b, i, t]),
+                        P = (0, s.useMemo)(
+                            () =>
+                                (0, n.jsxs)('div', {
+                                    className: m().message,
+                                    children: [
+                                        (0, n.jsx)(T.HL, { className: m().text, variant: 'div', type: 'controls', size: 'm', children: r.replace('#s', x) }),
+                                        l &&
+                                            (0, n.jsx)(A.$, {
+                                                className: m().button,
+                                                onClick: p,
+                                                variant: 'default',
+                                                color: 'secondary',
+                                                size: 'xs',
+                                                radius: 'xxxl',
+                                                disabled: c,
+                                                children: (0, n.jsx)(T.HL, { variant: 'div', type: 'controls', size: 'm', children: l }),
+                                            }),
+                                    ],
+                                }),
+                            [c, l, r, p, x],
+                        ),
+                        L = (0, s.useCallback)(
+                            (e, t, n, s = 0, o = void 0, r = 0) => {
+                                if (t !== a) return;
+                                if (r && d && r !== d) return;
+                                if (window.dedupeNonces && window.dedupeNonces[t] === s) return;
+                                window.dedupeNonces || (window.dedupeNonces = {}),
+                                    s && (window.dedupeNonces[t] = s),
+                                    window[W] || (window[W] = {}),
+                                    (window[W][t] = { progress: n, label: o }),
+                                    u(n),
+                                    o && E(o);
+                            },
+                            [a, d],
+                        ),
+                        C = (0, s.useCallback)(
+                            (e, n, s = 0, o = 0) => {
+                                if (o && d && o !== d) return;
+                                if (window['onBasicToastDismiss' + a] === s) return;
+                                s && (window['onBasicToastDismiss' + a] = s), n === a && (window[W] && delete window[W][a], null == t || t());
+                            },
+                            [t, a, d],
+                        );
+                    return (
+                        (0, s.useEffect)(() => {
+                            let e = window[W] && window[W][a];
+                            e && (u(e.progress), e.label && E(e.label));
+                            return () => {
+                                window[W] && delete window[W][a];
+                            };
+                        }, [a]),
+                        (0, s.useEffect)(() => {
+                            return (
+                                window.desktopEvents?.on?.(o.E.PROGRESS_BAR_CHANGE, L),
+                                () => {
+                                    window.desktopEvents?.off?.(o.E.PROGRESS_BAR_CHANGE, L);
+                                }
+                            );
+                        }, [L]),
+                        (0, s.useEffect)(() => {
+                            return (
+                                window.desktopEvents?.on?.(o.E.BASIC_TOAST_DISMISS, C),
+                                () => {
+                                    window.desktopEvents?.off?.(o.E.BASIC_TOAST_DISMISS, C);
+                                }
+                            );
+                        }, [C]),
+                        (0, n.jsxs)(I.$, {
+                            className: (0, _.$)(m().root, m().important),
+                            message: P,
+                            children: [
+                                (0, n.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: N + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: N <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
+                    );
+                };
             var P = a(70204),
                 L = a(34186),
                 C = a(39472),
@@ -319,23 +535,135 @@
                         (() => {
                             let { formatMessage: e } = (0, x.A)(),
                                 { notify: t } = (0, W.l)(),
-                                a = (0, s.useRef)(''),
-                                r = (0, s.useCallback)(
-                                    (s, o) => {
-                                        a.current !== o && ((a.current = o), t((0, n.jsx)(S, { formatMessage: e, version: o }), { containerId: E.u.IMPORTANT }));
+                                { notify: a, dismiss: r } = (0, W.l)(),
+                                { notify: l } = (0, W.l)(),
+                                { notify: i } = (0, W.l)(),
+                                { notify: c } = (0, W.l)(),
+                                b = (0, s.useRef)(''),
+                                d = (0, s.useCallback)(
+                                    (a, r) => {
+                                        b.current !== r && ((b.current = r), t((0, n.jsx)(S, { formatMessage: e, version: r }), { containerId: E.u.IMPORTANT }));
                                     },
-                                    [e, a, t],
+                                    [e, b, t],
+                                ),
+                                N = (0, s.useCallback)(
+                                    (t, l, i, c = 0) => {
+                                        if (window.modUpdateAvailableEventDedupeNonce === c) return;
+                                        c && (window.modUpdateAvailableEventDedupeNonce = c),
+                                            a((0, n.jsx)(modUpdateToast, { formatMessage: e, version: `${l} -> ${i}`, closeToast: r }), { containerId: E.u.IMPORTANT });
+                                    },
+                                    [e, a, r],
+                                ),
+                                u = (0, s.useCallback)(() => {
+                                    window.desktopEvents?.send(o.E.APPLICATION_RESTART);
+                                }, []),
+                                P = (0, s.useCallback)(
+                                    (e, t = 'GPU_STALL', a = 0) => {
+                                        if (window.onGPUStallEventDedupeNonce === a) return;
+                                        a && (window.onGPUStallEventDedupeNonce = a),
+                                            l(
+                                                (0, n.jsx)(toastWithProgress, {
+                                                    toastID: 'GPU_STALL',
+                                                    message: `Аппаратное ускорение отключилось: ${t}`,
+                                                    buttonLabel: 'Исправить',
+                                                    onButtonClick: u,
+                                                }),
+                                                { containerId: E.u.IMPORTANT },
+                                            );
+                                    },
+                                    [l, u],
+                                ),
+                                L = (0, s.useCallback)(() => {
+                                    window.desktopEvents?.send(o.E.APP_STALL_CANCEL_RESTART);
+                                }, []),
+                                C = (0, s.useCallback)(
+                                    (e, t = 0) => {
+                                        if (window.onAppStallStallDedupeNonce === t) return;
+                                        (window.onAppStallStallDedupeNonce = t),
+                                            i(
+                                                (0, n.jsx)(toastWithProgress, {
+                                                    toastID: 'safeModeRestart',
+                                                    message: 'Плеер запускается слишком долго. Перезагрузка в безопасном режиме через #s',
+                                                    buttonLabel: 'Отменить',
+                                                    onButtonClick: L,
+                                                    dismissOnButtonClick: !0,
+                                                }),
+                                                { containerId: E.u.IMPORTANT },
+                                            );
+                                    },
+                                    [i, L],
+                                ),
+                                D = (0, s.useCallback)(
+                                    (e, t, a, r, l = 0, i, b) => {
+                                        if (window['onBasicToastCreate' + t] === l) return;
+                                        l && (window['onBasicToastCreate' + t] = l),
+                                            window['onBasicToastDismiss' + t] && delete window['onBasicToastDismiss' + t],
+                                            window.dedupeNonces && delete window.dedupeNonces[t],
+                                            window.__pulseToastProgressCache && delete window.__pulseToastProgressCache[t],
+                                            c(
+                                                (0, n.jsx)(toastWithProgress, {
+                                                    toastID: t,
+                                                    message: a,
+                                                    buttonLabel: r || void 0,
+                                                    onButtonClick: i ? () => window.desktopEvents?.send(i, b) : void 0,
+                                                    dismissOnButtonClick: !!r,
+                                                    createNonce: l,
+                                                }),
+                                                { containerId: E.u.IMPORTANT },
+                                            );
+                                    },
+                                    [c],
                                 );
                             (0, s.useEffect)(() => {
                                 var e;
                                 return (
-                                    null == (e = window.desktopEvents) || e.on(o.E.UPDATE_AVAILABLE, r),
+                                    null == (e = window.desktopEvents) || e.on(o.E.UPDATE_AVAILABLE, d),
                                     () => {
                                         var e;
-                                        null == (e = window.desktopEvents) || e.off(o.E.UPDATE_AVAILABLE, r);
+                                        null == (e = window.desktopEvents) || e.off(o.E.UPDATE_AVAILABLE, d);
                                     }
                                 );
-                            }, [r]);
+                            }, [d]),
+                                (0, s.useEffect)(() => {
+                                    var e;
+                                    return (
+                                        null == (e = window.desktopEvents) || e.on(o.E.BASIC_TOAST_CREATE, D),
+                                        () => {
+                                            var e;
+                                            null == (e = window.desktopEvents) || e.off(o.E.BASIC_TOAST_CREATE, D);
+                                        }
+                                    );
+                                }, [D]),
+                                (0, s.useEffect)(() => {
+                                    var e;
+                                    return (
+                                        null == (e = window.desktopEvents) || e.on(o.E.MOD_UPDATE_AVAILABLE, N),
+                                        () => {
+                                            var e;
+                                            null == (e = window.desktopEvents) || e.off(o.E.MOD_UPDATE_AVAILABLE, N);
+                                        }
+                                    );
+                                }, [N]),
+                                (0, s.useEffect)(() => {
+                                    var e;
+                                    return (
+                                        null == (e = window.desktopEvents) || e.on(o.E.GPU_STALL, P),
+                                        () => {
+                                            var e;
+                                            null == (e = window.desktopEvents) || e.off(o.E.GPU_STALL, P);
+                                        }
+                                    );
+                                }, [P]),
+                                (0, s.useEffect)(() => {
+                                    var e;
+                                    return (
+                                        null == (e = window.desktopEvents) || e.on(o.E.APP_STALL, C),
+                                        () => {
+                                            var e;
+                                            null == (e = window.desktopEvents) || e.off(o.E.APP_STALL, C);
+                                        }
+                                    );
+                                }, [C]);
                         })(),
                         (() => {
                             let { library: e, experiments: t } = (0, D.g)(),

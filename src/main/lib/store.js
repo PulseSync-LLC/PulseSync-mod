@@ -118,9 +118,6 @@ let defaultExperimentOverrides = {
     WebNextInsertAlbumPlaylistIntoContext: 'on',
     WebNextCustomThumb: 'on',
     WebNextWaveScreenWordsInWave: 'on',
-    WebNextNewWaveTabFeedbackForm: 'on',
-    WebNextNewWaveTabRedesign: 'on',
-    WebNextNewWaveTab: 'on',
 };
 
 const useCachedValue = (key) => {
@@ -223,7 +220,6 @@ const init = () => {
             useDynamicEnergy: true,
             smoothDynamicEnergy: false,
             smoothDynamicEnergyCoefficient: 0.2,
-            playVibeOnAnyEntity: true,
             useVibeWidgetColors: false,
             disableRendering: false,
             autoLaunchOnAppStartup: false,

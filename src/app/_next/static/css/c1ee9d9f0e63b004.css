@@ -112,6 +112,37 @@
 .SettingsListButtonItem_description__g8_Ba {
     color: var(--ym-controls-color-primary-text-enabled);
 }
+.SettingsListLinkItem_icon__p4P_V {
+    color: var(--ym-controls-color-primary-text-enabled);
+    transition: transform var(--ym-duration-transition);
+}
+@media (prefers-reduced-motion: reduce) {
+    .SettingsListLinkItem_icon__p4P_V {
+        transition: none;
+    }
+}
+.SettingsListLinkItem_root__rTPC9:focus-visible .SettingsListLinkItem_icon__p4P_V,
+.SettingsListLinkItem_root__rTPC9:hover .SettingsListLinkItem_icon__p4P_V {
+    transform: translateX(var(--ym-spacer-size-xs));
+}
+.SettingsListLinkItem_container__k7bhS {
+    gap: var(--ym-spacer-size-xs);
+}
+.SettingsListLinkItem_container__k7bhS,
+.SettingsListLinkItem_linkText__0PHlQ {
+    display: flex;
+    justify-content: space-between;
+}
+.SettingsListLinkItem_linkText__0PHlQ {
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xxxs);
+}
+.SettingsListLinkItem_title__duJnL {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.SettingsListLinkItem_description__xWeAD {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
 .SettingsListToggleItem_root__yEEYT {
     align-items: center;
     display: flex;

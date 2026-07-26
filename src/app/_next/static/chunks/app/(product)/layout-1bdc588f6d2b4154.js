@@ -190,6 +190,7 @@
                 icon: 'TitleBar_icon__8Wji9',
                 icon_withSecondaryColor: 'TitleBar_icon_withSecondaryColor__vuw6G',
                 closeButton: 'TitleBar_closeButton__Epxh7',
+                pulseText: 'TitleBar_pulseText__FhYv',
             };
         },
         1176: (e, t, a) => {
@@ -545,14 +546,76 @@
                                 var e;
                                 null == (e = window.desktopEvents) || e.send(u.E.WINDOW_CLOSE);
                             })();
-                        }, []);
+                        }, []),
+                        onMiniPlayerToggle = (0, n.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(u.E.TOGGLE_MINIPLAYER);
+                        }, []),
+                        E = (0, n.useCallback)((e) => {
+                            if (e.target.closest('button')) return;
+                            var t;
+                            null == (t = window.desktopEvents) || t.send(u.E.WINDOW_MAXIMIZE);
+                        }, []),
+                        [w, N] = (0, n.useState)(window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() ?? !1);
+                    (0, n.useEffect)(() => {
+                        let e = (e, t, a) => {
+                                'modSettings.window.hidePulseSyncVersionInTitleBar' === t && N(a);
+                            },
+                            t = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', e);
+                        return () => {
+                            'function' == typeof t && t();
+                        };
+                    }, []);
                     return (0, r.jsx)('div', {
                         className: c().root,
-                        onDoubleClick: y,
+                        onDoubleClick: E,
                         children:
                             s &&
                             (0, r.jsxs)(r.Fragment, {
                                 children: [
+                                    !w && (0, r.jsx)('span', { className: c().pulseText, children: 'PulseSync '.concat(window.PULSE_VERSION) }),
+                                    (0, r.jsx)(h, {
+                                        onClick: onMiniPlayerToggle,
+                                        ariaLabel: 'miniplayer',
+                                        withSecondaryColor: t,
+                                        children: (0, r.jsxs)('svg', {
+                                            width: '12',
+                                            height: '12',
+                                            viewBox: '0 0 12 12',
+                                            xmlns: 'http://www.w3.org/2000/svg',
+                                            className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
+                                            children: [
+                                                (0, r.jsx)('path', {
+                                                    d: 'M1.49805 11C1.42969 11 1.36458 10.987 1.30273 10.961C1.24414 10.935 1.19206 10.8992 1.14648 10.8537C1.10091 10.8081 1.0651 10.7561 1.03906 10.6976C1.01302 10.6358 1 10.5707 1 10.5024C1 10.4341 1.01302 10.3707 1.03906 10.3122C1.0651 10.2504 1.10091 10.1967 1.14648 10.1512C1.19206 10.1024 1.24414 10.065 1.30273 10.039C1.36458 10.013 1.42969 10 1.49805 10H10.502C10.5703 10 10.6338 10.013 10.6924 10.039C10.7542 10.065 10.8079 10.1024 10.8535 10.1512C10.8991 10.1967 10.9349 10.2504 10.9609 10.3122C10.987 10.3707 11 10.4341 11 10.5024C11 10.5707 10.987 10.6358 10.9609 10.6976C10.9349 10.7561 10.8991 10.8081 10.8535 10.8537C10.8079 10.8992 10.7542 10.935 10.6924 10.961C10.6338 10.987 10.5703 11 10.502 11H1.49805Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, r.jsx)('path', {
+                                                    d: 'M1.24902 2C1.21484 2 1.18229 1.98699 1.15137 1.96098C1.12207 1.93496 1.09603 1.89919 1.07324 1.85366C1.05046 1.80813 1.03255 1.7561 1.01953 1.69756C1.00651 1.63577 1 1.57073 1 1.50244C1 1.43415 1.00651 1.37073 1.01953 1.31219C1.03255 1.25041 1.05046 1.19675 1.07324 1.15122C1.09603 1.10244 1.12207 1.06504 1.15137 1.03902C1.18229 1.01301 1.21484 1 1.24902 1H5.75098C5.78516 1 5.81689 1.01301 5.84619 1.03902C5.87711 1.06504 5.90397 1.10244 5.92676 1.15122C5.94955 1.19675 5.96745 1.25041 5.98047 1.31219C5.99349 1.37073 6 1.43415 6 1.50244C6 1.57073 5.99349 1.63577 5.98047 1.69756C5.96745 1.7561 5.94955 1.80813 5.92676 1.85366C5.90397 1.89919 5.87711 1.93496 5.84619 1.96098C5.81689 1.98699 5.78516 2 5.75098 2H1.24902Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, r.jsx)('path', {
+                                                    d: 'M10 6.24902C10 6.21484 10.013 6.18229 10.039 6.15137C10.065 6.12207 10.1008 6.09603 10.1463 6.07324C10.1919 6.05046 10.2439 6.03255 10.3024 6.01953C10.3642 6.00651 10.4293 6 10.4976 6C10.5659 6 10.6293 6.00651 10.6878 6.01953C10.7496 6.03255 10.8033 6.05046 10.8488 6.07324C10.8976 6.09603 10.935 6.12207 10.961 6.15137C10.987 6.18229 11 6.21484 11 6.24902L11 10.751C11 10.7852 10.987 10.8169 10.961 10.8462C10.935 10.8771 10.8976 10.904 10.8488 10.9268C10.8033 10.9495 10.7496 10.9675 10.6878 10.9805C10.6293 10.9935 10.5659 11 10.4976 11C10.4293 11 10.3642 10.9935 10.3024 10.9805C10.2439 10.9675 10.1919 10.9495 10.1463 10.9268C10.1008 10.904 10.065 10.8771 10.039 10.8462C10.013 10.8169 10 10.7852 10 10.751L10 6.24902Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, r.jsx)('path', {
+                                                    d: 'M9.85698 1.4045C9.89078 1.37069 9.93219 1.34771 9.98121 1.33556C10.0286 1.32502 10.0797 1.3246 10.1345 1.33432C10.1893 1.34404 10.2439 1.3632 10.2982 1.3918C10.3549 1.4227 10.4074 1.46234 10.4558 1.51072C10.5042 1.55911 10.5427 1.61048 10.5713 1.66483C10.6022 1.72148 10.6225 1.77721 10.6322 1.832C10.6442 1.8891 10.645 1.94135 10.6344 1.98876C10.6223 2.03778 10.5993 2.07919 10.5655 2.11299L6.11287 6.56559C6.07907 6.5994 6.03846 6.62158 5.99105 6.63212C5.94203 6.64427 5.88898 6.64434 5.83188 6.63231C5.77708 6.62259 5.72136 6.60228 5.6647 6.57139C5.61035 6.54279 5.55899 6.5043 5.5106 6.45591C5.46222 6.40753 5.42257 6.35501 5.39167 6.29835C5.36308 6.244 5.34392 6.18943 5.3342 6.13464C5.32448 6.07984 5.3257 6.02794 5.33785 5.97892C5.3484 5.93151 5.37057 5.8909 5.40438 5.8571L9.85698 1.4045Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, r.jsx)('path', {
+                                                    d: 'M10 1.19922C10 1.17188 10.013 1.14583 10.039 1.12109C10.065 1.09766 10.1008 1.07682 10.1463 1.05859C10.1919 1.04036 10.2439 1.02604 10.3024 1.01562C10.3642 1.00521 10.4293 1 10.4976 1C10.5659 1 10.6293 1.00521 10.6878 1.01562C10.7496 1.02604 10.8033 1.04036 10.8488 1.05859C10.8976 1.07682 10.935 1.09766 10.961 1.12109C10.987 1.14583 11 1.17188 11 1.19922L11 4.80078C11 4.82812 10.987 4.85352 10.961 4.87695C10.935 4.90169 10.8976 4.92318 10.8488 4.94141C10.8033 4.95964 10.7496 4.97396 10.6878 4.98438C10.6293 4.99479 10.5659 5 10.4976 5C10.4293 5 10.3642 4.99479 10.3024 4.98438C10.2439 4.97396 10.1919 4.95964 10.1463 4.94141C10.1008 4.92318 10.065 4.90169 10.039 4.87695C10.013 4.85352 10 4.82812 10 4.80078L10 1.19922Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, r.jsx)('path', {
+                                                    d: 'M10.8008 1C10.8281 1 10.8542 1.01301 10.8789 1.03902C10.9023 1.06504 10.9232 1.10081 10.9414 1.14634C10.9596 1.19187 10.974 1.2439 10.9844 1.30244C10.9948 1.36423 11 1.42927 11 1.49756C11 1.56585 10.9948 1.62927 10.9844 1.68781C10.974 1.74959 10.9596 1.80325 10.9414 1.84878C10.9232 1.89756 10.9023 1.93496 10.8789 1.96098C10.8542 1.98699 10.8281 2 10.8008 2L7.19922 2C7.17188 2 7.14648 1.98699 7.12305 1.96098C7.09831 1.93496 7.07682 1.89756 7.05859 1.84878C7.04036 1.80325 7.02604 1.74959 7.01562 1.68781C7.00521 1.62927 7 1.56585 7 1.49756C7 1.42927 7.00521 1.36423 7.01562 1.30244C7.02604 1.2439 7.04036 1.19187 7.05859 1.14634C7.07682 1.10081 7.09831 1.06504 7.12305 1.03902C7.14648 1.01301 7.17188 1 7.19922 1L10.8008 1Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                                (0, r.jsx)('path', {
+                                                    d: 'M1 1.49805C1 1.42969 1.01301 1.36458 1.03902 1.30273C1.06504 1.24414 1.10081 1.19206 1.14634 1.14648C1.19187 1.10091 1.2439 1.0651 1.30244 1.03906C1.36423 1.01302 1.42927 1 1.49756 1C1.56585 1 1.62927 1.01302 1.68781 1.03906C1.74959 1.0651 1.80325 1.10091 1.84878 1.14648C1.89756 1.19206 1.93496 1.24414 1.96098 1.30273C1.98699 1.36458 2 1.42969 2 1.49805L2 10.502C2 10.5703 1.98699 10.6338 1.96098 10.6924C1.93496 10.7542 1.89756 10.8079 1.84878 10.8535C1.80325 10.8991 1.74959 10.9349 1.68781 10.9609C1.62927 10.987 1.56585 11 1.49756 11C1.42927 11 1.36423 10.987 1.30244 10.9609C1.2439 10.9349 1.19187 10.8991 1.14634 10.8535C1.10081 10.8079 1.06504 10.7542 1.03902 10.6924C1.01301 10.6338 1 10.5703 1 10.502L1 1.49805Z',
+                                                    fill: 'currentColor',
+                                                }),
+                                            ],
+                                        }),
+                                    }),
                                     (0, r.jsx)(h, {
                                         onClick: v,
                                         ariaLabel: d({ id: 'windows-menu.roll-up' }),
@@ -1175,7 +1238,7 @@
                 v = a(49124);
             let y = (e) => {
                 let { children: t } = e,
-                    { state: a, toggleTrue: c } = (0, n.e)(!1),
+                    { state: a, toggleTrue: c } = (0, n.e)(Boolean(window.nativeSettings?.get?.('modSettings.window.minimizedStart'))),
                     { state: y, toggleTrue: p } = (0, n.e)(!1),
                     { getThemeFromStorage: m } = (0, d.Q)(new o.si()),
                     f = (0, s.useMemo)(() => {
@@ -1275,6 +1338,11 @@
                 valueInput: 'OverwrittenExperimentsModal_valueInput__goR3Y',
                 shake: 'OverwrittenExperimentsModal_shake__mFxEK',
                 submitButton: 'OverwrittenExperimentsModal_submitButton___VRmz',
+                row: 'OverwrittenExperimentsModal_row__W6A7r',
+                textContainer: 'OverwrittenExperimentsModal_textContainer__5m84F',
+                title: 'OverwrittenExperimentsModal_title__kMZ2J',
+                description: 'OverwrittenExperimentsModal_description__m9r4M',
+                selectButton: 'OverwrittenExperimentsModal_selectButton__P0v2_',
                 experimentsList: 'OverwrittenExperimentsModal_experimentsList__PFRVV',
                 overridedExperiment: 'OverwrittenExperimentsModal_overridedExperiment__w1bng',
             };
@@ -1363,7 +1431,13 @@
         },
         25366: (e, t, a) => {
             'use strict';
-            a.d(t, { DesktopInitializer: () => K });
+            a.d(t, {
+                DesktopInitializer: () => K,
+                sendDownloadTrack: () => sendDownloadTrack,
+                sendDownloadCurrentTrack: () => sendDownloadCurrentTrack,
+                sendDownloadTracks: () => sendDownloadTracks,
+                sendYnisonState: () => sendYnisonState,
+            });
             var r = a(32290),
                 i = a(55178),
                 s = a(15808),
@@ -1374,48 +1448,64 @@
                 d = a(1204),
                 c = a(97201),
                 h = a(36477);
-            let v = [
-                [
-                    /^\/home\/([^/?]+)(\?.*)?$/,
-                    (e) => {
-                        let t = e.match(/^\/home\/([^/?]+)(\?.*)?$/);
-                        if (!t) return e;
-                        let a = t[1],
-                            r = t[2] || '';
-                        if (!a) return e;
-                        let i = new URLSearchParams(r.startsWith('?') ? r.substring(1) : '');
-                        return i.set('tab', a), '/?'.concat(i.toString());
-                    },
-                ],
-                [/^\/home$/, () => u.Z.main.href],
-                [/^\/users\/(.*)\/playlists$/, () => u.Z.collection.href],
-                [/^\/users\/(.*)\/artists$/, () => u.Z.collection.href],
-                [/^\/users\/(.*)\/albums$/, () => u.Z.collection.href],
-                [/^\/users\/(.*)\/tracks$/, () => u.Z.collection.href],
-                [/^\/users\/(.*)\/podcasts$/, () => u.Z.collection.href],
-                [/^\/users\/(.*)\/kids$/, () => u.Z.collection.href],
-                [/^\/users\/(.*)\/history$/, () => u.Z.musicHistory.href],
-                [
-                    /^\/play-vibe/,
-                    (e) => {
-                        let t = new URLSearchParams(e.split('?')[1]);
-                        t.set(c.K.DEEPLINK, d.v.PLAY_VIBE);
-                        let a = ((e, t) => {
-                            let a = new URLSearchParams();
-                            return (
-                                e.forEach((e, t) => {
-                                    a.append(t, e);
-                                }),
-                                t.forEach((e, t) => {
-                                    a.append(t, e);
-                                }),
-                                a
-                            );
-                        })(new URLSearchParams(window.location.search), t);
-                        return 'landing' === t.get(c.K.SCREEN) ? '/?'.concat(a.toString()) : ''.concat(window.location.pathname, '?').concat(a.toString());
-                    },
-                ],
-            ];
+            let sendDownloadTrack = (e, t) => {
+                    var a;
+                    null == (a = window.desktopEvents) || a.send(s.E.DOWNLOAD_TRACK, e, t);
+                },
+                sendDownloadCurrentTrack = (e) => {
+                    var t;
+                    null == (t = window.desktopEvents) || t.send(s.E.DOWNLOAD_CURRENT_TRACK, e);
+                },
+                sendDownloadTracks = (e, t, a) => {
+                    var r;
+                    null == (r = window.desktopEvents) || r.send(s.E.DOWNLOAD_TRACKS, e, t, a);
+                },
+                sendYnisonState = (e) => {
+                    var t;
+                    null == (t = window.desktopEvents) || t.send(s.E.YNISON_STATE, { rawData: e.rawData });
+                },
+                v = [
+                    [
+                        /^\/home\/([^/?]+)(\?.*)?$/,
+                        (e) => {
+                            let t = e.match(/^\/home\/([^/?]+)(\?.*)?$/);
+                            if (!t) return e;
+                            let a = t[1],
+                                r = t[2] || '';
+                            if (!a) return e;
+                            let i = new URLSearchParams(r.startsWith('?') ? r.substring(1) : '');
+                            return i.set('tab', a), '/?'.concat(i.toString());
+                        },
+                    ],
+                    [/^\/home$/, () => u.Z.main.href],
+                    [/^\/users\/(.*)\/playlists$/, () => u.Z.collection.href],
+                    [/^\/users\/(.*)\/artists$/, () => u.Z.collection.href],
+                    [/^\/users\/(.*)\/albums$/, () => u.Z.collection.href],
+                    [/^\/users\/(.*)\/tracks$/, () => u.Z.collection.href],
+                    [/^\/users\/(.*)\/podcasts$/, () => u.Z.collection.href],
+                    [/^\/users\/(.*)\/kids$/, () => u.Z.collection.href],
+                    [/^\/users\/(.*)\/history$/, () => u.Z.musicHistory.href],
+                    [
+                        /^\/play-vibe/,
+                        (e) => {
+                            let t = new URLSearchParams(e.split('?')[1]);
+                            t.set(c.K.DEEPLINK, d.v.PLAY_VIBE);
+                            let a = ((e, t) => {
+                                let a = new URLSearchParams();
+                                return (
+                                    e.forEach((e, t) => {
+                                        a.append(t, e);
+                                    }),
+                                    t.forEach((e, t) => {
+                                        a.append(t, e);
+                                    }),
+                                    a
+                                );
+                            })(new URLSearchParams(window.location.search), t);
+                            return 'landing' === t.get(c.K.SCREEN) ? '/?'.concat(a.toString()) : ''.concat(window.location.pathname, '?').concat(a.toString());
+                        },
+                    ],
+                ];
             var y = a(60900),
                 p = a(45477),
                 m = a(75582),
@@ -1427,39 +1517,233 @@
                 _ = a(8623),
                 A = a.n(_);
             let P = (e) => {
-                let { version: t, formatMessage: a, closeToast: n } = e,
-                    o = (0, i.useCallback)(() => {
-                        var e;
-                        null == (e = window.desktopEvents) || e.send(s.E.INSTALL_UPDATE), null == n || n();
-                    }, [n]),
-                    l = (0, i.useMemo)(
-                        () =>
-                            (0, r.jsxs)('div', {
-                                className: A().message,
-                                children: [
-                                    (0, r.jsx)(E.HL, {
-                                        className: A().text,
-                                        variant: 'div',
-                                        type: 'controls',
-                                        size: 'm',
-                                        children: a({ id: 'desktop.on-update-available' }, { version: t }),
-                                    }),
-                                    (0, r.jsx)(b.$, {
-                                        className: A().button,
-                                        onClick: o,
-                                        variant: 'default',
-                                        color: 'secondary',
-                                        size: 'xs',
-                                        radius: 'xxxl',
-                                        'data-test-id': g.Kq.appUpdate.APP_UPDATE_NOTIFICATION_BUTTON,
-                                        children: (0, r.jsx)(E.HL, { variant: 'div', type: 'controls', size: 'm', children: a({ id: 'desktop.update' }) }),
-                                    }),
-                                ],
-                            }),
-                        [a, o, t],
+                    let { version: t, formatMessage: a, closeToast: n } = e,
+                        o = (0, i.useCallback)(() => {
+                            var e;
+                            null == (e = window.desktopEvents) || e.send(s.E.INSTALL_UPDATE), null == n || n();
+                        }, [n]),
+                        l = (0, i.useMemo)(
+                            () =>
+                                (0, r.jsxs)('div', {
+                                    className: A().message,
+                                    children: [
+                                        (0, r.jsx)(E.HL, {
+                                            className: A().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: a({ id: 'desktop.on-update-available' }, { version: t }),
+                                        }),
+                                        (0, r.jsx)(b.$, {
+                                            className: A().button,
+                                            onClick: o,
+                                            variant: 'default',
+                                            color: 'secondary',
+                                            size: 'xs',
+                                            radius: 'xxxl',
+                                            'data-test-id': g.Kq.appUpdate.APP_UPDATE_NOTIFICATION_BUTTON,
+                                            children: (0, r.jsx)(E.HL, { variant: 'div', type: 'controls', size: 'm', children: a({ id: 'desktop.update' }) }),
+                                        }),
+                                    ],
+                                }),
+                            [a, o, t],
+                        );
+                    return (0, r.jsx)(S.$, { className: (0, f.$)(A().root, A().important), message: l });
+                },
+                modUpdateToast = (e) => {
+                    let { version: t, formatMessage: a, closeToast: n } = e,
+                        [o, l] = (0, i.useState)(-1),
+                        u = (0, i.useCallback)(() => {
+                            window.desktopEvents?.send?.(s.E.INSTALL_MOD_UPDATE), null == n || n();
+                        }, [n]),
+                        d = (0, i.useCallback)(() => {
+                            window.desktopEvents?.send?.(s.E.DOWNLOAD_MOD_UPDATE);
+                        }, []),
+                        c = (e) => {
+                            let t = a({ id: 'offline.download' });
+                            return e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Установить'), t;
+                        },
+                        h = (0, i.useMemo)(
+                            () =>
+                                (0, r.jsxs)('div', {
+                                    className: A().message,
+                                    children: [
+                                        (0, r.jsx)(E.HL, {
+                                            className: A().text,
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: a({ id: 'desktop.on-mod-update-available' }, { version: t }),
+                                        }),
+                                        (0, r.jsx)(b.$, {
+                                            className: A().button,
+                                            onClick: o <= 100 ? d : u,
+                                            variant: 'default',
+                                            color: 'secondary',
+                                            size: 'xs',
+                                            radius: 'xxxl',
+                                            disabled: o <= 100 && o >= 0,
+                                            children: (0, r.jsx)(E.HL, { variant: 'div', type: 'controls', size: 'm', children: c(o) }),
+                                        }),
+                                    ],
+                                }),
+                            [a, u, t, o, d],
+                        ),
+                        v = (0, i.useCallback)((e, t, a, r = 0) => {
+                            if ('modUpdateToast' !== t) return;
+                            if (window.dedupeNonces && window.dedupeNonces[t] === r) return;
+                            window.dedupeNonces || (window.dedupeNonces = {}), r && (window.dedupeNonces[t] = r), l(a);
+                        }, []);
+                    return (
+                        (0, i.useEffect)(() => {
+                            return (
+                                window.desktopEvents?.on?.(s.E.PROGRESS_BAR_CHANGE, v),
+                                () => {
+                                    window.desktopEvents?.off?.(s.E.PROGRESS_BAR_CHANGE, v);
+                                }
+                            );
+                        }, [v]),
+                        (0, i.useEffect)(() => {
+                            let e = () => {
+                                null == n || n();
+                            };
+                            return (
+                                window.desktopEvents?.on?.(s.E.MOD_UPDATE_AVAILABLE, e),
+                                () => {
+                                    window.desktopEvents?.off?.(s.E.MOD_UPDATE_AVAILABLE, e);
+                                }
+                            );
+                        }, [n]),
+                        (0, r.jsxs)(S.$, {
+                            className: (0, f.$)(A().root, A().important),
+                            message: h,
+                            children: [
+                                (0, r.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: o + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: o <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
                     );
-                return (0, r.jsx)(S.$, { className: (0, f.$)(A().root, A().important), message: l });
-            };
+                },
+                toastWithProgress = (e) => {
+                    let {
+                            closeToast: t,
+                            toastID: a,
+                            message: n,
+                            buttonLabel: o,
+                            onButtonClick: l,
+                            disabled: u = !1,
+                            dismissOnButtonClick: d = !1,
+                            createNonce: c = 0,
+                        } = e,
+                        [h, v] = (0, i.useState)(-1),
+                        [y, g] = (0, i.useState)('Ожидание...'),
+                        k = '__pulseToastProgressCache',
+                        I = (0, i.useCallback)(() => {
+                            null == l || l(), d && (null == t || t());
+                        }, [d, l, t]),
+                        C = (0, i.useMemo)(
+                            () =>
+                                (0, r.jsxs)('div', {
+                                    className: A().message,
+                                    children: [
+                                        (0, r.jsx)(E.HL, { className: A().text, variant: 'div', type: 'controls', size: 'm', children: n.replace('#s', y) }),
+                                        o &&
+                                            (0, r.jsx)(b.$, {
+                                                className: A().button,
+                                                onClick: I,
+                                                variant: 'default',
+                                                color: 'secondary',
+                                                size: 'xs',
+                                                radius: 'xxxl',
+                                                disabled: u,
+                                                children: (0, r.jsx)(E.HL, { variant: 'div', type: 'controls', size: 'm', children: o }),
+                                            }),
+                                    ],
+                                }),
+                            [u, o, n, I, y],
+                        ),
+                        T = (0, i.useCallback)(
+                            (e, t, n, r = 0, i = void 0, s = 0) => {
+                                if (t !== a) return;
+                                if (s && c && s !== c) return;
+                                if (window.dedupeNonces && window.dedupeNonces[t] === r) return;
+                                window.dedupeNonces || (window.dedupeNonces = {}),
+                                    r && (window.dedupeNonces[t] = r),
+                                    window[k] || (window[k] = {}),
+                                    (window[k][t] = { progress: n, label: i }),
+                                    v(n),
+                                    i && g(i);
+                            },
+                            [a, c],
+                        ),
+                        x = (0, i.useCallback)(
+                            (e, n, r = 0, i = 0) => {
+                                if (i && c && i !== c) return;
+                                if (window['onBasicToastDismiss' + a] === r) return;
+                                r && (window['onBasicToastDismiss' + a] = r), n === a && (window[k] && delete window[k][a], null == t || t());
+                            },
+                            [t, a, c],
+                        );
+                    return (
+                        (0, i.useEffect)(() => {
+                            let e = window[k] && window[k][a];
+                            e && (v(e.progress), e.label && g(e.label));
+                            return () => {
+                                window[k] && delete window[k][a];
+                            };
+                        }, [a]),
+                        (0, i.useEffect)(() => {
+                            return (
+                                window.desktopEvents?.on?.(s.E.PROGRESS_BAR_CHANGE, T),
+                                () => {
+                                    window.desktopEvents?.off?.(s.E.PROGRESS_BAR_CHANGE, T);
+                                }
+                            );
+                        }, [T]),
+                        (0, i.useEffect)(() => {
+                            return (
+                                window.desktopEvents?.on?.(s.E.BASIC_TOAST_DISMISS, x),
+                                () => {
+                                    window.desktopEvents?.off?.(s.E.BASIC_TOAST_DISMISS, x);
+                                }
+                            );
+                        }, [x]),
+                        (0, r.jsxs)(S.$, {
+                            className: (0, f.$)(A().root, A().important),
+                            message: C,
+                            children: [
+                                (0, r.jsx)('div', {
+                                    className: 'qaIScXjx1qyXuaIHXQIo',
+                                    style: {
+                                        overflow: 'hidden',
+                                        left: '0',
+                                        top: '0',
+                                        position: 'absolute',
+                                        width: h + '%',
+                                        height: '100%',
+                                        backgroundColor: 'rgb(255 255 255)',
+                                        opacity: h <= 100 ? 0.1 : 0,
+                                        zIndex: 1,
+                                        transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                    },
+                                }),
+                            ],
+                        })
+                    );
+                };
             var k = a(70204),
                 I = a(34186),
                 C = a(39472),
@@ -1580,23 +1864,135 @@
                         (() => {
                             let { formatMessage: e } = (0, y.A)(),
                                 { notify: t } = (0, m.l)(),
-                                a = (0, i.useRef)(''),
-                                n = (0, i.useCallback)(
-                                    (i, s) => {
-                                        a.current !== s && ((a.current = s), t((0, r.jsx)(P, { formatMessage: e, version: s }), { containerId: p.u.IMPORTANT }));
+                                { notify: a, dismiss: n } = (0, m.l)(),
+                                { notify: o } = (0, m.l)(),
+                                { notify: l } = (0, m.l)(),
+                                { notify: u } = (0, m.l)(),
+                                d = (0, i.useRef)(''),
+                                c = (0, i.useCallback)(
+                                    (a, n) => {
+                                        d.current !== n && ((d.current = n), t((0, r.jsx)(P, { formatMessage: e, version: n }), { containerId: p.u.IMPORTANT }));
                                     },
-                                    [e, a, t],
+                                    [e, d, t],
+                                ),
+                                h = (0, i.useCallback)(
+                                    (t, o, l, u = 0) => {
+                                        if (window.modUpdateAvailableEventDedupeNonce === u) return;
+                                        u && (window.modUpdateAvailableEventDedupeNonce = u),
+                                            a((0, r.jsx)(modUpdateToast, { formatMessage: e, version: `${o} -> ${l}`, closeToast: n }), { containerId: p.u.IMPORTANT });
+                                    },
+                                    [e, a, n],
+                                ),
+                                v = (0, i.useCallback)(() => {
+                                    window.desktopEvents?.send(s.E.APPLICATION_RESTART);
+                                }, []),
+                                g = (0, i.useCallback)(
+                                    (e, t = 'GPU_STALL', a = 0) => {
+                                        if (window.onGPUStallEventDedupeNonce === a) return;
+                                        a && (window.onGPUStallEventDedupeNonce = a),
+                                            o(
+                                                (0, r.jsx)(toastWithProgress, {
+                                                    toastID: 'GPU_STALL',
+                                                    message: `Аппаратное ускорение отключилось: ${t}`,
+                                                    buttonLabel: 'Исправить',
+                                                    onButtonClick: v,
+                                                }),
+                                                { containerId: p.u.IMPORTANT },
+                                            );
+                                    },
+                                    [o, v],
+                                ),
+                                b = (0, i.useCallback)(() => {
+                                    window.desktopEvents?.send(s.E.APP_STALL_CANCEL_RESTART);
+                                }, []),
+                                E = (0, i.useCallback)(
+                                    (e, t = 0) => {
+                                        if (window.onAppStallStallDedupeNonce === t) return;
+                                        (window.onAppStallStallDedupeNonce = t),
+                                            l(
+                                                (0, r.jsx)(toastWithProgress, {
+                                                    toastID: 'safeModeRestart',
+                                                    message: 'Плеер запускается слишком долго. Перезагрузка в безопасном режиме через #s',
+                                                    buttonLabel: 'Отменить',
+                                                    onButtonClick: b,
+                                                    dismissOnButtonClick: !0,
+                                                }),
+                                                { containerId: p.u.IMPORTANT },
+                                            );
+                                    },
+                                    [l, b],
+                                ),
+                                S = (0, i.useCallback)(
+                                    (e, t, a, n, o = 0, l, d) => {
+                                        if (window['onBasicToastCreate' + t] === o) return;
+                                        o && (window['onBasicToastCreate' + t] = o),
+                                            window['onBasicToastDismiss' + t] && delete window['onBasicToastDismiss' + t],
+                                            window.dedupeNonces && delete window.dedupeNonces[t],
+                                            window.__pulseToastProgressCache && delete window.__pulseToastProgressCache[t],
+                                            u(
+                                                (0, r.jsx)(toastWithProgress, {
+                                                    toastID: t,
+                                                    message: a,
+                                                    buttonLabel: n || void 0,
+                                                    onButtonClick: l ? () => window.desktopEvents?.send(l, d) : void 0,
+                                                    dismissOnButtonClick: !!n,
+                                                    createNonce: o,
+                                                }),
+                                                { containerId: p.u.IMPORTANT },
+                                            );
+                                    },
+                                    [u],
                                 );
                             (0, i.useEffect)(() => {
                                 var e;
                                 return (
-                                    null == (e = window.desktopEvents) || e.on(s.E.UPDATE_AVAILABLE, n),
+                                    null == (e = window.desktopEvents) || e.on(s.E.UPDATE_AVAILABLE, c),
                                     () => {
                                         var e;
-                                        null == (e = window.desktopEvents) || e.off(s.E.UPDATE_AVAILABLE, n);
+                                        null == (e = window.desktopEvents) || e.off(s.E.UPDATE_AVAILABLE, c);
                                     }
                                 );
-                            }, [n]);
+                            }, [c]),
+                                (0, i.useEffect)(() => {
+                                    var e;
+                                    return (
+                                        null == (e = window.desktopEvents) || e.on(s.E.BASIC_TOAST_CREATE, S),
+                                        () => {
+                                            var e;
+                                            null == (e = window.desktopEvents) || e.off(s.E.BASIC_TOAST_CREATE, S);
+                                        }
+                                    );
+                                }, [S]),
+                                (0, i.useEffect)(() => {
+                                    var e;
+                                    return (
+                                        null == (e = window.desktopEvents) || e.on(s.E.MOD_UPDATE_AVAILABLE, h),
+                                        () => {
+                                            var e;
+                                            null == (e = window.desktopEvents) || e.off(s.E.MOD_UPDATE_AVAILABLE, h);
+                                        }
+                                    );
+                                }, [h]),
+                                (0, i.useEffect)(() => {
+                                    var e;
+                                    return (
+                                        null == (e = window.desktopEvents) || e.on(s.E.GPU_STALL, g),
+                                        () => {
+                                            var e;
+                                            null == (e = window.desktopEvents) || e.off(s.E.GPU_STALL, g);
+                                        }
+                                    );
+                                }, [g]),
+                                (0, i.useEffect)(() => {
+                                    var e;
+                                    return (
+                                        null == (e = window.desktopEvents) || e.on(s.E.APP_STALL, E),
+                                        () => {
+                                            var e;
+                                            null == (e = window.desktopEvents) || e.off(s.E.APP_STALL, E);
+                                        }
+                                    );
+                                }, [E]);
                         })(),
                         (() => {
                             let { library: e, experiments: t } = (0, T.g)(),
@@ -1923,7 +2319,223 @@
                 C = a(54280),
                 T = a(22308),
                 x = a.n(T);
-            let R = (0, i.PA)((e) => {
+            let UNSET_EXPERIMENT_GROUP_VALUE = '__pulse_sync_unset__',
+                IGNORED_EXPERIMENT_NAMES = new Set(['ABTestIds']),
+                EXPERIMENT_VARIANTS_CACHE = new Map(),
+                EXPERIMENT_VARIANTS_PENDING = new Map(),
+                UNSET_EXPERIMENT_GROUP_OPTION = { value: UNSET_EXPERIMENT_GROUP_VALUE, label: 'с сервера' },
+                DEFAULT_EXPERIMENT_GROUP_OPTIONS = [
+                    { value: 'default', label: 'off' },
+                    { value: 'on', label: 'on' },
+                ],
+                getExperimentEntries = (e) => {
+                    if (!e) return [];
+                    if ('function' == typeof e.entries) return [...e.entries()];
+                    return Array.isArray(e) ? e : 'object' == typeof e ? Object.entries(e) : [];
+                },
+                getExperimentValue = (e, t) => {
+                    if (!e) return;
+                    if ('function' == typeof e.get) return e.get(t);
+                    return 'object' == typeof e ? e[t] : void 0;
+                },
+                hasExperimentValue = (e, t) => !!e && ('function' == typeof e.has ? e.has(t) : 'object' == typeof e && Object.prototype.hasOwnProperty.call(e, t)),
+                getExperimentObject = (e) => Object.fromEntries(getExperimentEntries(e)),
+                getStaticExperimentNames = (e) => {
+                    try {
+                        return getExperimentEntries(null == e ? void 0 : e.experiments)
+                            .map((e) => e[0])
+                            .filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e));
+                    } catch (e) {
+                        return console.error('[PulseSync] Failed to get experiment keys from store', e), [];
+                    }
+                },
+                normalizeSearchValue = (e) =>
+                    String(e || '')
+                        .trim()
+                        .toLowerCase(),
+                getSearchScore = (e, t) => {
+                    if (!t) return 0;
+                    let a = e.toLowerCase(),
+                        r = a.indexOf(t);
+                    if (r < 0) return Number.MAX_SAFE_INTEGER;
+                    let i = a === t ? 0 : a.startsWith(t) ? 1 : 2;
+                    return 1e3 * i + r;
+                },
+                buildExperimentOptions = (e, t) => {
+                    let a = [UNSET_EXPERIMENT_GROUP_OPTION],
+                        r = new Set([UNSET_EXPERIMENT_GROUP_VALUE]),
+                        i = [];
+                    return (
+                        t && !r.has(t) && (a.push({ value: t, label: t, description: 'Current override' }), r.add(t)),
+                        DEFAULT_EXPERIMENT_GROUP_OPTIONS.forEach((e) => {
+                            r.has(e.value) || (r.add(e.value), i.push(e));
+                        }),
+                        'loaded' === (null == e ? void 0 : e.status) &&
+                            (null == e ? void 0 : e.options) &&
+                            e.options.length > 0 &&
+                            e.options.forEach((e) => {
+                                r.has(e.value) || (r.add(e.value), i.push(e));
+                            }),
+                        a.concat(i)
+                    );
+                },
+                settingBarWithDropdown = (e) => {
+                    let { title: t, description: a, onChange: i, value: n, options: o, direction: l = 'bottom', disabled: u = !1, onOpen: d } = e,
+                        [c, h] = s.useState(!1),
+                        [v, y] = s.useState(160),
+                        [p, m] = s.useState(!1),
+                        f = s.useRef(null),
+                        g = o.find((e) => e.value === n);
+                    return (
+                        s.useEffect(() => {
+                            let e = (e) => {
+                                var t;
+                                c && !(null == (t = f.current) ? void 0 : t.contains(e.target)) && h(!1);
+                            };
+                            return (
+                                document.addEventListener('click', e),
+                                () => {
+                                    document.removeEventListener('click', e);
+                                }
+                            );
+                        }, [c]),
+                        s.useEffect(() => {
+                            let e = f.current;
+                            if (!e || 'undefined' == typeof ResizeObserver) return;
+                            let t = new ResizeObserver(([e]) => {
+                                var t, a;
+                                let r =
+                                    (null == (t = e.borderBoxSize) ? void 0 : t[0]) && 'number' == typeof e.borderBoxSize[0].inlineSize
+                                        ? e.borderBoxSize[0].inlineSize
+                                        : null == (a = e.contentRect)
+                                          ? void 0
+                                          : a.width;
+                                'number' == typeof r && r > 0 && y(r);
+                            });
+                            return (
+                                t.observe(e),
+                                () => {
+                                    t.disconnect();
+                                }
+                            );
+                        }, []),
+                        s.useEffect(() => {
+                            c && m(!0);
+                        }, [c]),
+                        s.useEffect(() => {
+                            if (c || !p) return;
+                            let e = setTimeout(() => {
+                                m(!1);
+                            }, 180);
+                            return () => {
+                                clearTimeout(e);
+                            };
+                        }, [c, p]),
+                        (0, r.jsxs)('div', {
+                            className: x().row,
+                            children: [
+                                (0, r.jsxs)('div', {
+                                    className: x().textContainer,
+                                    children: [
+                                        (0, r.jsx)('div', { 'aria-hidden': !0, className: x().title, children: t }),
+                                        a && (0, r.jsx)('div', { className: x().description, children: a }),
+                                    ],
+                                }),
+                                (0, r.jsxs)('div', {
+                                    ref: f,
+                                    role: 'button',
+                                    tabIndex: u ? -1 : 0,
+                                    onClick: () =>
+                                        h((e) => {
+                                            if (u) return !1;
+                                            let t = !e;
+                                            return t && d && d(), t;
+                                        }),
+                                    onKeyDown: (e) => {
+                                        if (u) return;
+                                        ('Enter' === e.key || ' ' === e.key) &&
+                                            (e.preventDefault(),
+                                            h((e) => {
+                                                let t = !e;
+                                                return t && d && d(), t;
+                                            }));
+                                    },
+                                    className: ''.concat(u ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button', ' ', x().selectButton),
+                                    children: [
+                                        (null == g ? void 0 : g.label) || 'Select...',
+                                        p &&
+                                            (0, r.jsx)('ul', {
+                                                role: 'menu',
+                                                className: 'settingBarWithDropdown_menu'.concat(c ? '' : ' settingBarWithDropdown_menu__closed'),
+                                                style: {
+                                                    width: ''.concat(v, 'px'),
+                                                    top: 'bottom' === l ? '120%' : 'unset',
+                                                    bottom: 'top' === l ? '120%' : 'unset',
+                                                    '--settingBarWithDropdown-offset-y': 'bottom' === l ? '-6px' : '6px',
+                                                    '--settingBarWithDropdown-origin': 'bottom' === l ? 'top right' : 'bottom right',
+                                                },
+                                                children: o.map((e) =>
+                                                    (0, r.jsxs)(
+                                                        'li',
+                                                        {
+                                                            role: 'menuitem',
+                                                            className: 'settingBarWithDropdown_menuItem',
+                                                            id: e.value,
+                                                            'aria-selected': n === e.value,
+                                                            onClick: (t) => {
+                                                                t.stopPropagation(), i(e.value), h(!1);
+                                                            },
+                                                            children: [
+                                                                (0, r.jsx)('span', { children: e.label }),
+                                                                n === e.value &&
+                                                                    (0, r.jsx)('svg', {
+                                                                        width: '16',
+                                                                        height: '16',
+                                                                        fill: 'currentColor',
+                                                                        xmlns: 'http://www.w3.org/2000/svg',
+                                                                        children: (0, r.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
+                                                                    }),
+                                                            ],
+                                                        },
+                                                        ''.concat(e.value),
+                                                    ),
+                                                ),
+                                            }),
+                                    ],
+                                }),
+                            ],
+                        })
+                    );
+                },
+                PulseSyncExperimentOverrideRow = (0, i.PA)((e) => {
+                    let { experimentName: t, selectedGroup: a, defaultGroup: i, optionsState: n, onSelect: o, onOpenDropdown: l } = e,
+                        [u, d] = s.useState(a || UNSET_EXPERIMENT_GROUP_VALUE),
+                        c = 'error' === (null == n ? void 0 : n.status),
+                        h = i ? 'С сервера: '.concat(i) : 'С сервера: отсутствует',
+                        v = a || u,
+                        y = c
+                            ? 'Не удалось загрузить варианты. Попробуйте ещё раз. | '.concat(h)
+                            : v && v !== UNSET_EXPERIMENT_GROUP_VALUE
+                              ? 'Переопределено | '.concat(h)
+                              : h,
+                        p = buildExperimentOptions(n, v);
+                    return (
+                        s.useEffect(() => {
+                            d(a || UNSET_EXPERIMENT_GROUP_VALUE);
+                        }, [a]),
+                        (0, r.jsx)(settingBarWithDropdown, {
+                            title: t,
+                            description: y,
+                            value: v,
+                            options: p,
+                            onChange: (e) => {
+                                d(e), o(t, e);
+                            },
+                            onOpen: () => l(t),
+                        })
+                    );
+                }),
+                R = (0, i.PA)((e) => {
                     let { experiment: t = { name: '', value: {} }, readOnly: a, deleteMode: i } = e,
                         { experiments: o } = (0, d.g)(),
                         h = (0, u.N)().get(l.oo),
@@ -2077,6 +2689,188 @@
                         ],
                     });
                 }),
+                PulseSyncCloseButtonProps = { className: x().closeModalButton },
+                PulseSyncOverwrittenExperimentsModal = (0, i.PA)(() => {
+                    let {
+                            modals: { overwrittenExperimentsModal: e },
+                            experiments: t,
+                        } = (0, d.g)(),
+                        { formatMessage: a } = (0, b.A)(),
+                        storage = (0, u.N)().get(l.oo),
+                        [o, h] = s.useState(''),
+                        [v, y] = s.useState({}),
+                        p = s.useMemo(() => getStaticExperimentNames(t), [t.experiments]),
+                        m = (0, s.useCallback)(() => {
+                            window.location.reload();
+                        }, []),
+                        f = s.useCallback(
+                            (e) => {
+                                let a = getExperimentObject(t.overwrittenExperiments);
+                                delete a[e], t.deleteOverwrittenExperiments(e), storage.set(c.c.OverwrittenExperiments, { ...a });
+                            },
+                            [t, storage],
+                        ),
+                        g = s.useCallback(
+                            (e, a) => {
+                                if (a === UNSET_EXPERIMENT_GROUP_VALUE) return void f(e);
+                                let r = null == v[e] ? void 0 : v[e].groups,
+                                    i = null == r ? void 0 : r[a],
+                                    s = (0, C.jU)({ name: e, group: a, value: i && 'object' == typeof i ? i : { title: a } });
+                                storage.set(c.c.OverwrittenExperiments, { ...getExperimentObject(t.overwrittenExperiments), ...s }),
+                                    t.updateOverwrittenExperiments(e, s[e]);
+                            },
+                            [f, v, storage, t],
+                        ),
+                        P = s.useCallback(async (e) => {
+                            let t = EXPERIMENT_VARIANTS_CACHE.get(e);
+                            if (t) {
+                                y((a) => ({ ...a, [e]: t }));
+                                return;
+                            }
+                            let a = !1;
+                            y((t) => {
+                                let r = t[e];
+                                return r && ('loading' === r.status || 'loaded' === r.status) ? t : ((a = !0), { ...t, [e]: { ...(r || {}), status: 'loading' } });
+                            });
+                            if (!a) return;
+                            if (EXPERIMENT_VARIANTS_PENDING.has(e)) {
+                                try {
+                                    await EXPERIMENT_VARIANTS_PENDING.get(e);
+                                    let t = EXPERIMENT_VARIANTS_CACHE.get(e);
+                                    t && y((a) => ({ ...a, [e]: t }));
+                                } catch (t) {
+                                    y((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'error' } }));
+                                }
+                                return;
+                            }
+                            try {
+                                let t = (async () => {
+                                    let t = await fetch('https://api.music.yandex.net/experiments?experiment='.concat(encodeURIComponent(e)), { credentials: 'include' });
+                                    if (!t.ok) throw Error('HTTP '.concat(t.status));
+                                    let a = await t.json(),
+                                        r = a && 'object' == typeof a && a.result && 'object' == typeof a.result ? a.result : {},
+                                        i = Object.entries(r)
+                                            .map((e) => {
+                                                let [t, a] = e,
+                                                    r = (null == a ? void 0 : a.title) && 'string' == typeof a.title ? a.title : t;
+                                                return { value: t, label: r, description: r !== t ? t : void 0 };
+                                            })
+                                            .sort((e, t) => e.value.localeCompare(t.value)),
+                                        s = { status: 'loaded', options: i, groups: r };
+                                    return EXPERIMENT_VARIANTS_CACHE.set(e, s), s;
+                                })();
+                                EXPERIMENT_VARIANTS_PENDING.set(e, t);
+                                let a = await t;
+                                y((t) => ({ ...t, [e]: a }));
+                            } catch (t) {
+                                console.error('[PulseSync] Failed to load experiment variants', e, t), y((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'error' } }));
+                            } finally {
+                                EXPERIMENT_VARIANTS_PENDING.delete(e);
+                            }
+                        }, []),
+                        k = normalizeSearchValue(o),
+                        I = getExperimentEntries(t.overwrittenExperiments).map((e) => e[0]),
+                        T = [...new Set([...p, ...I])].filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e)),
+                        R = T.filter((e) => !k || e.toLowerCase().includes(k)).sort((e, a) => {
+                            let r = hasExperimentValue(t.overwrittenExperiments, e) ? 0 : 1,
+                                i = hasExperimentValue(t.overwrittenExperiments, a) ? 0 : 1;
+                            if (r !== i) return r - i;
+                            let s = getSearchScore(e, k),
+                                n = getSearchScore(a, k);
+                            return s !== n ? s - n : e.localeCompare(a);
+                        });
+                    return (0, r.jsxs)(S.a, {
+                        className: x().root,
+                        headerClassName: x().header,
+                        contentClassName: x().content,
+                        closeButtonProps: PulseSyncCloseButtonProps,
+                        title: 'Переопределение экспериментов',
+                        header: (0, r.jsx)(
+                            _.m_,
+                            {
+                                offsetOptions: 4,
+                                placement: 'left',
+                                text: 'Перезагрузить страницу',
+                                children: (0, r.jsx)(n.$, {
+                                    className: x().reloadButton,
+                                    size: 'xxs',
+                                    radius: 'round',
+                                    icon: (0, r.jsx)(E.I, { variant: 'reset', size: 'xxs' }),
+                                    onClick: m,
+                                }),
+                            },
+                            'reloadTooltip',
+                        ),
+                        open: e.isOpened,
+                        onOpenChange: e.onOpenChange,
+                        onClose: e.close,
+                        size: 'fitContent',
+                        placement: 'center',
+                        labelClose: a({ id: 'interface-actions.close' }),
+                        children: [
+                            (0, r.jsx)('div', {
+                                className: x().overrideForm,
+                                children: (0, r.jsx)('input', {
+                                    className: x().overrideInput,
+                                    type: 'text',
+                                    name: 'experimentSearch',
+                                    placeholder: 'Поиск',
+                                    value: o,
+                                    onChange: (e) => h(e.target.value),
+                                    style: {
+                                        minHeight: '2.5rem',
+                                        width: '100%',
+                                        border: '1px solid var(--ym-controls-color-secondary-outline-enabled_stroke)',
+                                        borderRadius: 'var(--ym-radius-size-xs)',
+                                        background: 'transparent',
+                                        color: 'var(--ym-controls-color-primary-text-enabled_variant)',
+                                        padding: '0 0.75rem',
+                                    },
+                                }),
+                            }),
+                            (0, r.jsx)('div', {
+                                style: { color: 'var(--ym-controls-color-secondary-text-enabled)', fontSize: '0.875rem', fontWeight: 500 },
+                                children: ''.concat(R.length, ' / ').concat(T.length, ' experiments'),
+                            }),
+                            (0, r.jsx)('div', {
+                                className: 'PulseSync_experimentsListScroll',
+                                style: { flex: '1 1 auto', minHeight: '16rem', overflowY: 'auto' },
+                                children: (0, r.jsxs)('ul', {
+                                    className: x().experimentsList,
+                                    children: [
+                                        R.map((e) => {
+                                            let a = getExperimentValue(t.overwrittenExperiments, e),
+                                                i = getExperimentValue(t.experiments, e);
+                                            return (0, r.jsx)(
+                                                'li',
+                                                {
+                                                    className: x().overridedExperiment,
+                                                    children: (0, r.jsx)(PulseSyncExperimentOverrideRow, {
+                                                        experimentName: e,
+                                                        selectedGroup: null == a ? void 0 : a.group,
+                                                        defaultGroup: null == i ? void 0 : i.group,
+                                                        optionsState: v[e],
+                                                        onSelect: g,
+                                                        onOpenDropdown: P,
+                                                    }),
+                                                },
+                                                e,
+                                            );
+                                        }),
+                                        0 === R.length &&
+                                            (0, r.jsx)('li', {
+                                                className: x().overridedExperiment,
+                                                children: (0, r.jsx)('span', {
+                                                    style: { color: 'var(--ym-controls-color-secondary-text-enabled)', fontSize: '0.875rem', fontWeight: 500 },
+                                                    children: 'No experiments found',
+                                                }),
+                                            }),
+                                    ],
+                                }),
+                            }),
+                        ],
+                    });
+                }),
                 N = () => {
                     let e = (0, u.N)().get(l.oo),
                         t = 'on' === e.get(c.c.AllowAnalyticsLogs),
@@ -2198,7 +2992,7 @@
                                           t && (0, r.jsx)(q, { togglePanel: c, isGeoWidgetShown: i, onToggleGeoWidget: h }),
                                       ],
                                   }),
-                                  (0, r.jsx)(D, {}),
+                                  (0, r.jsx)(PulseSyncOverwrittenExperimentsModal, {}),
                                   i && (0, r.jsx)(g, { onClose: y }),
                               ],
                           })
@@ -7458,23 +8252,34 @@
                 (function (e) {
                     (e.HIGHSHELF = 'highshelf'), (e.PEAKING = 'peaking'), (e.LOWSHELF = 'lowshelf');
                 })(l || (l = {}));
+            let pulseSyncR128NormalizationEnabled = !0;
+            null == window ||
+                null == window.nativeSettings ||
+                window.nativeSettings
+                    .getAsync('modSettings.r128Normalization')
+                    .then((e) => {
+                        pulseSyncR128NormalizationEnabled = e ?? !0;
+                    })
+                    .catch(() => {});
             class tf {
                 connectNodes() {
                     let { useAnalyser: e, useGain: t } = this.config;
-                    t && e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t && !e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
-                        !t && e && (this.sourceNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t || e || this.sourceNode.connect(this.context.destination);
+                    this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode),
+                        e && this.analyserNode.connect(this.r128GainNode),
+                        t && (this.r128GainNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
+                        !t && this.r128GainNode.connect(this.context.destination);
                 }
                 connectEqualizer() {
                     let { useAnalyser: e, useGain: t } = this.config,
                         a = this.bands[this.bands.length - 1];
                     a &&
                         (this.sourceNode.disconnect(),
+                        this.r128GainNode.disconnect(),
                         this.sourceNode.connect(this.preamp),
-                        t && a.connect(this.gainNode),
-                        !t && e && a.connect(this.analyserNode),
-                        t || e || a.connect(this.context.destination));
+                        a.connect(e ? this.analyserNode : this.r128GainNode),
+                        e && this.analyserNode.connect(this.r128GainNode),
+                        t && (this.r128GainNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
+                        !t && this.r128GainNode.connect(this.context.destination));
                 }
                 disconnectEqualizer() {
                     let { useAnalyser: e, useGain: t } = this.config,
@@ -7482,9 +8287,23 @@
                     a &&
                         (this.sourceNode.disconnect(),
                         a.disconnect(),
-                        t && this.sourceNode.connect(this.gainNode),
-                        !t && e && this.sourceNode.connect(this.analyserNode),
-                        t || e || this.sourceNode.connect(this.context.destination));
+                        this.r128GainNode.disconnect(),
+                        this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode),
+                        e && this.analyserNode.connect(this.r128GainNode),
+                        t && (this.r128GainNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
+                        !t && this.r128GainNode.connect(this.context.destination));
+                }
+                setR128Gain(e, t) {
+                    let a = null != e ? e : this.lastR128,
+                        r = Number(null == a ? void 0 : a.i),
+                        i = 'boolean' == typeof t ? t : pulseSyncR128NormalizationEnabled;
+                    'boolean' == typeof t && (pulseSyncR128NormalizationEnabled = t), null != e && (this.lastR128 = e);
+                    if (!i || !Number.isFinite(r)) return void this.r128GainNode.gain.setValueAtTime(1, this.context.currentTime);
+                    let s = Number(null == a ? void 0 : a.tp),
+                        n = -23 - r;
+                    Number.isFinite(s) && (n = Math.min(n, -s));
+                    let o = Math.pow(10, n / 20);
+                    (Number.isFinite(o) && o > 0) || (o = 1), this.r128GainNode.gain.setValueAtTime(o, this.context.currentTime);
                 }
                 setBands(e) {
                     0 === this.bands.length ? (this.bands = this.connectBandsBetween(this.createBandsByFrequencies(e))) : this.updateBands(e);
@@ -7547,6 +8366,8 @@
                         (0, L._)(this, 'bufferLength', 0),
                         (0, L._)(this, 'spectrum', new Uint8Array()),
                         (0, L._)(this, 'gainNode', void 0),
+                        (0, L._)(this, 'r128GainNode', void 0),
+                        (0, L._)(this, 'lastR128', null),
                         (0, L._)(this, 'config', void 0),
                         (this.audioElement = e),
                         (this.context = new AudioContext()),
@@ -7556,6 +8377,7 @@
                         (this.bufferLength = this.analyserNode.frequencyBinCount),
                         (this.spectrum = new Uint8Array(this.bufferLength)),
                         (this.gainNode = this.context.createGain()),
+                        (this.r128GainNode = this.context.createGain()),
                         (this.preamp = this.context.createGain()),
                         (this.config = t),
                         this.connectNodes();
@@ -7572,7 +8394,7 @@
                     let a = this.graphsByMediaPlayer.get(e);
                     if (a) return a;
                     let r = this.createGraphs(e, t);
-                    return this.graphsByMediaPlayer.set(e, r), r;
+                    return r.forEach((e) => this.graphs.add(e)), this.graphsByMediaPlayer.set(e, r), r;
                 }
                 initializeAnalyser(e, t, a) {
                     tv(a) && this.options.useAnalyser && !this.analyser && (this.analyser = new ta({ currentAudioElement: e.currentAudioElement, graphs: t }));
@@ -7663,6 +8485,13 @@
                                     ((i = null == (t = o.data.meta.smartPreviewParams) ? void 0 : t.fade),
                                     (s = null == (r = o.data.meta.smartPreviewParams) ? void 0 : r.durationMs)),
                                 (0, eA.b)(o) && ((i = o.data.meta.fade), (s = o.data.meta.durationMs)),
+                                this.graphs.forEach((e) => {
+                                    var t;
+                                    let r = null == (t = a.state.mediaPlayersStore.value[U.e.AUDIO]) ? void 0 : t.currentAudioElement.value,
+                                        i = null == o ? void 0 : o.data.meta.r128,
+                                        s = !i && o ? { i: 0, tp: 0 } : i;
+                                    (!r || e.audioElement === r) && e.setR128Gain(s);
+                                }),
                                 this.fade && this.fade.apply(i),
                                 this.smartPreview && this.smartPreview.apply(s),
                                 Promise.resolve()
@@ -7672,6 +8501,7 @@
                 constructor(e) {
                     (0, L._)(this, 'options', void 0),
                         (0, L._)(this, 'graphsByMediaPlayer', new WeakMap()),
+                        (0, L._)(this, 'graphs', new Set()),
                         (0, L._)(this, 'analyser', void 0),
                         (0, L._)(this, 'equalizer', new er.cJ(null)),
                         (0, L._)(this, 'fade', void 0),
@@ -9272,7 +10102,10 @@
                     );
                 }
                 updateMetadata(e) {
-                    if (!e) return null;
+                    if (!e) {
+                        window.navigator.mediaSession.metadata = null;
+                        return;
+                    }
                     let t = this.prepareMetadata(e);
                     return (window.navigator.mediaSession.metadata = null), (window.navigator.mediaSession.metadata = new MediaMetadata(t)), t;
                 }
@@ -9313,6 +10146,14 @@
                 }
                 handlePlayerEvents(e) {
                     let t, a;
+                    e.state.currentMediaPlayer?.onChange((currentPlayer) => {
+                        currentPlayer?.isCrossing.onChange((isCrossing) => {
+                            if (!isCrossing) {
+                                this.updateMetadata();
+                                this.updateMetadata(e.state.queueState.currentEntity.value?.entity.data.meta);
+                            }
+                        });
+                    });
                     e.state.queueState.currentEntity.onChange(() => {
                         this.updateCurrentEntityMetadata(e), this.updatePositionState(e);
                     }),
@@ -9322,6 +10163,7 @@
                         this.subscribeToCrossfadeEnd(e),
                         e.state.playerState.event.onChange(() => {
                             e.state.playerState.event.value === F.Iu.UPDATING_PROGRESS &&
+                                !e.state.currentMediaPlayer?.value.isCrossing?.value &&
                                 (this.updateCurrentEntityMetadata(e),
                                 this.updatePositionState(e),
                                 aI.forEach((t) => {
@@ -10744,8 +11586,32 @@
                     o = rA(void 0 !== n ? r.get(n) : void 0, i);
                 return { type: F.z4.Unloaded, meta: { id: a.playable_id, albumId: a.album_id_optional }, wasPlayed: s, sourceContextData: o };
             }
+            window.onRemoteDeviceConnected = [];
+            window.onRemoteDeviceDisconnected = [];
             class rI {
                 onYnisonStateUpdated(e) {
+                    const isRemoteControlEnabled = window.ENABLE_YNISON_REMOTE_CONTROL;
+                    const allowedStatuses1 = [F.MT.ENDED, F.MT.IDLE, F.MT.PAUSED, F.MT.STOPPED, F.MT.MEDIA_ELEMENT_ERROR];
+                    const allowedStatuses2 = [F.MT.ENDED, F.MT.IDLE, F.MT.STOPPED, F.MT.MEDIA_ELEMENT_ERROR];
+                    const current_device_id = window.ynison?.connector?.config?.device?.device_id;
+                    const currentStatus = this.playback.state.playerState.status.value;
+                    const shouldApplyState = this.variables.shouldApplyState;
+                    const isDeviceMatch = e.state.active_device_id_optional === current_device_id;
+                    const selfStateDuped = e.state.player_state?.status?.version?.device_id === current_device_id;
+                    if (
+                        isRemoteControlEnabled
+                            ? shouldApplyState && ((!selfStateDuped && isDeviceMatch) || allowedStatuses2.includes(currentStatus))
+                            : allowedStatuses1.includes(currentStatus) && shouldApplyState
+                    ) {
+                        if (isRemoteControlEnabled && !selfStateDuped) {
+                            const currentDevice = e.state.devices?.find((device) => device.info.device_id === e.state.player_state?.status?.version?.device_id);
+                            window.onRemoteDeviceConnected.forEach((listener) => listener(currentDevice));
+                            window.remoteDeviceConnected = true;
+                        }
+                    } else if (isRemoteControlEnabled && !isDeviceMatch) {
+                        window.onRemoteDeviceDisconnected.forEach((listener) => listener());
+                        window.remoteDeviceConnected = false;
+                    }
                     this.variables.shouldApplyState && this.applyYnisonDiff(e);
                 }
                 applyYnisonDiff(e) {
@@ -12801,7 +13667,7 @@
                                 () => {
                                     var t, a;
                                     let r = (null == (a = e.stateController.fullState.diff.player_state) || null == (t = a.status) ? void 0 : t.paused) === !1;
-                                    !e.isActive && r && e.interceptActivity();
+                                    !e.isActive && r && (window?.YNISON_INTERCEPT_PLAYBACK ?? !1) && e.interceptActivity();
                                 },
                                 'App',
                             );
@@ -13746,32 +14612,165 @@
                             A,
                         ]);
                     ((e) => {
-                        let t = (0, O.useCallback)(
-                            (t, a) => {
-                                switch (a) {
-                                    case 'PLAY':
-                                    case 'PAUSE':
-                                        null == e || e.togglePause();
-                                        break;
-                                    case 'MOVE_BACKWARD':
-                                        null == e || e.moveBackward();
-                                        break;
-                                    case 'MOVE_FORWARD':
-                                        null == e || e.moveForward();
-                                }
-                            },
-                            [e],
-                        );
+                        let { sonataState: t } = (0, ii.g)(),
+                            a = (0, O.useCallback)(() => {
+                                if (!e) return;
+                                let t = e.state.queueState.index.value ?? 0,
+                                    a = e.state.queueState.order.value,
+                                    r = e.state.queueState.entityList.value,
+                                    i = t - 1 >= 0 ? (a?.[t - 1] ?? t - 1) : null,
+                                    s = t + 1 < (r?.length ?? 0) ? (a?.[t + 1] ?? t + 1) : null,
+                                    n = e.state.queueState.currentEntity.value?.entity,
+                                    o = n?.data?.meta,
+                                    l = e.state.currentContext.value?.availableActions;
+                                window.desktopEvents?.send?.(il.E.PLAYER_STATE, {
+                                    status: e.state.playerState.status.value,
+                                    isPlaying: 'playing' === e.state.playerState.status.value,
+                                    canMoveForward: l?.moveForward?.value,
+                                    canMoveBackward: l?.moveBackward?.value,
+                                    track: o,
+                                    progress: e.state.playerState.progress.value,
+                                    availableActions: {
+                                        moveBackward: l?.moveBackward?.value,
+                                        moveForward: l?.moveForward?.value,
+                                        repeat: l?.repeat?.value,
+                                        shuffle: l?.shuffle?.value,
+                                        speed: l?.speed?.value,
+                                    },
+                                    actionsStore: {
+                                        repeat: e.state.queueState.repeat.value,
+                                        shuffle: e.state.queueState.shuffle.value,
+                                        isLiked: !!n?.likeStore?.isTrackLiked?.(o?.id),
+                                        isDisliked: !!n?.likeStore?.isTrackDisliked?.(o?.id),
+                                    },
+                                    previousTrack: null == i ? void 0 : r?.[i]?.entity?.data?.meta,
+                                    nextTrack: null == s ? void 0 : r?.[s]?.entity?.data?.meta,
+                                    volume: e.state.playerState.exponentVolume.value,
+                                });
+                            }, [e]),
+                            r = (0, O.useCallback)(
+                                async (r) => {
+                                    let i = t.entityMeta;
+                                    if (!e || !i) return;
+                                    switch (r) {
+                                        case 'TOGGLE_LIKE':
+                                            await i.toggleLike?.();
+                                            break;
+                                        case 'LIKE':
+                                            i.isLiked || (await i.toggleLike?.());
+                                            break;
+                                        case 'LIKE_NONE':
+                                            i.isLiked && (await i.toggleLike?.());
+                                    }
+                                    a();
+                                },
+                                [e, t.entityMeta, a],
+                            ),
+                            i = (0, O.useCallback)(
+                                async (r) => {
+                                    let i = t.entityMeta;
+                                    if (!e || !i) return;
+                                    let s = !1;
+                                    switch (r) {
+                                        case 'TOGGLE_DISLIKE':
+                                            s = !0;
+                                            break;
+                                        case 'DISLIKE':
+                                            s = !i.isDisliked;
+                                            break;
+                                        case 'DISLIKE_NONE':
+                                            s = !!i.isDisliked;
+                                    }
+                                    s && (await i.toggleDislike?.()),
+                                        s && !i.isDisliked && i.id === e.state.queueState.currentEntity.value?.entity?.data?.meta?.id && e.moveForward(),
+                                        a();
+                                },
+                                [e, t.entityMeta, a],
+                            ),
+                            s = (0, O.useCallback)(
+                                (t, n, o, l = 1) => {
+                                    if (window.playerActionEventDedupeNonce === l) return;
+                                    if (l) window.playerActionEventDedupeNonce = l;
+                                    switch (n) {
+                                        case 'PLAY':
+                                        case 'PAUSE':
+                                        case 'TOGGLE_PLAY':
+                                            null == e || e.togglePause();
+                                            break;
+                                        case 'MOVE_BACKWARD':
+                                            null == e || e.moveBackward();
+                                            break;
+                                        case 'MOVE_FORWARD':
+                                            null == e || e.moveForward();
+                                            break;
+                                        case 'REPEAT_NONE':
+                                            null == e || e.setRepeatMode('none');
+                                            break;
+                                        case 'REPEAT_CONTEXT':
+                                            null == e || e.setRepeatMode('context');
+                                            break;
+                                        case 'REPEAT_ONE':
+                                            null == e || e.setRepeatMode('one');
+                                            break;
+                                        case 'TOGGLE_REPEAT': {
+                                            let t = 'none';
+                                            switch (e?.state?.queueState?.repeat?.value) {
+                                                case 'none':
+                                                    t = 'vibe' === e?.state?.currentContext?.value?.contextData?.type ? 'one' : 'context';
+                                                    break;
+                                                case 'context':
+                                                    t = 'one';
+                                                    break;
+                                                case 'one':
+                                                default:
+                                                    t = 'none';
+                                            }
+                                            null == e || e.setRepeatMode(t);
+                                            break;
+                                        }
+                                        case 'TOGGLE_SHUFFLE':
+                                            null == e || e.toggleShuffle();
+                                            break;
+                                        case 'TOGGLE_LIKE':
+                                        case 'LIKE':
+                                        case 'LIKE_NONE':
+                                            r(n);
+                                            break;
+                                        case 'DISLIKE':
+                                        case 'DISLIKE_NONE':
+                                        case 'TOGGLE_DISLIKE':
+                                            i(n);
+                                            break;
+                                        case 'INCREASE_VOLUME':
+                                            null == e || e.increaseExponentVolume(o);
+                                            break;
+                                        case 'DECREASE_VOLUME':
+                                            null == e || e.decreaseExponentVolume(o);
+                                            break;
+                                        case 'SET_VOLUME':
+                                            null == e || e.setExponentVolume(Math.min(Math.max(o, 0), 100));
+                                            break;
+                                        case 'SET_PROGRESS':
+                                            null == e || e.setProgress(Math.max(o, 0));
+                                    }
+                                },
+                                [e, r, i],
+                            );
                         (0, O.useEffect)(() => {
-                            var e;
                             return (
-                                null == (e = window.desktopEvents) || e.on(il.E.PLAYER_ACTION, t),
+                                window.desktopEvents?.on?.(il.E.PLAYER_ACTION, s),
                                 () => {
-                                    var e;
-                                    null == (e = window.desktopEvents) || e.off(il.E.PLAYER_ACTION, t);
+                                    window.desktopEvents?.off?.(il.E.PLAYER_ACTION, s);
                                 }
                             );
-                        }, [t]);
+                        }, [s]),
+                            (0, O.useEffect)(() => {
+                                window.pulsesyncApi &&
+                                    ((window.pulsesyncApi.likeTrack = () => r('LIKE')),
+                                    (window.pulsesyncApi.unlikeTrack = () => r('LIKE_NONE')),
+                                    (window.pulsesyncApi.dislikeTrack = () => i('DISLIKE')),
+                                    (window.pulsesyncApi.undislikeTrack = () => i('DISLIKE_NONE')));
+                            }, [r, i]);
                     })(en),
                         ((e) => {
                             let {
@@ -14074,39 +15073,136 @@
                                 a = (0, id.c)((e) => {
                                     var t;
                                     let { isPlaying: a, canMoveBackward: r, canMoveForward: i } = e;
-                                    null == (t = window.desktopEvents) || t.send(il.E.PLAYER_STATE, { isPlaying: a, canMoveBackward: r, canMoveForward: i });
-                                });
+                                    null == (t = window.desktopEvents) ||
+                                        t.send(il.E.PLAYER_STATE, {
+                                            isPlaying: a,
+                                            canMoveBackward: r,
+                                            canMoveForward: i,
+                                            status: e.status,
+                                            track: e.track,
+                                            progress: e.progress,
+                                            availableActions: e.availableActions,
+                                            actionsStore: e.actionsStore,
+                                            previousTrack: e.previousTrack,
+                                            nextTrack: e.nextTrack,
+                                            volume: e.volume,
+                                        });
+                                }),
+                                r = (e) => {
+                                    let t = e?.state?.queueState?.index?.value ?? 0,
+                                        a = e?.state?.queueState?.order?.value,
+                                        r = e?.state?.queueState?.entityList?.value,
+                                        i = t - 1 >= 0 ? (a?.[t - 1] ?? t - 1) : null,
+                                        s = t + 1 < (r?.length ?? 0) ? (a?.[t + 1] ?? t + 1) : null;
+                                    return {
+                                        previousTrack: null == i ? void 0 : r?.[i]?.entity?.data?.meta,
+                                        nextTrack: null == s ? void 0 : r?.[s]?.entity?.data?.meta,
+                                    };
+                                },
+                                i = (e, t) => {
+                                    let { previousTrack: i, nextTrack: s } = r(e),
+                                        n = e?.state?.queueState?.currentEntity?.value?.entity,
+                                        o = n?.data?.meta,
+                                        l = e?.state?.currentContext?.value?.availableActions;
+                                    a({
+                                        status: t,
+                                        isPlaying: t === F.MT.PLAYING,
+                                        canMoveForward: l?.moveForward?.value,
+                                        canMoveBackward: l?.moveBackward?.value,
+                                        track: o,
+                                        progress: e?.state?.playerState?.progress?.value,
+                                        availableActions: {
+                                            moveBackward: l?.moveBackward?.value,
+                                            moveForward: l?.moveForward?.value,
+                                            repeat: l?.repeat?.value,
+                                            shuffle: l?.shuffle?.value,
+                                            speed: l?.speed?.value,
+                                        },
+                                        actionsStore: {
+                                            repeat: e?.state?.queueState?.repeat?.value,
+                                            shuffle: e?.state?.queueState?.shuffle?.value,
+                                            isLiked: !!n?.likeStore?.isTrackLiked?.(o?.id),
+                                            isDisliked: !!n?.likeStore?.isTrackDisliked?.(o?.id),
+                                        },
+                                        previousTrack: i,
+                                        nextTrack: s,
+                                        volume: e?.state?.playerState?.exponentVolume?.value,
+                                    });
+                                };
                             (0, O.useEffect)(() => {
                                 let e,
                                     r,
-                                    i =
-                                        null == t
-                                            ? void 0
-                                            : t.state.playerState.status.onChange((e) => {
-                                                  e && a({ isPlaying: e === F.MT.PLAYING });
-                                              }),
                                     s =
                                         null == t
                                             ? void 0
+                                            : t.state.playerState.status.onChange((e) => {
+                                                  e && i(t, e);
+                                              }),
+                                    n = t?.state?.queueState?.currentEntity?.onChange((e) => {
+                                        e && i(t, F.MT.PLAYING);
+                                    }),
+                                    o = t?.state?.playerState?.event?.onChange(() => {
+                                        let e = t?.state?.playerState?.event?.value;
+                                        ('SET_PROGRESS' === e || e === F.Iu?.SET_PROGRESS) && i(t, t?.state?.playerState?.status?.value);
+                                    }),
+                                    l = t?.state?.queueState?.entityList?.onChange(() => {
+                                        i(t, t?.state?.playerState?.status?.value);
+                                    }),
+                                    u = t?.state?.currentContext?.value?.availableActions.repeat?.onChange(() => {
+                                        i(t, t?.state?.playerState?.status?.value);
+                                    }),
+                                    d = t?.state?.currentContext?.value?.availableActions.shuffle?.onChange(() => {
+                                        i(t, t?.state?.playerState?.status?.value);
+                                    }),
+                                    c = t?.state?.queueState?.repeat?.onChange(() => {
+                                        i(t, t?.state?.playerState?.status?.value);
+                                    }),
+                                    h = t?.state?.queueState?.shuffle?.onChange(() => {
+                                        i(t, t?.state?.playerState?.status?.value);
+                                    }),
+                                    v = t?.state?.playerState?.exponentVolume?.onChange(() => {
+                                        i(t, t?.state?.playerState?.status?.value);
+                                    }),
+                                    y = window.desktopEvents?.on?.(il.E.GET_CURRENT_TRACK, () => {
+                                        i(t, t?.state?.playerState?.status?.value);
+                                    }),
+                                    p =
+                                        null == t
+                                            ? void 0
                                             : t.state.currentContext.onChange(() => {
-                                                  var i, s;
+                                                  var q, z;
                                                   null == e || e(),
                                                       null == r || r(),
                                                       (e =
-                                                          null == t || null == (i = t.state.currentContext.value)
+                                                          null == t || null == (q = t.state.currentContext.value)
                                                               ? void 0
-                                                              : i.availableActions.moveBackward.onChange((e) => {
-                                                                    a({ canMoveBackward: !!e });
+                                                              : q.availableActions.moveBackward.onChange((e) => {
+                                                                    i(t, t?.state?.playerState?.status?.value);
                                                                 })),
                                                       (r =
-                                                          null == t || null == (s = t.state.currentContext.value)
+                                                          null == t || null == (z = t.state.currentContext.value)
                                                               ? void 0
-                                                              : s.availableActions.moveForward.onChange((e) => {
-                                                                    a({ canMoveForward: !!e });
+                                                              : z.availableActions.moveForward.onChange((e) => {
+                                                                    i(t, t?.state?.playerState?.status?.value);
                                                                 }));
                                               });
+                                t && (window.__pulseSyncPendingPlayerInstance = t),
+                                    window.pulsesyncApi?.setPlayerInstance?.(t),
+                                    i(t, t?.state?.playerState?.status?.value);
                                 return () => {
-                                    null == i || i(), null == s || s(), null == r || r(), null == r || r();
+                                    null == s || s(),
+                                        null == p || p(),
+                                        null == n || n(),
+                                        null == y || y(),
+                                        null == o || o(),
+                                        null == l || l(),
+                                        null == u || u(),
+                                        null == d || d(),
+                                        null == c || c(),
+                                        null == h || h(),
+                                        null == v || v(),
+                                        null == e || e(),
+                                        null == r || r();
                                 };
                             }, [a, null == t ? void 0 : t.state.currentContext, null == t ? void 0 : t.state.playerState.status]);
                         })({ sonata: en }),

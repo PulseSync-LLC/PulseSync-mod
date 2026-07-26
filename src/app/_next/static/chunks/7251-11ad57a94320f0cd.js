@@ -1,6 +1,15 @@
 (self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([
     [7251],
     {
+        92496: (e, t, i) => {
+            'use strict';
+            i.d(t, { W: () => a, i: () => n });
+            var s = i(55178);
+            let a = (0, s.createContext)(null);
+            function n() {
+                return (0, s.useContext)(a);
+            }
+        },
         1613: (e, t, i) => {
             'use strict';
             i.d(t, { z: () => n });
@@ -553,6 +562,8 @@
                 T = i(78297),
                 S = i(31926),
                 I = i(10910),
+                J = i(92496),
+                W = i(99311),
                 f = i(98602),
                 O = i.n(f),
                 L = i(19267),
@@ -573,6 +584,37 @@
                     z = (0, N.g)(),
                     P = j.get(g.oo),
                     w = (0, T.$)(),
+                    pulseSyncR128Audio = (0, J.i)(),
+                    [pulseSyncR128Enabled, setPulseSyncR128Enabled] = (0, r.useState)(
+                        () => window.nativeSettings.get('modSettings.r128Normalization') ?? !0,
+                    ),
+                    onPulseSyncR128Toggle = (0, r.useCallback)((e) => {
+                        let i = 'boolean' == typeof e ? e : !(window.nativeSettings.get('modSettings.r128Normalization') ?? !0),
+                            a = null == t.state || null == t.state.queueState || null == t.state.queueState.currentEntity || null == t.state.queueState.currentEntity.value
+                                ? void 0
+                                : t.state.queueState.currentEntity.value.entity,
+                            r = null == a || null == a.data || null == a.data.meta ? void 0 : a.data.meta.r128;
+                        setPulseSyncR128Enabled(i), window.nativeSettings.set('modSettings.r128Normalization', i),
+                            null == pulseSyncR128Audio ||
+                                null == pulseSyncR128Audio.graphs ||
+                                pulseSyncR128Audio.graphs.forEach((e) => {
+                                    e.setR128Gain(r, i);
+                                });
+                    }, [t.state, pulseSyncR128Audio]),
+                    [pulseSyncWasapiQuickEnabled, setPulseSyncWasapiQuickEnabled] = (0, r.useState)(() =>
+                        Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput')),
+                    ),
+                    [pulseSyncYaspTapQuickEnabled, setPulseSyncYaspTapQuickEnabled] = (0, r.useState)(() =>
+                        Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap')),
+                    ),
+                    [pulseSyncWasapiQuickSupported, setPulseSyncWasapiQuickSupported] = (0, r.useState)(!1),
+                    pulseSyncIsWindows = window.PLATFORM === 'win32',
+                    onPulseSyncWasapiQuickToggle = (0, r.useCallback)((e) => {
+                        setPulseSyncWasapiQuickEnabled(e),
+                            Promise.resolve(window.nativeAudioOutput?.setWasapiExclusiveOutputEnabled?.(e)).catch((t) => {
+                                setPulseSyncWasapiQuickEnabled(!e), console.error('Failed to change WASAPI Exclusive setting:', t);
+                            });
+                    }, []),
                     V = (0, r.useCallback)(
                         (e) => {
                             w(e, t.quality), t.setQuality(e), null == z || z.setQuality(e), P.set(v.c.YmPlayerQuality, e, { expires: 365 });
@@ -646,6 +688,30 @@
                     },
                     [s.modal],
                 );
+                (0, r.useEffect)(() => {
+                    s.modal.isOpened && setPulseSyncR128Enabled(window.nativeSettings.get('modSettings.r128Normalization') ?? !0);
+                }, [s.modal.isOpened]);
+                (0, r.useEffect)(() => {
+                    if (!s.modal.isOpened || !pulseSyncIsWindows) return;
+                    setPulseSyncWasapiQuickEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput'))),
+                        setPulseSyncYaspTapQuickEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap')));
+                    let e = !1;
+                    return (
+                        Promise.resolve(window.nativeAudioOutput?.getWasapiExclusiveStatus?.())
+                            .then((t) => {
+                                e ||
+                                    (setPulseSyncWasapiQuickSupported(Boolean(t?.available && t?.supported)),
+                                    setPulseSyncWasapiQuickEnabled(Boolean(t?.outputEnabled)),
+                                    setPulseSyncYaspTapQuickEnabled(Boolean(t?.yaspTapEnabled)));
+                            })
+                            .catch(() => {
+                                e || setPulseSyncWasapiQuickSupported(!1);
+                            }),
+                        () => {
+                            e = !0;
+                        }
+                    );
+                }, [s.modal.isOpened, pulseSyncIsWindows]);
                 let H = !i.hasPlus,
                     Y = (0, r.useMemo)(
                         () =>
@@ -679,7 +745,65 @@
                                 },
                                 q,
                             );
-                    }, [q, k, e, f.isEnabled, f.isAvailable]);
+                    }, [q, k, e, f.isEnabled, f.isAvailable]),
+                    pulseSyncR128Toggle = (0, r.useMemo)(() => {
+                        if (e || !f.isAvailable) return null;
+                        return (0, a.jsxs)('div', {
+                            className: O().equalizer,
+                            style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' },
+                            children: [
+                                (0, a.jsx)(E.HL, {
+                                    className: O().item_option,
+                                    style: { width: 'unset' },
+                                    variant: 'span',
+                                    size: 'l',
+                                    weight: 'medium',
+                                    children: 'Нормализация громкости',
+                                }),
+                                (0, a.jsx)(W.l, {
+                                    isChecked: pulseSyncR128Enabled,
+                                    onChange: onPulseSyncR128Toggle,
+                                    'aria-label': 'Нормализация громкости',
+                                }),
+                            ],
+                        });
+                    }, [e, f.isAvailable, pulseSyncR128Enabled, onPulseSyncR128Toggle]),
+                    pulseSyncWasapiQuickToggle = (0, r.useMemo)(() => {
+                        if (e || !pulseSyncIsWindows) return null;
+                        let t = !pulseSyncWasapiQuickSupported || !pulseSyncYaspTapQuickEnabled;
+                        return (0, a.jsxs)('div', {
+                            className: O().equalizer,
+                            title: !pulseSyncWasapiQuickSupported
+                                ? 'WASAPI Exclusive недоступен'
+                                : pulseSyncYaspTapQuickEnabled
+                                  ? void 0
+                                  : 'Сначала включите YASP Tap в настройках аудио',
+                            style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', opacity: t ? 0.45 : 1 },
+                            children: [
+                                (0, a.jsx)(E.HL, {
+                                    className: O().item_option,
+                                    style: { width: 'unset' },
+                                    variant: 'span',
+                                    size: 'l',
+                                    weight: 'medium',
+                                    children: 'WASAPI Exclusive',
+                                }),
+                                (0, a.jsx)(W.l, {
+                                    isChecked: pulseSyncWasapiQuickEnabled,
+                                    onChange: onPulseSyncWasapiQuickToggle,
+                                    'aria-label': 'WASAPI Exclusive',
+                                    disabled: t,
+                                }),
+                            ],
+                        });
+                    }, [
+                        e,
+                        pulseSyncIsWindows,
+                        pulseSyncWasapiQuickEnabled,
+                        pulseSyncWasapiQuickSupported,
+                        pulseSyncYaspTapQuickEnabled,
+                        onPulseSyncWasapiQuickToggle,
+                    ]);
                 return (0, a.jsxs)(m.a, {
                     size: 'fitContent',
                     placement: e ? 'default' : 'right',
@@ -712,6 +836,8 @@
                                 ],
                             }),
                         Y,
+                        pulseSyncR128Toggle,
+                        pulseSyncWasapiQuickToggle,
                         $,
                     ],
                 });
@@ -1730,6 +1856,8 @@
                 m = i(378),
                 C = i(44128),
                 E = i(45303),
+                H = i(50),
+                V = i(14257),
                 A = i(60070),
                 y = i.n(A);
             let g = (0, s.PA)((e) => {
@@ -1747,6 +1875,7 @@
                     [N, D] = (0, r.useState)(void 0),
                     { formatMessage: v } = (0, l.A)(),
                     F = (0, C.e)(),
+                    { theme: U } = (0, H.W)(),
                     { state: T, toggleTrue: S, toggleFalse: I } = (0, c.e)(!1);
                 (0, r.useEffect)(() => {
                     'number' == typeof b && D(b);
@@ -1798,26 +1927,43 @@
                     }),
                     z = (0, d.L)(() => {
                         if (A === E.q.VERTICAL)
-                            return (0, a.jsx)('div', {
+                            return (0, a.jsxs)('div', {
                                 onWheel: M,
                                 className: (0, n.$)(y().sliderContainer, { [y().sliderContainer_focusVisible]: T }),
-                                children: (0, a.jsx)('div', {
-                                    className: (0, n.$)(y().wrapperSlider, s),
-                                    children: (0, a.jsx)(m.A, {
-                                        onMouseLeave: I,
-                                        className: (0, n.$)(y().slider, y().important),
-                                        thumbSize: 's',
-                                        onFocus: S,
-                                        onBlur: I,
-                                        trackSize: 's',
-                                        value: f,
-                                        maxValue: 1,
-                                        step: 0.01,
-                                        onChange: L,
-                                        'aria-label': v({ id: 'player-actions.volume-control' }),
-                                        'data-test-id': o.Kq.changeVolume.CHANGE_VOLUME_SLIDER,
+                                children: [
+                                    (0, a.jsx)('span', {
+                                        children: ''.concat(Math.round(f.toFixed(2) * 100), '%'),
+                                        style: {
+                                            position: 'absolute',
+                                            left: 0,
+                                            right: 0,
+                                            marginInline: 'auto',
+                                            width: 'fit-content',
+                                            top: '0.7rem',
+                                            textShadow:
+                                                U === V.S.Dark
+                                                    ? '-1px -1px 0 #000,\n1px -1px 0 #000,\n-1px 1px 0 #000,\n1px 1px 0 #000,\n-1px 0px 0 #000,\n0px 0px 0 #000,\n0px -1px 0 #000,\n0px 1px 0 #000'
+                                                    : void 0,
+                                        },
                                     }),
-                                }),
+                                    (0, a.jsx)('div', {
+                                        className: (0, n.$)(y().wrapperSlider, s),
+                                        children: (0, a.jsx)(m.A, {
+                                            onMouseLeave: I,
+                                            className: (0, n.$)(y().slider, y().important),
+                                            thumbSize: 's',
+                                            onFocus: S,
+                                            onBlur: I,
+                                            trackSize: 's',
+                                            value: f,
+                                            maxValue: 1,
+                                            step: 0.01,
+                                            onChange: L,
+                                            'aria-label': v({ id: 'player-actions.volume-control' }),
+                                            'data-test-id': o.Kq.changeVolume.CHANGE_VOLUME_SLIDER,
+                                        }),
+                                    }),
+                                ],
                             });
                     });
                 return (0, a.jsxs)('div', {

@@ -223,7 +223,8 @@
             var U = function (e, t) {
                     return Number((Math.round(e * t) / t).toFixed(4));
                 },
-                M = n(29222);
+                M = n(29222),
+                ymConstants = n(15808);
             function L(e, t, n) {
                 return void 0 === e && (e = !1), !!e || !t || !n || Number(t.timestamp_ms) < Number(n.timestamp_ms);
             }
@@ -1526,6 +1527,7 @@
                                     sessionId: n,
                                 },
                             })),
+                            (window.ynison = { connector: this.connector, state: this.stateController }),
                             (this.metricsController = new e_({
                                 transports: e.metricsTransport,
                                 sessionId: n,
@@ -1604,6 +1606,11 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
+                                const selfDedup = e.rawData.player_state.status.version.device_id === this.deviceConfig.info.device_id;
+                                if (!selfDedup) {
+                                    console.debug('[WSConnector] Received message from hub', e.rawData);
+                                    window.desktopEvents?.send(ymConstants.E.YNISON_STATE, { rawData: e.rawData });
+                                }
                                 var t = this.getMessageContext(e);
                                 if ((this.updateFullStateCompletion(t), !this.shouldIgnoreMessage(t))) {
                                     var n = this.processMessageState(e, t);
@@ -1759,7 +1766,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                return this.variables.isShadow ? eu(eu({}, e), { paused: !0 }) : e;
+                                return this.variables.isShadow || !this.isActive ? eu(eu({}, e), { paused: !0 }) : e;
                             },
                         }),
                         Object.defineProperty(e.prototype, 'createOutgoingDeviceData', {

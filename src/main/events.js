@@ -68,6 +68,7 @@ const yandexStationLogger = new Logger_js_1.Logger('YandexStation');
 const { throttle } = require('./lib/utils.js');
 const crypto = require('crypto');
 const fs = require('fs');
+const iconv = require('iconv-lite');
 
 let mainWindow = undefined;
 let isPlayerReady = false;
@@ -98,6 +99,17 @@ const PLAYLIST_LINK_IMPORT_UPLOAD_TIMEOUT_MS = 15 * 60 * 1000;
 const PLAYLIST_LINK_IMPORT_MAX_FILE_SIZE_BYTES = 0x19000000;
 const playlistLinkImportUploadWaiters = new Map();
 let pulseSyncManager_js_1;
+const repairPlaylistLinkImportMessage = (value) => {
+    let text = String(value || '');
+
+    for (let attempt = 0; attempt < 2 && /(?:Р.|С.){2,}/.test(text); attempt += 1) {
+        const repaired = iconv.encode(text, 'windows-1251').toString('utf8');
+        if (!repaired || repaired.includes('\uFFFD') || repaired === text) break;
+        text = repaired;
+    }
+
+    return text;
+};
 const isBoolean = (value) => {
     return typeof value === 'boolean';
 };
@@ -725,15 +737,17 @@ const handleApplicationEvents = (window) => {
                 importedCount: importedTracks.importedCount,
                 totalCount: importedTracks.totalCount,
                 failedCount: importedTracks.failedCount,
-                errors: importedTracks.errors,
+                errors: Array.isArray(importedTracks.errors) ? importedTracks.errors.map(repairPlaylistLinkImportMessage) : [],
             };
         } catch (error) {
             const rawMessage = error instanceof Error ? error.message : 'Не удалось импортировать треки по ссылке';
-            const errorMessage = String(rawMessage)
-                .split(/\r\n|[\r\n]/)
-                .map((line) => line.trim())
-                .filter(Boolean)
-                .at(-1);
+            const errorMessage = repairPlaylistLinkImportMessage(
+                String(rawMessage)
+                    .split(/\r\n|[\r\n]/)
+                    .map((line) => line.trim())
+                    .filter(Boolean)
+                    .at(-1),
+            );
 
             sendProgressBarChange(window, toastID, 0, 'Ошибка', toastNonce);
             window.setProgressBar(-1);
@@ -761,11 +775,13 @@ const handleApplicationEvents = (window) => {
             };
         } catch (error) {
             const rawMessage = error instanceof Error ? error.message : 'Не удалось проверить ссылку';
-            const errorMessage = String(rawMessage)
-                .split(/\r\n|[\r\n]/)
-                .map((line) => line.trim())
-                .filter(Boolean)
-                .at(-1);
+            const errorMessage = repairPlaylistLinkImportMessage(
+                String(rawMessage)
+                    .split(/\r\n|[\r\n]/)
+                    .map((line) => line.trim())
+                    .filter(Boolean)
+                    .at(-1),
+            );
 
             eventsLogger.warn('Prefetch for link import failed:', errorMessage);
             return {

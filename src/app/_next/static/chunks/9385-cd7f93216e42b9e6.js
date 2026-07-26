@@ -8442,7 +8442,19 @@
                 (function (e) {
                     (e.BAR_BELOW = 'barBellow'), (e.FULLSCREEN = 'fullscreen');
                 })(d || (d = {}));
-            let s0 = (e) => {
+            let getCommunicationTriggersMode = () => {
+                    try {
+                        let e = window.nativeSettings?.get?.('modSettings.communicationTriggers.mode');
+                        return ['all', 'barBelow', 'fullscreen', 'disabled'].includes(e) ? e : 'disabled';
+                    } catch (e) {
+                        return 'disabled';
+                    }
+                },
+                isCommunicationTriggerAllowed = (e) => {
+                    let t = getCommunicationTriggersMode();
+                    return t === 'all' || (t === 'barBelow' && e === d.BAR_BELOW) || (t === 'fullscreen' && e === d.FULLSCREEN);
+                },
+                s0 = (e) => {
                     let { text: t, textColor: a, color: i, action: l } = e;
                     return (0, f.wg)({
                         text: t || null,
@@ -8621,6 +8633,7 @@
                         let t = {
                             getData: (0, f.L3)(function* () {
                                 let { dynamicPagesResource: a, modelActionsLogger: i } = (0, f._$)(e);
+                                if (getCommunicationTriggersMode() === 'disabled') return (e.loadingState = ev.G.RESOLVE);
                                 if (e.loadingState !== ev.G.PENDING && e.loadingState !== ev.G.RESOLVE)
                                     try {
                                         e.loadingState = ev.G.PENDING;
@@ -8658,27 +8671,33 @@
                                                             var i;
                                                             switch (null == (i = e.triggers[0]) ? void 0 : i.meta.notificationId) {
                                                                 case d.BAR_BELOW:
-                                                                    return void e.triggers.forEach((e) => {
-                                                                        t.push(
-                                                                            ((e) => {
-                                                                                let t = 'data' in e ? s1(e.data) : s1(e.div),
-                                                                                    a = 'feedbackToken' in e ? e.feedbackToken : null,
-                                                                                    i = 'anchorId' in e ? e.anchorId : o.ON_START_BAR_BELOW;
-                                                                                return (0, f.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
-                                                                            })(e),
-                                                                        );
-                                                                    });
+                                                                    return void (
+                                                                        isCommunicationTriggerAllowed(d.BAR_BELOW) &&
+                                                                        e.triggers.forEach((e) => {
+                                                                            t.push(
+                                                                                ((e) => {
+                                                                                    let t = 'data' in e ? s1(e.data) : s1(e.div),
+                                                                                        a = 'feedbackToken' in e ? e.feedbackToken : null,
+                                                                                        i = 'anchorId' in e ? e.anchorId : o.ON_START_BAR_BELOW;
+                                                                                    return (0, f.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
+                                                                                })(e),
+                                                                            );
+                                                                        })
+                                                                    );
                                                                 case d.FULLSCREEN:
-                                                                    return void e.triggers.forEach((e) => {
-                                                                        a.push(
-                                                                            ((e) => {
-                                                                                let t = 'data' in e ? s3(e.data) : s3(e.div),
-                                                                                    a = 'feedbackToken' in e ? e.feedbackToken : null,
-                                                                                    i = 'anchorId' in e ? e.anchorId : o.ON_START_FULLSCREEN;
-                                                                                return (0, f.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
-                                                                            })(e),
-                                                                        );
-                                                                    });
+                                                                    return void (
+                                                                        isCommunicationTriggerAllowed(d.FULLSCREEN) &&
+                                                                        e.triggers.forEach((e) => {
+                                                                            a.push(
+                                                                                ((e) => {
+                                                                                    let t = 'data' in e ? s3(e.data) : s3(e.div),
+                                                                                        a = 'feedbackToken' in e ? e.feedbackToken : null,
+                                                                                        i = 'anchorId' in e ? e.anchorId : o.ON_START_FULLSCREEN;
+                                                                                    return (0, f.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
+                                                                                })(e),
+                                                                            );
+                                                                        })
+                                                                    );
                                                             }
                                                         }),
                                                         (0, f.wg)({ barBelow: { list: t }, modal: { list: a } })
@@ -10390,8 +10409,23 @@
                 os = a(24991),
                 on = a(14971),
                 oo = a(44240);
-            let od = (e) =>
-                e.items
+            let pulseSyncVibeSettingItem = {
+                    id: 'setting',
+                    type: os.D.SETTING,
+                    style: oo.y.CONTROL,
+                    data: {
+                        title: 'Настроить Мою волну',
+                        cover: { uri: 'avatars.mds.yandex.net/get-music-misc/30221/img.6a02b79f69c75168250b2889/%%' },
+                    },
+                },
+                od = (e) => {
+                    let t = e.items;
+                    if (window.nativeSettings?.get?.('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel') ?? !1) {
+                        t = t.filter((e) => e.type !== os.D.SETTING);
+                        let a = t.shift();
+                        t = a ? [a, pulseSyncVibeSettingItem, ...t] : [pulseSyncVibeSettingItem];
+                    }
+                    return t
                     .map((e, t) => {
                         var a, i, l, r;
                         switch (e.type) {
@@ -10439,6 +10473,7 @@
                         }
                     })
                     .filter((e) => null !== e);
+                };
             !(function (e) {
                 (e.CLICK = 'CLICK'), (e.VIEW = 'VIEW');
             })(m || (m = {}));
@@ -11688,6 +11723,16 @@
                 })({}),
                 di = a(71062);
             (y || (y = {})).TOO_MANY_FILES = 'TOO_MANY_FILES';
+            let reportPulseSyncUploadState = (e, t, a = {}) => {
+                    let i = null == e ? void 0 : e.pulseSyncImportToken;
+                    i && window.playlistLinkImporter?.reportUploadState?.({ trackToken: i, status: t, ...a });
+                },
+                rememberPulseSyncUploadError = (e, t) => {
+                    let a = (null == t ? void 0 : t.message) || String(t || 'UNKNOWN_ERROR');
+                    return e && Object.defineProperty(e, 'pulseSyncUploadError', { value: a, configurable: !0, writable: !0 }), a;
+                },
+                getPulseSyncUploadTimeout = (e) => Math.min(12e4, Math.max(15e3, Math.ceil(((null == e ? void 0 : e.size) || 0) / 262144) * 1e3 + 5e3)),
+                waitForPulseSyncUploadRetry = (e) => new Promise((t) => setTimeout(t, e));
             let dl = f.gK
                 .model('TrackUgcUploadModel', {
                     loadingState: f.gK.enumeration(Object.values(di.p)),
@@ -11702,7 +11747,7 @@
                         setFile(t) {
                             e.file = t;
                         },
-                        getUploadUrl: (0, f.L3)(function* () {
+                        getUploadUrl: (0, f.L3)(function* (uploadAttempt = 1) {
                             if (!(0, f._n)(e)) return;
                             let { loaderResource: t, modelActionsLogger: a } = (0, f._$)(e),
                                 { user: i } = (0, R.M)(e);
@@ -11722,33 +11767,78 @@
                                         (e.uploadUrl = i['post-target']), (e.trackId = i['ugc-track-id']);
                                         return;
                                     }
+                                    let uploadUrlError = rememberPulseSyncUploadError(e.file, new Error('Upload URL response is missing required fields'));
+                                    reportPulseSyncUploadState(e.file, 'attempt-failed', { attempt: uploadAttempt, stage: 'get-upload-url', error: uploadUrlError }),
                                     (e.errorReason = da.UNKNOWN_ERROR), (e.loadingState = di.p.REJECT);
                                     return;
                                 } catch (t) {
-                                    (e.loadingState = di.p.REJECT), a.error(t);
+                                    let i = rememberPulseSyncUploadError(e.file, t);
+                                    reportPulseSyncUploadState(e.file, 'attempt-failed', { attempt: uploadAttempt, stage: 'get-upload-url', error: i }),
+                                        (e.loadingState = di.p.REJECT),
+                                        a.error(t);
                                     return;
                                 }
                         }),
-                        uploadFile: (0, f.L3)(function* () {
+                        uploadFile: (0, f.L3)(function* (uploadAttempt = 1) {
                             if (!(0, f._n)(e)) return;
                             let { prefixlessResource: t, modelActionsLogger: a } = (0, f._$)(e);
                             if (e.loadingState === di.p.PREPARE && e.uploadUrl && e.file) {
-                                e.loadingState = di.p.UPLOADING;
+                                let i = getPulseSyncUploadTimeout(e.file),
+                                    l = !1;
+                                (e.loadingState = di.p.UPLOADING),
+                                    reportPulseSyncUploadState(e.file, 'uploading', {
+                                        attempt: uploadAttempt,
+                                        stage: 'upload-file',
+                                        fileSize: e.file.size,
+                                        timeoutMs: i,
+                                    });
                                 try {
                                     let a = new FormData();
                                     a.append('file', e.file);
-                                    let i = new AbortController(),
-                                        l = i.signal;
-                                    (e.abortController = i), yield t.uploadFile({ url: e.uploadUrl, formData: a }, { signal: l }), (e.loadingState = di.p.PROCESSING);
+                                    let r = new AbortController(),
+                                        s = r.signal,
+                                        o = setTimeout(() => {
+                                            (l = !0), r.abort();
+                                        }, i);
+                                    try {
+                                        (e.abortController = r), yield t.uploadFile({ url: e.uploadUrl, formData: a }, { signal: s }), (e.loadingState = di.p.PROCESSING);
+                                    } finally {
+                                        clearTimeout(o);
+                                    }
                                     return;
                                 } catch (t) {
-                                    (e.loadingState = di.p.REJECT), a.error(t);
+                                    if (e.loadingState === di.p.CANCELLED) return;
+                                    let r = rememberPulseSyncUploadError(e.file, l ? new Error(`Upload timed out after ${i} ms`) : t);
+                                    reportPulseSyncUploadState(e.file, 'attempt-failed', {
+                                        attempt: uploadAttempt,
+                                        stage: 'upload-file',
+                                        fileSize: e.file.size,
+                                        timeoutMs: i,
+                                        error: r,
+                                    }),
+                                        (e.errorReason = da.UNKNOWN_ERROR),
+                                        (e.loadingState = di.p.REJECT),
+                                        a.error(t);
                                     return;
                                 }
                             }
                         }),
                         runUpload: (0, f.L3)(function* () {
-                            (0, f._n)(e) && (yield t.getUploadUrl(), e.loadingState !== di.p.REJECT && (yield t.uploadFile()));
+                            if (!(0, f._n)(e)) return;
+                            let a = 1;
+                            for (let i = 1; i <= 3; i++) {
+                                if (((a = i), i > 1 && (yield waitForPulseSyncUploadRetry(500 * 2 ** (i - 2))), e.loadingState === di.p.CANCELLED)) return;
+                                (e.loadingState = di.p.IDLE), (e.uploadUrl = null), (e.errorReason = null), yield t.getUploadUrl(i);
+                                if (e.errorReason === da.TOO_MANY_FILES) break;
+                                if ((e.loadingState !== di.p.REJECT && (yield t.uploadFile(i)), e.loadingState === di.p.PROCESSING)) {
+                                    reportPulseSyncUploadState(e.file, 'uploaded', { attempt: i });
+                                    return;
+                                }
+                            }
+                            reportPulseSyncUploadState(e.file, 'failed', {
+                                error: e.file?.pulseSyncUploadError || e.errorReason || da.UNKNOWN_ERROR,
+                                attempt: a,
+                            });
                         }),
                         retryUpload() {
                             if ((this.reset(), !(0, f._n)(e))) return;
@@ -11757,7 +11847,13 @@
                         },
                         abortUpload() {
                             var t;
-                            if (((e.loadingState = di.p.CANCELLED), null == (t = e.abortController) || t.abort(), !(0, f._n)(e))) return;
+                            if (
+                                ((e.loadingState = di.p.CANCELLED),
+                                reportPulseSyncUploadState(e.file, 'cancelled'),
+                                null == (t = e.abortController) || t.abort(),
+                                !(0, f._n)(e))
+                            )
+                                return;
                             let { ugcUploadCenter: a } = (0, R.M)(e);
                             a.clearCancelledUploads();
                         },
