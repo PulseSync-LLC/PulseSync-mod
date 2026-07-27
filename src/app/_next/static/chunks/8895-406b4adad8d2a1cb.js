@@ -2633,18 +2633,6 @@
                 t0 = i.n(tJ);
             let t1 = (0, u.PA)(() => {
                 var e, t, i, n;
-                const deviceTypeMap = {
-                    UNSPECIFIED: 'Неизвестного устройства',
-                    WEB: 'Сайта',
-                    ANDROID: 'Android приложения',
-                    IOS: 'IOS приложения',
-                    SMART_SPEAKER: 'Умной колонки',
-                    WEB_TV: 'ТВ',
-                    ANDROID_TV: 'Android ТВ',
-                    APPLE_TV: 'Apple ТВ',
-                    ANDROID_WEAR: 'Android часов',
-                    WEB_DESKTOP: 'ПК приложения',
-                };
                 let {
                         sonataState: a,
                         advert: r,
@@ -2657,8 +2645,6 @@
                     b = null != (t = a.position) ? t : 0,
                     p = null != (i = a.duration) ? i : 0,
                     [g, f] = (0, v.useState)(null),
-                    [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, v.useState)(window.isRemoteDeviceConnected ?? !1),
-                    [remoteDevice, setRemoteDevice] = (0, v.useState)(window.remoteDevice ?? null),
                     A = (0, v.useRef)(!1),
                     { state: C, toggleTrue: j, toggleFalse: k } = (0, el.e)(!1),
                     I = !!p && !a.isGenerativeContext && C,
@@ -2703,22 +2689,6 @@
                             })
                         );
                     });
-                    (0, v.useEffect)(() => {
-                        let e = (device_info) => {
-                                (setIsRemoteDeviceConnected(!0), setRemoteDevice(device_info), (window.isRemoteDeviceConnected = !0), (window.remoteDevice = device_info));
-                            },
-                            t = () => {
-                                (setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null));
-                            };
-                        return (
-                            (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
-                                (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
-                                () => {
-                                    ((window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
-                                        (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t)));
-                                }
-                    );
-                }, []);
                 return (0, c.jsx)('div', {
                     className: t0().root,
                     style: M,
@@ -2781,23 +2751,7 @@
                                     trackSize: 's',
                                     thumbSize: 's',
                                 }),
-                            isRemoteDeviceConnected &&
-                            (0, c.jsx)('div', {
-                                style: {
-                                    position: 'absolute',
-                                    bottom: 0,
-                                    color: 'var(--ym-controls-color-primary-default-enabled)',
-                                    fontSize: 'small',
-                                },
-                                children: (0, c.jsxs)('span', {
-                                    children: [
-                                        'Управление с ',
-                                        null != deviceTypeMap?.[remoteDevice?.info?.type] ? deviceTypeMap?.[remoteDevice?.info?.type] : '',
-                                        ': ',
-                                        remoteDevice?.info?.title,
-                                    ],
-                                }),
-                            }),
+
                         ],
                     }),
                 });
@@ -5327,6 +5281,8 @@
                         F = s.checkExperiment(H.z.WebNextNewWaveTabFeedbackForm, 'on'),
                         U = (0, eH.Z)('/slides/special/my_vibe_onboarding');
                     const pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave';
+                    let [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, v.useState)(window.isRemoteDeviceConnected ?? !1);
+                    let [remoteDevice, setRemoteDevice] = (0, v.useState)(window.remoteDevice ?? null);
                     let [pulseSyncTrackQualityInfo, setPulseSyncTrackQualityInfo] = (0, v.useState)(window?.PulseSyncTrackQuality?.getLastInfo?.() ?? null);
                     let [pulseSyncWasapiExclusiveOutputState, setPulseSyncWasapiExclusiveOutputState] = (0, v.useState)(null);
                     let [pulseSyncShowAudioQualityOnNewWave, setPulseSyncShowAudioQualityOnNewWave] = (0, v.useState)(
@@ -5394,7 +5350,35 @@
                                 if (typeof unsubscribe === 'function') unsubscribe();
                             };
                         }, []),
-                        (0, eU.J)(a.landing.isResolved);
+                        (0, eU.J)(a.landing.isResolved),
+                    (0, v.useEffect)(() => {
+                        let e = (device_info) => {
+                                (setIsRemoteDeviceConnected(!0), setRemoteDevice(device_info), (window.isRemoteDeviceConnected = !0), (window.remoteDevice = device_info));
+                            },
+                            t = () => {
+                                (setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null));
+                            };
+                        return (
+                            (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
+                                (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
+                                () => {
+                                    ((window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
+                                        (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t)));
+                                }
+                        );
+                    }, []);
+                    const deviceTypeMap = {
+                        UNSPECIFIED: 'Неизвестного устройства',
+                        WEB: 'Сайта',
+                        ANDROID: 'Android приложения',
+                        IOS: 'IOS приложения',
+                        SMART_SPEAKER: 'Умной колонки',
+                        WEB_TV: 'ТВ',
+                        ANDROID_TV: 'Android ТВ',
+                        APPLE_TV: 'Apple ТВ',
+                        ANDROID_WEAR: 'Android часов',
+                        WEB_DESKTOP: 'ПК приложения',
+                    };
                     let K = s.checkExperiment(H.z.WebNextDisableVibe, 'on'),
                         X = (0, x.c)(() => {
                             o.isReady && o.modal.open();
@@ -5405,26 +5389,57 @@
                              (null == pulseSyncWasapiExclusiveOutputState || null == pulseSyncWasapiExclusiveOutputState.session
                                  ? void 0
                                  : pulseSyncWasapiExclusiveOutputState.session.state) === 'running',
-                         pulseSyncAudioQualityBubble = (0, v.useMemo)(() => {
-                             return (null == pulseSyncTrackQualityInfo ? void 0 : pulseSyncTrackQualityInfo.label) &&
-                                 (pulseSyncShowAudioQualityOnNewWave || pulseSyncWasapiIsActive)
-                                 ? (0, c.jsx)(A.$, {
-                                       color: 'secondary',
-                                       radius: 'xl',
-                                       'aria-label': 'Качество трека: '.concat(pulseSyncTrackQualityInfo.label),
-                                       className: eZ().beta,
-                                       style: { marginInlineEnd: 'var(--ym-spacer-size-xs)', color: 'white' },
-                                       withHover: !1,
-                                       children: (0, c.jsx)(P.HL, {
-                                           variant: 'div',
-                                           type: 'text',
-                                           size: 's',
-                                           weight: 'medium',
-                                           children: pulseSyncTrackQualityInfo.label,
-                                       }),
-                                   })
-                                 : null;
-                         }, [pulseSyncTrackQualityInfo, pulseSyncShowAudioQualityOnNewWave, pulseSyncWasapiIsActive]),
+                        pulseSyncYnisonBubble = (0, v.useMemo)(() => {
+                            if (!isRemoteDeviceConnected) return null;
+
+                            const remoteControlText = `Управление с ${
+                                deviceTypeMap?.[remoteDevice?.info?.type] ?? ''
+                            }: ${remoteDevice?.info?.title ?? ''}`;
+
+                            return (0, c.jsx)(A.$, {
+                                color: 'secondary',
+                                radius: 'xl',
+                                'aria-label': remoteControlText,
+                                className: eZ().beta,
+                                style: {
+                                    marginInlineEnd: 'var(--ym-spacer-size-xs)',
+                                    color: 'white',
+                                },
+                                withHover: !1,
+                                children: (0, c.jsx)(P.HL, {
+                                    variant: 'div',
+                                    type: 'text',
+                                    size: 's',
+                                    weight: 'medium',
+                                    children: remoteControlText,
+                                }),
+                            });
+                        }, [
+                            isRemoteDeviceConnected,
+                            remoteDevice?.info?.type,
+                            remoteDevice?.info?.title,
+                            deviceTypeMap,
+                        ]),
+                        pulseSyncAudioQualityBubble = (0, v.useMemo)(() => {
+                            return (null == pulseSyncTrackQualityInfo ? void 0 : pulseSyncTrackQualityInfo.label) &&
+                            (pulseSyncShowAudioQualityOnNewWave || pulseSyncWasapiIsActive)
+                                ? (0, c.jsx)(A.$, {
+                                    color: 'secondary',
+                                    radius: 'xl',
+                                    'aria-label': 'Качество трека: '.concat(pulseSyncTrackQualityInfo.label),
+                                    className: eZ().beta,
+                                    style: { marginInlineEnd: 'var(--ym-spacer-size-xs)', color: 'white' },
+                                    withHover: !1,
+                                    children: (0, c.jsx)(P.HL, {
+                                        variant: 'div',
+                                        type: 'text',
+                                        size: 's',
+                                        weight: 'medium',
+                                        children: pulseSyncTrackQualityInfo.label,
+                                    }),
+                                })
+                                : null;
+                        }, [pulseSyncTrackQualityInfo, pulseSyncShowAudioQualityOnNewWave, pulseSyncWasapiIsActive]),
                          pulseSyncWasapiStateBubble = (0, v.useMemo)(
                              () =>
                                  pulseSyncWasapiIsActive
@@ -5604,7 +5619,7 @@
                                               (0, c.jsx)(nF, {}),
                                                (0, c.jsxs)('div', {
                                                    className: $,
-                                                   children: [pulseSyncWasapiStateBubble, pulseSyncWasapiDeviceBubble, pulseSyncAudioQualityBubble, G],
+                                                   children: [pulseSyncYnisonBubble, pulseSyncWasapiStateBubble, pulseSyncWasapiDeviceBubble, pulseSyncAudioQualityBubble, G],
                                                }),
                                           ],
                                       }),
