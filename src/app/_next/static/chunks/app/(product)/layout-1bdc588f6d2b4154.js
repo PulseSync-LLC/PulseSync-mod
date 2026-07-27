@@ -12469,6 +12469,7 @@
                     });
                 }
                 playAutoflow(e) {
+                    if (!(window.ENABLE_ENDLESS_MUSIC?.() ?? true)) return;
                     var t, a, r;
                     let i,
                         s = null == (t = e.state.currentContext.value) ? void 0 : t.data.type;
@@ -14799,16 +14800,15 @@
                                 E = d.get(iE.Tq),
                                 S = [new tC(b)];
                             E && S.push(new tT(E)),
-                                null == a ||
-                                    a.createPlayback(ix.V.PROMO_LANDING, {
-                                        factory: r,
-                                        entityProvider: i,
-                                        playbackConfig: {
-                                            mediaElementErrorReloadCount: f.mediaElementErrorReloadCount,
-                                            windowSize: f.windowSize,
-                                            setupQueueWindowSize: f.setupQueueWindowSize,
-                                        },
-                                    });
+                                a.createPlayback(ix.V.PROMO_LANDING, {
+                                    factory: r,
+                                    entityProvider: i,
+                                    playbackConfig: {
+                                        mediaElementErrorReloadCount: f.mediaElementErrorReloadCount,
+                                        windowSize: f.windowSize,
+                                        setupQueueWindowSize: f.setupQueueWindowSize,
+                                    },
+                                });
                             let _ = a.getPlayback(ix.V.PROMO_LANDING);
                             for (let e of [
                                 new tM({
