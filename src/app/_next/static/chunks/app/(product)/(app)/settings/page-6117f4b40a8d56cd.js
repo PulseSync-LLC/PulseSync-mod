@@ -1710,18 +1710,11 @@
                         updateMenuMaxHeight = (0, pulseReactRuntime.useCallback)(() => {
                             let e = menuRef.current;
                             if (!e) return;
-                            let t = Array.from(e.querySelectorAll('.settingBarWithDropdown_menuItem')),
-                                o = window.getComputedStyle(e),
-                                i = ['borderTopWidth', 'borderBottomWidth', 'paddingTop', 'paddingBottom'].reduce((e, t) => e + (parseFloat(o[t]) || 0), 0),
-                                l = 16 * (parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16),
-                                r = Math.max(0, l - i),
-                                s = 0;
-                            for (let e of t) {
-                                let t = e.getBoundingClientRect().height;
-                                if (s && s + t > r) break;
-                                if (((s += t), s >= r)) break;
-                            }
-                            s && setMenuMaxHeight('border-box' === o.boxSizing ? s + i : s);
+                            let t = window.getComputedStyle(e),
+                                o = (parseFloat(t.borderTopWidth) || 0) + (parseFloat(t.borderBottomWidth) || 0),
+                                i = 16 * (parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16),
+                                l = e.scrollHeight + o;
+                            l > 0 && setMenuMaxHeight(Math.min(l, i));
                         }, []),
                         x = (0, pulseReactRuntime.useCallback)(
                             (e) => {
@@ -4409,9 +4402,11 @@
                     useLrclibTextState = (0, pulseReactRuntime.useState)(window.nativeSettings.get('modSettings.lrclib.useText') ?? !0),
                     useLrclibText = useLrclibTextState[0],
                     setUseLrclibText = useLrclibTextState[1],
-                    syncLyricsTextFallbackState = (0, pulseReactRuntime.useState)(window.nativeSettings.get('modSettings.lrclib.syncLyricsTextFallback') ?? !1),
-                    syncLyricsTextFallback = syncLyricsTextFallbackState[0],
-                    setSyncLyricsTextFallback = syncLyricsTextFallbackState[1],
+                    lookupModeState = (0, pulseReactRuntime.useState)(
+                        window.nativeSettings.get('modSettings.lrclib.lookupMode') === 'search' ? 'search' : 'get',
+                    ),
+                    lookupMode = lookupModeState[0],
+                    setLookupMode = lookupModeState[1],
                     useTitleOnlyFallbackState = (0, pulseReactRuntime.useState)(window.nativeSettings.get('modSettings.lrclib.useTitleOnlyFallback') ?? !0),
                     useTitleOnlyFallback = useTitleOnlyFallbackState[0],
                     setUseTitleOnlyFallback = useTitleOnlyFallbackState[1],
@@ -4422,9 +4417,10 @@
                         window.nativeSettings.set('modSettings.lrclib.useText', e);
                         setUseLrclibText(e);
                     }, []),
-                    onSyncLyricsTextFallbackToggle = (0, pulseReactRuntime.useCallback)((e) => {
-                        window.nativeSettings.set('modSettings.lrclib.syncLyricsTextFallback', e);
-                        setSyncLyricsTextFallback(e);
+                    onLookupModeChange = (0, pulseReactRuntime.useCallback)((value) => {
+                        const mode = value === 'search' ? 'search' : 'get';
+                        window.nativeSettings.set('modSettings.lrclib.lookupMode', mode);
+                        setLookupMode(mode);
                     }, []),
                     onUseTitleOnlyFallbackToggle = (0, pulseReactRuntime.useCallback)((e) => {
                         window.nativeSettings.set('modSettings.lrclib.useTitleOnlyFallback', e);
@@ -4462,12 +4458,28 @@
                             }),
                             (0, pulseJsxRuntime.jsx)('li', {
                                 className: eb().item,
-                                children: (0, pulseJsxRuntime.jsx)(em, {
-                                    title: 'Показывать текст вместо синхронизированной лирики',
-                                    description: 'Эта опция временно недоступна',
-                                    onChange: onSyncLyricsTextFallbackToggle,
-                                    isChecked: syncLyricsTextFallback,
-                                    disabled: !0,
+                                children: (0, pulseJsxRuntime.jsx)(settingBarWithDropdown, {
+                                    title: 'Режим поиска LRCLib',
+                                    description:
+                                        lookupMode === 'search'
+                                            ? 'Проверяет несколько вариантов и выбирает наиболее подходящий результат'
+                                            : 'Ищет текст по всем данным текущего трека',
+                                    onChange: onLookupModeChange,
+                                    value: lookupMode,
+                                    direction: 'bottom',
+                                    disabled: !useLrclibText,
+                                    options: [
+                                        {
+                                            value: 'get',
+                                            label: 'Точный поиск',
+                                            description: 'Ищет текст по всем данным текущего трека',
+                                        },
+                                        {
+                                            value: 'search',
+                                            label: 'Расширенный поиск',
+                                            description: 'Проверяет несколько вариантов и выбирает наиболее подходящий результат',
+                                        },
+                                    ],
                                 }),
                             }),
                             (0, pulseJsxRuntime.jsx)('li', {
@@ -4479,7 +4491,7 @@
                                         : 'Ищем по названию и автору',
                                     onChange: onUseTitleOnlyFallbackToggle,
                                     isChecked: useTitleOnlyFallback,
-                                    disabled: !useLrclibText,
+                                    disabled: !useLrclibText || lookupMode !== 'search',
                                 }),
                             }),
                             (0, pulseJsxRuntime.jsx)('li', {
