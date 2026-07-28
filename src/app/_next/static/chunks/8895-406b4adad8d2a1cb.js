@@ -2294,7 +2294,10 @@
                                   }),
                               !u.isGenerativeContext &&
                                   !m.isAdvertShown &&
-                                  (null == T ? void 0 : T.isSyncLyricsAvailable) &&
+                                  ((null == T ? void 0 : T.isSyncLyricsAvailable) ||
+                                      (null == T ? void 0 : T.isSyncLyricsAvailableWithOfflineFeature) ||
+                                      (null == T ? void 0 : T.hasSyncLyrics) ||
+                                      ((null == T ? void 0 : T.id) && v.syncLyrics.hasLyricsForTrack(T.id))) &&
                                   (0, c.jsx)(tg.Dr, {
                                       'aria-label': ed,
                                       onClick: B,
@@ -2999,6 +3002,51 @@
                              'function' == typeof t && t();
                          };
                      }, []);
+                     (0, v.useEffect)(() => {
+                         const trackId = null == S ? void 0 : S.id;
+                         const nativeAvailable =
+                             (null == S ? void 0 : S.isSyncLyricsAvailable) ||
+                             (null == S ? void 0 : S.isSyncLyricsAvailableWithOfflineFeature) ||
+                             (null == S ? void 0 : S.hasSyncLyrics);
+                         let lrclibEnabled = !0;
+                         try {
+                             lrclibEnabled = window.nativeSettings?.get('modSettings.lrclib.useText') !== !1;
+                         } catch (_error) {}
+                         if (trackId && !(null == S ? void 0 : S.isNonMusic) && r.syncLyrics.currentTrackId !== trackId && (nativeAvailable || lrclibEnabled || S.trackSource === 'UGC')) {
+                             r.syncLyrics.getData(trackId);
+                         }
+                         r.syncLyrics.prefetchNextTrack(sonataPlayer);
+                     }, [
+                         null == S ? void 0 : S.id,
+                         null == S ? void 0 : S.isSyncLyricsAvailable,
+                         null == S ? void 0 : S.isSyncLyricsAvailableWithOfflineFeature,
+                         null == S ? void 0 : S.hasSyncLyrics,
+                         null == S ? void 0 : S.isNonMusic,
+                         null == S ? void 0 : S.trackSource,
+                         r.syncLyrics.currentTrackId,
+                         r.syncLyrics,
+                         sonataPlayer,
+                     ]);
+                     (0, v.useEffect)(() => {
+                         const trackId = null == S ? void 0 : S.id;
+                         if (!trackId || String(r.syncLyrics.currentTrackId) !== String(trackId) || r.syncLyrics.isLoadingForTrack(trackId)) return;
+                         if (r.syncLyrics.isRejected || r.syncLyrics.hasInvalidLyrics) {
+                             r.autoHideSyncLyrics(trackId);
+                             return;
+                         }
+                         if (trackId && r.syncLyrics.hasLyricsForTrack(trackId)) r.restoreSyncLyricsForTrack(trackId);
+                     }, [
+                         null == S ? void 0 : S.id,
+                         r.syncLyrics.currentTrackId,
+                         r.syncLyrics.lines,
+                         r.syncLyrics.isLoading,
+                         r.syncLyrics.isRejected,
+                         r.syncLyrics.hasInvalidLyrics,
+                         r.syncLyrics.isResolved,
+                         r.syncLyrics,
+                         r.autoHideSyncLyrics,
+                         r.restoreSyncLyricsForTrack,
+                     ]);
                      let M = (0, x.c)(async (e, t) => {
                             t && (0, ec.P)(t, tL().ripple), await m(n, e);
                         }),

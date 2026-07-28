@@ -254,10 +254,10 @@ const init = () => {
             ytDlpCookiesBrowserSource: null,
         },
         lrclib: {
-            useText: false,
-            syncLyricsTextFallback: false,
-            useTitleOnlyFallback: false,
-            useTrackVersion: false,
+            useText: true,
+            lookupMode: 'search',
+            useTitleOnlyFallback: true,
+            useTrackVersion: true,
         },
         miniplayer: {
             skipTaskbar: false,

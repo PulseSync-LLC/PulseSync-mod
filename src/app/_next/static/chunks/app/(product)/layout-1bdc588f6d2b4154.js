@@ -2318,7 +2318,8 @@
                 I = a(30627),
                 C = a(54280),
                 T = a(22308),
-                x = a.n(T);
+                x = a.n(T),
+                pulseExperimentNames = a(79406);
             let UNSET_EXPERIMENT_GROUP_VALUE = '__pulse_sync_unset__',
                 IGNORED_EXPERIMENT_NAMES = new Set(['ABTestIds']),
                 EXPERIMENT_VARIANTS_CACHE = new Map(),
@@ -2699,7 +2700,16 @@
                         storage = (0, u.N)().get(l.oo),
                         [o, h] = s.useState(''),
                         [v, y] = s.useState({}),
-                        p = s.useMemo(() => getStaticExperimentNames(t), [t.experiments]),
+                        p = s.useMemo(
+                            () =>
+                                [
+                                    ...new Set([
+                                        ...Object.values(pulseExperimentNames.z || {}).filter((e) => typeof e === 'string'),
+                                        ...getStaticExperimentNames(t),
+                                    ]),
+                                ].filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e)),
+                            [t.experiments],
+                        ),
                         m = (0, s.useCallback)(() => {
                             window.location.reload();
                         }, []),
@@ -15139,7 +15149,7 @@
                                                   e && i(t, e);
                                               }),
                                     n = t?.state?.queueState?.currentEntity?.onChange((e) => {
-                                        e && i(t, F.MT.PLAYING);
+                                        e && i(t, t?.state?.playerState?.status?.value);
                                     }),
                                     o = t?.state?.playerState?.event?.onChange(() => {
                                         let e = t?.state?.playerState?.event?.value;

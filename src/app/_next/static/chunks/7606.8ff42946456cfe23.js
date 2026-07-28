@@ -4208,19 +4208,44 @@
                         { track: o, trackLyrics: c } = (0, S.g)(),
                         { state: d, setState: u } = (0, eh.e)(!1),
                         _ = c.currentTrackId !== (null == (t = o.meta) ? void 0 : t.id),
-                        m = o.isResolved && (null == (a = o.meta) ? void 0 : a.isLyricsAvailable);
+                        m = o.isResolved && (null == (a = o.meta) ? void 0 : a.isLyricsAvailable),
+                        trackId = null == n ? void 0 : n.id,
+                        isAvailable = null == n ? void 0 : n.isAvailable,
+                        isLyricsAvailable = null == n ? void 0 : n.isLyricsAvailable;
                     (0, A.useEffect)(() => {
                         var e;
-                        (null == (e = o.meta) ? void 0 : e.id) && m && _ && c.getLyrics(o.meta.id);
+                        (null == (e = o.meta) ? void 0 : e.id) && m && _ && (c.setTrack(o.meta), c.getLyrics(o.meta.id));
                     }, [_, m, c, null == (i = o.meta) ? void 0 : i.id]),
+                        (0, A.useEffect)(() => {
+                            const currentTrackId = c.currentTrackId == null ? null : String(c.currentTrackId);
+                            const requestedTrackId = trackId == null ? null : String(trackId);
+                            const hasLyrics = Boolean(c.lyrics && String(c.lyrics).trim().length > 0);
+                            const hasLyricsForRequestedTrack =
+                                hasLyrics && (!c.currentTrackId || (requestedTrackId && currentTrackId && requestedTrackId === currentTrackId));
+                            if (
+                                !trackId ||
+                                isAvailable === false ||
+                                isLyricsAvailable ||
+                                c.isLoading ||
+                                hasLyricsForRequestedTrack ||
+                                (requestedTrackId && currentTrackId && requestedTrackId === currentTrackId && c.isRejected)
+                            )
+                                return;
+                            c.setTrack(n);
+                            c.getLyrics(trackId);
+                        }, [trackId, isAvailable, isLyricsAvailable, c.currentTrackId, c.isRejected, c.isLoading, c.lyrics, c, n]),
                         c.shouldShowErrorNotification &&
                             (r((0, y.jsx)(er.h, { error: s({ id: 'error-messages.error-during-action' }) }), { containerId: en.u.ERROR }), c.resetShouldShowError());
                     let p = (0, f.c)((e) => {
                         u(e), e && n && c.sendViews({ trackId: n.id, albumId: n.albumId });
                     });
-                    return c.isShimmerVisible || !c.lyrics || o.isShimmerVisible
+                    const hasLyrics = Boolean(c.lyrics && String(c.lyrics).trim().length > 0);
+                    const shouldShowShimmer = c.isShimmerVisible || o.isShimmerVisible || (c.isLoading && !hasLyrics);
+                    return shouldShowShimmer
                         ? (0, y.jsx)(eO, { isShimmerActive: c.isLoading || o.isLoading })
-                        : (0, y.jsxs)('div', {
+                        : !hasLyrics
+                          ? null
+                          : (0, y.jsxs)('div', {
                               className: eE().root,
                               'data-test-id': q.Xk.track.TRACK_PAGE_LYRICS,
                               children: [
@@ -4602,7 +4627,9 @@
                                     'data-test-id': q.Xk.track.TRACK_PAGE_CONTENT,
                                     children: [
                                         (0, y.jsx)(ey, { onModalClose: x }),
-                                        (null == (s = u.meta) ? void 0 : s.isLyricsAvailable) && (0, y.jsx)(ew, { track: u.meta }, u.meta.id),
+                                        u.meta &&
+                                            ((null == (s = u.meta) ? void 0 : s.isLyricsAvailable) || window.nativeSettings?.get('modSettings.lrclib.useText') !== !1) &&
+                                            (0, y.jsx)(ew, { track: u.meta }, u.meta.id),
                                         p &&
                                             u.similarTracks &&
                                             (0, y.jsx)(eK, {
@@ -4949,7 +4976,7 @@
                     { modal: r, track: o } = l,
                     c = null == o ? void 0 : o.explicitDisclaimer;
                 (0, A.useEffect)(() => {
-                    o && o.isLyricsAvailable && l.modal.isOpened && l.getLyrics(o.id);
+                    o && (o.isLyricsAvailable || window.nativeSettings?.get('modSettings.lrclib.useText') !== !1) && l.modal.isOpened && l.getLyrics(o.id);
                 }, [o, l, l.modal.isOpened]),
                     (0, A.useEffect)(() => {
                         r.isOpened && o && l.isResolved && l.sendViews({ trackId: o.id, albumId: o.albumId });
@@ -8548,16 +8575,50 @@
                 sd = (0, h.PA)((e) => {
                     let { className: t, counterClassName: a, footerClassName: i, scrollerClassName: l, contentClassName: n, loaderClassName: s } = e,
                         r = (0, A.useRef)(null),
+                        sonataRuntimeState = (0, ak.e)(),
                         {
                             sonataState: { entityMeta: o },
-                            fullscreenPlayer: { syncLyrics: c, hideSyncLyrics: d },
+                            fullscreenPlayer: { syncLyrics: c, autoHideSyncLyrics: d },
                         } = (0, S.g)();
                     (0, A.useEffect)(() => {
-                        c.currentTrackId !== (null == o ? void 0 : o.id) && (null == o ? void 0 : o.isSyncLyricsAvailable) && c.getData(null == o ? void 0 : o.id);
-                    }, [null == o ? void 0 : o.isSyncLyricsAvailable, null == o ? void 0 : o.id, c]);
+                        const trackId = null == o ? void 0 : o.id;
+                        const nativeAvailable =
+                            (null == o ? void 0 : o.isSyncLyricsAvailable) ||
+                            (null == o ? void 0 : o.isSyncLyricsAvailableWithOfflineFeature) ||
+                            (null == o ? void 0 : o.hasSyncLyrics);
+                        let lrclibEnabled = !0;
+                        try {
+                            lrclibEnabled = window.nativeSettings?.get('modSettings.lrclib.useText') !== !1;
+                        } catch (_error) {}
+                        if (trackId && !(null == o ? void 0 : o.isNonMusic) && c.currentTrackId !== trackId && (nativeAvailable || lrclibEnabled || o.trackSource === 'UGC')) {
+                            c.getData(trackId);
+                        }
+                        c.prefetchNextTrack(sonataRuntimeState);
+                    }, [
+                        null == o ? void 0 : o.id,
+                        null == o ? void 0 : o.isSyncLyricsAvailable,
+                        null == o ? void 0 : o.isSyncLyricsAvailableWithOfflineFeature,
+                        null == o ? void 0 : o.hasSyncLyrics,
+                        null == o ? void 0 : o.isNonMusic,
+                        null == o ? void 0 : o.trackSource,
+                        c.currentTrackId,
+                        c,
+                        sonataRuntimeState,
+                    ]);
+                    (0, A.useEffect)(() => {
+                        const trackId = null == o ? void 0 : o.id;
+                        if (!trackId || String(c.currentTrackId) !== String(trackId) || c.isLoadingForTrack(trackId)) return;
+                        if (c.isRejected || c.hasInvalidLyrics) d(trackId);
+                    }, [null == o ? void 0 : o.id, c.currentTrackId, c.isLoading, c.isRejected, c.hasInvalidLyrics, c.lines, c, d]);
                     let u = (0, A.useMemo)(
-                            () => (c.isResolved ? (0, y.jsx)(sc, {}) : ((c.isRejected || c.hasInvalidLyrics) && d(), (0, y.jsx)(n4, { className: s }))),
-                            [c.isResolved, c.isRejected, c.hasInvalidLyrics, c.setInvisible, s],
+                            () => {
+                                const trackId = null == o ? void 0 : o.id;
+                                if (trackId && c.hasLyricsForTrack(trackId)) return (0, y.jsx)(sc, { key: String(trackId) });
+                                if (trackId && c.isLoadingForTrack(trackId)) return (0, y.jsx)(n4, { className: s });
+                                if (c.isRejected || c.hasInvalidLyrics) return null;
+                                return (0, y.jsx)(n4, { className: s });
+                            },
+                            [null == o ? void 0 : o.id, c.currentTrackId, c.lines, c.isLoading, c.isResolved, c.isRejected, c.hasInvalidLyrics, s, c],
                         ),
                         _ = (0, A.useMemo)(() => ({ counterClassName: a, scrollerClassName: l, footerClassName: i }), [a, i, l]);
                     return (0, y.jsx)(nX.Provider, {
@@ -8659,7 +8720,11 @@
             let sj = (0, h.PA)(() => {
                 var e;
                 let [t, a] = (0, A.useState)(!1),
-                    { sonataState: i, user: l } = (0, S.g)(),
+                    {
+                        sonataState: i,
+                        user: l,
+                        fullscreenPlayer: { syncLyrics: syncLyricsModel, autoHideSyncLyrics, restoreSyncLyricsForTrack },
+                    } = (0, S.g)(),
                     { entityMeta: n } = i,
                     { handleDebouncedToggle: s } = (0, l2.F)({ delay: 1500, throttleTimeout: 300 }),
                     r = i.canSpeed && ((null == n ? void 0 : n.isNonMusic) || (null == n || null == (e = n.mainAlbum) ? void 0 : e.isNonMusic)),
@@ -8683,8 +8748,36 @@
                                 'data-test-id': q.e8.player.FULLSCREEN_PLAYER_CONTEXT_MENU_BUTTON,
                             });
                     }),
+                    restoreTrackId = null == n ? void 0 : n.id,
+                    restoreSyncLyricsEffect =
+                        ((0, A.useEffect)(() => {
+                            if (!restoreTrackId || String(syncLyricsModel.currentTrackId) !== String(restoreTrackId) || syncLyricsModel.isLoadingForTrack(restoreTrackId)) return;
+                            if (syncLyricsModel.isRejected || syncLyricsModel.hasInvalidLyrics) {
+                                autoHideSyncLyrics(restoreTrackId);
+                                return;
+                            }
+                            if (syncLyricsModel.hasLyricsForTrack(restoreTrackId)) restoreSyncLyricsForTrack(restoreTrackId);
+                        }, [
+                            restoreTrackId,
+                            syncLyricsModel.currentTrackId,
+                            syncLyricsModel.lines,
+                            syncLyricsModel.isLoading,
+                            syncLyricsModel.isRejected,
+                            syncLyricsModel.hasInvalidLyrics,
+                            syncLyricsModel.isResolved,
+                            syncLyricsModel,
+                            autoHideSyncLyrics,
+                            restoreSyncLyricsForTrack,
+                        ]),
+                        null),
                     u = (0, A.useMemo)(() => {
-                        if (null == n ? void 0 : n.isSyncLyricsAvailable)
+                        const trackId = null == n ? void 0 : n.id;
+                        const syncLyricsAvailable =
+                            (null == n ? void 0 : n.isSyncLyricsAvailable) ||
+                            (null == n ? void 0 : n.isSyncLyricsAvailableWithOfflineFeature) ||
+                            (null == n ? void 0 : n.hasSyncLyrics) ||
+                            (trackId && syncLyricsModel.hasLyricsForTrack(trackId));
+                        if (syncLyricsAvailable)
                             return (0, y.jsx)(sf, {
                                 className: sN().syncLyricsButton,
                                 iconSize: 'm',
@@ -8693,7 +8786,16 @@
                                 color: 'secondary',
                                 disabled: !l.isAuthorized,
                             });
-                    }, [null == n ? void 0 : n.isSyncLyricsAvailable, l.isAuthorized]);
+                    }, [
+                        null == n ? void 0 : n.id,
+                        null == n ? void 0 : n.isSyncLyricsAvailable,
+                        null == n ? void 0 : n.isSyncLyricsAvailableWithOfflineFeature,
+                        null == n ? void 0 : n.hasSyncLyrics,
+                        syncLyricsModel.currentTrackId,
+                        syncLyricsModel.lines,
+                        syncLyricsModel.isResolved,
+                        l.isAuthorized,
+                    ]);
                 return (
                     (0, A.useEffect)(
                         () => (
@@ -9019,7 +9121,7 @@
                     {
                         sonataState: r,
                         settings: { isLandscape: o },
-                        fullscreenPlayer: { isSyncLyricsMode: c },
+                        fullscreenPlayer: { isSyncLyricsMode: c, syncLyrics: syncLyricsModel },
                         user: { hasPlus: d },
                     } = (0, S.g)(),
                     { formatMessage: u } = (0, Q.A)(),
@@ -9036,22 +9138,41 @@
                         p(r);
                     }),
                     N = (0, A.useMemo)(() => {
-                        var e;
                         if (h) return;
+                        const track = r.entityMeta;
+                        const trackId = null == track ? void 0 : track.id;
+                        const syncLyricsAvailable =
+                            (null == track ? void 0 : track.isSyncLyricsAvailable) ||
+                            (null == track ? void 0 : track.isSyncLyricsAvailableWithOfflineFeature) ||
+                            (null == track ? void 0 : track.hasSyncLyrics) ||
+                            (trackId && syncLyricsModel.hasLyricsForTrack(trackId));
                         let t = ''.concat(u({ id: 'interface-actions.open-sync-lyrics' }), ' ').concat(u({ id: 'warning-messages.can-break-accessibility' }));
                         return (0, y.jsx)(G.$, {
                             className: (0, eL.$)(sB().syncLyricsButton, { [sB().syncLyricsButton_active]: c }),
                             radius: 'round',
                             size: 'xxxs',
                             variant: 'text',
-                            disabled: !(null == (e = r.entityMeta) ? void 0 : e.isSyncLyricsAvailable) || o,
+                            disabled: !syncLyricsAvailable || o,
                             withRipple: !1,
                             withHover: !1,
                             'aria-label': t,
                             icon: (0, y.jsx)($.I, { variant: 'syncLyrics', size: 'xs' }),
                             onClick: s,
                         });
-                    }, [u, h, c, s, o, null == (l = r.entityMeta) ? void 0 : l.isSyncLyricsAvailable]);
+                    }, [
+                        u,
+                        h,
+                        c,
+                        s,
+                        o,
+                        null == (l = r.entityMeta) ? void 0 : l.id,
+                        null == l ? void 0 : l.isSyncLyricsAvailable,
+                        null == l ? void 0 : l.isSyncLyricsAvailableWithOfflineFeature,
+                        null == l ? void 0 : l.hasSyncLyrics,
+                        syncLyricsModel.currentTrackId,
+                        syncLyricsModel.lines,
+                        syncLyricsModel.isResolved,
+                    ]);
                 return (0, y.jsx)('div', {
                     className: (0, eL.$)(sB().footer, n),
                     children: (0, y.jsxs)('div', {

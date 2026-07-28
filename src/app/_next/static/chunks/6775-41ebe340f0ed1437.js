@@ -5701,6 +5701,7 @@
                         track: O,
                         experiments: D,
                     } = (0, L.g)(),
+                    sonataRuntimeState = (0, ik.e)(),
                     [R, M] = (0, b.useState)(!1),
                     [F, U] = (0, b.useState)(!1),
                     [downloadProgress, setDownloadProgress] = (0, b.useState)(0),
@@ -5744,6 +5745,55 @@
                             _ && 1 === e.detail && (null == i ? void 0 : i.hasTrackLink) && !k.modal.isOpened && Z();
                         }
                     }),
+                    lrclibSyncLyricsEffect =
+                        ((0, b.useEffect)(() => {
+                            const trackId = null == i ? void 0 : i.id;
+                            const nativeAvailable =
+                                (null == i ? void 0 : i.isSyncLyricsAvailable) ||
+                                (null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) ||
+                                (null == i ? void 0 : i.hasSyncLyrics);
+                            let lrclibEnabled = !0;
+                            try {
+                                lrclibEnabled = window.nativeSettings?.get('modSettings.lrclib.useText') !== !1;
+                            } catch (_error) {}
+                            if (trackId && !(null == i ? void 0 : i.isNonMusic) && k.syncLyrics.currentTrackId !== trackId && (nativeAvailable || lrclibEnabled || i.trackSource === 'UGC')) {
+                                k.syncLyrics.getData(trackId);
+                            }
+                            k.syncLyrics.prefetchNextTrack(sonataRuntimeState);
+                        }, [
+                            null == i ? void 0 : i.id,
+                            null == i ? void 0 : i.isSyncLyricsAvailable,
+                            null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature,
+                            null == i ? void 0 : i.hasSyncLyrics,
+                            null == i ? void 0 : i.isNonMusic,
+                            null == i ? void 0 : i.trackSource,
+                            k.syncLyrics.currentTrackId,
+                            k.syncLyrics,
+                            sonataRuntimeState,
+                        ]),
+                        null),
+                    restoreSyncLyricsEffect =
+                        ((0, b.useEffect)(() => {
+                            const trackId = null == i ? void 0 : i.id;
+                            if (!trackId || String(k.syncLyrics.currentTrackId) !== String(trackId) || k.syncLyrics.isLoadingForTrack(trackId)) return;
+                            if (k.syncLyrics.isRejected || k.syncLyrics.hasInvalidLyrics) {
+                                k.autoHideSyncLyrics(trackId);
+                                return;
+                            }
+                            if (trackId && k.syncLyrics.hasLyricsForTrack(trackId)) k.restoreSyncLyricsForTrack(trackId);
+                        }, [
+                            null == i ? void 0 : i.id,
+                            k.syncLyrics.currentTrackId,
+                            k.syncLyrics.lines,
+                            k.syncLyrics.isLoading,
+                            k.syncLyrics.isRejected,
+                            k.syncLyrics.hasInvalidLyrics,
+                            k.syncLyrics.isResolved,
+                            k.syncLyrics,
+                            k.autoHideSyncLyrics,
+                            k.restoreSyncLyricsForTrack,
+                        ]),
+                        null),
                     syncLyricsAvailable =
                         !!(null == i ? void 0 : i.isSyncLyricsAvailable) ||
                         !!(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) ||
