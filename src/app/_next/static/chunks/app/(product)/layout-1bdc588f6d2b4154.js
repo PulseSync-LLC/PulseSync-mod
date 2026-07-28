@@ -10157,10 +10157,10 @@
                 handlePlayerEvents(e) {
                     let t, a;
                     e.state.currentMediaPlayer?.onChange((currentPlayer) => {
-                        currentPlayer?.isCrossing.onChange((isCrossing) => {
+                        currentPlayer?.isCrossing?.onChange?.((isCrossing) => {
                             if (!isCrossing) {
                                 this.updateMetadata();
-                                this.updateMetadata(e.state.queueState.currentEntity.value?.entity.data.meta);
+                                this.updateMetadata(e.state.queueState.currentEntity.value?.entity?.data?.meta);
                             }
                         });
                     });
