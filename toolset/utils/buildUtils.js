@@ -179,7 +179,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
     }
 
     function getMiniPlayerBuildInfo(force = false) {
-        const miniPlayerDir = path.join(REPO_ROOT, 'miniplayer');
+        const miniPlayerDir = path.join(REPO_ROOT, 'webModules', 'miniplayer');
         const metaPath = path.join(miniPlayerDir, '.build-meta.json');
 
         if (!fs.existsSync(miniPlayerDir)) {
