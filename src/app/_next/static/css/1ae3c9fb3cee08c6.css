@@ -2617,7 +2617,6 @@
 .VibePlayerControls_root__qr97B {
     align-items: center;
     display: flex;
-    gap: var(--ym-spacer-size-xxxl);
     justify-content: center;
     margin-block-start: var(--ym-spacer-size-xl);
 }
@@ -2629,12 +2628,11 @@
 .VibePlayerControls_skipButton__z57B_ {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    color: inherit;
+    padding: 1rem;
     color: var(--accent-color, inherit);
     transition: color var(--ym-duration-transition);
 }
 .VibePlayerControls_skipButton__z57B_:not(:disabled):focus-visible {
-    color: inherit;
     color: var(--accent-color, inherit);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2657,6 +2655,7 @@
     align-items: center;
     background-color: #fff;
     display: flex;
+    margin-inline: 1rem;
     height: var(--play-button-size);
     justify-content: center;
     transform: scale(1);
@@ -2664,17 +2663,6 @@
         transform var(--ym-duration-transition),
         background-color var(--ym-duration-transition),
         opacity var(--ym-duration-transition),
-        -webkit-backdrop-filter var(--ym-duration-transition);
-    transition:
-        transform var(--ym-duration-transition),
-        background-color var(--ym-duration-transition),
-        opacity var(--ym-duration-transition),
-        backdrop-filter var(--ym-duration-transition);
-    transition:
-        transform var(--ym-duration-transition),
-        background-color var(--ym-duration-transition),
-        opacity var(--ym-duration-transition),
-        backdrop-filter var(--ym-duration-transition),
         -webkit-backdrop-filter var(--ym-duration-transition);
     width: var(--play-button-size);
 }
