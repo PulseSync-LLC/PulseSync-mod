@@ -5,6 +5,7 @@ import type { PulseSyncAddonFactory } from './contracts'
 import { PulseSyncWebHost } from './components/PulseSyncWebHost'
 import { createWebHostApi } from './runtime/createWebHostApi'
 import { startLegacyAssetsBridge } from './legacy/legacyAssetsBridge'
+import { installSystemAddons } from './systemAddons/installSystemAddons'
 
 function getOrCreateRootContainer() {
     const container = document.getElementById(WEB_HOST_ROOT_ID) ?? document.createElement('div')
@@ -39,14 +40,15 @@ export async function bootstrapWebHost() {
 
     const hostApi = createWebHostApi()
 
+    createRoot(getOrCreateRootContainer()).render(<PulseSyncWebHost />)
+    const systemAddonIds = await installSystemAddons(hostApi)
+
     Object.defineProperty(window, WEB_HOST_GLOBAL, {
         value: hostApi,
         configurable: false,
         enumerable: false,
         writable: false,
     })
-
-    createRoot(getOrCreateRootContainer()).render(<PulseSyncWebHost />)
 
     const pendingFactories = [...(window.__PULSESYNC_ADDON_QUEUE__ ?? [])]
     const liveQueue = createLiveAddonQueue(hostApi.installAddon)
@@ -73,6 +75,7 @@ export async function bootstrapWebHost() {
     console.info('[PulseSync WebHost] ready', {
         apiVersion: WEB_HOST_API_VERSION,
         reactVersion: hostApi.React.version,
+        systemAddons: systemAddonIds,
         queuedAddons: pendingFactories.length,
     })
     return hostApi
