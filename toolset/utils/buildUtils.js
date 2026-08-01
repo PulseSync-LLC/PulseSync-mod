@@ -277,6 +277,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             displayName: 'PulseSync WebHost',
             outputFileName: 'host.js',
             projectDirName: 'pulsesyncWebHost',
+            sourceProjectDirNames: ['pulsesyncSettings'],
         },
     };
 
@@ -304,6 +305,10 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             .update(
                 JSON.stringify({
                     sourcesHash: hashDirFiltered(moduleDir),
+                    sourceProjectsHash: (moduleConfig.sourceProjectDirNames ?? []).map((projectDirName) => ({
+                        projectDirName,
+                        hash: hashDirFiltered(path.join(REPO_ROOT, 'webModules', projectDirName)),
+                    })),
                     node: process.version,
                     platform: process.platform,
                     arch: process.arch,
