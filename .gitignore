@@ -155,8 +155,13 @@ output
 builds
 obfuscated
 src/main/lib/miniplayer/renderer/
+/src/app/pulsesync-web/
+/src/app/pulsesync-runtime/
 *.build-meta.json
 temp
+
+!webModules/pulsesyncWebHost/yarn.lock
+!webModules/pulsesyncRuntime/yarn.lock
 
 !src/node_modules/
 !src/node_modules/**/*
