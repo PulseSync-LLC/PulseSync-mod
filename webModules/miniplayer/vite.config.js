@@ -7,7 +7,7 @@ export default defineConfig({
     base: './',
     plugins: [react()],
     build: {
-        outDir: path.resolve(__dirname, '../src/main/lib/miniplayer/renderer'),
+        outDir: path.resolve(__dirname, '../../src/main/lib/miniplayer/renderer'),
         emptyOutDir: true,
         rollupOptions: {
             output: {

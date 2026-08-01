@@ -80,7 +80,7 @@ function createBuildTask({
                             sourceTask.output = ctx.state.build.workPath;
                         },
                     },
-                    createMiniPlayerTask(),
+                    createWebModulesTask(),
                     createNativeModulesTask({ noNativeModules }),
                     {
                         title: 'Модернизация source',
@@ -122,9 +122,20 @@ function createBuildTask({
     };
 }
 
+function createWebModulesTask() {
+    return {
+        title: 'Сборка веб-модулей',
+        task: (_context, task) =>
+            task.newListr(
+                wrapTaskDefinitions([createMiniPlayerTask(), createWebHostTask(), createRuntimeTask()]),
+                EXPANDED_SKIP_REASONS_OPTIONS,
+            ),
+    };
+}
+
 function createMiniPlayerTask() {
     return {
-        title: 'Сборка миниплеера',
+        title: 'Миниплеер',
         skip: (context) => {
             const info = context.core.buildUtils.getMiniPlayerBuildInfo();
             context.state.miniPlayerBuildInfo = info;
@@ -141,6 +152,38 @@ function createMiniPlayerTask() {
         },
         task: async (context) => {
             await context.core.buildUtils.buildMiniPlayer();
+        },
+    };
+}
+
+function createWebHostTask() {
+    return createRendererWebModuleTask({
+        title: 'PulseSync WebHost',
+        missingMessage: 'PulseSync WebHost не найден',
+        getInfo: 'getWebHostBuildInfo',
+        build: 'buildWebHost',
+        install: 'installWebHostBuild',
+    });
+}
+
+function createRuntimeTask() {
+    return createRendererWebModuleTask({
+        title: 'PulseSync Runtime',
+        missingMessage: 'PulseSync Runtime не найден',
+        getInfo: 'getRuntimeBuildInfo',
+        build: 'buildRuntime',
+        install: 'installRuntimeBuild',
+    });
+}
+
+function createRendererWebModuleTask({ title, missingMessage, getInfo, build, install }) {
+    return {
+        title,
+        task: async (context, task) => {
+            const info = context.core.buildUtils[getInfo]();
+            if (!info.exists) throw new Error(missingMessage);
+            if (!info.upToDate) await context.core.buildUtils[build]();
+            task.output = await context.core.buildUtils[install](context.state.build.workPath);
         },
     };
 }
