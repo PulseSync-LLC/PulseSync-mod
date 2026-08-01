@@ -1,0 +1,16 @@
+{
+    "name": "@pulsesync/runtime",
+    "private": true,
+    "version": "0.1.0",
+    "type": "module",
+    "scripts": {
+        "build": "tsc -b && vite build",
+        "lint": "oxlint src vite.config.ts"
+    },
+    "devDependencies": {
+        "@types/node": "^26.1.2",
+        "oxlint": "^1.76.0",
+        "typescript": "~7.0.2",
+        "vite": "8.1.5"
+    }
+}
