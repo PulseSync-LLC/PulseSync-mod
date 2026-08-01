@@ -7,6 +7,9 @@ const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
     plugins: [react()],
+    resolve: {
+        dedupe: ['react', 'react-dom'],
+    },
     define: {
         'process.env.NODE_ENV': JSON.stringify('production'),
     },
