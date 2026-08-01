@@ -7,6 +7,7 @@ export type RegisteredAddon = {
     cleanup?: Cleanup
     definition: PulseSyncAddonDefinition
     generation: number
+    system: boolean
 }
 
 const addons = new Map<string, RegisteredAddon>()
@@ -43,10 +44,11 @@ export function getRegisteredAddons(): ReadonlyMap<string, RegisteredAddon> {
     return addons
 }
 
-export function unregisterAddon(addonId: string, expectedGeneration?: number) {
+function unregisterAddonInternal(addonId: string, expectedGeneration: number | undefined, allowSystem: boolean) {
     const addon = addons.get(addonId)
     if (!addon) return false
     if (expectedGeneration !== undefined && addon.generation !== expectedGeneration) return false
+    if (addon.system && !allowSystem) return false
 
     addons.delete(addonId)
 
@@ -60,7 +62,11 @@ export function unregisterAddon(addonId: string, expectedGeneration?: number) {
     return true
 }
 
-export function registerAddon(definition: PulseSyncAddonDefinition) {
+export function unregisterAddon(addonId: string, expectedGeneration?: number) {
+    return unregisterAddonInternal(addonId, expectedGeneration, false)
+}
+
+function registerAddonInternal(definition: PulseSyncAddonDefinition, system: boolean) {
     const addonId = String(definition?.id ?? '').trim()
     if (!addonId) throw new Error('PulseSync addon id is required')
 
@@ -69,7 +75,9 @@ export function registerAddon(definition: PulseSyncAddonDefinition) {
         throw new Error(`PulseSync addon ${addonId} requires unsupported WebHost API ${apiVersion}`)
     }
 
-    unregisterAddon(addonId)
+    const registeredAddon = addons.get(addonId)
+    if (registeredAddon?.system && !system) throw new Error(`PulseSync addon id ${addonId} is reserved by a system addon`)
+    unregisterAddonInternal(addonId, undefined, system)
 
     const api = createAddonApi(addonId)
     const cleanup = definition.activate?.(api)
@@ -81,6 +89,7 @@ export function registerAddon(definition: PulseSyncAddonDefinition) {
         cleanup: typeof cleanup === 'function' ? cleanup : undefined,
         definition: normalizedDefinition,
         generation,
+        system,
     })
 
     emitRegistryChange()
@@ -89,8 +98,16 @@ export function registerAddon(definition: PulseSyncAddonDefinition) {
     return () => {
         if (!active) return
         active = false
-        unregisterAddon(addonId, generation)
+        unregisterAddonInternal(addonId, generation, system)
     }
+}
+
+export function registerAddon(definition: PulseSyncAddonDefinition) {
+    return registerAddonInternal(definition, false)
+}
+
+export function registerSystemAddon(definition: PulseSyncAddonDefinition) {
+    return registerAddonInternal(definition, true)
 }
 
 export function registerSlot(slotName: string, element: Element) {
