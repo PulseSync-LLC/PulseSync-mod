@@ -265,6 +265,144 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         console.log('Миниплеер успешно собран');
     }
 
+    const rendererWebModules = {
+        runtime: {
+            destinationDirName: 'pulsesync-runtime',
+            displayName: 'PulseSync Runtime',
+            outputFileName: 'runtime.js',
+            projectDirName: 'pulsesyncRuntime',
+        },
+        webHost: {
+            destinationDirName: 'pulsesync-web',
+            displayName: 'PulseSync WebHost',
+            outputFileName: 'host.js',
+            projectDirName: 'pulsesyncWebHost',
+        },
+    };
+
+    function getRendererWebModuleBuildInfo(moduleConfig, force = false) {
+        const moduleDir = path.join(REPO_ROOT, 'webModules', moduleConfig.projectDirName);
+        const outputDir = path.join(moduleDir, 'dist');
+        const outputPath = path.join(outputDir, moduleConfig.outputFileName);
+        const metaPath = path.join(moduleDir, '.build-meta.json');
+
+        if (!fs.existsSync(moduleDir)) {
+            return {
+                exists: false,
+                force,
+                metaPath,
+                moduleConfig,
+                moduleDir,
+                outputDir,
+                outputPath,
+                upToDate: false,
+            };
+        }
+
+        const buildKey = crypto
+            .createHash('sha256')
+            .update(
+                JSON.stringify({
+                    sourcesHash: hashDirFiltered(moduleDir),
+                    node: process.version,
+                    platform: process.platform,
+                    arch: process.arch,
+                }),
+            )
+            .digest('hex');
+
+        let upToDate = false;
+        if (!force && fs.existsSync(outputPath) && fs.existsSync(metaPath)) {
+            const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+            upToDate = meta.buildKey === buildKey;
+        }
+
+        return {
+            buildKey,
+            exists: true,
+            force,
+            metaPath,
+            moduleConfig,
+            moduleDir,
+            outputDir,
+            outputPath,
+            upToDate,
+        };
+    }
+
+    async function buildRendererWebModule(moduleConfig, force = false) {
+        const info = getRendererWebModuleBuildInfo(moduleConfig, force);
+
+        if (!info.exists) {
+            throw new Error(`${moduleConfig.displayName} не найден`);
+        }
+
+        if (info.upToDate) {
+            console.log(`${moduleConfig.displayName} актуален, сборка пропущена`);
+            return info;
+        }
+
+        console.log(`Сборка ${moduleConfig.displayName}...`);
+        console.time(`${moduleConfig.displayName} собран`);
+
+        const environment = { ...process.env };
+        const inheritedPath = Object.entries(environment).find(([key]) => key.toLowerCase() === 'path')?.[1] ?? '';
+        for (const key of Object.keys(environment)) {
+            if (key.toLowerCase() === 'path') delete environment[key];
+        }
+        environment[process.platform === 'win32' ? 'Path' : 'PATH'] =
+            `${path.join(info.moduleDir, 'node_modules', '.bin')}${path.delimiter}${inheritedPath}`;
+
+        execSync('yarn', {
+            cwd: info.moduleDir,
+            stdio: 'pipe',
+            env: environment,
+        });
+
+        execSync('yarn run build', {
+            cwd: info.moduleDir,
+            stdio: 'pipe',
+            env: environment,
+        });
+
+        console.timeEnd(`${moduleConfig.displayName} собран`);
+
+        fs.writeFileSync(
+            info.metaPath,
+            JSON.stringify(
+                {
+                    buildKey: info.buildKey,
+                    builtAt: new Date().toISOString(),
+                },
+                null,
+                2,
+            ),
+        );
+
+        console.log(`${moduleConfig.displayName} успешно собран`);
+        return getRendererWebModuleBuildInfo(moduleConfig, false);
+    }
+
+    async function installRendererWebModuleBuild(moduleConfig, sourcePath) {
+        const info = getRendererWebModuleBuildInfo(moduleConfig, false);
+        if (!info.exists || !fs.existsSync(info.outputPath)) {
+            throw new Error(`Не найден собранный ${moduleConfig.displayName}`);
+        }
+
+        const destination = path.join(sourcePath, 'app', moduleConfig.destinationDirName);
+        await fsp.rm(destination, { recursive: true, force: true });
+        await fsp.mkdir(path.dirname(destination), { recursive: true });
+        await fsp.cp(info.outputDir, destination, { recursive: true, force: true });
+        return destination;
+    }
+
+    const getWebHostBuildInfo = (force = false) => getRendererWebModuleBuildInfo(rendererWebModules.webHost, force);
+    const buildWebHost = (force = false) => buildRendererWebModule(rendererWebModules.webHost, force);
+    const installWebHostBuild = (sourcePath) => installRendererWebModuleBuild(rendererWebModules.webHost, sourcePath);
+    const getRuntimeBuildInfo = (force = false) => getRendererWebModuleBuildInfo(rendererWebModules.runtime, force);
+    const buildRuntime = (force = false) => buildRendererWebModule(rendererWebModules.runtime, force);
+    const installRuntimeBuild = (sourcePath) => installRendererWebModuleBuild(rendererWebModules.runtime, sourcePath);
+
     function deriveOutputDir(srcPath, extractedSuffix) {
         const baseName = path.basename(srcPath);
         const parentDir = path.dirname(srcPath);
@@ -352,6 +490,10 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         const cleanupPaths = [];
 
         await buildMiniPlayer();
+        await buildWebHost();
+        await installWebHostBuild(workPath);
+        await buildRuntime();
+        await installRuntimeBuild(workPath);
 
         const isMac = process.platform === 'darwin';
         if (!noNativeModules && !isMac) {
@@ -496,11 +638,17 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         build,
         archiveAsar,
         buildMiniPlayer,
+        buildRuntime,
+        buildWebHost,
         buildNativeModule,
         buildNativeModules,
         cleanupBuildArtifacts,
         getMiniPlayerBuildInfo,
+        getRuntimeBuildInfo,
+        getWebHostBuildInfo,
         getNativeModuleBuildInfos,
+        installRuntimeBuild,
+        installWebHostBuild,
         prepareReleaseAsarArtifact,
         prepareMinifiedBuildSource,
         prepareModernizedBuildSource,

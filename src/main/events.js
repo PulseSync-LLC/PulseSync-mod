@@ -1385,6 +1385,26 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_SETTINGS_SNAPSHOT, () => 
     }
 });
 
+electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_LEGACY_ASSETS_SNAPSHOT, () => {
+    try {
+        const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
+        return mgr?.getLegacyAssetsSnapshot?.() ?? { revision: 0, styles: [], scripts: [] };
+    } catch (err) {
+        eventsLogger.error('PULSESYNC_LEGACY_ASSETS_SNAPSHOT handler failed:', err);
+        return { revision: 0, styles: [], scripts: [] };
+    }
+});
+
+electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_WEBHOST_ADDONS_SNAPSHOT, () => {
+    try {
+        const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
+        return mgr?.getWebHostAddonsSnapshot?.() ?? { hash: '', addons: [] };
+    } catch (err) {
+        eventsLogger.error('PULSESYNC_WEBHOST_ADDONS_SNAPSHOT handler failed:', err);
+        return { hash: '', addons: [] };
+    }
+});
+
 exports.setZoomLevel = setZoomLevel;
 exports.pulseSyncManager = pulseSyncManager_js_1;
 electron_1.ipcMain.handle('zoom-in', zoomIn);

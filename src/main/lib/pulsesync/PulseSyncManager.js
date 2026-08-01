@@ -5,7 +5,6 @@ const EventEmitter = require('node:events');
 const Logger_js_1 = require('../../packages/logger/Logger.js');
 const store_js_1 = require('../store.js');
 const store_js_2 = require('../../types/store.js');
-const { applyCss, removeCss, applyScript, wrapThemeScript } = require('./utils/PulseSyncUtils');
 const { Events } = require('../../types/events');
 const { addAllowedUrls } = require('../handlers/handleHeadersReceived/corsHandler.js');
 
@@ -98,6 +97,9 @@ class PulseSyncManager extends EventEmitter {
         this.isConnecting = false;
         this.isPremium = false;
         this._addonSettingsSnapshot = {};
+        this._legacyAssetsRevision = 0;
+        this._legacyAssetsFingerprint = null;
+        this._webHostAddonsSnapshot = { hash: '', addons: [] };
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
         this.updateDownloadInfo = this.updateDownloadInfo.bind(this);
@@ -343,6 +345,17 @@ class PulseSyncManager extends EventEmitter {
             this.handleExtensions(incoming);
         });
 
+        this.socket.on('WEBHOST_ADDONS_SNAPSHOT', (payload) => {
+            const snapshot = {
+                hash: typeof payload?.hash === 'string' ? payload.hash : '',
+                addons: Array.isArray(payload?.addons) ? payload.addons : [],
+            };
+            if (snapshot.hash && snapshot.hash === this._webHostAddonsSnapshot.hash) return;
+
+            this._webHostAddonsSnapshot = this.cloneAddonSettingsValue(snapshot);
+            this.window.webContents.send(Events.PULSESYNC_WEBHOST_ADDONS, this._webHostAddonsSnapshot);
+        });
+
         this.socket.on('UPDATE_CSS', (data) => {
             this.handleCss({ css: data.theme?.css || '', name: data.theme?.name || 'theme' });
         });
@@ -365,9 +378,6 @@ class PulseSyncManager extends EventEmitter {
             const themeChanged = prev !== incoming;
 
             if (incoming === 'default' && prev && prev !== 'default') {
-                for (const key of Object.keys(this.cssContent)) {
-                    await removeCss(this.window, key, this.styleKeys);
-                }
                 this.cssContent = {};
                 this.styleKeys = {};
                 this.scriptContent = {};
@@ -379,6 +389,16 @@ class PulseSyncManager extends EventEmitter {
 
             if (prev === incoming && this.currentTheme?.css === newTheme.css && this.currentTheme?.script === newTheme.script) {
                 return;
+            }
+
+            if (themeChanged && prev && prev !== 'default') {
+                const previousThemeName = this.currentTheme?.name || prev;
+                const previousCssKey = `css-${sanitizeId(previousThemeName)}`;
+                const previousScriptKey = `theme-script-${sanitizeId(previousThemeName)}`;
+                delete this.cssContent[previousCssKey];
+                delete this.styleKeys[previousCssKey];
+                delete this.scriptContent[previousScriptKey];
+                delete this.scriptKeys[previousScriptKey];
             }
 
             this.currentTheme = newTheme;
@@ -462,11 +482,11 @@ class PulseSyncManager extends EventEmitter {
 
         const filtered = unique;
 
-        if (this.prevExtensions.length > 0) {
-            const prevMap = mapExtensionsById(this.prevExtensions);
-            const nextMap = mapExtensionsById(filtered);
-            let requiresReload = false;
+        const prevMap = mapExtensionsById(this.prevExtensions);
+        const nextMap = mapExtensionsById(filtered);
+        let requiresReload = false;
 
+        if (this.prevExtensions.length > 0) {
             for (const [id, prevExt] of prevMap) {
                 const nextExt = nextMap.get(id);
                 const prevHasScript = hasAddonScript(prevExt);
@@ -500,18 +520,13 @@ class PulseSyncManager extends EventEmitter {
                 }
             }
 
-            if (requiresReload) {
-                this.prevExtensions = filtered;
-                return this.safeReload('extension script set changed');
-            }
-
             for (const [id] of prevMap) {
                 if (nextMap.has(id)) continue;
 
                 const cssKey = `css-${id}`;
                 if (this.cssContent[cssKey]) {
                     delete this.cssContent[cssKey];
-                    await removeCss(this.window, cssKey, this.styleKeys);
+                    delete this.styleKeys[cssKey];
                 }
             }
         }
@@ -521,26 +536,27 @@ class PulseSyncManager extends EventEmitter {
         for (const ext of filtered) {
             const base = sanitizeId(ext.addon || ext.name);
 
-            await this.handleCss({ css: ext.css || '', name: base });
+            await this.handleCss({ css: ext.css || '', name: base }, false);
+        }
 
-            const key = `ext-script-${base}`;
-            const hasScript = hasAddonScript(ext);
+        for (const key of Object.keys(this.scriptContent)) {
+            if (!key.startsWith('ext-script-')) continue;
+            delete this.scriptContent[key];
+            delete this.scriptKeys[key];
+        }
 
-            if (!hasScript && isSystemId(base)) {
-                if (!this.scriptKeys[key]) {
-                    this.logger.info(`System addon '${base}' had empty script in incoming list; preserving system version.`);
-                }
-                continue;
-            }
-
-            if (hasScript && !this.scriptKeys[key]) {
+        for (const ext of filtered) {
+            const base = sanitizeId(ext.addon || ext.name);
+            if (hasAddonScript(ext)) {
+                const key = `ext-script-${base}`;
                 this.logger.info(`Applying script: ${ext.name}${isSystemId(base) ? ' (system)' : ''}`);
-                await applyScript(this.window, key, ext.script);
+                this.scriptContent[key] = String(ext.script);
                 this.scriptKeys[key] = true;
-            } else if (!hasScript && this.scriptKeys[key]) {
-                return this.safeReload(`extension script removed: ${base}`);
             }
         }
+
+        if (requiresReload) return this.safeReload('extension script set changed');
+        this.publishLegacyAssets();
     }
 
     getEnabledAddons() {
@@ -583,20 +599,59 @@ class PulseSyncManager extends EventEmitter {
         return this.cloneAddonSettingsValue(this._addonSettingsSnapshot);
     }
 
-    async handleCss({ css, name }) {
+    getLegacyAssetsSnapshot() {
+        if (process.argv.includes('--safe-mode')) {
+            return { revision: this._legacyAssetsRevision, styles: [], scripts: [] };
+        }
+
+        return {
+            revision: this._legacyAssetsRevision,
+            styles: Object.entries(this.cssContent).map(([id, css]) => ({ id, css })),
+            scripts: Object.entries(this.scriptContent).map(([id, code]) => ({
+                id,
+                code,
+                kind: id.startsWith('theme-script-') ? 'theme' : 'addon',
+            })),
+        };
+    }
+
+    getWebHostAddonsSnapshot() {
+        if (process.argv.includes('--safe-mode')) return { hash: '', addons: [] };
+        return this.cloneAddonSettingsValue(this._webHostAddonsSnapshot);
+    }
+
+    publishLegacyAssets() {
+        const currentSnapshot = this.getLegacyAssetsSnapshot();
+        const fingerprint = JSON.stringify({
+            styles: [...currentSnapshot.styles].sort((left, right) => left.id.localeCompare(right.id)),
+            scripts: [...currentSnapshot.scripts].sort((left, right) => left.id.localeCompare(right.id)),
+        });
+        if (fingerprint === this._legacyAssetsFingerprint) return currentSnapshot;
+
+        this._legacyAssetsFingerprint = fingerprint;
+        this._legacyAssetsRevision += 1;
+        const snapshot = this.getLegacyAssetsSnapshot();
+        if (!this.webContents || this.webContents.isDestroyed()) return snapshot;
+        this.webContents.send(Events.PULSESYNC_LEGACY_ASSETS, snapshot);
+        return snapshot;
+    }
+
+    async handleCss({ css, name }, publish = true) {
         const key = `css-${sanitizeId(name)}`;
         const old = this.cssContent[key] || '';
         if (!css?.trim() || css.trim() === '{}') {
             if (old) {
                 delete this.cssContent[key];
-                await removeCss(this.window, key, this.styleKeys);
+                delete this.styleKeys[key];
+                if (publish) this.publishLegacyAssets();
                 return true;
             }
             return false;
         }
         if (!this.styleKeys[key] || this.isReloading || css !== old) {
             this.cssContent[key] = css;
-            await applyCss(this.window, key, css, this.styleKeys);
+            this.styleKeys[key] = true;
+            if (publish) this.publishLegacyAssets();
             return true;
         }
         return false;
@@ -611,31 +666,32 @@ class PulseSyncManager extends EventEmitter {
         }
 
         this.logger.info(`Applying theme: ${name}`);
-        await this.handleCss({ css, name });
+        await this.handleCss({ css, name }, false);
 
         const keyScript = `theme-script-${sanitizeId(name)}`;
-        const wrapped = wrapThemeScript(script);
-        const oldWrapped = this.scriptContent[keyScript] || '';
+        const oldScript = this.scriptContent[keyScript] || '';
         let scriptChanged = false;
 
         if (!script.trim()) {
-            if (oldWrapped) {
+            if (oldScript) {
                 delete this.scriptContent[keyScript];
                 delete this.scriptKeys[keyScript];
                 this.safeReload(`theme script removed: ${name}`);
                 return;
             }
-        } else if (!this.scriptKeys[keyScript] || wrapped !== oldWrapped) {
-            this.scriptContent[keyScript] = wrapped;
+        } else if (!this.scriptKeys[keyScript] || script !== oldScript) {
+            this.scriptContent[keyScript] = script;
             this.scriptKeys[keyScript] = true;
-            await applyScript(this.window, keyScript, wrapped);
             scriptChanged = true;
         }
 
         if (!this.isReloading && name.toLowerCase() !== 'default' && (themeChanged || scriptChanged) && !this.hasReloadedOnTheme) {
             this.hasReloadedOnTheme = true;
             this.safeReload(`theme changed: ${name}`);
+            return;
         }
+
+        this.publishLegacyAssets();
     }
 
     async handleGetTrackInfo() {
@@ -704,6 +760,7 @@ class PulseSyncManager extends EventEmitter {
             this.socket.emit('READY', {
                 addonStateHashVersion: 1,
                 addonStateHash: hashAddonState(this.currentTheme, this.sourceExtensions),
+                webHostAddonProtocolVersion: 1,
             });
             this.socket.emit('IS_PREMIUM_USER');
             this.readySent = true;
