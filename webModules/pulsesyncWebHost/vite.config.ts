@@ -23,6 +23,7 @@ export default defineConfig({
             name: 'PulseSyncWebHostBundle',
             formats: ['iife'],
             fileName: () => 'host.js',
+            cssFileName: 'host',
         },
     },
 });
