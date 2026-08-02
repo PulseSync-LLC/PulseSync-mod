@@ -1,0 +1,67 @@
+.backdrop {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.52);
+  box-sizing: border-box;
+}
+
+.modal {
+  width: min(680px, 100%);
+  max-height: min(760px, calc(100vh - 48px));
+  overflow: hidden;
+  color: var(--ym-controls-color-primary-text-enabled, #fff);
+  background: var(--ym-background-color-primary-enabled-popover, #242424);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 72px;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  h2 {
+    margin: 0;
+    color: inherit;
+    font: inherit;
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+
+.closeButton {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  font: inherit;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+.content {
+  min-height: 160px;
+  overflow: auto;
+  padding: 0 24px 24px;
+}

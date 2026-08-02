@@ -2,6 +2,7 @@ export type Cleanup = () => void;
 export type UnknownRecord = Record<string, unknown>;
 export type AddonSettings = Record<string, unknown>;
 export type AddonSettingsSnapshot = Record<string, AddonSettings>;
+export type ModSettingListener = (value: unknown) => void;
 
 export type DesktopEventsBridge = {
     invoke?: <T = unknown>(event: string, ...args: unknown[]) => Promise<T>;
@@ -17,8 +18,12 @@ export type PulseSyncPlayer = Record<string, any> & {
 export type PulseSyncApi = UnknownRecord & {
     _addonSettings: AddonSettingsSnapshot;
     _addonSettingsListeners: Map<string, Set<(settings: AddonSettings) => void>>;
+    _modSettingsListeners: Map<string, Set<ModSettingListener>>;
     _pendingCalls: Array<(player: PulseSyncPlayer) => void>;
     playerInstance?: PulseSyncPlayer | null;
+    getModSetting: (key: unknown) => Promise<unknown>;
+    setModSetting: (key: unknown, value: unknown) => Promise<unknown>;
+    onModSettingChange: (key: unknown, listener: ModSettingListener) => Cleanup;
     setPlayerInstance: (player: PulseSyncPlayer) => void;
 };
 

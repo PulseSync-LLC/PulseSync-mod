@@ -5025,7 +5025,7 @@
                         })
                     );
                 });
-            let eS = (0, pulseMobxRuntime.PA)(() => {
+            let pulseLegacySettings = (0, pulseMobxRuntime.PA)(() => {
                 let e = (0, pulseSettingsRuntime.HFS)(),
                     t = (0, pulseSettingsRuntime.NFA)().get(pulseSettingsRuntime.ooW),
                     {
@@ -5531,6 +5531,187 @@
                         (0, pulseJsxRuntime.jsx)(appUpdatesSettings, {}),
                         (0, pulseJsxRuntime.jsx)(discordRpcSettings, {}),
                         (0, pulseJsxRuntime.jsx)(ynisonSettings, {}),
+                    ],
+                });
+            });
+            let eS = (0, pulseMobxRuntime.PA)(() => {
+                let e = (0, pulseSettingsRuntime.HFS)(),
+                    t = (0, pulseSettingsRuntime.NFA)().get(pulseSettingsRuntime.ooW),
+                    {
+                        modals: { shortcutsModal: pulseShortcutsModal, aboutAppModal: aboutAppModal, clearMemoryModal: clearMemoryModal },
+                        experiments: pulseExperiments,
+                        wizard: pulseWizard,
+                        user: pulseUser,
+                        slam: pulseSlam,
+                        settings: pulseSettings,
+                        sonataState: pulseSonataState,
+                    } = (0, pulseSettingsRuntime.Pjs)(),
+                    equalizer = (0, pulseEqualizerRuntime.S)(),
+                    { notify: notify } = (0, pulseSettingsRuntime.lkh)(),
+                    { formatMessage: formatMessage } = (0, pulseIntlRuntime.A)(),
+                    crossfadeState = (0, pulseSettingsRuntime.gQL)(),
+                    showEqualizer = equalizer.isAvailable && !pulseSettings.isMobile,
+                    showCrossfade = pulseExperiments.checkExperiment(pulseSettingsRuntime.zal.WebNextCrossMediaPlayer, 'on'),
+                    hasPlus = pulseUser.hasPlus,
+                    showLiteMode = pulseSettings.isLiteVersionModeAvailableForToggle && !0,
+                    showBrandedPlayer = !pulseSettings.isMobile,
+                    equalizerStatusLabel = equalizer.isEnabled
+                        ? formatMessage({ id: 'equalizer.enabled' })
+                        : formatMessage({ id: 'equalizer.disabled' }),
+                    appVersionLabel = (0, pulseReactRuntime.useMemo)(
+                        () => formatMessage({ id: 'desktop.app-version-short' }, { version: e }),
+                        [!0, formatMessage, e],
+                    ),
+                    toggleChildMode = (0, pulseReactRuntime.useCallback)(
+                        async (enabled) => {
+                            (await pulseUser.setSettings({ isChildModeEnabled: enabled })) === pulseSettingsRuntime.FlZ.ERROR &&
+                                notify(
+                                    (0, pulseJsxRuntime.jsx)(pulseSettingsUi.hT, {
+                                        error: formatMessage({ id: 'settings.failed-to-change-child-mode' }),
+                                    }),
+                                    { containerId: pulseSettingsRuntime.uQT.ERROR },
+                                );
+                        },
+                        [pulseUser, formatMessage, notify],
+                    ),
+                    toggleOfflineMode = (0, pulseReactRuntime.useCallback)(
+                        (enabled) => {
+                            pulseSlam.setOfflineMode(enabled);
+                        },
+                        [pulseSlam],
+                    ),
+                    openClearMemory = (0, pulseReactRuntime.useCallback)(() => {
+                        clearMemoryModal.open();
+                    }, [clearMemoryModal]),
+                    toggleLiteMode = (0, pulseReactRuntime.useCallback)(
+                        (enabled) => {
+                            if (enabled) return void pulseSettings.setLiteVersionMode(pulseSettingsRuntime.wv5.ENABLED, !0);
+                            pulseSettings.setLiteVersionMode(pulseSettingsRuntime.wv5.DISABLED, !0);
+                        },
+                        [pulseSettings],
+                    ),
+                    openPulseSyncSettings = (0, pulseReactRuntime.useCallback)(() => {
+                        window.dispatchEvent(new CustomEvent('pulsesync-open-settings'));
+                    }, []);
+                (0, pulseReactRuntime.useLayoutEffect)(() => {
+                    let e = t.get(pulseSettingsRuntime.cYZ.CrossFadeMode);
+                    'boolean' == typeof e && pulseSonataState.setCrossFadeMode(e);
+                }, [pulseSonataState, t]);
+                let toggleCrossfade = (0, pulseReactRuntime.useCallback)(
+                    (enabled) => {
+                        pulseSonataState.setCrossFadeMode(enabled), crossfadeState && (crossfadeState.isCrossfadeEnabled.value = enabled);
+                    },
+                    [pulseSonataState, crossfadeState],
+                );
+                return (0, pulseJsxRuntime.jsxs)('ul', {
+                    className: eb().root,
+                    ...(0, pulseDataTest.Am)(pulseDataTest.e8.settings.SETTINGS_LIST),
+                    children: [
+                        hasPlus &&
+                            (0, pulseJsxRuntime.jsx)('li', {
+                                className: eb().item,
+                                children: (0, pulseJsxRuntime.jsx)(em, {
+                                    title: formatMessage({ id: 'offline.offline-mode' }),
+                                    description: formatMessage({ id: 'offline.offline-mode-description' }),
+                                    onChange: toggleOfflineMode,
+                                    isChecked: !!pulseSlam.isOfflineModeEnabled,
+                                    dataTestId: (0, pulseDataTest.Am)(pulseDataTest.e8.settings.OFFLINE_MODE_TOGGLE),
+                                }),
+                            }),
+                        hasPlus &&
+                            (0, pulseJsxRuntime.jsxs)('li', {
+                                className: eb().item,
+                                children: [
+                                    (0, pulseJsxRuntime.jsx)(ec, {
+                                        title: formatMessage({ id: 'offline.clear-memory' }),
+                                        onClick: openClearMemory,
+                                    }),
+                                    (0, pulseJsxRuntime.jsx)(H, {}),
+                                ],
+                            }),
+                        showLiteMode &&
+                            (0, pulseJsxRuntime.jsx)('li', {
+                                className: eb().item,
+                                children: (0, pulseJsxRuntime.jsx)(em, {
+                                    title: formatMessage({ id: 'lite-version.title' }),
+                                    description: formatMessage({ id: 'lite-version.description' }),
+                                    onChange: toggleLiteMode,
+                                    isChecked: pulseSettings.isLiteVersionModeEnabled,
+                                }),
+                            }),
+                        showEqualizer &&
+                            (0, pulseJsxRuntime.jsxs)('li', {
+                                className: eb().item,
+                                children: [
+                                    (0, pulseJsxRuntime.jsx)(ec, {
+                                        title: formatMessage({ id: 'equalizer.title' }),
+                                        description: equalizerStatusLabel,
+                                        onClick: equalizer.modal.open,
+                                        descriptionProps: (0, pulseDataTest.Am)(pulseDataTest.e8.settings.SETTINGS_EQUALIZER_BUTTON_DESCRIPTION),
+                                        ...(0, pulseDataTest.Am)(pulseDataTest.e8.settings.SETTINGS_EQUALIZER_BUTTON),
+                                    }),
+                                    (0, pulseJsxRuntime.jsx)(pulseEqualizerModal, {}),
+                                ],
+                            }),
+                        showCrossfade &&
+                            (0, pulseJsxRuntime.jsx)('li', {
+                                className: eb().item,
+                                children: (0, pulseJsxRuntime.jsx)(em, {
+                                    title: formatMessage({ id: 'settings.crossfade' }),
+                                    onChange: toggleCrossfade,
+                                    isChecked: pulseSonataState.isCrossFadeEnabled,
+                                }),
+                            }),
+                        (0, pulseJsxRuntime.jsx)(pulseSettingsUi.aQ, {
+                            fallback: (0, pulseJsxRuntime.jsx)('li', {
+                                className: eb().item,
+                                children: (0, pulseJsxRuntime.jsx)(ec, {
+                                    title: formatMessage({ id: 'settings.preferences' }),
+                                    description: formatMessage({ id: 'settings.preferences-description' }),
+                                    onClick: pulseWizard.modal.open,
+                                }),
+                            }),
+                        }),
+                        (0, pulseJsxRuntime.jsx)(pulseSettingsUi.aQ, {
+                            fallback:
+                                !pulseExperiments.checkExperiment(pulseSettingsRuntime.zal.WebNextDisableKids, 'on') &&
+                                (0, pulseJsxRuntime.jsx)('li', {
+                                    className: eb().item,
+                                    children: (0, pulseJsxRuntime.jsx)(em, {
+                                        title: formatMessage({ id: 'settings.show-child-section' }),
+                                        onChange: toggleChildMode,
+                                        isChecked: pulseUser.settings.isChildModeEnabled,
+                                        dataTestId: (0, pulseDataTest.Am)(pulseDataTest.e8.settings.SETTINGS_KIDS_BUTTON),
+                                    }),
+                                }),
+                        }),
+                        (0, pulseJsxRuntime.jsxs)('li', {
+                            className: eb().item,
+                            children: [
+                                (0, pulseJsxRuntime.jsx)(ec, {
+                                    title: formatMessage({ id: 'settings.shortcuts' }),
+                                    onClick: pulseShortcutsModal.open,
+                                }),
+                                (0, pulseJsxRuntime.jsx)(ex, {}),
+                            ],
+                        }),
+                        showBrandedPlayer && (0, pulseJsxRuntime.jsx)('li', { className: eb().item, children: (0, pulseJsxRuntime.jsx)(en, {}) }),
+                        (0, pulseJsxRuntime.jsx)('li', {
+                            className: eb().item,
+                            children: (0, pulseJsxRuntime.jsx)(ec, { title: 'Настройки мода', onClick: openPulseSyncSettings }),
+                        }),
+                        appVersionLabel &&
+                            (0, pulseJsxRuntime.jsxs)('li', {
+                                className: eb().item,
+                                children: [
+                                    (0, pulseJsxRuntime.jsx)(ec, {
+                                        title: formatMessage({ id: 'settings.about-app' }),
+                                        description: appVersionLabel,
+                                        onClick: aboutAppModal.open,
+                                    }),
+                                    (0, pulseJsxRuntime.jsx)(P, {}),
+                                ],
+                            }),
                     ],
                 });
             });

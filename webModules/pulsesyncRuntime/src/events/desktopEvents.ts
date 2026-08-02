@@ -4,6 +4,7 @@ import { applyAddonSettingsSnapshot, applyAddonSettingsUpdate } from '../api/add
 import { applyWasapiOutputState, syncWasapiCrossfadePolicy } from '../audio/wasapi';
 import { installYaspNativeAudioHooks } from '../audio/yasp';
 import { syncLocalAudioGainMute } from '../audio/webAudioGraph';
+import { cloneValue } from '../core/values';
 import { syncLocalPlaybackState } from '../features/playerMethods';
 import { ensureYandexStationCastBridge } from '../features/yandexStation';
 
@@ -33,6 +34,9 @@ export function registerDesktopListeners(ensureApi: () => PulseSyncApi) {
     });
     desktopEvents.on('NATIVE_AUDIO_OUTPUT_WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED', (_event, state) => applyWasapiOutputState(state));
     desktopEvents.on('NATIVE_STORE_UPDATE', (_event, key: string, value: unknown) => {
+        const listeners = ensureApi()._modSettingsListeners.get(key);
+        listeners?.forEach((listener) => listener(cloneValue(value)));
+
         if (key === NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY) {
             syncWasapiCrossfadePolicy(Boolean(value === true && window.nativeSettings?.get?.(WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY)));
             if (value === true) {

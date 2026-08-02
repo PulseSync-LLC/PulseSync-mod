@@ -19,6 +19,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "oxlint": "^1.76.0",
+    "sass-embedded": "^1.100.0",
     "typescript": "~7.0.2",
     "vite": "^8.1.5"
   }
