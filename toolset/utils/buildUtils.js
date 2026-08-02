@@ -276,6 +276,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             destinationDirName: 'pulsesync-web',
             displayName: 'PulseSync WebHost',
             outputFileName: 'host.js',
+            requiredOutputFileNames: ['host.js', 'host.css'],
             projectDirName: 'pulsesyncWebHost',
             sourceProjectDirNames: ['pulsesyncSettings'],
         },
@@ -285,6 +286,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         const moduleDir = path.join(REPO_ROOT, 'webModules', moduleConfig.projectDirName);
         const outputDir = path.join(moduleDir, 'dist');
         const outputPath = path.join(outputDir, moduleConfig.outputFileName);
+        const outputPaths = (moduleConfig.requiredOutputFileNames ?? [moduleConfig.outputFileName]).map((fileName) => path.join(outputDir, fileName));
         const metaPath = path.join(moduleDir, '.build-meta.json');
 
         if (!fs.existsSync(moduleDir)) {
@@ -317,7 +319,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             .digest('hex');
 
         let upToDate = false;
-        if (!force && fs.existsSync(outputPath) && fs.existsSync(metaPath)) {
+        if (!force && outputPaths.every((requiredOutputPath) => fs.existsSync(requiredOutputPath)) && fs.existsSync(metaPath)) {
             const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
             upToDate = meta.buildKey === buildKey;
         }
@@ -331,6 +333,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             moduleDir,
             outputDir,
             outputPath,
+            outputPaths,
             upToDate,
         };
     }
@@ -390,7 +393,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
     async function installRendererWebModuleBuild(moduleConfig, sourcePath) {
         const info = getRendererWebModuleBuildInfo(moduleConfig, false);
-        if (!info.exists || !fs.existsSync(info.outputPath)) {
+        if (!info.exists || !info.outputPaths.every((requiredOutputPath) => fs.existsSync(requiredOutputPath))) {
             throw new Error(`Не найден собранный ${moduleConfig.displayName}`);
         }
 
