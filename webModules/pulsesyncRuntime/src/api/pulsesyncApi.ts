@@ -7,6 +7,17 @@ function getCurrentEntity() {
     return getPlayerInstance()?.state?.queueState?.currentEntity?.value?.entity;
 }
 
+function normalizeModSettingKey(key: unknown) {
+    const normalizedKey = String(key ?? '').trim();
+    if (!normalizedKey.startsWith('modSettings.')) throw new Error('PulseSync mod settings API only accepts modSettings.* keys');
+    return normalizedKey;
+}
+
+function invokeDesktopEvent(event: string, ...args: unknown[]) {
+    if (!window.desktopEvents?.invoke) return Promise.reject(new Error('PulseSync desktop events bridge is unavailable'));
+    return window.desktopEvents.invoke(event, ...args);
+}
+
 function callLikeStore(methodNames: string[], trackId?: unknown, options: Record<string, any> = {}) {
     const entity = getCurrentEntity();
     const entityId = trackId ? createEntityId(trackId, options.albumId) : entity?.entityData?.meta?.id;
@@ -25,6 +36,7 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         _pendingCalls: [],
         _addonSettings: {},
         _addonSettingsListeners: new Map(),
+        _modSettingsListeners: new Map(),
         _waitForPlayer: callWithPlayer,
         playVibe(params: VibeParams = { screen: 'landing' }) {
             if (normalizeVibeSeeds(params).length) return playVibeBySeeds(params);
@@ -120,6 +132,26 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
                         if (!currentListeners?.size) window.pulsesyncApi?._addonSettingsListeners.delete(key);
                     };
                 },
+            };
+        },
+        async getModSetting(key: unknown) {
+            const normalizedKey = normalizeModSettingKey(key);
+            return cloneValue(await invokeDesktopEvent('NATIVE_STORE_GET', normalizedKey));
+        },
+        async setModSetting(key: unknown, value: unknown) {
+            const normalizedKey = normalizeModSettingKey(key);
+            return cloneValue(await invokeDesktopEvent('NATIVE_STORE_SET', normalizedKey, cloneValue(value)));
+        },
+        onModSettingChange(key: unknown, listener) {
+            const normalizedKey = normalizeModSettingKey(key);
+            if (typeof listener !== 'function') return () => {};
+            let listeners = api._modSettingsListeners.get(normalizedKey);
+            if (!listeners) api._modSettingsListeners.set(normalizedKey, (listeners = new Set()));
+            listeners.add(listener);
+            return () => {
+                const currentListeners = api._modSettingsListeners.get(normalizedKey);
+                currentListeners?.delete(listener);
+                if (!currentListeners?.size) api._modSettingsListeners.delete(normalizedKey);
             };
         },
         setPlayerInstance(player: PulseSyncPlayer) {
