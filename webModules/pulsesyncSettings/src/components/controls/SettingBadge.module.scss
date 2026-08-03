@@ -1,0 +1,63 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: fit-content;
+  margin-inline: 5px;
+  padding-inline: 6px;
+  color: #000;
+  background-color: var(--ym-controls-color-primary-default-enabled, #ffdb4d);
+  border-radius: 6px;
+  font-family: var(--ym-font-text, inherit);
+  font-size: var(--ym-font-size-label-xs, 12px);
+  font-weight: var(--ym-font-weight-bold, 700);
+  line-height: var(--ym-font-line-height-label-s, 18px);
+  transition: opacity var(--ym-duration-transition, 300ms);
+
+  &[data-disabled='true'] {
+    opacity: 0.3;
+  }
+}
+
+.tooltip {
+  position: fixed;
+  z-index: var(--ym-z-index-overlay, 1000);
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  max-width: 230px;
+  padding-block: var(--ym-spacer-size-xxxs, 4px);
+  padding-inline: var(--ym-spacer-size-xs, 8px);
+  color: var(--ym-controls-color-secondary-on_default-enabled, #fff);
+  background-color: var(--ym-controls-color-secondary-outline-selected, #333);
+  border: 1px solid var(--ym-outline-color-primary-disabled, rgba(255, 255, 255, 0.12));
+  border-radius: var(--ym-radius-size-s, 8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+  font-family: var(--ym-font-text, inherit);
+  font-size: var(--ym-font-size-label-s, 13px);
+  line-height: var(--ym-font-line-height-label-s, 18px);
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  animation: tooltipIn 120ms ease-out;
+  backdrop-filter: saturate(180%) blur(15px);
+}
+
+.tooltipTitle {
+  font-weight: var(--ym-font-weight-bold, 700);
+}
+
+.tooltipDescription {
+  color: var(--ym-controls-color-primary-text-enabled, #d0d0d0);
+  font-weight: var(--ym-font-weight-normal, 400);
+  white-space: pre-wrap;
+}
+
+@keyframes tooltipIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
