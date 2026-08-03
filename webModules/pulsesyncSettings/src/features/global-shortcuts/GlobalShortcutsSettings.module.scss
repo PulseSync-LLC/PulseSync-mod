@@ -1,0 +1,111 @@
+.section {
+  h3 {
+    margin: 0 0 12px;
+    color: var(--ym-controls-color-secondary-text-enabled, #a0a0a0);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.addButton,
+.commandButton,
+.removeButton {
+  color: var(--ym-controls-color-primary-text-enabled_variant, #fff);
+  background: transparent;
+  border: 1px solid var(--ym-controls-color-secondary-outline-enabled_stroke, rgba(255, 255, 255, 0.16));
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--ym-controls-color-secondary-default-hovered, rgba(255, 255, 255, 0.08));
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+}
+
+.addButton {
+  padding: 10px 14px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.empty {
+  padding: 14px 16px;
+  color: var(--ym-controls-color-secondary-text-enabled, #a0a0a0);
+  background: var(--ym-surface-color-primary-enabled-list, rgba(255, 255, 255, 0.04));
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: var(--ym-surface-color-primary-enabled-list, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--ym-controls-color-secondary-outline-default-stroke, rgba(255, 255, 255, 0.1));
+  border-radius: 16px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  strong {
+    font-size: 15px;
+  }
+}
+
+.removeButton {
+  padding: 7px 10px;
+  color: var(--ym-controls-color-secondary-text-enabled, #a0a0a0);
+}
+
+.command {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ym-controls-color-secondary-outline-default-stroke, rgba(255, 255, 255, 0.1));
+}
+
+.commandButton {
+  align-self: flex-end;
+  padding: 8px 11px;
+}
+
+.error {
+  margin-top: 10px;
+  padding: 10px 12px;
+  color: #ff8f8f;
+  background: rgba(255, 84, 84, 0.12);
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
