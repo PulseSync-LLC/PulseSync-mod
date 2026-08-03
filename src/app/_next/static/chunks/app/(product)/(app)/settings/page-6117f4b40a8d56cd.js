@@ -5033,16 +5033,9 @@
                             shortcutsModal: pulseShortcutsModal,
                             aboutAppModal: aboutAppModal,
                             clearMemoryModal: r,
-                            windowSettingsModal: se,
-                            playerSettingsModal: aeModal,
                             audioSettingsModal: audioSettingsModal,
-                            myVibeAnimationAppearanceSettingsModal: myVibeAnimationAppearanceSettingsModal,
-                            myVibeAnimationPerformanceSettingsModal: myVibeAnimationPerformanceSettingsModal,
                             appUpdatesSettingsModal: appUpdatesSettingsModal,
                             systemSettingsModal: deModal,
-                            globalShortcutsSettingsModal: globalShortcutsSettingsModal,
-                            myVibeParamsSettingsModal: myVibeParamsSettingsModal,
-                            miniPlayerSettingsModal: ueModal,
                             ynisonSettingsModal: ynisonSettingsModal,
                             scrobblersSettingsModal: scrobblersSettingsModal,
                             downloaderSettingsModal: downloaderSettingsModal,
@@ -5352,74 +5345,11 @@
                                 (0, pulseJsxRuntime.jsx)(ex, {}),
                             ],
                         }),
-                        (0, pulseJsxRuntime.jsx)('li', {
-                            className: eb().item,
-                            children: (0, pulseJsxRuntime.jsx)(ec, {
-                                title: 'Глобальные горячие клавиши',
-                                description: 'Действия, кейбинды и группы действий',
-                                onClick: globalShortcutsSettingsModal.open,
-                            }),
-                        }),
-                        (0, pulseJsxRuntime.jsx)(globalShortcutsSettings, {}),
                         S && (0, pulseJsxRuntime.jsx)('li', { className: eb().item, children: (0, pulseJsxRuntime.jsx)(en, {}) }),
 
                         (0, pulseJsxRuntime.jsx)(settingsCategorySeparator, { text: 'Моя Волна' }),
 
-                        (0, pulseJsxRuntime.jsx)('li', {
-                            className: eb().item,
-                            children: (0, pulseJsxRuntime.jsx)(ec, {
-                                title: 'Производительность анимации Волны',
-                                description: 'Отключение анимации, FPS, разрешение и т.п.',
-                                onClick: myVibeAnimationPerformanceSettingsModal.open,
-                            }),
-                        }),
-
-                        (0, pulseJsxRuntime.jsx)('li', {
-                            className: eb().item,
-                            children: (0, pulseJsxRuntime.jsx)(ec, {
-                                title: 'Вид анимации Волны',
-                                description: 'Настройка визуального вида Моей Волны',
-                                onClick: myVibeAnimationAppearanceSettingsModal.open,
-                            }),
-                        }),
-
-                        (0, pulseJsxRuntime.jsx)('li', {
-                            className: eb().item,
-                            children: (0, pulseJsxRuntime.jsx)(ec, {
-                                title: 'Поведение Волны',
-                                description: 'Настройка поведения Волны',
-                                onClick: myVibeParamsSettingsModal.open,
-                            }),
-                        }),
-
                         (0, pulseJsxRuntime.jsx)(settingsCategorySeparator, { text: 'UI и Плеер' }),
-
-                        (0, pulseJsxRuntime.jsx)('li', {
-                            className: eb().item,
-                            children: (0, pulseJsxRuntime.jsx)(ec, {
-                                title: 'Поведение окна',
-                                description: 'Настройки поведения окна приложения',
-                                onClick: se.open,
-                            }),
-                        }),
-
-                        (0, pulseJsxRuntime.jsx)('li', {
-                            className: eb().item,
-                            children: (0, pulseJsxRuntime.jsx)(ec, {
-                                title: 'Панель плеера',
-                                description: 'Настройки элементов на панели плеера',
-                                onClick: aeModal.open,
-                            }),
-                        }),
-
-                        (0, pulseJsxRuntime.jsx)('li', {
-                            className: eb().item,
-                            children: (0, pulseJsxRuntime.jsx)(ec, {
-                                title: 'Миниплеер',
-                                description: 'Настройки поведения миниплеера',
-                                onClick: ueModal.open,
-                            }),
-                        }),
 
                         (0, pulseJsxRuntime.jsx)(settingsCategorySeparator, { text: 'Интеграции' }),
 
@@ -5518,14 +5448,8 @@
                         }),
 
                         (0, pulseJsxRuntime.jsx)(systemSettings, {}),
-                        (0, pulseJsxRuntime.jsx)(myVibeAnimationPerformanceSettings, {}),
-                        (0, pulseJsxRuntime.jsx)(myVibeAnimationAppearanceSettings, {}),
-                        (0, pulseJsxRuntime.jsx)(myVibeParamsSettings, {}),
-                        (0, pulseJsxRuntime.jsx)(playerSettings, {}),
                         (0, pulseJsxRuntime.jsx)(lrclibSettings, {}),
                         (0, pulseJsxRuntime.jsx)(audioSettings, {}),
-                        (0, pulseJsxRuntime.jsx)(windowSettings, {}),
-                        (0, pulseJsxRuntime.jsx)(miniPlayerSettings, {}),
                         (0, pulseJsxRuntime.jsx)(scrobblersSettings, {}),
                         (0, pulseJsxRuntime.jsx)(downloaderSettings, {}),
                         (0, pulseJsxRuntime.jsx)(appUpdatesSettings, {}),
@@ -5593,6 +5517,15 @@
                     openPulseSyncSettings = (0, pulseReactRuntime.useCallback)(() => {
                         window.dispatchEvent(new CustomEvent('pulsesync-open-settings'));
                     }, []);
+                (0, pulseReactRuntime.useEffect)(() => {
+                    let showRestartNotification = () => {
+                        notify((0, pulseJsxRuntime.jsx)(pulseSettingsUi.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                            containerId: pulseSettingsRuntime.uQT.ERROR,
+                        });
+                    };
+                    window.addEventListener('pulsesync-restart-required', showRestartNotification);
+                    return () => window.removeEventListener('pulsesync-restart-required', showRestartNotification);
+                }, [notify]);
                 (0, pulseReactRuntime.useLayoutEffect)(() => {
                     let e = t.get(pulseSettingsRuntime.cYZ.CrossFadeMode);
                     'boolean' == typeof e && pulseSonataState.setCrossFadeMode(e);

@@ -551,6 +551,9 @@
                             var e;
                             null == (e = window.desktopEvents) || e.send(u.E.TOGGLE_MINIPLAYER);
                         }, []),
+                        onPulseSyncSettingsOpen = (0, n.useCallback)(() => {
+                            window.dispatchEvent(new CustomEvent('pulsesync-open-settings'));
+                        }, []),
                         E = (0, n.useCallback)((e) => {
                             if (e.target.closest('button')) return;
                             var t;
@@ -574,6 +577,29 @@
                             (0, r.jsxs)(r.Fragment, {
                                 children: [
                                     !w && (0, r.jsx)('span', { className: c().pulseText, children: 'PulseSync '.concat(window.PULSE_VERSION) }),
+                                    (0, r.jsx)(h, {
+                                        onClick: onPulseSyncSettingsOpen,
+                                        ariaLabel: 'Настройки мода',
+                                        withSecondaryColor: t,
+                                        children: (0, r.jsxs)('svg', {
+                                            width: '14',
+                                            height: '14',
+                                            viewBox: '0 0 24 24',
+                                            fill: 'none',
+                                            xmlns: 'http://www.w3.org/2000/svg',
+                                            className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
+                                            children: [
+                                                (0, r.jsx)('path', {
+                                                    d: 'M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.09a2 2 0 0 1 1 1.74v.5a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z',
+                                                    stroke: 'currentColor',
+                                                    strokeWidth: '2.25',
+                                                    strokeLinecap: 'round',
+                                                    strokeLinejoin: 'round',
+                                                }),
+                                                (0, r.jsx)('circle', { cx: '12', cy: '12', r: '3', stroke: 'currentColor', strokeWidth: '2.25' }),
+                                            ],
+                                        }),
+                                    }),
                                     (0, r.jsx)(h, {
                                         onClick: onMiniPlayerToggle,
                                         ariaLabel: 'miniplayer',
@@ -7815,7 +7841,7 @@
                     }
                     let l = 2 * Math.sqrt(r / a);
                     if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
-                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICENT?.() ?? 0.2;
+                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
                         return (this._prevRms = void 0 !== this._prevRms ? this._prevRms * (1 - e) + l * e : l), this._prevRms;
                     }
                     return l;
@@ -7838,7 +7864,7 @@
                     }
                     let l = 120 * Math.sqrt(r / a);
                     if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
-                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICENT?.() ?? 0.2;
+                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
                         return (this._prevRms = void 0 !== this._prevRms ? this._prevRms * (1 - e) + l * e : l), this._prevRms;
                     }
                     return l;
@@ -8517,7 +8543,14 @@
                         (0, L._)(this, 'fade', void 0),
                         (0, L._)(this, 'smartPreview', void 0),
                         (0, L._)(this, 'crossfade', void 0),
-                        (this.options = e);
+                        (this.options = e),
+                        (window.__PULSESYNC_APPLY_R128_NORMALIZATION__ = (e) => {
+                            let t = Boolean(e);
+                            (pulseSyncR128NormalizationEnabled = t),
+                                this.graphs.forEach((e) => {
+                                    e.setR128Gain(void 0, t);
+                                });
+                        });
                 }
             }
             function tb(e) {

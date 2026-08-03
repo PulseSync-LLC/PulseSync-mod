@@ -50,14 +50,14 @@
 }
 .TitleBar_pulseText__FhYv {
     margin-right: 20px;
-    color: rgba(255, 255, 255, 0.29);
+    color: rgba(255, 255, 255, 0.62);
     font-family: var(--ym-font-text);
-    font-weight: 100;
+    font-weight: 300;
     line-height: var(--ym-font-line-height-label-s);
 }
 .ym-light-theme {
     .TitleBar_pulseText__FhYv {
-        color: rgba(0, 0, 0, 0.29);
+        color: rgba(0, 0, 0, 0.62);
     }
 }
 .UserWidget-Content {

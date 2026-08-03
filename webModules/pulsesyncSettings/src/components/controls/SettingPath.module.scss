@@ -1,0 +1,57 @@
+.setting {
+  overflow: hidden;
+  background: var(--ym-background-color-secondary-enabled-basic, rgba(255, 255, 255, 0.04));
+  border-radius: 16px;
+
+  > div:first-child {
+    background: transparent;
+    border-radius: 0;
+  }
+}
+
+.pathRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px 14px;
+}
+
+.path {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  padding: 10px 12px;
+  color: var(--ym-controls-color-secondary-text-enabled, #8f8f8f);
+  background: var(--ym-background-color-primary-enabled-content, #171717);
+  border-radius: 10px;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browseButton {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  color: var(--ym-controls-color-primary-text-enabled, #fff);
+  background: var(--ym-controls-color-secondary-default-enabled, rgba(255, 255, 255, 0.12));
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--ym-controls-color-secondary-hovered, rgba(255, 255, 255, 0.18));
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+}

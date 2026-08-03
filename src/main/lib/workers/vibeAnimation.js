@@ -50,6 +50,7 @@
             (t.ERROR = 'vibe-animation-worker-error'),
             (t.LOG = 'vibe-animation-worker-log'),
             (t.UPDATE_LAYOUT = 'vibe-animation-worker-update-layout'),
+            (t.UPDATE_RUNTIME_SETTINGS = 'vibe-animation-worker-update-runtime-settings'),
             (t.APPLY_SETTINGS = 'vibe-animation-worker-apply-settings'),
             (t.IDLE_ANIMATION = 'vibe-animation-worker-idle-animation'),
             (t.PLAY_ANIMATION = 'vibe-animation-worker-play-animation'),
@@ -2858,6 +2859,21 @@
         updateRenderingState() {
             this.isRenderingEnabled ? this.ticker?.start() : this.ticker?.stop();
         }
+        updateRuntimeSettings({ fps: t, resolution: e } = {}) {
+            const i = Number(t);
+            if (Number.isFinite(i) && i > 0 && this.ticker) {
+                this.ticker.stop();
+                this.ticker.fps = i;
+                this.isRenderingEnabled && this.ticker.start();
+            }
+            const s = Number(e);
+            if (Number.isFinite(s) && s > 0 && this.uniforms && this.renderer) {
+                this.shaderOptions.canvasSize.desktopSizePx = s;
+                this.uniforms.updateSize();
+                const { width: t, height: e } = this.uniforms.size;
+                this.renderer.setSize(t, e);
+            }
+        }
         get isLiteAnimationEnabled() {
             return this.state === mt.LITE;
         }
@@ -2944,6 +2960,10 @@
             case t.UPDATE_LAYOUT: {
                 const t = e.data.payload;
                 vt?.uniforms?.updateLayout(Boolean(t?.isMobile));
+                break;
+            }
+            case t.UPDATE_RUNTIME_SETTINGS: {
+                vt?.updateRuntimeSettings(e.data.payload);
                 break;
             }
             case t.AUDIO_ANALYZER_FREQUENCIES: {

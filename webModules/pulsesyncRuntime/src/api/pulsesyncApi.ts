@@ -7,15 +7,25 @@ function getCurrentEntity() {
     return getPlayerInstance()?.state?.queueState?.currentEntity?.value?.entity;
 }
 
+const LEGACY_MOD_SETTING_KEYS = new Set(['enableYnisonPlayerRemoteControl', 'ynisonInterceptPlayback', 'sendModAnonymizedMetrics']);
+
 function normalizeModSettingKey(key: unknown) {
     const normalizedKey = String(key ?? '').trim();
-    if (!normalizedKey.startsWith('modSettings.')) throw new Error('PulseSync mod settings API only accepts modSettings.* keys');
+    if (!normalizedKey.startsWith('modSettings.') && !LEGACY_MOD_SETTING_KEYS.has(normalizedKey)) {
+        throw new Error('PulseSync mod settings API rejected unsupported key');
+    }
     return normalizedKey;
 }
 
 function invokeDesktopEvent(event: string, ...args: unknown[]) {
     if (!window.desktopEvents?.invoke) return Promise.reject(new Error('PulseSync desktop events bridge is unavailable'));
     return window.desktopEvents.invoke(event, ...args);
+}
+
+function getScrobbleMethod(method: 'lastfmGetUser' | 'lastfmLogin' | 'lastfmLogout') {
+    const handler = window.scrobble?.[method];
+    if (typeof handler !== 'function') throw new Error('Last.fm bridge is unavailable');
+    return handler;
 }
 
 function callLikeStore(methodNames: string[], trackId?: unknown, options: Record<string, any> = {}) {
@@ -38,6 +48,9 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         _addonSettingsListeners: new Map(),
         _modSettingsListeners: new Map(),
         _waitForPlayer: callWithPlayer,
+        applyR128Normalization(enabled: unknown) {
+            window.__PULSESYNC_APPLY_R128_NORMALIZATION__?.(Boolean(enabled));
+        },
         playVibe(params: VibeParams = { screen: 'landing' }) {
             if (normalizeVibeSeeds(params).length) return playVibeBySeeds(params);
             const nativePlayVibe = window.pulsesyncApi?.playVibeNative;
@@ -138,9 +151,74 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
             const normalizedKey = normalizeModSettingKey(key);
             return cloneValue(await invokeDesktopEvent('NATIVE_STORE_GET', normalizedKey));
         },
+        getModSettingSnapshot(key: unknown) {
+            const normalizedKey = normalizeModSettingKey(key);
+            return cloneValue(window.nativeSettings?.get?.(normalizedKey));
+        },
+        getDisplayMaxFps() {
+            const value = Number(window.DISPLAY_MAX_FPS);
+            return Number.isFinite(value) ? Math.max(value, 1) : 60;
+        },
+        getPlatform() {
+            return String(window.PLATFORM ?? '');
+        },
+        async getPremiumStatus() {
+            return Boolean(await invokeDesktopEvent('isPremiumUser'));
+        },
+        async getLastFmUser() {
+            try {
+                return cloneValue(await getScrobbleMethod('lastfmGetUser')());
+            } catch (error) {
+                if (error instanceof Error && error.message.includes('No session found')) return null;
+                throw error;
+            }
+        },
+        async getLastFmYnisonAvailability() {
+            try {
+                const response = await fetch('https://api.music.yandex.net/tracks/138005337:36143630');
+                return response.ok;
+            } catch {
+                return false;
+            }
+        },
+        async getSelectedWasapiExclusiveDeviceId() {
+            return cloneValue(await window.nativeAudioOutput?.getSelectedWasapiExclusiveDeviceId?.());
+        },
+        async getWasapiExclusiveStatus() {
+            return cloneValue(await window.nativeAudioOutput?.getWasapiExclusiveStatus?.());
+        },
+        async listWasapiExclusiveDevices() {
+            return cloneValue(await window.nativeAudioOutput?.listWasapiExclusiveDevices?.({ includeDisabled: true, includeFormats: true }));
+        },
+        async loginLastFm() {
+            return cloneValue(await getScrobbleMethod('lastfmLogin')());
+        },
+        async logoutLastFm() {
+            return cloneValue(await getScrobbleMethod('lastfmLogout')());
+        },
+        onLastFmUserInfoChange(listener) {
+            if (typeof listener !== 'function') return () => {};
+            return window.desktopEvents?.on('LASTFM_USERINFO_UPDATE', (_event, value) => listener(cloneValue(value))) ?? (() => {});
+        },
+        refreshPlayerBar() {
+            window.setTimeout(() => window.forcePlayerBarRerender?.(), 100);
+        },
+        async selectWasapiExclusiveDevice(deviceId: unknown) {
+            return cloneValue(await window.nativeAudioOutput?.selectWasapiExclusiveDevice?.(deviceId || null));
+        },
+        setAutoStartupStatus(isEnabled: unknown) {
+            window.desktopEvents?.send?.('autoStartupStatus', Boolean(isEnabled));
+        },
         async setModSetting(key: unknown, value: unknown) {
             const normalizedKey = normalizeModSettingKey(key);
             return cloneValue(await invokeDesktopEvent('NATIVE_STORE_SET', normalizedKey, cloneValue(value)));
+        },
+        async selectModSettingDirectory(key: unknown) {
+            const normalizedKey = normalizeModSettingKey(key);
+            return invokeDesktopEvent('setPathWithNativeDialog', normalizedKey, undefined, ['openDirectory', 'showHiddenFiles']);
+        },
+        setGlobalShortcutsRecording(isRecording: unknown) {
+            window.desktopEvents?.send?.('GLOBAL_SHORTCUTS_RECORDING_STATE', Boolean(isRecording));
         },
         onModSettingChange(key: unknown, listener) {
             const normalizedKey = normalizeModSettingKey(key);

@@ -313,6 +313,31 @@
                             : null == c || c.applySettings({ hue: i, collectionHue: B.collectionHue });
                     }, [r, w.isPlaying, w.isVibeContext, M.isShuffleVibe, c, B.collectionHue, null == w.entityMeta ? void 0 : w.entityMeta.trackParameters]),
                     (0, a.useEffect)(() => {
+                        let e = (e) => {
+                            let { key: t, value: i } = (null == e ? void 0 : e.detail) || {};
+                            if ('modSettings.vibeAnimationEnhancement.disableRendering' === t) return void (i ? c?.disable() : c?.enable());
+                            if ('modSettings.vibeAnimationEnhancement.maxFPS' === t)
+                                return void c?.updateRuntimeSettings({ fps: Number(i) });
+                            if ('modSettings.vibeAnimationEnhancement.canvasResolution' === t)
+                                return void c?.updateRuntimeSettings({ resolution: Number(i) });
+                            if ('modSettings.vibeAnimationEnhancement.useVibeWidgetColors' !== t) return;
+                            let n = w.entityMeta?.trackParameters?.hue;
+                            Q()
+                                ? c?.applySettings({
+                                      customColors: y({
+                                          averageColor: r,
+                                          isPlaying: w.isPlaying,
+                                          isShuffleVibeActive: !!(M.isShuffleVibe && w.isVibeContext),
+                                      }),
+                                  })
+                                : c?.applySettings({ hue: n, collectionHue: B.collectionHue });
+                        };
+                        return (
+                            window.addEventListener('pulse-sync-vibe-setting-change', e),
+                            () => window.removeEventListener('pulse-sync-vibe-setting-change', e)
+                        );
+                    }, [r, w.isPlaying, w.isVibeContext, M.isShuffleVibe, c, B.collectionHue, null == w.entityMeta ? void 0 : w.entityMeta.trackParameters]),
+                    (0, a.useEffect)(() => {
                         var e, t, n, a, oA;
                         let s = null == (t = w.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
                             l = null == (a = w.entityMeta) || null == (n = a.trackParameters) ? void 0 : n.energy,
