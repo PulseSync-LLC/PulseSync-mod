@@ -57,6 +57,26 @@ function App({ api }: AppProps = {}) {
     return () => window.removeEventListener('keydown', closeOnEscape)
   }, [close, isMounted])
 
+  useEffect(() => {
+    if (!isMounted) return
+
+    const scrollSettings = (event: WheelEvent) => {
+      const target =
+        event.target instanceof Element
+          ? event.target.closest<HTMLElement>('[data-pulsesync-scroll-region]')
+          : null
+      if (!target) return
+      event.stopImmediatePropagation()
+    }
+
+    window.addEventListener('wheel', scrollSettings, {
+      capture: true,
+      passive: true,
+    })
+    return () =>
+      window.removeEventListener('wheel', scrollSettings, { capture: true })
+  }, [isMounted])
+
   if (!isMounted) return null
 
   return (
@@ -86,7 +106,11 @@ function App({ api }: AppProps = {}) {
           </button>
         </header>
         <div className={styles.body}>
-          <nav className={styles.navigation} aria-label="Разделы настроек">
+          <nav
+            className={styles.navigation}
+            aria-label="Разделы настроек"
+            data-pulsesync-scroll-region
+          >
             {SETTINGS_GROUPS.map((group) => (
               <div className={styles.navigationGroup} key={group.label}>
                 <div className={styles.navigationLabel}>{group.label}</div>
@@ -110,6 +134,7 @@ function App({ api }: AppProps = {}) {
           <div
             className={styles.content}
             data-pulsesync-settings-content
+            data-pulsesync-scroll-region
           >
             {SETTINGS_SECTIONS.map((section) => (
               <SettingsPane
