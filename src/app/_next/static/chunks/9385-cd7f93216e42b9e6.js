@@ -9826,18 +9826,23 @@
                         const albumName = track.albumName || track.albumTitle || album?.title || album?.name || null;
                         const durationValue = track.durationMs ? track.durationMs / 1000 : Number(track.duration);
                         const duration = Number.isFinite(durationValue) && durationValue > 0 ? Math.round(durationValue) : null;
+                        const isUserGenerated =
+                            track.trackSource === 'UGC' ||
+                            track.trackSource === 'OWN_REPLACED_TO_UGC' ||
+                            track.isUGC === true ||
+                            track.isOwnReplacedToUGC === true;
                         if (
                             trackName &&
                             getSetting('useTrackVersion', true) &&
                             typeof track.version === 'string' &&
                             track.version &&
-                            track.trackSource !== 'UGC' &&
+                            !isUserGenerated &&
                             !/^https?:\/\//.test(track.version)
                         ) {
                             trackName = `${trackName} ${track.version}`;
                         }
                         return trackName
-                            ? { trackId: track.id == null ? null : String(track.id), trackName, artistName, albumName, artists, duration, track }
+                            ? { trackId: track.id == null ? null : String(track.id), trackName, artistName, albumName, artists, duration, isUserGenerated, track }
                             : null;
                     };
 
@@ -9955,10 +9960,12 @@
                             }
                         });
 
-                    const fetchSearchResults = (trackName, artistName, isSyncedRequest) =>
+                    const fetchSearchResults = (trackName, artistName, isSyncedRequest, useKeywordSearch = false) =>
                         enqueueRequest(async () => {
-                            const query = new URLSearchParams({ track_name: trackName });
-                            if (artistName) query.set('artist_name', artistName);
+                            const query = useKeywordSearch
+                                ? new URLSearchParams({ q: [artistName, trackName].filter(Boolean).join(' ') })
+                                : new URLSearchParams({ track_name: trackName });
+                            if (artistName && !useKeywordSearch) query.set('artist_name', artistName);
                             const controller = new AbortController();
                             const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
                             requestControllers.add(controller);
@@ -9999,14 +10006,24 @@
                         const generation = queueGeneration;
                         const isStale = () => generation !== queueGeneration;
                         const request = (trackName, artistName) => retryAborted(() => fetchSearchResults(trackName, artistName, false), generation);
+                        const keywordRequest = (trackName, artistName) =>
+                            retryAborted(() => fetchSearchResults(trackName, artistName, false, true), generation);
                         const allowTitleOnlyFallback = getSetting('useTitleOnlyFallback', true);
-                        const normalizedTitles = allowTitleOnlyFallback
+                        const normalizedTitles = allowTitleOnlyFallback || lookup.isUserGenerated
                             ? getTitleVariants(lookup.trackName).map(normalizeSignaturePart).filter(Boolean)
                             : [];
-                        let artistAttempt = lookup.trackName && lookup.artistName ? await request(lookup.trackName, lookup.artistName) : null;
+                        const keywordAttempt = lookup.isUserGenerated ? await keywordRequest(lookup.trackName, lookup.artistName) : null;
                         if (isStale()) return null;
-                        let resultsWithArtist = artistAttempt?.items || null;
-                        let usedLooseQuery = false;
+                        let keywordResults = keywordAttempt?.items || null;
+                        if (keywordResults && normalizedTitles.length)
+                            keywordResults = keywordResults.filter((item) =>
+                                normalizedTitles.includes(normalizeSignaturePart(item.trackName || item.track_name || item.title || item.name)),
+                            );
+                        if (!keywordResults?.length) keywordResults = null;
+                        let artistAttempt = keywordResults || !lookup.trackName || !lookup.artistName ? null : await request(lookup.trackName, lookup.artistName);
+                        if (isStale()) return null;
+                        let resultsWithArtist = keywordResults || artistAttempt?.items || null;
+                        let usedLooseQuery = Boolean(keywordResults);
                         let fallbackAttempt =
                             resultsWithArtist || !lookup.trackName || !allowTitleOnlyFallback ? null : await request(lookup.trackName, null);
                         if (isStale()) return null;
@@ -10054,8 +10071,8 @@
                             const withDuration = results.filter((item) => typeof item.duration === 'number');
                             if (withDuration.length) {
                                 const closeMatches = withDuration.filter((item) => Math.abs(item.duration - lookup.duration) <= 10);
-                                if (!closeMatches.length) return null;
-                                results = closeMatches;
+                                if (closeMatches.length) results = closeMatches;
+                                else if (!lookup.isUserGenerated) return null;
                             }
                         }
 
@@ -10079,11 +10096,21 @@
                         const generation = queueGeneration;
                         const isStale = () => generation !== queueGeneration;
                         const request = (trackName, artistName) => retryAborted(() => fetchSearchResults(trackName, artistName, true), generation);
+                        const keywordRequest = (trackName, artistName) =>
+                            retryAborted(() => fetchSearchResults(trackName, artistName, true, true), generation);
                         const allowTitleOnlyFallback = getSetting('useTitleOnlyFallback', true);
                         const variants = [...new Set(getTitleVariants(lookup.trackName).filter(Boolean))];
-                        let results = null;
+                        const normalizedTitles = variants.map(normalizeSignaturePart).filter(Boolean);
+                        const keywordAttempt = lookup.isUserGenerated ? await keywordRequest(lookup.trackName, lookup.artistName) : null;
+                        if (isStale()) return null;
+                        let results = keywordAttempt?.items || null;
+                        if (results && normalizedTitles.length)
+                            results = results.filter((item) =>
+                                normalizedTitles.includes(normalizeSignaturePart(item.trackName || item.track_name || item.title || item.name)),
+                            );
+                        if (!results?.length) results = null;
 
-                        for (const variant of variants) {
+                        for (const variant of results ? [] : variants) {
                             const attempt = await request(variant, lookup.artistName);
                             if (isStale()) return null;
                             if (attempt?.items) {
@@ -10118,8 +10145,8 @@
                             const withDuration = results.filter((item) => typeof item.duration === 'number');
                             if (withDuration.length) {
                                 const closeMatches = withDuration.filter((item) => Math.abs(item.duration - lookup.duration) <= 10);
-                                if (!closeMatches.length) return null;
-                                results = closeMatches;
+                                if (closeMatches.length) results = closeMatches;
+                                else if (!lookup.isUserGenerated) return null;
                             }
                         }
                         let selected = results[0];
@@ -10144,7 +10171,7 @@
                         const isSyncedRequest = requestKind === 'sync';
                         if (!isEnabled()) return null;
                         const lookup = source?.trackName ? source : buildTrackLookup(source);
-                        const lookupMode = getLookupMode();
+                        const lookupMode = lookup?.isUserGenerated ? 'search' : getLookupMode();
                         const missingRequiredFields =
                             !lookup?.trackName ||
                             (lookupMode === 'get' && (!lookup.artistName || !lookup.albumName || !lookup.duration));
