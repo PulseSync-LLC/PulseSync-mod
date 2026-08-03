@@ -37,6 +37,10 @@ export function registerDesktopListeners(ensureApi: () => PulseSyncApi) {
         const listeners = ensureApi()._modSettingsListeners.get(key);
         listeners?.forEach((listener) => listener(cloneValue(value)));
 
+        if (key.startsWith('modSettings.vibeAnimationEnhancement.')) {
+            window.dispatchEvent(new CustomEvent('pulse-sync-vibe-setting-change', { detail: { key, value: cloneValue(value) } }));
+        }
+
         if (key === NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY) {
             syncWasapiCrossfadePolicy(Boolean(value === true && window.nativeSettings?.get?.(WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY)));
             if (value === true) {

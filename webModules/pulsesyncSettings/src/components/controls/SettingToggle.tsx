@@ -1,14 +1,17 @@
+import { SettingBadge, type SettingBadgeProps } from './SettingBadge'
 import styles from './SettingToggle.module.scss'
 
 type SettingToggleProps = {
+  badge?: SettingBadgeProps
   checked: boolean
-  description: string
+  description?: string
   disabled?: boolean
   onChange: (checked: boolean) => void
   title: string
 }
 
 export function SettingToggle({
+  badge,
   checked,
   description,
   disabled = false,
@@ -16,10 +19,15 @@ export function SettingToggle({
   title,
 }: SettingToggleProps) {
   return (
-    <div className={styles.row}>
+    <div className={styles.row} data-disabled={disabled}>
       <div className={styles.text}>
-        <div className={styles.title}>{title}</div>
-        <div className={styles.description}>{description}</div>
+        <div className={styles.titleLine}>
+          <div className={styles.title}>{title}</div>
+          {badge ? <SettingBadge {...badge} /> : null}
+        </div>
+        {description ? (
+          <div className={styles.description}>{description}</div>
+        ) : null}
       </div>
       <button
         className={styles.switch}
