@@ -36,6 +36,7 @@
                 (d.INIT = 'vibe-animation-worker-init'),
                     (d.ERROR = 'vibe-animation-worker-error'),
                     (d.UPDATE_LAYOUT = 'vibe-animation-worker-update-layout'),
+                    (d.UPDATE_RUNTIME_SETTINGS = 'vibe-animation-worker-update-runtime-settings'),
                     (d.APPLY_SETTINGS = 'vibe-animation-worker-apply-settings'),
                     (d.IDLE_ANIMATION = 'vibe-animation-worker-idle-animation'),
                     (d.PLAY_ANIMATION = 'vibe-animation-worker-play-animation'),
@@ -56,6 +57,9 @@
                 }
                 updateLayout(d) {
                     this.invoke(c.UPDATE_LAYOUT, { isMobile: d });
+                }
+                updateRuntimeSettings(d) {
+                    this.invoke(c.UPDATE_RUNTIME_SETTINGS, d);
                 }
                 enable() {
                     this.invoke(window?.VIBE_ANIMATION_DISABLE_RENDERING() ? c.DISABLE : c.ENABLE);
