@@ -6,7 +6,7 @@ const Logger_js_1 = require('../../packages/logger/Logger.js');
 const store_js_1 = require('../store.js');
 const store_js_2 = require('../../types/store.js');
 const { Events } = require('../../types/events');
-const { addAllowedUrls } = require('../handlers/handleHeadersReceived/corsHandler.js');
+const { setAllowedUrls } = require('../handlers/handleHeadersReceived/corsHandler.js');
 
 const { mergeWithSystem, isSystemId, sanitizeId: sanitizeIdFromSystem } = require('./system/SystemAddons');
 
@@ -95,8 +95,17 @@ class PulseSyncManager extends EventEmitter {
         this.reconnectAttempt = 0;
         this.reconnectTimer = null;
         this.isConnecting = false;
+        this.clientAuthorizationKnown = false;
+        this.clientAuthorized = false;
+        this.legacyClientAuthorized = false;
+        this.userValidationTokenValidated = false;
+        this.userValidationTokenTimer = null;
+        this.userValidationRevision = 0;
+        this.legacyPremiumTimer = null;
+        this.isAuthorized = false;
         this.isPremium = false;
         this._addonSettingsSnapshot = {};
+        this._allowedUrls = [];
         this._legacyAssetsRevision = 0;
         this._legacyAssetsFingerprint = null;
         this._webHostAddonsSnapshot = { hash: '', addons: [] };
@@ -106,7 +115,13 @@ class PulseSyncManager extends EventEmitter {
         this.readyEvent = this.readyEvent.bind(this);
         this.getEnabledAddons = this.getEnabledAddons.bind(this);
         this.handlePulseSyncApi = this.handlePulseSyncApi.bind(this);
+        this.acceptLegacyAuthorization = this.acceptLegacyAuthorization.bind(this);
+        this.clearUserValidationToken = this.clearUserValidationToken.bind(this);
+        this.scheduleUserValidationTokenExpiration = this.scheduleUserValidationTokenExpiration.bind(this);
+        this.syncAuthorizationState = this.syncAuthorizationState.bind(this);
         this.validatePremium = this.validatePremium.bind(this);
+        this.validateUserValidationToken = this.validateUserValidationToken.bind(this);
+        this.updateAuthorizationState = this.updateAuthorizationState.bind(this);
         this.updatePremiumState = this.updatePremiumState.bind(this);
         this.prevExtensions = mergeWithSystem([]);
     }
@@ -124,6 +139,11 @@ class PulseSyncManager extends EventEmitter {
             this.logger.warn('Safe mode enabled: skipping theme and addon injection');
             return;
         }
+        if (!this.isAuthorized) {
+            this.logger.warn('Authorization required: skipping theme and addon injection');
+            return;
+        }
+        setAllowedUrls(this._allowedUrls);
         await this.handleExtensions(this.sourceExtensions);
         if (this.currentTheme && this.currentTheme.name.toLowerCase() !== 'default') {
             await this.handleTheme(this.currentTheme);
@@ -173,10 +193,129 @@ class PulseSyncManager extends EventEmitter {
         });
     }
 
+    async updateAuthorizationState(isAuthorized, source = 'unknown') {
+        const nextValue = Boolean(isAuthorized);
+        const changed = this.isAuthorized !== nextValue;
+        this.isAuthorized = nextValue;
+
+        if (!changed) return;
+
+        this.logger.info(`Authorization state changed: ${this.isAuthorized} (${source})`);
+
+        if (this.isAuthorized) {
+            if (!this.appLoaded) return;
+            await this._ensureSingleApply(async () => {
+                await this.injectThemesAndAddons();
+            });
+            if (!this.webContents.isDestroyed()) {
+                this.webContents.send(Events.PULSESYNC_WEBHOST_ADDONS, this.getWebHostAddonsSnapshot());
+            }
+            return;
+        }
+
+        const hadActiveScripts = Object.keys(this.scriptContent).length > 0;
+        this.prevExtensions = [];
+        this.cssContent = {};
+        this.scriptContent = {};
+        this.styleKeys = {};
+        this.scriptKeys = {};
+        setAllowedUrls([]);
+        this.publishLegacyAssets();
+        if (!this.webContents.isDestroyed()) {
+            this.webContents.send(Events.PULSESYNC_WEBHOST_ADDONS, { hash: '', addons: [] });
+        }
+        if (hadActiveScripts && this.appLoaded && !this.isReloading && !this.webContents.isDestroyed()) {
+            this.safeReload('authorization lost');
+        }
+    }
+
+    async syncAuthorizationState(source = 'unknown') {
+        const isAuthorized = this.clientAuthorizationKnown
+            ? this.clientAuthorized && this.userValidationTokenValidated
+            : this.legacyClientAuthorized;
+        await this.updateAuthorizationState(isAuthorized, source);
+    }
+
+    clearUserValidationToken() {
+        this.userValidationRevision += 1;
+        this.userValidationTokenValidated = false;
+        if (this.userValidationTokenTimer) {
+            clearTimeout(this.userValidationTokenTimer);
+            this.userValidationTokenTimer = null;
+        }
+    }
+
+    scheduleUserValidationTokenExpiration(expiresAt) {
+        if (this.userValidationTokenTimer) clearTimeout(this.userValidationTokenTimer);
+        const delay = Math.max(1, expiresAt - Date.now());
+        this.userValidationTokenTimer = setTimeout(() => {
+            this.userValidationTokenTimer = null;
+            this.userValidationTokenValidated = false;
+            this.userValidationRevision += 1;
+            void this.updatePremiumState(false, 'USER_VALIDATION_TOKEN_EXPIRED');
+            void this.syncAuthorizationState('USER_VALIDATION_TOKEN_EXPIRED');
+        }, delay);
+    }
+
+    async validateUserValidationToken(payload) {
+        const token = typeof payload?.token === 'string' ? payload.token.trim() : '';
+        if (!token) {
+            this.clearUserValidationToken();
+            await this.updatePremiumState(false, 'USER_VALIDATION_TOKEN_MISSING');
+            await this.syncAuthorizationState('USER_VALIDATION_TOKEN_MISSING');
+            return;
+        }
+
+        const revision = ++this.userValidationRevision;
+        try {
+            const response = await fetch('https://ru-node-1.pulsesync.dev/user/validation', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                signal: AbortSignal.timeout(5000),
+            });
+            const data = await response.json();
+            if (revision !== this.userValidationRevision) return;
+
+            const expiresAt = Number(data?.expiresAt);
+            if (
+                !response.ok ||
+                data?.ok !== true ||
+                data?.authorized !== true ||
+                !Number.isFinite(expiresAt) ||
+                expiresAt <= Date.now()
+            ) {
+                this.clearUserValidationToken();
+                await this.updatePremiumState(false, 'USER_VALIDATION_TOKEN_INVALID');
+                await this.syncAuthorizationState('USER_VALIDATION_TOKEN_INVALID');
+                return;
+            }
+
+            this.userValidationTokenValidated = true;
+            this.scheduleUserValidationTokenExpiration(expiresAt);
+            await this.updatePremiumState(data.isPremium === true, 'USER_VALIDATION_TOKEN');
+            await this.syncAuthorizationState('USER_VALIDATION_TOKEN_VALID');
+        } catch (error) {
+            if (revision !== this.userValidationRevision) return;
+            this.logger.warn(`USER_VALIDATION_TOKEN validation error (${error.message})`);
+            this.clearUserValidationToken();
+            await this.updatePremiumState(false, 'USER_VALIDATION_TOKEN_ERROR');
+            await this.syncAuthorizationState('USER_VALIDATION_TOKEN_ERROR');
+        }
+    }
+
+    async acceptLegacyAuthorization(source) {
+        if (this.clientAuthorizationKnown || this.legacyClientAuthorized) return;
+        this.legacyClientAuthorized = true;
+        this.logger.info(`AUTH_STATUS not received: using legacy client authorization (${source})`);
+        await this.syncAuthorizationState(`LEGACY_${source}`);
+    }
+
     start() {
         this.connectSocket();
         this.tryConnect();
-        this.validatePremium();
     }
 
     clearReconnectTimer() {
@@ -299,6 +438,16 @@ class PulseSyncManager extends EventEmitter {
             this.logger.warn(`Socket.IO disconnected: ${reason}`);
             this.isConnecting = false;
             this.readySent = false;
+            this.clientAuthorizationKnown = false;
+            this.clientAuthorized = false;
+            this.legacyClientAuthorized = false;
+            this.clearUserValidationToken();
+            if (this.legacyPremiumTimer) {
+                clearTimeout(this.legacyPremiumTimer);
+                this.legacyPremiumTimer = null;
+            }
+            void this.updatePremiumState(false, 'SOCKET_DISCONNECT');
+            void this.syncAuthorizationState('SOCKET_DISCONNECT');
             this.emit('disconnected', reason);
             this.scheduleReconnect(reason);
         });
@@ -334,18 +483,39 @@ class PulseSyncManager extends EventEmitter {
             }
         });
 
+        this.socket.on('AUTH_STATUS', async (payload) => {
+            if (this.legacyPremiumTimer) {
+                clearTimeout(this.legacyPremiumTimer);
+                this.legacyPremiumTimer = null;
+            }
+            this.clientAuthorizationKnown = true;
+            this.clientAuthorized = payload?.authorized === true;
+            this.legacyClientAuthorized = false;
+            if (!this.clientAuthorized) {
+                this.clearUserValidationToken();
+                await this.updatePremiumState(false, 'CLIENT_AUTH_STATUS');
+            }
+            await this.syncAuthorizationState('CLIENT_AUTH_STATUS');
+        });
+
+        this.socket.on('USER_VALIDATION_TOKEN', async (payload) => {
+            await this.validateUserValidationToken(payload);
+        });
+
         this.socket.on('PING', () => {
             if (!this.readySent && this.socket.connected && !this.isReloading) {
                 this.sendReadyEvent();
             }
         });
 
-        this.socket.on('REFRESH_EXTENSIONS', (data) => {
+        this.socket.on('REFRESH_EXTENSIONS', async (data) => {
+            await this.acceptLegacyAuthorization('REFRESH_EXTENSIONS');
             const incoming = Array.isArray(data?.addons) ? data.addons : [];
-            this.handleExtensions(incoming);
+            await this.handleExtensions(incoming);
         });
 
-        this.socket.on('WEBHOST_ADDONS_SNAPSHOT', (payload) => {
+        this.socket.on('WEBHOST_ADDONS_SNAPSHOT', async (payload) => {
+            await this.acceptLegacyAuthorization('WEBHOST_ADDONS_SNAPSHOT');
             const snapshot = {
                 hash: typeof payload?.hash === 'string' ? payload.hash : '',
                 addons: Array.isArray(payload?.addons) ? payload.addons : [],
@@ -353,21 +523,29 @@ class PulseSyncManager extends EventEmitter {
             if (snapshot.hash && snapshot.hash === this._webHostAddonsSnapshot.hash) return;
 
             this._webHostAddonsSnapshot = this.cloneAddonSettingsValue(snapshot);
-            this.window.webContents.send(Events.PULSESYNC_WEBHOST_ADDONS, this._webHostAddonsSnapshot);
-        });
-
-        this.socket.on('UPDATE_CSS', (data) => {
-            this.handleCss({ css: data.theme?.css || '', name: data.theme?.name || 'theme' });
-        });
-
-        this.socket.on('ALLOWED_URLS', (payload) => {
-            if (Array.isArray(payload?.allowedUrls) && payload.allowedUrls.length) {
-                this.logger.warn(`Allowed: ${payload.allowedUrls}`);
-                addAllowedUrls(payload.allowedUrls);
+            if (this.isAuthorized) {
+                this.window.webContents.send(Events.PULSESYNC_WEBHOST_ADDONS, this._webHostAddonsSnapshot);
             }
         });
 
+        this.socket.on('UPDATE_CSS', async (data) => {
+            await this.acceptLegacyAuthorization('UPDATE_CSS');
+            if (!this.isAuthorized) return;
+            await this.handleCss({ css: data.theme?.css || '', name: data.theme?.name || 'theme' });
+        });
+
+        this.socket.on('ALLOWED_URLS', async (payload) => {
+            await this.acceptLegacyAuthorization('ALLOWED_URLS');
+            this._allowedUrls = Array.isArray(payload?.allowedUrls)
+                ? payload.allowedUrls.filter((url) => typeof url === 'string' && url.trim())
+                : [];
+            if (!this.isAuthorized) return;
+            this.logger.warn(`Allowed: ${this._allowedUrls}`);
+            setAllowedUrls(this._allowedUrls);
+        });
+
         this.socket.on('THEME', async (data) => {
+            await this.acceptLegacyAuthorization('THEME');
             if (!data?.theme) {
                 this.logger.info('[WARN] THEME payload missing');
                 return;
@@ -376,6 +554,12 @@ class PulseSyncManager extends EventEmitter {
             const incoming = newTheme.name.toLowerCase();
             const prev = this.currentTheme?.name.toLowerCase() || null;
             const themeChanged = prev !== incoming;
+
+            if (!this.isAuthorized) {
+                this.currentTheme = incoming === 'default' ? null : newTheme;
+                this.logger.warn('Authorization required: skipping theme update');
+                return;
+            }
 
             if (incoming === 'default' && prev && prev !== 'default') {
                 this.cssContent = {};
@@ -462,12 +646,17 @@ class PulseSyncManager extends EventEmitter {
     async handleExtensions(addons) {
         this.logger.info(process.argv);
 
+        this.sourceExtensions = Array.isArray(addons) ? addons : [];
+
         if (process.argv.includes('--safe-mode')) {
             this.logger.warn('Safe mode enabled: skipping ddon injection');
             return;
         }
+        if (!this.isAuthorized) {
+            this.logger.warn('Authorization required: skipping addon injection');
+            return;
+        }
 
-        this.sourceExtensions = Array.isArray(addons) ? addons : [];
         const merged = mergeWithSystem(this.sourceExtensions);
 
         const unique = [];
@@ -600,7 +789,7 @@ class PulseSyncManager extends EventEmitter {
     }
 
     getLegacyAssetsSnapshot() {
-        if (process.argv.includes('--safe-mode')) {
+        if (process.argv.includes('--safe-mode') || !this.isAuthorized) {
             return { revision: this._legacyAssetsRevision, styles: [], scripts: [] };
         }
 
@@ -616,7 +805,7 @@ class PulseSyncManager extends EventEmitter {
     }
 
     getWebHostAddonsSnapshot() {
-        if (process.argv.includes('--safe-mode')) return { hash: '', addons: [] };
+        if (process.argv.includes('--safe-mode') || !this.isAuthorized) return { hash: '', addons: [] };
         return this.cloneAddonSettingsValue(this._webHostAddonsSnapshot);
     }
 
@@ -662,6 +851,10 @@ class PulseSyncManager extends EventEmitter {
 
         if (process.argv.includes('--safe-mode')) {
             this.logger.warn('Safe mode enabled: skipping theme injection');
+            return;
+        }
+        if (!this.isAuthorized) {
+            this.logger.warn('Authorization required: skipping theme injection');
             return;
         }
 
@@ -748,6 +941,10 @@ class PulseSyncManager extends EventEmitter {
     }
 
     handlePulseSyncApi(payload) {
+        if (!this.isAuthorized) {
+            this.logger.warn('Authorization required: ignoring PulseSync API call');
+            return;
+        }
         if (!payload?.action) {
             this.logger.warn('handlePulseSyncApi: missing action');
             return;
@@ -761,8 +958,15 @@ class PulseSyncManager extends EventEmitter {
                 addonStateHashVersion: 1,
                 addonStateHash: hashAddonState(this.currentTheme, this.sourceExtensions),
                 webHostAddonProtocolVersion: 1,
+                userValidationProtocolVersion: 1,
             });
-            this.socket.emit('IS_PREMIUM_USER');
+            if (this.legacyPremiumTimer) clearTimeout(this.legacyPremiumTimer);
+            this.legacyPremiumTimer = setTimeout(() => {
+                this.legacyPremiumTimer = null;
+                if (this.clientAuthorizationKnown || !this.socket?.connected) return;
+                void this.validatePremium();
+                this.socket.emit('IS_PREMIUM_USER');
+            }, 1000);
             this.readySent = true;
         } else {
             this.logger.warn('sendReadyEvent: socket not connected, skipping');
