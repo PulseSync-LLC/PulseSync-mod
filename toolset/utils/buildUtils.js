@@ -361,11 +361,18 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         environment[process.platform === 'win32' ? 'Path' : 'PATH'] =
             `${path.join(info.moduleDir, 'node_modules', '.bin')}${path.delimiter}${inheritedPath}`;
 
-        execSync('yarn', {
-            cwd: info.moduleDir,
-            stdio: 'pipe',
-            env: environment,
-        });
+        const installDirectories = [
+            ...(moduleConfig.sourceProjectDirNames ?? []).map((projectDirName) => path.join(REPO_ROOT, 'webModules', projectDirName)),
+            info.moduleDir,
+        ];
+
+        for (const installDirectory of installDirectories) {
+            execSync('yarn', {
+                cwd: installDirectory,
+                stdio: 'pipe',
+                env: environment,
+            });
+        }
 
         execSync('yarn run build', {
             cwd: info.moduleDir,
