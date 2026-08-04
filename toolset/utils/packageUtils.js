@@ -1,9 +1,30 @@
 function createPackageUtils(runtime) {
-    const { fsp, path } = runtime.deps;
-    const { SRC_PATH } = runtime.constants;
+    const { fs, fsp, path } = runtime.deps;
+    const { REPO_ROOT, SRC_PATH } = runtime.constants;
 
     function getModVersion() {
-        return require(path.join(SRC_PATH, '/main/config.js')).config.modification.version;
+        const packageJson = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
+        return packageJson.version;
+    }
+
+    async function syncModVersion(src = SRC_PATH) {
+        const packageJsonPath = path.join(src, '/package.json');
+        const packageJson = JSON.parse(await fsp.readFile(packageJsonPath, 'utf8'));
+        const oldVersion = packageJson.modification?.version;
+        const newVersion = getModVersion();
+
+        if (!packageJson.modification) {
+            throw new Error(`В ${packageJsonPath} отсутствует секция modification`);
+        }
+
+        if (oldVersion === newVersion) {
+            return { changed: false, oldVersion, newVersion };
+        }
+
+        packageJson.modification.version = newVersion;
+        await fsp.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 4), 'utf8');
+
+        return { changed: true, oldVersion, newVersion };
     }
 
     async function modifyPackage({ src = SRC_PATH, version = undefined, buildInfo = undefined, modVersion = undefined, appConfig = undefined }) {
@@ -24,6 +45,7 @@ function createPackageUtils(runtime) {
     return {
         getModVersion,
         modifyPackage,
+        syncModVersion,
     };
 }
 
