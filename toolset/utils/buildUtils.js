@@ -496,6 +496,11 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
 
         const cleanupPaths = [];
+        const versionSync = await packageUtils.syncModVersion(workPath);
+
+        if (versionSync.changed) {
+            console.log(`Версия мода синхронизирована: ${versionSync.oldVersion ?? 'не задана'} -> ${versionSync.newVersion}`);
+        }
 
         await buildMiniPlayer();
         await buildWebHost();

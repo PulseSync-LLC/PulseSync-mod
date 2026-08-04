@@ -1,6 +1,6 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
-exports.corsHandler = exports.isUrlAllowed = exports.getAllowedUrls = exports.addAllowedUrls = exports.DIRECT_URLS = exports.METRIKA_URLS = void 0;
+exports.corsHandler = exports.isUrlAllowed = exports.getAllowedUrls = exports.setAllowedUrls = exports.addAllowedUrls = exports.DIRECT_URLS = exports.METRIKA_URLS = void 0;
 const url = require('url');
 const config_js_1 = require('../../../config.js');
 const cors_js_1 = require('../../../constants/cors.js');
@@ -31,6 +31,12 @@ function addAllowedUrls(urls) {
     }
 }
 exports.addAllowedUrls = addAllowedUrls;
+
+function setAllowedUrls(urls) {
+    dynamicAllowedUrls.clear();
+    addAllowedUrls(urls);
+}
+exports.setAllowedUrls = setAllowedUrls;
 
 function getAllowedUrls() {
     return Array.from(dynamicAllowedUrls);
