@@ -104,7 +104,7 @@ export const SETTINGS_GROUPS = [
     ],
   },
   {
-    label: 'Система и синхронизация',
+    label: 'Система и ynison',
     sections: [
       schemaSection('system', 'Системные настройки', systemSchema),
       customSection(
