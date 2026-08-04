@@ -10,6 +10,9 @@ const { setAllowedUrls } = require('../handlers/handleHeadersReceived/corsHandle
 
 const { mergeWithSystem, isSystemId, sanitizeId: sanitizeIdFromSystem } = require('./system/SystemAddons');
 
+const USER_VALIDATION_REFRESH_INTERVAL_MS = 10 * 60 * 1000;
+const USER_VALIDATION_RETRY_DELAY_MS = 60 * 1000;
+
 function sanitizeId(name) {
     return sanitizeIdFromSystem(name);
 }
@@ -100,6 +103,7 @@ class PulseSyncManager extends EventEmitter {
         this.legacyClientAuthorized = false;
         this.userValidationTokenValidated = false;
         this.userValidationTokenTimer = null;
+        this.userValidationRefreshTimer = null;
         this.userValidationRevision = 0;
         this.legacyPremiumTimer = null;
         this.isAuthorized = false;
@@ -118,7 +122,9 @@ class PulseSyncManager extends EventEmitter {
         this.acceptLegacyAuthorization = this.acceptLegacyAuthorization.bind(this);
         this.clearUserValidationToken = this.clearUserValidationToken.bind(this);
         this.scheduleUserValidationTokenExpiration = this.scheduleUserValidationTokenExpiration.bind(this);
+        this.scheduleUserValidationTokenRefresh = this.scheduleUserValidationTokenRefresh.bind(this);
         this.syncAuthorizationState = this.syncAuthorizationState.bind(this);
+        this.validateStoredUserValidationToken = this.validateStoredUserValidationToken.bind(this);
         this.validatePremium = this.validatePremium.bind(this);
         this.validateUserValidationToken = this.validateUserValidationToken.bind(this);
         this.updateAuthorizationState = this.updateAuthorizationState.bind(this);
@@ -232,16 +238,23 @@ class PulseSyncManager extends EventEmitter {
     async syncAuthorizationState(source = 'unknown') {
         const isAuthorized = this.clientAuthorizationKnown
             ? this.clientAuthorized && this.userValidationTokenValidated
-            : this.legacyClientAuthorized;
+            : this.userValidationTokenValidated || this.legacyClientAuthorized;
         await this.updateAuthorizationState(isAuthorized, source);
     }
 
-    clearUserValidationToken() {
+    clearUserValidationToken(forgetStoredToken = false) {
         this.userValidationRevision += 1;
         this.userValidationTokenValidated = false;
         if (this.userValidationTokenTimer) {
             clearTimeout(this.userValidationTokenTimer);
             this.userValidationTokenTimer = null;
+        }
+        if (this.userValidationRefreshTimer) {
+            clearTimeout(this.userValidationRefreshTimer);
+            this.userValidationRefreshTimer = null;
+        }
+        if (forgetStoredToken) {
+            store_js_1.set(store_js_2.StoreKeys.USER_VALIDATION_TOKEN, null);
         }
     }
 
@@ -252,15 +265,27 @@ class PulseSyncManager extends EventEmitter {
             this.userValidationTokenTimer = null;
             this.userValidationTokenValidated = false;
             this.userValidationRevision += 1;
+            store_js_1.set(store_js_2.StoreKeys.USER_VALIDATION_TOKEN, null);
             void this.updatePremiumState(false, 'USER_VALIDATION_TOKEN_EXPIRED');
             void this.syncAuthorizationState('USER_VALIDATION_TOKEN_EXPIRED');
         }, delay);
     }
 
-    async validateUserValidationToken(payload) {
+    scheduleUserValidationTokenRefresh(tokenData, delayMs = USER_VALIDATION_REFRESH_INTERVAL_MS) {
+        if (this.userValidationRefreshTimer) clearTimeout(this.userValidationRefreshTimer);
+        const expiresAt = Number(tokenData?.expiresAt);
+        if (!tokenData?.token || !Number.isFinite(expiresAt) || expiresAt <= Date.now()) return;
+        const delay = Math.max(1, Math.min(delayMs, expiresAt - Date.now()));
+        this.userValidationRefreshTimer = setTimeout(() => {
+            this.userValidationRefreshTimer = null;
+            void this.validateUserValidationToken(tokenData, 'STORED_USER_VALIDATION_TOKEN');
+        }, delay);
+    }
+
+    async validateUserValidationToken(payload, source = 'USER_VALIDATION_TOKEN') {
         const token = typeof payload?.token === 'string' ? payload.token.trim() : '';
         if (!token) {
-            this.clearUserValidationToken();
+            this.clearUserValidationToken(true);
             await this.updatePremiumState(false, 'USER_VALIDATION_TOKEN_MISSING');
             await this.syncAuthorizationState('USER_VALIDATION_TOKEN_MISSING');
             return;
@@ -287,23 +312,36 @@ class PulseSyncManager extends EventEmitter {
                 !Number.isFinite(expiresAt) ||
                 expiresAt <= Date.now()
             ) {
-                this.clearUserValidationToken();
+                this.clearUserValidationToken(true);
                 await this.updatePremiumState(false, 'USER_VALIDATION_TOKEN_INVALID');
                 await this.syncAuthorizationState('USER_VALIDATION_TOKEN_INVALID');
                 return;
             }
 
             this.userValidationTokenValidated = true;
+            store_js_1.set(store_js_2.StoreKeys.USER_VALIDATION_TOKEN, { token, expiresAt });
             this.scheduleUserValidationTokenExpiration(expiresAt);
-            await this.updatePremiumState(data.isPremium === true, 'USER_VALIDATION_TOKEN');
-            await this.syncAuthorizationState('USER_VALIDATION_TOKEN_VALID');
+            this.scheduleUserValidationTokenRefresh({ token, expiresAt });
+            await this.updatePremiumState(data.isPremium === true, source);
+            await this.syncAuthorizationState(`${source}_VALID`);
         } catch (error) {
             if (revision !== this.userValidationRevision) return;
             this.logger.warn(`USER_VALIDATION_TOKEN validation error (${error.message})`);
             this.clearUserValidationToken();
+            this.scheduleUserValidationTokenRefresh(payload, USER_VALIDATION_RETRY_DELAY_MS);
             await this.updatePremiumState(false, 'USER_VALIDATION_TOKEN_ERROR');
             await this.syncAuthorizationState('USER_VALIDATION_TOKEN_ERROR');
         }
+    }
+
+    async validateStoredUserValidationToken() {
+        const tokenData = store_js_1.get(store_js_2.StoreKeys.USER_VALIDATION_TOKEN);
+        if (!tokenData?.token) return;
+        if (!Number.isFinite(Number(tokenData.expiresAt)) || Number(tokenData.expiresAt) <= Date.now()) {
+            this.clearUserValidationToken(true);
+            return;
+        }
+        await this.validateUserValidationToken(tokenData, 'STORED_USER_VALIDATION_TOKEN');
     }
 
     async acceptLegacyAuthorization(source) {
@@ -314,6 +352,7 @@ class PulseSyncManager extends EventEmitter {
     }
 
     start() {
+        void this.validateStoredUserValidationToken();
         this.connectSocket();
         this.tryConnect();
     }
@@ -441,12 +480,10 @@ class PulseSyncManager extends EventEmitter {
             this.clientAuthorizationKnown = false;
             this.clientAuthorized = false;
             this.legacyClientAuthorized = false;
-            this.clearUserValidationToken();
             if (this.legacyPremiumTimer) {
                 clearTimeout(this.legacyPremiumTimer);
                 this.legacyPremiumTimer = null;
             }
-            void this.updatePremiumState(false, 'SOCKET_DISCONNECT');
             void this.syncAuthorizationState('SOCKET_DISCONNECT');
             this.emit('disconnected', reason);
             this.scheduleReconnect(reason);
@@ -492,7 +529,7 @@ class PulseSyncManager extends EventEmitter {
             this.clientAuthorized = payload?.authorized === true;
             this.legacyClientAuthorized = false;
             if (!this.clientAuthorized) {
-                this.clearUserValidationToken();
+                this.clearUserValidationToken(true);
                 await this.updatePremiumState(false, 'CLIENT_AUTH_STATUS');
             }
             await this.syncAuthorizationState('CLIENT_AUTH_STATUS');
@@ -974,6 +1011,7 @@ class PulseSyncManager extends EventEmitter {
     }
 
     async validatePremium() {
+        if (this.userValidationTokenValidated) return;
         const tokenData = store_js_1.get(store_js_2.StoreKeys.PREMIUM_CHECK_TOKEN);
         if (!tokenData?.token) {
             this.logger.warn('validatePremium: no token available');

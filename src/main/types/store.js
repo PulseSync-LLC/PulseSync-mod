@@ -24,4 +24,5 @@ var StoreKeys;
     StoreKeys['GLOBAL_SHORTCUTS'] = 'enableGlobalShortcuts';
     StoreKeys['AUTO_UPDATES'] = 'autoUpdates';
     StoreKeys['PREMIUM_CHECK_TOKEN'] = 'premiumCheckToken';
+    StoreKeys['USER_VALIDATION_TOKEN'] = 'userValidationToken';
 })(StoreKeys || (exports.StoreKeys = StoreKeys = {}));
