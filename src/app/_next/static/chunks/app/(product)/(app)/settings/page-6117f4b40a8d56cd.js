@@ -1554,6 +1554,9 @@
                     ),
                     openPulseSyncSettings = (0, d.useCallback)(() => {
                         window.dispatchEvent(new CustomEvent('pulsesync-open-settings'));
+                    }, []),
+                    openOtherPulseSyncSettings = (0, d.useCallback)(() => {
+                        window.openConfigFile?.();
                     }, []);
                 (0, d.useEffect)(() => {
                     let showRestartNotification = () => {
@@ -1716,6 +1719,14 @@
                         (0, o.jsx)('li', {
                             className: eb().item,
                             children: (0, o.jsx)(ec, { title: 'Настройки мода', onClick: openPulseSyncSettings }),
+                        }),
+                        (0, o.jsx)('li', {
+                            className: eb().item,
+                            children: (0, o.jsx)(ec, {
+                                title: 'Прочие настройки мода',
+                                description: 'Открывает config.json Яндекс Музыки',
+                                onClick: openOtherPulseSyncSettings,
+                            }),
                         }),
                         U &&
                             (0, o.jsxs)('li', {
