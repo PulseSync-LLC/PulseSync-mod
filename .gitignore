@@ -162,6 +162,7 @@ temp
 
 !webModules/pulsesyncWebHost/yarn.lock
 !webModules/pulsesyncRuntime/yarn.lock
+!webModules/pulsesyncSettings/yarn.lock
 
 !src/node_modules/
 !src/node_modules/**/*

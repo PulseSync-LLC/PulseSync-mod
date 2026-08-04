@@ -80,6 +80,13 @@ function createBuildTask({
                             sourceTask.output = ctx.state.build.workPath;
                         },
                     },
+                    {
+                        title: 'Синхронизация версии мода',
+                        task: async (ctx, versionTask) => {
+                            const result = await ctx.core.packageUtils.syncModVersion(ctx.state.build.workPath);
+                            versionTask.output = result.changed ? `${result.oldVersion ?? 'не задана'} -> ${result.newVersion}` : result.newVersion;
+                        },
+                    },
                     createWebModulesTask(),
                     createNativeModulesTask({ noNativeModules }),
                     {
