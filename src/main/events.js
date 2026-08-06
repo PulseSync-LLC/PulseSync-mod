@@ -68,6 +68,7 @@ const yandexStationLogger = new Logger_js_1.Logger('YandexStation');
 const { throttle } = require('./lib/utils.js');
 const crypto = require('crypto');
 const fs = require('fs');
+const nodePath = require('node:path');
 const iconv = require('iconv-lite');
 
 let mainWindow = undefined;
@@ -86,6 +87,27 @@ const WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY = 'modSettings.nativeAudioOutput.wa
 const WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY = 'modSettings.nativeAudioOutput.enableWasapiExclusiveOutput';
 const WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY = 'modSettings.nativeAudioOutput.forceWasapiExclusiveFullVolume';
 const YASP_CHUNK_TAP_ENABLED_SETTING_KEY = 'modSettings.nativeAudioOutput.enableYaspChunkTap';
+const ISOLATED_ADDON_WORLD_ID_START = 10000;
+const isolatedAddonWorldIds = new Map();
+let nextIsolatedAddonWorldId = ISOLATED_ADDON_WORLD_ID_START;
+let isolatedAddonRuntimeSource = null;
+
+const getIsolatedAddonWorldId = (webContents, addonId) => {
+    const key = `${webContents.id}:${addonId}`;
+    let worldId = isolatedAddonWorldIds.get(key);
+    if (!worldId) {
+        worldId = nextIsolatedAddonWorldId++;
+        isolatedAddonWorldIds.set(key, worldId);
+    }
+    return worldId;
+};
+
+const getIsolatedAddonRuntimeSource = () => {
+    if (isolatedAddonRuntimeSource) return isolatedAddonRuntimeSource;
+    const runtimePath = nodePath.join(electron_1.app.getAppPath(), 'app', 'pulsesync-web', 'isolated.js');
+    isolatedAddonRuntimeSource = fs.readFileSync(runtimePath, 'utf8');
+    return isolatedAddonRuntimeSource;
+};
 
 const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 
@@ -1388,21 +1410,60 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_SETTINGS_SNAPSHOT, () => 
 electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_LEGACY_ASSETS_SNAPSHOT, () => {
     try {
         const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
-        return mgr?.getLegacyAssetsSnapshot?.() ?? { revision: 0, styles: [], scripts: [] };
+        return mgr?.getLegacyAssetsSnapshot?.() ?? { runtime: 'legacy', revision: 0, styles: [], scripts: [] };
     } catch (err) {
         eventsLogger.error('PULSESYNC_LEGACY_ASSETS_SNAPSHOT handler failed:', err);
-        return { revision: 0, styles: [], scripts: [] };
+        return { runtime: 'legacy', revision: 0, styles: [], scripts: [] };
     }
 });
 
 electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_WEBHOST_ADDONS_SNAPSHOT, () => {
     try {
         const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
-        return mgr?.getWebHostAddonsSnapshot?.() ?? { hash: '', addons: [] };
+        return mgr?.getWebHostAddonsSnapshot?.() ?? { runtime: 'isolated', hash: '', addons: [] };
     } catch (err) {
         eventsLogger.error('PULSESYNC_WEBHOST_ADDONS_SNAPSHOT handler failed:', err);
-        return { hash: '', addons: [] };
+        return { runtime: 'isolated', hash: '', addons: [] };
     }
+});
+
+electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, async (event, payload) => {
+    if (!mainWindow || event.sender !== mainWindow.webContents) throw new Error('PulseSync isolated addon rejected an unknown sender');
+
+    const addon = payload?.addon;
+    const addonId = typeof addon?.id === 'string' ? addon.id.trim() : '';
+    const code = typeof payload?.code === 'string' ? payload.code : '';
+    const channelToken = typeof payload?.channelToken === 'string' ? payload.channelToken : '';
+    const apiMethods = Array.isArray(payload?.apiMethods) ? payload.apiMethods.filter((method) => typeof method === 'string').slice(0, 64) : [];
+
+    if (!addonId || addonId.length > 160 || addonId.includes('\0')) throw new Error('PulseSync isolated addon id is invalid');
+    if (!code.trim() || code.length > 10_000_000) throw new Error(`PulseSync isolated addon ${addonId} has invalid code`);
+    if (!/^[a-f0-9-]{36}$/i.test(channelToken)) throw new Error(`PulseSync isolated addon ${addonId} has an invalid channel token`);
+
+    const worldId = getIsolatedAddonWorldId(event.sender, addonId);
+    const init = {
+        addon: {
+            id: addonId,
+            name: typeof addon.name === 'string' ? addon.name : addonId,
+            directoryName: typeof addon.directoryName === 'string' ? addon.directoryName : addonId,
+            ...(typeof addon.version === 'string' ? { version: addon.version } : {}),
+        },
+        apiMethods,
+        initialSettings: payload?.initialSettings ?? {},
+        channelToken,
+    };
+    const initCode = `Object.defineProperty(globalThis, '__PULSESYNC_ISOLATED_INIT__', { value: ${JSON.stringify(init)}, configurable: true });\nnull;`;
+    const runtimeCode = `${getIsolatedAddonRuntimeSource()}\n;null;`;
+    const addonCode = `${code}\n;null;`;
+    const sourceBase = `pulsesync-isolated://${encodeURIComponent(addonId)}`;
+
+    await event.sender.executeJavaScriptInIsolatedWorld(worldId, [
+        { code: initCode, url: `${sourceBase}/bootstrap.js` },
+        { code: runtimeCode, url: `${sourceBase}/runtime.js` },
+        { code: addonCode, url: `${sourceBase}/addon.js` },
+    ]);
+
+    return { runtime: 'isolated', worldId };
 });
 
 exports.setZoomLevel = setZoomLevel;
