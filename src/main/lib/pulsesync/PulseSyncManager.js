@@ -112,7 +112,7 @@ class PulseSyncManager extends EventEmitter {
         this._allowedUrls = [];
         this._legacyAssetsRevision = 0;
         this._legacyAssetsFingerprint = null;
-        this._webHostAddonsSnapshot = { hash: '', addons: [] };
+        this._webHostAddonsSnapshot = { runtime: 'isolated', hash: '', addons: [] };
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
         this.updateDownloadInfo = this.updateDownloadInfo.bind(this);
@@ -228,7 +228,7 @@ class PulseSyncManager extends EventEmitter {
         setAllowedUrls([]);
         this.publishLegacyAssets();
         if (!this.webContents.isDestroyed()) {
-            this.webContents.send(Events.PULSESYNC_WEBHOST_ADDONS, { hash: '', addons: [] });
+            this.webContents.send(Events.PULSESYNC_WEBHOST_ADDONS, { runtime: 'isolated', hash: '', addons: [] });
         }
         if (hadActiveScripts && this.appLoaded && !this.isReloading && !this.webContents.isDestroyed()) {
             this.safeReload('authorization lost');
@@ -553,7 +553,12 @@ class PulseSyncManager extends EventEmitter {
 
         this.socket.on('WEBHOST_ADDONS_SNAPSHOT', async (payload) => {
             await this.acceptLegacyAuthorization('WEBHOST_ADDONS_SNAPSHOT');
+            if (payload?.runtime !== undefined && payload.runtime !== 'isolated' && payload.runtime !== 'sandbox') {
+                this.logger.warn(`WEBHOST_ADDONS_SNAPSHOT: rejected runtime ${String(payload.runtime)}`);
+                return;
+            }
             const snapshot = {
+                runtime: 'isolated',
                 hash: typeof payload?.hash === 'string' ? payload.hash : '',
                 addons: Array.isArray(payload?.addons) ? payload.addons : [],
             };
@@ -827,10 +832,11 @@ class PulseSyncManager extends EventEmitter {
 
     getLegacyAssetsSnapshot() {
         if (process.argv.includes('--safe-mode') || !this.isAuthorized) {
-            return { revision: this._legacyAssetsRevision, styles: [], scripts: [] };
+            return { runtime: 'legacy', revision: this._legacyAssetsRevision, styles: [], scripts: [] };
         }
 
         return {
+            runtime: 'legacy',
             revision: this._legacyAssetsRevision,
             styles: Object.entries(this.cssContent).map(([id, css]) => ({ id, css })),
             scripts: Object.entries(this.scriptContent).map(([id, code]) => ({
@@ -842,7 +848,7 @@ class PulseSyncManager extends EventEmitter {
     }
 
     getWebHostAddonsSnapshot() {
-        if (process.argv.includes('--safe-mode') || !this.isAuthorized) return { hash: '', addons: [] };
+        if (process.argv.includes('--safe-mode') || !this.isAuthorized) return { runtime: 'isolated', hash: '', addons: [] };
         return this.cloneAddonSettingsValue(this._webHostAddonsSnapshot);
     }
 

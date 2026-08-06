@@ -4,8 +4,8 @@
     "version": "0.1.0",
     "type": "module",
     "scripts": {
-        "build": "tsc -b && vite build",
-        "lint": "oxlint src vite.config.ts"
+        "build": "tsc -b && vite build && vite build --config vite.isolated.config.ts",
+        "lint": "oxlint src vite.config.ts vite.isolated.config.ts"
     },
     "dependencies": {
         "react": "19.2.4",

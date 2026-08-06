@@ -1,5 +1,6 @@
 import type { LegacyAssetsSnapshot, LegacyScriptAsset, LegacyStyleAsset } from './contracts'
 import { wrapLegacyThemeScript } from './themeScript'
+import { LEGACY_ADDON_RUNTIME } from '../runtimeModes'
 
 let lastAppliedRevision = -1
 
@@ -65,7 +66,9 @@ function applyScript(asset: LegacyScriptAsset) {
 function normalizeSnapshot(snapshot: unknown): LegacyAssetsSnapshot | null {
     if (!snapshot || typeof snapshot !== 'object') return null
     const value = snapshot as Partial<LegacyAssetsSnapshot>
+    if (value.runtime !== undefined && value.runtime !== LEGACY_ADDON_RUNTIME) return null
     return {
+        runtime: LEGACY_ADDON_RUNTIME,
         revision: Number.isFinite(Number(value.revision)) ? Number(value.revision) : 0,
         styles: Array.isArray(value.styles) ? value.styles : [],
         scripts: Array.isArray(value.scripts) ? value.scripts : [],

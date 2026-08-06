@@ -1,8 +1,11 @@
 import type { WebHostAddonAsset, WebHostAddonsSnapshot } from './contracts'
+import { IsolatedAddonRuntime } from './isolated/IsolatedAddonRuntime'
+import { ISOLATED_ADDON_RUNTIME } from '../runtimeModes'
 
 type AppliedAddon = {
     code: string
     css: string
+    runtime: IsolatedAddonRuntime
 }
 
 const appliedAddons = new Map<string, AppliedAddon>()
@@ -12,47 +15,21 @@ function normalizeId(value: unknown) {
     return String(value ?? '').trim()
 }
 
-function getStyleElementId(addonId: string) {
-    return `pulsesync-web-addon-style-${addonId}`
-}
-
-function getScriptElementId(addonId: string) {
-    return `pulsesync-web-addon-script-${addonId}`
-}
-
 function removeAddon(addonId: string) {
     window.__PULSESYNC_WEB_HOST__?.unregisterAddon(addonId)
-    document.getElementById(getStyleElementId(addonId))?.remove()
-    document.getElementById(getScriptElementId(addonId))?.remove()
+    appliedAddons.get(addonId)?.runtime.destroy()
     appliedAddons.delete(addonId)
 }
 
-function applyStyle(addonId: string, css: string) {
-    const styleId = getStyleElementId(addonId)
-    const existingStyle = document.getElementById(styleId)
-
-    if (!css.trim()) {
-        existingStyle?.remove()
-        return
-    }
-
-    const style = existingStyle instanceof HTMLStyleElement ? existingStyle : document.createElement('style')
-    style.id = styleId
-    style.dataset.pulsesyncAddon = addonId
-    style.textContent = css
-    if (!style.isConnected) (document.head || document.documentElement).appendChild(style)
-}
-
-function applyScript(addonId: string, code: string) {
-    window.__PULSESYNC_WEB_HOST__?.unregisterAddon(addonId)
-    document.getElementById(getScriptElementId(addonId))?.remove()
-    if (!code.trim()) return
-
-    const script = document.createElement('script')
-    script.id = getScriptElementId(addonId)
-    script.dataset.pulsesyncAddon = addonId
-    script.textContent = `${code}\n//# sourceURL=pulsesync-addon://${encodeURIComponent(addonId)}/script.js`
-    ;(document.head || document.documentElement).appendChild(script)
+function applyAddon(addon: WebHostAddonAsset) {
+    removeAddon(addon.id)
+    const runtime = new IsolatedAddonRuntime(addon)
+    appliedAddons.set(addon.id, { code: addon.code, css: addon.css, runtime })
+    void runtime.start().catch(error => {
+        if (appliedAddons.get(addon.id)?.runtime !== runtime) return
+        console.error(`[PulseSync WebHost] Failed to start isolated addon ${addon.id}:`, error)
+        removeAddon(addon.id)
+    })
 }
 
 function normalizeAddon(value: unknown): WebHostAddonAsset | null {
@@ -74,8 +51,10 @@ function normalizeAddon(value: unknown): WebHostAddonAsset | null {
 function normalizeSnapshot(value: unknown): WebHostAddonsSnapshot | null {
     if (!value || typeof value !== 'object') return null
     const snapshot = value as Partial<WebHostAddonsSnapshot>
+    if (snapshot.runtime !== undefined && snapshot.runtime !== ISOLATED_ADDON_RUNTIME) return null
 
     return {
+        runtime: ISOLATED_ADDON_RUNTIME,
         hash: normalizeId(snapshot.hash),
         addons: Array.isArray(snapshot.addons)
             ? snapshot.addons.map(normalizeAddon).filter((addon): addon is WebHostAddonAsset => addon !== null)
@@ -95,12 +74,10 @@ export function applyWebHostAddonsSnapshot(value: unknown) {
 
     for (const addon of nextAddons.values()) {
         const previous = appliedAddons.get(addon.id)
-        if (previous?.css !== addon.css) applyStyle(addon.id, addon.css)
-        if (previous?.code !== addon.code) applyScript(addon.id, addon.code)
-        appliedAddons.set(addon.id, { code: addon.code, css: addon.css })
+        if (!previous || previous.css !== addon.css || previous.code !== addon.code) applyAddon(addon)
     }
 
     lastAppliedHash = snapshot.hash
-    console.info('[PulseSync WebHost] addon snapshot applied', { addons: nextAddons.size })
+    console.info('[PulseSync WebHost] isolated addon snapshot applied', { addons: nextAddons.size })
     return true
 }
