@@ -13,6 +13,7 @@ export type RegisteredAddon = {
 const addons = new Map<string, RegisteredAddon>()
 const slots = new Map<string, Element>()
 const subscribers = new Set<() => void>()
+const SLOT_MARKER_ATTRIBUTE = 'data-pulsesync-slots'
 
 const standardSlotSelectors: Readonly<Record<string, readonly string[]>> = {
     playerBarButton: [
@@ -115,14 +116,27 @@ export function registerSlot(slotName: string, element: Element) {
     if (!normalizedName) throw new Error('PulseSync slot name is required')
     if (!(element instanceof Element)) throw new Error(`PulseSync slot ${normalizedName} requires a DOM element`)
 
+    const previousElement = slots.get(normalizedName)
+    if (previousElement && previousElement !== element) updateSlotMarker(previousElement, normalizedName, false)
     slots.set(normalizedName, element)
+    updateSlotMarker(element, normalizedName, true)
     emitRegistryChange()
 
     return () => {
         if (slots.get(normalizedName) !== element) return
         slots.delete(normalizedName)
+        updateSlotMarker(element, normalizedName, false)
         emitRegistryChange()
     }
+}
+
+function updateSlotMarker(element: Element, slotName: string, present: boolean) {
+    const slotNames = new Set((element.getAttribute(SLOT_MARKER_ATTRIBUTE) ?? '').split(/\s+/).filter(Boolean))
+    if (present) slotNames.add(slotName)
+    else slotNames.delete(slotName)
+
+    if (slotNames.size) element.setAttribute(SLOT_MARKER_ATTRIBUTE, [...slotNames].join(' '))
+    else element.removeAttribute(SLOT_MARKER_ATTRIBUTE)
 }
 
 export function resolveSlot(slotName: string) {
@@ -132,6 +146,9 @@ export function resolveSlot(slotName: string) {
 
     const declaredSlot = document.querySelector(`[data-pulsesync-slot="${CSS.escape(slotName)}"]`)
     if (declaredSlot) return declaredSlot
+
+    const registeredMarker = document.querySelector(`[${SLOT_MARKER_ATTRIBUTE}~="${CSS.escape(slotName)}"]`)
+    if (registeredMarker) return registeredMarker
 
     for (const selector of standardSlotSelectors[slotName] ?? []) {
         const target = document.querySelector(selector)
