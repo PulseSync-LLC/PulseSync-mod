@@ -164,8 +164,7 @@ temp
 !webModules/pulsesyncRuntime/yarn.lock
 !webModules/pulsesyncSettings/yarn.lock
 
-!src/node_modules/
-!src/node_modules/**/*
+/src/node_modules
 
 native/**/node_modules
 /src/main/native_modules/
