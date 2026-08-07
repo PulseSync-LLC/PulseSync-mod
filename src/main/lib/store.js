@@ -255,6 +255,8 @@ const init = () => {
         },
         lrclib: {
             useText: true,
+            preferLrclib: false,
+            useWordSync: true,
             lookupMode: 'search',
             useTitleOnlyFallback: true,
             useTrackVersion: true,

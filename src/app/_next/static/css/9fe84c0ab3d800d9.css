@@ -2367,6 +2367,15 @@
     letter-spacing: var(--ym-letter-spacing-m);
     line-height: 1.25;
 }
+.PulseSyncWordLyrics_word {
+    transition: opacity 0.12s linear;
+    will-change: opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+    .PulseSyncWordLyrics_word {
+        transition: none;
+    }
+}
 .SyncLyricsScroller_line__Vh6WN {
     align-items: center;
     display: flex;

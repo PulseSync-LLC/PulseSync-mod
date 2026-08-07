@@ -3,6 +3,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 const electron_1 = require('electron');
 const fs = require('fs');
 const path = require('path');
+const yaml = require('js-yaml');
 const config_js_1 = require('../config.js');
 const getInitialTheme_js_1 = require('./getInitialTheme.js');
 const deviceInfo_js_1 = require('./deviceInfo.js');
@@ -13,6 +14,37 @@ const deviceInfo = (0, deviceInfo_js_1.getDeviceInfo)();
 const store_js_1 = require('./store.js');
 const events_js_1 = require('../types/events.js');
 const events = require('node:events');
+const MAX_LYRICSFILE_BYTES = 1024 * 1024;
+const MAX_LYRICSFILE_DEPTH = 32;
+const MAX_LYRICSFILE_NODES = 20_000;
+const sanitizeLyricsfileValue = (value, state, depth = 0) => {
+    if (depth > MAX_LYRICSFILE_DEPTH || ++state.nodes > MAX_LYRICSFILE_NODES) throw new Error('Lyricsfile is too complex');
+    if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
+    if (typeof value === 'number') {
+        if (!Number.isSafeInteger(value)) throw new TypeError('Lyricsfile numbers must be safe integers');
+        return value;
+    }
+    if (!value || typeof value !== 'object') throw new TypeError('Lyricsfile contains an unsupported value');
+    if (state.seen.has(value)) throw new Error('Lyricsfile aliases are not supported');
+    state.seen.add(value);
+    if (Array.isArray(value)) return value.map((item) => sanitizeLyricsfileValue(item, state, depth + 1));
+    const result = {};
+    for (const [key, item] of Object.entries(value)) {
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') throw new Error('Lyricsfile contains an unsafe key');
+        result[key] = sanitizeLyricsfileValue(item, state, depth + 1);
+    }
+    return result;
+};
+const parseLyricsfile = (source) => {
+    try {
+        if (typeof source !== 'string' || Buffer.byteLength(source, 'utf8') > MAX_LYRICSFILE_BYTES) return null;
+        const document = yaml.load(source, { schema: yaml.JSON_SCHEMA });
+        if (!document || typeof document !== 'object' || Array.isArray(document)) return null;
+        return sanitizeLyricsfileValue(document, { nodes: 0, seen: new WeakSet() });
+    } catch (_error) {
+        return null;
+    }
+};
 const PULSESYNC_TITLEBAR_STYLE_ID = 'pulsesync-non-premium-titlebar-guard';
 const PULSESYNC_TITLEBAR_TEXT_CLASS = 'TitleBar_pulseText__FhYv';
 const PULSESYNC_TITLEBAR_TEXT_SELECTOR =
@@ -426,6 +458,9 @@ electron_1.contextBridge.exposeInMainWorld('DEFAULT_MUSIC_EXPERIMENT_OVERRIDES',
 electron_1.contextBridge.exposeInMainWorld('ENABLE_ENDLESS_MUSIC', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.enableEndlessMusic);
 electron_1.contextBridge.exposeInMainWorld('ALLOWED_URLS', {
     get: () => electron_1.ipcRenderer.invoke('GET_CORS'),
+});
+electron_1.contextBridge.exposeInMainWorld('lyricsfileParser', {
+    parse: parseLyricsfile,
 });
 electron_1.contextBridge.exposeInMainWorld('desktopEvents', {
     send(name, ...args) {
