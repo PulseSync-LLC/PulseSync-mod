@@ -8379,8 +8379,24 @@
             var sa = a(52930),
                 si = a.n(sa);
             let sl = (e) => {
-                let { className: t, text: a } = e;
-                return (0, y.jsx)('span', { className: (0, eL.$)(si().root, t), children: a });
+                let { className: t, text: a, words: i, progressPosition: l, isActive: n } = e;
+                if (!n || !Array.isArray(i) || !i.length) return (0, y.jsx)('span', { className: (0, eL.$)(si().root, t), children: a });
+                return (0, y.jsx)('span', {
+                    className: (0, eL.$)(si().root, t),
+                    children: i.map((e, t) => {
+                        const a = typeof e.toSec === 'number' && e.toSec > e.fromSec ? e.toSec : e.fromSec;
+                        const i = l < e.fromSec ? 0 : a <= e.fromSec || l >= a ? 1 : (l - e.fromSec) / (a - e.fromSec);
+                        return (0, y.jsx)(
+                            'span',
+                            {
+                                className: 'PulseSyncWordLyrics_word',
+                                style: { opacity: 0.35 + 0.65 * Math.max(0, Math.min(1, i)) },
+                                children: e.text,
+                            },
+                            ''.concat(e.fromSec, ':').concat(e.toSec, ':').concat(t),
+                        );
+                    }),
+                });
             };
             var sn = a(20418),
                 ss = a.n(sn);
@@ -8405,6 +8421,16 @@
                         [l, s, n, r],
                     ),
                     u = c.getActiveLineIndex(l);
+                const [pulseSyncWordSyncEnabled, setPulseSyncWordSyncEnabled] = (0, A.useState)(
+                    () => window.nativeSettings?.get('modSettings.lrclib.useWordSync') !== !1,
+                );
+                (0, A.useEffect)(
+                    () =>
+                        window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key, value) => {
+                            if (key === 'modSettings.lrclib.useWordSync') setPulseSyncWordSyncEnabled(value !== !1);
+                        }),
+                    [],
+                );
                 return (
                     ((e) => {
                         let t = (0, A.useRef)(0),
@@ -8442,7 +8468,12 @@
                                           [ss().line_active]: t === u && !n,
                                       }),
                                       'data-test-id': q.e8.player.SYNC_LYRICS_LINE,
-                                      children: (0, y.jsx)(sl, { text: e.text }),
+                                      children: (0, y.jsx)(sl, {
+                                          text: e.text,
+                                          words: e.words,
+                                          progressPosition: l,
+                                          isActive: pulseSyncWordSyncEnabled && t === u && !n,
+                                      }),
                                   },
                                   e.key,
                               );

@@ -166,6 +166,8 @@ export const discordRpcSchema = defineSettingsSection({
 
 const LRCLIB_PREFIX = 'modSettings.lrclib.'
 const USE_TEXT_KEY = `${LRCLIB_PREFIX}useText`
+const PREFER_LRCLIB_KEY = `${LRCLIB_PREFIX}preferLrclib`
+const USE_WORD_SYNC_KEY = `${LRCLIB_PREFIX}useWordSync`
 const LOOKUP_MODE_KEY = `${LRCLIB_PREFIX}lookupMode`
 const USE_TITLE_ONLY_FALLBACK_KEY = `${LRCLIB_PREFIX}useTitleOnlyFallback`
 const USE_TRACK_VERSION_KEY = `${LRCLIB_PREFIX}useTrackVersion`
@@ -183,6 +185,28 @@ export const lrclibSchema = defineSettingsSection({
         context.getBoolean(USE_TEXT_KEY)
           ? 'Если в Яндекс Музыке текста нет, то ищем в LRCLib'
           : 'Берём текст только из Яндекс Музыки',
+    },
+    {
+      type: 'toggle',
+      key: PREFER_LRCLIB_KEY,
+      defaultValue: false,
+      title: 'Предпочитать LRCLib',
+      description: (context) =>
+        context.getBoolean(PREFER_LRCLIB_KEY)
+          ? 'Сначала ищем текст в LRCLib, нативный используем только если ничего не найдено'
+          : 'Сначала используем нативный текст Яндекс Музыки',
+      disabledWhen: (context) => !context.getBoolean(USE_TEXT_KEY),
+    },
+    {
+      type: 'toggle',
+      key: USE_WORD_SYNC_KEY,
+      defaultValue: true,
+      title: 'Использовать пословную синхронизацию',
+      description: (context) =>
+        context.getBoolean(USE_WORD_SYNC_KEY)
+          ? 'Используем пословную лирику LRCLIB, когда она доступна'
+          : 'Всегда используем построчную лирику LRCLIB',
+      disabledWhen: (context) => !context.getBoolean(USE_TEXT_KEY),
     },
     {
       type: 'select',

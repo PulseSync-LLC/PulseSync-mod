@@ -9714,6 +9714,7 @@
                     const syncedByTrackId = new Map();
                     const syncedMissesByTrackId = new Map();
                     const syncedInFlightByTrackId = new Map();
+                    const lyricsfileLinesByItem = new WeakMap();
                     const requestControllers = new Set();
                     let requestChain = Promise.resolve();
                     let lastRequestAt = 0;
@@ -9747,6 +9748,7 @@
                     };
 
                     const isEnabled = () => getSetting('useText', true);
+                    const prefersLyrics = () => isEnabled() && getSetting('preferLrclib', false);
                     const getLookupMode = () => (getStringSetting('lookupMode', 'get') === 'search' ? 'search' : 'get');
                     const normalizeSignaturePart = (value) =>
                         typeof value === 'string'
@@ -9875,6 +9877,72 @@
                         }
                     };
 
+                    const parseLyricsfile = (lyricsfile) => {
+                        try {
+                            const document = window.lyricsfileParser?.parse?.(lyricsfile);
+                            if (document?.version !== '1.0' || !Array.isArray(document.lines)) return [];
+                            const lines = document.lines
+                                .map((line) => {
+                                    if (
+                                        !line ||
+                                        typeof line.text !== 'string' ||
+                                        !Number.isSafeInteger(line.start_ms) ||
+                                        line.start_ms < 0 ||
+                                        (line.end_ms != null &&
+                                            (!Number.isSafeInteger(line.end_ms) || line.end_ms < line.start_ms))
+                                    )
+                                        return null;
+                                    let words = [];
+                                    if (Array.isArray(line.words) && line.words.length) {
+                                        words = line.words.map((word) => {
+                                            if (
+                                                !word ||
+                                                typeof word.text !== 'string' ||
+                                                !Number.isSafeInteger(word.start_ms) ||
+                                                word.start_ms < 0 ||
+                                                (word.end_ms != null &&
+                                                    (!Number.isSafeInteger(word.end_ms) || word.end_ms < word.start_ms))
+                                            )
+                                                return null;
+                                            return {
+                                                text: word.text,
+                                                fromSec: word.start_ms / 1000,
+                                                toSec: word.end_ms == null ? undefined : word.end_ms / 1000,
+                                            };
+                                        });
+                                        if (words.some((word) => !word) || words.map((word) => word.text).join('') !== line.text) words = [];
+                                    }
+                                    return {
+                                        text: line.text,
+                                        fromSec: line.start_ms / 1000,
+                                        toSec: line.end_ms == null ? undefined : line.end_ms / 1000,
+                                        words,
+                                    };
+                                })
+                                .filter(Boolean)
+                                .sort((left, right) => left.fromSec - right.fromSec);
+                            return lines.map((line, lineIndex) => {
+                                const nextLine = lines[lineIndex + 1];
+                                const toSec = line.toSec ?? nextLine?.fromSec;
+                                const words = line.words.map((word, wordIndex) => ({
+                                    ...word,
+                                    toSec: word.toSec ?? line.words[wordIndex + 1]?.fromSec ?? toSec,
+                                }));
+                                return { ...line, toSec, words };
+                            });
+                        } catch (_error) {
+                            return [];
+                        }
+                    };
+
+                    const getLyricsfileLines = (item) => {
+                        if (!item || typeof item !== 'object') return [];
+                        if (lyricsfileLinesByItem.has(item)) return lyricsfileLinesByItem.get(item);
+                        const lines = parseLyricsfile(item.lyricsfile);
+                        lyricsfileLinesByItem.set(item, lines);
+                        return lines;
+                    };
+
                     const normalizePlaceholderText = (value) => (typeof value === 'string' ? value.trim().replace(/\s+/g, '') : '');
                     const isPlaceholderText = (value) => {
                         const normalized = normalizePlaceholderText(value);
@@ -9902,6 +9970,13 @@
                             text: line.text,
                             fromSec: typeof line.fromSec === 'number' ? Math.max(0, line.fromSec + shift) : line.fromSec,
                             toSec: typeof line.toSec === 'number' ? Math.max(0, line.toSec + shift) : line.toSec,
+                            words: Array.isArray(line.words)
+                                ? line.words.map((word) => ({
+                                      text: word.text,
+                                      fromSec: typeof word.fromSec === 'number' ? Math.max(0, word.fromSec + shift) : word.fromSec,
+                                      toSec: typeof word.toSec === 'number' ? Math.max(0, word.toSec + shift) : word.toSec,
+                                  }))
+                                : undefined,
                         }));
                     };
 
@@ -10130,30 +10205,45 @@
                         }
                         if (!results) return null;
 
-                        results = results.filter((item) => item && !item.instrumental && item.syncedLyrics);
-                        if (!results.length) return null;
+                        let candidates = results
+                            .filter((item) => item && !item.instrumental)
+                            .map((item) => {
+                                const lyricsfileLines = getLyricsfileLines(item);
+                                return {
+                                    item,
+                                    lyricsfileLines,
+                                    hasWordSync: lyricsfileLines.some((line) => line.words.length),
+                                };
+                            })
+                            .filter((candidate) => candidate.item.syncedLyrics || candidate.lyricsfileLines.length);
+                        candidates
+                            .filter((candidate) => candidate.hasWordSync)
+                            .forEach((candidate) => debug('word synced search result', candidate.item));
+                        if (!candidates.length) return null;
                         if (lookup.artistName) {
                             const wantedArtist = normalizeSignaturePart(lookup.artistName);
-                            const closeMatches = results.filter((item) => {
-                                const artist = normalizeSignaturePart(item.artistName);
+                            const closeMatches = candidates.filter((candidate) => {
+                                const artist = normalizeSignaturePart(candidate.item.artistName);
                                 return artist === wantedArtist || artist.includes(wantedArtist);
                             });
                             if (!closeMatches.length && !allowTitleOnlyFallback) return null;
-                            if (closeMatches.length) results = closeMatches;
+                            if (closeMatches.length) candidates = closeMatches;
                         }
                         if (lookup.duration && lookup.duration > 0) {
-                            const withDuration = results.filter((item) => typeof item.duration === 'number');
+                            const withDuration = candidates.filter((candidate) => typeof candidate.item.duration === 'number');
                             if (withDuration.length) {
-                                const closeMatches = withDuration.filter((item) => Math.abs(item.duration - lookup.duration) <= 10);
-                                if (closeMatches.length) results = closeMatches;
+                                const closeMatches = withDuration.filter((candidate) => Math.abs(candidate.item.duration - lookup.duration) <= 10);
+                                if (closeMatches.length) candidates = closeMatches;
                                 else if (!lookup.isUserGenerated) return null;
                             }
                         }
-                        let selected = results[0];
+                        const wordSyncedCandidates = candidates.filter((candidate) => candidate.hasWordSync);
+                        const selectionPool = wordSyncedCandidates.length ? wordSyncedCandidates : candidates;
+                        let selected = selectionPool[0]?.item;
                         if (lookup.duration && lookup.duration > 0) {
                             selected =
-                                results
-                                    .map((item) => ({ item, delta: Math.abs(item.duration - lookup.duration) }))
+                                selectionPool
+                                    .map((candidate) => ({ item: candidate.item, delta: Math.abs(candidate.item.duration - lookup.duration) }))
                                     .sort((left, right) => left.delta - right.delta)[0]?.item || selected;
                         }
                         return selected;
@@ -10273,7 +10363,12 @@
                         const promise = (async () => {
                             const item = await getLyricsBySignature(lookup, 'sync');
                             if (requestGeneration !== queueGeneration) return null;
-                            const lines = normalizeSyncedTiming(parseLrc(item?.syncedLyrics), lookup.duration);
+                            const lyricsfileLines = getLyricsfileLines(item);
+                            const hasWordSync = lyricsfileLines.some((line) => line.words.length);
+                            let lines = hasWordSync ? lyricsfileLines : parseLrc(item?.syncedLyrics);
+                            if (!lines.length && lyricsfileLines.length)
+                                lines = lyricsfileLines.map((line) => ({ text: line.text, fromSec: line.fromSec, toSec: line.toSec }));
+                            lines = normalizeSyncedTiming(lines, lookup.duration);
                             const result = lines.length && !isPlaceholderSynced(lines) ? providerResult(item, lookup, { lines }) : null;
                             if (trackId) {
                                 if (result) {
@@ -10336,7 +10431,7 @@
                             logSyncPrefetch('skip', { prefetchId, reason: 'track-id' });
                             return null;
                         }
-                        if (track.hasSyncLyrics || track.isSyncLyricsAvailable || track.isSyncLyricsAvailableWithOfflineFeature) {
+                        if (!prefersLyrics() && (track.hasSyncLyrics || track.isSyncLyricsAvailable || track.isSyncLyricsAvailableWithOfflineFeature)) {
                             logSyncPrefetch('skip', { prefetchId, reason: 'native-sync-available', trackId });
                             return null;
                         }
@@ -10426,6 +10521,7 @@
                     return {
                         provider: PROVIDER,
                         isEnabled,
+                        prefersLyrics,
                         buildTrackLookup,
                         parseLrc,
                         isPlaceholderText,
@@ -10442,11 +10538,19 @@
                         reset,
                     };
                 })(),
-                nz = f.gK.model('SyncLyricsLine', { text: f.gK.string, fromSec: f.gK.number, toSec: f.gK.maybe(f.gK.number) }).views((e) => ({
-                    get key() {
-                        return ''.concat(e.fromSec, ':').concat(e.toSec);
-                    },
-                })),
+                nWord = f.gK.model('SyncLyricsWord', { text: f.gK.string, fromSec: f.gK.number, toSec: f.gK.maybe(f.gK.number) }),
+                nz = f.gK
+                    .model('SyncLyricsLine', {
+                        text: f.gK.string,
+                        fromSec: f.gK.number,
+                        toSec: f.gK.maybe(f.gK.number),
+                        words: f.gK.optional(f.gK.array(nWord), []),
+                    })
+                    .views((e) => ({
+                        get key() {
+                            return ''.concat(e.fromSec, ':').concat(e.toSec);
+                        },
+                    })),
                 nQ = f.gK
                     .compose(
                         f.gK.model('SyncLyrics', {
@@ -10461,7 +10565,7 @@
                         }),
                         V.X,
                     )
-                    .volatile(() => ({ requestToken: 0 }))
+                    .volatile(() => ({ requestToken: 0, lrclibPreferenceCleanup: null }))
                     .views((e) => ({
                         get startSec() {
                             var t;
@@ -10503,6 +10607,22 @@
                         const isStaleRequest = (requestToken, trackId) =>
                             requestToken !== e.requestToken || String(e.currentTrackId) !== String(trackId);
                         let t = {
+                            afterCreate() {
+                                e.lrclibPreferenceCleanup = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                                    if (key !== 'modSettings.lrclib.preferLrclib') return;
+                                    e.reloadForLrclibPreference();
+                                });
+                            },
+                            beforeDestroy() {
+                                e.lrclibPreferenceCleanup?.();
+                                e.lrclibPreferenceCleanup = null;
+                            },
+                            reloadForLrclibPreference() {
+                                if (e.currentTrackId == null) return;
+                                const trackId = e.currentTrackId;
+                                e.loadingState = ev.G.IDLE;
+                                void e.getData(trackId);
+                            },
                             setVisible() {
                                 e.isVisible = !0;
                             },
@@ -10526,17 +10646,34 @@
                                 if (!a || (e.isLoading && String(e.currentTrackId) === String(a))) return;
                                 const requestToken = ++e.requestToken;
                                 let nativeError = new Error('Sync lyrics are not available');
-                                try {
-                                    e.loadingState = ev.G.PENDING;
-                                    e.currentTrackId = a;
-                                    e.hasLyricsViewed = !1;
-                                    e.lines = null;
-                                    e.major = null;
-                                    e.externalLyricId = null;
+                                e.loadingState = ev.G.PENDING;
+                                e.currentTrackId = a;
+                                e.hasLyricsViewed = !1;
+                                e.lines = null;
+                                e.major = null;
+                                e.externalLyricId = null;
+                                e.lyricId = null;
+                                e.writers = (0, f.wg)([]);
+                                const { sonataState } = (0, R.M)(e);
+                                const trackMeta = sonataState?.entityMeta;
+                                const applyLrclibLyrics = (result, reason) => {
+                                    if (!result?.lines?.length) return !1;
+                                    e.major = nH(result.provider);
+                                    e.externalLyricId = result.externalLyricId;
                                     e.lyricId = null;
-                                    e.writers = (0, f.wg)([]);
-                                    const { sonataState } = (0, R.M)(e);
-                                    const trackMeta = sonataState?.entityMeta;
+                                    e.writers = (0, f.wg)(result.writers || []);
+                                    e.hasLyricsViewed = !0;
+                                    e.lines = (0, f.wg)(result.lines);
+                                    pulseSyncLrclib.logSyncPrefetch('trigger-from-getData', { reason, trackId: a });
+                                    e.loadingState = ev.G.RESOLVE;
+                                    return !0;
+                                };
+                                if (pulseSyncLrclib.prefersLyrics()) {
+                                    const preferred = yield pulseSyncLrclib.resolveSynced(trackMeta);
+                                    if (isStaleRequest(requestToken, a)) return;
+                                    if (applyLrclibLyrics(preferred, 'resolved-preferred-lrclib')) return;
+                                }
+                                try {
                                     if (trackMeta?.hasSyncLyrics) {
                                         const nativeLyrics = yield i.getLyrics(n$(a, u.LRC));
                                         if (isStaleRequest(requestToken, a)) return;
@@ -10557,23 +10694,11 @@
                                 } catch (error) {
                                     nativeError = error;
                                 }
-                                const { sonataState } = (0, R.M)(e);
-                                const trackMeta = sonataState?.entityMeta;
                                 if (pulseSyncLrclib.hasSyncedNoResult(a))
                                     pulseSyncLrclib.logSyncPrefetch('fallback-skip', { reason: 'no-result-cached', trackId: String(a) });
                                 const fallback = yield pulseSyncLrclib.resolveSynced(trackMeta);
                                 if (isStaleRequest(requestToken, a)) return;
-                                if (fallback?.lines?.length) {
-                                    e.major = nH(fallback.provider);
-                                    e.externalLyricId = fallback.externalLyricId;
-                                    e.lyricId = null;
-                                    e.writers = (0, f.wg)(fallback.writers || []);
-                                    e.hasLyricsViewed = !0;
-                                    e.lines = (0, f.wg)(fallback.lines);
-                                    pulseSyncLrclib.logSyncPrefetch('trigger-from-getData', { reason: 'resolved-lrclib', trackId: a });
-                                    e.loadingState = ev.G.RESOLVE;
-                                    return;
-                                }
+                                if (applyLrclibLyrics(fallback, 'resolved-lrclib')) return;
                                 e.loadingState = ev.G.REJECT;
                                 pulseSyncLrclib.logSyncPrefetch('trigger-from-getData', { reason: 'reject-no-fallback', trackId: a });
                                 l.error(nativeError);
@@ -12466,7 +12591,7 @@
                         }),
                         V.X,
                     )
-                    .volatile(() => ({ requestToken: 0 }))
+                    .volatile(() => ({ requestToken: 0, lrclibPreferenceCleanup: null }))
                     .views((e) => ({
                         get writersNames() {
                             return e.writers.join(', ');
@@ -12493,6 +12618,22 @@
                             );
                         const isLyricsUnavailableError = (error) => error?.message === 'Lyrics are not available';
                         let t = {
+                            afterCreate() {
+                                e.lrclibPreferenceCleanup = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                                    if (key !== 'modSettings.lrclib.preferLrclib') return;
+                                    e.reloadForLrclibPreference();
+                                });
+                            },
+                            beforeDestroy() {
+                                e.lrclibPreferenceCleanup?.();
+                                e.lrclibPreferenceCleanup = null;
+                            },
+                            reloadForLrclibPreference() {
+                                if (e.currentTrackId == null) return;
+                                const trackId = e.currentTrackId;
+                                e.loadingState = ev.G.IDLE;
+                                void e.getLyrics(trackId);
+                            },
                             setTrack(t) {
                                 const nextTrackId = t?.id;
                                 const changed =
@@ -12522,18 +12663,34 @@
                                 const requestToken = ++e.requestToken;
                                 let nativeLyricsFound = !1;
                                 let nativeError = new Error('Lyrics are not available');
-                                try {
-                                    e.loadingState = ev.G.PENDING;
-                                    e.currentTrackId = a;
-                                    e.lyrics = null;
-                                    e.major = null;
-                                    e.externalLyricId = null;
+                                e.loadingState = ev.G.PENDING;
+                                e.currentTrackId = a;
+                                e.lyrics = null;
+                                e.major = null;
+                                e.externalLyricId = null;
+                                e.lyricId = null;
+                                e.hasError = !1;
+                                e.writers = (0, f.wg)([]);
+                                const { sonataState } = (0, R.M)(e);
+                                const entityTrack = sonataState?.entityMeta;
+                                const track = isTrackForId(e.track, a, e.trackId) ? e.track : isTrackForId(entityTrack, a) ? entityTrack : null;
+                                const applyLrclibLyrics = (result) => {
+                                    if (!result?.lyrics) return !1;
+                                    e.major = nH(result.provider);
+                                    e.externalLyricId = result.externalLyricId;
                                     e.lyricId = null;
+                                    e.writers = (0, f.wg)(result.writers || []);
+                                    e.lyrics = result.lyrics;
                                     e.hasError = !1;
-                                    e.writers = (0, f.wg)([]);
-                                    const { sonataState } = (0, R.M)(e);
-                                    const entityTrack = sonataState?.entityMeta;
-                                    const track = isTrackForId(e.track, a, e.trackId) ? e.track : isTrackForId(entityTrack, a) ? entityTrack : null;
+                                    e.loadingState = ev.G.RESOLVE;
+                                    return !0;
+                                };
+                                if (pulseSyncLrclib.prefersLyrics()) {
+                                    const preferred = yield pulseSyncLrclib.resolvePlain(track);
+                                    if (isStaleRequest(requestToken, a)) return;
+                                    if (applyLrclibLyrics(preferred)) return;
+                                }
+                                try {
                                     if (track?.isLyricsAvailable === !1 || track?.hasLyrics === !1) throw nativeError;
                                     const nativeLyrics = yield i.getLyrics(n$(a, u.TEXT));
                                     if (isStaleRequest(requestToken, a)) return;
@@ -12560,21 +12717,9 @@
                                     l.error(nativeError);
                                     return;
                                 }
-                                const { sonataState } = (0, R.M)(e);
-                                const entityTrack = sonataState?.entityMeta;
-                                const track = isTrackForId(e.track, a, e.trackId) ? e.track : isTrackForId(entityTrack, a) ? entityTrack : null;
                                 const fallback = yield pulseSyncLrclib.resolvePlain(track);
                                 if (isStaleRequest(requestToken, a)) return;
-                                if (fallback?.lyrics) {
-                                    e.major = nH(fallback.provider);
-                                    e.externalLyricId = fallback.externalLyricId;
-                                    e.lyricId = null;
-                                    e.writers = (0, f.wg)(fallback.writers || []);
-                                    e.lyrics = fallback.lyrics;
-                                    e.hasError = !1;
-                                    e.loadingState = ev.G.RESOLVE;
-                                    return;
-                                }
+                                if (applyLrclibLyrics(fallback)) return;
                                 e.loadingState = ev.G.REJECT;
                                 e.hasError = !isLyricsUnavailableError(nativeError);
                                 e.modal.isOpened && e.modal.close();
