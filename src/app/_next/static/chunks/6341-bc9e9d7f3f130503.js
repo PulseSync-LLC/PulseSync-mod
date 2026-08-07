@@ -737,6 +737,26 @@
             var eh = i(71926),
                 eC = i(67221),
                 eE = i.n(eC);
+            let downloadTrackToFile = (0, r.PA)((t) => {
+                let { track: e } = t,
+                    i = (0, n.useMemo)(() => {
+                        let t = (e?.artists ?? [])
+                            .map((t) => t.name)
+                            .filter(Boolean)
+                            .join(', ');
+                        return [t, e?.title].filter(Boolean).join(' — ');
+                    }, [e]),
+                    r = (0, n.useCallback)(() => {
+                        e?.id && window.desktopEvents?.send('DOWNLOAD_TRACK', e.id, i);
+                    }, [e, i]);
+                return (0, a.jsx)(p.Dr, {
+                    onClick: r,
+                    icon: (0, a.jsx)(v.I, { variant: 'download', size: 'xxs' }),
+                    className: eT().root,
+                    'data-test-id': u.S7.CONTEXT_MENU_DOWNLOAD_BUTTON,
+                    children: 'Скачать в файл',
+                });
+            });
             let eO = (0, r.PA)((e) => {
                     let { track: t } = e,
                         {
@@ -1062,6 +1082,7 @@
                                           children: (0, a.jsx)(c.A, { id: 'non-music.navigate-to-clip' }),
                                       }),
                                   tT && (0, a.jsx)(ek, { track: ej }),
+                                  tT && (0, a.jsx)(downloadTrackToFile, { track: ej }),
                                   tQ &&
                                       (0, a.jsx)(p.Dr, {
                                           onClick: ti,
@@ -1746,7 +1767,7 @@
                 return (0, s.c)(async (e) => {
                     var t;
                     let { playlist: i, track: a, withSuccessNotification: s = !0, withFailNotification: o = !0, withPageRefresh: u = !0 } = e,
-                        p = "undefined" != typeof window && window.nativeSettings?.get("modSettings.playlist.addTracksToEndFromContextMenu") === !0,
+                        p = 'undefined' != typeof window && window.nativeSettings?.get('modSettings.playlist.addTracksToEndFromContextMenu') === !0,
                         v = null != i.tracksCount ? i.tracksCount : null != i.trackCount ? i.trackCount : null == i ? void 0 : i.meta?.tracksCount,
                         h = null != v ? v : null == i ? void 0 : i.meta?.trackCount,
                         g = p ? Number(null != h ? h : Array.isArray(i.tracks) ? i.tracks.length : 0) || 0 : 0,
