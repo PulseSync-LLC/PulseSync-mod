@@ -191,6 +191,9 @@ class PulseSyncManager extends EventEmitter {
         if (!changed) return;
 
         this.logger.info(`Premium state changed: ${this.isPremium} (${source})`);
+        if (!this.webContents.isDestroyed()) {
+            this.webContents.send(Events.PULSESYNC_PREMIUM_STATUS_CHANGED, this.isPremium);
+        }
 
         if (!this.isPremium) return;
         if (!this.appLoaded) return;
