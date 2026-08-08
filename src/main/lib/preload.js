@@ -45,12 +45,8 @@ const parseLyricsfile = (source) => {
         return null;
     }
 };
-const PULSESYNC_TITLEBAR_STYLE_ID = 'pulsesync-non-premium-titlebar-guard';
 const PULSESYNC_TITLEBAR_TEXT_CLASS = 'TitleBar_pulseText__FhYv';
-const PULSESYNC_TITLEBAR_TEXT_SELECTOR =
-    '[class*="TitleBar_root"] > span[class*="TitleBar_pulseText"], [class*="TitleBar_root"] > .TitleBar_pulseText__FhYv, [class*="TitleBar_root"] > [class*="TitleBar_pulseText"]';
-const PULSESYNC_FOREIGN_TITLEBAR_SELECTOR =
-    '[class*="TitleBar_root"] > [id*="custom-titlebar"], [class*="TitleBar_root"] > [class*="custom-titlebar"], [class*="TitleBar_root"] > [data-titlebar-replacement]';
+const PULSESYNC_TITLEBAR_GUARD_ATTRIBUTE = 'data-pulsesync-titlebar-branding-guard';
 let cachedTitlebarVisibilitySettings = null;
 const getIsPremiumUserSync = () => {
     try {
@@ -238,9 +234,27 @@ const shouldHidePulseSyncVersionInTitleBar = () => {
     }
 };
 const cleanupNonPremiumTitlebarBranding = () => {
-    window.document.getElementById(PULSESYNC_TITLEBAR_STYLE_ID)?.remove();
-    for (const element of window.document.querySelectorAll('[data-pulsesync-titlebar-branding-owned="true"]')) {
-        element.remove();
+    window.document.documentElement.removeAttribute(PULSESYNC_TITLEBAR_GUARD_ATTRIBUTE);
+    for (const element of window.document.querySelectorAll('[data-pulsesync-titlebar-branding="true"]')) {
+        if (element.getAttribute('data-pulsesync-titlebar-branding-owned') === 'true') {
+            element.remove();
+            continue;
+        }
+
+        element.removeAttribute('data-pulsesync-titlebar-branding');
+        const guardedStyles = {
+            display: 'inline',
+            visibility: 'visible',
+            opacity: '1',
+            width: 'auto',
+            height: 'auto',
+            overflow: 'visible',
+        };
+        for (const [property, value] of Object.entries(guardedStyles)) {
+            if (element.style.getPropertyValue(property) === value && element.style.getPropertyPriority(property) === 'important') {
+                element.style.removeProperty(property);
+            }
+        }
     }
 };
 const ensureNonPremiumTitlebarBranding = () => {
@@ -250,46 +264,12 @@ const ensureNonPremiumTitlebarBranding = () => {
         return;
     }
 
+    window.document.documentElement.setAttribute(PULSESYNC_TITLEBAR_GUARD_ATTRIBUTE, 'true');
+
     const titleBar = window.document.querySelector('[class*="TitleBar_root"]');
     if (!titleBar) return;
 
     const brandingText = `PulseSync ${config_js_1.config.modification.version}`;
-    const head = window.document.head || window.document.documentElement;
-    if (head) {
-        let styleElement = window.document.getElementById(PULSESYNC_TITLEBAR_STYLE_ID);
-        const guardCss = `
-            ${PULSESYNC_TITLEBAR_TEXT_SELECTOR} {
-                display: inline !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                width: auto !important;
-                height: auto !important;
-                max-width: none !important;
-                min-width: 0 !important;
-                overflow: visible !important;
-                pointer-events: none !important;
-                position: relative !important;
-            }
-
-            ${PULSESYNC_FOREIGN_TITLEBAR_SELECTOR} {
-                display: none !important;
-                visibility: hidden !important;
-                opacity: 0 !important;
-                width: 0 !important;
-                height: 0 !important;
-                overflow: hidden !important;
-            }
-        `;
-
-        if (!styleElement) {
-            styleElement = window.document.createElement('style');
-            styleElement.id = PULSESYNC_TITLEBAR_STYLE_ID;
-            head.appendChild(styleElement);
-        }
-        if (styleElement.textContent !== guardCss) {
-            styleElement.textContent = guardCss;
-        }
-    }
 
     let pulseText = titleBar.querySelector('span[class*="TitleBar_pulseText"], .TitleBar_pulseText__FhYv, [class*="TitleBar_pulseText"]');
     if (!pulseText) {
@@ -327,14 +307,12 @@ const ensureNonPremiumTitlebarBranding = () => {
     }
 };
 const installNonPremiumTitlebarBrandingGuard = () => {
-    const titlebarVisibilitySettings = getTitlebarVisibilitySettings();
-    if (titlebarVisibilitySettings.shouldHidePulseSyncVersion) return;
-    if (titlebarVisibilitySettings.isPremium) return;
-
     let scheduled = false;
     let applyingBranding = false;
     let titlebarObserver = null;
     let titlebarObserverTarget = null;
+    let brandingObserver = null;
+    let brandingObserverTarget = null;
     const runGuard = () => {
         scheduled = false;
         if (applyingBranding) {
@@ -362,20 +340,39 @@ const installNonPremiumTitlebarBrandingGuard = () => {
         if (!window.MutationObserver) return;
 
         const titleBar = window.document.querySelector('[class*="TitleBar_root"]');
-        if (!titleBar || titlebarObserverTarget === titleBar) {
-            return;
+        if (!titleBar) return;
+
+        if (titlebarObserverTarget !== titleBar) {
+            titlebarObserver?.disconnect();
+            titlebarObserverTarget = titleBar;
+            titlebarObserver = new MutationObserver(() => {
+                if (applyingBranding) {
+                    return;
+                }
+                scheduleGuard();
+            });
+            titlebarObserver.observe(titleBar, {
+                childList: true,
+            });
         }
 
-        titlebarObserver?.disconnect();
-        titlebarObserverTarget = titleBar;
-        titlebarObserver = new MutationObserver(() => {
+        const pulseText = titleBar.querySelector('[data-pulsesync-titlebar-branding="true"]');
+        if (!pulseText || brandingObserverTarget === pulseText) return;
+
+        brandingObserver?.disconnect();
+        brandingObserverTarget = pulseText;
+        brandingObserver = new MutationObserver(() => {
             if (applyingBranding) {
                 return;
             }
             scheduleGuard();
         });
-        titlebarObserver.observe(titleBar, {
+        brandingObserver.observe(pulseText, {
+            attributes: true,
+            attributeFilter: ['style', 'class', 'data-pulsesync-titlebar-branding'],
             childList: true,
+            characterData: true,
+            subtree: true,
         });
     };
 
@@ -386,6 +383,10 @@ const installNonPremiumTitlebarBrandingGuard = () => {
         if (typeof key === 'string' && key.startsWith('modSettings')) {
             scheduleGuard();
         }
+    });
+    electron_1.ipcRenderer.on(events_js_1.Events.PULSESYNC_PREMIUM_STATUS_CHANGED, () => {
+        resetTitlebarVisibilitySettings();
+        scheduleGuard();
     });
 
     if (!window.MutationObserver) return;
