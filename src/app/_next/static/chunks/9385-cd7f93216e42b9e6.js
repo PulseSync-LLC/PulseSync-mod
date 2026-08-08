@@ -10220,6 +10220,7 @@
                             .filter((candidate) => candidate.hasWordSync)
                             .forEach((candidate) => debug('word synced search result', candidate.item));
                         if (!candidates.length) return null;
+                        const wordSyncEnabled = getSetting('useWordSync', true);
                         if (lookup.artistName) {
                             const wantedArtist = normalizeSignaturePart(lookup.artistName);
                             const closeMatches = candidates.filter((candidate) => {
@@ -10232,13 +10233,16 @@
                         if (lookup.duration && lookup.duration > 0) {
                             const withDuration = candidates.filter((candidate) => typeof candidate.item.duration === 'number');
                             if (withDuration.length) {
-                                const closeMatches = withDuration.filter((candidate) => Math.abs(candidate.item.duration - lookup.duration) <= 10);
+                                const closeMatches = withDuration.filter((candidate) => {
+                                    const tolerance = wordSyncEnabled && candidate.hasWordSync ? 10 : 2;
+                                    return Math.abs(candidate.item.duration - lookup.duration) <= tolerance;
+                                });
                                 if (closeMatches.length) candidates = closeMatches;
                                 else if (!lookup.isUserGenerated) return null;
                             }
                         }
                         const wordSyncedCandidates = candidates.filter((candidate) => candidate.hasWordSync);
-                        const selectionPool = wordSyncedCandidates.length ? wordSyncedCandidates : candidates;
+                        const selectionPool = wordSyncEnabled && wordSyncedCandidates.length ? wordSyncedCandidates : candidates;
                         let selected = selectionPool[0]?.item;
                         if (lookup.duration && lookup.duration > 0) {
                             selected =
