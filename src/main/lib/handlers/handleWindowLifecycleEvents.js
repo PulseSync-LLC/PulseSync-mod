@@ -155,6 +155,23 @@ const handleWindowLifecycleEvents = (window) => {
                     }
                 }
             `);
+        webContents.insertCSS(
+            `
+                html[data-pulsesync-titlebar-branding-guard="true"] [data-pulsesync-titlebar-branding="true"] {
+                    display: inline !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    width: auto !important;
+                    height: auto !important;
+                    max-width: none !important;
+                    min-width: 0 !important;
+                    overflow: visible !important;
+                    pointer-events: none !important;
+                    position: relative !important;
+                }
+            `,
+            { cssOrigin: 'user' },
+        );
     });
 };
 exports.handleWindowLifecycleEvents = handleWindowLifecycleEvents;
