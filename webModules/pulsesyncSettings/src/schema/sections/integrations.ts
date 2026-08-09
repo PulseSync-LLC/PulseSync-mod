@@ -180,7 +180,7 @@ export const lrclibSchema = defineSettingsSection({
       key: USE_TEXT_KEY,
       defaultValue: true,
       title: 'Использовать LRCLib для текста',
-      badge: { label: 'ALPHA' },
+      badge: { label: 'BETA' },
       description: (context) =>
         context.getBoolean(USE_TEXT_KEY)
           ? 'Если в Яндекс Музыке текста нет, то ищем в LRCLib'
