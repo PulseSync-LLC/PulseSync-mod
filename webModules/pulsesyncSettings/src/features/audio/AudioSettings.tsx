@@ -242,10 +242,10 @@ export function AudioSettings({
       id: SURROUND_AUDIO_KEY,
       type: 'toggle',
       props: {
-        title: 'Попробовать включить пространственный звук',
+        title: 'Включить пространственный звук',
         description:
           'Включает поддержку систем 5.1 / 7.1 (Учтите что звук останется в стерео)',
-        badge: { label: 'ALPHA' },
+        badge: { label: 'BETA' },
         checked: surroundAudio.value,
         disabled: surroundAudio.isLoading || !api,
         onChange: (value) => {
