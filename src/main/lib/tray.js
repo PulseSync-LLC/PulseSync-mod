@@ -15,10 +15,12 @@ const config_js_1 = require('../config.js');
 const events_js_1 = require('../events.js');
 const supportChat_js_1 = require('./supportChat.js');
 const store_js_1 = require('./store.js');
+const pulsesyncDevConfig_js_1 = require('./pulsesyncDevConfig.js');
 let tray = null;
+const resourcesPath = pulsesyncDevConfig_js_1.pulseSyncDevConfig.resourcesPath ?? process.resourcesPath;
 const createPngIcon = () => {
     const sizes = [22, 24, 32, 48, 16];
-    const iconsPath = (0, node_path_1.join)(process.resourcesPath, 'assets', 'icons');
+    const iconsPath = (0, node_path_1.join)(resourcesPath, 'assets', 'icons');
     const icon = electron_1.nativeImage.createEmpty();
     for (const size of sizes) {
         const iconPath = (0, node_path_1.join)(iconsPath, `icon_${size}x${size}.png`);
@@ -32,7 +34,7 @@ const createPngIcon = () => {
     return icon;
 };
 const createIcoIcon = () => {
-    const iconPath = (0, node_path_1.join)(process.resourcesPath, 'assets', 'icon.ico');
+    const iconPath = (0, node_path_1.join)(resourcesPath, 'assets', 'icon.ico');
     return electron_1.nativeImage.createFromPath(iconPath);
 };
 const trayIcon = () => {
@@ -136,7 +138,7 @@ const createContextMenu = (window) => {
             role: 'quit',
         },
     ];
-    if (config_js_1.config.app.enableDevTools || store_js_1.getDevMode()) {
+    if (config_js_1.config.app.enableDevTools || store_js_1.getDevMode() || pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled) {
         template.unshift({
             label: 'Debug',
             submenu: [

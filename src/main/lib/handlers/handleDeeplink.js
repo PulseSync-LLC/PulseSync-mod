@@ -6,6 +6,7 @@ const state_js_1 = require('../state.js');
 const Logger_js_1 = require('../../packages/logger/Logger.js');
 const config_js_1 = require('../../config.js');
 const events_js_1 = require('../../events.js');
+const pulsesyncDevConfig_js_1 = require('../pulsesyncDevConfig.js');
 let deeplinkUrl = null;
 const deeplinkLogger = new Logger_js_1.Logger('Deeplink');
 const transformUrlToInternal = (url) => {
@@ -32,7 +33,7 @@ const handleDeeplinkOnApplicationStartup = () => {
     if (lastArgFromProccessArgs && (0, exports.checkIsDeeplink)(lastArgFromProccessArgs)) {
         state_js_1.state.deeplink = lastArgFromProccessArgs;
     }
-    if (!electron_1.app.isDefaultProtocolClient(config_js_1.config.app.deeplinkProtocol)) {
+    if (!pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled && !electron_1.app.isDefaultProtocolClient(config_js_1.config.app.deeplinkProtocol)) {
         electron_1.app.setAsDefaultProtocolClient(config_js_1.config.app.deeplinkProtocol);
     }
     electron_1.app.on('open-url', (event, url) => {

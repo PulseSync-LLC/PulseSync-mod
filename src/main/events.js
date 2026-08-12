@@ -32,6 +32,7 @@ const minimize_js_1 = require('./lib/window/minimize.js');
 const handleDeeplink_js_1 = require('./lib/handlers/handleDeeplink.js');
 const loadReleaseNotes_js_1 = require('./lib/loadReleaseNotes.js');
 const deviceInfo_js_1 = require('./lib/deviceInfo.js');
+const pulsesyncDevConfig_js_1 = require('./lib/pulsesyncDevConfig.js');
 
 const isAccelerator = require('electron-is-accelerator');
 const modUpdater_js_1 = require('./lib/modUpdater.js');
@@ -103,10 +104,11 @@ const getIsolatedAddonWorldId = (webContents, addonId) => {
 };
 
 const getIsolatedAddonRuntimeSource = () => {
-    if (isolatedAddonRuntimeSource) return isolatedAddonRuntimeSource;
+    if (!pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled && isolatedAddonRuntimeSource) return isolatedAddonRuntimeSource;
     const runtimePath = nodePath.join(electron_1.app.getAppPath(), 'app', 'pulsesync-web', 'isolated.js');
-    isolatedAddonRuntimeSource = fs.readFileSync(runtimePath, 'utf8');
-    return isolatedAddonRuntimeSource;
+    const runtimeSource = fs.readFileSync(runtimePath, 'utf8');
+    if (!pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled) isolatedAddonRuntimeSource = runtimeSource;
+    return runtimeSource;
 };
 
 const MiniPlayer = miniPlayer_js_1.getMiniPlayer();

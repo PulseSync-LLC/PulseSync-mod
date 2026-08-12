@@ -25,6 +25,8 @@ const { getFfmpegUpdater } = require('./lib/ffmpegInstaller.js');
 const { getYtDlpInstaller } = require('./lib/ytDlpInstaller.js');
 const { initUserCountMetric } = require('./lib/metrics');
 const { throttle } = require('./lib/utils.js');
+const pulsesyncDevConfig_js_1 = require('./lib/pulsesyncDevConfig.js');
+const pulsesyncDevReload_js_1 = require('./lib/pulsesyncDevReload.js');
 
 const events_js_1 = require('./events.js');
 const customTitleBar_js_1 = require('./lib/customTitleBar.js');
@@ -48,7 +50,7 @@ const logger = new Logger_js_1.Logger('Main');
 logger.log('Application starting...');
 logger.log(process.argv);
 
-if (store_js_1.get('sendModAnonymizedMetrics') ?? true) {
+if (!pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled && (store_js_1.get('sendModAnonymizedMetrics') ?? true)) {
     initUserCountMetric({
         endpointUrl: 'https://ru-node-1.pulsesync.dev/api/v2/metrics',
         apiKey: 'l4lRNGW8mFQDmBBIEd0ZJSeI9ARRcgSaf_p5kkpmCvw',
@@ -154,10 +156,14 @@ const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
     (0, handleBackgroundTasks_js_1.handleBackgroundTasks)(window);
     (0, handleCrash_js_1.handleCrash)();
     await (0, loadURL_js_1.loadURL)(window);
+    (0, pulsesyncDevReload_js_1.setupPulseSyncDevReload)(window);
     if ([platform_js_1.Platform.WINDOWS, platform_js_1.Platform.LINUX].includes(deviceInfo_js_1.devicePlatform)) {
         (0, customTitleBar_js_1.createCustomTitleBar)(window);
     }
-    if (store_js_1.getModSettings()?.appAutoUpdates.enableAppAutoUpdate ?? config_js_1.config.app.enableAutoUpdate) {
+    if (
+        !pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled &&
+        (store_js_1.getModSettings()?.appAutoUpdates.enableAppAutoUpdate ?? config_js_1.config.app.enableAutoUpdate)
+    ) {
         updater.start();
         updater.onUpdate((version) => {
             (0, events_js_1.sendUpdateAvailable)(window, version);
@@ -171,7 +177,11 @@ const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
         };
         (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(throttle(callback, 200));
     });
-    if (store_js_1.getModSettings()?.appAutoUpdates.enableModAutoUpdate && deviceInfo_js_1.devicePlatform === platform_js_1.Platform.WINDOWS) {
+    if (
+        !pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled &&
+        store_js_1.getModSettings()?.appAutoUpdates.enableModAutoUpdate &&
+        deviceInfo_js_1.devicePlatform === platform_js_1.Platform.WINDOWS
+    ) {
         modUpdater.start();
     }
 })();
