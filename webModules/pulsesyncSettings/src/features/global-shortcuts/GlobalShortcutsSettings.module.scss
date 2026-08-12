@@ -26,6 +26,9 @@
   font: inherit;
   font-size: 13px;
   cursor: pointer;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
 
   &:hover {
     background: var(--ym-controls-color-secondary-default-hovered, rgba(255, 255, 255, 0.08));
