@@ -171,3 +171,6 @@ native/**/node_modules
 
 /modernized/**
 overlay-runtime
+
+ffmpeg.exe
+yt-dlp.exe

@@ -5,6 +5,7 @@ const { URL } = require('url');
 const framesHandler_js_1 = require('./framesHandler.js');
 const corsHandler_js_1 = require('./corsHandler.js');
 const experimentOverridesHandler_js_1 = require('./remoteExperimentsOverride.js');
+const pulsesyncDevConfig_js_1 = require('../../pulsesyncDevConfig.js');
 
 const filter = { urls: ['*://*/*'] };
 const apiFilter = { urls: ['https://api.music.yandex.net/*'] };
@@ -16,6 +17,16 @@ const FONTS_PREFIX = 'https://fonts.googleapis.com/';
 
 function isLastfmUrl(url) {
     return LASTFM_PREFIXES.some((prefix) => url.startsWith(prefix));
+}
+
+function isPulseSyncDevServerUrl(value) {
+    if (!pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled) return false;
+    try {
+        const origin = new URL(value).origin;
+        return [pulsesyncDevConfig_js_1.pulseSyncDevConfig.webHostUrl, pulsesyncDevConfig_js_1.pulseSyncDevConfig.miniPlayerUrl].includes(origin);
+    } catch {
+        return false;
+    }
 }
 
 exports.handleHeadersReceived = (window) => {
@@ -42,7 +53,7 @@ exports.handleHeadersReceived = (window) => {
             callback({ cancel: false });
             return;
         }
-        if (url.startsWith(LOCAL_PREFIX) || url.startsWith(FONTS_PREFIX) || isLastfmUrl(url) || corsHandler_js_1.isUrlAllowed(url)) {
+        if (isPulseSyncDevServerUrl(url) || url.startsWith(LOCAL_PREFIX) || url.startsWith(FONTS_PREFIX) || isLastfmUrl(url) || corsHandler_js_1.isUrlAllowed(url)) {
             callback({ cancel: false });
         } else {
             callback({ cancel: true });
@@ -62,7 +73,10 @@ exports.handleHeadersReceived = (window) => {
         const origin = originMap.get(details.id);
         originMap.delete(details.id);
 
-        if (url.startsWith(LOCAL_PREFIX) || url.startsWith(FONTS_PREFIX)) {
+        if (isPulseSyncDevServerUrl(url)) {
+            responseHeaders['access-control-allow-origin'] = [origin || '*'];
+            if (origin) responseHeaders['access-control-allow-credentials'] = ['true'];
+        } else if (url.startsWith(LOCAL_PREFIX) || url.startsWith(FONTS_PREFIX)) {
             responseHeaders['access-control-allow-origin'] = ['*'];
             responseHeaders['access-control-allow-credentials'] = ['true'];
         } else if (origin && corsHandler_js_1.isUrlAllowed(url)) {
