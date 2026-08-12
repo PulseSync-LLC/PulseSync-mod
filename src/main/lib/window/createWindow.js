@@ -12,6 +12,7 @@ const config_js_1 = require('../../config.js');
 const platform_js_1 = require('../../types/platform.js');
 const deviceInfo_js_1 = require('../deviceInfo.js');
 const store_js_1 = require('../store.js');
+const pulsesyncDevConfig_js_1 = require('../pulsesyncDevConfig.js');
 const toggleWindowVisibility_js_1 = require('./toggleWindowVisibility.js');
 
 const minBounds = {
@@ -56,7 +57,7 @@ const createWindow = async () => {
         height: (dimensions?.height ?? 800) * scaleFactor,
         ...(position ? { x: position.x, y: position.y } : { center: true }),
         webPreferences: {
-            devTools: config_js_1.config.app.enableDevTools || store_js_1.getDevMode(),
+            devTools: config_js_1.config.app.enableDevTools || store_js_1.getDevMode() || pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled,
             webSecurity: config_js_1.config.app.enableWebSecurity,
             nodeIntegrationInWorker: true,
             nodeIntegration: false,

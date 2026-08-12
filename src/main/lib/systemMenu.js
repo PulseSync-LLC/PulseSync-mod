@@ -10,6 +10,7 @@ const formatters_js_1 = require('./i18n/formatters.js');
 const toggleWindowVisibility_js_1 = require('./window/toggleWindowVisibility.js');
 const supportChat_js_1 = require('./supportChat.js');
 const store_js_1 = require('./store.js');
+const pulsesyncDevConfig_js_1 = require('./pulsesyncDevConfig.js');
 const events_js_1 = require('../events.js');
 const createContextMenu = (window) => {
     const updater = (0, updater_js_1.getUpdater)();
@@ -128,7 +129,7 @@ const createContextMenu = (window) => {
             role: 'forceReload',
         },
     ];
-    if (config_js_1.config.app.enableDevTools || store_js_1.getDevMode()) {
+    if (config_js_1.config.app.enableDevTools || store_js_1.getDevMode() || pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled) {
         debugSubmenu.push({
             role: 'toggleDevTools',
         });
