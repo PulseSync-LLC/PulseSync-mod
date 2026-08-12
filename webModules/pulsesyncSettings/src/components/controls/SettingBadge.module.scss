@@ -12,7 +12,7 @@
   font-size: var(--ym-font-size-label-xs, 12px);
   font-weight: var(--ym-font-weight-bold, 700);
   line-height: var(--ym-font-line-height-label-s, 18px);
-  transition: opacity var(--ym-duration-transition, 300ms);
+  transition: opacity 0.2s;
 
   &[data-disabled='true'] {
     opacity: 0.3;

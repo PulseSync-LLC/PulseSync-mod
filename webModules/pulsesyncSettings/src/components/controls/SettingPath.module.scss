@@ -40,6 +40,9 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
 
   &:hover {
     background: var(--ym-controls-color-secondary-hovered, rgba(255, 255, 255, 0.18));

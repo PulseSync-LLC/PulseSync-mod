@@ -18,6 +18,7 @@
 .title,
 .description {
   display: block;
+  transition: color 0.2s;
 }
 
 .title {
@@ -58,8 +59,9 @@
   text-align: left;
   cursor: pointer;
   transition:
-    border-color 200ms ease,
-    color 200ms ease;
+    border-color 0.2s,
+    color 0.2s,
+    opacity 0.2s;
 
   &:hover {
     border-color: var(--ym-controls-color-secondary-outline-hovered_stroke, rgba(255, 255, 255, 0.32));

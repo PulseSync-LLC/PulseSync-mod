@@ -18,6 +18,7 @@
 .title,
 .description {
   display: block;
+  transition: color 0.2s;
 }
 
 .title {
@@ -92,6 +93,7 @@
     content: '';
     pointer-events: none;
     transform: translateY(-50%);
+    transition: background-color 0.2s;
   }
 
   &:hover::-webkit-slider-thumb,
