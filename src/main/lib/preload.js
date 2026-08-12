@@ -12,6 +12,7 @@ const playerActions_js_1 = require('../types/playerActions.js');
 const hostnamePatterns_js_1 = require('../constants/hostnamePatterns.js');
 const deviceInfo = (0, deviceInfo_js_1.getDeviceInfo)();
 const store_js_1 = require('./store.js');
+const pulsesyncDevConfig_js_1 = require('./pulsesyncDevConfig.js');
 const events_js_1 = require('../types/events.js');
 const events = require('node:events');
 const MAX_LYRICSFILE_BYTES = 1024 * 1024;
@@ -419,7 +420,12 @@ registerNativeStoreUpdateCacheSync();
 
 electron_1.contextBridge.exposeInMainWorld('IS_PREMIUM_USER', () => electron_1.ipcRenderer.invoke('isPremiumUser'));
 electron_1.contextBridge.exposeInMainWorld('HIDE_PULSESYNC_VERSION_IN_TITLEBAR', () => shouldHidePulseSyncVersionInTitleBar());
-electron_1.contextBridge.exposeInMainWorld('IS_DEVTOOLS_ENABLED', Boolean(store_js_1.getDevMode()));
+electron_1.contextBridge.exposeInMainWorld('IS_DEVTOOLS_ENABLED', Boolean(store_js_1.getDevMode() || pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled));
+if (pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled) {
+    electron_1.contextBridge.exposeInMainWorld('__PULSESYNC_DEV__', {
+        webHostUrl: pulsesyncDevConfig_js_1.pulseSyncDevConfig.webHostUrl,
+    });
+}
 electron_1.contextBridge.exposeInMainWorld('EVENTS', events_js_1);
 
 electron_1.contextBridge.exposeInMainWorld('DISPLAY_MAX_FPS', store_js_1.getDisplayMaxFps());

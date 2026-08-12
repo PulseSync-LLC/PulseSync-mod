@@ -26,6 +26,12 @@ async function runCommand(command, context, { afterTasks = [] } = {}) {
     installSkippedRendererStyle();
 
     const runtimeMessages = context.core?.runtime?.state?.runtimeMessages ?? [];
+    if (command.persistent && typeof command.execute === 'function') {
+        runtimeMessages.forEach((message) => console.warn(message));
+        await command.execute(context);
+        return context;
+    }
+
     const beforeTasks = runtimeMessages.length
         ? [
               {

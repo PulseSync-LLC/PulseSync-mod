@@ -4,6 +4,7 @@
     "description": "Mod for Yandex Music Desktop",
     "main": "index.js",
     "scripts": {
+        "dev": "node toolset.js dev",
         "release": "node toolset.js release",
         "buildMod": "node toolset.js build -d",
         "buildModProd": "node toolset.js build -m --modernize",

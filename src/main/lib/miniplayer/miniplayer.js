@@ -2,9 +2,8 @@ const electron = require('electron');
 const path = require('path');
 const fs = require('fs');
 const store_js_1 = require('../store.js');
+const pulsesyncDevConfig_js_1 = require('../pulsesyncDevConfig.js');
 const hex2hsl = require('./hex2hsl.js');
-
-const IS_DEV = false;
 
 class MiniPlayer {
     constructor() {
@@ -85,10 +84,10 @@ class MiniPlayer {
             },
         });
 
-        const devUrl = 'http://localhost:5173/';
+        const devUrl = pulsesyncDevConfig_js_1.pulseSyncDevConfig.miniPlayerUrl;
         const builtIndex = path.join(__dirname, 'renderer', 'index.html');
 
-        if (IS_DEV) {
+        if (devUrl) {
             this.window.loadURL(devUrl);
         } else {
             if (fs.existsSync(builtIndex)) {

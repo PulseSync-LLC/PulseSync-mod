@@ -1,6 +1,38 @@
+const productionWebHost = {
+    load: () => import('./pulsesync-web/host.js'),
+    stylesheet: './pulsesync-web/host.css',
+};
+
+async function loadDevelopmentWebHost(devServerUrl) {
+    const refreshRuntimeModule = await import(`${devServerUrl}/@react-refresh`);
+    const refreshRuntime = refreshRuntimeModule.default;
+    refreshRuntime.injectIntoGlobalHook(window);
+    window.$RefreshReg$ = () => {};
+    window.$RefreshSig$ = () => (type) => type;
+    window.__vite_plugin_react_preamble_installed__ = true;
+
+    await import(`${devServerUrl}/@vite/client`);
+    await import(`${devServerUrl}/src/index.ts`);
+}
+
+async function loadWebHost() {
+    const devServerUrl = window.__PULSESYNC_DEV__?.webHostUrl;
+    if (devServerUrl) {
+        try {
+            await loadDevelopmentWebHost(devServerUrl);
+            return;
+        } catch (error) {
+            console.error('PulseSync WebHost dev server failed to load, falling back to the production bundle', error);
+        }
+    }
+
+    await loadStylesheet('web-host', productionWebHost.stylesheet);
+    await productionWebHost.load();
+}
+
 const modules = [
     { name: 'runtime', load: () => import('./pulsesync-runtime/runtime.js') },
-    { name: 'web-host', load: () => import('./pulsesync-web/host.js'), stylesheet: './pulsesync-web/host.css' },
+    { name: 'web-host', load: loadWebHost },
 ];
 
 function loadStylesheet(name, href) {
