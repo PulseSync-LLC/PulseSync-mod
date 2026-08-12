@@ -13,7 +13,9 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background 160ms ease;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
 
   &:hover:not(:disabled) {
     background: var(--ym-background-color-secondary-hovered, rgba(255, 255, 255, 0.08));
