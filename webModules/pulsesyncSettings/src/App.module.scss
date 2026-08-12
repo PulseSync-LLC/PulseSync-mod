@@ -38,6 +38,8 @@
 }
 
 .backdrop {
+  --modal-viewport-inset: 24px;
+
   position: fixed;
   z-index: var(--ym-z-index-modal, 500);
   inset: 0;
@@ -48,7 +50,7 @@
   box-sizing: border-box;
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--ym-duration-transition, 300ms) ease-in-out;
+  transition: opacity var(--ym-duration-transition, 300ms) ease-in-out, background var(--ym-duration-transition, 300ms) ease-in-out;
 
   &[data-visible='true'] {
     opacity: 1;
@@ -56,7 +58,13 @@
   }
 }
 
+.dimmed {
+  background: rgba(0, 0, 0, 0.2);
+}
+
 .modal {
+  --modal-offset-x: 0px;
+
   display: flex;
   flex-direction: column;
   width: min(920px, 100%);
@@ -68,15 +76,31 @@
   border-radius: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
   opacity: 0;
-  transform: translateY(10px) scale(0.97);
+  transform: translate3d(var(--modal-offset-x), 10px, 0) scale(0.97);
   transition:
     opacity var(--ym-duration-transition, 300ms) ease-in-out,
     transform var(--ym-duration-transition, 300ms) ease-in-out;
 
   .backdrop[data-visible='true'] & {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate3d(var(--modal-offset-x), 0, 0) scale(1);
   }
+}
+
+.withLeftOffset {
+  --modal-offset-x: clamp(
+    calc(-50vw + 50% + var(--modal-viewport-inset)),
+    -60%,
+    0px
+  );
+}
+
+.withRightOffset {
+  --modal-offset-x: clamp(
+    0px,
+    60%,
+    calc(50vw - 50% - var(--modal-viewport-inset))
+  );
 }
 
 .body {
@@ -240,6 +264,8 @@
 
 @media (max-width: 720px) {
   .backdrop {
+    --modal-viewport-inset: 12px;
+
     padding: 12px;
   }
 
