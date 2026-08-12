@@ -6,6 +6,7 @@ import {
   PULSESYNC_OPEN_SETTINGS_EVENT,
   PULSESYNC_RESTART_REQUIRED_EVENT,
 } from './events'
+import { useModSetting } from './hooks/useModSetting'
 import { useModalPresence } from './hooks/useModalPresence'
 import {
   SETTINGS_GROUPS,
@@ -22,6 +23,15 @@ type SettingsPaneProps = {
   children: ReactNode
 }
 
+const MY_VIBE_SECTION_IDS = new Set<string>(
+  SETTINGS_GROUPS.find((group) => group.label === 'Моя Волна')?.sections.map(
+    (section) => section.id,
+  ),
+)
+const SWAP_VIBE_ANIMATION_AND_WHEEL_KEY =
+  'modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel'
+const MAIN_PAGE_URL = 'music-application://desktop/'
+
 function SettingsPane({ active, children }: SettingsPaneProps) {
   return (
     <div className={styles.sectionPane} hidden={!active}>
@@ -35,9 +45,19 @@ function App({ api }: AppProps = {}) {
     useState<SettingsSectionId>('playlists')
   const modSettingsApi = getModSettingsApi(api)
   const { close, isMounted, isVisible, open } = useModalPresence(import.meta.env.DEV)
+  const { value: swapVibeAnimationAndWheel } = useModSetting(
+    modSettingsApi,
+    SWAP_VIBE_ANIMATION_AND_WHEEL_KEY,
+    false,
+  )
   const notifyRestartRequired = useCallback(() => {
     window.dispatchEvent(new CustomEvent(PULSESYNC_RESTART_REQUIRED_EVENT))
   }, [])
+  const isInMyVibeCategory = MY_VIBE_SECTION_IDS.has(activeSection)
+  const shouldRevealMyVibe =
+    isInMyVibeCategory && activeSection !== 'vibe-behavior'
+  const shouldOffsetModal =
+    shouldRevealMyVibe && window.location.href === MAIN_PAGE_URL
 
   useEffect(() => {
     const openSettings = () => open()
@@ -81,7 +101,7 @@ function App({ api }: AppProps = {}) {
 
   return (
     <div
-      className={styles.backdrop}
+      className={`${styles.backdrop}${shouldRevealMyVibe ? ` ${styles.dimmed}` : ''}`}
       data-visible={isVisible}
       role="presentation"
       onMouseDown={(event) => {
@@ -89,7 +109,15 @@ function App({ api }: AppProps = {}) {
       }}
     >
       <section
-        className={styles.modal}
+        className={`${styles.modal}${
+          shouldOffsetModal
+            ? ` ${
+                swapVibeAnimationAndWheel
+                  ? styles.withRightOffset
+                  : styles.withLeftOffset
+              }`
+            : ''
+        }`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="PulseSyncSettings_title"
