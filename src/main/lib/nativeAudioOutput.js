@@ -486,7 +486,7 @@ const getWasapiOutputRendererOptions = (format = {}) => {
         channels,
         bitsPerSample,
         validBitsPerSample: bitsPerSample,
-        containerBitsPerSample: bitsPerSample,
+        containerBitsPerSample: bitsPerSample === 24 ? 32 : bitsPerSample,
         float: false,
         bufferMs: 40,
         maxQueuedMs: 10000,

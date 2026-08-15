@@ -29,11 +29,18 @@ const normalizePcmBitsPerSample = (value, fallback = 16) => {
 };
 
 const normalizePcmContainerBitsPerSample = (value, bitsPerSample, sampleFormat) => {
-    if (bitsPerSample === 24 && String(sampleFormat ?? '').toLowerCase() === 'pcm24in32') {
-        return 32;
+    const normalizedSampleFormat = String(sampleFormat ?? '').toLowerCase();
+    if (bitsPerSample === 24) {
+        if (normalizedSampleFormat === 'pcm24in32') {
+            return 32;
+        }
+        if (normalizedSampleFormat === 'pcm24') {
+            return 24;
+        }
     }
 
-    const containerBitsPerSample = normalizePositiveInteger(value, bitsPerSample, 16, 32);
+    const preferredContainerBitsPerSample = bitsPerSample === 24 ? 32 : bitsPerSample;
+    const containerBitsPerSample = normalizePositiveInteger(value, preferredContainerBitsPerSample, 16, 32);
     return containerBitsPerSample === bitsPerSample || (bitsPerSample === 24 && containerBitsPerSample === 32) ? containerBitsPerSample : bitsPerSample;
 };
 

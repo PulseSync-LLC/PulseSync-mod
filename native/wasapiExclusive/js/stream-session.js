@@ -689,6 +689,7 @@ class YaspWasapiExclusiveStreamSession {
                 return;
             }
 
+            const requestedRendererOptions = { ...this.rendererOptions };
             const closest = this.getClosestSupportedFormat?.(this.rendererOptions);
             if (closest && closest.exact === false) {
                 const requested = closest.requestedOptions ?? this.rendererOptions;
@@ -711,6 +712,28 @@ class YaspWasapiExclusiveStreamSession {
                     ...closest.rendererOptions,
                 };
             }
+            this.log('info', 'YASP WASAPI PCM format selected', {
+                signature: this.signature,
+                deviceId: this.rendererOptions.deviceId ?? null,
+                deviceName: closest?.device?.name ?? null,
+                containerFallback: closest?.containerExact === false,
+                requested: {
+                    sampleRate: requestedRendererOptions.sampleRate,
+                    channels: requestedRendererOptions.channels,
+                    bitsPerSample: requestedRendererOptions.bitsPerSample,
+                    containerBitsPerSample: requestedRendererOptions.containerBitsPerSample ?? requestedRendererOptions.bitsPerSample,
+                    sampleFormat: requestedRendererOptions.sampleFormat ?? null,
+                    waveFormatExtensible: requestedRendererOptions.waveFormatExtensible !== false,
+                },
+                selected: {
+                    sampleRate: this.rendererOptions.sampleRate,
+                    channels: this.rendererOptions.channels,
+                    bitsPerSample: this.rendererOptions.bitsPerSample,
+                    containerBitsPerSample: this.rendererOptions.containerBitsPerSample ?? this.rendererOptions.bitsPerSample,
+                    sampleFormat: this.rendererOptions.sampleFormat ?? null,
+                    waveFormatExtensible: this.rendererOptions.waveFormatExtensible !== false,
+                },
+            });
 
             const ffmpegPath = await this.getFfmpegPath?.();
             if (!ffmpegPath) {
