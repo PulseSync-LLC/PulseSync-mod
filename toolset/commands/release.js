@@ -2,7 +2,7 @@ const { createReleaseTask, createWorkflowTask } = require('../utils/commandTasks
 
 module.exports = {
     name: 'release',
-    description: 'загружает asar на сервер и отправляет патчноут',
+    description: 'публикует app.asar и app.asar.unpacked на GitHub и сервер, затем отправляет патчноут',
     order: 30,
     usage: 'release [--dest=<path>] [--onlyUploadAppAsar] [--onlySendPatchNotes]',
     flags: ['dest', 'onlyUploadAppAsar', 'onlySendPatchNotes'],

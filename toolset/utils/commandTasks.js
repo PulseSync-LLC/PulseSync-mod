@@ -335,6 +335,14 @@ function createReleaseTask({ title = 'Публикация релиза', versio
                         },
                     },
                     {
+                        title: 'Проверка release artifacts',
+                        skip: (ctx) => (ctx.options.onlySendPatchNotes ? 'отключено режимом onlySendPatchNotes' : false),
+                        task: (ctx, artifactsTask) => {
+                            const artifacts = ctx.core.releaseUtils.validateReleaseArtifacts(ctx.state.releasePayload);
+                            artifactsTask.output = `${artifacts.asarPath}, ${artifacts.unpackedPath}`;
+                        },
+                    },
+                    {
                         title: 'Публикация GitHub release',
                         skip: (ctx) =>
                             ctx.options.onlyUploadAppAsar || ctx.options.onlySendPatchNotes ? 'отключено выбранным режимом release' : false,
@@ -348,6 +356,13 @@ function createReleaseTask({ title = 'Публикация релиза', versio
                         skip: (ctx) => (ctx.options.onlySendPatchNotes ? 'отключено режимом onlySendPatchNotes' : false),
                         task: async (ctx) => {
                             await ctx.core.releaseUtils.uploadReleaseAppAsar(ctx.state.releasePayload);
+                        },
+                    },
+                    {
+                        title: 'Загрузка app.asar.unpacked',
+                        skip: (ctx) => (ctx.options.onlySendPatchNotes ? 'отключено режимом onlySendPatchNotes' : false),
+                        task: async (ctx) => {
+                            await ctx.core.releaseUtils.uploadReleaseUnpacked(ctx.state.releasePayload);
                         },
                     },
                     {

@@ -18,7 +18,7 @@ async function resolveCommandOptions(commandName, flags, core) {
 
     core.setOldYMHashOverride(flags.oldYMHashOverride);
 
-    const shouldDefaultBuildDest = commandName === 'build' || commandName === 'spoof' || shouldBuild || shouldRelease;
+    const shouldDefaultBuildDest = commandName === 'build' || commandName === 'spoof' || commandName === 'release' || shouldBuild || shouldRelease;
     const dest = flags.dest ?? (shouldDefaultBuildDest ? (lastExtracted ? core.constants.DEFAULT_PATCHED_DIST_PATH : core.constants.DEFAULT_DIST_PATH) : undefined);
 
     let src;
