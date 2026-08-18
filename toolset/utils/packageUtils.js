@@ -14,7 +14,7 @@ function createPackageUtils(runtime) {
         const newVersion = getModVersion();
 
         if (!packageJson.modification) {
-            throw new Error(`В ${packageJsonPath} отсутствует секция modification`);
+            return { changed: false, skipped: true, oldVersion, newVersion };
         }
 
         if (oldVersion === newVersion) {
