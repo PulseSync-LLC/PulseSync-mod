@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import styles from './SettingSlider.module.scss'
 
 type SettingSliderProps = {
@@ -9,6 +9,7 @@ type SettingSliderProps = {
   onChange: (value: number) => void
   step: number
   title: string
+  titleAction?: ReactNode
   value: number
   valueLabel?: (value: number) => string
 }
@@ -21,6 +22,7 @@ export function SettingSlider({
   onChange,
   step,
   title,
+  titleAction,
   value,
   valueLabel = String,
 }: SettingSliderProps) {
@@ -30,7 +32,10 @@ export function SettingSlider({
   return (
     <div className={styles.row} data-disabled={disabled}>
       <span className={styles.text}>
-        <span className={styles.title}>{title}</span>
+        <span className={styles.titleLine}>
+          <span className={styles.title}>{title}</span>
+          {titleAction}
+        </span>
         <span className={styles.description}>{description}</span>
       </span>
       <div className={styles.control}>

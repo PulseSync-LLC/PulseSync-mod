@@ -1,9 +1,16 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import type { PulseSyncAddonApi } from '../../pulsesyncWebHost/src/contracts'
 import styles from './App.module.scss'
 import { getModSettingsApi } from './api/modSettings'
 import {
   PULSESYNC_OPEN_SETTINGS_EVENT,
+  PULSESYNC_OPEN_SETTINGS_DEEPLINK_EVENT,
   PULSESYNC_RESTART_REQUIRED_EVENT,
 } from './events'
 import { useModSetting } from './hooks/useModSetting'
@@ -13,6 +20,7 @@ import {
   SETTINGS_SECTIONS,
   type SettingsSectionId,
 } from './schema/registry'
+import { SettingsNavigationProvider } from './SettingsNavigationProvider'
 
 type AppProps = {
   api?: PulseSyncAddonApi
@@ -32,6 +40,36 @@ const SWAP_VIBE_ANIMATION_AND_WHEEL_KEY =
   'modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel'
 const MAIN_PAGE_URL = 'music-application://desktop/'
 
+type SettingsDeeplink = {
+  categoryId: SettingsSectionId
+  settingId: string
+}
+
+function parseSettingsDeeplink(value: unknown): SettingsDeeplink | null {
+  if (typeof value !== 'string') return null
+  const [prefix, encodedCategoryId, encodedSettingId, ...rest] = value
+    .split(/[?#]/, 1)[0]
+    .split('/')
+    .filter(Boolean)
+  if (
+    prefix !== 'mod-settings' ||
+    !encodedCategoryId ||
+    !encodedSettingId ||
+    rest.length
+  )
+    return null
+
+  try {
+    const categoryId = decodeURIComponent(encodedCategoryId)
+    const settingId = decodeURIComponent(encodedSettingId)
+    const section = SETTINGS_SECTIONS.find((item) => item.id === categoryId)
+    if (!section || !settingId) return null
+    return { categoryId: section.id as SettingsSectionId, settingId }
+  } catch {
+    return null
+  }
+}
+
 function SettingsPane({ active, children }: SettingsPaneProps) {
   return (
     <div className={styles.sectionPane} hidden={!active}>
@@ -43,6 +81,9 @@ function SettingsPane({ active, children }: SettingsPaneProps) {
 function App({ api }: AppProps = {}) {
   const [activeSection, setActiveSection] =
     useState<SettingsSectionId>('playlists')
+  const [highlightedSettingId, setHighlightedSettingId] = useState<string>()
+  const [searchQuery, setSearchQuery] = useState('')
+  const contentRef = useRef<HTMLDivElement>(null)
   const modSettingsApi = getModSettingsApi(api)
   const { close, isMounted, isVisible, open } = useModalPresence(import.meta.env.DEV)
   const { value: swapVibeAnimationAndWheel } = useModSetting(
@@ -58,6 +99,7 @@ function App({ api }: AppProps = {}) {
     isInMyVibeCategory && activeSection !== 'vibe-behavior'
   const shouldOffsetModal =
     shouldRevealMyVibe && window.location.href === MAIN_PAGE_URL
+  const isSearching = Boolean(searchQuery.trim())
 
   useEffect(() => {
     const openSettings = () => open()
@@ -65,6 +107,46 @@ function App({ api }: AppProps = {}) {
     window.addEventListener(PULSESYNC_OPEN_SETTINGS_EVENT, openSettings)
     return () => window.removeEventListener(PULSESYNC_OPEN_SETTINGS_EVENT, openSettings)
   }, [open])
+
+  useEffect(() => {
+    const unsubscribe = window.desktopEvents?.on?.(
+      PULSESYNC_OPEN_SETTINGS_DEEPLINK_EVENT,
+      (_event, pathname) => {
+        const deeplink = parseSettingsDeeplink(pathname)
+        if (!deeplink) return
+        setSearchQuery('')
+        setActiveSection(deeplink.categoryId)
+        setHighlightedSettingId(deeplink.settingId)
+        open()
+      },
+    )
+
+    return typeof unsubscribe === 'function' ? unsubscribe : undefined
+  }, [open])
+
+  useEffect(() => {
+    if (!isVisible || !highlightedSettingId) return
+
+    const frame = window.requestAnimationFrame(() => {
+      const target = Array.from(
+        contentRef.current?.querySelectorAll<HTMLElement>(
+          '[data-pulsesync-setting-id]',
+        ) ?? [],
+      ).find(
+        (item) => item.dataset.pulsesyncSettingId === highlightedSettingId,
+      )
+      target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+    const timeout = window.setTimeout(
+      () => setHighlightedSettingId(undefined),
+      3600,
+    )
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.clearTimeout(timeout)
+    }
+  }, [activeSection, highlightedSettingId, isVisible])
 
   useEffect(() => {
     if (!isMounted) return
@@ -124,14 +206,32 @@ function App({ api }: AppProps = {}) {
       >
         <header className={styles.header}>
           <h2 id="PulseSyncSettings_title">Настройки мода</h2>
-          <button
-            className={styles.closeButton}
-            type="button"
-            aria-label="Закрыть"
-            onClick={close}
-          >
-            ×
-          </button>
+          <div className={styles.headerActions}>
+            <label className={styles.search}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="m16 16 4 4" />
+              </svg>
+              <input
+                type="search"
+                value={searchQuery}
+                aria-label="Поиск по настройкам"
+                placeholder="Поиск по настройкам"
+                onChange={(event) => {
+                  setSearchQuery(event.target.value)
+                  setHighlightedSettingId(undefined)
+                }}
+              />
+            </label>
+            <button
+              className={styles.closeButton}
+              type="button"
+              aria-label="Закрыть"
+              onClick={close}
+            >
+              ×
+            </button>
+          </div>
         </header>
         <div className={styles.body}>
           <nav
@@ -151,7 +251,11 @@ function App({ api }: AppProps = {}) {
                     aria-current={
                       activeSection === section.id ? 'page' : undefined
                     }
-                    onClick={() => setActiveSection(section.id)}
+                    onClick={() => {
+                      setSearchQuery('')
+                      setHighlightedSettingId(undefined)
+                      setActiveSection(section.id)
+                    }}
                   >
                     {section.label}
                   </button>
@@ -161,18 +265,31 @@ function App({ api }: AppProps = {}) {
           </nav>
           <div
             className={styles.content}
+            data-searching={isSearching}
             data-pulsesync-settings-content
             data-pulsesync-scroll-region
+            ref={contentRef}
           >
             {SETTINGS_SECTIONS.map((section) => (
               <SettingsPane
-                active={activeSection === section.id}
+                active={isSearching || activeSection === section.id}
                 key={section.id}
               >
-                {section.render({
-                  api: modSettingsApi,
-                  onRestartRequired: notifyRestartRequired,
-                })}
+                <SettingsNavigationProvider
+                  categoryId={section.id}
+                  categoryLabel={section.label}
+                  highlightedSettingId={
+                    activeSection === section.id
+                      ? highlightedSettingId
+                      : undefined
+                  }
+                  searchQuery={searchQuery}
+                >
+                  {section.render({
+                    api: modSettingsApi,
+                    onRestartRequired: notifyRestartRequired,
+                  })}
+                </SettingsNavigationProvider>
               </SettingsPane>
             ))}
           </div>
