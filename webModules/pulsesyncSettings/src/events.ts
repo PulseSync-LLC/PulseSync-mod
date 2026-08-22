@@ -1,3 +1,5 @@
 export const PULSESYNC_OPEN_SETTINGS_EVENT = 'pulsesync-open-settings'
+export const PULSESYNC_OPEN_SETTINGS_DEEPLINK_EVENT =
+  'PULSESYNC_OPEN_SETTINGS_DEEPLINK'
 export const PULSESYNC_RESTART_REQUIRED_EVENT =
   'pulsesync-restart-required'
