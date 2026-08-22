@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const semver = require('semver');
 const axios = require('axios');
 const FormData = require('form-data');
+const sharp = require('sharp');
 dotenv.config();
 
 const webhookUrl = process.env.DISCORD_DATAMINER_WEBHOOK_URL ?? process.env.DISCORD_WEBHOOK_URL;
@@ -12,6 +13,11 @@ const OUTPUT = path.join(__dirname, 'output');
 const DISCORD_EMBED_DESCRIPTION_LIMIT = 2000;
 const DISCORD_MAX_FILES_PER_MESSAGE = 10;
 const MOBX_DIFF_CONTEXT_LINES = 3;
+const MOBX_MIN_SIMILARITY = 0.7;
+const ICON_SIZE_PRIORITY = ['default', 'xxxl', 'xxl', 'xl', 'l', 'm', 's', 'xs', 'xxs', 'xxxs'];
+const DISCORD_ICON_SIZE = 256;
+const DISCORD_ICON_COLOR = '#ffffff';
+const DISCORD_ICON_BACKGROUND = 'rgb(0 0 0 / 0)';
 
 if (!process.env.DISCORD_DATAMINER_WEBHOOK_URL) console.warn('DISCORD_DATAMINER_WEBHOOK_URL не установлена, используется DISCORD_WEBHOOK_URL');
 if (!webhookUrl) throw new Error('DISCORD_DATAMINER_WEBHOOK_URL и DISCORD_WEBHOOK_URL не установлена в .env файле');
@@ -59,6 +65,11 @@ function isSingleLetterName(value) {
     return /^[A-Za-zА-Яа-яЁё_$]$/.test(baseName);
 }
 
+function isMinifiedMobxName(value) {
+    if (typeof value !== 'string') return false;
+    return /^[A-Za-z_$][A-Za-z0-9_$]?$/.test(value.replace(/\s+\(\d+\)$/, ''));
+}
+
 function filterDiffItems(diff, predicate) {
     return {
         added: diff.added.filter(predicate),
@@ -87,7 +98,9 @@ function formatDiff(diff) {
     if (diff.changed && diff.changed.length > 0) {
         message += formatDiffSection(
             'Изменено',
-            diff.changed.map((item) => `- ${item.key}: ${item.oldValue.replace(/(?<!\\)\n/g, '\n- ')}\n+ ${item.key}: ${item.newValue.replace(/(?<!\\)\n/g, '\n+ ')}`).join('\n\n'),
+            diff.changed
+                .map((item) => `- ${item.key}: ${item.oldValue.replace(/(?<!\\)\n/g, '\n- ')}\n+ ${item.key}: ${item.newValue.replace(/(?<!\\)\n/g, '\n+ ')}`)
+                .join('\n\n'),
         );
     }
     if (diff.removed.length > 0) {
@@ -254,11 +267,7 @@ function formatMobxChangedSection(key, oldValue, newValue, isLast) {
         return [`  "${key}": [`, ...formatJsonArrayDiff(oldValue, newValue), `  ]${suffix}`].join('\n');
     }
 
-    return [
-        `  "${key}":`,
-        ...formatCompactTextDiff(JSON.stringify(oldValue, null, 2), JSON.stringify(newValue, null, 2)),
-        suffix ? `  ${suffix}` : '',
-    ]
+    return [`  "${key}":`, ...formatCompactTextDiff(JSON.stringify(oldValue, null, 2), JSON.stringify(newValue, null, 2)), suffix ? `  ${suffix}` : '']
         .filter(Boolean)
         .join('\n');
 }
@@ -406,9 +415,9 @@ async function sendDiscordMessage(message, withComponents = true, files = []) {
         formData.append('payload_json', JSON.stringify(message));
 
         files.forEach((file, index) => {
-            formData.append(`files[${index}]`, fs.createReadStream(file.path), {
+            formData.append(`files[${index}]`, file.data ?? fs.createReadStream(file.path), {
                 filename: file.name,
-                contentType: file.contentType ?? 'image/svg+xml',
+                contentType: file.contentType ?? 'application/octet-stream',
             });
         });
 
@@ -493,7 +502,99 @@ function getMobxConstructsDiff(oldFolder, newFolder) {
     const oldData = readJsonOrDefault(path.join(oldFolder, 'mobxConstructs.json'), {});
     const newData = readJsonOrDefault(path.join(newFolder, 'mobxConstructs.json'), {});
 
-    return filterDiffItems(calculateObjectDiff(oldData, newData), (item) => !isSingleLetterName(item.key));
+    return filterDiffItems(calculateMobxConstructsDiff(oldData, newData), (item) => !isSingleLetterName(item.key));
+}
+
+function getMobxConstructTokens(construct) {
+    return new Set(
+        ['props', 'views', 'actions', 'chains'].flatMap((section) =>
+            (Array.isArray(construct?.[section]) ? construct[section] : []).map((value) => `${section}:${value}`),
+        ),
+    );
+}
+
+function getMobxConstructSimilarity(oldConstruct, newConstruct) {
+    const oldTokens = getMobxConstructTokens(oldConstruct);
+    const newTokens = getMobxConstructTokens(newConstruct);
+    if (!oldTokens.size || !newTokens.size) return 0;
+
+    let intersectionSize = 0;
+    for (const token of oldTokens) {
+        if (newTokens.has(token)) intersectionSize++;
+    }
+
+    return (2 * intersectionSize) / (oldTokens.size + newTokens.size);
+}
+
+function createMobxDiffItem(oldEntry, newEntry) {
+    return {
+        key: oldEntry.key === newEntry.key ? newEntry.key : `${oldEntry.key} → ${newEntry.key}`,
+        oldValue: JSON.stringify(oldEntry.value, null, 2),
+        newValue: JSON.stringify(newEntry.value, null, 2),
+    };
+}
+
+function calculateMobxConstructsDiff(oldObj, newObj) {
+    const oldEntries = Object.entries(oldObj).map(([key, value]) => ({ key, value }));
+    const newEntries = Object.entries(newObj).map(([key, value]) => ({ key, value }));
+    const unmatchedOld = new Set(oldEntries);
+    const unmatchedNew = new Set(newEntries);
+    const matched = [];
+
+    const match = (oldEntry, newEntry) => {
+        unmatchedOld.delete(oldEntry);
+        unmatchedNew.delete(newEntry);
+        matched.push([oldEntry, newEntry]);
+    };
+
+    // Preserve exact identities first, including duplicate structures.
+    for (const oldEntry of oldEntries) {
+        const newEntry = newEntries.find((entry) => entry.key === oldEntry.key && JSON.stringify(entry.value) === JSON.stringify(oldEntry.value));
+        if (newEntry) match(oldEntry, newEntry);
+    }
+
+    // Semantic names are stable enough to survive structural changes; short minified names are not.
+    for (const oldEntry of [...unmatchedOld]) {
+        if (isMinifiedMobxName(oldEntry.key)) continue;
+        const newEntry = [...unmatchedNew].find((entry) => entry.key === oldEntry.key);
+        if (newEntry) match(oldEntry, newEntry);
+    }
+
+    // Chunk rebuilds can rename and reorder minified constructs without changing their structure.
+    const newEntriesByValue = new Map();
+    for (const entry of unmatchedNew) {
+        const signature = JSON.stringify(entry.value);
+        if (!newEntriesByValue.has(signature)) newEntriesByValue.set(signature, []);
+        newEntriesByValue.get(signature).push(entry);
+    }
+
+    for (const oldEntry of [...unmatchedOld]) {
+        const candidate = newEntriesByValue.get(JSON.stringify(oldEntry.value))?.find((entry) => unmatchedNew.has(entry));
+        if (candidate) match(oldEntry, candidate);
+    }
+
+    // Match renamed constructs with small real changes only when their structure remains strongly similar.
+    const similarityCandidates = [];
+    for (const oldEntry of unmatchedOld) {
+        for (const newEntry of unmatchedNew) {
+            const similarity = getMobxConstructSimilarity(oldEntry.value, newEntry.value);
+            if (similarity >= MOBX_MIN_SIMILARITY) similarityCandidates.push({ oldEntry, newEntry, similarity });
+        }
+    }
+
+    similarityCandidates.sort((a, b) => b.similarity - a.similarity || a.oldEntry.key.localeCompare(b.oldEntry.key) || a.newEntry.key.localeCompare(b.newEntry.key));
+
+    for (const candidate of similarityCandidates) {
+        if (unmatchedOld.has(candidate.oldEntry) && unmatchedNew.has(candidate.newEntry)) match(candidate.oldEntry, candidate.newEntry);
+    }
+
+    return {
+        added: [...unmatchedNew].map((entry) => ({ key: entry.key, value: JSON.stringify(entry.value, null, 2) })),
+        changed: matched
+            .filter(([oldEntry, newEntry]) => JSON.stringify(oldEntry.value) !== JSON.stringify(newEntry.value))
+            .map(([oldEntry, newEntry]) => createMobxDiffItem(oldEntry, newEntry)),
+        removed: [...unmatchedOld].map((entry) => ({ key: entry.key, value: JSON.stringify(entry.value, null, 2) })),
+    };
 }
 
 function getDiffTemplate(title, description, color = 0x378584) {
@@ -568,28 +669,43 @@ function getIconSvgFileName(iconName, size) {
     return `${size === 'default' ? iconName : `${iconName}_${size}`}.svg`;
 }
 
-function getAddedIconFiles(iconsDiff, newFolder) {
+function selectIconSize(sizes) {
+    return ICON_SIZE_PRIORITY.find((size) => sizes.includes(size)) ?? sizes[0];
+}
+
+function getDiscordIconFileName(iconName, index) {
+    const safeIconName = iconName.replace(/[^A-Za-z0-9_.-]/g, '_');
+    return `${index + 1}-${safeIconName}.png`;
+}
+
+async function getAddedIconFiles(iconsDiff, newFolder) {
     const iconsFolder = path.join(newFolder, 'icons');
     const files = [];
 
     for (const item of iconsDiff.added) {
         const sizes = parseIconSizes(item.value);
+        const size = selectIconSize(sizes);
+        if (!size) continue;
+        const fileName = getIconSvgFileName(item.key, size);
+        const filePath = path.join(iconsFolder, fileName);
 
-        for (const size of sizes) {
-            const fileName = getIconSvgFileName(item.key, size);
-            const filePath = path.join(iconsFolder, fileName);
-
-            if (!fs.existsSync(filePath)) {
-                console.warn(`⚠️  SVG для новой иконки не найден: ${filePath}`);
-                continue;
-            }
-
-            files.push({
-                name: fileName,
-                path: filePath,
-                description: size === 'default' ? item.key : `${item.key} (${size})`,
-            });
+        if (!fs.existsSync(filePath)) {
+            console.warn(`⚠️  SVG для новой иконки не найден: ${filePath}`);
+            continue;
         }
+
+        const svg = fs.readFileSync(filePath, 'utf8').replaceAll('currentColor', DISCORD_ICON_COLOR);
+        const data = await sharp(Buffer.from(svg))
+            .resize(DISCORD_ICON_SIZE, DISCORD_ICON_SIZE, { fit: 'contain' })
+            .flatten({ background: DISCORD_ICON_BACKGROUND })
+            .png()
+            .toBuffer();
+        files.push({
+            name: getDiscordIconFileName(item.key, files.length),
+            data,
+            contentType: 'image/png',
+            description: item.key,
+        });
     }
 
     return files;
@@ -606,7 +722,7 @@ function chunkArray(items, chunkSize) {
 }
 
 async function sendAddedIconImages(iconsDiff, newFolder, versionsString) {
-    const iconFiles = getAddedIconFiles(iconsDiff, newFolder);
+    const iconFiles = await getAddedIconFiles(iconsDiff, newFolder);
     if (!iconFiles.length) return;
 
     const chunks = chunkArray(iconFiles, DISCORD_MAX_FILES_PER_MESSAGE);
