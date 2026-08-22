@@ -18,6 +18,13 @@
   display: block;
 }
 
+.titleLine {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .title {
   color: var(--ym-controls-color-primary-text-enabled_variant, #fff);
   font-size: 15px;

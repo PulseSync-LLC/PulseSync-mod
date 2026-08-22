@@ -1,4 +1,5 @@
 .row {
+  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
@@ -7,15 +8,24 @@
   padding: 14px 16px;
   color: inherit;
   background: var(--ym-background-color-secondary-enabled-basic, rgba(255, 255, 255, 0.04));
-  border: 0;
   border-radius: 16px;
   box-sizing: border-box;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
   transition:
     background 0.2s,
     opacity 0.2s;
+}
+
+.action {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
 
   &:hover:not(:disabled) {
     background: var(--ym-background-color-secondary-hovered, rgba(255, 255, 255, 0.08));
@@ -28,22 +38,35 @@
 
   &:disabled {
     cursor: default;
-    opacity: 0.55;
   }
 }
 
 .avatar {
+  position: relative;
+  z-index: 1;
   flex: 0 0 auto;
   width: 46px;
   height: 46px;
   object-fit: cover;
   border-radius: 50%;
+  pointer-events: none;
 }
 
 .text {
-  display: block;
+  position: relative;
+  z-index: 1;
+  display: flex;
   min-width: 0;
   flex: 1;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.titleLine {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .title,
@@ -67,11 +90,26 @@
 }
 
 .chevron {
+  position: relative;
+  z-index: 1;
   width: 9px;
   height: 9px;
   margin-right: 4px;
   border-top: 2px solid currentColor;
   border-right: 2px solid currentColor;
   opacity: 0.6;
+  pointer-events: none;
   transform: rotate(45deg);
+}
+
+.row[data-disabled='true'] {
+  .title,
+  .description {
+    color: var(--ym-controls-color-primary-text-disabled, #666);
+  }
+
+  .avatar,
+  .chevron {
+    opacity: 0.55;
+  }
 }

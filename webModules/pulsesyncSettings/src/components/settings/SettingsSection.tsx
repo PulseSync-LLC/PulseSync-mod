@@ -5,6 +5,11 @@ import { SettingPath } from '../controls/SettingPath'
 import { SettingSelect } from '../controls/SettingSelect'
 import { SettingSlider } from '../controls/SettingSlider'
 import { SettingToggle } from '../controls/SettingToggle'
+import {
+  matchesSettingsSearch,
+  useSettingsNavigation,
+} from '../../settingsNavigation'
+import { SettingsItem } from './SettingsItem'
 import styles from './SettingsSection.module.scss'
 
 export type SettingsSchemaItem =
@@ -58,7 +63,15 @@ type SettingsSectionProps = {
 function renderItem(item: SettingsSchemaItem) {
   switch (item.type) {
     case 'action':
-      return <SettingAction key={item.id} {...item.props} />
+      return (
+        <SettingsItem
+          id={item.id}
+          key={item.id}
+          searchText={[item.props.title, item.props.description]}
+        >
+          <SettingAction {...item.props} />
+        </SettingsItem>
+      )
     case 'heading':
       return (
         <div className={styles.heading} key={item.id}>
@@ -72,15 +85,66 @@ function renderItem(item: SettingsSchemaItem) {
         </div>
       )
     case 'input':
-      return <SettingInput key={item.id} {...item.props} />
+      return (
+        <SettingsItem
+          id={item.id}
+          key={item.id}
+          searchText={[
+            item.props.title,
+            item.props.description,
+            item.props.placeholder,
+          ]}
+        >
+          <SettingInput {...item.props} />
+        </SettingsItem>
+      )
     case 'path':
-      return <SettingPath key={item.id} {...item.props} />
+      return (
+        <SettingsItem
+          id={item.id}
+          key={item.id}
+          searchText={[item.props.title, item.props.description, item.props.path]}
+        >
+          <SettingPath {...item.props} />
+        </SettingsItem>
+      )
     case 'select':
-      return <SettingSelect key={item.id} {...item.props} />
+      return (
+        <SettingsItem
+          id={item.id}
+          key={item.id}
+          searchText={[
+            item.props.title,
+            item.props.description,
+            ...item.props.options.flatMap((option) => [
+              option.label,
+              option.description,
+            ]),
+          ]}
+        >
+          <SettingSelect {...item.props} />
+        </SettingsItem>
+      )
     case 'slider':
-      return <SettingSlider key={item.id} {...item.props} />
+      return (
+        <SettingsItem
+          id={item.id}
+          key={item.id}
+          searchText={[item.props.title, item.props.description]}
+        >
+          <SettingSlider {...item.props} />
+        </SettingsItem>
+      )
     case 'toggle':
-      return <SettingToggle key={item.id} {...item.props} />
+      return (
+        <SettingsItem
+          id={item.id}
+          key={item.id}
+          searchText={[item.props.title, item.props.description]}
+        >
+          <SettingToggle {...item.props} />
+        </SettingsItem>
+      )
   }
 }
 
@@ -89,10 +153,22 @@ export function SettingsSection({
   items,
   title,
 }: SettingsSectionProps) {
+  const { categoryId, categoryLabel, searchQuery } = useSettingsNavigation()
+  const visibleItems = items.filter((item) => {
+    if (item.type !== 'heading' && item.type !== 'note') return true
+    return matchesSettingsSearch(searchQuery, [
+      categoryId,
+      categoryLabel,
+      title,
+      item.id,
+      item.text,
+    ])
+  })
+
   return (
-    <section className={styles.section}>
+    <section className={styles.section} data-searching={Boolean(searchQuery)}>
       <h3>{title}</h3>
-      <div className={styles.list}>{items.map(renderItem)}</div>
+      <div className={styles.list}>{visibleItems.map(renderItem)}</div>
       {error ? (
         <div className={styles.error} role="status">
           {error}

@@ -21,6 +21,13 @@
   transition: color 0.2s;
 }
 
+.titleLine {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .title {
   color: var(--ym-controls-color-primary-text-enabled_variant, #fff);
   font-size: 16px;

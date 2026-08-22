@@ -23,7 +23,11 @@ const navigateToDeeplink = (window, url) => {
     }
     const pathname = transformUrlToInternal(url);
     deeplinkLogger.info('Navigate to', url, pathname);
-    (0, events_js_1.sendOpenDeeplink)(window, pathname);
+    if (pathname === '/mod-settings' || pathname.startsWith('/mod-settings/')) {
+        (0, events_js_1.sendOpenModSettingsDeeplink)(window, pathname);
+    } else {
+        (0, events_js_1.sendOpenDeeplink)(window, pathname);
+    }
     window.focus();
     state_js_1.state.deeplink = null;
 };
