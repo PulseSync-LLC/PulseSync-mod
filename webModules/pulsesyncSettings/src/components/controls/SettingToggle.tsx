@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { SettingBadge, type SettingBadgeProps } from './SettingBadge'
 import styles from './SettingToggle.module.scss'
 
@@ -8,6 +9,7 @@ type SettingToggleProps = {
   disabled?: boolean
   onChange: (checked: boolean) => void
   title: string
+  titleAction?: ReactNode
 }
 
 export function SettingToggle({
@@ -17,12 +19,14 @@ export function SettingToggle({
   disabled = false,
   onChange,
   title,
+  titleAction,
 }: SettingToggleProps) {
   return (
     <div className={styles.row} data-disabled={disabled}>
       <div className={styles.text}>
         <div className={styles.titleLine}>
           <div className={styles.title}>{title}</div>
+          {titleAction}
           {badge ? <SettingBadge {...badge} /> : null}
         </div>
         {description ? (

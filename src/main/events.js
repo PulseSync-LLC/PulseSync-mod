@@ -8,6 +8,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 exports.sendRefreshRepositoryMeta =
     exports.sendRefreshTracksAvailability =
     exports.sendAnalyticsOnFirstLaunch =
+    exports.sendOpenModSettingsDeeplink =
     exports.sendOpenDeeplink =
     exports.sendPlayerAction =
     exports.sendRefreshApplicationData =
@@ -1325,6 +1326,11 @@ const sendOpenDeeplink = (window, pathname) => {
     eventsLogger.info('Event sent', events_js_1.Events.OPEN_DEEPLINK);
 };
 exports.sendOpenDeeplink = sendOpenDeeplink;
+const sendOpenModSettingsDeeplink = (window, pathname) => {
+    window.webContents.send(events_js_1.Events.PULSESYNC_OPEN_SETTINGS_DEEPLINK, pathname);
+    eventsLogger.info('Event sent', events_js_1.Events.PULSESYNC_OPEN_SETTINGS_DEEPLINK);
+};
+exports.sendOpenModSettingsDeeplink = sendOpenModSettingsDeeplink;
 const sendAnalyticsOnFirstLaunch = (window) => {
     window.webContents.send(events_js_1.Events.FIRST_LAUNCH);
     eventsLogger.info('Event send', events_js_1.Events.FIRST_LAUNCH);
