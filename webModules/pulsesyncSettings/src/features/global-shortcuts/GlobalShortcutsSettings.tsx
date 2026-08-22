@@ -3,6 +3,7 @@ import type { ModSettingsApi } from '../../api/modSettings'
 import { SettingInput } from '../../components/controls/SettingInput'
 import { SettingSelect } from '../../components/controls/SettingSelect'
 import { SettingToggle } from '../../components/controls/SettingToggle'
+import { SettingsItem } from '../../components/settings/SettingsItem'
 import { KeybindRecorder } from './KeybindRecorder'
 import {
   ACTION_DEFAULT_VALUES,
@@ -178,13 +179,25 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
   return (
     <section className={styles.section}>
       <h3>Горячие клавиши</h3>
-      <SettingToggle
-        title="Включить глобальные горячие клавиши"
-        description="Во время записи регистрация временно отключается, чтобы не было конфликтов с уже назначенными сочетаниями."
-        checked={enabled}
-        disabled={isLoading || !api}
-        onChange={updateEnabled}
-      />
+      <SettingsItem
+        id={GLOBAL_SHORTCUTS_KEY}
+        searchText={[
+          'Глобальные горячие клавиши',
+          'Сочетания клавиш',
+          'Хоткеи',
+          'Добавить хоткей',
+          'Действие',
+          'Команда',
+        ]}
+      >
+        <SettingToggle
+          title="Включить глобальные горячие клавиши"
+          description="Во время записи регистрация временно отключается, чтобы не было конфликтов с уже назначенными сочетаниями."
+          checked={enabled}
+          disabled={isLoading || !api}
+          onChange={updateEnabled}
+        />
+      </SettingsItem>
       <div className={styles.toolbar}>
         <button
           className={styles.addButton}

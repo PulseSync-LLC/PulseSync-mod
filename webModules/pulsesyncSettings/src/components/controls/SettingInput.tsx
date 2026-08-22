@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import styles from './SettingInput.module.scss'
 
 type SettingInputProps = {
@@ -7,6 +8,7 @@ type SettingInputProps = {
   onChange: (value: string) => void
   placeholder: string
   title: string
+  titleAction?: ReactNode
   value: string
 }
 
@@ -17,17 +19,22 @@ export function SettingInput({
   onChange,
   placeholder,
   title,
+  titleAction,
   value,
 }: SettingInputProps) {
   return (
-    <label className={styles.row}>
+    <div className={styles.row}>
       <span className={styles.text}>
-        <span className={styles.title}>{title}</span>
+        <span className={styles.titleLine}>
+          <span className={styles.title}>{title}</span>
+          {titleAction}
+        </span>
         <span className={styles.description}>{description}</span>
       </span>
       <input
         className={styles.input}
         type="number"
+        aria-label={title}
         inputMode="numeric"
         min={min}
         max={max}
@@ -36,6 +43,6 @@ export function SettingInput({
         placeholder={placeholder}
         onChange={(event) => onChange(event.currentTarget.value)}
       />
-    </label>
+    </div>
   )
 }

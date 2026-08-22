@@ -1,4 +1,8 @@
 .section {
+  &[data-searching='true']:not(:has([data-pulsesync-setting-id])) {
+    display: none;
+  }
+
   h3 {
     margin: 0 0 12px;
     color: var(--ym-controls-color-secondary-text-enabled, #a0a0a0);

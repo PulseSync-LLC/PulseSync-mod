@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { SettingToggle } from './SettingToggle'
 import styles from './SettingPath.module.scss'
 
@@ -9,6 +10,7 @@ type SettingPathProps = {
   onChange: (checked: boolean) => void
   path: string
   title: string
+  titleAction?: ReactNode
 }
 
 export function SettingPath({
@@ -19,6 +21,7 @@ export function SettingPath({
   onChange,
   path,
   title,
+  titleAction,
 }: SettingPathProps) {
   return (
     <div className={styles.setting}>
@@ -27,6 +30,7 @@ export function SettingPath({
         description={description}
         checked={checked}
         disabled={disabled}
+        titleAction={titleAction}
         onChange={onChange}
       />
       {checked ? (

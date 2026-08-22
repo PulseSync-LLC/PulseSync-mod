@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { createPortal } from 'react-dom'
 import styles from './SettingSelect.module.scss'
 
@@ -14,6 +20,7 @@ type SettingSelectProps = {
   onChange: (value: string) => void
   options: readonly SettingSelectOption[]
   title: string
+  titleAction?: ReactNode
   value: string
 }
 
@@ -23,6 +30,7 @@ export function SettingSelect({
   onChange,
   options,
   title,
+  titleAction,
   value,
 }: SettingSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -97,7 +105,10 @@ export function SettingSelect({
   return (
     <div className={styles.row} data-disabled={disabled} ref={rootRef}>
       <span className={styles.text}>
-        <span className={styles.title}>{title}</span>
+        <span className={styles.titleLine}>
+          <span className={styles.title}>{title}</span>
+          {titleAction}
+        </span>
         {resolvedDescription ? (
           <span className={styles.description}>
             {resolvedDescription}
