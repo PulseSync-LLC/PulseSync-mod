@@ -331,6 +331,7 @@ export function SchemaSettingsSection({
             placeholder: item.placeholder ?? '',
             min: item.min,
             max: item.max,
+            disabled,
             onChange: (value) => void updateValue(item, item.key, value),
           },
         }

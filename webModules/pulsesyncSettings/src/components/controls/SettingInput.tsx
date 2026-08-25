@@ -3,6 +3,7 @@ import styles from './SettingInput.module.scss'
 
 type SettingInputProps = {
   description: string
+  disabled?: boolean
   max?: number
   min?: number
   onChange: (value: string) => void
@@ -14,6 +15,7 @@ type SettingInputProps = {
 
 export function SettingInput({
   description,
+  disabled = false,
   max,
   min,
   onChange,
@@ -23,7 +25,7 @@ export function SettingInput({
   value,
 }: SettingInputProps) {
   return (
-    <div className={styles.row}>
+    <div className={styles.row} data-disabled={disabled}>
       <span className={styles.text}>
         <span className={styles.titleLine}>
           <span className={styles.title}>{title}</span>
@@ -35,6 +37,7 @@ export function SettingInput({
         className={styles.input}
         type="number"
         aria-label={title}
+        disabled={disabled}
         inputMode="numeric"
         min={min}
         max={max}
