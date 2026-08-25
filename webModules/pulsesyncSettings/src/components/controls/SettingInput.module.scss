@@ -37,6 +37,13 @@
   font-size: 12px;
 }
 
+.row[data-disabled='true'] {
+  .title,
+  .description {
+    color: var(--ym-controls-color-primary-text-disabled, #666);
+  }
+}
+
 .input {
   flex: 0 0 auto;
   width: 110px;
@@ -58,5 +65,11 @@
   &:focus-visible {
     border-color: var(--ym-controls-color-secondary-outline-hovered_stroke, rgba(255, 255, 255, 0.32));
     outline: none;
+  }
+
+  &:disabled {
+    color: var(--ym-controls-color-primary-text-disabled, #666);
+    border-color: var(--ym-controls-color-secondary-outline-disabled_stroke, rgba(255, 255, 255, 0.08));
+    cursor: not-allowed;
   }
 }
