@@ -21,16 +21,16 @@ const runtimeServices: RuntimeServices = {
 const ensureApi = () => ensurePulseSyncApi(runtimeServices);
 
 export function bootstrapPulseSyncRuntime() {
-    installFindCssRuleHelper();
     if (window.__pulsesyncBridgeInitialized) return false;
-    window.__pulsesyncBridgeInitialized = true;
 
+    installFindCssRuleHelper();
     installWebAudioGraphMonitor();
     installTrackQualityApi();
     installNativeAudioOutputMonitor();
     installYaspNativeAudioHooks();
     ensureApi();
     registerDesktopListeners(ensureApi);
+    window.__pulsesyncBridgeInitialized = true;
     void requestInitialAddonSettingsSnapshot(ensureApi);
     console.info('[PulseSync Runtime] ready', { apiVersion: 1 });
     return true;

@@ -1,6 +1,8 @@
 import type { AddonSettings, AddonSettingsSnapshot, PulseSyncApi } from '../contracts';
 import { areSettingsEqual, cloneValue, isPlainObject, normalizeAddonId } from '../core/values';
 
+const INITIAL_SNAPSHOT_RETRY_DELAYS_MS = [500, 1_000, 2_000, 4_000] as const;
+
 function notifySettingsListeners(addonId: string) {
     const api = window.pulsesyncApi;
     const listeners = api?._addonSettingsListeners.get(addonId);
@@ -44,9 +46,9 @@ export function applyAddonSettingsSnapshot(snapshot: unknown) {
     });
 }
 
-export async function requestInitialAddonSettingsSnapshot(ensureApi: () => PulseSyncApi) {
+export async function requestInitialAddonSettingsSnapshot(ensureApi: () => PulseSyncApi, failedAttempts = 0) {
     if (!window.desktopEvents?.invoke) {
-        window.setTimeout(() => void requestInitialAddonSettingsSnapshot(ensureApi), 500);
+        window.setTimeout(() => void requestInitialAddonSettingsSnapshot(ensureApi, failedAttempts), 500);
         return;
     }
 
@@ -54,5 +56,13 @@ export async function requestInitialAddonSettingsSnapshot(ensureApi: () => Pulse
         const snapshot = await window.desktopEvents.invoke<AddonSettingsSnapshot>('PULSESYNC_SETTINGS_SNAPSHOT');
         ensureApi();
         applyAddonSettingsSnapshot(snapshot);
-    } catch {}
+    } catch (error) {
+        console.warn('[PulseSync Runtime] Failed to request initial addon settings snapshot:', error);
+        const retryDelay = INITIAL_SNAPSHOT_RETRY_DELAYS_MS[failedAttempts];
+        if (retryDelay === undefined) {
+            console.error('[PulseSync Runtime] Initial addon settings snapshot retries exhausted');
+            return;
+        }
+        window.setTimeout(() => void requestInitialAddonSettingsSnapshot(ensureApi, failedAttempts + 1), retryDelay);
+    }
 }
