@@ -14,6 +14,7 @@ const deviceInfo = (0, deviceInfo_js_1.getDeviceInfo)();
 const store_js_1 = require('./store.js');
 const pulsesyncDevConfig_js_1 = require('./pulsesyncDevConfig.js');
 const events_js_1 = require('../types/events.js');
+const desktopEventPolicy_js_1 = require('./pulsesync/desktopEventPolicy.js');
 const events = require('node:events');
 const MAX_LYRICSFILE_BYTES = 1024 * 1024;
 const MAX_LYRICSFILE_DEPTH = 32;
@@ -471,30 +472,42 @@ electron_1.contextBridge.exposeInMainWorld('lyricsfileParser', {
 });
 electron_1.contextBridge.exposeInMainWorld('desktopEvents', {
     send(name, ...args) {
-        electron_1.ipcRenderer.send(name, ...args);
+        electron_1.ipcRenderer.send((0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('send', name), ...args);
     },
     on(name, callback) {
+        const eventName = (0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('listen', name);
         const listener = (event, ...args) => {
             callback(event, ...args);
         };
 
-        electron_1.ipcRenderer.on(name, listener);
+        electron_1.ipcRenderer.on(eventName, listener);
 
         return () => {
-            electron_1.ipcRenderer.off(name, listener);
+            electron_1.ipcRenderer.off(eventName, listener);
         };
     },
     off(name, listener) {
-        electron_1.ipcRenderer.off(name, listener);
+        electron_1.ipcRenderer.off((0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('listen', name), listener);
     },
     invoke(name, ...args) {
-        return electron_1.ipcRenderer.invoke(name, ...args);
-    },
-    emit(name, ...args) {
-        console.debug('emitted', name, ...args);
-        return electron_1.ipcRenderer.emit(name, ...args);
+        return electron_1.ipcRenderer.invoke((0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('invoke', name), ...args);
     },
     EVENTS: { ...events_js_1.Events },
+});
+electron_1.contextBridge.exposeInMainWorld('pulseSyncWebHost', {
+    async executeIsolatedAddon(addonId, channelToken) {
+        const prepared = await electron_1.ipcRenderer.invoke(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, { addonId, channelToken });
+        const worldId = Number(prepared?.worldId);
+        const executionToken = typeof prepared?.executionToken === 'string' ? prepared.executionToken : '';
+        const securityOrigin = typeof prepared?.securityOrigin === 'string' ? prepared.securityOrigin : '';
+        const worldName = typeof prepared?.worldName === 'string' ? prepared.worldName : '';
+        if (!Number.isSafeInteger(worldId) || worldId < 1000 || !executionToken || !securityOrigin || !worldName) {
+            throw new Error('PulseSync isolated addon preparation returned an invalid capability');
+        }
+
+        electron_1.webFrame.setIsolatedWorldInfo(worldId, { securityOrigin, name: worldName });
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, { executionToken });
+    },
 });
 electron_1.contextBridge.exposeInMainWorld('nativeSettings', {
     set(key, value) {
