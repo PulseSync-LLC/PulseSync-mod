@@ -1,4 +1,5 @@
 import type { PulseSyncAddonApi, PulseSyncApi } from '../contracts'
+import { ISOLATED_API_METHOD_SET } from '../addons/isolated/apiPolicy'
 import type { ApiResponse, IsolatedEventKind, IsolatedInit, IsolatedLogLevel } from './contracts'
 
 type PendingCall = {
@@ -39,7 +40,7 @@ export class IsolatedBridge {
 
     constructor(init: IsolatedInit) {
         this.init = init
-        this.allowedMethods = new Set(init.apiMethods)
+        this.allowedMethods = ISOLATED_API_METHOD_SET
         this.currentSettings = init.initialSettings ?? {}
 
         const settingsStore = Object.freeze({
@@ -97,6 +98,11 @@ export class IsolatedBridge {
         this.dispatch('status', { type: 'ready' })
     }
 
+    reportError(category: string, error: unknown) {
+        const normalizedError = toError(error)
+        this.dispatch('status', { type: 'error', category, message: normalizedError.message, stack: normalizedError.stack })
+    }
+
     log(level: IsolatedLogLevel, args: unknown[]) {
         this.dispatch('status', { type: 'log', level, args })
     }
@@ -150,13 +156,14 @@ export class IsolatedBridge {
     }
 
     private readonly handleWindowError = (event: ErrorEvent) => {
-        this.dispatch('status', { type: 'error', message: event.message, stack: event.error?.stack })
+        this.dispatch('status', { type: 'error', category: 'addon-execution-failed', message: event.message, stack: event.error?.stack })
     }
 
     private readonly handleUnhandledRejection = (event: PromiseRejectionEvent) => {
         const reason = event.reason
         this.dispatch('status', {
             type: 'error',
+            category: 'addon-execution-failed',
             message: reason instanceof Error ? reason.message : String(reason),
             stack: reason instanceof Error ? reason.stack : undefined,
         })

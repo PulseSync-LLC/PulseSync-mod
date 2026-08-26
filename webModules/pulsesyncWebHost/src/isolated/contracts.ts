@@ -9,7 +9,6 @@ export type IsolatedAddonAsset = {
 
 export type IsolatedInit = {
     addon: IsolatedAddonAsset
-    apiMethods: string[]
     initialSettings: unknown
     channelToken: string
 }
@@ -27,6 +26,7 @@ export type ApiResponse = {
 
 export type IsolatedWindow = Window & {
     __PULSESYNC_ISOLATED_INIT__?: IsolatedInit
+    __PULSESYNC_ISOLATED_RUNTIME_READY__?: boolean
     __PULSESYNC_ISOLATED_DISPOSE__?: Cleanup
     __PULSESYNC_WEB_HOST__?: PulseSyncWebHostApi
     __PULSESYNC_ADDON_QUEUE__?: PulseSyncAddonFactory[]
