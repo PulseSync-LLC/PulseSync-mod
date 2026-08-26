@@ -46,6 +46,7 @@ const { getPulseSyncAppInstaller } = require('./lib/pulsesyncAppInstaller.js');
 const taskBarExtension_js_1 = require('./lib/taskBarExtension/taskBarExtension.js');
 const scrobbleManager_js_1 = require('./lib/scrobble/index.js');
 const { getPulseSyncManager } = require('./lib/pulsesync/PulseSyncManager.js');
+const { IsolatedAddonExecutionStore, resolveCanonicalAddon, validateChannelToken } = require('./lib/pulsesync/isolatedAddonExecution.js');
 const miniPlayer_js_1 = require('./lib/miniplayer/miniplayer.js');
 const discordRichPresence_js_1 = require('./lib/discordRichPresence.js');
 const { getYandexStationRuntime } = require('./lib/yandexStation/YandexStationRuntime.js');
@@ -93,6 +94,7 @@ const ISOLATED_ADDON_WORLD_ID_START = 10000;
 const isolatedAddonWorldIds = new Map();
 let nextIsolatedAddonWorldId = ISOLATED_ADDON_WORLD_ID_START;
 let isolatedAddonRuntimeSource = null;
+const isolatedAddonExecutionStore = new IsolatedAddonExecutionStore();
 
 const getIsolatedAddonWorldId = (webContents, addonId) => {
     const key = `${webContents.id}:${addonId}`;
@@ -1435,41 +1437,70 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_WEBHOST_ADDONS_SNAPSHOT, 
     }
 });
 
+electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, (event, payload) => {
+    if (!mainWindow || event.sender !== mainWindow.webContents) throw new Error('PulseSync isolated addon rejected an unknown sender');
+
+    try {
+        const manager = pulseSyncManager_js_1 || getPulseSyncManager(mainWindow);
+        const addon = resolveCanonicalAddon(manager.getWebHostAddonsSnapshot(), payload?.addonId);
+        const channelToken = validateChannelToken(addon.id, payload?.channelToken);
+        const settingsSnapshot = manager.getAddonSettingsSnapshot();
+        const initialSettings = settingsSnapshot?.[addon.id] ?? {};
+        const worldId = getIsolatedAddonWorldId(event.sender, addon.id);
+        const executionToken = isolatedAddonExecutionStore.prepare({
+            senderId: event.sender.id,
+            worldId,
+            addon,
+            channelToken,
+            initialSettings,
+        });
+
+        return {
+            executionToken,
+            worldId,
+            securityOrigin: `pulsesync-isolated://addon-${worldId}`,
+            worldName: `PulseSync addon ${addon.id}`,
+        };
+    } catch (error) {
+        eventsLogger.error('PULSESYNC_ISOLATED_ADDON_PREPARE handler failed:', error);
+        throw error;
+    }
+});
+
 electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, async (event, payload) => {
     if (!mainWindow || event.sender !== mainWindow.webContents) throw new Error('PulseSync isolated addon rejected an unknown sender');
 
-    const addon = payload?.addon;
-    const addonId = typeof addon?.id === 'string' ? addon.id.trim() : '';
-    const code = typeof payload?.code === 'string' ? payload.code : '';
-    const channelToken = typeof payload?.channelToken === 'string' ? payload.channelToken : '';
-    const apiMethods = Array.isArray(payload?.apiMethods) ? payload.apiMethods.filter((method) => typeof method === 'string').slice(0, 64) : [];
-
-    if (!addonId || addonId.length > 160 || addonId.includes('\0')) throw new Error('PulseSync isolated addon id is invalid');
-    if (!code.trim() || code.length > 10_000_000) throw new Error(`PulseSync isolated addon ${addonId} has invalid code`);
-    if (!/^[a-f0-9-]{36}$/i.test(channelToken)) throw new Error(`PulseSync isolated addon ${addonId} has an invalid channel token`);
-
-    const worldId = getIsolatedAddonWorldId(event.sender, addonId);
+    const prepared = isolatedAddonExecutionStore.consume(payload?.executionToken, event.sender.id);
+    const { addon, channelToken, initialSettings, worldId } = prepared;
     const init = {
         addon: {
-            id: addonId,
-            name: typeof addon.name === 'string' ? addon.name : addonId,
-            directoryName: typeof addon.directoryName === 'string' ? addon.directoryName : addonId,
-            ...(typeof addon.version === 'string' ? { version: addon.version } : {}),
+            id: addon.id,
+            name: addon.name,
+            directoryName: addon.directoryName,
+            ...(addon.version ? { version: addon.version } : {}),
         },
-        apiMethods,
-        initialSettings: payload?.initialSettings ?? {},
+        initialSettings,
         channelToken,
     };
-    const initCode = `Object.defineProperty(globalThis, '__PULSESYNC_ISOLATED_INIT__', { value: ${JSON.stringify(init)}, configurable: true });\nnull;`;
+    const initCode = `delete globalThis.__PULSESYNC_ISOLATED_RUNTIME_READY__;\nObject.defineProperty(globalThis, '__PULSESYNC_ISOLATED_INIT__', { value: ${JSON.stringify(init)}, configurable: true });\nnull;`;
     const runtimeCode = `${getIsolatedAddonRuntimeSource()}\n;null;`;
-    const addonCode = `${code}\n;null;`;
-    const sourceBase = `pulsesync-isolated://${encodeURIComponent(addonId)}`;
+    const addonCode = addon.code;
+    const sourceBase = `pulsesync-isolated://${encodeURIComponent(addon.id)}`;
 
-    await event.sender.executeJavaScriptInIsolatedWorld(worldId, [
-        { code: initCode, url: `${sourceBase}/bootstrap.js` },
-        { code: runtimeCode, url: `${sourceBase}/runtime.js` },
-        { code: addonCode, url: `${sourceBase}/addon.js` },
-    ]);
+    try {
+        await event.sender.executeJavaScriptInIsolatedWorld(worldId, [
+            { code: initCode, url: `${sourceBase}/bootstrap.js` },
+            { code: runtimeCode, url: `${sourceBase}/runtime.js` },
+        ]);
+        const runtimeReady = await event.sender.executeJavaScriptInIsolatedWorld(worldId, [
+            { code: 'globalThis.__PULSESYNC_ISOLATED_RUNTIME_READY__ === true;', url: `${sourceBase}/runtime-ready.js` },
+        ]);
+        if (runtimeReady !== true) throw new Error(`[PulseSync Addons] Isolated addon ${addon.id} runtime initialization failed`);
+        await event.sender.executeJavaScriptInIsolatedWorld(worldId, [{ code: addonCode, url: `${sourceBase}/addon.js` }]);
+    } catch (error) {
+        eventsLogger.error(`[PulseSync Addons] Isolated addon ${addon.id} execution failed:`, error);
+        throw error;
+    }
 
     return { runtime: 'isolated', worldId };
 });

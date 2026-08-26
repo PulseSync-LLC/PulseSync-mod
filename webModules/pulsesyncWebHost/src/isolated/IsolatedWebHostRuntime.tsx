@@ -8,6 +8,7 @@ import { IsolatedAddonHost } from './IsolatedAddonHost'
 import { IsolatedBridge } from './IsolatedBridge'
 import type { IsolatedInit, IsolatedWindow } from './contracts'
 import { IsolatedTargetRegistry } from './IsolatedTargetRegistry'
+import { installIsolatedDomExecutionPolicy } from './domExecutionPolicy'
 
 export class IsolatedWebHostRuntime {
     private readonly isolatedWindow: IsolatedWindow
@@ -23,6 +24,7 @@ export class IsolatedWebHostRuntime {
     private rootContainer?: HTMLDivElement
     private started = false
     private disposed = false
+    private registrationReported = false
 
     constructor(isolatedWindow: IsolatedWindow, init: IsolatedInit) {
         this.isolatedWindow = isolatedWindow
@@ -39,6 +41,7 @@ export class IsolatedWebHostRuntime {
     start() {
         if (this.started || this.disposed) return
         this.started = true
+        installIsolatedDomExecutionPolicy()
         this.bridge.start()
 
         this.defineGlobal('pulsesyncApi', this.bridge.pulsesyncApi)
@@ -46,8 +49,6 @@ export class IsolatedWebHostRuntime {
         this.defineGlobal('__PULSESYNC_ADDON_QUEUE__', this.addonQueue)
         this.defineGlobal('__PULSESYNC_ISOLATED_DISPOSE__', this.dispose)
         document.addEventListener(this.bridge.eventName('dispose'), this.dispose)
-
-        this.bridge.reportReady()
     }
 
     private defineGlobal(name: keyof IsolatedWindow, value: unknown) {
@@ -84,7 +85,7 @@ export class IsolatedWebHostRuntime {
         Object.defineProperty(queue, 'push', {
             value: (...factories: PulseSyncAddonFactory[]) => {
                 factories.forEach(factory => {
-                    void this.hostApi.installAddon(factory).catch(error => this.bridge.log('error', ['Addon installation failed', String(error)]))
+                    void this.hostApi.installAddon(factory).catch(error => this.bridge.reportError('addon-registration-failed', error))
                 })
                 return factories.length
             },
@@ -135,6 +136,10 @@ export class IsolatedWebHostRuntime {
         this.currentDefinition = Object.freeze({ ...definition, id: addonId })
         this.definitionGeneration += 1
         this.renderDefinition()
+        if (!this.registrationReported) {
+            this.registrationReported = true
+            this.bridge.reportReady()
+        }
 
         let active = true
         return () => {
@@ -175,6 +180,7 @@ export class IsolatedWebHostRuntime {
         delete this.isolatedWindow.__PULSESYNC_WEB_HOST__
         delete this.isolatedWindow.__PULSESYNC_ADDON_QUEUE__
         delete this.isolatedWindow.pulsesyncApi
+        delete this.isolatedWindow.__PULSESYNC_ISOLATED_RUNTIME_READY__
         delete this.isolatedWindow.__PULSESYNC_ISOLATED_DISPOSE__
     }
 }

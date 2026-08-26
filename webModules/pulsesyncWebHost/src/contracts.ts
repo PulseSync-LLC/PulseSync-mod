@@ -10,6 +10,10 @@ export type DesktopEventsBridge = {
     on?: (event: string, listener: (event: unknown, ...args: unknown[]) => void) => (() => void) | void
 }
 
+export type PulseSyncWebHostBridge = {
+    executeIsolatedAddon: (addonId: string, channelToken: string) => Promise<{ runtime: 'isolated'; worldId: number }>
+}
+
 export type PulseSyncAddonComponentProps = {
     addonId: string
     api: PulseSyncAddonApi
@@ -69,6 +73,7 @@ declare global {
         __PULSESYNC_ADDON_QUEUE__?: PulseSyncAddonFactory[]
         pulsesyncApi?: PulseSyncApi
         desktopEvents?: DesktopEventsBridge
+        pulseSyncWebHost?: PulseSyncWebHostBridge
         __PS_STYLES__?: Record<string, string>
         __PS_SCRIPTS__?: Record<string, string>
         clearAll?: () => void
