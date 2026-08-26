@@ -7,6 +7,7 @@ const store_js_1 = require('../store.js');
 const store_js_2 = require('../../types/store.js');
 const { Events } = require('../../types/events');
 const { setAllowedUrls } = require('../handlers/handleHeadersReceived/corsHandler.js');
+const { normalizeCanonicalSnapshot } = require('./isolatedAddonExecution.js');
 
 const { mergeWithSystem, isSystemId, sanitizeId: sanitizeIdFromSystem } = require('./system/SystemAddons');
 
@@ -556,15 +557,15 @@ class PulseSyncManager extends EventEmitter {
 
         this.socket.on('WEBHOST_ADDONS_SNAPSHOT', async (payload) => {
             await this.acceptLegacyAuthorization('WEBHOST_ADDONS_SNAPSHOT');
-            if (payload?.runtime !== undefined && payload.runtime !== 'isolated' && payload.runtime !== 'sandbox') {
-                this.logger.warn(`WEBHOST_ADDONS_SNAPSHOT: rejected runtime ${String(payload.runtime)}`);
+            let snapshot;
+            try {
+                snapshot = normalizeCanonicalSnapshot(payload, (error) => {
+                    this.logger.warn(error instanceof Error ? error.message : String(error));
+                });
+            } catch (error) {
+                this.logger.warn(error instanceof Error ? error.message : String(error));
                 return;
             }
-            const snapshot = {
-                runtime: 'isolated',
-                hash: typeof payload?.hash === 'string' ? payload.hash : '',
-                addons: Array.isArray(payload?.addons) ? payload.addons : [],
-            };
             if (snapshot.hash && snapshot.hash === this._webHostAddonsSnapshot.hash) return;
 
             this._webHostAddonsSnapshot = this.cloneAddonSettingsValue(snapshot);

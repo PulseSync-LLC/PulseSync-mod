@@ -1,7 +1,6 @@
-import { ISOLATED_ADDON_EXECUTE_EVENT } from '../../constants'
 import { getPulseSyncApi } from '../../runtime/pulsesyncApi'
 import type { WebHostAddonAsset } from '../contracts'
-import { ISOLATED_API_METHODS, ISOLATED_API_METHOD_SET } from './apiPolicy'
+import { ISOLATED_API_METHOD_SET } from './apiPolicy'
 
 type AddonSettingsStore = {
     getCurrent?: () => unknown
@@ -16,6 +15,7 @@ type ApiRequest = {
 
 type RuntimeStatus = {
     type: 'ready' | 'log' | 'error'
+    category?: string
     level?: 'info' | 'warn' | 'error'
     args?: unknown[]
     message?: string
@@ -24,6 +24,7 @@ type RuntimeStatus = {
 
 const MAX_API_CALLS_PER_WINDOW = 300
 const API_RATE_WINDOW_MS = 10_000
+const ADDON_REGISTRATION_TIMEOUT_MS = 10_000
 
 function toTransportValue(value: unknown, depth = 0, seen = new WeakSet<object>()): unknown {
     if (value === null || value === undefined || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') return value
@@ -78,9 +79,18 @@ export class IsolatedAddonRuntime {
     private destroyed = false
     private apiCallWindowStartedAt = 0
     private apiCallCount = 0
+    private readonly registrationPromise: Promise<void>
+    private resolveRegistration!: () => void
+    private rejectRegistration!: (error: Error) => void
+    private registrationSettled = false
 
     constructor(addon: WebHostAddonAsset) {
         this.addon = addon
+        this.registrationPromise = new Promise((resolve, reject) => {
+            this.resolveRegistration = resolve
+            this.rejectRegistration = reject
+        })
+        void this.registrationPromise.catch(() => {})
     }
 
     private eventName(kind: 'request' | 'response' | 'settings' | 'dispose' | 'status') {
@@ -158,6 +168,10 @@ export class IsolatedAddonRuntime {
         if (!status) return
         const prefix = `[PulseSync isolated addon: ${this.addon.id}]`
         if (status.type === 'ready') {
+            if (!this.registrationSettled) {
+                this.registrationSettled = true
+                this.resolveRegistration()
+            }
             console.info(`${prefix} ready`)
             return
         }
@@ -166,7 +180,13 @@ export class IsolatedAddonRuntime {
             return
         }
         if (status.type === 'error') {
-            console.error(`${prefix} ${String(status.message ?? 'Unknown isolated addon error').slice(0, 2_000)}`, String(status.stack ?? '').slice(0, 8_000))
+            const category = String(status.category ?? 'addon-execution-failed')
+            const message = String(status.message ?? 'Unknown isolated addon error').slice(0, 2_000)
+            if (!this.registrationSettled) {
+                this.registrationSettled = true
+                this.rejectRegistration(new Error(`${category}: ${message}`))
+            }
+            console.error(`${prefix} ${category}: ${message}`, String(status.stack ?? '').slice(0, 8_000))
         }
     }
 
@@ -181,26 +201,30 @@ export class IsolatedAddonRuntime {
 
     async start() {
         if (this.destroyed) throw new Error('PulseSync isolated addon runtime was destroyed')
-        const invoke = window.desktopEvents?.invoke
-        if (typeof invoke !== 'function') throw new Error('PulseSync desktop events bridge is unavailable')
+        const executeIsolatedAddon = window.pulseSyncWebHost?.executeIsolatedAddon
+        if (typeof executeIsolatedAddon !== 'function') throw new Error('PulseSync isolated addon bridge is unavailable')
 
         this.installStyle()
         this.subscribeSettings()
         document.addEventListener(this.eventName('request'), this.handleApiRequestBound)
         document.addEventListener(this.eventName('status'), this.handleStatusBound)
 
-        await invoke(ISOLATED_ADDON_EXECUTE_EVENT, {
-            addon: {
-                id: this.addon.id,
-                name: this.addon.name,
-                directoryName: this.addon.directoryName,
-                ...(this.addon.version ? { version: this.addon.version } : {}),
-            },
-            code: this.addon.code,
-            channelToken: this.channelToken,
-            apiMethods: ISOLATED_API_METHODS,
-            initialSettings: this.currentSettings,
-        })
+        await executeIsolatedAddon(this.addon.id, this.channelToken)
+
+        let timeout = 0
+        try {
+            await Promise.race([
+                this.registrationPromise,
+                new Promise<never>((_resolve, reject) => {
+                    timeout = window.setTimeout(
+                        () => reject(new Error(`addon-registration-failed: addon registration timed out after ${ADDON_REGISTRATION_TIMEOUT_MS}ms`)),
+                        ADDON_REGISTRATION_TIMEOUT_MS,
+                    )
+                }),
+            ])
+        } finally {
+            if (timeout) window.clearTimeout(timeout)
+        }
 
         if (this.destroyed) return
         this.dispatch('settings', { value: this.currentSettings })
@@ -211,6 +235,10 @@ export class IsolatedAddonRuntime {
 
     destroy() {
         if (this.destroyed) return
+        if (!this.registrationSettled) {
+            this.registrationSettled = true
+            this.rejectRegistration(new Error('addon-registration-failed: isolated addon was destroyed before registration'))
+        }
         this.dispatch('dispose', {})
         this.destroyed = true
         document.removeEventListener(this.eventName('request'), this.handleApiRequestBound)

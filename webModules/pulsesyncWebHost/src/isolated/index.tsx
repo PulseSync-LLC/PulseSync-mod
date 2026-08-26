@@ -9,3 +9,9 @@ if (!initialState) throw new Error('PulseSync isolated addon init is missing')
 
 delete isolatedWindow.__PULSESYNC_ISOLATED_INIT__
 new IsolatedWebHostRuntime(isolatedWindow, initialState).start()
+Object.defineProperty(isolatedWindow, '__PULSESYNC_ISOLATED_RUNTIME_READY__', {
+    value: true,
+    configurable: true,
+    enumerable: false,
+    writable: false,
+})
