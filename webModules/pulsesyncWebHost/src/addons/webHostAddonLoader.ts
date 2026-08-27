@@ -1,14 +1,20 @@
-import type { WebHostAddonAsset, WebHostAddonsSnapshot } from './contracts'
+import type { WebHostAddonsSnapshot, WebHostAsset } from './contracts'
 import { IsolatedAddonRuntime } from './isolated/IsolatedAddonRuntime'
+import { CssThemeRuntime } from './theme/CssThemeRuntime'
 import { ISOLATED_ADDON_RUNTIME } from '../runtimeModes'
 
+type WebHostAssetRuntime = {
+    start: () => Promise<void>
+    destroy: () => void
+}
+
 type AppliedAddon = {
-    asset: WebHostAddonAsset
-    runtime: IsolatedAddonRuntime
+    asset: WebHostAsset
+    runtime: WebHostAssetRuntime
 }
 
 const appliedAddons = new Map<string, AppliedAddon>()
-const lastKnownGoodAddons = new Map<string, WebHostAddonAsset>()
+const lastKnownGoodAddons = new Map<string, WebHostAsset>()
 let lastAppliedHash = ''
 
 function normalizeId(value: unknown) {
@@ -16,14 +22,15 @@ function normalizeId(value: unknown) {
 }
 
 function removeAddon(addonId: string, forgetLastKnownGood = false) {
-    window.__PULSESYNC_WEB_HOST__?.unregisterAddon(addonId)
-    appliedAddons.get(addonId)?.runtime.destroy()
+    const applied = appliedAddons.get(addonId)
+    if (applied?.asset.type === 'web-addon') window.__PULSESYNC_WEB_HOST__?.unregisterAddon(addonId)
+    applied?.runtime.destroy()
     appliedAddons.delete(addonId)
     if (forgetLastKnownGood) lastKnownGoodAddons.delete(addonId)
 }
 
-function startAddon(addon: WebHostAddonAsset, rollbackAddon?: WebHostAddonAsset) {
-    const runtime = new IsolatedAddonRuntime(addon)
+function startAddon(addon: WebHostAsset, rollbackAddon?: WebHostAsset) {
+    const runtime = addon.type === 'theme' ? new CssThemeRuntime(addon) : new IsolatedAddonRuntime(addon)
     appliedAddons.set(addon.id, { asset: addon, runtime })
     void runtime
         .start()
@@ -32,7 +39,7 @@ function startAddon(addon: WebHostAddonAsset, rollbackAddon?: WebHostAddonAsset)
         })
         .catch(error => {
             if (appliedAddons.get(addon.id)?.runtime !== runtime) return
-            console.error(`[PulseSync WebHost] Failed to start isolated addon ${addon.id}:`, error)
+            console.error(`[PulseSync WebHost] Failed to start ${addon.type} ${addon.id}:`, error)
             lastAppliedHash = ''
             removeAddon(addon.id)
 
@@ -41,31 +48,41 @@ function startAddon(addon: WebHostAddonAsset, rollbackAddon?: WebHostAddonAsset)
                 return
             }
 
-            console.warn(`[PulseSync WebHost] Restoring last working isolated addon ${addon.id}`)
+            console.warn(`[PulseSync WebHost] Restoring last working ${rollbackAddon.type} ${addon.id}`)
             startAddon(rollbackAddon)
         })
 }
 
-function applyAddon(addon: WebHostAddonAsset) {
+function applyAddon(addon: WebHostAsset) {
     const rollbackAddon = lastKnownGoodAddons.get(addon.id)
     removeAddon(addon.id)
     startAddon(addon, rollbackAddon)
 }
 
-function normalizeAddon(value: unknown): WebHostAddonAsset | null {
+function normalizeAddon(value: unknown): WebHostAsset | null {
     if (!value || typeof value !== 'object') return null
-    const addon = value as Partial<WebHostAddonAsset>
+    const addon = value as Partial<WebHostAsset> & { type?: unknown; code?: unknown }
     const id = normalizeId(addon.id)
     if (!id) return null
 
-    return {
+    const baseAsset = {
         id,
         name: normalizeId(addon.name) || id,
         directoryName: normalizeId(addon.directoryName) || id,
         ...(typeof addon.version === 'string' ? { version: addon.version } : {}),
         css: typeof addon.css === 'string' ? addon.css : '',
-        code: typeof addon.code === 'string' ? addon.code : '',
     }
+
+    if (addon.type === 'theme') {
+        if (!baseAsset.css.trim() || baseAsset.css.trim() === '{}') return null
+        if (typeof addon.code === 'string' && addon.code.trim()) return null
+        return { ...baseAsset, type: 'theme' }
+    }
+
+    if (addon.type !== undefined && addon.type !== 'web-addon') return null
+    const code = typeof addon.code === 'string' ? addon.code : ''
+    if (!code.trim()) return null
+    return { ...baseAsset, type: 'web-addon', code }
 }
 
 function normalizeSnapshot(value: unknown): WebHostAddonsSnapshot | null {
@@ -76,9 +93,7 @@ function normalizeSnapshot(value: unknown): WebHostAddonsSnapshot | null {
     return {
         runtime: ISOLATED_ADDON_RUNTIME,
         hash: normalizeId(snapshot.hash),
-        addons: Array.isArray(snapshot.addons)
-            ? snapshot.addons.map(normalizeAddon).filter((addon): addon is WebHostAddonAsset => addon !== null)
-            : [],
+        addons: Array.isArray(snapshot.addons) ? snapshot.addons.map(normalizeAddon).filter((addon): addon is WebHostAsset => addon !== null) : [],
     }
 }
 
@@ -94,10 +109,12 @@ export function applyWebHostAddonsSnapshot(value: unknown) {
 
     for (const addon of nextAddons.values()) {
         const previous = appliedAddons.get(addon.id)
-        if (!previous || previous.asset.css !== addon.css || previous.asset.code !== addon.code) applyAddon(addon)
+        const previousCode = previous?.asset.type === 'web-addon' ? previous.asset.code : ''
+        const nextCode = addon.type === 'web-addon' ? addon.code : ''
+        if (!previous || previous.asset.type !== addon.type || previous.asset.css !== addon.css || previousCode !== nextCode) applyAddon(addon)
     }
 
     lastAppliedHash = snapshot.hash
-    console.info('[PulseSync WebHost] isolated addon snapshot applied', { addons: nextAddons.size })
+    console.info('[PulseSync WebHost] addon snapshot applied', { assets: nextAddons.size })
     return true
 }
