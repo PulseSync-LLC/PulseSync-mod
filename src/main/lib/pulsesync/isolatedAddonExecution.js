@@ -4,6 +4,7 @@ const crypto = require('node:crypto');
 const { parse } = require('@babel/parser');
 
 const MAX_ISOLATED_ADDON_CODE_LENGTH = 10_000_000;
+const MAX_WEB_HOST_ASSET_CSS_LENGTH = 10_000_000;
 const ISOLATED_EXECUTION_TTL_MS = 15_000;
 
 const createBlockedAddonError = (addonId, category, reason) => {
@@ -20,6 +21,23 @@ const validateAddonId = (value) => {
         throw createBlockedAddonError(addonId, 'invalid-addon-id', 'addon id must be a non-empty string of at most 160 characters');
     }
     return addonId;
+};
+
+const normalizeAssetType = (value) => {
+    if (value === undefined || value === 'web-addon') return 'web-addon';
+    if (value === 'theme') return 'theme';
+    throw createBlockedAddonError('<snapshot>', 'invalid-asset-type', `asset type ${String(value)} is not supported`);
+};
+
+const validateCanonicalCss = (assetId, value, required = false) => {
+    const css = typeof value === 'string' ? value : '';
+    if (css.length > MAX_WEB_HOST_ASSET_CSS_LENGTH) {
+        throw createBlockedAddonError(assetId, 'css-too-large', `stylesheet exceeds ${MAX_WEB_HOST_ASSET_CSS_LENGTH} characters`);
+    }
+    if (required && (!css.trim() || css.trim() === '{}')) {
+        throw createBlockedAddonError(assetId, 'empty-css', 'theme stylesheet is empty');
+    }
+    return css;
 };
 
 const readStaticString = (node) => {
@@ -134,6 +152,9 @@ const resolveCanonicalAddon = (snapshot, requestedAddonId) => {
     }
 
     const addon = matches[0];
+    if (normalizeAssetType(addon.type) !== 'web-addon') {
+        throw createBlockedAddonError(addonId, 'non-executable-asset', 'CSS-only themes cannot be executed');
+    }
     const code = validateCanonicalAddonCode(addonId, addon.code);
     return Object.freeze({
         id: addonId,
@@ -181,15 +202,30 @@ const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
             if (idCounts.get(addonId) !== 1) {
                 throw createBlockedAddonError(addonId, 'duplicate-addon-id', 'addon id is duplicated in the incoming snapshot');
             }
-            const code = validateCanonicalAddonCode(addonId, sourceAddon?.code);
-            addons.push({
+            const type = normalizeAssetType(sourceAddon?.type);
+            const baseAsset = {
+                type,
                 id: addonId,
                 name: typeof sourceAddon?.name === 'string' && sourceAddon.name.trim() ? sourceAddon.name : addonId,
                 directoryName: typeof sourceAddon?.directoryName === 'string' && sourceAddon.directoryName.trim() ? sourceAddon.directoryName : addonId,
                 ...(typeof sourceAddon?.version === 'string' ? { version: sourceAddon.version } : {}),
-                css: typeof sourceAddon?.css === 'string' ? sourceAddon.css : '',
-                code,
-            });
+            };
+
+            if (type === 'theme') {
+                if (typeof sourceAddon?.code === 'string' && sourceAddon.code.trim()) {
+                    throw createBlockedAddonError(addonId, 'theme-script-not-allowed', 'CSS-only themes cannot contain addon code');
+                }
+                addons.push({
+                    ...baseAsset,
+                    css: validateCanonicalCss(addonId, sourceAddon?.css, true),
+                });
+            } else {
+                addons.push({
+                    ...baseAsset,
+                    css: validateCanonicalCss(addonId, sourceAddon?.css),
+                    code: validateCanonicalAddonCode(addonId, sourceAddon?.code),
+                });
+            }
         } catch (error) {
             try {
                 onBlocked(error);
@@ -245,6 +281,7 @@ class IsolatedAddonExecutionStore {
 module.exports = {
     ISOLATED_EXECUTION_TTL_MS,
     MAX_ISOLATED_ADDON_CODE_LENGTH,
+    MAX_WEB_HOST_ASSET_CSS_LENGTH,
     IsolatedAddonExecutionStore,
     normalizeCanonicalSnapshot,
     resolveCanonicalAddon,
