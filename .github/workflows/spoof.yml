@@ -1,0 +1,85 @@
+name: Spoof mod
+
+on:
+    workflow_dispatch:
+    repository_dispatch:
+        types: [spoof-mod]
+
+concurrency:
+    group: spoof-mod-release
+    cancel-in-progress: false
+
+permissions:
+    contents: write
+
+jobs:
+    spoof:
+        name: Spoof, build and publish
+        runs-on: windows-2025
+        timeout-minutes: 60
+        env:
+            SERVER_URL: ${{ secrets.SERVER_URL }}
+            AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
+            DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+            GITHUB_TOKEN: ${{ github.token }}
+            GITHUB_REPO_OWNER: ${{ github.repository_owner }}
+            GITHUB_REPO_NAME: ${{ github.event.repository.name }}
+            NO_COLOR: 1
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  ref: dev
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+
+            - name: Validate release secrets
+              shell: pwsh
+              run: |
+                  $required = @('SERVER_URL', 'AUTH_TOKEN', 'DISCORD_WEBHOOK_URL')
+                  $missing = $required | Where-Object {
+                    [string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($_))
+                  }
+
+                  if ($missing.Count -gt 0) {
+                    throw "Missing required repository secrets: $($missing -join ', ')"
+                  }
+
+            - name: Install dependencies
+              shell: pwsh
+              run: |
+                  corepack enable
+                  corepack prepare yarn@1.22.22 --activate
+                  yarn install --frozen-lockfile
+
+            - name: Bump mod patch version
+              shell: pwsh
+              run: |
+                  npm version patch --no-git-tag-version
+                  $modVersion = node -p "require('./package.json').version"
+                  node -e "const fs = require('fs'); const packageJson = JSON.parse(fs.readFileSync('src/package.json', 'utf8')); packageJson.modification.version = process.argv[1]; fs.writeFileSync('src/package.json', JSON.stringify(packageJson, null, 4), 'utf8');" $modVersion
+
+            - name: Download latest Yandex Music build
+              run: node toolset.js download
+
+            - name: Spoof, build and publish mod
+              run: node toolset.js spoof -r -m --modernize
+
+            - name: Commit spoofed version to dev
+              shell: pwsh
+              run: |
+                  $changes = git status --porcelain -- package.json src/package.json
+                  if ([string]::IsNullOrWhiteSpace($changes)) {
+                    Write-Host 'No version changes to commit.'
+                    exit 0
+                  }
+
+                  git config user.name 'github-actions[bot]'
+                  git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+                  git add -- package.json src/package.json
+                  git commit -m 'chore: Prepare to release'
+                  git push origin HEAD:dev
