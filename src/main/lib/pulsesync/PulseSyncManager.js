@@ -1004,7 +1004,7 @@ class PulseSyncManager extends EventEmitter {
             this.socket.emit('READY', {
                 addonStateHashVersion: 1,
                 addonStateHash: hashAddonState(this.currentTheme, this.sourceExtensions),
-                webHostAddonProtocolVersion: 1,
+                webHostAddonProtocolVersion: 2,
                 userValidationProtocolVersion: 1,
             });
             if (this.legacyPremiumTimer) clearTimeout(this.legacyPremiumTimer);
