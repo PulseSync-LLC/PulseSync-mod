@@ -5586,11 +5586,11 @@
                         [k, P] = (0, pulseSyncPlayerReact.useState)(!1),
                         [j, S] = (0, pulseSyncPlayerReact.useState)(!1),
                         [castHoveredDeviceKey, setCastHoveredDeviceKey] = (0, pulseSyncPlayerReact.useState)(null),
-                        [E, T] = (0, pulseSyncPlayerReact.useState)(pulseSyncIsYandexStationCastEnabled()),
+                        [castEnabled, setCastEnabled] = (0, pulseSyncPlayerReact.useState)(pulseSyncIsYandexStationCastEnabled()),
                         I = (0, pulseSyncPlayerReact.useRef)(null),
                         w = (0, pulseSyncPlayerReact.useRef)(null),
                         L = (0, pulseSyncPlayerReact.useCallback)(async () => {
-                            if (!E) {
+                            if (!castEnabled) {
                                 y([]);
                                 S(!1);
                                 P(!1);
@@ -5608,7 +5608,7 @@
                             } catch (e) {
                                 console.warn('Failed to load Yandex Station cast devices', e), y([]), S(!1), P(!1);
                             }
-                        }, [E]),
+                        }, [castEnabled]),
                         M = (0, pulseSyncPlayerReact.useCallback)(() => {
                             l(!1);
                             clearTimeout(w.current);
@@ -5659,7 +5659,7 @@
                     (0, pulseSyncPlayerReact.useEffect)(() => {
                         const e = (e) => {
                             const t = e.detail?.enabled ?? pulseSyncIsYandexStationCastEnabled();
-                            T(t);
+                            setCastEnabled(t);
                             t ? (S(!1), void L()) : (M(), y([]), b(null), S(!1), P(!1));
                         };
                         return (
@@ -5693,13 +5693,13 @@
                             }
                         );
                     }, [s, B]);
-                    return a || !E
+                    return a || !castEnabled
                         ? null
                         : (0, pulseSyncPlayerJsx.jsxs)('div', {
                               ref: I,
                               style: { position: 'relative', display: 'flex', alignItems: 'center' },
                               children: [
-                                  (0, pulseSyncPlayerJsx.jsx)(p.$, {
+                                  (0, pulseSyncPlayerJsx.jsx)(pulseSyncPlayerButton.$, {
                                       className: t,
                                       radius: 'round',
                                       size: 'xxxs',
@@ -5708,7 +5708,7 @@
                                       'aria-label': i({ id: 'player-actions.cast' }),
                                       icon: g
                                           ? pulseSyncRenderCastDeviceIcon(pulseSyncGetActiveCastDeviceRow(v, g), 'PulseSync_castPlayerButtonIcon')
-                                          : (0, pulseSyncPlayerJsx.jsx)(F.Icon, { variant: 'cast', size: 'xs' }),
+                                          : (0, pulseSyncPlayerJsx.jsx)(E.I, { variant: 'cast', size: 'xs' }),
                                       onClick: V,
                                       style: g ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : void 0,
                                   }),
