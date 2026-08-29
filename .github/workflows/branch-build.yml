@@ -1,0 +1,71 @@
+name: Build branch mod
+
+on:
+    push:
+        branches:
+            - pulsesync-bridge-api
+    workflow_dispatch:
+
+concurrency:
+    group: branch-build-${{ github.ref_name }}
+    cancel-in-progress: true
+
+permissions:
+    contents: write
+
+jobs:
+    build:
+        name: Build and publish ${{ github.ref_name }}
+        if: github.ref_name == 'pulsesync-bridge-api'
+        runs-on: windows-2025
+        timeout-minutes: 60
+        env:
+            GH_TOKEN: ${{ github.token }}
+            NO_COLOR: 1
+
+        steps:
+            - name: Checkout branch
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+
+            - name: Install dependencies
+              shell: pwsh
+              run: |
+                  corepack enable
+                  corepack prepare yarn@1.22.22 --activate
+                  yarn install --frozen-lockfile
+
+            - name: Build install artifact
+              run: node toolset.js build -m --modernize --buildZstd
+
+            - name: Create build metadata
+              shell: pwsh
+              run: |
+                  $metadata = [ordered]@{
+                    branch = $env:GITHUB_REF_NAME
+                    commit = $env:GITHUB_SHA
+                    version = node -p "require('./package.json').version"
+                    yandexMusicVersion = node -p "require('./src/package.json').version"
+                    builtAt = [DateTimeOffset]::UtcNow.ToString('o')
+                  }
+                  $metadata | ConvertTo-Json | Set-Content -LiteralPath build.json -Encoding utf8NoBOM
+
+            - name: Publish rolling prerelease
+              shell: pwsh
+              run: |
+                  $tag = "branch-$env:GITHUB_REF_NAME"
+                  $releaseName = "PulseSync Mod - $env:GITHUB_REF_NAME"
+
+                  if (gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null) {
+                    git tag --force $tag $env:GITHUB_SHA
+                    git push origin "refs/tags/$tag" --force
+                    gh release edit $tag --repo $env:GITHUB_REPOSITORY --title $releaseName --prerelease
+                  } else {
+                    gh release create $tag --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title $releaseName --prerelease
+                  }
+
+                  gh release upload $tag builds/latest/app.asar.zst build.json --repo $env:GITHUB_REPOSITORY --clobber
