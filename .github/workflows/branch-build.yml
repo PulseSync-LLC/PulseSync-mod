@@ -32,6 +32,21 @@ jobs:
               with:
                   node-version: 22
 
+            - name: Restore toolset build cache
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      webModules/miniplayer/.build-meta.json
+                      src/main/lib/miniplayer/renderer
+                      webModules/pulsesyncWebHost/.build-meta.json
+                      webModules/pulsesyncWebHost/dist
+                      webModules/pulsesyncRuntime/.build-meta.json
+                      webModules/pulsesyncRuntime/dist
+                      src/main/native_modules
+                  key: branch-toolset-${{ runner.os }}-${{ runner.arch }}-node22-${{ hashFiles('package.json', 'toolset/**/*.js', 'webModules/miniplayer/**', 'webModules/pulsesyncWebHost/**', 'webModules/pulsesyncRuntime/**', 'webModules/pulsesyncSettings/**', 'native/**') }}
+                  restore-keys: |
+                      branch-toolset-${{ runner.os }}-${{ runner.arch }}-node22-
+
             - name: Install dependencies
               shell: pwsh
               run: |
