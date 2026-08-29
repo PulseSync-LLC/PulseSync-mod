@@ -58,7 +58,7 @@ jobs:
               shell: pwsh
               run: |
                   $tag = "branch-$env:GITHUB_REF_NAME"
-                  $releaseName = "PulseSync Mod - $env:GITHUB_REF_NAME"
+                  $releaseName = $env:GITHUB_REF_NAME
 
                   if (gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null) {
                     git tag --force $tag $env:GITHUB_SHA
