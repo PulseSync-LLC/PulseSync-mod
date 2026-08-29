@@ -78,7 +78,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         if (fs.existsSync(outputZipPath)) {
             await fsp.rm(outputZipPath, { force: true });
         }
-        await sevenZip.cmd(['a', outputZipPath, path.join(folderPath, '*')]);
+        await sevenZip.cmd(['a', outputZipPath, path.join(path.resolve(folderPath), '*')]);
         return outputZipPath;
     }
 
