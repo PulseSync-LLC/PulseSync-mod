@@ -38,6 +38,7 @@ jobs:
                   corepack enable
                   corepack prepare yarn@1.22.22 --activate
                   yarn install --frozen-lockfile
+                  yarn --cwd src install --frozen-lockfile
 
             - name: Build install artifact
               run: node toolset.js build -m --modernize --buildZstd
