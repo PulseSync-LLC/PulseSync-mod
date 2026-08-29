@@ -41,7 +41,7 @@ jobs:
                   yarn --cwd src install --frozen-lockfile
 
             - name: Build install artifact
-              run: node toolset.js build -m --modernize --buildZstd
+              run: node toolset.js build --buildZstd
 
             - name: Pack unpacked artifact
               run: node -e "const path = require('path'); require('7zip-min').pack(path.resolve('builds/latest/app.asar.unpacked'), path.resolve('builds/latest/app.asar.unpacked.zip')).catch(error => { console.error(error); process.exit(1) })"
