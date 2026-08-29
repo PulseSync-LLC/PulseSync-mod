@@ -42,6 +42,9 @@ jobs:
             - name: Build install artifact
               run: node toolset.js build -m --modernize --buildZstd
 
+            - name: Pack unpacked artifact
+              run: node -e "const path = require('path'); require('7zip-min').pack(path.resolve('builds/latest/app.asar.unpacked'), path.resolve('builds/latest/app.asar.unpacked.zip')).catch(error => { console.error(error); process.exit(1) })"
+
             - name: Create build metadata
               shell: pwsh
               run: |
@@ -68,4 +71,4 @@ jobs:
                     gh release create $tag --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title $releaseName --prerelease
                   }
 
-                  gh release upload $tag builds/latest/app.asar.zst build.json --repo $env:GITHUB_REPOSITORY --clobber
+                  gh release upload $tag builds/latest/app.asar.zst builds/latest/app.asar.unpacked.zip build.json --repo $env:GITHUB_REPOSITORY --clobber
