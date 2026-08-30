@@ -154,6 +154,14 @@ export const vibeBehaviorSchema = defineSettingsSection({
     },
     {
       type: 'toggle',
+      key: `${PREFIX}hideArtistCoverOnNewWave`,
+      defaultValue: false,
+      title: 'Скрывать изображение артиста на странице Волны',
+      description:
+        'Убирает изображение артиста и размещает название по центру, как для треков без изображения.',
+    },
+    {
+      type: 'toggle',
       key: `${PREFIX}forceOldSettingsInWheel`,
       defaultValue: true,
       title: 'Форсировать старые настройки в колесе Волн',

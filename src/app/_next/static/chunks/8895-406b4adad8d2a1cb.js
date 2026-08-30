@@ -5265,6 +5265,9 @@
                         [swapVibeAnimationAndWheel, setSwapVibeAnimationAndWheel] = (0, v.useState)(
                             window?.nativeSettings?.get('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel') ?? false,
                         ),
+                        [hideArtistCoverOnNewWave, setHideArtistCoverOnNewWave] = (0, v.useState)(
+                            window?.nativeSettings?.get('modSettings.vibeAnimationEnhancement.hideArtistCoverOnNewWave') ?? false,
+                        ),
                         N = (() => {
                             var e, t, i, n, a, r;
                             let { sonataState: s } = (0, z.g)(),
@@ -5339,7 +5342,7 @@
                         V = !!(null == (n = p.entityMeta) ? void 0 : n.isNonUserGenerated),
                         W = !!(null == (a = p.entityMeta) ? void 0 : a.isNonMusic),
                         D = p.isGenerativeContext,
-                        F = !!(null == T || null == (r = T.cutoutCover) ? void 0 : r.uri) && !w,
+                        F = !hideArtistCoverOnNewWave && !!(null == T || null == (r = T.cutoutCover) ? void 0 : r.uri) && !w,
                         K = F && T,
                         X = (0, nI.A)(null != R ? R : []) > 1,
                         q = V && !X,
@@ -5382,6 +5385,7 @@
                         (0, v.useEffect)(() => {
                             const e = (event, key, value) => {
                                 'modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel' === key && setSwapVibeAnimationAndWheel(value);
+                                'modSettings.vibeAnimationEnhancement.hideArtistCoverOnNewWave' === key && setHideArtistCoverOnNewWave(value);
                             };
 
                             const unsub = window.desktopEvents?.on('NATIVE_STORE_UPDATE', e);
