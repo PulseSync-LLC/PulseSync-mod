@@ -2747,14 +2747,15 @@
             const e = (this.energy.value * t) / 1e3;
             this.time = (this.time + e) % 86400;
         }
-        getUpdatedAudioParam(t, e, i = 0.02) {
-            const s = Math.max(0, Math.min(1, t)),
-                r = Math.max(0, Math.min(1, e));
-            if (r > s) return r;
-            if (r < s) {
-                return s - Math.min(i, s - r);
+        getUpdatedAudioParam(t, e, i, s) {
+            const r = Math.max(0, Math.min(1, t)),
+                n = Math.max(0, Math.min(1, e));
+            if (n > r) return n;
+            if (n < r) {
+                const t = Math.max(0, i) / Math.max(1, s);
+                return r - Math.min(t, r - n);
             }
-            return s;
+            return r;
         }
         update(t) {
             this.energy.next(t),
@@ -2765,9 +2766,9 @@
                 this.updateTime(t),
                 this.audioFrequencies &&
                     (this.audioRatio.next(t),
-                    (this.audioLow = this.getUpdatedAudioParam(this.audioLow, this.audioFrequencies.low) * this.audioRatio.value),
-                    (this.audioMiddle = this.getUpdatedAudioParam(this.audioMiddle, this.audioFrequencies.middle) * this.audioRatio.value),
-                    (this.audioHigh = this.getUpdatedAudioParam(this.audioHigh, this.audioFrequencies.high) * this.audioRatio.value));
+                    (this.audioLow = this.getUpdatedAudioParam(this.audioLow, this.audioFrequencies.low, t, 350) * this.audioRatio.value),
+                    (this.audioMiddle = this.getUpdatedAudioParam(this.audioMiddle, this.audioFrequencies.middle, t, 500) * this.audioRatio.value),
+                    (this.audioHigh = this.getUpdatedAudioParam(this.audioHigh, this.audioFrequencies.high, t, 220) * this.audioRatio.value));
         }
         get fragmentScale() {
             return this.isMobile ? this.baseScale * this.shaderOptions.canvasSize.mobileScale : this.baseScale * this.shaderOptions.canvasSize.desktopScale;

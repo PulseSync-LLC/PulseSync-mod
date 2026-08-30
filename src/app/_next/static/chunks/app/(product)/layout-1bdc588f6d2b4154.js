@@ -2729,10 +2729,7 @@
                         p = s.useMemo(
                             () =>
                                 [
-                                    ...new Set([
-                                        ...Object.values(pulseExperimentNames.z || {}).filter((e) => typeof e === 'string'),
-                                        ...getStaticExperimentNames(t),
-                                    ]),
+                                    ...new Set([...Object.values(pulseExperimentNames.z || {}).filter((e) => typeof e === 'string'), ...getStaticExperimentNames(t)]),
                                 ].filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e)),
                             [t.experiments],
                         ),
@@ -7800,18 +7797,18 @@
                     let { analyserNode: t, spectrum: a, bufferLength: r, context: i } = this.currentGraph;
                     if (!t) throw new z.t('No analyser node has been created');
                     t.getByteFrequencyData(a);
-                    let s = i.sampleRate / r,
+                    let s = i.sampleRate / t.fftSize,
                         n = 0,
                         o = e.map((e) => {
                             let { low: t, high: a } = e,
-                                r = Math.floor(t / s),
-                                i = Math.floor(a / s);
-                            return (n = Math.max(n, i)), { startIndex: r, endIndex: i };
+                                i = Math.max(0, Math.min(r - 1, Math.ceil(t / s))),
+                                o = Math.max(i, Math.min(r - 1, Math.ceil(a / s) - 1));
+                            return (n = Math.max(n, o)), { startIndex: i, endIndex: o };
                         }),
                         l = Array(n + 2).fill(0);
                     for (let e = 0; e < n + 1; e++) {
                         var u, d;
-                        let t = (null != (u = a[e]) ? u : 0) / 256;
+                        let t = (null != (u = a[e]) ? u : 0) / 255;
                         l[e + 1] = (null != (d = l[e]) ? d : 0) + t;
                     }
                     return o.map((e) => {
@@ -7825,16 +7822,22 @@
                     let t = Math.pow(0.01, 1 - e);
                     return t > 0.01 ? t : 0;
                 };
-                getRMS() {
+                getVolumeCompensation() {
+                    let e = 1;
+                    try {
+                        e = JSON.parse(window.localStorage.getItem(eZStorage.c.YmPlayerVolume))?.value ?? 1;
+                    } catch {}
+                    return this.getExponentialVolume(e);
+                }
+                getRMS(volumeCompensation) {
                     if (null === this.currentGraph) return 0;
                     let { analyserNode: t } = this.currentGraph;
                     if (!t) return 0;
                     let a = t.fftSize,
-                        i = new Uint8Array(a);
+                        i = this.timeDomainBuffer.length === a ? this.timeDomainBuffer : (this.timeDomainBuffer = new Uint8Array(a));
                     t.getByteTimeDomainData(i);
                     let r = 0,
-                        s = JSON.parse(window.localStorage.getItem(eZStorage.c.YmPlayerVolume)),
-                        n = this.getExponentialVolume(s?.value ?? 1);
+                        n = volumeCompensation ?? this.getVolumeCompensation();
                     for (let e = 0; e < a; e++) {
                         let t = 0 !== n ? (i[e] - 128) / 128 / n : 0;
                         r += t * t;
@@ -7842,20 +7845,19 @@
                     let l = 2 * Math.sqrt(r / a);
                     if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
                         let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
-                        return (this._prevRms = void 0 !== this._prevRms ? this._prevRms * (1 - e) + l * e : l), this._prevRms;
+                        return (this._prevTimeRms = void 0 !== this._prevTimeRms ? this._prevTimeRms * (1 - e) + l * e : l), this._prevTimeRms;
                     }
-                    return l;
+                    return (this._prevTimeRms = l), l;
                 }
-                getRMSAlt() {
+                getRMSAlt(volumeCompensation) {
                     if (null === this.currentGraph) return 0;
                     let { analyserNode: t } = this.currentGraph;
                     if (!t) return 0;
                     let a = t.frequencyBinCount,
-                        i = new Float32Array(a);
+                        i = this.frequencyDomainBuffer.length === a ? this.frequencyDomainBuffer : (this.frequencyDomainBuffer = new Float32Array(a));
                     t.getFloatFrequencyData(i);
                     let r = 0,
-                        s = JSON.parse(window.localStorage.getItem(eZStorage.c.YmPlayerVolume)),
-                        n = this.getExponentialVolume(s?.value ?? 1);
+                        n = volumeCompensation ?? this.getVolumeCompensation();
                     for (let e = 0; e < a; e++) {
                         let t = i[e];
                         if (t === -1 / 0) continue;
@@ -7865,17 +7867,21 @@
                     let l = 120 * Math.sqrt(r / a);
                     if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
                         let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
-                        return (this._prevRms = void 0 !== this._prevRms ? this._prevRms * (1 - e) + l * e : l), this._prevRms;
+                        return (this._prevFrequencyRms = void 0 !== this._prevFrequencyRms ? this._prevFrequencyRms * (1 - e) + l * e : l), this._prevFrequencyRms;
                     }
-                    return l;
+                    return (this._prevFrequencyRms = l), l;
                 }
                 constructor({ currentAudioElement: e, graphs: t }) {
                     (0, L._)(this, 'currentGraph', null),
                         (0, L._)(this, 'graphs', void 0),
+                        (0, L._)(this, 'timeDomainBuffer', new Uint8Array()),
+                        (0, L._)(this, 'frequencyDomainBuffer', new Float32Array()),
+                        (0, L._)(this, '_prevTimeRms', void 0),
+                        (0, L._)(this, '_prevFrequencyRms', void 0),
                         (this.graphs = t),
                         e.onChange((e) => {
                             let t = this.graphs.find((t) => t.audioElement === e);
-                            t && (this.currentGraph = t);
+                            t && ((this.currentGraph = t), (this._prevTimeRms = void 0), (this._prevFrequencyRms = void 0));
                         });
                 }
             }
