@@ -175,15 +175,14 @@ function App({ api }: AppProps = {}) {
       capture: true,
       passive: true,
     })
-    return () =>
-      window.removeEventListener('wheel', scrollSettings, { capture: true })
+    return () => window.removeEventListener('wheel', scrollSettings, { capture: true });
   }, [isMounted])
 
   if (!isMounted) return null
 
   return (
     <div
-      className={`${styles.backdrop}${shouldRevealMyVibe ? ` ${styles.dimmed}` : ''}`}
+      className={`${styles.backdrop}${shouldOffsetModal ? ` ${styles.dimmed}` : ''}`}
       data-visible={isVisible}
       role="presentation"
       onMouseDown={(event) => {
