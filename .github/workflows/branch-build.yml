@@ -3,7 +3,7 @@ name: Build branch mod
 on:
     push:
         branches:
-            - pulsesync-bridge-api
+            - dev
     workflow_dispatch:
 
 concurrency:
@@ -16,7 +16,7 @@ permissions:
 jobs:
     build:
         name: Build and publish ${{ github.ref_name }}
-        if: github.ref_name == 'pulsesync-bridge-api'
+        if: github.ref_name == 'dev'
         runs-on: windows-2025
         timeout-minutes: 60
         env:
