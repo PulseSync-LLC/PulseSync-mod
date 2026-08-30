@@ -240,13 +240,14 @@
                             rmsAlt = I.analyser.getRMSAlt(volumeCompensation),
                             measuredEnergy = 0.7 * rms + 0.3 * rmsAlt,
                             rawEnergy = Number.isFinite(measuredEnergy) ? Math.max(0, measuredEnergy) : 0,
+                            useSmoothing = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? false,
                             previousEnergy = dynamicEnergyRef.current,
                             envelopeCoefficient = rawEnergy > previousEnergy ? 0.65 : 0.12,
-                            smoothedEnergy = previousEnergy + (rawEnergy - previousEnergy) * envelopeCoefficient,
-                            compressedEnergy = 1 - Math.exp(-1.6 * smoothedEnergy),
+                            smoothedEnergy = useSmoothing ? previousEnergy + (rawEnergy - previousEnergy) * envelopeCoefficient : rawEnergy,
+                            compressedEnergy = useSmoothing ? 1 - Math.exp(-1.6 * smoothedEnergy) : rawEnergy,
                             energy = compressedEnergy * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
                             energyNormalized = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? energy : (w?.entityMeta?.trackParameters?.energy ?? 1);
-                        (dynamicEnergyRef.current = smoothedEnergy),
+                        dynamicEnergyRef.current = smoothedEnergy,
                             null == c || c.updateEnergy(energyNormalized),
                             null == c || c.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != i ? i : 0 });
                         try {
