@@ -227,6 +227,7 @@ const init = () => {
             improvedWaveLayout: true,
             forceOldSettingsInWheel: true,
             swapVibeAnimationAndWheel: false,
+            hideArtistCoverOnNewWave: false,
             showAudioQualityOnNewWave: true,
         },
         appAutoUpdates: {
