@@ -214,6 +214,7 @@
                         [f, m] = (0, h.d)(),
                         [x, V] = (0, h.d)(),
                         [N, S] = (0, a.useState)(!1),
+                        dynamicEnergyRef = (0, a.useRef)(0),
                         { user: B, sonataState: w, settings: C, vibe: M } = (0, u.g)(),
                         R = (0, p.U)(),
                         I = (0, A.i)(),
@@ -230,14 +231,22 @@
                     let W = (0, o.c)(() => {
                         if (!(null == I ? void 0 : I.analyser)) return;
                         let [e, t, i] = I.analyser.getAverageFrequencies([
-                            { low: 0, high: 450 },
-                            { low: 400, high: 5e3 },
-                            { low: 5e3, high: 2e4 },
+                            { low: 20, high: 250 },
+                            { low: 250, high: 2500 },
+                            { low: 2500, high: 12000 },
                         ]);
-                        let rms = I.analyser.getRMS(),
-                            rmsAlt = I.analyser.getRMSAlt(),
-                            energy = ((rms + rmsAlt) / 2) * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
+                        let volumeCompensation = I.analyser.getVolumeCompensation(),
+                            rms = I.analyser.getRMS(volumeCompensation),
+                            rmsAlt = I.analyser.getRMSAlt(volumeCompensation),
+                            measuredEnergy = 0.7 * rms + 0.3 * rmsAlt,
+                            rawEnergy = Number.isFinite(measuredEnergy) ? Math.max(0, measuredEnergy) : 0,
+                            previousEnergy = dynamicEnergyRef.current,
+                            envelopeCoefficient = rawEnergy > previousEnergy ? 0.65 : 0.12,
+                            smoothedEnergy = previousEnergy + (rawEnergy - previousEnergy) * envelopeCoefficient,
+                            compressedEnergy = 1 - Math.exp(-1.6 * smoothedEnergy),
+                            energy = compressedEnergy * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
                             energyNormalized = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? energy : (w?.entityMeta?.trackParameters?.energy ?? 1);
+                        (dynamicEnergyRef.current = smoothedEnergy),
                             null == c || c.updateEnergy(energyNormalized),
                             null == c || c.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != i ? i : 0 });
                         try {
@@ -246,7 +255,7 @@
                                     detail: {
                                         energy: energyNormalized,
                                         rms: rms,
-                                        bands: { low: e ?? 0, middle: t ?? 0, high: n ?? 0 },
+                                        bands: { low: e ?? 0, middle: t ?? 0, high: i ?? 0 },
                                         dynamic: !!window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.(),
                                         ts: Date.now(),
                                     },
@@ -316,10 +325,8 @@
                         let e = (e) => {
                             let { key: t, value: i } = (null == e ? void 0 : e.detail) || {};
                             if ('modSettings.vibeAnimationEnhancement.disableRendering' === t) return void (i ? c?.disable() : c?.enable());
-                            if ('modSettings.vibeAnimationEnhancement.maxFPS' === t)
-                                return void c?.updateRuntimeSettings({ fps: Number(i) });
-                            if ('modSettings.vibeAnimationEnhancement.canvasResolution' === t)
-                                return void c?.updateRuntimeSettings({ resolution: Number(i) });
+                            if ('modSettings.vibeAnimationEnhancement.maxFPS' === t) return void c?.updateRuntimeSettings({ fps: Number(i) });
+                            if ('modSettings.vibeAnimationEnhancement.canvasResolution' === t) return void c?.updateRuntimeSettings({ resolution: Number(i) });
                             if ('modSettings.vibeAnimationEnhancement.useVibeWidgetColors' !== t) return;
                             let n = w.entityMeta?.trackParameters?.hue;
                             Q()
@@ -332,10 +339,7 @@
                                   })
                                 : c?.applySettings({ hue: n, collectionHue: B.collectionHue });
                         };
-                        return (
-                            window.addEventListener('pulse-sync-vibe-setting-change', e),
-                            () => window.removeEventListener('pulse-sync-vibe-setting-change', e)
-                        );
+                        return window.addEventListener('pulse-sync-vibe-setting-change', e), () => window.removeEventListener('pulse-sync-vibe-setting-change', e);
                     }, [r, w.isPlaying, w.isVibeContext, M.isShuffleVibe, c, B.collectionHue, null == w.entityMeta ? void 0 : w.entityMeta.trackParameters]),
                     (0, a.useEffect)(() => {
                         var e, t, n, a, oA;
