@@ -566,6 +566,10 @@ class PulseSyncManager extends EventEmitter {
                 this.logger.warn(error instanceof Error ? error.message : String(error));
                 return;
             }
+            if (Array.isArray(snapshot.allowedUrls)) {
+                this._allowedUrls = snapshot.allowedUrls;
+                setAllowedUrls(this._allowedUrls);
+            }
             if (snapshot.hash && snapshot.hash === this._webHostAddonsSnapshot.hash) return;
 
             this._webHostAddonsSnapshot = this.cloneAddonSettingsValue(snapshot);

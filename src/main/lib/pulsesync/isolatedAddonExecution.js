@@ -179,6 +179,11 @@ const hashCanonicalAddons = (addons) =>
         )
         .digest('hex');
 
+const normalizeAllowedUrls = (value) => {
+    if (!Array.isArray(value)) return undefined;
+    return Object.freeze([...new Set(value.filter((entry) => typeof entry === 'string').map((entry) => entry.trim()).filter(Boolean))]);
+};
+
 const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
     if (payload?.runtime !== undefined && payload.runtime !== 'isolated' && payload.runtime !== 'sandbox') {
         throw createBlockedAddonError('<snapshot>', 'invalid-runtime', `runtime ${String(payload.runtime)} is not isolated`);
@@ -234,10 +239,12 @@ const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
     }
 
     const suppliedHash = typeof payload?.hash === 'string' ? payload.hash : '';
+    const allowedUrls = normalizeAllowedUrls(payload?.allowedUrls);
     return Object.freeze({
         runtime: 'isolated',
         hash: addons.length === sourceAddons.length && suppliedHash ? suppliedHash : hashCanonicalAddons(addons),
         addons: Object.freeze(addons),
+        ...(allowedUrls ? { allowedUrls } : {}),
     });
 };
 

@@ -1,3 +1,5 @@
+import type { PulseSyncApi as PublicPulseSyncApi } from '@pulsesync/yamusic-types';
+
 export type Cleanup = () => void;
 export type UnknownRecord = Record<string, unknown>;
 export type AddonSettings = Record<string, unknown>;
@@ -15,27 +17,24 @@ export type PulseSyncPlayer = Record<string, any> & {
     togglePause?: (...args: unknown[]) => unknown;
 };
 
-export type PulseSyncApi = UnknownRecord & {
+export type PulseSyncApi = PublicPulseSyncApi & UnknownRecord & {
     _addonSettings: AddonSettingsSnapshot;
     _addonSettingsListeners: Map<string, Set<(settings: AddonSettings) => void>>;
     _modSettingsListeners: Map<string, Set<ModSettingListener>>;
     _pendingCalls: Array<(player: PulseSyncPlayer) => void>;
     playerInstance?: PulseSyncPlayer | null;
-    applyR128Normalization: (enabled: unknown) => void;
     getModSetting: (key: unknown) => Promise<unknown>;
     getModSettingSnapshot: (key: unknown) => unknown;
-    getDisplayMaxFps: () => number;
-    getPlatform: () => string;
-    getPremiumStatus: () => Promise<boolean>;
     getLastFmUser: () => Promise<unknown>;
     getLastFmYnisonAvailability: () => Promise<boolean>;
+    getTrackReplacement: (trackId: unknown) => string | null;
     getSelectedWasapiExclusiveDeviceId: () => Promise<unknown>;
     getWasapiExclusiveStatus: () => Promise<unknown>;
     listWasapiExclusiveDevices: () => Promise<unknown>;
     loginLastFm: () => Promise<unknown>;
     logoutLastFm: () => Promise<unknown>;
     onLastFmUserInfoChange: (listener: (value: unknown) => void) => Cleanup;
-    refreshPlayerBar: () => void;
+    publishPageEntity: (type: unknown, entity: unknown, resolveArtistBrief?: unknown, artistBriefComplete?: boolean) => UnknownRecord;
     selectWasapiExclusiveDevice: (deviceId: unknown) => Promise<unknown>;
     setAutoStartupStatus: (isEnabled: unknown) => void;
     setModSetting: (key: unknown, value: unknown) => Promise<unknown>;
