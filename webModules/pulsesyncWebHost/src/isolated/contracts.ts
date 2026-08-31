@@ -13,7 +13,7 @@ export type IsolatedInit = {
     channelToken: string
 }
 
-export type IsolatedEventKind = 'request' | 'response' | 'settings' | 'dispose' | 'status'
+export type IsolatedEventKind = 'request' | 'response' | 'settings' | 'subscription' | 'event' | 'dispose' | 'status'
 export type IsolatedLogLevel = 'info' | 'warn' | 'error'
 export type IsolatedLog = (level: IsolatedLogLevel, args: unknown[]) => void
 

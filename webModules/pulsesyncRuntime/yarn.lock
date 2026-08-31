@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@pulsesync/yamusic-types@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@pulsesync/yamusic-types/-/yamusic-types-0.0.3.tgz#d367c65eba0f60ff3200c188167c784f1570b857"
+  integrity sha512-ORJHD24krKql7ScNJ3E8uECXhoIkOMuwbm0DMiaIQtQC/8q3ytL3Rjz62eaXq1KzUaJZnBSEsDK+GoJiRLi/xQ==
+
 "@emnapi/core@1.11.1":
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/@emnapi/core/-/core-1.11.1.tgz#b9e1064f3a6b1631e241e638eb48d736bfd372a6"

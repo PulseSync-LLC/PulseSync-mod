@@ -2,6 +2,22 @@ import type { AddonSettings, PulseSyncApi, PulseSyncPlayer, RuntimeServices } fr
 import { clamp, cloneValue, createEntityId, getPlayerInstance, normalizeAddonId } from '../core/values';
 import { callWithPlayer, tryStoreMethod } from '../features/player';
 import { normalizeVibeSeeds, playVibeBySeeds, type VibeParams } from '../features/vibe';
+import {
+    clearTrackReplacementsForOwner,
+    getPageEntity,
+    getPlayerSnapshot,
+    getQueueSnapshot,
+    getRouteSnapshot,
+    getTrackReplacement,
+    onPageEntityChange,
+    onPlayerSnapshotChange,
+    onQueueChange,
+    onRouteChange,
+    publishPageEntity,
+    removeTrackReplacement,
+    setTrackReplacement,
+    setTrackReplacements,
+} from '../features/addonCapabilities';
 
 function getCurrentEntity() {
     return getPlayerInstance()?.state?.queueState?.currentEntity?.value?.entity;
@@ -103,7 +119,8 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
                 player.injectLast?.({ entitiesData });
             });
         },
-        likeTrack: (trackId?: unknown, options?: Record<string, any>) => callLikeStore(['likeTrack', 'setTrackLiked', 'addTrackLike', 'toggleTrackLike'], trackId, options),
+        likeTrack: (trackId?: unknown, options?: Record<string, any>) =>
+            callLikeStore(['likeTrack', 'setTrackLiked', 'addTrackLike', 'toggleTrackLike'], trackId, options),
         unlikeTrack: (trackId?: unknown, options?: Record<string, any>) => callLikeStore(['unlikeTrack', 'removeTrackLike', 'setTrackUnliked'], trackId, options),
         dislikeTrack: (trackId?: unknown, options?: Record<string, any>) =>
             callLikeStore(['dislikeTrack', 'setTrackDisliked', 'addTrackDislike', 'toggleTrackDislike'], trackId, options),
@@ -121,27 +138,33 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         },
         getState: () => getPlayerInstance()?.state,
         isPlaying: () => getPlayerInstance()?.state?.playerState?.status?.value === 'playing',
+        getPlayerSnapshot,
+        getQueueSnapshot,
+        getRouteSnapshot,
         getCurrentTrack: () => getCurrentEntity()?.entityData?.meta,
         getQueue: () => getPlayerInstance()?.state?.queueState?.entityList?.value,
+        getPageEntity,
+        getTrackReplacement,
         getProgress: () => getPlayerInstance()?.state?.playerState?.progress?.value,
         getDuration: () => getCurrentEntity()?.entityData?.meta?.duration,
         getVolume: () => getPlayerInstance()?.state?.playerState?.volume?.value,
         getRepeatMode: () => getPlayerInstance()?.state?.queueState?.repeat?.value,
         isShuffle: () => getPlayerInstance()?.state?.queueState?.shuffle?.value,
-        getSettings(addonId: unknown) {
+        getSettings<TSettings extends AddonSettings = AddonSettings>(addonId: string) {
             const key = normalizeAddonId(addonId);
             return {
-                getCurrent: () => cloneValue(window.pulsesyncApi?._addonSettings[key] ?? {}),
-                onChange(callback: (settings: AddonSettings) => void) {
+                getCurrent: () => cloneValue(window.pulsesyncApi?._addonSettings[key] ?? {}) as TSettings,
+                onChange(callback: (settings: TSettings) => void) {
                     const currentApi = window.pulsesyncApi;
                     if (!key || !currentApi || typeof callback !== 'function') return () => {};
                     let listeners = currentApi._addonSettingsListeners.get(key);
                     if (!listeners) currentApi._addonSettingsListeners.set(key, (listeners = new Set()));
-                    listeners.add(callback);
-                    if (Object.prototype.hasOwnProperty.call(currentApi._addonSettings, key)) callback(cloneValue(currentApi._addonSettings[key] ?? {}));
+                    const listener = (settings: AddonSettings) => callback(settings as TSettings);
+                    listeners.add(listener);
+                    if (Object.prototype.hasOwnProperty.call(currentApi._addonSettings, key)) listener(cloneValue(currentApi._addonSettings[key] ?? {}));
                     return () => {
                         const currentListeners = window.pulsesyncApi?._addonSettingsListeners.get(key);
-                        currentListeners?.delete(callback);
+                        currentListeners?.delete(listener);
                         if (!currentListeners?.size) window.pulsesyncApi?._addonSettingsListeners.delete(key);
                     };
                 },
@@ -200,6 +223,31 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
             if (typeof listener !== 'function') return () => {};
             return window.desktopEvents?.on('LASTFM_USERINFO_UPDATE', (_event, value) => listener(cloneValue(value))) ?? (() => {});
         },
+        onCurrentTrackChange(listener) {
+            if (typeof listener !== 'function') return () => {};
+            let active = true;
+            let unsubscribe: (() => void) | undefined;
+            callWithPlayer((player) => {
+                if (!active) return;
+                const emit = () => listener(cloneValue(getCurrentEntity()?.entityData?.meta ?? null));
+                const cleanup = player.state?.queueState?.currentEntity?.onChange?.(emit);
+                if (typeof cleanup === 'function') unsubscribe = cleanup;
+                emit();
+            });
+            return () => {
+                active = false;
+                unsubscribe?.();
+            };
+        },
+        onPlayerSnapshotChange,
+        onQueueChange,
+        onRouteChange,
+        onPageEntityChange,
+        publishPageEntity,
+        setTrackReplacement,
+        setTrackReplacements,
+        removeTrackReplacement,
+        clearTrackReplacements: clearTrackReplacementsForOwner,
         refreshPlayerBar() {
             window.setTimeout(() => window.forcePlayerBarRerender?.(), 100);
         },

@@ -1,6 +1,6 @@
 import { getPulseSyncApi } from '../../runtime/pulsesyncApi'
 import type { WebHostAddonAsset } from '../contracts'
-import { ISOLATED_API_METHOD_SET } from './apiPolicy'
+import { ISOLATED_ADDON_SCOPED_API_METHOD_SET, ISOLATED_API_METHOD_SET } from './apiPolicy'
 
 type AddonSettingsStore = {
     getCurrent?: () => unknown
@@ -25,6 +25,13 @@ type RuntimeStatus = {
 const MAX_API_CALLS_PER_WINDOW = 300
 const API_RATE_WINDOW_MS = 10_000
 const ADDON_REGISTRATION_TIMEOUT_MS = 10_000
+const ISOLATED_SUBSCRIPTIONS = {
+    'current-track': { methodName: 'onCurrentTrackChange', eventType: 'current-track-change' },
+    'page-entity': { methodName: 'onPageEntityChange', eventType: 'page-entity-change' },
+    'player-snapshot': { methodName: 'onPlayerSnapshotChange', eventType: 'player-snapshot-change' },
+    queue: { methodName: 'onQueueChange', eventType: 'queue-change' },
+    route: { methodName: 'onRouteChange', eventType: 'route-change' },
+} as const
 
 function toTransportValue(value: unknown, depth = 0, seen = new WeakSet<object>()): unknown {
     if (value === null || value === undefined || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') return value
@@ -36,6 +43,14 @@ function toTransportValue(value: unknown, depth = 0, seen = new WeakSet<object>(
 
     if (Array.isArray(value)) return value.slice(0, 500).map(item => toTransportValue(item, depth + 1, seen))
     if (value instanceof Date) return value.toISOString()
+    if (value instanceof Error) {
+        return {
+            name: value.name,
+            message: value.message,
+            stack: value.stack,
+            ...(value.cause !== undefined ? { cause: toTransportValue(value.cause, depth + 1, seen) } : {}),
+        }
+    }
 
     const result: Record<string, unknown> = {}
     let entries: [string, unknown][] = []
@@ -75,6 +90,7 @@ export class IsolatedAddonRuntime {
     private readonly channelToken = crypto.randomUUID()
     private style?: HTMLStyleElement
     private settingsCleanup?: () => void
+    private readonly subscriptionCleanups = new Map<string, () => void>()
     private currentSettings: unknown = {}
     private destroyed = false
     private apiCallWindowStartedAt = 0
@@ -93,11 +109,11 @@ export class IsolatedAddonRuntime {
         void this.registrationPromise.catch(() => {})
     }
 
-    private eventName(kind: 'request' | 'response' | 'settings' | 'dispose' | 'status') {
+    private eventName(kind: 'request' | 'response' | 'settings' | 'subscription' | 'event' | 'dispose' | 'status') {
         return `pulsesync-isolated:${this.channelToken}:${kind}`
     }
 
-    private dispatch(kind: 'response' | 'settings' | 'dispose', value: unknown) {
+    private dispatch(kind: 'response' | 'settings' | 'event' | 'dispose', value: unknown) {
         if (this.destroyed && kind !== 'dispose') return
         document.dispatchEvent(new CustomEvent(this.eventName(kind), { detail: JSON.stringify(value) }))
     }
@@ -141,6 +157,25 @@ export class IsolatedAddonRuntime {
         if (this.apiCallCount > MAX_API_CALLS_PER_WINDOW) throw new Error('PulseSync addon API rate limit exceeded')
     }
 
+    private handleSubscription(event: Event) {
+        const message = parseEventDetail<{ event?: unknown; active?: unknown }>(event)
+        if (typeof message?.event !== 'string' || !(message.event in ISOLATED_SUBSCRIPTIONS)) return
+
+        const eventName = message.event as keyof typeof ISOLATED_SUBSCRIPTIONS
+        const subscription = ISOLATED_SUBSCRIPTIONS[eventName]
+        const api = getPulseSyncApi()
+        this.subscriptionCleanups.get(eventName)?.()
+        this.subscriptionCleanups.delete(eventName)
+        if (message.active !== true) return
+
+        const subscribe = api?.[subscription.methodName]
+        if (typeof subscribe !== 'function') return
+        const cleanup = Reflect.apply(subscribe, api, [
+            (value: unknown) => this.dispatch('event', { type: subscription.eventType, value: toTransportValue(value) }),
+        ])
+        if (typeof cleanup === 'function') this.subscriptionCleanups.set(eventName, cleanup as () => void)
+    }
+
     private async handleApiRequest(event: Event) {
         const request = parseEventDetail<ApiRequest>(event)
         if (!request || !Number.isSafeInteger(request.requestId) || request.requestId <= 0) return
@@ -155,8 +190,8 @@ export class IsolatedAddonRuntime {
             const api = getPulseSyncApi()
             const method = api?.[request.method]
             if (typeof method !== 'function') throw new Error(`PulseSync addon API method is unavailable: ${request.method}`)
-
-            const value = await Reflect.apply(method, api, request.args)
+            const args = ISOLATED_ADDON_SCOPED_API_METHOD_SET.has(request.method) ? [...request.args, this.addon.id] : request.args
+            const value = await Reflect.apply(method, api, args)
             this.dispatch('response', { requestId: request.requestId, ok: true, value: toTransportValue(value) })
         } catch (error) {
             this.dispatch('response', { requestId: request.requestId, ok: false, message: getErrorMessage(error) })
@@ -207,6 +242,7 @@ export class IsolatedAddonRuntime {
         this.installStyle()
         this.subscribeSettings()
         document.addEventListener(this.eventName('request'), this.handleApiRequestBound)
+        document.addEventListener(this.eventName('subscription'), this.handleSubscriptionBound)
         document.addEventListener(this.eventName('status'), this.handleStatusBound)
 
         await executeIsolatedAddon(this.addon.id, this.channelToken)
@@ -231,6 +267,7 @@ export class IsolatedAddonRuntime {
     }
 
     private readonly handleApiRequestBound = (event: Event) => void this.handleApiRequest(event)
+    private readonly handleSubscriptionBound = (event: Event) => this.handleSubscription(event)
     private readonly handleStatusBound = (event: Event) => this.handleStatus(event)
 
     destroy() {
@@ -242,9 +279,15 @@ export class IsolatedAddonRuntime {
         this.dispatch('dispose', {})
         this.destroyed = true
         document.removeEventListener(this.eventName('request'), this.handleApiRequestBound)
+        document.removeEventListener(this.eventName('subscription'), this.handleSubscriptionBound)
         document.removeEventListener(this.eventName('status'), this.handleStatusBound)
         this.settingsCleanup?.()
         this.settingsCleanup = undefined
+        for (const cleanup of this.subscriptionCleanups.values()) cleanup()
+        this.subscriptionCleanups.clear()
+        const api = getPulseSyncApi()
+        const clearTrackReplacements = api?.clearTrackReplacements
+        if (typeof clearTrackReplacements === 'function') Reflect.apply(clearTrackReplacements, api, [this.addon.id])
         this.style?.remove()
         this.style = undefined
     }

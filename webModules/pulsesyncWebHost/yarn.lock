@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@pulsesync/yamusic-types@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@pulsesync/yamusic-types/-/yamusic-types-0.0.3.tgz#d367c65eba0f60ff3200c188167c784f1570b857"
+  integrity sha512-ORJHD24krKql7ScNJ3E8uECXhoIkOMuwbm0DMiaIQtQC/8q3ytL3Rjz62eaXq1KzUaJZnBSEsDK+GoJiRLi/xQ==
+
 "@bufbuild/protobuf@^2.5.0":
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/@bufbuild/protobuf/-/protobuf-2.14.0.tgz#a5e962823f9c22c0d5e9aedb9a08d8f93735299c"
