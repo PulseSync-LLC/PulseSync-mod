@@ -126,7 +126,8 @@ export class IsolatedWebHostRuntime {
 
         const addonId = String(definition?.id ?? '').trim()
         if (addonId !== this.init.addon.id) throw new Error(`PulseSync isolated addon id mismatch: ${addonId || '<empty>'}`)
-        if ((definition.apiVersion ?? WEB_HOST_API_VERSION) !== WEB_HOST_API_VERSION) {
+        const apiVersion = definition.apiVersion ?? WEB_HOST_API_VERSION
+        if (apiVersion !== WEB_HOST_API_VERSION) {
             throw new Error(`PulseSync isolated runtime does not support addon API ${definition.apiVersion}`)
         }
 

@@ -80,9 +80,9 @@ function registerAddonInternal(definition: PulseSyncAddonDefinition, system: boo
     if (registeredAddon?.system && !system) throw new Error(`PulseSync addon id ${addonId} is reserved by a system addon`)
     unregisterAddonInternal(addonId, undefined, system)
 
-    const api = createAddonApi(addonId)
-    const cleanup = definition.activate?.(api)
     const normalizedDefinition = Object.freeze({ ...definition, id: addonId })
+    const api = createAddonApi(normalizedDefinition)
+    const cleanup = definition.activate?.(api)
     const generation = (addonGeneration += 1)
 
     addons.set(addonId, {
