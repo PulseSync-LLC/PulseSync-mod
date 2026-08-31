@@ -23,7 +23,11 @@ export function isPlainObject(value: unknown): value is UnknownRecord {
 }
 
 export function cloneValue<T>(value: T): T {
-    if (typeof structuredClone === 'function') return structuredClone(value);
+    if (typeof structuredClone === 'function') {
+        try {
+            return structuredClone(value);
+        } catch {}
+    }
 
     try {
         return JSON.parse(JSON.stringify(value)) as T;

@@ -1,9 +1,29 @@
 import type React from 'react'
 import type { ComponentType } from 'react'
 import type * as jsxRuntime from 'react/jsx-runtime'
+import type { PulseSyncPageApiV1, PulseSyncPlayerApiV1, PulseSyncRouterApiV1, PulseSyncWebHostApiV1 } from '@pulsesync/yamusic-types'
 
 export type Cleanup = () => void
 export type PulseSyncApi = Record<string, unknown>
+export type PulseSyncWebHostClient = PulseSyncWebHostApiV1
+
+export type PulseSyncAddonIdentity = {
+    id: string
+    name: string
+    directoryName: string
+    version?: string
+}
+
+export type PulseSyncAddonSettingsStore = {
+    getCurrent: () => Record<string, unknown>
+    onChange: (listener: (value: Record<string, unknown>) => void) => Cleanup
+}
+
+export type PulseSyncAddonAssets = {
+    list: () => Promise<readonly string[]>
+    url: (fileName: string) => string
+    fetch: (fileName: string, init?: RequestInit) => Promise<Response>
+}
 
 export type DesktopEventsBridge = {
     invoke?: <T = unknown>(event: string, ...args: unknown[]) => Promise<T>
@@ -21,12 +41,7 @@ export type PulseSyncAddonComponentProps = {
 
 export type PulseSyncAddonComponent = ComponentType<PulseSyncAddonComponentProps>
 
-export type PulseSyncAddonMountTarget =
-    | Element
-    | string
-    | (() => Element | null)
-    | { selector: string }
-    | { slot: string }
+export type PulseSyncAddonMountTarget = Element | string | (() => Element | null) | { selector: string } | { slot: string }
 
 export type PulseSyncAddonMount = {
     target: PulseSyncAddonMountTarget
@@ -45,7 +60,14 @@ export type PulseSyncAddonDefinition = {
 
 export type PulseSyncAddonApi = {
     readonly addonId: string
-    readonly pulsesyncApi: PulseSyncApi | undefined
+    readonly addon: PulseSyncAddonIdentity
+    readonly client: PulseSyncWebHostClient
+    readonly pulsesyncApi: PulseSyncWebHostClient
+    readonly player: PulseSyncPlayerApiV1
+    readonly page: PulseSyncPageApiV1
+    readonly router: PulseSyncRouterApiV1
+    readonly settings: PulseSyncAddonSettingsStore
+    readonly assets: PulseSyncAddonAssets
     logger: {
         info: (...args: unknown[]) => void
         warn: (...args: unknown[]) => void

@@ -552,7 +552,7 @@
                 o = s(31322);
             class r extends o.X {
                 async getAlbumWithRichTracks(t, e) {
-                    return (
+                    let pulseSyncEntity = (
                         await this.httpClient.get(
                             'albums/'.concat(t.albumId, '/with-tracks'),
                             this.createHttpOptions({
@@ -570,9 +570,10 @@
                             }),
                         )
                     ).json();
+                    return window.pulsesyncApi?.publishPageEntity?.('album', pulseSyncEntity), pulseSyncEntity;
                 }
                 async getAlbumWithTracksIds(t, e) {
-                    return (
+                    let pulseSyncEntity = (
                         await this.httpClient.get(
                             'albums/'.concat(t.albumId, '/with-tracks'),
                             this.createHttpOptions({
@@ -590,6 +591,7 @@
                             }),
                         )
                     ).json();
+                    return window.pulsesyncApi?.publishPageEntity?.('album', pulseSyncEntity), pulseSyncEntity;
                 }
                 async getAlbumWithTracksIdsWithEtag(t, e) {
                     let s = this.createHttpOptions({
@@ -1660,7 +1662,7 @@
                 n = s(79722);
             class o extends a.X {
                 async getPlaylist(t, e) {
-                    return (
+                    let pulseSyncEntity = (
                         await this.httpClient.get(
                             'playlist/'.concat(t.playlistUuid),
                             this.createHttpOptions({
@@ -1678,6 +1680,7 @@
                             }),
                         )
                     ).json();
+                    return window.pulsesyncApi?.publishPageEntity?.('playlist', pulseSyncEntity), pulseSyncEntity;
                 }
                 async getSimilarEntities(t, e) {
                     return (
@@ -1908,7 +1911,7 @@
                     ).json();
                 }
                 async getBriefInfo(t, e) {
-                    return (
+                    let pulseSyncEntity = (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/brief-info'),
                             this.createHttpOptions({
@@ -1924,6 +1927,7 @@
                             }),
                         )
                     ).json();
+                    return window.pulsesyncApi?.publishPageEntity?.('artist', pulseSyncEntity, void 0, !0), pulseSyncEntity;
                 }
                 async getAboutArtist(t, e) {
                     return (
@@ -2058,12 +2062,13 @@
                     ).json();
                 }
                 async getInfo(t, e) {
-                    return (
+                    let pulseSyncEntity = (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/info'),
                             this.createHttpOptions({ timeoutKey: 'getInfo', params: t, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
+                    return window.pulsesyncApi?.publishPageEntity?.('artist', pulseSyncEntity, () => this.getBriefInfo(t, e)), pulseSyncEntity;
                 }
                 async getSkeleton(t, e) {
                     return (

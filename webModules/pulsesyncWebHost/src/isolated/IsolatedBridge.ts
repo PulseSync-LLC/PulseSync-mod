@@ -1,5 +1,7 @@
-import type { PulseSyncAddonApi, PulseSyncApi } from '../contracts'
+import type { PulseSyncAddonApi, PulseSyncApi, PulseSyncWebHostClient } from '../contracts'
+import type { PulseSyncPlayerSnapshot, PulseSyncQueueSnapshot, PulseSyncRouteSnapshot } from '@pulsesync/yamusic-types'
 import { ISOLATED_API_METHOD_SET } from '../addons/isolated/apiPolicy'
+import { createAddonAssets, createAddonIdentity, createAddonNamespaces } from '../runtime/addonResources'
 import type { ApiResponse, IsolatedEventKind, IsolatedInit, IsolatedLogLevel } from './contracts'
 
 type PendingCall = {
@@ -25,15 +27,60 @@ function toError(error: unknown): Error {
     return error instanceof Error ? error : new Error(String(error))
 }
 
+function toSerializableValue(value: unknown, depth = 0, seen = new WeakSet<object>()): unknown {
+    if (value === null || value === undefined || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') return value
+    if (typeof value === 'bigint') return value.toString()
+    if (typeof value === 'function' || typeof value === 'symbol' || depth >= 6 || typeof value !== 'object') return undefined
+    if (seen.has(value)) return '[Circular]'
+    seen.add(value)
+
+    if (value instanceof Error) {
+        return {
+            name: value.name,
+            message: value.message,
+            stack: value.stack,
+            ...(value.cause !== undefined ? { cause: toSerializableValue(value.cause, depth + 1, seen) } : {}),
+        }
+    }
+    if (Array.isArray(value)) return value.slice(0, 100).map(item => toSerializableValue(item, depth + 1, seen))
+
+    let entries: [string, unknown][]
+    try {
+        entries = Object.entries(value).slice(0, 100)
+    } catch {
+        return String(value)
+    }
+
+    const result: Record<string, unknown> = {}
+    for (const [key, item] of entries) {
+        try {
+            const normalized = toSerializableValue(item, depth + 1, seen)
+            if (normalized !== undefined) result[key] = normalized
+        } catch {
+            // Ignore getters and proxies that cannot be serialized.
+        }
+    }
+    return result
+}
+
+function toSettings(value: unknown): Record<string, unknown> {
+    return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : {}
+}
+
 export class IsolatedBridge {
-    readonly pulsesyncApi: PulseSyncApi
+    readonly pulsesyncApi: PulseSyncApi & PulseSyncWebHostClient
     readonly addonApi: PulseSyncAddonApi
 
     private readonly init: IsolatedInit
     private readonly allowedMethods: ReadonlySet<string>
     private readonly pendingCalls = new Map<number, PendingCall>()
-    private readonly settingsListeners = new Set<(value: unknown) => void>()
-    private currentSettings: unknown
+    private readonly settingsListeners = new Set<(value: Record<string, unknown>) => void>()
+    private readonly currentTrackListeners = new Set<(track: Record<string, unknown> | null) => void>()
+    private readonly pageEntityListeners = new Set<(snapshot: Record<string, unknown>) => void>()
+    private readonly playerSnapshotListeners = new Set<(snapshot: PulseSyncPlayerSnapshot) => void>()
+    private readonly queueListeners = new Set<(snapshot: PulseSyncQueueSnapshot) => void>()
+    private readonly routeListeners = new Set<(snapshot: PulseSyncRouteSnapshot) => void>()
+    private currentSettings: Record<string, unknown>
     private nextRequestId = 0
     private started = false
     private disposed = false
@@ -41,11 +88,12 @@ export class IsolatedBridge {
     constructor(init: IsolatedInit) {
         this.init = init
         this.allowedMethods = ISOLATED_API_METHOD_SET
-        this.currentSettings = init.initialSettings ?? {}
+        this.currentSettings = toSettings(init.initialSettings)
+        const identity = createAddonIdentity(init.addon)
 
         const settingsStore = Object.freeze({
             getCurrent: () => this.currentSettings,
-            onChange: (listener: (value: unknown) => void) => {
+            onChange: (listener: (value: Record<string, unknown>) => void) => {
                 if (typeof listener !== 'function') return () => {}
                 this.settingsListeners.add(listener)
                 return () => this.settingsListeners.delete(listener)
@@ -53,7 +101,7 @@ export class IsolatedBridge {
         })
 
         this.pulsesyncApi = Object.freeze(
-            new Proxy(Object.create(null) as PulseSyncApi, {
+            new Proxy(Object.create(null) as PulseSyncApi & PulseSyncWebHostClient, {
                 get: (_target, property) => {
                     if (property === 'getSettings') {
                         return (addonId?: unknown) => {
@@ -63,16 +111,44 @@ export class IsolatedBridge {
                             return settingsStore
                         }
                     }
+                    if (property === 'onCurrentTrackChange')
+                        return (listener: (track: Record<string, unknown> | null) => void) => this.subscribeCurrentTrack(listener)
+                    if (property === 'onPageEntityChange')
+                        return (listener: (snapshot: Record<string, unknown>) => void) =>
+                            this.subscribeEvent('page-entity', this.pageEntityListeners, listener)
+                    if (property === 'onPlayerSnapshotChange')
+                        return (listener: (snapshot: PulseSyncPlayerSnapshot) => void) =>
+                            this.subscribeEvent('player-snapshot', this.playerSnapshotListeners, listener)
+                    if (property === 'onQueueChange')
+                        return (listener: (snapshot: PulseSyncQueueSnapshot) => void) =>
+                            this.subscribeEvent('queue', this.queueListeners, listener)
+                    if (property === 'onRouteChange')
+                        return (listener: (snapshot: PulseSyncRouteSnapshot) => void) =>
+                            this.subscribeEvent('route', this.routeListeners, listener)
                     if (property === 'then' || typeof property !== 'string' || !this.allowedMethods.has(property)) return undefined
                     return (...args: unknown[]) => this.callApi(property, args)
                 },
-                has: (_target, property) => property === 'getSettings' || (typeof property === 'string' && this.allowedMethods.has(property)),
+                has: (_target, property) =>
+                    property === 'getSettings' ||
+                    property === 'onCurrentTrackChange' ||
+                    property === 'onPageEntityChange' ||
+                    property === 'onPlayerSnapshotChange' ||
+                    property === 'onQueueChange' ||
+                    property === 'onRouteChange' ||
+                    (typeof property === 'string' && this.allowedMethods.has(property)),
             }),
         )
 
+        const namespaces = createAddonNamespaces(this.pulsesyncApi)
+
         this.addonApi = Object.freeze({
             addonId: init.addon.id,
+            addon: identity,
+            client: this.pulsesyncApi,
             pulsesyncApi: this.pulsesyncApi,
+            ...namespaces,
+            settings: settingsStore,
+            assets: createAddonAssets(init.addon.id),
             logger: Object.freeze({
                 info: (...args: unknown[]) => this.log('info', args),
                 warn: (...args: unknown[]) => this.log('warn', args),
@@ -90,6 +166,7 @@ export class IsolatedBridge {
         this.started = true
         document.addEventListener(this.eventName('response'), this.handleResponse)
         document.addEventListener(this.eventName('settings'), this.handleSettings)
+        document.addEventListener(this.eventName('event'), this.handleEvent)
         window.addEventListener('error', this.handleWindowError)
         window.addEventListener('unhandledrejection', this.handleUnhandledRejection)
     }
@@ -104,10 +181,10 @@ export class IsolatedBridge {
     }
 
     log(level: IsolatedLogLevel, args: unknown[]) {
-        this.dispatch('status', { type: 'log', level, args })
+        this.dispatch('status', { type: 'log', level, args: args.map(arg => toSerializableValue(arg)) })
     }
 
-    private dispatch(kind: 'request' | 'status', value: unknown) {
+    private dispatch(kind: 'request' | 'subscription' | 'status', value: unknown) {
         if (this.disposed) return
         document.dispatchEvent(new CustomEvent(this.eventName(kind), { detail: JSON.stringify(value) }))
     }
@@ -134,6 +211,25 @@ export class IsolatedBridge {
         })
     }
 
+    private subscribeCurrentTrack(listener: (track: Record<string, unknown> | null) => void) {
+        return this.subscribeEvent('current-track', this.currentTrackListeners, listener)
+    }
+
+    private subscribeEvent<T>(event: string, listeners: Set<(value: T) => void>, listener: (value: T) => void) {
+        if (typeof listener !== 'function' || this.disposed) return () => {}
+        const shouldSubscribe = listeners.size === 0
+        listeners.add(listener)
+        if (shouldSubscribe) this.dispatch('subscription', { event, active: true })
+
+        let active = true
+        return () => {
+            if (!active) return
+            active = false
+            listeners.delete(listener)
+            if (listeners.size === 0) this.dispatch('subscription', { event, active: false })
+        }
+    }
+
     private readonly handleResponse = (event: Event) => {
         const response = parseEventDetail<ApiResponse>(event)
         if (!response) return
@@ -151,8 +247,30 @@ export class IsolatedBridge {
         const message = parseEventDetail<{ value?: unknown }>(event)
         if (!message) return
 
-        this.currentSettings = message.value ?? {}
+        this.currentSettings = toSettings(message.value)
         this.settingsListeners.forEach(listener => listener(this.currentSettings))
+    }
+
+    private readonly handleEvent = (event: Event) => {
+        const message = parseEventDetail<{ type?: unknown; value?: unknown }>(event)
+        if (!message) return
+        if (message.type === 'current-track-change') {
+            const track = message.value && typeof message.value === 'object' ? (message.value as Record<string, unknown>) : null
+            this.currentTrackListeners.forEach(listener => listener(track))
+        }
+        if (message.type === 'page-entity-change' && message.value && typeof message.value === 'object') {
+            const snapshot = message.value as Record<string, unknown>
+            this.pageEntityListeners.forEach(listener => listener(snapshot))
+        }
+        if (message.type === 'player-snapshot-change' && message.value && typeof message.value === 'object') {
+            this.playerSnapshotListeners.forEach(listener => listener(message.value as PulseSyncPlayerSnapshot))
+        }
+        if (message.type === 'queue-change' && message.value && typeof message.value === 'object') {
+            this.queueListeners.forEach(listener => listener(message.value as PulseSyncQueueSnapshot))
+        }
+        if (message.type === 'route-change' && message.value && typeof message.value === 'object') {
+            this.routeListeners.forEach(listener => listener(message.value as PulseSyncRouteSnapshot))
+        }
     }
 
     private readonly handleWindowError = (event: ErrorEvent) => {
@@ -176,6 +294,7 @@ export class IsolatedBridge {
         if (this.started) {
             document.removeEventListener(this.eventName('response'), this.handleResponse)
             document.removeEventListener(this.eventName('settings'), this.handleSettings)
+            document.removeEventListener(this.eventName('event'), this.handleEvent)
             window.removeEventListener('error', this.handleWindowError)
             window.removeEventListener('unhandledrejection', this.handleUnhandledRejection)
         }
@@ -186,5 +305,10 @@ export class IsolatedBridge {
         })
         this.pendingCalls.clear()
         this.settingsListeners.clear()
+        this.currentTrackListeners.clear()
+        this.pageEntityListeners.clear()
+        this.playerSnapshotListeners.clear()
+        this.queueListeners.clear()
+        this.routeListeners.clear()
     }
 }
