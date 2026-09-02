@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { installNativeSlotTooltips } from '../runtime/pulsesyncApi'
 import { getRegisteredAddons, getRegistryRevision, resolveMountTarget, resolveSlot, subscribeRegistry } from '../runtime/registry'
 import { AddonErrorBoundary } from './AddonErrorBoundary'
+import { AddonSlot } from './AddonSlot'
 
 export function PulseSyncWebHost() {
     useSyncExternalStore(subscribeRegistry, getRegistryRevision, getRegistryRevision)
@@ -44,7 +45,7 @@ export function PulseSyncWebHost() {
             content.push(
                 createPortal(
                     <AddonErrorBoundary addonId={addonId}>
-                        <AddonComponent addonId={addonId} api={addon.api} />
+                        <AddonSlot addonId={addonId} api={addon.api} component={AddonComponent} slotName={slotName} />
                     </AddonErrorBoundary>,
                     target,
                     `${addonId}:${slotName}:${addon.generation}`,
