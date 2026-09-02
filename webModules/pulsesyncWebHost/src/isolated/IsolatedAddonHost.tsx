@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import type { PulseSyncAddonApi, PulseSyncAddonDefinition } from '../contracts'
 import { AddonErrorBoundary } from '../components/AddonErrorBoundary'
 import { AddonSlot } from '../components/AddonSlot'
+import { installTrackContextMenuTracking } from '../trackContextMenu'
 import type { IsolatedLog } from './contracts'
 import { IsolatedTargetRegistry } from './IsolatedTargetRegistry'
 
@@ -17,6 +18,8 @@ type IsolatedAddonHostProps = {
 
 export function IsolatedAddonHost({ addonId, addonApi, definition, generation, log, targets }: IsolatedAddonHostProps) {
     const [, setDomRevision] = useState(0)
+
+    useEffect(() => installTrackContextMenuTracking(), [])
 
     useEffect(() => {
         let animationFrame = 0
