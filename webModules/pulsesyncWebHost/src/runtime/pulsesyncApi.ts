@@ -5,10 +5,15 @@ export function getPulseSyncApi(): PulseSyncApi | undefined {
     return window.pulsesyncApi
 }
 
+export function installNativeSlotTooltips() {
+    const api = getPulseSyncApi() as (PulseSyncApi & { enableNativeSlotTooltips?: () => () => void }) | undefined
+    return api?.enableNativeSlotTooltips?.() ?? (() => {})
+}
+
 export function createAddonApi(addon: Partial<PulseSyncAddonIdentity> & Pick<PulseSyncAddonIdentity, 'id'>): PulseSyncAddonApi {
     const identity = createAddonIdentity(addon)
     const client = createAddonClient(getPulseSyncApi)
-    const namespaces = createAddonNamespaces(client)
+    const namespaces = createAddonNamespaces(client, identity.id)
     const log = (method: 'info' | 'warn' | 'error', args: unknown[]) => console[method](`[PulseSync addon: ${identity.id}]`, ...args)
 
     return Object.freeze({

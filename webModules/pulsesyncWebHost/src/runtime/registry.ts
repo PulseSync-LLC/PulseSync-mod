@@ -1,5 +1,6 @@
 import { WEB_HOST_API_VERSION } from '../constants'
 import type { Cleanup, PulseSyncAddonApi, PulseSyncAddonDefinition, PulseSyncAddonMountTarget } from '../contracts'
+import { resolveStandardSlot } from '../slots'
 import { createAddonApi } from './pulsesyncApi'
 
 export type RegisteredAddon = {
@@ -14,13 +15,6 @@ const addons = new Map<string, RegisteredAddon>()
 const slots = new Map<string, Element>()
 const subscribers = new Set<() => void>()
 const SLOT_MARKER_ATTRIBUTE = 'data-pulsesync-slots'
-
-const standardSlotSelectors: Readonly<Record<string, readonly string[]>> = {
-    playerBarButton: [
-        '[data-test-id="PLAYERBAR_DESKTOP"] [class*="PlayerBarDesktop_meta__"]',
-        '[data-test-id="PLAYERBAR_DESKTOP"]',
-    ],
-}
 
 let registryRevision = 0
 let addonGeneration = 0
@@ -150,12 +144,7 @@ export function resolveSlot(slotName: string) {
     const registeredMarker = document.querySelector(`[${SLOT_MARKER_ATTRIBUTE}~="${CSS.escape(slotName)}"]`)
     if (registeredMarker) return registeredMarker
 
-    for (const selector of standardSlotSelectors[slotName] ?? []) {
-        const target = document.querySelector(selector)
-        if (target) return target
-    }
-
-    return null
+    return resolveStandardSlot(slotName)
 }
 
 export function resolveMountTarget(target: PulseSyncAddonMountTarget): Element | null {
