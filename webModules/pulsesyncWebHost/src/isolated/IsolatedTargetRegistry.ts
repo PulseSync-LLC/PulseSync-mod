@@ -1,9 +1,6 @@
 import type { Cleanup, PulseSyncAddonMountTarget } from '../contracts'
+import { resolveStandardSlot } from '../slots'
 import type { IsolatedLog } from './contracts'
-
-const STANDARD_SLOT_SELECTORS: Readonly<Record<string, readonly string[]>> = {
-    playerBarButton: ['[data-test-id="PLAYERBAR_DESKTOP"] [class*="PlayerBarDesktop_meta__"]', '[data-test-id="PLAYERBAR_DESKTOP"]'],
-}
 
 export class IsolatedTargetRegistry {
     private readonly slots = new Map<string, Element>()
@@ -40,12 +37,7 @@ export class IsolatedTargetRegistry {
         const registeredMarker = document.querySelector(`[data-pulsesync-slots~="${CSS.escape(slotName)}"]`)
         if (registeredMarker) return registeredMarker
 
-        for (const selector of STANDARD_SLOT_SELECTORS[slotName] ?? []) {
-            const target = document.querySelector(selector)
-            if (target) return target
-        }
-
-        return null
+        return resolveStandardSlot(slotName)
     }
 
     resolveMountTarget(target: PulseSyncAddonMountTarget): Element | null {

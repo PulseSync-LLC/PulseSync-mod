@@ -1,7 +1,7 @@
 import type React from 'react'
 import type { ComponentType } from 'react'
 import type * as jsxRuntime from 'react/jsx-runtime'
-import type { PulseSyncPageApiV1, PulseSyncPlayerApiV1, PulseSyncRouterApiV1, PulseSyncWebHostApiV1 } from '@pulsesync/yamusic-types'
+import type { PulseSyncPageApiV1, PulseSyncPlayerApiV1, PulseSyncRouterApiV1, PulseSyncToastOptions, PulseSyncWebHostApiV1 } from '@pulsesync/yamusic-types'
 
 export type Cleanup = () => void
 export type PulseSyncApi = Record<string, unknown>
@@ -23,6 +23,10 @@ export type PulseSyncAddonAssets = {
     list: () => Promise<readonly string[]>
     url: (fileName: string) => string
     fetch: (fileName: string, init?: RequestInit) => Promise<Response>
+}
+
+export type PulseSyncAddonNotifications = {
+    show: (message: string, options?: PulseSyncToastOptions) => Promise<void>
 }
 
 export type DesktopEventsBridge = {
@@ -66,6 +70,7 @@ export type PulseSyncAddonApi = {
     readonly player: PulseSyncPlayerApiV1
     readonly page: PulseSyncPageApiV1
     readonly router: PulseSyncRouterApiV1
+    readonly notifications: PulseSyncAddonNotifications
     readonly settings: PulseSyncAddonSettingsStore
     readonly assets: PulseSyncAddonAssets
     logger: {

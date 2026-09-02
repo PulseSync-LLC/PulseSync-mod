@@ -23,6 +23,7 @@ export type PulseSyncApi = PublicPulseSyncApi & UnknownRecord & {
     _modSettingsListeners: Map<string, Set<ModSettingListener>>;
     _pendingCalls: Array<(player: PulseSyncPlayer) => void>;
     playerInstance?: PulseSyncPlayer | null;
+    enableNativeSlotTooltips: () => Cleanup;
     getModSetting: (key: unknown) => Promise<unknown>;
     getModSettingSnapshot: (key: unknown) => unknown;
     getLastFmUser: () => Promise<unknown>;

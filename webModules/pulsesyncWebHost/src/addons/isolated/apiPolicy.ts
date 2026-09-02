@@ -9,4 +9,5 @@ export const ISOLATED_ADDON_SCOPED_API_METHOD_SET: ReadonlySet<string> = new Set
     'setTrackReplacements',
     'removeTrackReplacement',
     'clearTrackReplacements',
+    'showToast',
 ])

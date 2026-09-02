@@ -1437,6 +1437,21 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_WEBHOST_ADDONS_SNAPSHOT, 
     }
 });
 
+electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_SHOW_TOAST, (event, payload) => {
+    if (!mainWindow || event.sender !== mainWindow.webContents) throw new Error('PulseSync toast rejected an unknown sender');
+
+    const message = typeof payload?.message === 'string' ? payload.message.trim().slice(0, 500) : '';
+    if (!message) throw new TypeError('PulseSync toast message is required');
+
+    const requestedDuration = Number(payload?.durationMs);
+    const durationMs = Number.isFinite(requestedDuration) ? Math.min(Math.max(requestedDuration, 1500), 10_000) : 4000;
+    const ownerId = typeof payload?.ownerId === 'string' ? payload.ownerId.trim().replace(/[^a-z0-9._-]/gi, '').slice(0, 100) : '';
+    const toastId = `pulsesync-addon:${ownerId || crypto.randomUUID()}`;
+    const operationNonce = sendBasicToastCreate(mainWindow, toastId, message, 'Закрыть');
+    const dismissTimer = setTimeout(() => sendBasicToastDismiss(mainWindow, toastId, operationNonce), durationMs);
+    dismissTimer.unref?.();
+});
+
 electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, (event, payload) => {
     if (!mainWindow || event.sender !== mainWindow.webContents) throw new Error('PulseSync isolated addon rejected an unknown sender');
 
