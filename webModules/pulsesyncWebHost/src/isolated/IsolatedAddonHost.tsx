@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import type { PulseSyncAddonApi, PulseSyncAddonDefinition } from '../contracts'
 import { AddonErrorBoundary } from '../components/AddonErrorBoundary'
+import { AddonSlot } from '../components/AddonSlot'
 import type { IsolatedLog } from './contracts'
 import { IsolatedTargetRegistry } from './IsolatedTargetRegistry'
 
@@ -52,7 +53,7 @@ export function IsolatedAddonHost({ addonId, addonApi, definition, generation, l
         content.push(
             createPortal(
                 <AddonErrorBoundary addonId={addonId} onError={handleRenderError}>
-                    <Component addonId={addonId} api={addonApi} />
+                    <AddonSlot addonId={addonId} api={addonApi} component={Component} slotName={slotName} />
                 </AddonErrorBoundary>,
                 target,
                 `${generation}:slot:${slotName}`,
