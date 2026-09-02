@@ -9,14 +9,6 @@ import type {
 } from '../contracts'
 
 const PULSESYNC_LOCAL_ORIGIN = 'http://localhost:2007'
-const PULSESYNC_WEB_HOST_SUBSCRIPTION_METHODS = new Set([
-    'onCurrentTrackChange',
-    'onPageEntityChange',
-    'onPlayerSnapshotChange',
-    'onQueueChange',
-    'onRouteChange',
-])
-
 function normalizeFileName(value: string) {
     const fileName = String(value ?? '').trim()
     if (!fileName || fileName.includes('\0')) throw new TypeError('PulseSync addon asset file name is required')
@@ -81,17 +73,20 @@ export function createAddonClient(getApi: () => PulseSyncApi | undefined): Pulse
                 if (!api) throw new Error('PulseSync client API is unavailable')
                 const value = api[property]
                 if (typeof value !== 'function') return value
-                if (PULSESYNC_WEB_HOST_SUBSCRIPTION_METHODS.has(property)) {
-                    return (...args: unknown[]) => Reflect.apply(value, api, args)
+                return (...args: unknown[]) => {
+                    const result = Reflect.apply(value, api, args)
+                    return typeof result === 'function' ? result : Promise.resolve(result)
                 }
-                return (...args: unknown[]) => Promise.resolve(Reflect.apply(value, api, args))
             },
             has: (_target, property) => typeof property === 'string' && Boolean(getApi()?.[property]),
         }),
     )
 }
 
-export function createAddonNamespaces(client: PulseSyncWebHostClient): Pick<PulseSyncAddonApi, 'player' | 'page' | 'router'> {
+export function createAddonNamespaces(
+    client: PulseSyncWebHostClient,
+    notificationOwnerId?: string,
+): Pick<PulseSyncAddonApi, 'player' | 'page' | 'router' | 'notifications'> {
     return Object.freeze({
         player: Object.freeze({
             getSnapshot: () => client.getPlayerSnapshot(),
@@ -107,5 +102,8 @@ export function createAddonNamespaces(client: PulseSyncWebHostClient): Pick<Puls
             getSnapshot: () => client.getRouteSnapshot(),
             onChange: listener => client.onRouteChange(listener),
         } satisfies PulseSyncAddonApi['router']),
+        notifications: Object.freeze({
+            show: (message, options) => client.showToast(message, options ?? {}, notificationOwnerId),
+        } satisfies PulseSyncAddonApi['notifications']),
     })
 }

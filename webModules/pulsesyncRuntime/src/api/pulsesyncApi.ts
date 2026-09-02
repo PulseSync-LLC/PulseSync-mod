@@ -1,6 +1,8 @@
+import type { PulseSyncToastOptions } from '@pulsesync/yamusic-types';
 import type { AddonSettings, PulseSyncApi, PulseSyncPlayer, RuntimeServices } from '../contracts';
 import { clamp, cloneValue, createEntityId, getPlayerInstance, normalizeAddonId } from '../core/values';
 import { callWithPlayer, tryStoreMethod } from '../features/player';
+import { enableNativeSlotTooltips } from '../features/nativeUi';
 import { normalizeVibeSeeds, playVibeBySeeds, type VibeParams } from '../features/vibe';
 import {
     clearTrackReplacementsForOwner,
@@ -64,6 +66,7 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         _addonSettingsListeners: new Map(),
         _modSettingsListeners: new Map(),
         _waitForPlayer: callWithPlayer,
+        enableNativeSlotTooltips,
         applyR128Normalization(enabled: unknown) {
             window.__PULSESYNC_APPLY_R128_NORMALIZATION__?.(Boolean(enabled));
         },
@@ -187,6 +190,13 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         },
         async getPremiumStatus() {
             return Boolean(await invokeDesktopEvent('isPremiumUser'));
+        },
+        async showToast(message: string, options: PulseSyncToastOptions | null = {}, ownerId?: string) {
+            await invokeDesktopEvent('PULSESYNC_SHOW_TOAST', {
+                message: String(message ?? '').trim(),
+                durationMs: options?.durationMs,
+                ownerId: String(ownerId ?? '').trim(),
+            });
         },
         async getLastFmUser() {
             try {
