@@ -1,7 +1,15 @@
 import type React from 'react'
 import type { ComponentType } from 'react'
 import type * as jsxRuntime from 'react/jsx-runtime'
-import type { PulseSyncPageApiV1, PulseSyncPlayerApiV1, PulseSyncRouterApiV1, PulseSyncToastOptions, PulseSyncWebHostApiV1 } from '@pulsesync/yamusic-types'
+import type {
+    PulseSyncPageApiV1,
+    PulseSyncPageEntity,
+    PulseSyncPlayerApiV1,
+    PulseSyncRouterApiV1,
+    PulseSyncToastOptions,
+    PulseSyncTrackMeta,
+    PulseSyncWebHostApiV1,
+} from '@pulsesync/yamusic-types'
 
 export type Cleanup = () => void
 export type PulseSyncApi = Record<string, unknown>
@@ -45,6 +53,14 @@ export type PulseSyncAddonComponentProps = {
 
 export type PulseSyncAddonComponent = ComponentType<PulseSyncAddonComponentProps>
 
+export type PulseSyncAddonSlotComponentProps = PulseSyncAddonComponentProps & {
+    slot: string
+    currentTrack?: PulseSyncTrackMeta | null
+    pageEntity?: PulseSyncPageEntity | null
+}
+
+export type PulseSyncAddonSlotComponent = ComponentType<PulseSyncAddonSlotComponentProps>
+
 export type PulseSyncAddonMountTarget = Element | string | (() => Element | null) | { selector: string } | { slot: string }
 
 export type PulseSyncAddonMount = {
@@ -57,7 +73,7 @@ export type PulseSyncAddonDefinition = {
     name?: string
     apiVersion?: number
     component?: PulseSyncAddonComponent
-    slots?: Record<string, PulseSyncAddonComponent>
+    slots?: Record<string, PulseSyncAddonSlotComponent>
     mounts?: readonly PulseSyncAddonMount[]
     activate?: (api: PulseSyncAddonApi) => void | Cleanup
 }
