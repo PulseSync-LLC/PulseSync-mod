@@ -1,11 +1,14 @@
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { installNativeSlotTooltips } from '../runtime/pulsesyncApi'
 import { getRegisteredAddons, getRegistryRevision, resolveMountTarget, resolveSlot, subscribeRegistry } from '../runtime/registry'
 import { AddonErrorBoundary } from './AddonErrorBoundary'
 
 export function PulseSyncWebHost() {
     useSyncExternalStore(subscribeRegistry, getRegistryRevision, getRegistryRevision)
     const [, setDomRevision] = useState(0)
+
+    useEffect(() => installNativeSlotTooltips(), [])
 
     useEffect(() => {
         let animationFrame = 0
