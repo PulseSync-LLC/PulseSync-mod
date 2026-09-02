@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import type { PulseSyncPageEntity, PulseSyncTrackMeta } from '@pulsesync/yamusic-types'
 import type { PulseSyncAddonApi, PulseSyncAddonSlotComponent } from '../contracts'
+import { getTrackContextMenuTrack } from '../trackContextMenu'
 
 const PLAYER_BAR_BUTTON_SLOT = 'playerBarButton'
+const TRACK_CONTEXT_MENU_ITEM_SLOT = 'trackContextMenuItem'
 const PAGE_ENTITY_SLOTS = new Set(['entityHeaderTitleAccessory', 'entityHeaderMeta', 'entityHeaderControls'])
 
 type AddonSlotProps = {
@@ -24,5 +26,9 @@ export function AddonSlot({ addonId, api, component: Component, slotName }: Addo
     const baseProps = { addonId, api, slot: slotName }
     if (slotName === PLAYER_BAR_BUTTON_SLOT) return <Component {...baseProps} currentTrack={currentTrack} />
     if (PAGE_ENTITY_SLOTS.has(slotName)) return <Component {...baseProps} pageEntity={pageEntity} />
+    if (slotName === TRACK_CONTEXT_MENU_ITEM_SLOT) {
+        const track = getTrackContextMenuTrack()
+        return track ? <Component {...baseProps} track={track} /> : null
+    }
     return <Component {...baseProps} />
 }

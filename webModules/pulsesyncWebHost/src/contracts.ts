@@ -53,10 +53,18 @@ export type PulseSyncAddonComponentProps = {
 
 export type PulseSyncAddonComponent = ComponentType<PulseSyncAddonComponentProps>
 
+export type PulseSyncTrackMenuContext = {
+    readonly id: string
+    readonly url: string
+    readonly albumId?: string
+    readonly title?: string
+}
+
 export type PulseSyncAddonSlotComponentProps = PulseSyncAddonComponentProps & {
     slot: string
     currentTrack?: PulseSyncTrackMeta | null
     pageEntity?: PulseSyncPageEntity | null
+    track?: PulseSyncTrackMenuContext
 }
 
 export type PulseSyncAddonSlotComponent = ComponentType<PulseSyncAddonSlotComponentProps>

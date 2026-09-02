@@ -40,6 +40,17 @@ function ensureStandardSlotAnchor(parent: Element, slotName: string, before: Ele
     return anchor
 }
 
+function ensureAppendedStandardSlotAnchor(parent: Element, slotName: string) {
+    const existing = Array.from(parent.children).find((child) => child.getAttribute('data-pulsesync-standard-slot') === slotName)
+    if (existing) return existing
+
+    const anchor = document.createElement('span')
+    anchor.setAttribute('data-pulsesync-standard-slot', slotName)
+    anchor.setAttribute('style', 'display: contents')
+    parent.append(anchor)
+    return anchor
+}
+
 function resolvePlayerBarButtonTarget() {
     const playerBar = document.querySelector('[data-test-id="PLAYERBAR_DESKTOP"]')
     if (!playerBar) return null
@@ -72,11 +83,17 @@ function resolveEntityHeaderTarget(selector: string) {
     return document.querySelector(`[data-test-id="ENTITY_HEADER"] ${selector}`)
 }
 
+function resolveTrackContextMenuItemTarget() {
+    const menu = document.querySelector('[data-test-id="TRACK_CONTEXT_MENU"]')
+    return menu ? ensureAppendedStandardSlotAnchor(menu, 'trackContextMenuItem') : null
+}
+
 export const STANDARD_SLOT_RESOLVERS = Object.freeze({
     playerBarButton: resolvePlayerBarButtonTarget,
     entityHeaderTitleAccessory: () => resolveEntityHeaderTarget('[data-test-id="ENTITY_TITLE"]'),
     entityHeaderMeta: () => resolveEntityHeaderTarget('[class*="PageHeaderBase_meta__"]'),
     entityHeaderControls: () => resolveEntityHeaderTarget('[data-test-id="BASE_PAGE_HEADER_CONTROLS"]'),
+    trackContextMenuItem: resolveTrackContextMenuItemTarget,
 } satisfies Readonly<Record<string, StandardSlotResolver>>)
 
 export type PulseSyncStandardSlotName = keyof typeof STANDARD_SLOT_RESOLVERS

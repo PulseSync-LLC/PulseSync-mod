@@ -2,6 +2,7 @@ import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react
 import { createPortal } from 'react-dom'
 import { installNativeSlotTooltips } from '../runtime/pulsesyncApi'
 import { getRegisteredAddons, getRegistryRevision, resolveMountTarget, resolveSlot, subscribeRegistry } from '../runtime/registry'
+import { installTrackContextMenuTracking } from '../trackContextMenu'
 import { AddonErrorBoundary } from './AddonErrorBoundary'
 import { AddonSlot } from './AddonSlot'
 
@@ -10,6 +11,7 @@ export function PulseSyncWebHost() {
     const [, setDomRevision] = useState(0)
 
     useEffect(() => installNativeSlotTooltips(), [])
+    useEffect(() => installTrackContextMenuTracking(), [])
 
     useEffect(() => {
         let animationFrame = 0
