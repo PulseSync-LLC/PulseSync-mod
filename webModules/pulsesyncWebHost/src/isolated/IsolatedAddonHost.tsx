@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import type { PulseSyncAddonApi, PulseSyncAddonDefinition } from '../contracts'
 import { AddonErrorBoundary } from '../components/AddonErrorBoundary'
 import { AddonSlot } from '../components/AddonSlot'
+import { TrackMenuItems } from '../components/TrackMenuItems'
 import { installTrackContextMenuTracking } from '../trackContextMenu'
 import type { IsolatedLog } from './contracts'
 import { IsolatedTargetRegistry } from './IsolatedTargetRegistry'
@@ -63,6 +64,14 @@ export function IsolatedAddonHost({ addonId, addonApi, definition, generation, l
             ),
         )
     })
+
+    if (definition.trackMenuItems?.length) {
+        content.push(
+            <AddonErrorBoundary key={`${generation}:track-menu-items`} addonId={addonId} onError={handleRenderError}>
+                <TrackMenuItems api={addonApi} items={definition.trackMenuItems} />
+            </AddonErrorBoundary>,
+        )
+    }
 
     definition.mounts?.forEach((mount, index) => {
         const target = targets.resolveMountTarget(mount.target)
