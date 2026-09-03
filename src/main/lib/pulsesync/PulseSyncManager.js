@@ -305,7 +305,10 @@ class PulseSyncManager extends EventEmitter {
                 },
                 signal: AbortSignal.timeout(5000),
             });
-            const data = await response.json();
+            if (response.status === 408 || response.status === 429 || (response.status >= 500 && response.status < 600)) {
+                throw new Error(`User validation temporarily unavailable (HTTP ${response.status})`);
+            }
+            const data = response.ok ? await response.json() : null;
             if (revision !== this.userValidationRevision) return;
 
             const expiresAt = Number(data?.expiresAt);
