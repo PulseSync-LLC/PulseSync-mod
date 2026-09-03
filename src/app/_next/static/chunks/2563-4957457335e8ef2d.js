@@ -329,7 +329,28 @@
                     eT = (0, a.useMemo)(() => {
                         if (!s.isNonMusic) return (0, r.jsx)(W.C, { onClick: ek, disabled: !s.isAvailable || (ep && Z), variant: M.I.ALBUM, onOpenMenuChange: R });
                     }, [s.isAvailable, ek, s.isNonMusic, R, ep, Z]),
-                    eS = { variant: O.Y.ALBUM, id: s.id, title: s.title, path: eA, albumArtistName: s.artistName, albumArtistId: s.artistId };
+                    eS = { variant: O.Y.ALBUM, id: s.id, title: s.title, path: eA, albumArtistName: s.artistName, albumArtistId: s.artistId },
+                    pulseSyncInjectAlbumMenuItems = (items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('albumContextMenu', items, {
+                            eventDetail: { id: String(s.id), url: eA, ...(s.title ? { title: String(s.title) } : {}) },
+                            renderItem: ({ key, payload, activate }) => {
+                                const label = String(payload?.label ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim();
+                                if (!label || !icon) return null;
+                                return (0, r.jsx)(
+                                    u.Dr,
+                                    {
+                                        icon: (0, r.jsx)(M.I, { variant: icon, size: 'xxs' }),
+                                        onClick: () => {
+                                            activate(), R(!1);
+                                        },
+                                        children: label,
+                                        'data-pulsesync-addon-menu-item': '',
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items;
                 return (0, r.jsxs)(u.W1, {
                     isMobile: Z,
                     offsetOptions: 10,
@@ -339,7 +360,7 @@
                     wrapperClassName: G,
                     containerProps: { 'data-test-id': o.Kq.album.ALBUM_CONTEXT_MENU },
                     ...J,
-                    children: [
+                    children: pulseSyncInjectAlbumMenuItems([
                         Z && (0, r.jsx)(F.C, { getDescriptionTexts: s.getDescriptionTexts, entityId: s.id }),
                         ed && (0, r.jsx)(b.d, { entityVariant: E.D.ARTIST, adminUrl: ex }),
                         eN,
@@ -350,7 +371,7 @@
                         P,
                         eo && (0, r.jsx)(z, { onClick: eh, isFinished: s.listeningFinished }),
                         (0, r.jsx)(D.H, { shareLink: ev, entityMeta: eS }),
-                    ],
+                    ]),
                 });
             });
         },

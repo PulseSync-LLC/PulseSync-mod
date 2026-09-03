@@ -5,6 +5,7 @@ import { getRegisteredAddons, getRegistryRevision, resolveMountTarget, resolveSl
 import { installTrackContextMenuTracking } from '../trackContextMenu'
 import { AddonErrorBoundary } from './AddonErrorBoundary'
 import { AddonSlot } from './AddonSlot'
+import { AlbumMenuItems, HeaderActions, PlayerBarButtons, PlaylistMenuItems } from './NativeActions'
 import { TrackMenuItems } from './TrackMenuItems'
 
 export function PulseSyncWebHost() {
@@ -60,6 +61,38 @@ export function PulseSyncWebHost() {
             content.push(
                 <AddonErrorBoundary key={`${addonId}:track-menu-items:${addon.generation}`} addonId={addonId}>
                     <TrackMenuItems api={addon.api} items={addon.definition.trackMenuItems} />
+                </AddonErrorBoundary>,
+            )
+        }
+
+        if (addon.definition.albumMenuItems?.length) {
+            content.push(
+                <AddonErrorBoundary key={`${addonId}:album-menu-items:${addon.generation}`} addonId={addonId}>
+                    <AlbumMenuItems api={addon.api} items={addon.definition.albumMenuItems} />
+                </AddonErrorBoundary>,
+            )
+        }
+
+        if (addon.definition.playlistMenuItems?.length) {
+            content.push(
+                <AddonErrorBoundary key={`${addonId}:playlist-menu-items:${addon.generation}`} addonId={addonId}>
+                    <PlaylistMenuItems api={addon.api} items={addon.definition.playlistMenuItems} />
+                </AddonErrorBoundary>,
+            )
+        }
+
+        if (addon.definition.playerBarButtons?.length) {
+            content.push(
+                <AddonErrorBoundary key={`${addonId}:player-bar-buttons:${addon.generation}`} addonId={addonId}>
+                    <PlayerBarButtons api={addon.api} items={addon.definition.playerBarButtons} />
+                </AddonErrorBoundary>,
+            )
+        }
+
+        if (addon.definition.headerActions?.length) {
+            content.push(
+                <AddonErrorBoundary key={`${addonId}:header-actions:${addon.generation}`} addonId={addonId}>
+                    <HeaderActions api={addon.api} items={addon.definition.headerActions} />
                 </AddonErrorBoundary>,
             )
         }
