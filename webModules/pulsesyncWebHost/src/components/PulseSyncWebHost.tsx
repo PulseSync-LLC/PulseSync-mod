@@ -5,6 +5,7 @@ import { getRegisteredAddons, getRegistryRevision, resolveMountTarget, resolveSl
 import { installTrackContextMenuTracking } from '../trackContextMenu'
 import { AddonErrorBoundary } from './AddonErrorBoundary'
 import { AddonSlot } from './AddonSlot'
+import { TrackMenuItems } from './TrackMenuItems'
 
 export function PulseSyncWebHost() {
     useSyncExternalStore(subscribeRegistry, getRegistryRevision, getRegistryRevision)
@@ -54,6 +55,14 @@ export function PulseSyncWebHost() {
                 ),
             )
         })
+
+        if (addon.definition.trackMenuItems?.length) {
+            content.push(
+                <AddonErrorBoundary key={`${addonId}:track-menu-items:${addon.generation}`} addonId={addonId}>
+                    <TrackMenuItems api={addon.api} items={addon.definition.trackMenuItems} />
+                </AddonErrorBoundary>,
+            )
+        }
 
         addon.definition.mounts?.forEach((mount, mountIndex) => {
             const target = resolveMountTarget(mount.target)
