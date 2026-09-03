@@ -6155,6 +6155,7 @@
                                   }),
                         ),
                         el = window.CHANGE_DISLIKE_BUTTON_POS?.(),
+                        // for PulseSync WebHost
                         pulseSyncInjectPlayerBarButtons = (items) =>
                             window.pulsesyncApi?.injectNativeSlotItems?.('playerBarButtons', items, {
                                 eventDetail: null,

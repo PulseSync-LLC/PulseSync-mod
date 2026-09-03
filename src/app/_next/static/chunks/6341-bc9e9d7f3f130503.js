@@ -1037,6 +1037,7 @@
                             trackArtistId: null == (eC = ej.mainArtist) ? void 0 : eC.id,
                             trackAlbumId: ej.albumId,
                         },
+                        // for PulseSync WebHost
                         pulseSyncTrackIdParts = String(ej.id ?? '').split(':', 2),
                         pulseSyncTrackId = pulseSyncTrackIdParts[0],
                         pulseSyncTrackAlbumId = String(

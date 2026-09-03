@@ -1395,29 +1395,59 @@
                             eN,
                             eA,
                         ]),
-                        eW = (0, o.useMemo)(
-                            () =>
-                                (0, a.jsx)('div', {
-                                    className: ed().meta,
-                                    children:
-                                        (null == v ? void 0 : v.lastMonthListeners) &&
-                                        (0, a.jsxs)('div', {
-                                            className: ed().label,
-                                            'data-test-id': n.e8.pageHeader.ARTIST_LISTENERS_COUNT,
-                                            children: [
-                                                (0, a.jsx)(h.I, { variant: 'users', size: 'xxxs' }),
-                                                (0, a.jsx)(A.HL, {
-                                                    type: 'text',
-                                                    size: 'm',
-                                                    weight: 'medium',
-                                                    variant: 'span',
-                                                    children: (0, a.jsx)(f.A, { id: 'entity-names.listeners-per-month', values: { counter: v.lastMonthListeners } }),
-                                                }),
-                                            ],
-                                        }),
-                                }),
-                            [null == v ? void 0 : v.lastMonthListeners],
+                        // for PulseSync WebHost
+                        [pulseSyncHeaderInfoRevision, pulseSyncSetHeaderInfoRevision] = (0, o.useState)(0);
+                    (0, o.useEffect)(() => {
+                        const onNativeSlotChange = (e) => {
+                            'headerInfoItems' === e.detail && pulseSyncSetHeaderInfoRevision((e) => e + 1);
+                        };
+                        return (
+                            document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange),
+                            () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange)
                         );
+                    }, []);
+                    let eW = (0, o.useMemo)(() => {
+                        const pulseSyncNativeArtistMetaItems = [
+                                (null == v ? void 0 : v.lastMonthListeners) &&
+                                    (0, a.jsxs)('div', {
+                                        className: ed().label,
+                                        'data-test-id': n.e8.pageHeader.ARTIST_LISTENERS_COUNT,
+                                        children: [
+                                            (0, a.jsx)(h.I, { variant: 'users', size: 'xxxs' }),
+                                            (0, a.jsx)(A.HL, {
+                                                type: 'text',
+                                                size: 'm',
+                                                weight: 'medium',
+                                                variant: 'span',
+                                                children: (0, a.jsx)(f.A, { id: 'entity-names.listeners-per-month', values: { counter: v.lastMonthListeners } }),
+                                            }),
+                                        ],
+                                    }),
+                            ].filter(Boolean),
+                            pulseSyncArtistMetaItems = window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', pulseSyncNativeArtistMetaItems, {
+                                eventDetail: null,
+                                renderItem: ({ key, payload }) => {
+                                    const text = String(payload?.text ?? '').trim(),
+                                        icon = String(payload?.icon ?? '').trim(),
+                                        label = String(payload?.label ?? text).trim();
+                                    if (!text && !icon) return null;
+                                    return (0, a.jsxs)(
+                                        'div',
+                                        {
+                                            className: ed().label,
+                                            ...(label ? { 'aria-label': label } : {}),
+                                            'data-pulsesync-addon-header-item': 'meta',
+                                            children: [
+                                                icon && (0, a.jsx)(h.I, { variant: icon, size: 'xxxs' }),
+                                                (0, a.jsx)(A.HL, { type: 'text', size: 'm', weight: 'medium', variant: 'span', children: text }),
+                                            ],
+                                        },
+                                        key,
+                                    );
+                                },
+                            }) ?? pulseSyncNativeArtistMetaItems;
+                        return (0, a.jsx)('div', { className: ed().meta, children: pulseSyncArtistMetaItems });
+                    }, [null == v ? void 0 : v.lastMonthListeners, pulseSyncHeaderInfoRevision]);
                     return (0, a.jsx)('div', {
                         className: ed().root,
                         children: (0, a.jsx)(ee.k, {

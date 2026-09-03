@@ -1,12 +1,13 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 
 const ACTIVATE_EVENT = 'pulsesync:native-slot-activate'
+const CHANGE_EVENT = 'pulsesync:native-slot-change'
 
 export type NativeSlotRegistration = {
     readonly id: string
     readonly payload: unknown
     readonly position?: number | 'start' | 'end'
-    readonly onActivate: (detail: unknown) => void
+    readonly onActivate?: (detail: unknown) => void
 }
 
 type NativeSlotRegistrationElementProps = {
@@ -33,10 +34,17 @@ function NativeSlotRegistrationElement({ addonId, item, slotName }: NativeSlotRe
         const registration = registrationRef.current
         if (!registration) return
 
-        const onActivate = (event: Event) => item.onActivate(parseActivationDetail(event))
+        if (!item.onActivate) return
+        const onActivate = (event: Event) => item.onActivate?.(parseActivationDetail(event))
         registration.addEventListener(ACTIVATE_EVENT, onActivate)
         return () => registration.removeEventListener(ACTIVATE_EVENT, onActivate)
     }, [item])
+
+    useLayoutEffect(() => {
+        const notify = () => document.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: slotName }))
+        notify()
+        return () => queueMicrotask(notify)
+    }, [item, slotName])
 
     return (
         <span
