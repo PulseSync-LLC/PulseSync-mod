@@ -5,12 +5,16 @@ export type UnknownRecord = Record<string, unknown>;
 export type AddonSettings = Record<string, unknown>;
 export type AddonSettingsSnapshot = Record<string, AddonSettings>;
 export type ModSettingListener = (value: unknown) => void;
-export type NativeTrackMenuTools = {
-    jsx: (type: unknown, props: Record<string, unknown>, key?: string) => unknown;
-    MenuItem: unknown;
-    Icon: unknown;
-    track: Record<string, any>;
-    close: () => void;
+export type NativeSlotRenderItem = {
+    addonId: string;
+    itemId: string;
+    key: string;
+    payload: unknown;
+    activate: () => void;
+};
+export type NativeSlotTools = {
+    eventDetail: unknown;
+    renderItem: (item: NativeSlotRenderItem) => unknown;
 };
 
 export type DesktopEventsBridge = {
@@ -36,7 +40,7 @@ export type PulseSyncApi = PublicPulseSyncApi & UnknownRecord & {
     getLastFmUser: () => Promise<unknown>;
     getLastFmYnisonAvailability: () => Promise<boolean>;
     getTrackReplacement: (trackId: unknown) => string | null;
-    injectTrackMenuItems: (nativeItems: unknown[], tools: NativeTrackMenuTools) => unknown[];
+    injectNativeSlotItems: (slotName: string, nativeItems: unknown[], tools: NativeSlotTools) => unknown[];
     getSelectedWasapiExclusiveDeviceId: () => Promise<unknown>;
     getWasapiExclusiveStatus: () => Promise<unknown>;
     listWasapiExclusiveDevices: () => Promise<unknown>;

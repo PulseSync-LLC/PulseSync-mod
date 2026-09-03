@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import type { PulseSyncAddonApi, PulseSyncAddonDefinition } from '../contracts'
 import { AddonErrorBoundary } from '../components/AddonErrorBoundary'
 import { AddonSlot } from '../components/AddonSlot'
+import { AlbumMenuItems, HeaderActions, PlayerBarButtons, PlaylistMenuItems } from '../components/NativeActions'
 import { TrackMenuItems } from '../components/TrackMenuItems'
 import { installTrackContextMenuTracking } from '../trackContextMenu'
 import type { IsolatedLog } from './contracts'
@@ -69,6 +70,38 @@ export function IsolatedAddonHost({ addonId, addonApi, definition, generation, l
         content.push(
             <AddonErrorBoundary key={`${generation}:track-menu-items`} addonId={addonId} onError={handleRenderError}>
                 <TrackMenuItems api={addonApi} items={definition.trackMenuItems} />
+            </AddonErrorBoundary>,
+        )
+    }
+
+    if (definition.albumMenuItems?.length) {
+        content.push(
+            <AddonErrorBoundary key={`${generation}:album-menu-items`} addonId={addonId} onError={handleRenderError}>
+                <AlbumMenuItems api={addonApi} items={definition.albumMenuItems} />
+            </AddonErrorBoundary>,
+        )
+    }
+
+    if (definition.playlistMenuItems?.length) {
+        content.push(
+            <AddonErrorBoundary key={`${generation}:playlist-menu-items`} addonId={addonId} onError={handleRenderError}>
+                <PlaylistMenuItems api={addonApi} items={definition.playlistMenuItems} />
+            </AddonErrorBoundary>,
+        )
+    }
+
+    if (definition.playerBarButtons?.length) {
+        content.push(
+            <AddonErrorBoundary key={`${generation}:player-bar-buttons`} addonId={addonId} onError={handleRenderError}>
+                <PlayerBarButtons api={addonApi} items={definition.playerBarButtons} />
+            </AddonErrorBoundary>,
+        )
+    }
+
+    if (definition.headerActions?.length) {
+        content.push(
+            <AddonErrorBoundary key={`${generation}:header-actions`} addonId={addonId} onError={handleRenderError}>
+                <HeaderActions api={addonApi} items={definition.headerActions} />
             </AddonErrorBoundary>,
         )
     }

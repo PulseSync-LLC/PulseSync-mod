@@ -3104,7 +3104,33 @@
                             path: Q,
                             playlistOwnerName: null == (t = u.owner) ? void 0 : t.name,
                             playlistOwnerLogin: null == (a = u.owner) ? void 0 : a.login,
-                        };
+                        },
+                        pulseSyncInjectPlaylistMenuItems = (items) =>
+                            window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
+                                eventDetail: {
+                                    id: String(u.kind ?? u.id),
+                                    uuid: String(u.uuid ?? ''),
+                                    url: Q,
+                                    ...(u.title ? { title: String(u.title) } : {}),
+                                },
+                                renderItem: ({ key, payload, activate }) => {
+                                    const label = String(payload?.label ?? '').trim(),
+                                        icon = String(payload?.icon ?? '').trim();
+                                    if (!label || !icon) return null;
+                                    return (0, r.jsx)(
+                                        tl.Dr,
+                                        {
+                                            icon: (0, r.jsx)(eG.I, { variant: icon, size: 'xxs' }),
+                                            onClick: () => {
+                                                activate(), m(!1);
+                                            },
+                                            children: label,
+                                            'data-pulsesync-addon-menu-item': '',
+                                        },
+                                        key,
+                                    );
+                                },
+                            }) ?? items;
                     return (0, r.jsxs)(tl.W1, {
                         isMobile: h,
                         offsetOptions: 10,
@@ -3114,7 +3140,7 @@
                         wrapperClassName: _,
                         ...y,
                         containerProps: { 'data-test-id': d.Kq.playlist.PLAYLIST_CONTEXT_MENU },
-                        children: [
+                        children: pulseSyncInjectPlaylistMenuItems([
                             I && (0, r.jsx)(t$.d, { entityVariant: am.D.PLAYLIST, adminUrl: u.isFavouritePlaylist ? void 0 : Z, withPlaylistPageFeatures: !0 }),
                             (0, r.jsx)(at, { sourcePlaylistUuid: u.uuid }),
                             !h && (0, r.jsx)(af.L, { onClick: D, isPinned: u.isPinned }),
@@ -3151,7 +3177,7 @@
                                     children: (0, r.jsx)(eW.A, { id: 'playlist-actions.remove-playlist' }),
                                 }),
                             (B || O) && (0, r.jsx)(al, { playlist: u }),
-                        ],
+                        ]),
                     });
                 }),
                 aP = (0, l.PA)((e) => {

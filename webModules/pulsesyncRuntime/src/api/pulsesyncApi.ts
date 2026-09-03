@@ -3,7 +3,7 @@ import type { AddonSettings, PulseSyncApi, PulseSyncPlayer, RuntimeServices } fr
 import { clamp, cloneValue, createEntityId, getPlayerInstance, normalizeAddonId } from '../core/values';
 import { callWithPlayer, tryStoreMethod } from '../features/player';
 import { enableNativeSlotTooltips } from '../features/nativeUi';
-import { injectTrackMenuItems } from '../features/trackMenu';
+import { injectNativeSlotItems } from '../features/nativeSlots';
 import { normalizeVibeSeeds, playVibeBySeeds, type VibeParams } from '../features/vibe';
 import {
     clearTrackReplacementsForOwner,
@@ -68,7 +68,7 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         _modSettingsListeners: new Map(),
         _waitForPlayer: callWithPlayer,
         enableNativeSlotTooltips,
-        injectTrackMenuItems,
+        injectNativeSlotItems,
         applyR128Normalization(enabled: unknown) {
             window.__PULSESYNC_APPLY_R128_NORMALIZATION__?.(Boolean(enabled));
         },

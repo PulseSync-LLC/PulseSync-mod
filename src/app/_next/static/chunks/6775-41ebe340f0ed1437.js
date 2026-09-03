@@ -6154,7 +6154,36 @@
                                       entityMeta: i,
                                   }),
                         ),
-                        el = window.CHANGE_DISLIKE_BUTTON_POS?.();
+                        el = window.CHANGE_DISLIKE_BUTTON_POS?.(),
+                        pulseSyncInjectPlayerBarButtons = (items) =>
+                            window.pulsesyncApi?.injectNativeSlotItems?.('playerBarButtons', items, {
+                                eventDetail: null,
+                                renderItem: ({ key, payload, activate }) => {
+                                    const label = String(payload?.label ?? '').trim(),
+                                        description = String(payload?.description ?? '').trim(),
+                                        icon = String(payload?.icon ?? '').trim();
+                                    if (!label || !icon) return null;
+                                    return (0, m.jsx)(
+                                        iTooltipWithTitle.k,
+                                        {
+                                            title: label,
+                                            ...(description ? { description } : {}),
+                                            children: (0, m.jsx)(T.$, {
+                                                className: i9().settingsButton,
+                                                radius: 'round',
+                                                size: 'xxxs',
+                                                variant: 'text',
+                                                withRipple: !1,
+                                                'aria-label': label,
+                                                icon: (0, m.jsx)(E.I, { variant: icon, size: 'xs' }),
+                                                onClick: activate,
+                                                'data-pulsesync-addon-player-button': '',
+                                            }),
+                                        },
+                                        key,
+                                    );
+                                },
+                            }) ?? items;
                     (0, b.useEffect)(() => {
                         let e = (e, t, a) => {
                             'trackDownloadCurrent' === t && setDownloadProgress(a);
@@ -6324,7 +6353,7 @@
                                                     !j.isGenerativeContext &&
                                                     !w.isAdvertShown &&
                                                     (0, m.jsxs)(m.Fragment, {
-                                                        children: [
+                                                        children: pulseSyncInjectPlayerBarButtons([
                                                             V && (0, m.jsx)(iJ.i, { iconSize: 'l' }),
                                                             ea,
                                                             en,
@@ -6412,7 +6441,7 @@
                                                                     }),
                                                                 }),
                                                             }),
-                                                        ],
+                                                        ]),
                                                     }),
                                                 (0, m.jsx)(iW.r, {
                                                     variant: iz.q.VERTICAL,

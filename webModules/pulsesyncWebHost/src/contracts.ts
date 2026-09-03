@@ -73,6 +73,53 @@ export type TrackMenuItemDefinition = {
     readonly onClick: (context: TrackMenuItemContext) => void | Promise<void>
 }
 
+export type AlbumMenuContext = {
+    readonly id: string
+    readonly url?: string
+    readonly title?: string
+}
+
+export type AlbumMenuItemDefinition = {
+    readonly id: string
+    readonly label: string
+    readonly icon: string
+    readonly position?: number | 'start' | 'end'
+    readonly onClick: (context: { api: PulseSyncAddonApi; album: AlbumMenuContext }) => void | Promise<void>
+}
+
+export type PlaylistMenuContext = {
+    readonly id: string
+    readonly uuid?: string
+    readonly url?: string
+    readonly title?: string
+}
+
+export type PlaylistMenuItemDefinition = {
+    readonly id: string
+    readonly label: string
+    readonly icon: string
+    readonly position?: number | 'start' | 'end'
+    readonly onClick: (context: { api: PulseSyncAddonApi; playlist: PlaylistMenuContext }) => void | Promise<void>
+}
+
+export type PlayerBarButtonDefinition = {
+    readonly id: string
+    readonly label: string
+    readonly description?: string
+    readonly icon: string
+    readonly position?: number | 'start' | 'end'
+    readonly onClick: (context: { api: PulseSyncAddonApi; currentTrack: PulseSyncTrackMeta | null }) => void | Promise<void>
+}
+
+export type HeaderActionDefinition = {
+    readonly id: string
+    readonly label: string
+    readonly description?: string
+    readonly icon: string
+    readonly position?: number | 'start' | 'end'
+    readonly onClick: (context: { api: PulseSyncAddonApi; pageEntity: PulseSyncPageEntity | null }) => void | Promise<void>
+}
+
 export type PulseSyncAddonSlotComponentProps = PulseSyncAddonComponentProps & {
     slot: string
     currentTrack?: PulseSyncTrackMeta | null
@@ -96,6 +143,10 @@ export type PulseSyncAddonDefinition = {
     component?: PulseSyncAddonComponent
     slots?: Record<string, PulseSyncAddonSlotComponent>
     trackMenuItems?: readonly TrackMenuItemDefinition[]
+    albumMenuItems?: readonly AlbumMenuItemDefinition[]
+    playlistMenuItems?: readonly PlaylistMenuItemDefinition[]
+    playerBarButtons?: readonly PlayerBarButtonDefinition[]
+    headerActions?: readonly HeaderActionDefinition[]
     mounts?: readonly PulseSyncAddonMount[]
     activate?: (api: PulseSyncAddonApi) => void | Cleanup
 }

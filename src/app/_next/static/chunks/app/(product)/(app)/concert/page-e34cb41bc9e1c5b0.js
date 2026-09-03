@@ -1342,7 +1342,10 @@
                 T = n(94218),
                 w = n(23278),
                 j = n.n(w),
-                E = n(41898);
+                E = n(41898),
+                pulseSyncHeaderButton = n(63423),
+                pulseSyncHeaderIcon = n(82586),
+                pulseSyncHeaderTooltip = n(60244);
             let N = 'entity-header-block-controls',
                 P = (0, s.PA)((e) => {
                     let {
@@ -1408,7 +1411,36 @@
                                           children: [n, I],
                                       }),
                             [k, n, L, I],
-                        );
+                        ),
+                        pulseSyncHeaderControlItems = Array.isArray(h) ? h : [h],
+                        pulseSyncInjectHeaderActions = (items) =>
+                            window.pulsesyncApi?.injectNativeSlotItems?.('headerActions', items, {
+                                eventDetail: null,
+                                renderItem: ({ key, payload, activate }) => {
+                                    const label = String(payload?.label ?? '').trim(),
+                                        description = String(payload?.description ?? '').trim(),
+                                        icon = String(payload?.icon ?? '').trim();
+                                    if (!label || !icon) return null;
+                                    return (0, i.jsx)(
+                                        pulseSyncHeaderTooltip.k,
+                                        {
+                                            title: label,
+                                            ...(description ? { description } : {}),
+                                            children: (0, i.jsx)(pulseSyncHeaderButton.$, {
+                                                radius: 'round',
+                                                size: 'xs',
+                                                variant: 'text',
+                                                withRipple: !1,
+                                                'aria-label': label,
+                                                icon: (0, i.jsx)(pulseSyncHeaderIcon.I, { variant: icon, size: 'xs' }),
+                                                onClick: activate,
+                                                'data-pulsesync-addon-header-action': '',
+                                            }),
+                                        },
+                                        key,
+                                    );
+                                },
+                            }) ?? items;
                     return (0, i.jsxs)('div', {
                         className: (0, r.$)(
                             j().root,
@@ -1443,7 +1475,11 @@
                                             !!a && (0, i.jsx)('div', { className: (0, r.$)(j().meta, { [j().meta_withDisclaimerLabel]: !!k }, H), children: a }),
                                         ],
                                     }),
-                                    (0, i.jsx)('div', { className: j().controls, 'data-test-id': d.e8.pageHeader.BASE_PAGE_HEADER_CONTROLS, children: h }),
+                                    (0, i.jsx)('div', {
+                                        className: j().controls,
+                                        'data-test-id': d.e8.pageHeader.BASE_PAGE_HEADER_CONTROLS,
+                                        children: pulseSyncInjectHeaderActions(pulseSyncHeaderControlItems),
+                                    }),
                                     F &&
                                         (0, i.jsxs)('div', {
                                             className: j().buttonContainer,
