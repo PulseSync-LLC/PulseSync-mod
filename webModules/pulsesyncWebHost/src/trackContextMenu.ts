@@ -1,10 +1,17 @@
+import type { PulseSyncTrackMeta } from '@pulsesync/yamusic-types'
 import type { PulseSyncTrackMenuContext } from './contracts'
 
 const TRACK_CONTEXT_MENU_SELECTOR = '[data-test-id="TRACK_CONTEXT_MENU"]'
 const TRACK_CONTEXT_MENU_BUTTON_SELECTOR = '[data-test-id="TRACK_CONTEXT_MENU_BUTTON"]'
+const PLAYER_CONTEXT_MENU_BUTTON_SELECTOR = [
+    '[data-test-id="PLAYERBAR_DESKTOP_CONTEXT_MENU_BUTTON"]',
+    '[data-test-id="FULLSCREEN_PLAYER_CONTEXT_MENU_BUTTON"]',
+    '[data-test-id="MOBILE_FULLSCREEN_PLAYER_CONTEXT_MENU_BUTTON"]',
+].join(',')
 const TRACK_LINK_SELECTOR = 'a[href*="/track/"]'
 
 let activeTrack: PulseSyncTrackMenuContext | null = null
+let activeSource: 'player' | 'track' | null = null
 
 function decodePathSegment(value: string) {
     try {
@@ -29,6 +36,22 @@ function parseTrackLink(link: HTMLAnchorElement): PulseSyncTrackMenuContext | nu
         url: `${url.pathname}${url.search}${url.hash}`,
         ...(title ? { title } : {}),
         ...(albumId ? { albumId: decodePathSegment(albumId) } : {}),
+    })
+}
+
+function createCurrentTrackContext(track: PulseSyncTrackMeta | null) {
+    if (!track?.id) return null
+
+    const [trackId, entityAlbumId] = String(track.id).split(':', 2)
+    const albumId = String(track.albums?.[0]?.id ?? track.albumId ?? entityAlbumId ?? '').trim()
+    const encodedTrackId = encodeURIComponent(trackId)
+    const url = albumId ? `/album/${encodeURIComponent(albumId)}/track/${encodedTrackId}` : `/track/${encodedTrackId}`
+
+    return Object.freeze({
+        id: trackId,
+        url,
+        ...(albumId ? { albumId } : {}),
+        ...(track.title ? { title: track.title } : {}),
     })
 }
 
@@ -59,10 +82,12 @@ function captureTrackContext(event: Event) {
     const origin = event.target instanceof Element ? event.target : event.target instanceof Node ? event.target.parentElement : null
     if (!origin || origin.closest(TRACK_CONTEXT_MENU_SELECTOR)) return
 
-    const isMenuButton = Boolean(origin.closest(TRACK_CONTEXT_MENU_BUTTON_SELECTOR))
-    if (event.type !== 'contextmenu' && !isMenuButton) return
+    const isTrackMenuButton = Boolean(origin.closest(TRACK_CONTEXT_MENU_BUTTON_SELECTOR))
+    const isPlayerMenuButton = Boolean(origin.closest(PLAYER_CONTEXT_MENU_BUTTON_SELECTOR))
+    if (event.type !== 'contextmenu' && !isTrackMenuButton && !isPlayerMenuButton) return
 
     activeTrack = findTrackFromOrigin(origin)
+    activeSource = isPlayerMenuButton ? 'player' : 'track'
 }
 
 export function installTrackContextMenuTracking() {
@@ -75,9 +100,10 @@ export function installTrackContextMenuTracking() {
         document.removeEventListener('focusin', captureTrackContext, true)
         document.removeEventListener('contextmenu', captureTrackContext, true)
         activeTrack = null
+        activeSource = null
     }
 }
 
-export function getTrackContextMenuTrack() {
-    return activeTrack
+export function getTrackContextMenuTrack(currentTrack: PulseSyncTrackMeta | null) {
+    return activeTrack ?? (activeSource === 'player' ? createCurrentTrackContext(currentTrack) : null)
 }

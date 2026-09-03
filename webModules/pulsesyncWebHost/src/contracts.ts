@@ -60,6 +60,19 @@ export type PulseSyncTrackMenuContext = {
     readonly title?: string
 }
 
+export type TrackMenuItemContext = {
+    readonly api: PulseSyncAddonApi
+    readonly track: PulseSyncTrackMenuContext
+}
+
+export type TrackMenuItemDefinition = {
+    readonly id: string
+    readonly label: string
+    readonly icon: string
+    readonly position?: number | 'start' | 'end'
+    readonly onClick: (context: TrackMenuItemContext) => void | Promise<void>
+}
+
 export type PulseSyncAddonSlotComponentProps = PulseSyncAddonComponentProps & {
     slot: string
     currentTrack?: PulseSyncTrackMeta | null
@@ -82,6 +95,7 @@ export type PulseSyncAddonDefinition = {
     apiVersion?: number
     component?: PulseSyncAddonComponent
     slots?: Record<string, PulseSyncAddonSlotComponent>
+    trackMenuItems?: readonly TrackMenuItemDefinition[]
     mounts?: readonly PulseSyncAddonMount[]
     activate?: (api: PulseSyncAddonApi) => void | Cleanup
 }
