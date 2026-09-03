@@ -1037,14 +1037,44 @@
                             trackArtistId: null == (eC = ej.mainArtist) ? void 0 : eC.id,
                             trackAlbumId: ej.albumId,
                         },
+                        pulseSyncTrackIdParts = String(ej.id ?? '').split(':', 2),
+                        pulseSyncTrackId = pulseSyncTrackIdParts[0],
+                        pulseSyncTrackAlbumId = String(
+                            ej.albums?.[0]?.id ?? ej.albumId ?? ej.mainAlbum?.id ?? pulseSyncTrackIdParts[1] ?? '',
+                        ).trim(),
+                        pulseSyncTrackContext = pulseSyncTrackId
+                            ? {
+                                  id: pulseSyncTrackId,
+                                  url: pulseSyncTrackAlbumId
+                                      ? `/album/${encodeURIComponent(pulseSyncTrackAlbumId)}/track/${encodeURIComponent(pulseSyncTrackId)}`
+                                      : `/track/${encodeURIComponent(pulseSyncTrackId)}`,
+                                  ...(pulseSyncTrackAlbumId ? { albumId: pulseSyncTrackAlbumId } : {}),
+                                  ...(ej.title ? { title: String(ej.title) } : {}),
+                              }
+                            : void 0,
                         pulseSyncInjectTrackMenuItems = (items) =>
-                            window.pulsesyncApi?.injectTrackMenuItems?.(items, {
-                                jsx: a.jsx,
-                                MenuItem: p.Dr,
-                                Icon: v.I,
-                                track: ej,
-                                close: () => eL(!1),
-                            }) ?? items;
+                            pulseSyncTrackContext
+                                ? (window.pulsesyncApi?.injectNativeSlotItems?.('trackContextMenu', items, {
+                                      eventDetail: pulseSyncTrackContext,
+                                      renderItem: ({ key, payload, activate }) => {
+                                          const label = String(payload?.label ?? '').trim(),
+                                              icon = String(payload?.icon ?? '').trim();
+                                          if (!label || !icon) return null;
+                                          return (0, a.jsx)(
+                                              p.Dr,
+                                              {
+                                                  icon: (0, a.jsx)(v.I, { variant: icon, size: 'xxs' }),
+                                                  onClick: () => {
+                                                      activate(), eL(!1);
+                                                  },
+                                                  children: label,
+                                                  'data-pulsesync-addon-menu-item': '',
+                                              },
+                                              key,
+                                          );
+                                      },
+                                  }) ?? items)
+                                : items;
                     return e2.isOfflineModeEnabled
                         ? (0, a.jsxs)(p.W1, {
                               isMobile: td,

@@ -1498,7 +1498,32 @@
                     ariaLabel: N({ id: 'interface-actions.context-menu' }),
                     containerProps: { 'data-test-id': c.Kq.playlist.PLAYLIST_CONTEXT_MENU },
                     ...n,
-                    children: [
+                    children: ((items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
+                            eventDetail: {
+                                id: String(i.kind ?? i.id),
+                                uuid: String(i.uuid ?? ''),
+                                url: String(i.url ?? ''),
+                                ...(i.title ? { title: String(i.title) } : {}),
+                            },
+                            renderItem: ({ key, payload, activate }) => {
+                                const label = String(payload?.label ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim();
+                                if (!label || !icon) return null;
+                                return (0, s.jsx)(
+                                    D.Dr,
+                                    {
+                                        icon: (0, s.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: icon, size: 'xxs' }),
+                                        onClick: () => {
+                                            activate(), l?.(!1);
+                                        },
+                                        children: label,
+                                        'data-pulsesync-addon-menu-item': '',
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items)([
                         L && (0, s.jsx)(B.d, { entityVariant: $.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : j }),
                         !p && (0, s.jsx)(X.L, { onClick: f, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, s.jsx)(V.T, { onClick: x, isLiked: i.isLiked, disabled: !g.isAuthorized }),
@@ -1509,7 +1534,7 @@
                                 children: 'Скачать в файл',
                             }),
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, s.jsx)(G.N, { onClick: P, disabled: !i.isAvailable }),
-                    ],
+                    ]),
                 });
             });
             var J = i(11675),
