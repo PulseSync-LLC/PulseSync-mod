@@ -1036,7 +1036,15 @@
                             trackArtistName: null == (eh = ej.mainArtist) ? void 0 : eh.name,
                             trackArtistId: null == (eC = ej.mainArtist) ? void 0 : eC.id,
                             trackAlbumId: ej.albumId,
-                        };
+                        },
+                        pulseSyncInjectTrackMenuItems = (items) =>
+                            window.pulsesyncApi?.injectTrackMenuItems?.(items, {
+                                jsx: a.jsx,
+                                MenuItem: p.Dr,
+                                Icon: v.I,
+                                track: ej,
+                                close: () => eL(!1),
+                            }) ?? items;
                     return e2.isOfflineModeEnabled
                         ? (0, a.jsxs)(p.W1, {
                               isMobile: td,
@@ -1051,7 +1059,10 @@
                               ariaLabel: e3({ id: 'interface-actions.context-menu' }),
                               variant: 'text',
                               ...eF,
-                              children: [tT && (0, a.jsx)(ek, { track: ej }), ej.isNonUserGenerated && (0, a.jsx)(ee.H, { shareLink: tm, entityMeta: t0 })],
+                              children: pulseSyncInjectTrackMenuItems([
+                                  tT && (0, a.jsx)(ek, { track: ej }),
+                                  ej.isNonUserGenerated && (0, a.jsx)(ee.H, { shareLink: tm, entityMeta: t0 }),
+                              ]),
                           })
                         : (0, a.jsxs)(p.W1, {
                               dismissSettings: eB,
@@ -1066,8 +1077,8 @@
                               ariaLabel: e3({ id: 'interface-actions.context-menu' }),
                               variant: 'text',
                               ...eF,
-                              children: [
-                                  (0, a.jsx)(eO, { track: ej }),
+                              children: pulseSyncInjectTrackMenuItems([
+                                  ej.isUGC && td && (0, a.jsx)(eO, { track: ej }),
                                   td && (0, a.jsx)(el.C, { getDescriptionTexts: ej.getDescriptionTexts, entityId: ej.id }),
                                   tk && (0, a.jsx)(I.d, { entityVariant: tv, adminUrl: tp }),
                                   tA && (0, a.jsx)(ei, { onClick: tn, isFinished: tI }),
@@ -1161,7 +1172,7 @@
                                           'data-test-id': u.Kq.track.TRACK_CONTEXT_MENU_ABOUT_TRACK_BUTTON,
                                           children: ty,
                                       }),
-                              ],
+                              ]),
                           });
                 });
         },
