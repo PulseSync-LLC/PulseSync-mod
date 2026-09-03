@@ -158,6 +158,7 @@ export class IsolatedAddonRuntime {
     }
 
     private handleSubscription(event: Event) {
+        if (this.destroyed) return
         const message = parseEventDetail<{ event?: unknown; active?: unknown }>(event)
         if (typeof message?.event !== 'string' || !(message.event in ISOLATED_SUBSCRIPTIONS)) return
 
@@ -177,6 +178,7 @@ export class IsolatedAddonRuntime {
     }
 
     private async handleApiRequest(event: Event) {
+        if (this.destroyed) return
         const request = parseEventDetail<ApiRequest>(event)
         if (!request || !Number.isSafeInteger(request.requestId) || request.requestId <= 0) return
 
@@ -245,7 +247,13 @@ export class IsolatedAddonRuntime {
         document.addEventListener(this.eventName('subscription'), this.handleSubscriptionBound)
         document.addEventListener(this.eventName('status'), this.handleStatusBound)
 
-        await executeIsolatedAddon(this.addon.id, this.channelToken)
+        try {
+            await executeIsolatedAddon(this.addon.id, this.channelToken)
+        } finally {
+            // The isolated world may start listening only after destroy() sent its first dispose event.
+            if (this.destroyed) this.runCleanup('late isolated runtime', () => this.dispatch('dispose', {}))
+        }
+        if (this.destroyed) return
 
         let timeout = 0
         try {
@@ -270,25 +278,39 @@ export class IsolatedAddonRuntime {
     private readonly handleSubscriptionBound = (event: Event) => this.handleSubscription(event)
     private readonly handleStatusBound = (event: Event) => this.handleStatus(event)
 
+    private runCleanup(resource: string, cleanup: () => unknown) {
+        const reportError = (error: unknown) => console.warn(`[PulseSync isolated addon: ${this.addon.id}] Failed to clean up ${resource}:`, error)
+        try {
+            void Promise.resolve(cleanup()).catch(reportError)
+        } catch (error) {
+            reportError(error)
+        }
+    }
+
     destroy() {
         if (this.destroyed) return
+        this.destroyed = true
         if (!this.registrationSettled) {
             this.registrationSettled = true
             this.rejectRegistration(new Error('addon-registration-failed: isolated addon was destroyed before registration'))
         }
-        this.dispatch('dispose', {})
-        this.destroyed = true
         document.removeEventListener(this.eventName('request'), this.handleApiRequestBound)
         document.removeEventListener(this.eventName('subscription'), this.handleSubscriptionBound)
         document.removeEventListener(this.eventName('status'), this.handleStatusBound)
-        this.settingsCleanup?.()
+        this.runCleanup('isolated runtime', () => this.dispatch('dispose', {}))
+        const settingsCleanup = this.settingsCleanup
         this.settingsCleanup = undefined
-        for (const cleanup of this.subscriptionCleanups.values()) cleanup()
+        if (settingsCleanup) this.runCleanup('settings subscription', settingsCleanup)
+        const subscriptionCleanups = [...this.subscriptionCleanups.entries()]
         this.subscriptionCleanups.clear()
-        const api = getPulseSyncApi()
-        const clearTrackReplacements = api?.clearTrackReplacements
-        if (typeof clearTrackReplacements === 'function') Reflect.apply(clearTrackReplacements, api, [this.addon.id])
-        this.style?.remove()
+        for (const [event, cleanup] of subscriptionCleanups) this.runCleanup(`${event} subscription`, cleanup)
+        this.runCleanup('track replacements', () => {
+            const api = getPulseSyncApi()
+            const clearTrackReplacements = api?.clearTrackReplacements
+            if (typeof clearTrackReplacements === 'function') return Reflect.apply(clearTrackReplacements, api, [this.addon.id])
+        })
+        const style = this.style
         this.style = undefined
+        this.runCleanup('stylesheet', () => style?.remove())
     }
 }
