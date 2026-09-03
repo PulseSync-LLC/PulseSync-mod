@@ -2217,7 +2217,45 @@
                                         ownerName: (null == (e = t.owner) ? void 0 : e.name) || '',
                                         gender: (null == (a = t.owner) ? void 0 : a.sex) === tU.U.FEMALE ? 'female' : 'male',
                                     });
-                        }, [t, l, n]);
+                        }, [t, l, n]),
+                        // for PulseSync WebHost
+                        [, pulseSyncSetHeaderInfoRevision] = (0, s.useState)(0);
+                    (0, s.useEffect)(() => {
+                        const onNativeSlotChange = (e) => {
+                            'headerInfoItems' === e.detail && pulseSyncSetHeaderInfoRevision((e) => e + 1);
+                        };
+                        return (
+                            document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange),
+                            () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange)
+                        );
+                    }, []);
+                    const pulseSyncNativePlaylistMetaItems = [c],
+                        pulseSyncPlaylistMetaItems = window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', pulseSyncNativePlaylistMetaItems, {
+                            eventDetail: null,
+                            renderItem: ({ key, payload, position, positionIndex }) => {
+                                const text = String(payload?.text ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim(),
+                                    label = String(payload?.label ?? text).trim();
+                                if (!text && !icon) return null;
+                                return (0, r.jsxs)(
+                                    eC.HL,
+                                    {
+                                        variant: 'span',
+                                        type: 'text',
+                                        size: 'm',
+                                        weight: 'medium',
+                                        ...(label ? { 'aria-label': label } : {}),
+                                        'data-pulsesync-addon-header-item': 'meta',
+                                        children: [
+                                            (position > 0 || positionIndex > 0) && '\u00a0•\u00a0',
+                                            icon && (0, r.jsx)(eG.I, { variant: icon, size: 'xxxs' }),
+                                            text,
+                                        ],
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? pulseSyncNativePlaylistMetaItems;
                     return (0, r.jsx)(eC.HL, {
                         variant: 'span',
                         className: a,
@@ -2226,7 +2264,7 @@
                         weight: 'medium',
                         lineClamp: 1,
                         'data-test-id': d.e8.pageHeader.PLAYLIST_HEADER_UPDATED_TEXT,
-                        children: c,
+                        children: pulseSyncPlaylistMetaItems,
                     });
                 }),
                 tY = (0, l.PA)((e) => {
@@ -3105,6 +3143,7 @@
                             playlistOwnerName: null == (t = u.owner) ? void 0 : t.name,
                             playlistOwnerLogin: null == (a = u.owner) ? void 0 : a.login,
                         },
+                        // for PulseSync WebHost
                         pulseSyncInjectPlaylistMenuItems = (items) =>
                             window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
                                 eventDetail: {

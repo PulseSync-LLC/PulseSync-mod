@@ -49,6 +49,8 @@ export function injectNativeSlotItems(slotName: string, nativeItems: unknown[], 
 
         const addonId = registration.dataset.pulsesyncAddonId || 'unknown-addon';
         const itemId = registration.getAttribute(ITEM_ID_ATTRIBUTE) || String(registrationIndex);
+        const position = resolvePosition(registration.getAttribute(POSITION_ATTRIBUTE), visibleNativeItems.length);
+        const itemsAtPosition = positions.get(position) ?? [];
         let item: unknown;
         try {
             item = tools.renderItem({
@@ -56,6 +58,8 @@ export function injectNativeSlotItems(slotName: string, nativeItems: unknown[], 
                 itemId,
                 key: `pulsesync-native-slot-${normalizedSlotName}-${addonId}-${itemId}`,
                 payload,
+                position,
+                positionIndex: itemsAtPosition.length,
                 activate: () => dispatchActivation(registration, tools.eventDetail),
             });
         } catch (error) {
@@ -64,8 +68,6 @@ export function injectNativeSlotItems(slotName: string, nativeItems: unknown[], 
         }
         if (!item) return;
 
-        const position = resolvePosition(registration.getAttribute(POSITION_ATTRIBUTE), visibleNativeItems.length);
-        const itemsAtPosition = positions.get(position) ?? [];
         itemsAtPosition.push(item);
         positions.set(position, itemsAtPosition);
     });

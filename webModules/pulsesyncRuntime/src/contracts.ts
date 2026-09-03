@@ -10,6 +10,8 @@ export type NativeSlotRenderItem = {
     itemId: string;
     key: string;
     payload: unknown;
+    position: number;
+    positionIndex: number;
     activate: () => void;
 };
 export type NativeSlotTools = {
