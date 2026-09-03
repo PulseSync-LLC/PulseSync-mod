@@ -1432,7 +1432,7 @@
                                                 variant: 'text',
                                                 withRipple: !1,
                                                 'aria-label': label,
-                                                icon: (0, i.jsx)(pulseSyncHeaderIcon.I, { variant: icon, size: 'xs' }),
+                                                icon: (0, i.jsx)(pulseSyncHeaderIcon.I, { variant: icon, size: 'xxs' }),
                                                 onClick: activate,
                                                 'data-pulsesync-addon-header-action': '',
                                             }),
