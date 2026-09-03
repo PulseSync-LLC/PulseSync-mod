@@ -5,6 +5,7 @@ import { getRegisteredAddons, getRegistryRevision, resolveMountTarget, resolveSl
 import { installTrackContextMenuTracking } from '../trackContextMenu'
 import { AddonErrorBoundary } from './AddonErrorBoundary'
 import { AddonSlot } from './AddonSlot'
+import { HeaderItems } from './HeaderItems'
 import { AlbumMenuItems, HeaderActions, PlayerBarButtons, PlaylistMenuItems } from './NativeActions'
 import { TrackMenuItems } from './TrackMenuItems'
 
@@ -93,6 +94,14 @@ export function PulseSyncWebHost() {
             content.push(
                 <AddonErrorBoundary key={`${addonId}:header-actions:${addon.generation}`} addonId={addonId}>
                     <HeaderActions api={addon.api} items={addon.definition.headerActions} />
+                </AddonErrorBoundary>,
+            )
+        }
+
+        if (addon.definition.headerItems?.length) {
+            content.push(
+                <AddonErrorBoundary key={`${addonId}:header-items:${addon.generation}`} addonId={addonId}>
+                    <HeaderItems api={addon.api} items={addon.definition.headerItems} />
                 </AddonErrorBoundary>,
             )
         }

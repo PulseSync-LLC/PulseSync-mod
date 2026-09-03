@@ -120,6 +120,29 @@ export type HeaderActionDefinition = {
     readonly onClick: (context: { api: PulseSyncAddonApi; pageEntity: PulseSyncPageEntity | null }) => void | Promise<void>
 }
 
+export type HeaderItemArea = 'title' | 'meta'
+
+export type HeaderItemContent =
+    | string
+    | {
+          readonly text?: string
+          readonly icon?: string
+          readonly label?: string
+          readonly display?: 'inline' | 'block'
+      }
+
+export type HeaderItemContext = {
+    readonly api: PulseSyncAddonApi
+    readonly pageEntity: PulseSyncPageEntity | null
+}
+
+export type HeaderItemDefinition = {
+    readonly id: string
+    readonly area: HeaderItemArea
+    readonly content: HeaderItemContent | ((context: HeaderItemContext) => HeaderItemContent | null | Promise<HeaderItemContent | null>)
+    readonly position?: number | 'start' | 'end'
+}
+
 export type PulseSyncAddonSlotComponentProps = PulseSyncAddonComponentProps & {
     slot: string
     currentTrack?: PulseSyncTrackMeta | null
@@ -147,6 +170,7 @@ export type PulseSyncAddonDefinition = {
     playlistMenuItems?: readonly PlaylistMenuItemDefinition[]
     playerBarButtons?: readonly PlayerBarButtonDefinition[]
     headerActions?: readonly HeaderActionDefinition[]
+    headerItems?: readonly HeaderItemDefinition[]
     mounts?: readonly PulseSyncAddonMount[]
     activate?: (api: PulseSyncAddonApi) => void | Cleanup
 }

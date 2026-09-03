@@ -552,7 +552,8 @@
                 o = s(31322);
             class r extends o.X {
                 async getAlbumWithRichTracks(t, e) {
-                    let pulseSyncEntity = (
+                    // for PulseSync WebHost
+                    let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'albums/'.concat(t.albumId, '/with-tracks'),
                             this.createHttpOptions({
@@ -573,7 +574,8 @@
                     return window.pulsesyncApi?.publishPageEntity?.('album', pulseSyncEntity), pulseSyncEntity;
                 }
                 async getAlbumWithTracksIds(t, e) {
-                    let pulseSyncEntity = (
+                    // for PulseSync WebHost
+                    let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'albums/'.concat(t.albumId, '/with-tracks'),
                             this.createHttpOptions({
@@ -1662,7 +1664,8 @@
                 n = s(79722);
             class o extends a.X {
                 async getPlaylist(t, e) {
-                    let pulseSyncEntity = (
+                    // for PulseSync WebHost
+                    let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'playlist/'.concat(t.playlistUuid),
                             this.createHttpOptions({
@@ -1911,7 +1914,8 @@
                     ).json();
                 }
                 async getBriefInfo(t, e) {
-                    let pulseSyncEntity = (
+                    // for PulseSync WebHost
+                    let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/brief-info'),
                             this.createHttpOptions({
@@ -2062,7 +2066,8 @@
                     ).json();
                 }
                 async getInfo(t, e) {
-                    let pulseSyncEntity = (
+                    // for PulseSync WebHost
+                    let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/info'),
                             this.createHttpOptions({ timeoutKey: 'getInfo', params: t, signal: null == e ? void 0 : e.signal }),

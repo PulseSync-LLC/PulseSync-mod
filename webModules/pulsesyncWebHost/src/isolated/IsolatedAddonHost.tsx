@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import type { PulseSyncAddonApi, PulseSyncAddonDefinition } from '../contracts'
 import { AddonErrorBoundary } from '../components/AddonErrorBoundary'
 import { AddonSlot } from '../components/AddonSlot'
+import { HeaderItems } from '../components/HeaderItems'
 import { AlbumMenuItems, HeaderActions, PlayerBarButtons, PlaylistMenuItems } from '../components/NativeActions'
 import { TrackMenuItems } from '../components/TrackMenuItems'
 import { installTrackContextMenuTracking } from '../trackContextMenu'
@@ -102,6 +103,14 @@ export function IsolatedAddonHost({ addonId, addonApi, definition, generation, l
         content.push(
             <AddonErrorBoundary key={`${generation}:header-actions`} addonId={addonId} onError={handleRenderError}>
                 <HeaderActions api={addonApi} items={definition.headerActions} />
+            </AddonErrorBoundary>,
+        )
+    }
+
+    if (definition.headerItems?.length) {
+        content.push(
+            <AddonErrorBoundary key={`${generation}:header-items`} addonId={addonId} onError={handleRenderError}>
+                <HeaderItems api={addonApi} items={definition.headerItems} />
             </AddonErrorBoundary>,
         )
     }

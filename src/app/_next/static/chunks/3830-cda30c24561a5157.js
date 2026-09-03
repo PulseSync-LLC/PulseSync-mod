@@ -1391,14 +1391,18 @@
                     } = (0, _.g)(),
                     u = (0, n.useMemo)(() => eZ(o.artists), [o.artists]),
                     m = (null == u ? void 0 : u.length) === 1 && !(null == (t = u[0]) ? void 0 : t.decomposed) && !(null == (a = u[0]) ? void 0 : a.various);
-                return (0, i.jsx)(ek.B, {
-                    objectType: o.mainObjectType,
-                    objectId: String(o.id),
-                    objectPosX: 1,
-                    objectPosY: 1,
-                    objectsCount: null == (l = o.artists) ? void 0 : l.length,
-                    children: (0, i.jsxs)('div', {
-                        className: e0().meta,
+                // for PulseSync WebHost
+                let [, pulseSyncSetHeaderInfoRevision] = (0, n.useState)(0);
+                (0, n.useEffect)(() => {
+                    const onNativeSlotChange = (e) => {
+                        'headerInfoItems' === e.detail && pulseSyncSetHeaderInfoRevision((e) => e + 1);
+                    };
+                    return (
+                        document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange),
+                        () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange)
+                    );
+                }, []);
+                const pulseSyncAlbumArtistMeta = (0, i.jsxs)(i.Fragment, {
                         children: [
                             m &&
                                 (0, i.jsx)(eG.t, {
@@ -1417,17 +1421,58 @@
                                 variant: c ? 'breakAll' : 'breakWord',
                                 withLink: d,
                             }),
-                            o.year &&
-                                (0, i.jsx)(p.HL, {
-                                    variant: 'div',
-                                    type: 'text',
-                                    size: 'm',
-                                    weight: 'medium',
-                                    className: (0, ex.$)(e0().year, { [e0().year_dot]: u.length > 0 }),
-                                    'data-test-id': r.e8.pageHeader.ALBUM_RELEASE_DATE,
-                                    children: o.year,
-                                }),
                         ],
+                    }),
+                    pulseSyncNativeAlbumMetaItems = [
+                        pulseSyncAlbumArtistMeta,
+                        o.year &&
+                            (0, i.jsx)(p.HL, {
+                                variant: 'div',
+                                type: 'text',
+                                size: 'm',
+                                weight: 'medium',
+                                className: (0, ex.$)(e0().year, { [e0().year_dot]: u.length > 0 }),
+                                'data-test-id': r.e8.pageHeader.ALBUM_RELEASE_DATE,
+                                children: o.year,
+                            }),
+                    ].filter(Boolean),
+                    pulseSyncAlbumMetaItems = window.pulsesyncApi?.injectNativeSlotItems?.(
+                        'headerInfoItems',
+                        pulseSyncNativeAlbumMetaItems,
+                        {
+                            eventDetail: null,
+                            renderItem: ({ key, payload, position }) => {
+                                const text = String(payload?.text ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim(),
+                                    label = String(payload?.label ?? text).trim(),
+                                    variant = 'block' === payload?.display ? 'div' : 'span';
+                                if (!text && !icon) return null;
+                                return (0, i.jsxs)(
+                                    p.HL,
+                                    {
+                                        variant,
+                                        type: 'text',
+                                        size: 'm',
+                                        weight: 'medium',
+                                        className: (0, ex.$)(e0().year, { [e0().year_dot]: position > 0 }),
+                                        ...(label ? { 'aria-label': label } : {}),
+                                        'data-pulsesync-addon-header-item': 'meta',
+                                        children: [icon && (0, i.jsx)(v.I, { variant: icon, size: 'xxxs' }), text],
+                                    },
+                                    key,
+                                );
+                            },
+                        },
+                    ) ?? pulseSyncNativeAlbumMetaItems;
+                return (0, i.jsx)(ek.B, {
+                    objectType: o.mainObjectType,
+                    objectId: String(o.id),
+                    objectPosX: 1,
+                    objectPosY: 1,
+                    objectsCount: null == (l = o.artists) ? void 0 : l.length,
+                    children: (0, i.jsxs)('div', {
+                        className: e0().meta,
+                        children: pulseSyncAlbumMetaItems,
                     }),
                 });
             });
