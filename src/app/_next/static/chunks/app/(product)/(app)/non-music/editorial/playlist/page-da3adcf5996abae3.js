@@ -1431,6 +1431,7 @@
                 _ = i(6752),
                 m = i(14934),
                 p = i(82586),
+                // for PulseSync WebHost
                 pulseSyncPlaylistDownloadIcons = i(82586),
                 h = i(86269),
                 g = i(71926),
@@ -1498,6 +1499,7 @@
                     ariaLabel: N({ id: 'interface-actions.context-menu' }),
                     containerProps: { 'data-test-id': c.Kq.playlist.PLAYLIST_CONTEXT_MENU },
                     ...n,
+                    // for PulseSync WebHost
                     children: ((items) =>
                         window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
                             eventDetail: {

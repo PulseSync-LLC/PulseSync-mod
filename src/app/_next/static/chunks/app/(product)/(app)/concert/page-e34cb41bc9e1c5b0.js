@@ -216,6 +216,17 @@
                 b = n(96746),
                 C = n.n(b);
             let y = (0, s.PA)((e) => {
+                // for PulseSync WebHost
+                let [, pulseSyncSetHeaderTitleRevision] = (0, o.useState)(0);
+                (0, o.useEffect)(() => {
+                    const onNativeSlotChange = (e) => {
+                        'headerTitleItems' === e.detail && pulseSyncSetHeaderTitleRevision((e) => e + 1);
+                    };
+                    return (
+                        document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange),
+                        () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange)
+                    );
+                }, []);
                 let {
                         title: t = '',
                         'aria-labelledby': n,
@@ -299,13 +310,36 @@
                                   children: [F, k && W],
                               })
                             : F,
-                    );
+                    ),
+                    pulseSyncInjectHeaderTitleItems = (items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('headerTitleItems', items, {
+                            eventDetail: null,
+                            renderItem: ({ key, payload, positionIndex }) => {
+                                const text = String(payload?.text ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim(),
+                                    label = String(payload?.label ?? text).trim();
+                                if (!text && !icon) return null;
+                                return (0, i.jsxs)(
+                                    m.HL,
+                                    {
+                                        variant: 'span',
+                                        type: 'text',
+                                        size: 's',
+                                        weight: 'medium',
+                                        ...(label ? { 'aria-label': label } : {}),
+                                        'data-pulsesync-addon-header-item': 'title',
+                                        children: [icon && (0, i.jsx)(h.I, { variant: icon, size: 'xxs' }), text],
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items;
                 return (0, i.jsxs)(i.Fragment, {
                     children: [
                         !A &&
                             (0, i.jsxs)('div', {
                                 className: (0, r.$)(C().root, w),
-                                children: [
+                                children: pulseSyncInjectHeaderTitleItems([
                                     (0, i.jsx)(g, { title: t, className: C().stickyTitle, children: U }),
                                     s &&
                                         (0, i.jsx)('div', {
@@ -319,7 +353,7 @@
                                                 'data-test-id': l.e8.pageHeader.EDIT_TITLE_BUTTON,
                                             }),
                                         }),
-                                ],
+                                ]),
                             }),
                         A &&
                             (0, i.jsx)('div', {
@@ -1343,6 +1377,7 @@
                 w = n(23278),
                 j = n.n(w),
                 E = n(41898),
+                // for PulseSync WebHost
                 pulseSyncHeaderButton = n(63423),
                 pulseSyncHeaderIcon = n(82586),
                 pulseSyncHeaderTooltip = n(60244);
@@ -1412,6 +1447,7 @@
                                       }),
                             [k, n, L, I],
                         ),
+                        // for PulseSync WebHost
                         pulseSyncHeaderControlItems = Array.isArray(h) ? h : [h],
                         pulseSyncInjectHeaderActions = (items) =>
                             window.pulsesyncApi?.injectNativeSlotItems?.('headerActions', items, {

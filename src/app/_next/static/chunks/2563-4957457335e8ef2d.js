@@ -330,6 +330,7 @@
                         if (!s.isNonMusic) return (0, r.jsx)(W.C, { onClick: ek, disabled: !s.isAvailable || (ep && Z), variant: M.I.ALBUM, onOpenMenuChange: R });
                     }, [s.isAvailable, ek, s.isNonMusic, R, ep, Z]),
                     eS = { variant: O.Y.ALBUM, id: s.id, title: s.title, path: eA, albumArtistName: s.artistName, albumArtistId: s.artistId },
+                    // for PulseSync WebHost
                     pulseSyncInjectAlbumMenuItems = (items) =>
                         window.pulsesyncApi?.injectNativeSlotItems?.('albumContextMenu', items, {
                             eventDetail: { id: String(s.id), url: eA, ...(s.title ? { title: String(s.title) } : {}) },
