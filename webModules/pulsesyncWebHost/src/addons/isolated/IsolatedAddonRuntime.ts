@@ -1,4 +1,5 @@
 import { getPulseSyncApi } from '../../runtime/pulsesyncApi'
+import { createStorageHandler } from '../../runtime/addonStorage'
 import type { WebHostAddonAsset } from '../contracts'
 import { ISOLATED_ADDON_SCOPED_API_METHOD_SET, ISOLATED_API_METHOD_SET } from './apiPolicy'
 
@@ -11,6 +12,7 @@ type ApiRequest = {
     requestId: number
     method: string
     args: unknown[]
+    target?: 'storage'
 }
 
 type RuntimeStatus = {
@@ -87,6 +89,7 @@ function getErrorMessage(error: unknown) {
 
 export class IsolatedAddonRuntime {
     private readonly addon: WebHostAddonAsset
+    private readonly storage: ReturnType<typeof createStorageHandler>
     private readonly channelToken = crypto.randomUUID()
     private style?: HTMLStyleElement
     private settingsCleanup?: () => void
@@ -102,6 +105,7 @@ export class IsolatedAddonRuntime {
 
     constructor(addon: WebHostAddonAsset) {
         this.addon = addon
+        this.storage = createStorageHandler(addon.id, () => !this.destroyed)
         this.registrationPromise = new Promise((resolve, reject) => {
             this.resolveRegistration = resolve
             this.rejectRegistration = reject
@@ -184,10 +188,16 @@ export class IsolatedAddonRuntime {
 
         try {
             this.checkApiRateLimit()
+            if (!Array.isArray(request.args)) throw new Error('PulseSync addon API arguments are invalid')
+            if (request.target === 'storage') {
+                const value = await this.storage(request.method, request.args)
+                this.dispatch('response', { requestId: request.requestId, ok: true, value })
+                return
+            }
+            if (request.target !== undefined) throw new Error('PulseSync addon API target is not allowed')
             if (typeof request.method !== 'string' || !ISOLATED_API_METHOD_SET.has(request.method)) {
                 throw new Error(`PulseSync addon API method is not allowed: ${String(request.method)}`)
             }
-            if (!Array.isArray(request.args)) throw new Error('PulseSync addon API arguments are invalid')
 
             const api = getPulseSyncApi()
             const method = api?.[request.method]

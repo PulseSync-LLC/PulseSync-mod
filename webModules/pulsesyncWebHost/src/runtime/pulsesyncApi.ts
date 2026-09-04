@@ -1,6 +1,7 @@
 import type { PulseSyncAddonApi, PulseSyncAddonIdentity, PulseSyncApi } from '../contracts'
 import { createAddonAssets, createAddonClient, createAddonIdentity, createAddonNamespaces, createAddonSettingsStore } from './addonResources'
 import { createAddonNet } from './addonNet'
+import { createAddonStorage, createStorageHandler } from './addonStorage'
 
 export function getPulseSyncApi(): PulseSyncApi | undefined {
     return window.pulsesyncApi
@@ -26,6 +27,7 @@ export function createAddonApi(addon: Partial<PulseSyncAddonIdentity> & Pick<Pul
         settings: createAddonSettingsStore(identity.id, getPulseSyncApi),
         assets: createAddonAssets(identity.id),
         net: createAddonNet(lifetime),
+        storage: createAddonStorage(createStorageHandler(identity.id, () => !lifetime.aborted)),
         logger: Object.freeze({
             info: (...args: unknown[]) => log('info', args),
             warn: (...args: unknown[]) => log('warn', args),
