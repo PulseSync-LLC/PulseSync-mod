@@ -44,6 +44,16 @@ export type AddonNet = {
     text: (input: RequestInfo | URL, options?: NetRequestOptions) => Promise<string>
 }
 
+export type StorageValue = null | boolean | number | string | readonly StorageValue[] | { readonly [key: string]: StorageValue }
+
+export type AddonStorage = {
+    get: <T = unknown>(key: string) => Promise<T | undefined>
+    set: (key: string, value: StorageValue) => Promise<void>
+    remove: (key: string) => Promise<void>
+    keys: () => Promise<string[]>
+    clear: () => Promise<void>
+}
+
 export type PulseSyncAddonNotifications = {
     show: (message: string, options?: PulseSyncToastOptions) => Promise<void>
 }
@@ -198,6 +208,7 @@ export type PulseSyncAddonApi = {
     readonly settings: PulseSyncAddonSettingsStore
     readonly assets: PulseSyncAddonAssets
     readonly net: AddonNet
+    readonly storage: AddonStorage
     logger: {
         info: (...args: unknown[]) => void
         warn: (...args: unknown[]) => void
