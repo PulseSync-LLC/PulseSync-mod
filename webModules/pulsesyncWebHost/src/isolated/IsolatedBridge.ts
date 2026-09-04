@@ -3,6 +3,7 @@ import type { PulseSyncPlayerSnapshot, PulseSyncQueueSnapshot, PulseSyncRouteSna
 import { ISOLATED_API_METHOD_SET } from '../addons/isolated/apiPolicy'
 import { createAddonAssets, createAddonIdentity, createAddonNamespaces } from '../runtime/addonResources'
 import { createAddonNet } from '../runtime/addonNet'
+import { createAddonStorage } from '../runtime/addonStorage'
 import type { ApiResponse, IsolatedEventKind, IsolatedInit, IsolatedLogLevel } from './contracts'
 
 type PendingCall = {
@@ -152,6 +153,7 @@ export class IsolatedBridge {
             settings: settingsStore,
             assets: createAddonAssets(init.addon.id),
             net: createAddonNet(this.lifetime.signal),
+            storage: createAddonStorage((method, args) => this.callRequest(method, args, 'storage')),
             logger: Object.freeze({
                 info: (...args: unknown[]) => this.log('info', args),
                 warn: (...args: unknown[]) => this.log('warn', args),
@@ -193,8 +195,12 @@ export class IsolatedBridge {
     }
 
     private callApi(method: string, args: unknown[]) {
-        if (this.disposed) return Promise.reject(new Error('PulseSync isolated addon disposed'))
         if (!this.allowedMethods.has(method)) return Promise.reject(new Error(`PulseSync addon API method is not allowed: ${method}`))
+        return this.callRequest(method, args)
+    }
+
+    private callRequest(method: string, args: unknown[], target?: 'storage') {
+        if (this.disposed) return Promise.reject(new Error('PulseSync isolated addon disposed'))
 
         const requestId = (this.nextRequestId += 1)
         return new Promise<unknown>((resolve, reject) => {
@@ -205,7 +211,7 @@ export class IsolatedBridge {
             this.pendingCalls.set(requestId, { resolve, reject, timeout })
 
             try {
-                this.dispatch('request', { requestId, method, args })
+                this.dispatch('request', { requestId, method, args, target })
             } catch (error) {
                 this.pendingCalls.delete(requestId)
                 window.clearTimeout(timeout)
