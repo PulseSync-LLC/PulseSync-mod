@@ -2,6 +2,7 @@ import type { PulseSyncAddonApi, PulseSyncApi, PulseSyncWebHostClient } from '..
 import type { PulseSyncPlayerSnapshot, PulseSyncQueueSnapshot, PulseSyncRouteSnapshot } from '@pulsesync/yamusic-types'
 import { ISOLATED_API_METHOD_SET } from '../addons/isolated/apiPolicy'
 import { createAddonAssets, createAddonIdentity, createAddonNamespaces } from '../runtime/addonResources'
+import { createAddonNet } from '../runtime/addonNet'
 import type { ApiResponse, IsolatedEventKind, IsolatedInit, IsolatedLogLevel } from './contracts'
 
 type PendingCall = {
@@ -74,6 +75,7 @@ export class IsolatedBridge {
     private readonly init: IsolatedInit
     private readonly allowedMethods: ReadonlySet<string>
     private readonly pendingCalls = new Map<number, PendingCall>()
+    private readonly lifetime = new AbortController()
     private readonly settingsListeners = new Set<(value: Record<string, unknown>) => void>()
     private readonly currentTrackListeners = new Set<(track: Record<string, unknown> | null) => void>()
     private readonly pageEntityListeners = new Set<(snapshot: Record<string, unknown>) => void>()
@@ -149,6 +151,7 @@ export class IsolatedBridge {
             ...namespaces,
             settings: settingsStore,
             assets: createAddonAssets(init.addon.id),
+            net: createAddonNet(this.lifetime.signal),
             logger: Object.freeze({
                 info: (...args: unknown[]) => this.log('info', args),
                 warn: (...args: unknown[]) => this.log('warn', args),
@@ -290,6 +293,7 @@ export class IsolatedBridge {
     dispose() {
         if (this.disposed) return
         this.disposed = true
+        this.lifetime.abort(new DOMException('Addon disabled', 'AbortError'))
 
         if (this.started) {
             document.removeEventListener(this.eventName('response'), this.handleResponse)
