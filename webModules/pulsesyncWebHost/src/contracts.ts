@@ -33,6 +33,17 @@ export type PulseSyncAddonAssets = {
     fetch: (fileName: string, init?: RequestInit) => Promise<Response>
 }
 
+export type NetRequestOptions = RequestInit & {
+    /** Timeout in milliseconds; defaults to 15000. Use 0 to disable the timeout. */
+    timeoutMs?: number
+}
+
+export type AddonNet = {
+    fetch: (input: RequestInfo | URL, options?: NetRequestOptions) => Promise<Response>
+    json: <T = unknown>(input: RequestInfo | URL, options?: NetRequestOptions) => Promise<T>
+    text: (input: RequestInfo | URL, options?: NetRequestOptions) => Promise<string>
+}
+
 export type PulseSyncAddonNotifications = {
     show: (message: string, options?: PulseSyncToastOptions) => Promise<void>
 }
@@ -186,6 +197,7 @@ export type PulseSyncAddonApi = {
     readonly notifications: PulseSyncAddonNotifications
     readonly settings: PulseSyncAddonSettingsStore
     readonly assets: PulseSyncAddonAssets
+    readonly net: AddonNet
     logger: {
         info: (...args: unknown[]) => void
         warn: (...args: unknown[]) => void

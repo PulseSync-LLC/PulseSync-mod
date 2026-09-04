@@ -1,5 +1,6 @@
 import type { PulseSyncAddonApi, PulseSyncAddonIdentity, PulseSyncApi } from '../contracts'
 import { createAddonAssets, createAddonClient, createAddonIdentity, createAddonNamespaces, createAddonSettingsStore } from './addonResources'
+import { createAddonNet } from './addonNet'
 
 export function getPulseSyncApi(): PulseSyncApi | undefined {
     return window.pulsesyncApi
@@ -10,7 +11,7 @@ export function installNativeSlotTooltips() {
     return api?.enableNativeSlotTooltips?.() ?? (() => {})
 }
 
-export function createAddonApi(addon: Partial<PulseSyncAddonIdentity> & Pick<PulseSyncAddonIdentity, 'id'>): PulseSyncAddonApi {
+export function createAddonApi(addon: Partial<PulseSyncAddonIdentity> & Pick<PulseSyncAddonIdentity, 'id'>, lifetime: AbortSignal): PulseSyncAddonApi {
     const identity = createAddonIdentity(addon)
     const client = createAddonClient(getPulseSyncApi)
     const namespaces = createAddonNamespaces(client, identity.id)
@@ -24,6 +25,7 @@ export function createAddonApi(addon: Partial<PulseSyncAddonIdentity> & Pick<Pul
         ...namespaces,
         settings: createAddonSettingsStore(identity.id, getPulseSyncApi),
         assets: createAddonAssets(identity.id),
+        net: createAddonNet(lifetime),
         logger: Object.freeze({
             info: (...args: unknown[]) => log('info', args),
             warn: (...args: unknown[]) => log('warn', args),

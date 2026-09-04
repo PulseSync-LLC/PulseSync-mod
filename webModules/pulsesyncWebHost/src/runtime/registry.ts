@@ -5,6 +5,7 @@ import { createAddonApi } from './pulsesyncApi'
 
 export type RegisteredAddon = {
     api: PulseSyncAddonApi
+    lifetime: AbortController
     cleanup?: Cleanup
     definition: PulseSyncAddonDefinition
     generation: number
@@ -46,6 +47,7 @@ function unregisterAddonInternal(addonId: string, expectedGeneration: number | u
     if (addon.system && !allowSystem) return false
 
     addons.delete(addonId)
+    addon.lifetime.abort(new DOMException('Addon disabled', 'AbortError'))
 
     try {
         addon.cleanup?.()
@@ -75,12 +77,20 @@ function registerAddonInternal(definition: PulseSyncAddonDefinition, system: boo
     unregisterAddonInternal(addonId, undefined, system)
 
     const normalizedDefinition = Object.freeze({ ...definition, id: addonId })
-    const api = createAddonApi(normalizedDefinition)
-    const cleanup = definition.activate?.(api)
+    const lifetime = new AbortController()
+    const api = createAddonApi(normalizedDefinition, lifetime.signal)
+    let cleanup: void | Cleanup
+    try {
+        cleanup = definition.activate?.(api)
+    } catch (error) {
+        lifetime.abort(new DOMException('Addon activation failed', 'AbortError'))
+        throw error
+    }
     const generation = (addonGeneration += 1)
 
     addons.set(addonId, {
         api,
+        lifetime,
         cleanup: typeof cleanup === 'function' ? cleanup : undefined,
         definition: normalizedDefinition,
         generation,
