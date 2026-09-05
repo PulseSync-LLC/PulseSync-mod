@@ -17,6 +17,13 @@
 - Follow the formatting and style already used in the specific directory you modify.
 - When behavior is unclear, inspect nearby files first and copy the local pattern.
 
+## Workflow
+- Apply the shared execution, evidence, validation, and reporting rules in [the workspace instructions](../AGENTS.md).
+- Establish the exact active source, injected runtime, generated bundle, or extracted version named in the task. Complete the authorized change there and through any required generation step without unrelated cleanup.
+- Routine local decisions do not require plan approval. Ask only when the target or compatibility requirement cannot be resolved from the request and available evidence.
+- For generated code omitted by the graph index, read the exact source directly; absence from the graph is not evidence that a hook or implementation is absent.
+- Preserve the existing runtime and renderer/main contracts. Use existing checks without adding or changing tests unless explicitly requested, and distinguish syntax/build results from live playback or addon activation.
+
 ## Repository Map
 
 ### Root
@@ -130,6 +137,8 @@
   - release scripts
   - download/update pipelines
 - The root `npm test` script is intentionally not useful here; do not rely on it as validation.
+- For documentation only, review the diff and referenced instructions and run `git diff --check`; extraction, downloads, builds, and release workflows are unnecessary.
+- Stop after the relevant checks pass; broaden validation only when the edited path, a failure, or unresolved runtime risk justifies it.
 
 ## Editing Guidance By Area
 
@@ -155,7 +164,7 @@
 
 ## Safety Notes
 - This repo includes historical extracted versions and build artifacts; changing the wrong copy is easy. Verify the target path before editing.
-- If a task mentions a versioned snapshot under `extracted/`, confirm the exact version directory and whether the change belongs there or in active sources under `src/`.
+- If a task mentions a versioned snapshot under `extracted/`, verify the exact version directory and intended source from the request and available files. Ask only if the choice between that snapshot and active `src/` remains unresolved.
 - Respect existing package-manager files. Do not switch package managers or regenerate lockfiles unless explicitly asked.
 - Do not run destructive cleanup commands unless the user clearly requested them.
 
@@ -163,4 +172,4 @@
 - Read the nearest config and adjacent implementation before patching.
 - Keep changes narrow and explain why a file was chosen if multiple similar files exist.
 - Prefer minimal validation that proves the edited path still works.
-- Call out when a task appears to target generated, extracted, or historical content so the user can confirm intent.
+- State which generated, extracted, or historical path the task targets. If the user already named that target clearly, proceed within that scope; ask only when the intended copy remains ambiguous after inspection.
