@@ -16434,6 +16434,113 @@
                 c = a(72733),
                 h = a(50),
                 v = a(9634);
+            // for PulseSync WebHost
+            const NativeFieldComponent = i.lazy(() => Promise.all([a.e(4638), a.e(627), a.e(1993), a.e(6758)]).then(() => ({ default: a(84638).NativeField })));
+            // for PulseSync WebHost: native tab buttons with addon-owned panel content.
+            const NativeTabsComponent = i.lazy(() => a.e(4797).then(() => {
+                const native = a(15299);
+                const Tab = ({ itemDisabled, ...props }) => i.createElement(native.oz, { ...props, disabled: props.disabled || itemDisabled });
+                return { default: function NativeTabs({ id, label, value, items, disabled, onChange }) {
+                    const enabled = items.filter(item => !item.disabled);
+                    const focusValue = enabled.some(item => item.value === value) ? value : enabled[0]?.value;
+                    const select = next => {
+                        if (!disabled && next !== value && enabled.some(item => item.value === next)) onChange(next);
+                    };
+                    const keyDown = event => {
+                        if (disabled || event.altKey || event.ctrlKey || event.metaKey || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+                        const buttons = Array.from(event.currentTarget.querySelectorAll('[role="tab"]:not(:disabled)'));
+                        const index = buttons.indexOf(event.target.closest('[role="tab"]'));
+                        if (index < 0 || !buttons.length) return;
+                        const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+                        const offset = (event.key === 'ArrowRight' ? 1 : -1) * (rtl ? -1 : 1);
+                        const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + offset + buttons.length) % buttons.length;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        buttons[nextIndex].focus();
+                        select(buttons[nextIndex].getAttribute('data-pulsesync-tab-value'));
+                    };
+                    return i.createElement(native.tU, { elementId: id, value, disabled, 'aria-label': label, 'aria-orientation': 'horizontal', style: { scrollbarWidth: 'none' }, onTabChange: select, onKeyDown: keyDown },
+                        items.map(item => i.createElement(Tab, { key: item.value, value: item.value, itemDisabled: item.disabled, tabIndex: !disabled && item.value === focusValue ? 0 : -1, size: 'm', radius: 'xxxl', 'data-pulsesync-tab-value': item.value }, item.label)),
+                    );
+                } };
+            }));
+            const nativeControlDom = a(51767),
+                nativeControlButton = a(63423),
+                nativeControlIcon = a(82586),
+                nativeControlTooltip = a(70280),
+                nativeControlCaption = a(71926),
+                nativeControlEmptySubscribe = () => () => {},
+                nativeControlEmptySnapshot = () => 0,
+                NativeTooltipReference = i.forwardRef(({ anchor, 'aria-describedby': describedBy }, ref) => {
+                    i.useImperativeHandle(ref, () => anchor, [anchor]);
+                    i.useLayoutEffect(() => {
+                        if (!describedBy) return;
+                        const previous = anchor.getAttribute('aria-describedby'),
+                            value = [previous, describedBy].filter(Boolean).join(' ');
+                        anchor.setAttribute('aria-describedby', value);
+                        return () => {
+                            if (anchor.getAttribute('aria-describedby') !== value) return;
+                            if (previous === null) anchor.removeAttribute('aria-describedby');
+                            else anchor.setAttribute('aria-describedby', previous);
+                        };
+                    }, [anchor, describedBy]);
+                    return null;
+                }),
+                NativeLegacyTooltip = ({ anchor, title, description, onClose }) =>
+                    i.createElement(nativeControlTooltip.m_, {
+                        open: true,
+                        onOpenChange: (open) => { if (!open) onClose(); },
+                        isHoverEnabled: false,
+                        isFocusEnabled: false,
+                        enableAriaDescribedby: true,
+                        offsetOptions: 4,
+                        shiftOptions: { padding: 8 },
+                        flipOptions: { padding: 8 },
+                        children: [
+                            i.createElement(NativeTooltipReference, { anchor, key: 'reference' }),
+                            i.createElement(nativeControlTooltip.ZI, { key: 'content' },
+                                i.createElement(nativeControlCaption.HL, { variant: 'div', type: 'text', size: 's', weight: description ? 'bold' : 'medium' }, title),
+                                description ? i.createElement(nativeControlCaption.HL, { variant: 'div', type: 'text', size: 's', weight: 'normal' }, description) : null),
+                        ],
+                    }),
+                nativeControlTools = {
+                    createElement: i.createElement,
+                    createPortal: nativeControlDom.createPortal,
+                    Button: nativeControlButton.$,
+                    Icon: nativeControlIcon.I,
+                    Tooltip: nativeControlTooltip.m_,
+                    LegacyTooltip: NativeLegacyTooltip,
+                    Field: (props) => i.createElement(i.Suspense, { fallback: null }, i.createElement(NativeFieldComponent, props)),
+                    Tabs: (props) => i.createElement(i.Suspense, { fallback: null }, i.createElement(NativeTabsComponent, props)),
+                };
+            function NativeAddonControls() {
+                const [renderer, setRenderer] = i.useState(() => window.pulsesyncApi?.createNativeControlsRenderer?.(nativeControlTools));
+                i.useEffect(() => {
+                    const ready = () => setRenderer((current) => current ?? window.pulsesyncApi?.createNativeControlsRenderer?.(nativeControlTools));
+                    document.addEventListener('pulsesync:runtime-ready', ready);
+                    ready();
+                    return () => document.removeEventListener('pulsesync:runtime-ready', ready);
+                }, []);
+                i.useSyncExternalStore(renderer?.subscribe ?? nativeControlEmptySubscribe, renderer?.getSnapshot ?? nativeControlEmptySnapshot, nativeControlEmptySnapshot);
+                return renderer?.render() ?? null;
+            }
+            // for PulseSync WebHost
+            const NativeAddonModalContent = i.lazy(() => Promise.all([a.e(4638), a.e(627), a.e(1993), a.e(6758)]).then(() => ({ default: a(84638).AddonModalHost })));
+            const nativeModalEmptySnapshot = () => undefined;
+            // for PulseSync WebHost: subscribe immediately, but load modal UI only after its first request.
+            function NativeAddonModals() {
+                const [api, setApi] = i.useState(() => window.pulsesyncApi);
+                i.useEffect(() => {
+                    const ready = () => setApi(window.pulsesyncApi);
+                    document.addEventListener('pulsesync:runtime-ready', ready);
+                    ready();
+                    return () => document.removeEventListener('pulsesync:runtime-ready', ready);
+                }, []);
+                const modal = i.useSyncExternalStore(api?.registerNativeModals ?? nativeControlEmptySubscribe, api?.getNativeModal ?? nativeModalEmptySnapshot, nativeModalEmptySnapshot);
+                const requested = i.useRef(false);
+                if (modal) requested.current = true;
+                return requested.current ? i.createElement(i.Suspense, { fallback: null }, i.createElement(NativeAddonModalContent, { modal })) : null;
+            }
             let y = (e) => {
                 let { children: t, predefinedTheme: a } = e,
                     y = (0, o.N)().get(n.oo),
@@ -16464,7 +16571,8 @@
                         b((0, d.V)());
                     }, [b]);
                 let E = (0, i.useMemo)(() => ({ theme: f, setTheme: g }), [f]);
-                return (0, r.jsx)(h.D.Provider, { value: E, children: (0, r.jsx)(i.Suspense, { fallback: (0, r.jsx)(v.MainSuspenseLoader, {}), children: t }) });
+                // for PulseSync WebHost
+                return (0, r.jsx)(h.D.Provider, { value: E, children: (0, r.jsx)(i.Suspense, { fallback: (0, r.jsx)(v.MainSuspenseLoader, {}), children: (0, r.jsxs)(i.Fragment, { children: [t, (0, r.jsx)(NativeAddonControls, {}), (0, r.jsx)(i.Suspense, { fallback: null, children: (0, r.jsx)(NativeAddonModals, {}) })] }) }) });
             };
         },
         96923: (e, t, a) => {

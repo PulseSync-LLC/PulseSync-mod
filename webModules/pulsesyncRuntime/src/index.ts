@@ -31,6 +31,7 @@ export function bootstrapPulseSyncRuntime() {
     ensureApi();
     registerDesktopListeners(ensureApi);
     window.__pulsesyncBridgeInitialized = true;
+    document.dispatchEvent(new Event('pulsesync:runtime-ready'));
     void requestInitialAddonSettingsSnapshot(ensureApi);
     console.info('[PulseSync Runtime] ready', { apiVersion: 1 });
     return true;
