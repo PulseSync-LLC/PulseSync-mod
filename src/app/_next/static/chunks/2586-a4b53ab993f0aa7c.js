@@ -3,7 +3,8 @@
     [2586],
     {
         82586: (e, r, t) => {
-            t.d(r, { I: () => f });
+            // for PulseSync WebHost
+            t.d(r, { I: () => f, resolveIcon: () => resolveIcon });
             var s,
                 n = t(55178),
                 a = {
@@ -2946,6 +2947,16 @@
                 });
             })();
             var f = c.Icon;
+            // for PulseSync WebHost
+            function resolveIcon(name) {
+                const collection = l(5151).iconsCollection;
+                for (const size of ['xs', 'xxs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxs']) {
+                    if (Object.hasOwn(collection, `${name}_${size}`)) return { variant: name, size };
+                }
+                if (!Object.hasOwn(collection, name)) return;
+                const sized = /^(.*)_(xxxs|xxs|xs|s|m|l|xl|xxl|xxxl)$/.exec(name);
+                return sized ? { variant: sized[1], size: sized[2] } : { variant: name };
+            }
             c.__esModule;
         },
     },

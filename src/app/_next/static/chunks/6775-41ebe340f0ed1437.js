@@ -7459,12 +7459,71 @@
             var n8 = a(29680),
                 re = a(99937),
                 rt = a.n(re);
+            // for PulseSync WebHost
+            const NativeAddonNotification = ({ notification, iconProps, closeToast }) => {
+                const { message, kind, coverUrl, link, isActive } = notification;
+                if (kind === 'error' && !iconProps && !coverUrl && !link) return (0, m.jsx)(a(90357).h, { error: message, closeToast });
+                const caption = (0, m.jsxs)(a(71926).HL, {
+                    className: kind === 'error' ? a(17679).message : undefined,
+                    variant: 'div', type: 'controls', size: 'm', role: kind === 'error' ? 'alert' : 'status',
+                    children: [message, link && ' ', link && (0, m.jsx)(a(61258).N, {
+                        href: link.href,
+                        className: a(70627).link,
+                        onClick: (event) => {
+                            if (!isActive()) return event.preventDefault();
+                            closeToast?.();
+                        },
+                        children: (0, m.jsx)(a(71926).HL, { className: a(70627).title, variant: 'span', type: 'controls', size: 'm', children: link.label }),
+                    })],
+                });
+                return (0, m.jsx)(a(58534).$, {
+                    className: kind === 'error' ? a(17679).root : undefined,
+                    message: caption,
+                    cover: coverUrl
+                        ? (0, m.jsx)(a(50162)._V, { src: coverUrl, size: 100, fit: 'cover', className: a(70627).image, 'aria-hidden': true })
+                        : iconProps ? (0, m.jsx)(a(82586).I, iconProps) : undefined,
+                    coverRadius: 's',
+                    closeToast,
+                });
+            };
             let ra = [{ id: nM.u.INFO }, { id: nM.u.ERROR, limit: 1 }],
-                ri = () =>
-                    ra.map((e) => {
+                ri = () => {
+                    // for PulseSync WebHost
+                    const { notify, dismiss } = (0, nF.l)();
+                    (0, b.useEffect)(() => {
+                        let unregister;
+                        const register = () => {
+                            const api = window.pulsesyncApi;
+                            if (unregister || !api?.registerNativeNotifications) return;
+                            unregister = api.registerNativeNotifications({
+                                show: (notification) => {
+                                    const { id, icon, kind, durationMs, onClose } = notification;
+                                    const iconProps = icon ? a(82586).resolveIcon(icon) : undefined;
+                                    if (icon && !iconProps) throw new TypeError('Notification icon is not in the native catalog');
+                                    const content = (0, m.jsx)(NativeAddonNotification, { notification, iconProps });
+                                    notify(content, {
+                                        containerId: kind === 'error' ? nM.u.ERROR : nM.u.INFO,
+                                        toastId: id,
+                                        autoClose: durationMs,
+                                        single: false,
+                                        onClose,
+                                    });
+                                },
+                                dismiss: (id) => dismiss({ notificationId: id, forceClose: true }),
+                            });
+                        };
+                        document.addEventListener('pulsesync:runtime-ready', register);
+                        register();
+                        return () => {
+                            document.removeEventListener('pulsesync:runtime-ready', register);
+                            unregister?.();
+                        };
+                    }, [notify, dismiss]);
+                    return ra.map((e) => {
                         let { id: t, limit: a } = e;
                         return (0, m.jsx)(n8.Notification, { className: rt().root, enableMultiContainer: !0, containerId: t, position: 'bottom-center', limit: a }, t);
-                    }),
+                    });
+                },
                 rn = ix.default.default(
                     () =>
                         Promise.all([
