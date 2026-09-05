@@ -4,6 +4,9 @@ import { clamp, cloneValue, createEntityId, getPlayerInstance, normalizeAddonId 
 import { callWithPlayer, tryStoreMethod } from '../features/player';
 import { enableNativeSlotTooltips } from '../features/nativeUi';
 import { injectNativeSlotItems } from '../features/nativeSlots';
+import { createNativeControlsRenderer } from '../features/nativeControls';
+import { clearAddonNotifications, registerNativeNotifications, showNotification } from '../features/nativeNotifications';
+import { clearAddonModals, closeModal, getNativeModal, registerNativeModals, showModal, showFormModal } from '../features/nativeModals';
 import { normalizeVibeSeeds, playVibeBySeeds, type VibeParams } from '../features/vibe';
 import {
     clearTrackReplacementsForOwner,
@@ -69,6 +72,16 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         _waitForPlayer: callWithPlayer,
         enableNativeSlotTooltips,
         injectNativeSlotItems,
+        createNativeControlsRenderer,
+        registerNativeNotifications,
+        clearAddonNotifications,
+        showNotification,
+        clearAddonModals,
+        getNativeModal,
+        registerNativeModals,
+        showModal,
+        showFormModal,
+        closeModal,
         applyR128Normalization(enabled: unknown) {
             window.__PULSESYNC_APPLY_R128_NORMALIZATION__?.(Boolean(enabled));
         },

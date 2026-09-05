@@ -1,4 +1,7 @@
 import type { PulseSyncApi as PublicPulseSyncApi } from '@pulsesync/yamusic-types';
+import type { NativeControlTools, NativeControlsRenderer } from './features/nativeControls';
+import type { NativeNotificationTools } from './features/nativeNotifications';
+import type { NativeModal } from './features/nativeModals';
 
 export type Cleanup = () => void;
 export type UnknownRecord = Record<string, unknown>;
@@ -37,6 +40,12 @@ export type PulseSyncApi = PublicPulseSyncApi & UnknownRecord & {
     _pendingCalls: Array<(player: PulseSyncPlayer) => void>;
     playerInstance?: PulseSyncPlayer | null;
     enableNativeSlotTooltips: () => Cleanup;
+    createNativeControlsRenderer: (tools: NativeControlTools) => NativeControlsRenderer;
+    registerNativeNotifications: (tools: NativeNotificationTools) => Cleanup;
+    clearAddonNotifications: (ownerId: string) => void;
+    registerNativeModals: (listener: () => void) => Cleanup;
+    getNativeModal: () => NativeModal | undefined;
+    clearAddonModals: (ownerId: string) => void;
     getModSetting: (key: unknown) => Promise<unknown>;
     getModSettingSnapshot: (key: unknown) => unknown;
     getLastFmUser: () => Promise<unknown>;

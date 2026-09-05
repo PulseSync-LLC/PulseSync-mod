@@ -2,8 +2,26 @@
 (self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([
     [4638],
     {
+        // for PulseSync WebHost: native EditContentModal styles shared with addon dialogs.
+        10734: (e) => {
+            e.exports = {
+                root: 'EditContentModal_root__spGT4',
+                modalContent: 'EditContentModal_modalContent__uk5Di',
+                header: 'EditContentModal_header__F6BJQ',
+                title: 'EditContentModal_title__OFu19',
+                content: 'EditContentModal_content__6yEGM',
+                field: 'EditContentModal_field__rexIL',
+                label: 'EditContentModal_label__Cf3Kp',
+                input: 'EditContentModal_input__8O8GH',
+                input_error: 'EditContentModal_input_error__fxTOr',
+                buttons: 'EditContentModal_buttons__bHzfS',
+                button: 'EditContentModal_button__usS1Z',
+            };
+        },
         84638: (e, t, r) => {
             r.d(t, { a: () => u });
+            // for PulseSync WebHost
+            r.d(t, { AddonModalHost: () => AddonModalHost, NativeField: () => NativeField });
             var n,
                 s = r(78035),
                 a = r(80451),
@@ -5022,6 +5040,86 @@
             })();
             var u = f.u;
             f.X;
+            // for PulseSync WebHost
+            // for PulseSync WebHost
+            function NativeField({ field, value, onChange, id, error }) {
+                const css = r(10734), Caption = r(71926).HL;
+                const common = { id, disabled: field.disabled, 'aria-labelledby': `${id}-label`, 'aria-describedby': error ? `${id}-error` : undefined, 'aria-invalid': Boolean(error), 'aria-required': field.required };
+                let control;
+                if (field.type === 'text') {
+                    control = i.createElement(r(30627).p, {
+                        ...common, type: 'text', name: field.name, value,
+                        placeholder: field.placeholder, required: field.required,
+                        minLength: field.minLength, maxLength: field.maxLength,
+                        containerClassName: [css.input, error && css.input_error].filter(Boolean).join(' '),
+                        onChange: (event) => onChange(event.target.value),
+                    });
+                } else if (field.type === 'switch') {
+                    control = i.createElement(r(99311).l, { ...common, type: 'button', isChecked: value, onChange });
+                } else if (field.type === 'slider') {
+                    const min = field.min ?? 0, max = field.max ?? 100;
+                    // for PulseSync WebHost: the native slider paints a zero-based range.
+                    control = i.createElement(r(378).A, {
+                        ...common, name: field.name, min: 0, maxValue: max - min, step: field.step ?? 1,
+                        value: value - min, secondaryValue: max - min, showThumbVariant: 'always', thumbSize: 'm',
+                        'aria-valuemin': min, 'aria-valuemax': max, 'aria-valuenow': value,
+                        'aria-valuetext': String(value),
+                        onChange: next => onChange(Math.min(max, Math.max(min, next + min))),
+                    });
+                } else if (field.type === 'select') {
+                    const dropdown = r(56758), selected = field.options.findIndex(option => option.value === value);
+                    control = i.createElement(dropdown.ms, {
+                        isDisabled: field.disabled,
+                        defaultValue: selected < 0 ? undefined : `${id}-option-${selected}`,
+                        onSelect: option => onChange(option.value),
+                        reference: i.createElement(r(63423).$, { ...common, type: 'button', size: 'm', radius: 'm' }, selected < 0 ? 'Выбрать' : field.options[selected].label),
+                        children: field.options.map((option, index) => i.createElement(dropdown.c$, { key: option.value, id: `${id}-option-${index}`, value: option.value, label: option.label, type: 'button' })),
+                    });
+                }
+                const isSwitch = field.type === 'switch', isSlider = field.type === 'slider';
+                const label = i.createElement(Caption, { id: `${id}-label`, variant: isSwitch ? 'div' : 'label', htmlFor: isSwitch ? undefined : id, size: 'm', className: css.label, style: isSwitch || isSlider ? { marginBlockEnd: 0, overflowWrap: 'anywhere', minWidth: 0 } : undefined }, field.label);
+                // for PulseSync WebHost: keep slider labels and values together using native spacing and typography.
+                const heading = isSlider ? i.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--ym-spacer-size-m)' } },
+                    label,
+                    i.createElement(Caption, { variant: 'span', size: 'm', className: css.title, style: { flexShrink: 0, fontVariantNumeric: 'tabular-nums' } }, Number(value.toPrecision(12))),
+                ) : label;
+                return i.createElement('div', { className: css.field, style: isSwitch ? { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', alignItems: 'center', columnGap: 'var(--ym-spacer-size-m)', rowGap: 'var(--ym-spacer-size-xs)' } : isSlider ? { display: 'grid', gap: 'var(--ym-spacer-size-m)' } : undefined },
+                    heading,
+                    control,
+                    error && i.createElement(Caption, { id: `${id}-error`, variant: 'div', size: 's', role: 'alert', style: isSwitch ? { gridColumn: '1 / -1' } : undefined }, error),
+                );
+            }
+            function AddonModalHost({ modal }) {
+                const previous = i.useRef();
+                if (modal) previous.current = modal;
+                const item = modal ?? previous.current;
+                if (!item) return null;
+                const css = r(10734), Button = r(63423).$, Caption = r(71926).HL;
+                const close = () => item.respond(false);
+                return i.createElement(u, {
+                    open: Boolean(modal),
+                    onOpenChange: (open) => { if (!open) close(); },
+                    onClose: close,
+                    title: item.title,
+                    titleProps: { id: `${item.id}-title`, size: 'm', style: { overflowWrap: 'anywhere' } },
+                    labelClose: 'Закрыть',
+                    className: css.root,
+                    headerClassName: css.header,
+                    contentClassName: css.modalContent,
+                    size: 'fitContent',
+                    placement: 'center',
+                    overlayColor: 'full',
+                    containerProps: { 'aria-labelledby': `${item.id}-title`, 'aria-describedby': `${item.id}-message`, 'data-pulsesync-addon-modal': '' },
+                    children: i.createElement(item.kind === 'form' ? 'form' : 'div', { className: css.content, ...(item.kind === 'form' ? { noValidate: true, onSubmit: event => { event.preventDefault(); item.respond(true); } } : {}) },
+                        i.createElement(Caption, { id: `${item.id}-message`, className: css.field, variant: 'div', type: 'text', size: 'm', weight: 'normal', style: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } }, item.message),
+                        item.fields?.map(field => i.createElement(NativeField, { key: field.name, field, id: `${item.id}-${field.name}`, value: item.values[field.name], error: item.errors?.[field.name], onChange: value => item.change(field.name, value) })),
+                        i.createElement('div', { className: css.buttons },
+                            item.kind !== 'alert' && i.createElement(Button, { type: 'button', radius: 'xxxl', color: 'secondary', size: 'm', className: css.button, onClick: close }, item.cancelLabel),
+                            i.createElement(Button, { type: item.kind === 'form' ? 'submit' : 'button', radius: 'xxxl', color: 'primary', size: 'm', className: css.button, onClick: item.kind === 'form' ? undefined : () => item.respond(true) }, item.confirmLabel),
+                        ),
+                    ),
+                });
+            }
         },
     },
 ]);
