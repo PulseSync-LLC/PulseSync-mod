@@ -7,6 +7,7 @@ import type {
     PulseSyncApi,
     PulseSyncWebHostClient,
 } from '../contracts'
+import { createAddonModals } from './addonModals'
 
 const PULSESYNC_LOCAL_ORIGIN = 'http://localhost:2007'
 function normalizeFileName(value: string) {
@@ -86,7 +87,14 @@ export function createAddonClient(getApi: () => PulseSyncApi | undefined): Pulse
 export function createAddonNamespaces(
     client: PulseSyncWebHostClient,
     notificationOwnerId?: string,
-): Pick<PulseSyncAddonApi, 'player' | 'page' | 'router' | 'notifications'> {
+    lifetime?: AbortSignal,
+): Pick<PulseSyncAddonApi, 'player' | 'page' | 'router' | 'notifications' | 'toasts' | 'modals'> {
+    const toasts = Object.freeze({
+        show: async (message, options) => {
+            lifetime?.throwIfAborted()
+            await client.showToast(message, options ?? {}, notificationOwnerId)
+        },
+    } satisfies PulseSyncAddonApi['toasts'])
     return Object.freeze({
         player: Object.freeze({
             getSnapshot: () => client.getPlayerSnapshot(),
@@ -103,7 +111,17 @@ export function createAddonNamespaces(
             onChange: listener => client.onRouteChange(listener),
         } satisfies PulseSyncAddonApi['router']),
         notifications: Object.freeze({
-            show: (message, options) => client.showToast(message, options ?? {}, notificationOwnerId),
+            show: toasts.show,
+            info: async (message, options) => {
+                lifetime?.throwIfAborted()
+                await client.showNotification(message, 'info', options ?? {}, notificationOwnerId)
+            },
+            error: async (message, options) => {
+                lifetime?.throwIfAborted()
+                await client.showNotification(message, 'error', options ?? {}, notificationOwnerId)
+            },
         } satisfies PulseSyncAddonApi['notifications']),
+        toasts,
+        modals: createAddonModals(client, notificationOwnerId, lifetime),
     })
 }

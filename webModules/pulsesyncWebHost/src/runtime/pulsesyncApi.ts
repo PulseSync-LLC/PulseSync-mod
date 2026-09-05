@@ -15,7 +15,14 @@ export function installNativeSlotTooltips() {
 export function createAddonApi(addon: Partial<PulseSyncAddonIdentity> & Pick<PulseSyncAddonIdentity, 'id'>, lifetime: AbortSignal): PulseSyncAddonApi {
     const identity = createAddonIdentity(addon)
     const client = createAddonClient(getPulseSyncApi)
-    const namespaces = createAddonNamespaces(client, identity.id)
+    const namespaces = createAddonNamespaces(client, identity.id, lifetime)
+    lifetime.addEventListener('abort', () => {
+        const api = getPulseSyncApi()
+        const clear = api?.clearAddonNotifications
+        if (typeof clear === 'function') Reflect.apply(clear, api, [identity.id])
+        const clearModals = api?.clearAddonModals
+        if (typeof clearModals === 'function') Reflect.apply(clearModals, api, [identity.id])
+    }, { once: true })
     const log = (method: 'info' | 'warn' | 'error', args: unknown[]) => console[method](`[PulseSync addon: ${identity.id}]`, ...args)
 
     return Object.freeze({
