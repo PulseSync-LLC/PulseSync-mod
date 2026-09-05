@@ -190,10 +190,10 @@
     "@parcel/watcher-win32-arm64" "2.6.0"
     "@parcel/watcher-win32-x64" "2.6.0"
 
-"@pulsesync/yamusic-types@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@pulsesync/yamusic-types/-/yamusic-types-0.0.4.tgz#3ac2a639ea9866128052b3469af58ad55dca17b9"
-  integrity sha512-6lEjx7SY93GK7hiuyKEWptzJfHMq5XKqu7ziLo8hPiLyFUOGCBBLV3u0zz2kgb6KtpMfi+zp7dA9V8B2NzMU1A==
+"@pulsesync/yamusic-types@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.npmjs.org/@pulsesync/yamusic-types/-/yamusic-types-0.0.5.tgz#05f33b1fb9d6fff0d78b310db58091ceee9dbfc5"
+  integrity sha512-QLhBRyZFn+Zb7Hl1loVgfAtAiCo5glV/KVs5ZB7JNutyaKkW60ZT+Qz3dkVG8bTTxMbOhM9FUNl46XVVmQpcbQ==
 
 "@rolldown/binding-android-arm-eabi@1.2.5":
   version "1.2.5"
