@@ -159,11 +159,7 @@ exports.makeDecryptor = makeDecryptor;
 function artists2string(artists) {
     if (!artists || artists?.length === 0) return;
     if (artists.length <= 1) return artists?.[0].name;
-    let string = artists.shift()?.name;
-    artists.forEach((a) => {
-        string += ' & ' + a.name;
-    });
-    return string;
+    return artists.map((artist) => artist.name).join(' & ');
 }
 
 exports.artists2string = artists2string;
@@ -194,7 +190,7 @@ function LRC2SYLT(lrcString) {
     const lines = lrcString.split(/\r?\n/);
     const result = [];
 
-    const timeTagRegex = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,2}))?\]/g;
+    const timeTagRegex = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
     const metaTagRegex = /^\[(ar|ti|al|by|offset|re|ve):.*?\]$/i;
 
     for (const line of lines) {
@@ -212,8 +208,8 @@ function LRC2SYLT(lrcString) {
         while ((match = timeTagRegex.exec(trimmed)) !== null) {
             const minutes = parseInt(match[1], 10);
             const seconds = parseInt(match[2], 10);
-            const hundredths = match[3] ? parseInt(match[3].padEnd(2, '0'), 10) : 0;
-            const timestamp = (minutes * 60 + seconds) * 1000 + hundredths * 10;
+            const milliseconds = match[3] ? parseInt(match[3].padEnd(3, '0'), 10) : 0;
+            const timestamp = (minutes * 60 + seconds) * 1000 + milliseconds;
             times.push(timestamp);
         }
 

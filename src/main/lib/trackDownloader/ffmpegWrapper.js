@@ -3,8 +3,19 @@ const fs = require('fs').promises;
 const fsSync = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
-const { artists2string, escapeRestrictedShellChars } = require('../utils.js');
+const { artists2string } = require('../utils.js');
 const { getFfmpegUpdater } = require('../ffmpegInstaller.js');
+const { createLyricsFrames, writeLyricsFrames } = require('./id3Lyrics.js');
+
+function getReleaseYear(track) {
+    const album = track?.albums?.[0];
+    for (const value of [album?.year, album?.releaseDate, track?.year, track?.releaseDate]) {
+        const year = String(value ?? '')
+            .trim()
+            .match(/^([1-9]\d{3})(?:$|-\d{2}-\d{2}(?:T|$))/)?.[1];
+        if (year) return year;
+    }
+}
 
 function runProcess(command, args, logger, options = {}) {
     return new Promise((resolve, reject) => {
@@ -59,7 +70,8 @@ class FfmpegWrapper {
 
     pushMetadata(args, key, value) {
         if (value === undefined || value === null || value === '') return;
-        args.push('-metadata', `${key}=${escapeRestrictedShellChars(String(value))}`);
+        // spawn receives literal arguments without a shell; escaping would alter the tag value.
+        args.push('-metadata', `${key}=${String(value)}`);
     }
 
     async writeTrackFile(data, finalFilepath, tempDirPath, tempFilepath, fileExtension = undefined, lrc = undefined, options = {}) {
@@ -72,6 +84,7 @@ class FfmpegWrapper {
         if (fsSync.existsSync(coverPath)) withCover = true;
 
         const args = [];
+        const lyricsFrames = fileExtension === 'mp3' && lrc ? createLyricsFrames(lrc) : undefined;
 
         // Input
         args.push('-i', tempFilepath);
@@ -91,7 +104,13 @@ class FfmpegWrapper {
         args.push('-c:a', 'copy');
 
         if (fileExtension === 'mp3') {
-            args.push('-id3v2_version', '4');
+            // Windows Explorer reliably reads cover art from ID3v2.3.
+            args.push('-id3v2_version', '3');
+            if (lyricsFrames?.length) {
+                // Reserve space for USLT/SYLT so adding lyrics does not rewrite the audio.
+                args.push('-metadata_header_padding', String(lyricsFrames.length + 10));
+                args.push('-metadata', 'lyrics=');
+            }
         }
 
         // Cover embedding
@@ -102,9 +121,9 @@ class FfmpegWrapper {
         this.pushMetadata(args, 'artist', artists2string(data.track?.artists));
         this.pushMetadata(args, 'title', data.track?.title);
         this.pushMetadata(args, 'album', data.track?.albums?.[0]?.title);
-        this.pushMetadata(args, 'year', data.track?.albums?.[0]?.year);
+        this.pushMetadata(args, 'date', getReleaseYear(data.track));
         this.pushMetadata(args, 'genre', data.track?.albums?.[0]?.genre);
-        this.pushMetadata(args, 'ISRC', data.track?.isrc);
+        this.pushMetadata(args, fileExtension === 'mp3' ? 'TSRC' : 'ISRC', data.track?.isrc);
 
         // Overwrite + output
         args.push('-y', finalFilepath);
@@ -118,8 +137,12 @@ class FfmpegWrapper {
             throw error;
         }
 
+        if (lyricsFrames?.length) {
+            await writeLyricsFrames(finalFilepath, lyricsFrames, options);
+        }
+
         if (lrc) {
-            // FFmpeg CLI cannot preserve ID3 SYLT timing frames reliably, so keep timed lyrics as a sidecar.
+            // Keep the sidecar available for players that do not read embedded lyrics.
             const ext = path.extname(finalFilepath);
             const lrcPath = `${finalFilepath.slice(0, -ext.length)}.lrc`;
             await fs.writeFile(lrcPath, lrc);
