@@ -203,6 +203,13 @@
                                 !n || (t && d.containerId !== t) || ((d.count -= d.queue.length), (d.queue = []));
                             }
                             function y(e) {
+                                // for PulseSync WebHost
+                                if (null != e) {
+                                    const cancelled = d.queue.filter(({ toastProps }) => toastProps.toastId === e);
+                                    d.queue = d.queue.filter(({ toastProps }) => toastProps.toastId !== e);
+                                    d.count -= cancelled.length;
+                                    cancelled.forEach(({ toastProps }) => toastProps.onClose?.());
+                                }
                                 a((t) => (null == e ? [] : t.filter((t) => t !== e)));
                             }
                             function v() {

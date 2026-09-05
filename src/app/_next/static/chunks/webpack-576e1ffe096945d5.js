@@ -83,13 +83,21 @@
                                     ? 'static/chunks/4942-9ec88915bdd7c400.js'
                                     : 627 === e
                                       ? 'static/chunks/627-344af6dbfdf6642b.js'
-                                      : 530 === e
-                                        ? 'static/chunks/530-fbfeb02ab9c8804a.js'
-                                        : 8035 === e
-                                          ? 'static/chunks/8035-f09e4b1ac01e4083.js'
-                                          : 9740 === e
-                                            ? 'static/chunks/9740-ba9c73f182d3e78e.js'
-                                            : 'static/chunks/' +
+                                      : 4638 === e // for PulseSync WebHost
+                                        ? 'static/chunks/4638-a9bceb56754c577a.js' // for PulseSync WebHost
+                                        : 1993 === e // for PulseSync WebHost
+                                          ? 'static/chunks/1993-bc6e70b45eabe339.js' // for PulseSync WebHost
+                                          : 6758 === e // for PulseSync WebHost
+                                            ? 'static/chunks/6758-3a48a40a7e2ac577.js' // for PulseSync WebHost
+                                            : 4797 === e // for PulseSync WebHost
+                                              ? 'static/chunks/4797-52fff73642a7d8fd.js' // for PulseSync WebHost
+                                            : 530 === e
+                                              ? 'static/chunks/530-fbfeb02ab9c8804a.js'
+                                              : 8035 === e
+                                                ? 'static/chunks/8035-f09e4b1ac01e4083.js'
+                                                : 9740 === e
+                                                  ? 'static/chunks/9740-ba9c73f182d3e78e.js'
+                                                  : 'static/chunks/' +
                                               ({ 714: '461441ef', 2641: '19516523', 5118: '9d6cea74', 8473: '127542af', 9096: 'a7e8490a' }[e] || e) +
                                               '.' +
                                               {
