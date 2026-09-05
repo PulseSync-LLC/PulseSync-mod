@@ -91,6 +91,8 @@
                                             ? 'static/chunks/6758-3a48a40a7e2ac577.js' // for PulseSync WebHost
                                             : 4797 === e // for PulseSync WebHost
                                               ? 'static/chunks/4797-52fff73642a7d8fd.js' // for PulseSync WebHost
+                                              : 6341 === e // for PulseSync WebHost
+                                                ? 'static/chunks/6341-bc9e9d7f3f130503.js' // for PulseSync WebHost
                                             : 530 === e
                                               ? 'static/chunks/530-fbfeb02ab9c8804a.js'
                                               : 8035 === e
