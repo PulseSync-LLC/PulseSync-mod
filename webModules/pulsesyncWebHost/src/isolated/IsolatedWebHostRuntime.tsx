@@ -9,6 +9,7 @@ import { IsolatedBridge } from './IsolatedBridge'
 import type { IsolatedInit, IsolatedWindow } from './contracts'
 import { IsolatedTargetRegistry } from './IsolatedTargetRegistry'
 import { installIsolatedDomExecutionPolicy } from './domExecutionPolicy'
+import { clearAddonModalSessions } from '../runtime/addonModals'
 
 export class IsolatedWebHostRuntime {
     private readonly isolatedWindow: IsolatedWindow
@@ -132,10 +133,17 @@ export class IsolatedWebHostRuntime {
         }
 
         this.unregisterCurrentAddon()
-        const cleanup = definition.activate?.(this.bridge.addonApi)
+        let cleanup: void | Cleanup
+        try {
+            cleanup = definition.activate?.(this.bridge.addonApi)
+        } catch (error) {
+            clearAddonModalSessions(this.bridge.addonApi.modals)
+            throw error
+        }
         this.addonCleanup = typeof cleanup === 'function' ? cleanup : undefined
         this.currentDefinition = Object.freeze({ ...definition, id: addonId })
         this.definitionGeneration += 1
+        const generation = this.definitionGeneration
         this.renderDefinition()
         if (!this.registrationReported) {
             this.registrationReported = true
@@ -146,12 +154,13 @@ export class IsolatedWebHostRuntime {
         return () => {
             if (!active) return
             active = false
-            this.unregisterCurrentAddon()
+            if (generation === this.definitionGeneration) this.unregisterCurrentAddon()
         }
     }
 
     private unregisterCurrentAddon(): boolean {
         const hadDefinition = Boolean(this.currentDefinition || this.addonCleanup)
+        clearAddonModalSessions(this.bridge.addonApi.modals)
         try {
             this.addonCleanup?.()
         } catch (error) {

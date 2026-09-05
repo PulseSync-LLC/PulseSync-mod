@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import type { PulseSyncAddonApi, PulseSyncAddonDefinition } from '../contracts'
 import { AddonErrorBoundary } from '../components/AddonErrorBoundary'
+import { AddonModals } from '../components/AddonModals'
 import { AddonSlot } from '../components/AddonSlot'
 import { HeaderItems } from '../components/HeaderItems'
 import { AlbumMenuItems, HeaderActions, PlayerBarButtons, PlaylistMenuItems } from '../components/NativeActions'
@@ -41,7 +42,7 @@ export function IsolatedAddonHost({ addonId, addonApi, definition, generation, l
     if (!definition) return null
 
     const handleRenderError = (error: Error) => log('error', ['React render failed', error.message, error.stack])
-    const content: ReactNode[] = []
+    const content: ReactNode[] = [<AddonModals key={`${generation}:modals`} modals={addonApi.modals} addonId={addonId} />]
     const RootComponent = definition.component
 
     if (RootComponent) {
