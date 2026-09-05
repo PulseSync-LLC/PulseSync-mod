@@ -1,23 +1,13 @@
 import type { Cleanup } from '../contracts';
 import { getNativeTooltip, hideNativeTooltip } from './nativeUi';
-import type { NativeField } from '@pulsesync/yamusic-types';
-import { normalizeNativeFields } from './nativeFields';
+import { readControl, renderControl } from './nativeControls/registry';
+import type { NativeControl, NativeControlTools } from './nativeControls/types';
+
+export type { NativeControlTools } from './nativeControls/types';
 
 const ATTRIBUTE = 'data-pulsesync-native-control';
 const SELECTOR = `[${ATTRIBUTE}]`;
 const CHANGE_EVENT = 'pulsesync:native-controls-change';
-const ACTIVATE_EVENT = 'pulsesync:native-control-activate';
-
-export type NativeControlTools = {
-    createElement: (component: unknown, props: Record<string, unknown> | null, ...children: unknown[]) => unknown;
-    createPortal: (node: unknown, container: Element, key: string) => unknown;
-    Button: unknown;
-    Icon: unknown;
-    Tooltip: unknown;
-    LegacyTooltip: unknown;
-    Field: unknown;
-    Tabs: unknown;
-};
 
 export type NativeControlsRenderer = {
     subscribe: (listener: () => void) => Cleanup;
@@ -25,67 +15,10 @@ export type NativeControlsRenderer = {
     render: () => unknown[];
 };
 
-type Control = {
-    kind: 'button' | 'icon-button';
-    label: string;
-    icon?: string;
-    disabled: boolean;
-    color: string;
-    variant: string;
-    size: string;
-    tooltip?: string;
-    placement: string;
-};
-
-type TabsControl = {
-    kind: 'tabs';
-    id: string;
-    label: string;
-    value: string;
-    disabled: boolean;
-    items: { value: string; label: string; disabled: boolean }[];
-};
-
-function readControl(raw: string | null): Control | TabsControl | { kind: 'field'; field: NativeField } | undefined {
-    try {
-        const value = JSON.parse(raw ?? 'null');
-        if (value?.kind === 'field') return { kind: 'field', field: normalizeNativeFields([value.field])[0]! };
-        if (value?.kind === 'tabs') {
-            if (typeof value.id !== 'string' || !/^[a-z0-9_-]{1,100}$/i.test(value.id) || typeof value.label !== 'string' || !value.label.trim() || value.label.length > 200) return;
-            if (!Array.isArray(value.items) || !value.items.length || value.items.length > 20) return;
-            const values = new Set<string>();
-            const items: TabsControl['items'] = [];
-            for (const item of value.items) {
-                if (!item || typeof item.value !== 'string' || !/^[a-z0-9_-]{1,80}$/i.test(item.value) || values.has(item.value) || typeof item.label !== 'string' || !item.label.trim() || item.label.length > 200) return;
-                values.add(item.value);
-                items.push({ value: item.value, label: item.label, disabled: item.disabled === true });
-            }
-            if (!values.has(value.value)) return;
-            return { kind: 'tabs', id: value.id, label: value.label, value: value.value, disabled: value.disabled === true, items };
-        }
-        if (!value || (value.kind !== 'button' && value.kind !== 'icon-button') || typeof value.label !== 'string' || !value.label.trim()) return;
-        const icon = typeof value.icon === 'string' && /^[a-z][a-z0-9_-]*$/i.test(value.icon) ? value.icon : undefined;
-        if (value.kind === 'icon-button' && !icon) return;
-        return {
-            kind: value.kind,
-            label: value.label,
-            icon,
-            disabled: value.disabled === true,
-            color: ['primary', 'secondary'].includes(value.color) ? value.color : 'secondary',
-            variant: ['default', 'outline', 'text'].includes(value.variant) ? value.variant : 'default',
-            size: ['xs', 's', 'm', 'l'].includes(value.size) ? value.size : 's',
-            tooltip: typeof value.tooltip === 'string' && value.tooltip.trim() ? value.tooltip : undefined,
-            placement: ['top', 'bottom', 'left', 'right'].includes(value.placement) ? value.placement : 'top',
-        };
-    } catch {
-        return;
-    }
-}
-
 export function createNativeControlsRenderer(tools: NativeControlTools): NativeControlsRenderer {
     const listeners = new Set<() => void>();
     const keys = new WeakMap<Element, string>();
-    const entries = new Map<Element, { raw: string; control: ReturnType<typeof readControl>; node: unknown }>();
+    const entries = new Map<Element, { raw: string; control: NativeControl | undefined; node: unknown }>();
     let nextKey = 0;
     let revision = 0;
     let observer: MutationObserver | undefined;
@@ -110,53 +43,14 @@ export function createNativeControlsRenderer(tools: NativeControlTools): NativeC
         const cached = entries.get(element);
         return cached && cached.raw === raw ? cached.control : readControl(raw);
     };
-    const createNode = (element: Element, control: NonNullable<ReturnType<typeof readControl>>, key: string) => {
-        if (control.kind === 'field') {
-            const change = (value: string | boolean | number) => {
-                const current = readCurrent(element);
-                if (current?.kind !== 'field' || current.field.disabled) return;
-                if (current.field.type === 'switch' ? typeof value !== 'boolean' : current.field.type === 'slider' ? typeof value !== 'number' || !Number.isFinite(value) : typeof value !== 'string') return;
-                element.dispatchEvent(new CustomEvent('pulsesync:native-field-change', { detail: JSON.stringify(value) }));
-            };
-            return tools.createPortal(tools.createElement(tools.Field, { field: control.field, value: control.field.value ?? (control.field.type === 'switch' ? false : control.field.type === 'slider' ? control.field.min ?? 0 : ''), id: key, onChange: change }), element, key);
-        }
-        if (control.kind === 'tabs') {
-            if (!tools.Tabs) return;
-            const change = (value: string) => {
-                const current = readCurrent(element);
-                if (current?.kind !== 'tabs' || current.disabled || value === current.value || !current.items.some(item => item.value === value && !item.disabled)) return;
-                element.dispatchEvent(new CustomEvent('pulsesync:native-tabs-change', { detail: value }));
-            };
-            return tools.createPortal(tools.createElement(tools.Tabs, { ...control, onChange: change }), element, key);
-        }
-        const activate = () => {
-            const current = readCurrent(element);
-            if (current && (current.kind === 'button' || current.kind === 'icon-button') && !current.disabled) element.dispatchEvent(new CustomEvent(ACTIVATE_EVENT));
-        };
-        let button = tools.createElement(tools.Button, {
-            type: 'button',
-            color: control.color,
-            variant: control.variant,
-            size: control.size,
-            radius: control.kind === 'icon-button' ? 'round' : 'm',
-            disabled: control.disabled,
-            'aria-label': control.kind === 'icon-button' ? control.label : undefined,
-            icon: control.icon ? tools.createElement(tools.Icon, { variant: control.icon }) : undefined,
-            onClick: activate,
-            children: control.kind === 'button' ? control.label : undefined,
+    const createNode = (element: Element, control: NativeControl, key: string) => {
+        const node = renderControl(control, {
+            tools,
+            key,
+            readCurrent: () => readCurrent(element),
+            dispatch: (type, detail) => element.dispatchEvent(new CustomEvent(type, { detail })),
         });
-        if (control.tooltip) {
-            button = tools.createElement(tools.Tooltip, {
-                text: control.tooltip,
-                placement: control.placement,
-                offsetOptions: 4,
-                shiftOptions: { padding: 8 },
-                flipOptions: { padding: 8 },
-                enableAriaDescribedby: true,
-                children: button,
-            });
-        }
-        return tools.createPortal(button, element, key);
+        return node === undefined ? undefined : tools.createPortal(node, element, key);
     };
     const update = (element: Element) => {
         const previous = entries.get(element);

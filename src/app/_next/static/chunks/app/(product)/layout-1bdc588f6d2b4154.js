@@ -16447,6 +16447,15 @@
                 v = a(9634);
             // for PulseSync WebHost
             const NativeFieldComponent = i.lazy(() => Promise.all([a.e(4638), a.e(627), a.e(1993), a.e(6758)]).then(() => ({ default: a(84638).NativeField })));
+            // for PulseSync WebHost: reserve the native size while the spinner chunk loads.
+            const NativeSpinnerComponent = i.lazy(() => a.e(6341).then(() => ({ default: a(99902).y })));
+            function NativeSpinner({ size, label }) {
+                return i.createElement('span', {
+                    role: 'status',
+                    'aria-label': label,
+                    style: { display: 'inline-flex', flexShrink: 0, width: `var(--ym-icon-size-${size})`, height: `var(--ym-icon-size-${size})` },
+                }, i.createElement(i.Suspense, { fallback: null }, i.createElement(NativeSpinnerComponent, { size })));
+            }
             // for PulseSync WebHost: native tab buttons with addon-owned panel content.
             const NativeTabsComponent = i.lazy(() => a.e(4797).then(() => {
                 const native = a(15299);
@@ -16523,6 +16532,8 @@
                     LegacyTooltip: NativeLegacyTooltip,
                     Field: (props) => i.createElement(i.Suspense, { fallback: null }, i.createElement(NativeFieldComponent, props)),
                     Tabs: (props) => i.createElement(i.Suspense, { fallback: null }, i.createElement(NativeTabsComponent, props)),
+                    Spinner: NativeSpinner,
+                    Caption: nativeControlCaption.HL,
                 };
             function NativeAddonControls() {
                 const [renderer, setRenderer] = i.useState(() => window.pulsesyncApi?.createNativeControlsRenderer?.(nativeControlTools));
