@@ -8,6 +8,7 @@ import { AddonSlot } from './AddonSlot'
 import { HeaderItems } from './HeaderItems'
 import { AlbumMenuItems, HeaderActions, PlayerBarButtons, PlaylistMenuItems } from './NativeActions'
 import { TrackMenuItems } from './TrackMenuItems'
+import { AddonModals } from './AddonModals'
 
 export function PulseSyncWebHost() {
     useSyncExternalStore(subscribeRegistry, getRegistryRevision, getRegistryRevision)
@@ -34,6 +35,7 @@ export function PulseSyncWebHost() {
     const content: ReactNode[] = []
 
     getRegisteredAddons().forEach((addon, addonId) => {
+        content.push(<AddonModals key={`${addonId}:modals:${addon.generation}`} modals={addon.api.modals} addonId={addonId} />)
         const AddonComponent = addon.definition.component
         if (AddonComponent) {
             content.push(

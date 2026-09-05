@@ -7,6 +7,10 @@ import type {
     PulseSyncPlayerApiV1,
     PulseSyncRouterApiV1,
     PulseSyncToastOptions,
+    NotificationOptions,
+    ModalOptions,
+    FormModalOptions,
+    FormValues,
     PulseSyncTrackMeta,
     PulseSyncWebHostApiV1,
 } from '@pulsesync/yamusic-types'
@@ -54,8 +58,30 @@ export type AddonStorage = {
     clear: () => Promise<void>
 }
 
-export type PulseSyncAddonNotifications = {
+export type AddonToasts = {
     show: (message: string, options?: PulseSyncToastOptions) => Promise<void>
+}
+
+export type AddonModals = {
+    open: (render: (props: RenderModalProps) => React.ReactNode) => Promise<boolean>
+    alert: (options: ModalOptions) => Promise<boolean>
+    confirm: (options: ModalOptions) => Promise<boolean>
+    form: (options: FormModalOptions) => Promise<FormValues | null>
+}
+
+export type RenderModalProps = {
+    controller: {
+        readonly signal: AbortSignal
+        show: (kind: 'alert' | 'confirm', options: ModalOptions) => Promise<boolean>
+        showForm: (options: FormModalOptions) => Promise<FormValues | null>
+        close: (confirmed?: boolean) => void
+        fail: (error: unknown) => void
+    }
+}
+
+export type PulseSyncAddonNotifications = AddonToasts & {
+    info: (message: string, options?: NotificationOptions) => Promise<void>
+    error: (message: string, options?: NotificationOptions) => Promise<void>
 }
 
 export type DesktopEventsBridge = {
@@ -205,6 +231,8 @@ export type PulseSyncAddonApi = {
     readonly page: PulseSyncPageApiV1
     readonly router: PulseSyncRouterApiV1
     readonly notifications: PulseSyncAddonNotifications
+    readonly toasts: AddonToasts
+    readonly modals: AddonModals
     readonly settings: PulseSyncAddonSettingsStore
     readonly assets: PulseSyncAddonAssets
     readonly net: AddonNet

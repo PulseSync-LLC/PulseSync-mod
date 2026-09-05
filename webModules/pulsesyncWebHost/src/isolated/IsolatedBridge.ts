@@ -123,11 +123,9 @@ export class IsolatedBridge {
                         return (listener: (snapshot: PulseSyncPlayerSnapshot) => void) =>
                             this.subscribeEvent('player-snapshot', this.playerSnapshotListeners, listener)
                     if (property === 'onQueueChange')
-                        return (listener: (snapshot: PulseSyncQueueSnapshot) => void) =>
-                            this.subscribeEvent('queue', this.queueListeners, listener)
+                        return (listener: (snapshot: PulseSyncQueueSnapshot) => void) => this.subscribeEvent('queue', this.queueListeners, listener)
                     if (property === 'onRouteChange')
-                        return (listener: (snapshot: PulseSyncRouteSnapshot) => void) =>
-                            this.subscribeEvent('route', this.routeListeners, listener)
+                        return (listener: (snapshot: PulseSyncRouteSnapshot) => void) => this.subscribeEvent('route', this.routeListeners, listener)
                     if (property === 'then' || typeof property !== 'string' || !this.allowedMethods.has(property)) return undefined
                     return (...args: unknown[]) => this.callApi(property, args)
                 },
@@ -142,7 +140,7 @@ export class IsolatedBridge {
             }),
         )
 
-        const namespaces = createAddonNamespaces(this.pulsesyncApi)
+        const namespaces = createAddonNamespaces(this.pulsesyncApi, undefined, this.lifetime.signal)
 
         this.addonApi = Object.freeze({
             addonId: init.addon.id,
@@ -204,7 +202,7 @@ export class IsolatedBridge {
 
         const requestId = (this.nextRequestId += 1)
         return new Promise<unknown>((resolve, reject) => {
-            const timeout = window.setTimeout(() => {
+            const timeout = !target && (method === 'showModal' || method === 'showFormModal') ? 0 : window.setTimeout(() => {
                 this.pendingCalls.delete(requestId)
                 reject(new Error(`PulseSync addon API call timed out: ${method}`))
             }, API_CALL_TIMEOUT_MS)
