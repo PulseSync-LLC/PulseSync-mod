@@ -202,7 +202,24 @@ export class IsolatedAddonRuntime {
             const api = getPulseSyncApi()
             const method = api?.[request.method]
             if (typeof method !== 'function') throw new Error(`PulseSync addon API method is unavailable: ${request.method}`)
-            const args = ISOLATED_ADDON_SCOPED_API_METHOD_SET.has(request.method) ? [...request.args, this.addon.id] : request.args
+            let args =
+                request.method === 'showToast'
+                    ? [request.args[0], request.args[1], this.addon.id]
+                    : ISOLATED_ADDON_SCOPED_API_METHOD_SET.has(request.method)
+                      ? [...request.args, this.addon.id]
+                      : request.args
+            if (request.method === 'showNotification') {
+                args = [request.args[0], request.args[1], request.args[2], this.addon.id]
+            }
+            if (request.method === 'showModal') {
+                args = [request.args[0], request.args[1], this.addon.id, request.args[3]]
+            }
+            if (request.method === 'showFormModal') {
+                args = [request.args[0], this.addon.id, request.args[2]];
+            }
+            if (request.method === 'closeModal') {
+                args = [request.args[0], this.addon.id]
+            }
             const value = await Reflect.apply(method, api, args)
             this.dispatch('response', { requestId: request.requestId, ok: true, value: toTransportValue(value) })
         } catch (error) {
@@ -318,6 +335,16 @@ export class IsolatedAddonRuntime {
             const api = getPulseSyncApi()
             const clearTrackReplacements = api?.clearTrackReplacements
             if (typeof clearTrackReplacements === 'function') return Reflect.apply(clearTrackReplacements, api, [this.addon.id])
+        })
+        this.runCleanup('notifications', () => {
+            const api = getPulseSyncApi()
+            const clear = api?.clearAddonNotifications
+            if (typeof clear === 'function') return Reflect.apply(clear, api, [this.addon.id])
+        })
+        this.runCleanup('modals', () => {
+            const api = getPulseSyncApi()
+            const clear = api?.clearAddonModals
+            if (typeof clear === 'function') return Reflect.apply(clear, api, [this.addon.id])
         })
         const style = this.style
         this.style = undefined
