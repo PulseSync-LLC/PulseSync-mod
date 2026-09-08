@@ -14,10 +14,10 @@ const deviceInfo_js_1 = require('../deviceInfo.js');
 const store_js_1 = require('../store.js');
 const toggleWindowVisibility_js_1 = require('./toggleWindowVisibility.js');
 
-const minBounds = {
-    minWidth: 768,
-    minHeight: 650,
-};
+// ванильный минимум; при включённой настройке «Поведение окна →
+// Снять блокировки минимального размера» окно можно уменьшать почти без ограничений
+const vanillaMinBounds = { minWidth: 768, minHeight: 650 };
+const unlockedMinBounds = { minWidth: 280, minHeight: 200 };
 
 const dimensions = (store_js_1.getModSettings()?.window?.saveWindowDimensionsOnRestart ?? true) ? store_js_1.getWindowDimensions() : undefined;
 let position = store_js_1.getModSettings()?.window?.saveWindowPositionOnRestart ? store_js_1.getWindowPosition() : undefined;
@@ -27,6 +27,8 @@ const isWithinDisplayBounds = (pos, display) => {
 };
 
 const createWindow = async () => {
+    const removeMinSizeRestrictions = store_js_1.getModSettings()?.window?.removeMinSizeRestrictions ?? false;
+    const minBounds = removeMinSizeRestrictions ? unlockedMinBounds : vanillaMinBounds;
     const withFrame = [platform_js_1.Platform.WINDOWS, platform_js_1.Platform.MACOS].includes(deviceInfo_js_1.devicePlatform);
     let scaleFactor = 1;
     if (position) {

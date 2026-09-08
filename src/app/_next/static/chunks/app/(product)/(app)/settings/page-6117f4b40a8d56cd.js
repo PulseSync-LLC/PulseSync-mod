@@ -3610,7 +3610,17 @@
                             console.log('hidePulseSyncVersionInTitleBar toggled. Value: ', e);
                             window.nativeSettings.set('modSettings.window.hidePulseSyncVersionInTitleBar', e);
                             setHidePulseSyncVersionInTitleBar(e);
-                        }, []);
+                        }, []),
+                        onRemoveMinSizeRestrictionsToggle = (0, pulseReactRuntime.useCallback)(
+                            async (e) => {
+                                console.log('window.removeMinSizeRestrictions toggled. Value: ', e);
+                                window.nativeSettings.set('modSettings.window.removeMinSizeRestrictions', e);
+                                o((0, pulseJsxRuntime.jsx)(pulseSettingsUi.hT, { error: 'Для применения этой настройки требуется перезапуск приложения' }), {
+                                    containerId: pulseSettingsRuntime.uQT.ERROR,
+                                });
+                            },
+                            [o],
+                        );
                     let hidePulseSyncVersionInTitleBarState = (0, pulseReactRuntime.useState)(
                             window.nativeSettings.get('modSettings.window.hidePulseSyncVersionInTitleBar') ?? !1,
                         ),
@@ -3646,6 +3656,15 @@
                             className: ''.concat(eb().root, ' ').concat(ev().list),
                             style: { width: '32.125rem', maxHeight: '37.5rem', gap: 0 },
                             children: [
+                                (0, pulseJsxRuntime.jsx)('li', {
+                                    className: eb().item,
+                                    children: (0, pulseJsxRuntime.jsx)(em, {
+                                        title: 'Снять блокировки минимального размера окна приложения',
+                                        description: 'Позволяет уменьшать окно ниже стандартных 768×650 (до 280×200). Требуется перезапуск приложения',
+                                        onChange: onRemoveMinSizeRestrictionsToggle,
+                                        isChecked: window.nativeSettings.getAsync('modSettings.window.removeMinSizeRestrictions'),
+                                    }),
+                                }),
                                 (0, pulseJsxRuntime.jsx)('li', {
                                     className: eb().item,
                                     children: (0, pulseJsxRuntime.jsx)(settingBarWithDropdown, {

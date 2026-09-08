@@ -177,6 +177,7 @@ const init = () => {
             coverAsThumbnail: true,
         },
         window: {
+            removeMinSizeRestrictions: false,
             toTray: false,
             autoStartup: false,
             minimizedStart: false,
