@@ -6,6 +6,7 @@ export type StoredSettingValue = boolean | number | string | null
 
 export type SettingsSchemaContext = {
   api: ModSettingsApi | undefined
+  displayMaxFps: number
   get: (key: string) => unknown
   getBoolean: (key: string) => boolean
   getNumber: (key: string) => number

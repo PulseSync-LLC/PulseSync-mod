@@ -85,6 +85,7 @@ function App({ api }: AppProps = {}) {
   const [searchQuery, setSearchQuery] = useState('')
   const contentRef = useRef<HTMLDivElement>(null)
   const modSettingsApi = getModSettingsApi(api)
+  const [displayMaxFps, setDisplayMaxFps] = useState(60)
   const { close, isMounted, isVisible, open } = useModalPresence(import.meta.env.DEV)
   const { value: swapVibeAnimationAndWheel } = useModSetting(
     modSettingsApi,
@@ -100,6 +101,25 @@ function App({ api }: AppProps = {}) {
   const shouldOffsetModal =
     shouldRevealMyVibe && window.location.href === MAIN_PAGE_URL
   const isSearching = Boolean(searchQuery.trim())
+
+  useEffect(() => {
+    let active = true
+    const readDisplayMaxFps = async () => {
+      let value = 60
+      try {
+        const result = await modSettingsApi?.getDisplayMaxFps()
+        if (typeof result === 'number' && Number.isFinite(result) && result > 0)
+          value = result
+      } catch {
+        // Keep the default while display information is unavailable.
+      }
+      if (active) setDisplayMaxFps(value)
+    }
+    void readDisplayMaxFps()
+    return () => {
+      active = false
+    }
+  }, [modSettingsApi])
 
   useEffect(() => {
     const openSettings = () => open()
@@ -286,6 +306,7 @@ function App({ api }: AppProps = {}) {
                 >
                   {section.render({
                     api: modSettingsApi,
+                    displayMaxFps,
                     onRestartRequired: notifyRestartRequired,
                   })}
                 </SettingsNavigationProvider>

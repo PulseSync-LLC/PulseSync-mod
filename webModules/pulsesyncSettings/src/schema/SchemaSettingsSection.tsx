@@ -16,6 +16,7 @@ import type {
 
 type SchemaSettingsSectionProps = {
   api: ModSettingsApi | undefined
+  displayMaxFps: number
   onRestartRequired?: () => void
   schema: SettingsSectionSchema
 }
@@ -73,6 +74,7 @@ function normalizeValue(
 
 export function SchemaSettingsSection({
   api,
+  displayMaxFps,
   onRestartRequired,
   schema,
 }: SchemaSettingsSectionProps) {
@@ -167,13 +169,14 @@ export function SchemaSettingsSection({
   const createContext = useCallback(
     (nextValues = values): SettingsSchemaContext => ({
       api,
+      displayMaxFps,
       get: (key) => nextValues[key],
       getBoolean: (key) => Boolean(nextValues[key]),
       getNumber: (key) => Number(nextValues[key]),
       getString: (key) => String(nextValues[key] ?? ''),
       premium,
     }),
-    [api, premium, values],
+    [api, displayMaxFps, premium, values],
   )
 
   const updateValue = useCallback(
