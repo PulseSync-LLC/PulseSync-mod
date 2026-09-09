@@ -466,6 +466,13 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return workPath;
     }
 
+    function installSourceDependencies(workPath) {
+        execSync('yarn install --frozen-lockfile', {
+            cwd: workPath,
+            stdio: 'pipe',
+        });
+    }
+
     async function prepareModernizedBuildSource(workPath) {
         await prepareModernizedSource(workPath, MODERNIZED_SRC_PATH);
         return MODERNIZED_SRC_PATH;
@@ -510,6 +517,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             console.log(`Версия мода синхронизирована: ${versionSync.oldVersion ?? 'не задана'} -> ${versionSync.newVersion}`);
         }
 
+        installSourceDependencies(workPath);
         await buildMiniPlayer();
         await buildWebHost();
         await installWebHostBuild(workPath);
@@ -669,6 +677,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         getWebHostBuildInfo,
         getNativeModuleBuildInfos,
         installRuntimeBuild,
+        installSourceDependencies,
         installWebHostBuild,
         prepareReleaseAsarArtifact,
         prepareMinifiedBuildSource,

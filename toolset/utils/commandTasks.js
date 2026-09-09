@@ -91,6 +91,13 @@ function createBuildTask({
                             versionTask.output = result.changed ? `${result.oldVersion ?? 'не задана'} -> ${result.newVersion}` : result.newVersion;
                         },
                     },
+                    {
+                        title: 'Установка зависимостей source',
+                        task: async (ctx, dependenciesTask) => {
+                            dependenciesTask.output = ctx.state.build.workPath;
+                            await ctx.core.buildUtils.installSourceDependencies(ctx.state.build.workPath);
+                        },
+                    },
                     createWebModulesTask(),
                     createNativeModulesTask({ noNativeModules }),
                     {
