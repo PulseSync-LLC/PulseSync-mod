@@ -28,7 +28,7 @@ export const vibePerformanceSchema = defineSettingsSection({
       min: 1,
       max: (context) =>
         Math.max(
-          context.api?.getDisplayMaxFps() ?? 60,
+          context.displayMaxFps,
           context.getNumber(`${PREFIX}maxFPS`),
         ),
       step: 1,

@@ -26,6 +26,7 @@ import type { SettingsSectionSchema } from './types'
 
 type SettingsRenderProps = {
   api: ModSettingsApi | undefined
+  displayMaxFps: number
   onRestartRequired: () => void
 }
 
@@ -43,9 +44,10 @@ function schemaSection(
   return {
     id,
     label,
-    render: ({ api, onRestartRequired }) => (
+    render: ({ api, displayMaxFps, onRestartRequired }) => (
       <SchemaSettingsSection
         api={api}
+        displayMaxFps={displayMaxFps}
         schema={schema}
         onRestartRequired={onRestartRequired}
       />
