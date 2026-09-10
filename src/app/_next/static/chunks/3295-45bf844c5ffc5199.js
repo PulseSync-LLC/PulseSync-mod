@@ -59,6 +59,7 @@
                     this.invoke(c.UPDATE_LAYOUT, { isMobile: d });
                 }
                 updateRuntimeSettings(d) {
+                    if (Object.prototype.hasOwnProperty.call(d, 'animationVariant')) this.animationVariant = d.animationVariant === 'ncs' ? 'ncs' : 'vibe';
                     this.invoke(c.UPDATE_RUNTIME_SETTINGS, d);
                 }
                 enable() {
@@ -90,14 +91,15 @@
                         this.onError && this.worker.removeEventListener('error', this.onError),
                         this.worker.terminate();
                 }
-                constructor({ offscreenCanvas: d, state: l, collectionHue: X, fps: maxFps, resolution: resolution, shaderOptions: G, onError: b, onMessage: Z }) {
+                constructor({ offscreenCanvas: d, state: l, collectionHue: X, fps: maxFps, resolution: resolution, animationVariant, shaderOptions: G, onError: b, onMessage: Z }) {
+                    this.animationVariant = animationVariant === 'ncs' ? 'ncs' : 'vibe';
                     (0, V._)(this, 'worker', void 0),
                         (0, V._)(this, 'onMessage', void 0),
                         (0, V._)(this, 'onError', void 0),
                         (this.worker = new W()),
                         Z && ((this.onMessage = Z), this.worker.addEventListener('message', this.onMessage)),
                         b && ((this.onError = b), this.worker.addEventListener('error', this.onError)),
-                        this.invoke(c.INIT, { canvas: d, state: l, collectionHue: X, fps: maxFps, resolution: resolution, shaderOptions: G }, [d]);
+                        this.invoke(c.INIT, { canvas: d, state: l, collectionHue: X, fps: maxFps, resolution: resolution, animationVariant: this.animationVariant, shaderOptions: G }, [d]);
                 }
             }
             let s = 25,

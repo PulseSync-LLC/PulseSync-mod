@@ -26,6 +26,7 @@ type StoredItemBase = {
   defaultValue: StoredSettingValue
   description?: Resolvable<string | undefined>
   disabledWhen?: (context: SettingsSchemaContext) => boolean
+  hiddenWhen?: (context: SettingsSchemaContext) => boolean
   key: string
   onApplied?: (
     value: StoredSettingValue,
