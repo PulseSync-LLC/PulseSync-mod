@@ -7800,11 +7800,59 @@
             var tt = a(90369),
                 eZStorage = a(19379);
             class ta {
-                getAverageFrequencies(e) {
+                getNcsSpectrumSnapshot(volumeCompensation) {
+                    const graph = this.currentGraph;
+                    if (!graph?.analyserNode) return null;
+                    this.ncsAnalysers ??= new WeakMap();
+                    let analysis = this.ncsAnalysers.get(graph);
+                    if (!analysis) {
+                        // Separate FFT keeps the existing Vibe/RMS path unchanged.
+                        // 4096 samples resolve the 100 Hz reactor at about 11 Hz.
+                        const node = graph.context.createAnalyser();
+                        node.fftSize = 4096;
+                        node.smoothingTimeConstant = 0;
+                        graph.analyserNode.connect(node);
+                        analysis = { node, buffer: new Float32Array(node.frequencyBinCount) };
+                        this.ncsAnalysers.set(graph, analysis);
+                    }
+                    const { node, buffer } = analysis;
+                    const gain = volumeCompensation ?? this.getVolumeCompensation();
+                    node.getFloatFrequencyData(buffer);
+                    const gainDb = gain > 0 ? 20 * Math.log10(gain) : 0;
+                    for (let bin = 0; bin < buffer.length; bin++) {
+                        const db = buffer[bin];
+                        buffer[bin] = gain > 0 && Number.isFinite(db) ? Math.pow(10, (db - gainDb) / 20) : 0;
+                    }
+                    // The worker receives a clone; the analyser reuses this buffer.
+                    return { linearSpectrum: buffer, sampleRate: graph.context.sampleRate, fftSize: node.fftSize };
+                }
+                getSpectrumSnapshot(volumeCompensation) {
+                    if (!this.currentGraph?.analyserNode) return null;
+                    const { context, analyserNode } = this.currentGraph;
+                    const length = analyserNode.frequencyBinCount;
+                    const frequencies = this.frequencyDomainBuffer.length === length ? this.frequencyDomainBuffer : (this.frequencyDomainBuffer = new Float32Array(length));
+                    const spectrum = this.normalizedSpectrum.length === length ? this.normalizedSpectrum : (this.normalizedSpectrum = new Float32Array(length));
+                    const gain = volumeCompensation ?? this.getVolumeCompensation();
+                    analyserNode.getFloatFrequencyData(frequencies);
+                    // Undo linear gain in dB BEFORE clipping/quantizing the FFT.
+                    // Keep the existing 0..255 worker contract, at float precision.
+                    const gainDb = gain > 0 ? 20 * Math.log10(gain) : 0;
+                    const range = analyserNode.maxDecibels - analyserNode.minDecibels;
+                    for (let bin = 0; bin < length; bin++) {
+                        const db = frequencies[bin];
+                        spectrum[bin] = gain > 0 && Number.isFinite(db)
+                            ? 255 * Math.max(0, Math.min(1, (db - gainDb - analyserNode.minDecibels) / range))
+                            : 0;
+                    }
+                    // postMessage clones the buffer; it must never be transferred.
+                    return { spectrum, sampleRate: context.sampleRate, fftSize: analyserNode.fftSize };
+                }
+                getAverageFrequencies(e, snapshot = this.getSpectrumSnapshot()) {
                     if (null === this.currentGraph) return [];
-                    let { analyserNode: t, spectrum: a, bufferLength: r, context: i } = this.currentGraph;
+                    let { analyserNode: t, bufferLength: r, context: i } = this.currentGraph;
                     if (!t) throw new z.t('No analyser node has been created');
-                    t.getByteFrequencyData(a);
+                    const a = snapshot?.spectrum;
+                    if (!a) return [];
                     let s = i.sampleRate / t.fftSize,
                         n = 0,
                         o = e.map((e) => {
@@ -7831,6 +7879,9 @@
                     return t > 0.01 ? t : 0;
                 };
                 getVolumeCompensation() {
+                    const audioElement = this.currentGraph?.audioElement;
+                    if (audioElement?.muted) return 0;
+                    if (Number.isFinite(audioElement?.volume)) return Math.max(0, Math.min(1, audioElement.volume));
                     let e = 1;
                     try {
                         e = JSON.parse(window.localStorage.getItem(eZStorage.c.YmPlayerVolume))?.value ?? 1;
@@ -7842,12 +7893,12 @@
                     let { analyserNode: t } = this.currentGraph;
                     if (!t) return 0;
                     let a = t.fftSize,
-                        i = this.timeDomainBuffer.length === a ? this.timeDomainBuffer : (this.timeDomainBuffer = new Uint8Array(a));
-                    t.getByteTimeDomainData(i);
+                        i = this.timeDomainBuffer.length === a ? this.timeDomainBuffer : (this.timeDomainBuffer = new Float32Array(a));
+                    t.getFloatTimeDomainData(i);
                     let r = 0,
                         n = volumeCompensation ?? this.getVolumeCompensation();
                     for (let e = 0; e < a; e++) {
-                        let t = 0 !== n ? (i[e] - 128) / 128 / n : 0;
+                        let t = n > 0 && Number.isFinite(i[e]) ? i[e] / n : 0;
                         r += t * t;
                     }
                     let l = 2 * Math.sqrt(r / a);
@@ -7868,8 +7919,8 @@
                         n = volumeCompensation ?? this.getVolumeCompensation();
                     for (let e = 0; e < a; e++) {
                         let t = i[e];
-                        if (t === -1 / 0) continue;
-                        let s = 0 !== n ? Math.pow(10, t / 20) / n : 0;
+                        if (!Number.isFinite(t)) continue;
+                        let s = n > 0 ? Math.pow(10, t / 20) / n : 0;
                         r += s * s;
                     }
                     let l = 120 * Math.sqrt(r / a);
@@ -7882,8 +7933,9 @@
                 constructor({ currentAudioElement: e, graphs: t }) {
                     (0, L._)(this, 'currentGraph', null),
                         (0, L._)(this, 'graphs', void 0),
-                        (0, L._)(this, 'timeDomainBuffer', new Uint8Array()),
+                        (0, L._)(this, 'timeDomainBuffer', new Float32Array()),
                         (0, L._)(this, 'frequencyDomainBuffer', new Float32Array()),
+                        (0, L._)(this, 'normalizedSpectrum', new Float32Array()),
                         (0, L._)(this, '_prevTimeRms', void 0),
                         (0, L._)(this, '_prevFrequencyRms', void 0),
                         (this.graphs = t),
@@ -8391,7 +8443,9 @@
                 }
                 createAnalyzerNode(e) {
                     let t = e.createAnalyser();
-                    return (t.fftSize = 1024), (t.smoothingTimeConstant = 0.4), t;
+                    // Smooth compensated values in the visualizer, not raw FFT
+                    // magnitudes: otherwise volume changes leave a false envelope.
+                    return (t.fftSize = 1024), (t.smoothingTimeConstant = 0), t;
                 }
                 checkAndResumeAudioContext(e) {
                     let t = () => {

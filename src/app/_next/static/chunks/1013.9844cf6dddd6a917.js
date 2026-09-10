@@ -230,13 +230,14 @@
                     (0, L.d)({ handleTrackLike: T, shouldCheckVibeContext: !1 });
                     let W = (0, o.c)(() => {
                         if (!(null == I ? void 0 : I.analyser)) return;
+                        const volumeCompensation = I.analyser.getVolumeCompensation();
+                        const spectrumSnapshot = I.analyser.getSpectrumSnapshot(volumeCompensation);
                         let [e, t, i] = I.analyser.getAverageFrequencies([
                             { low: 20, high: 250 },
                             { low: 250, high: 2500 },
                             { low: 2500, high: 12000 },
-                        ]);
-                        let volumeCompensation = I.analyser.getVolumeCompensation(),
-                            rms = I.analyser.getRMS(volumeCompensation),
+                        ], spectrumSnapshot);
+                        let rms = I.analyser.getRMS(volumeCompensation),
                             rmsAlt = I.analyser.getRMSAlt(volumeCompensation),
                             measuredEnergy = 0.7 * rms + 0.3 * rmsAlt,
                             rawEnergy = Number.isFinite(measuredEnergy) ? Math.max(0, measuredEnergy) : 0,
@@ -249,7 +250,12 @@
                             energyNormalized = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? energy : (w?.entityMeta?.trackParameters?.energy ?? 1);
                         dynamicEnergyRef.current = smoothedEnergy,
                             null == c || c.updateEnergy(energyNormalized),
-                            null == c || c.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != i ? i : 0 });
+                            null == c || c.updateAudioFrequencies({
+                                low: null != e ? e : 0,
+                                middle: null != t ? t : 0,
+                                high: null != i ? i : 0,
+                                ...(c.animationVariant === 'ncs' ? { ...I.analyser.getNcsSpectrumSnapshot(volumeCompensation), rms: rawEnergy } : null),
+                            });
                         try {
                             window.dispatchEvent(
                                 new CustomEvent('vibe:energy', {
@@ -276,6 +282,7 @@
                                 shaderOptions: k,
                                 fps: window.VIBE_ANIMATION_MAX_FPS?.() ?? 25,
                                 resolution: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.canvasResolution') ?? 650,
+                                animationVariant: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.animationVariant'),
                                 onMessage: P,
                                 onError: M,
                             }),
@@ -328,6 +335,7 @@
                             if ('modSettings.vibeAnimationEnhancement.disableRendering' === t) return void (i ? c?.disable() : c?.enable());
                             if ('modSettings.vibeAnimationEnhancement.maxFPS' === t) return void c?.updateRuntimeSettings({ fps: Number(i) });
                             if ('modSettings.vibeAnimationEnhancement.canvasResolution' === t) return void c?.updateRuntimeSettings({ resolution: Number(i) });
+                            if ('modSettings.vibeAnimationEnhancement.animationVariant' === t) return void c?.updateRuntimeSettings({ animationVariant: i });
                             if ('modSettings.vibeAnimationEnhancement.useVibeWidgetColors' !== t) return;
                             let n = w.entityMeta?.trackParameters?.hue;
                             Q()
