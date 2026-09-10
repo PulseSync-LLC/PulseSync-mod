@@ -412,9 +412,12 @@ const installNonPremiumTitlebarBrandingGuard = () => {
 const loadedWorkers = new Map();
 
 const loadWorker = (workerName) => {
-    const workerPath = path.join(__dirname, 'workers', `${path.parse(workerName).name}.js`);
-    const code = fs.readFileSync(workerPath);
-    loadedWorkers.set(workerName, code.toString('utf-8'));
+    const name = path.parse(workerName).name;
+    // Blob workers cannot resolve relative imports. Load the NCS module before
+    // the shared animation runtime, including when the initial variant is Vibe.
+    const sources = name === 'vibeAnimation' ? ['ncsAnimation', name] : [name];
+    const code = sources.map((source) => fs.readFileSync(path.join(__dirname, 'workers', `${source}.js`), 'utf-8')).join('\n;\n');
+    loadedWorkers.set(workerName, code);
 };
 
 registerNativeStoreUpdateCacheSync();

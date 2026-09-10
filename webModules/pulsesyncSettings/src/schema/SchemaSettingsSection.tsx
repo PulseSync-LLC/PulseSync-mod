@@ -117,9 +117,11 @@ export function SchemaSettingsSection({
     }
 
     let active = true
+    const updatedKeys = new Set<string>()
     const unsubscribes = descriptors.map((descriptor) =>
       api.onModSettingChange(descriptor.key, (value) => {
         if (!active) return
+        updatedKeys.add(descriptor.key)
         setValues((current) => ({
           ...current,
           [descriptor.key]: normalizeValue(value, descriptor.defaultValue),
@@ -136,7 +138,7 @@ export function SchemaSettingsSection({
       void api
         .getModSetting(descriptor.key)
         .then((value) => {
-          if (!active) return
+          if (!active || updatedKeys.has(descriptor.key)) return
           setValues((current) => ({
             ...current,
             [descriptor.key]: normalizeValue(value, descriptor.defaultValue),
@@ -248,7 +250,10 @@ export function SchemaSettingsSection({
   )
 
   const context = createContext()
-  const renderedItems: SettingsSchemaItem[] = schema.items.map((item) => {
+  const visibleItems = schema.items.filter(
+    (item) => !isStoredItem(item) || !item.hiddenWhen?.(context),
+  )
+  const renderedItems: SettingsSchemaItem[] = visibleItems.map((item) => {
     if (item.type === 'heading') return item
     if (item.type === 'note')
       return { ...item, text: resolve(item.text, context) }

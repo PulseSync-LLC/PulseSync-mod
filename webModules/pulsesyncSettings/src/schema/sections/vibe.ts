@@ -4,6 +4,9 @@ const PREFIX = 'modSettings.vibeAnimationEnhancement.'
 const DISABLE_RENDERING_KEY = `${PREFIX}disableRendering`
 const USE_DYNAMIC_ENERGY_KEY = `${PREFIX}useDynamicEnergy`
 const SMOOTH_DYNAMIC_ENERGY_KEY = `${PREFIX}smoothDynamicEnergy`
+const ANIMATION_VARIANT_KEY = `${PREFIX}animationVariant`
+
+export type AnimationVariant = 'vibe' | 'ncs' | undefined
 
 const animationDisabled = (context: {
   getBoolean: (key: string) => boolean
@@ -11,6 +14,7 @@ const animationDisabled = (context: {
 
 export const vibePerformanceSchema = defineSettingsSection({
   title: 'Производительность Моей Волны',
+  watch: [{ key: ANIMATION_VARIANT_KEY, defaultValue: null }],
   items: [
     {
       type: 'toggle',
@@ -40,7 +44,12 @@ export const vibePerformanceSchema = defineSettingsSection({
       key: `${PREFIX}canvasResolution`,
       defaultValue: 650,
       title: 'Разрешение анимации Волны',
-      options: [
+      // Values identify the saved quality preset; the NCS worker maps its size.
+      options: (context) => context.get(ANIMATION_VARIANT_KEY) === 'ncs' ? [
+        { value: '300', label: 'Низкое', description: '700x700' },
+        { value: '650', label: 'Среднее', description: '1400x1400. По умолчанию' },
+        { value: '1400', label: 'Высокое', description: '2000x2000' },
+      ] : [
         { value: '300', label: 'Низкое', description: '300x300' },
         {
           value: '650',
@@ -58,6 +67,22 @@ export const vibeAppearanceSchema = defineSettingsSection({
   title: 'Вид анимации Волны',
   watch: [{ key: DISABLE_RENDERING_KEY, defaultValue: false }],
   items: [
+    {
+      type: 'select',
+      key: ANIMATION_VARIANT_KEY,
+      // Preserve absence: opening settings must not opt users into this control.
+      defaultValue: null,
+      title: 'Вариант анимации',
+      options: [
+        { value: 'vibe', label: 'Волна' },
+        { value: 'ncs', label: 'NCS', description: 'Сфера из частиц, реагирующая на музыку' },
+      ],
+      hiddenWhen: (context) => {
+        const value = context.get(ANIMATION_VARIANT_KEY)
+        return value !== 'vibe' && value !== 'ncs'
+      },
+      disabledWhen: animationDisabled,
+    },
     {
       type: 'toggle',
       key: `${PREFIX}useVibeWidgetColors`,

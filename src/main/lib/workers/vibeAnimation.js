@@ -96,9 +96,9 @@
             return t.length
                 ? this.copy(t)
                 : ((function (t, e, i, s) {
-                      (t[0] = e), (t[1] = i), (t[2] = s);
-                  })(this, t, e, i),
-                  this);
+                    (t[0] = e), (t[1] = i), (t[2] = s);
+                })(this, t, e, i),
+                    this);
         }
         copy(t) {
             return i(this, t), this;
@@ -127,11 +127,11 @@
         distance(t) {
             return t
                 ? (function (t, e) {
-                      let i = e[0] - t[0],
-                          s = e[1] - t[1],
-                          r = e[2] - t[2];
-                      return Math.sqrt(i * i + s * s + r * r);
-                  })(this, t)
+                    let i = e[0] - t[0],
+                        s = e[1] - t[1],
+                        r = e[2] - t[2];
+                    return Math.sqrt(i * i + s * s + r * r);
+                })(this, t)
                 : e(this);
         }
         squaredLen() {
@@ -140,11 +140,11 @@
         squaredDistance(t) {
             return t
                 ? (function (t, e) {
-                      let i = e[0] - t[0],
-                          s = e[1] - t[1],
-                          r = e[2] - t[2];
-                      return i * i + s * s + r * r;
-                  })(this, t)
+                    let i = e[0] - t[0],
+                        s = e[1] - t[1],
+                        r = e[2] - t[2];
+                    return i * i + s * s + r * r;
+                })(this, t)
                 : a(this);
         }
         negate(t = this) {
@@ -175,7 +175,7 @@
                         n = e[2];
                     (t[0] = s * i[0] + r * i[3] + n * i[6]), (t[1] = s * i[1] + r * i[4] + n * i[7]), (t[2] = s * i[2] + r * i[5] + n * i[8]);
                 })(this, this, t),
-                this
+                    this
             );
         }
         applyMatrix4(t) {
@@ -190,7 +190,7 @@
                         (t[1] = (i[1] * s + i[5] * r + i[9] * n + i[13]) / a),
                         (t[2] = (i[2] * s + i[6] * r + i[10] * n + i[14]) / a);
                 })(this, this, t),
-                this
+                    this
             );
         }
         scaleRotateMatrix4(t) {
@@ -205,7 +205,7 @@
                         (t[1] = (i[1] * s + i[5] * r + i[9] * n) / a),
                         (t[2] = (i[2] * s + i[6] * r + i[10] * n) / a);
                 })(this, this, t),
-                this
+                    this
             );
         }
         applyQuaternion(t) {
@@ -226,7 +226,7 @@
                         m = 2 * i[3];
                     (l *= m), (u *= m), (c *= m), (d *= 2), (g *= 2), (p *= 2), (t[0] = s + l + d), (t[1] = r + u + g), (t[2] = n + c + p);
                 })(this, this, t),
-                this
+                    this
             );
         }
         angle(t) {
@@ -240,7 +240,7 @@
                         a = e[2];
                     (t[0] = r + s * (i[0] - r)), (t[1] = n + s * (i[1] - n)), (t[2] = a + s * (i[2] - a));
                 })(this, this, t, e),
-                this
+                    this
             );
         }
         smoothLerp(t, e, i) {
@@ -252,7 +252,7 @@
                         o = e[2];
                     (t[0] = i[0] + (a - i[0]) * n), (t[1] = i[1] + (h - i[1]) * n), (t[2] = i[2] + (o - i[2]) * n);
                 })(this, this, t, e, i),
-                this
+                    this
             );
         }
         clone() {
@@ -292,25 +292,25 @@
         addAttribute(t, e) {
             if (
                 ((this.attributes[t] = e),
-                (e.id = p++),
-                (e.size = e.size || 1),
-                (e.type =
-                    e.type || (e.data.constructor === Float32Array ? this.gl.FLOAT : e.data.constructor === Uint16Array ? this.gl.UNSIGNED_SHORT : this.gl.UNSIGNED_INT)),
-                (e.target = 'index' === t ? this.gl.ELEMENT_ARRAY_BUFFER : this.gl.ARRAY_BUFFER),
-                (e.normalized = e.normalized || !1),
-                (e.stride = e.stride || 0),
-                (e.offset = e.offset || 0),
-                (e.count = e.count || (e.stride ? e.data.byteLength / e.stride : e.data.length / e.size)),
-                (e.divisor = e.instanced || 0),
-                (e.needsUpdate = !1),
-                (e.usage = e.usage || this.gl.STATIC_DRAW),
+                    (e.id = p++),
+                    (e.size = e.size || 1),
+                    (e.type =
+                        e.type || (e.data.constructor === Float32Array ? this.gl.FLOAT : e.data.constructor === Uint16Array ? this.gl.UNSIGNED_SHORT : this.gl.UNSIGNED_INT)),
+                    (e.target = 'index' === t ? this.gl.ELEMENT_ARRAY_BUFFER : this.gl.ARRAY_BUFFER),
+                    (e.normalized = e.normalized || !1),
+                    (e.stride = e.stride || 0),
+                    (e.offset = e.offset || 0),
+                    (e.count = e.count || (e.stride ? e.data.byteLength / e.stride : e.data.length / e.size)),
+                    (e.divisor = e.instanced || 0),
+                    (e.needsUpdate = !1),
+                    (e.usage = e.usage || this.gl.STATIC_DRAW),
                 e.buffer || this.updateAttribute(e),
-                e.divisor)
+                    e.divisor)
             ) {
                 if (((this.isInstanced = !0), this.instancedCount && this.instancedCount !== e.count * e.divisor))
                     return (
                         console.warn('geometry has multiple instanced buffers of different length'),
-                        (this.instancedCount = Math.min(this.instancedCount, e.count * e.divisor))
+                            (this.instancedCount = Math.min(this.instancedCount, e.count * e.divisor))
                     );
                 this.instancedCount = e.count * e.divisor;
             } else 'index' === t ? (this.drawRange.count = e.count) : this.attributes.index || (this.drawRange.count = Math.max(this.drawRange.count, e.count));
@@ -318,7 +318,7 @@
         updateAttribute(t) {
             const e = !t.buffer;
             e && (t.buffer = this.gl.createBuffer()),
-                this.glState.boundBuffer !== t.buffer && (this.gl.bindBuffer(t.target, t.buffer), (this.glState.boundBuffer = t.buffer)),
+            this.glState.boundBuffer !== t.buffer && (this.gl.bindBuffer(t.target, t.buffer), (this.glState.boundBuffer = t.buffer)),
                 e ? this.gl.bufferData(t.target, t.data, t.usage) : this.gl.bufferSubData(t.target, 0, t.data),
                 (t.needsUpdate = !1);
         }
@@ -349,11 +349,11 @@
                         this.gl.enableVertexAttribArray(t + e),
                         this.gl.renderer.vertexAttribDivisor(t + e, s.divisor);
             }),
-                this.attributes.index && this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.attributes.index.buffer);
+            this.attributes.index && this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.attributes.index.buffer);
         }
         draw({ program: t, mode: e = this.gl.TRIANGLES }) {
             this.gl.renderer.currentGeometry !== `${this.id}_${t.attributeOrder}` &&
-                (this.VAOs[t.attributeOrder] || this.createVAO(t),
+            (this.VAOs[t.attributeOrder] || this.createVAO(t),
                 this.gl.renderer.bindVertexArray(this.VAOs[t.attributeOrder]),
                 (this.gl.renderer.currentGeometry = `${this.id}_${t.attributeOrder}`)),
                 t.attributeLocations.forEach((t, { name: e }) => {
@@ -365,16 +365,16 @@
                 this.isInstanced
                     ? this.attributes.index
                         ? this.gl.renderer.drawElementsInstanced(
-                              e,
-                              this.drawRange.count,
-                              this.attributes.index.type,
-                              this.attributes.index.offset + this.drawRange.start * i,
-                              this.instancedCount,
-                          )
+                            e,
+                            this.drawRange.count,
+                            this.attributes.index.type,
+                            this.attributes.index.offset + this.drawRange.start * i,
+                            this.instancedCount,
+                        )
                         : this.gl.renderer.drawArraysInstanced(e, this.drawRange.start, this.drawRange.count, this.instancedCount)
                     : this.attributes.index
-                      ? this.gl.drawElements(e, this.drawRange.count, this.attributes.index.type, this.attributes.index.offset + this.drawRange.start * i)
-                      : this.gl.drawArrays(e, this.drawRange.start, this.drawRange.count);
+                        ? this.gl.drawElements(e, this.drawRange.count, this.attributes.index.type, this.attributes.index.offset + this.drawRange.start * i)
+                        : this.gl.drawArrays(e, this.drawRange.start, this.drawRange.count);
         }
         getPosition() {
             const t = this.attributes.position;
@@ -438,8 +438,8 @@
                 (this.gl = t),
                 (this.uniforms = s),
                 (this.id = v++),
-                e || console.warn('vertex shader not supplied'),
-                i || console.warn('fragment shader not supplied'),
+            e || console.warn('vertex shader not supplied'),
+            i || console.warn('fragment shader not supplied'),
                 (this.transparent = r),
                 (this.cullFace = n),
                 (this.frontFace = a),
@@ -450,11 +450,11 @@
                 (this.blendEquation = {}),
                 (this.stencilFunc = {}),
                 (this.stencilOp = {}),
-                this.transparent &&
-                    !this.blendFunc.src &&
-                    (this.gl.renderer.premultipliedAlpha
-                        ? this.setBlendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA)
-                        : this.setBlendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA)),
+            this.transparent &&
+            !this.blendFunc.src &&
+            (this.gl.renderer.premultipliedAlpha
+                ? this.setBlendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA)
+                : this.setBlendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA)),
                 (this.vertexShader = t.createShader(t.VERTEX_SHADER)),
                 (this.fragmentShader = t.createShader(t.FRAGMENT_SHADER)),
                 (this.program = t.createProgram()),
@@ -465,15 +465,15 @@
         setShaders({ vertex: t, fragment: e }) {
             if (
                 (t &&
-                    (this.gl.shaderSource(this.vertexShader, t),
+                (this.gl.shaderSource(this.vertexShader, t),
                     this.gl.compileShader(this.vertexShader),
-                    '' !== this.gl.getShaderInfoLog(this.vertexShader) && console.warn(`${this.gl.getShaderInfoLog(this.vertexShader)}\nVertex Shader\n${A(t)}`)),
+                '' !== this.gl.getShaderInfoLog(this.vertexShader) && console.warn(`${this.gl.getShaderInfoLog(this.vertexShader)}\nVertex Shader\n${A(t)}`)),
                 e &&
-                    (this.gl.shaderSource(this.fragmentShader, e),
+                (this.gl.shaderSource(this.fragmentShader, e),
                     this.gl.compileShader(this.fragmentShader),
-                    '' !== this.gl.getShaderInfoLog(this.fragmentShader) && console.warn(`${this.gl.getShaderInfoLog(this.fragmentShader)}\nFragment Shader\n${A(e)}`)),
-                this.gl.linkProgram(this.program),
-                !this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS))
+                '' !== this.gl.getShaderInfoLog(this.fragmentShader) && console.warn(`${this.gl.getShaderInfoLog(this.fragmentShader)}\nFragment Shader\n${A(e)}`)),
+                    this.gl.linkProgram(this.program),
+                    !this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS))
             )
                 return console.warn(this.gl.getProgramInfoLog(this.program));
             this.uniformLocations = new Map();
@@ -510,11 +510,11 @@
             this.depthTest ? this.gl.renderer.enable(this.gl.DEPTH_TEST) : this.gl.renderer.disable(this.gl.DEPTH_TEST),
                 this.cullFace ? this.gl.renderer.enable(this.gl.CULL_FACE) : this.gl.renderer.disable(this.gl.CULL_FACE),
                 this.blendFunc.src ? this.gl.renderer.enable(this.gl.BLEND) : this.gl.renderer.disable(this.gl.BLEND),
-                this.cullFace && this.gl.renderer.setCullFace(this.cullFace),
+            this.cullFace && this.gl.renderer.setCullFace(this.cullFace),
                 this.gl.renderer.setFrontFace(this.frontFace),
                 this.gl.renderer.setDepthMask(this.depthWrite),
                 this.gl.renderer.setDepthFunc(this.depthFunc),
-                this.blendFunc.src && this.gl.renderer.setBlendFunc(this.blendFunc.src, this.blendFunc.dst, this.blendFunc.srcAlpha, this.blendFunc.dstAlpha),
+            this.blendFunc.src && this.gl.renderer.setBlendFunc(this.blendFunc.src, this.blendFunc.dst, this.blendFunc.srcAlpha, this.blendFunc.dstAlpha),
                 this.gl.renderer.setBlendEquation(this.blendEquation.modeRGB, this.blendEquation.modeAlpha),
                 this.stencilFunc.func || this.stencilOp.stencilFail ? this.gl.renderer.enable(this.gl.STENCIL_TEST) : this.gl.renderer.disable(this.gl.STENCIL_TEST),
                 this.gl.renderer.setStencilFunc(this.stencilFunc.func, this.stencilFunc.ref, this.stencilFunc.mask),
@@ -543,30 +543,33 @@
                             s.value.forEach((t) => {
                                 (e += 1), t.update(e), r.push(e);
                             }),
-                            E(this.gl, i.type, t, r)
+                                E(this.gl, i.type, t, r)
                         );
                     }
                     E(this.gl, i.type, t, s.value);
                 }),
                 this.applyState(),
-                t && this.gl.renderer.setFrontFace(this.frontFace === this.gl.CCW ? this.gl.CW : this.gl.CCW);
+            t && this.gl.renderer.setFrontFace(this.frontFace === this.gl.CCW ? this.gl.CW : this.gl.CCW);
         }
         remove() {
             this.gl.deleteProgram(this.program);
+            this.gl.deleteShader(this.vertexShader);
+            this.gl.deleteShader(this.fragmentShader);
+            this.uniformLocations?.forEach((location) => this.gl.renderer.state.uniformLocations.delete(location));
         }
     }
     function E(t, e, i, s) {
         s = s.length
             ? (function (t) {
-                  const e = t.length,
-                      i = t[0].length;
-                  if (void 0 === i) return t;
-                  const s = e * i;
-                  let r = x[s];
-                  r || (x[s] = r = new Float32Array(s));
-                  for (let s = 0; s < e; s++) r.set(t[s], s * i);
-                  return r;
-              })(s)
+                const e = t.length,
+                    i = t[0].length;
+                if (void 0 === i) return t;
+                const s = e * i;
+                let r = x[s];
+                r || (x[s] = r = new Float32Array(s));
+                for (let s = 0; s < e; s++) r.set(t[s], s * i);
+                return r;
+            })(s)
             : s;
         const r = t.renderer.state.uniformLocations.get(i);
         if (s.length)
@@ -583,8 +586,8 @@
                 r.set
                     ? r.set(s)
                     : (function (t, e) {
-                          for (let i = 0, s = t.length; i < s; i++) t[i] = e[i];
-                      })(r, s),
+                        for (let i = 0, s = t.length; i < s; i++) t[i] = e[i];
+                    })(r, s),
                     t.renderer.state.uniformLocations.set(i, r);
             }
         else {
@@ -660,10 +663,10 @@
                 (this.premultipliedAlpha = o),
                 (this.autoClear = c),
                 (this.id = S++),
-                2 === d && (this.gl = t.getContext('webgl2', g)),
+            2 === d && (this.gl = t.getContext('webgl2', g)),
                 (this.isWebgl2 = !!this.gl),
-                this.gl || (this.gl = t.getContext('webgl', g)),
-                this.gl || console.error('unable to create webgl context'),
+            this.gl || (this.gl = t.getContext('webgl', g)),
+            this.gl || console.error('unable to create webgl context'),
                 (this.gl.renderer = this),
                 this.setSize(e, i),
                 (this.state = {}),
@@ -687,14 +690,14 @@
                 this.isWebgl2
                     ? (this.getExtension('EXT_color_buffer_float'), this.getExtension('OES_texture_float_linear'))
                     : (this.getExtension('OES_texture_float'),
-                      this.getExtension('OES_texture_float_linear'),
-                      this.getExtension('OES_texture_half_float'),
-                      this.getExtension('OES_texture_half_float_linear'),
-                      this.getExtension('OES_element_index_uint'),
-                      this.getExtension('OES_standard_derivatives'),
-                      this.getExtension('EXT_sRGB'),
-                      this.getExtension('WEBGL_depth_texture'),
-                      this.getExtension('WEBGL_draw_buffers')),
+                        this.getExtension('OES_texture_float_linear'),
+                        this.getExtension('OES_texture_half_float'),
+                        this.getExtension('OES_texture_half_float_linear'),
+                        this.getExtension('OES_element_index_uint'),
+                        this.getExtension('OES_standard_derivatives'),
+                        this.getExtension('EXT_sRGB'),
+                        this.getExtension('WEBGL_depth_texture'),
+                        this.getExtension('WEBGL_draw_buffers')),
                 this.getExtension('WEBGL_compressed_texture_astc'),
                 this.getExtension('EXT_texture_compression_bptc'),
                 this.getExtension('WEBGL_compressed_texture_s3tc'),
@@ -719,11 +722,11 @@
                 (this.height = e),
                 (this.gl.canvas.width = t * this.dpr),
                 (this.gl.canvas.height = e * this.dpr),
-                this.gl.canvas.style && Object.assign(this.gl.canvas.style, { width: t + 'px', height: e + 'px' });
+            this.gl.canvas.style && Object.assign(this.gl.canvas.style, { width: t + 'px', height: e + 'px' });
         }
         setViewport(t, e, i = 0, s = 0) {
             (this.state.viewport.width === t && this.state.viewport.height === e) ||
-                ((this.state.viewport.width = t),
+            ((this.state.viewport.width = t),
                 (this.state.viewport.height = e),
                 (this.state.viewport.x = i),
                 (this.state.viewport.y = s),
@@ -740,7 +743,7 @@
         }
         setBlendFunc(t, e, i, s) {
             (this.state.blendFunc.src === t && this.state.blendFunc.dst === e && this.state.blendFunc.srcAlpha === i && this.state.blendFunc.dstAlpha === s) ||
-                ((this.state.blendFunc.src = t),
+            ((this.state.blendFunc.src = t),
                 (this.state.blendFunc.dst = e),
                 (this.state.blendFunc.srcAlpha = i),
                 (this.state.blendFunc.dstAlpha = s),
@@ -748,10 +751,10 @@
         }
         setBlendEquation(t, e) {
             (t = t || this.gl.FUNC_ADD),
-                (this.state.blendEquation.modeRGB === t && this.state.blendEquation.modeAlpha === e) ||
-                    ((this.state.blendEquation.modeRGB = t),
-                    (this.state.blendEquation.modeAlpha = e),
-                    void 0 !== e ? this.gl.blendEquationSeparate(t, e) : this.gl.blendEquation(t));
+            (this.state.blendEquation.modeRGB === t && this.state.blendEquation.modeAlpha === e) ||
+            ((this.state.blendEquation.modeRGB = t),
+                (this.state.blendEquation.modeAlpha = e),
+                void 0 !== e ? this.gl.blendEquationSeparate(t, e) : this.gl.blendEquation(t));
         }
         setCullFace(t) {
             this.state.cullFace !== t && ((this.state.cullFace = t), this.gl.cullFace(t));
@@ -770,14 +773,14 @@
         }
         setStencilFunc(t, e, i) {
             (this.state.stencilFunc === t && this.state.stencilRef === e && this.state.stencilFuncMask === i) ||
-                ((this.state.stencilFunc = t || this.gl.ALWAYS),
+            ((this.state.stencilFunc = t || this.gl.ALWAYS),
                 (this.state.stencilRef = e || 0),
                 (this.state.stencilFuncMask = i || 0),
                 this.gl.stencilFunc(t || this.gl.ALWAYS, e || 0, i || 0));
         }
         setStencilOp(t, e, i) {
             (this.state.stencilFail === t && this.state.stencilDepthFail === e && this.state.stencilDepthPass === i) ||
-                ((this.state.stencilFail = t), (this.state.stencilDepthFail = e), (this.state.stencilDepthPass = i), this.gl.stencilOp(t, e, i));
+            ((this.state.stencilFail = t), (this.state.stencilDepthFail = e), (this.state.stencilDepthPass = i), this.gl.stencilOp(t, e, i));
         }
         activeTexture(t) {
             this.state.activeTextureUnit !== t && ((this.state.activeTextureUnit = t), this.gl.activeTexture(this.gl.TEXTURE0 + t));
@@ -789,16 +792,16 @@
             return e && this.gl[e]
                 ? this.gl[e].bind(this.gl)
                 : (this.extensions[t] || (this.extensions[t] = this.gl.getExtension(t)),
-                  e ? (this.extensions[t] ? this.extensions[t][i].bind(this.extensions[t]) : null) : this.extensions[t]);
+                    e ? (this.extensions[t] ? this.extensions[t][i].bind(this.extensions[t]) : null) : this.extensions[t]);
         }
         sortOpaque(t, e) {
             return t.renderOrder !== e.renderOrder
                 ? t.renderOrder - e.renderOrder
                 : t.program.id !== e.program.id
-                  ? t.program.id - e.program.id
-                  : t.zDepth !== e.zDepth
-                    ? t.zDepth - e.zDepth
-                    : e.id - t.id;
+                    ? t.program.id - e.program.id
+                    : t.zDepth !== e.zDepth
+                        ? t.zDepth - e.zDepth
+                        : e.id - t.id;
         }
         sortTransparent(t, e) {
             return t.renderOrder !== e.renderOrder ? t.renderOrder - e.renderOrder : t.zDepth !== e.zDepth ? e.zDepth - t.zDepth : e.id - t.id;
@@ -810,11 +813,11 @@
             let r = [];
             if (
                 (e && i && e.updateFrustum(),
-                t.traverse((t) => {
-                    if (!t.visible) return !0;
-                    t.draw && ((i && t.frustumCulled && e && !e.frustumIntersectsMesh(t)) || r.push(t));
-                }),
-                s)
+                    t.traverse((t) => {
+                        if (!t.visible) return !0;
+                        t.draw && ((i && t.frustumCulled && e && !e.frustumIntersectsMesh(t)) || r.push(t));
+                    }),
+                    s)
             ) {
                 const t = [],
                     i = [],
@@ -822,7 +825,7 @@
                 r.forEach((r) => {
                     r.program.transparent ? (r.program.depthTest ? i.push(r) : s.push(r)) : t.push(r),
                         (r.zDepth = 0),
-                        0 === r.renderOrder && r.program.depthTest && e && (r.worldMatrix.getTranslation(_), _.applyMatrix4(e.projectionViewMatrix), (r.zDepth = _.z));
+                    0 === r.renderOrder && r.program.depthTest && e && (r.worldMatrix.getTranslation(_), _.applyMatrix4(e.projectionViewMatrix), (r.zDepth = _.z));
                 }),
                     t.sort(this.sortOpaque),
                     i.sort(this.sortTransparent),
@@ -835,14 +838,14 @@
             null === i
                 ? (this.bindFramebuffer(), this.setViewport(this.width * this.dpr, this.height * this.dpr))
                 : (this.bindFramebuffer(i), this.setViewport(i.width, i.height)),
-                (a || (this.autoClear && !1 !== a)) &&
-                    (!this.depth || (i && !i.depth) || (this.enable(this.gl.DEPTH_TEST), this.setDepthMask(!0)),
-                    (this.stencil || !i || i.stencil) && (this.enable(this.gl.STENCIL_TEST), this.setStencilMask(255)),
-                    this.gl.clear(
-                        (this.color ? this.gl.COLOR_BUFFER_BIT : 0) | (this.depth ? this.gl.DEPTH_BUFFER_BIT : 0) | (this.stencil ? this.gl.STENCIL_BUFFER_BIT : 0),
-                    )),
-                s && t.updateMatrixWorld(),
-                e && e.updateMatrixWorld();
+            (a || (this.autoClear && !1 !== a)) &&
+            (!this.depth || (i && !i.depth) || (this.enable(this.gl.DEPTH_TEST), this.setDepthMask(!0)),
+            (this.stencil || !i || i.stencil) && (this.enable(this.gl.STENCIL_TEST), this.setStencilMask(255)),
+                this.gl.clear(
+                    (this.color ? this.gl.COLOR_BUFFER_BIT : 0) | (this.depth ? this.gl.DEPTH_BUFFER_BIT : 0) | (this.stencil ? this.gl.STENCIL_BUFFER_BIT : 0),
+                )),
+            s && t.updateMatrixWorld(),
+            e && e.updateMatrixWorld();
             this.getRenderList({ scene: t, camera: e, frustumCull: n, sort: r }).forEach((t) => {
                 t.draw({ camera: e });
             });
@@ -859,10 +862,10 @@
             u = i[3];
         return (
             (t[0] = s * u + a * h + r * l - n * o),
-            (t[1] = r * u + a * o + n * h - s * l),
-            (t[2] = n * u + a * l + s * o - r * h),
-            (t[3] = a * u - s * h - r * o - n * l),
-            t
+                (t[1] = r * u + a * o + n * h - s * l),
+                (t[2] = n * u + a * l + s * o - r * h),
+                (t[3] = a * u - s * h - r * o - n * l),
+                t
         );
     }
     const R = function (t, e) {
@@ -936,8 +939,8 @@
                         o = Math.cos(i);
                     (t[0] = s * o + a * h), (t[1] = r * o + n * h), (t[2] = n * o - r * h), (t[3] = a * o - s * h);
                 })(this._target, this._target, t),
-                this.onChange(),
-                this
+                    this.onChange(),
+                    this
             );
         }
         rotateY(t) {
@@ -952,8 +955,8 @@
                         o = Math.cos(i);
                     (t[0] = s * o - n * h), (t[1] = r * o + a * h), (t[2] = n * o + s * h), (t[3] = a * o - r * h);
                 })(this._target, this._target, t),
-                this.onChange(),
-                this
+                    this.onChange(),
+                    this
             );
         }
         rotateZ(t) {
@@ -968,8 +971,8 @@
                         o = Math.cos(i);
                     (t[0] = s * o + r * h), (t[1] = r * o - s * h), (t[2] = n * o + a * h), (t[3] = a * o - n * h);
                 })(this._target, this._target, t),
-                this.onChange(),
-                this
+                    this.onChange(),
+                    this
             );
         }
         inverse(t = this._target) {
@@ -983,8 +986,8 @@
                         h = a ? 1 / a : 0;
                     (t[0] = -i * h), (t[1] = -s * h), (t[2] = -r * h), (t[3] = n * h);
                 })(this._target, t),
-                this.onChange(),
-                this
+                    this.onChange(),
+                    this
             );
         }
         conjugate(t = this._target) {
@@ -1023,8 +1026,8 @@
                             (t[n] = (e[3 * n + s] + e[3 * s + n]) * i);
                     }
                 })(this._target, t),
-                this.onChange(),
-                this
+                    this.onChange(),
+                    this
             );
         }
         fromEuler(t, e) {
@@ -1039,18 +1042,18 @@
                     'XYZ' === i
                         ? ((t[0] = s * a * o + r * n * h), (t[1] = r * n * o - s * a * h), (t[2] = r * a * h + s * n * o), (t[3] = r * a * o - s * n * h))
                         : 'YXZ' === i
-                          ? ((t[0] = s * a * o + r * n * h), (t[1] = r * n * o - s * a * h), (t[2] = r * a * h - s * n * o), (t[3] = r * a * o + s * n * h))
-                          : 'ZXY' === i
-                            ? ((t[0] = s * a * o - r * n * h), (t[1] = r * n * o + s * a * h), (t[2] = r * a * h + s * n * o), (t[3] = r * a * o - s * n * h))
-                            : 'ZYX' === i
-                              ? ((t[0] = s * a * o - r * n * h), (t[1] = r * n * o + s * a * h), (t[2] = r * a * h - s * n * o), (t[3] = r * a * o + s * n * h))
-                              : 'YZX' === i
-                                ? ((t[0] = s * a * o + r * n * h), (t[1] = r * n * o + s * a * h), (t[2] = r * a * h - s * n * o), (t[3] = r * a * o - s * n * h))
-                                : 'XZY' === i &&
-                                  ((t[0] = s * a * o - r * n * h), (t[1] = r * n * o - s * a * h), (t[2] = r * a * h + s * n * o), (t[3] = r * a * o + s * n * h));
+                            ? ((t[0] = s * a * o + r * n * h), (t[1] = r * n * o - s * a * h), (t[2] = r * a * h - s * n * o), (t[3] = r * a * o + s * n * h))
+                            : 'ZXY' === i
+                                ? ((t[0] = s * a * o - r * n * h), (t[1] = r * n * o + s * a * h), (t[2] = r * a * h + s * n * o), (t[3] = r * a * o - s * n * h))
+                                : 'ZYX' === i
+                                    ? ((t[0] = s * a * o - r * n * h), (t[1] = r * n * o + s * a * h), (t[2] = r * a * h - s * n * o), (t[3] = r * a * o + s * n * h))
+                                    : 'YZX' === i
+                                        ? ((t[0] = s * a * o + r * n * h), (t[1] = r * n * o + s * a * h), (t[2] = r * a * h - s * n * o), (t[3] = r * a * o - s * n * h))
+                                        : 'XZY' === i &&
+                                        ((t[0] = s * a * o - r * n * h), (t[1] = r * n * o - s * a * h), (t[2] = r * a * h + s * n * o), (t[3] = r * a * o + s * n * h));
                 })(this._target, t, t.order),
                 e || this.onChange(),
-                this
+                    this
             );
         }
         fromAxisAngle(t, e) {
@@ -1060,8 +1063,8 @@
                     let s = Math.sin(i);
                     (t[0] = s * e[0]), (t[1] = s * e[1]), (t[2] = s * e[2]), (t[3] = Math.cos(i));
                 })(this._target, t, e),
-                this.onChange(),
-                this
+                    this.onChange(),
+                    this
             );
         }
         slerp(t, e) {
@@ -1081,15 +1084,15 @@
                         m = i[2],
                         f = i[3];
                     (n = l * g + u * p + c * m + d * f),
-                        n < 0 && ((n = -n), (g = -g), (p = -p), (m = -m), (f = -f)),
+                    n < 0 && ((n = -n), (g = -g), (p = -p), (m = -m), (f = -f)),
                         1 - n > 1e-6 ? ((r = Math.acos(n)), (a = Math.sin(r)), (h = Math.sin((1 - s) * r) / a), (o = Math.sin(s * r) / a)) : ((h = 1 - s), (o = s)),
                         (t[0] = h * l + o * g),
                         (t[1] = h * u + o * p),
                         (t[2] = h * c + o * m),
                         (t[3] = h * d + o * f);
                 })(this._target, this._target, t, e),
-                this.onChange(),
-                this
+                    this.onChange(),
+                    this
             );
         }
         fromArray(t, e = 0) {
@@ -1148,34 +1151,34 @@
             y = i[3];
         return (
             (t[0] = b * s + E * h + A * c + y * m),
-            (t[1] = b * r + E * o + A * d + y * f),
-            (t[2] = b * n + E * l + A * g + y * v),
-            (t[3] = b * a + E * u + A * p + y * x),
-            (b = i[4]),
-            (E = i[5]),
-            (A = i[6]),
-            (y = i[7]),
-            (t[4] = b * s + E * h + A * c + y * m),
-            (t[5] = b * r + E * o + A * d + y * f),
-            (t[6] = b * n + E * l + A * g + y * v),
-            (t[7] = b * a + E * u + A * p + y * x),
-            (b = i[8]),
-            (E = i[9]),
-            (A = i[10]),
-            (y = i[11]),
-            (t[8] = b * s + E * h + A * c + y * m),
-            (t[9] = b * r + E * o + A * d + y * f),
-            (t[10] = b * n + E * l + A * g + y * v),
-            (t[11] = b * a + E * u + A * p + y * x),
-            (b = i[12]),
-            (E = i[13]),
-            (A = i[14]),
-            (y = i[15]),
-            (t[12] = b * s + E * h + A * c + y * m),
-            (t[13] = b * r + E * o + A * d + y * f),
-            (t[14] = b * n + E * l + A * g + y * v),
-            (t[15] = b * a + E * u + A * p + y * x),
-            t
+                (t[1] = b * r + E * o + A * d + y * f),
+                (t[2] = b * n + E * l + A * g + y * v),
+                (t[3] = b * a + E * u + A * p + y * x),
+                (b = i[4]),
+                (E = i[5]),
+                (A = i[6]),
+                (y = i[7]),
+                (t[4] = b * s + E * h + A * c + y * m),
+                (t[5] = b * r + E * o + A * d + y * f),
+                (t[6] = b * n + E * l + A * g + y * v),
+                (t[7] = b * a + E * u + A * p + y * x),
+                (b = i[8]),
+                (E = i[9]),
+                (A = i[10]),
+                (y = i[11]),
+                (t[8] = b * s + E * h + A * c + y * m),
+                (t[9] = b * r + E * o + A * d + y * f),
+                (t[10] = b * n + E * l + A * g + y * v),
+                (t[11] = b * a + E * u + A * p + y * x),
+                (b = i[12]),
+                (E = i[13]),
+                (A = i[14]),
+                (y = i[15]),
+                (t[12] = b * s + E * h + A * c + y * m),
+                (t[13] = b * r + E * o + A * d + y * f),
+                (t[14] = b * n + E * l + A * g + y * v),
+                (t[15] = b * a + E * u + A * p + y * x),
+                t
         );
     }
     function k(t, e) {
@@ -1213,54 +1216,54 @@
                 f > 0
                     ? ((v = 2 * Math.sqrt(f + 1)), (e[3] = 0.25 * v), (e[0] = (d - p) / v), (e[1] = (g - l) / v), (e[2] = (o - u) / v))
                     : h > c && h > m
-                      ? ((v = 2 * Math.sqrt(1 + h - c - m)), (e[3] = (d - p) / v), (e[0] = 0.25 * v), (e[1] = (o + u) / v), (e[2] = (g + l) / v))
-                      : c > m
-                        ? ((v = 2 * Math.sqrt(1 + c - h - m)), (e[3] = (g - l) / v), (e[0] = (o + u) / v), (e[1] = 0.25 * v), (e[2] = (d + p) / v))
-                        : ((v = 2 * Math.sqrt(1 + m - h - c)), (e[3] = (o - u) / v), (e[0] = (g + l) / v), (e[1] = (d + p) / v), (e[2] = 0.25 * v)),
-                e
+                        ? ((v = 2 * Math.sqrt(1 + h - c - m)), (e[3] = (d - p) / v), (e[0] = 0.25 * v), (e[1] = (o + u) / v), (e[2] = (g + l) / v))
+                        : c > m
+                            ? ((v = 2 * Math.sqrt(1 + c - h - m)), (e[3] = (g - l) / v), (e[0] = (o + u) / v), (e[1] = 0.25 * v), (e[2] = (d + p) / v))
+                            : ((v = 2 * Math.sqrt(1 + m - h - c)), (e[3] = (o - u) / v), (e[0] = (g + l) / v), (e[1] = (d + p) / v), (e[2] = 0.25 * v)),
+                    e
             );
         };
     })();
     function N(t, e, i) {
         return (
             (t[0] = e[0] + i[0]),
-            (t[1] = e[1] + i[1]),
-            (t[2] = e[2] + i[2]),
-            (t[3] = e[3] + i[3]),
-            (t[4] = e[4] + i[4]),
-            (t[5] = e[5] + i[5]),
-            (t[6] = e[6] + i[6]),
-            (t[7] = e[7] + i[7]),
-            (t[8] = e[8] + i[8]),
-            (t[9] = e[9] + i[9]),
-            (t[10] = e[10] + i[10]),
-            (t[11] = e[11] + i[11]),
-            (t[12] = e[12] + i[12]),
-            (t[13] = e[13] + i[13]),
-            (t[14] = e[14] + i[14]),
-            (t[15] = e[15] + i[15]),
-            t
+                (t[1] = e[1] + i[1]),
+                (t[2] = e[2] + i[2]),
+                (t[3] = e[3] + i[3]),
+                (t[4] = e[4] + i[4]),
+                (t[5] = e[5] + i[5]),
+                (t[6] = e[6] + i[6]),
+                (t[7] = e[7] + i[7]),
+                (t[8] = e[8] + i[8]),
+                (t[9] = e[9] + i[9]),
+                (t[10] = e[10] + i[10]),
+                (t[11] = e[11] + i[11]),
+                (t[12] = e[12] + i[12]),
+                (t[13] = e[13] + i[13]),
+                (t[14] = e[14] + i[14]),
+                (t[15] = e[15] + i[15]),
+                t
         );
     }
     function D(t, e, i) {
         return (
             (t[0] = e[0] - i[0]),
-            (t[1] = e[1] - i[1]),
-            (t[2] = e[2] - i[2]),
-            (t[3] = e[3] - i[3]),
-            (t[4] = e[4] - i[4]),
-            (t[5] = e[5] - i[5]),
-            (t[6] = e[6] - i[6]),
-            (t[7] = e[7] - i[7]),
-            (t[8] = e[8] - i[8]),
-            (t[9] = e[9] - i[9]),
-            (t[10] = e[10] - i[10]),
-            (t[11] = e[11] - i[11]),
-            (t[12] = e[12] - i[12]),
-            (t[13] = e[13] - i[13]),
-            (t[14] = e[14] - i[14]),
-            (t[15] = e[15] - i[15]),
-            t
+                (t[1] = e[1] - i[1]),
+                (t[2] = e[2] - i[2]),
+                (t[3] = e[3] - i[3]),
+                (t[4] = e[4] - i[4]),
+                (t[5] = e[5] - i[5]),
+                (t[6] = e[6] - i[6]),
+                (t[7] = e[7] - i[7]),
+                (t[8] = e[8] - i[8]),
+                (t[9] = e[9] - i[9]),
+                (t[10] = e[10] - i[10]),
+                (t[11] = e[11] - i[11]),
+                (t[12] = e[12] - i[12]),
+                (t[13] = e[13] - i[13]),
+                (t[14] = e[14] - i[14]),
+                (t[15] = e[15] - i[15]),
+                t
         );
     }
     class P extends Array {
@@ -1295,24 +1298,24 @@
             return t.length
                 ? this.copy(t)
                 : ((function (t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, m, f) {
-                      (t[0] = e),
-                          (t[1] = i),
-                          (t[2] = s),
-                          (t[3] = r),
-                          (t[4] = n),
-                          (t[5] = a),
-                          (t[6] = h),
-                          (t[7] = o),
-                          (t[8] = l),
-                          (t[9] = u),
-                          (t[10] = c),
-                          (t[11] = d),
-                          (t[12] = g),
-                          (t[13] = p),
-                          (t[14] = m),
-                          (t[15] = f);
-                  })(this, t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, m),
-                  this);
+                    (t[0] = e),
+                        (t[1] = i),
+                        (t[2] = s),
+                        (t[3] = r),
+                        (t[4] = n),
+                        (t[5] = a),
+                        (t[6] = h),
+                        (t[7] = o),
+                        (t[8] = l),
+                        (t[9] = u),
+                        (t[10] = c),
+                        (t[11] = d),
+                        (t[12] = g),
+                        (t[13] = p),
+                        (t[14] = m),
+                        (t[15] = f);
+                })(this, t, e, i, s, r, n, a, h, o, l, u, c, d, g, p, m),
+                    this);
         }
         translate(t, e = this) {
             return (
@@ -1334,39 +1337,39 @@
                         v = i[2];
                     e === t
                         ? ((t[12] = e[0] * m + e[4] * f + e[8] * v + e[12]),
-                          (t[13] = e[1] * m + e[5] * f + e[9] * v + e[13]),
-                          (t[14] = e[2] * m + e[6] * f + e[10] * v + e[14]),
-                          (t[15] = e[3] * m + e[7] * f + e[11] * v + e[15]))
+                            (t[13] = e[1] * m + e[5] * f + e[9] * v + e[13]),
+                            (t[14] = e[2] * m + e[6] * f + e[10] * v + e[14]),
+                            (t[15] = e[3] * m + e[7] * f + e[11] * v + e[15]))
                         : ((s = e[0]),
-                          (r = e[1]),
-                          (n = e[2]),
-                          (a = e[3]),
-                          (h = e[4]),
-                          (o = e[5]),
-                          (l = e[6]),
-                          (u = e[7]),
-                          (c = e[8]),
-                          (d = e[9]),
-                          (g = e[10]),
-                          (p = e[11]),
-                          (t[0] = s),
-                          (t[1] = r),
-                          (t[2] = n),
-                          (t[3] = a),
-                          (t[4] = h),
-                          (t[5] = o),
-                          (t[6] = l),
-                          (t[7] = u),
-                          (t[8] = c),
-                          (t[9] = d),
-                          (t[10] = g),
-                          (t[11] = p),
-                          (t[12] = s * m + h * f + c * v + e[12]),
-                          (t[13] = r * m + o * f + d * v + e[13]),
-                          (t[14] = n * m + l * f + g * v + e[14]),
-                          (t[15] = a * m + u * f + p * v + e[15]));
+                            (r = e[1]),
+                            (n = e[2]),
+                            (a = e[3]),
+                            (h = e[4]),
+                            (o = e[5]),
+                            (l = e[6]),
+                            (u = e[7]),
+                            (c = e[8]),
+                            (d = e[9]),
+                            (g = e[10]),
+                            (p = e[11]),
+                            (t[0] = s),
+                            (t[1] = r),
+                            (t[2] = n),
+                            (t[3] = a),
+                            (t[4] = h),
+                            (t[5] = o),
+                            (t[6] = l),
+                            (t[7] = u),
+                            (t[8] = c),
+                            (t[9] = d),
+                            (t[10] = g),
+                            (t[11] = p),
+                            (t[12] = s * m + h * f + c * v + e[12]),
+                            (t[13] = r * m + o * f + d * v + e[13]),
+                            (t[14] = n * m + l * f + g * v + e[14]),
+                            (t[15] = a * m + u * f + p * v + e[15]));
                 })(this, e, t),
-                this
+                    this
             );
         }
         rotate(t, e, i = this) {
@@ -1401,7 +1404,7 @@
                         F = s[2],
                         I = Math.hypot(R, T, F);
                     Math.abs(I) < 1e-6 ||
-                        ((I = 1 / I),
+                    ((I = 1 / I),
                         (R *= I),
                         (T *= I),
                         (F *= I),
@@ -1441,9 +1444,9 @@
                         (t[9] = o * S + d * w + f * C),
                         (t[10] = l * S + g * w + v * C),
                         (t[11] = u * S + p * w + x * C),
-                        e !== t && ((t[12] = e[12]), (t[13] = e[13]), (t[14] = e[14]), (t[15] = e[15])));
+                    e !== t && ((t[12] = e[12]), (t[13] = e[13]), (t[14] = e[14]), (t[15] = e[15])));
                 })(this, i, t, e),
-                this
+                    this
             );
         }
         scale(t, e = this) {
@@ -1469,7 +1472,7 @@
                         (t[14] = e[14]),
                         (t[15] = e[15]);
                 })(this, e, 'number' == typeof t ? [t, t, t] : t),
-                this
+                    this
             );
         }
         add(t, e) {
@@ -1486,69 +1489,69 @@
                         ? z(this, t, e)
                         : z(this, this, t)
                     : ((s = this),
-                      (r = t),
-                      ((i = this)[0] = s[0] * r),
-                      (i[1] = s[1] * r),
-                      (i[2] = s[2] * r),
-                      (i[3] = s[3] * r),
-                      (i[4] = s[4] * r),
-                      (i[5] = s[5] * r),
-                      (i[6] = s[6] * r),
-                      (i[7] = s[7] * r),
-                      (i[8] = s[8] * r),
-                      (i[9] = s[9] * r),
-                      (i[10] = s[10] * r),
-                      (i[11] = s[11] * r),
-                      (i[12] = s[12] * r),
-                      (i[13] = s[13] * r),
-                      (i[14] = s[14] * r),
-                      (i[15] = s[15] * r)),
-                this
+                        (r = t),
+                        ((i = this)[0] = s[0] * r),
+                        (i[1] = s[1] * r),
+                        (i[2] = s[2] * r),
+                        (i[3] = s[3] * r),
+                        (i[4] = s[4] * r),
+                        (i[5] = s[5] * r),
+                        (i[6] = s[6] * r),
+                        (i[7] = s[7] * r),
+                        (i[8] = s[8] * r),
+                        (i[9] = s[9] * r),
+                        (i[10] = s[10] * r),
+                        (i[11] = s[11] * r),
+                        (i[12] = s[12] * r),
+                        (i[13] = s[13] * r),
+                        (i[14] = s[14] * r),
+                        (i[15] = s[15] * r)),
+                    this
             );
         }
         identity() {
             var t;
             return (
                 ((t = this)[0] = 1),
-                (t[1] = 0),
-                (t[2] = 0),
-                (t[3] = 0),
-                (t[4] = 0),
-                (t[5] = 1),
-                (t[6] = 0),
-                (t[7] = 0),
-                (t[8] = 0),
-                (t[9] = 0),
-                (t[10] = 1),
-                (t[11] = 0),
-                (t[12] = 0),
-                (t[13] = 0),
-                (t[14] = 0),
-                (t[15] = 1),
-                this
+                    (t[1] = 0),
+                    (t[2] = 0),
+                    (t[3] = 0),
+                    (t[4] = 0),
+                    (t[5] = 1),
+                    (t[6] = 0),
+                    (t[7] = 0),
+                    (t[8] = 0),
+                    (t[9] = 0),
+                    (t[10] = 1),
+                    (t[11] = 0),
+                    (t[12] = 0),
+                    (t[13] = 0),
+                    (t[14] = 0),
+                    (t[15] = 1),
+                    this
             );
         }
         copy(t) {
             var e, i;
             return (
                 (i = t),
-                ((e = this)[0] = i[0]),
-                (e[1] = i[1]),
-                (e[2] = i[2]),
-                (e[3] = i[3]),
-                (e[4] = i[4]),
-                (e[5] = i[5]),
-                (e[6] = i[6]),
-                (e[7] = i[7]),
-                (e[8] = i[8]),
-                (e[9] = i[9]),
-                (e[10] = i[10]),
-                (e[11] = i[11]),
-                (e[12] = i[12]),
-                (e[13] = i[13]),
-                (e[14] = i[14]),
-                (e[15] = i[15]),
-                this
+                    ((e = this)[0] = i[0]),
+                    (e[1] = i[1]),
+                    (e[2] = i[2]),
+                    (e[3] = i[3]),
+                    (e[4] = i[4]),
+                    (e[5] = i[5]),
+                    (e[6] = i[6]),
+                    (e[7] = i[7]),
+                    (e[8] = i[8]),
+                    (e[9] = i[9]),
+                    (e[10] = i[10]),
+                    (e[11] = i[11]),
+                    (e[12] = i[12]),
+                    (e[13] = i[13]),
+                    (e[14] = i[14]),
+                    (e[15] = i[15]),
+                    this
             );
         }
         fromPerspective({ fov: t, aspect: e, near: i, far: s } = {}) {
@@ -1573,7 +1576,7 @@
                         (t[14] = 2 * r * s * a),
                         (t[15] = 0);
                 })(this, t, e, i, s),
-                this
+                    this
             );
         }
         fromOrthogonal({ left: t, right: e, bottom: i, top: s, near: r, far: n }) {
@@ -1599,7 +1602,7 @@
                         (t[14] = (a + n) * l),
                         (t[15] = 1);
                 })(this, t, e, i, s, r, n),
-                this
+                    this
             );
         }
         fromQuaternion(t) {
@@ -1638,7 +1641,7 @@
                         (t[14] = 0),
                         (t[15] = 1);
                 })(this, t),
-                this
+                    this
             );
         }
         setPosition(t) {
@@ -1677,7 +1680,7 @@
                         T = d * v - g * f,
                         F = x * T - b * R + E * C + A * w - y * S + M * _;
                     F &&
-                        ((F = 1 / F),
+                    ((F = 1 / F),
                         (t[0] = (h * T - o * R + l * C) * F),
                         (t[1] = (r * R - s * T - n * C) * F),
                         (t[2] = (m * M - f * y + v * A) * F),
@@ -1695,7 +1698,7 @@
                         (t[14] = (m * b - p * A - f * x) * F),
                         (t[15] = (u * A - c * b + d * x) * F));
                 })(this, t),
-                this
+                    this
             );
         }
         compose(t, e, i) {
@@ -1738,7 +1741,7 @@
                         (r[14] = i[2]),
                         (r[15] = 1);
                 })(this, t, e, i),
-                this
+                    this
             );
         }
         decompose(t, i, s) {
@@ -1766,7 +1769,7 @@
                         (r[1] = a),
                         (r[2] = h);
                 })(this, t, i, s),
-                this
+                    this
             );
         }
         getRotation(t) {
@@ -1814,8 +1817,8 @@
                         m = l * u - h * d,
                         f = h * c - o * u;
                     (g = p * p + m * m + f * f),
-                        0 === g &&
-                            (l ? (h += 1e-6) : o ? (l += 1e-6) : (o += 1e-6), (p = o * d - l * c), (m = l * u - h * d), (f = h * c - o * u), (g = p * p + m * m + f * f)),
+                    0 === g &&
+                    (l ? (h += 1e-6) : o ? (l += 1e-6) : (o += 1e-6), (p = o * d - l * c), (m = l * u - h * d), (f = h * c - o * u), (g = p * p + m * m + f * f)),
                         (g = 1 / Math.sqrt(g)),
                         (p *= g),
                         (m *= g),
@@ -1837,7 +1840,7 @@
                         (t[14] = a),
                         (t[15] = 1);
                 })(this, t, e, i),
-                this
+                    this
             );
         }
         determinant() {
@@ -1846,43 +1849,43 @@
         fromArray(t, e = 0) {
             return (
                 (this[0] = t[e]),
-                (this[1] = t[e + 1]),
-                (this[2] = t[e + 2]),
-                (this[3] = t[e + 3]),
-                (this[4] = t[e + 4]),
-                (this[5] = t[e + 5]),
-                (this[6] = t[e + 6]),
-                (this[7] = t[e + 7]),
-                (this[8] = t[e + 8]),
-                (this[9] = t[e + 9]),
-                (this[10] = t[e + 10]),
-                (this[11] = t[e + 11]),
-                (this[12] = t[e + 12]),
-                (this[13] = t[e + 13]),
-                (this[14] = t[e + 14]),
-                (this[15] = t[e + 15]),
-                this
+                    (this[1] = t[e + 1]),
+                    (this[2] = t[e + 2]),
+                    (this[3] = t[e + 3]),
+                    (this[4] = t[e + 4]),
+                    (this[5] = t[e + 5]),
+                    (this[6] = t[e + 6]),
+                    (this[7] = t[e + 7]),
+                    (this[8] = t[e + 8]),
+                    (this[9] = t[e + 9]),
+                    (this[10] = t[e + 10]),
+                    (this[11] = t[e + 11]),
+                    (this[12] = t[e + 12]),
+                    (this[13] = t[e + 13]),
+                    (this[14] = t[e + 14]),
+                    (this[15] = t[e + 15]),
+                    this
             );
         }
         toArray(t = [], e = 0) {
             return (
                 (t[e] = this[0]),
-                (t[e + 1] = this[1]),
-                (t[e + 2] = this[2]),
-                (t[e + 3] = this[3]),
-                (t[e + 4] = this[4]),
-                (t[e + 5] = this[5]),
-                (t[e + 6] = this[6]),
-                (t[e + 7] = this[7]),
-                (t[e + 8] = this[8]),
-                (t[e + 9] = this[9]),
-                (t[e + 10] = this[10]),
-                (t[e + 11] = this[11]),
-                (t[e + 12] = this[12]),
-                (t[e + 13] = this[13]),
-                (t[e + 14] = this[14]),
-                (t[e + 15] = this[15]),
-                t
+                    (t[e + 1] = this[1]),
+                    (t[e + 2] = this[2]),
+                    (t[e + 3] = this[3]),
+                    (t[e + 4] = this[4]),
+                    (t[e + 5] = this[5]),
+                    (t[e + 6] = this[6]),
+                    (t[e + 7] = this[7]),
+                    (t[e + 8] = this[8]),
+                    (t[e + 9] = this[9]),
+                    (t[e + 10] = this[10]),
+                    (t[e + 11] = this[11]),
+                    (t[e + 12] = this[12]),
+                    (t[e + 13] = this[13]),
+                    (t[e + 14] = this[14]),
+                    (t[e + 15] = this[15]),
+                    t
             );
         }
     }
@@ -1930,37 +1933,37 @@
                 (function (t, e, i = 'YXZ') {
                     'XYZ' === i
                         ? ((t[1] = Math.asin(Math.min(Math.max(e[8], -1), 1))),
-                          Math.abs(e[8]) < 0.99999
-                              ? ((t[0] = Math.atan2(-e[9], e[10])), (t[2] = Math.atan2(-e[4], e[0])))
-                              : ((t[0] = Math.atan2(e[6], e[5])), (t[2] = 0)))
+                            Math.abs(e[8]) < 0.99999
+                                ? ((t[0] = Math.atan2(-e[9], e[10])), (t[2] = Math.atan2(-e[4], e[0])))
+                                : ((t[0] = Math.atan2(e[6], e[5])), (t[2] = 0)))
                         : 'YXZ' === i
-                          ? ((t[0] = Math.asin(-Math.min(Math.max(e[9], -1), 1))),
-                            Math.abs(e[9]) < 0.99999
-                                ? ((t[1] = Math.atan2(e[8], e[10])), (t[2] = Math.atan2(e[1], e[5])))
-                                : ((t[1] = Math.atan2(-e[2], e[0])), (t[2] = 0)))
-                          : 'ZXY' === i
-                            ? ((t[0] = Math.asin(Math.min(Math.max(e[6], -1), 1))),
-                              Math.abs(e[6]) < 0.99999
-                                  ? ((t[1] = Math.atan2(-e[2], e[10])), (t[2] = Math.atan2(-e[4], e[5])))
-                                  : ((t[1] = 0), (t[2] = Math.atan2(e[1], e[0]))))
-                            : 'ZYX' === i
-                              ? ((t[1] = Math.asin(-Math.min(Math.max(e[2], -1), 1))),
-                                Math.abs(e[2]) < 0.99999
-                                    ? ((t[0] = Math.atan2(e[6], e[10])), (t[2] = Math.atan2(e[1], e[0])))
-                                    : ((t[0] = 0), (t[2] = Math.atan2(-e[4], e[5]))))
-                              : 'YZX' === i
-                                ? ((t[2] = Math.asin(Math.min(Math.max(e[1], -1), 1))),
-                                  Math.abs(e[1]) < 0.99999
-                                      ? ((t[0] = Math.atan2(-e[9], e[5])), (t[1] = Math.atan2(-e[2], e[0])))
-                                      : ((t[0] = 0), (t[1] = Math.atan2(e[8], e[10]))))
-                                : 'XZY' === i &&
-                                  ((t[2] = Math.asin(-Math.min(Math.max(e[4], -1), 1))),
-                                  Math.abs(e[4]) < 0.99999
-                                      ? ((t[0] = Math.atan2(e[6], e[5])), (t[1] = Math.atan2(e[8], e[0])))
-                                      : ((t[0] = Math.atan2(-e[9], e[10])), (t[1] = 0)));
+                            ? ((t[0] = Math.asin(-Math.min(Math.max(e[9], -1), 1))),
+                                Math.abs(e[9]) < 0.99999
+                                    ? ((t[1] = Math.atan2(e[8], e[10])), (t[2] = Math.atan2(e[1], e[5])))
+                                    : ((t[1] = Math.atan2(-e[2], e[0])), (t[2] = 0)))
+                            : 'ZXY' === i
+                                ? ((t[0] = Math.asin(Math.min(Math.max(e[6], -1), 1))),
+                                    Math.abs(e[6]) < 0.99999
+                                        ? ((t[1] = Math.atan2(-e[2], e[10])), (t[2] = Math.atan2(-e[4], e[5])))
+                                        : ((t[1] = 0), (t[2] = Math.atan2(e[1], e[0]))))
+                                : 'ZYX' === i
+                                    ? ((t[1] = Math.asin(-Math.min(Math.max(e[2], -1), 1))),
+                                        Math.abs(e[2]) < 0.99999
+                                            ? ((t[0] = Math.atan2(e[6], e[10])), (t[2] = Math.atan2(e[1], e[0])))
+                                            : ((t[0] = 0), (t[2] = Math.atan2(-e[4], e[5]))))
+                                    : 'YZX' === i
+                                        ? ((t[2] = Math.asin(Math.min(Math.max(e[1], -1), 1))),
+                                            Math.abs(e[1]) < 0.99999
+                                                ? ((t[0] = Math.atan2(-e[9], e[5])), (t[1] = Math.atan2(-e[2], e[0])))
+                                                : ((t[0] = 0), (t[1] = Math.atan2(e[8], e[10]))))
+                                        : 'XZY' === i &&
+                                        ((t[2] = Math.asin(-Math.min(Math.max(e[4], -1), 1))),
+                                            Math.abs(e[4]) < 0.99999
+                                                ? ((t[0] = Math.atan2(e[6], e[5])), (t[1] = Math.atan2(e[8], e[0])))
+                                                : ((t[0] = Math.atan2(-e[9], e[10])), (t[1] = 0)));
                 })(this._target, t, e),
-                this.onChange(),
-                this
+                    this.onChange(),
+                    this
             );
         }
         fromQuaternion(t, e = this.order, i) {
@@ -2001,10 +2004,10 @@
         }
         updateMatrixWorld(t) {
             this.matrixAutoUpdate && this.updateMatrix(),
-                (this.worldMatrixNeedsUpdate || t) &&
-                    (null === this.parent ? this.worldMatrix.copy(this.matrix) : this.worldMatrix.multiply(this.parent.worldMatrix, this.matrix),
-                    (this.worldMatrixNeedsUpdate = !1),
-                    (t = !0));
+            (this.worldMatrixNeedsUpdate || t) &&
+            (null === this.parent ? this.worldMatrix.copy(this.matrix) : this.worldMatrix.multiply(this.parent.worldMatrix, this.matrix),
+                (this.worldMatrixNeedsUpdate = !1),
+                (t = !0));
             for (let e = 0, i = this.children.length; e < i; e++) this.children[e].updateMatrixWorld(t);
         }
         updateMatrix() {
@@ -2043,15 +2046,15 @@
             E = i[8];
         return (
             (t[0] = d * s + g * a + p * l),
-            (t[1] = d * r + g * h + p * u),
-            (t[2] = d * n + g * o + p * c),
-            (t[3] = m * s + f * a + v * l),
-            (t[4] = m * r + f * h + v * u),
-            (t[5] = m * n + f * o + v * c),
-            (t[6] = x * s + b * a + E * l),
-            (t[7] = x * r + b * h + E * u),
-            (t[8] = x * n + b * o + E * c),
-            t
+                (t[1] = d * r + g * h + p * u),
+                (t[2] = d * n + g * o + p * c),
+                (t[3] = m * s + f * a + v * l),
+                (t[4] = m * r + f * h + v * u),
+                (t[5] = m * n + f * o + v * c),
+                (t[6] = x * s + b * a + E * l),
+                (t[7] = x * r + b * h + E * u),
+                (t[8] = x * n + b * o + E * c),
+                t
         );
     }
     class H extends Array {
@@ -2062,9 +2065,9 @@
             return t.length
                 ? this.copy(t)
                 : ((function (t, e, i, s, r, n, a, h, o, l) {
-                      (t[0] = e), (t[1] = i), (t[2] = s), (t[3] = r), (t[4] = n), (t[5] = a), (t[6] = h), (t[7] = o), (t[8] = l);
-                  })(this, t, e, i, s, r, n, a, h, o),
-                  this);
+                    (t[0] = e), (t[1] = i), (t[2] = s), (t[3] = r), (t[4] = n), (t[5] = a), (t[6] = h), (t[7] = o), (t[8] = l);
+                })(this, t, e, i, s, r, n, a, h, o),
+                    this);
         }
         translate(t, e = this) {
             return (
@@ -2090,7 +2093,7 @@
                         (t[7] = d * r + g * h + u),
                         (t[8] = d * n + g * o + c);
                 })(this, e, t),
-                this
+                    this
             );
         }
         rotate(t, e = this) {
@@ -2117,7 +2120,7 @@
                         (t[7] = u),
                         (t[8] = c);
                 })(this, e, t),
-                this
+                    this
             );
         }
         scale(t, e = this) {
@@ -2135,7 +2138,7 @@
                         (t[7] = e[7]),
                         (t[8] = e[8]);
                 })(this, e, t),
-                this
+                    this
             );
         }
         multiply(t, e) {
@@ -2149,32 +2152,32 @@
             var e, i;
             return (
                 (i = t),
-                ((e = this)[0] = i[0]),
-                (e[1] = i[1]),
-                (e[2] = i[2]),
-                (e[3] = i[3]),
-                (e[4] = i[4]),
-                (e[5] = i[5]),
-                (e[6] = i[6]),
-                (e[7] = i[7]),
-                (e[8] = i[8]),
-                this
+                    ((e = this)[0] = i[0]),
+                    (e[1] = i[1]),
+                    (e[2] = i[2]),
+                    (e[3] = i[3]),
+                    (e[4] = i[4]),
+                    (e[5] = i[5]),
+                    (e[6] = i[6]),
+                    (e[7] = i[7]),
+                    (e[8] = i[8]),
+                    this
             );
         }
         fromMatrix4(t) {
             var e, i;
             return (
                 (i = t),
-                ((e = this)[0] = i[0]),
-                (e[1] = i[1]),
-                (e[2] = i[2]),
-                (e[3] = i[4]),
-                (e[4] = i[5]),
-                (e[5] = i[6]),
-                (e[6] = i[8]),
-                (e[7] = i[9]),
-                (e[8] = i[10]),
-                this
+                    ((e = this)[0] = i[0]),
+                    (e[1] = i[1]),
+                    (e[2] = i[2]),
+                    (e[3] = i[4]),
+                    (e[4] = i[5]),
+                    (e[5] = i[6]),
+                    (e[6] = i[8]),
+                    (e[7] = i[9]),
+                    (e[8] = i[10]),
+                    this
             );
         }
         fromQuaternion(t) {
@@ -2206,7 +2209,7 @@
                         (t[5] = g + m),
                         (t[8] = 1 - l - c);
                 })(this, t),
-                this
+                    this
             );
         }
         fromBasis(t, e, i) {
@@ -2229,7 +2232,7 @@
                         g = l * n - a * o,
                         p = i * c + s * d + r * g;
                     p &&
-                        ((p = 1 / p),
+                    ((p = 1 / p),
                         (t[0] = c * p),
                         (t[1] = (-u * s + r * l) * p),
                         (t[2] = (h * s - r * a) * p),
@@ -2240,7 +2243,7 @@
                         (t[7] = (-l * i + s * o) * p),
                         (t[8] = (a * i - s * n) * p));
                 })(this, t),
-                this
+                    this
             );
         }
         getNormalMatrix(t) {
@@ -2276,7 +2279,7 @@
                         T = d * v - g * f,
                         F = x * T - b * R + E * C + A * w - y * S + M * _;
                     F &&
-                        ((F = 1 / F),
+                    ((F = 1 / F),
                         (t[0] = (h * T - o * R + l * C) * F),
                         (t[1] = (o * w - a * T - l * S) * F),
                         (t[2] = (a * R - h * w + l * _) * F),
@@ -2287,7 +2290,7 @@
                         (t[7] = (f * E - p * M - v * b) * F),
                         (t[8] = (p * y - m * E + v * x) * F));
                 })(this, t),
-                this
+                    this
             );
         }
     }
@@ -2295,7 +2298,7 @@
     class Y extends V {
         constructor(t, { geometry: e, program: i, mode: s = t.TRIANGLES, frustumCulled: r = !0, renderOrder: n = 0 } = {}) {
             super(),
-                t.canvas || console.error('gl not passed as first argument to Mesh'),
+            t.canvas || console.error('gl not passed as first argument to Mesh'),
                 (this.gl = t),
                 (this.id = W++),
                 (this.geometry = e),
@@ -2316,15 +2319,15 @@
         }
         draw({ camera: t } = {}) {
             t &&
-                (this.program.uniforms.modelMatrix ||
-                    Object.assign(this.program.uniforms, {
-                        modelMatrix: { value: null },
-                        viewMatrix: { value: null },
-                        modelViewMatrix: { value: null },
-                        normalMatrix: { value: null },
-                        projectionMatrix: { value: null },
-                        cameraPosition: { value: null },
-                    }),
+            (this.program.uniforms.modelMatrix ||
+            Object.assign(this.program.uniforms, {
+                modelMatrix: { value: null },
+                viewMatrix: { value: null },
+                modelViewMatrix: { value: null },
+                normalMatrix: { value: null },
+                projectionMatrix: { value: null },
+                cameraPosition: { value: null },
+            }),
                 (this.program.uniforms.projectionMatrix.value = t.projectionMatrix),
                 (this.program.uniforms.cameraPosition.value = t.worldPosition),
                 (this.program.uniforms.viewMatrix.value = t.viewMatrix),
@@ -2377,9 +2380,9 @@
             return t.length
                 ? this.copy(t)
                 : ((function (t, e, i) {
-                      (t[0] = e), (t[1] = i);
-                  })(this, t, e),
-                  this);
+                    (t[0] = e), (t[1] = i);
+                })(this, t, e),
+                    this);
         }
         copy(t) {
             var e, i;
@@ -2417,10 +2420,10 @@
             return t
                 ? ((e = this), (s = (i = t)[0] - e[0]), (r = i[1] - e[1]), s * s + r * r)
                 : (function (t) {
-                      var e = t[0],
-                          i = t[1];
-                      return e * e + i * i;
-                  })(this);
+                    var e = t[0],
+                        i = t[1];
+                    return e * e + i * i;
+                })(this);
             var e, i, s, r;
         }
         negate(t = this) {
@@ -2456,7 +2459,7 @@
                         r = e[1];
                     (t[0] = i[0] * s + i[4] * r + i[12]), (t[1] = i[1] * s + i[5] * r + i[13]);
                 })(this, this, t),
-                this
+                    this
             );
         }
         lerp(t, e) {
@@ -2466,7 +2469,7 @@
                         n = e[1];
                     (t[0] = r + s * (i[0] - r)), (t[1] = n + s * (i[1] - n));
                 })(this, this, t, e),
-                this
+                    this
             );
         }
         smoothLerp(t, e, i) {
@@ -2477,7 +2480,7 @@
                         h = e[1];
                     (t[0] = i[0] + (a - i[0]) * n), (t[1] = i[1] + (h - i[1]) * n);
                 })(this, this, t, e, i),
-                this
+                    this
             );
         }
         clone() {
@@ -2514,13 +2517,13 @@
                     let x = n * v - r / 2;
                     if (
                         ((t[3 * p + l] = x * d),
-                        (t[3 * p + u] = E * g),
-                        (t[3 * p + c] = a / 2),
-                        (e[3 * p + l] = 0),
-                        (e[3 * p + u] = 0),
-                        (e[3 * p + c] = a >= 0 ? 1 : -1),
-                        (i[2 * p] = n / h),
-                        (i[2 * p + 1] = 1 - b / o),
+                            (t[3 * p + u] = E * g),
+                            (t[3 * p + c] = a / 2),
+                            (e[3 * p + l] = 0),
+                            (e[3 * p + u] = 0),
+                            (e[3 * p + c] = a >= 0 ? 1 : -1),
+                            (i[2 * p] = n / h),
+                            (i[2 * p + 1] = 1 - b / o),
                         b === o || n === h)
                     )
                         continue;
@@ -2761,7 +2764,7 @@ varying highp vec2 textureUv;
 
 uniform vec2 vScreenSize;
 uniform float vScale;
-uniform ${colorType} vColorBackground;
+uniform vec3 vColorBackground;
 uniform vec3 vColor[6];
 uniform vec4 vBlobParams[3];
 uniform float vAudio[3];
@@ -2840,7 +2843,7 @@ void main() {
   float sharedNoise = cachedNoise.r * 2.0 - 1.0;
   float spark = shapeSpark(texture2D(vSparkLut, vec2(sparkTextureX, 0.5)).r);
 
-  ${colorType} color = vColorBackground;
+  ${colorType} color = ${transparent ? 'vec4(vColorBackground, 0.0)' : 'vColorBackground'};
   vec4 blobColor;
 ${blobs}
 
@@ -2891,6 +2894,9 @@ ${blobs}
                     destroy() {
                         gl.deleteFramebuffer(framebuffer);
                         gl.deleteTexture(textureHandle);
+                        renderer.state.textureUnits.forEach((bound, unit) => {
+                            if (bound === texture) renderer.state.textureUnits[unit] = null;
+                        });
                     },
                 };
 
@@ -3043,6 +3049,7 @@ ${blobs}
     class pt {
         isMobile = !1;
         audioFrequencies = null;
+        ncsAudio = new self.PulseSyncNcsAnimation.AudioState();
         background = new c(0, 0, 0);
         baseScale = 1;
         energy = new ut(0.2, 0.2, 250);
@@ -3073,6 +3080,7 @@ ${blobs}
                     vColor: this.toValue(this.color.value),
                     vBlobParams: this.toValue(this.blobParams),
                     vAudio: this.toValue([this.audioLow, this.audioMiddle, this.audioHigh]),
+                    ...this.ncsAudio.uniforms,
                     vReact: this.toValue([this.reactTop.value, this.reactMiddle.value, this.reactBottom.value]),
                 });
         }
@@ -3090,6 +3098,10 @@ ${blobs}
         }
         updateAudioFrequencies(t) {
             this.audioFrequencies = t;
+            this.ncsAudio.updateAudioFrequencies(t);
+        }
+        updateNcsAudio(delta) {
+            this.ncsAudio.update(delta, this.audioRatio.value);
         }
         updateSize() {
             const { width: t, height: e } = this.getDimensions();
@@ -3146,11 +3158,11 @@ ${blobs}
                 this.reactMiddle.next(t),
                 this.reactBottom.next(t),
                 this.updateTime(t),
-                this.audioFrequencies &&
-                    (this.audioRatio.next(t),
-                    (this.audioLow = this.getUpdatedAudioParam(this.audioLow, this.audioFrequencies.low, t, 350) * this.audioRatio.value),
-                    (this.audioMiddle = this.getUpdatedAudioParam(this.audioMiddle, this.audioFrequencies.middle, t, 500) * this.audioRatio.value),
-                    (this.audioHigh = this.getUpdatedAudioParam(this.audioHigh, this.audioFrequencies.high, t, 220) * this.audioRatio.value));
+            this.audioFrequencies &&
+            (this.audioRatio.next(t),
+                (this.audioLow = this.getUpdatedAudioParam(this.audioLow, this.audioFrequencies.low, t, 350) * this.audioRatio.value),
+                (this.audioMiddle = this.getUpdatedAudioParam(this.audioMiddle, this.audioFrequencies.middle, t, 500) * this.audioRatio.value),
+                (this.audioHigh = this.getUpdatedAudioParam(this.audioHigh, this.audioFrequencies.high, t, 220) * this.audioRatio.value));
         }
         get fragmentScale() {
             return this.isMobile ? this.baseScale * this.shaderOptions.canvasSize.mobileScale : this.baseScale * this.shaderOptions.canvasSize.desktopScale;
@@ -3175,25 +3187,26 @@ ${blobs}
             }
         }
         syncUniformValues() {
+            this.ncsAudio.syncUniformValues();
             const t = this.uniformValues,
                 e = t.vScreenSize.value,
                 i = t.vAudio.value,
                 s = t.vReact.value;
             return (
                 this.syncBlobParams(),
-                (e[0] = this.width),
-                (e[1] = this.height),
-                (t.vTime.value = this.time),
-                (t.vScale.value = this.fragmentScale),
-                (t.vColorBackground.value = this.background),
-                (t.vColor.value = this.color.value),
-                (i[0] = this.audioLow),
-                (i[1] = this.audioMiddle),
-                (i[2] = this.audioHigh),
-                (s[0] = this.reactTop.value),
-                (s[1] = this.reactMiddle.value),
-                (s[2] = this.reactBottom.value),
-                t
+                    (e[0] = this.width),
+                    (e[1] = this.height),
+                    (t.vTime.value = this.time),
+                    (t.vScale.value = this.fragmentScale),
+                    (t.vColorBackground.value = this.background),
+                    (t.vColor.value = this.color.value),
+                    (i[0] = this.audioLow),
+                    (i[1] = this.audioMiddle),
+                    (i[2] = this.audioHigh),
+                    (s[0] = this.reactTop.value),
+                    (s[1] = this.reactMiddle.value),
+                    (s[2] = this.reactBottom.value),
+                    t
             );
         }
     }
@@ -3203,6 +3216,9 @@ ${blobs}
     })(mt || (mt = {}));
     class ft {
         isRenderingEnabled = !0;
+        animationVariant = 'vibe';
+        resolution;
+        mobileResolution;
         state;
         shader;
         renderer;
@@ -3211,7 +3227,8 @@ ${blobs}
         canvas;
         shaderOptions;
         uniforms;
-        constructor({ canvas: t, state: e, collectionHue: i, fps: maxFps, resolution: resolution, shaderOptions: s, onError: r }) {
+        constructor({ canvas: t, state: e, collectionHue: i, fps: maxFps, resolution: resolution, animationVariant, shaderOptions: s, onError: r }) {
+            this.animationVariant = animationVariant === 'ncs' ? 'ncs' : 'vibe';
             (this.canvas = t),
                 (this.shaderOptions = ((t) => ({
                     transparent: !1,
@@ -3219,6 +3236,9 @@ ${blobs}
                     canvasSize: { mobileSizePx: 430, desktopSizePx: resolution ?? 650, mobileScale: 0.4, desktopScale: 0.35 },
                     ...t,
                 }))(s));
+            this.resolution = this.shaderOptions.canvasSize.desktopSizePx;
+            this.mobileResolution = this.shaderOptions.canvasSize.mobileSizePx;
+            this.configureResolution();
             try {
                 (this.uniforms = new pt(it(i), this.shaderOptions)),
                     (this.renderer = this.createRenderer()),
@@ -3228,6 +3248,12 @@ ${blobs}
                 ('string' == typeof t || t instanceof Error) && r?.(t);
             }
             (this.state = e ?? mt.DEFAULT), (this.shader = this.createShader());
+        }
+        configureResolution() {
+            const ncs = this.animationVariant === 'ncs';
+            const resolution = ncs ? self.PulseSyncNcsAnimation.getResolution(this.resolution) : this.resolution;
+            this.shaderOptions.canvasSize.desktopSizePx = resolution;
+            this.shaderOptions.canvasSize.mobileSizePx = ncs ? resolution : this.mobileResolution;
         }
         createRenderer() {
             const { width: t, height: e } = this.uniforms?.size ?? {};
@@ -3249,6 +3275,7 @@ ${blobs}
         }
         createShader() {
             if (!this.renderer || !this.uniforms) return;
+            if (this.animationVariant === 'ncs') return this.createNcsShader();
             const renderer = this.renderer,
                 gl = renderer.gl,
                 layerCount = this.isLiteAnimationEnabled ? 2 : 3,
@@ -3319,27 +3346,66 @@ ${blobs}
                 },
             };
         }
+        createNcsShader() {
+            const shader = self.PulseSyncNcsAnimation.createShader({
+                renderer: this.renderer,
+                uniforms: this.uniforms.syncUniformValues(),
+                size: this.uniforms.size,
+                transparent: this.shaderOptions.transparent,
+                lite: this.isLiteAnimationEnabled,
+                graphics: {
+                    Program: b,
+                    Geometry: f,
+                    Plane: J,
+                    Mesh: Y,
+                    Transform: V,
+                    createVertexShader,
+                    createRenderTarget: createCachedRenderTarget,
+                },
+            });
+            this.program = shader.program;
+            return shader;
+        }
         render(t = 1) {
-            this.shader && this.uniforms && (this.uniforms.update(t), this.uniforms.syncUniformValues(), this.shader.render());
+            if (!this.shader || !this.uniforms) return;
+            this.uniforms.update(t);
+            if (this.animationVariant === 'ncs') this.uniforms.updateNcsAudio(t);
+            this.uniforms.syncUniformValues();
+            this.shader.render();
         }
         updateRenderingState() {
             this.isRenderingEnabled ? this.ticker?.start() : this.ticker?.stop();
         }
-        updateRuntimeSettings({ fps: t, resolution: e } = {}) {
+        updateRuntimeSettings(settings = {}) {
+            const { fps: t, resolution: e } = settings;
+            const resolution = Number(e);
+            const resolutionChanged = Number.isFinite(resolution) && resolution > 0;
+            if (resolutionChanged) this.resolution = resolution;
+            let variantChanged = false;
+            if (Object.prototype.hasOwnProperty.call(settings, 'animationVariant')) {
+                const variant = settings.animationVariant === 'ncs' ? 'ncs' : 'vibe';
+                if (variant !== this.animationVariant) {
+                    this.shader?.destroy();
+                    this.shader = null;
+                    this.animationVariant = variant;
+                    this.uniforms.ncsAudio.reset();
+                    variantChanged = true;
+                }
+            }
             const i = Number(t);
             if (Number.isFinite(i) && i > 0 && this.ticker) {
                 this.ticker.stop();
                 this.ticker.fps = i;
                 this.isRenderingEnabled && this.ticker.start();
             }
-            const s = Number(e);
-            if (Number.isFinite(s) && s > 0 && this.uniforms && this.renderer) {
-                this.shaderOptions.canvasSize.desktopSizePx = s;
+            if ((resolutionChanged || variantChanged) && this.uniforms && this.renderer) {
+                this.configureResolution();
                 this.uniforms.updateSize();
                 const { width: t, height: e } = this.uniforms.size;
                 this.renderer.setSize(t, e);
                 this.shader?.setSize(t, e);
             }
+            if (variantChanged) this.shader = this.createShader();
         }
         get isLiteAnimationEnabled() {
             return this.state === mt.LITE;
@@ -3362,14 +3428,14 @@ ${blobs}
                     s && (h.backgroundColor = s),
                     r && (h.baseScale = et(r, 0, 1)),
                     a && (h.customColors = { top: st(a.top), middle: st(a.middle), bottom: st(a.bottom) }),
-                    h
+                        h
                 );
             })(t);
             h ? this.uniforms?.updateCustomColors(h) : e && i && this.uniforms?.updateColor(e, i),
-                s && this.uniforms?.updateEnergy(s),
-                r && this.uniforms?.updateBackgroundColor(r),
-                n && this.uniforms?.updateBaseScale(n),
-                'boolean' == typeof a && this.uniforms?.switchToDefaultHue(a);
+            s && this.uniforms?.updateEnergy(s),
+            r && this.uniforms?.updateBackgroundColor(r),
+            n && this.uniforms?.updateBaseScale(n),
+            'boolean' == typeof a && this.uniforms?.switchToDefaultHue(a);
         }
         likeAnimation() {
             const t = this.uniforms;
