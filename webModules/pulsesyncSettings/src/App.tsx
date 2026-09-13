@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import type { PulseSyncAddonApi } from '../../pulsesyncWebHost/src/contracts';
 import styles from './App.module.scss';
 import { getModSettingsApi } from './api/modSettings';
-import { PULSESYNC_OPEN_SETTINGS_EVENT, PULSESYNC_OPEN_SETTINGS_DEEPLINK_EVENT, PULSESYNC_RESTART_REQUIRED_EVENT } from './events';
+import { PULSESYNC_OPEN_SETTINGS_EVENT, PULSESYNC_OPEN_SETTINGS_DEEPLINK_EVENT } from './events';
 import { useModSetting } from './hooks/useModSetting';
 import { useModalPresence } from './hooks/useModalPresence';
 import { SETTINGS_GROUPS, SETTINGS_SECTIONS, type SettingsSectionId } from './schema/registry';
@@ -60,8 +60,16 @@ function App({ api }: AppProps = {}) {
     const { close, isMounted, isVisible, open } = useModalPresence(import.meta.env.DEV);
     const { value: swapVibeAnimationAndWheel } = useModSetting(modSettingsApi, SWAP_VIBE_ANIMATION_AND_WHEEL_KEY, false);
     const notifyRestartRequired = useCallback(() => {
-        window.dispatchEvent(new CustomEvent(PULSESYNC_RESTART_REQUIRED_EVENT));
-    }, []);
+        if (!api) {
+            console.warn('[PulseSync Settings] API уведомлений недоступен');
+            return;
+        }
+
+        // The native settings page may not be mounted when the mod settings are open.
+        void api.notifications.info('Для применения этой настройки требуется перезапуск приложения').catch((error: unknown) => {
+            api.logger.error('Не удалось показать уведомление о перезапуске', error);
+        });
+    }, [api]);
     const isInMyVibeCategory = MY_VIBE_SECTION_IDS.has(activeSection);
     const shouldRevealMyVibe = isInMyVibeCategory && activeSection !== 'vibe-behavior';
     const shouldOffsetModal = shouldRevealMyVibe && window.location.href === MAIN_PAGE_URL;
