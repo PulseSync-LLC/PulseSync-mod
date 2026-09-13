@@ -1,10 +1,10 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 
-const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
-const devServerOrigin = 'http://127.0.0.1:5173';
+const currentDirectory = path.dirname(fileURLToPath(import.meta.url))
+const devServerOrigin = 'http://127.0.0.1:5173'
 
 export default defineConfig(({ command }) => ({
     plugins: [react()],
@@ -39,4 +39,4 @@ export default defineConfig(({ command }) => ({
             cssFileName: 'host',
         },
     },
-}));
+}))

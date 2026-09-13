@@ -32,7 +32,7 @@ export function createNativeControlsRenderer(tools: NativeControlTools): NativeC
             tooltip = visibleTooltip;
             tooltipNode = tooltip ? tools.createElement(tools.LegacyTooltip, { ...tooltip, key: 'legacy-tooltip', onClose: hideNativeTooltip }) : undefined;
         }
-        nodes = Array.from(entries.values(), entry => entry.node).filter(node => node !== undefined);
+        nodes = Array.from(entries.values(), (entry) => entry.node).filter((node) => node !== undefined);
         if (tooltipNode !== undefined) nodes.push(tooltipNode);
         revision += 1;
         listeners.forEach((listener) => listener());
@@ -73,7 +73,7 @@ export function createNativeControlsRenderer(tools: NativeControlTools): NativeC
     const collect = (node: Node, targets: Set<Element>) => {
         if (!(node instanceof Element) || !node.isConnected) return;
         if (node.matches(SELECTOR)) targets.add(node);
-        node.querySelectorAll(SELECTOR).forEach(element => targets.add(element));
+        node.querySelectorAll(SELECTOR).forEach((element) => targets.add(element));
     };
 
     return {
@@ -86,8 +86,8 @@ export function createNativeControlsRenderer(tools: NativeControlTools): NativeC
                     for (const record of records) {
                         if (record.type === 'attributes') targets.add(record.target as Element);
                         else {
-                            record.addedNodes.forEach(node => collect(node, targets));
-                            if (!removed) removed = Array.from(record.removedNodes).some(node => node instanceof Element);
+                            record.addedNodes.forEach((node) => collect(node, targets));
+                            if (!removed) removed = Array.from(record.removedNodes).some((node) => node instanceof Element);
                         }
                     }
                     let changed = false;
@@ -98,7 +98,9 @@ export function createNativeControlsRenderer(tools: NativeControlTools): NativeC
                             if (entry.node !== undefined) changed = true;
                         }
                     }
-                    targets.forEach(element => { if (update(element)) changed = true; });
+                    targets.forEach((element) => {
+                        if (update(element)) changed = true;
+                    });
                     if (changed || (tooltip && !tooltip.anchor.isConnected)) notify();
                 });
                 observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: [ATTRIBUTE] });

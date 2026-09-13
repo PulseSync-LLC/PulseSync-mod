@@ -147,16 +147,25 @@ export function pulseSyncYaspWorkerBootstrap(sourceUrl: string, inlineSource: st
             .replace(/(bitrate:\s*n\.bandwidth,\s*)language:\s*e\.lang/, '$1sampleRate:n.audioSamplingRate,language:e.lang')
             .replace(/(V\(G\(r\),\s*"channels",\s*void 0\),)/, '$1V(G(r),"sampleRate",void 0),')
             .replace(/(r\.channels\s*=\s*e\.channels,\s*)r(\s*)/, '$1r.sampleRate=e.sampleRate||e.audioSamplingRate,$2r')
-            .replace(/(this\.bitrate\s*=\s*e\.bitrate,\s*)this\.initialization/, '$1this.sampleRate=e.sampleRate||e.audioSamplingRate||this.sampleRate,this.initialization')
+            .replace(
+                /(this\.bitrate\s*=\s*e\.bitrate,\s*)this\.initialization/,
+                '$1this.sampleRate=e.sampleRate||e.audioSamplingRate||this.sampleRate,this.initialization',
+            )
             .replace(/channels:\s*r\.channels/g, 'channels:r.channels,sampleRate:r.sampleRate');
     const patchWorkerSource = (source: string) => {
         const metadataSource = patchMetadata(source);
         const marker = /(return\s+e\.next\s*=\s*15\s*,\s*)cf\.race\(\[this\.appendChunk\(t\s*,\s*o\)\s*,\s*n\]\)/;
-        const patched = metadataSource.replace(marker, '$1(self.__pulseSyncYaspNativeAudioStreamChunkTap&&self.__pulseSyncYaspNativeAudioStreamChunkTap(this,t,o),cf.race([this.appendChunk(t,o),n]))');
+        const patched = metadataSource.replace(
+            marker,
+            '$1(self.__pulseSyncYaspNativeAudioStreamChunkTap&&self.__pulseSyncYaspNativeAudioStreamChunkTap(this,t,o),cf.race([this.appendChunk(t,o),n]))',
+        );
         postMessage({
             event: 'patch-status',
             patched: patched !== source,
-            reason: patched === source ? 'appendStream chunk marker not found' : `appendStream stream-read tap patched, track metadata ${metadataSource === source ? 'not patched' : 'patched'}`,
+            reason:
+                patched === source
+                    ? 'appendStream chunk marker not found'
+                    : `appendStream stream-read tap patched, track metadata ${metadataSource === source ? 'not patched' : 'patched'}`,
         });
         return patched;
     };

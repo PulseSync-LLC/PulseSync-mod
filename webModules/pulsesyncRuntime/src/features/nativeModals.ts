@@ -74,19 +74,28 @@ function enqueueModal(kind: NativeModal['kind'], options: ModalOptions, ownerId?
             message,
             confirmLabel,
             cancelLabel,
-            ...(fields ? {
-                fields,
-                values: initialFormValues(fields),
-                errors: {},
-                change(name: string, value: string | boolean | number) {
-                    const field = fields.find(field => field.name === name);
-                    if (!active() || !field || field.disabled) return;
-                    if (field.type === 'switch' ? typeof value !== 'boolean' : field.type === 'slider' ? typeof value !== 'number' || !Number.isFinite(value) : typeof value !== 'string') return;
-                    if (typeof value === 'string' && value.length > 5000) return;
-                    entry.modal = { ...entry.modal, values: { ...entry.modal.values, [name]: value }, errors: { ...entry.modal.errors, [name]: '' } };
-                    listener?.();
-                },
-            } : {}),
+            ...(fields
+                ? {
+                      fields,
+                      values: initialFormValues(fields),
+                      errors: {},
+                      change(name: string, value: string | boolean | number) {
+                          const field = fields.find((field) => field.name === name);
+                          if (!active() || !field || field.disabled) return;
+                          if (
+                              field.type === 'switch'
+                                  ? typeof value !== 'boolean'
+                                  : field.type === 'slider'
+                                    ? typeof value !== 'number' || !Number.isFinite(value)
+                                    : typeof value !== 'string'
+                          )
+                              return;
+                          if (typeof value === 'string' && value.length > 5000) return;
+                          entry.modal = { ...entry.modal, values: { ...entry.modal.values, [name]: value }, errors: { ...entry.modal.errors, [name]: '' } };
+                          listener?.();
+                      },
+                  }
+                : {}),
             respond(confirmed) {
                 if (!active()) return;
                 let result: ModalResult = confirmed === true;

@@ -27,7 +27,13 @@ function getTapMode() {
 
 function isLikelyWorkerUrl(url: unknown) {
     const value = String(url ?? '').toLowerCase();
-    return value.startsWith('blob:') || value.includes('yasp') || value.includes('yandex-video-player') || value.includes('video-player-iframe-api-bundles') || value.includes('stream-player');
+    return (
+        value.startsWith('blob:') ||
+        value.includes('yasp') ||
+        value.includes('yandex-video-player') ||
+        value.includes('video-player-iframe-api-bundles') ||
+        value.includes('stream-player')
+    );
 }
 
 function readWorkerSource(sourceUrl: string) {

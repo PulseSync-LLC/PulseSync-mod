@@ -133,11 +133,7 @@ export function onPlayerSnapshotChange(listener: (snapshot: PulseSyncPlayerSnaps
 export function onQueueChange(listener: (snapshot: PulseSyncQueueSnapshot) => void) {
     if (typeof listener !== 'function') return () => {};
     const emit = () => listener(getQueueSnapshot());
-    return subscribePlayer(emit, (player) => [
-        player.state?.queueState?.entityList,
-        player.state?.queueState?.index,
-        player.state?.queueState?.currentEntity,
-    ]);
+    return subscribePlayer(emit, (player) => [player.state?.queueState?.entityList, player.state?.queueState?.index, player.state?.queueState?.currentEntity]);
 }
 
 function routeKey(snapshot: PulseSyncRouteSnapshot) {

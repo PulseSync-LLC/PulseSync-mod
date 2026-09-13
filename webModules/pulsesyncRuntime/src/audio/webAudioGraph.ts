@@ -174,7 +174,10 @@ function forgetConnections(source: AudioNode, args: any[]) {
     if (!records) return;
     if (!args.length) return void audioState.graphConnections.set(source, []);
     if (typeof args[0] === 'number') return;
-    audioState.graphConnections.set(source, records.filter((record) => record.destination !== args[0]));
+    audioState.graphConnections.set(
+        source,
+        records.filter((record) => record.destination !== args[0]),
+    );
 }
 
 function isAudioDestination(source: AudioNode, destination: unknown): destination is AudioDestinationNode {
