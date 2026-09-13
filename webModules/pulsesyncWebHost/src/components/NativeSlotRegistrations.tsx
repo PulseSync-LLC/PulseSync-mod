@@ -59,6 +59,14 @@ function NativeSlotRegistrationElement({ addonId, item, slotName }: NativeSlotRe
     )
 }
 
-export function NativeSlotRegistrations({ addonId, items, slotName }: { addonId: string; items: readonly NativeSlotRegistration[]; slotName: string }) {
+export function NativeSlotRegistrations({
+    addonId,
+    items,
+    slotName,
+}: {
+    addonId: string
+    items: readonly NativeSlotRegistration[]
+    slotName: string
+}) {
     return items.map(item => <NativeSlotRegistrationElement key={item.id} addonId={addonId} item={item} slotName={slotName} />)
 }

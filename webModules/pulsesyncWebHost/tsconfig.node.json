@@ -18,4 +18,3 @@
     },
     "include": ["vite.config.ts", "vite.isolated.config.ts"]
 }
-

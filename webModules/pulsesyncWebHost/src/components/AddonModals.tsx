@@ -12,7 +12,9 @@ export function AddonModals({ modals, addonId }: { modals: Modals; addonId: stri
     const store = getAddonModalStore(modals)
     if (!store) throw new Error('Addon modal store is unavailable')
     const entry = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
-    return entry ? <AddonErrorBoundary key={entry.id} addonId={addonId} onError={entry.props.controller.fail}>
-        <RenderModal render={entry.render} modalProps={entry.props} />
-    </AddonErrorBoundary> : null
+    return entry ? (
+        <AddonErrorBoundary key={entry.id} addonId={addonId} onError={entry.props.controller.fail}>
+            <RenderModal render={entry.render} modalProps={entry.props} />
+        </AddonErrorBoundary>
+    ) : null
 }

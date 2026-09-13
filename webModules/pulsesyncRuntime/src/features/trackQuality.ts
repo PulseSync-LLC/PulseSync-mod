@@ -11,7 +11,9 @@ const qualityMap: Record<string, string> = {
 };
 
 function normalizeCodec(value: unknown) {
-    const raw = String(value ?? '').trim().toLowerCase();
+    const raw = String(value ?? '')
+        .trim()
+        .toLowerCase();
     if (!raw) return null;
     if (raw.includes('flac')) return 'FLAC';
     if (raw.includes('mp3') || raw.includes('mpeg')) return 'MP3';
@@ -37,7 +39,9 @@ function formatSampleRate(value: unknown) {
 }
 
 function normalizeRank(format: TrackFormat, fallback: TrackFormat, bitrateKbits: number | null, codec: string | null) {
-    const rawQuality = String(format.quality ?? fallback.quality ?? '').trim().toLowerCase();
+    const rawQuality = String(format.quality ?? fallback.quality ?? '')
+        .trim()
+        .toLowerCase();
     if (qualityMap[rawQuality]) return qualityMap[rawQuality];
     if (format.lossless === true || codec === 'FLAC' || codec === 'ALAC') return 'HQ+';
     if (!bitrateKbits) return null;

@@ -59,10 +59,9 @@ function findTrackFromOrigin(origin: Element): PulseSyncTrackMenuContext | null 
     let candidate: Element | null = origin.closest(TRACK_CONTEXT_MENU_BUTTON_SELECTOR) ?? origin
 
     while (candidate && candidate !== document.body) {
-        const links = [
-            ...(candidate.matches(TRACK_LINK_SELECTOR) ? [candidate] : []),
-            ...candidate.querySelectorAll(TRACK_LINK_SELECTOR),
-        ].filter((link): link is HTMLAnchorElement => link instanceof HTMLAnchorElement)
+        const links = [...(candidate.matches(TRACK_LINK_SELECTOR) ? [candidate] : []), ...candidate.querySelectorAll(TRACK_LINK_SELECTOR)].filter(
+            (link): link is HTMLAnchorElement => link instanceof HTMLAnchorElement,
+        )
         const tracks = links.map(parseTrackLink).filter((track): track is PulseSyncTrackMenuContext => track !== null)
         const trackIds = new Set(tracks.map(track => track.id))
 

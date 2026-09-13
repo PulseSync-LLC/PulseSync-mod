@@ -5,17 +5,23 @@ import type { ControlHandler, FieldControl } from './types';
 function initialValue(field: NativeField) {
     if (field.value !== undefined && field.value !== null) return field.value;
     switch (field.type) {
-        case 'switch': return false;
-        case 'slider': return field.min ?? 0;
-        default: return '';
+        case 'switch':
+            return false;
+        case 'slider':
+            return field.min ?? 0;
+        default:
+            return '';
     }
 }
 
 function isChangeValue(field: NativeField, value: unknown): value is string | boolean | number {
     switch (field.type) {
-        case 'switch': return typeof value === 'boolean';
-        case 'slider': return typeof value === 'number' && Number.isFinite(value);
-        default: return typeof value === 'string';
+        case 'switch':
+            return typeof value === 'boolean';
+        case 'slider':
+            return typeof value === 'number' && Number.isFinite(value);
+        default:
+            return typeof value === 'string';
     }
 }
 

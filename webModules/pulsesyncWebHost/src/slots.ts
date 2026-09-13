@@ -14,7 +14,7 @@ function resolveCommonAncestor(root: Element, elements: readonly Element[]) {
 
     while (candidate && candidate !== root) {
         const current = candidate
-        if (elements.every((element) => current.contains(element))) return current
+        if (elements.every(element => current.contains(element))) return current
         candidate = current.parentElement
     }
 
@@ -30,7 +30,7 @@ function resolveDirectChild(parent: Element, descendant: Element) {
 }
 
 function ensureStandardSlotAnchor(parent: Element, slotName: string, before: Element) {
-    const existing = Array.from(parent.children).find((child) => child.getAttribute('data-pulsesync-standard-slot') === slotName)
+    const existing = Array.from(parent.children).find(child => child.getAttribute('data-pulsesync-standard-slot') === slotName)
     if (existing) return existing
 
     const anchor = document.createElement('span')
@@ -41,7 +41,7 @@ function ensureStandardSlotAnchor(parent: Element, slotName: string, before: Ele
 }
 
 function ensureAppendedStandardSlotAnchor(parent: Element, slotName: string) {
-    const existing = Array.from(parent.children).find((child) => child.getAttribute('data-pulsesync-standard-slot') === slotName)
+    const existing = Array.from(parent.children).find(child => child.getAttribute('data-pulsesync-standard-slot') === slotName)
     if (existing) return existing
 
     const anchor = document.createElement('span')

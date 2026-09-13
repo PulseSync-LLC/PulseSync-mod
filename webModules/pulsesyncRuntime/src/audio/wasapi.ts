@@ -19,7 +19,9 @@ export function isWasapiExclusiveOutputEnabled() {
 function findCrossfadePlayer(player: PulseSyncPlayer | null) {
     const current = player?.state?.currentMediaPlayer?.value;
     const players = Object.values(player?.state?.mediaPlayersStore?.value ?? {}) as Record<string, any>[];
-    return [current, ...players].find((candidate) => candidate && typeof candidate.forceStopCrossfade === 'function' && candidate.isEnabled && 'value' in candidate.isEnabled);
+    return [current, ...players].find(
+        (candidate) => candidate && typeof candidate.forceStopCrossfade === 'function' && candidate.isEnabled && 'value' in candidate.isEnabled,
+    );
 }
 
 function enforceCrossfadePolicy() {

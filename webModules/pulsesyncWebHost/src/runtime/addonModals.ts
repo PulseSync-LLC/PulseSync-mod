@@ -25,7 +25,9 @@ export function createAddonModals(client: PulseSyncWebHostClient, ownerId?: stri
         const abort = () => request.abort(new DOMException('Modal cancelled', 'AbortError'))
         requests.add(request)
         parent?.addEventListener('abort', abort, { once: true })
-        const cancelNative = () => { void client.closeModal(id, ownerId).catch(() => {}) }
+        const cancelNative = () => {
+            void client.closeModal(id, ownerId).catch(() => {})
+        }
         request.signal.addEventListener('abort', cancelNative, { once: true })
         try {
             const result = await call(id)
@@ -43,12 +45,22 @@ export function createAddonModals(client: PulseSyncWebHostClient, ownerId?: stri
             request.signal.removeEventListener('abort', cancelNative)
         }
     }
-    const show = (kind: 'alert' | 'confirm', options: ModalOptions, parent?: AbortSignal) => requestModal(id => client.showModal(kind, options, ownerId, id), parent)
+    const show = (kind: 'alert' | 'confirm', options: ModalOptions, parent?: AbortSignal) =>
+        requestModal(id => client.showModal(kind, options, ownerId, id), parent)
     const showForm = (options: FormModalOptions, parent?: AbortSignal) => requestModal(id => client.showFormModal(options, ownerId, id), parent)
     const modals: AddonModals = Object.freeze({
-        async alert(options) { available(); return show('alert', options) },
-        async confirm(options) { available(); return show('confirm', options) },
-        async form(options) { available(); return showForm(options) },
+        async alert(options) {
+            available()
+            return show('alert', options)
+        },
+        async confirm(options) {
+            available()
+            return show('confirm', options)
+        },
+        async form(options) {
+            available()
+            return showForm(options)
+        },
         async open(render) {
             available()
             if (typeof render !== 'function') throw new TypeError('Modal renderer must be a function')
@@ -64,23 +76,29 @@ export function createAddonModals(client: PulseSyncWebHostClient, ownerId?: stri
                     else resolve(value)
                 }
                 let shown = false
-                entry = { id, render, props: { controller: {
-                    signal: session.signal,
-                    async show(kind, options) {
-                        session.signal.throwIfAborted()
-                        if (shown) throw new Error('Modal controller has already been shown')
-                        shown = true
-                        return show(kind, options, session.signal)
+                entry = {
+                    id,
+                    render,
+                    props: {
+                        controller: {
+                            signal: session.signal,
+                            async show(kind, options) {
+                                session.signal.throwIfAborted()
+                                if (shown) throw new Error('Modal controller has already been shown')
+                                shown = true
+                                return show(kind, options, session.signal)
+                            },
+                            async showForm(options) {
+                                session.signal.throwIfAborted()
+                                if (shown) throw new Error('Modal controller has already been shown')
+                                shown = true
+                                return showForm(options, session.signal)
+                            },
+                            close: (confirmed = false) => finish(confirmed),
+                            fail: error => finish(false, error instanceof Error ? error : new Error(String(error))),
+                        },
                     },
-                    async showForm(options) {
-                        session.signal.throwIfAborted()
-                        if (shown) throw new Error('Modal controller has already been shown')
-                        shown = true
-                        return showForm(options, session.signal)
-                    },
-                    close: (confirmed = false) => finish(confirmed),
-                    fail: error => finish(false, error instanceof Error ? error : new Error(String(error))),
-                } } }
+                }
                 notify()
             })
         },
@@ -91,7 +109,12 @@ export function createAddonModals(client: PulseSyncWebHostClient, ownerId?: stri
     }
     lifetime?.addEventListener('abort', clear, { once: true })
     stores.set(modals, {
-        subscribe: listener => { listeners.add(listener); return () => { listeners.delete(listener) } },
+        subscribe: listener => {
+            listeners.add(listener)
+            return () => {
+                listeners.delete(listener)
+            }
+        },
         getSnapshot: () => entry,
         clear,
     })

@@ -332,7 +332,8 @@ export function installYandexStationPlayerProxy(player: PulseSyncPlayer) {
         if (bridge.isActive()) {
             const action = isPlaying(current) ? 'PAUSE' : 'PLAY';
             bridge.startMuteGuard();
-            if (action === 'PLAY' && !bridge.initialTrackSent) return runAfterStationStart(bridge.sendInitialCurrentTrack(), () => callOriginalPlayerMethod(current, 'togglePause', args));
+            if (action === 'PLAY' && !bridge.initialTrackSent)
+                return runAfterStationStart(bridge.sendInitialCurrentTrack(), () => callOriginalPlayerMethod(current, 'togglePause', args));
             void bridge.sendCommand(action);
         }
         return callOriginalPlayerMethod(current, 'togglePause', args);
@@ -376,7 +377,9 @@ export function installYandexStationPlayerProxy(player: PulseSyncPlayer) {
         const bridge = ensureYandexStationCastBridge();
         if (!bridge.isActive()) return callOriginalPlayerMethod(current, 'setEntityByIndex', args);
         bridge.startMuteGuard();
-        return runAfterStationStart(bridge.sendTrackFromEntity(getQueueEntity(current, Number(args[0]))), () => callOriginalPlayerMethod(current, 'setEntityByIndex', args));
+        return runAfterStationStart(bridge.sendTrackFromEntity(getQueueEntity(current, Number(args[0]))), () =>
+            callOriginalPlayerMethod(current, 'setEntityByIndex', args),
+        );
     });
     wrapPlayerMethod(player, 'playContext', (current, args) => {
         const result = callOriginalPlayerMethod(current, 'playContext', args);

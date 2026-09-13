@@ -3,5 +3,5 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export function isOneOf<const T extends string>(value: unknown, choices: readonly T[]): value is T {
-    return choices.some(choice => choice === value);
+    return choices.some((choice) => choice === value);
 }

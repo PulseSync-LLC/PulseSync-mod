@@ -215,7 +215,7 @@ export class IsolatedAddonRuntime {
                 args = [request.args[0], request.args[1], this.addon.id, request.args[3]]
             }
             if (request.method === 'showFormModal') {
-                args = [request.args[0], this.addon.id, request.args[2]];
+                args = [request.args[0], this.addon.id, request.args[2]]
             }
             if (request.method === 'closeModal') {
                 args = [request.args[0], this.addon.id]
