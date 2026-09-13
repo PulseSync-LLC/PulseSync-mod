@@ -1567,13 +1567,6 @@
                         window.openConfigFile?.();
                     }, []);
                 (0, d.useEffect)(() => {
-                    let showRestartNotification = () => {
-                        y((0, o.jsx)(R.h, { error: 'Для применения этой настройки требуется перезапуск приложения' }), { containerId: x.u.ERROR });
-                    };
-                    window.addEventListener('pulsesync-restart-required', showRestartNotification);
-                    return () => window.removeEventListener('pulsesync-restart-required', showRestartNotification);
-                }, [y]);
-                (0, d.useEffect)(() => {
                     let readTracksDirectory = async (directory) => {
                             let result = { tracksCount: 0, tracksSize: 0 };
                             for await (let entry of directory.values())
