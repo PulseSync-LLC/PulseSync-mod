@@ -4,7 +4,11 @@ const DEFAULT_TIMEOUT_MS = 15_000
 const MAX_TIMEOUT_MS = 2_147_483_647
 
 export function createAddonNet(lifetime: AbortSignal): AddonNet {
-    async function request<T>(input: RequestInfo | URL, options: NetRequestOptions | undefined, read: (response: Response) => Promise<T>): Promise<T> {
+    async function request<T>(
+        input: RequestInfo | URL,
+        options: NetRequestOptions | undefined,
+        read: (response: Response) => Promise<T>,
+    ): Promise<T> {
         const { timeoutMs = DEFAULT_TIMEOUT_MS, ...init } = options ?? {}
         if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 0 || timeoutMs > MAX_TIMEOUT_MS) {
             throw new RangeError(`timeoutMs must be an integer between 0 and ${MAX_TIMEOUT_MS}`)
@@ -14,7 +18,8 @@ export function createAddonNet(lifetime: AbortSignal): AddonNet {
         const timeout = new AbortController()
         const signal = AbortSignal.any([lifetime, request.signal, timeout.signal])
         signal.throwIfAborted()
-        const timer = timeoutMs > 0 ? window.setTimeout(() => timeout.abort(new DOMException('Request timed out', 'TimeoutError')), timeoutMs) : undefined
+        const timer =
+            timeoutMs > 0 ? window.setTimeout(() => timeout.abort(new DOMException('Request timed out', 'TimeoutError')), timeoutMs) : undefined
 
         try {
             const response = await window.fetch(request, { signal })

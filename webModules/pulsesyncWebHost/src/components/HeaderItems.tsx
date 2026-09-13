@@ -84,16 +84,8 @@ export function HeaderItems({ api, items }: { api: PulseSyncAddonApi; items: rea
 
     return (
         <>
-            <NativeSlotRegistrations
-                addonId={api.addonId}
-                items={registrations.filter(item => item.area === 'title')}
-                slotName="headerTitleItems"
-            />
-            <NativeSlotRegistrations
-                addonId={api.addonId}
-                items={registrations.filter(item => item.area === 'meta')}
-                slotName="headerInfoItems"
-            />
+            <NativeSlotRegistrations addonId={api.addonId} items={registrations.filter(item => item.area === 'title')} slotName="headerTitleItems" />
+            <NativeSlotRegistrations addonId={api.addonId} items={registrations.filter(item => item.area === 'meta')} slotName="headerInfoItems" />
         </>
     )
 }

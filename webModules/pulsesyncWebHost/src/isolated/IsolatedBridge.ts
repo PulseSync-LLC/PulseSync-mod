@@ -202,10 +202,13 @@ export class IsolatedBridge {
 
         const requestId = (this.nextRequestId += 1)
         return new Promise<unknown>((resolve, reject) => {
-            const timeout = !target && (method === 'showModal' || method === 'showFormModal') ? 0 : window.setTimeout(() => {
-                this.pendingCalls.delete(requestId)
-                reject(new Error(`PulseSync addon API call timed out: ${method}`))
-            }, API_CALL_TIMEOUT_MS)
+            const timeout =
+                !target && (method === 'showModal' || method === 'showFormModal')
+                    ? 0
+                    : window.setTimeout(() => {
+                          this.pendingCalls.delete(requestId)
+                          reject(new Error(`PulseSync addon API call timed out: ${method}`))
+                      }, API_CALL_TIMEOUT_MS)
             this.pendingCalls.set(requestId, { resolve, reject, timeout })
 
             try {

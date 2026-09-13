@@ -1,7 +1,14 @@
 import type { RuntimeServices } from './contracts';
 import { ensurePulseSyncApi } from './api/pulsesyncApi';
 import { requestInitialAddonSettingsSnapshot } from './api/addonSettingsBridge';
-import { getLastWasapiOutputState, bindWasapiCrossfadePlayer, installNativeAudioOutputMonitor, installWasapiPlayerSeekProxy, syncWasapiCrossfadePolicy, syncWasapiPlayerHold } from './audio/wasapi';
+import {
+    getLastWasapiOutputState,
+    bindWasapiCrossfadePlayer,
+    installNativeAudioOutputMonitor,
+    installWasapiPlayerSeekProxy,
+    syncWasapiCrossfadePolicy,
+    syncWasapiPlayerHold,
+} from './audio/wasapi';
 import { installWebAudioGraphMonitor } from './audio/webAudioGraph';
 import { installYaspNativeAudioHooks } from './audio/yasp';
 import { installFindCssRuleHelper } from './dom/findCssRule';

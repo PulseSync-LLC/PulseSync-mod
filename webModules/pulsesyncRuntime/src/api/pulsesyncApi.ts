@@ -29,7 +29,7 @@ function getCurrentEntity() {
     return getPlayerInstance()?.state?.queueState?.currentEntity?.value?.entity;
 }
 
-const LEGACY_MOD_SETTING_KEYS = new Set(['enableYnisonPlayerRemoteControl', 'ynisonInterceptPlayback', 'sendModAnonymizedMetrics']);
+const LEGACY_MOD_SETTING_KEYS = new Set(['enableYnisonPlayerRemoteControl', 'ynisonInterceptPlayback', 'sendModAnonymizedMetrics', 'devMode']);
 
 function normalizeModSettingKey(key: unknown) {
     const normalizedKey = String(key ?? '').trim();

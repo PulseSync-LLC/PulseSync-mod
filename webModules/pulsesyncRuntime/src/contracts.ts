@@ -33,40 +33,41 @@ export type PulseSyncPlayer = Record<string, any> & {
     togglePause?: (...args: unknown[]) => unknown;
 };
 
-export type PulseSyncApi = PublicPulseSyncApi & UnknownRecord & {
-    _addonSettings: AddonSettingsSnapshot;
-    _addonSettingsListeners: Map<string, Set<(settings: AddonSettings) => void>>;
-    _modSettingsListeners: Map<string, Set<ModSettingListener>>;
-    _pendingCalls: Array<(player: PulseSyncPlayer) => void>;
-    playerInstance?: PulseSyncPlayer | null;
-    enableNativeSlotTooltips: () => Cleanup;
-    createNativeControlsRenderer: (tools: NativeControlTools) => NativeControlsRenderer;
-    registerNativeNotifications: (tools: NativeNotificationTools) => Cleanup;
-    clearAddonNotifications: (ownerId: string) => void;
-    registerNativeModals: (listener: () => void) => Cleanup;
-    getNativeModal: () => NativeModal | undefined;
-    clearAddonModals: (ownerId: string) => void;
-    getModSetting: (key: unknown) => Promise<unknown>;
-    getModSettingSnapshot: (key: unknown) => unknown;
-    getLastFmUser: () => Promise<unknown>;
-    getLastFmYnisonAvailability: () => Promise<boolean>;
-    getTrackReplacement: (trackId: unknown) => string | null;
-    injectNativeSlotItems: (slotName: string, nativeItems: unknown[], tools: NativeSlotTools) => unknown[];
-    getSelectedWasapiExclusiveDeviceId: () => Promise<unknown>;
-    getWasapiExclusiveStatus: () => Promise<unknown>;
-    listWasapiExclusiveDevices: () => Promise<unknown>;
-    loginLastFm: () => Promise<unknown>;
-    logoutLastFm: () => Promise<unknown>;
-    onLastFmUserInfoChange: (listener: (value: unknown) => void) => Cleanup;
-    publishPageEntity: (type: unknown, entity: unknown, resolveArtistBrief?: unknown, artistBriefComplete?: boolean) => UnknownRecord;
-    selectWasapiExclusiveDevice: (deviceId: unknown) => Promise<unknown>;
-    setAutoStartupStatus: (isEnabled: unknown) => void;
-    setModSetting: (key: unknown, value: unknown) => Promise<unknown>;
-    selectModSettingDirectory: (key: unknown) => Promise<unknown>;
-    setGlobalShortcutsRecording: (isRecording: unknown) => void;
-    onModSettingChange: (key: unknown, listener: ModSettingListener) => Cleanup;
-    setPlayerInstance: (player: PulseSyncPlayer) => void;
-};
+export type PulseSyncApi = PublicPulseSyncApi &
+    UnknownRecord & {
+        _addonSettings: AddonSettingsSnapshot;
+        _addonSettingsListeners: Map<string, Set<(settings: AddonSettings) => void>>;
+        _modSettingsListeners: Map<string, Set<ModSettingListener>>;
+        _pendingCalls: Array<(player: PulseSyncPlayer) => void>;
+        playerInstance?: PulseSyncPlayer | null;
+        enableNativeSlotTooltips: () => Cleanup;
+        createNativeControlsRenderer: (tools: NativeControlTools) => NativeControlsRenderer;
+        registerNativeNotifications: (tools: NativeNotificationTools) => Cleanup;
+        clearAddonNotifications: (ownerId: string) => void;
+        registerNativeModals: (listener: () => void) => Cleanup;
+        getNativeModal: () => NativeModal | undefined;
+        clearAddonModals: (ownerId: string) => void;
+        getModSetting: (key: unknown) => Promise<unknown>;
+        getModSettingSnapshot: (key: unknown) => unknown;
+        getLastFmUser: () => Promise<unknown>;
+        getLastFmYnisonAvailability: () => Promise<boolean>;
+        getTrackReplacement: (trackId: unknown) => string | null;
+        injectNativeSlotItems: (slotName: string, nativeItems: unknown[], tools: NativeSlotTools) => unknown[];
+        getSelectedWasapiExclusiveDeviceId: () => Promise<unknown>;
+        getWasapiExclusiveStatus: () => Promise<unknown>;
+        listWasapiExclusiveDevices: () => Promise<unknown>;
+        loginLastFm: () => Promise<unknown>;
+        logoutLastFm: () => Promise<unknown>;
+        onLastFmUserInfoChange: (listener: (value: unknown) => void) => Cleanup;
+        publishPageEntity: (type: unknown, entity: unknown, resolveArtistBrief?: unknown, artistBriefComplete?: boolean) => UnknownRecord;
+        selectWasapiExclusiveDevice: (deviceId: unknown) => Promise<unknown>;
+        setAutoStartupStatus: (isEnabled: unknown) => void;
+        setModSetting: (key: unknown, value: unknown) => Promise<unknown>;
+        selectModSettingDirectory: (key: unknown) => Promise<unknown>;
+        setGlobalShortcutsRecording: (isRecording: unknown) => void;
+        onModSettingChange: (key: unknown, listener: ModSettingListener) => Cleanup;
+        setPlayerInstance: (player: PulseSyncPlayer) => void;
+    };
 
 export type RuntimeServices = {
     getLastWasapiOutputState: () => unknown;
