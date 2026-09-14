@@ -5540,6 +5540,7 @@
                             user: r,
                             experiments: s,
                             releaseNotes: o,
+                            quality: pulseSyncQuality,
                             fullscreenVideoPlayer: l,
                             sonataState: { entityMeta: u },
                             settings: { isMobile: b },
@@ -5699,9 +5700,13 @@
                                 ? (0, c.jsx)(A.$, {
                                       color: 'secondary',
                                       radius: 'xl',
+                                      type: 'button',
                                       'aria-label': 'Качество трека: '.concat(pulseSyncTrackQualityInfo.label),
+                                      'aria-haspopup': 'dialog',
+                                      title: w({ id: 'player-actions.audio-quality' }),
+                                      onClick: pulseSyncQuality.modal.open,
                                       className: eZ().beta,
-                                      style: { marginInlineEnd: 'var(--ym-spacer-size-xs)', color: 'white' },
+                                      style: { marginInlineEnd: 'var(--ym-spacer-size-xs)', color: 'white', cursor: 'pointer' },
                                       withHover: !1,
                                       children: (0, c.jsx)(P.HL, {
                                           variant: 'div',
@@ -5712,7 +5717,7 @@
                                       }),
                                   })
                                 : null;
-                        }, [pulseSyncTrackQualityInfo, pulseSyncShowAudioQualityOnNewWave, pulseSyncWasapiIsActive]),
+                        }, [pulseSyncTrackQualityInfo, pulseSyncShowAudioQualityOnNewWave, pulseSyncWasapiIsActive, pulseSyncQuality.modal.open, w]),
                         pulseSyncWasapiStateBubble = (0, v.useMemo)(
                             () =>
                                 pulseSyncWasapiIsActive
