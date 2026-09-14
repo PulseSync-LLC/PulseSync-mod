@@ -7694,7 +7694,7 @@
                     { className: r, children: s } = e,
                     o = (0, v.usePathname)(),
                     {
-                        settings: { isMobile: l, isWindowsApplication: d, isLinuxApplication: c },
+                        settings: { isMobile: l, isWindowsApplication: d, isMacOSApplication: isMacOS, isLinuxApplication: c },
                         redAlert: u,
                         communication: _,
                         advertBanners: {
@@ -7731,7 +7731,7 @@
                     Y().root,
                     T,
                     {
-                        [ro().root_applicationPreserveTitleBar]: d || c,
+                        [ro().root_applicationPreserveTitleBar]: d || c || isMacOS,
                         [y]: N,
                         [Y().root_withAxeBanner]: h.isVisible,
                         modSettings_alwaysWideBar: window.ALWAYS_WIDE_BAR?.(),
