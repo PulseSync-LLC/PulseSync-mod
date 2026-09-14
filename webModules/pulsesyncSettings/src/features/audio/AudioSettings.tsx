@@ -3,6 +3,7 @@ import type { ModSettingsApi } from '../../api/modSettings';
 import type { SettingSelectOption } from '../../components/controls/SettingSelect';
 import { SettingsSection, type SettingsSchemaItem } from '../../components/settings/SettingsSection';
 import { useBooleanModSetting } from '../../hooks/useBooleanModSetting';
+import { usePlatform } from '../../hooks/usePlatform';
 
 const R128_NORMALIZATION_KEY = 'modSettings.r128Normalization';
 const SURROUND_AUDIO_KEY = 'modSettings.enableSurroundAudioCompatibility';
@@ -89,7 +90,8 @@ export function AudioSettings({ api, onRestartRequired }: AudioSettingsProps) {
     const [wasapiDevices, setWasapiDevices] = useState<WasapiDevice[]>([]);
     const [selectedWasapiDeviceId, setSelectedWasapiDeviceId] = useState('');
     const [wasapiError, setWasapiError] = useState<string>();
-    const isWindows = api?.getPlatform() === 'win32';
+    const platform = usePlatform(api);
+    const isWindows = platform === 'win32';
 
     const loadWasapiDevices = useCallback(async () => {
         if (!api || !isWindows) return;
