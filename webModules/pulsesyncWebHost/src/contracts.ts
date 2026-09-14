@@ -85,6 +85,7 @@ export type PulseSyncAddonNotifications = AddonToasts & {
 }
 
 export type DesktopEventsBridge = {
+    send?: (event: string, ...args: unknown[]) => void
     invoke?: <T = unknown>(event: string, ...args: unknown[]) => Promise<T>
     on?: (event: string, listener: (event: unknown, ...args: unknown[]) => void) => (() => void) | void
 }

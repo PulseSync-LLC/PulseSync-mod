@@ -239,10 +239,16 @@ const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
     }
 
     const suppliedHash = typeof payload?.hash === 'string' ? payload.hash : '';
+    const calculatedHash = hashCanonicalAddons(addons);
+    if (suppliedHash && suppliedHash !== calculatedHash) {
+        try {
+            onBlocked(new Error(`[PulseSync Addons] Incoming snapshot hash mismatch: expected ${calculatedHash}, received ${suppliedHash}`));
+        } catch {}
+    }
     const allowedUrls = normalizeAllowedUrls(payload?.allowedUrls);
     return Object.freeze({
         runtime: 'isolated',
-        hash: addons.length === sourceAddons.length && suppliedHash ? suppliedHash : hashCanonicalAddons(addons),
+        hash: calculatedHash,
         addons: Object.freeze(addons),
         ...(allowedUrls ? { allowedUrls } : {}),
     });

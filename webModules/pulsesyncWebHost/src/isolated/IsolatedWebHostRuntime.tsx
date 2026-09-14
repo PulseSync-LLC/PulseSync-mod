@@ -4,12 +4,14 @@ import * as jsxDevRuntime from 'react/jsx-dev-runtime'
 import * as jsxRuntime from 'react/jsx-runtime'
 import { WEB_HOST_API_VERSION } from '../constants'
 import type { Cleanup, PulseSyncAddonDefinition, PulseSyncAddonFactory, PulseSyncWebHostApi } from '../contracts'
+import { clearAddonModalSessions } from '../runtime/addonModals'
 import { IsolatedAddonHost } from './IsolatedAddonHost'
 import { IsolatedBridge } from './IsolatedBridge'
-import type { IsolatedInit, IsolatedWindow } from './contracts'
 import { IsolatedTargetRegistry } from './IsolatedTargetRegistry'
+import type { IsolatedInit, IsolatedWindow } from './contracts'
 import { installIsolatedDomExecutionPolicy } from './domExecutionPolicy'
-import { clearAddonModalSessions } from '../runtime/addonModals'
+
+const REGISTRATION_STABILIZATION_MS = 500
 
 export class IsolatedWebHostRuntime {
     private readonly isolatedWindow: IsolatedWindow
@@ -26,6 +28,8 @@ export class IsolatedWebHostRuntime {
     private started = false
     private disposed = false
     private registrationReported = false
+    private registrationFailed = false
+    private registrationTimer = 0
 
     constructor(isolatedWindow: IsolatedWindow, init: IsolatedInit) {
         this.isolatedWindow = isolatedWindow
@@ -86,7 +90,7 @@ export class IsolatedWebHostRuntime {
         Object.defineProperty(queue, 'push', {
             value: (...factories: PulseSyncAddonFactory[]) => {
                 factories.forEach(factory => {
-                    void this.hostApi.installAddon(factory).catch(error => this.bridge.reportError('addon-registration-failed', error))
+                    void this.hostApi.installAddon(factory).catch(error => this.reportRuntimeError('addon-registration-failed', error))
                 })
                 return factories.length
             },
@@ -116,10 +120,35 @@ export class IsolatedWebHostRuntime {
                 addonApi={this.bridge.addonApi}
                 definition={this.currentDefinition}
                 generation={this.definitionGeneration}
-                log={(level, args) => this.bridge.log(level, args)}
+                reportError={this.reportRuntimeError}
                 targets={this.targets}
             />,
         )
+    }
+
+    private clearRegistrationTimer() {
+        if (!this.registrationTimer) return
+        window.clearTimeout(this.registrationTimer)
+        this.registrationTimer = 0
+    }
+
+    private scheduleRegistrationReady() {
+        if (this.registrationReported || this.registrationFailed || this.disposed) return
+        this.clearRegistrationTimer()
+        this.registrationTimer = window.setTimeout(() => {
+            this.registrationTimer = 0
+            if (this.registrationReported || this.registrationFailed || this.disposed || !this.currentDefinition) return
+            this.registrationReported = true
+            this.bridge.reportReady()
+        }, REGISTRATION_STABILIZATION_MS)
+    }
+
+    private readonly reportRuntimeError = (category: string, error: unknown) => {
+        if (!this.registrationReported) {
+            this.registrationFailed = true
+            this.clearRegistrationTimer()
+        }
+        this.bridge.reportError(category, error)
     }
 
     private registerAddon(definition: PulseSyncAddonDefinition): Cleanup {
@@ -145,10 +174,7 @@ export class IsolatedWebHostRuntime {
         this.definitionGeneration += 1
         const generation = this.definitionGeneration
         this.renderDefinition()
-        if (!this.registrationReported) {
-            this.registrationReported = true
-            this.bridge.reportReady()
-        }
+        this.scheduleRegistrationReady()
 
         let active = true
         return () => {
@@ -160,6 +186,7 @@ export class IsolatedWebHostRuntime {
 
     private unregisterCurrentAddon(): boolean {
         const hadDefinition = Boolean(this.currentDefinition || this.addonCleanup)
+        if (!this.registrationReported) this.clearRegistrationTimer()
         clearAddonModalSessions(this.bridge.addonApi.modals)
         try {
             this.addonCleanup?.()
@@ -177,6 +204,7 @@ export class IsolatedWebHostRuntime {
     readonly dispose = () => {
         if (this.disposed) return
         this.disposed = true
+        this.clearRegistrationTimer()
 
         document.removeEventListener(this.bridge.eventName('dispose'), this.dispose)
         this.unregisterCurrentAddon()

@@ -1930,26 +1930,6 @@
                                     },
                                     [o, v],
                                 ),
-                                b = (0, i.useCallback)(() => {
-                                    window.desktopEvents?.send(s.E.APP_STALL_CANCEL_RESTART);
-                                }, []),
-                                E = (0, i.useCallback)(
-                                    (e, t = 0) => {
-                                        if (window.onAppStallStallDedupeNonce === t) return;
-                                        (window.onAppStallStallDedupeNonce = t),
-                                            l(
-                                                (0, r.jsx)(toastWithProgress, {
-                                                    toastID: 'safeModeRestart',
-                                                    message: 'Плеер запускается слишком долго. Перезагрузка в безопасном режиме через #s',
-                                                    buttonLabel: 'Отменить',
-                                                    onButtonClick: b,
-                                                    dismissOnButtonClick: !0,
-                                                }),
-                                                { containerId: p.u.IMPORTANT },
-                                            );
-                                    },
-                                    [l, b],
-                                ),
                                 S = (0, i.useCallback)(
                                     (e, t, a, n, o = 0, l, d) => {
                                         if (window['onBasicToastCreate' + t] === o) return;
@@ -2010,17 +1990,7 @@
                                             null == (e = window.desktopEvents) || e.off(s.E.GPU_STALL, g);
                                         }
                                     );
-                                }, [g]),
-                                (0, i.useEffect)(() => {
-                                    var e;
-                                    return (
-                                        null == (e = window.desktopEvents) || e.on(s.E.APP_STALL, E),
-                                        () => {
-                                            var e;
-                                            null == (e = window.desktopEvents) || e.off(s.E.APP_STALL, E);
-                                        }
-                                    );
-                                }, [E]);
+                                }, [g]);
                         })(),
                         (() => {
                             let { library: e, experiments: t } = (0, T.g)(),

@@ -13,6 +13,81 @@ const { mergeWithSystem, isSystemId, sanitizeId: sanitizeIdFromSystem } = requir
 
 const USER_VALIDATION_REFRESH_INTERVAL_MS = 10 * 60 * 1000;
 const USER_VALIDATION_RETRY_DELAY_MS = 60 * 1000;
+const ADDON_RECOVERY_STORE_KEY = 'pulsesyncAddonRecovery';
+const LEGACY_RECOVERY_MAX_JOURNAL = 128;
+const LEGACY_RECOVERY_MAX_AGE_MS = 60 * 1000;
+
+function createEmptyAddonRecoveryState() {
+    return {
+        legacy: { active: null, journal: [], quarantine: {} },
+        webHost: { quarantine: {} },
+        pendingNotice: null,
+    };
+}
+
+function normalizeRecoveryEntry(value) {
+    if (!value || typeof value !== 'object') return null;
+    const id = typeof value.id === 'string' ? value.id.trim() : '';
+    const fingerprint = typeof value.fingerprint === 'string' ? value.fingerprint.trim() : '';
+    if (!id || !fingerprint) return null;
+    return {
+        id,
+        fingerprint,
+        name: typeof value.name === 'string' && value.name.trim() ? value.name.trim() : id,
+        kind: value.kind === 'theme' ? 'theme' : 'addon',
+        isSystem: value.isSystem === true,
+        startedAt: Number.isFinite(Number(value.startedAt)) ? Number(value.startedAt) : Date.now(),
+    };
+}
+
+function normalizeQuarantine(value) {
+    const result = {};
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return result;
+    for (const [id, entry] of Object.entries(value)) {
+        const fingerprint = typeof entry?.fingerprint === 'string' ? entry.fingerprint.trim() : '';
+        if (!id || !fingerprint) continue;
+        result[id] = {
+            fingerprint,
+            name: typeof entry?.name === 'string' && entry.name.trim() ? entry.name.trim() : id,
+            reason: typeof entry?.reason === 'string' ? entry.reason : 'unknown',
+            failedAt: Number.isFinite(Number(entry?.failedAt)) ? Number(entry.failedAt) : Date.now(),
+        };
+    }
+    return result;
+}
+
+function normalizeAddonRecoveryState(value) {
+    const state = createEmptyAddonRecoveryState();
+    if (!value || typeof value !== 'object') return state;
+    state.legacy.active = normalizeRecoveryEntry(value.legacy?.active);
+    state.legacy.journal = Array.isArray(value.legacy?.journal)
+        ? value.legacy.journal.map(normalizeRecoveryEntry).filter(Boolean).slice(-LEGACY_RECOVERY_MAX_JOURNAL)
+        : [];
+    state.legacy.quarantine = normalizeQuarantine(value.legacy?.quarantine);
+    state.webHost.quarantine = normalizeQuarantine(value.webHost?.quarantine);
+    if (value.pendingNotice && typeof value.pendingNotice === 'object') {
+        const id = typeof value.pendingNotice.id === 'string' ? value.pendingNotice.id.trim() : '';
+        if (id) {
+            state.pendingNotice = {
+                id,
+                name: typeof value.pendingNotice.name === 'string' && value.pendingNotice.name.trim() ? value.pendingNotice.name.trim() : id,
+                runtime: value.pendingNotice.runtime === 'webhost' ? 'webhost' : 'legacy',
+                reason: typeof value.pendingNotice.reason === 'string' ? value.pendingNotice.reason : 'unknown',
+            };
+        }
+    }
+    return state;
+}
+
+function hashRecoveryAsset(value) {
+    return crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
+}
+
+function legacyStyleIdForScriptId(scriptId) {
+    if (scriptId.startsWith('ext-script-')) return `css-${scriptId.slice('ext-script-'.length)}`;
+    if (scriptId.startsWith('theme-script-')) return `css-${scriptId.slice('theme-script-'.length)}`;
+    return '';
+}
 
 function sanitizeId(name) {
     return sanitizeIdFromSystem(name);
@@ -86,6 +161,7 @@ class PulseSyncManager extends EventEmitter {
         this.currentTheme = null;
         this.cssContent = {};
         this.scriptContent = {};
+        this.scriptMetadata = {};
         this.styleKeys = {};
         this.scriptKeys = {};
         this.isReloading = false;
@@ -114,6 +190,8 @@ class PulseSyncManager extends EventEmitter {
         this._legacyAssetsRevision = 0;
         this._legacyAssetsFingerprint = null;
         this._webHostAddonsSnapshot = { runtime: 'isolated', hash: '', addons: [] };
+        this._addonRecoveryState = normalizeAddonRecoveryState(store_js_1.get(ADDON_RECOVERY_STORE_KEY));
+        this.recoverInterruptedLegacyAddon();
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
         this.updateDownloadInfo = this.updateDownloadInfo.bind(this);
@@ -141,11 +219,207 @@ class PulseSyncManager extends EventEmitter {
         }
     }
 
-    async injectThemesAndAddons() {
-        if (process.argv.includes('--safe-mode')) {
-            this.logger.warn('Safe mode enabled: skipping theme and addon injection');
+    persistAddonRecoveryState() {
+        store_js_1.set(ADDON_RECOVERY_STORE_KEY, this.cloneAddonSettingsValue(this._addonRecoveryState));
+    }
+
+    getLegacyScriptFingerprint(id, code) {
+        return hashRecoveryAsset({ runtime: 'legacy', id, code: String(code || '') });
+    }
+
+    getWebHostAssetFingerprint(addon) {
+        return hashRecoveryAsset({
+            runtime: 'isolated',
+            type: addon?.type,
+            id: addon?.id,
+            version: addon?.version || '',
+            css: addon?.css || '',
+            code: addon?.type === 'web-addon' ? addon?.code || '' : '',
+        });
+    }
+
+    getCurrentLegacyScriptAsset(scriptId) {
+        const id = typeof scriptId === 'string' ? scriptId.trim() : '';
+        const code = id ? this.scriptContent[id] : undefined;
+        if (!id || typeof code !== 'string' || !code.trim()) return null;
+        const metadata = this.scriptMetadata[id] || {};
+        return {
+            id,
+            name: typeof metadata.name === 'string' && metadata.name.trim() ? metadata.name.trim() : id,
+            kind: metadata.kind === 'theme' || id.startsWith('theme-script-') ? 'theme' : 'addon',
+            isSystem: metadata.isSystem === true,
+            fingerprint: this.getLegacyScriptFingerprint(id, code),
+        };
+    }
+
+    isLegacyScriptQuarantined(scriptId) {
+        const current = this.getCurrentLegacyScriptAsset(scriptId);
+        if (!current) return false;
+        return this._addonRecoveryState.legacy.quarantine[current.id]?.fingerprint === current.fingerprint;
+    }
+
+    getCurrentWebHostAsset(addonId) {
+        const id = typeof addonId === 'string' ? addonId.trim() : '';
+        if (!id) return null;
+        const addon = Array.isArray(this._webHostAddonsSnapshot?.addons) ? this._webHostAddonsSnapshot.addons.find((item) => item?.id === id) : null;
+        if (!addon) return null;
+        return {
+            ...addon,
+            fingerprint: this.getWebHostAssetFingerprint(addon),
+        };
+    }
+
+    quarantineLegacyAsset(asset, reason = 'unknown') {
+        const normalized = normalizeRecoveryEntry(asset);
+        if (!normalized || normalized.isSystem) return null;
+        const quarantine = this._addonRecoveryState.legacy.quarantine;
+        quarantine[normalized.id] = {
+            fingerprint: normalized.fingerprint,
+            name: normalized.name,
+            reason,
+            failedAt: Date.now(),
+        };
+        this._addonRecoveryState.legacy.active = null;
+        this._addonRecoveryState.legacy.journal = [];
+        this._addonRecoveryState.pendingNotice = {
+            id: normalized.id,
+            name: normalized.name,
+            runtime: 'legacy',
+            reason,
+        };
+        this.persistAddonRecoveryState();
+        this.logger.error(`Legacy addon quarantined: ${normalized.name} (${normalized.id}), reason=${reason}`);
+        return normalized;
+    }
+
+    quarantineWebHostAsset(asset, reason = 'unknown') {
+        if (!asset || asset.type !== 'web-addon' || typeof asset.id !== 'string' || typeof asset.fingerprint !== 'string') return null;
+        this._addonRecoveryState.webHost.quarantine[asset.id] = {
+            fingerprint: asset.fingerprint,
+            name: typeof asset.name === 'string' && asset.name.trim() ? asset.name.trim() : asset.id,
+            reason,
+            failedAt: Date.now(),
+        };
+        this.persistAddonRecoveryState();
+        this.logger.error(`WebHost addon quarantined: ${asset.name || asset.id} (${asset.id}), reason=${reason}`);
+        return asset;
+    }
+
+    recoverInterruptedLegacyAddon() {
+        const active = this._addonRecoveryState.legacy.active;
+        const hadJournal = this._addonRecoveryState.legacy.journal.length > 0;
+        if (active && !active.isSystem) {
+            this.quarantineLegacyAsset(active, 'renderer-exit-during-legacy-load');
             return;
         }
+        if (active || hadJournal) {
+            this._addonRecoveryState.legacy.active = null;
+            this._addonRecoveryState.legacy.journal = [];
+            this.persistAddonRecoveryState();
+        }
+    }
+
+    markApplicationInitFinished() {
+        if (!this._addonRecoveryState.legacy.active && this._addonRecoveryState.legacy.journal.length === 0) return;
+        this._addonRecoveryState.legacy.active = null;
+        this._addonRecoveryState.legacy.journal = [];
+        this.persistAddonRecoveryState();
+    }
+
+    consumeAddonRecoveryNotice() {
+        const notice = this._addonRecoveryState.pendingNotice;
+        if (!notice) return null;
+        this._addonRecoveryState.pendingNotice = null;
+        this.persistAddonRecoveryState();
+        return this.cloneAddonSettingsValue(notice);
+    }
+
+    getLegacyRecoveryCandidate() {
+        const active = this._addonRecoveryState.legacy.active;
+        const candidate = active || this._addonRecoveryState.legacy.journal.at(-1);
+        if (!candidate || candidate.isSystem) return null;
+        if (Date.now() - candidate.startedAt > LEGACY_RECOVERY_MAX_AGE_MS) return null;
+        return candidate;
+    }
+
+    recoverFromStartupStall(webHostReady) {
+        if (!webHostReady) {
+            this.logger.error('Application startup stalled before WebHost reported ready; no addon will be quarantined');
+            return null;
+        }
+        const candidate = this.getLegacyRecoveryCandidate();
+        if (!candidate) {
+            this.logger.error('Application startup stalled with no recoverable legacy addon candidate');
+            return null;
+        }
+        return this.quarantineLegacyAsset(candidate, 'application-init-stall');
+    }
+
+    recoverFromRendererCrash(reason = 'renderer-crash') {
+        const candidate = this.getLegacyRecoveryCandidate();
+        if (!candidate) return null;
+        return this.quarantineLegacyAsset(candidate, reason);
+    }
+
+    handleAddonRecoveryRequest(payload) {
+        if (!payload || typeof payload !== 'object') throw new TypeError('PulseSync addon recovery payload is invalid');
+        const runtime = payload.runtime;
+        const action = payload.action;
+
+        if (runtime === 'legacy') {
+            const requested = normalizeRecoveryEntry(payload.asset);
+            if (!requested) throw new TypeError('PulseSync legacy recovery asset is invalid');
+            const current = this.getCurrentLegacyScriptAsset(requested.id);
+            if (!current || current.fingerprint !== requested.fingerprint || current.kind !== requested.kind) {
+                throw new Error(`PulseSync legacy recovery rejected stale asset ${requested.id}`);
+            }
+            const quarantine = this._addonRecoveryState.legacy.quarantine[current.id];
+            if (quarantine?.fingerprint === current.fingerprint) return { allowed: false, quarantined: true };
+
+            if (action === 'begin') {
+                const entry = normalizeRecoveryEntry({ ...current, startedAt: Date.now() });
+                this._addonRecoveryState.legacy.active = entry;
+                this._addonRecoveryState.legacy.journal = this._addonRecoveryState.legacy.journal
+                    .filter((item) => item.id !== entry.id || item.fingerprint !== entry.fingerprint)
+                    .concat(entry)
+                    .slice(-LEGACY_RECOVERY_MAX_JOURNAL);
+                this.persistAddonRecoveryState();
+                return { allowed: true, quarantined: false };
+            }
+
+            if (action === 'complete') {
+                const active = this._addonRecoveryState.legacy.active;
+                if (active?.id === current.id && active?.fingerprint === current.fingerprint) {
+                    this._addonRecoveryState.legacy.active = null;
+                    this.persistAddonRecoveryState();
+                }
+                return { allowed: true, quarantined: false };
+            }
+
+            if (action === 'failure') {
+                const quarantined = this.quarantineLegacyAsset(current, typeof payload.reason === 'string' ? payload.reason : 'legacy-execution-failed');
+                return { allowed: false, quarantined: Boolean(quarantined) };
+            }
+
+            throw new Error(`PulseSync legacy recovery action is not supported: ${String(action)}`);
+        }
+
+        if (runtime === 'webhost') {
+            if (action !== 'quarantine') throw new Error(`PulseSync WebHost recovery action is not supported: ${String(action)}`);
+            const id = typeof payload.addonId === 'string' ? payload.addonId.trim() : '';
+            const fingerprint = typeof payload.fingerprint === 'string' ? payload.fingerprint.trim() : '';
+            const current = this.getCurrentWebHostAsset(id);
+            if (!current || current.type !== 'web-addon' || current.fingerprint !== fingerprint) {
+                throw new Error(`PulseSync WebHost recovery rejected stale asset ${id || '<empty>'}`);
+            }
+            const quarantined = this.quarantineWebHostAsset(current, typeof payload.reason === 'string' ? payload.reason : 'webhost-runtime-failed');
+            return { quarantined: Boolean(quarantined) };
+        }
+
+        throw new Error(`PulseSync addon recovery runtime is not supported: ${String(runtime)}`);
+    }
+
+    async injectThemesAndAddons() {
         if (!this.isAuthorized) {
             this.logger.warn('Authorization required: skipping theme and addon injection');
             return;
@@ -227,6 +501,7 @@ class PulseSyncManager extends EventEmitter {
         this.prevExtensions = [];
         this.cssContent = {};
         this.scriptContent = {};
+        this.scriptMetadata = {};
         this.styleKeys = {};
         this.scriptKeys = {};
         setAllowedUrls([]);
@@ -577,7 +852,7 @@ class PulseSyncManager extends EventEmitter {
 
             this._webHostAddonsSnapshot = this.cloneAddonSettingsValue(snapshot);
             if (this.isAuthorized) {
-                this.window.webContents.send(Events.PULSESYNC_WEBHOST_ADDONS, this._webHostAddonsSnapshot);
+                this.window.webContents.send(Events.PULSESYNC_WEBHOST_ADDONS, this.getWebHostAddonsSnapshot());
             }
         });
 
@@ -618,6 +893,7 @@ class PulseSyncManager extends EventEmitter {
                 this.cssContent = {};
                 this.styleKeys = {};
                 this.scriptContent = {};
+                this.scriptMetadata = {};
                 this.scriptKeys = {};
                 this.currentTheme = null;
                 this.safeReload('theme switched to default');
@@ -635,6 +911,7 @@ class PulseSyncManager extends EventEmitter {
                 delete this.cssContent[previousCssKey];
                 delete this.styleKeys[previousCssKey];
                 delete this.scriptContent[previousScriptKey];
+                delete this.scriptMetadata[previousScriptKey];
                 delete this.scriptKeys[previousScriptKey];
             }
 
@@ -701,10 +978,6 @@ class PulseSyncManager extends EventEmitter {
 
         this.sourceExtensions = Array.isArray(addons) ? addons : [];
 
-        if (process.argv.includes('--safe-mode')) {
-            this.logger.warn('Safe mode enabled: skipping ddon injection');
-            return;
-        }
         if (!this.isAuthorized) {
             this.logger.warn('Authorization required: skipping addon injection');
             return;
@@ -784,6 +1057,7 @@ class PulseSyncManager extends EventEmitter {
         for (const key of Object.keys(this.scriptContent)) {
             if (!key.startsWith('ext-script-')) continue;
             delete this.scriptContent[key];
+            delete this.scriptMetadata[key];
             delete this.scriptKeys[key];
         }
 
@@ -793,6 +1067,11 @@ class PulseSyncManager extends EventEmitter {
                 const key = `ext-script-${base}`;
                 this.logger.info(`Applying script: ${ext.name}${isSystemId(base) ? ' (system)' : ''}`);
                 this.scriptContent[key] = String(ext.script);
+                this.scriptMetadata[key] = {
+                    name: ext.name || ext.addon || base,
+                    kind: 'addon',
+                    isSystem: isSystemId(base),
+                };
                 this.scriptKeys[key] = true;
             }
         }
@@ -812,8 +1091,8 @@ class PulseSyncManager extends EventEmitter {
             scripts.push({
                 id: base,
                 name: ext.name || ext.addon || base,
-                cssApplied: !!this.styleKeys[cssKey],
-                scriptApplied: !!this.scriptKeys[scriptKey],
+                cssApplied: !!this.styleKeys[cssKey] && !this.isLegacyScriptQuarantined(scriptKey),
+                scriptApplied: !!this.scriptKeys[scriptKey] && !this.isLegacyScriptQuarantined(scriptKey),
                 cssKey,
                 scriptKey,
                 isSystem: isSystemId(base),
@@ -827,8 +1106,8 @@ class PulseSyncManager extends EventEmitter {
             const scriptKey = `theme-script-${sanitizeId(tName)}`;
             theme.push({
                 name: tName,
-                cssApplied: !!this.styleKeys[cssKey],
-                scriptApplied: !!this.scriptKeys[scriptKey],
+                cssApplied: !!this.styleKeys[cssKey] && !this.isLegacyScriptQuarantined(scriptKey),
+                scriptApplied: !!this.scriptKeys[scriptKey] && !this.isLegacyScriptQuarantined(scriptKey),
                 cssKey,
                 scriptKey,
             });
@@ -842,25 +1121,69 @@ class PulseSyncManager extends EventEmitter {
     }
 
     getLegacyAssetsSnapshot() {
-        if (process.argv.includes('--safe-mode') || !this.isAuthorized) {
+        if (!this.isAuthorized) {
             return { runtime: 'legacy', revision: this._legacyAssetsRevision, styles: [], scripts: [] };
         }
+
+        const quarantinedStyleIds = new Set();
+        const scripts = [];
+        let recoveryChanged = false;
+
+        for (const [id, code] of Object.entries(this.scriptContent)) {
+            const asset = this.getCurrentLegacyScriptAsset(id);
+            if (!asset) continue;
+            const quarantine = this._addonRecoveryState.legacy.quarantine[id];
+            if (quarantine?.fingerprint === asset.fingerprint) {
+                const styleId = legacyStyleIdForScriptId(id);
+                if (styleId) quarantinedStyleIds.add(styleId);
+                continue;
+            }
+            if (quarantine && quarantine.fingerprint !== asset.fingerprint) {
+                delete this._addonRecoveryState.legacy.quarantine[id];
+                recoveryChanged = true;
+            }
+            scripts.push({ ...asset, code });
+        }
+
+        if (recoveryChanged) this.persistAddonRecoveryState();
 
         return {
             runtime: 'legacy',
             revision: this._legacyAssetsRevision,
-            styles: Object.entries(this.cssContent).map(([id, css]) => ({ id, css })),
-            scripts: Object.entries(this.scriptContent).map(([id, code]) => ({
-                id,
-                code,
-                kind: id.startsWith('theme-script-') ? 'theme' : 'addon',
-            })),
+            styles: Object.entries(this.cssContent)
+                .filter(([id]) => !quarantinedStyleIds.has(id))
+                .map(([id, css]) => ({ id, css })),
+            scripts,
         };
     }
 
     getWebHostAddonsSnapshot() {
-        if (process.argv.includes('--safe-mode') || !this.isAuthorized) return { runtime: 'isolated', hash: '', addons: [] };
-        return this.cloneAddonSettingsValue(this._webHostAddonsSnapshot);
+        if (!this.isAuthorized) return { runtime: 'isolated', hash: '', addons: [] };
+        const addons = [];
+        let recoveryChanged = false;
+        let filtered = false;
+
+        for (const addon of Array.isArray(this._webHostAddonsSnapshot?.addons) ? this._webHostAddonsSnapshot.addons : []) {
+            const fingerprint = this.getWebHostAssetFingerprint(addon);
+            const quarantine = this._addonRecoveryState.webHost.quarantine[addon.id];
+            if (addon.type === 'web-addon' && quarantine?.fingerprint === fingerprint) {
+                filtered = true;
+                continue;
+            }
+            if (quarantine && quarantine.fingerprint !== fingerprint) {
+                delete this._addonRecoveryState.webHost.quarantine[addon.id];
+                recoveryChanged = true;
+            }
+            addons.push({ ...addon, ...(addon.type === 'web-addon' ? { fingerprint } : {}) });
+        }
+
+        if (recoveryChanged) this.persistAddonRecoveryState();
+        return {
+            runtime: 'isolated',
+            hash: filtered ? hashRecoveryAsset({ runtime: 'isolated', addons }) : this._webHostAddonsSnapshot.hash,
+            addons,
+            ...(Array.isArray(this._webHostAddonsSnapshot.allowedUrls) ? { allowedUrls: [...this._webHostAddonsSnapshot.allowedUrls] } : {}),
+        };
     }
 
     publishLegacyAssets() {
@@ -903,10 +1226,6 @@ class PulseSyncManager extends EventEmitter {
     async handleTheme({ css = '', name = 'theme', script = '' }, themeChanged = false) {
         this.logger.info(process.argv);
 
-        if (process.argv.includes('--safe-mode')) {
-            this.logger.warn('Safe mode enabled: skipping theme injection');
-            return;
-        }
         if (!this.isAuthorized) {
             this.logger.warn('Authorization required: skipping theme injection');
             return;
@@ -922,12 +1241,18 @@ class PulseSyncManager extends EventEmitter {
         if (!script.trim()) {
             if (oldScript) {
                 delete this.scriptContent[keyScript];
+                delete this.scriptMetadata[keyScript];
                 delete this.scriptKeys[keyScript];
                 this.safeReload(`theme script removed: ${name}`);
                 return;
             }
         } else if (!this.scriptKeys[keyScript] || script !== oldScript) {
             this.scriptContent[keyScript] = script;
+            this.scriptMetadata[keyScript] = {
+                name,
+                kind: 'theme',
+                isSystem: false,
+            };
             this.scriptKeys[keyScript] = true;
             scriptChanged = true;
         }
