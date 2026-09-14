@@ -1,6 +1,7 @@
+import { ADDON_RECOVERY_EVENT } from '../constants'
+import { LEGACY_ADDON_RUNTIME } from '../runtimeModes'
 import type { LegacyAssetsSnapshot, LegacyScriptAsset, LegacyStyleAsset } from './contracts'
 import { wrapLegacyThemeScript } from './themeScript'
-import { LEGACY_ADDON_RUNTIME } from '../runtimeModes'
 
 let lastAppliedRevision = -1
 
@@ -45,7 +46,36 @@ function removeScript(id: string) {
     console.log('PulseSync removeScript:', id)
 }
 
-function applyScript(asset: LegacyScriptAsset) {
+function getRecoveryAsset(asset: LegacyScriptAsset) {
+    const id = normalizeId(asset.id)
+    const fingerprint = normalizeId(asset.fingerprint)
+    if (!id || !fingerprint) return null
+    return {
+        id,
+        fingerprint,
+        name: normalizeId(asset.name) || id,
+        kind: asset.kind === 'theme' ? 'theme' : 'addon',
+        isSystem: asset.isSystem === true,
+    }
+}
+
+async function sendRecoveryAction(action: 'begin' | 'complete' | 'failure', asset: LegacyScriptAsset, reason?: string) {
+    const recoveryAsset = getRecoveryAsset(asset)
+    if (!recoveryAsset || !window.desktopEvents?.invoke) return { allowed: true, quarantined: false }
+    try {
+        return await window.desktopEvents.invoke<{ allowed?: boolean; quarantined?: boolean }>(ADDON_RECOVERY_EVENT, {
+            runtime: 'legacy',
+            action,
+            asset: recoveryAsset,
+            ...(reason ? { reason } : {}),
+        })
+    } catch (error) {
+        console.error(`[PulseSync WebHost] Legacy addon recovery ${action} failed for ${recoveryAsset.id}:`, error)
+        return { allowed: false, quarantined: false }
+    }
+}
+
+async function applyScript(asset: LegacyScriptAsset) {
     const id = normalizeId(asset.id)
     if (!id || typeof asset.code !== 'string' || !asset.code.trim()) return
 
@@ -53,14 +83,29 @@ function applyScript(asset: LegacyScriptAsset) {
     const registry = getScriptRegistry()
     if (registry[id] === code && document.getElementById(id)) return
 
+    const recovery = await sendRecoveryAction('begin', asset)
+    if (recovery.allowed === false) {
+        removeScript(id)
+        return
+    }
+
     const parent = document.head || document.documentElement
     parent.querySelector(`script#${CSS.escape(id)}`)?.remove()
     const script = document.createElement('script')
     script.id = id
     script.textContent = code
-    parent.appendChild(script)
-    registry[id] = code
-    console.log('PulseSync applyScript:', id)
+
+    try {
+        parent.appendChild(script)
+        registry[id] = code
+        console.log('PulseSync applyScript:', id)
+        await sendRecoveryAction('complete', asset)
+    } catch (error) {
+        script.remove()
+        delete registry[id]
+        await sendRecoveryAction('failure', asset, error instanceof Error ? error.message : String(error))
+        console.error('PulseSync applyScript failed:', id, error)
+    }
 }
 
 function normalizeSnapshot(snapshot: unknown): LegacyAssetsSnapshot | null {
@@ -75,7 +120,7 @@ function normalizeSnapshot(snapshot: unknown): LegacyAssetsSnapshot | null {
     }
 }
 
-export function applyLegacyAssetsSnapshot(snapshot: unknown) {
+export async function applyLegacyAssetsSnapshot(snapshot: unknown) {
     const normalized = normalizeSnapshot(snapshot)
     if (!normalized || normalized.revision <= lastAppliedRevision) return false
 
@@ -92,7 +137,7 @@ export function applyLegacyAssetsSnapshot(snapshot: unknown) {
     })
 
     styles.forEach(applyStyle)
-    scripts.forEach(applyScript)
+    for (const script of scripts) await applyScript(script)
     lastAppliedRevision = normalized.revision
     return true
 }
