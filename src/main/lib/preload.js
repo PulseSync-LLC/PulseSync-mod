@@ -15,6 +15,7 @@ const store_js_1 = require('./store.js');
 const pulsesyncDevConfig_js_1 = require('./pulsesyncDevConfig.js');
 const events_js_1 = require('../types/events.js');
 const desktopEventPolicy_js_1 = require('./pulsesync/desktopEventPolicy.js');
+const reactErrorDecoder_js_1 = require('./reactErrorDecoder.js');
 const events = require('node:events');
 const MAX_LYRICSFILE_BYTES = 1024 * 1024;
 const MAX_LYRICSFILE_DEPTH = 32;
@@ -431,6 +432,9 @@ if (pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled) {
     });
 }
 electron_1.contextBridge.exposeInMainWorld('EVENTS', events_js_1);
+electron_1.contextBridge.exposeInMainWorld('REACT_ERROR_DECODER', {
+    decode: (version, code, args) => (0, reactErrorDecoder_js_1.decode)(version, code, Array.isArray(args) ? args : []),
+});
 
 electron_1.contextBridge.exposeInMainWorld('DISPLAY_MAX_FPS', store_js_1.getDisplayMaxFps());
 electron_1.contextBridge.exposeInMainWorld('ENABLE_YNISON_REMOTE_CONTROL', Boolean(store_js_1.getEnableYnisonRemoteControl()));
