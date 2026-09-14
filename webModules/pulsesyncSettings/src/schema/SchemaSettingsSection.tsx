@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ModSettingsApi } from '../api/modSettings';
 import { SettingsSection, type SettingsSchemaItem } from '../components/settings/SettingsSection';
 import { usePremiumStatus } from '../hooks/usePremiumStatus';
+import { usePlatform } from '../hooks/usePlatform';
 import type { PathSettingSchema, Resolvable, SettingsSchemaContext, SettingsSectionSchema, StoredSettingValue, StoredSettingsSchemaItem } from './types';
 
 type SchemaSettingsSectionProps = {
@@ -55,6 +56,7 @@ function normalizeValue(value: unknown, fallback: StoredSettingValue): StoredSet
 }
 
 export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, schema }: SchemaSettingsSectionProps) {
+    const platform = usePlatform(api);
     const descriptors = useMemo(() => collectDescriptors(schema), [schema]);
     const descriptorByKey = useMemo(() => new Map(descriptors.map((descriptor) => [descriptor.key, descriptor])), [descriptors]);
     const premium = usePremiumStatus(schema.requiresPremium ? api : undefined);
@@ -126,13 +128,14 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
         (nextValues = values): SettingsSchemaContext => ({
             api,
             displayMaxFps,
+            platform,
             get: (key) => nextValues[key],
             getBoolean: (key) => Boolean(nextValues[key]),
             getNumber: (key) => Number(nextValues[key]),
             getString: (key) => String(nextValues[key] ?? ''),
             premium,
         }),
-        [api, displayMaxFps, premium, values],
+        [api, displayMaxFps, platform, premium, values],
     );
 
     const updateValue = useCallback(

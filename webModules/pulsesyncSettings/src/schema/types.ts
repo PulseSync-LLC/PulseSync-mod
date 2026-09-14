@@ -1,4 +1,4 @@
-import type { ModSettingsApi } from '../api/modSettings';
+import type { ModSettingsApi, ModSettingsPlatform } from '../api/modSettings';
 import type { SettingBadgeProps } from '../components/controls/SettingBadge';
 import type { SettingSelectOption } from '../components/controls/SettingSelect';
 
@@ -7,6 +7,7 @@ export type StoredSettingValue = boolean | number | string | null;
 export type SettingsSchemaContext = {
     api: ModSettingsApi | undefined;
     displayMaxFps: number;
+    platform: ModSettingsPlatform | undefined;
     get: (key: string) => unknown;
     getBoolean: (key: string) => boolean;
     getNumber: (key: string) => number;

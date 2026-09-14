@@ -1,11 +1,13 @@
 import type { PulseSyncAddonApi } from '../../../pulsesyncWebHost/src/contracts';
 
+export type ModSettingsPlatform = 'win32' | 'darwin' | 'linux';
+
 export type ModSettingsApi = {
     applyR128Normalization: (enabled: boolean) => void;
     getModSetting: (key: string) => Promise<unknown>;
     getModSettingSnapshot: (key: string) => unknown;
     getDisplayMaxFps: () => number | Promise<number>;
-    getPlatform: () => string;
+    getPlatform: () => string | Promise<string>;
     getPremiumStatus: () => Promise<boolean>;
     getLastFmUser: () => Promise<unknown>;
     getLastFmYnisonAvailability: () => Promise<boolean>;
