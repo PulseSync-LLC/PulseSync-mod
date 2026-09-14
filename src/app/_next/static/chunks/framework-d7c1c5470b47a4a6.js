@@ -658,6 +658,8 @@
         55409: (e, t, n) => {
             var r = n(6027);
             function l(e) {
+                var r = globalThis.REACT_ERROR_DECODER && globalThis.REACT_ERROR_DECODER.decode('19.2.4', e, Array.prototype.slice.call(arguments, 1));
+                if (r) return r;
                 var t = 'https://react.dev/errors/' + e;
                 if (1 < arguments.length) {
                     t += '?args[]=' + encodeURIComponent(arguments[1]);
@@ -791,6 +793,8 @@
                 o = n(6027),
                 i = n(89059);
             function u(e) {
+                var c = globalThis.REACT_ERROR_DECODER && globalThis.REACT_ERROR_DECODER.decode('19.2.4', e, Array.prototype.slice.call(arguments, 1));
+                if (c) return c;
                 var t = 'https://react.dev/errors/' + e;
                 if (1 < arguments.length) {
                     t += '?args[]=' + encodeURIComponent(arguments[1]);
