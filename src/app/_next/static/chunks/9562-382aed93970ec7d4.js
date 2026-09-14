@@ -1337,6 +1337,8 @@
             'use strict';
             var n = r(55178);
             function u(e) {
+                var d = globalThis.REACT_ERROR_DECODER && globalThis.REACT_ERROR_DECODER.decode('19.2.0-canary-97cdd5d3-20250710', e, Array.prototype.slice.call(arguments, 1));
+                if (d) return d;
                 var t = 'https://react.dev/errors/' + e;
                 if (1 < arguments.length) {
                     t += '?args[]=' + encodeURIComponent(arguments[1]);
