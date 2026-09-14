@@ -140,6 +140,7 @@ export const appUpdatesSchema = defineSettingsSection({
             defaultValue: true,
             title: 'Проверять обновления модификации',
             description: 'Проверять ли наличие обновлений мода автоматически',
+            hiddenWhen: (context) => context.platform !== 'win32',
             restartRequired: true,
         },
     ],

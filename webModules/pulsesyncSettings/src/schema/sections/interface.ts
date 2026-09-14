@@ -69,6 +69,7 @@ export const windowSchema = defineSettingsSection({
             defaultValue: false,
             title: 'Минимизировать в трей при закрытии',
             description: 'Если включено, приложение свернется в трей при закрытии.',
+            hiddenWhen: (context) => context.platform !== 'win32' && context.platform !== 'linux',
         },
         {
             type: 'toggle',
@@ -76,6 +77,7 @@ export const windowSchema = defineSettingsSection({
             defaultValue: true,
             title: 'Кнопки в превью панели задач',
             description: 'Добавляет поддержку расширений панели задач.',
+            hiddenWhen: (context) => context.platform !== 'win32',
             restartRequired: true,
         },
         {
@@ -84,6 +86,7 @@ export const windowSchema = defineSettingsSection({
             defaultValue: true,
             title: 'Использовать обложку трека в превью окна',
             description: 'Если трек играет, заменяет динамичное превью на картинку обложки трека',
+            hiddenWhen: (context) => context.platform !== 'win32',
             disabledWhen: (context) => !context.getBoolean('modSettings.taskBarExtensions.enable'),
             restartRequired: true,
         },
@@ -218,6 +221,7 @@ export const miniplayerSchema = defineSettingsSection({
             defaultValue: false,
             title: 'Не отображать окно в таскбаре',
             description: 'Работает только если миниплеер закреплён поверх других окон',
+            hiddenWhen: (context) => context.platform !== 'win32' && context.platform !== 'linux',
         },
         {
             type: 'toggle',

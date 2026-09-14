@@ -10805,9 +10805,9 @@
                             if (e.mode === nM.u.SYNC_LYRICS) {
                                 e.shouldRestoreSyncLyrics = !0;
                                 e.lastAutoHiddenSyncTrackId = trackId == null ? null : String(trackId);
+                                e.mode = null;
+                                e.syncLyrics.setInvisible();
                             }
-                            e.mode = null;
-                            e.syncLyrics.setInvisible();
                         },
                         restoreSyncLyricsForTrack(trackId) {
                             const currentTrackId = trackId == null ? null : String(trackId);
