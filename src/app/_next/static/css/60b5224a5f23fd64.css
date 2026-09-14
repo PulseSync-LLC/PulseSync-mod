@@ -508,7 +508,7 @@
     grid-area: navbar;
 }
 .DefaultLayout_navbar_application_macos__9dj3u {
-    margin-block-start: var(--ym-spacer-size-xxl);
+    margin-block-start: 0;
 }
 .DefaultLayout_navbar_application_linux__ejlGn,
 .DefaultLayout_navbar_application_windows__3hDQ_ {

@@ -15,6 +15,31 @@
     -webkit-app-region: drag;
     overflow: hidden;
 }
+.TitleBar_root_macos__QjdOZ {
+    box-sizing: border-box;
+    column-gap: 4px;
+    padding-left: 92px;
+    padding-right: 12px;
+}
+.TitleBar_root_macos__QjdOZ .TitleBar_button__9MptL {
+    box-sizing: border-box;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 24px;
+    border-radius: 6px;
+}
+.TitleBar_root_macos__QjdOZ .TitleBar_icon__8Wji9 {
+    display: block;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+}
+.TitleBar_root_macos__QjdOZ .TitleBar_pulseText__FhYv {
+    margin: 0 8px 0 0;
+    font-size: 13px;
+    line-height: 16px;
+    white-space: nowrap;
+}
 .TitleBar_button__9MptL,
 .TitleBar_root__QjdOZ {
     align-items: center;
