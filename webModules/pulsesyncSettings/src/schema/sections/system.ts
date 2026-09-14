@@ -29,13 +29,14 @@ export const systemSchema = defineSettingsSection({
             defaultValue: 'default',
             title: 'API аппаратного ускорения',
             description: 'Изменение может помочь в некоторых случаях, пробуйте по убыванию в списке.',
-            options: [
-                { value: 'default', label: 'Авто' },
-                { value: 'd3d11', label: 'DirectX 11' },
-                { value: 'd3d11on12', label: 'DirectX 11 on 12' },
-                { value: 'gl', label: 'OpenGL' },
-                { value: 'd3d9', label: 'DirectX 9' },
-            ],
+            options: (context) =>
+                [
+                    { value: 'default', label: 'Авто' },
+                    { value: 'd3d11', label: 'DirectX 11' },
+                    { value: 'd3d11on12', label: 'DirectX 11 on 12' },
+                    { value: 'gl', label: 'OpenGL' },
+                    { value: 'd3d9', label: 'DirectX 9' },
+                ].filter((option) => context.platform === 'win32' || !option.value.startsWith('d3d')),
             disabledWhen: (context) => !context.getBoolean(HARDWARE_ACCELERATION_KEY),
             restartRequired: true,
         },
