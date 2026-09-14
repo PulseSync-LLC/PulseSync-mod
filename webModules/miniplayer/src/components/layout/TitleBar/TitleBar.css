@@ -19,3 +19,13 @@
     display: flex;
     flex-direction: row;
 }
+
+.TitleBar_macos {
+    box-sizing: border-box;
+    padding-left: 92px;
+    padding-right: 4px;
+}
+
+.TitleBar_macos .TitleBar_button_container {
+    -webkit-app-region: no-drag;
+}

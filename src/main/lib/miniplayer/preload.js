@@ -1,5 +1,7 @@
 const electron = require('electron');
 
+electron.contextBridge.exposeInMainWorld('PLATFORM', process.platform);
+
 electron.contextBridge.exposeInMainWorld('desktopEvents', {
     send(name, ...args) {
         electron.ipcRenderer.send(name, ...args);
