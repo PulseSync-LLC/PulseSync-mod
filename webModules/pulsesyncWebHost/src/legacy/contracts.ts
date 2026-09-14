@@ -9,6 +9,9 @@ export type LegacyScriptAsset = {
     id: string
     code: string
     kind: 'addon' | 'theme'
+    name?: string
+    fingerprint?: string
+    isSystem?: boolean
 }
 
 export type LegacyAssetsSnapshot = {

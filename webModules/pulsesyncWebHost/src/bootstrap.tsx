@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { startWebHostAddonsBridge } from './addons/webHostAddonsBridge'
-import { ADDON_QUEUE_GLOBAL, WEB_HOST_API_VERSION, WEB_HOST_GLOBAL, WEB_HOST_ROOT_ID } from './constants'
+import { ADDON_QUEUE_GLOBAL, WEB_HOST_API_VERSION, WEB_HOST_GLOBAL, WEB_HOST_HEALTH_EVENT, WEB_HOST_ROOT_ID } from './constants'
 import type { PulseSyncAddonFactory } from './contracts'
 import { PulseSyncWebHost } from './components/PulseSyncWebHost'
 import { createWebHostApi } from './runtime/createWebHostApi'
@@ -38,6 +38,7 @@ function createLiveAddonQueue(installAddon: (factory: PulseSyncAddonFactory) => 
 export async function bootstrapWebHost() {
     if (window.__PULSESYNC_WEB_HOST__) return window.__PULSESYNC_WEB_HOST__
 
+    window.desktopEvents?.send?.(WEB_HOST_HEALTH_EVENT, { status: 'booting' })
     const hostApi = createWebHostApi()
 
     createRoot(getOrCreateRootContainer()).render(<PulseSyncWebHost />)
@@ -72,6 +73,7 @@ export async function bootstrapWebHost() {
     }
 
     window.dispatchEvent(new CustomEvent('pulsesync-web-host-ready', { detail: { apiVersion: WEB_HOST_API_VERSION } }))
+    window.desktopEvents?.send?.(WEB_HOST_HEALTH_EVENT, { status: 'ready', apiVersion: WEB_HOST_API_VERSION })
     console.info('[PulseSync WebHost] ready', {
         apiVersion: WEB_HOST_API_VERSION,
         reactVersion: hostApi.React.version,

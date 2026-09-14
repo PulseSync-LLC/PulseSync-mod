@@ -24,7 +24,15 @@ type RuntimeStatus = {
     stack?: string
 }
 
+export type IsolatedAddonFailure = {
+    category: string
+    message: string
+    stack?: string
+}
+
 const MAX_API_CALLS_PER_WINDOW = 300
+const RUNTIME_FAILURE_WINDOW_MS = 10_000
+const RUNTIME_FAILURE_THRESHOLD = 3
 const API_RATE_WINDOW_MS = 10_000
 const ADDON_REGISTRATION_TIMEOUT_MS = 10_000
 const ISOLATED_SUBSCRIPTIONS = {
@@ -102,9 +110,13 @@ export class IsolatedAddonRuntime {
     private resolveRegistration!: () => void
     private rejectRegistration!: (error: Error) => void
     private registrationSettled = false
+    private fatalReported = false
+    private runtimeFailureTimestamps: number[] = []
+    private readonly onFatalError?: (failure: IsolatedAddonFailure) => void
 
-    constructor(addon: WebHostAddonAsset) {
+    constructor(addon: WebHostAddonAsset, onFatalError?: (failure: IsolatedAddonFailure) => void) {
         this.addon = addon
+        this.onFatalError = onFatalError
         this.storage = createStorageHandler(addon.id, () => !this.destroyed)
         this.registrationPromise = new Promise((resolve, reject) => {
             this.resolveRegistration = resolve
@@ -227,6 +239,20 @@ export class IsolatedAddonRuntime {
         }
     }
 
+    private reportRuntimeFailure(failure: IsolatedAddonFailure) {
+        if (this.destroyed || this.fatalReported || !this.onFatalError) return
+        if (failure.category === 'addon-execution-failed') {
+            const now = Date.now()
+            this.runtimeFailureTimestamps = this.runtimeFailureTimestamps.filter(timestamp => now - timestamp <= RUNTIME_FAILURE_WINDOW_MS)
+            this.runtimeFailureTimestamps.push(now)
+            if (this.runtimeFailureTimestamps.length < RUNTIME_FAILURE_THRESHOLD) return
+        }
+        this.fatalReported = true
+        queueMicrotask(() => {
+            if (!this.destroyed) this.onFatalError?.(failure)
+        })
+    }
+
     private handleStatus(event: Event) {
         const status = parseEventDetail<RuntimeStatus>(event)
         if (!status) return
@@ -246,11 +272,14 @@ export class IsolatedAddonRuntime {
         if (status.type === 'error') {
             const category = String(status.category ?? 'addon-execution-failed')
             const message = String(status.message ?? 'Unknown isolated addon error').slice(0, 2_000)
+            const stack = String(status.stack ?? '').slice(0, 8_000)
             if (!this.registrationSettled) {
                 this.registrationSettled = true
                 this.rejectRegistration(new Error(`${category}: ${message}`))
+            } else {
+                this.reportRuntimeFailure({ category, message, ...(stack ? { stack } : {}) })
             }
-            console.error(`${prefix} ${category}: ${message}`, String(status.stack ?? '').slice(0, 8_000))
+            console.error(`${prefix} ${category}: ${message}`, stack)
         }
     }
 
@@ -266,7 +295,7 @@ export class IsolatedAddonRuntime {
     async start() {
         if (this.destroyed) throw new Error('PulseSync isolated addon runtime was destroyed')
         const executeIsolatedAddon = window.pulseSyncWebHost?.executeIsolatedAddon
-        if (typeof executeIsolatedAddon !== 'function') throw new Error('PulseSync isolated addon bridge is unavailable')
+        if (typeof executeIsolatedAddon !== 'function') throw new Error('webhost-bridge-unavailable: PulseSync isolated addon bridge is unavailable')
 
         this.installStyle()
         this.subscribeSettings()

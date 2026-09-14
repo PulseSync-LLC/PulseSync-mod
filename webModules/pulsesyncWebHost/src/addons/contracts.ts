@@ -5,6 +5,7 @@ type WebHostAssetBase = {
     name: string
     directoryName: string
     version?: string
+    fingerprint?: string
     css: string
 }
 

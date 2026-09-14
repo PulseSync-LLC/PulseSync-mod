@@ -313,12 +313,8 @@ const updateGlobalShortcuts = () => {
     }
 };
 
-const restartApplication = (safeMode = false) => {
-    if (safeMode) {
-        electron_1.app.relaunch({ args: ['--safe-mode'] });
-    } else {
-        electron_1.app.relaunch();
-    }
+const restartApplication = () => {
+    electron_1.app.relaunch();
     electron_1.app.exit();
 };
 
@@ -340,17 +336,13 @@ const handleApplicationEvents = (window) => {
     mainWindow = window;
     eventsLogger.info('Application events handler initialized');
 
-    const isSafeMode = process.argv.includes('--safe-mode');
+    let webHostHealth = { status: 'unknown', reportedAt: 0 };
+    let currentApplicationReadyAt = 0;
 
     const applicationReadyTimeOut = setTimeout(() => {
-        if (!isSafeMode) {
-            eventsLogger.error('Application ready event timeout reached. Restarting in safe mode.');
-            restartApplication(true);
-        }
+        eventsLogger.error('Application ready event timeout reached. Addon recovery was not started because application initialization did not reach the addon stage.');
     }, 5000);
     let applicationInitFinishedTimeout;
-    let appSafeModeRestartTimeout;
-    let safeModeRestartInterval;
 
     const isMainWindowBackgrounded = () => {
         const startsMinimized = store_js_1.getModSettings()?.window?.minimizedStart ?? false;
@@ -359,24 +351,20 @@ const handleApplicationEvents = (window) => {
 
     const handleApplicationInitFinishedTimeout = () => {
         applicationInitFinishedTimeout && clearTimeout(applicationInitFinishedTimeout);
-        safeModeRestartInterval && clearInterval(safeModeRestartInterval);
-        appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
 
         applicationInitFinishedTimeout = setTimeout(() => {
-            if (!isSafeMode) {
-                eventsLogger.error('APPLICATION_INIT_FINISHED event timeout reached. Prompt safe mode restart.');
-                mainWindow.webContents.send(events_js_1.Events.APP_STALL);
-                let progress = 0;
-                safeModeRestartInterval = setInterval(() => {
-                    sendProgressBarChange(window, 'safeModeRestart', Math.round(progress / 2), `${Math.round(20 - (progress / 10))} сек`);
-                    progress += 1;
-                }, 100);
-                appSafeModeRestartTimeout = setTimeout(() => {
-                    eventsLogger.error('Safe mode restart timeout reached. Restarting in safe mode.');
-                    clearInterval(safeModeRestartInterval);
-                    restartApplication(true);
-                }, 21000);
+            const webHostReady = webHostHealth.status === 'ready' && webHostHealth.reportedAt >= currentApplicationReadyAt - 2000;
+            const recoveredAddon = pulseSyncManager_js_1?.recoverFromStartupStall?.(webHostReady);
+            if (recoveredAddon) {
+                eventsLogger.error(`APPLICATION_INIT_FINISHED timeout quarantined legacy addon ${recoveredAddon.id}. Restarting normally.`);
+                restartApplication();
+                return;
             }
+            eventsLogger.error('APPLICATION_INIT_FINISHED event timeout reached. No addon was quarantined.', {
+                webHostStatus: webHostHealth.status,
+                webHostReportedAt: webHostHealth.reportedAt,
+                applicationReadyAt: currentApplicationReadyAt,
+            });
         }, 20 * 1000);
     };
 
@@ -603,9 +591,9 @@ const handleApplicationEvents = (window) => {
         if (type === 'GPU') mainWindow?.webContents.send(events_js_1.Events.GPU_STALL, reason);
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_RESTART, (event, { safeMode = false }) => {
+    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_RESTART, () => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_RESTART);
-        restartApplication(safeMode);
+        restartApplication();
     });
 
     electron_1.ipcMain.handle('scrobble-login', () => {
@@ -852,14 +840,23 @@ const handleApplicationEvents = (window) => {
     });
     electron_1.ipcMain.on(events_js_1.Events.APP_STALL_CANCEL_RESTART, () => {
         eventsLogger.info('Event received', events_js_1.Events.APP_STALL_CANCEL_RESTART);
-        appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
-        safeModeRestartInterval && clearInterval(safeModeRestartInterval);
+    });
+    electron_1.ipcMain.on(events_js_1.Events.PULSESYNC_WEBHOST_HEALTH, (event, payload) => {
+        if (event.sender !== window.webContents) return;
+        const status = ['booting', 'ready', 'failed'].includes(payload?.status) ? payload.status : 'unknown';
+        webHostHealth = { status, reportedAt: Date.now() };
+        eventsLogger.info('PulseSync WebHost health update', status);
+    });
+    electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ADDON_RECOVERY, (event, payload) => {
+        if (event.sender !== window.webContents) throw new Error('PulseSync addon recovery rejected an unknown sender');
+        return pulseSyncManager_js_1.handleAddonRecoveryRequest(payload);
     });
     electron_1.ipcMain.on(events_js_1.Events.APPLICATION_READY, async (event, language) => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_READY);
         void sendFeaturesMetric(buildFeaturesSnapshot());
 
         applicationReadyTimeOut && clearTimeout(applicationReadyTimeOut);
+        currentApplicationReadyAt = Date.now();
 
         isPlayerReady = false;
         isApplicationInitFinished = isMainWindowBackgrounded() || Date.now() - applicationInitFinishedAt < 3000;
@@ -999,11 +996,12 @@ const handleApplicationEvents = (window) => {
         isApplicationInitFinished = true;
         applicationInitFinishedAt = Date.now();
         applicationInitFinishedTimeout && clearTimeout(applicationInitFinishedTimeout);
-        appSafeModeRestartTimeout && clearTimeout(appSafeModeRestartTimeout);
-        safeModeRestartInterval && clearInterval(safeModeRestartInterval);
-        sendBasicToastDismiss(window, 'safeModeRestart');
+        pulseSyncManager_js_1.markApplicationInitFinished();
+        const recoveryNotice = pulseSyncManager_js_1.consumeAddonRecoveryNotice();
+        if (recoveryNotice?.runtime === 'legacy') {
+            sendBasicToastCreate(window, `legacy-addon-recovery:${recoveryNotice.id}`, `Аддон «${recoveryNotice.name}» автоматически отключён после ошибки запуска.`, 'Ясно');
+        }
 
-        if (isSafeMode) sendBasicToastCreate(window, 'safeModeNoticeToast', 'Безопасный режим. Аддоны отключены.', 'Ясно');
         if (pendingLastFmStartupAuthErrorToast) {
             pendingLastFmStartupAuthErrorToast = false;
             sendBasicToastCreate(window, 'lastFmStartupAuthError', 'Не удалось авторизоваться в LastFM. Подробнее на странице настроек скробблинга', 'Ясно');

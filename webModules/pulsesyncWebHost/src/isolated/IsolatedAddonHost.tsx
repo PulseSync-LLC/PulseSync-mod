@@ -8,7 +8,6 @@ import { HeaderItems } from '../components/HeaderItems'
 import { AlbumMenuItems, HeaderActions, PlayerBarButtons, PlaylistMenuItems } from '../components/NativeActions'
 import { TrackMenuItems } from '../components/TrackMenuItems'
 import { installTrackContextMenuTracking } from '../trackContextMenu'
-import type { IsolatedLog } from './contracts'
 import { IsolatedTargetRegistry } from './IsolatedTargetRegistry'
 
 type IsolatedAddonHostProps = {
@@ -16,11 +15,11 @@ type IsolatedAddonHostProps = {
     addonApi: PulseSyncAddonApi
     definition?: PulseSyncAddonDefinition
     generation: number
-    log: IsolatedLog
+    reportError: (category: string, error: unknown) => void
     targets: IsolatedTargetRegistry
 }
 
-export function IsolatedAddonHost({ addonId, addonApi, definition, generation, log, targets }: IsolatedAddonHostProps) {
+export function IsolatedAddonHost({ addonId, addonApi, definition, generation, reportError, targets }: IsolatedAddonHostProps) {
     const [, setDomRevision] = useState(0)
 
     useEffect(() => installTrackContextMenuTracking(), [])
@@ -41,7 +40,7 @@ export function IsolatedAddonHost({ addonId, addonApi, definition, generation, l
 
     if (!definition) return null
 
-    const handleRenderError = (error: Error) => log('error', ['React render failed', error.message, error.stack])
+    const handleRenderError = (error: Error) => reportError('addon-render-failed', error)
     const content: ReactNode[] = [<AddonModals key={`${generation}:modals`} modals={addonApi.modals} addonId={addonId} />]
     const RootComponent = definition.component
 
