@@ -7,6 +7,8 @@ self.PulseSyncNcsAnimation = (() => {
     // Form's private noise, audio filters and time units are approximated here.
     // Point sprites accumulate density instead of OpenGL image atomics. The GLSL
     // is self-contained because this worker is loaded from a Blob.
+    const isMacOS = /Mac/i.test(self.navigator?.platform ?? '') || /Macintosh|Mac OS X/i.test(self.navigator?.userAgent ?? '');
+
     function createNcsShaderSources(transparent) {
         return {
             particleVertex: `
@@ -126,7 +128,7 @@ void main() {
     float fade = edge.x * edge.y;
     float alpha = clamp(max(max(color.r, color.g), color.b) + halo * 0.15, 0.0, 1.0) * fade;
     color = clamp(color, 0.0, 1.0) * fade;
-    gl_FragColor = ${transparent ? 'vec4(color / max(alpha, 0.001), alpha)' : 'vec4(color + vColorBackground * (1.0 - alpha), 1.0)'};
+    gl_FragColor = ${transparent ? (isMacOS ? 'vec4(color, alpha)' : 'vec4(color / max(alpha, 0.001), alpha)') : 'vec4(color + vColorBackground * (1.0 - alpha), 1.0)'};
 }
 `,
         };
