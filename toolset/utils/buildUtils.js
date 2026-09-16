@@ -467,6 +467,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
     }
 
     function installSourceDependencies(workPath) {
+        if(workPath.includes('@pretty')) return
         execSync('yarn install --frozen-lockfile', {
             cwd: workPath,
             stdio: 'pipe',

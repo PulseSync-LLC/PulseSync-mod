@@ -511,12 +511,37 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         });
     }
 
-    async function release({ dest, versions = undefined, onlyUploadAppAsar = false, onlySendPatchNotes = false }) {
-        const payload = await prepareReleasePayload({ dest, versions });
+    async function uploadReleaseUnpacked({ dest = undefined } = {}) {
+        const asarPath = dest ?? DEFAULT_DIST_PATH;
+        return uploadUnpacked({
+            sourcePath: getAsarUnpackedDirPath(asarPath),
+        });
+    }
 
-        if (onlyUploadAppAsar && onlySendPatchNotes) {
-            throw new Error('Release: onlyUploadAppAsar и onlySendPatchNotes нельзя использовать вместе');
+    async function release({
+        dest,
+        versions = undefined,
+        onlyUploadAppAsar = false,
+        onlyUploadUnpacked = false,
+        onlySendPatchNotes = false,
+    }) {
+        const exclusiveModes = [
+            ['onlyUploadAppAsar', onlyUploadAppAsar],
+            ['onlyUploadUnpacked', onlyUploadUnpacked],
+            ['onlySendPatchNotes', onlySendPatchNotes],
+        ].filter(([, enabled]) => enabled);
+
+        if (exclusiveModes.length > 1) {
+            throw new Error(`Release: режимы ${exclusiveModes.map(([name]) => name).join(', ')} нельзя использовать вместе`);
         }
+
+        if (onlyUploadUnpacked) {
+            await uploadReleaseUnpacked({ dest });
+            console.log('Релиз: включён режим onlyUploadUnpacked, GitHub release, app.asar и Discord патчноут пропущены');
+            return;
+        }
+
+        const payload = await prepareReleasePayload({ dest, versions });
 
         if (onlyUploadAppAsar) {
             await uploadReleaseAppAsar(payload);
@@ -539,6 +564,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         release,
         prepareReleasePayload,
         uploadReleaseAppAsar,
+        uploadReleaseUnpacked,
         sendPatchNoteToDiscord,
         uploadAppAsar,
         uploadUnpacked,

@@ -4,8 +4,8 @@ module.exports = {
     name: 'spoof',
     description: 'подменяет версию приложения в src на последнюю',
     order: 20,
-    usage: 'spoof [-b] [-r] [-m] [--modernize] [--noNativeModules] [--dest=<path>] [--buildZstd] [--onlyUploadAppAsar] [--onlySendPatchNotes]',
-    flags: ['b', 'r', 'm', 'modernize', 'noNativeModules', 'dest', 'buildZstd', 'onlyUploadAppAsar', 'onlySendPatchNotes'],
+    usage: 'spoof [-b] [-r] [-m] [--modernize] [--noNativeModules] [--dest=<path>] [--buildZstd] [--onlyUploadAppAsar] [--onlyUploadUnpacked] [--onlySendPatchNotes]',
+    flags: ['b', 'r', 'm', 'modernize', 'noNativeModules', 'dest', 'buildZstd', 'onlyUploadAppAsar', 'onlyUploadUnpacked', 'onlySendPatchNotes'],
     createTasks({ options }) {
         return [
             createWorkflowTask('Workflow spoof', [
@@ -22,7 +22,8 @@ module.exports = {
                 },
                 {
                     ...createPrepareReleaseAsarTask(),
-                    enabled: () => (options.shouldRelease && !options.onlySendPatchNotes) || options.shouldBuildZstd,
+                    enabled: () =>
+                        (options.shouldRelease && !options.onlySendPatchNotes && !options.onlyUploadUnpacked) || options.shouldBuildZstd,
                 },
                 {
                     ...createReleaseTask({ versions: (context) => context.state.versions }),
