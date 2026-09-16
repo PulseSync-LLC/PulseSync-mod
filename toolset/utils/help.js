@@ -83,9 +83,13 @@ const FLAG_DEFINITIONS = {
         label: '--onlyUploadAppAsar',
         description: 'в release загружает только app.asar, без GitHub release и Discord патчноута',
     },
+    onlyUploadUnpacked: {
+        label: '--onlyUploadUnpacked',
+        description: 'в release загружает только app.asar.unpacked, без app.asar, GitHub release и Discord патчноута',
+    },
     onlySendPatchNotes: {
         label: '--onlySendPatchNotes',
-        description: 'в release отправляет только Discord патчноут, без GitHub release и загрузки app.asar',
+        description: 'в release отправляет только Discord патчноут, без GitHub release и загрузки артефактов',
     },
 };
 
