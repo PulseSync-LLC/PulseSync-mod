@@ -13,6 +13,7 @@ async function resolveCommandOptions(commandName, flags, core) {
     const shouldRelease = flags.r ?? false;
     const shouldBuild = flags.b ?? false;
     const onlyUploadAppAsar = flags.onlyUploadAppAsar ?? false;
+    const onlyUploadUnpacked = flags.onlyUploadUnpacked ?? false;
     const onlySendPatchNotes = flags.onlySendPatchNotes ?? false;
     const shouldBuildZstd = flags.buildZstd ?? false;
 
@@ -47,6 +48,7 @@ async function resolveCommandOptions(commandName, flags, core) {
         shouldRelease,
         shouldBuild,
         onlyUploadAppAsar,
+        onlyUploadUnpacked,
         onlySendPatchNotes,
         shouldBuildZstd,
         dest,

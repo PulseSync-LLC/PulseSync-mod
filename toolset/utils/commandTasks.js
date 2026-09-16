@@ -95,7 +95,7 @@ function createBuildTask({
                         title: 'Установка зависимостей source',
                         task: async (ctx, dependenciesTask) => {
                             dependenciesTask.output = ctx.state.build.workPath;
-                            await ctx.core.buildUtils.installSourceDependencies(ctx.state.build.workPath);
+                            ctx.core.buildUtils.installSourceDependencies(ctx.state.build.workPath);
                         },
                     },
                     createWebModulesTask(),
@@ -379,8 +379,30 @@ function createReleaseTask({ title = 'Публикация релиза', versio
     return {
         title,
         task: (context, task) => {
-            if (context.options.onlyUploadAppAsar && context.options.onlySendPatchNotes) {
-                throw new Error('Release: onlyUploadAppAsar и onlySendPatchNotes нельзя использовать вместе');
+            const exclusiveModes = [
+                ['onlyUploadAppAsar', context.options.onlyUploadAppAsar],
+                ['onlyUploadUnpacked', context.options.onlyUploadUnpacked],
+                ['onlySendPatchNotes', context.options.onlySendPatchNotes],
+            ].filter(([, enabled]) => enabled);
+
+            if (exclusiveModes.length > 1) {
+                throw new Error(`Release: режимы ${exclusiveModes.map(([name]) => name).join(', ')} нельзя использовать вместе`);
+            }
+
+            if (context.options.onlyUploadUnpacked) {
+                return task.newListr(
+                    wrapTaskDefinitions([
+                        {
+                            title: 'Загрузка app.asar.unpacked',
+                            task: async (ctx) => {
+                                await ctx.core.releaseUtils.uploadReleaseUnpacked({
+                                    dest: resolveValue(dest, ctx),
+                                });
+                            },
+                        },
+                    ]),
+                    EXPANDED_SKIP_REASONS_OPTIONS,
+                );
             }
 
             return task.newListr(
