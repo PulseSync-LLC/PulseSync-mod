@@ -3,8 +3,6 @@
 const crypto = require('node:crypto');
 const { parse } = require('@babel/parser');
 
-const MAX_ISOLATED_ADDON_CODE_LENGTH = 10_000_000;
-const MAX_WEB_HOST_ASSET_CSS_LENGTH = 10_000_000;
 const ISOLATED_EXECUTION_TTL_MS = 15_000;
 
 const createBlockedAddonError = (addonId, category, reason) => {
@@ -31,9 +29,6 @@ const normalizeAssetType = (value) => {
 
 const validateCanonicalCss = (assetId, value, required = false) => {
     const css = typeof value === 'string' ? value : '';
-    if (css.length > MAX_WEB_HOST_ASSET_CSS_LENGTH) {
-        throw createBlockedAddonError(assetId, 'css-too-large', `stylesheet exceeds ${MAX_WEB_HOST_ASSET_CSS_LENGTH} characters`);
-    }
     if (required && (!css.trim() || css.trim() === '{}')) {
         throw createBlockedAddonError(assetId, 'empty-css', 'theme stylesheet is empty');
     }
@@ -127,9 +122,6 @@ const findBlockedCapability = (root) => {
 
 const validateCanonicalAddonCode = (addonId, code) => {
     if (typeof code !== 'string' || !code.trim()) throw createBlockedAddonError(addonId, 'empty-code', 'bundle is empty');
-    if (code.length > MAX_ISOLATED_ADDON_CODE_LENGTH) {
-        throw createBlockedAddonError(addonId, 'code-too-large', `bundle exceeds ${MAX_ISOLATED_ADDON_CODE_LENGTH} characters`);
-    }
 
     let program;
     try {
@@ -293,8 +285,6 @@ class IsolatedAddonExecutionStore {
 
 module.exports = {
     ISOLATED_EXECUTION_TTL_MS,
-    MAX_ISOLATED_ADDON_CODE_LENGTH,
-    MAX_WEB_HOST_ASSET_CSS_LENGTH,
     IsolatedAddonExecutionStore,
     normalizeCanonicalSnapshot,
     resolveCanonicalAddon,
