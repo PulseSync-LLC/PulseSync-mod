@@ -7915,6 +7915,35 @@
                             let t = this.graphs.find((t) => t.audioElement === e);
                             t && ((this.currentGraph = t), (this._prevTimeRms = void 0), (this._prevFrequencyRms = void 0));
                         });
+                    const getAnalyserNode = () => {
+                        const node = this.currentGraph?.analyserNode;
+                        if (!node) throw new Error('PulseSync Wave analyser is not ready');
+                        return node;
+                    };
+                    const readAnalyserData = (method, ArrayType, frequency) => {
+                        const node = getAnalyserNode();
+                        const buffer = new ArrayType(frequency ? node.frequencyBinCount : node.fftSize);
+                        node[method](buffer);
+                        return buffer;
+                    };
+                    window.pulseSyncWebHost?.registerWaveAnalyser?.({
+                        isAvailable: () => !!this.currentGraph?.analyserNode,
+                        getProperties: () => {
+                            const node = getAnalyserNode();
+                            return {
+                                fftSize: node.fftSize,
+                                frequencyBinCount: node.frequencyBinCount,
+                                minDecibels: node.minDecibels,
+                                maxDecibels: node.maxDecibels,
+                                smoothingTimeConstant: node.smoothingTimeConstant,
+                                sampleRate: node.context.sampleRate,
+                            };
+                        },
+                        getByteFrequencyData: () => readAnalyserData('getByteFrequencyData', Uint8Array, true),
+                        getFloatFrequencyData: () => readAnalyserData('getFloatFrequencyData', Float32Array, true),
+                        getByteTimeDomainData: () => readAnalyserData('getByteTimeDomainData', Uint8Array, false),
+                        getFloatTimeDomainData: () => readAnalyserData('getFloatTimeDomainData', Float32Array, false),
+                    });
                 }
             }
             !(function (e) {
