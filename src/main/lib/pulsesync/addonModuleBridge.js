@@ -7,7 +7,7 @@ const createAddonModuleBridge = (invoke, capability) => {
     const request = async (alias, bytes) => {
         if (!active) throw moduleError('aborted');
         if (!validAlias(alias)) throw moduleError('undeclared-module');
-        if (!(bytes instanceof Uint8Array) || !bytes.byteLength || bytes.byteLength > 10 * 1024 * 1024) throw moduleError('integrity-mismatch');
+        if (bytes !== undefined && (!(bytes instanceof Uint8Array) || !bytes.byteLength || bytes.byteLength > 10 * 1024 * 1024)) throw moduleError('integrity-mismatch');
         const result = await invoke(MODULE_IPC.request, { capability, operation: 'load', alias, bytes });
         if (!active) throw moduleError('aborted');
         return result;

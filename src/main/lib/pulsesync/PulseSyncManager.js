@@ -239,6 +239,7 @@ class PulseSyncManager extends EventEmitter {
             css: addon?.css || '',
             code: addon?.type === 'web-addon' ? addon?.code || '' : '',
             ...(addon?.securityManifest ? { securityManifest: addon.securityManifest, catalogAddonId: addon.catalogAddonId } : {}),
+            ...(addon?.localModules ? { localModules: addon.localModules } : {}),
         });
     }
 

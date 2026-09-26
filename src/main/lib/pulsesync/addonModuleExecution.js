@@ -18,7 +18,7 @@ class AddonModuleExecutionStore {
         this.generations = new Map();
     }
 
-    activate({ senderId, runtimeId, binding, descriptors, activationId = crypto.randomUUID() }) {
+    activate({ senderId, runtimeId, binding, descriptors, development = false, activationId = crypto.randomUUID() }) {
         if (!Number.isSafeInteger(senderId) || typeof runtimeId !== 'string' || !runtimeId || typeof binding !== 'string' || !binding || binding.length > 16384) {
             throw moduleError('access-denied');
         }
@@ -58,6 +58,7 @@ class AddonModuleExecutionStore {
         const activation = Object.freeze({
             senderId,
             runtimeId,
+            development,
             binding,
             descriptors: Object.freeze(pins),
             worldId: this.allocateWorld(),

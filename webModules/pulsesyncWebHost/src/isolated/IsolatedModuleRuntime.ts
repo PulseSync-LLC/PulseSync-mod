@@ -21,10 +21,10 @@ type Definition = {
 }
 type Options = { fetch: (context: { descriptor: Descriptor; signal: AbortSignal }) => Promise<Uint8Array> }
 export type ModuleBridge = {
-    load: (alias: string, bytes: Uint8Array) => Promise<{ kind: 'javascript' | 'wasm'; bytes?: Uint8Array }>
+    load: (alias: string, bytes?: Uint8Array) => Promise<{ kind: 'javascript' | 'wasm'; bytes?: Uint8Array }>
     dispose: () => Promise<unknown>
 }
-export type ModuleInit = { descriptors: Record<string, Descriptor>; errors: Record<string, string> }
+export type ModuleInit = { descriptors: Record<string, Descriptor>; errors: Record<string, string>; development?: boolean }
 
 export class IsolatedModuleRuntime {
     private readonly abort = new AbortController()
@@ -81,11 +81,14 @@ export class IsolatedModuleRuntime {
 
     private async initialize(alias: string, kind: Descriptor['kind'], options: Options) {
         this.assertActive()
-        if (typeof options?.fetch !== 'function') throw new Error('PulseSync modules: access-denied')
         const descriptor = Object.freeze({ ...this.init.descriptors[alias] })
-        const bytes = await options.fetch({ descriptor, signal: this.abort.signal })
-        this.assertActive()
-        if (!(bytes instanceof Uint8Array) || bytes.byteLength !== descriptor.size) throw new Error('PulseSync modules: integrity-mismatch')
+        let bytes: Uint8Array | undefined
+        if (!this.init.development) {
+            if (typeof options?.fetch !== 'function') throw new Error('PulseSync modules: access-denied')
+            bytes = await options.fetch({ descriptor, signal: this.abort.signal })
+            this.assertActive()
+            if (!(bytes instanceof Uint8Array) || bytes.byteLength !== descriptor.size) throw new Error('PulseSync modules: integrity-mismatch')
+        }
         const pending: { alias: string; definition?: Definition } = { alias }
         this.registration = pending
         try {
