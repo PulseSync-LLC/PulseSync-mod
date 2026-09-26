@@ -1,4 +1,5 @@
 import type { Cleanup, PulseSyncAddonFactory, PulseSyncApi, PulseSyncWebHostApi } from '../contracts'
+import type { IsolatedModuleRuntime, ModuleBridge, ModuleInit } from './IsolatedModuleRuntime'
 
 export type IsolatedAddonAsset = {
     id: string
@@ -11,6 +12,7 @@ export type IsolatedInit = {
     addon: IsolatedAddonAsset
     initialSettings: unknown
     channelToken: string
+    modules?: ModuleInit
 }
 
 export type IsolatedEventKind = 'request' | 'response' | 'settings' | 'subscription' | 'event' | 'dispose' | 'status'
@@ -31,4 +33,6 @@ export type IsolatedWindow = Window & {
     __PULSESYNC_WEB_HOST__?: PulseSyncWebHostApi
     __PULSESYNC_ADDON_QUEUE__?: PulseSyncAddonFactory[]
     pulsesyncApi?: PulseSyncApi
+    __PULSESYNC_MODULES__?: ModuleBridge
+    __PULSESYNC_MODULE_RUNTIME__?: Pick<IsolatedModuleRuntime, 'register' | 'load' | 'instantiateWasm'>
 }

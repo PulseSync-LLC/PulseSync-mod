@@ -23,6 +23,8 @@ function normalizeId(value: unknown) {
 
 function getFailure(error: unknown, fallbackCategory = 'addon-start-failed'): IsolatedAddonFailure {
     const message = error instanceof Error ? error.message : String(error)
+    const moduleFailure = /PulseSync modules: ([a-z-]+)/.exec(message)
+    if (moduleFailure) return { category: `webhost-modules-${moduleFailure[1]}`, message }
     const categoryMatch = /^([a-z0-9-]+):\s*/i.exec(message)
     return {
         category: categoryMatch?.[1] || fallbackCategory,
@@ -73,6 +75,7 @@ async function showRecoveryToast(addon: WebHostAsset, failure: IsolatedAddonFail
 function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, failure: IsolatedAddonFailure) {
     const applied = appliedAddons.get(addon.id)
     if (!applied || applied.runtime !== runtime) return
+    if (/PulseSync modules: [a-z-]+/.test(failure.message)) failure = { ...failure, category: getFailure(failure.message).category }
 
     console.error(`[PulseSync WebHost] ${addon.type} ${addon.id} failed: ${failure.category}: ${failure.message}`, failure.stack ?? '')
     lastAppliedHash = ''
@@ -81,6 +84,17 @@ function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, f
     if (addon.type === 'web-addon' && shouldPersistQuarantine(failure)) {
         void persistWebHostQuarantine(addon, failure)
         void showRecoveryToast(addon, failure)
+    } else if (failure.category.startsWith('webhost-modules-')) {
+        void window.desktopEvents
+            ?.invoke?.(SHOW_TOAST_EVENT, {
+                ownerId: `webhost-modules-${addon.id}`,
+                message:
+                    failure.category === 'webhost-modules-reload-required'
+                        ? `Для запуска модулей аддона «${addon.name}» перезапустите Яндекс Музыку.`
+                        : `Не удалось запустить модули аддона «${addon.name}». Повторите включение аддона позже.`,
+                durationMs: 7000,
+            })
+            .catch(() => {})
     }
 }
 
@@ -154,7 +168,14 @@ export function applyWebHostAddonsSnapshot(value: unknown) {
         const previous = appliedAddons.get(addon.id)
         const previousCode = previous?.asset.type === 'web-addon' ? previous.asset.code : ''
         const nextCode = addon.type === 'web-addon' ? addon.code : ''
-        if (!previous || previous.asset.type !== addon.type || previous.asset.css !== addon.css || previousCode !== nextCode) applyAddon(addon)
+        if (
+            !previous ||
+            previous.asset.type !== addon.type ||
+            previous.asset.css !== addon.css ||
+            previousCode !== nextCode ||
+            previous.asset.fingerprint !== addon.fingerprint
+        )
+            applyAddon(addon)
     }
 
     lastAppliedHash = snapshot.hash

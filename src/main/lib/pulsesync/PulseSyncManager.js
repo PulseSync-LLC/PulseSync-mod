@@ -8,6 +8,9 @@ const store_js_2 = require('../../types/store.js');
 const { Events } = require('../../types/events');
 const { setAllowedUrls } = require('../handlers/handleHeadersReceived/corsHandler.js');
 const { normalizeCanonicalSnapshot } = require('./isolatedAddonExecution.js');
+const { app: electronApp } = require('electron');
+const moduleTransportFs = require('node:fs');
+const moduleTransportPath = require('node:path');
 
 const { mergeWithSystem, isSystemId, sanitizeId: sanitizeIdFromSystem } = require('./system/SystemAddons');
 
@@ -235,6 +238,7 @@ class PulseSyncManager extends EventEmitter {
             version: addon?.version || '',
             css: addon?.css || '',
             code: addon?.type === 'web-addon' ? addon?.code || '' : '',
+            ...(addon?.securityManifest ? { securityManifest: addon.securityManifest, catalogAddonId: addon.catalogAddonId } : {}),
         });
     }
 
@@ -481,6 +485,7 @@ class PulseSyncManager extends EventEmitter {
         const nextValue = Boolean(isAuthorized);
         const changed = this.isAuthorized !== nextValue;
         this.isAuthorized = nextValue;
+        if (!nextValue) this.emit('module-context-changed');
 
         if (!changed) return;
 
@@ -587,13 +592,7 @@ class PulseSyncManager extends EventEmitter {
             if (revision !== this.userValidationRevision) return;
 
             const expiresAt = Number(data?.expiresAt);
-            if (
-                !response.ok ||
-                data?.ok !== true ||
-                data?.authorized !== true ||
-                !Number.isFinite(expiresAt) ||
-                expiresAt <= Date.now()
-            ) {
+            if (!response.ok || data?.ok !== true || data?.authorized !== true || !Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
                 this.clearUserValidationToken(true);
                 await this.updatePremiumState(false, 'USER_VALIDATION_TOKEN_INVALID');
                 await this.syncAuthorizationState('USER_VALIDATION_TOKEN_INVALID');
@@ -833,6 +832,10 @@ class PulseSyncManager extends EventEmitter {
             await this.handleExtensions(incoming);
         });
 
+        this.socket.on('ADDON_MODULE_REVOKED', (payload) => {
+            if (typeof payload?.activationId === 'string') this.emit('module-revoked', payload.activationId);
+        });
+
         this.socket.on('WEBHOST_ADDONS_SNAPSHOT', async (payload) => {
             await this.acceptLegacyAuthorization('WEBHOST_ADDONS_SNAPSHOT');
             let snapshot;
@@ -851,6 +854,7 @@ class PulseSyncManager extends EventEmitter {
             if (snapshot.hash && snapshot.hash === this._webHostAddonsSnapshot.hash) return;
 
             this._webHostAddonsSnapshot = this.cloneAddonSettingsValue(snapshot);
+            this.emit('module-context-changed');
             if (this.isAuthorized) {
                 this.window.webContents.send(Events.PULSESYNC_WEBHOST_ADDONS, this.getWebHostAddonsSnapshot());
             }
@@ -864,9 +868,7 @@ class PulseSyncManager extends EventEmitter {
 
         this.socket.on('ALLOWED_URLS', async (payload) => {
             await this.acceptLegacyAuthorization('ALLOWED_URLS');
-            this._allowedUrls = Array.isArray(payload?.allowedUrls)
-                ? payload.allowedUrls.filter((url) => typeof url === 'string' && url.trim())
-                : [];
+            this._allowedUrls = Array.isArray(payload?.allowedUrls) ? payload.allowedUrls.filter((url) => typeof url === 'string' && url.trim()) : [];
             if (!this.isAuthorized) return;
             this.logger.warn(`Allowed: ${this._allowedUrls}`);
             setAllowedUrls(this._allowedUrls);
@@ -1155,6 +1157,26 @@ class PulseSyncManager extends EventEmitter {
                 .map(([id, css]) => ({ id, css })),
             scripts,
         };
+    }
+
+    async requestAddonModule(payload) {
+        if (!this.isAuthorized || !this.socket?.connected) throw new Error('PulseSync modules: access-denied');
+        let transportToken;
+        try {
+            transportToken = moduleTransportFs.readFileSync(moduleTransportPath.join(electronApp.getPath('appData'), 'PulseSync', 'addon-module-transport.key'), 'utf8');
+        } catch {
+            throw new Error('PulseSync modules: unsupported-host');
+        }
+        if (!/^[a-f0-9]{64}$/.test(transportToken)) throw new Error('PulseSync modules: access-denied');
+        const response = await this.socket
+            .timeout(20000)
+            .emitWithAck('ADDON_MODULE_REQUEST', { ...payload, transportToken })
+            .catch(() => {
+                throw new Error('PulseSync modules: unavailable');
+            });
+        if (!this.isAuthorized || !this.socket?.connected) throw new Error('PulseSync modules: aborted');
+        if (!response?.ok) throw new Error(`PulseSync modules: ${response?.error || 'unavailable'}`);
+        return response.value;
     }
 
     getWebHostAddonsSnapshot() {
