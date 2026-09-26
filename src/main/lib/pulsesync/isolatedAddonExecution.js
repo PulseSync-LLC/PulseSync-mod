@@ -2,6 +2,7 @@
 
 const crypto = require('node:crypto');
 const { parse } = require('@babel/parser');
+const { normalizeModuleManifest } = require('./addonModuleTrust.js');
 
 const ISOLATED_EXECUTION_TTL_MS = 15_000;
 
@@ -154,6 +155,7 @@ const resolveCanonicalAddon = (snapshot, requestedAddonId) => {
         directoryName: typeof addon.directoryName === 'string' && addon.directoryName.trim() ? addon.directoryName : addonId,
         ...(typeof addon.version === 'string' ? { version: addon.version } : {}),
         code,
+        ...(addon.securityManifest ? { securityManifest: addon.securityManifest, catalogAddonId: addon.catalogAddonId } : {}),
     });
 };
 
@@ -173,7 +175,14 @@ const hashCanonicalAddons = (addons) =>
 
 const normalizeAllowedUrls = (value) => {
     if (!Array.isArray(value)) return undefined;
-    return Object.freeze([...new Set(value.filter((entry) => typeof entry === 'string').map((entry) => entry.trim()).filter(Boolean))]);
+    return Object.freeze([
+        ...new Set(
+            value
+                .filter((entry) => typeof entry === 'string')
+                .map((entry) => entry.trim())
+                .filter(Boolean),
+        ),
+    ]);
 };
 
 const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
@@ -217,10 +226,17 @@ const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
                     css: validateCanonicalCss(addonId, sourceAddon?.css, true),
                 });
             } else {
+                const moduleFields = sourceAddon?.securityManifest
+                    ? {
+                          securityManifest: normalizeModuleManifest(sourceAddon.securityManifest),
+                          catalogAddonId: validateAddonId(sourceAddon.catalogAddonId),
+                      }
+                    : {};
                 addons.push({
                     ...baseAsset,
                     css: validateCanonicalCss(addonId, sourceAddon?.css),
                     code: validateCanonicalAddonCode(addonId, sourceAddon?.code),
+                    ...moduleFields,
                 });
             }
         } catch (error) {

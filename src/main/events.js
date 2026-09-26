@@ -95,6 +95,9 @@ const isolatedAddonWorldIds = new Map();
 let nextIsolatedAddonWorldId = ISOLATED_ADDON_WORLD_ID_START;
 let isolatedAddonRuntimeSource = null;
 const isolatedAddonExecutionStore = new IsolatedAddonExecutionStore();
+const { AddonModuleHost } = require('./lib/pulsesync/addonModuleHost.js');
+const addonModuleHost = new AddonModuleHost(() => nextIsolatedAddonWorldId++);
+addonModuleHost.register(electron_1.ipcMain);
 
 const getIsolatedAddonWorldId = (webContents, addonId) => {
     const key = `${webContents.id}:${addonId}`;
@@ -407,6 +410,7 @@ const handleApplicationEvents = (window) => {
     updateGlobalShortcuts();
 
     pulseSyncManager_js_1 = getPulseSyncManager(window);
+    addonModuleHost.attach(pulseSyncManager_js_1, window.webContents);
     pulseSyncManager_js_1.start();
     scrobbleManager_js_1.handleRegisterPulseSyncScrobbler(pulseSyncManager_js_1);
 
@@ -999,7 +1003,12 @@ const handleApplicationEvents = (window) => {
         pulseSyncManager_js_1.markApplicationInitFinished();
         const recoveryNotice = pulseSyncManager_js_1.consumeAddonRecoveryNotice();
         if (recoveryNotice?.runtime === 'legacy') {
-            sendBasicToastCreate(window, `legacy-addon-recovery:${recoveryNotice.id}`, `Аддон «${recoveryNotice.name}» автоматически отключён после ошибки запуска.`, 'Ясно');
+            sendBasicToastCreate(
+                window,
+                `legacy-addon-recovery:${recoveryNotice.id}`,
+                `Аддон «${recoveryNotice.name}» автоматически отключён после ошибки запуска.`,
+                'Ясно',
+            );
         }
 
         if (pendingLastFmStartupAuthErrorToast) {
@@ -1128,11 +1137,7 @@ const handleApplicationEvents = (window) => {
         if (key === WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY) {
             nativeAudioOutput.stopWasapiExclusiveOutput('device changed');
         }
-        if (
-            key === WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY ||
-            key === YASP_CHUNK_TAP_ENABLED_SETTING_KEY ||
-            key === WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY
-        ) {
+        if (key === WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY || key === YASP_CHUNK_TAP_ENABLED_SETTING_KEY || key === WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY) {
             nativeAudioOutput.refreshWasapiExclusiveDefaultDeviceMonitor();
         }
         if (key === WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY) {
@@ -1443,15 +1448,22 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_SHOW_TOAST, (event, paylo
 
     const requestedDuration = Number(payload?.durationMs);
     const durationMs = Number.isFinite(requestedDuration) ? Math.min(Math.max(requestedDuration, 1500), 10_000) : 4000;
-    const ownerId = typeof payload?.ownerId === 'string' ? payload.ownerId.trim().replace(/[^a-z0-9._-]/gi, '').slice(0, 100) : '';
+    const ownerId =
+        typeof payload?.ownerId === 'string'
+            ? payload.ownerId
+                  .trim()
+                  .replace(/[^a-z0-9._-]/gi, '')
+                  .slice(0, 100)
+            : '';
     const toastId = `pulsesync-addon:${ownerId || crypto.randomUUID()}`;
     const operationNonce = sendBasicToastCreate(mainWindow, toastId, message, 'Закрыть');
     const dismissTimer = setTimeout(() => sendBasicToastDismiss(mainWindow, toastId, operationNonce), durationMs);
     dismissTimer.unref?.();
 });
 
-electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, (event, payload) => {
-    if (!mainWindow || event.sender !== mainWindow.webContents) throw new Error('PulseSync isolated addon rejected an unknown sender');
+electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, async (event, payload) => {
+    if (!mainWindow || event.sender !== mainWindow.webContents || event.senderFrame !== event.sender.mainFrame)
+        throw new Error('PulseSync isolated addon rejected an unknown sender');
 
     try {
         const manager = pulseSyncManager_js_1 || getPulseSyncManager(mainWindow);
@@ -1459,13 +1471,15 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, (
         const channelToken = validateChannelToken(addon.id, payload?.channelToken);
         const settingsSnapshot = manager.getAddonSettingsSnapshot();
         const initialSettings = settingsSnapshot?.[addon.id] ?? {};
-        const worldId = getIsolatedAddonWorldId(event.sender, addon.id);
+        const moduleContext = addon.securityManifest ? await addonModuleHost.prepare(addon, event.sender.id) : null;
+        const worldId = moduleContext?.activation.worldId ?? getIsolatedAddonWorldId(event.sender, addon.id);
         const executionToken = isolatedAddonExecutionStore.prepare({
             senderId: event.sender.id,
             worldId,
             addon,
             channelToken,
             initialSettings,
+            moduleContext,
         });
 
         return {
@@ -1473,6 +1487,7 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, (
             worldId,
             securityOrigin: `pulsesync-isolated://addon-${worldId}`,
             worldName: `PulseSync addon ${addon.id}`,
+            ...(moduleContext ? { moduleCapability: moduleContext.activation.capability } : {}),
         };
     } catch (error) {
         eventsLogger.error('PULSESYNC_ISOLATED_ADDON_PREPARE handler failed:', error);
@@ -1481,10 +1496,12 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, (
 });
 
 electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, async (event, payload) => {
-    if (!mainWindow || event.sender !== mainWindow.webContents) throw new Error('PulseSync isolated addon rejected an unknown sender');
+    if (!mainWindow || event.sender !== mainWindow.webContents || event.senderFrame !== event.sender.mainFrame)
+        throw new Error('PulseSync isolated addon rejected an unknown sender');
 
     const prepared = isolatedAddonExecutionStore.consume(payload?.executionToken, event.sender.id);
-    const { addon, channelToken, initialSettings, worldId } = prepared;
+    const { addon, channelToken, initialSettings, worldId, moduleContext } = prepared;
+    if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
     const init = {
         addon: {
             id: addon.id,
@@ -1494,6 +1511,7 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, a
         },
         initialSettings,
         channelToken,
+        ...(moduleContext ? { modules: moduleContext.init } : {}),
     };
     const initCode = `delete globalThis.__PULSESYNC_ISOLATED_RUNTIME_READY__;\nObject.defineProperty(globalThis, '__PULSESYNC_ISOLATED_INIT__', { value: ${JSON.stringify(init)}, configurable: true });\nnull;`;
     const runtimeCode = `${getIsolatedAddonRuntimeSource()}\n;null;`;
@@ -1509,9 +1527,12 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, a
             { code: 'globalThis.__PULSESYNC_ISOLATED_RUNTIME_READY__ === true;', url: `${sourceBase}/runtime-ready.js` },
         ]);
         if (runtimeReady !== true) throw new Error(`[PulseSync Addons] Isolated addon ${addon.id} runtime initialization failed`);
+        if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
         await event.sender.executeJavaScriptInIsolatedWorld(worldId, [{ code: addonCode, url: `${sourceBase}/addon.js` }]);
+        if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
     } catch (error) {
         eventsLogger.error(`[PulseSync Addons] Isolated addon ${addon.id} execution failed:`, error);
+        if (moduleContext) addonModuleHost.invalidate(moduleContext.activation);
         throw error;
     }
 

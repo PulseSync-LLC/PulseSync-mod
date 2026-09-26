@@ -15,6 +15,7 @@ const store_js_1 = require('./store.js');
 const pulsesyncDevConfig_js_1 = require('./pulsesyncDevConfig.js');
 const events_js_1 = require('../types/events.js');
 const desktopEventPolicy_js_1 = require('./pulsesync/desktopEventPolicy.js');
+const { createAddonModuleBridge } = require('./pulsesync/addonModuleBridge.js');
 const reactErrorDecoder_js_1 = require('./reactErrorDecoder.js');
 const events = require('node:events');
 const MAX_LYRICSFILE_BYTES = 1024 * 1024;
@@ -483,8 +484,8 @@ electron_1.contextBridge.exposeInMainWorld('desktopEvents', {
     },
     on(name, callback) {
         const eventName = (0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('listen', name);
-        const listener = (event, ...args) => {
-            callback(event, ...args);
+        const listener = (_event, ...args) => {
+            callback({}, ...args);
         };
 
         electron_1.ipcRenderer.on(eventName, listener);
@@ -501,14 +502,7 @@ electron_1.contextBridge.exposeInMainWorld('desktopEvents', {
     },
     EVENTS: { ...events_js_1.Events },
 });
-const waveAnalyserMethods = [
-    'isAvailable',
-    'getProperties',
-    'getByteFrequencyData',
-    'getFloatFrequencyData',
-    'getByteTimeDomainData',
-    'getFloatTimeDomainData',
-];
+const waveAnalyserMethods = ['isAvailable', 'getProperties', 'getByteFrequencyData', 'getFloatFrequencyData', 'getByteTimeDomainData', 'getFloatTimeDomainData'];
 const waveAnalyserWorlds = new Set();
 let waveAnalyserProvider = null;
 const waveAnalyserBridge = Object.fromEntries(
@@ -541,6 +535,13 @@ electron_1.contextBridge.exposeInMainWorld('pulseSyncWebHost', {
         }
 
         electron_1.webFrame.setIsolatedWorldInfo(worldId, { securityOrigin, name: worldName });
+        if (prepared.moduleCapability) {
+            electron_1.contextBridge.exposeInIsolatedWorld(
+                worldId,
+                '__PULSESYNC_MODULES__',
+                createAddonModuleBridge((...args) => electron_1.ipcRenderer.invoke(...args), prepared.moduleCapability),
+            );
+        }
         if (!waveAnalyserWorlds.has(worldId)) {
             electron_1.contextBridge.exposeInIsolatedWorld(worldId, '__PULSESYNC_WAVE_ANALYSER__', waveAnalyserBridge);
             waveAnalyserWorlds.add(worldId);
@@ -571,9 +572,7 @@ electron_1.contextBridge.exposeInMainWorld('nativeAudioOutput', {
         return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_STORE_SET, 'modSettings.nativeAudioOutput.enableYaspChunkTap', Boolean(enabled));
     },
     isWasapiExclusiveOutputEnabled() {
-        return Boolean(
-            store_js_1.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput') && store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap'),
-        );
+        return Boolean(store_js_1.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput') && store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap'));
     },
     setWasapiExclusiveOutputEnabled(enabled) {
         return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_STORE_SET, 'modSettings.nativeAudioOutput.enableWasapiExclusiveOutput', Boolean(enabled));

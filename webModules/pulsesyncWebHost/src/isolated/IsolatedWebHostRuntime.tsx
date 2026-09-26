@@ -8,6 +8,7 @@ import { clearAddonModalSessions } from '../runtime/addonModals'
 import { IsolatedAddonHost } from './IsolatedAddonHost'
 import { IsolatedBridge } from './IsolatedBridge'
 import { IsolatedTargetRegistry } from './IsolatedTargetRegistry'
+import { IsolatedModuleRuntime } from './IsolatedModuleRuntime'
 import type { IsolatedInit, IsolatedWindow } from './contracts'
 import { installIsolatedDomExecutionPolicy } from './domExecutionPolicy'
 
@@ -30,6 +31,7 @@ export class IsolatedWebHostRuntime {
     private registrationReported = false
     private registrationFailed = false
     private registrationTimer = 0
+    private modules?: IsolatedModuleRuntime
 
     constructor(isolatedWindow: IsolatedWindow, init: IsolatedInit) {
         this.isolatedWindow = isolatedWindow
@@ -48,6 +50,18 @@ export class IsolatedWebHostRuntime {
         this.started = true
         installIsolatedDomExecutionPolicy()
         this.bridge.start()
+        if (this.init.modules) {
+            if (!this.isolatedWindow.__PULSESYNC_MODULES__) throw new Error('PulseSync modules: unsupported-host')
+            this.modules = new IsolatedModuleRuntime(this.isolatedWindow.__PULSESYNC_MODULES__, this.init.modules, this.bridge.addonApi)
+            this.defineGlobal(
+                '__PULSESYNC_MODULE_RUNTIME__',
+                Object.freeze({
+                    register: this.modules.register,
+                    load: this.modules.load,
+                    instantiateWasm: this.modules.instantiateWasm,
+                }),
+            )
+        }
 
         this.defineGlobal('pulsesyncApi', this.bridge.pulsesyncApi)
         this.defineGlobal('__PULSESYNC_WEB_HOST__', this.hostApi)
@@ -207,6 +221,7 @@ export class IsolatedWebHostRuntime {
         this.clearRegistrationTimer()
 
         document.removeEventListener(this.bridge.eventName('dispose'), this.dispose)
+        this.modules?.dispose()
         this.unregisterCurrentAddon()
         this.reactRoot?.unmount()
         this.reactRoot = undefined
@@ -216,6 +231,7 @@ export class IsolatedWebHostRuntime {
         this.bridge.dispose()
 
         delete this.isolatedWindow.__PULSESYNC_WEB_HOST__
+        delete this.isolatedWindow.__PULSESYNC_MODULE_RUNTIME__
         delete this.isolatedWindow.__PULSESYNC_ADDON_QUEUE__
         delete this.isolatedWindow.pulsesyncApi
         delete this.isolatedWindow.__PULSESYNC_ISOLATED_RUNTIME_READY__
