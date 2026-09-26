@@ -5,6 +5,8 @@ const { AddonModuleExecutionStore, MODULE_IPC, moduleError } = require('./addonM
 const { verifyModuleToken, assertAddonBinding, sha256 } = require('./addonModuleTrust.js');
 const { resolveCanonicalAddon, validateCanonicalAddonCode } = require('./isolatedAddonExecution.js');
 
+const localFingerprint = (addon) => sha256(JSON.stringify([addon.id, addon.code, addon.securityManifest, addon.localModules]));
+
 class AddonModuleHost {
     constructor(allocateWorld, { trustedKeys } = {}) {
         this.store = new AddonModuleExecutionStore({ allocateWorld });
@@ -57,7 +59,7 @@ class AddonModuleHost {
 
     invalidate(activation) {
         this.store.invalidate(activation);
-        void this.manager?.requestAddonModule({ operation: 'dispose', activationId: activation.activationId }).catch(() => {});
+        if (!activation.development) void this.manager?.requestAddonModule({ operation: 'dispose', activationId: activation.activationId }).catch(() => {});
         if (this.webContents && !this.webContents.isDestroyed()) {
             void this.webContents
                 .executeJavaScriptInIsolatedWorld(activation.worldId, [
@@ -92,6 +94,21 @@ class AddonModuleHost {
     async prepare(addon, senderId) {
         const revision = this.revision;
         const activationId = crypto.randomUUID();
+        if (addon.localModules) {
+            const binding = localFingerprint(addon);
+            if (localFingerprint(this.current(addon.id)) !== binding) throw moduleError('aborted');
+            const previous = this.store.active.get(`${senderId}:${addon.id}`);
+            if (previous) this.invalidate(previous);
+            const activation = this.store.activate({
+                senderId,
+                runtimeId: addon.id,
+                binding,
+                descriptors: addon.localModules,
+                activationId,
+                development: true,
+            });
+            return { activation, init: { descriptors: activation.descriptors, errors: {}, development: true } };
+        }
         try {
             const response = await this.manager.requestAddonModule({ operation: 'resolve', addonId: addon.id, activationId });
             if (revision !== this.revision) throw moduleError('aborted');
@@ -133,6 +150,10 @@ class AddonModuleHost {
     assertCurrent(activation) {
         this.store.assertActive(activation);
         const addon = this.current(activation.runtimeId);
+        if (activation.development) {
+            if (!addon.localModules || localFingerprint(addon) !== activation.binding) throw moduleError('aborted');
+            return;
+        }
         const bindingParts = activation.binding.split('.');
         const binding = JSON.parse(Buffer.from(bindingParts[1], 'base64url').toString('utf8'));
         assertAddonBinding(addon, binding);
@@ -154,23 +175,40 @@ class AddonModuleHost {
             const { activation, descriptor } = this.store.resolve(event.sender.id, payload?.capability, payload?.alias);
             this.assertCurrent(activation);
             if (payload?.operation !== 'load') throw moduleError('access-denied');
-            if (!(payload.bytes instanceof Uint8Array) || payload.bytes.byteLength !== descriptor.size) throw moduleError('integrity-mismatch');
-            const bytes = Buffer.from(payload.bytes);
+            let bytes;
+            if (activation.development) {
+                const response = await this.manager.requestAddonModule({
+                    operation: 'load-local',
+                    addonId: activation.runtimeId,
+                    activationId: activation.activationId,
+                    alias: payload.alias,
+                    sha256: descriptor.sha256,
+                });
+                if (typeof response.bytes !== 'string' || response.bytes.length > Math.ceil(descriptor.size / 3) * 4) throw moduleError('integrity-mismatch');
+                bytes = Buffer.from(response.bytes, 'base64');
+                this.assertCurrent(activation);
+            } else {
+                if (!(payload.bytes instanceof Uint8Array)) throw moduleError('integrity-mismatch');
+                bytes = Buffer.from(payload.bytes);
+            }
+            if (bytes.byteLength !== descriptor.size) throw moduleError('integrity-mismatch');
             if (sha256(bytes) !== descriptor.sha256) throw moduleError('integrity-mismatch');
-            const response = await this.manager.requestAddonModule({
-                operation: payload.operation,
-                activationId: activation.activationId,
-                alias: payload.alias,
-            });
-            this.assertCurrent(activation);
-            const approval = this.verifyToken(response.approval, 'ps-addon-module-approval+jwt');
-            assertAddonBinding(this.current(activation.runtimeId), approval);
-            if (
-                approval.activationId !== activation.activationId ||
-                approval.alias !== payload.alias ||
-                Object.keys(descriptor).some((key) => descriptor[key] !== approval.descriptor?.[key])
-            )
-                throw moduleError('integrity-mismatch');
+            if (!activation.development) {
+                const response = await this.manager.requestAddonModule({
+                    operation: payload.operation,
+                    activationId: activation.activationId,
+                    alias: payload.alias,
+                });
+                this.assertCurrent(activation);
+                const approval = this.verifyToken(response.approval, 'ps-addon-module-approval+jwt');
+                assertAddonBinding(this.current(activation.runtimeId), approval);
+                if (
+                    approval.activationId !== activation.activationId ||
+                    approval.alias !== payload.alias ||
+                    Object.keys(descriptor).some((key) => descriptor[key] !== approval.descriptor?.[key])
+                )
+                    throw moduleError('integrity-mismatch');
+            }
             if (descriptor.kind === 'wasm') return { kind: 'wasm', bytes: new Uint8Array(bytes) };
             const code = validateCanonicalAddonCode(activation.runtimeId, bytes.toString('utf8'));
             if (sha256(code) !== descriptor.sha256) throw moduleError('integrity-mismatch');

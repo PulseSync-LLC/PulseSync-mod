@@ -156,6 +156,7 @@ const resolveCanonicalAddon = (snapshot, requestedAddonId) => {
         ...(typeof addon.version === 'string' ? { version: addon.version } : {}),
         code,
         ...(addon.securityManifest ? { securityManifest: addon.securityManifest, catalogAddonId: addon.catalogAddonId } : {}),
+        ...(addon.localModules ? { localModules: addon.localModules } : {}),
     });
 };
 
@@ -230,6 +231,7 @@ const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
                     ? {
                           securityManifest: normalizeModuleManifest(sourceAddon.securityManifest),
                           catalogAddonId: validateAddonId(sourceAddon.catalogAddonId),
+                          ...(sourceAddon.localModules ? { localModules: sourceAddon.localModules } : {}),
                       }
                     : {};
                 addons.push({
