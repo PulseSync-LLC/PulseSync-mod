@@ -193,7 +193,18 @@ class PulseSyncManager extends EventEmitter {
         this._legacyAssetsRevision = 0;
         this._legacyAssetsFingerprint = null;
         this._webHostAddonsSnapshot = { runtime: 'isolated', hash: '', addons: [] };
-        this._addonRecoveryState = normalizeAddonRecoveryState(store_js_1.get(ADDON_RECOVERY_STORE_KEY));
+        const storedRecoveryState = store_js_1.get(ADDON_RECOVERY_STORE_KEY);
+        this._addonRecoveryState = normalizeAddonRecoveryState(storedRecoveryState);
+        const obsoleteStallIds = Object.entries(this._addonRecoveryState.legacy.quarantine)
+            .filter(([, entry]) => entry.reason === 'application-init-stall')
+            .map(([id]) => id);
+        if (obsoleteStallIds.length || storedRecoveryState?.legacy?.retryOnNextStart !== undefined) {
+            for (const id of obsoleteStallIds) delete this._addonRecoveryState.legacy.quarantine[id];
+            if (this._addonRecoveryState.pendingNotice?.runtime === 'legacy' && obsoleteStallIds.includes(this._addonRecoveryState.pendingNotice.id)) {
+                this._addonRecoveryState.pendingNotice = null;
+            }
+            this.persistAddonRecoveryState();
+        }
         this.recoverInterruptedLegacyAddon();
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
@@ -345,19 +356,6 @@ class PulseSyncManager extends EventEmitter {
         if (!candidate || candidate.isSystem) return null;
         if (Date.now() - candidate.startedAt > LEGACY_RECOVERY_MAX_AGE_MS) return null;
         return candidate;
-    }
-
-    recoverFromStartupStall(webHostReady) {
-        if (!webHostReady) {
-            this.logger.error('Application startup stalled before WebHost reported ready; no addon will be quarantined');
-            return null;
-        }
-        const candidate = this.getLegacyRecoveryCandidate();
-        if (!candidate) {
-            this.logger.error('Application startup stalled with no recoverable legacy addon candidate');
-            return null;
-        }
-        return this.quarantineLegacyAsset(candidate, 'application-init-stall');
     }
 
     recoverFromRendererCrash(reason = 'renderer-crash') {

@@ -339,38 +339,6 @@ const handleApplicationEvents = (window) => {
     mainWindow = window;
     eventsLogger.info('Application events handler initialized');
 
-    let webHostHealth = { status: 'unknown', reportedAt: 0 };
-    let currentApplicationReadyAt = 0;
-
-    const applicationReadyTimeOut = setTimeout(() => {
-        eventsLogger.error('Application ready event timeout reached. Addon recovery was not started because application initialization did not reach the addon stage.');
-    }, 5000);
-    let applicationInitFinishedTimeout;
-
-    const isMainWindowBackgrounded = () => {
-        const startsMinimized = store_js_1.getModSettings()?.window?.minimizedStart ?? false;
-        return state_js_1.state.isWindowHidden || state_js_1.state.isMinimized || mainWindow?.isMinimized?.() || (startsMinimized && mainWindow?.isVisible?.() === false);
-    };
-
-    const handleApplicationInitFinishedTimeout = () => {
-        applicationInitFinishedTimeout && clearTimeout(applicationInitFinishedTimeout);
-
-        applicationInitFinishedTimeout = setTimeout(() => {
-            const webHostReady = webHostHealth.status === 'ready' && webHostHealth.reportedAt >= currentApplicationReadyAt - 2000;
-            const recoveredAddon = pulseSyncManager_js_1?.recoverFromStartupStall?.(webHostReady);
-            if (recoveredAddon) {
-                eventsLogger.error(`APPLICATION_INIT_FINISHED timeout quarantined legacy addon ${recoveredAddon.id}. Restarting normally.`);
-                restartApplication();
-                return;
-            }
-            eventsLogger.error('APPLICATION_INIT_FINISHED event timeout reached. No addon was quarantined.', {
-                webHostStatus: webHostHealth.status,
-                webHostReportedAt: webHostHealth.reportedAt,
-                applicationReadyAt: currentApplicationReadyAt,
-            });
-        }, 20 * 1000);
-    };
-
     const updater = (0, updater_js_1.getUpdater)();
     const trackDownloader = new trackDownloader_js_1.TrackDownloader(window);
     const yandexStationRuntime = getYandexStationRuntime({
@@ -848,7 +816,6 @@ const handleApplicationEvents = (window) => {
     electron_1.ipcMain.on(events_js_1.Events.PULSESYNC_WEBHOST_HEALTH, (event, payload) => {
         if (event.sender !== window.webContents) return;
         const status = ['booting', 'ready', 'failed'].includes(payload?.status) ? payload.status : 'unknown';
-        webHostHealth = { status, reportedAt: Date.now() };
         eventsLogger.info('PulseSync WebHost health update', status);
     });
     electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ADDON_RECOVERY, (event, payload) => {
@@ -859,15 +826,8 @@ const handleApplicationEvents = (window) => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_READY);
         void sendFeaturesMetric(buildFeaturesSnapshot());
 
-        applicationReadyTimeOut && clearTimeout(applicationReadyTimeOut);
-        currentApplicationReadyAt = Date.now();
-
         isPlayerReady = false;
-        isApplicationInitFinished = isMainWindowBackgrounded() || Date.now() - applicationInitFinishedAt < 3000;
-
-        if (!isApplicationInitFinished) {
-            handleApplicationInitFinishedTimeout();
-        }
+        isApplicationInitFinished = Date.now() - applicationInitFinishedAt < 3000;
 
         (0, pulseSyncManager_js_1.readyEvent)();
         (0, deviceInfo_js_1.logHardwareInfo)();
@@ -999,7 +959,6 @@ const handleApplicationEvents = (window) => {
 
         isApplicationInitFinished = true;
         applicationInitFinishedAt = Date.now();
-        applicationInitFinishedTimeout && clearTimeout(applicationInitFinishedTimeout);
         pulseSyncManager_js_1.markApplicationInitFinished();
         const recoveryNotice = pulseSyncManager_js_1.consumeAddonRecoveryNotice();
         if (recoveryNotice?.runtime === 'legacy') {
