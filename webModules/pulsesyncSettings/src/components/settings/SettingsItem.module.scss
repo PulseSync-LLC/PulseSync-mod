@@ -31,8 +31,8 @@
     border: 0;
     border-radius: 8px;
     cursor: pointer;
-    opacity: 0.65;
-    pointer-events: auto;
+    opacity: 0;
+    pointer-events: none;
     transition:
         color 140ms ease,
         background-color 140ms ease,
@@ -54,12 +54,10 @@
     &[data-copied='true'] {
         color: var(--ym-controls-color-primary-text-enabled_variant, #fff);
         background: var(--ym-controls-color-secondary-default-hovered, rgba(255, 255, 255, 0.12));
-        opacity: 1;
     }
 
     &[data-error='true'] {
         color: #ff8f8f;
-        opacity: 1;
     }
 
     &:active {
@@ -73,13 +71,15 @@
 }
 
 .item:hover .copyButton,
-.item[data-highlighted='true'] .copyButton {
+.item:focus-within .copyButton {
     opacity: 1;
+    pointer-events: auto;
 }
 
-@media (max-width: 720px) {
+@media (hover: none) {
     .copyButton {
         opacity: 1;
+        pointer-events: auto;
     }
 }
 
