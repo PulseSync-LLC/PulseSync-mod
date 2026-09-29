@@ -14,7 +14,7 @@ async function createRuntime() {
     const sevenZip = require('7zip-min');
     const FormData = require('form-data');
     const { Octokit } = await import('@octokit/rest');
-    const { execSync } = require('child_process');
+    const { execSync, execFileSync } = require('child_process');
     const { exec, spawn } = require('child_process');
     const { promisify } = require('util');
     const vm = require('vm');
@@ -30,7 +30,7 @@ async function createRuntime() {
         DEFAULT_PATCHED_DIST_PATH: path.join(REPO_ROOT, 'builds/patched/app.asar'),
         EXTRACTED_DIR_PATH: path.join(REPO_ROOT, 'extracted'),
         YM_LATEST_YML_URL: 'https://desktop.app.music.yandex.net/stable/latest.yml',
-        PRETTIER_CONFIG_PATH: path.join(REPO_ROOT, '.prettierrc.json'),
+        OXFMT_CONFIG_PATH: path.join(REPO_ROOT, '.oxfmtrc.json'),
         MAC_APP_PATH: '/Applications/Яндекс Музыка.app',
         WINDOWS_APP_PATH: path.join(process.env?.LOCALAPPDATA ?? '', '/Programs/YandexMusic'),
         MODERNIZED_SRC_PATH: path.join(REPO_ROOT, 'modernized/src'),
@@ -79,6 +79,7 @@ async function createRuntime() {
             FormData,
             Octokit,
             execSync,
+            execFileSync,
             execAsync,
             spawn,
             vm,

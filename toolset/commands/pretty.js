@@ -1,6 +1,6 @@
 module.exports = {
     name: 'pretty',
-    description: 'форматирует extracted-билд через Prettier',
+    description: 'форматирует extracted-билд через Oxfmt',
     order: 90,
     usage: 'pretty [--src=<path>] [--dest=<path>] [--lastExtracted] [--modernize]',
     flags: ['src', 'dest', 'lastExtracted', 'modernize'],
