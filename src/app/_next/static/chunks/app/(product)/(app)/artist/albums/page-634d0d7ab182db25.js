@@ -5,7 +5,7 @@
             'use strict';
             e.d(a, { h: () => i });
             var i = (function (t) {
-                return (t.DISCOGRAPHY = 'discography'), (t.ALBUMS = 'albums'), (t.COMPILATIONS = 'compilations'), t;
+                return ((t.DISCOGRAPHY = 'discography'), (t.ALBUMS = 'albums'), (t.COMPILATIONS = 'compilations'), t);
             })({});
         },
         34959: (t, a, e) => {
@@ -152,7 +152,7 @@
                     });
                 (0, v.X)(j.albumsSubpage.pagesLoader, J);
                 let K = (0, S.S)({ artist: null == (a = j.meta) ? void 0 : a.artist, shouldHistoryBack: !0 });
-                (0, z.G)(x),
+                ((0, z.G)(x),
                     (0, n.useEffect)(() => {
                         var t;
                         (null == (t = j.meta) ? void 0 : t.artist.isUnsafeLegal) && K();
@@ -188,7 +188,7 @@
                                     });
                             }
                         }, [null == t ? void 0 : t.meta, null == t ? void 0 : t.infoLoadingState.isLoading, a, null == t || null == (e = t.meta) ? void 0 : e.artist]);
-                    })(j, G);
+                    })(j, G));
                 let tt = (0, n.useMemo)(() => ({ Footer: () => (0, i.jsx)(T.A, { children: (0, i.jsx)(P.w, { className: Q().footer }) }) }), []),
                     ta = (0, n.useMemo)(() => {
                         switch (G) {
@@ -277,10 +277,10 @@
         37215: (t, a, e) => {
             'use strict';
             var i;
-            e.d(a, { g: () => i }),
+            (e.d(a, { g: () => i }),
                 (function (t) {
-                    (t.RATING = 'rating'), (t.YEAR = 'year');
-                })(i || (i = {}));
+                    ((t.RATING = 'rating'), (t.YEAR = 'year'));
+                })(i || (i = {})));
         },
         52381: (t) => {
             t.exports = {
@@ -294,7 +294,7 @@
         },
         94107: (t, a, e) => {
             'use strict';
-            e.r(a), e.d(a, { default: () => o });
+            (e.r(a), e.d(a, { default: () => o }));
             var i = e(32290),
                 s = e(21916),
                 l = e(34959),
@@ -302,7 +302,7 @@
                 n = e(17024);
             let o = () => {
                 let t = (0, s.useSearchParams)().get('artistId');
-                return (t && (0, n.L)(t)) || (0, s.notFound)(), (0, i.jsx)(l.r, { artistId: t, variant: r.h.ALBUMS });
+                return ((t && (0, n.L)(t)) || (0, s.notFound)(), (0, i.jsx)(l.r, { artistId: t, variant: r.h.ALBUMS }));
             };
         },
         99171: (t, a, e) => {
@@ -310,7 +310,7 @@
         },
     },
     (t) => {
-        t.O(
+        (t.O(
             0,
             [
                 7034, 5718, 7231, 7972, 6347, 3183, 9763, 6639, 7258, 5114, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 3266, 6477, 7275, 2586,
@@ -318,6 +318,6 @@
             ],
             () => t((t.s = 99171)),
         ),
-            (_N_E = t.O());
+            (_N_E = t.O()));
     },
 ]);

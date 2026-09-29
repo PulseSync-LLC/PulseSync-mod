@@ -159,7 +159,7 @@
                                         .filter(Boolean)
                                         .reduce((t, e, s) => {
                                             let l = i[s];
-                                            return e.startsWith(':') && l && (t[e.substring(1)] = l), t;
+                                            return (e.startsWith(':') && l && (t[e.substring(1)] = l), t);
                                         }, {});
                                 })(p, t),
                                 r = {
@@ -216,7 +216,7 @@
                 l = 'https://';
         },
         80451: (t, e, s) => {
-            s.r(e),
+            (s.r(e),
                 s.d(e, {
                     AVATAR_DEFAULT_SIZE: () => h,
                     BurstDebounce: () => E,
@@ -236,12 +236,12 @@
                                             void 0 === r || (('cause' === l || 'error' === l) && 'object' == typeof r && null !== r ? (i[l] = t(r, s)) : (i[l] = r)), i
                                         );
                                     }, {});
-                                    return (i.ownProperties = Object.getOwnPropertyNames(e).reduce((t, s) => (y.includes(s) || (t[s] = e[s]), t), {})), i;
+                                    return ((i.ownProperties = Object.getOwnPropertyNames(e).reduce((t, s) => (y.includes(s) || (t[s] = e[s]), t), {})), i);
                                 }
                                 return { error: e };
                             } catch (s) {
                                 let t = { name: '', message: '' };
-                                return s instanceof Error && ((t.name = s.name), (t.message = s.message)), { error: e, serializationError: t };
+                                return (s instanceof Error && ((t.name = s.name), (t.message = s.message)), { error: e, serializationError: t });
                             }
                         },
                     createVsid: () => v,
@@ -256,7 +256,7 @@
                     sanitizeDOM: () => u,
                     stringifyJSONSafely: () => a,
                     toBoolean: () => r,
-                });
+                }));
             var i = s(31534);
             let l = ['1', 'true', 'on', 'yes'];
             function r(t) {
@@ -304,7 +304,7 @@
                 };
             function v(t, e) {
                 let s = '';
-                for (; s.length < 44; ) s += (Math.random() + 1).toString(36).substring(3);
+                for (; s.length < 44;) s += (Math.random() + 1).toString(36).substring(3);
                 s = s.slice(0, 44);
                 let i = t.toString().slice(0, 10);
                 return ''.concat(s, 'x').concat(e, 'x0001x').concat(i);
@@ -341,7 +341,7 @@
                             })(a, d),
                             rel: ((t, e) => t || (e ? 'noreferrer noopener' : ''))(a, d),
                         };
-                    return 'alternate' === a && c && (h.hrefLang = c), h;
+                    return ('alternate' === a && c && (h.hrefLang = c), h);
                 };
             function B(t) {
                 let e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : console;
@@ -349,7 +349,7 @@
                 try {
                     return JSON.parse(t);
                 } catch (t) {
-                    return (t instanceof Error || 'string' == typeof t) && e.error(t), null;
+                    return ((t instanceof Error || 'string' == typeof t) && e.error(t), null);
                 }
             }
             function S(t, e) {
@@ -372,7 +372,7 @@
                 L = (t) =>
                     Object.entries(t).reduce((t, e) => {
                         let [s, i] = e;
-                        return A.test(s) && 'string' == typeof i && (t[s] = i), t;
+                        return (A.test(s) && 'string' == typeof i && (t[s] = i), t);
                     }, {});
             var w = s(91945),
                 T = s(62060);
@@ -385,11 +385,11 @@
                         var l, r;
                         if (!t) return;
                         let n = _[null != (l = null == i ? void 0 : i.type) ? l : 'state'];
-                        null != (r = null == i ? void 0 : i.collapsed) && r
+                        (null != (r = null == i ? void 0 : i.collapsed) && r
                             ? console.groupCollapsed('%c'.concat(M, ' ').concat(e), n)
                             : console.group('%c'.concat(M, ' ').concat(e), n),
                             s && (Object.values(s).some((t) => null !== t && 'object' == typeof t) ? console.log('%c'.concat(M), 'color: #6B7280', s) : console.table(s)),
-                            console.groupEnd();
+                            console.groupEnd());
                     },
                 };
             }
@@ -397,24 +397,24 @@
                 invoke() {
                     let t = Date.now();
                     if ((this.refreshBurstIdle(t), this.registerAndCheckBurst(t), this.isBurstMode)) {
-                        (this.isPendingState = !0), this.logEvent('invoke -> schedule debounced callback'), this.debouncedCallback();
+                        ((this.isPendingState = !0), this.logEvent('invoke -> schedule debounced callback'), this.debouncedCallback());
                         return;
                     }
-                    this.logEvent('invoke -> execute callback immediately'), this.callback();
+                    (this.logEvent('invoke -> execute callback immediately'), this.callback());
                 }
                 cancel() {
-                    (this.isPendingState = !1), this.debouncedCallback.cancel(), this.logLifecycle('cancel pending callback');
+                    ((this.isPendingState = !1), this.debouncedCallback.cancel(), this.logLifecycle('cancel pending callback'));
                 }
                 get isPending() {
                     return this.isPendingState;
                 }
                 dispose() {
-                    (this.isPendingState = !1),
+                    ((this.isPendingState = !1),
                         this.debouncedCallback.cancel(),
                         (this.recentTimestamps = []),
                         (this.isBurstMode = !1),
                         (this.lastInvokeAt = 0),
-                        this.logLifecycle('dispose instance state');
+                        this.logLifecycle('dispose instance state'));
                 }
                 refreshBurstIdle(t) {
                     this.isBurstMode &&
@@ -441,7 +441,7 @@
                 }
                 registerAndCheckBurst(t) {
                     let e = this.config.burstThreshold;
-                    for (this.recentTimestamps.push(t); this.recentTimestamps.length > e; ) this.recentTimestamps.shift();
+                    for (this.recentTimestamps.push(t); this.recentTimestamps.length > e;) this.recentTimestamps.shift();
                     if (this.recentTimestamps.length === e) {
                         let e = this.recentTimestamps[0];
                         void 0 !== e && t - e <= this.config.burstWindowMs && (this.isBurstMode = !0);
@@ -461,13 +461,13 @@
                         !Number.isInteger(e.burstThreshold) || e.burstThreshold < 1)
                     )
                         throw RangeError('BurstDebounce config.burstThreshold must be a positive integer, got '.concat(e.burstThreshold));
-                    (this.callback = t),
+                    ((this.callback = t),
                         (this.config = e),
                         (this.debugLogger = x(s)),
                         this.logLifecycle('created', { ...this.config }),
                         (this.debouncedCallback = (0, T.A)(() => {
-                            (this.isPendingState = !1), this.logEvent('debounced callback execute'), this.callback();
-                        }, e.delay));
+                            ((this.isPendingState = !1), this.logEvent('debounced callback execute'), this.callback());
+                        }, e.delay)));
                 }
             }
             let D = (t) => ({ r: parseInt(t.slice(1, 3), 16), g: parseInt(t.slice(3, 5), 16), b: parseInt(t.slice(5, 7), 16) }),

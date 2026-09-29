@@ -429,11 +429,11 @@
                 var e = l[t];
                 if (void 0 !== e) return e.exports;
                 var i = (l[t] = { exports: {} });
-                return n[t](i, i.exports, s), i.exports;
+                return (n[t](i, i.exports, s), i.exports);
             }
             var c = {};
-            (() => {
-                Object.defineProperty(c, 'X', { value: !0 }), (c.l = void 0);
+            ((() => {
+                (Object.defineProperty(c, 'X', { value: !0 }), (c.l = void 0));
                 let t = s(810),
                     e = s(352);
                 c.l = (i) => {
@@ -443,7 +443,7 @@
                             let t = null == i ? void 0 : i.current;
                             t && (a(0 === t.scrollLeft), n(t.scrollWidth - t.scrollLeft <= t.offsetWidth + 10));
                         };
-                    (0, t.useEffect)(() => {
+                    ((0, t.useEffect)(() => {
                         l();
                     }, [i, l]),
                         (0, t.useEffect)(() => {
@@ -452,10 +452,10 @@
                                 null == t || t.addEventListener('scroll', l),
                                 window.addEventListener('resize', l),
                                 () => {
-                                    null == t || t.removeEventListener('scroll', l), window.removeEventListener('resize', l);
+                                    (null == t || t.removeEventListener('scroll', l), window.removeEventListener('resize', l));
                                 }
                             );
-                        }, [i, l]);
+                        }, [i, l]));
                     let s = (0, t.useMemo)(
                         () =>
                             (0, e.throttle)(
@@ -486,7 +486,7 @@
                     };
                 };
             })(),
-                c.X;
+                c.X);
             var _ = c.l;
         },
         49518: (t, e, i) => {
@@ -507,7 +507,7 @@
                 x = i(23338),
                 p = i.n(x),
                 C = (function (t) {
-                    return (t.ONE = 'one'), (t.TWO = 'two'), t;
+                    return ((t.ONE = 'one'), (t.TWO = 'two'), t);
                 })({});
             let v = (t) => {
                     let {
@@ -637,13 +637,13 @@
                     { swipeBackward: p, swipeForward: C, shouldBackwardButtonBeDisabled: v, shouldForwardButtonBeDisabled: f, shouldHideControls: A } = (0, l.Y)(e),
                     N = (0, o.useCallback)(
                         (t) => {
-                            p(), t.stopPropagation();
+                            (p(), t.stopPropagation());
                         },
                         [p],
                     ),
                     k = (0, o.useCallback)(
                         (t) => {
-                            C(), t.stopPropagation();
+                            (C(), t.stopPropagation());
                         },
                         [C],
                     );
@@ -798,7 +798,7 @@
                         };
                     })(),
                     k = (0, n.useCallback)(() => {
-                        N(), (window.location.href = C.Z.main.href);
+                        (N(), (window.location.href = C.Z.main.href));
                     }, [N]),
                     { contentRef: b } = (0, p.g)();
                 return (0, r.jsxs)('div', {
@@ -868,7 +868,7 @@
                 o = {
                     5881: (t, e, i) => {
                         function r() {
-                            for (var t, e, i = 0, r = ''; i < arguments.length; )
+                            for (var t, e, i = 0, r = ''; i < arguments.length;)
                                 (t = arguments[i++]) &&
                                     (e = (function t(e) {
                                         var i,
@@ -883,11 +883,11 @@
                                     (r && (r += ' '), (r += e));
                             return r;
                         }
-                        i.r(e), i.d(e, { clsx: () => r, default: () => a });
+                        (i.r(e), i.d(e, { clsx: () => r, default: () => a }));
                         let a = r;
                     },
                     9058: (t, e, i) => {
-                        i.r(e), i.d(e, { default: () => r });
+                        (i.r(e), i.d(e, { default: () => r }));
                         let r = { root: 'IZnFMW4gXBshJODnvB1P', item: 'VJ9IexhAEuYSCyGiMfN4' };
                     },
                     9097: (t, e) => {
@@ -899,7 +899,7 @@
                             else r = e;
                             return { $$typeof: i, type: t, key: a, ref: void 0 !== (e = r.ref) ? e : null, props: r };
                         }
-                        (e.Fragment = Symbol.for('react.fragment')), (e.jsx = r), (e.jsxs = r);
+                        ((e.Fragment = Symbol.for('react.fragment')), (e.jsx = r), (e.jsxs = r));
                     },
                     4377: (t, e, i) => {
                         t.exports = i(9097);
@@ -910,7 +910,7 @@
                             function (t) {
                                 return t && t.__esModule ? t : { default: t };
                             };
-                        Object.defineProperty(e, '__esModule', { value: !0 }), (e.Carousel = void 0);
+                        (Object.defineProperty(e, '__esModule', { value: !0 }), (e.Carousel = void 0));
                         let a = i(4377),
                             o = i(5881),
                             n = i(810),
@@ -936,19 +936,19 @@
                 var e = n[t];
                 if (void 0 !== e) return e.exports;
                 var i = (n[t] = { exports: {} });
-                return o[t].call(i.exports, i, i.exports, l), i.exports;
+                return (o[t].call(i.exports, i, i.exports, l), i.exports);
             }
-            (l.d = (t, e) => {
+            ((l.d = (t, e) => {
                 for (var i in e) l.o(e, i) && !l.o(t, i) && Object.defineProperty(t, i, { enumerable: !0, get: e[i] });
             }),
                 (l.o = (t, e) => Object.prototype.hasOwnProperty.call(t, e)),
                 (l.r = (t) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(t, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(t, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(t, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(t, '__esModule', { value: !0 }));
+                }));
             var s = {};
             (() => {
-                Object.defineProperty(s, 'X', { value: !0 }), (s.l = void 0);
+                (Object.defineProperty(s, 'X', { value: !0 }), (s.l = void 0));
                 var t = l(5056);
                 Object.defineProperty(s, 'l', {
                     enumerable: !0,
@@ -1081,19 +1081,19 @@
                 o = i(30782),
                 n = i(55178),
                 l = i(60900);
-            !(function (t) {
-                (t.formatDate = 'FormattedDate'),
+            (!(function (t) {
+                ((t.formatDate = 'FormattedDate'),
                     (t.formatTime = 'FormattedTime'),
                     (t.formatNumber = 'FormattedNumber'),
                     (t.formatList = 'FormattedList'),
-                    (t.formatDisplayName = 'FormattedDisplayName');
+                    (t.formatDisplayName = 'FormattedDisplayName'));
             })(r || (r = {})),
                 (function (t) {
-                    (t.formatDate = 'FormattedDateParts'),
+                    ((t.formatDate = 'FormattedDateParts'),
                         (t.formatTime = 'FormattedTimeParts'),
                         (t.formatNumber = 'FormattedNumberParts'),
-                        (t.formatList = 'FormattedListParts');
-                })(a || (a = {}));
+                        (t.formatList = 'FormattedListParts'));
+                })(a || (a = {})));
             var s = function (t) {
                 var e = (0, l.A)(),
                     i = t.value,
@@ -1110,7 +1110,7 @@
                         s = 'string' == typeof r ? new Date(r || 0) : r;
                     return a('formatDate' === t ? i.formatDateToParts(s, n) : i.formatTimeToParts(s, n));
                 };
-                return (e.displayName = a[t]), e;
+                return ((e.displayName = a[t]), e);
             }
             function _(t) {
                 var e = function (e) {
@@ -1123,11 +1123,11 @@
                     var _ = i.textComponent || n.Fragment;
                     return n.createElement(_, null, c);
                 };
-                return (e.displayName = r[t]), e;
+                return ((e.displayName = r[t]), e);
             }
-            (s.displayName = 'FormattedNumberParts'), (s.displayName = 'FormattedNumberParts');
+            ((s.displayName = 'FormattedNumberParts'), (s.displayName = 'FormattedNumberParts'));
             var d = _('formatDate');
-            _('formatTime'), _('formatNumber'), _('formatList'), _('formatDisplayName'), c('formatDate'), c('formatTime');
+            (_('formatTime'), _('formatNumber'), _('formatList'), _('formatDisplayName'), c('formatDate'), c('formatTime'));
         },
         81885: (t) => {
             t.exports = {
@@ -1188,12 +1188,12 @@
                         h = (0, M.K)(o),
                         [x, p] = (0, n.useState)(!1),
                         v = (0, _.c)(async () => {
-                            x || o.isLiked || (p(!0), null == m || m()), await h();
+                            (x || o.isLiked || (p(!0), null == m || m()), await h());
                         }),
                         f = (0, P.F)(),
                         A = (0, _.c)((t) => {
                             if ((t.stopPropagation(), u())) return void t.preventDefault();
-                            d.openAlbumTrailer(o.id), f(l.ky.Album, String(o.id));
+                            (d.openAlbumTrailer(o.id), f(l.ky.Album, String(o.id)));
                         });
                     return (0, r.jsxs)('div', {
                         className: (0, a.$)(W().root, W().controls, i, { [W().controls_disabled]: !o.isAvailable }),
@@ -1253,19 +1253,19 @@
                         te = (0, h.c)({ album: i, callback: Y }),
                         ti = (0, h.c)({ album: i, callback: tt }),
                         tr = (0, _.c)((t) => {
-                            null == Q || Q(), X({ to: l.QT.AlbumScreen }), te(t);
+                            (null == Q || Q(), X({ to: l.QT.AlbumScreen }), te(t));
                         }),
                         ta = (0, _.c)(() => {
                             if (!K()) {
                                 if (Z) return void G.open();
-                                $ || q || (U(!0), null == V || V()), ti(), F(!q);
+                                ($ || q || (U(!0), null == V || V()), ti(), F(!q));
                             }
                         }),
                         to = (0, _.c)((t) => {
-                            (0, u.P)(t, T.$f.ripple), tr(t);
+                            ((0, u.P)(t, T.$f.ripple), tr(t));
                         }),
                         tn = (0, _.c)((t) => {
-                            t.stopPropagation(), tr(t);
+                            (t.stopPropagation(), tr(t));
                         }),
                         tl = (0, n.useCallback)(
                             (t) =>
@@ -1408,10 +1408,10 @@
                     return (0, r.useCallback)(() => {
                         if (!e || !v || !c.xK.includes(v) || !p.includes(v) || t.current) return;
                         let r = { hash: C, pageId: s.F[v], entityType: g, entityId: b, entityPosX: E, entityPosY: P, objectsCount: S };
-                        void 0 !== j && ((r.filterKey = j), (r.filterValue = w), (r.filterPos = I)),
+                        (void 0 !== j && ((r.filterKey = j), (r.filterValue = w), (r.filterPos = I)),
                             c.qG.includes(v) && ((r.tabId = f), (r.tabPos = A), (r.isTabSelectedByDefault = N)),
                             M && (r.skeletonId = M),
-                            L && T && ((r.mainObjectType = T), (r.mainObjectId = L));
+                            L && T && ((r.mainObjectType = T), (r.mainObjectId = L)));
                         let o = (0, a.Fx)({ params: r, logger: i, context: 'useSendEventOnBlockLoaded' });
                         o && ((0, a.uY)(e.evgenInstance, o), (t.current = !0));
                     }, [e, v, C, g, b, E, P, j, w, I, S, M, L, T, i, f, A, N]);

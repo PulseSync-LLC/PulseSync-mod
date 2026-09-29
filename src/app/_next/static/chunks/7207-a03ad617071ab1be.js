@@ -51,12 +51,12 @@
             let s = (e) => {
                 let t = (0, a.usePathname)(),
                     [r, s] = (0, i.useState)(!1);
-                (0, i.useEffect)(() => {
-                    window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t);
+                ((0, i.useEffect)(() => {
+                    (window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t));
                 }),
                     (0, i.useEffect)(() => {
                         window.Ya.Rum.spa.getLastSpaSubPage(t) && e && !r && (window.Ya.Rum.spa.finishDataLoading(t), window.Ya.Rum.spa.startDataRendering(t), s(!0));
-                    }, [e, r, t]);
+                    }, [e, r, t]));
             };
         },
         4820: (e, t, r) => {
@@ -109,15 +109,15 @@
                     u = (0, i.useRef)(void 0),
                     m = (0, s.c)(() => {
                         var r;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let a = [...(null != (r = e.lastRejectedPagesList) ? r : [])].reverse().filter((t) => {
                             var r;
                             return (null == (r = e.pageStates) ? void 0 : r[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             a.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, i.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = r((0, a.jsx)(n.L, { reloadBlocks: m }), { containerId: l.u.ERROR, autoClose: !1 }));
@@ -173,11 +173,11 @@
                             objectPosX: z,
                             objectPosY: W,
                         };
-                        void 0 !== C && ((l.filterKey = C), (l.filterValue = w), (l.filterPos = E)),
+                        (void 0 !== C && ((l.filterKey = C), (l.filterValue = w), (l.filterPos = E)),
                             c.qG.includes(x) && ((l.tabId = g), (l.tabPos = b), (l.isTabSelectedByDefault = A)),
                             F && (l.skeletonId = F),
                             'string' == typeof I && 'string' == typeof R && ((l.mainObjectType = R), (l.mainObjectId = I)),
-                            D && (l.displayReasonId = D);
+                            D && (l.displayReasonId = D));
                         let d = (0, i.Fx)({ params: l, logger: e, context: 'useSendEventOnBlockShowedOrHidden' });
                         d && (a ? (0, i.Pf)(t.evgenInstance, d) : (0, i.nv)(t.evgenInstance, d));
                     },
@@ -236,45 +236,45 @@
                         children:
                             f === o.JU.SUBSTITUTED
                                 ? (0, a.jsxs)('svg', {
-                                    className: (0, i.$)(h().explicitMark, t),
-                                    viewBox: '0 0 16 16',
-                                    role: 'img',
-                                    'aria-label': I,
-                                    style: {
-                                        width: 'var(--ym-icon-size-'.concat(x, ')'),
-                                        height: 'var(--ym-icon-size-'.concat(x, ')'),
-                                    },
-                                    ...v,
-                                    'data-test-id': c.S7.EXPLICIT_MARK_ICON,
-                                    children: [
-                                        (0, a.jsx)('circle', {
-                                            cx: '8',
-                                            cy: '8',
-                                            r: '5.5',
-                                            fill: 'none',
-                                            stroke: 'currentColor',
-                                            strokeWidth: '1.5',
-                                        }),
-                                        (0, a.jsx)('text', {
-                                            x: '8',
-                                            y: '9',
-                                            fill: 'currentColor',
-                                            fontSize: '7',
-                                            fontWeight: '700',
-                                            textAnchor: 'middle',
-                                            dominantBaseline: 'middle',
-                                            children: 'S',
-                                        }),
-                                    ],
-                                })
+                                      className: (0, i.$)(h().explicitMark, t),
+                                      viewBox: '0 0 16 16',
+                                      role: 'img',
+                                      'aria-label': I,
+                                      style: {
+                                          width: 'var(--ym-icon-size-'.concat(x, ')'),
+                                          height: 'var(--ym-icon-size-'.concat(x, ')'),
+                                      },
+                                      ...v,
+                                      'data-test-id': c.S7.EXPLICIT_MARK_ICON,
+                                      children: [
+                                          (0, a.jsx)('circle', {
+                                              cx: '8',
+                                              cy: '8',
+                                              r: '5.5',
+                                              fill: 'none',
+                                              stroke: 'currentColor',
+                                              strokeWidth: '1.5',
+                                          }),
+                                          (0, a.jsx)('text', {
+                                              x: '8',
+                                              y: '9',
+                                              fill: 'currentColor',
+                                              fontSize: '7',
+                                              fontWeight: '700',
+                                              textAnchor: 'middle',
+                                              dominantBaseline: 'middle',
+                                              children: 'S',
+                                          }),
+                                      ],
+                                  })
                                 : (0, a.jsx)(u.I, {
-                                    className: (0, i.$)(h().explicitMark, t),
-                                    'aria-label': I,
-                                    variant: N,
-                                    size: x,
-                                    ...v,
-                                    'data-test-id': c.S7.EXPLICIT_MARK_ICON,
-                                }),
+                                      className: (0, i.$)(h().explicitMark, t),
+                                      'aria-label': I,
+                                      variant: N,
+                                      size: x,
+                                      ...v,
+                                      'data-test-id': c.S7.EXPLICIT_MARK_ICON,
+                                  }),
                     }),
                 });
             });
@@ -296,7 +296,7 @@
                     c = (0, a.useContext)(s.B),
                     d = (0, a.useCallback)(
                         (a, i) => {
-                            e ? e(a, r ? i : void 0) : l(a, i), t && c.unobserveElement(o);
+                            (e ? e(a, r ? i : void 0) : l(a, i), t && c.unobserveElement(o));
                         },
                         [e, c, o, l, t, r],
                     );
@@ -560,7 +560,7 @@
                                 entity: t,
                                 callback: r,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), n.isOpened && (a.reset(), n.close()), i.modal.isOpened && i.modal.close();
+                                    (null == e || e.stopPropagation(), n.isOpened && (a.reset(), n.close()), i.modal.isOpened && i.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     s.modal.isOpened && (s.modal.close(), s.reset());
@@ -570,11 +570,11 @@
                         })({
                             artist: t,
                             callback: (0, h.c)((e) => {
-                                j && N.isOpened && N.close(), k(e);
+                                (j && N.isOpened && N.close(), k(e));
                             }),
                         }),
                         y = (0, h.c)((e) => {
-                            I({ to: _.QT.ArtistScreen }), null == T || T(), R(e);
+                            (I({ to: _.QT.ArtistScreen }), null == T || T(), R(e));
                         });
                     return r && !t.various
                         ? (0, a.jsx)(b.N, {
@@ -791,7 +791,7 @@
                         } = (0, o.g)(),
                         E = 1 === r.length,
                         L = (0, n.useCallback)((e) => {
-                            y(!0), e.preventDefault();
+                            (y(!0), e.preventDefault());
                         }, []),
                         O = (0, n.useMemo)(() => {
                             let e = r;
@@ -1105,11 +1105,11 @@
                                 let m = { ...(0, u.HO)(s), url: s.url, isLiked: !s.isLiked };
                                 r(!0);
                                 let p = await s.toggleLike();
-                                r(!1),
+                                (r(!1),
                                     c &&
                                         (p === _.f.OK
                                             ? e((0, a.jsx)(x, { withLink: o, album: m }), { containerId: l.u.INFO })
-                                            : e((0, a.jsx)(d.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
+                                            : e((0, a.jsx)(d.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR })));
                             });
                         })(),
                         { pageAlbumId: g } = (0, n.T)();
@@ -1202,7 +1202,7 @@
                         };
                     })(),
                     S = (0, n.useCallback)(() => {
-                        A(), (window.location.href = x.Z.main.href);
+                        (A(), (window.location.href = x.Z.main.href));
                     }, [A]),
                     { contentRef: N } = (0, f.g)();
                 return (0, a.jsxs)('div', {
@@ -1343,7 +1343,7 @@
                         );
                     }, [t, r]),
                     S = (0, c.c)((e) => {
-                        s.modal.isOpened && s.modal.close(), b({ to: l.QT.ArtistScreen }), x(e);
+                        (s.modal.isOpened && s.modal.close(), b({ to: l.QT.ArtistScreen }), x(e));
                     });
                 return (0, a.jsxs)(a.Fragment, {
                     children: [
@@ -1396,19 +1396,19 @@
                 s = r(30782),
                 n = r(55178),
                 l = r(60900);
-            !(function (e) {
-                (e.formatDate = 'FormattedDate'),
+            (!(function (e) {
+                ((e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName');
+                    (e.formatDisplayName = 'FormattedDisplayName'));
             })(a || (a = {})),
                 (function (e) {
-                    (e.formatDate = 'FormattedDateParts'),
+                    ((e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts');
-                })(i || (i = {}));
+                        (e.formatList = 'FormattedListParts'));
+                })(i || (i = {})));
             var o = function (e) {
                 var t = (0, l.A)(),
                     r = e.value,
@@ -1425,7 +1425,7 @@
                         o = 'string' == typeof a ? new Date(a || 0) : a;
                     return i('formatDate' === e ? r.formatDateToParts(o, n) : r.formatTimeToParts(o, n));
                 };
-                return (t.displayName = i[e]), t;
+                return ((t.displayName = i[e]), t);
             }
             function d(e) {
                 var t = function (t) {
@@ -1438,11 +1438,11 @@
                     var d = r.textComponent || n.Fragment;
                     return n.createElement(d, null, c);
                 };
-                return (t.displayName = a[e]), t;
+                return ((t.displayName = a[e]), t);
             }
-            (o.displayName = 'FormattedNumberParts'), (o.displayName = 'FormattedNumberParts');
+            ((o.displayName = 'FormattedNumberParts'), (o.displayName = 'FormattedNumberParts'));
             var u = d('formatDate');
-            d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime');
+            (d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime'));
         },
         83598: (e) => {
             e.exports = {
@@ -1459,10 +1459,10 @@
         92013: (e, t, r) => {
             'use strict';
             var a;
-            r.d(t, { T: () => a }),
+            (r.d(t, { T: () => a }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(a || (a = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(a || (a = {})));
         },
         92606: (e) => {
             e.exports = {

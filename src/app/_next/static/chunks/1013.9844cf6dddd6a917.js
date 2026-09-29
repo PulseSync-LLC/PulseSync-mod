@@ -3,7 +3,7 @@
     {
         11560: (e, t, i) => {
             'use strict';
-            i.r(t), i.d(t, { VibeWidgetFallbackAnimation: () => m });
+            (i.r(t), i.d(t, { VibeWidgetFallbackAnimation: () => m }));
             var n = i(32290),
                 r = i(63618),
                 a = i(96103),
@@ -62,7 +62,7 @@
                 u = function (e, t, i) {
                     return function () {
                         var n;
-                        e.props[t] && (n = e.props)[t].apply(n, arguments), i();
+                        (e.props[t] && (n = e.props)[t].apply(n, arguments), i());
                     };
                 },
                 d =
@@ -124,7 +124,7 @@
                             ((t = e.call.apply(e, [this].concat(n)) || this).state = { status: l._K, current: null }),
                             (t.appeared = !1),
                             (t.changeState = function (e, i) {
-                                void 0 === i && (i = t.state.current), t.setState({ status: e, current: i });
+                                (void 0 === i && (i = t.state.current), t.setState({ status: e, current: i }));
                             }),
                             t
                         );
@@ -171,12 +171,12 @@
                         t
                     );
                 })(s.Component);
-            (m.propTypes = {}), (m.defaultProps = { mode: c.out });
+            ((m.propTypes = {}), (m.defaultProps = { mode: c.out }));
             let g = m;
         },
         51013: (e, t, i) => {
             'use strict';
-            i.r(t), i.d(t, { VibeWidgetAnimation: () => C });
+            (i.r(t), i.d(t, { VibeWidgetAnimation: () => C }));
             var n = i(32290),
                 r = i(96103),
                 a = i(55178),
@@ -232,11 +232,14 @@
                         if (!(null == I ? void 0 : I.analyser)) return;
                         const volumeCompensation = I.analyser.getVolumeCompensation();
                         const spectrumSnapshot = I.analyser.getSpectrumSnapshot(volumeCompensation);
-                        let [e, t, i] = I.analyser.getAverageFrequencies([
-                            { low: 20, high: 250 },
-                            { low: 250, high: 2500 },
-                            { low: 2500, high: 12000 },
-                        ], spectrumSnapshot);
+                        let [e, t, i] = I.analyser.getAverageFrequencies(
+                            [
+                                { low: 20, high: 250 },
+                                { low: 250, high: 2500 },
+                                { low: 2500, high: 12000 },
+                            ],
+                            spectrumSnapshot,
+                        );
                         let rms = I.analyser.getRMS(volumeCompensation),
                             rmsAlt = I.analyser.getRMSAlt(volumeCompensation),
                             measuredEnergy = 0.7 * rms + 0.3 * rmsAlt,
@@ -248,14 +251,15 @@
                             compressedEnergy = useSmoothing ? 1 - Math.exp(-1.6 * smoothedEnergy) : rawEnergy,
                             energy = compressedEnergy * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
                             energyNormalized = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? energy : (w?.entityMeta?.trackParameters?.energy ?? 1);
-                        dynamicEnergyRef.current = smoothedEnergy,
+                        ((dynamicEnergyRef.current = smoothedEnergy),
                             null == c || c.updateEnergy(energyNormalized),
-                            null == c || c.updateAudioFrequencies({
-                                low: null != e ? e : 0,
-                                middle: null != t ? t : 0,
-                                high: null != i ? i : 0,
-                                ...(c.animationVariant === 'ncs' ? { ...I.analyser.getNcsSpectrumSnapshot(volumeCompensation), rms: rawEnergy } : null),
-                            });
+                            null == c ||
+                                c.updateAudioFrequencies({
+                                    low: null != e ? e : 0,
+                                    middle: null != t ? t : 0,
+                                    high: null != i ? i : 0,
+                                    ...(c.animationVariant === 'ncs' ? { ...I.analyser.getNcsSpectrumSnapshot(volumeCompensation), rms: rawEnergy } : null),
+                                }));
                         try {
                             window.dispatchEvent(
                                 new CustomEvent('vibe:energy', {
@@ -287,13 +291,13 @@
                                 onError: M,
                             }),
                             n = null == (s = w.entityMeta) || null == (a = s.trackParameters) ? void 0 : a.hue;
-                        d(i),
+                        (d(i),
                             V(new E.Rv(E.p4, W)),
                             Q()
                                 ? i.applySettings({
                                       customColors: y({ averageColor: r, isPlaying: w.isPlaying, isShuffleVibeActive: !!(M.isShuffleVibe && w.isVibeContext) }),
                                   })
-                                : i.applySettings({ hue: n, collectionHue: B.collectionHue });
+                                : i.applySettings({ hue: n, collectionHue: B.collectionHue }));
                     }, [
                         r,
                         f,
@@ -311,7 +315,7 @@
                         null == w.entityMeta ? void 0 : w.entityMeta.trackParameters,
                     ]);
                     let D = (0, o.c)(() => {
-                        null == c || c.destroy(), d(null), null == x || x.stop(), V(null);
+                        (null == c || c.destroy(), d(null), null == x || x.stop(), V(null));
                     });
                     return ((0, a.useEffect)(
                         () => () => {
@@ -348,14 +352,14 @@
                                   })
                                 : c?.applySettings({ hue: n, collectionHue: B.collectionHue });
                         };
-                        return window.addEventListener('pulse-sync-vibe-setting-change', e), () => window.removeEventListener('pulse-sync-vibe-setting-change', e);
+                        return (window.addEventListener('pulse-sync-vibe-setting-change', e), () => window.removeEventListener('pulse-sync-vibe-setting-change', e));
                     }, [r, w.isPlaying, w.isVibeContext, M.isShuffleVibe, c, B.collectionHue, null == w.entityMeta ? void 0 : w.entityMeta.trackParameters]),
                     (0, a.useEffect)(() => {
                         var e, t, n, a, oA;
                         let s = null == (t = w.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
                             l = null == (a = w.entityMeta) || null == (n = a.trackParameters) ? void 0 : n.energy,
                             o = null == (oA = w.entityMeta) ? void 0 : oA.trackParameters;
-                        o && o.userCollectionHue && B.setUserCollectionHue(o.userCollectionHue),
+                        (o && o.userCollectionHue && B.setUserCollectionHue(o.userCollectionHue),
                             i && w.isPlaying
                                 ? (null == c ||
                                       c.playAnimation(
@@ -371,7 +375,7 @@
                                               : { hue: s, energy: l, collectionHue: o && o.userCollectionHue },
                                       ),
                                   null == x || x.start())
-                                : (null == c || c.idleAnimation(), null == x || x.stop());
+                                : (null == c || c.idleAnimation(), null == x || x.stop()));
                     }, [x, i, w.isPlaying, c, B, r, w.isVibeContext, M.isShuffleVibe, null == w.entityMeta ? void 0 : w.entityMeta.trackParameters]),
                     (0, a.useEffect)(() => {
                         i ? null == c || c.enable() : null == c || c.disable();
@@ -431,7 +435,7 @@
             'use strict';
             i.d(t, { w: () => n });
             var n = (function (e) {
-                return (e.DISABLED = 'DISABLED'), (e.ENABLED = 'ENABLED'), e;
+                return ((e.DISABLED = 'DISABLED'), (e.ENABLED = 'ENABLED'), e);
             })({});
         },
         59688: (e) => {
@@ -457,8 +461,8 @@
                 (0, n.useEffect)(() => {
                     let e = () => {
                         var e, t, i, n;
-                        o.id === (null == (e = u.entityMeta) ? void 0 : e.id) && !o.isLiked && (null == (n = u.entityMeta) ? void 0 : n.isLiked) && s(),
-                            c({ id: null == (t = u.entityMeta) ? void 0 : t.id, isLiked: null == (i = u.entityMeta) ? void 0 : i.isLiked });
+                        (o.id === (null == (e = u.entityMeta) ? void 0 : e.id) && !o.isLiked && (null == (n = u.entityMeta) ? void 0 : n.isLiked) && s(),
+                            c({ id: null == (t = u.entityMeta) ? void 0 : t.id, isLiked: null == (i = u.entityMeta) ? void 0 : i.isLiked }));
                     };
                     l ? u.contextType === r.K.Vibe && e() : e();
                 }, [s, l, u.contextType, null == (t = u.entityMeta) ? void 0 : t.id, null == (i = u.entityMeta) ? void 0 : i.isLiked, o.id, o.isLiked]);
@@ -547,7 +551,7 @@
                             }
                             if ((i.current++, !(i.current < 3))) {
                                 if (((i.current = 0), h !== s.IU.LITE)) {
-                                    E(s.IU.LITE), p.count('liteAnimation', V);
+                                    (E(s.IU.LITE), p.count('liteAnimation', V));
                                     return;
                                 }
                                 _ ||

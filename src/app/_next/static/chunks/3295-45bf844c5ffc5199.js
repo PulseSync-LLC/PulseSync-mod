@@ -13,16 +13,16 @@
                     };
                     return [G(0), G(8), G(4)];
                 };
-            X(28429),
+            (X(28429),
                 X(26313),
                 (function (d) {
-                    (d.DEFAULT = 'DEFAULT'), (d.LITE = 'LITE');
+                    ((d.DEFAULT = 'DEFAULT'), (d.LITE = 'LITE'));
                 })(Z || (Z = {})),
                 X(10262),
                 X(20686),
                 X(23845),
                 X(46811),
-                X(21722);
+                X(21722));
             var Z,
                 c,
                 V = X(91945),
@@ -33,7 +33,7 @@
                     return new Worker(url, e);
                 };
             !(function (d) {
-                (d.INIT = 'vibe-animation-worker-init'),
+                ((d.INIT = 'vibe-animation-worker-init'),
                     (d.ERROR = 'vibe-animation-worker-error'),
                     (d.UPDATE_LAYOUT = 'vibe-animation-worker-update-layout'),
                     (d.UPDATE_RUNTIME_SETTINGS = 'vibe-animation-worker-update-runtime-settings'),
@@ -45,7 +45,7 @@
                     (d.DISABLE = 'vibe-animation-worker-disable'),
                     (d.AUDIO_ANALYZER_FREQUENCIES = 'vibe-animation-worker-audio-analyzer-frequencies'),
                     (d.ENABLE_LITE_ANIMATION = 'vibe-animation-worker-enable-lite-animation'),
-                    (d.UPDATE_VIBE_ENERGY = 'vibe-animation-worker-update-energy');
+                    (d.UPDATE_VIBE_ENERGY = 'vibe-animation-worker-update-energy'));
             })(c || (c = {}));
             class m {
                 invoke(d, l) {
@@ -87,19 +87,33 @@
                     this.invoke(c.UPDATE_VIBE_ENERGY, e);
                 }
                 destroy() {
-                    this.onMessage && this.worker.removeEventListener('message', this.onMessage),
+                    (this.onMessage && this.worker.removeEventListener('message', this.onMessage),
                         this.onError && this.worker.removeEventListener('error', this.onError),
-                        this.worker.terminate();
+                        this.worker.terminate());
                 }
-                constructor({ offscreenCanvas: d, state: l, collectionHue: X, fps: maxFps, resolution: resolution, animationVariant, shaderOptions: G, onError: b, onMessage: Z }) {
+                constructor({
+                    offscreenCanvas: d,
+                    state: l,
+                    collectionHue: X,
+                    fps: maxFps,
+                    resolution: resolution,
+                    animationVariant,
+                    shaderOptions: G,
+                    onError: b,
+                    onMessage: Z,
+                }) {
                     this.animationVariant = animationVariant === 'ncs' ? 'ncs' : 'vibe';
-                    (0, V._)(this, 'worker', void 0),
+                    ((0, V._)(this, 'worker', void 0),
                         (0, V._)(this, 'onMessage', void 0),
                         (0, V._)(this, 'onError', void 0),
                         (this.worker = new W()),
                         Z && ((this.onMessage = Z), this.worker.addEventListener('message', this.onMessage)),
                         b && ((this.onError = b), this.worker.addEventListener('error', this.onError)),
-                        this.invoke(c.INIT, { canvas: d, state: l, collectionHue: X, fps: maxFps, resolution: resolution, animationVariant: this.animationVariant, shaderOptions: G }, [d]);
+                        this.invoke(
+                            c.INIT,
+                            { canvas: d, state: l, collectionHue: X, fps: maxFps, resolution: resolution, animationVariant: this.animationVariant, shaderOptions: G },
+                            [d],
+                        ));
                 }
             }
             let s = 25,
@@ -110,10 +124,10 @@
                     let l,
                         X = [],
                         G = (b) => {
-                            if (void 0 === l) return (l = b), void (this.requestId = requestAnimationFrame(G));
+                            if (void 0 === l) return ((l = b), void (this.requestId = requestAnimationFrame(G)));
                             let Z = b - l;
-                            if (((l = b), X.length < 600)) return X.push(Z), void (this.requestId = requestAnimationFrame(G));
-                            d(
+                            if (((l = b), X.length < 600)) return (X.push(Z), void (this.requestId = requestAnimationFrame(G)));
+                            (d(
                                 1e3 /
                                     ((d) => {
                                         let l = Math.ceil(0.05 * d.length),
@@ -122,7 +136,7 @@
                                     })(X),
                             ),
                                 (X = []),
-                                (this.requestId = requestAnimationFrame(G));
+                                (this.requestId = requestAnimationFrame(G)));
                         };
                     this.requestId = requestAnimationFrame(G);
                 }
@@ -143,18 +157,18 @@
                             let b = G - d;
                             b >= l - 0.1 && ((d = G - (b % l)), this.render(b));
                         };
-                    (this.isActive = !0), (this.requestId = requestAnimationFrame(X));
+                    ((this.isActive = !0), (this.requestId = requestAnimationFrame(X)));
                 }
                 stop() {
                     this.isActive && ((this.isActive = !1), cancelAnimationFrame(this.requestId));
                 }
                 constructor(d, l) {
-                    (0, V._)(this, 'fps', void 0),
+                    ((0, V._)(this, 'fps', void 0),
                         (0, V._)(this, 'render', void 0),
                         (0, V._)(this, 'isActive', !1),
                         (0, V._)(this, 'requestId', 0),
                         (this.fps = d),
-                        (this.render = l);
+                        (this.render = l));
                 }
             }
         },

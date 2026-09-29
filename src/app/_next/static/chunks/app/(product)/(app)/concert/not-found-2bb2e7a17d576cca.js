@@ -8,7 +8,7 @@
         },
         7748: (e, t, n) => {
             'use strict';
-            n.r(t), n.d(t, { NotFound: () => m });
+            (n.r(t), n.d(t, { NotFound: () => m }));
             var i = n(32290),
                 a = n(63618),
                 o = n(96103),
@@ -99,7 +99,7 @@
                                 logger: i,
                                 context: 'useSendEventOnNotFoundNavigated',
                             });
-                            a && (0, _.Mu)(t.evgenInstance, a), e();
+                            (a && (0, _.Mu)(t.evgenInstance, a), e());
                         }, [t, n, i, e]),
                     };
                 })(R);
@@ -245,10 +245,10 @@
                     { canBack: T, canForward: I, moveBack: A, moveForward: C } = (0, _.J)(x),
                     E = (0, r.useRef)(null),
                     v = (0, c.c)((e) => {
-                        e.stopPropagation(), A();
+                        (e.stopPropagation(), A());
                     }),
                     m = (0, c.c)((e) => {
-                        e.stopPropagation(), C();
+                        (e.stopPropagation(), C());
                     });
                 return (
                     (0, r.useEffect)(() => {
@@ -373,7 +373,7 @@
                 let t = (0, i.useRef)(!1),
                     n = (0, a.z)();
                 (0, i.useEffect)(() => {
-                    e && (null == n || n.disable(), (t.current = !0)), !e && t.current && (null == n || n.enable(), (t.current = !1));
+                    (e && (null == n || n.disable(), (t.current = !0)), !e && t.current && (null == n || n.enable(), (t.current = !1)));
                 }, [e, n]);
             };
         },
@@ -868,7 +868,7 @@
         },
         95054: (e, t, n) => {
             'use strict';
-            n.r(t), n.d(t, { default: () => W });
+            (n.r(t), n.d(t, { default: () => W }));
             var i = n(32290),
                 a = n(96103),
                 o = n(55178),
@@ -905,6 +905,6 @@
         },
     },
     (e) => {
-        e.O(0, [7034, 6706, 8892, 2536, 66, 5835, 2812, 6477, 7275, 2586, 8347, 4522, 4220, 9562, 7358], () => e((e.s = 77276))), (_N_E = e.O());
+        (e.O(0, [7034, 6706, 8892, 2536, 66, 5835, 2812, 6477, 7275, 2586, 8347, 4522, 4220, 9562, 7358], () => e((e.s = 77276))), (_N_E = e.O()));
     },
 ]);

@@ -49,10 +49,10 @@
                         let s = { ...(0, a.HO)(e), isLiked: !e.isLiked };
                         m(!0);
                         let l = await e.toggleLike();
-                        m(!1),
+                        (m(!1),
                             l === n.f.OK
                                 ? i((0, r.jsx)(x, { artist: s }), { containerId: o.u.INFO })
-                                : i((0, r.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, r.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [e, t.isAuthorized, _, h, i]);
                 };
         },
@@ -122,7 +122,7 @@
                     eg = (0, k.P)(),
                     ep = (0, u.c)((e) => {
                         if ((e.stopPropagation(), eg())) return void e.preventDefault();
-                        $.openArtistTrailer(t.id), ev(o.ky.Artist, t.id);
+                        ($.openArtistTrailer(t.id), ev(o.ky.Artist, t.id));
                     }),
                     ek = (0, l.useMemo)(() => {
                         let e = Y({ id: 'entity-names.artist-name' }, { artistName: eu }),
@@ -135,23 +135,23 @@
                     eb = (0, v.S)({ artist: t, callback: eh }),
                     eN = (0, v.S)({ artist: t, callback: ej }),
                     eT = (0, u.c)((e) => {
-                        null == ea || ea(), el({ to: o.QT.ArtistScreen }), eb(e);
+                        (null == ea || ea(), el({ to: o.QT.ArtistScreen }), eb(e));
                     }),
                     eA = (0, A.N)(),
                     eL = (0, u.c)(() => {
                         if (!eg()) {
                             if (eA) return void X.open();
-                            Z || eC || (G(!0), null == es || es()), eN(), en(!eC);
+                            (Z || eC || (G(!0), null == es || es()), eN(), en(!eC));
                         }
                     }),
                     eR = (0, u.c)(() => {
-                        J || em || (ee(!0), null == er || er()), eo();
+                        (J || em || (ee(!0), null == er || er()), eo());
                     }),
                     ey = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eS = (0, u.c)((e) => {
-                        ei(e), ef(e);
+                        (ei(e), ef(e));
                     }),
                     eB = (0, l.useMemo)(
                         () =>
@@ -551,7 +551,7 @@
                     o = (0, l.useRef)(null);
                 return (
                     (0, l.useEffect)(() => {
-                        (null == o ? void 0 : o.current) && s(o), i && n(i);
+                        ((null == o ? void 0 : o.current) && s(o), i && n(i));
                     }, [o, i, s, n]),
                     (0, l.useEffect)(
                         () => () => {
@@ -592,7 +592,7 @@
                     P = t.length + j.length > 25,
                     E = (0, f.Z)(null != L ? L : ''),
                     w = (0, d.c)((e) => {
-                        null == R || R(), E(e);
+                        (null == R || R(), E(e));
                     }),
                     H = (0, l.useMemo)(
                         () =>
@@ -606,11 +606,11 @@
                     D = !y && s && B,
                     z = (0, l.useCallback)(() => {
                         var e;
-                        O(!0), null == (e = I.current) || e.focus();
+                        (O(!0), null == (e = I.current) || e.focus());
                     }, []),
                     W = (0, l.useCallback)(
                         (e) => {
-                            O(!1), null == h || h(e);
+                            (O(!1), null == h || h(e));
                         },
                         [h],
                     ),
@@ -710,7 +710,7 @@
         },
         45248: (e, t, i) => {
             'use strict';
-            i.r(t), i.d(t, { default: () => $ });
+            (i.r(t), i.d(t, { default: () => $ }));
             var r = i(32290),
                 a = i(21916),
                 s = i(55178),
@@ -764,8 +764,8 @@
                     Z = (0, s.useRef)(0);
                 (0, D.Q)({ id: Number(K.id), name: null != (n = K.name) ? n : '', type: null != (z = K.type) ? z : '' }, D.T.ROOT);
                 let G = (0, u.c)(async () => {
-                        await window.navigator.clipboard.writeText(Q),
-                            q((0, r.jsx)(P.D, { entityVariant: S.Y.LABEL, entityTitle: K.name || '' }), { containerId: T.u.INFO });
+                        (await window.navigator.clipboard.writeText(Q),
+                            q((0, r.jsx)(P.D, { entityVariant: S.Y.LABEL, entityTitle: K.name || '' }), { containerId: T.u.INFO }));
                     }),
                     J = (0, s.useMemo)(
                         () =>
@@ -917,7 +917,7 @@
             var M = i(17024);
             let $ = () => {
                 let e = (0, a.useSearchParams)().get('labelId');
-                return (e && (0, M.L)(e)) || (0, a.notFound)(), (0, r.jsx)(s.Suspense, { fallback: (0, r.jsx)(K, {}), children: (0, r.jsx)(F, { labelId: e }) });
+                return ((e && (0, M.L)(e)) || (0, a.notFound)(), (0, r.jsx)(s.Suspense, { fallback: (0, r.jsx)(K, {}), children: (0, r.jsx)(F, { labelId: e }) }));
             };
         },
         45807: (e, t, i) => {
@@ -939,11 +939,11 @@
                 var t = n[e];
                 if (void 0 !== t) return t.exports;
                 var i = (n[e] = { exports: {} });
-                return l[e](i, i.exports, o), i.exports;
+                return (l[e](i, i.exports, o), i.exports);
             }
             var d = {};
-            (() => {
-                Object.defineProperty(d, 'X', { value: !0 }), (d.l = void 0);
+            ((() => {
+                (Object.defineProperty(d, 'X', { value: !0 }), (d.l = void 0));
                 let e = o(810),
                     t = o(352);
                 d.l = (i) => {
@@ -953,7 +953,7 @@
                             let e = null == i ? void 0 : i.current;
                             e && (a(0 === e.scrollLeft), l(e.scrollWidth - e.scrollLeft <= e.offsetWidth + 10));
                         };
-                    (0, e.useEffect)(() => {
+                    ((0, e.useEffect)(() => {
                         n();
                     }, [i, n]),
                         (0, e.useEffect)(() => {
@@ -962,10 +962,10 @@
                                 null == e || e.addEventListener('scroll', n),
                                 window.addEventListener('resize', n),
                                 () => {
-                                    null == e || e.removeEventListener('scroll', n), window.removeEventListener('resize', n);
+                                    (null == e || e.removeEventListener('scroll', n), window.removeEventListener('resize', n));
                                 }
                             );
-                        }, [i, n]);
+                        }, [i, n]));
                     let o = (0, e.useMemo)(
                         () =>
                             (0, t.throttle)(
@@ -996,7 +996,7 @@
                     };
                 };
             })(),
-                d.X;
+                d.X);
             var c = d.l;
         },
         49522: (e, t, i) => {
@@ -1024,13 +1024,13 @@
                     { swipeBackward: f, swipeForward: v, shouldBackwardButtonBeDisabled: g, shouldForwardButtonBeDisabled: p, shouldHideControls: k } = (0, n.Y)(t),
                     C = (0, s.useCallback)(
                         (e) => {
-                            f(), e.stopPropagation();
+                            (f(), e.stopPropagation());
                         },
                         [f],
                     ),
                     j = (0, s.useCallback)(
                         (e) => {
-                            v(), e.stopPropagation();
+                            (v(), e.stopPropagation());
                         },
                         [v],
                     );
@@ -1138,10 +1138,10 @@
                         let s = { ...(0, a.HO)(e), isPinned: !e.isPinned };
                         h(!0);
                         let l = await e.togglePin();
-                        h(!1),
+                        (h(!1),
                             l
                                 ? i((0, r.jsx)(m, { artist: s }), { containerId: n.u.INFO })
-                                : i((0, r.jsx)(c.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, r.jsx)(c.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [e, t.isAuthorized, _, u, i]);
                 };
         },
@@ -1153,7 +1153,7 @@
                 s = {
                     5881: (e, t, i) => {
                         function r() {
-                            for (var e, t, i = 0, r = ''; i < arguments.length; )
+                            for (var e, t, i = 0, r = ''; i < arguments.length;)
                                 (e = arguments[i++]) &&
                                     (t = (function e(t) {
                                         var i,
@@ -1168,11 +1168,11 @@
                                     (r && (r += ' '), (r += t));
                             return r;
                         }
-                        i.r(t), i.d(t, { clsx: () => r, default: () => a });
+                        (i.r(t), i.d(t, { clsx: () => r, default: () => a }));
                         let a = r;
                     },
                     9058: (e, t, i) => {
-                        i.r(t), i.d(t, { default: () => r });
+                        (i.r(t), i.d(t, { default: () => r }));
                         let r = { root: 'IZnFMW4gXBshJODnvB1P', item: 'VJ9IexhAEuYSCyGiMfN4' };
                     },
                     9097: (e, t) => {
@@ -1184,7 +1184,7 @@
                             else r = t;
                             return { $$typeof: i, type: e, key: a, ref: void 0 !== (t = r.ref) ? t : null, props: r };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r));
                     },
                     4377: (e, t, i) => {
                         e.exports = i(9097);
@@ -1195,7 +1195,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Carousel = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Carousel = void 0));
                         let a = i(4377),
                             s = i(5881),
                             l = i(810),
@@ -1221,19 +1221,19 @@
                 var t = l[e];
                 if (void 0 !== t) return t.exports;
                 var i = (l[e] = { exports: {} });
-                return s[e].call(i.exports, i, i.exports, n), i.exports;
+                return (s[e].call(i.exports, i, i.exports, n), i.exports);
             }
-            (n.d = (e, t) => {
+            ((n.d = (e, t) => {
                 for (var i in t) n.o(t, i) && !n.o(e, i) && Object.defineProperty(e, i, { enumerable: !0, get: t[i] });
             }),
                 (n.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (n.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var o = {};
             (() => {
-                Object.defineProperty(o, 'X', { value: !0 }), (o.l = void 0);
+                (Object.defineProperty(o, 'X', { value: !0 }), (o.l = void 0));
                 var e = n(5056);
                 Object.defineProperty(o, 'l', {
                     enumerable: !0,
@@ -1413,10 +1413,10 @@
                             let s = { ...(0, _.HO)(e), isDisliked: !e.isDisliked };
                             l(!0);
                             let o = await e.toggleDislike();
-                            l(!1),
+                            (l(!1),
                                 o === h.f.OK
                                     ? i((0, r.jsx)(A, { coverUri: s.coverUri, title: s.name, isDisliked: s.isDisliked }), { containerId: x.u.INFO })
-                                    : i((0, r.jsx)(g.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: x.u.ERROR });
+                                    : i((0, r.jsx)(g.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: x.u.ERROR }));
                         });
                     })(p),
                     ea = (0, P.F)(),
@@ -1521,7 +1521,7 @@
                         (e) => {
                             if (c && ['Enter', 'Escape'].includes(e.key)) {
                                 var t;
-                                'Escape' === e.key && (f.current = !0), null == (t = e.currentTarget) || t.blur();
+                                ('Escape' === e.key && (f.current = !0), null == (t = e.currentTarget) || t.blur());
                             }
                         },
                         [c],
@@ -1530,7 +1530,7 @@
                         let e = h.trim();
                         f.current || (n && e.length < n) ? ((f.current = !1), null == _ || _(i)) : null == _ || _(e);
                     }, [h, f, n, _, i]);
-                (0, l.useEffect)(() => {
+                ((0, l.useEffect)(() => {
                     v.current && ((v.current.selectionStart = v.current.value.length), (v.current.selectionEnd = v.current.value.length));
                 }, []),
                     (0, l.useLayoutEffect)(() => {
@@ -1540,7 +1540,7 @@
                             let t = e.scrollHeight;
                             e.style.height = ''.concat(t, 'px');
                         }
-                    }, [v, h]);
+                    }, [v, h]));
                 let C = (0, l.useMemo)(() => ('textarea' === d ? (e) => (0, r.jsx)('textarea', { ref: v, rows: 6, ...e }) : (e) => (0, r.jsx)('input', { ...e })), [d]);
                 return (0, r.jsx)(C, {
                     className: (0, a.$)(o().root, t, { [o().root_textarea]: 'textarea' === d, [o().root_outline]: m }),
@@ -1626,10 +1626,10 @@
                     return (0, r.useCallback)(() => {
                         if (!t || !g || !d.xK.includes(g) || !f.includes(g) || e.current) return;
                         let r = { hash: v, pageId: o.F[g], entityType: N, entityId: b, entityPosX: T, entityPosY: P, objectsCount: y };
-                        void 0 !== S && ((r.filterKey = S), (r.filterValue = B), (r.filterPos = O)),
+                        (void 0 !== S && ((r.filterKey = S), (r.filterValue = B), (r.filterPos = O)),
                             d.qG.includes(g) && ((r.tabId = p), (r.tabPos = k), (r.isTabSelectedByDefault = C)),
                             I && (r.skeletonId = I),
-                            R && L && ((r.mainObjectType = L), (r.mainObjectId = R));
+                            R && L && ((r.mainObjectType = L), (r.mainObjectId = R)));
                         let s = (0, a.Fx)({ params: r, logger: i, context: 'useSendEventOnBlockLoaded' });
                         s && ((0, a.uY)(t.evgenInstance, s), (e.current = !0));
                     }, [t, g, v, N, b, T, P, S, B, O, y, I, R, L, i, p, k, C]);
@@ -1761,7 +1761,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5367, 7258, 7034, 5718, 7231, 7972, 6347, 3183, 9763, 6639, 1749, 6706, 1311, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 6252, 3266, 6477, 7275,
@@ -1769,6 +1769,6 @@
             ],
             () => e((e.s = 60507)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

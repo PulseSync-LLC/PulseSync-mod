@@ -3,7 +3,7 @@
     {
         20176: (e, s, u) => {
             'use strict';
-            u.r(s), u.d(s, { default: () => d });
+            (u.r(s), u.d(s, { default: () => d }));
             var l = u(32290),
                 r = u(21916),
                 a = u(55178),
@@ -11,7 +11,7 @@
                 t = u(17024);
             let d = () => {
                 let e = (0, r.useSearchParams)().get('albumId');
-                return (e && (0, t.L)(e)) || (0, r.notFound)(), (0, l.jsx)(a.Suspense, { children: (0, l.jsx)(n.l, { albumId: e }) });
+                return ((e && (0, t.L)(e)) || (0, r.notFound)(), (0, l.jsx)(a.Suspense, { children: (0, l.jsx)(n.l, { albumId: e }) }));
             };
         },
         21940: (e, s, u) => {
@@ -19,7 +19,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 6639, 7034, 7231, 5718, 7972, 6347, 3183, 9763, 7258, 9117, 1541, 5367, 422, 5108, 149, 8868, 324, 3379, 3647, 9297, 6706, 1311, 5201, 8892, 2536, 66,
@@ -28,6 +28,6 @@
             ],
             () => e((e.s = 21940)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

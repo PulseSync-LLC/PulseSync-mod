@@ -1173,7 +1173,9 @@
     background: rgba(0, 0, 0, 0.7);
     color: hsla(0, 0%, 100%, 0.5);
     z-index: var(--ym-z-index-popover);
-    transition: opacity 160ms ease, transform 160ms ease;
+    transition:
+        opacity 160ms ease,
+        transform 160ms ease;
 }
 
 .PulseSync_castPopoverStatus {
@@ -1219,12 +1221,13 @@
     padding-block-end: 0;
     padding-block-start: 0;
     transform: translateY(-0.25rem);
-    transition: border-color 160ms ease,
-    margin 160ms ease,
-    max-height 160ms ease,
-    opacity 160ms ease,
-    padding 160ms ease,
-    transform 160ms ease;
+    transition:
+        border-color 160ms ease,
+        margin 160ms ease,
+        max-height 160ms ease,
+        opacity 160ms ease,
+        padding 160ms ease,
+        transform 160ms ease;
 }
 
 .PulseSync_castPopoverStatus_refreshing.PulseSync_castPopoverStatus_visible {
@@ -1280,9 +1283,10 @@
     padding-inline-end: var(--ym-spacer-size-s);
     padding-inline-start: var(--ym-spacer-size-s);
     text-align: start;
-    transition: color var(--ym-duration-transition),
-    background-color var(--ym-duration-transition),
-    opacity var(--ym-duration-transition);
+    transition:
+        color var(--ym-duration-transition),
+        background-color var(--ym-duration-transition),
+        opacity var(--ym-duration-transition);
     width: 100%;
 }
 
@@ -2413,7 +2417,6 @@
 }
 
 @media (max-width: 1005px) {
-
     .VibePlayerbarMeta_root___dH5G {
         height: 64px;
         transition: width 0.2s;
@@ -2422,7 +2425,6 @@
 }
 
 @media (max-width: 1000px) {
-
     .VibePlayerbarMeta_root___dH5G {
         width: 100%;
     }

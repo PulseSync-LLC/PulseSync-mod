@@ -18,19 +18,19 @@
                         let e = await fetch((0, o.X)(t));
                         if (!e.ok) {
                             let a = 'Failed to load data from URL: '.concat(e.status, ' ').concat(e.statusText);
-                            return null == r || r(a, { url: t, status: e.status, statusText: e.statusText }), null;
+                            return (null == r || r(a, { url: t, status: e.status, statusText: e.statusText }), null);
                         }
                         if (u(e.headers.get('content-type'), 'application/json')) return await e.json();
                         return await e.text();
                     } catch (e) {
-                        return null == r || r('Failed to load data from URL: '.concat(String(e)), { url: t, error: e }), null;
+                        return (null == r || r('Failed to load data from URL: '.concat(String(e)), { url: t, error: e }), null);
                     }
                 },
                 c = (t, r) => {
                     try {
                         return new URL(t);
                     } catch (e) {
-                        return null == r || r('Failed to convert '.concat(t, ' to URL: ').concat(String(e)), { url: t, error: e }), null;
+                        return (null == r || r('Failed to convert '.concat(t, ' to URL: ').concat(String(e)), { url: t, error: e }), null);
                     }
                 },
                 f = async (t) => {
@@ -45,7 +45,7 @@
                               try {
                                   return JSON.parse(t);
                               } catch (e) {
-                                  return null == r || r('Failed to parse configuration', { jsonString: t }), null;
+                                  return (null == r || r('Failed to parse configuration', { jsonString: t }), null);
                               }
                           })(n, a);
                 };
@@ -65,7 +65,7 @@
                             return null;
                         return e;
                     } catch (t) {
-                        return null == r || r('GraphQL payload: failed to parse JSON body', { error: t }), null;
+                        return (null == r || r('GraphQL payload: failed to parse JSON body', { error: t }), null);
                     }
                 },
                 h = /^(http|https):\/\//i,
@@ -186,7 +186,7 @@
                         ((globalThis.MSW_INIT_PROMISE = new Promise((r, e) => {
                             let o = ((t) => {
                                     let { urlCapturePattern: r = '*' } = t;
-                                    return r.endsWith('*') || (r += '*'), { ...t, urlCapturePattern: r };
+                                    return (r.endsWith('*') || (r += '*'), { ...t, urlCapturePattern: r });
                                 })(t),
                                 { serviceWorkerUrl: u, urlCapturePattern: s } = o,
                                 c = ((t) => [
@@ -210,11 +210,11 @@
                                 ])(o),
                                 d = (0, a.k)(...c),
                                 p = new URL(u || '/mockServiceWorker.js', window.location.href);
-                            p.searchParams.set('capture', s),
+                            (p.searchParams.set('capture', s),
                                 d
                                     .start({ onUnhandledRequest: 'bypass', serviceWorker: { url: p.toString() } })
                                     .then(r)
-                                    .catch((t) => e(Error('Client MSW initialization failed: '.concat(String(t)))));
+                                    .catch((t) => e(Error('Client MSW initialization failed: '.concat(String(t))))));
                         })),
                         await globalThis.MSW_INIT_PROMISE);
                 };

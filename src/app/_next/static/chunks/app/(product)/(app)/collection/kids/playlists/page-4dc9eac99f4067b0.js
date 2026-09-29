@@ -63,15 +63,15 @@
                     u = (0, l.useRef)(void 0),
                     _ = (0, r.c)(() => {
                         var i;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let s = [...(null != (i = e.lastRejectedPagesList) ? i : [])].reverse().filter((t) => {
                             var i;
                             return (null == (i = e.pageStates) ? void 0 : i[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             s.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, l.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = i((0, s.jsx)(n.L, { reloadBlocks: _ }), { containerId: o.u.ERROR, autoClose: !1 }));
@@ -136,7 +136,7 @@
             e.exports = { root: 'ArtistItem_root__Q_mgJ', image: 'ArtistItem_image__5rKWF', cover: 'ArtistItem_cover__FTvHo' };
         },
         19581: (e, t, i) => {
-            Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 94056));
+            (Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 94056)));
         },
         20472: (e, t, i) => {
             'use strict';
@@ -365,7 +365,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), n.isOpened && (s.reset(), n.close()), l.modal.isOpened && l.modal.close();
+                                    (null == e || e.stopPropagation(), n.isOpened && (s.reset(), n.close()), l.modal.isOpened && l.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     r.modal.isOpened && (r.modal.close(), r.reset());
@@ -375,11 +375,11 @@
                         })({
                             artist: t,
                             callback: (0, p.c)((e) => {
-                                j && S.isOpened && S.close(), N(e);
+                                (j && S.isOpened && S.close(), N(e));
                             }),
                         }),
                         E = (0, p.c)((e) => {
-                            L({ to: m.QT.ArtistScreen }), null == A || A(), P(e);
+                            (L({ to: m.QT.ArtistScreen }), null == A || A(), P(e));
                         });
                     return i && !t.various
                         ? (0, s.jsx)(C.N, {
@@ -596,7 +596,7 @@
                         } = (0, a.g)(),
                         T = 1 === i.length,
                         I = (0, n.useCallback)((e) => {
-                            E(!0), e.preventDefault();
+                            (E(!0), e.preventDefault());
                         }, []),
                         w = (0, n.useMemo)(() => {
                             let e = i;
@@ -912,7 +912,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [n, c, d];
-                                    return 'ru' === r && e.push(a), e.push(u), e;
+                                    return ('ru' === r && e.push(a), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [n, c, d, u];
@@ -1146,7 +1146,7 @@
                         };
                     })(),
                     f = (0, n.useCallback)(() => {
-                        k(), (window.location.href = g.Z.main.href);
+                        (k(), (window.location.href = g.Z.main.href));
                     }, [k]),
                     { contentRef: S } = (0, x.g)();
                 return (0, s.jsxs)('div', {
@@ -1284,10 +1284,10 @@
                         let r = { ...(0, l.HO)(e), url: e.url, isLiked: !e.isLiked };
                         m(!0);
                         let n = await e.toggleLike();
-                        m(!1),
+                        (m(!1),
                             n === o.f.OK
                                 ? i((0, s.jsx)(h, { playlist: r }), { containerId: a.u.INFO })
-                                : i((0, s.jsx)(u.h, { error: p({ id: 'error-messages.error-during-action' }) }), { containerId: a.u.ERROR });
+                                : i((0, s.jsx)(u.h, { error: p({ id: 'error-messages.error-during-action' }) }), { containerId: a.u.ERROR }));
                     }, [t.isAuthorized, _, e, p, i]);
                 };
         },
@@ -1328,10 +1328,10 @@
                         let r = { ...(0, l.HO)(e), url: e.url, isPinned: !e.isPinned };
                         h(!0);
                         let n = await e.togglePin();
-                        h(!1),
+                        (h(!1),
                             n
                                 ? i((0, s.jsx)(m, { playlist: r }), { containerId: o.u.INFO })
-                                : i((0, s.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, s.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [t.isAuthorized, _, e, i, u]);
                 };
         },
@@ -1383,7 +1383,7 @@
                         );
                     }, [t, i]),
                     f = (0, c.c)((e) => {
-                        r.modal.isOpened && r.modal.close(), C({ to: o.QT.ArtistScreen }), g(e);
+                        (r.modal.isOpened && r.modal.close(), C({ to: o.QT.ArtistScreen }), g(e));
                     });
                 return (0, s.jsxs)(s.Fragment, {
                     children: [
@@ -1523,7 +1523,7 @@
                                     {
                                         icon: (0, s.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: icon, size: 'xxs' }),
                                         onClick: () => {
-                                            activate(), l?.(!1);
+                                            (activate(), l?.(!1));
                                         },
                                         children: label,
                                         'data-pulsesync-addon-menu-item': '',
@@ -1571,33 +1571,33 @@
                     eh = (0, C.P)(),
                     ep = (0, u.c)((e) => {
                         if ((e.stopPropagation(), eh())) return void e.preventDefault();
-                        Y.setUtmLink(X), Y.openPlaylistTrailer(i.id), em(a.ky.Playlist, i.id);
+                        (Y.setUtmLink(X), Y.openPlaylistTrailer(i.id), em(a.ky.Playlist, i.id));
                     }),
                     [ex, eg] = (0, n.useState)(!1),
                     { isPlaying: ev, togglePlay: ey } = (0, E.D)({
                         playContextParams: { contextData: { type: d.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: U, utmLink: X }, loadContextMeta: !0 },
                     }),
                     eC = (0, u.c)(() => {
-                        ed({ to: a.QT.PlaylistScreen }), null == J || J();
+                        (ed({ to: a.QT.PlaylistScreen }), null == J || J());
                     }),
                     ek = (0, u.c)((e) => {
-                        eC(), e_(e);
+                        (eC(), e_(e));
                     }),
                     ef = (0, A.N)(),
                     eS = (0, u.c)(() => {
                         if (!eh()) {
                             if (ef) return void V.open();
-                            et || ev || (ei(!0), null == ee || ee()), ey(), eu(!ev);
+                            (et || ev || (ei(!0), null == ee || ee()), ey(), eu(!ev));
                         }
                     }),
                     ej = (0, u.c)(() => {
-                        es || i.isLiked || (el(!0), null == Q || Q()), ea();
+                        (es || i.isLiked || (el(!0), null == Q || Q()), ea());
                     }),
                     eN = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eA = (0, u.c)((e) => {
-                        en(e), eg(e);
+                        (en(e), eg(e));
                     }),
                     eL = (0, n.useMemo)(() => {
                         var e;
@@ -1947,7 +1947,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 7231, 6347, 3183, 9763, 6639, 7258, 3907, 2456, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6477, 7275, 2586, 8347, 4522,
@@ -1955,6 +1955,6 @@
             ],
             () => e((e.s = 19581)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

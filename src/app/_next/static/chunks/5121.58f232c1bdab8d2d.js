@@ -73,10 +73,10 @@
         },
         38126: (e, t, r) => {
             var o;
-            r.d(t, { r: () => o }),
+            (r.d(t, { r: () => o }),
                 (function (e) {
-                    (e.RU = 'ru'), (e.COM = 'com'), (e.KZ = 'kz'), (e.BY = 'by'), (e.UZ = 'uz');
-                })(o || (o = {}));
+                    ((e.RU = 'ru'), (e.COM = 'com'), (e.KZ = 'kz'), (e.BY = 'by'), (e.UZ = 'uz'));
+                })(o || (o = {})));
         },
         47502: (e, t, r) => {
             r.d(t, { createDesktopContainer: () => eq });
@@ -163,7 +163,7 @@
                 check() {
                     if (this.dataIsLoaded) {
                         if (!this.passportLogin && this.token) {
-                            this.removeToken(), this.reloadPage();
+                            (this.removeToken(), this.reloadPage());
                             return;
                         }
                         if (!this.token && this.passportLogin && !this.isOAuthPage) return void this.redirectToAuthorizationUrl();
@@ -271,14 +271,14 @@
                     return this.storage.get(ef.c.OauthState) || '';
                 }
                 constructor(e, t, r) {
-                    super(e, t),
+                    (super(e, t),
                         (0, eG._)(this, 'language', void 0),
                         (0, eG._)(this, 'dataIsLoaded', void 0),
                         (0, eG._)(this, 'tokenOwnerLogin', void 0),
                         (this.language = r),
                         (this.dataIsLoaded = !1),
                         this.oauthState || this.updateOauthState(),
-                        this.check();
+                        this.check());
                 }
             }
             class eP extends eR {
@@ -287,7 +287,7 @@
                 }
                 loadDataFromElectron() {
                     Promise.allSettled([this.loadPassportLogin(), this.loadYandexUid()]).then(() => {
-                        this.setDataIsLoaded(), this.check();
+                        (this.setDataIsLoaded(), this.check());
                     });
                 }
                 async loadPassportLogin() {
@@ -319,7 +319,7 @@
                     return this.yadexUidFromElectron;
                 }
                 constructor(e, t, r) {
-                    super(e, t, r), (0, eG._)(this, 'passportLoginFromElectron', void 0), (0, eG._)(this, 'yadexUidFromElectron', void 0), this.loadDataFromElectron();
+                    (super(e, t, r), (0, eG._)(this, 'passportLoginFromElectron', void 0), (0, eG._)(this, 'yadexUidFromElectron', void 0), this.loadDataFromElectron());
                 }
             }
             var eI = r(51053),
@@ -486,14 +486,14 @@
                                         {
                                             resources: { musicExternalApi: u },
                                         } = e.get(eF.tw);
-                                    (i.timeout = u.defaultTimeout),
+                                    ((i.timeout = u.defaultTimeout),
                                         (i.hooks = {
                                             afterResponse: [...((null == i || null == (t = i.hooks) ? void 0 : t.afterResponse) || [])],
                                             beforeError: [c.beforeErrorHook, ...((null == i || null == (r = i.hooks) ? void 0 : r.beforeError) || [])],
                                             beforeRequest: [eZ.x, ...((null == i || null == (o = i.hooks) ? void 0 : o.beforeRequest) || [])],
                                             afterTimeout: [c.beforeErrorHook, ...((null == i || null == (n = i.hooks) ? void 0 : n.afterTimeout) || [])],
                                             beforeRetry: [eK.i, c.beforeRetryHook, ...((null == i || null == (a = i.hooks) ? void 0 : a.beforeRetry) || [])],
-                                        });
+                                        }));
                                     let m = s(i);
                                     return (0, eh.sY)(m, {
                                         get isOffline() {

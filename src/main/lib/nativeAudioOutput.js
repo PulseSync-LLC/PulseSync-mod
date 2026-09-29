@@ -272,8 +272,7 @@ const isYaspChunkTapEnabled = () => getStoreModule()?.get?.(YASP_CHUNK_TAP_ENABL
 const isWasapiExclusiveOutputConfigured = () => getStoreModule()?.get?.(WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY) === true;
 const isWasapiExclusiveOutputEnabled = () => isWasapiExclusiveOutputConfigured() && isYaspChunkTapEnabled();
 const isWasapiExclusiveFullVolumeForced = () => getStoreModule()?.get?.(WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY) === true;
-const getWasapiExclusiveVolumeGain = (exponentVolume) =>
-    isWasapiExclusiveFullVolumeForced() ? 1 : (exponentVolumeToLinearGain(exponentVolume) ?? 1);
+const getWasapiExclusiveVolumeGain = (exponentVolume) => (isWasapiExclusiveFullVolumeForced() ? 1 : (exponentVolumeToLinearGain(exponentVolume) ?? 1));
 
 const getWasapiExclusiveDeviceAvailability = (forceRefresh = false) => {
     const requestedDeviceId = getSelectedWasapiExclusiveDeviceId();
@@ -304,9 +303,7 @@ const getWasapiExclusiveDeviceAvailability = (forceRefresh = false) => {
         const devices = wasapiExclusive.listDevices({ includeDisabled: true, includeFormats: false });
         const device = requestedDeviceId
             ? (devices.find((item) => item.id === requestedDeviceId) ?? null)
-            : (devices.find((item) => item.isDefault && item.state === 'active') ??
-              devices.find((item) => item.isDefaultConsole && item.state === 'active') ??
-              null);
+            : (devices.find((item) => item.isDefault && item.state === 'active') ?? devices.find((item) => item.isDefaultConsole && item.state === 'active') ?? null);
         const available = device?.state === 'active';
         const reason = available
             ? null
@@ -346,10 +343,7 @@ const stopWasapiExclusiveDefaultDeviceMonitor = () => {
     }
 };
 
-const shouldMonitorWasapiExclusiveDefaultDevice = () =>
-    process.platform === 'win32' &&
-    isWasapiExclusiveOutputEnabled() &&
-    !getSelectedWasapiExclusiveDeviceId();
+const shouldMonitorWasapiExclusiveDefaultDevice = () => process.platform === 'win32' && isWasapiExclusiveOutputEnabled() && !getSelectedWasapiExclusiveDeviceId();
 
 const pollWasapiExclusiveDefaultDevice = () => {
     if (!shouldMonitorWasapiExclusiveDefaultDevice()) {

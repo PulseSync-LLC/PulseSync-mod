@@ -112,7 +112,7 @@
                 if (((0, x.J)(o.isResolved), o.isRejected && !i.hasLiked)) return (0, s.jsx)(_.SomethingWentWrong, {});
                 (0, n.useEffect)(
                     () => () => {
-                        o.reset(), i.reset();
+                        (o.reset(), i.reset());
                     },
                     [o, i],
                 );
@@ -199,7 +199,7 @@
             });
         },
         87047: (e, t, o) => {
-            Promise.resolve().then(o.bind(o, 3377)), Promise.resolve().then(o.bind(o, 78736));
+            (Promise.resolve().then(o.bind(o, 3377)), Promise.resolve().then(o.bind(o, 78736)));
         },
         98148: (e, t, o) => {
             'use strict';
@@ -300,7 +300,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 7231, 7972, 6347, 3183, 9763, 7258, 6639, 3931, 8868, 963, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 6252, 6477, 7275, 2586,
@@ -308,6 +308,6 @@
             ],
             () => e((e.s = 87047)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

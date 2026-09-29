@@ -126,10 +126,10 @@
                         let s = { ...(0, a.HO)(e), isLiked: !e.isLiked };
                         _(!0);
                         let n = await e.toggleLike();
-                        _(!1),
+                        (_(!1),
                             n === l.f.OK
                                 ? i((0, r.jsx)(v, { artist: s }), { containerId: o.u.INFO })
-                                : i((0, r.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, r.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [e, t.isAuthorized, m, h, i]);
                 };
         },
@@ -199,7 +199,7 @@
                     eg = (0, C.P)(),
                     ef = (0, u.c)((e) => {
                         if ((e.stopPropagation(), eg())) return void e.preventDefault();
-                        $.openArtistTrailer(t.id), ex(o.ky.Artist, t.id);
+                        ($.openArtistTrailer(t.id), ex(o.ky.Artist, t.id));
                     }),
                     eC = (0, n.useMemo)(() => {
                         let e = Z({ id: 'entity-names.artist-name' }, { artistName: eu }),
@@ -212,23 +212,23 @@
                     ek = (0, x.S)({ artist: t, callback: eh }),
                     eT = (0, x.S)({ artist: t, callback: eb }),
                     eS = (0, u.c)((e) => {
-                        null == ea || ea(), en({ to: o.QT.ArtistScreen }), ek(e);
+                        (null == ea || ea(), en({ to: o.QT.ArtistScreen }), ek(e));
                     }),
                     ey = (0, y.N)(),
                     eI = (0, u.c)(() => {
                         if (!eg()) {
                             if (ey) return void G.open();
-                            Y || eA || (Q(!0), null == es || es()), eT(), el(!eA);
+                            (Y || eA || (Q(!0), null == es || es()), eT(), el(!eA));
                         }
                     }),
                     eN = (0, u.c)(() => {
-                        J || e_ || (ee(!0), null == er || er()), eo();
+                        (J || e_ || (ee(!0), null == er || er()), eo());
                     }),
                     ej = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eE = (0, u.c)((e) => {
-                        ei(e), ep(e);
+                        (ei(e), ep(e));
                     }),
                     eO = (0, n.useMemo)(
                         () =>
@@ -487,7 +487,7 @@
                 s = i(98411),
                 n = (function () {
                     function e(e) {
-                        (this.observableValue = (0, s.vP)(e)), (this.prevValueByListener = new Map());
+                        ((this.observableValue = (0, s.vP)(e)), (this.prevValueByListener = new Map()));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'value', {
@@ -512,7 +512,7 @@
                                             r = !1;
                                             return;
                                         }
-                                        i.prevValueByListener.set(e, a), e(a);
+                                        (i.prevValueByListener.set(e, a), e(a));
                                     }
                                 })
                             );
@@ -522,9 +522,9 @@
                 })();
             !(function () {
                 function e(e) {
-                    (this.observableValue = (0, s.EW)(e)), (this.prevValueByListener = new Map());
+                    ((this.observableValue = (0, s.EW)(e)), (this.prevValueByListener = new Map()));
                 }
-                Object.defineProperty(e.prototype, 'value', {
+                (Object.defineProperty(e.prototype, 'value', {
                     get: function () {
                         return this.observableValue.value;
                     },
@@ -543,11 +543,11 @@
                                         r = !1;
                                         return;
                                     }
-                                    i.prevValueByListener.set(e, a), e(a);
+                                    (i.prevValueByListener.set(e, a), e(a));
                                 }
                             })
                         );
-                    });
+                    }));
             })();
             class l extends Error {
                 name = 'BaseException';
@@ -558,14 +558,14 @@
                 constructor(e, t = {}) {
                     let { code: i = 'E_INTERNAL', data: r = {}, ...a } = t,
                         s = e || 'Internal error';
-                    super(s, a), (this.message = s), (this.code = i), (this.data = r), (this.stack = Error(s).stack), Object.setPrototypeOf(this, l.prototype);
+                    (super(s, a), (this.message = s), (this.code = i), (this.data = r), (this.stack = Error(s).stack), Object.setPrototypeOf(this, l.prototype));
                 }
             }
             class o extends l {
                 name = 'DisclaimerDictionaryLoadError';
                 constructor(e) {
-                    super('Failed to load disclaimer dictionary', { code: 'E_DISCLAIMER_DICTIONARY_LOAD', cause: e, data: { valueType: typeof e } }),
-                        Object.setPrototypeOf(this, o.prototype);
+                    (super('Failed to load disclaimer dictionary', { code: 'E_DISCLAIMER_DICTIONARY_LOAD', cause: e, data: { valueType: typeof e } }),
+                        Object.setPrototypeOf(this, o.prototype));
                 }
             }
             class c extends l {
@@ -573,17 +573,17 @@
                 disclaimerId;
                 retryAttempted;
                 constructor(e, t) {
-                    super(`Disclaimer with id "${e}" not found${t ? ' after retry' : ''}`, {
+                    (super(`Disclaimer with id "${e}" not found${t ? ' after retry' : ''}`, {
                         code: 'E_DISCLAIMER_NOT_FOUND',
                         data: { disclaimerId: e, retryAttempted: t },
                     }),
                         (this.disclaimerId = e),
                         (this.retryAttempted = t),
-                        Object.setPrototypeOf(this, c.prototype);
+                        Object.setPrototypeOf(this, c.prototype));
                 }
             }
             !(function (e) {
-                (e.MODAL = 'modal'),
+                ((e.MODAL = 'modal'),
                     (e.FOREIGN_AGENT = 'foreignAgent'),
                     (e.INFORMATIONAL = 'informational'),
                     (e.AGE_18 = 'age18'),
@@ -594,7 +594,7 @@
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
                     (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                    (e.SUBSTITUTED_ICON = 'substitutedIcon');
+                    (e.SUBSTITUTED_ICON = 'substitutedIcon'));
             })(r || (r = {}));
             let d = (e) => {
                     let t = [];
@@ -616,7 +616,7 @@
                 loadingPromise;
                 isDestroyed;
                 constructor(e) {
-                    (this.dataSource = e.dataSource),
+                    ((this.dataSource = e.dataSource),
                         (this.itemsObservable = new n(null)),
                         (this.isLoadingObservable = new n(!1)),
                         (this.errorObservable = new n(null)),
@@ -624,12 +624,12 @@
                         (this.isDestroyed = !1),
                         (this.items = this.itemsObservable),
                         (this.isLoading = this.isLoadingObservable),
-                        (this.error = this.errorObservable);
+                        (this.error = this.errorObservable));
                 }
                 async load() {
                     if (this.isDestroyed) return;
                     if (this.loadingPromise) return void (await this.loadingPromise);
-                    (this.isLoadingObservable.value = !0), (this.errorObservable.value = null);
+                    ((this.isLoadingObservable.value = !0), (this.errorObservable.value = null));
                     let e = this.dataSource
                         .loadAll()
                         .then((e) => {
@@ -642,7 +642,7 @@
                         .finally(() => {
                             this.loadingPromise = null;
                         });
-                    (this.loadingPromise = e), await e;
+                    ((this.loadingPromise = e), await e);
                 }
                 async getById(e) {
                     let t = this.findItemById(e);
@@ -669,16 +669,16 @@
                     for (let e of i)
                         if (e) {
                             let t = r[e.disclaimerType] ?? [];
-                            t.push(e.disclaimerItem), (r[e.disclaimerType] = t);
+                            (t.push(e.disclaimerItem), (r[e.disclaimerType] = t));
                         }
                     return r;
                 }
                 destroy() {
-                    (this.isDestroyed = !0),
+                    ((this.isDestroyed = !0),
                         (this.loadingPromise = null),
                         (this.itemsObservable.value = null),
                         (this.isLoadingObservable.value = !1),
-                        (this.errorObservable.value = null);
+                        (this.errorObservable.value = null));
                 }
                 findItemById(e) {
                     let t = this.itemsObservable.value;
@@ -686,7 +686,7 @@
                 }
             }
             !(function (e) {
-                (e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted');
+                ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted'));
             })(a || (a = {}));
             let _ = new Map([
                     [r.EXPLICIT_ICON, a.E],
@@ -939,7 +939,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), n.isOpened && (r.reset(), n.close()), a.modal.isOpened && a.modal.close();
+                                    (null == e || e.stopPropagation(), n.isOpened && (r.reset(), n.close()), a.modal.isOpened && a.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     s.modal.isOpened && (s.modal.close(), s.reset());
@@ -949,11 +949,11 @@
                         })({
                             artist: t,
                             callback: (0, v.c)((e) => {
-                                T && k.isOpened && k.close(), S(e);
+                                (T && k.isOpened && k.close(), S(e));
                             }),
                         }),
                         j = (0, v.c)((e) => {
-                            I({ to: _.QT.ArtistScreen }), null == y || y(), N(e);
+                            (I({ to: _.QT.ArtistScreen }), null == y || y(), N(e));
                         });
                     return i && !t.various
                         ? (0, r.jsx)(C.N, {
@@ -1170,7 +1170,7 @@
                         } = (0, o.g)(),
                         L = 1 === i.length,
                         P = (0, n.useCallback)((e) => {
-                            j(!0), e.preventDefault();
+                            (j(!0), e.preventDefault());
                         }, []),
                         R = (0, n.useMemo)(() => {
                             let e = i;
@@ -1503,11 +1503,11 @@
                                 let m = { ...(0, u.HO)(s), url: s.url, isLiked: !s.isLiked };
                                 i(!0);
                                 let h = await s.toggleLike();
-                                i(!1),
+                                (i(!1),
                                     c &&
                                         (h === _.f.OK
                                             ? e((0, r.jsx)(x, { withLink: o, album: m }), { containerId: l.u.INFO })
-                                            : e((0, r.jsx)(d.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
+                                            : e((0, r.jsx)(d.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR })));
                             });
                         })(),
                         { pageAlbumId: f } = (0, n.T)();
@@ -1600,7 +1600,7 @@
                         };
                     })(),
                     b = (0, n.useCallback)(() => {
-                        A(), (window.location.href = x.Z.main.href);
+                        (A(), (window.location.href = x.Z.main.href));
                     }, [A]),
                     { contentRef: k } = (0, p.g)();
                 return (0, r.jsxs)('div', {
@@ -1651,7 +1651,7 @@
             }
         },
         68125: (e, t, i) => {
-            Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 96977));
+            (Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 96977)));
         },
         68912: (e, t, i) => {
             'use strict';
@@ -1946,10 +1946,10 @@
                         let s = { ...(0, a.HO)(e), isPinned: !e.isPinned };
                         h(!0);
                         let n = await e.togglePin();
-                        h(!1),
+                        (h(!1),
                             n
                                 ? i((0, r.jsx)(_, { artist: s }), { containerId: l.u.INFO })
-                                : i((0, r.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR });
+                                : i((0, r.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
                     }, [e, t.isAuthorized, m, u, i]);
                 };
         },
@@ -1997,7 +1997,7 @@
                         );
                     }, [t, i]),
                     b = (0, c.c)((e) => {
-                        s.modal.isOpened && s.modal.close(), C({ to: l.QT.ArtistScreen }), x(e);
+                        (s.modal.isOpened && s.modal.close(), C({ to: l.QT.ArtistScreen }), x(e));
                     });
                 return (0, r.jsxs)(r.Fragment, {
                     children: [
@@ -2133,10 +2133,10 @@
                             let s = { ...(0, m.HO)(e), isDisliked: !e.isDisliked };
                             n(!0);
                             let o = await e.toggleDislike();
-                            n(!1),
+                            (n(!1),
                                 o === h.f.OK
                                     ? i((0, r.jsx)(y, { coverUri: s.coverUri, title: s.name, isDisliked: s.isDisliked }), { containerId: v.u.INFO })
-                                    : i((0, r.jsx)(g.h, { error: l({ id: 'error-messages.error-during-action' }) }), { containerId: v.u.ERROR });
+                                    : i((0, r.jsx)(g.h, { error: l({ id: 'error-messages.error-during-action' }) }), { containerId: v.u.ERROR }));
                         });
                     })(f),
                     ea = (0, R.F)(),
@@ -2249,19 +2249,19 @@
                 s = i(30782),
                 n = i(55178),
                 l = i(60900);
-            !(function (e) {
-                (e.formatDate = 'FormattedDate'),
+            (!(function (e) {
+                ((e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName');
+                    (e.formatDisplayName = 'FormattedDisplayName'));
             })(r || (r = {})),
                 (function (e) {
-                    (e.formatDate = 'FormattedDateParts'),
+                    ((e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts');
-                })(a || (a = {}));
+                        (e.formatList = 'FormattedListParts'));
+                })(a || (a = {})));
             var o = function (e) {
                 var t = (0, l.A)(),
                     i = e.value,
@@ -2278,7 +2278,7 @@
                         o = 'string' == typeof r ? new Date(r || 0) : r;
                     return a('formatDate' === e ? i.formatDateToParts(o, n) : i.formatTimeToParts(o, n));
                 };
-                return (t.displayName = a[e]), t;
+                return ((t.displayName = a[e]), t);
             }
             function d(e) {
                 var t = function (t) {
@@ -2291,11 +2291,11 @@
                     var d = i.textComponent || n.Fragment;
                     return n.createElement(d, null, c);
                 };
-                return (t.displayName = r[e]), t;
+                return ((t.displayName = r[e]), t);
             }
-            (o.displayName = 'FormattedNumberParts'), (o.displayName = 'FormattedNumberParts');
+            ((o.displayName = 'FormattedNumberParts'), (o.displayName = 'FormattedNumberParts'));
             var u = d('formatDate');
-            d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime');
+            (d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime'));
         },
         83598: (e) => {
             e.exports = {
@@ -2368,10 +2368,10 @@
         92013: (e, t, i) => {
             'use strict';
             var r;
-            i.d(t, { T: () => r }),
+            (i.d(t, { T: () => r }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(r || (r = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(r || (r = {})));
         },
         94218: (e, t, i) => {
             'use strict';
@@ -2427,10 +2427,10 @@
                 h = i(57594),
                 v = i(97201),
                 p = (function (e) {
-                    return (e.TRACKS = 'tracks'), (e.ARTISTS = 'artists'), e;
+                    return ((e.TRACKS = 'tracks'), (e.ARTISTS = 'artists'), e);
                 })({}),
                 x = (function (e) {
-                    return (e[(e.TRACKS = 0)] = 'TRACKS'), (e[(e.ARTISTS = 1)] = 'ARTISTS'), e;
+                    return ((e[(e.TRACKS = 0)] = 'TRACKS'), (e[(e.ARTISTS = 1)] = 'ARTISTS'), e);
                 })({}),
                 g = i(44432),
                 f = i.n(g),
@@ -2755,14 +2755,14 @@
                             return x.TRACKS;
                         }, [e]),
                         k = (0, o.zb)(b);
-                    t.account.data.uid || (0, s.notFound)(),
+                    (t.account.data.uid || (0, s.notFound)(),
                         (0, _.J)(i.isResolved),
                         (0, n.useEffect)(
                             () => () => {
                                 i.reset();
                             },
                             [i],
-                        );
+                        ));
                     let T = (0, n.useMemo)(() => {
                         switch (k.value) {
                             case x.TRACKS:
@@ -2793,7 +2793,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 7231, 6347, 9763, 3183, 6639, 7258, 3379, 3647, 3667, 7972, 8868, 4795, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6477,
@@ -2801,6 +2801,6 @@
             ],
             () => e((e.s = 68125)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

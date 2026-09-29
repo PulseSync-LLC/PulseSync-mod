@@ -18,20 +18,20 @@
                               var r,
                                   n,
                                   i = 1 === e.length ? u : s;
-                              return (r = t.cache.create()), (n = t.serializer), i.bind(this, e, r, n);
+                              return ((r = t.cache.create()), (n = t.serializer), i.bind(this, e, r, n));
                           }
                 )(e, { cache: r, serializer: n });
             }
             function u(e, t, r, n) {
                 var i = null == n || 'number' == typeof n || 'boolean' == typeof n ? n : r(n),
                     a = t.get(i);
-                return void 0 === a && ((a = e.call(this, n)), t.set(i, a)), a;
+                return (void 0 === a && ((a = e.call(this, n)), t.set(i, a)), a);
             }
             function s(e, t, r) {
                 var n = Array.prototype.slice.call(arguments, 3),
                     i = r(n),
                     a = t.get(i);
-                return void 0 === a && ((a = e.apply(this, n)), t.set(i, a)), a;
+                return (void 0 === a && ((a = e.apply(this, n)), t.set(i, a)), a);
             }
             var c = function () {
                 return JSON.stringify(arguments);
@@ -39,12 +39,12 @@
             function m() {
                 this.cache = Object.create(null);
             }
-            (m.prototype.get = function (e) {
+            ((m.prototype.get = function (e) {
                 return this.cache[e];
             }),
                 (m.prototype.set = function (e, t) {
                     this.cache[e] = t;
-                });
+                }));
             var f = {
                     create: function () {
                         return new m();
@@ -53,20 +53,20 @@
                 p = {
                     variadic: function (e, t) {
                         var r, n;
-                        return (r = t.cache.create()), (n = t.serializer), s.bind(this, e, r, n);
+                        return ((r = t.cache.create()), (n = t.serializer), s.bind(this, e, r, n));
                     },
                     monadic: function (e, t) {
                         var r, n;
-                        return (r = t.cache.create()), (n = t.serializer), u.bind(this, e, r, n);
+                        return ((r = t.cache.create()), (n = t.serializer), u.bind(this, e, r, n));
                     },
                 };
             !(function (e) {
-                (e.MISSING_VALUE = 'MISSING_VALUE'), (e.INVALID_VALUE = 'INVALID_VALUE'), (e.MISSING_INTL_API = 'MISSING_INTL_API');
+                ((e.MISSING_VALUE = 'MISSING_VALUE'), (e.INVALID_VALUE = 'INVALID_VALUE'), (e.MISSING_INTL_API = 'MISSING_INTL_API'));
             })(n || (n = {}));
             var y = (function (e) {
                     function t(t, r, n) {
                         var i = e.call(this, t) || this;
-                        return (i.code = r), (i.originalMessage = n), i;
+                        return ((i.code = r), (i.originalMessage = n), i);
                     }
                     return (
                         (0, a.__extends)(t, e),
@@ -87,13 +87,13 @@
                             ) || this
                         );
                     }
-                    return (0, a.__extends)(t, e), t;
+                    return ((0, a.__extends)(t, e), t);
                 })(y),
                 d = (function (e) {
                     function t(t, r, i) {
                         return e.call(this, 'Value for "'.concat(t, '" must be of type ').concat(r), n.INVALID_VALUE, i) || this;
                     }
-                    return (0, a.__extends)(t, e), t;
+                    return ((0, a.__extends)(t, e), t);
                 })(y),
                 v = (function (e) {
                     function t(t, r) {
@@ -101,7 +101,7 @@
                             e.call(this, 'The intl string context variable "'.concat(t, '" was not provided to the string "').concat(r, '"'), n.MISSING_VALUE, r) || this
                         );
                     }
-                    return (0, a.__extends)(t, e), t;
+                    return ((0, a.__extends)(t, e), t);
                 })(y);
             function g(e) {
                 return {
@@ -118,7 +118,7 @@
                 };
             }
             !(function (e) {
-                (e[(e.literal = 0)] = 'literal'), (e[(e.object = 1)] = 'object');
+                ((e[(e.literal = 0)] = 'literal'), (e[(e.object = 1)] = 'object'));
             })(i || (i = {}));
             var _ = (function () {
                 function e(t, r, u, s) {
@@ -132,7 +132,7 @@
                             var t = f.formatToParts(e);
                             if (1 === t.length) return t[0].value;
                             var r = t.reduce(function (e, t) {
-                                return e.length && t.type === i.literal && 'string' == typeof e[e.length - 1] ? (e[e.length - 1] += t.value) : e.push(t.value), e;
+                                return (e.length && t.type === i.literal && 'string' == typeof e[e.length - 1] ? (e[e.length - 1] += t.value) : e.push(t.value), e);
                             }, []);
                             return r.length <= 1 ? r[0] || '' : r;
                         }),
@@ -153,8 +153,8 @@
                                     if (!(u && g in u)) throw new v(g, c);
                                     var _ = u[g];
                                     if ((0, o.isArgumentElement)(p)) {
-                                        (_ && 'string' != typeof _ && 'number' != typeof _) || (_ = 'string' == typeof _ || 'number' == typeof _ ? String(_) : ''),
-                                            m.push({ type: 'string' == typeof _ ? i.literal : i.object, value: _ });
+                                        ((_ && 'string' != typeof _ && 'number' != typeof _) || (_ = 'string' == typeof _ || 'number' == typeof _ ? String(_) : ''),
+                                            m.push({ type: 'string' == typeof _ ? i.literal : i.object, value: _ }));
                                         continue;
                                     }
                                     if ((0, o.isDateElement)(p)) {
@@ -169,7 +169,7 @@
                                     }
                                     if ((0, o.isNumberElement)(p)) {
                                         var b = 'string' == typeof p.style ? l.number[p.style] : (0, o.isNumberSkeleton)(p.style) ? p.style.parsedOptions : void 0;
-                                        b && b.scale && (_ *= b.scale || 1), m.push({ type: i.literal, value: a.getNumberFormat(r, b).format(_) });
+                                        (b && b.scale && (_ *= b.scale || 1), m.push({ type: i.literal, value: a.getNumberFormat(r, b).format(_) }));
                                         continue;
                                     }
                                     if ((0, o.isTagElement)(p)) {
@@ -182,13 +182,13 @@
                                                 return e.value;
                                             }),
                                         );
-                                        Array.isArray(T) || (T = [T]),
+                                        (Array.isArray(T) || (T = [T]),
                                             m.push.apply(
                                                 m,
                                                 T.map(function (e) {
                                                     return { type: 'string' == typeof e ? i.literal : i.object, value: e };
                                                 }),
-                                            );
+                                            ));
                                     }
                                     if ((0, o.isSelectElement)(p)) {
                                         var N = p.options[_] || p.options.other;
@@ -217,7 +217,7 @@
                                     ? m
                                     : m.reduce(function (e, t) {
                                           var r = e[e.length - 1];
-                                          return r && r.type === i.literal && t.type === i.literal ? (r.value += t.value) : e.push(t), e;
+                                          return (r && r.type === i.literal && t.type === i.literal ? (r.value += t.value) : e.push(t), e);
                                       }, []);
                             })(f.ast, f.locales, f.formatters, f.formats, e, void 0, f.message);
                         }),
@@ -238,7 +238,7 @@
                         this.ast = e.__parse(t, (0, a.__assign)((0, a.__assign)({}, b), { locale: this.resolvedLocale }));
                     } else this.ast = t;
                     if (!Array.isArray(this.ast)) throw TypeError('A message must be provided as a String or AST.');
-                    (this.formats =
+                    ((this.formats =
                         ((c = e.formats),
                         u
                             ? Object.keys(c).reduce(
@@ -251,7 +251,7 @@
                                                   ? (0, a.__assign)(
                                                         (0, a.__assign)((0, a.__assign)({}, r || {}), n || {}),
                                                         Object.keys(r).reduce(function (e, t) {
-                                                            return (e[t] = (0, a.__assign)((0, a.__assign)({}, r[t]), n[t] || {})), e;
+                                                            return ((e[t] = (0, a.__assign)((0, a.__assign)({}, r[t]), n[t] || {})), e);
                                                         }, {}),
                                                     )
                                                   : r)),
@@ -286,12 +286,12 @@
                                     },
                                     { cache: g(m.pluralRules), strategy: p.variadic },
                                 ),
-                            }));
+                            })));
                 }
                 return (
                     Object.defineProperty(e, 'defaultLocale', {
                         get: function () {
-                            return e.memoizedDefaultLocale || (e.memoizedDefaultLocale = new Intl.NumberFormat().resolvedOptions().locale), e.memoizedDefaultLocale;
+                            return (e.memoizedDefaultLocale || (e.memoizedDefaultLocale = new Intl.NumberFormat().resolvedOptions().locale), e.memoizedDefaultLocale);
                         },
                         enumerable: !1,
                         configurable: !0,
@@ -324,17 +324,17 @@
             })();
         },
         63670: (e, t, r) => {
-            Object.defineProperty(t, '__esModule', { value: !0 }), (t._Parser = t.parse = void 0);
+            (Object.defineProperty(t, '__esModule', { value: !0 }), (t._Parser = t.parse = void 0));
             var n = r(30782);
-            (t.parse = function () {
+            ((t.parse = function () {
                 throw Error("You're trying to format an uncompiled message with react-intl without parser, please import from 'react-intl' instead");
             }),
                 n.__exportStar(r(88222), t),
-                (t._Parser = void 0);
+                (t._Parser = void 0));
         },
         88222: (e, t) => {
             var r, n;
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 (t.createNumberElement =
                     t.createLiteralElement =
                     t.isDateTimeSkeleton =
@@ -352,7 +352,7 @@
                     t.TYPE =
                         void 0),
                 (function (e) {
-                    (e[(e.literal = 0)] = 'literal'),
+                    ((e[(e.literal = 0)] = 'literal'),
                         (e[(e.argument = 1)] = 'argument'),
                         (e[(e.number = 2)] = 'number'),
                         (e[(e.date = 3)] = 'date'),
@@ -360,10 +360,10 @@
                         (e[(e.select = 5)] = 'select'),
                         (e[(e.plural = 6)] = 'plural'),
                         (e[(e.pound = 7)] = 'pound'),
-                        (e[(e.tag = 8)] = 'tag');
+                        (e[(e.tag = 8)] = 'tag'));
                 })(r || (t.TYPE = r = {})),
                 (function (e) {
-                    (e[(e.number = 0)] = 'number'), (e[(e.dateTime = 1)] = 'dateTime');
+                    ((e[(e.number = 0)] = 'number'), (e[(e.dateTime = 1)] = 'dateTime'));
                 })(n || (t.SKELETON_TYPE = n = {})),
                 (t.isLiteralElement = function (e) {
                     return e.type === r.literal;
@@ -403,7 +403,7 @@
                 }),
                 (t.createNumberElement = function (e, t) {
                     return { type: r.number, value: e, style: t };
-                });
+                }));
         },
     },
 ]);

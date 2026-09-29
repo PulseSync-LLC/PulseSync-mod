@@ -40,24 +40,24 @@
         24991: (e, t, a) => {
             'use strict';
             var i;
-            a.d(t, { D: () => i }),
+            (a.d(t, { D: () => i }),
                 (function (e) {
-                    (e.ALBUM = 'ALBUM'), (e.WAVE = 'WAVE'), (e.PROMO_LINK = 'PROMO_LINK'), (e.SETTING = 'SETTING');
-                })(i || (i = {}));
+                    ((e.ALBUM = 'ALBUM'), (e.WAVE = 'WAVE'), (e.PROMO_LINK = 'PROMO_LINK'), (e.SETTING = 'SETTING'));
+                })(i || (i = {})));
         },
         36751: (e, t, a) => {
             'use strict';
             var i;
-            a.d(t, { b: () => i }),
+            (a.d(t, { b: () => i }),
                 (function (e) {
-                    (e.ALBUM = 'ALBUM'),
+                    ((e.ALBUM = 'ALBUM'),
                         (e.ARTIST = 'ARTIST'),
                         (e.PLAYLIST = 'PLAYLIST'),
                         (e.WAVE = 'WAVE'),
                         (e.CLIP = 'CLIP'),
                         (e.GENERATIVE = 'GENERATIVE'),
-                        (e.OTHER = 'OTHER');
-                })(i || (i = {}));
+                        (e.OTHER = 'OTHER'));
+                })(i || (i = {})));
         },
         37476: (e) => {
             e.exports = { root: 'WheelMobileItemShimmer_root__mu_1t', petal: 'WheelMobileItemShimmer_petal__Oo99q' };
@@ -65,10 +65,10 @@
         44240: (e, t, a) => {
             'use strict';
             var i;
-            a.d(t, { y: () => i }),
+            (a.d(t, { y: () => i }),
                 (function (e) {
-                    (e.DEFAULT = 'DEFAULT'), (e.CONTROL = 'CONTROL'), (e.CONTROL_ACCENT = 'CONTROL_ACCENT'), (e.MULTIVIBE = 'MULTIVIBE');
-                })(i || (i = {}));
+                    ((e.DEFAULT = 'DEFAULT'), (e.CONTROL = 'CONTROL'), (e.CONTROL_ACCENT = 'CONTROL_ACCENT'), (e.MULTIVIBE = 'MULTIVIBE'));
+                })(i || (i = {})));
         },
         61566: (e) => {
             e.exports = {
@@ -110,17 +110,17 @@
         },
         88249: (e) => {
             function t() {}
-            (t.prototype = {
+            ((t.prototype = {
                 on: function (e, t, a) {
                     var i = this.e || (this.e = {});
-                    return (i[e] || (i[e] = [])).push({ fn: t, ctx: a }), this;
+                    return ((i[e] || (i[e] = [])).push({ fn: t, ctx: a }), this);
                 },
                 once: function (e, t, a) {
                     var i = this;
                     function l() {
-                        i.off(e, l), t.apply(a, arguments);
+                        (i.off(e, l), t.apply(a, arguments));
                     }
-                    return (l._ = t), this.on(e, l, a);
+                    return ((l._ = t), this.on(e, l, a));
                 },
                 emit: function (e) {
                     for (var t = [].slice.call(arguments, 1), a = ((this.e || (this.e = {}))[e] || []).slice(), i = 0, l = a.length; i < l; i++)
@@ -132,15 +132,15 @@
                         i = a[e],
                         l = [];
                     if (i && t) for (var n = 0, o = i.length; n < o; n++) i[n].fn !== t && i[n].fn._ !== t && l.push(i[n]);
-                    return l.length ? (a[e] = l) : delete a[e], this;
+                    return (l.length ? (a[e] = l) : delete a[e], this);
                 },
             }),
                 (e.exports = t),
-                (e.exports.TinyEmitter = t);
+                (e.exports.TinyEmitter = t));
         },
         88481: (e, t, a) => {
             'use strict';
-            a.r(t), a.d(t, { Wheel: () => eQ });
+            (a.r(t), a.d(t, { Wheel: () => eQ }));
             var i = a(32290),
                 l = a(46966),
                 n = a(96103),
@@ -252,7 +252,7 @@
                     }).catch(E.A);
                 }
                 constructor(e) {
-                    super({
+                    (super({
                         dbName: 'music_wheel_feedbacks',
                         dbVersion: 1,
                         onUpgrade: (e) => {
@@ -260,7 +260,7 @@
                         },
                     }),
                         (0, I._)(this, 'uid', void 0),
-                        (this.uid = e);
+                        (this.uid = e));
                 }
             }
             var g = a(63618),
@@ -328,7 +328,7 @@
                     h = (0, z.b)(),
                     u = (0, q.D)(),
                     _ = (0, p.c)((e, a) => {
-                        u(e, null != a ? a : ''), e && t.handleFeedbackView();
+                        (u(e, null != a ? a : ''), e && t.handleFeedbackView());
                     }),
                     { ref: v, intersectionPropertyId: x } = (0, G.n)({ callback: _, withViewUuid: !0 }),
                     {
@@ -423,7 +423,7 @@
                     o = (0, ec.N)(),
                     c = (0, q.D)(),
                     d = (0, p.c)((e, t) => {
-                        c(e, null != t ? t : ''), e && l.handleFeedbackView();
+                        (c(e, null != t ? t : ''), e && l.handleFeedbackView());
                     }),
                     { ref: m, intersectionPropertyId: h } = (0, G.n)({ callback: d, withViewUuid: !0 }),
                     u = (0, ed.Z)(null != (t = l.data.url) ? t : ''),
@@ -508,7 +508,7 @@
                         _ = (0, h.e)(),
                         b = C(),
                         v = (0, p.c)((e, a) => {
-                            u(e, null != a ? a : ''), e && t.handleFeedbackView();
+                            (u(e, null != a ? a : ''), e && t.handleFeedbackView());
                         }),
                         { ref: x, intersectionPropertyId: j } = (0, G.n)({ callback: v, withViewUuid: !0 }),
                         { resetContext: y } = (0, eb.B)({ seeds: t.data.seeds, pageIdForFrom: l, blockIdForFrom: ''.concat(e_.U.RADIO, '-').concat(e_.U.WHEEL) }),
@@ -591,13 +591,13 @@
                         d = (0, ec.N)(),
                         m = (0, q.D)(),
                         h = (0, p.c)((e, a) => {
-                            m(e, null != a ? a : ''), e && t.handleFeedbackView();
+                            (m(e, null != a ? a : ''), e && t.handleFeedbackView());
                         }),
                         { ref: _, intersectionPropertyId: b } = (0, G.n)({ callback: h, withViewUuid: !0 }),
                         v = (0, p.c)(() => {
                             if (a) {
                                 if ((t.handleFeedbackClick(), n)) return void c(!0);
-                                l.modal.open(), d({ to: s.QT.MyWaweSettingsScreen });
+                                (l.modal.open(), d({ to: s.QT.MyWaweSettingsScreen }));
                             }
                         }),
                         x = (0, p.c)((e) => {
@@ -660,7 +660,7 @@
                     u = (0, z.b)(),
                     _ = (0, q.D)(),
                     b = (0, p.c)((e, t) => {
-                        _(e, null != t ? t : ''), e && a.handleFeedbackView();
+                        (_(e, null != t ? t : ''), e && a.handleFeedbackView());
                     }),
                     { ref: v, intersectionPropertyId: x } = (0, G.n)({ callback: b, withViewUuid: !0 }),
                     {
@@ -846,7 +846,7 @@
                         Number.isFinite(t) &&
                             ((e, t) => {
                                 let { transform: a, opacity: i } = S(t);
-                                (e.style.transform = String(a)), (e.style.opacity = String(i));
+                                ((e.style.transform = String(a)), (e.style.opacity = String(i)));
                             })(e, t);
                     });
                 },
@@ -860,13 +860,13 @@
                         m = (0, A.f)(),
                         [h, b] = (0, o.useState)(9),
                         v = ((e) => (0 === e.length ? e : Array.from({ length: Math.ceil(22 / e.length) }, () => e).flat()))(a);
-                    (0, o.useEffect)(() => {
+                    ((0, o.useEffect)(() => {
                         m();
                     }, [m]),
                         (0, o.useEffect)(() => {
                             let e = d.current;
                             e && 0 !== a.length && e.realIndex !== n && (e.slideToLoop(n, 0), eA(e));
-                        }, [n, a.length]);
+                        }, [n, a.length]));
                     let x = (0, p.c)((e) => {
                             s(e.realIndex);
                         }),
@@ -874,13 +874,13 @@
                             b(Math.max(4, Math.min(9, Math.floor(e.wrapperEl.clientHeight / 106))));
                         }),
                         C = (0, p.c)((e) => {
-                            (d.current = e), eA(e);
+                            ((d.current = e), eA(e));
                         }),
                         y = (0, p.c)((e) => {
                             eA(e);
                         }),
                         I = (0, p.c)((e) => {
-                            e.el.classList.remove(V().root_transitioning), s(e.realIndex), eA(e);
+                            (e.el.classList.remove(V().root_transitioning), s(e.realIndex), eA(e));
                         }),
                         E = (0, p.c)((e) => {
                             e.el.classList.add(V().root_transitioning);
@@ -1187,11 +1187,11 @@
                             return (0, o.useMemo)(() => {
                                 if (a && l) {
                                     let e = new N(String(l));
-                                    return e.openDatabase(), e;
+                                    return (e.openDatabase(), e);
                                 }
                             }, [a, l]);
                         })();
-                    (0, o.useEffect)(() => {
+                    ((0, o.useEffect)(() => {
                         a.setFeedbacksStore(v);
                     }, [a, v]),
                         (0, o.useEffect)(() => {
@@ -1208,7 +1208,7 @@
                             return () => {
                                 null == e || e();
                             };
-                        }, [b, p, a.isNeededToLoad]);
+                        }, [b, p, a.isNeededToLoad]));
                     let x = (0, r.L)(() =>
                         n
                             ? (0, i.jsx)(eG, { className: t, items: a.items, isShimmerVisible: a.isShimmerVisible })

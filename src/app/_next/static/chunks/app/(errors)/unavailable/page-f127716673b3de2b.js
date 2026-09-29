@@ -34,10 +34,10 @@
                     { canBack: y, canForward: _, moveBack: x, moveForward: k } = (0, m.J)(h),
                     S = (0, s.useRef)(null),
                     b = (0, c.c)((e) => {
-                        e.stopPropagation(), x();
+                        (e.stopPropagation(), x());
                     }),
                     A = (0, c.c)((e) => {
-                        e.stopPropagation(), k();
+                        (e.stopPropagation(), k());
                     });
                 return (
                     (0, s.useEffect)(() => {
@@ -309,7 +309,7 @@
                         };
                     })(),
                     S = (0, s.useCallback)(() => {
-                        k(), (window.location.href = v.Z.main.href);
+                        (k(), (window.location.href = v.Z.main.href));
                     }, [k]),
                     { contentRef: b } = (0, f.g)();
                 return (0, o.jsxs)('div', {
@@ -402,6 +402,6 @@
         },
     },
     (e) => {
-        e.O(0, [7034, 5718, 6706, 8892, 66, 6477, 7275, 2586, 8347, 4220, 9562, 7358], () => e((e.s = 94561))), (_N_E = e.O());
+        (e.O(0, [7034, 5718, 6706, 8892, 66, 6477, 7275, 2586, 8347, 4220, 9562, 7358], () => e((e.s = 94561))), (_N_E = e.O()));
     },
 ]);

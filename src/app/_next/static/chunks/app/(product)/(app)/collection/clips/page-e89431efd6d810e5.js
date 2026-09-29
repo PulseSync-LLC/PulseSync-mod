@@ -85,12 +85,12 @@
             let l = (e) => {
                 let t = (0, i.usePathname)(),
                     [r, l] = (0, o.useState)(!1);
-                (0, o.useEffect)(() => {
-                    window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t);
+                ((0, o.useEffect)(() => {
+                    (window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t));
                 }),
                     (0, o.useEffect)(() => {
                         window.Ya.Rum.spa.getLastSpaSubPage(t) && e && !r && (window.Ya.Rum.spa.finishDataLoading(t), window.Ya.Rum.spa.startDataRendering(t), l(!0));
-                    }, [e, r, t]);
+                    }, [e, r, t]));
             };
         },
         8626: (e, t, r) => {
@@ -333,11 +333,11 @@
                             objectPosX: M,
                             objectPosY: D,
                         };
-                        void 0 !== O && ((a.filterKey = O), (a.filterValue = T), (a.filterPos = N)),
+                        (void 0 !== O && ((a.filterKey = O), (a.filterValue = T), (a.filterPos = N)),
                             c.qG.includes(x) && ((a.tabId = C), (a.tabPos = g), (a.isTabSelectedByDefault = y)),
                             U && (a.skeletonId = U),
                             'string' == typeof R && 'string' == typeof j && ((a.mainObjectType = j), (a.mainObjectId = R)),
-                            B && (a.displayReasonId = B);
+                            B && (a.displayReasonId = B));
                         let d = (0, o.Fx)({ params: a, logger: e, context: 'useSendEventOnBlockShowedOrHidden' });
                         d && (i ? (0, o.Pf)(t.evgenInstance, d) : (0, o.nv)(t.evgenInstance, d));
                     },
@@ -452,7 +452,7 @@
                 l = {
                     5881: (e, t, r) => {
                         function i() {
-                            for (var e, t, r = 0, i = ''; r < arguments.length; )
+                            for (var e, t, r = 0, i = ''; r < arguments.length;)
                                 (e = arguments[r++]) &&
                                     (t = (function e(t) {
                                         var r,
@@ -467,11 +467,11 @@
                                     (i && (i += ' '), (i += t));
                             return i;
                         }
-                        r.r(t), r.d(t, { clsx: () => i, default: () => o });
+                        (r.r(t), r.d(t, { clsx: () => i, default: () => o }));
                         let o = i;
                     },
                     4831: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = {
                             root: 'KL50tMDvfAdw_9MzcVht',
                             bottom: 'bL0wE1Bui8zpIZbvMVL3',
@@ -486,7 +486,7 @@
                         };
                     },
                     8346: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = {
                             root: 'laBJlJAaqEVS0i_4Ot3l',
                             titleContainer: 'LmhA6nlLyzxwYIX31gYa',
@@ -504,15 +504,15 @@
                         };
                     },
                     6132: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = { root: 'LizdJ2L0HW7JWOvPrfly' };
                     },
                     4517: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = { root: 'eaYyesBmJL_NbkgoYR1c', focusable: 'uL1dD5rxgI4bPmfyMMe7' };
                     },
                     6951: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = {
                             root_controls_xxs: 'tRaaBpDMg9Qu8v6gKjtn',
                             root_entity_xxs: 'M9zvtlcpLUVn6DKdcHhj',
@@ -535,7 +535,7 @@
                         };
                     },
                     2223: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = {
                             root_size_xs: 'qJJ288377iHlWN_RXeEE',
                             root_size_s: '_sd8Q9d_Ttn0Ufe4ISWS',
@@ -551,7 +551,7 @@
                         };
                     },
                     5882: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = {
                             root: '_MWOVuZRvUQdXKTMcOPx',
                             root_clamp: 'LezmJlldtbHWqU7l1950',
@@ -568,7 +568,7 @@
                             else i = t;
                             return { $$typeof: r, type: e, key: o, ref: void 0 !== (t = i.ref) ? t : null, props: i };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i));
                     },
                     4377: (e, t, r) => {
                         e.exports = r(9097);
@@ -579,7 +579,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.CardControls = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.CardControls = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(9e3),
@@ -627,7 +627,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.EntityCard = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.EntityCard = void 0));
                         let o = r(4377),
                             l = r(810),
                             n = r(5881),
@@ -701,7 +701,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Label = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Label = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(2582),
@@ -720,7 +720,7 @@
                         };
                     },
                     9e3: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Label = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Label = void 0));
                         var i = r(2);
                         Object.defineProperty(t, 'Label', {
                             enumerable: !0,
@@ -735,7 +735,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.SROnly = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.SROnly = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(810),
@@ -749,7 +749,7 @@
                         };
                     },
                     3758: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.SROnly = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.SROnly = void 0));
                         var i = r(2865);
                         Object.defineProperty(t, 'SROnly', {
                             enumerable: !0,
@@ -764,13 +764,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(810),
                             a = r(4721),
                             s = i(r(6951));
-                        (t.CaptionComponent = (e) => {
+                        ((t.CaptionComponent = (e) => {
                             let { forwardRef: t, variant: r, type: i = 'text', size: n = 's', className: c, children: d, weight: u = 'medium', ..._ } = e;
                             return (0, o.jsx)(a.Typography, {
                                 variant: r,
@@ -780,7 +780,7 @@
                                 children: d,
                             });
                         }),
-                            (t.Caption = (0, n.forwardRef)((e, r) => (0, o.jsx)(t.CaptionComponent, { forwardRef: r, ...e })));
+                            (t.Caption = (0, n.forwardRef)((e, r) => (0, o.jsx)(t.CaptionComponent, { forwardRef: r, ...e }))));
                     },
                     404: function (e, t, r) {
                         var i =
@@ -788,13 +788,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.HeadingComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.HeadingComponent = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(810),
                             a = r(4721),
                             s = i(r(2223));
-                        (t.HeadingComponent = (e) => {
+                        ((t.HeadingComponent = (e) => {
                             let { forwardRef: t, variant: r, weight: i = 'bold', size: n = 's', className: c, children: d, ...u } = e;
                             return (0, o.jsx)(a.Typography, {
                                 variant: r,
@@ -804,7 +804,7 @@
                                 children: d,
                             });
                         }),
-                            (t.Heading = (0, n.forwardRef)((e, r) => (0, o.jsx)(t.HeadingComponent, { forwardRef: r, ...e })));
+                            (t.Heading = (0, n.forwardRef)((e, r) => (0, o.jsx)(t.HeadingComponent, { forwardRef: r, ...e }))));
                     },
                     4721: function (e, t, r) {
                         var i =
@@ -812,7 +812,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(810),
@@ -833,10 +833,10 @@
                                 children: n,
                             });
                         }
-                        (t.TypographyComponent = s), (t.Typography = (0, n.forwardRef)((e, t) => (0, o.jsx)(s, { forwardRef: t, ...e })));
+                        ((t.TypographyComponent = s), (t.Typography = (0, n.forwardRef)((e, t) => (0, o.jsx)(s, { forwardRef: t, ...e }))));
                     },
                     2582: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.Caption = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.Caption = void 0));
                         var i = r(7743);
                         Object.defineProperty(t, 'Caption', {
                             enumerable: !0,
@@ -861,19 +861,19 @@
                 var t = n[e];
                 if (void 0 !== t) return t.exports;
                 var r = (n[e] = { exports: {} });
-                return l[e].call(r.exports, r, r.exports, a), r.exports;
+                return (l[e].call(r.exports, r, r.exports, a), r.exports);
             }
-            (a.d = (e, t) => {
+            ((a.d = (e, t) => {
                 for (var r in t) a.o(t, r) && !a.o(e, r) && Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
             }),
                 (a.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (a.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var s = {};
             (() => {
-                Object.defineProperty(s, 'X$', { value: !0 }), (s.kk = s.m7 = void 0);
+                (Object.defineProperty(s, 'X$', { value: !0 }), (s.kk = s.m7 = void 0));
                 var e = a(440);
                 Object.defineProperty(s, 'm7', {
                     enumerable: !0,
@@ -930,7 +930,7 @@
                     A = (0, i.useRef)(!0),
                     I = (0, a.N)().get(n.U2),
                     E = (0, l.c)((e) => {
-                        x && (null == e || e.preventDefault()), _ && _(e), p && p();
+                        (x && (null == e || e.preventDefault()), _ && _(e), p && p());
                     });
                 return (
                     (0, i.useEffect)(() => {
@@ -959,7 +959,7 @@
                                         if (null == t ? void 0 : t.includes(a)) return void E(e);
                                     }
                                     if (s) {
-                                        null == e || e.preventDefault(),
+                                        (null == e || e.preventDefault(),
                                             t.isUnsafeLegal && h.setType(c.Z.UNSAFE),
                                             h.setDisclaimerRejectHandler(null != f ? f : null),
                                             h.setId(g.current),
@@ -968,17 +968,17 @@
                                             h.setShouldHistoryBack(!!(null == v ? void 0 : v.shouldHistoryBack)),
                                             h.setShouldCloseModalOnOutsidePress(null == (o = null == v ? void 0 : v.closeOnOutside) || o),
                                             h.setShouldCloseModalOnEscape(null == (l = null == v ? void 0 : v.closeOnEscape) || l),
-                                            (b.current += 1);
+                                            (b.current += 1));
                                         let r = b.current,
                                             i = await t.getModalDisclaimerData();
                                         if (b.current !== r || !1 === A.current) return;
-                                        h.setModalData(null != i ? i : null), (y.current = !1), C.open();
+                                        (h.setModalData(null != i ? i : null), (y.current = !1), C.open());
                                         return;
                                     }
-                                    x && (null == e || e.preventDefault()), E(e);
+                                    (x && (null == e || e.preventDefault()), E(e));
                                     return;
                                 }
-                                x && (null == e || e.preventDefault()), E(e);
+                                (x && (null == e || e.preventDefault()), E(e));
                             } finally {
                                 S.current = !1;
                             }
@@ -1313,7 +1313,7 @@
                     c = (0, i.useContext)(l.B),
                     d = (0, i.useCallback)(
                         (i, o) => {
-                            e ? e(i, r ? o : void 0) : a(i, o), t && c.unobserveElement(s);
+                            (e ? e(i, r ? o : void 0) : a(i, o), t && c.unobserveElement(s));
                         },
                         [e, c, s, a, t, r],
                     );
@@ -1384,10 +1384,10 @@
                         objectPosX: E,
                         objectPosY: R,
                     };
-                    n.qG.includes(p) && ((l.tabId = m), (l.tabPos = f), (l.isTabSelectedByDefault = v)),
+                    (n.qG.includes(p) && ((l.tabId = m), (l.tabPos = f), (l.isTabSelectedByDefault = v)),
                         L && (l.skeletonId = L),
                         y && (l.mainObjectType = y),
-                        S && (l.mainObjectId = S);
+                        S && (l.mainObjectId = S));
                     let a = (0, i.Fx)({ params: l, logger: j, context: 'useSendEventOnClipShowedOrHidden' });
                     if (a) {
                         if (o) return void (0, i.Pf)(t.evgenInstance, a);
@@ -1705,12 +1705,12 @@
                                 r = Math.ceil((e.endIndex * a) / 20);
                             for (let e = t; e <= r; e++) v(e);
                         });
-                    (0, n.useEffect)(() => {
+                    ((0, n.useEffect)(() => {
                         o.isNeededToLoad && (null == r || r.scrollTo({ top: 0, behavior: 'instant' }), o.setInitialShimmer(), v());
                     }, [o, o.isNeededToLoad, v, r]),
                         (0, n.useEffect)(() => {
                             !m.isScrolling && m.range && C(m.range);
-                        }, [C, m.range, m.isScrolling]);
+                        }, [C, m.range, m.isScrolling]));
                     let g = (0, L.A)(() => {
                         s(w);
                     }, 100);
@@ -1823,7 +1823,7 @@
             };
         },
         33830: (e, t, r) => {
-            Promise.resolve().then(r.bind(r, 3377)), Promise.resolve().then(r.bind(r, 30604));
+            (Promise.resolve().then(r.bind(r, 3377)), Promise.resolve().then(r.bind(r, 30604)));
         },
         37717: (e) => {
             e.exports = {
@@ -1893,7 +1893,7 @@
                                 entity: t,
                                 callback: r,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), n.isOpened && (i.reset(), n.close()), o.modal.isOpened && o.modal.close();
+                                    (null == e || e.stopPropagation(), n.isOpened && (i.reset(), n.close()), o.modal.isOpened && o.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     l.modal.isOpened && (l.modal.close(), l.reset());
@@ -1903,11 +1903,11 @@
                         })({
                             artist: t,
                             callback: (0, f.c)((e) => {
-                                A && b.isOpened && b.close(), I(e);
+                                (A && b.isOpened && b.close(), I(e));
                             }),
                         }),
                         L = (0, f.c)((e) => {
-                            R({ to: p.QT.ArtistScreen }), null == E || E(), j(e);
+                            (R({ to: p.QT.ArtistScreen }), null == E || E(), j(e));
                         });
                     return r && !t.various
                         ? (0, i.jsx)(g.N, {
@@ -2124,7 +2124,7 @@
                         } = (0, s.g)(),
                         N = 1 === r.length,
                         k = (0, n.useCallback)((e) => {
-                            L(!0), e.preventDefault();
+                            (L(!0), e.preventDefault());
                         }, []),
                         P = (0, n.useMemo)(() => {
                             let e = r;
@@ -2196,11 +2196,11 @@
                 var t = a[e];
                 if (void 0 !== t) return t.exports;
                 var r = (a[e] = { exports: {} });
-                return n[e](r, r.exports, s), r.exports;
+                return (n[e](r, r.exports, s), r.exports);
             }
             var c = {};
-            (() => {
-                Object.defineProperty(c, 'X', { value: !0 }), (c.l = void 0);
+            ((() => {
+                (Object.defineProperty(c, 'X', { value: !0 }), (c.l = void 0));
                 let e = s(810),
                     t = s(352);
                 c.l = (r) => {
@@ -2210,7 +2210,7 @@
                             let e = null == r ? void 0 : r.current;
                             e && (o(0 === e.scrollLeft), n(e.scrollWidth - e.scrollLeft <= e.offsetWidth + 10));
                         };
-                    (0, e.useEffect)(() => {
+                    ((0, e.useEffect)(() => {
                         a();
                     }, [r, a]),
                         (0, e.useEffect)(() => {
@@ -2219,10 +2219,10 @@
                                 null == e || e.addEventListener('scroll', a),
                                 window.addEventListener('resize', a),
                                 () => {
-                                    null == e || e.removeEventListener('scroll', a), window.removeEventListener('resize', a);
+                                    (null == e || e.removeEventListener('scroll', a), window.removeEventListener('resize', a));
                                 }
                             );
-                        }, [r, a]);
+                        }, [r, a]));
                     let s = (0, e.useMemo)(
                         () =>
                             (0, t.throttle)(
@@ -2253,7 +2253,7 @@
                     };
                 };
             })(),
-                c.X;
+                c.X);
             var d = c.l;
         },
         48736: (e) => {
@@ -2284,13 +2284,13 @@
                     { swipeBackward: v, swipeForward: x, shouldBackwardButtonBeDisabled: h, shouldForwardButtonBeDisabled: C, shouldHideControls: g } = (0, a.Y)(t),
                     y = (0, l.useCallback)(
                         (e) => {
-                            v(), e.stopPropagation();
+                            (v(), e.stopPropagation());
                         },
                         [v],
                     ),
                     S = (0, l.useCallback)(
                         (e) => {
-                            x(), e.stopPropagation();
+                            (x(), e.stopPropagation());
                         },
                         [x],
                     );
@@ -2363,7 +2363,7 @@
                         l = e - 3600 * r - 60 * o,
                         n = i(t || e, 3600) > 0,
                         a = [o, l];
-                    return n && a.unshift(r), a.map((e) => String(e).padStart(2, '0')).join(':');
+                    return (n && a.unshift(r), a.map((e) => String(e).padStart(2, '0')).join(':'));
                 };
         },
         53514: (e, t, r) => {
@@ -2384,7 +2384,7 @@
             'use strict';
             r.d(t, { V: () => i });
             var i = (function (e) {
-                return (e.TRAILER = 'TRAILER'), (e.ADVERT = 'ADVERT'), (e.CLIP = 'CLIP'), (e.PROMO_LANDING = 'PROMO_LANDING'), e;
+                return ((e.TRAILER = 'TRAILER'), (e.ADVERT = 'ADVERT'), (e.CLIP = 'CLIP'), (e.PROMO_LANDING = 'PROMO_LANDING'), e);
             })({});
         },
         56797: (e, t, r) => {
@@ -2427,10 +2427,10 @@
                         from: n.W[m],
                         to: i.QT.VideoScreen,
                     };
-                    a.qG.includes(m) && ((o.tabId = f), (o.tabPos = v), (o.isTabSelectedByDefault = x)),
+                    (a.qG.includes(m) && ((o.tabId = f), (o.tabPos = v), (o.isTabSelectedByDefault = x)),
                         h && (o.skeletonId = h),
                         b && (o.mainObjectType = b),
-                        A && (o.mainObjectId = A);
+                        A && (o.mainObjectId = A));
                     let l = (0, i.Fx)({ params: o, logger: O, context: 'useSendEventOnClipNavigated' });
                     l && e && (0, i.QS)(t.evgenInstance, l);
                 });
@@ -2554,7 +2554,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [n, c, d];
-                                    return 'ru' === l && e.push(s), e.push(u), e;
+                                    return ('ru' === l && e.push(s), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [n, c, d, u];
@@ -2652,7 +2652,7 @@
             'use strict';
             r.d(t, { H: () => i });
             var i = (function (e) {
-                return (e.VARIOUS_CLIP_CONTEXT = 'various-clip-context'), e;
+                return ((e.VARIOUS_CLIP_CONTEXT = 'various-clip-context'), e);
             })({});
         },
         64170: (e, t, r) => {
@@ -2734,7 +2734,7 @@
                         };
                     })(),
                     S = (0, n.useCallback)(() => {
-                        y(), (window.location.href = x.Z.main.href);
+                        (y(), (window.location.href = x.Z.main.href));
                     }, [y]),
                     { contentRef: b } = (0, v.g)();
                 return (0, i.jsxs)('div', {
@@ -2806,7 +2806,7 @@
                 a = {
                     5881: (e, t, r) => {
                         function i() {
-                            for (var e, t, r = 0, i = ''; r < arguments.length; )
+                            for (var e, t, r = 0, i = ''; r < arguments.length;)
                                 (e = arguments[r++]) &&
                                     (t = (function e(t) {
                                         var r,
@@ -2821,15 +2821,15 @@
                                     (i && (i += ' '), (i += t));
                             return i;
                         }
-                        r.r(t), r.d(t, { clsx: () => i, default: () => o });
+                        (r.r(t), r.d(t, { clsx: () => i, default: () => o }));
                         let o = i;
                     },
                     9682: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = { root: 'QhR4J536RmNHBB5bZYwF', text: 'Fqg1VWCJUfasVVxqICeO' };
                     },
                     6951: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = {
                             root_controls_xxs: 'tRaaBpDMg9Qu8v6gKjtn',
                             root_entity_xxs: 'M9zvtlcpLUVn6DKdcHhj',
@@ -2852,7 +2852,7 @@
                         };
                     },
                     5882: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = {
                             root: '_MWOVuZRvUQdXKTMcOPx',
                             root_clamp: 'LezmJlldtbHWqU7l1950',
@@ -2869,13 +2869,13 @@
                             else i = t;
                             return { $$typeof: r, type: e, key: o, ref: void 0 !== (t = i.ref) ? t : null, props: i };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i));
                     },
                     4377: (e, t, r) => {
                         e.exports = r(9097);
                     },
                     58: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Tooltip = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Tooltip = void 0));
                         let i = r(4377),
                             o = r(810),
                             l = r(1964),
@@ -2920,14 +2920,14 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.TooltipContent = t.TooltipContentComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.TooltipContent = t.TooltipContentComponent = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(810),
                             a = r(1964),
                             s = r(7743),
                             c = i(r(9682));
-                        (t.TooltipContentComponent = (e) => {
+                        ((t.TooltipContentComponent = (e) => {
                             let { className: t, children: r, arrow: i, rootNode: d, forwardRef: u, text: _, ...p } = e;
                             return (0, o.jsx)(a.FloatingPortal, {
                                 root: d,
@@ -2949,10 +2949,10 @@
                                 }),
                             });
                         }),
-                            (t.TooltipContent = (0, n.forwardRef)((e, r) => (0, o.jsx)(t.TooltipContentComponent, { forwardRef: r, ...e })));
+                            (t.TooltipContent = (0, n.forwardRef)((e, r) => (0, o.jsx)(t.TooltipContentComponent, { forwardRef: r, ...e }))));
                     },
                     5481: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useTooltip = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useTooltip = void 0));
                         let i = r(4377),
                             o = r(810),
                             l = r(1964),
@@ -3010,13 +3010,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(810),
                             a = r(4721),
                             s = i(r(6951));
-                        (t.CaptionComponent = (e) => {
+                        ((t.CaptionComponent = (e) => {
                             let { forwardRef: t, variant: r, type: i = 'text', size: n = 's', className: c, children: d, weight: u = 'medium', ..._ } = e;
                             return (0, o.jsx)(a.Typography, {
                                 variant: r,
@@ -3026,7 +3026,7 @@
                                 children: d,
                             });
                         }),
-                            (t.Caption = (0, n.forwardRef)((e, r) => (0, o.jsx)(t.CaptionComponent, { forwardRef: r, ...e })));
+                            (t.Caption = (0, n.forwardRef)((e, r) => (0, o.jsx)(t.CaptionComponent, { forwardRef: r, ...e }))));
                     },
                     4721: function (e, t, r) {
                         var i =
@@ -3034,7 +3034,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(810),
@@ -3055,7 +3055,7 @@
                                 children: n,
                             });
                         }
-                        (t.TypographyComponent = s), (t.Typography = (0, n.forwardRef)((e, t) => (0, o.jsx)(s, { forwardRef: t, ...e })));
+                        ((t.TypographyComponent = s), (t.Typography = (0, n.forwardRef)((e, t) => (0, o.jsx)(s, { forwardRef: t, ...e }))));
                     },
                     1964: (e) => {
                         e.exports = o;
@@ -3072,19 +3072,19 @@
                 var t = s[e];
                 if (void 0 !== t) return t.exports;
                 var r = (s[e] = { exports: {} });
-                return a[e].call(r.exports, r, r.exports, c), r.exports;
+                return (a[e].call(r.exports, r, r.exports, c), r.exports);
             }
-            (c.d = (e, t) => {
+            ((c.d = (e, t) => {
                 for (var r in t) c.o(t, r) && !c.o(e, r) && Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
             }),
                 (c.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (c.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var d = {};
             (() => {
-                Object.defineProperty(d, 'X$', { value: !0 }), (d._v = d.u = void 0);
+                (Object.defineProperty(d, 'X$', { value: !0 }), (d._v = d.u = void 0));
                 var e = c(58);
                 Object.defineProperty(d, 'u', {
                     enumerable: !0,
@@ -3124,12 +3124,12 @@
                                     if (e.isIntersecting) {
                                         let e = window.setTimeout(() => {
                                             let e = String((0, l.A)());
-                                            i.callback(!0, e), (i.showed = !0), (i.viewUuid = e);
+                                            (i.callback(!0, e), (i.showed = !0), (i.viewUuid = e));
                                         }, 1e3);
                                         i.timerId = e;
                                     }
-                                    !e.isIntersecting && i.showed && (i.callback(!1, i.viewUuid), (i.showed = !1), (i.viewUuid = '')),
-                                        e.isIntersecting || window.clearTimeout(i.timerId);
+                                    (!e.isIntersecting && i.showed && (i.callback(!1, i.viewUuid), (i.showed = !1), (i.viewUuid = '')),
+                                        e.isIntersecting || window.clearTimeout(i.timerId));
                                 }
                             },
                             { threshold: 0.8 },
@@ -3191,7 +3191,7 @@
                 l = {
                     5881: (e, t, r) => {
                         function i() {
-                            for (var e, t, r = 0, i = ''; r < arguments.length; )
+                            for (var e, t, r = 0, i = ''; r < arguments.length;)
                                 (e = arguments[r++]) &&
                                     (t = (function e(t) {
                                         var r,
@@ -3206,11 +3206,11 @@
                                     (i && (i += ' '), (i += t));
                             return i;
                         }
-                        r.r(t), r.d(t, { clsx: () => i, default: () => o });
+                        (r.r(t), r.d(t, { clsx: () => i, default: () => o }));
                         let o = i;
                     },
                     9058: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = { root: 'IZnFMW4gXBshJODnvB1P', item: 'VJ9IexhAEuYSCyGiMfN4' };
                     },
                     9097: (e, t) => {
@@ -3222,7 +3222,7 @@
                             else i = t;
                             return { $$typeof: r, type: e, key: o, ref: void 0 !== (t = i.ref) ? t : null, props: i };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i));
                     },
                     4377: (e, t, r) => {
                         e.exports = r(9097);
@@ -3233,7 +3233,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Carousel = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Carousel = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(810),
@@ -3259,19 +3259,19 @@
                 var t = n[e];
                 if (void 0 !== t) return t.exports;
                 var r = (n[e] = { exports: {} });
-                return l[e].call(r.exports, r, r.exports, a), r.exports;
+                return (l[e].call(r.exports, r, r.exports, a), r.exports);
             }
-            (a.d = (e, t) => {
+            ((a.d = (e, t) => {
                 for (var r in t) a.o(t, r) && !a.o(e, r) && Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
             }),
                 (a.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (a.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var s = {};
             (() => {
-                Object.defineProperty(s, 'X', { value: !0 }), (s.l = void 0);
+                (Object.defineProperty(s, 'X', { value: !0 }), (s.l = void 0));
                 var e = a(5056);
                 Object.defineProperty(s, 'l', {
                     enumerable: !0,
@@ -3307,9 +3307,9 @@
         77223: (e, t, r) => {
             'use strict';
             var i, o;
-            r.d(t, { n: () => o, o: () => i }),
+            (r.d(t, { n: () => o, o: () => i }),
                 (function (e) {
-                    (e.ARTIST = 'artist'),
+                    ((e.ARTIST = 'artist'),
                         (e.ALBUM = 'album'),
                         (e.TRACK = 'track'),
                         (e.PLAYLIST = 'playlist'),
@@ -3320,11 +3320,11 @@
                         (e.PODCAST_EPISODE = 'podcast_episode'),
                         (e.WAVE = 'wave'),
                         (e.GENRE = 'genre'),
-                        (e.SEARCH_PAGE = 'search-page');
+                        (e.SEARCH_PAGE = 'search-page'));
                 })(i || (i = {})),
                 (function (e) {
-                    (e.PLAY = 'play'), (e.FRIDGE = 'fridge'), (e.NAVIGATE = 'navigate'), (e.LIKE = 'like');
-                })(o || (o = {}));
+                    ((e.PLAY = 'play'), (e.FRIDGE = 'fridge'), (e.NAVIGATE = 'navigate'), (e.LIKE = 'like'));
+                })(o || (o = {})));
         },
         78176: (e, t, r) => {
             'use strict';
@@ -3358,7 +3358,7 @@
                         );
                     }, [t, r]),
                     S = (0, c.c)((e) => {
-                        l.modal.isOpened && l.modal.close(), g({ to: a.QT.ArtistScreen }), x(e);
+                        (l.modal.isOpened && l.modal.close(), g({ to: a.QT.ArtistScreen }), x(e));
                     });
                 return (0, i.jsxs)(i.Fragment, {
                     children: [
@@ -3424,14 +3424,14 @@
                             f.current ||
                                 (f.current = new ResizeObserver((e) => {
                                     let t = !1;
-                                    e.forEach((e) => {
+                                    (e.forEach((e) => {
                                         let r = e.target.getAttribute('data-index');
                                         if (e.target && r) {
                                             let i = e.contentRect.height;
                                             i && i !== m.current.get(r) && (m.current.set(r, e.contentRect.height), (t = !0));
                                         }
                                     }),
-                                        t && g();
+                                        t && g());
                                 }));
                         }, [g]),
                         { virtualizer: C, resizeObserver: f.current }
@@ -3464,10 +3464,10 @@
             'use strict';
             r.d(t, { Z: () => i, n: () => o });
             var i = (function (e) {
-                    return (e.REJECT = 'REJECT'), (e.UNSAFE = 'UNSAFE'), e;
+                    return ((e.REJECT = 'REJECT'), (e.UNSAFE = 'UNSAFE'), e);
                 })({}),
                 o = (function (e) {
-                    return (e.ALBUM = 'album'), (e.PODCAST = 'podcast'), (e.AUDIOBOOK = 'audiobook'), (e.ARTIST = 'artist'), (e.TRACK = 'track'), (e.CLIP = 'clip'), e;
+                    return ((e.ALBUM = 'album'), (e.PODCAST = 'podcast'), (e.AUDIOBOOK = 'audiobook'), (e.ARTIST = 'artist'), (e.TRACK = 'track'), (e.CLIP = 'clip'), e);
                 })({});
         },
         86269: (e, t, r) => {
@@ -3478,7 +3478,7 @@
                 l = {
                     5881: (e, t, r) => {
                         function i() {
-                            for (var e, t, r = 0, i = ''; r < arguments.length; )
+                            for (var e, t, r = 0, i = ''; r < arguments.length;)
                                 (e = arguments[r++]) &&
                                     (t = (function e(t) {
                                         var r,
@@ -3493,11 +3493,11 @@
                                     (i && (i += ' '), (i += t));
                             return i;
                         }
-                        r.r(t), r.d(t, { clsx: () => i, default: () => o });
+                        (r.r(t), r.d(t, { clsx: () => i, default: () => o }));
                         let o = i;
                     },
                     7152: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => i });
+                        (r.r(t), r.d(t, { default: () => i }));
                         let i = {
                             root: 'qaIScXjx1qyXuaIHXQIo',
                             root_radius_xs: 'wdE2qVRIlWUesuBfzCis',
@@ -3520,7 +3520,7 @@
                             else i = t;
                             return { $$typeof: r, type: e, key: o, ref: void 0 !== (t = i.ref) ? t : null, props: i };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i));
                     },
                     4377: (e, t, r) => {
                         e.exports = r(9097);
@@ -3531,7 +3531,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Paper = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Paper = void 0));
                         let o = r(4377),
                             l = r(5881),
                             n = r(810),
@@ -3563,19 +3563,19 @@
                 var t = n[e];
                 if (void 0 !== t) return t.exports;
                 var r = (n[e] = { exports: {} });
-                return l[e].call(r.exports, r, r.exports, a), r.exports;
+                return (l[e].call(r.exports, r, r.exports, a), r.exports);
             }
-            (a.d = (e, t) => {
+            ((a.d = (e, t) => {
                 for (var r in t) a.o(t, r) && !a.o(e, r) && Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
             }),
                 (a.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (a.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var s = {};
             (() => {
-                Object.defineProperty(s, 'U', { value: !0 }), (s.X = void 0);
+                (Object.defineProperty(s, 'U', { value: !0 }), (s.X = void 0));
                 var e = a(4788);
                 Object.defineProperty(s, 'X', {
                     enumerable: !0,
@@ -3675,7 +3675,7 @@
                         O = _ ? a.S7.PAUSE_BUTTON : a.S7.PLAY_BUTTON,
                         T = j(_ ? { id: 'player-actions.pause' } : { id: 'player-actions.play' }),
                         N = (0, s.c)((e) => {
-                            e.stopPropagation(), e.preventDefault(), null == p || p(e), E && R(!_);
+                            (e.stopPropagation(), e.preventDefault(), null == p || p(e), E && R(!_));
                         });
                     return (0, i.jsx)(c.$, {
                         className: r,
@@ -3831,10 +3831,10 @@
                     return (0, i.useCallback)(() => {
                         if (!t || !h || !c.xK.includes(h) || !v.includes(h) || e.current) return;
                         let i = { hash: x, pageId: s.F[h], entityType: A, entityId: b, entityPosX: I, entityPosY: P, objectsCount: L };
-                        void 0 !== O && ((i.filterKey = O), (i.filterValue = T), (i.filterPos = N)),
+                        (void 0 !== O && ((i.filterKey = O), (i.filterValue = T), (i.filterPos = N)),
                             c.qG.includes(h) && ((i.tabId = C), (i.tabPos = g), (i.isTabSelectedByDefault = y)),
                             k && (i.skeletonId = k),
-                            j && R && ((i.mainObjectType = R), (i.mainObjectId = j));
+                            j && R && ((i.mainObjectType = R), (i.mainObjectId = j)));
                         let l = (0, o.Fx)({ params: i, logger: r, context: 'useSendEventOnBlockLoaded' });
                         l && ((0, o.uY)(t.evgenInstance, l), (e.current = !0));
                     }, [t, h, x, A, b, I, P, O, T, N, L, k, j, R, r, C, g, y]);
@@ -3907,13 +3907,13 @@
                     t = (0, l.p)();
                 return (0, i.c)(function (r) {
                     let i = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : 0;
-                    e.setIds(r), e.setClipIndex(i), t((0, n.J)(r, i)), e.modal.open();
+                    (e.setIds(r), e.setClipIndex(i), t((0, n.J)(r, i)), e.modal.open());
                 });
             };
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 6639, 7475, 6347, 7972, 5108, 7258, 2690, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 6252, 7307, 6477, 7275, 2586, 8347, 7702,
@@ -3921,6 +3921,6 @@
             ],
             () => e((e.s = 33830)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

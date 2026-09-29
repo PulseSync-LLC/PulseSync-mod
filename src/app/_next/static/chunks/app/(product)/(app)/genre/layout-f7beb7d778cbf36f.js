@@ -9,10 +9,10 @@
         2047: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { L: () => r }),
+            (a.d(t, { L: () => r }),
                 (function (e) {
-                    (e.PUBLIC = 'public'), (e.PRIVATE = 'private');
-                })(r || (r = {}));
+                    ((e.PUBLIC = 'public'), (e.PRIVATE = 'private'));
+                })(r || (r = {})));
         },
         5482: (e, t, a) => {
             'use strict';
@@ -51,16 +51,16 @@
         13365: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { _: () => r }),
+            (a.d(t, { _: () => r }),
                 (function (e) {
-                    (e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new');
-                })(r || (r = {}));
+                    ((e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new'));
+                })(r || (r = {})));
         },
         20168: (e, t, a) => {
             'use strict';
             a.d(t, { Y: () => r });
             var r = (function (e) {
-                return (e.OK = 'ok'), (e.ERROR = 'error'), (e.RELOAD = 'reload'), e;
+                return ((e.OK = 'ok'), (e.ERROR = 'error'), (e.RELOAD = 'reload'), e);
             })({});
         },
         33229: (e, t, a) => {
@@ -104,7 +104,7 @@
             'use strict';
             a.d(t, { j: () => r });
             var r = (function (e) {
-                return (e[(e.LIKE = 3)] = 'LIKE'), (e[(e.CHART = 1076)] = 'CHART'), e;
+                return ((e[(e.LIKE = 3)] = 'LIKE'), (e[(e.CHART = 1076)] = 'CHART'), e);
             })({});
         },
         45066: (e, t, a) => {
@@ -175,7 +175,7 @@
                         i = () => {
                             var e, t;
                             let r = null != (t = null == (e = window.__PAGE_STATE_PATCHES__) ? void 0 : e[a]) ? t : [];
-                            return window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[a], r;
+                            return (window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[a], r);
                         };
                     return {
                         pageStoreProvider: (e) => {
@@ -211,7 +211,7 @@
             'use strict';
             a.d(t, { G: () => r });
             var r = (function (e) {
-                return (e.IDLE = 'IDLE'), (e.PENDING = 'PENDING'), (e.RESOLVE = 'RESOLVE'), (e.REJECT = 'REJECT'), e;
+                return ((e.IDLE = 'IDLE'), (e.PENDING = 'PENDING'), (e.RESOLVE = 'RESOLVE'), (e.REJECT = 'REJECT'), e);
             })({});
         },
         55516: (e, t, a) => {
@@ -266,23 +266,23 @@
             'use strict';
             a.d(t, { F: () => r });
             var r = (function (e) {
-                return (e.OK = 'ok'), (e.ERROR = 'error'), e;
+                return ((e.OK = 'ok'), (e.ERROR = 'error'), e);
             })({});
         },
         63380: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { f: () => r }),
+            (a.d(t, { f: () => r }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(r || (r = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(r || (r = {})));
         },
         64605: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { _: () => r }),
+            (a.d(t, { _: () => r }),
                 (function (e) {
-                    (e.UNKNOWN = 'unknown'),
+                    ((e.UNKNOWN = 'unknown'),
                         (e.ALBUM = 'album'),
                         (e.SINGLE = 'single'),
                         (e.COMPILATION = 'compilation'),
@@ -293,8 +293,8 @@
                         (e.VIDEO_ALBUM = 'video-album'),
                         (e.RADIO = 'radio'),
                         (e.ASMR = 'asmr'),
-                        (e.NOISE = 'noise');
-                })(r || (r = {}));
+                        (e.NOISE = 'noise'));
+                })(r || (r = {})));
         },
         66472: (e, t, a) => {
             'use strict';
@@ -357,19 +357,19 @@
                                 try {
                                     e.pagesLoader.setPageState(r, p.G.PENDING);
                                     let t = o;
-                                    t || (t = yield u.getMetatagAlbums({ id: a, offset: r, limit: i })), (e.fullTitle = t.title.fullTitle);
+                                    (t || (t = yield u.getMetatagAlbums({ id: a, offset: r, limit: i })), (e.fullTitle = t.title.fullTitle));
                                     let s = t.albums.map(n.p);
                                     e.pagesLoader.setItems(s, { page: r, pager: { page: r, perPage: i, total: t.pager.total } });
                                 } catch (t) {
-                                    g.error(t),
+                                    (g.error(t),
                                         t instanceof l.GX &&
                                             (t.statusCode === l.X1.NOT_FOUND || t.statusCode === l.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = l.X1.NOT_FOUND),
-                                        e.pagesLoader.setItems(null, { responseStatus: E.F.ERROR, page: r });
+                                        e.pagesLoader.setItems(null, { responseStatus: E.F.ERROR, page: r }));
                                 }
                         }),
                         reset() {
-                            (e.errorStatusCode = null), (e.fullTitle = null), e.pagesLoader.reset();
+                            ((e.errorStatusCode = null), (e.fullTitle = null), e.pagesLoader.reset());
                         },
                     })),
                 R = s.gK
@@ -428,19 +428,19 @@
                                 try {
                                     e.pagesLoader.setPageState(r, p.G.PENDING);
                                     let t = n;
-                                    t || (t = yield o.getMetatagArtists({ id: a, offset: r, limit: i, period: 'week' })), (e.fullTitle = t.title.fullTitle);
+                                    (t || (t = yield o.getMetatagArtists({ id: a, offset: r, limit: i, period: 'week' })), (e.fullTitle = t.title.fullTitle));
                                     let s = t.artists.map((e) => (0, d.d)(e.artist));
                                     e.pagesLoader.setItems(s, { page: r, pager: t.pager });
                                 } catch (t) {
-                                    u.error(t),
+                                    (u.error(t),
                                         t instanceof l.GX &&
                                             (t.statusCode === l.X1.NOT_FOUND || t.statusCode === l.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = l.X1.NOT_FOUND),
-                                        e.pagesLoader.setItems(null, { responseStatus: E.F.ERROR, page: r });
+                                        e.pagesLoader.setItems(null, { responseStatus: E.F.ERROR, page: r }));
                                 }
                         }),
                         reset() {
-                            (e.errorStatusCode = null), e.pagesLoader.reset();
+                            ((e.errorStatusCode = null), e.pagesLoader.reset());
                         },
                     }));
             var v = a(33229),
@@ -489,15 +489,15 @@
                                 try {
                                     e.pagesLoader.setPageState(r, p.G.PENDING);
                                     let t = l;
-                                    t || (t = yield n.getMetatagPlaylists({ id: a, offset: r, limit: i, withLikesCount: !0 })), (e.fullTitle = t.title.fullTitle);
+                                    (t || (t = yield n.getMetatagPlaylists({ id: a, offset: r, limit: i, withLikesCount: !0 })), (e.fullTitle = t.title.fullTitle));
                                     let s = t.playlists.map(v.j);
                                     e.pagesLoader.setItems(s, { page: r, pager: { page: r, perPage: i, total: t.pager.total } });
                                 } catch (t) {
-                                    o.error(t), e.pagesLoader.setItems(null, { responseStatus: E.F.ERROR, page: r });
+                                    (o.error(t), e.pagesLoader.setItems(null, { responseStatus: E.F.ERROR, page: r }));
                                 }
                         }),
                         reset() {
-                            e.pagesLoader.reset(), (e.errorStatusCode = null), (e.fullTitle = null);
+                            (e.pagesLoader.reset(), (e.errorStatusCode = null), (e.fullTitle = null));
                         },
                     })),
                 I = s.gK
@@ -545,23 +545,23 @@
                                 try {
                                     e.loadingState = p.G.PENDING;
                                     let t = r;
-                                    t || (t = yield i.getMetatagById({ id: a })),
+                                    (t || (t = yield i.getMetatagById({ id: a })),
                                         (e.id = t.id),
                                         (e.fullTitle = t.title.fullTitle),
                                         (e.artists = (0, s.wg)(t.artists.map(d.d))),
                                         (e.albums = (0, s.wg)(t.albums.map(n.p))),
                                         (e.playlists = (0, s.wg)(t.playlists.map(u.Z))),
-                                        e.loadingState !== p.G.IDLE && (e.loadingState = p.G.RESOLVE);
+                                        e.loadingState !== p.G.IDLE && (e.loadingState = p.G.RESOLVE));
                                 } catch (t) {
-                                    o.error(t),
+                                    (o.error(t),
                                         t instanceof l.GX &&
                                             (t.statusCode === l.X1.NOT_FOUND || t.statusCode === l.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = l.X1.NOT_FOUND),
-                                        e.loadingState !== p.G.IDLE && (e.loadingState = p.G.REJECT);
+                                        e.loadingState !== p.G.IDLE && (e.loadingState = p.G.REJECT));
                                 }
                         }),
                         reset() {
-                            (e.loadingState = p.G.IDLE), (e.fullTitle = null), (e.artists = (0, s.wg)([])), (e.albums = (0, s.wg)([])), (e.playlists = (0, s.wg)([]));
+                            ((e.loadingState = p.G.IDLE), (e.fullTitle = null), (e.artists = (0, s.wg)([])), (e.albums = (0, s.wg)([])), (e.playlists = (0, s.wg)([])));
                         },
                     })),
                 P = {
@@ -671,7 +671,7 @@
                         let { library: t, user: a } = (0, o.M)(e);
                         if (a.isAuthorized) {
                             let i = yield t.togglePlaylistLike({ userId: a.account.data.uid, entityId: e.id, ownerId: e.uid, kindId: e.kind });
-                            return (0, r._n)(e) && i === n.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), i;
+                            return ((0, r._n)(e) && i === n.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), i);
                         }
                     }),
                     togglePin: (0, r.L3)(function* () {
@@ -685,7 +685,7 @@
                         try {
                             var l, n;
                             let r = yield a.changePlaylistRelative({ userId: e.uid, diff: t, revision: null != (l = e.revision) ? l : 0, playlistKind: e.kind });
-                            return (e.revision = r.revision), (e.isAvailable = null == (n = r.available) || n), p.Y.OK;
+                            return ((e.revision = r.revision), (e.isAvailable = null == (n = r.available) || n), p.Y.OK);
                         } catch (e) {
                             if ((s.error(e), e && 'object' == typeof e && 'statusCode' in e && e.statusCode === i.X1.PRECONDITION_FAILED)) return p.Y.RELOAD;
                             return p.Y.ERROR;
@@ -701,10 +701,10 @@
                             e.title = t;
                             try {
                                 let i = yield a.changePlaylistTitle({ title: t, userId: e.uid, playlistKind: e.kind });
-                                if (!(null == i ? void 0 : i.title)) return (e.title = r), u.F.ERROR;
-                                return (e.title = i.title), u.F.OK;
+                                if (!(null == i ? void 0 : i.title)) return ((e.title = r), u.F.ERROR);
+                                return ((e.title = i.title), u.F.OK);
                             } catch (t) {
-                                (e.title = r), i.error(t);
+                                ((e.title = r), i.error(t));
                             }
                         }
                         return u.F.ERROR;
@@ -714,7 +714,7 @@
                         let { pinsCollection: t } = (0, o.M)(e),
                             { usersResource: a, modelActionsLogger: i } = (0, r._$)(e);
                         try {
-                            return yield a.deletePlaylist({ userId: e.uid, playlistKind: e.kind }), t.isPinned(e.pinId) && t.deletePin(e.pinId), u.F.OK;
+                            return (yield a.deletePlaylist({ userId: e.uid, playlistKind: e.kind }), t.isPinned(e.pinId) && t.deletePin(e.pinId), u.F.OK);
                         } catch (e) {
                             i.error(e);
                         }
@@ -738,7 +738,7 @@
                         } catch (e) {
                             i.error(e);
                         }
-                        return (e.visibility = n), u.F.ERROR;
+                        return ((e.visibility = n), u.F.ERROR);
                     }),
                     downloadToFile: (0, r.L3)(function* () {
                         if (!(0, r._n)(e)) return;
@@ -758,10 +758,10 @@
             'use strict';
             a.d(t, { Z: () => r, n: () => i });
             var r = (function (e) {
-                    return (e.REJECT = 'REJECT'), (e.UNSAFE = 'UNSAFE'), e;
+                    return ((e.REJECT = 'REJECT'), (e.UNSAFE = 'UNSAFE'), e);
                 })({}),
                 i = (function (e) {
-                    return (e.ALBUM = 'album'), (e.PODCAST = 'podcast'), (e.AUDIOBOOK = 'audiobook'), (e.ARTIST = 'artist'), (e.TRACK = 'track'), (e.CLIP = 'clip'), e;
+                    return ((e.ALBUM = 'album'), (e.PODCAST = 'podcast'), (e.AUDIOBOOK = 'audiobook'), (e.ARTIST = 'artist'), (e.TRACK = 'track'), (e.CLIP = 'clip'), e);
                 })({});
         },
         86634: (e, t, a) => {
@@ -832,14 +832,14 @@
                                     );
                                 }
                                 let d = Math.max(r + 1, l);
-                                t.ensurePageStatesInitialized(d), e.pageStates && (e.pageStates[r] = i), i === s.G.REJECT && t.addLastRejectedPageToList(r);
+                                (t.ensurePageStatesInitialized(d), e.pageStates && (e.pageStates[r] = i), i === s.G.REJECT && t.addLastRejectedPageToList(r));
                             },
                             setItems: (n, o) => {
                                 var u;
                                 let { page: g, pager: d, responseStatus: c } = o;
                                 if (((e.requestsCount = (null != (u = e.requestsCount) ? u : 0) + 1), c === i.F.ERROR || !n || !d))
                                     return void t.setPageState(g, s.G.REJECT);
-                                e.pager
+                                (e.pager
                                     ? a && ((e.pager.lastPage = d.lastPage), (e.pager.perPage = d.perPage))
                                     : (e.pager = { page: d.page, perPage: d.perPage, total: d.total, lastPage: d.lastPage }),
                                     t.setPageState(g, s.G.RESOLVE),
@@ -847,7 +847,7 @@
                                     a
                                         ? (e.items || (e.items = (0, r.wg)([])), e.items && e.items.push(...n))
                                         : (e.items || (e.items = (0, r.wg)(Array.from({ length: e.pager.total }, () => null))),
-                                          e.items && (0, l.I)({ items: e.items, mappedRawItems: n, page: g, pageSize: e.pager.perPage }));
+                                          e.items && (0, l.I)({ items: e.items, mappedRawItems: n, page: g, pageSize: e.pager.perPage })));
                             },
                             resetRejectedPagesState() {
                                 var t, a, r;
@@ -856,7 +856,7 @@
                             },
                             addLastRejectedPageToList(t) {
                                 var a, r, i;
-                                for (e.lastRejectedPagesList.push(t); (null != (r = null == (a = e.lastRejectedPagesList) ? void 0 : a.length) ? r : 0) > 5; )
+                                for (e.lastRejectedPagesList.push(t); (null != (r = null == (a = e.lastRejectedPagesList) ? void 0 : a.length) ? r : 0) > 5;)
                                     null == (i = e.lastRejectedPagesList) || i.shift();
                             },
                             ensurePageStatesInitialized(t) {
@@ -873,10 +873,10 @@
                                 }
                             },
                             reset() {
-                                (e.initialRequestLoadingState = s.G.IDLE),
+                                ((e.initialRequestLoadingState = s.G.IDLE),
                                     (e.requestsCount = 0),
                                     (e.lastRejectedPagesList = (0, r.wg)([])),
-                                    e.destroyItems([e.items, e.pager, e.pageStates]);
+                                    e.destroyItems([e.items, e.pager, e.pageStates]));
                             },
                         };
                         return t;
@@ -892,16 +892,16 @@
                 let { items: t, mappedRawItems: a, page: r, pageSize: i } = e,
                     s = r * i,
                     l = 0;
-                for (let e = s; e < s + i; e++) a[l] && (t[e] = a[l]), l++;
+                for (let e = s; e < s + i; e++) (a[l] && (t[e] = a[l]), l++);
             }
             a.d(t, { I: () => r });
         },
         90404: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { _: () => r }),
+            (a.d(t, { _: () => r }),
                 (function (e) {
-                    (e.ALBUM_ITEM = 'album_item'),
+                    ((e.ALBUM_ITEM = 'album_item'),
                         (e.ARTIST_ITEM = 'artist_item'),
                         (e.PLAYLIST_ITEM = 'playlist_item'),
                         (e.TRACK_ITEM = 'track_item'),
@@ -920,8 +920,8 @@
                         (e.CLIP = 'clip'),
                         (e.CLIP_ITEM = 'clip_item'),
                         (e.CONCERT_ITEM = 'concert_item'),
-                        (e.QUERY_TO_VIBE_ITEM = 'q2v_item');
-                })(r || (r = {}));
+                        (e.QUERY_TO_VIBE_ITEM = 'q2v_item'));
+                })(r || (r = {})));
         },
         93043: (e, t, a) => {
             'use strict';
@@ -935,23 +935,23 @@
             var r = a(60754);
             let i = r.gK.model('ModelDestroyManager').actions(() => ({
                 destroyItems(e) {
-                    e.forEach((e) => {
+                    (e.forEach((e) => {
                         e && (0, r.Yo)(e);
                     }),
                         queueMicrotask(() => {
                             e.forEach((e) => {
                                 e && (0, r.zr)(e);
                             });
-                        });
+                        }));
                 },
             }));
         },
         96333: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { S: () => r }),
+            (a.d(t, { S: () => r }),
                 (function (e) {
-                    (e.TRACK = 'track'),
+                    ((e.TRACK = 'track'),
                         (e.MUSIC = 'music'),
                         (e.NOISE = 'noise'),
                         (e.PODCAST = 'podcast-episode'),
@@ -963,11 +963,11 @@
                         (e.LECTURE = 'lecture'),
                         (e.FAIRY_TALE = 'fairy-tale'),
                         (e.AUDIOBOOK = 'audiobook'),
-                        (e.POETRY = 'poetry');
-                })(r || (r = {}));
+                        (e.POETRY = 'poetry'));
+                })(r || (r = {})));
         },
     },
     (e) => {
-        e.O(0, [6706, 1311, 8892, 6252, 7613, 6477, 7275, 1647, 4220, 9562, 7358], () => e((e.s = 88091))), (_N_E = e.O());
+        (e.O(0, [6706, 1311, 8892, 6252, 7613, 6477, 7275, 1647, 4220, 9562, 7358], () => e((e.s = 88091))), (_N_E = e.O()));
     },
 ]);

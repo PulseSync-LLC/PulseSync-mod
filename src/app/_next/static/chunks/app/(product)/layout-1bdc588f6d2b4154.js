@@ -203,7 +203,7 @@
             'use strict';
             a.d(t, { v: () => r });
             var r = (function (e) {
-                return (e.PLAY_VIBE = 'play-vibe'), (e.SHOW_MULTIVIBE_PROMO = 'show-multivibe-promo'), (e.SHOW_MULTIVIBE_INVITE = 'show-multivibe-invite'), e;
+                return ((e.PLAY_VIBE = 'play-vibe'), (e.SHOW_MULTIVIBE_PROMO = 'show-multivibe-promo'), (e.SHOW_MULTIVIBE_INVITE = 'show-multivibe-invite'), e);
             })({});
         },
         1918: (e) => {
@@ -217,7 +217,7 @@
             'use strict';
             a.d(t, { s: () => r });
             var r = (function (e) {
-                return (e.VIDEO = 'video-ad-player'), (e.SLOT = 'video-ad-container'), e;
+                return ((e.VIDEO = 'video-ad-player'), (e.SLOT = 'video-ad-container'), e);
             })({});
         },
         3796: (e, t, a) => {
@@ -228,12 +228,12 @@
             let s = (e) => {
                 let t = (0, r.usePathname)(),
                     [a, s] = (0, i.useState)(!1);
-                (0, i.useEffect)(() => {
-                    window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t);
+                ((0, i.useEffect)(() => {
+                    (window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t));
                 }),
                     (0, i.useEffect)(() => {
                         window.Ya.Rum.spa.getLastSpaSubPage(t) && e && !a && (window.Ya.Rum.spa.finishDataLoading(t), window.Ya.Rum.spa.startDataRendering(t), s(!0));
-                    }, [e, a, t]);
+                    }, [e, a, t]));
             };
         },
         5285: (e, t, a) => {
@@ -255,7 +255,7 @@
                         .concat(r)
                         .concat(n ? '?' : '')
                         .concat(n);
-                (u = l),
+                ((u = l),
                     (d = ''
                         .concat(l)
                         .concat(r)
@@ -271,7 +271,7 @@
                         })(l) || 'ru',
                     ),
                     a.setOrigin(u),
-                    a.setHref(d);
+                    a.setHref(d));
             });
         },
         5506: (e, t, a) => {
@@ -302,24 +302,24 @@
                                 { state: E, toggleTrue: S } = (0, c.e)(!1),
                                 _ = (0, s.useMemo)(() => {
                                     let e = f ? f.split(',') : [];
-                                    return g && e.unshift(g), e;
+                                    return (g && e.unshift(g), e);
                                 }, [f, g]),
                                 { togglePlay: A } = (0, y.B)({ seeds: _, pageIdForFrom: h._Q.RADIO, blockIdForFrom: _.join('_') });
-                            (0, s.useEffect)(() => {
+                            ((0, s.useEffect)(() => {
                                 if (E) {
                                     let e = new URL(window.location.href);
-                                    p.forEach((t) => e.searchParams.delete(t)), m(e.toString()), r.setHref(window.location.href);
+                                    (p.forEach((t) => e.searchParams.delete(t)), m(e.toString()), r.setHref(window.location.href));
                                 }
                             }, [r, m, E, r.href]),
                                 (0, s.useEffect)(() => {
                                     if (u.get(l.K.DEEPLINK) === o.v.PLAY_VIBE) {
                                         if (!a.isAuthorized || b) return void S();
-                                        t.setShouldApplyYnisonState(!1), A(), 'true' === u.get(l.K.OPEN_PLAYER) && e.modal.open(), S();
+                                        (t.setShouldApplyYnisonState(!1), A(), 'true' === u.get(l.K.OPEN_PLAYER) && e.modal.open(), S());
                                     }
                                     return () => {
                                         t.setShouldApplyYnisonState(!0);
                                     };
-                                }, [e.modal, b, u, S, t, A, a.isAuthorized]);
+                                }, [e.modal, b, u, S, t, A, a.isAuthorized]));
                         })(),
                         (() => {
                             let { multivibe: e, user: t } = (0, n.g)(),
@@ -331,7 +331,7 @@
                                         let r = new URL(window.location.href);
                                         a.forEach((e) => r.searchParams.delete(e));
                                         let i = r.toString();
-                                        t(i), e.setHref(i);
+                                        (t(i), e.setHref(i));
                                     });
                                 })(),
                                 { isEnabled: c, inviteModal: h, promoModal: v } = e,
@@ -340,7 +340,7 @@
                             (0, s.useEffect)(() => {
                                 if (c && t.hasPlus) {
                                     if (y === o.v.SHOW_MULTIVIBE_INVITE && p) {
-                                        h.open(), r([l.K.DEEPLINK, l.K.MULTIVIBE_INVITE_ROOM_ID]);
+                                        (h.open(), r([l.K.DEEPLINK, l.K.MULTIVIBE_INVITE_ROOM_ID]));
                                         return;
                                     }
                                     y === o.v.SHOW_MULTIVIBE_PROMO && (v.open(), r([l.K.DEEPLINK]));
@@ -375,7 +375,7 @@
             'use strict';
             a.d(t, { L: () => i });
             var r = {};
-            Object.defineProperty(r, '__esModule', { value: !0 }), (r.useReturnValue = void 0), (r.useReturnValue = (e) => e()), r.__esModule;
+            (Object.defineProperty(r, '__esModule', { value: !0 }), (r.useReturnValue = void 0), (r.useReturnValue = (e) => e()), r.__esModule);
             var i = r.useReturnValue;
         },
         7027: (e, t, a) => {
@@ -393,7 +393,7 @@
                         { user: n, experiments: o, pinsCollection: l, disclaimersDictionary: u } = i;
                     if ((await n.getAbout(a), n.puid && r.setPassportUid(n.puid), await Promise.allSettled([o.getData(t), u.getDisclaimers()]), n.isAuthorized)) {
                         let e = [n.getSettings(), i.library.getData()];
-                        s && e.push(l.getData()), await Promise.allSettled(e);
+                        (s && e.push(l.getData()), await Promise.allSettled(e));
                     }
                 },
                 c = (0, r.PA)((e) => {
@@ -434,7 +434,7 @@
         },
         8152: (e, t, a) => {
             'use strict';
-            a.d(t, { AuthorizationChecker: () => u }), a(32290);
+            (a.d(t, { AuthorizationChecker: () => u }), a(32290));
             var r = a(96103),
                 i = a(21916),
                 s = a(55178);
@@ -458,13 +458,13 @@
                         [r, a],
                     ),
                     m = u.get(n.QG);
-                m.setRedirectUrl({ pathname: c, searchParams: h, host: v, tld: y }),
+                (m.setRedirectUrl({ pathname: c, searchParams: h, host: v, tld: y }),
                     (0, s.useEffect)(() => {
-                        m.disconnect(), m.observe(!1);
+                        (m.disconnect(), m.observe(!1));
                     }, [m, d.isAuthorized, d.puid]),
                     null == (t = m.setTokenOwnerLogin) || t.call(m, d.account.data.login),
                     m.setRedirectHandler(p),
-                    m.check();
+                    m.check());
             });
         },
         8623: (e) => {
@@ -644,54 +644,57 @@
                                             ],
                                         }),
                                     }),
-                                    s && (0, r.jsx)(h, {
-                                        onClick: v,
-                                        ariaLabel: d({ id: 'windows-menu.roll-up' }),
-                                        withSecondaryColor: t,
-                                        children: (0, r.jsx)('svg', {
-                                            width: '10',
-                                            height: '1',
-                                            viewBox: '0 0 10 1',
-                                            xmlns: 'http://www.w3.org/2000/svg',
-                                            className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
-                                            children: (0, r.jsx)('path', {
-                                                d: 'M0.498047 1C0.429688 1 0.364583 0.986979 0.302734 0.960938C0.244141 0.934896 0.192057 0.899089 0.146484 0.853516C0.100911 0.807943 0.0651042 0.755859 0.0390625 0.697266C0.0130208 0.635417 0 0.570312 0 0.501953C0 0.433594 0.0130208 0.370117 0.0390625 0.311523C0.0651042 0.249674 0.100911 0.195964 0.146484 0.150391C0.192057 0.101562 0.244141 0.0641276 0.302734 0.0380859C0.364583 0.0120443 0.429688 -0.000976562 0.498047 -0.000976562H9.50195C9.57031 -0.000976562 9.63379 0.0120443 9.69238 0.0380859C9.75423 0.0641276 9.80794 0.101562 9.85352 0.150391C9.89909 0.195964 9.9349 0.249674 9.96094 0.311523C9.98698 0.370117 10 0.433594 10 0.501953C10 0.570312 9.98698 0.635417 9.96094 0.697266C9.9349 0.755859 9.89909 0.807943 9.85352 0.853516C9.80794 0.899089 9.75423 0.934896 9.69238 0.960938C9.63379 0.986979 9.57031 1 9.50195 1H0.498047Z',
-                                                fill: 'currentColor',
+                                    s &&
+                                        (0, r.jsx)(h, {
+                                            onClick: v,
+                                            ariaLabel: d({ id: 'windows-menu.roll-up' }),
+                                            withSecondaryColor: t,
+                                            children: (0, r.jsx)('svg', {
+                                                width: '10',
+                                                height: '1',
+                                                viewBox: '0 0 10 1',
+                                                xmlns: 'http://www.w3.org/2000/svg',
+                                                className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
+                                                children: (0, r.jsx)('path', {
+                                                    d: 'M0.498047 1C0.429688 1 0.364583 0.986979 0.302734 0.960938C0.244141 0.934896 0.192057 0.899089 0.146484 0.853516C0.100911 0.807943 0.0651042 0.755859 0.0390625 0.697266C0.0130208 0.635417 0 0.570312 0 0.501953C0 0.433594 0.0130208 0.370117 0.0390625 0.311523C0.0651042 0.249674 0.100911 0.195964 0.146484 0.150391C0.192057 0.101562 0.244141 0.0641276 0.302734 0.0380859C0.364583 0.0120443 0.429688 -0.000976562 0.498047 -0.000976562H9.50195C9.57031 -0.000976562 9.63379 0.0120443 9.69238 0.0380859C9.75423 0.0641276 9.80794 0.101562 9.85352 0.150391C9.89909 0.195964 9.9349 0.249674 9.96094 0.311523C9.98698 0.370117 10 0.433594 10 0.501953C10 0.570312 9.98698 0.635417 9.96094 0.697266C9.9349 0.755859 9.89909 0.807943 9.85352 0.853516C9.80794 0.899089 9.75423 0.934896 9.69238 0.960938C9.63379 0.986979 9.57031 1 9.50195 1H0.498047Z',
+                                                    fill: 'currentColor',
+                                                }),
                                             }),
                                         }),
-                                    }),
-                                    s && (0, r.jsx)(h, {
-                                        onClick: y,
-                                        ariaLabel: d({ id: 'windows-menu.unwrap' }),
-                                        withSecondaryColor: t,
-                                        children: (0, r.jsx)('svg', {
-                                            width: '10',
-                                            height: '10',
-                                            viewBox: '0 0 10 10',
-                                            xmlns: 'http://www.w3.org/2000/svg',
-                                            className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
-                                            children: (0, r.jsx)('path', {
-                                                d: 'M1.47461 10C1.2793 10 1.09212 9.96094 0.913086 9.88281C0.734049 9.80143 0.576172 9.69401 0.439453 9.56055C0.30599 9.42383 0.198568 9.26595 0.117188 9.08691C0.0390625 8.90788 0 8.7207 0 8.52539V1.47461C0 1.2793 0.0390625 1.09212 0.117188 0.913086C0.198568 0.734049 0.30599 0.577799 0.439453 0.444336C0.576172 0.307617 0.734049 0.200195 0.913086 0.12207C1.09212 0.0406901 1.2793 0 1.47461 0H8.52539C8.7207 0 8.90788 0.0406901 9.08691 0.12207C9.26595 0.200195 9.4222 0.307617 9.55566 0.444336C9.69238 0.577799 9.7998 0.734049 9.87793 0.913086C9.95931 1.09212 10 1.2793 10 1.47461V8.52539C10 8.7207 9.95931 8.90788 9.87793 9.08691C9.7998 9.26595 9.69238 9.42383 9.55566 9.56055C9.4222 9.69401 9.26595 9.80143 9.08691 9.88281C8.90788 9.96094 8.7207 10 8.52539 10H1.47461ZM8.50098 8.99902C8.56934 8.99902 8.63281 8.986 8.69141 8.95996C8.75326 8.93392 8.80697 8.89811 8.85254 8.85254C8.89811 8.80697 8.93392 8.75488 8.95996 8.69629C8.986 8.63444 8.99902 8.56934 8.99902 8.50098V1.49902C8.99902 1.43066 8.986 1.36719 8.95996 1.30859C8.93392 1.24674 8.89811 1.19303 8.85254 1.14746C8.80697 1.10189 8.75326 1.06608 8.69141 1.04004C8.63281 1.014 8.56934 1.00098 8.50098 1.00098H1.49902C1.43066 1.00098 1.36556 1.014 1.30371 1.04004C1.24512 1.06608 1.19303 1.10189 1.14746 1.14746C1.10189 1.19303 1.06608 1.24674 1.04004 1.30859C1.014 1.36719 1.00098 1.43066 1.00098 1.49902V8.50098C1.00098 8.56934 1.014 8.63444 1.04004 8.69629C1.06608 8.75488 1.10189 8.80697 1.14746 8.85254C1.19303 8.89811 1.24512 8.93392 1.30371 8.95996C1.36556 8.986 1.43066 8.99902 1.49902 8.99902H8.50098Z',
-                                                fill: 'currentColor',
+                                    s &&
+                                        (0, r.jsx)(h, {
+                                            onClick: y,
+                                            ariaLabel: d({ id: 'windows-menu.unwrap' }),
+                                            withSecondaryColor: t,
+                                            children: (0, r.jsx)('svg', {
+                                                width: '10',
+                                                height: '10',
+                                                viewBox: '0 0 10 10',
+                                                xmlns: 'http://www.w3.org/2000/svg',
+                                                className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
+                                                children: (0, r.jsx)('path', {
+                                                    d: 'M1.47461 10C1.2793 10 1.09212 9.96094 0.913086 9.88281C0.734049 9.80143 0.576172 9.69401 0.439453 9.56055C0.30599 9.42383 0.198568 9.26595 0.117188 9.08691C0.0390625 8.90788 0 8.7207 0 8.52539V1.47461C0 1.2793 0.0390625 1.09212 0.117188 0.913086C0.198568 0.734049 0.30599 0.577799 0.439453 0.444336C0.576172 0.307617 0.734049 0.200195 0.913086 0.12207C1.09212 0.0406901 1.2793 0 1.47461 0H8.52539C8.7207 0 8.90788 0.0406901 9.08691 0.12207C9.26595 0.200195 9.4222 0.307617 9.55566 0.444336C9.69238 0.577799 9.7998 0.734049 9.87793 0.913086C9.95931 1.09212 10 1.2793 10 1.47461V8.52539C10 8.7207 9.95931 8.90788 9.87793 9.08691C9.7998 9.26595 9.69238 9.42383 9.55566 9.56055C9.4222 9.69401 9.26595 9.80143 9.08691 9.88281C8.90788 9.96094 8.7207 10 8.52539 10H1.47461ZM8.50098 8.99902C8.56934 8.99902 8.63281 8.986 8.69141 8.95996C8.75326 8.93392 8.80697 8.89811 8.85254 8.85254C8.89811 8.80697 8.93392 8.75488 8.95996 8.69629C8.986 8.63444 8.99902 8.56934 8.99902 8.50098V1.49902C8.99902 1.43066 8.986 1.36719 8.95996 1.30859C8.93392 1.24674 8.89811 1.19303 8.85254 1.14746C8.80697 1.10189 8.75326 1.06608 8.69141 1.04004C8.63281 1.014 8.56934 1.00098 8.50098 1.00098H1.49902C1.43066 1.00098 1.36556 1.014 1.30371 1.04004C1.24512 1.06608 1.19303 1.10189 1.14746 1.14746C1.10189 1.19303 1.06608 1.24674 1.04004 1.30859C1.014 1.36719 1.00098 1.43066 1.00098 1.49902V8.50098C1.00098 8.56934 1.014 8.63444 1.04004 8.69629C1.06608 8.75488 1.10189 8.80697 1.14746 8.85254C1.19303 8.89811 1.24512 8.93392 1.30371 8.95996C1.36556 8.986 1.43066 8.99902 1.49902 8.99902H8.50098Z',
+                                                    fill: 'currentColor',
+                                                }),
                                             }),
                                         }),
-                                    }),
-                                    s && (0, r.jsx)(h, {
-                                        className: c().closeButton,
-                                        onClick: p,
-                                        ariaLabel: d({ id: 'windows-menu.close' }),
-                                        children: (0, r.jsx)('svg', {
-                                            width: '10',
-                                            height: '10',
-                                            viewBox: '0 0 10 10',
-                                            xmlns: 'http://www.w3.org/2000/svg',
-                                            className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
-                                            children: (0, r.jsx)('path', {
-                                                d: 'M5 5.70801L0.854492 9.85352C0.756836 9.95117 0.639648 10 0.50293 10C0.359701 10 0.239258 9.9528 0.141602 9.8584C0.0472005 9.76074 0 9.6403 0 9.49707C0 9.36035 0.0488281 9.24316 0.146484 9.14551L4.29199 5L0.146484 0.854492C0.0488281 0.756836 0 0.638021 0 0.498047C0 0.429688 0.0130208 0.364583 0.0390625 0.302734C0.0651042 0.240885 0.100911 0.188802 0.146484 0.146484C0.192057 0.100911 0.245768 0.0651042 0.307617 0.0390625C0.369466 0.0130208 0.43457 0 0.50293 0C0.639648 0 0.756836 0.0488281 0.854492 0.146484L5 4.29199L9.14551 0.146484C9.24316 0.0488281 9.36198 0 9.50195 0C9.57031 0 9.63379 0.0130208 9.69238 0.0390625C9.75423 0.0651042 9.80794 0.100911 9.85352 0.146484C9.89909 0.192057 9.9349 0.245768 9.96094 0.307617C9.98698 0.366211 10 0.429688 10 0.498047C10 0.638021 9.95117 0.756836 9.85352 0.854492L5.70801 5L9.85352 9.14551C9.95117 9.24316 10 9.36035 10 9.49707C10 9.56543 9.98698 9.63053 9.96094 9.69238C9.9349 9.75423 9.89909 9.80794 9.85352 9.85352C9.8112 9.89909 9.75911 9.9349 9.69727 9.96094C9.63542 9.98698 9.57031 10 9.50195 10C9.36198 10 9.24316 9.95117 9.14551 9.85352L5 5.70801Z',
-                                                fill: 'currentColor',
+                                    s &&
+                                        (0, r.jsx)(h, {
+                                            className: c().closeButton,
+                                            onClick: p,
+                                            ariaLabel: d({ id: 'windows-menu.close' }),
+                                            children: (0, r.jsx)('svg', {
+                                                width: '10',
+                                                height: '10',
+                                                viewBox: '0 0 10 10',
+                                                xmlns: 'http://www.w3.org/2000/svg',
+                                                className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
+                                                children: (0, r.jsx)('path', {
+                                                    d: 'M5 5.70801L0.854492 9.85352C0.756836 9.95117 0.639648 10 0.50293 10C0.359701 10 0.239258 9.9528 0.141602 9.8584C0.0472005 9.76074 0 9.6403 0 9.49707C0 9.36035 0.0488281 9.24316 0.146484 9.14551L4.29199 5L0.146484 0.854492C0.0488281 0.756836 0 0.638021 0 0.498047C0 0.429688 0.0130208 0.364583 0.0390625 0.302734C0.0651042 0.240885 0.100911 0.188802 0.146484 0.146484C0.192057 0.100911 0.245768 0.0651042 0.307617 0.0390625C0.369466 0.0130208 0.43457 0 0.50293 0C0.639648 0 0.756836 0.0488281 0.854492 0.146484L5 4.29199L9.14551 0.146484C9.24316 0.0488281 9.36198 0 9.50195 0C9.57031 0 9.63379 0.0130208 9.69238 0.0390625C9.75423 0.0651042 9.80794 0.100911 9.85352 0.146484C9.89909 0.192057 9.9349 0.245768 9.96094 0.307617C9.98698 0.366211 10 0.429688 10 0.498047C10 0.638021 9.95117 0.756836 9.85352 0.854492L5.70801 5L9.85352 9.14551C9.95117 9.24316 10 9.36035 10 9.49707C10 9.56543 9.98698 9.63053 9.96094 9.69238C9.9349 9.75423 9.89909 9.80794 9.85352 9.85352C9.8112 9.89909 9.75911 9.9349 9.69727 9.96094C9.63542 9.98698 9.57031 10 9.50195 10C9.36198 10 9.24316 9.95117 9.14551 9.85352L5 5.70801Z',
+                                                    fill: 'currentColor',
+                                                }),
                                             }),
                                         }),
-                                    }),
                                 ],
                             }),
                     });
@@ -735,10 +738,10 @@
                     { canBack: g, canForward: b, moveBack: E, moveForward: S } = (0, h.J)(p),
                     _ = (0, n.useRef)(null),
                     A = (0, u.c)((e) => {
-                        e.stopPropagation(), E();
+                        (e.stopPropagation(), E());
                     }),
                     P = (0, u.c)((e) => {
-                        e.stopPropagation(), S();
+                        (e.stopPropagation(), S());
                     });
                 return (
                     (0, n.useEffect)(() => {
@@ -778,7 +781,7 @@
             'use strict';
             a.d(t, { V: () => r });
             var r = (function (e) {
-                return (e.WINDOWS = 'Windows'), (e.MACOS = 'MacOS'), (e.LINUX = 'Linux'), e;
+                return ((e.WINDOWS = 'Windows'), (e.MACOS = 'MacOS'), (e.LINUX = 'Linux'), e);
             })({});
         },
         14190: (e, t, a) => {
@@ -942,9 +945,9 @@
                 b = a(57594);
             let E = (e) => {
                     {
-                        document.body.classList.remove('desktop'),
+                        (document.body.classList.remove('desktop'),
                             e.setLayout(window.innerWidth < p.P.Mobile ? p.u.Mobile : p.u.Desktop),
-                            e.setIsLandscape(window.matchMedia('(orientation: landscape)').matches);
+                            e.setIsLandscape(window.matchMedia('(orientation: landscape)').matches));
                         let t = window.screen.availHeight || window.innerHeight;
                         e.setIsMobileLandscapeHeight(t < 450);
                     }
@@ -971,7 +974,7 @@
                             }, 100),
                         [d],
                     );
-                    (0, n.useEffect)(() => {
+                    ((0, n.useEffect)(() => {
                         (function (e) {
                             if (!(null == e ? void 0 : e.isBrowser) || !e.name || !e.version) return !1;
                             let t = u[e.name];
@@ -991,7 +994,7 @@
                                 }
                             ),
                             [M],
-                        );
+                        ));
                     let L = (0, n.useMemo)(
                         () => ({
                             defaultLayoutRef: c,
@@ -1049,7 +1052,7 @@
             let v = { [h.M.MAIN]: c(), [h.M.TRAILER]: c(), [h.M.VIDEO_PLAYER]: c(), [h.M.IMAGE_SLIDER]: c(), [h.M.PROMO_LANDING]: c() };
             class y {
                 constructor(e) {
-                    (0, o._)(this, 'code', void 0),
+                    ((0, o._)(this, 'code', void 0),
                         (0, o._)(this, 'ctrlKey', void 0),
                         (0, o._)(this, 'shiftKey', void 0),
                         (0, o._)(this, 'altKey', void 0),
@@ -1058,7 +1061,7 @@
                         (this.altKey = !!e.altKey),
                         (this.ctrlKey = !!e.ctrlKey),
                         (this.shiftKey = !!e.shiftKey),
-                        (this.metaKey = !!e.metaKey);
+                        (this.metaKey = !!e.metaKey));
                 }
             }
             class p {
@@ -1131,7 +1134,7 @@
                     window.removeEventListener('keydown', this.handle);
                 }
                 constructor(e) {
-                    (0, o._)(this, 'store', void 0), (0, o._)(this, 'listenersGroups', v), (this.store = e.getFlatStore()), (this.handle = this.handle.bind(this));
+                    ((0, o._)(this, 'store', void 0), (0, o._)(this, 'listenersGroups', v), (this.store = e.getFlatStore()), (this.handle = this.handle.bind(this)));
                 }
             }
             let m = {
@@ -1180,7 +1183,7 @@
                                 o = (0, S.N)(),
                                 l = (0, b.d)(),
                                 u = o.get(E.oo);
-                            (0, s.useEffect)(
+                            ((0, s.useEffect)(
                                 () => (
                                     null == t ||
                                         t.addShortcutsListener(i, d.l.DECREASE_VOLUME, () => {
@@ -1196,9 +1199,9 @@
                                             void 0 !== e && (await l(a, e, r));
                                         }),
                                     () => {
-                                        null == t || t.removeShortcutsListener(i, d.l.DECREASE_VOLUME),
+                                        (null == t || t.removeShortcutsListener(i, d.l.DECREASE_VOLUME),
                                             null == t || t.removeShortcutsListener(i, d.l.INCREASE_VOLUME),
-                                            null == t || t.removeShortcutsListener(i, d.l.TOGGLE_MUTE);
+                                            null == t || t.removeShortcutsListener(i, d.l.TOGGLE_MUTE));
                                     }
                                 ),
                                 [t, r, n, u, l, a, i],
@@ -1229,13 +1232,13 @@
                                                         (await (null == n ? void 0 : n.slideForward(2, r)));
                                                 }),
                                             () => {
-                                                null == t || t.removeShortcutsListener(i, d.l.MOVE_FORWARD),
+                                                (null == t || t.removeShortcutsListener(i, d.l.MOVE_FORWARD),
                                                     null == t || t.removeShortcutsListener(i, d.l.MOVE_BACKWARD),
                                                     null == t || t.removeShortcutsListener(i, d.l.SLIDE_BACKWARD),
-                                                    null == t || t.removeShortcutsListener(i, d.l.SLIDE_FORWARD);
+                                                    null == t || t.removeShortcutsListener(i, d.l.SLIDE_FORWARD));
                                             }
                                         );
-                                }, [t, n, u, a.isGenerativeContext, r, i]);
+                                }, [t, n, u, a.isGenerativeContext, r, i]));
                         })({ controller: i, sonataState: a, groupId: h.M.MAIN }),
                         (0, s.useEffect)(
                             () => (
@@ -1252,7 +1255,7 @@
         },
         19476: (e, t, a) => {
             'use strict';
-            a.r(t), a.d(t, { default: () => y });
+            (a.r(t), a.d(t, { default: () => y }));
             var r = a(32290),
                 i = a(63618),
                 s = a(55178),
@@ -1376,7 +1379,7 @@
             };
         },
         22692: (e, t, a) => {
-            Promise.resolve().then(a.bind(a, 63397)),
+            (Promise.resolve().then(a.bind(a, 63397)),
                 Promise.resolve().then(a.bind(a, 46456)),
                 Promise.resolve().then(a.bind(a, 29680)),
                 Promise.resolve().then(a.bind(a, 54441)),
@@ -1423,7 +1426,7 @@
                 Promise.resolve().then(a.bind(a, 9634)),
                 Promise.resolve().then(a.bind(a, 17584)),
                 Promise.resolve().then(a.bind(a, 79884)),
-                Promise.resolve().then(a.bind(a, 64170));
+                Promise.resolve().then(a.bind(a, 64170)));
         },
         22748: (e, t, a) => {
             'use strict';
@@ -1502,7 +1505,7 @@
                                 r = t[2] || '';
                             if (!a) return e;
                             let i = new URLSearchParams(r.startsWith('?') ? r.substring(1) : '');
-                            return i.set('tab', a), '/?'.concat(i.toString());
+                            return (i.set('tab', a), '/?'.concat(i.toString()));
                         },
                     ],
                     [/^\/home$/, () => u.Z.main.href],
@@ -1548,7 +1551,7 @@
                     let { version: t, formatMessage: a, closeToast: n } = e,
                         o = (0, i.useCallback)(() => {
                             var e;
-                            null == (e = window.desktopEvents) || e.send(s.E.INSTALL_UPDATE), null == n || n();
+                            (null == (e = window.desktopEvents) || e.send(s.E.INSTALL_UPDATE), null == n || n());
                         }, [n]),
                         l = (0, i.useMemo)(
                             () =>
@@ -1582,14 +1585,14 @@
                     let { version: t, formatMessage: a, closeToast: n } = e,
                         [o, l] = (0, i.useState)(-1),
                         u = (0, i.useCallback)(() => {
-                            window.desktopEvents?.send?.(s.E.INSTALL_MOD_UPDATE), null == n || n();
+                            (window.desktopEvents?.send?.(s.E.INSTALL_MOD_UPDATE), null == n || n());
                         }, [n]),
                         d = (0, i.useCallback)(() => {
                             window.desktopEvents?.send?.(s.E.DOWNLOAD_MOD_UPDATE);
                         }, []),
                         c = (e) => {
                             let t = a({ id: 'offline.download' });
-                            return e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Установить'), t;
+                            return (e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Установить'), t);
                         },
                         h = (0, i.useMemo)(
                             () =>
@@ -1620,7 +1623,7 @@
                         v = (0, i.useCallback)((e, t, a, r = 0) => {
                             if ('modUpdateToast' !== t) return;
                             if (window.dedupeNonces && window.dedupeNonces[t] === r) return;
-                            window.dedupeNonces || (window.dedupeNonces = {}), r && (window.dedupeNonces[t] = r), l(a);
+                            (window.dedupeNonces || (window.dedupeNonces = {}), r && (window.dedupeNonces[t] = r), l(a));
                         }, []);
                     return (
                         (0, i.useEffect)(() => {
@@ -1680,7 +1683,7 @@
                         [y, g] = (0, i.useState)('Ожидание...'),
                         k = '__pulseToastProgressCache',
                         I = (0, i.useCallback)(() => {
-                            null == l || l(), d && (null == t || t());
+                            (null == l || l(), d && (null == t || t()));
                         }, [d, l, t]),
                         C = (0, i.useMemo)(
                             () =>
@@ -1708,12 +1711,12 @@
                                 if (t !== a) return;
                                 if (s && c && s !== c) return;
                                 if (window.dedupeNonces && window.dedupeNonces[t] === r) return;
-                                window.dedupeNonces || (window.dedupeNonces = {}),
+                                (window.dedupeNonces || (window.dedupeNonces = {}),
                                     r && (window.dedupeNonces[t] = r),
                                     window[k] || (window[k] = {}),
                                     (window[k][t] = { progress: n, label: i }),
                                     v(n),
-                                    i && g(i);
+                                    i && g(i));
                             },
                             [a, c],
                         ),
@@ -1721,7 +1724,7 @@
                             (e, n, r = 0, i = 0) => {
                                 if (i && c && i !== c) return;
                                 if (window['onBasicToastDismiss' + a] === r) return;
-                                r && (window['onBasicToastDismiss' + a] = r), n === a && (window[k] && delete window[k][a], null == t || t());
+                                (r && (window['onBasicToastDismiss' + a] = r), n === a && (window[k] && delete window[k][a], null == t || t()));
                             },
                             [t, a, c],
                         );
@@ -1863,7 +1866,7 @@
                 {
                     let { theme: t } = (0, W.W)(),
                         a = (0, I.N)().get(k.vg);
-                    (() => {
+                    ((() => {
                         let [e, t] = (0, i.useState)(!1),
                             {
                                 releaseNotes: { setTranslationsReleaseNotes: a, isReady: r, modal: n, setSortedDescReleaseNotesKeys: o },
@@ -1871,11 +1874,11 @@
                             l = (0, i.useCallback)(
                                 (e, r) => {
                                     let { needToShowReleaseNotes: i, sortedDescReleaseNotesKeys: s, translationsReleaseNotes: n } = r;
-                                    a(n), o(s), i && t(!0);
+                                    (a(n), o(s), i && t(!0));
                                 },
                                 [o, a],
                             );
-                        (0, i.useEffect)(() => {
+                        ((0, i.useEffect)(() => {
                             e && r && (n.open(), t(!1));
                         }, [r, n, e]),
                             (0, i.useEffect)(() => {
@@ -1887,7 +1890,7 @@
                                         null == (e = window.desktopEvents) || e.off(s.E.LOAD_RELEASE_NOTES, l);
                                     }
                                 );
-                            }, [l]);
+                            }, [l]));
                     })(),
                         (() => {
                             let { formatMessage: e } = (0, y.A)(),
@@ -1906,8 +1909,8 @@
                                 h = (0, i.useCallback)(
                                     (t, o, l, u = 0) => {
                                         if (window.modUpdateAvailableEventDedupeNonce === u) return;
-                                        u && (window.modUpdateAvailableEventDedupeNonce = u),
-                                            a((0, r.jsx)(modUpdateToast, { formatMessage: e, version: `${o} -> ${l}`, closeToast: n }), { containerId: p.u.IMPORTANT });
+                                        (u && (window.modUpdateAvailableEventDedupeNonce = u),
+                                            a((0, r.jsx)(modUpdateToast, { formatMessage: e, version: `${o} -> ${l}`, closeToast: n }), { containerId: p.u.IMPORTANT }));
                                     },
                                     [e, a, n],
                                 ),
@@ -1917,7 +1920,7 @@
                                 g = (0, i.useCallback)(
                                     (e, t = 'GPU_STALL', a = 0) => {
                                         if (window.onGPUStallEventDedupeNonce === a) return;
-                                        a && (window.onGPUStallEventDedupeNonce = a),
+                                        (a && (window.onGPUStallEventDedupeNonce = a),
                                             o(
                                                 (0, r.jsx)(toastWithProgress, {
                                                     toastID: 'GPU_STALL',
@@ -1926,14 +1929,14 @@
                                                     onButtonClick: v,
                                                 }),
                                                 { containerId: p.u.IMPORTANT },
-                                            );
+                                            ));
                                     },
                                     [o, v],
                                 ),
                                 S = (0, i.useCallback)(
                                     (e, t, a, n, o = 0, l, d) => {
                                         if (window['onBasicToastCreate' + t] === o) return;
-                                        o && (window['onBasicToastCreate' + t] = o),
+                                        (o && (window['onBasicToastCreate' + t] = o),
                                             window['onBasicToastDismiss' + t] && delete window['onBasicToastDismiss' + t],
                                             window.dedupeNonces && delete window.dedupeNonces[t],
                                             window.__pulseToastProgressCache && delete window.__pulseToastProgressCache[t],
@@ -1947,11 +1950,11 @@
                                                     createNonce: o,
                                                 }),
                                                 { containerId: p.u.IMPORTANT },
-                                            );
+                                            ));
                                     },
                                     [u],
                                 );
-                            (0, i.useEffect)(() => {
+                            ((0, i.useEffect)(() => {
                                 var e;
                                 return (
                                     null == (e = window.desktopEvents) || e.on(s.E.UPDATE_AVAILABLE, c),
@@ -1990,12 +1993,12 @@
                                             null == (e = window.desktopEvents) || e.off(s.E.GPU_STALL, g);
                                         }
                                     );
-                                }, [g]);
+                                }, [g]));
                         })(),
                         (() => {
                             let { library: e, experiments: t } = (0, T.g)(),
                                 a = (0, i.useCallback)(() => {
-                                    t.getData(), e.getData(), (0, x.Q)();
+                                    (t.getData(), e.getData(), (0, x.Q)());
                                 }, [t, e]);
                             (0, i.useEffect)(() => {
                                 var e;
@@ -2103,14 +2106,14 @@
                             }, [t]);
                         })(),
                         (0, i.useEffect)(() => {
-                            ((e) => {
+                            (((e) => {
                                 var t;
                                 null == (t = window.desktopEvents) || t.send(s.E.APPLICATION_READY, e);
                             })(e),
                                 document.addEventListener('auxclick', (e) => e.preventDefault()),
                                 document.addEventListener('click', (e) => {
                                     (e.ctrlKey || e.metaKey || e.shiftKey) && e.preventDefault();
-                                });
+                                }));
                         }, [e]),
                         (0, i.useEffect)(() => {
                             let e = (0, C.H)();
@@ -2123,7 +2126,7 @@
                                     window.desktopEvents.send(s.E.APPLICATION_THEME, t);
                                 })(t),
                                 a.count(t, 'appTheme'));
-                        }, [t]);
+                        }, [t]));
                 }
                 return (0, r.jsx)(U, {});
             };
@@ -2134,21 +2137,21 @@
             var r = a(95415),
                 i = a(87748),
                 s = (function (e) {
-                    return (e.WEB = 'YandexMusicWebNext'), (e.DESKTOP = 'YandexMusicDesktopApp'), e;
+                    return ((e.WEB = 'YandexMusicWebNext'), (e.DESKTOP = 'YandexMusicDesktopApp'), e);
                 })({});
             let n = () => ''.concat(s.DESKTOP).concat((0, i.t)((0, r.u)()));
         },
         25718: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { e: () => r }),
+            (a.d(t, { e: () => r }),
                 (function (e) {
-                    (e.AUDIO = 'audio'), (e.DOWNLOADED_AUDIO = 'downloadedAudio'), (e.HLS = 'hls'), (e.CLIP = 'clip');
-                })(r || (r = {}));
+                    ((e.AUDIO = 'audio'), (e.DOWNLOADED_AUDIO = 'downloadedAudio'), (e.HLS = 'hls'), (e.CLIP = 'clip'));
+                })(r || (r = {})));
         },
         26452: (e, t, a) => {
             'use strict';
-            a.d(t, { ErrorBoosterScript: () => r }), a(32290);
+            (a.d(t, { ErrorBoosterScript: () => r }), a(32290));
             let r = (e) => {
                 let { nonce: t, assetPrefix: a, errorBooster: r } = e;
                 return null;
@@ -2178,7 +2181,7 @@
                 let t = (0, r.useRef)(!1),
                     a = (0, i.z)();
                 (0, r.useEffect)(() => {
-                    e && (null == a || a.disable(), (t.current = !0)), !e && t.current && (null == a || a.enable(), (t.current = !1));
+                    (e && (null == a || a.disable(), (t.current = !0)), !e && t.current && (null == a || a.enable(), (t.current = !1)));
                 }, [e, a]);
             };
         },
@@ -2209,7 +2212,7 @@
             let s = () => {
                 let e,
                     t = (0, r.H)() || '1.0.0';
-                return (e = (0, i.y)()), ''.concat(e, '/').concat(t);
+                return ((e = (0, i.y)()), ''.concat(e, '/').concat(t));
             };
         },
         35174: (e, t, a) => {
@@ -2225,7 +2228,7 @@
                         if ('code' in t && t.code === i.lo.MISSING_DATA) return;
                         let a = t && 'object' == typeof t && 'code' in t && t.code,
                             r = 'IntlProviderError';
-                        a && (r += ':'.concat(a)), e.error(r, { error: null == t ? void 0 : t.message, stack: null == t ? void 0 : t.stack });
+                        (a && (r += ':'.concat(a)), e.error(r, { error: null == t ? void 0 : t.message, stack: null == t ? void 0 : t.stack }));
                     },
                     [e],
                 );
@@ -2286,7 +2289,7 @@
                                         { duration: 1e3, iterations: 5, easing: 'ease-in-out' },
                                     );
                                 };
-                            return (t = requestAnimationFrame(a)), () => cancelAnimationFrame(t);
+                            return ((t = requestAnimationFrame(a)), () => cancelAnimationFrame(t));
                         }, [e]);
                     })(i);
                     let n = (0, s.useCallback)(() => {
@@ -2345,7 +2348,7 @@
                             .map((e) => e[0])
                             .filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e));
                     } catch (e) {
-                        return console.error('[PulseSync] Failed to get experiment keys from store', e), [];
+                        return (console.error('[PulseSync] Failed to get experiment keys from store', e), []);
                     }
                 },
                 normalizeSearchValue = (e) =>
@@ -2448,7 +2451,7 @@
                                         h((e) => {
                                             if (u) return !1;
                                             let t = !e;
-                                            return t && d && d(), t;
+                                            return (t && d && d(), t);
                                         }),
                                     onKeyDown: (e) => {
                                         if (u) return;
@@ -2456,7 +2459,7 @@
                                             (e.preventDefault(),
                                             h((e) => {
                                                 let t = !e;
-                                                return t && d && d(), t;
+                                                return (t && d && d(), t);
                                             }));
                                     },
                                     className: ''.concat(u ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button', ' ', x().selectButton),
@@ -2482,7 +2485,7 @@
                                                             id: e.value,
                                                             'aria-selected': n === e.value,
                                                             onClick: (t) => {
-                                                                t.stopPropagation(), i(e.value), h(!1);
+                                                                (t.stopPropagation(), i(e.value), h(!1));
                                                             },
                                                             children: [
                                                                 (0, r.jsx)('span', { children: e.label }),
@@ -2528,7 +2531,7 @@
                             value: v,
                             options: p,
                             onChange: (e) => {
-                                d(e), o(t, e);
+                                (d(e), o(t, e));
                             },
                             onOpen: () => l(t),
                         })
@@ -2551,22 +2554,22 @@
                                 try {
                                     i = JSON.parse(String(s.value || '{}'));
                                 } catch (e) {
-                                    null == (a = y.current) || a.setCustomValidity('Невалидный JSON в поле value'), null == (r = y.current) || r.reportValidity();
+                                    (null == (a = y.current) || a.setCustomValidity('Невалидный JSON в поле value'), null == (r = y.current) || r.reportValidity());
                                     return;
                                 }
                                 null == (t = v.current) || t.reset();
                                 let n = (0, C.jU)({ name: String(s.name), group: String(s.group), value: i });
-                                h.set(c.c.OverwrittenExperiments, { ...(0, k.HO)(p), ...n }), o.updateOverwrittenExperiments(s.name, n[s.name]);
+                                (h.set(c.c.OverwrittenExperiments, { ...(0, k.HO)(p), ...n }), o.updateOverwrittenExperiments(s.name, n[s.name]));
                             },
                             [h, p, o],
                         ),
                         f = (0, s.useCallback)(() => {
                             let e = { ...(0, k.HO)(p) };
-                            delete e[t.name], o.deleteOverwrittenExperiments(t.name), h.set(c.c.OverwrittenExperiments, { ...e });
+                            (delete e[t.name], o.deleteOverwrittenExperiments(t.name), h.set(c.c.OverwrittenExperiments, { ...e }));
                         }, [p, t.name, o, h]),
                         g = (0, s.useCallback)(() => {
                             var e, t;
-                            null == (e = y.current) || e.setCustomValidity(''), null == (t = y.current) || t.reportValidity();
+                            (null == (e = y.current) || e.setCustomValidity(''), null == (t = y.current) || t.reportValidity());
                         }, []);
                     return (0, r.jsxs)('form', {
                         className: x().overrideForm,
@@ -2711,7 +2714,7 @@
                         f = s.useCallback(
                             (e) => {
                                 let a = getExperimentObject(t.overwrittenExperiments);
-                                delete a[e], t.deleteOverwrittenExperiments(e), storage.set(c.c.OverwrittenExperiments, { ...a });
+                                (delete a[e], t.deleteOverwrittenExperiments(e), storage.set(c.c.OverwrittenExperiments, { ...a }));
                             },
                             [t, storage],
                         ),
@@ -2721,8 +2724,8 @@
                                 let r = null == v[e] ? void 0 : v[e].groups,
                                     i = null == r ? void 0 : r[a],
                                     s = (0, C.jU)({ name: e, group: a, value: i && 'object' == typeof i ? i : { title: a } });
-                                storage.set(c.c.OverwrittenExperiments, { ...getExperimentObject(t.overwrittenExperiments), ...s }),
-                                    t.updateOverwrittenExperiments(e, s[e]);
+                                (storage.set(c.c.OverwrittenExperiments, { ...getExperimentObject(t.overwrittenExperiments), ...s }),
+                                    t.updateOverwrittenExperiments(e, s[e]));
                             },
                             [f, v, storage, t],
                         ),
@@ -2762,13 +2765,13 @@
                                             })
                                             .sort((e, t) => e.value.localeCompare(t.value)),
                                         s = { status: 'loaded', options: i, groups: r };
-                                    return EXPERIMENT_VARIANTS_CACHE.set(e, s), s;
+                                    return (EXPERIMENT_VARIANTS_CACHE.set(e, s), s);
                                 })();
                                 EXPERIMENT_VARIANTS_PENDING.set(e, t);
                                 let a = await t;
                                 y((t) => ({ ...t, [e]: a }));
                             } catch (t) {
-                                console.error('[PulseSync] Failed to load experiment variants', e, t), y((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'error' } }));
+                                (console.error('[PulseSync] Failed to load experiment variants', e, t), y((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'error' } })));
                             } finally {
                                 EXPERIMENT_VARIANTS_PENDING.delete(e);
                             }
@@ -2880,7 +2883,7 @@
                     let e = (0, u.N)().get(l.oo),
                         t = 'on' === e.get(c.c.AllowAnalyticsLogs),
                         a = (0, s.useCallback)(() => {
-                            e.set(c.c.AllowAnalyticsLogs, t ? 'default' : 'on'), window.location.reload();
+                            (e.set(c.c.AllowAnalyticsLogs, t ? 'default' : 'on'), window.location.reload());
                         }, [e, t]);
                     return (0, r.jsxs)(n.$, {
                         size: 'xxs',
@@ -2895,7 +2898,7 @@
                     let e = (0, u.N)().get(l.oo),
                         t = e.get(c.c.EnableCrossfadeDebugMode),
                         a = (0, s.useCallback)(() => {
-                            e.set(c.c.EnableCrossfadeDebugMode, !t), window.location.reload();
+                            (e.set(c.c.EnableCrossfadeDebugMode, !t), window.location.reload());
                         }, [e, t]);
                     return (0, r.jsxs)(n.$, {
                         size: 'xxs',
@@ -2910,7 +2913,7 @@
                     let e = (0, u.N)().get(l.oo),
                         t = e.get(c.c.EnableBurstDebounceDebugMode),
                         a = (0, s.useCallback)(() => {
-                            e.set(c.c.EnableBurstDebounceDebugMode, !t), window.location.reload();
+                            (e.set(c.c.EnableBurstDebounceDebugMode, !t), window.location.reload());
                         }, [e, t]);
                     return (0, r.jsxs)(n.$, {
                         size: 'xxs',
@@ -2925,7 +2928,7 @@
                     let e = (0, u.N)().get(l.oo),
                         t = e.get(c.c.EnableMetricsPluginDebugMode),
                         a = (0, s.useCallback)(() => {
-                            e.set(c.c.EnableMetricsPluginDebugMode, !t), window.location.reload();
+                            (e.set(c.c.EnableMetricsPluginDebugMode, !t), window.location.reload());
                         }, [e, t]);
                     return (0, r.jsxs)(n.$, {
                         size: 'xxs',
@@ -2940,7 +2943,7 @@
                     let e = (0, u.N)().get(l.oo),
                         t = e.get(c.c.EnableYnisonMetricsDebugMode),
                         a = (0, s.useCallback)(() => {
-                            e.set(c.c.EnableYnisonMetricsDebugMode, !t), window.location.reload();
+                            (e.set(c.c.EnableYnisonMetricsDebugMode, !t), window.location.reload());
                         }, [e, t]);
                     return (0, r.jsxs)(n.$, {
                         size: 'xxs',
@@ -2957,7 +2960,7 @@
                             modals: { overwrittenExperimentsModal: a },
                         } = (0, d.g)(),
                         i = (0, s.useCallback)(() => {
-                            a.open(), t();
+                            (a.open(), t());
                         }, [a, t]);
                     return (0, r.jsx)(n.$, { size: 'xxs', className: v().block, variant: 'default', isBlock: !0, onClick: i, children: 'Переопределение экспериментов' });
                 }),
@@ -3223,7 +3226,7 @@
                     return e ? (0, i.jsx)(t, {}) : a;
                 }
                 constructor(...e) {
-                    super(...e), (0, r._)(this, 'state', { hasError: !1 });
+                    (super(...e), (0, r._)(this, 'state', { hasError: !1 }));
                 }
             }
             let u = (function (e) {
@@ -3231,7 +3234,7 @@
                     let a = (0, o.N)().get(n.Zf);
                     return (0, i.jsx)(e, { ...t, logger: a });
                 };
-                return (t.displayName = 'withContainer('.concat(e.displayName || e.name || 'Component', ')')), t;
+                return ((t.displayName = 'withContainer('.concat(e.displayName || e.name || 'Component', ')')), t);
             })(l);
         },
         39231: (e, t, a) => {
@@ -3256,7 +3259,7 @@
             var r = a(75314),
                 i = a(14257);
             let s = (e) => {
-                document.body.classList.remove(...Object.values(r.o)), e && Object.values(i.S).includes(e) && document.body.classList.add(r.o[e]);
+                (document.body.classList.remove(...Object.values(r.o)), e && Object.values(i.S).includes(e) && document.body.classList.add(r.o[e]));
             };
         },
         43564: (e, t, a) => {
@@ -3296,7 +3299,7 @@
                     { isFreemium: O } = (0, v.X)(),
                     [M, L] = (0, i.useState)(null),
                     F = (0, u.c)(() => (D.modal.isOpened ? y.u.FULLSCREEN_ERROR : y.u.ERROR));
-                (0, i.useEffect)(() => {
+                ((0, i.useEffect)(() => {
                     let e =
                         null == T
                             ? void 0
@@ -3319,7 +3322,7 @@
                         return () => {
                             null == e || e();
                         };
-                    }, [M, w]);
+                    }, [M, w]));
                 let B = (0, u.c)(async (e) => {
                         try {
                             await (null == T
@@ -3368,7 +3371,7 @@
                             null == P || P();
                             return;
                         }
-                        w.setIsApplying(!0), await B(S), w.setIsApplying(!1);
+                        (w.setIsApplying(!0), await B(S), w.setIsApplying(!1));
                     }),
                     G = (0, u.c)(async (e, t) => {
                         var a;
@@ -3386,7 +3389,7 @@
                                     : [...w.meta.seeds];
                             }
                         else r = [e];
-                        M ? (await q(r), await V(!0)) : await B(r), w.setIsApplying(!1);
+                        (M ? (await q(r), await V(!0)) : await B(r), w.setIsApplying(!1));
                     });
                 return {
                     isVibeContext: U,
@@ -3396,7 +3399,7 @@
                     togglePlay: Y,
                     resetContext: (0, u.c)(async function () {
                         let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [f.M1];
-                        w.setIsApplying(!0), M ? (await q(e), await V(!0)) : await B(e), w.setIsApplying(!1);
+                        (w.setIsApplying(!0), M ? (await q(e), await V(!0)) : await B(e), w.setIsApplying(!1));
                     }),
                     applySetting: G,
                     playSeeds: (0, u.c)(async (e) => {
@@ -3405,7 +3408,7 @@
                             null == P || P();
                             return;
                         }
-                        w.setIsApplying(!0), M ? (await q(t), await V(!0)) : await B(t), w.setIsApplying(!1);
+                        (w.setIsApplying(!0), M ? (await q(t), await V(!0)) : await B(t), w.setIsApplying(!1));
                     }),
                 };
             };
@@ -3424,13 +3427,13 @@
                         var i, s;
                         if (void 0 !== (null == (i = window.Ya) ? void 0 : i.Metrika2) && !t.value)
                             try {
-                                (e = new window.Ya.Metrika2({ ...r })),
+                                ((e = new window.Ya.Metrika2({ ...r })),
                                     (t.value = !0),
                                     (s = e),
                                     a.forEach((e) => {
                                         e(s);
                                     }),
-                                    (a.length = 0);
+                                    (a.length = 0));
                             } catch (e) {
                                 ('string' == typeof e || e instanceof Error) && r.logger.error(e);
                             }
@@ -3469,10 +3472,10 @@
         44884: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { b: () => r }),
+            (a.d(t, { b: () => r }),
                 (function (e) {
-                    (e.Album = 'album'), (e.Artist = 'artist'), (e.Playlist = 'playlist'), (e.Radio = 'fm_radio'), (e.Other = 'other'), (e.Search = 'search');
-                })(r || (r = {}));
+                    ((e.Album = 'album'), (e.Artist = 'artist'), (e.Playlist = 'playlist'), (e.Radio = 'fm_radio'), (e.Other = 'other'), (e.Search = 'search'));
+                })(r || (r = {})));
         },
         44989: (e, t, a) => {
             'use strict';
@@ -3486,13 +3489,13 @@
                 },
                 n = {},
                 o = {};
-            (() => {
-                Object.defineProperty(o, '__esModule', { value: !0 }), (o.useToggle = void 0);
+            ((() => {
+                (Object.defineProperty(o, '__esModule', { value: !0 }), (o.useToggle = void 0));
                 let e = (function e(t) {
                     var a = n[t];
                     if (void 0 !== a) return a.exports;
                     var r = (n[t] = { exports: {} });
-                    return s[t](r, r.exports, e), r.exports;
+                    return (s[t](r, r.exports, e), r.exports);
                 })(810);
                 o.useToggle = (t) => {
                     let [a, r] = (0, e.useState)(t);
@@ -3511,7 +3514,7 @@
                     return { state: a, toggle: i, setState: r, toggleTrue: s, toggleFalse: n };
                 };
             })(),
-                o.__esModule;
+                o.__esModule);
             var l = o.useToggle;
         },
         45066: (e, t, a) => {
@@ -3598,7 +3601,7 @@
                     } = (0, n.g)();
                 return (
                     (0, r.useEffect)(() => {
-                        a.reset(), e.hit(t);
+                        (a.reset(), e.hit(t));
                     }, [t, e, a]),
                     null
                 );
@@ -3635,7 +3638,7 @@
                     let i = m.get(u.c.Offer);
                     if (null === i) return;
                     let { target: s, serviceSessionId: n, tariffOfferName: o, isSilent: l, offersBatchId: p, offersPositionIds: f } = i;
-                    m.remove(u.c.Offer), t(s), d(l), r(n), c(p), h(f), o && a(o), e.open();
+                    (m.remove(u.c.Offer), t(s), d(l), r(n), c(p), h(f), o && a(o), e.open());
                 }, [y, m, e, a, t, r, d, c, h, v.isAuthorized]);
             });
         },
@@ -3845,7 +3848,7 @@
                         i = () => {
                             var e, t;
                             let r = null != (t = null == (e = window.__PAGE_STATE_PATCHES__) ? void 0 : e[a]) ? t : [];
-                            return window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[a], r;
+                            return (window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[a], r);
                         };
                     return {
                         pageStoreProvider: (e) => {
@@ -4018,7 +4021,7 @@
                     ).json();
                 }
                 constructor(e, t) {
-                    super(e, t), (0, r._)(this, 'httpClient', void 0), (0, r._)(this, 'config', void 0), (this.httpClient = e), (this.config = t);
+                    (super(e, t), (0, r._)(this, 'httpClient', void 0), (0, r._)(this, 'config', void 0), (this.httpClient = e), (this.config = t));
                 }
             }
         },
@@ -4075,7 +4078,7 @@
             a.d(t, { WebInitializer: () => o });
             var r = a(32290),
                 i = a(96103);
-            a(19379), a(34186);
+            (a(19379), a(34186));
             var s = a(57594);
             let n = (0, i.PA)((e) => {
                     let { children: t, userIp: a } = e,
@@ -4111,13 +4114,13 @@
                 },
                 n = {},
                 o = {};
-            (() => {
-                Object.defineProperty(o, '__esModule', { value: !0 }), (o.useForceUpdateRef = void 0);
+            ((() => {
+                (Object.defineProperty(o, '__esModule', { value: !0 }), (o.useForceUpdateRef = void 0));
                 let e = (function e(t) {
                     var a = n[t];
                     if (void 0 !== a) return a.exports;
                     var r = (n[t] = { exports: {} });
-                    return s[t](r, r.exports, e), r.exports;
+                    return (s[t](r, r.exports, e), r.exports);
                 })(810);
                 o.useForceUpdateRef = () => {
                     let [t, a] = (0, e.useState)(null);
@@ -4129,7 +4132,7 @@
                     ];
                 };
             })(),
-                o.__esModule;
+                o.__esModule);
             var l = o.useForceUpdateRef;
         },
         55499: (e, t, a) => {
@@ -4139,12 +4142,12 @@
                 i = a(25718);
             class s {
                 constructor({ data: e }) {
-                    (0, r._)(this, 'data', void 0),
+                    ((0, r._)(this, 'data', void 0),
                         (0, r._)(this, 'mediaElementErrorReloadCounter', 0),
                         (0, r._)(this, 'contentType', i.e.AUDIO),
                         (0, r._)(this, 'hidden', !1),
                         (0, r._)(this, 'playId', ''),
-                        (this.data = e);
+                        (this.data = e));
                 }
             }
         },
@@ -4152,7 +4155,7 @@
             'use strict';
             a.d(t, { V: () => r });
             var r = (function (e) {
-                return (e.TRAILER = 'TRAILER'), (e.ADVERT = 'ADVERT'), (e.CLIP = 'CLIP'), (e.PROMO_LANDING = 'PROMO_LANDING'), e;
+                return ((e.TRAILER = 'TRAILER'), (e.ADVERT = 'ADVERT'), (e.CLIP = 'CLIP'), (e.PROMO_LANDING = 'PROMO_LANDING'), e);
             })({});
         },
         57510: (e, t, a) => {
@@ -4189,19 +4192,19 @@
                     return (0, c.stringifyJSONSafely)(this.data);
                 }
                 constructor(e, t = null, a = null) {
-                    (0, u._)(this, 'data', void 0), (0, u._)(this, 'next', void 0), (0, u._)(this, 'prev', void 0), (this.data = e), (this.next = t), (this.prev = a);
+                    ((0, u._)(this, 'data', void 0), (0, u._)(this, 'next', void 0), (0, u._)(this, 'prev', void 0), (this.data = e), (this.next = t), (this.prev = a));
                 }
             }
             class v {
                 replaceState(e) {
                     let t = new h(e, null, null);
-                    this.current && (t = new h(e, this.current.next, this.current.prev)), (this.current = t), this.updateSessionStorage();
+                    (this.current && (t = new h(e, this.current.next, this.current.prev)), (this.current = t), this.updateSessionStorage());
                 }
                 pushState(e) {
                     let t = new h(e, null, null);
-                    this.current && this.current.isLocationNotEqual(e.href) && ((t = new h(e, null, this.current)), (this.current.next = t)),
+                    (this.current && this.current.isLocationNotEqual(e.href) && ((t = new h(e, null, this.current)), (this.current.next = t)),
                         (this.current = t),
-                        this.updateSessionStorage();
+                        this.updateSessionStorage());
                 }
                 get state() {
                     return this.current;
@@ -4218,13 +4221,13 @@
                     var e;
                     if (!this.canForward) return;
                     let t = null == (e = this.current) ? void 0 : e.next;
-                    t && (this.current = t), this.updateSessionStorage();
+                    (t && (this.current = t), this.updateSessionStorage());
                 }
                 back() {
                     var e;
                     if (!this.canBack) return;
                     let t = null == (e = this.current) ? void 0 : e.prev;
-                    t && (this.current = t), this.updateSessionStorage();
+                    (t && (this.current = t), this.updateSessionStorage());
                 }
                 updateSessionStorage() {
                     this.current && this.sessionStorage.set(d.c.SessionHistoryState, this.current.data);
@@ -4234,7 +4237,11 @@
                     e && this.replaceState(e);
                 }
                 constructor(e) {
-                    (0, u._)(this, 'sessionStorage', void 0), (0, u._)(this, 'current', void 0), (this.sessionStorage = e), (this.current = null), this.restoreHistory();
+                    ((0, u._)(this, 'sessionStorage', void 0),
+                        (0, u._)(this, 'current', void 0),
+                        (this.sessionStorage = e),
+                        (this.current = null),
+                        this.restoreHistory());
                 }
             }
             var y = a(83808),
@@ -4286,7 +4293,7 @@
             'use strict';
             a.d(t, { h: () => r });
             var r = (function (e) {
-                return (e.ARTIST_DONATION_BUTTON = 'artist_donation_button'), (e.TRAILER_BUTTON = 'trailer_button'), (e.CONCERTS_TAB = 'concerts_tab'), e;
+                return ((e.ARTIST_DONATION_BUTTON = 'artist_donation_button'), (e.TRAILER_BUTTON = 'trailer_button'), (e.CONCERTS_TAB = 'concerts_tab'), e);
             })({});
         },
         60780: (e, t, a) => {
@@ -4419,7 +4426,7 @@
                 m = a(1918),
                 f = a.n(m),
                 g = (function (e) {
-                    return (e.ERROR = 'error'), (e.SUCCESS = 'success'), e;
+                    return ((e.ERROR = 'error'), (e.SUCCESS = 'success'), e);
                 })({});
             let b = (e) => {
                 let { playlistName: t, url: a, variant: r } = e,
@@ -4491,12 +4498,12 @@
                         t.current || (t.current = setInterval(a, 2e3));
                     }, [a]),
                     c = (0, i.useCallback)(() => {
-                        clearInterval(t.current), (t.current = void 0);
+                        (clearInterval(t.current), (t.current = void 0));
                     }, []);
-                (0, i.useEffect)(() => {
+                ((0, i.useEffect)(() => {
                     e.shouldCheckProcessingTracks ? r() : c();
                 }, [c, r, e.shouldCheckProcessingTracks]),
-                    (0, i.useEffect)(() => () => c(), [c]);
+                    (0, i.useEffect)(() => () => c(), [c]));
             });
         },
         63887: (e, t, a) => {
@@ -4507,7 +4514,7 @@
                 s = {
                     5881: (e, t, a) => {
                         function r() {
-                            for (var e, t, a = 0, r = ''; a < arguments.length; )
+                            for (var e, t, a = 0, r = ''; a < arguments.length;)
                                 (e = arguments[a++]) &&
                                     (t = (function e(t) {
                                         var a,
@@ -4522,11 +4529,11 @@
                                     (r && (r += ' '), (r += t));
                             return r;
                         }
-                        a.r(t), a.d(t, { clsx: () => r, default: () => i });
+                        (a.r(t), a.d(t, { clsx: () => r, default: () => i }));
                         let i = r;
                     },
                     9829: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => r });
+                        (a.r(t), a.d(t, { default: () => r }));
                         let r = {
                             root: 'buOTZq_TKQOVyjMLrXvB',
                             block: 'BSPmaubc8UL2KHOMLV4A',
@@ -4546,7 +4553,7 @@
                             else r = t;
                             return { $$typeof: a, type: e, key: i, ref: void 0 !== (t = r.ref) ? t : null, props: r };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r));
                     },
                     4377: (e, t, a) => {
                         e.exports = a(9097);
@@ -4557,7 +4564,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Link = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Link = void 0));
                         let i = a(4377),
                             s = a(810),
                             n = a(5881),
@@ -4629,19 +4636,19 @@
                 var t = n[e];
                 if (void 0 !== t) return t.exports;
                 var a = (n[e] = { exports: {} });
-                return s[e].call(a.exports, a, a.exports, o), a.exports;
+                return (s[e].call(a.exports, a, a.exports, o), a.exports);
             }
-            (o.d = (e, t) => {
+            ((o.d = (e, t) => {
                 for (var a in t) o.o(t, a) && !o.o(e, a) && Object.defineProperty(e, a, { enumerable: !0, get: t[a] });
             }),
                 (o.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (o.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var l = {};
             (() => {
-                Object.defineProperty(l, 'X', { value: !0 }), (l.r = void 0);
+                (Object.defineProperty(l, 'X', { value: !0 }), (l.r = void 0));
                 var e = o(3937);
                 Object.defineProperty(l, 'r', {
                     enumerable: !0,
@@ -4732,7 +4739,7 @@
                         };
                     })(),
                     _ = (0, n.useCallback)(() => {
-                        S(), (window.location.href = f.Z.main.href);
+                        (S(), (window.location.href = f.Z.main.href));
                     }, [S]),
                     { contentRef: A } = (0, m.g)();
                 return (0, r.jsxs)('div', {
@@ -4784,9 +4791,9 @@
         65163: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { O: () => r }),
+            (a.d(t, { O: () => r }),
                 (function (e) {
-                    (e.RADIO_STARTED = 'radioStarted'),
+                    ((e.RADIO_STARTED = 'radioStarted'),
                         (e.TRACK_STARTED = 'trackStarted'),
                         (e.TRACK_FINISHED = 'trackFinished'),
                         (e.SKIP = 'skip'),
@@ -4804,22 +4811,22 @@
                         (e.PLAYABLE_ITEM_LIKE = 'playableItemLike'),
                         (e.PLAYABLE_ITEM_DISLIKE = 'playableItemDislike'),
                         (e.PLAYABLE_ITEM_UNLIKE = 'playableItemUnlike'),
-                        (e.PLAYABLE_ITEM_UNDISLIKE = 'playableItemUndislike');
-                })(r || (r = {}));
+                        (e.PLAYABLE_ITEM_UNDISLIKE = 'playableItemUndislike'));
+                })(r || (r = {})));
         },
         65808: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { N: () => r }),
+            (a.d(t, { N: () => r }),
                 (function (e) {
-                    (e.MP3 = 'mp3'),
+                    ((e.MP3 = 'mp3'),
                         (e.FLAC = 'flac'),
                         (e.AAC = 'aac'),
                         (e.HEAAC = 'he-aac'),
                         (e.FLACMP4 = 'flac-mp4'),
                         (e.AACMP4 = 'aac-mp4'),
-                        (e.HEAACMP4 = 'he-aac-mp4');
-                })(r || (r = {}));
+                        (e.HEAACMP4 = 'he-aac-mp4'));
+                })(r || (r = {})));
         },
         66369: (e, t, a) => {
             'use strict';
@@ -4845,9 +4852,9 @@
                             a.set(n.c.BuySubscriptionParams, { target: r, communicationId: s, campaignId: u });
                             let c = (0, l.j)();
                             if (null === c) return;
-                            c.delete(d.TARGET), c.delete(d.COMMUNICATION_ID), c.delete(d.CAMPAIGN_ID);
+                            (c.delete(d.TARGET), c.delete(d.COMMUNICATION_ID), c.delete(d.CAMPAIGN_ID));
                             let h = new URL(window.location.href);
-                            (h.search = c.toString()), t(h.toString());
+                            ((h.search = c.toString()), t(h.toString()));
                         }, [e, t]),
                         null
                     );
@@ -4909,9 +4916,9 @@
                         }),
                         U = (0, c.c)((e) => {
                             let { id: t, state: a } = e;
-                            v.setTrack(t, a),
+                            (v.setTrack(t, a),
                                 a.loadingState === d.DT.DOWNLOAD_FAILED &&
-                                    q((0, r.jsx)(f, { message: (0, r.jsx)(n.A, { id: 'offline.track-download-error' }) }), { containerId: A.u.ERROR });
+                                    q((0, r.jsx)(f, { message: (0, r.jsx)(n.A, { id: 'offline.track-download-error' }) }), { containerId: A.u.ERROR }));
                         }),
                         W = (0, c.c)((e) => {
                             v.setTracks(e);
@@ -4934,7 +4941,7 @@
                         (0, s.useEffect)(() => {
                             if (N) {
                                 var e;
-                                null == (e = O.tracksController) ||
+                                (null == (e = O.tracksController) ||
                                     e.getTracksCount().then((e) => {
                                         let t = ((e) => {
                                             if (0 === e) return '0';
@@ -4943,7 +4950,7 @@
                                         })(e);
                                         t && F.count({ [g.x.TRACKS_COUNT]: t }, b.l);
                                     }),
-                                    (N = !1);
+                                    (N = !1));
                             }
                         }, [F, O.tracksController]),
                         (0, s.useEffect)(() => {
@@ -4963,8 +4970,8 @@
                                 null == (a = O.tracksController) || a.initState(),
                                 () => {
                                     var e, t;
-                                    null == (e = O.store) || e.tracks.events.off(d.je.ENTITY_CHANGED, U),
-                                        null == (t = O.store) || t.tracks.events.off(d.je.STATE_CHANGED, W);
+                                    (null == (e = O.store) || e.tracks.events.off(d.je.ENTITY_CHANGED, U),
+                                        null == (t = O.store) || t.tracks.events.off(d.je.STATE_CHANGED, W));
                                 }
                             );
                         }, [U, W, null == (t = O.store) ? void 0 : t.tracks.events, O.tracksController]),
@@ -5011,7 +5018,7 @@
                 o = {
                     5881: (e, t, a) => {
                         function r() {
-                            for (var e, t, a = 0, r = ''; a < arguments.length; )
+                            for (var e, t, a = 0, r = ''; a < arguments.length;)
                                 (e = arguments[a++]) &&
                                     (t = (function e(t) {
                                         var a,
@@ -5026,15 +5033,15 @@
                                     (r && (r += ' '), (r += t));
                             return r;
                         }
-                        a.r(t), a.d(t, { clsx: () => r, default: () => i });
+                        (a.r(t), a.d(t, { clsx: () => r, default: () => i }));
                         let i = r;
                     },
                     9682: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => r });
+                        (a.r(t), a.d(t, { default: () => r }));
                         let r = { root: 'QhR4J536RmNHBB5bZYwF', text: 'Fqg1VWCJUfasVVxqICeO' };
                     },
                     6951: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => r });
+                        (a.r(t), a.d(t, { default: () => r }));
                         let r = {
                             root_controls_xxs: 'tRaaBpDMg9Qu8v6gKjtn',
                             root_entity_xxs: 'M9zvtlcpLUVn6DKdcHhj',
@@ -5057,7 +5064,7 @@
                         };
                     },
                     5882: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => r });
+                        (a.r(t), a.d(t, { default: () => r }));
                         let r = {
                             root: '_MWOVuZRvUQdXKTMcOPx',
                             root_clamp: 'LezmJlldtbHWqU7l1950',
@@ -5074,13 +5081,13 @@
                             else r = t;
                             return { $$typeof: a, type: e, key: i, ref: void 0 !== (t = r.ref) ? t : null, props: r };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r));
                     },
                     4377: (e, t, a) => {
                         e.exports = a(9097);
                     },
                     58: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Tooltip = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Tooltip = void 0));
                         let r = a(4377),
                             i = a(810),
                             s = a(1964),
@@ -5125,14 +5132,14 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.TooltipContent = t.TooltipContentComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.TooltipContent = t.TooltipContentComponent = void 0));
                         let i = a(4377),
                             s = a(5881),
                             n = a(810),
                             o = a(1964),
                             l = a(7743),
                             u = r(a(9682));
-                        (t.TooltipContentComponent = (e) => {
+                        ((t.TooltipContentComponent = (e) => {
                             let { className: t, children: a, arrow: r, rootNode: d, forwardRef: c, text: h, ...v } = e;
                             return (0, i.jsx)(o.FloatingPortal, {
                                 root: d,
@@ -5154,10 +5161,10 @@
                                 }),
                             });
                         }),
-                            (t.TooltipContent = (0, n.forwardRef)((e, a) => (0, i.jsx)(t.TooltipContentComponent, { forwardRef: a, ...e })));
+                            (t.TooltipContent = (0, n.forwardRef)((e, a) => (0, i.jsx)(t.TooltipContentComponent, { forwardRef: a, ...e }))));
                     },
                     5481: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useTooltip = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useTooltip = void 0));
                         let r = a(4377),
                             i = a(810),
                             s = a(1964),
@@ -5215,13 +5222,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0));
                         let i = a(4377),
                             s = a(5881),
                             n = a(810),
                             o = a(4721),
                             l = r(a(6951));
-                        (t.CaptionComponent = (e) => {
+                        ((t.CaptionComponent = (e) => {
                             let { forwardRef: t, variant: a, type: r = 'text', size: n = 's', className: u, children: d, weight: c = 'medium', ...h } = e;
                             return (0, i.jsx)(o.Typography, {
                                 variant: a,
@@ -5231,7 +5238,7 @@
                                 children: d,
                             });
                         }),
-                            (t.Caption = (0, n.forwardRef)((e, a) => (0, i.jsx)(t.CaptionComponent, { forwardRef: a, ...e })));
+                            (t.Caption = (0, n.forwardRef)((e, a) => (0, i.jsx)(t.CaptionComponent, { forwardRef: a, ...e }))));
                     },
                     4721: function (e, t, a) {
                         var r =
@@ -5239,7 +5246,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0));
                         let i = a(4377),
                             s = a(5881),
                             n = a(810),
@@ -5260,7 +5267,7 @@
                                 children: n,
                             });
                         }
-                        (t.TypographyComponent = l), (t.Typography = (0, n.forwardRef)((e, t) => (0, i.jsx)(l, { forwardRef: t, ...e })));
+                        ((t.TypographyComponent = l), (t.Typography = (0, n.forwardRef)((e, t) => (0, i.jsx)(l, { forwardRef: t, ...e }))));
                     },
                     1964: (e) => {
                         e.exports = i;
@@ -5277,19 +5284,19 @@
                 var t = l[e];
                 if (void 0 !== t) return t.exports;
                 var a = (l[e] = { exports: {} });
-                return o[e].call(a.exports, a, a.exports, u), a.exports;
+                return (o[e].call(a.exports, a, a.exports, u), a.exports);
             }
-            (u.d = (e, t) => {
+            ((u.d = (e, t) => {
                 for (var a in t) u.o(t, a) && !u.o(e, a) && Object.defineProperty(e, a, { enumerable: !0, get: t[a] });
             }),
                 (u.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (u.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var d = {};
             (() => {
-                Object.defineProperty(d, 'X$', { value: !0 }), (d._v = d.u = void 0);
+                (Object.defineProperty(d, 'X$', { value: !0 }), (d._v = d.u = void 0));
                 var e = u(58);
                 Object.defineProperty(d, 'u', {
                     enumerable: !0,
@@ -5352,7 +5359,7 @@
                 V = a(63849),
                 U = a(25718);
             !(function (e) {
-                (e.PLAYING = 'playing'), (e.NOT_PLAYING = 'not-playing');
+                ((e.PLAYING = 'playing'), (e.NOT_PLAYING = 'not-playing'));
             })(r || (r = {}));
             let W = (e) =>
                 !!(
@@ -5386,7 +5393,7 @@
                         if (0 !== e.length) {
                             for (let i of (function (e) {
                                 let t = [];
-                                for (; 0 !== e.length; ) {
+                                for (; 0 !== e.length;) {
                                     let a = e.shift();
                                     if (a && a.stage === r.PLAYING) {
                                         let e = t[t.length - 1];
@@ -5397,9 +5404,9 @@
                                     }
                                 }
                                 let a = t[t.length - 1];
-                                return a && a.stage === r.PLAYING && t.push({ stage: r.NOT_PLAYING, perfNow: performance.now(), ts: Date.now() }), t;
+                                return (a && a.stage === r.PLAYING && t.push({ stage: r.NOT_PLAYING, perfNow: performance.now(), ts: Date.now() }), t);
                             })(e))
-                                i.stage === r.PLAYING ? (t = i.perfNow) : (a = i.perfNow), t && a && (s.push(a - t), (t = void 0), (a = void 0));
+                                (i.stage === r.PLAYING ? (t = i.perfNow) : (a = i.perfNow), t && a && (s.push(a - t), (t = void 0), (a = void 0)));
                             for (let e of s) i += e;
                             return Math.round((i / 1e3 + Number.EPSILON) * 1e3) / 1e3;
                         }
@@ -5411,7 +5418,7 @@
                 }
                 saveTimeStageOfPlayback(e) {
                     let t = { stage: e.stage, perfNow: performance.now(), ts: Date.now() };
-                    e.reason && (t.reason = e.reason), this.entityTimeStagesOfPlayback.push(t);
+                    (e.reason && (t.reason = e.reason), this.entityTimeStagesOfPlayback.push(t));
                 }
                 clearTimeStagesOfPlayback() {
                     this.entityTimeStagesOfPlayback = [];
@@ -5438,7 +5445,7 @@
                     return '' !== this.playId;
                 }
                 constructor(e) {
-                    (0, L._)(this, 'entityData', void 0),
+                    ((0, L._)(this, 'entityData', void 0),
                         (0, L._)(this, 'likeStore', void 0),
                         (0, L._)(this, 'entityPlayId', ''),
                         (0, L._)(this, 'entityAddTracksToPlayerTime', ''),
@@ -5450,13 +5457,13 @@
                         (0, L._)(this, 'contentType', U.e.AUDIO),
                         (0, L._)(this, 'hidden', !1),
                         (this.entityData = e.data),
-                        (this.likeStore = e.likeStore);
+                        (this.likeStore = e.likeStore));
                 }
             }
             class j extends K {}
             class Y extends K {
                 constructor(...e) {
-                    super(...e), (0, L._)(this, 'contentType', U.e.DOWNLOADED_AUDIO);
+                    (super(...e), (0, L._)(this, 'contentType', U.e.DOWNLOADED_AUDIO));
                 }
             }
             class G extends K {}
@@ -5471,7 +5478,7 @@
             var z = a(29222);
             class Q extends z.t {
                 constructor(e, { code: t = 'E_ENTITY_FACTORY', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'EntityFactoryException'), Object.setPrototypeOf(this, Q.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'EntityFactoryException'), Object.setPrototypeOf(this, Q.prototype));
                 }
             }
             class X extends K {
@@ -5482,7 +5489,7 @@
                     return !1;
                 }
                 constructor(...e) {
-                    super(...e), (0, L._)(this, 'contentType', U.e.HLS);
+                    (super(...e), (0, L._)(this, 'contentType', U.e.HLS));
                 }
             }
             class Z extends K {
@@ -5501,7 +5508,7 @@
                     return !1;
                 }
                 constructor(...e) {
-                    super(...e), (0, L._)(this, 'contentType', U.e.CLIP);
+                    (super(...e), (0, L._)(this, 'contentType', U.e.CLIP));
                 }
             }
             class J extends K {
@@ -5512,7 +5519,7 @@
                     return !1;
                 }
                 constructor(...e) {
-                    super(...e), (0, L._)(this, 'contentType', U.e.HLS);
+                    (super(...e), (0, L._)(this, 'contentType', U.e.HLS));
                 }
             }
             class ee {
@@ -5544,7 +5551,7 @@
                                 t = new J({ data: a, likeStore: this.likeStore });
                                 break;
                             case q.R.Unknown:
-                                a.meta.type, B.S.MUSIC, (t = new j({ data: { ...a, type: q.R.Music }, likeStore: this.likeStore }));
+                                (a.meta.type, B.S.MUSIC, (t = new j({ data: { ...a, type: q.R.Music }, likeStore: this.likeStore })));
                                 break;
                             case F.z4.Unloaded:
                                 t = new H({ data: a, likeStore: this.likeStore });
@@ -5556,7 +5563,7 @@
                     throw new Q('Cannot create entities with nonexistent type', { code: 'E_NONEXISTENT_ENTITY_TYPE', data: { type: a.type, meta: a.meta } });
                 }
                 constructor(e) {
-                    (0, L._)(this, 'likeStore', void 0), (this.likeStore = e.likeStore);
+                    ((0, L._)(this, 'likeStore', void 0), (this.likeStore = e.likeStore));
                 }
             }
             var et = a(71483);
@@ -5568,10 +5575,10 @@
             var er = a(46862);
             class ei extends z.t {
                 constructor(e, { code: t = 'E_CONTEXT', name: a, ...r } = {}) {
-                    super(e, { code: t, ...r }),
+                    (super(e, { code: t, ...r }),
                         (0, L._)(this, 'name', void 0),
                         (this.name = null != a ? a : 'ContextException'),
-                        Object.setPrototypeOf(this, ei.prototype);
+                        Object.setPrototypeOf(this, ei.prototype));
                 }
             }
             class es extends F.EX {
@@ -5587,11 +5594,11 @@
                 logError(e) {
                     let t,
                         { name: a, message: r = 'Error in YaMusicContext', data: i, cause: s, originalError: n } = e;
-                    (t = n instanceof z.t ? n : new ei(r, { name: a, cause: (0, M.createObjectFromError)(s), data: i })),
-                        this.logger.error(t, { ...t.data, code: t.code, cause: t.cause, stack: t.stack, message: t.message });
+                    ((t = n instanceof z.t ? n : new ei(r, { name: a, cause: (0, M.createObjectFromError)(s), data: i })),
+                        this.logger.error(t, { ...t.data, code: t.code, cause: t.cause, stack: t.stack, message: t.message }));
                 }
                 constructor({ logger: e }) {
-                    super(),
+                    (super(),
                         (0, L._)(this, 'isCurrent', !1),
                         (0, L._)(this, 'actions', {
                             moveBackward: new er.cJ(!1),
@@ -5603,7 +5610,7 @@
                         (0, L._)(this, 'from', ''),
                         (0, L._)(this, 'utmLink', void 0),
                         (0, L._)(this, 'logger', void 0),
-                        (this.logger = e);
+                        (this.logger = e));
                 }
             }
             function en(e, t) {
@@ -5661,9 +5668,9 @@
                     return null;
                 }
                 constructor(e) {
-                    super(e), (0, L._)(this, 'contextData', void 0), (0, L._)(this, 'albumsResource', void 0), (0, L._)(this, 'variables', void 0);
+                    (super(e), (0, L._)(this, 'contextData', void 0), (0, L._)(this, 'albumsResource', void 0), (0, L._)(this, 'variables', void 0));
                     let { data: t, albumsResource: a, variables: r } = e;
-                    (this.albumsResource = a), (this.contextData = t), (this.from = t.from), (this.utmLink = t.utmLink), (this.variables = r);
+                    ((this.albumsResource = a), (this.contextData = t), (this.from = t.from), (this.utmLink = t.utmLink), (this.variables = r));
                 }
             }
             var el = a(86882);
@@ -5695,7 +5702,7 @@
                             let t,
                                 a,
                                 r = { ...e, id: ((t = e.uid), (a = e.kind), ''.concat(t, ':').concat(a)) };
-                            return (this.contextData.meta = r), r;
+                            return ((this.contextData.meta = r), r);
                         })
                         .catch((e) => {
                             throw new ei('Error in PlaylistContext', {
@@ -5726,13 +5733,18 @@
                     return this.contextData;
                 }
                 constructor(e) {
-                    super(e),
+                    (super(e),
                         (0, L._)(this, 'contextData', void 0),
                         (0, L._)(this, 'usersResource', void 0),
                         (0, L._)(this, 'playlistResource', void 0),
-                        (0, L._)(this, 'variables', void 0);
+                        (0, L._)(this, 'variables', void 0));
                     let { data: t, playlistResource: a, usersResource: r, variables: i } = e;
-                    (this.usersResource = r), (this.playlistResource = a), (this.contextData = t), (this.from = t.from), (this.utmLink = t.utmLink), (this.variables = i);
+                    ((this.usersResource = r),
+                        (this.playlistResource = a),
+                        (this.contextData = t),
+                        (this.from = t.from),
+                        (this.utmLink = t.utmLink),
+                        (this.variables = i));
                 }
             }
             class ed extends es {
@@ -5796,9 +5808,9 @@
                     return this.contextData;
                 }
                 constructor(e) {
-                    super(e), (0, L._)(this, 'contextData', void 0), (0, L._)(this, 'artistsResource', void 0), (0, L._)(this, 'variables', void 0);
+                    (super(e), (0, L._)(this, 'contextData', void 0), (0, L._)(this, 'artistsResource', void 0), (0, L._)(this, 'variables', void 0));
                     let { data: t, artistsResource: a, variables: r } = e;
-                    (this.artistsResource = a), (this.contextData = t), (this.from = t.from), (this.utmLink = t.utmLink), (this.variables = r);
+                    ((this.artistsResource = a), (this.contextData = t), (this.from = t.from), (this.utmLink = t.utmLink), (this.variables = r));
                 }
             }
             var ec = a(65163);
@@ -5889,9 +5901,9 @@
                             let { feedback: e, error: s } = em({ entity: i.entity, type: ec.O.TRACK_STARTED, from: t }),
                                 { feedback: n, error: o } = em({ entity: i.entity, type: ec.O.TRACK_FINISHED, from: t }),
                                 l = eP(i.entity);
-                            e || null == (a = this.afterError) || a.promise(new z.t('[VibeContext] Can not create feedback for history vibe track', { cause: s })),
+                            (e || null == (a = this.afterError) || a.promise(new z.t('[VibeContext] Can not create feedback for history vibe track', { cause: s })),
                                 n || null == (r = this.afterError) || r.promise(new z.t('[VibeContext] Can not create feedback for history vibe track', { cause: o })),
-                                e && n && this.sessionStore.storeSessionFeedbacksInHistory([e, n], l);
+                                e && n && this.sessionStore.storeSessionFeedbacksInHistory([e, n], l));
                         }
                 }
                 storeDeferredSkip(e) {
@@ -5901,7 +5913,7 @@
                     let n = eP(i);
                     if (!n) return !1;
                     let { feedback: o, error: l } = em({ entity: i, type: ec.O.SKIP, from: s });
-                    if (!o) return null == (t = this.afterError) || t.promise(new z.t('[VibeContext] Cannot create deferred SKIP feedback', { cause: l })), !1;
+                    if (!o) return (null == (t = this.afterError) || t.promise(new z.t('[VibeContext] Cannot create deferred SKIP feedback', { cause: l })), !1);
                     if ('trackId' in o.event && e_(i)) return !1;
                     let u = this.sessionStore.store.get(n);
                     return (
@@ -5999,7 +6011,7 @@
                     }
                 }
                 constructor({ rotorResource: e, variables: t, sessionStore: a, deferredFeedbacksQueue: r }) {
-                    (0, L._)(this, 'rotorResource', void 0),
+                    ((0, L._)(this, 'rotorResource', void 0),
                         (0, L._)(this, 'sessionStore', void 0),
                         (0, L._)(this, 'deferredFeedbacksQueue', void 0),
                         (0, L._)(this, 'variables', void 0),
@@ -6007,7 +6019,7 @@
                         (this.rotorResource = e),
                         (this.sessionStore = a),
                         (this.deferredFeedbacksQueue = r),
-                        (this.variables = t);
+                        (this.variables = t));
                 }
             }
             function eI(e) {
@@ -6070,14 +6082,14 @@
                     if (a) {
                         var r, i;
                         let s = Array.isArray(e) ? e : [e];
-                        a.feedbacks.push(...s), this.storePersistentFeedbacks(s, t, null != (i = null == (r = a.wave) ? void 0 : r.seeds) ? i : []);
+                        (a.feedbacks.push(...s), this.storePersistentFeedbacks(s, t, null != (i = null == (r = a.wave) ? void 0 : r.seeds) ? i : []));
                     } else throw new z.t('Can not store feedbacks for sending. No session was created in map.');
                 }
                 getSessionFeedbacksWithMultipleSessions(e) {
                     let t = this.store.get(e);
                     if (t) {
                         let e = t.feedbacks;
-                        return (t.feedbacks = []), e;
+                        return ((t.feedbacks = []), e);
                     }
                 }
                 getSessionsFeedbacks() {
@@ -6085,8 +6097,8 @@
                     for (let [r, i] of this.store.entries()) {
                         if (i.feedbacks.length) {
                             var t, a;
-                            e.push({ radioSessionId: r, feedbacks: i.feedbacks, seeds: null != (a = null == (t = i.wave) ? void 0 : t.seeds) ? a : [] }),
-                                (i.feedbacks = []);
+                            (e.push({ radioSessionId: r, feedbacks: i.feedbacks, seeds: null != (a = null == (t = i.wave) ? void 0 : t.seeds) ? a : [] }),
+                                (i.feedbacks = []));
                         }
                         i.feedbacks = [];
                     }
@@ -6095,10 +6107,10 @@
                 getSessionFeedbacks(e) {
                     if (this.multipleSessions) return this.getSessionFeedbacksWithMultipleSessions(e);
                     let t = this.feedbacksForSending;
-                    return (this.feedbacksForSending = []), t;
+                    return ((this.feedbacksForSending = []), t);
                 }
                 clearStoredFeedbacks() {
-                    (this.feedbacksHistory = []), (this.feedbacksForSending = []), this.store.clear();
+                    ((this.feedbacksHistory = []), (this.feedbacksForSending = []), this.store.clear());
                 }
                 isDeferredFeedbacksStorageEnabled() {
                     var e;
@@ -6123,25 +6135,25 @@
                     });
                     let { radioSessionId: r, wave: i, acceptedSeeds: s, pumpkin: n, batchId: o, descriptionSeed: l } = t,
                         u = { radioSessionId: r, wave: i, acceptedSeeds: s, pumpkin: n, descriptionSeed: l, batchId: o, feedbacks: a, historyFeedbacks: [], active: !0 };
-                    this.store.set(r, u), (this.observableActiveSession.value = u);
+                    (this.store.set(r, u), (this.observableActiveSession.value = u));
                 }
                 addClonedSession(e) {
                     let { radioSessionId: t, feedbacks: a = [] } = e;
                     this.store.set(t, { radioSessionId: t, feedbacks: a, historyFeedbacks: [], active: !1 });
                 }
                 constructor({ variables: e, deferredFeedbacksStore: t }) {
-                    (0, L._)(this, 'store', new Map()),
+                    ((0, L._)(this, 'store', new Map()),
                         (0, L._)(this, 'feedbacksHistory', []),
                         (0, L._)(this, 'feedbacksForSending', []),
                         (0, L._)(this, 'variables', void 0),
                         (0, L._)(this, 'deferredFeedbacksStore', void 0),
                         (0, L._)(this, 'observableActiveSession', new er.cJ(void 0)),
                         (this.variables = e),
-                        (this.deferredFeedbacksStore = t);
+                        (this.deferredFeedbacksStore = t));
                 }
             }
             !(function (e) {
-                (e.CLONED = 'cloned'), (e.RESTORED_TO_DEFAULT_SEED = 'restoredToDefaultSeed');
+                ((e.CLONED = 'cloned'), (e.RESTORED_TO_DEFAULT_SEED = 'restoredToDefaultSeed'));
             })(i || (i = {}));
             var eR = a(21263);
             function ew(e) {
@@ -6304,7 +6316,7 @@
                                 this.deferredFeedbacksQueue.commit(t).then(() => {
                                     let { batchId: t, sequence: i } = e,
                                         s = ew({ batchId: t, sequence: i, radioSessionId: r, additional: a });
-                                    return (this.contextData.meta.sessionTracks = e), (this.contextData.meta.sessionTracks.sequence = []), s;
+                                    return ((this.contextData.meta.sessionTracks = e), (this.contextData.meta.sessionTracks.sequence = []), s);
                                 }),
                             )
                             .catch(
@@ -6324,10 +6336,10 @@
                     let e = { from: this.contextData.from, utmLink: this.contextData.utmLink },
                         { batchId: t, sequence: a, radioSessionId: r } = this.contextData.meta.session,
                         i = ew({ batchId: t, sequence: a, radioSessionId: r, additional: e });
-                    return (this.contextData.meta.session.sequence = []), i;
+                    return ((this.contextData.meta.session.sequence = []), i);
                 }
                 constructor({ contextData: e, rotorResource: t, sessionStore: a, deferredFeedbacksQueue: r, variables: i }) {
-                    (0, L._)(this, 'contextData', void 0),
+                    ((0, L._)(this, 'contextData', void 0),
                         (0, L._)(this, 'rotorResource', void 0),
                         (0, L._)(this, 'sessionStore', void 0),
                         (0, L._)(this, 'deferredFeedbacksQueue', void 0),
@@ -6339,7 +6351,7 @@
                         (this.sessionStore = a),
                         (this.deferredFeedbacksQueue = r),
                         (this.variables = i),
-                        (this.timeOfLastInteractionWithVibe = e.timeOfLastInteractionWithVibe ? e.timeOfLastInteractionWithVibe : Date.now());
+                        (this.timeOfLastInteractionWithVibe = e.timeOfLastInteractionWithVibe ? e.timeOfLastInteractionWithVibe : Date.now()));
                 }
             }
             function eN(e, t, a) {
@@ -6355,7 +6367,7 @@
                     let { entity: n, sourceContext: o } = s;
                     if (!o) {
                         if (n.data.wasPlayed || t === i) break;
-                        (a = s), (r = i);
+                        ((a = s), (r = i));
                     }
                 }
                 let i = null !== r ? r + 1 : e.length;
@@ -6415,7 +6427,7 @@
                 }
                 commit(e) {
                     if ((this.storeMemoryFeedbacksInHistory(e.memorySessionsFeedbacks), !this.deferredFeedbacksStore))
-                        return this.releaseStoredFeedbackIdsClaim(e.claimedStoredFeedbackIds), Promise.resolve();
+                        return (this.releaseStoredFeedbackIdsClaim(e.claimedStoredFeedbackIds), Promise.resolve());
                     let t = this.getPersistentCleanupRequests(e);
                     return t.length
                         ? Promise.all(t)
@@ -6429,7 +6441,7 @@
                         : (this.releaseStoredFeedbackIdsClaim(e.claimedStoredFeedbackIds), Promise.resolve());
                 }
                 rollback(e) {
-                    this.restoreMemoryFeedbacks(e.memorySessionsFeedbacks), this.releaseStoredFeedbackIdsClaim(e.claimedStoredFeedbackIds);
+                    (this.restoreMemoryFeedbacks(e.memorySessionsFeedbacks), this.releaseStoredFeedbackIdsClaim(e.claimedStoredFeedbackIds));
                 }
                 prepareInternal(e) {
                     let t = this.prepareMemorySessionsFeedbacks(e),
@@ -6468,7 +6480,7 @@
                                   .then(() => [])
                                   .catch((e) => {
                                       var t;
-                                      return null == (t = this.logger) || t.error('[DeferredFeedbacksStore] Error while deleting database', { error: e }), [];
+                                      return (null == (t = this.logger) || t.error('[DeferredFeedbacksStore] Error while deleting database', { error: e }), []);
                                   })
                             : this.deferredFeedbacksStore
                                   .openDatabase()
@@ -6508,7 +6520,7 @@
                                   })
                                   .catch((e) => {
                                       var t;
-                                      return null == (t = this.logger) || t.error('[DeferredFeedbacksStore] Error while preparing stored feedbacks', { error: e }), [];
+                                      return (null == (t = this.logger) || t.error('[DeferredFeedbacksStore] Error while preparing stored feedbacks', { error: e }), []);
                                   })
                         : Promise.resolve([]);
                 }
@@ -6521,7 +6533,7 @@
                     for (let a of e)
                         for (let e of a.feedbacks) {
                             let r = eT(a.radioSessionId, e);
-                            this.runtimeState.claimedStoredFeedbackIds.add(r), t.push(r);
+                            (this.runtimeState.claimedStoredFeedbackIds.add(r), t.push(r));
                         }
                     return t;
                 }
@@ -6566,10 +6578,10 @@
                                         continue;
                                     }
                                     let r = [];
-                                    this.addFeedbacks(r, t.feedbacks), a.push({ radioSessionId: t.radioSessionId, seeds: t.seeds, feedbacks: r });
+                                    (this.addFeedbacks(r, t.feedbacks), a.push({ radioSessionId: t.radioSessionId, seeds: t.seeds, feedbacks: r }));
                                 }
                         };
-                    return r(e), r(t), a.length ? a : void 0;
+                    return (r(e), r(t), a.length ? a : void 0);
                 }
                 addFeedbacks(e, t) {
                     for (let a of t) eg(e, a) || e.push(a);
@@ -6614,13 +6626,13 @@
                     let t = eF.runtimeStateByStore.get(e);
                     if (t) return t;
                     let a = this.createRuntimeState();
-                    return eF.runtimeStateByStore.set(e, a), a;
+                    return (eF.runtimeStateByStore.set(e, a), a);
                 }
                 createRuntimeState() {
                     return { prepareLock: Promise.resolve(), claimedStoredFeedbackIds: new Set() };
                 }
                 constructor({ sessionStore: e, variables: t, deferredFeedbacksStore: a, logger: r }) {
-                    (0, L._)(this, 'sessionStore', void 0),
+                    ((0, L._)(this, 'sessionStore', void 0),
                         (0, L._)(this, 'variables', void 0),
                         (0, L._)(this, 'deferredFeedbacksStore', void 0),
                         (0, L._)(this, 'logger', void 0),
@@ -6629,14 +6641,14 @@
                         (this.variables = t),
                         (this.deferredFeedbacksStore = a),
                         (this.logger = r),
-                        (this.runtimeState = this.getRuntimeState(a));
+                        (this.runtimeState = this.getRuntimeState(a)));
                 }
             }
             (0, L._)(eF, 'runtimeStateByStore', new WeakMap());
             class eB extends es {
                 apply(e) {
                     let { hooks: t, playback: a } = e;
-                    (this.afterErrorHook = t.afterError),
+                    ((this.afterErrorHook = t.afterError),
                         (this.feedbacksController.afterErrorHook = t.afterError),
                         t.beforeDestroy.tapPromise('VibeContext', () => {
                             var e;
@@ -6652,12 +6664,12 @@
                             let t = a.state.queueState.currentEntity.value;
                             if (!t) return;
                             if (!(null == (e = this.variables) ? void 0 : e.flushDeferredFeedbacksOnContextSwitch)) {
-                                this.sendFeedback({ entity: t.entity, type: ec.O.SKIP }), this.sessionStore.clearStoredFeedbacks();
+                                (this.sendFeedback({ entity: t.entity, type: ec.O.SKIP }), this.sessionStore.clearStoredFeedbacks());
                                 return;
                             }
                             let r = this.contextData.meta.session;
                             if (!r) {
-                                this.logVibeError({ message: 'Cannot send feedbacks on context switch. No session' }), this.sessionStore.clearStoredFeedbacks();
+                                (this.logVibeError({ message: 'Cannot send feedbacks on context switch. No session' }), this.sessionStore.clearStoredFeedbacks());
                                 return;
                             }
                             this.feedbacksController
@@ -6681,13 +6693,13 @@
                                       let t = a.state.queueState.currentEntity.value;
                                       if (!t) return void e();
                                       let { entity: r } = t;
-                                      this.isVibeStarted
+                                      (this.isVibeStarted
                                           ? this.sendFeedback({ type: ec.O.TRACK_STARTED, entity: r, saveFeedbackToHistory: !0 })
                                           : (this.sendFeedback({ type: ec.O.RADIO_STARTED, entity: r }).then(() => {
                                                 this.sendFeedback({ type: ec.O.TRACK_STARTED, entity: r, saveFeedbackToHistory: !0 });
                                             }),
                                             (this.isVibeStarted = !0)),
-                                          e();
+                                          e());
                                   })
                                 : Promise.resolve(),
                         ),
@@ -6735,7 +6747,7 @@
                                 entityList: e.entityList,
                                 useWaveQueue: null == (t = this.variables) ? void 0 : t.useWaveQueue,
                             });
-                            return (this.sessionController.timeOfLastInteractionWithVibe = Date.now()), { ...e, calibratedPosition: a };
+                            return ((this.sessionController.timeOfLastInteractionWithVibe = Date.now()), { ...e, calibratedPosition: a });
                         }),
                         t.afterInject.tap('VibeContext', (e) => {
                             if (!this.isCurrentContext) return e;
@@ -6743,11 +6755,11 @@
                             for (let e of t)
                                 if ((eh(e.entity) || (0, eA.b)(e.entity)) && !e.entity.data.fromCurrentContext) {
                                     var r, i;
-                                    (e.entity.data.batchId = ((i = e.entity), 'user-queue-'.concat(i.data.meta.id, '-').concat(Date.now()))),
-                                        (e.entity.data.radioSessionId = null == (r = this.contextData.meta.session) ? void 0 : r.radioSessionId);
+                                    ((e.entity.data.batchId = ((i = e.entity), 'user-queue-'.concat(i.data.meta.id, '-').concat(Date.now()))),
+                                        (e.entity.data.radioSessionId = null == (r = this.contextData.meta.session) ? void 0 : r.radioSessionId));
                                 } else a.hooks.afterError.promise(new z.t('Can not manualy set batchId/radioSessionId for '.concat(e.entity.data.type, ' entity.')));
                             return { contextEntityPairs: t };
-                        });
+                        }));
                 }
                 get observableActiveSession() {
                     return this.sessionStore.observableActiveSession;
@@ -6775,19 +6787,19 @@
                         c = n.currentEntity.value,
                         h = null != o ? o : n.filterParams.value.allowExplicit;
                     if (null != (r = null == (a = this.variables) ? void 0 : a.batchFeedbacksOnVibeSettingsChange) && r)
-                        c && eh(c.entity) && this.feedbacksController.storeDeferredSkip({ entity: c.entity, from: this.contextData.from }),
-                            (i = this.sessionController.createSessionWithSettings({ seeds: s, rotorQueueParam: d, allowExplicit: h, interactive: l, from: u }));
+                        (c && eh(c.entity) && this.feedbacksController.storeDeferredSkip({ entity: c.entity, from: this.contextData.from }),
+                            (i = this.sessionController.createSessionWithSettings({ seeds: s, rotorQueueParam: d, allowExplicit: h, interactive: l, from: u })));
                     else {
                         let e = Promise.resolve();
-                        c && eh(c.entity) && (e = this.sendFeedback({ entity: c.entity, type: ec.O.SKIP })),
+                        (c && eh(c.entity) && (e = this.sendFeedback({ entity: c.entity, type: ec.O.SKIP })),
                             (i = e.then(() =>
                                 this.sessionController.createSessionWithSettings({ seeds: s, rotorQueueParam: d, allowExplicit: h, interactive: l, from: u }),
-                            ));
+                            )));
                     }
                     return i
                         .then(() => {
                             var e;
-                            (null == (e = this.variables) ? void 0 : e.sendRadioStartedOnVibeSettingsChange) && (this.isVibeStarted = !1), u && (this.from = u);
+                            ((null == (e = this.variables) ? void 0 : e.sendRadioStartedOnVibeSettingsChange) && (this.isVibeStarted = !1), u && (this.from = u));
                         })
                         .catch((e) => {
                             this.logVibeError({ message: 'Error while setting new vibe settings', cause: e });
@@ -6836,7 +6848,7 @@
                             s = t.value === r.value.length - 1;
                         if (!i && !s) return Promise.resolve();
                         let n = this.getNextTracks(a).then((t) => {
-                            e.injectLast({ entitiesData: t }), (this.availableActions.moveForward.value = !0);
+                            (e.injectLast({ entitiesData: t }), (this.availableActions.moveForward.value = !0));
                         });
                         return s ? n : (i && n.catch((e) => this.logVibeError({ cause: e })), Promise.resolve());
                     });
@@ -6878,7 +6890,7 @@
                     let t = e.state.queueState.currentEntity.value;
                     if (!t) return Promise.resolve();
                     let { entity: a } = t;
-                    return this.sendFeedback({ entity: a, type: ec.O.SKIP, saveFeedbackToHistory: !0 }), Promise.resolve();
+                    return (this.sendFeedback({ entity: a, type: ec.O.SKIP, saveFeedbackToHistory: !0 }), Promise.resolve());
                 }
                 onSetIndex(e, t) {
                     var a;
@@ -6917,7 +6929,7 @@
                         (this.sessionTracksPromise = this.sendFeedbacksForInactiveSessions()
                             .then(() => this.sessionController.getEntitiesFromNextSequence(e))
                             .finally(() => {
-                                (this.sessionTracksPromise = null), (this.availableActions.moveForward.value = !0);
+                                ((this.sessionTracksPromise = null), (this.availableActions.moveForward.value = !0));
                             })),
                         (this.availableActions.moveForward.value = !1),
                         this.sessionTracksPromise
@@ -6930,7 +6942,7 @@
                 }
                 sendFeedback(e) {
                     let { entity: t, type: a, sendWithSessionTracks: r = !1, saveFeedbackToHistory: i = !1 } = e;
-                    if (!t) return this.logVibeError({ message: 'Cannot send feedback. No entity' }), Promise.resolve();
+                    if (!t) return (this.logVibeError({ message: 'Cannot send feedback. No entity' }), Promise.resolve());
                     let { session: s } = this.contextData.meta;
                     return s
                         ? this.feedbacksController
@@ -6990,13 +7002,13 @@
                 onQueueNavigationCommon(e) {
                     var t;
                     let a = eM(e.state.queueState, null == (t = this.variables) ? void 0 : t.sendCorrectRotorQueueParam);
-                    return this.removeNotPlayedVibeTracksByTtl(e), a;
+                    return (this.removeNotPlayedVibeTracksByTtl(e), a);
                 }
                 remove(e, t) {
-                    (this.handleAfterEntityRemoveHook = !1), e.remove(t, !0);
+                    ((this.handleAfterEntityRemoveHook = !1), e.remove(t, !0));
                 }
                 constructor(e) {
-                    super(e),
+                    (super(e),
                         (0, L._)(this, 'contextData', void 0),
                         (0, L._)(this, 'isVibeStarted', !1),
                         (0, L._)(this, 'variables', void 0),
@@ -7006,11 +7018,11 @@
                         (0, L._)(this, 'deferredFeedbacksQueue', void 0),
                         (0, L._)(this, 'sessionController', void 0),
                         (0, L._)(this, 'afterErrorHook', void 0),
-                        (0, L._)(this, 'handleAfterEntityRemoveHook', !0);
+                        (0, L._)(this, 'handleAfterEntityRemoveHook', !0));
                     let { data: t, rotorResource: a, variables: r, deferredFeedbacksStore: i, logger: s } = e;
                     this.contextData = t;
                     let n = null != i ? i : new eL();
-                    (this.from = t.from),
+                    ((this.from = t.from),
                         (this.utmLink = t.utmLink),
                         (this.availableActions.repeat.value = !1),
                         (this.availableActions.shuffle.value = !1),
@@ -7030,7 +7042,7 @@
                             rotorResource: a,
                             sessionStore: this.sessionStore,
                             deferredFeedbacksQueue: this.deferredFeedbacksQueue,
-                        }));
+                        })));
                 }
             }
             class eq extends es {
@@ -7054,7 +7066,7 @@
                         .getTracksMeta({ trackIds: [e], withProgress: !0 })
                         .then((t) => {
                             let a = t[0];
-                            if (a) return (this.contextData.meta = a), a;
+                            if (a) return ((this.contextData.meta = a), a);
                             throw new ei('Error in VariousContext. Track not found', { code: 'E_VARIOUS_LOAD_CONTEXT_META', data: { contextId: e } });
                         })
                         .catch((t) => {
@@ -7076,14 +7088,14 @@
                     return this.contextData;
                 }
                 constructor(e) {
-                    super(e), (0, L._)(this, 'contextData', void 0), (0, L._)(this, 'tracksResource', void 0), (0, L._)(this, 'variables', void 0);
+                    (super(e), (0, L._)(this, 'contextData', void 0), (0, L._)(this, 'tracksResource', void 0), (0, L._)(this, 'variables', void 0));
                     let { data: t, tracksResource: a, variables: r } = e;
-                    (this.tracksResource = a), (this.contextData = t), (this.from = t.from), (this.utmLink = t.utmLink), (this.variables = r);
+                    ((this.tracksResource = a), (this.contextData = t), (this.from = t.from), (this.utmLink = t.utmLink), (this.variables = r));
                 }
             }
             class eV extends z.t {
                 constructor(e, { code: t = 'E_CONTEXT_FACTORY', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'ContextFactoryException'), Object.setPrototypeOf(this, eV.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'ContextFactoryException'), Object.setPrototypeOf(this, eV.prototype));
                 }
             }
             var eU = a(11051);
@@ -7094,7 +7106,7 @@
             class eG extends es {
                 apply(e) {
                     let { hooks: t, playback: a } = e;
-                    a.state.playerState.status.onChange((e) => {
+                    (a.state.playerState.status.onChange((e) => {
                         this.isCurrentContext &&
                             e &&
                             (e === F.MT.PLAYING
@@ -7106,14 +7118,14 @@
                                 r = e && e instanceof ei && e.code === ej,
                                 i = e instanceof F.LI && eY.has(e.code);
                             !t && !r && this.isCurrentContext && i && (this.restartsCount >= 5 || this.restart(a));
-                        });
+                        }));
                 }
                 loadContextMeta() {
                     return this.rotorResource
                         .getGenerativeInfo({ stationId: String(this.contextData.meta.id) })
                         .then((e) => {
                             let t = { id: String(this.contextData.meta.id), stream: e.stream, ...e.data };
-                            return (this.contextData.meta = t), t;
+                            return ((this.contextData.meta = t), t);
                         })
                         .catch((e) => {
                             throw new ei('Error GenerativeContext', {
@@ -7155,14 +7167,14 @@
                     let t = arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
                     if (this.restartsCount >= 5) {
                         let t = new ei('Error GenerativeContext', { code: eK, data: { contextId: this.contextData.meta.id } });
-                        return e.hooks.afterError.promise(t), Promise.reject(t);
+                        return (e.hooks.afterError.promise(t), Promise.reject(t));
                     }
                     return (
                         this.restartsCount++,
                         this.loadContextMeta()
                             .then(() => {
                                 let a = t || !this.isPaused;
-                                return t && this.isPaused && (this.isPaused = !1), e.restartContext({ playAfterRestart: a, entitiesData: eW(this.contextData.meta) });
+                                return (t && this.isPaused && (this.isPaused = !1), e.restartContext({ playAfterRestart: a, entitiesData: eW(this.contextData.meta) }));
                             })
                             .catch((t) => {
                                 let a = new ei('Error GenerativeContext restart', {
@@ -7175,14 +7187,14 @@
                     );
                 }
                 constructor(e) {
-                    super(e),
+                    (super(e),
                         (0, L._)(this, 'contextData', void 0),
                         (0, L._)(this, 'rotorResource', void 0),
                         (0, L._)(this, 'isPaused', !1),
                         (0, L._)(this, 'variables', void 0),
-                        (0, L._)(this, 'restartsCount', 0);
+                        (0, L._)(this, 'restartsCount', 0));
                     let { data: t, variables: a, rotorResource: r } = e;
-                    (this.rotorResource = r),
+                    ((this.rotorResource = r),
                         (this.contextData = t),
                         (this.from = t.from),
                         (this.utmLink = t.utmLink),
@@ -7190,7 +7202,7 @@
                         (this.availableActions.shuffle.value = !1),
                         (this.availableActions.moveBackward.value = !1),
                         (this.availableActions.moveForward.value = !1),
-                        (this.variables = a);
+                        (this.variables = a));
                 }
             }
             let eH = (e) => [{ type: q.R.Radio, meta: e }];
@@ -7218,7 +7230,7 @@
                                     streamUrl: a,
                                     streamEpisodeId: r,
                                 };
-                            return (this.contextData.meta = i), i;
+                            return ((this.contextData.meta = i), i);
                         })
                         .catch((e) => {
                             throw new ei('Error RadioContext', {
@@ -7241,9 +7253,9 @@
                     return this.contextData;
                 }
                 constructor(e) {
-                    super(e), (0, L._)(this, 'contextData', void 0), (0, L._)(this, 'radioStationsResource', void 0), (0, L._)(this, 'variables', void 0);
+                    (super(e), (0, L._)(this, 'contextData', void 0), (0, L._)(this, 'radioStationsResource', void 0), (0, L._)(this, 'variables', void 0));
                     let { data: t, variables: a, radioStationsResource: r } = e;
-                    (this.radioStationsResource = r),
+                    ((this.radioStationsResource = r),
                         (this.contextData = t),
                         (this.from = t.from),
                         (this.utmLink = t.utmLink),
@@ -7251,7 +7263,7 @@
                         (this.availableActions.shuffle.value = !1),
                         (this.availableActions.moveBackward.value = !1),
                         (this.availableActions.moveForward.value = !1),
-                        (this.variables = a);
+                        (this.variables = a));
                 }
             }
             let eQ = (e) => [{ type: q.R.Radio, meta: e }];
@@ -7262,7 +7274,7 @@
                         .getByRadioId({ radioId: String(this.contextData.meta.id) })
                         .then((e) => {
                             let t = { id: String(this.contextData.meta.id), ...e };
-                            return (this.contextData.meta = t), t;
+                            return ((this.contextData.meta = t), t);
                         })
                         .catch((e) => {
                             throw new ei('Error RadioContext', {
@@ -7285,14 +7297,14 @@
                     return this.contextData;
                 }
                 constructor(e) {
-                    super(e),
+                    (super(e),
                         (0, L._)(this, 'contextData', void 0),
                         (0, L._)(this, 'radioStreamResource', void 0),
                         (0, L._)(this, 'isPaused', !1),
                         (0, L._)(this, 'restartsCount', 0),
-                        (0, L._)(this, 'variables', void 0);
+                        (0, L._)(this, 'variables', void 0));
                     let { data: t, variables: a, radioStreamResource: r } = e;
-                    (this.radioStreamResource = r),
+                    ((this.radioStreamResource = r),
                         (this.contextData = t),
                         (this.from = t.from),
                         (this.utmLink = t.utmLink),
@@ -7300,7 +7312,7 @@
                         (this.availableActions.shuffle.value = !1),
                         (this.availableActions.moveBackward.value = !1),
                         (this.availableActions.moveForward.value = !1),
-                        (this.variables = a);
+                        (this.variables = a));
                 }
             }
             class eZ {
@@ -7408,7 +7420,7 @@
                     throw new eV('Cannot create context with nonexistent type', { code: 'E_NONEXISTENT_CONTEXT_TYPE', data: { type: a.type, meta: a.meta } });
                 }
                 constructor(e) {
-                    (0, L._)(this, 'logger', void 0),
+                    ((0, L._)(this, 'logger', void 0),
                         (0, L._)(this, 'variables', void 0),
                         (0, L._)(this, 'albumsResource', void 0),
                         (0, L._)(this, 'usersResource', void 0),
@@ -7418,7 +7430,7 @@
                         (0, L._)(this, 'playlistResource', void 0),
                         (0, L._)(this, 'radioStationsResource', void 0),
                         (0, L._)(this, 'radioStreamResource', void 0),
-                        (0, L._)(this, 'deferredFeedbacksStore', void 0);
+                        (0, L._)(this, 'deferredFeedbacksStore', void 0));
                     let {
                         variables: t,
                         logger: a,
@@ -7432,7 +7444,7 @@
                         radioStationsResource: d,
                         deferredFeedbacksStore: c,
                     } = e;
-                    (this.albumsResource = null != o ? o : null),
+                    ((this.albumsResource = null != o ? o : null),
                         (this.artistsResource = null != l ? l : null),
                         (this.rotorResource = null != r ? r : null),
                         (this.usersResource = null != i ? i : null),
@@ -7442,7 +7454,7 @@
                         (this.radioStreamResource = null != u ? u : null),
                         (this.variables = t),
                         (this.deferredFeedbacksStore = null != c ? c : new eL()),
-                        (this.logger = a);
+                        (this.logger = a));
                 }
             }
             var e$ = a(62386),
@@ -7509,7 +7521,7 @@
                           : F.OQ.CROSSFADE;
                 }
                 constructor(e, t, a) {
-                    (0, L._)(this, 'context', void 0),
+                    ((0, L._)(this, 'context', void 0),
                         (0, L._)(this, 'entity', void 0),
                         (0, L._)(this, 'lastChangeMethod', null),
                         (0, L._)(this, 'lastSeekPosition', void 0),
@@ -7517,7 +7529,7 @@
                         (0, L._)(this, 'sourceContext', void 0),
                         (this.context = e),
                         (this.entity = t),
-                        (this.sourceContext = a);
+                        (this.sourceContext = a));
                 }
             }
             class e5 {
@@ -7531,17 +7543,17 @@
                     return new e9(e, t, a);
                 }
                 constructor(e) {
-                    (0, L._)(this, 'entityFactory', void 0),
+                    ((0, L._)(this, 'entityFactory', void 0),
                         (0, L._)(this, 'contextFactory', void 0),
                         (this.entityFactory = new ee(e.entityFactoryParams)),
-                        (this.contextFactory = new eZ(e.contextFactoryParams));
+                        (this.contextFactory = new eZ(e.contextFactoryParams)));
                 }
             }
             var e3 = a(14600);
             let e2 = 'deferred-feedbacks';
             class e4 extends z.t {
                 constructor(e, { code: t = 'E_DEFERRED_FEEDBACKS_IDB_STORE', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'DeferredFeedbacksStoreException'), Object.setPrototypeOf(this, e4.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'DeferredFeedbacksStoreException'), Object.setPrototypeOf(this, e4.prototype));
                 }
             }
             let e8 = (e, t) => (void 0 === e && void 0 === t) || (void 0 !== e && void 0 !== t && e === t),
@@ -7563,7 +7575,9 @@
                     return this.idbIsAvailable;
                 }
                 openDatabase() {
-                    return this.idb || (this.idb = this.openIdb({ onBlocked: () => this.onBlockedHandler(), onTerminated: () => this.onTerminatedHandler() })), this.idb;
+                    return (
+                        this.idb || (this.idb = this.openIdb({ onBlocked: () => this.onBlockedHandler(), onTerminated: () => this.onTerminatedHandler() })), this.idb
+                    );
                 }
                 setErrorLogger(e) {
                     this.errorLogger = e;
@@ -7668,33 +7682,33 @@
                     });
                 }
                 onTerminatedHandler() {
-                    (this.idbIsAvailable = !1),
+                    ((this.idbIsAvailable = !1),
                         (this.idb = this.openIdb({
                             onBlocked: () => this.onBlockedHandler(),
                             onTerminated: () => {
                                 this.idbIsAvailable = !1;
                             },
-                        }));
+                        })));
                 }
                 openIdb(e) {
                     return new e3.h(this.idbName)
                         .openDB(1, {
                             onBlocked: (t, a, r) => {
                                 var i;
-                                this.logError('Connection has been blocked'), null == e || null == (i = e.onBlocked) || i.call(e, t, a, r);
+                                (this.logError('Connection has been blocked'), null == e || null == (i = e.onBlocked) || i.call(e, t, a, r));
                             },
                             onTerminated: () => {
                                 var t;
-                                this.logError('Storage has been terminated'), null == e || null == (t = e.onTerminated) || t.call(e);
+                                (this.logError('Storage has been terminated'), null == e || null == (t = e.onTerminated) || t.call(e));
                             },
                             onUpgrade: (e) => {
                                 let t = e.createObjectStore(e2, { keyPath: 'id' });
-                                t.createIndex('radioSessionId', 'radioSessionId', { unique: !1 }), t.createIndex('createdAt', 'createdAt', { unique: !1 });
+                                (t.createIndex('radioSessionId', 'radioSessionId', { unique: !1 }), t.createIndex('createdAt', 'createdAt', { unique: !1 }));
                             },
                         })
                         .then((e) => ((this.idbIsAvailable = !0), e))
                         .catch((e) => {
-                            (this.idbIsAvailable = !1), this.logError('Open storage error', e);
+                            ((this.idbIsAvailable = !1), this.logError('Open storage error', e));
                         });
                 }
                 closeConnection(e) {
@@ -7735,7 +7749,7 @@
                 generateAndLogError(e, t) {
                     var a;
                     let r = this.generateError(e, t);
-                    return null == (a = this.errorLogger) || a.call(this, r), r;
+                    return (null == (a = this.errorLogger) || a.call(this, r), r);
                 }
                 generateError(e, t) {
                     var a;
@@ -7750,7 +7764,7 @@
                     return e instanceof DOMException && 'ConstraintError' === e.name;
                 }
                 constructor(e = 500) {
-                    (0, L._)(this, 'storedFeedbacksLimit', void 0),
+                    ((0, L._)(this, 'storedFeedbacksLimit', void 0),
                         (0, L._)(this, 'idb', void 0),
                         (0, L._)(this, 'errorLogger', void 0),
                         (0, L._)(this, 'pendingFeedbackIds', new Set()),
@@ -7766,7 +7780,7 @@
                         })().then((e) => {
                             this.storageEstimate = e;
                         }),
-                        (this.idbName = ''.concat('music_deferred_feedbacks', '_').concat('1.0.0'));
+                        (this.idbName = ''.concat('music_deferred_feedbacks', '_').concat('1.0.0')));
                 }
             }
             var tt = a(90369),
@@ -7802,7 +7816,8 @@
                     if (!this.currentGraph?.analyserNode) return null;
                     const { context, analyserNode } = this.currentGraph;
                     const length = analyserNode.frequencyBinCount;
-                    const frequencies = this.frequencyDomainBuffer.length === length ? this.frequencyDomainBuffer : (this.frequencyDomainBuffer = new Float32Array(length));
+                    const frequencies =
+                        this.frequencyDomainBuffer.length === length ? this.frequencyDomainBuffer : (this.frequencyDomainBuffer = new Float32Array(length));
                     const spectrum = this.normalizedSpectrum.length === length ? this.normalizedSpectrum : (this.normalizedSpectrum = new Float32Array(length));
                     const gain = volumeCompensation ?? this.getVolumeCompensation();
                     analyserNode.getFloatFrequencyData(frequencies);
@@ -7812,9 +7827,7 @@
                     const range = analyserNode.maxDecibels - analyserNode.minDecibels;
                     for (let bin = 0; bin < length; bin++) {
                         const db = frequencies[bin];
-                        spectrum[bin] = gain > 0 && Number.isFinite(db)
-                            ? 255 * Math.max(0, Math.min(1, (db - gainDb - analyserNode.minDecibels) / range))
-                            : 0;
+                        spectrum[bin] = gain > 0 && Number.isFinite(db) ? 255 * Math.max(0, Math.min(1, (db - gainDb - analyserNode.minDecibels) / range)) : 0;
                     }
                     // postMessage clones the buffer; it must never be transferred.
                     return { spectrum, sampleRate: context.sampleRate, fftSize: analyserNode.fftSize };
@@ -7831,7 +7844,7 @@
                             let { low: t, high: a } = e,
                                 i = Math.max(0, Math.min(r - 1, Math.ceil(t / s))),
                                 o = Math.max(i, Math.min(r - 1, Math.ceil(a / s) - 1));
-                            return (n = Math.max(n, o)), { startIndex: i, endIndex: o };
+                            return ((n = Math.max(n, o)), { startIndex: i, endIndex: o });
                         }),
                         l = Array(n + 2).fill(0);
                     for (let e = 0; e < n + 1; e++) {
@@ -7876,9 +7889,9 @@
                     let l = 2 * Math.sqrt(r / a);
                     if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
                         let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
-                        return (this._prevTimeRms = void 0 !== this._prevTimeRms ? this._prevTimeRms * (1 - e) + l * e : l), this._prevTimeRms;
+                        return ((this._prevTimeRms = void 0 !== this._prevTimeRms ? this._prevTimeRms * (1 - e) + l * e : l), this._prevTimeRms);
                     }
-                    return (this._prevTimeRms = l), l;
+                    return ((this._prevTimeRms = l), l);
                 }
                 getRMSAlt(volumeCompensation) {
                     if (null === this.currentGraph) return 0;
@@ -7898,12 +7911,12 @@
                     let l = 120 * Math.sqrt(r / a);
                     if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
                         let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
-                        return (this._prevFrequencyRms = void 0 !== this._prevFrequencyRms ? this._prevFrequencyRms * (1 - e) + l * e : l), this._prevFrequencyRms;
+                        return ((this._prevFrequencyRms = void 0 !== this._prevFrequencyRms ? this._prevFrequencyRms * (1 - e) + l * e : l), this._prevFrequencyRms);
                     }
-                    return (this._prevFrequencyRms = l), l;
+                    return ((this._prevFrequencyRms = l), l);
                 }
                 constructor({ currentAudioElement: e, graphs: t }) {
-                    (0, L._)(this, 'currentGraph', null),
+                    ((0, L._)(this, 'currentGraph', null),
                         (0, L._)(this, 'graphs', void 0),
                         (0, L._)(this, 'timeDomainBuffer', new Float32Array()),
                         (0, L._)(this, 'frequencyDomainBuffer', new Float32Array()),
@@ -7914,7 +7927,7 @@
                         e.onChange((e) => {
                             let t = this.graphs.find((t) => t.audioElement === e);
                             t && ((this.currentGraph = t), (this._prevTimeRms = void 0), (this._prevFrequencyRms = void 0));
-                        });
+                        }));
                     const getAnalyserNode = () => {
                         const node = this.currentGraph?.analyserNode;
                         if (!node) throw new Error('PulseSync Wave analyser is not ready');
@@ -7947,7 +7960,7 @@
                 }
             }
             !(function (e) {
-                (e.IDLE = 'IDLE'), (e.ENABLED = 'ENABLED'), (e.DISABLED = 'DISABLED');
+                ((e.IDLE = 'IDLE'), (e.ENABLED = 'ENABLED'), (e.DISABLED = 'DISABLED'));
             })(s || (s = {}));
             class tr {
                 enable() {
@@ -7965,31 +7978,31 @@
                         (this.state = s.DISABLED));
                 }
                 applyPreset(e) {
-                    (this.preset = e),
+                    ((this.preset = e),
                         this.graphs.forEach((t) => {
-                            t.setPreamp(e.preamp), t.setBands(e.frequencies);
-                        });
+                            (t.setPreamp(e.preamp), t.setBands(e.frequencies));
+                        }));
                 }
                 addGraphs(e) {
                     let t = e.filter((e) => !this.graphs.includes(e));
                     if (0 === t.length) return;
                     this.graphs.push(...t);
                     let { preset: a } = this;
-                    a &&
+                    (a &&
                         t.forEach((e) => {
-                            e.setPreamp(a.preamp), e.setBands(a.frequencies);
+                            (e.setPreamp(a.preamp), e.setBands(a.frequencies));
                         }),
                         this.state === s.ENABLED &&
                             t.forEach((e) => {
                                 e.connectEqualizer();
-                            });
+                            }));
                 }
                 constructor({ preset: e, graphs: t }) {
-                    (0, L._)(this, 'graphs', void 0),
+                    ((0, L._)(this, 'graphs', void 0),
                         (0, L._)(this, 'state', s.DISABLED),
                         (0, L._)(this, 'preset', void 0),
                         (this.graphs = [...t]),
-                        e && this.applyPreset(e);
+                        e && this.applyPreset(e));
                 }
             }
             var ti = (function (e, t, a) {
@@ -8011,9 +8024,9 @@
             class ts {
                 init() {
                     try {
-                        return (this.worker = new ti()), this.worker.addEventListener('message', this.onMessage.bind(this)), Promise.resolve();
+                        return ((this.worker = new ti()), this.worker.addEventListener('message', this.onMessage.bind(this)), Promise.resolve());
                     } catch (e) {
-                        return this.destroy(), Promise.reject(e);
+                        return (this.destroy(), Promise.reject(e));
                     }
                 }
                 get isIntervalRunning() {
@@ -8030,19 +8043,19 @@
                 }
                 destroy() {
                     var e;
-                    this.clearInterval(),
+                    (this.clearInterval(),
                         this.errorListeners.forEach((e) => {
                             var t, a;
-                            null == (t = this.worker) || t.removeEventListener('error', e), null == (a = this.worker) || a.removeEventListener('messageerror', e);
+                            (null == (t = this.worker) || t.removeEventListener('error', e), null == (a = this.worker) || a.removeEventListener('messageerror', e));
                         }),
                         null == (e = this.worker) || e.terminate(),
-                        (this.worker = null);
+                        (this.worker = null));
                 }
                 onMessage(e) {
                     'tick' === e.data.message && this.callback && this.callback();
                 }
                 constructor() {
-                    (0, L._)(this, 'worker', null), (0, L._)(this, 'callback', null), (0, L._)(this, 'isTrackingInWorker', !1), (0, L._)(this, 'errorListeners', []);
+                    ((0, L._)(this, 'worker', null), (0, L._)(this, 'callback', null), (0, L._)(this, 'isTrackingInWorker', !1), (0, L._)(this, 'errorListeners', []));
                 }
             }
             class tn {
@@ -8057,7 +8070,7 @@
                     this.intervalId = setInterval(e, t);
                 }
                 clearInterval() {
-                    null !== this.intervalId && clearInterval(this.intervalId), (this.intervalId = null);
+                    (null !== this.intervalId && clearInterval(this.intervalId), (this.intervalId = null));
                 }
                 destroy() {
                     this.clearInterval();
@@ -8092,7 +8105,7 @@
                 }
             }
             !(function (e) {
-                (e.IDLE = 'IDLE'), (e.ENABLED = 'ENABLED'), (e.DISABLED = 'DISABLED');
+                ((e.IDLE = 'IDLE'), (e.ENABLED = 'ENABLED'), (e.DISABLED = 'DISABLED'));
             })(n || (n = {}));
             let tl = 1e3 / 60,
                 tu = 1 / 60;
@@ -8110,38 +8123,38 @@
                         let e = this.getFadeOutVolume();
                         this.volumeAtTime = e;
                     }
-                    e > this.inStop && e < this.outStart && (this.volumeAtTime = this.maxVolume), e > this.outStop && (this.volumeAtTime = 0);
+                    (e > this.inStop && e < this.outStart && (this.volumeAtTime = this.maxVolume), e > this.outStop && (this.volumeAtTime = 0));
                 }
                 enable() {
-                    this.saveAudioElementVolumeBeforeFade(),
+                    (this.saveAudioElementVolumeBeforeFade(),
                         (this.volume = 0),
                         (this.state = n.ENABLED),
-                        this.ticker.isIntervalRunning || this.ticker.setInterval(this.updateGain.bind(this), tl);
+                        this.ticker.isIntervalRunning || this.ticker.setInterval(this.updateGain.bind(this), tl));
                 }
                 enableFadeIn() {
-                    this.saveAudioElementVolumeBeforeFade(),
+                    (this.saveAudioElementVolumeBeforeFade(),
                         (this.volume = 0),
                         (this.state = n.ENABLED),
-                        this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeIn.bind(this), tl);
+                        this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeIn.bind(this), tl));
                 }
                 fadeIn() {
                     if (this.state !== n.ENABLED) return;
                     let e = this.audioElement.currentTime,
                         t = e >= this.inStart && e <= this.inStop,
                         a = this.getFadeInVolume(e);
-                    t && (this.volumeAtTime = a), e > this.inStop && e < this.outStart && ((this.volumeAtTime = this.maxVolume), this.disable());
+                    (t && (this.volumeAtTime = a), e > this.inStop && e < this.outStart && ((this.volumeAtTime = this.maxVolume), this.disable()));
                 }
                 enableFadeOut() {
-                    this.saveAudioElementVolumeBeforeFade(),
+                    (this.saveAudioElementVolumeBeforeFade(),
                         (this.state = n.ENABLED),
-                        this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeOut.bind(this), tl);
+                        this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeOut.bind(this), tl));
                 }
                 fadeOut() {
                     if (this.state !== n.ENABLED) return;
                     let e = this.audioElement.currentTime,
                         t = e >= this.outStart && e <= this.outStop,
                         a = this.getFadeOutVolume();
-                    t && (this.volumeAtTime = a), e > this.outStop && (this.volumeAtTime = 0);
+                    (t && (this.volumeAtTime = a), e > this.outStop && (this.volumeAtTime = 0));
                 }
                 getFadeInVolume(e) {
                     let t = this.inStop - this.inStart,
@@ -8155,11 +8168,11 @@
                 disable() {
                     let e = !this.config.useVolumeForAudioEffect || null !== this.audioElementVolumeBeforeFade,
                         t = this.maxVolume;
-                    (this.state = n.DISABLED), this.ticker.clearInterval(), e && (this.volume = t), (this.audioElementVolumeBeforeFade = null);
+                    ((this.state = n.DISABLED), this.ticker.clearInterval(), e && (this.volume = t), (this.audioElementVolumeBeforeFade = null));
                 }
                 setFadeParams(e) {
                     let { inStart: t, inStop: a, outStart: r, outStop: i } = e;
-                    (this.inStart = t), (this.inStop = a), (this.outStart = r), (this.outStop = i);
+                    ((this.inStart = t), (this.inStop = a), (this.outStart = r), (this.outStop = i));
                 }
                 set volumeAtTime(e) {
                     if (this.config.useVolumeForAudioEffect) this.audioElement.volume = e;
@@ -8196,7 +8209,7 @@
                 }
                 constructor({ target: e, hooks: t, config: a }) {
                     var r, i;
-                    (0, L._)(this, 'state', n.IDLE),
+                    ((0, L._)(this, 'state', n.IDLE),
                         (0, L._)(this, 'inStart', 0),
                         (0, L._)(this, 'inStop', 0),
                         (0, L._)(this, 'outStart', 0),
@@ -8221,7 +8234,7 @@
                             .catch((e) => {
                                 let t = new z.t('FadeEffect. Error in ticker init().', { cause: (0, M.createObjectFromError)(e) });
                                 this.hooks.afterError.promise(t);
-                            });
+                            }));
                 }
             }
             class tc {
@@ -8234,11 +8247,11 @@
                 apply(e) {
                     if (this.currentFadeEffect) {
                         if (!e) return void this.currentFadeEffect.disable();
-                        this.currentFadeEffect.setFadeParams(e), this.currentFadeEffect.enable();
+                        (this.currentFadeEffect.setFadeParams(e), this.currentFadeEffect.enable());
                     }
                 }
                 constructor({ currentAudioElement: e, graphs: t, playback: a }) {
-                    (0, L._)(this, 'fadeEffects', []),
+                    ((0, L._)(this, 'fadeEffects', []),
                         (0, L._)(this, 'currentFadeEffect', null),
                         t.forEach((e) => {
                             this.fadeEffects.push(
@@ -8252,7 +8265,7 @@
                         e.onChange((e) => {
                             let t = this.fadeEffects.find((t) => t.audioElement === e);
                             t && (this.currentFadeEffect = t);
-                        });
+                        }));
                 }
             }
             class th {
@@ -8276,7 +8289,7 @@
                     if (!a || !r) return;
                     let i = a.inStop - a.inStart,
                         s = { ...a, inStop: a.inStart + i / 4 };
-                    r.setFadeParams(s), r.enableFadeIn();
+                    (r.setFadeParams(s), r.enableFadeIn());
                 }
                 disableFade() {
                     this.fadeEffects.forEach((e) => {
@@ -8288,9 +8301,9 @@
                     return !!(t.value && !e && e0(t.value.context));
                 }
                 constructor({ graphs: e, playback: t, config: a = {} }) {
-                    (0, L._)(this, 'playback', void 0), (0, L._)(this, 'fadeEffects', []), (this.playback = t);
+                    ((0, L._)(this, 'playback', void 0), (0, L._)(this, 'fadeEffects', []), (this.playback = t));
                     let r = t.state.mediaPlayersStore.value[U.e.AUDIO];
-                    a.useVolumeForAudioEffect && r && (0, F.uo)(r)
+                    (a.useVolumeForAudioEffect && r && (0, F.uo)(r)
                         ? r.audioElementsStore.forEach((e) => {
                               this.fadeEffects.push(
                                   new td({
@@ -8320,10 +8333,10 @@
                             ),
                             r.isReadyForAudioEffectInStart.onChange(
                                 (e) => {
-                                    e && this.canEnableFastFade(r.isReadyForAudioEffect.value) && this.enableFastFade(), e || this.disableFade();
+                                    (e && this.canEnableFastFade(r.isReadyForAudioEffect.value) && this.enableFastFade(), e || this.disableFade());
                                 },
                                 { skipFirstChange: !0 },
-                            ));
+                            )));
                 }
             }
             function tv(e) {
@@ -8338,7 +8351,7 @@
                     this.durationMs = e;
                 }
                 constructor({ playback: e }) {
-                    (0, L._)(this, 'playback', null),
+                    ((0, L._)(this, 'playback', null),
                         (0, L._)(this, 'durationMs', void 0),
                         (this.playback = e),
                         this.playback.state.playerState.progress.onChange((e) => {
@@ -8346,15 +8359,15 @@
                             let r = (null != (t = this.durationMs) ? t : 0) / 1e3,
                                 i = e && Math.abs(e.duration - r) > 1;
                             e && e.position > r && i && (null == (a = this.playback) || a.moveForward());
-                        });
+                        }));
                 }
             }
-            !(function (e) {
-                (e.SUSPENDED = 'suspended'), (e.RUNNING = 'running'), (e.CLOSED = 'closed');
+            (!(function (e) {
+                ((e.SUSPENDED = 'suspended'), (e.RUNNING = 'running'), (e.CLOSED = 'closed'));
             })(o || (o = {})),
                 (function (e) {
-                    (e.HIGHSHELF = 'highshelf'), (e.PEAKING = 'peaking'), (e.LOWSHELF = 'lowshelf');
-                })(l || (l = {}));
+                    ((e.HIGHSHELF = 'highshelf'), (e.PEAKING = 'peaking'), (e.LOWSHELF = 'lowshelf'));
+                })(l || (l = {})));
             let pulseSyncR128NormalizationEnabled = !0;
             null == window ||
                 null == window.nativeSettings ||
@@ -8367,10 +8380,10 @@
             class tf {
                 connectNodes() {
                     let { useAnalyser: e, useGain: t } = this.config;
-                    this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode),
+                    (this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode),
                         e && this.analyserNode.connect(this.r128GainNode),
                         t && (this.r128GainNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
-                        !t && this.r128GainNode.connect(this.context.destination);
+                        !t && this.r128GainNode.connect(this.context.destination));
                 }
                 connectEqualizer() {
                     let { useAnalyser: e, useGain: t } = this.config,
@@ -8400,13 +8413,13 @@
                     let a = null != e ? e : this.lastR128,
                         r = Number(null == a ? void 0 : a.i),
                         i = 'boolean' == typeof t ? t : pulseSyncR128NormalizationEnabled;
-                    'boolean' == typeof t && (pulseSyncR128NormalizationEnabled = t), null != e && (this.lastR128 = e);
+                    ('boolean' == typeof t && (pulseSyncR128NormalizationEnabled = t), null != e && (this.lastR128 = e));
                     if (!i || !Number.isFinite(r)) return void this.r128GainNode.gain.setValueAtTime(1, this.context.currentTime);
                     let s = Number(null == a ? void 0 : a.tp),
                         n = -23 - r;
                     Number.isFinite(s) && (n = Math.min(n, -s));
                     let o = Math.pow(10, n / 20);
-                    (Number.isFinite(o) && o > 0) || (o = 1), this.r128GainNode.gain.setValueAtTime(o, this.context.currentTime);
+                    ((Number.isFinite(o) && o > 0) || (o = 1), this.r128GainNode.gain.setValueAtTime(o, this.context.currentTime));
                 }
                 setBands(e) {
                     0 === this.bands.length ? (this.bands = this.connectBandsBetween(this.createBandsByFrequencies(e))) : this.updateBands(e);
@@ -8422,7 +8435,7 @@
                 }
                 createBand(e, t, a) {
                     let r = this.context.createBiquadFilter();
-                    return (r.type = e), (r.frequency.value = t), (r.Q.value = 1), a && r.gain.setValueAtTime(a, this.context.currentTime + 0.3), r;
+                    return ((r.type = e), (r.frequency.value = t), (r.Q.value = 1), a && r.gain.setValueAtTime(a, this.context.currentTime + 0.3), r);
                 }
                 getBiquadFilterType(e, t) {
                     return 0 === e ? l.LOWSHELF : e === t - 1 ? l.HIGHSHELF : l.PEAKING;
@@ -8431,7 +8444,7 @@
                     let t = this.preamp;
                     return (
                         e.forEach((e) => {
-                            t.connect(e), (t = e);
+                            (t.connect(e), (t = e));
                         }),
                         e
                     );
@@ -8446,14 +8459,14 @@
                     let t = e.createAnalyser();
                     // Smooth compensated values in the visualizer, not raw FFT
                     // magnitudes: otherwise volume changes leave a false envelope.
-                    return (t.fftSize = 1024), (t.smoothingTimeConstant = 0), t;
+                    return ((t.fftSize = 1024), (t.smoothingTimeConstant = 0), t);
                 }
                 checkAndResumeAudioContext(e) {
                     let t = () => {
                         e.resume().then(() => {
-                            document.body.removeEventListener('touchend', t, !0),
+                            (document.body.removeEventListener('touchend', t, !0),
                                 document.body.removeEventListener('click', t, !0),
-                                document.body.removeEventListener('keydown', t, !0);
+                                document.body.removeEventListener('keydown', t, !0));
                         });
                     };
                     e.state === o.SUSPENDED &&
@@ -8462,7 +8475,7 @@
                         document.body.addEventListener('keydown', t, !0));
                 }
                 constructor(e, t) {
-                    (0, L._)(this, 'audioElement', void 0),
+                    ((0, L._)(this, 'audioElement', void 0),
                         (0, L._)(this, 'context', void 0),
                         (0, L._)(this, 'sourceNode', void 0),
                         (0, L._)(this, 'preamp', void 0),
@@ -8485,7 +8498,7 @@
                         (this.r128GainNode = this.context.createGain()),
                         (this.preamp = this.context.createGain()),
                         (this.config = t),
-                        this.connectNodes();
+                        this.connectNodes());
                 }
             }
             class tg {
@@ -8499,7 +8512,7 @@
                     let a = this.graphsByMediaPlayer.get(e);
                     if (a) return a;
                     let r = this.createGraphs(e, t);
-                    return r.forEach((e) => this.graphs.add(e)), this.graphsByMediaPlayer.set(e, r), r;
+                    return (r.forEach((e) => this.graphs.add(e)), this.graphsByMediaPlayer.set(e, r), r);
                 }
                 initializeAnalyser(e, t, a) {
                     tv(a) && this.options.useAnalyser && !this.analyser && (this.analyser = new ta({ currentAudioElement: e.currentAudioElement, graphs: t }));
@@ -8538,7 +8551,7 @@
                             return tp(e) && !!t.useEqualizer;
                         })(a, this.options)
                     ) {
-                        this.initializeCrossfade(t, void 0, a), this.initializeSmartPreview(t, a);
+                        (this.initializeCrossfade(t, void 0, a), this.initializeSmartPreview(t, a));
                         return;
                     }
                     let r = this.getOrCreateGraphs(
@@ -8550,11 +8563,11 @@
                             return { useAnalyser: !!r && t.useAnalyser, useGain: r && (!!t.useFade || i) };
                         })(a, this.options),
                     );
-                    this.initializeAnalyser(e, r, a),
+                    (this.initializeAnalyser(e, r, a),
                         this.initializeEqualizer(r, a),
                         this.initializeFade(e, t, r, a),
                         this.initializeCrossfade(t, r, a),
-                        this.initializeSmartPreview(t, a);
+                        this.initializeSmartPreview(t, a));
                 }
                 initializeMediaPlayersStore(e, t) {
                     void 0 !== e &&
@@ -8565,7 +8578,7 @@
                 }
                 apply(e) {
                     let { hooks: t, playback: a } = e;
-                    a.state.mediaPlayersStore.onChange((e) => {
+                    (a.state.mediaPlayersStore.onChange((e) => {
                         this.initializeMediaPlayersStore(e, a);
                     }),
                         a.state.playerState.event.onChange(() => {
@@ -8601,10 +8614,10 @@
                                 this.smartPreview && this.smartPreview.apply(s),
                                 Promise.resolve()
                             );
-                        });
+                        }));
                 }
                 constructor(e) {
-                    (0, L._)(this, 'options', void 0),
+                    ((0, L._)(this, 'options', void 0),
                         (0, L._)(this, 'graphsByMediaPlayer', new WeakMap()),
                         (0, L._)(this, 'graphs', new Set()),
                         (0, L._)(this, 'analyser', void 0),
@@ -8615,28 +8628,28 @@
                         (this.options = e),
                         (window.__PULSESYNC_APPLY_R128_NORMALIZATION__ = (e) => {
                             let t = Boolean(e);
-                            (pulseSyncR128NormalizationEnabled = t),
+                            ((pulseSyncR128NormalizationEnabled = t),
                                 this.graphs.forEach((e) => {
                                     e.setR128Gain(void 0, t);
-                                });
-                        });
+                                }));
+                        }));
                 }
             }
             function tb(e) {
                 return (null == e ? void 0 : e.data.type) === q.R.Clip;
             }
-            !(function (e) {
-                (e.AD = 'ad'), (e.SHOT = 'shot');
+            (!(function (e) {
+                ((e.AD = 'ad'), (e.SHOT = 'shot'));
             })(u || (u = {})),
                 (function (e) {
-                    (e.NONE = 'none'), (e.AD = 'ad'), (e.JINGLE = 'jingle');
+                    ((e.NONE = 'none'), (e.AD = 'ad'), (e.JINGLE = 'jingle'));
                 })(d || (d = {})),
                 (function (e) {
-                    (e.NONE = 'none'), (e.AD = 'ad'), (e.JINGLE = 'jingle');
+                    ((e.NONE = 'none'), (e.AD = 'ad'), (e.JINGLE = 'jingle'));
                 })(c || (c = {})),
                 (function (e) {
-                    (e.VIDEO = 'video'), (e.AUDIO = 'audio');
-                })(h || (h = {}));
+                    ((e.VIDEO = 'video'), (e.AUDIO = 'audio'));
+                })(h || (h = {})));
             class tE {
                 apply(e) {
                     let { playback: t, hooks: a } = e;
@@ -8667,7 +8680,7 @@
                                             ((null == n ? void 0 : n.entity.totalPlayedSeconds) || 0) /
                                             ((((null == n ? void 0 : n.entity.data.meta) && 'durationMs' in n.entity.data.meta && n.entity.data.meta.durationMs) || 1) /
                                                 1e3);
-                                    (this.currentTrackId = String(null == n ? void 0 : n.entity.data.meta.id)),
+                                    ((this.currentTrackId = String(null == n ? void 0 : n.entity.data.meta.id)),
                                         (this.from = a.value.from),
                                         this.afterTrackResource
                                             .getAfterTrack({ contextItem: String(a.value.data.meta.id), from: a.value.from, types: u.AD, nextTrackId: v, prevTrackId: m })
@@ -8678,9 +8691,9 @@
                                                     (f < 0.5 && (null == (i = a.ad) ? void 0 : i.afterSkip) === c.AD);
                                                 if ('ad' in a && this.advertModule && n) {
                                                     let r = tb(null == (s = t.state.queueState.currentEntity.value) ? void 0 : s.entity) ? h.VIDEO : void 0;
-                                                    t.pause(), this.advertModule.playAdvert({ afterTrackResponse: a, advertType: r }).finally(e);
+                                                    (t.pause(), this.advertModule.playAdvert({ afterTrackResponse: a, advertType: r }).finally(e));
                                                 } else e();
-                                            });
+                                            }));
                                 } else e();
                             }),
                     );
@@ -8690,18 +8703,18 @@
                 }
                 constructor(e) {
                     var t;
-                    (0, L._)(this, 'advertModule', void 0),
+                    ((0, L._)(this, 'advertModule', void 0),
                         (0, L._)(this, 'variables', void 0),
                         (0, L._)(this, 'afterTrackResource', void 0),
                         (0, L._)(this, 'adsResource', void 0),
                         (0, L._)(this, 'currentTrackId', ''),
-                        (0, L._)(this, 'from', '');
+                        (0, L._)(this, 'from', ''));
                     let { afterTrackResource: a, advertModule: r, adsResource: i, variables: s } = e;
-                    (this.afterTrackResource = a),
+                    ((this.afterTrackResource = a),
                         (this.adsResource = i),
                         (this.variables = s),
                         (this.advertModule = r),
-                        null == (t = this.advertModule) || t.setAdvertFeedbackCallback(this.advertFeedbackCallback.bind(this));
+                        null == (t = this.advertModule) || t.setAdvertFeedbackCallback(this.advertFeedbackCallback.bind(this)));
                 }
             }
             var tS = a(8342),
@@ -8730,7 +8743,7 @@
             }
             class tI {
                 createTelemetry(e) {
-                    (this.vsid = (0, M.createVsid)(e.playbackInitializationTime, this.playerTypeForVsid)),
+                    ((this.vsid = (0, M.createVsid)(e.playbackInitializationTime, this.playerTypeForVsid)),
                         (this.telemetry = new tS.YT({
                             getState: () => {
                                 var t;
@@ -8774,7 +8787,7 @@
                                 this.telemetryResource.perfLog({ payload: e, urlParams: t });
                             },
                         })),
-                        this.resourceTimingsMonitor.attach(window);
+                        this.resourceTimingsMonitor.attach(window));
                 }
                 logEvent(e, t) {
                     var a;
@@ -8820,7 +8833,7 @@
                     null == (t = this.telemetry) || t.logError({ error: e.detail });
                 }
                 constructor({ telemetryResource: e, service: t, from: a, playerTypeForVsid: r }) {
-                    (0, L._)(this, 'telemetry', void 0),
+                    ((0, L._)(this, 'telemetry', void 0),
                         (0, L._)(this, 'resourceTimingsMonitor', void 0),
                         (0, L._)(this, 'telemetryResource', void 0),
                         (0, L._)(this, 'from', void 0),
@@ -8830,7 +8843,7 @@
                         (this.telemetryResource = e),
                         (this.service = t),
                         (this.from = a),
-                        (this.playerTypeForVsid = r);
+                        (this.playerTypeForVsid = r));
                 }
             }
             class tC {
@@ -8838,7 +8851,7 @@
                     return this.transport.send(e, { topLevelParameter: 'player-metrics' });
                 }
                 constructor(e) {
-                    (0, L._)(this, 'transport', void 0), (this.transport = e);
+                    ((0, L._)(this, 'transport', void 0), (this.transport = e));
                 }
             }
             class tT {
@@ -8846,7 +8859,7 @@
                     return this.transport.send(e, { service: 'Player' });
                 }
                 constructor(e) {
-                    (0, L._)(this, 'transport', void 0), (this.transport = e);
+                    ((0, L._)(this, 'transport', void 0), (this.transport = e));
                 }
             }
             var tx = a(79490);
@@ -8907,10 +8920,10 @@
                             return;
                         }
                         if (e === F.pM.CONTEXT) {
-                            (n.availableActions.moveBackward.value = !!a || (0 === s && !!r)), (n.availableActions.moveForward.value = !!r || !!a);
+                            ((n.availableActions.moveBackward.value = !!a || (0 === s && !!r)), (n.availableActions.moveForward.value = !!r || !!a));
                             return;
                         }
-                        (n.availableActions.moveBackward.value = !!a), (n.availableActions.moveForward.value = !!r || t);
+                        ((n.availableActions.moveBackward.value = !!a), (n.availableActions.moveForward.value = !!r || t));
                     }
                 });
                 tR.push(c);
@@ -8937,9 +8950,9 @@
                                     l = 'type' in s && s.type && tD.includes(s.type),
                                     u = !n && !o && !l,
                                     d = (!n || a) && !o && !l;
-                                (r.availableActions.shuffle.value = u),
+                                ((r.availableActions.shuffle.value = u),
                                     (r.availableActions.repeat.value = d),
-                                    !u && t.state.queueState.shuffle.value && t.toggleShuffle();
+                                    !u && t.state.queueState.shuffle.value && t.toggleShuffle());
                                 let c = t.state.queueState.repeat.value,
                                     h = !d && c !== F.pM.NONE,
                                     v = d && n && c === F.pM.CONTEXT;
@@ -8953,13 +8966,13 @@
                                 e.availableActions.speed.value = !!a;
                             }
                         };
-                    t.afterContextSet.tap('AvailableActionsPlugin', r),
+                    (t.afterContextSet.tap('AvailableActionsPlugin', r),
                         t.beforeMediaStartPlaying.tap('AvailableActionsPlugin', r),
                         a.state.queueState.entityList.onChange(() => {
-                            r(), tw(a, this.variables.isAutoflowEnabled);
+                            (r(), tw(a, this.variables.isAutoflowEnabled));
                         }),
                         a.state.queueState.filterParams.onChange(() => {
-                            r(), tw(a, this.variables.isAutoflowEnabled);
+                            (r(), tw(a, this.variables.isAutoflowEnabled));
                         }),
                         a.state.queueState.index.onChange(() => {
                             tw(a, this.variables.isAutoflowEnabled);
@@ -8967,10 +8980,10 @@
                         a.state.queueState.repeat.onChange((e) => {
                             let { value: t } = a.state.currentContext;
                             (0, e$.i)(t) && this.variables.isVibeRepeatEnabled && e === F.pM.CONTEXT && a.setRepeatMode(F.pM.ONE);
-                        });
+                        }));
                 }
                 constructor({ variables: e }) {
-                    (0, L._)(this, 'variables', void 0), (this.variables = e);
+                    ((0, L._)(this, 'variables', void 0), (this.variables = e));
                 }
             }
             class tL {
@@ -8985,7 +8998,7 @@
             class tF {
                 apply(e) {
                     let { playback: t, hooks: a } = e;
-                    t.state.playerState.event.onChange(() => {
+                    (t.state.playerState.event.onChange(() => {
                         let { currentEntity: e } = t.state.queueState;
                         if (e.value)
                             switch (t.state.playerState.event.value) {
@@ -9004,24 +9017,24 @@
                     }),
                         a.beforeEntityPlayingProcessStart.tapPromise('TotalPlayedTimePlugin', () => {
                             let { currentEntity: e } = t.state.queueState;
-                            return e.value && e.value.entity.clearTimeStagesOfPlayback(), Promise.resolve();
+                            return (e.value && e.value.entity.clearTimeStagesOfPlayback(), Promise.resolve());
                         }),
                         a.afterMediaStartPlaying.tapPromise('TotalPlayedTimePlugin', () => {
                             let { currentEntity: e } = t.state.queueState;
-                            return e.value && e.value.entity.saveTimeStageOfPlayback({ stage: r.PLAYING, reason: 'hook-afterMediaStartPlaying' }), Promise.resolve();
+                            return (e.value && e.value.entity.saveTimeStageOfPlayback({ stage: r.PLAYING, reason: 'hook-afterMediaStartPlaying' }), Promise.resolve());
                         }),
                         a.afterMediaEndPlaying.tapPromise('TotalPlayedTimePlugin', () => {
                             let { currentEntity: e } = t.state.queueState;
-                            return e.value && e.value.entity.saveTimeStageOfPlayback({ stage: r.NOT_PLAYING, reason: 'hook-afterMediaEndPlaying' }), Promise.resolve();
+                            return (e.value && e.value.entity.saveTimeStageOfPlayback({ stage: r.NOT_PLAYING, reason: 'hook-afterMediaEndPlaying' }), Promise.resolve());
                         }),
                         a.beforeEntityChange.tapPromise('TotalPlayedTimePlugin', () => {
                             let { currentEntity: e } = t.state.queueState;
-                            return e.value && e.value.entity.saveTimeStageOfPlayback({ stage: r.NOT_PLAYING, reason: 'hook-beforeEntityChange' }), Promise.resolve();
+                            return (e.value && e.value.entity.saveTimeStageOfPlayback({ stage: r.NOT_PLAYING, reason: 'hook-beforeEntityChange' }), Promise.resolve());
                         }),
                         a.beforeContextSet.tapPromise('TotalPlayedTimePlugin', () => {
                             let { currentEntity: e } = t.state.queueState;
-                            return e.value && e.value.entity.saveTimeStageOfPlayback({ stage: r.NOT_PLAYING, reason: 'hook-beforeContextSet' }), Promise.resolve();
-                        });
+                            return (e.value && e.value.entity.saveTimeStageOfPlayback({ stage: r.NOT_PLAYING, reason: 'hook-beforeContextSet' }), Promise.resolve());
+                        }));
                 }
             }
             var tB = a(31322),
@@ -9042,12 +9055,12 @@
                     ).json();
                 }
                 constructor(e, t) {
-                    super(e, t), (0, L._)(this, 'httpClient', void 0), (0, L._)(this, 'config', void 0), (this.httpClient = e), (this.config = t);
+                    (super(e, t), (0, L._)(this, 'httpClient', void 0), (0, L._)(this, 'config', void 0), (this.httpClient = e), (this.config = t));
                 }
             }
             var tU = a(87953);
             !(function (e) {
-                (e.START = 'start'), (e.END = 'end'), (e.PLAYING = 'playing'), (e.PAUSE = 'pause');
+                ((e.START = 'start'), (e.END = 'end'), (e.PLAYING = 'playing'), (e.PAUSE = 'pause'));
             })(v || (v = {}));
             var tW = a(82299),
                 tK = a(44179),
@@ -9061,7 +9074,7 @@
                 };
             class tQ {
                 use(e) {
-                    return this.middlewares.push(e), this;
+                    return (this.middlewares.push(e), this);
                 }
                 run(e) {
                     let t = (a) => (a >= this.middlewares.length ? Promise.resolve() : (0, this.middlewares[a])(e, () => t(a + 1)));
@@ -9076,7 +9089,7 @@
                     return this.playData;
                 }
                 constructor(e) {
-                    (0, L._)(this, 'contextEntityPair', void 0),
+                    ((0, L._)(this, 'contextEntityPair', void 0),
                         (0, L._)(this, 'playType', void 0),
                         (0, L._)(this, 'totalPlayedSeconds', void 0),
                         (0, L._)(this, 'endPositionSeconds', void 0),
@@ -9096,12 +9109,12 @@
                         (this.playback = e.playback),
                         (this.operation = e.operation),
                         (this.clock = e.clock),
-                        (this.isCrossfadeEnabled = e.isCrossfadeEnabled);
+                        (this.isCrossfadeEnabled = e.isCrossfadeEnabled));
                 }
             }
             class tZ extends z.t {
                 constructor(e, { code: t = 'E_PLAYS', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'PlaysException'), Object.setPrototypeOf(this, tZ.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'PlaysException'), Object.setPrototypeOf(this, tZ.prototype));
                 }
             }
             let t$ = (e, t) => {
@@ -9109,7 +9122,7 @@
                 let { entity: s, context: n } = e.contextEntityPair;
                 if (!s.playId) {
                     let t = {};
-                    (t.contextId = n.data.meta.id), (t.entityId = s.data.meta.id);
+                    ((t.contextId = n.data.meta.id), (t.entityId = s.data.meta.id));
                     let a = new tZ('Trying to '.concat(e.operation, ' without playId'), { data: t });
                     throw (null == (r = e.hooks) || r.afterError.promise(a), a);
                 }
@@ -9118,7 +9131,7 @@
                     let t = new tZ('from field is required for '.concat(e.operation, ', but was not found in plays data'));
                     throw (null == (i = e.hooks) || i.afterError.promise(t), t);
                 }
-                return (e.playData.playId = s.playId), (e.playData.from = o), t();
+                return ((e.playData.playId = s.playId), (e.playData.from = o), t());
             };
             function tJ(e) {
                 return (null == e ? void 0 : e.data.type) === et.K.Radio;
@@ -9159,7 +9172,7 @@
             let t3 = (e, t) => {
                     var a;
                     let { entity: r, context: i } = e.contextEntityPair;
-                    (e.playData.timestamp = t5(e.clock())),
+                    ((e.playData.timestamp = t5(e.clock())),
                         (e.playData.albumId = (function (e) {
                             let t;
                             if ('albums' in e.data.meta) {
@@ -9179,9 +9192,9 @@
                         (e.playData.contextItem = String(i.data.meta.id)),
                         (e.playData.addTracksToPlayerTime = r.addTracksToPlayerTime),
                         (e.playData.fromCache = t9(r)),
-                        (e.playData.isRestored = !!r.data.isRestored);
+                        (e.playData.isRestored = !!r.data.isRestored));
                     let s = (null == (a = r.data.additional) ? void 0 : a.utmLink) || i.utmLink || {};
-                    return (e.playData = { ...e.playData, ...s }), t();
+                    return ((e.playData = { ...e.playData, ...s }), t());
                 },
                 t2 = (e, t) => ((e.playData.audioAuto = 'none'), (e.playData.audioOutputName = 'Динамик'), (e.playData.audioOutputType = 'Speaker'), t()),
                 t4 = (e, t) => {
@@ -9192,7 +9205,7 @@
                         var n;
                         a = { generativeStreamId: (null == (n = i.data.meta.stream) ? void 0 : n.id) ? String(i.data.meta.stream.id) : void 0 };
                     } else a = { trackId: s };
-                    return (e.playData = { ...e.playData, ...a }), t();
+                    return ((e.playData = { ...e.playData, ...a }), t());
                 },
                 t8 = (e, t) => {
                     let { context: a } = e.contextEntityPair;
@@ -9203,12 +9216,12 @@
                             {
                                 wave: { seeds: o, stationId: l },
                             } = a.data.meta.session;
-                        (e.playData.radioSessionId = null != (r = t.radioSessionId) ? r : a.data.meta.session.radioSessionId),
+                        ((e.playData.radioSessionId = null != (r = t.radioSessionId) ? r : a.data.meta.session.radioSessionId),
                             (e.playData.batchId = null != (i = null != n ? n : t.radioBatchId) ? i : a.data.meta.session.batchId),
                             (e.playData.isFromAutoflow = t.isFromAutoflow),
                             (e.playData.isFromPumpkin = t.isFromPumpkin),
                             (e.playData.context = 'radio'),
-                            (e.playData.contextItem = null != (s = t.contextItem) ? s : o.join() || l);
+                            (e.playData.contextItem = null != (s = t.contextItem) ? s : o.join() || l));
                     }
                     return t();
                 };
@@ -9230,19 +9243,19 @@
                         var r;
                         let t = [at.b.Search, at.b.Other],
                             i = null != (r = a.data.overrideContextType) ? r : at.b.Other;
-                        (e.playData.context = i), t.includes(i) && (e.playData.contextItem = null);
+                        ((e.playData.context = i), t.includes(i) && (e.playData.contextItem = null));
                     }
                     return t();
                 },
                 ar = (e, t) => {
                     let { entity: a } = e.contextEntityPair;
-                    return (0, tt.l)(a) && (e.playData.smartPreview = !0), t();
+                    return ((0, tt.l)(a) && (e.playData.smartPreview = !0), t());
                 };
             !(function (e) {
-                (e.AFTER_MEDIA_END_PLAYING = 'AFTER_MEDIA_END_PLAYING'),
+                ((e.AFTER_MEDIA_END_PLAYING = 'AFTER_MEDIA_END_PLAYING'),
                     (e.BEFORE_CONTEXT_SET = 'BEFORE_CONTEXT_SET'),
                     (e.BEFORE_ENTITY_CHANGE = 'BEFORE_ENTITY_CHANGE'),
-                    (e.AFTER_CONTEXT_END = 'AFTER_CONTEXT_END');
+                    (e.AFTER_CONTEXT_END = 'AFTER_CONTEXT_END'));
             })(y || (y = {}));
             let ai = (e, t) => {
                 var a, r;
@@ -9257,18 +9270,18 @@
                 );
             };
             !(function (e) {
-                (e.FINISH = 'finish'),
+                ((e.FINISH = 'finish'),
                     (e.SKIP = 'skip'),
                     (e.DISLIKE = 'dislike'),
                     (e.BACK_SKIP = 'back_skip'),
                     (e.OTHER_TRACK = 'other_track'),
-                    (e.IN_PROGRESS = 'in_progress');
+                    (e.IN_PROGRESS = 'in_progress'));
             })(p || (p = {}));
             let as = (e, t) => {
                 let a,
                     { dynamicData: r, playType: i } = e;
-                if (void 0 !== r.changeReason) return (e.playData.changeReason = r.changeReason), t();
-                if (!r.hookSource) return i === v.PLAYING && (e.playData.changeReason = p.IN_PROGRESS), t();
+                if (void 0 !== r.changeReason) return ((e.playData.changeReason = r.changeReason), t());
+                if (!r.hookSource) return (i === v.PLAYING && (e.playData.changeReason = p.IN_PROGRESS), t());
                 switch (r.hookSource) {
                     case y.AFTER_MEDIA_END_PLAYING:
                         a = p.FINISH;
@@ -9293,7 +9306,7 @@
                             }
                         })(r.entityChangeMethod, r.wasDislikedOnChange);
                 }
-                return (e.playData.changeReason = a), t();
+                return ((e.playData.changeReason = a), t());
             };
             function an(e) {
                 let t = e.state.mediaPlayersStore.value[U.e.AUDIO];
@@ -9330,16 +9343,16 @@
                     let { context: a } = e.contextEntityPair,
                         { livePlayableIndex: r, index: i } = e.playback.state.queueState,
                         s = i.value === r.value;
-                    return (0, tx.S)(a) || ((0, e$.i)(a) ? (e.playData.isLivePlayableIndex = s) : (e.playData.isLivePlayableIndex = !1)), t();
+                    return ((0, tx.S)(a) || ((0, e$.i)(a) ? (e.playData.isLivePlayableIndex = s) : (e.playData.isLivePlayableIndex = !1)), t());
                 },
                 au = (e, t) => {
                     let { context: a, sourceContext: r } = e.contextEntityPair;
-                    return (0, e$.i)(a) && r && ((e.playData.context = r.data.type), (e.playData.contextItem = String(r.data.meta.id))), t();
+                    return ((0, e$.i)(a) && r && ((e.playData.context = r.data.type), (e.playData.contextItem = String(r.data.meta.id))), t());
                 };
             class ad {
                 buildPlayDataPipeline() {
                     let e = new tQ().use(t$).use(t1).use(t3).use(t2).use(t4).use(t8).use(t7).use(aa).use(ar).use(ai).use(as).use(al);
-                    return this.toggles.enableSendFadeFieldsInPlays && e.use(ao), this.toggles.enableSendOriginalContextInVibePlays && e.use(au), e;
+                    return (this.toggles.enableSendFadeFieldsInPlays && e.use(ao), this.toggles.enableSendOriginalContextInVibePlays && e.use(au), e);
                 }
                 createPlay(e) {
                     let t = new tX({ ...e, hooks: this.hooks, playback: this.playback, clock: this.clock, isCrossfadeEnabled: this.isCrossfadeEnabled });
@@ -9402,8 +9415,8 @@
                                 t
                                     ? this.sendPlay(t)
                                           .then(() => {
-                                              i && this.addSentPartialPlayReportId(t.playId),
-                                                  s && (this.nextPeriodicSendTotalPlayedSeconds += this.periodicSendIntervalSeconds);
+                                              (i && this.addSentPartialPlayReportId(t.playId),
+                                                  s && (this.nextPeriodicSendTotalPlayedSeconds += this.periodicSendIntervalSeconds));
                                           })
                                           .catch((t) => {
                                               this.handleSendingError(t, 'Error while sending plays', e);
@@ -9483,9 +9496,9 @@
                                       })
                                       .catch((e) => {
                                           var a;
-                                          (this.isSendingPlays.value = !1),
+                                          ((this.isSendingPlays.value = !1),
                                               e instanceof tU.GX && e.statusCode === tU.X1.BAD_REQUEST && this.deletePlaysData(t),
-                                              null == (a = this.hooks) || a.afterError.promise(new tZ('Error while sending plays', { cause: e }));
+                                              null == (a = this.hooks) || a.afterError.promise(new tZ('Error while sending plays', { cause: e })));
                                       });
                               })
                               .catch((e) => {
@@ -9546,8 +9559,8 @@
                     var r;
                     let i = '',
                         s = '';
-                    a && ((i = a.context.data.meta.id), (s = a.entity.data.meta.id)),
-                        null == (r = this.hooks) || r.afterError.promise(new tZ(t, { cause: e, data: { contextId: i, entityId: s } }));
+                    (a && ((i = a.context.data.meta.id), (s = a.entity.data.meta.id)),
+                        null == (r = this.hooks) || r.afterError.promise(new tZ(t, { cause: e, data: { contextId: i, entityId: s } })));
                 }
                 clearDynamicData(e) {
                     this.dynamicDataManager.clearDynamicData(e);
@@ -9616,7 +9629,7 @@
                     return Promise.resolve();
                 }
                 constructor(e) {
-                    (0, L._)(this, 'store', void 0),
+                    ((0, L._)(this, 'store', void 0),
                         (0, L._)(this, 'gateway', void 0),
                         (0, L._)(this, 'dynamicDataManager', void 0),
                         (0, L._)(this, 'clock', void 0),
@@ -9641,11 +9654,11 @@
                         (this.isCrossfadeEnabled = e.isCrossfadeEnabled),
                         (this.periodicSendIntervalSeconds = e.periodicSendIntervalSeconds),
                         (this.isSendingPlays = new er.cJ(!1)),
-                        (this.playDataPipeline = this.buildPlayDataPipeline());
+                        (this.playDataPipeline = this.buildPlayDataPipeline()));
                 }
             }
             !(function (e) {
-                (e.PREPARE = 'prepare'), (e.PLAY = 'play');
+                ((e.PREPARE = 'prepare'), (e.PLAY = 'play'));
             })(m || (m = {}));
             class ac {
                 getDynamicDataByPlayId(e) {
@@ -9709,7 +9722,7 @@
             }
             class ay {
                 attachSubscriptions() {
-                    this.attachPlayerStateEventSubscription(), this.attachProgressSubscriptions();
+                    (this.attachPlayerStateEventSubscription(), this.attachProgressSubscriptions());
                 }
                 attachPlayerStateEventSubscription() {
                     this.playback.state.playerState.event.onChange(() => {
@@ -9729,19 +9742,19 @@
                     });
                 }
                 handlePlayingEvent(e, t) {
-                    av(e, this.dynamicDataManager), this.dynamicDataManager.updateDynamicData(t, { maxPlayerStage: m.PLAY });
+                    (av(e, this.dynamicDataManager), this.dynamicDataManager.updateDynamicData(t, { maxPlayerStage: m.PLAY }));
                 }
                 handlePausedEvent(e, t) {
                     let a = this.playback.state.playerState.progress.value;
-                    Math.abs(a.position - a.duration) > 0.2 && this.dynamicDataManager.updateDynamicData(t, { pause: !0 }),
-                        tJ(e.context) && this.service.sendPausePlayReport(e);
+                    (Math.abs(a.position - a.duration) > 0.2 && this.dynamicDataManager.updateDynamicData(t, { pause: !0 }),
+                        tJ(e.context) && this.service.sendPausePlayReport(e));
                 }
                 handleSetProgressEvent(e, t) {
                     (0, tx.S)(e.context) || tJ(e.context) || this.dynamicDataManager.updateDynamicData(t, { seek: !0 });
                 }
                 attachProgressSubscriptions() {
-                    this.toggles.enableLocalStoredPlaysData && this.attachStorePlayOnProgress(),
-                        (this.toggles.enablePartialPlayReporting || this.toggles.enablePeriodicSendPlays) && this.attachPartialPlayReporting();
+                    (this.toggles.enableLocalStoredPlaysData && this.attachStorePlayOnProgress(),
+                        (this.toggles.enablePartialPlayReporting || this.toggles.enablePeriodicSendPlays) && this.attachPartialPlayReporting());
                 }
                 attachStorePlayOnProgress() {
                     let e = (0, ah.A)(
@@ -9772,7 +9785,7 @@
                     this.playback.state.playerState.progress.onChange(e);
                 }
                 constructor(e) {
-                    (0, L._)(this, 'playback', void 0),
+                    ((0, L._)(this, 'playback', void 0),
                         (0, L._)(this, 'service', void 0),
                         (0, L._)(this, 'dynamicDataManager', void 0),
                         (0, L._)(this, 'toggles', void 0),
@@ -9781,17 +9794,17 @@
                         (this.service = e.service),
                         (this.dynamicDataManager = e.dynamicDataManager),
                         (this.toggles = e.toggles),
-                        (this.storePlaysProgressIntervalMs = e.storePlaysProgressIntervalMs);
+                        (this.storePlaysProgressIntervalMs = e.storePlaysProgressIntervalMs));
                 }
             }
             class ap extends z.t {
                 constructor(e, { code: t = 'E_MEDIA_PROVIDER', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'MediaProviderException'), Object.setPrototypeOf(this, ap.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'MediaProviderException'), Object.setPrototypeOf(this, ap.prototype));
                 }
             }
             class am extends ap {
                 constructor(e, { code: t = 'E_GET_FILE_INFO_MEDIA_PROVIDER', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'GetFileInfoMediaProviderException'), Object.setPrototypeOf(this, am.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'GetFileInfoMediaProviderException'), Object.setPrototypeOf(this, am.prototype));
                 }
             }
             class af {
@@ -9799,7 +9812,7 @@
                     return this.playsResource.sendPlays({ clientNow: t5(), plays: e });
                 }
                 constructor(e) {
-                    (0, L._)(this, 'playsResource', void 0), (this.playsResource = e);
+                    ((0, L._)(this, 'playsResource', void 0), (this.playsResource = e));
                 }
             }
             class ag {
@@ -9829,7 +9842,7 @@
                     let { hooks: r, playback: i } = e,
                         s = this.params.store || new ag(),
                         n = new af(new tV(this.params.httpClient, this.params.playsResourceConfig));
-                    (this.dynamicDataManager = new ac()),
+                    ((this.dynamicDataManager = new ac()),
                         (this.service = new ad({
                             store: s,
                             gateway: n,
@@ -9849,7 +9862,7 @@
                             toggles: this.toggles,
                             storePlaysProgressIntervalMs: null != (a = this.params.storePlaysProgressIntervalMs) ? a : 1e4,
                         })),
-                        this.playerStateSubscriptions.attachSubscriptions();
+                        this.playerStateSubscriptions.attachSubscriptions());
                     let {
                         playback: o,
                         hooks: l,
@@ -9858,7 +9871,7 @@
                         toggles: c,
                         clock: h,
                     } = { playback: i, hooks: r, service: this.service, dynamicDataManager: this.dynamicDataManager, toggles: this.toggles, clock: () => new Date() };
-                    l.beforeEntityPlayingProcessStart.tapPromise('PlaysPlugin', () => {
+                    (l.beforeEntityPlayingProcessStart.tapPromise('PlaysPlugin', () => {
                         c.enableRemoveDuplicatePlays && u.clearSentPlayIds();
                         let { queueState: e } = o.state,
                             t = e.currentEntity.value;
@@ -9867,14 +9880,14 @@
                                 a = t.entity.playId;
                             d.updateDynamicData(a, { startedWithCrossfade: e });
                         }
-                        return u.sendStartEntityPlay(t), u.clearPeriodicSendInterval(), Promise.resolve();
+                        return (u.sendStartEntityPlay(t), u.clearPeriodicSendInterval(), Promise.resolve());
                     }),
                         l.beforeMediaStartPlaying.tapPromise('PlaysPlugin', () => {
                             let { currentEntity: e } = o.state.queueState;
                             if (e.value) {
                                 let t = e.value.entity.playId;
-                                e.value.entity.isDisliked && d.markAsAlreadyDisliked(t),
-                                    d.getDynamicDataByPlayId(t).startTimestamp || d.updateDynamicData(t, { startTimestamp: t5(h()) });
+                                (e.value.entity.isDisliked && d.markAsAlreadyDisliked(t),
+                                    d.getDynamicDataByPlayId(t).startTimestamp || d.updateDynamicData(t, { startTimestamp: t5(h()) }));
                             }
                             return Promise.resolve();
                         }),
@@ -9902,7 +9915,7 @@
                         }),
                         l.beforeContextSet.tapPromise('PlaysPlugin', () => {
                             let e = o.state.queueState.currentEntity.value;
-                            return e && d.updateDynamicData(e.entity.playId, { hookSource: y.BEFORE_CONTEXT_SET }), u.sendCurrentEntityEndPlay();
+                            return (e && d.updateDynamicData(e.entity.playId, { hookSource: y.BEFORE_CONTEXT_SET }), u.sendCurrentEntityEndPlay());
                         }),
                         l.afterContextEnd.tapPromise('PlaysPlugin', (e) => {
                             let t = o.state.queueState.currentEntity.value,
@@ -9957,11 +9970,11 @@
                             s.openDatabase().then(() => {
                                 var e;
                                 null == (e = this.service) || e.sendStoredPlaysData();
-                            });
+                            }));
                 }
                 constructor(e) {
                     var t, a, r, i, s, n, o, l, u, d, c, h, v, y, p, m, f, g;
-                    (0, L._)(this, 'service', void 0),
+                    ((0, L._)(this, 'service', void 0),
                         (0, L._)(this, 'dynamicDataManager', void 0),
                         (0, L._)(this, 'playerStateSubscriptions', void 0),
                         (0, L._)(this, 'toggles', void 0),
@@ -9977,14 +9990,14 @@
                             enablePeriodicSendPlays: null != (m = null == (o = e.variables) ? void 0 : o.enablePeriodicSendPlays) && m,
                             enableSendFadeFieldsInPlays: null != (f = null == (l = e.variables) ? void 0 : l.enableSendFadeFieldsInPlays) && f,
                             enableSendOriginalContextInVibePlays: null != (g = null == (u = e.variables) ? void 0 : u.enableSendOriginalContextInVibePlays) && g,
-                        });
+                        }));
                 }
             }
             var aE = a(16839);
             let aS = 'playsHeartBeats';
             class a_ extends z.t {
                 constructor(e, { code: t = 'E_PLAYS_IDB_STORE', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'PlaysStoreException'), Object.setPrototypeOf(this, a_.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'PlaysStoreException'), Object.setPrototypeOf(this, a_.prototype));
                 }
             }
             class aA {
@@ -10061,33 +10074,33 @@
                     });
                 }
                 onTerminatedHandler() {
-                    (this.idbIsAvailable = !1),
+                    ((this.idbIsAvailable = !1),
                         (this.idb = this.openIdb({
                             onBlocked: () => this.onBlockedHandler(),
                             onTerminated: () => {
                                 this.idbIsAvailable = !1;
                             },
-                        }));
+                        })));
                 }
                 openIdb(e) {
                     return new e3.h(this.idbName)
                         .openDB(1, {
                             onBlocked: (t, a, r) => {
                                 var i;
-                                this.logError('Connection has been blocked'), null == e || null == (i = e.onBlocked) || i.call(e, t, a, r);
+                                (this.logError('Connection has been blocked'), null == e || null == (i = e.onBlocked) || i.call(e, t, a, r));
                             },
                             onTerminated: () => {
                                 var t;
-                                this.logError('Storage has been terminated'), null == e || null == (t = e.onTerminated) || t.call(e);
+                                (this.logError('Storage has been terminated'), null == e || null == (t = e.onTerminated) || t.call(e));
                             },
                             onUpgrade: (e) => {
                                 let t = e.createObjectStore(aS, { keyPath: 'id', autoIncrement: !0 });
-                                t.createIndex('playId', 'playId', { unique: !1 }), t.createIndex('trackId', 'trackId', { unique: !1 });
+                                (t.createIndex('playId', 'playId', { unique: !1 }), t.createIndex('trackId', 'trackId', { unique: !1 }));
                             },
                         })
                         .then((e) => ((this.idbIsAvailable = !0), e))
                         .catch((e) => {
-                            (this.idbIsAvailable = !1), this.logError('Open storage error', e);
+                            ((this.idbIsAvailable = !1), this.logError('Open storage error', e));
                         });
                 }
                 closeConnection(e) {
@@ -10134,7 +10147,7 @@
                     );
                 }
                 constructor(e = 100) {
-                    (0, L._)(this, 'storedPlaysLimit', void 0),
+                    ((0, L._)(this, 'storedPlaysLimit', void 0),
                         (0, L._)(this, 'idb', void 0),
                         (0, L._)(this, 'errorLogger', void 0),
                         (0, L._)(this, 'idbIsAvailable', !1),
@@ -10149,14 +10162,14 @@
                         })().then((e) => {
                             this.storageEstimate = e;
                         }),
-                        (this.idbName = ''.concat('music_plays', '_').concat('1.0.0'));
+                        (this.idbName = ''.concat('music_plays', '_').concat('1.0.0')));
                 }
             }
             function aP(e) {
                 return (null == e ? void 0 : e.data.type) === q.R.Generative;
             }
             !(function (e) {
-                (e.PLAY = 'play'), (e.PAUSE = 'pause'), (e.NEXT = 'nexttrack'), (e.PREV = 'previoustrack'), (e.SEEK = 'seekto'), (e.STOP = 'stop');
+                ((e.PLAY = 'play'), (e.PAUSE = 'pause'), (e.NEXT = 'nexttrack'), (e.PREV = 'previoustrack'), (e.SEEK = 'seekto'), (e.STOP = 'stop'));
             })(f || (f = {}));
             let ak = [40, 50, 80, 100, 200, 300, 400],
                 aI = [f.PLAY, f.PAUSE, f.STOP, f.SEEK];
@@ -10219,7 +10232,7 @@
                         return;
                     }
                     let t = this.prepareMetadata(e);
-                    return (window.navigator.mediaSession.metadata = null), (window.navigator.mediaSession.metadata = new MediaMetadata(t)), t;
+                    return ((window.navigator.mediaSession.metadata = null), (window.navigator.mediaSession.metadata = new MediaMetadata(t)), t);
                 }
                 subscribeToCrossfadeEnd(e) {
                     var t;
@@ -10266,8 +10279,8 @@
                             }
                         });
                     });
-                    e.state.queueState.currentEntity.onChange(() => {
-                        this.updateCurrentEntityMetadata(e), this.updatePositionState(e);
+                    (e.state.queueState.currentEntity.onChange(() => {
+                        (this.updateCurrentEntityMetadata(e), this.updatePositionState(e));
                     }),
                         e.state.playerState.status.onChange((e) => {
                             this.updateMediaSessionPlaybackState(e);
@@ -10288,7 +10301,7 @@
                         }),
                         e.state.currentContext.onChange(() => {
                             var r, i;
-                            null == t || t(),
+                            (null == t || t(),
                                 null == a || a(),
                                 (t =
                                     null == (r = e.state.currentContext.value)
@@ -10305,15 +10318,15 @@
                                               var t, a;
                                               let r = null != (a = null == (t = e.state.currentContext.value) ? void 0 : t.availableActions.moveForward.value) && a;
                                               window.navigator.mediaSession.setActionHandler(f.NEXT, r ? (t) => this.handleMediaActionEvents(t, e) : null);
-                                          }));
-                        });
+                                          })));
+                        }));
                 }
                 apply(e) {
                     let { playback: t } = e;
                     this.isSupported() && this.handlePlayerEvents(t);
                 }
                 constructor({ browserName: e, browserVersion: t }) {
-                    (0, L._)(this, 'browserName', void 0), (0, L._)(this, 'browserVersion', void 0), (this.browserName = e), (this.browserVersion = t);
+                    ((0, L._)(this, 'browserName', void 0), (0, L._)(this, 'browserVersion', void 0), (this.browserName = e), (this.browserVersion = t));
                 }
             }
             class aT {
@@ -10324,7 +10337,7 @@
                             r = a.state.queueState.currentEntity.value ? a.state.queueState.currentEntity.value.entity.mediaSourceData : null;
                         (t = e instanceof z.t ? e : new z.t('Error in Sonata player', { code: 'E_SONATA', cause: e })).name = '[Sonata] '.concat(t.name);
                         let i = t.cause ? (0, M.createObjectFromError)(t.cause) : void 0;
-                        return this.logger.error(t, { ...t.data, ...(r || {}), code: t.code, cause: i, stack: t.stack, message: t.message }), Promise.resolve();
+                        return (this.logger.error(t, { ...t.data, ...(r || {}), code: t.code, cause: i, stack: t.stack, message: t.message }), Promise.resolve());
                     });
                 }
                 constructor(e) {
@@ -10345,7 +10358,7 @@
                     });
                 }
                 constructor(e) {
-                    (0, L._)(this, 'quality', void 0), (this.quality = e);
+                    ((0, L._)(this, 'quality', void 0), (this.quality = e));
                 }
             }
             var aR = a(51770);
@@ -10353,15 +10366,15 @@
             class aD {
                 apply(e) {
                     let { hooks: t, playback: a } = e;
-                    t.beforeEntityChange.tapPromise('ContinuePlayingPlugin', () => {
+                    (t.beforeEntityChange.tapPromise('ContinuePlayingPlugin', () => {
                         let { position: e, duration: t } = this.getTimingsFromPlayback(a);
                         return new Promise((r) => {
-                            e !== t && this.checkBeforeProgressSync(a), r();
+                            (e !== t && this.checkBeforeProgressSync(a), r());
                         });
                     }),
                         a.state.playerState.status.onChange((e) => {
-                            (e === F.MT.PAUSED || e === F.MT.STOPPED) && (this.clearTimeout(), this.checkBeforeProgressSync(a)),
-                                e === F.MT.PLAYING && this.shouldSendProgressSync(a) && this.setTimeout(a);
+                            ((e === F.MT.PAUSED || e === F.MT.STOPPED) && (this.clearTimeout(), this.checkBeforeProgressSync(a)),
+                                e === F.MT.PLAYING && this.shouldSendProgressSync(a) && this.setTimeout(a));
                         }),
                         a.state.playerState.event.onChange(() => {
                             if (a.state.playerState.event.value === F.Iu.SET_PROGRESS) {
@@ -10380,7 +10393,7 @@
                                 let { endPositionSec: a } = t.data.meta.streamProgress;
                                 t.everFinished ? (e.positionSec = a) : (e.positionSec = void 0 !== e.lastSeekPosition ? e.lastSeekPosition : a);
                             }
-                        });
+                        }));
                 }
                 checkBeforeProgressSync(e) {
                     var t;
@@ -10409,10 +10422,10 @@
                     return !!(a && 'rememberPosition' in a && a.rememberPosition);
                 }
                 setTimeout(e) {
-                    this.clearTimeout(),
+                    (this.clearTimeout(),
                         (this.timeoutId = window.setTimeout(() => {
                             this.checkBeforeProgressSync(e);
-                        }, 3e4));
+                        }, 3e4)));
                 }
                 clearTimeout() {
                     window.clearTimeout(this.timeoutId);
@@ -10421,9 +10434,9 @@
                     return { duration: Math.floor(e.state.playerState.progress.value.duration), position: Math.floor(e.state.playerState.progress.value.position) };
                 }
                 constructor(e) {
-                    (0, L._)(this, 'streamsResource', void 0), (0, L._)(this, 'variables', void 0), (0, L._)(this, 'timeoutId', 0);
+                    ((0, L._)(this, 'streamsResource', void 0), (0, L._)(this, 'variables', void 0), (0, L._)(this, 'timeoutId', 0));
                     let { httpClient: t, streamsResourceConfig: a, variables: r } = e;
-                    (this.streamsResource = new aR.c(t, a)), (this.variables = r);
+                    ((this.streamsResource = new aR.c(t, a)), (this.variables = r));
                 }
             }
             function aN(e) {
@@ -10441,7 +10454,7 @@
             class aL {
                 apply(e) {
                     let { playback: t, hooks: a } = e;
-                    a.afterErrorProcessed.tapPromise('ErrorAutoSkipPlugin', (e) => {
+                    (a.afterErrorProcessed.tapPromise('ErrorAutoSkipPlugin', (e) => {
                         var r;
                         if (!this.variables.enabled || this.isSkipping) return Promise.resolve();
                         let i = null == (r = t.state.queueState.currentEntity.value) ? void 0 : r.context.data.type;
@@ -10467,15 +10480,15 @@
                         }),
                         a.afterContextSet.tap('ErrorAutoSkipPlugin', () => {
                             this.consecutiveSkipCount = 0;
-                        });
+                        }));
                 }
                 constructor({ variables: e, consecutiveSkipLimit: t }) {
-                    (0, L._)(this, 'variables', void 0),
+                    ((0, L._)(this, 'variables', void 0),
                         (0, L._)(this, 'consecutiveSkipLimit', void 0),
                         (0, L._)(this, 'consecutiveSkipCount', 0),
                         (0, L._)(this, 'isSkipping', !1),
                         (this.variables = e),
-                        (this.consecutiveSkipLimit = null != t ? t : 10);
+                        (this.consecutiveSkipLimit = null != t ? t : 10));
                 }
             }
             var aF = a(94299),
@@ -10514,12 +10527,12 @@
                         t = e ? 'mp4' : void 0,
                         a = void 0 === this.sourceIndex ? void 0 : String(this.sourceIndex),
                         r = new URLSearchParams();
-                    t && r.append('container', t), e && r.append('codec', e), this.vsid && r.append('vsid', this.vsid), a && r.append('source_index', a);
+                    (t && r.append('container', t), e && r.append('codec', e), this.vsid && r.append('vsid', this.vsid), a && r.append('source_index', a));
                     let i = r.toString();
                     return i ? '?'.concat(i) : void 0;
                 }
                 constructor(e) {
-                    (0, L._)(this, 'type', 'downloadInfoSource'),
+                    ((0, L._)(this, 'type', 'downloadInfoSource'),
                         (0, L._)(this, 'data', void 0),
                         (0, L._)(this, 'vsid', void 0),
                         (0, L._)(this, 'sourceIndex', void 0),
@@ -10532,14 +10545,14 @@
                         (this.loadingTime = e.loadingTime),
                         (this.getFileInfoResponseTime = e.getFileInfoResponseTime),
                         (this.url = e.url),
-                        (this.sourceIndex = e.sourceIndex);
+                        (this.sourceIndex = e.sourceIndex));
                 }
             }
-            !(function (e) {
-                (e.TRACK = 'track'), (e.STREAM = 'stream');
+            (!(function (e) {
+                ((e.TRACK = 'track'), (e.STREAM = 'stream'));
             })(b || (b = {})),
                 (function (e) {
-                    (e.WANT_PLAY_TRACK = 'WANT_PLAY_TRACK'),
+                    ((e.WANT_PLAY_TRACK = 'WANT_PLAY_TRACK'),
                         (e.TRACK_IS_BUFFERING = 'TRACK_IS_BUFFERING'),
                         (e.TRACK_IS_PLAYING = 'TRACK_IS_PLAYING'),
                         (e.TRACK_IS_PLAYING_MISSED = 'TRACK_IS_PLAYING_MISSED'),
@@ -10555,8 +10568,8 @@
                         (e.STREAM_ERROR_PLAYING = 'STREAM_ERROR_PLAYING'),
                         (e.STREAM_ERROR_INITIAL_BUFFERING = 'STREAM_ERROR_INITIAL_BUFFERING'),
                         (e.STREAM_ERROR_PREPARE = 'STREAM_ERROR_PREPARE'),
-                        (e.STREAM_IS_BUFFERING = 'STREAM_IS_BUFFERING');
-                })(E || (E = {}));
+                        (e.STREAM_IS_BUFFERING = 'STREAM_IS_BUFFERING'));
+                })(E || (E = {})));
             var aU = a(51607),
                 aW = a(76232);
             function aK(e) {
@@ -10604,7 +10617,7 @@
                 });
             }
             !(function (e) {
-                (e.LOSSLESS = 'Lossless'), (e.NQ = 'NQ'), (e.LQ = 'LQ'), (e.PREVIEW = 'Preview'), (e.SMART_PREVIEW = 'SmartPreview');
+                ((e.LOSSLESS = 'Lossless'), (e.NQ = 'NQ'), (e.LQ = 'LQ'), (e.PREVIEW = 'Preview'), (e.SMART_PREVIEW = 'SmartPreview'));
             })(S || (S = {}));
             class aG {
                 buildWantPlayCtx() {
@@ -10636,13 +10649,13 @@
                     if (!e) return null;
                     let [t, a] = e,
                         r = this.builder.buildPlayingMissedEvent(t, a);
-                    return this.wantPlayEvents.delete(t), this.send(r), this.logEvent(r), r;
+                    return (this.wantPlayEvents.delete(t), this.send(r), this.logEvent(r), r);
                 }
                 handlePlaying(e, t) {
                     let a = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : Math.trunc(performance.now()),
                         r = this.wantPlayEvents.get(e.entity.playId),
                         i = r ? this.builder.buildPlayingEvent(e, r, t, this.buildPlayingCtx(a)) : null;
-                    return i && (this.wantPlayEvents.delete(e.entity.playId), this.send(i)), this.logEvent(i), i;
+                    return (i && (this.wantPlayEvents.delete(e.entity.playId), this.send(i)), this.logEvent(i), i);
                 }
                 handleBuffering(e) {
                     let t = this.builder.buildBufferingEvent(e);
@@ -10704,7 +10717,7 @@
                     aj(e, null == e ? void 0 : e.name, this.enableDebugMode);
                 }
                 constructor(e) {
-                    (0, L._)(this, 'builder', void 0),
+                    ((0, L._)(this, 'builder', void 0),
                         (0, L._)(this, 'transports', void 0),
                         (0, L._)(this, 'mediaConfigController', void 0),
                         (0, L._)(this, 'enableDebugMode', void 0),
@@ -10715,7 +10728,7 @@
                         (this.builder = e.builder),
                         (this.transports = e.transports),
                         (this.mediaConfigController = e.mediaConfigController),
-                        (this.enableDebugMode = e.enableDebugMode);
+                        (this.enableDebugMode = e.enableDebugMode));
                 }
             }
             function aH(e) {
@@ -10729,24 +10742,24 @@
                     { codec: t, bitrate: a, expectedQuality: r }
                 );
             }
-            !(function (e) {
-                (e.GET_FILE_INFO = 'GetFileInfo'), (e.SOURCE = 'Source');
+            (!(function (e) {
+                ((e.GET_FILE_INFO = 'GetFileInfo'), (e.SOURCE = 'Source'));
             })(_ || (_ = {})),
                 !(function (e) {
-                    (e.E_GET_MEDIA_SRC = 'E_GET_MEDIA_SRC'), (e.E_CREATE_SIGN = 'E_CREATE_SIGN'), (e.E_UNSUITABLE_ENTITY_TYPE = 'E_UNSUITABLE_ENTITY_TYPE');
+                    ((e.E_GET_MEDIA_SRC = 'E_GET_MEDIA_SRC'), (e.E_CREATE_SIGN = 'E_CREATE_SIGN'), (e.E_UNSUITABLE_ENTITY_TYPE = 'E_UNSUITABLE_ENTITY_TYPE'));
                 })(A || (A = {})),
                 (function (e) {
-                    (e.NETWORK = 'NETWORK'), (e.OTHER = 'OTHER');
+                    ((e.NETWORK = 'NETWORK'), (e.OTHER = 'OTHER'));
                 })(P || (P = {})),
                 (function (e) {
-                    (e.RESPONSE_CODE = 'ResponseCode'), (e.OTHER = 'OTHER');
-                })(k || (k = {}));
+                    ((e.RESPONSE_CODE = 'ResponseCode'), (e.OTHER = 'OTHER'));
+                })(k || (k = {})));
             let az = new Set(Object.values(A));
             function aQ(e) {
                 return e instanceof ap || ('object' == typeof e && null !== e && 'code' in e && 'string' == typeof e.code && az.has(e.code));
             }
             !(function (e) {
-                (e.TRACK = 'track'), (e.SET = 'set'), (e.TRAILER = 'trailer'), (e.NON_MUSIC = 'non_music');
+                ((e.TRACK = 'track'), (e.SET = 'set'), (e.TRAILER = 'trailer'), (e.NON_MUSIC = 'non_music'));
             })(I || (I = {}));
             let aX = (e) => {
                 let { entity: t } = e;
@@ -10891,11 +10904,11 @@
                     return 'object' == typeof e && null !== e && 'name' in e && 'AbortError' === e.name;
                 }
                 constructor(e) {
-                    (0, L._)(this, 'profile', void 0), (this.profile = e);
+                    ((0, L._)(this, 'profile', void 0), (this.profile = e));
                 }
             }
             !(function (e) {
-                (e.SKIPPED = 'SKIPPED'), (e.NEXT = 'NEXT'), (e.FROM_QUEUE = 'FROM_QUEUE'), (e.OTHER = 'OTHER');
+                ((e.SKIPPED = 'SKIPPED'), (e.NEXT = 'NEXT'), (e.FROM_QUEUE = 'FROM_QUEUE'), (e.OTHER = 'OTHER'));
             })(C || (C = {}));
             let a$ = {
                 eventNames: {
@@ -10933,13 +10946,13 @@
                 onBeforeMediaStartPlaying() {}
                 constructor(e) {
                     var t;
-                    (0, L._)(this, 'runner', void 0),
+                    ((0, L._)(this, 'runner', void 0),
                         (this.runner = new aG({
                             builder: new aZ(a$),
                             transports: e.transports,
                             mediaConfigController: e.mediaConfigController,
                             enableDebugMode: null == (t = e.variables) ? void 0 : t.enableDebugMode,
-                        }));
+                        })));
                 }
             }
             (T || (T = {})).GET_FILE_INFO = 'get_file_info';
@@ -10999,7 +11012,7 @@
                     let t = (t) => {
                         e.afterError.promise(t);
                     };
-                    (this.onSendError = t), this.runner.setOnSendError(t);
+                    ((this.onSendError = t), this.runner.setOnSendError(t));
                 }
                 onCurrentEntityVisit(e, t) {
                     if (!eh(e.entity) || e.entity.data.sourceContextData || e.entity.data.wasPlayed || this.visitedWaveTrackEntities.has(e.entity)) return null;
@@ -11051,7 +11064,7 @@
                 onError(e, t) {
                     let a = this.runner.hasWantPlay(t.entity.playId),
                         r = this.runner.handleError(e, t);
-                    return a && !this.runner.hasWantPlay(t.entity.playId) && this.startupStageInfoByPlayId.delete(t.entity.playId), r;
+                    return (a && !this.runner.hasWantPlay(t.entity.playId) && this.startupStageInfoByPlayId.delete(t.entity.playId), r);
                 }
                 onBuffering(e) {
                     return this.runner.handleBuffering(e);
@@ -11090,10 +11103,10 @@
                 }
                 onEntityChange(e, t) {
                     let { method: a } = t;
-                    this.runner.clearPreFetchDedupe(),
+                    (this.runner.clearPreFetchDedupe(),
                         this.addtionalInfoByPlayId.size && this.addtionalInfoByPlayId.clear(),
                         (this.lastAdditionalInfoKey = e.playId),
-                        this.addtionalInfoByPlayId.set(e.playId, { entityChangeMethod: a });
+                        this.addtionalInfoByPlayId.set(e.playId, { entityChangeMethod: a }));
                 }
                 onFirstDataReceived(e) {
                     let t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : Math.trunc(performance.now()),
@@ -11109,11 +11122,11 @@
                         e >= 0 && (i.firstDataReceivedTime = e);
                     }
                     let s = a - r.firstDataReceivedAt;
-                    return s >= 0 && (i.initialDataEnqueuedTime = s), i;
+                    return (s >= 0 && (i.initialDataEnqueuedTime = s), i);
                 }
                 constructor(e) {
                     var t, a;
-                    (0, L._)(this, 'runner', void 0),
+                    ((0, L._)(this, 'runner', void 0),
                         (0, L._)(this, 'addtionalInfoByPlayId', new Map()),
                         (0, L._)(this, 'startupStageInfoByPlayId', new Map()),
                         (0, L._)(this, 'lastAdditionalInfoKey', null),
@@ -11128,21 +11141,21 @@
                             enableDebugMode: null == (t = e.variables) ? void 0 : t.enableDebugMode,
                         })),
                         (this.enableDebugMode = null == (a = e.variables) ? void 0 : a.enableDebugMode),
-                        (this.transports = e.transports);
+                        (this.transports = e.transports));
                 }
             }
             class a9 {
                 apply(e) {
                     let { hooks: t, playback: a } = e;
-                    this.metricsStore.setHooks(t),
+                    (this.metricsStore.setHooks(t),
                         this.subscribeOnBufferedInfoChanged(a),
                         a.state.playerState.event.onChange(() => {
                             let e = a.state.playerState.event.value,
                                 t = a.state.queueState.currentEntity.value;
-                            t &&
+                            (t &&
                                 (e === F.Iu.CANPLAY && this.metricsStore.onCanPlay(t),
                                 e === F.Iu.WAITING && this.recentMediaPlayerEventType !== F.Iu.SETTING_PROGRESS && this.metricsStore.onBuffering(t)),
-                                (this.recentMediaPlayerEventType = e);
+                                (this.recentMediaPlayerEventType = e));
                         }),
                         a.state.queueState.currentEntity.onChange(() => {
                             let e = a.state.queueState.currentEntity.value;
@@ -11153,28 +11166,28 @@
                         }),
                         t.beforeEntityChange.tapPromise('MetricsPlugin', (e) => {
                             let t = a.state.queueState.currentEntity.value;
-                            return t && this.metricsStore.onEntityChange(t.entity, e), Promise.resolve();
+                            return (t && this.metricsStore.onEntityChange(t.entity, e), Promise.resolve());
                         }),
                         t.beforeEntityPlayingProcessStart.tapPromise('MetricsPlugin', () => {
                             this.subscribeOnBufferedInfoChanged(a);
                             let e = a.state.queueState.currentEntity.value;
-                            return e && ((this.firstDataReceivedPlayId = null), this.metricsStore.onWantPlay(e)), Promise.resolve();
+                            return (e && ((this.firstDataReceivedPlayId = null), this.metricsStore.onWantPlay(e)), Promise.resolve());
                         }),
                         t.afterError.tapPromise('MetricsPlugin', (e) => {
                             let t = a.state.queueState.currentEntity.value,
                                 r = a.state.queueState.nextEntity.value,
                                 i = e instanceof F.LI && e.code === F.QC.PRE_FETCH && null != r ? r : t;
-                            return i && this.metricsStore.onError(e, i), Promise.resolve();
+                            return (i && this.metricsStore.onError(e, i), Promise.resolve());
                         }),
                         t.afterMediaStartPlaying.tapPromise('MetricsPlugin', () => {
                             let e = a.state.queueState.currentEntity.value;
-                            return e && this.metricsStore.onPlaying(e), Promise.resolve();
+                            return (e && this.metricsStore.onPlaying(e), Promise.resolve());
                         }),
                         t.beforeMediaStartPlaying.tapPromise('MetricsPlugin', () => {
                             let e = a.state.queueState.currentEntity.value;
-                            return e && this.metricsStore.onBeforeMediaStartPlaying(e.entity), Promise.resolve();
+                            return (e && this.metricsStore.onBeforeMediaStartPlaying(e.entity), Promise.resolve());
                         }),
-                        t.beforeDestroy.tapPromise('MetricsPlugin', () => (this.unsubscribeFromBufferedInfoChanged(), Promise.resolve()));
+                        t.beforeDestroy.tapPromise('MetricsPlugin', () => (this.unsubscribeFromBufferedInfoChanged(), Promise.resolve())));
                 }
                 subscribeOnBufferedInfoChanged(e) {
                     var t, a;
@@ -11223,11 +11236,11 @@
                 }
                 constructor(e) {
                     var t, a;
-                    (0, L._)(this, 'metricsStore', void 0),
+                    ((0, L._)(this, 'metricsStore', void 0),
                         (0, L._)(this, 'recentMediaPlayerEventType', null),
                         (0, L._)(this, 'bufferedInfoChangedMessenger', void 0),
                         (0, L._)(this, 'bufferedInfoChangedHandler', void 0),
-                        (0, L._)(this, 'firstDataReceivedPlayId', null);
+                        (0, L._)(this, 'firstDataReceivedPlayId', null));
                     let r = null != (a = null == (t = e.variables) ? void 0 : t.profile) ? a : b.TRACK;
                     this.metricsStore = (function (e, t) {
                         switch (e) {
@@ -11263,7 +11276,7 @@
             }
             class a2 extends z.t {
                 constructor(e = 'Preload aborted', { code: t = 'E_MEDIA_SOURCE_PRELOAD_ABORTED', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'PreloadAbortedException'), Object.setPrototypeOf(this, a2.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'PreloadAbortedException'), Object.setPrototypeOf(this, a2.prototype));
                 }
             }
             function a4(e) {
@@ -11278,7 +11291,7 @@
                     let { hooks: t, playback: a } = e,
                         r = (0, a5.A)(
                             () => {
-                                this.releaseAllPreloadedSrc(a), this.preload(a, t);
+                                (this.releaseAllPreloadedSrc(a), this.preload(a, t));
                             },
                             1e3,
                             { trailing: !0 },
@@ -11286,7 +11299,7 @@
                     this.variables.isMediaSourcePreloadEnabled &&
                         (a.state.queueState.nextEntity.onChange(r),
                         this.mediaConfigController.quality.onChange(() => {
-                            this.releaseAllPreloadedSrc(a), this.preload(a, t);
+                            (this.releaseAllPreloadedSrc(a), this.preload(a, t));
                         }),
                         t.beforeEntityChange.tapPromise(
                             'MediaSourcePreloadPlugin',
@@ -11299,12 +11312,12 @@
                 }
                 abortActivePreloadRun() {
                     var e;
-                    null == (e = this.activePreloadAbortController) || e.abort(), (this.activePreloadAbortController = null);
+                    (null == (e = this.activePreloadAbortController) || e.abort(), (this.activePreloadAbortController = null));
                 }
                 startPreloadRun() {
                     this.abortActivePreloadRun();
                     let e = new AbortController();
-                    return (this.activePreloadAbortController = e), e.signal;
+                    return ((this.activePreloadAbortController = e), e.signal);
                 }
                 isPreloadCancellation(e) {
                     return e instanceof a2 || ('object' == typeof e && null !== e && 'name' in e && 'AbortError' === e.name);
@@ -11323,7 +11336,7 @@
                                       e
                                           .preloadSrc({ entity: a.entity, bufferGoal: this.config.bufferGoal, positionSec: a.positionSec })
                                           .then(() => {
-                                              a4(r), this.preloadedSrcArray.push(structuredClone(a.entity.mediaSourceData));
+                                              (a4(r), this.preloadedSrcArray.push(structuredClone(a.entity.mediaSourceData)));
                                           })
                                           .catch((e) => {
                                               this.reportPrefetchError(t, r, a.entity, e, 'Preload source error');
@@ -11353,9 +11366,9 @@
                                 s = 0,
                                 n = r,
                                 o = [];
-                            for (; s < t && !(n >= i.length); ) {
+                            for (; s < t && !(n >= i.length);) {
                                 let e = i[n];
-                                void 0 !== e && o.push(e), (n += 1), (s += 1);
+                                (void 0 !== e && o.push(e), (n += 1), (s += 1));
                             }
                             return o.map((e) => a[e]);
                         })({ contextEntityPairs: a.value, index: r.value, order: t.value, preloadCount: this.config.entitiesToPreloadStrmUrlsCount }),
@@ -11369,20 +11382,20 @@
                 }
                 releaseRedundantPreloadedSrc(e, t) {
                     if (!(this.preloadedSrcArray.length + t <= this.config.preloadedSourcesMaxCount))
-                        for (; this.preloadedSrcArray.length + t !== this.config.preloadedSourcesMaxCount; ) {
+                        for (; this.preloadedSrcArray.length + t !== this.config.preloadedSourcesMaxCount;) {
                             let t = this.preloadedSrcArray.shift();
                             t && e.releaseSrc(t);
                         }
                 }
                 releaseAllPreloadedSrc(e) {
-                    for (; this.preloadedSrcArray.length; ) {
+                    for (; this.preloadedSrcArray.length;) {
                         let t = this.preloadedSrcArray.shift();
                         t && e.releaseSrc(t);
                     }
                 }
                 constructor({ mediaProvider: e, config: t, mediaConfigController: a, variables: r }) {
                     var i;
-                    (0, L._)(this, 'variables', void 0),
+                    ((0, L._)(this, 'variables', void 0),
                         (0, L._)(this, 'mediaProvider', void 0),
                         (0, L._)(this, 'config', void 0),
                         (0, L._)(this, 'mediaConfigController', void 0),
@@ -11391,18 +11404,18 @@
                         (this.variables = { isMediaSourcePreloadEnabled: null != (i = null == r ? void 0 : r.isMediaSourcePreloadEnabled) && i }),
                         (this.mediaProvider = e),
                         (this.mediaConfigController = a),
-                        (this.config = t);
+                        (this.config = t));
                 }
             }
             class a6 {
                 apply() {
-                    this.trailerPlayback.hooks.afterContextEnd.tapPromise(
+                    (this.trailerPlayback.hooks.afterContextEnd.tapPromise(
                         'TrailerPlugin',
                         () => (this.trailerPlayback.restartContext({ playAfterRestart: !1 }), Promise.resolve()),
                     ),
                         this.trailerPlayback.hooks.afterMediaPause.tapPromise('TrailerPlugin', () => (this.onTrailerPaused(), Promise.resolve())),
                         this.trailerPlayback.hooks.afterMediaStartPlaying.tapPromise('TrailerPlugin', () => (this.onTrailerPlaying(), Promise.resolve())),
-                        this.trailerPlayback.hooks.afterMediaResume.tapPromise('TrailerPlugin', () => (this.onTrailerPlaying(), Promise.resolve()));
+                        this.trailerPlayback.hooks.afterMediaResume.tapPromise('TrailerPlugin', () => (this.onTrailerPlaying(), Promise.resolve())));
                 }
                 constructor({ onTrailerPaused: e, onTrailerPlaying: t, playbackController: a, trailerPlaybackParams: r }) {
                     if (
@@ -11442,10 +11455,10 @@
                         }));
                 }
                 constructor() {
-                    (0, L._)(this, 'channel', void 0),
+                    ((0, L._)(this, 'channel', void 0),
                         (0, L._)(this, 'activeStreamId', void 0),
                         (this.activeStreamId = (0, a7.A)()),
-                        (this.channel = new BroadcastChannel('ya_music_playback'));
+                        (this.channel = new BroadcastChannel('ya_music_playback')));
                 }
             }
             class rt {
@@ -11480,7 +11493,7 @@
             };
             class rr extends z.t {
                 constructor(e, { code: t = 'E_YNISON', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'YnisonException'), Object.setPrototypeOf(this, rr.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'YnisonException'), Object.setPrototypeOf(this, rr.prototype));
                 }
             }
             let ri = (e, t) => new rr('[YnisonException] '.concat(e), { cause: (0, M.createObjectFromError)(t) }),
@@ -11501,7 +11514,7 @@
                             })
                             .map((e, t) => r({ playable: e, wasPlayed: 'number' == typeof i && i >= t, radioSessionId: a })),
                         n = 'number' == typeof i && s[i];
-                    return n && (n.isRestored = !0), s;
+                    return (n && (n.isRestored = !0), s);
                 };
             function ro(e) {
                 let { playable: t, wasPlayed: a } = e;
@@ -11642,7 +11655,7 @@
                 rE = (e, t) => {
                     if (!e) return null;
                     let a = { ...e };
-                    return a.type === et.K.Vibe && (a.allowExplicit = t.queueState.filterParams.value.allowExplicit), a;
+                    return (a.type === et.K.Vibe && (a.allowExplicit = t.queueState.filterParams.value.allowExplicit), a);
                 };
             function rS(e) {
                 let { playableList: t, trackSourcesMap: a, from: r, livePlayableIndex: i, currentPlayableIndex: s, radioSessionId: n, getEntityData: o } = e,
@@ -11653,7 +11666,7 @@
                         })
                         .map((e, t) => o({ playable: e, trackSourcesMap: a, from: r, wasPlayed: t <= i, radioSessionId: n })),
                     u = l[s];
-                return u && (u.isRestored = !0), l;
+                return (u && (u.isRestored = !0), l);
             }
             var r_ = a(83778);
             function rA(e, t) {
@@ -11765,11 +11778,11 @@
                 }
                 changeOptions(e) {
                     let t = ra.ynisonToPlayback(e.repeat_mode);
-                    return this.playback.setRepeatMode(t), Promise.resolve();
+                    return (this.playback.setRepeatMode(t), Promise.resolve());
                 }
                 changeShuffle(e) {
                     let t = !!(Array.isArray(e.playable_indices) && e.playable_indices.length);
-                    return this.playback.setShuffle(t), Promise.resolve();
+                    return (this.playback.setShuffle(t), Promise.resolve());
                 }
                 changeStatus(e) {
                     let t = new rt(),
@@ -11786,7 +11799,7 @@
                                 let {
                                     currentEntity: { value: i },
                                 } = this.playback.state.queueState;
-                                return i && (i.positionSec = r), Promise.resolve();
+                                return (i && (i.positionSec = r), Promise.resolve());
                             }),
                         void 0 !== e.paused && e.paused !== rg(this.playback, e.paused) && t.push(() => this.playback.togglePause()),
                         t.exec()
@@ -11877,7 +11890,7 @@
                         if ((0, ae.p)(v)) return { context: v, entitiesData: P, loadContextMeta: !1, queueParams: S, progress: y };
                         return { context: v, entitiesData: P, loadContextMeta: !0, queueParams: S, progress: y };
                     } catch (e) {
-                        return this.playback.hooks.afterError.promise(ri('GetContextParamsWithWaveQueueError', e)), null;
+                        return (this.playback.hooks.afterError.promise(ri('GetContextParamsWithWaveQueueError', e)), null);
                     }
                 }
                 getContextParams(e) {
@@ -11903,14 +11916,14 @@
                         if ((0, tx.S)(u)) return { context: u, loadContextMeta: !0, progress: d };
                         return { context: u, entitiesData: v, loadContextMeta: !0, queueParams: h, progress: d };
                     } catch (e) {
-                        return this.playback.hooks.afterError.promise(ri('GetContextParamsError', e)), null;
+                        return (this.playback.hooks.afterError.promise(ri('GetContextParamsError', e)), null);
                     }
                 }
                 destroy() {
                     this.unlisteners.forEach((e) => e());
                 }
                 constructor({ factory: e, playback: t, ynisonStateController: a, variables: r, fallbackTypesQueueToVibe: i }) {
-                    (0, L._)(this, 'factory', void 0),
+                    ((0, L._)(this, 'factory', void 0),
                         (0, L._)(this, 'playback', void 0),
                         (0, L._)(this, 'variables', void 0),
                         (0, L._)(this, 'unlisteners', void 0),
@@ -11919,7 +11932,7 @@
                         (this.playback = t),
                         (this.variables = r),
                         (this.unlisteners = []),
-                        (this.fallbackTypesQueueToVibe = null != i ? i : []);
+                        (this.fallbackTypesQueueToVibe = null != i ? i : []));
                     let s = a.on(D.p$.UPDATED, this.onYnisonStateUpdated.bind(this), 'YnisonPlugin');
                     this.unlisteners.push(s);
                     let n = a.fullState;
@@ -11990,7 +12003,7 @@
                 }
                 if ((0, e1.F)(e)) {
                     let { id: t } = null != (n = e.data.meta) ? n : {};
-                    return void 0 !== t && (l.albumId = String(t)), l;
+                    return (void 0 !== t && (l.albumId = String(t)), l);
                 }
                 if ((0, rD.T)(e)) {
                     let { id: t } = null != (o = e.data.meta) ? o : {};
@@ -12104,7 +12117,7 @@
                             this.updateYnisonState({ useYnisonStatus: !0, useWaveQueue: this.variables.useWaveQueue });
                         });
                     this.unsubscribeFromPlayerEvents = () => {
-                        e(), t(), r(), i(), a(), s(), n();
+                        (e(), t(), r(), i(), a(), s(), n());
                     };
                 }
                 updateYnisonState(e) {
@@ -12290,7 +12303,7 @@
                                                 let r = t[e].playable_id,
                                                     n = null != (a = s.get(r)) ? a : -1,
                                                     o = i.findIndex((e, t) => t > n && e.playable_id === r);
-                                                return s.set(r, o), o;
+                                                return (s.set(r, o), o);
                                             }),
                                             l = i.findIndex((e) => e.playable_id === t[a].playable_id);
                                         return { playableList: i, currentPlayableIndex: l, playableIndices: o, livePlayableIndex: i.length };
@@ -12429,7 +12442,7 @@
                     null == (e = this.unsubscribeFromPlayerEvents) || e.call(this);
                 }
                 constructor({ playback: e, ynisonStateController: t, deviceConfig: a, variables: r }) {
-                    (0, L._)(this, 'unsubscribeFromPlayerEvents', void 0),
+                    ((0, L._)(this, 'unsubscribeFromPlayerEvents', void 0),
                         (0, L._)(this, 'playback', void 0),
                         (0, L._)(this, 'ynisonStateController', void 0),
                         (0, L._)(this, 'deviceConfig', void 0),
@@ -12439,7 +12452,7 @@
                         (this.deviceConfig = a),
                         (this.variables = r),
                         this.subscribeOnPlayerEvents(),
-                        this.updateYnisonState();
+                        this.updateYnisonState());
                 }
             }
             class rV {
@@ -12453,16 +12466,16 @@
                             fallbackTypesQueueToVibe: this.fallbackTypesQueueToVibe,
                         }),
                         i = new rq({ playback: t, ynisonStateController: this.ynisonStateController, deviceConfig: this.deviceConfig, variables: this.variables });
-                    a.beforeEntityChange.tapPromise('YnisonPlugin', () => {
+                    (a.beforeEntityChange.tapPromise('YnisonPlugin', () => {
                         let {
                             currentEntity: { value: e },
                         } = t.state.queueState;
-                        return e && (e.positionSec = void 0), Promise.resolve();
+                        return (e && (e.positionSec = void 0), Promise.resolve());
                     }),
-                        a.beforeDestroy.tapPromise('YnisonPlugin', () => (r.destroy(), i.destroy(), Promise.resolve()));
+                        a.beforeDestroy.tapPromise('YnisonPlugin', () => (r.destroy(), i.destroy(), Promise.resolve())));
                 }
                 constructor({ factory: e, deviceConfig: t, ynisonStateController: a, variables: r, fallbackTypesQueueToVibe: i }) {
-                    (0, L._)(this, 'factory', void 0),
+                    ((0, L._)(this, 'factory', void 0),
                         (0, L._)(this, 'deviceConfig', void 0),
                         (0, L._)(this, 'ynisonStateController', void 0),
                         (0, L._)(this, 'variables', void 0),
@@ -12471,7 +12484,7 @@
                         (this.deviceConfig = t),
                         (this.ynisonStateController = a),
                         (this.variables = r),
-                        (this.fallbackTypesQueueToVibe = null != i ? i : []);
+                        (this.fallbackTypesQueueToVibe = null != i ? i : []));
                 }
             }
             class rU {
@@ -12507,7 +12520,7 @@
                     null == (e = this.unsubscribeFromPlayerEvents) || e.call(this);
                 }
                 constructor({ playback: e, ynisonStateController: t, deviceConfig: a }) {
-                    (0, L._)(this, 'unsubscribeFromPlayerEvents', void 0),
+                    ((0, L._)(this, 'unsubscribeFromPlayerEvents', void 0),
                         (0, L._)(this, 'playback', void 0),
                         (0, L._)(this, 'ynisonStateController', void 0),
                         (0, L._)(this, 'deviceConfig', void 0),
@@ -12515,7 +12528,7 @@
                         (this.ynisonStateController = t),
                         (this.deviceConfig = a),
                         this.subscribeOnPlayerEvents(),
-                        this.updateYnisonState();
+                        this.updateYnisonState());
                 }
             }
             class rW {
@@ -12530,20 +12543,20 @@
                     return Promise.resolve();
                 }
                 changeVolume(e) {
-                    return this.playback.setExponentVolume(e), Promise.resolve();
+                    return (this.playback.setExponentVolume(e), Promise.resolve());
                 }
                 destroy() {
                     this.unlisteners.forEach((e) => e());
                 }
                 constructor({ playback: e, ynisonStateController: t, variables: a }) {
-                    (0, L._)(this, 'playback', void 0),
+                    ((0, L._)(this, 'playback', void 0),
                         (0, L._)(this, 'variables', void 0),
                         (0, L._)(this, 'unlisteners', void 0),
                         (this.playback = e),
                         (this.variables = a),
-                        (this.unlisteners = []);
+                        (this.unlisteners = []));
                     let r = t.on(D.p$.UPDATED, this.onYnisonStateUpdated.bind(this), 'YnisonVolumePlugin');
-                    this.unlisteners.push(r), this.onYnisonStateUpdated(t.fullState);
+                    (this.unlisteners.push(r), this.onYnisonStateUpdated(t.fullState));
                 }
             }
             class rK {
@@ -12554,12 +12567,12 @@
                     a.beforeDestroy.tapPromise('YnisonVolumePlugin', () => (r.destroy(), i.destroy(), Promise.resolve()));
                 }
                 constructor({ deviceConfig: e, ynisonStateController: t, variables: a }) {
-                    (0, L._)(this, 'deviceConfig', void 0),
+                    ((0, L._)(this, 'deviceConfig', void 0),
                         (0, L._)(this, 'ynisonStateController', void 0),
                         (0, L._)(this, 'variables', void 0),
                         (this.deviceConfig = e),
                         (this.ynisonStateController = t),
-                        (this.variables = a);
+                        (this.variables = a));
                 }
             }
             let rj = [et.K.Album, et.K.Artist, et.K.Playlist, et.K.Various];
@@ -12639,18 +12652,18 @@
                     e.playContext({ context: u, loadContextMeta: !0 });
                 }
                 constructor({ platform: e, factory: t, variables: a }) {
-                    (0, L._)(this, 'platform', void 0),
+                    ((0, L._)(this, 'platform', void 0),
                         (0, L._)(this, 'factory', void 0),
                         (0, L._)(this, 'variables', void 0),
                         (this.platform = e),
                         (this.factory = t),
-                        (this.variables = a);
+                        (this.variables = a));
                 }
             }
             class rG {
                 apply(e) {
                     let { playback: t, hooks: a } = e;
-                    this.telemetry.createTelemetry(t),
+                    (this.telemetry.createTelemetry(t),
                         this.telemetry.setStaticParams(
                             { labels: { from: this.telemetry.from }, puid: this.puid ? String(this.puid) : void 0, yaspVersion: this.yaspVersion },
                             !0,
@@ -12667,19 +12680,19 @@
                         ),
                         a.beforeMediaStartPlaying.tapPromise('TelemetryPlugin', () => {
                             let { value: e } = t.state.queueState.currentEntity;
-                            return this.beforeMediaHandler(null == e ? void 0 : e.entity), Promise.resolve();
+                            return (this.beforeMediaHandler(null == e ? void 0 : e.entity), Promise.resolve());
                         }),
                         a.beforeMediaSourceContentReload.tapPromise('TelemetryPlugin', () => {
                             let { value: e } = t.state.queueState.currentEntity;
-                            return this.beforeMediaHandler(null == e ? void 0 : e.entity), Promise.resolve();
+                            return (this.beforeMediaHandler(null == e ? void 0 : e.entity), Promise.resolve());
                         }),
-                        a.beforeMediaSourceContentPreload.tapPromise('TelemetryPlugin', (e) => (this.beforeMediaHandler(e), Promise.resolve()));
+                        a.beforeMediaSourceContentPreload.tapPromise('TelemetryPlugin', (e) => (this.beforeMediaHandler(e), Promise.resolve())));
                 }
                 beforeMediaHandler(e) {
                     if (!e || t9(e)) return;
                     let { mediaSourceData: t } = e;
-                    t && 'vsid' in t && void 0 === t.vsid && (t.vsid = this.telemetry.vsid),
-                        t && 'sourceIndex' in t && void 0 === t.sourceIndex && (t.sourceIndex = this.telemetry.onBeforeSetSource());
+                    (t && 'vsid' in t && void 0 === t.vsid && (t.vsid = this.telemetry.vsid),
+                        t && 'sourceIndex' in t && void 0 === t.sourceIndex && (t.sourceIndex = this.telemetry.onBeforeSetSource()));
                     let a = (function (e) {
                             let { mediaSourceData: t } = e;
                             if (!t) return;
@@ -12695,14 +12708,14 @@
                         this.telemetry.onSetSource(a));
                 }
                 constructor({ telemetry: e, puid: t, yaspVersion: a, getTelemetryTestIds: r }) {
-                    (0, L._)(this, 'telemetry', void 0),
+                    ((0, L._)(this, 'telemetry', void 0),
                         (0, L._)(this, 'puid', void 0),
                         (0, L._)(this, 'yaspVersion', void 0),
                         (0, L._)(this, 'getTelemetryTestIds', void 0),
                         (this.telemetry = e),
                         (this.puid = t),
                         (this.yaspVersion = a),
-                        (this.getTelemetryTestIds = r);
+                        (this.getTelemetryTestIds = r));
                 }
             }
             class rH {
@@ -12710,7 +12723,7 @@
                     this.quality.value = e;
                 }
                 constructor(e) {
-                    (0, L._)(this, 'quality', new er.cJ(aW.e.BALANCED)), (0, L._)(this, 'isCrossfadeEnabled', new er.cJ(!0)), this.setQuality(e);
+                    ((0, L._)(this, 'quality', new er.cJ(aW.e.BALANCED)), (0, L._)(this, 'isCrossfadeEnabled', new er.cJ(!0)), this.setQuality(e));
                 }
             }
             function rz(e) {
@@ -12723,12 +12736,12 @@
                 }
                 getQueryParamsString() {
                     let e = new URLSearchParams();
-                    this.vsid && e.append('vsid', this.vsid), void 0 !== this.sourceIndex && e.append('source_index', String(this.sourceIndex));
+                    (this.vsid && e.append('vsid', this.vsid), void 0 !== this.sourceIndex && e.append('source_index', String(this.sourceIndex)));
                     let t = e.toString();
                     return t ? '?'.concat(t) : void 0;
                 }
                 constructor(e) {
-                    (0, L._)(this, 'type', 'generativeSource'),
+                    ((0, L._)(this, 'type', 'generativeSource'),
                         (0, L._)(this, 'data', void 0),
                         (0, L._)(this, 'vsid', void 0),
                         (0, L._)(this, 'sourceIndex', void 0),
@@ -12736,12 +12749,12 @@
                         (0, L._)(this, 'url', void 0),
                         (this.data = e.data),
                         (this.vsid = e.vsid),
-                        (this.sourceIndex = e.sourceIndex);
+                        (this.sourceIndex = e.sourceIndex));
                 }
             }
             class rX extends ap {
                 constructor(e, { code: t = 'E_GENERATIVE_MEDIA_PROVIDER', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'GenerativeMediaProviderException'), Object.setPrototypeOf(this, rX.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'GenerativeMediaProviderException'), Object.setPrototypeOf(this, rX.prototype));
                 }
             }
             class rZ {
@@ -12750,7 +12763,7 @@
                         var t;
                         if (null == (t = e.entity.data.meta.stream) ? void 0 : t.url) {
                             let t = new rQ({ data: e.entity.data.meta.stream });
-                            return (e.entity.mediaSourceData = t), Promise.resolve(t);
+                            return ((e.entity.mediaSourceData = t), Promise.resolve(t));
                         }
                         return Promise.reject(new rX('Failed to create generative src link', { code: A.E_GET_MEDIA_SRC }));
                     }
@@ -12837,7 +12850,7 @@
                                                     getFileInfoResponseTime: i,
                                                     getFileInfoUrl: s,
                                                 });
-                                            return (t.mediaSourceData = n), (t.expectedQuality = r), n;
+                                            return ((t.mediaSourceData = n), (t.expectedQuality = r), n);
                                         })
                                         .catch((e) => {
                                             let a = this.createMediaSource({
@@ -12848,12 +12861,12 @@
                                                 getFileInfoResponseTime: s,
                                             });
                                             throw (
-                                                ((t.mediaSourceData = a),
+                                                (t.mediaSourceData = a),
                                                 new am('Error in get-file-info retry enclaw request', {
                                                     code: A.E_GET_MEDIA_SRC,
                                                     cause: e,
                                                     data: { trackId: t.data.meta.id, quality: r, codecs: this.codecs.join('') },
-                                                }))
+                                                })
                                             );
                                         })
                                 );
@@ -12865,7 +12878,7 @@
                                 getFileInfoResponseTime: s,
                                 getFileInfoUrl: n,
                             });
-                            return (t.mediaSourceData = o), o;
+                            return ((t.mediaSourceData = o), o);
                         })
                     );
                 }
@@ -12941,16 +12954,16 @@
                 }
                 constructor(e) {
                     var t;
-                    (0, L._)(this, 'secretKey', void 0),
+                    ((0, L._)(this, 'secretKey', void 0),
                         (0, L._)(this, 'resource', void 0),
                         (0, L._)(this, 'mediaConfigController', void 0),
                         (0, L._)(this, 'transport', void 0),
                         (0, L._)(this, 'codecs', void 0),
                         (0, L._)(this, 'variables', void 0),
                         (0, L._)(this, 'mediaSourceTtlMs', void 0),
-                        (0, L._)(this, 'tools', void 0);
+                        (0, L._)(this, 'tools', void 0));
                     let { resource: a, secretKey: r, mediaConfigController: i, transport: s, variables: n, mediaSourceTtlMs: o, codecs: l, tools: u } = e;
-                    (this.resource = a),
+                    ((this.resource = a),
                         (this.secretKey = r),
                         (this.mediaConfigController = i),
                         (this.transport = s),
@@ -12960,7 +12973,7 @@
                             fromPromoLanding: null == n ? void 0 : n.fromPromoLanding,
                         }),
                         (this.mediaSourceTtlMs = null != o ? o : 0),
-                        (this.tools = u || r0.$n);
+                        (this.tools = u || r0.$n));
                 }
             }
             class r9 {
@@ -12968,12 +12981,12 @@
                     return this.data.src;
                 }
                 constructor(e) {
-                    (0, L._)(this, 'type', 'clipSource'),
+                    ((0, L._)(this, 'type', 'clipSource'),
                         (0, L._)(this, 'data', void 0),
                         (0, L._)(this, 'vsid', void 0),
                         (0, L._)(this, 'getFileInfoResponseTime', void 0),
                         (0, L._)(this, 'url', void 0),
-                        (this.data = e.data);
+                        (this.data = e.data));
                 }
             }
             class r5 {
@@ -12983,17 +12996,17 @@
                         let e = new r9({
                             data: { src: ''.concat(this.vhUrl).concat(t.data.meta.playerId, '?service=').concat(this.service, '&from=').concat(this.from) },
                         });
-                        return (t.mediaSourceData = e), Promise.resolve(e);
+                        return ((t.mediaSourceData = e), Promise.resolve(e));
                     }
                     return Promise.reject(new z.t('Provided entity is not clip entity', { code: A.E_UNSUITABLE_ENTITY_TYPE }));
                 }
                 constructor({ service: e, from: t, vhUrl: a }) {
-                    (0, L._)(this, 'service', void 0),
+                    ((0, L._)(this, 'service', void 0),
                         (0, L._)(this, 'from', void 0),
                         (0, L._)(this, 'vhUrl', void 0),
                         (this.service = e),
                         (this.from = t),
-                        (this.vhUrl = a);
+                        (this.vhUrl = a));
                 }
             }
             class r3 {
@@ -13006,7 +13019,7 @@
                     );
                 }
                 constructor(e) {
-                    (0, L._)(this, 'type', 'radioSource'),
+                    ((0, L._)(this, 'type', 'radioSource'),
                         (0, L._)(this, 'data', void 0),
                         (0, L._)(this, 'manualQualitySourceKey', void 0),
                         (0, L._)(this, 'vsid', void 0),
@@ -13018,12 +13031,12 @@
                         (this.manualQualitySourceKey = e.manualQualitySourceKey),
                         (this.vsid = e.vsid),
                         (this.sourceIndex = e.sourceIndex),
-                        (this.playId = e.playId);
+                        (this.playId = e.playId));
                 }
             }
             class r2 extends ap {
                 constructor(e, { code: t = 'E_RADIO_MEDIA_PROVIDER', ...a } = {}) {
-                    super(e, { code: t, ...a }), (0, L._)(this, 'name', 'RadioMediaProviderException'), Object.setPrototypeOf(this, r2.prototype);
+                    (super(e, { code: t, ...a }), (0, L._)(this, 'name', 'RadioMediaProviderException'), Object.setPrototypeOf(this, r2.prototype));
                 }
             }
             class r4 {
@@ -13035,7 +13048,7 @@
                                 manualQualitySourceKey: e.entity.data.meta.manualQualitySourceKey,
                                 playId: e.entity.playId,
                             });
-                            return (e.entity.mediaSourceData = t), Promise.resolve(t);
+                            return ((e.entity.mediaSourceData = t), Promise.resolve(t));
                         }
                         return Promise.reject(
                             new r2('Failed to create fm radio src link because the "streamUrl" property is missing in the entity meta', { code: A.E_GET_MEDIA_SRC }),
@@ -13061,12 +13074,12 @@
                         : this.getFileInfoProvider.getMediaSourceBatch({ entities: t });
                 }
                 constructor(e) {
-                    (0, L._)(this, 'generativeProvider', new rZ()),
+                    ((0, L._)(this, 'generativeProvider', new rZ()),
                         (0, L._)(this, 'radioProvider', new r4()),
                         (0, L._)(this, 'getFileInfoProvider', void 0),
                         (0, L._)(this, 'vhMediaProvider', void 0),
                         (this.getFileInfoProvider = new r1(e.getFileInfoProviderParams)),
-                        (this.vhMediaProvider = new r5(e.vhMediaProviderParams));
+                        (this.vhMediaProvider = new r5(e.vhMediaProviderParams)));
                 }
             }
             class r6 {
@@ -13079,9 +13092,9 @@
                                         i = r.data.meta.id,
                                         s = 'string' == typeof i && i.includes(':');
                                     if (!r.data.fromCurrentContext || s) return void t.push(r.data.meta.id);
-                                    (0, e1.F)(a) && (i = ''.concat(r.data.meta.id, ':').concat(a.data.meta.id)),
+                                    ((0, e1.F)(a) && (i = ''.concat(r.data.meta.id, ':').concat(a.data.meta.id)),
                                         'albumId' in r.data.meta && r.data.meta.albumId && (i = ''.concat(r.data.meta.id, ':').concat(r.data.meta.albumId)),
-                                        t.push(i);
+                                        t.push(i));
                                 }, {}),
                                 { trackIds: t }
                             );
@@ -13131,7 +13144,7 @@
                         });
                 }
                 constructor(e) {
-                    (0, L._)(this, 'resource', void 0), (this.resource = e.clipsResource);
+                    ((0, L._)(this, 'resource', void 0), (this.resource = e.clipsResource));
                 }
             }
             class ie {
@@ -13139,10 +13152,10 @@
                     return e.some((e) => tb(e.entity)) ? this.clipMetaProvider.loadEntities(e) : this.trackMetaProvider.loadEntities(e);
                 }
                 constructor(e) {
-                    (0, L._)(this, 'trackMetaProvider', void 0),
+                    ((0, L._)(this, 'trackMetaProvider', void 0),
                         (0, L._)(this, 'clipMetaProvider', void 0),
                         (this.trackMetaProvider = new r6({ tracksResource: e.tracksResource })),
-                        (this.clipMetaProvider = new r7({ clipsResource: e.clipsResource }));
+                        (this.clipMetaProvider = new r7({ clipsResource: e.clipsResource })));
                 }
             }
             (R || (R = {})).MAIN = 'MAIN';
@@ -13151,7 +13164,7 @@
                     return Array.from(this.playbacks.values());
                 }
                 afterPlayHandler(e) {
-                    return (this.activePlayback.value = e), Promise.resolve();
+                    return ((this.activePlayback.value = e), Promise.resolve());
                 }
                 beforePlayHandler(e) {
                     return this.activePlayback.value && this.activePlayback.value !== e ? this.activePlayback.value.pause() : Promise.resolve();
@@ -13194,13 +13207,13 @@
                             playbackConfig: t.playbackConfig,
                             variables: t.variables,
                         });
-                        this.playbacks.set(e, a),
+                        (this.playbacks.set(e, a),
                             a.hooks.afterMediaStartPlaying.tapPromise('MusicPlaybackController', () => this.afterPlayHandler(a)),
                             a.hooks.beforeMediaStartPlaying.tapPromise('MusicPlaybackController', () => this.beforePlayHandler(a)),
                             a.hooks.afterMediaResume.tapPromise('MusicPlaybackController', () => this.afterPlayHandler(a)),
                             a.hooks.beforeMediaResume.tapPromise('MusicPlaybackController', () => this.beforePlayHandler(a)),
                             a.hooks.beforeDestroy.tapPromise('MusicPlaybackController', () => this.beforeDestroyHandler(a)),
-                            this.syncWithMainPlayback(a, t.syncVolumeWithMainPlayback);
+                            this.syncWithMainPlayback(a, t.syncVolumeWithMainPlayback));
                     }
                 }
                 syncWithMainPlayback(e) {
@@ -13219,11 +13232,11 @@
                     });
                 }
                 constructor(e) {
-                    (0, L._)(this, 'activePlayback', new er.cJ(null)),
+                    ((0, L._)(this, 'activePlayback', new er.cJ(null)),
                         (0, L._)(this, 'playbacks', new Map()),
                         (0, L._)(this, 'playbacksWaitingForSync', []),
                         (0, L._)(this, 'useExponentVolume', void 0),
-                        (this.useExponentVolume = !!e.useExponentVolume);
+                        (this.useExponentVolume = !!e.useExponentVolume));
                 }
             }
             class ia {
@@ -13246,7 +13259,7 @@
                             t,
                         );
                     } catch (e) {
-                        return a.hooks.afterError.promise(e), Promise.resolve();
+                        return (a.hooks.afterError.promise(e), Promise.resolve());
                     }
                 }
                 setContext(e, t) {
@@ -13262,7 +13275,7 @@
                             t,
                         );
                     } catch (e) {
-                        return a.hooks.afterError.promise(e), Promise.resolve();
+                        return (a.hooks.afterError.promise(e), Promise.resolve());
                     }
                 }
                 restartContext(e, t) {
@@ -13537,16 +13550,16 @@
                                             if (!r.durationMs) return e;
                                             if (r.id === t) {
                                                 var i;
-                                                return (a = !1), e + ((null == (i = r.streamProgress) ? void 0 : i.endPositionSec) || 0);
+                                                return ((a = !1), e + ((null == (i = r.streamProgress) ? void 0 : i.endPositionSec) || 0));
                                             }
                                             return a ? e + r.durationMs / 1e3 : e;
                                         }, 0);
                                     })(h.volumes, a.entityMeta.id);
-                                'durationSec' in h && (e = h.durationSec),
+                                ('durationSec' in h && (e = h.durationSec),
                                     r.saveAlbumDuration(e),
                                     null == (l = r.trackTempStreamProgress) ||
                                         l.updateEndPositionSec((null == (o = r.track) || null == (n = o.streamProgress) ? void 0 : n.endPositionSec) || 0),
-                                    null == (u = r.albumStreamProgress) || u.updateEndPositionSec(t);
+                                    null == (u = r.albumStreamProgress) || u.updateEndPositionSec(t));
                             }
                             'listeningFinished' in h && (null == (d = r.albumStreamProgress) || d.updateEverFinished(h.listeningFinished || !1));
                         }
@@ -13555,7 +13568,7 @@
             });
             var il = a(15808),
                 iu = (function (e) {
-                    return (e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e;
+                    return ((e.PLAY = 'PLAY'), (e.PAUSE = 'PAUSE'), (e.MOVE_BACKWARD = 'MOVE_BACKWARD'), (e.MOVE_FORWARD = 'MOVE_FORWARD'), e);
                 })(iu || {}),
                 id = a(91027),
                 ic = a(32629),
@@ -13564,7 +13577,7 @@
                 async getMediaSource(e) {
                     let { entity: t } = e,
                         a = '';
-                    return t instanceof ih.y && t.data.meta.src && (a = t.data.meta.src), Promise.resolve({ src: a });
+                    return (t instanceof ih.y && t.data.meta.src && (a = t.data.meta.src), Promise.resolve({ src: a }));
                 }
             }
             var iy = a(78305);
@@ -13572,11 +13585,11 @@
                 im = async () => {
                     if (ip) return;
                     let e = window.document.createElement('audio');
-                    (e.src =
+                    ((e.src =
                         'data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAADAAAC2QBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVWqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqr///////////////////////////////////////////8AAAA8TEFNRTMuOThyBK8AAAAAAAAAADQgJAimTQABzAAAAtmIVtmVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//sQZAAO4AAAf4AAAAgAAA/wAAABAoQDLmAAACBYgGYMAAAE+oH///////0WKFRVzjKnAmjp+XX9qP//////p0USaKtMwpjZNhNFyEM61QAAOAP////////nfSpMQU1FMy45OC4yqqr/+xBEDI/wAAB/gAAACAxgGaMAAAEAAAH+AAAAIAAAP8AAAASqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqv/7EGQoD/AAAGkAAAAIAAANIAAAAQAAAaQAAAAgAAA0gAAABKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq'),
-                        e.load();
+                        e.load());
                     try {
-                        await e.play(), e.pause(), (ip = !0);
+                        (await e.play(), e.pause(), (ip = !0));
                     } catch (e) {}
                 },
                 ig = async () => im();
@@ -13602,7 +13615,7 @@
                       : { transport: aF.o.ENCRAW, codecs: [...r0.iy, ...r0.DM] };
             }
             var iC = (function (e) {
-                    return (e.HQ_PLUS = 'hqPlus'), (e.HQ = 'hq'), (e.NQ = 'nq'), (e.LQ = 'lq'), (e.PREVIEW = 'preview'), e;
+                    return ((e.HQ_PLUS = 'hqPlus'), (e.HQ = 'hq'), (e.NQ = 'nq'), (e.LQ = 'lq'), (e.PREVIEW = 'preview'), e);
                 })({}),
                 iT = a(79406),
                 ix = a(56755),
@@ -13615,7 +13628,7 @@
                 iL = a(9634);
             let iF = (e) => {
                 let { audioLoader: t, children: a } = e;
-                return (0, O.use)(t), a;
+                return ((0, O.use)(t), a);
             };
             var iB = a(92708),
                 iq = a(26490);
@@ -13623,7 +13636,7 @@
                 let e = (0, iq.S)(),
                     t = (0, iw.i)(),
                     { sonataState: a } = (0, ii.g)();
-                (0, O.useEffect)(() => {
+                ((0, O.useEffect)(() => {
                     e.loadPresets();
                 }, [e]),
                     (0, O.useEffect)(() => {
@@ -13632,7 +13645,7 @@
                             (e.isEnabled
                                 ? (e.currentPreset && t.equalizer.value.applyPreset((0, iB.HO)(e.currentPreset)), t.equalizer.value.enable())
                                 : t.equalizer.value.disable());
-                    }, [e.currentPreset, e.isEnabled, null == t ? void 0 : t.equalizer, a.areCoresRegistered, e.isAvailable]);
+                    }, [e.currentPreset, e.isEnabled, null == t ? void 0 : t.equalizer, a.areCoresRegistered, e.isAvailable]));
             });
             var iU = a(6752),
                 iW = a(11541),
@@ -13645,7 +13658,7 @@
                     i = (0, iS.N)(),
                     s = (0, iU.L)(() => !!t || (void 0 === r.isOfflineModeEnabled ? (0, iW.g)(i.get(iE.U2)) : r.isOfflineModeEnabled)),
                     n = a.checkExperiment(iT.z.WebNextYnisonActivityInterception, 'on');
-                (0, O.useEffect)(() => {
+                ((0, O.useEffect)(() => {
                     i.get(iE.by).updateVariables({ isShadow: !n });
                 }, [i, n]),
                     ((e) => {
@@ -13683,13 +13696,13 @@
                                         }
                                     });
                                     return () => {
-                                        n(), e.dispose(), s.current === e && (s.current = null);
+                                        (n(), e.dispose(), s.current === e && (s.current = null));
                                     };
                                 }, [r, i, t, a]),
                                 { networkMonitorRef: s }
                             );
                         })({ isConnectionDisabled: e.isConnectionDisabled, isNetworkMonitoringEnabled: s, checkConnectionReasonRef: i });
-                        (0, O.useEffect)(() => {
+                        ((0, O.useEffect)(() => {
                             let a = t.get(iE.by);
                             if (e.isConnectionDisabled) return void a.connector.disconnect();
                             let r = () => {
@@ -13711,7 +13724,7 @@
                                 document.addEventListener('visibilitychange', r),
                                 r(),
                                 () => {
-                                    o(), document.removeEventListener('visibilitychange', r), i.current === r && (i.current = null);
+                                    (o(), document.removeEventListener('visibilitychange', r), i.current === r && (i.current = null));
                                 }
                             );
                         }, [t, s, n, e.isConnectionDisabled, e.isYnisonActivityInterceptionEnabled]),
@@ -13721,7 +13734,7 @@
                                     { experiments: r } = (0, ii.g)(),
                                     i = r.checkExperiment(iT.z.WebNextYnisonInactiveTimerDesktop, 'on'),
                                     s = r.getExperiment(iT.z.WebNextYnisonInactiveTimerDesktop);
-                                (0, O.useEffect)(() => {
+                                ((0, O.useEffect)(() => {
                                     if (!e.isEnabled) return;
                                     let { inactiveTimeoutMs: r, inactiveCheckIntervalMs: n } = (function (e) {
                                             let t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
@@ -13769,8 +13782,8 @@
                                         return () => {
                                             i();
                                         };
-                                    }, [t, e.isEnabled]);
-                            })({ isEnabled: !e.isConnectionDisabled || !e.isYnisonActivityInterceptionEnabled });
+                                    }, [t, e.isEnabled]));
+                            })({ isEnabled: !e.isConnectionDisabled || !e.isYnisonActivityInterceptionEnabled }));
                     })({ isConnectionDisabled: s, isYnisonActivityInterceptionEnabled: n }),
                     (0, O.useEffect)(() => {
                         if (s || !n) return;
@@ -13787,7 +13800,7 @@
                         return () => {
                             t();
                         };
-                    }, [i, s, n]);
+                    }, [i, s, n]));
             });
             var iH = a(60754),
                 iz = a(23912);
@@ -14155,14 +14168,14 @@
                         changePreamp(t) {
                             let { localStorage: a } = (0, iH._$)(e),
                                 r = (0, iH.dV)(e.currentPreset);
-                            (e.customPreset = (0, iH.wg)({ ...r, id: iz.f.CUSTOM })), e.customPreset.setPreamp(t), (e.currentPreset = (0, iH.o8)(e.customPreset));
+                            ((e.customPreset = (0, iH.wg)({ ...r, id: iz.f.CUSTOM })), e.customPreset.setPreamp(t), (e.currentPreset = (0, iH.o8)(e.customPreset)));
                             let i = a.get(iO.c.EqualizerConfig);
                             a.set(iO.c.EqualizerConfig, { ...i, customPreset: (0, iB.HO)(e.customPreset), lastPresetId: iz.f.CUSTOM, version: '6' });
                         },
                         changeAmp(t, a) {
                             let { localStorage: r } = (0, iH._$)(e),
                                 i = (0, iH.dV)(e.currentPreset);
-                            (e.customPreset = (0, iH.wg)({ ...i, id: iz.f.CUSTOM })), e.customPreset.setAmp(t, a), (e.currentPreset = (0, iH.o8)(e.customPreset));
+                            ((e.customPreset = (0, iH.wg)({ ...i, id: iz.f.CUSTOM })), e.customPreset.setAmp(t, a), (e.currentPreset = (0, iH.o8)(e.customPreset)));
                             let s = r.get(iO.c.EqualizerConfig);
                             r.set(iO.c.EqualizerConfig, { ...s, customPreset: (0, iB.HO)(e.customPreset), lastPresetId: iz.f.CUSTOM, version: '6' });
                         },
@@ -14647,7 +14660,7 @@
                                             },
                                         },
                                     });
-                                l.push(a), l.push(t);
+                                (l.push(a), l.push(t));
                             }
                             return (
                                 l.push(
@@ -14727,7 +14740,7 @@
                             B,
                             A,
                         ]);
-                    ((e) => {
+                    (((e) => {
                         let { sonataState: t } = (0, ii.g)(),
                             a = (0, O.useCallback)(() => {
                                 if (!e) return;
@@ -14797,9 +14810,9 @@
                                         case 'DISLIKE_NONE':
                                             s = !!i.isDisliked;
                                     }
-                                    s && (await i.toggleDislike?.()),
+                                    (s && (await i.toggleDislike?.()),
                                         s && !i.isDisliked && i.id === e.state.queueState.currentEntity.value?.entity?.data?.meta?.id && e.moveForward(),
-                                        a();
+                                        a());
                                 },
                                 [e, t.entityMeta, a],
                             ),
@@ -14872,7 +14885,7 @@
                                 },
                                 [e, r, i],
                             );
-                        (0, O.useEffect)(() => {
+                        ((0, O.useEffect)(() => {
                             return (
                                 window.desktopEvents?.on?.(il.E.PLAYER_ACTION, s),
                                 () => {
@@ -14886,7 +14899,7 @@
                                     (window.pulsesyncApi.unlikeTrack = () => r('LIKE_NONE')),
                                     (window.pulsesyncApi.dislikeTrack = () => i('DISLIKE')),
                                     (window.pulsesyncApi.undislikeTrack = () => i('DISLIKE_NONE')));
-                            }, [r, i]);
+                            }, [r, i]));
                     })(en),
                         ((e) => {
                             let {
@@ -14914,7 +14927,7 @@
                                 b = d.get(iE.UB),
                                 E = d.get(iE.Tq),
                                 S = [new tC(b)];
-                            E && S.push(new tT(E)),
+                            (E && S.push(new tT(E)),
                                 a.createPlayback(ix.V.PROMO_LANDING, {
                                     factory: r,
                                     entityProvider: i,
@@ -14923,7 +14936,7 @@
                                         windowSize: f.windowSize,
                                         setupQueueWindowSize: f.setupQueueWindowSize,
                                     },
-                                });
+                                }));
                             let _ = a.getPlayback(ix.V.PROMO_LANDING);
                             for (let e of [
                                 new tM({
@@ -15029,7 +15042,7 @@
                                         let { YaspCoreAdapter: t, YaspLoader: a, HlsCoreAdapter: r, HtmlAudioCoreAdapter: i } = e,
                                             s = new a({ logger: _, yaspTelemetry: es, getTelemetryTestIds: x }),
                                             n = z ? new r({ hlsErrorRetryLimit: k.player.hlsErrorRetryLimit }) : new i();
-                                        en.registerMediaPlayer({
+                                        (en.registerMediaPlayer({
                                             mediaPlayerParams: { core: n, mediaProvider: ee, mediaPlayerType: 'audioMediaPlayer', contentType: U.e.HLS },
                                         }),
                                             T &&
@@ -15060,7 +15073,7 @@
                                                 .then(() => {
                                                     let e,
                                                         a = s.getYaspAudioElement();
-                                                    (e = window.Worker ? new to() : new tn()),
+                                                    ((e = window.Worker ? new to() : new tn()),
                                                         R
                                                             ? en.registerMediaPlayer({
                                                                   mediaPlayerParams: {
@@ -15106,11 +15119,11 @@
                                                                     contentType: U.e.AUDIO,
                                                                 },
                                                                 playbackId: ix.V.PROMO_LANDING,
-                                                            });
+                                                            }));
                                                 })
                                                 .catch((e) => {
                                                     _.error('[SonataProvider] Error trying to register media players', { error: e });
-                                                });
+                                                }));
                                     }),
                                 d.setCoresAsRegistered(!0));
                         }, [
@@ -15286,7 +15299,7 @@
                                             ? void 0
                                             : t.state.currentContext.onChange(() => {
                                                   var q, z;
-                                                  null == e || e(),
+                                                  (null == e || e(),
                                                       null == r || r(),
                                                       (e =
                                                           null == t || null == (q = t.state.currentContext.value)
@@ -15299,13 +15312,13 @@
                                                               ? void 0
                                                               : z.availableActions.moveForward.onChange((e) => {
                                                                     i(t, t?.state?.playerState?.status?.value);
-                                                                }));
+                                                                })));
                                               });
-                                t && (window.__pulseSyncPendingPlayerInstance = t),
+                                (t && (window.__pulseSyncPendingPlayerInstance = t),
                                     window.pulsesyncApi?.setPlayerInstance?.(t),
-                                    i(t, t?.state?.playerState?.status?.value);
+                                    i(t, t?.state?.playerState?.status?.value));
                                 return () => {
-                                    null == s || s(),
+                                    (null == s || s(),
                                         null == p || p(),
                                         null == n || n(),
                                         null == y || y(),
@@ -15317,7 +15330,7 @@
                                         null == h || h(),
                                         null == v || v(),
                                         null == e || e(),
-                                        null == r || r();
+                                        null == r || r());
                                 };
                             }, [a, null == t ? void 0 : t.state.currentContext, null == t ? void 0 : t.state.playerState.status]);
                         })({ sonata: en }),
@@ -15350,15 +15363,15 @@
                                 let n, o, l, u, d, c;
                                 if (!t) return;
                                 let h = s.get(iO.c.YmPlayerVolume);
-                                (n = 'number' != typeof h || isNaN(h) ? 1 : h),
+                                ((n = 'number' != typeof h || isNaN(h) ? 1 : h),
                                     t.setExponentVolume(n),
                                     t.setExponentVolume(n, ix.V.TRAILER),
-                                    a && t.setExponentVolume(n, a);
+                                    a && t.setExponentVolume(n, a));
                                 let v = t.getState(a).queueState.currentEntity.onChange((e) => {
                                         let t = null == e ? void 0 : e.context.data.type,
                                             a = null == e ? void 0 : e.context.data.meta.id,
                                             r = null == e ? void 0 : e.entity;
-                                        r && i.setEntityMeta(r), t && i.setContextType(t), a && i.setContextId(a);
+                                        (r && i.setEntityMeta(r), t && i.setContextType(t), a && i.setContextId(a));
                                     }),
                                     y = t.getState(a).playerState.status.onChange((e) => {
                                         e && i.setStatus(e);
@@ -15371,7 +15384,7 @@
                                             let r = !!s.get(iO.c.YmPlayerShuffle);
                                             t.setShuffle(r, a);
                                         }
-                                        (o =
+                                        ((o =
                                             null == (e = t.getState(a).currentContext.value)
                                                 ? void 0
                                                 : e.availableActions.moveBackward.onChange((e) => {
@@ -15400,7 +15413,7 @@
                                                     ? void 0
                                                     : y.availableActions.speed.onChange((e) => {
                                                           'boolean' == typeof e && (i.setCanSpeed(e), e || t.setSpeed(1, a));
-                                                      }));
+                                                      })));
                                     }),
                                     m =
                                         null == (e = t.getState(a).playerState)
@@ -15410,7 +15423,7 @@
                                               }),
                                     f = t.getState(a).playerState.volume.onChange(() => {
                                         let e = t.getState(a).playerState.exponentVolume.value;
-                                        i.setVolume(e), r && s.set(iO.c.YmPlayerVolume, e, { expires: 365 });
+                                        (i.setVolume(e), r && s.set(iO.c.YmPlayerVolume, e, { expires: 365 }));
                                     }),
                                     g = t.getState(a).queueState.repeat.onChange((e) => {
                                         e && (i.setRepeatMode(e), r && s.set(iO.c.YmPlayerRepeatMode, e, { expires: 365 }));
@@ -15419,7 +15432,7 @@
                                         'boolean' == typeof e && (i.setShuffle(e), r && s.set(iO.c.YmPlayerShuffle, e, { expires: 365 }));
                                     });
                                 return () => {
-                                    null == v || v(),
+                                    (null == v || v(),
                                         null == y || y(),
                                         null == p || p(),
                                         null == f || f(),
@@ -15430,10 +15443,10 @@
                                         null == m || m(),
                                         null == o || o(),
                                         null == l || l(),
-                                        null == c || c();
+                                        null == c || c());
                                 };
                             }, [a, t, i, s, r]);
-                        })({ sonata: en, playbackId: l ? ix.V.PROMO_LANDING : void 0, withStorage: !l, sonataState: l && (null == b ? void 0 : b.state) ? b.state : d });
+                        })({ sonata: en, playbackId: l ? ix.V.PROMO_LANDING : void 0, withStorage: !l, sonataState: l && (null == b ? void 0 : b.state) ? b.state : d }));
                     let eo = (0, O.useCallback)(() => {
                         if (!y.isAuthorized || E || Q || X) return aW.e.PREVIEW;
                         if (S) return aW.e.EFFICIENT;
@@ -15453,11 +15466,11 @@
                                             return aW.e.BALANCED;
                                     }
                                 })(e);
-                                return A.set(iO.c.YmPlayerQuality, t, { expires: 365 }), t;
+                                return (A.set(iO.c.YmPlayerQuality, t, { expires: 365 }), t);
                             }
                             return e;
                         }
-                        return A.set(iO.c.YmPlayerQuality, aW.e.BALANCED, { expires: 365 }), aW.e.BALANCED;
+                        return (A.set(iO.c.YmPlayerQuality, aW.e.BALANCED, { expires: 365 }), aW.e.BALANCED);
                     }, [A, E, S, y.isAuthorized, Q, X]);
                     return (
                         (0, O.useEffect)(
@@ -15479,7 +15492,7 @@
                         (0, O.useEffect)(() => {
                             let e = A.get(iO.c.CrossFadeMode),
                                 t = !!R && (null == e || e);
-                            A.set(iO.c.CrossFadeMode, t, { expires: 365 }), (K.isCrossfadeEnabled.value = t);
+                            (A.set(iO.c.CrossFadeMode, t, { expires: 365 }), (K.isCrossfadeEnabled.value = t));
                         }, [K, d, A, R]),
                         (0, O.useEffect)(() => {
                             (0, ir.Bx)(A, ss);
@@ -15531,9 +15544,9 @@
                         d = (0, r.useCallback)(() => {
                             let e = (0, n.j)();
                             if (null === e) return;
-                            e.delete(l.INVITE_ID), e.delete(l.UTM_MEDIUM);
+                            (e.delete(l.INVITE_ID), e.delete(l.UTM_MEDIUM));
                             let a = new URL(window.location.href);
-                            (a.search = e.toString()), t(a.toString());
+                            ((a.search = e.toString()), t(a.toString()));
                         }, [t]);
                     return { inviteId: a, shouldShowFamilyInvite: !!(!e.hasPlus && u), clear: d };
                 };
@@ -15575,7 +15588,7 @@
                             let { pageId: t, blockId: a } = e;
                             return (0, r.useMemo)(() => {
                                 let e = ['desktop'];
-                                return t && e.push(t.toLowerCase()), a && e.push(a.toLowerCase()), e.push('default'), e.join('-');
+                                return (t && e.push(t.toLowerCase()), a && e.push(a.toLowerCase()), e.push('default'), e.join('-'));
                             }, [a, t]);
                         })(t),
                         o = ((e) => {
@@ -15654,7 +15667,7 @@
                 s = {
                     5881: (e, t, a) => {
                         function r() {
-                            for (var e, t, a = 0, r = ''; a < arguments.length; )
+                            for (var e, t, a = 0, r = ''; a < arguments.length;)
                                 (e = arguments[a++]) &&
                                     (t = (function e(t) {
                                         var a,
@@ -15669,11 +15682,11 @@
                                     (r && (r += ' '), (r += t));
                             return r;
                         }
-                        a.r(t), a.d(t, { clsx: () => r, default: () => i });
+                        (a.r(t), a.d(t, { clsx: () => r, default: () => i }));
                         let i = r;
                     },
                     4517: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => r });
+                        (a.r(t), a.d(t, { default: () => r }));
                         let r = { root: 'eaYyesBmJL_NbkgoYR1c', focusable: 'uL1dD5rxgI4bPmfyMMe7' };
                     },
                     9097: (e, t) => {
@@ -15685,7 +15698,7 @@
                             else r = t;
                             return { $$typeof: a, type: e, key: i, ref: void 0 !== (t = r.ref) ? t : null, props: r };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r));
                     },
                     4377: (e, t, a) => {
                         e.exports = a(9097);
@@ -15696,7 +15709,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.SROnly = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.SROnly = void 0));
                         let i = a(4377),
                             s = a(5881),
                             n = a(810),
@@ -15718,19 +15731,19 @@
                 var t = n[e];
                 if (void 0 !== t) return t.exports;
                 var a = (n[e] = { exports: {} });
-                return s[e].call(a.exports, a, a.exports, o), a.exports;
+                return (s[e].call(a.exports, a, a.exports, o), a.exports);
             }
-            (o.d = (e, t) => {
+            ((o.d = (e, t) => {
                 for (var a in t) o.o(t, a) && !o.o(e, a) && Object.defineProperty(e, a, { enumerable: !0, get: t[a] });
             }),
                 (o.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (o.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var l = {};
             (() => {
-                Object.defineProperty(l, '__esModule', { value: !0 }), (l.SROnly = void 0);
+                (Object.defineProperty(l, '__esModule', { value: !0 }), (l.SROnly = void 0));
                 var e = o(2865);
                 Object.defineProperty(l, 'SROnly', {
                     enumerable: !0,
@@ -15759,27 +15772,27 @@
                 y = a(23248);
             class p {
                 setDefaultState() {
-                    (this.isAdvertPlaying.value = !1), (this.afterTrackResponse = null), (this.advertData = null);
+                    ((this.isAdvertPlaying.value = !1), (this.afterTrackResponse = null), (this.advertData = null));
                 }
                 setAudioAdvertState(e, t) {
-                    (this.advertData = { type: y.I.AUDIO, data: t }), (this.isAdvertPlaying.value = !0), (this.afterTrackResponse = e);
+                    ((this.advertData = { type: y.I.AUDIO, data: t }), (this.isAdvertPlaying.value = !0), (this.afterTrackResponse = e));
                 }
                 setVideoAdvert(e, t) {
-                    (this.advertData = { type: y.I.VIDEO, data: t }), (this.isAdvertPlaying.value = !0), (this.afterTrackResponse = e);
+                    ((this.advertData = { type: y.I.VIDEO, data: t }), (this.isAdvertPlaying.value = !0), (this.afterTrackResponse = e));
                 }
                 setClickThrough(e) {
                     e && (this.clickThrough = e);
                 }
                 constructor() {
-                    (0, u._)(this, 'isAdvertPlaying', new v.cJ(!1)),
+                    ((0, u._)(this, 'isAdvertPlaying', new v.cJ(!1)),
                         (0, u._)(this, 'afterTrackResponse', null),
                         (0, u._)(this, 'advertData', null),
-                        (0, u._)(this, 'clickThrough', void 0);
+                        (0, u._)(this, 'clickThrough', void 0));
                 }
             }
             function m(e, t) {
                 let a;
-                return ((a = e instanceof c.t ? e : new c.t('Error in '.concat(t, ' advert'), { code: 'E_ADVERT', cause: e })).name = '[Advert] '.concat(a.name)), a;
+                return (((a = e instanceof c.t ? e : new c.t('Error in '.concat(t, ' advert'), { code: 'E_ADVERT', cause: e })).name = '[Advert] '.concat(a.name)), a);
             }
             class f {
                 async loadEntities() {
@@ -15800,12 +15813,12 @@
                     this.isCurrent = e;
                 }
                 constructor({ data: e }) {
-                    (0, u._)(this, 'data', void 0), (0, u._)(this, 'isCurrent', !1), (this.data = e);
+                    ((0, u._)(this, 'data', void 0), (0, u._)(this, 'isCurrent', !1), (this.data = e));
                 }
             }
             var b = a(55499);
             !(function (e) {
-                (e.CROSSFADE = 'crossfade'), (e.MIX = 'mix'), (e.NONE = 'none');
+                ((e.CROSSFADE = 'crossfade'), (e.MIX = 'mix'), (e.NONE = 'none'));
             })(r || (r = {}));
             class E {
                 get isCrossfadeEnabled() {
@@ -15827,7 +15840,11 @@
                     return r.NONE;
                 }
                 constructor(e, t) {
-                    (0, u._)(this, 'context', void 0), (0, u._)(this, 'entity', void 0), (0, u._)(this, 'lastChangeMethod', null), (this.context = e), (this.entity = t);
+                    ((0, u._)(this, 'context', void 0),
+                        (0, u._)(this, 'entity', void 0),
+                        (0, u._)(this, 'lastChangeMethod', null),
+                        (this.context = e),
+                        (this.entity = t));
                 }
             }
             class S {
@@ -15850,7 +15867,7 @@
                 }
                 createAudioAdvertPlayback(e) {
                     let { playbackController: t, mediaPlayerParams: a } = e;
-                    t.createPlayback(h.V.ADVERT, {
+                    (t.createPlayback(h.V.ADVERT, {
                         mediaPlayerParams: a,
                         factory: this.factory,
                         isBlocking: !0,
@@ -15863,22 +15880,22 @@
                                 var t;
                                 null == (t = this.advertFeedbackCallback) || t.call(this);
                             }
-                        });
+                        }));
                 }
                 init(e) {
                     let t = document.createElement('script');
-                    (t.src = 'https://yandex.'.concat(e, '/ads/system/adsdk.js')),
+                    ((t.src = 'https://yandex.'.concat(e, '/ads/system/adsdk.js')),
                         document.head.appendChild(t),
                         t.addEventListener('load', () => {
                             let e = window.ya;
-                            e.videoAd.loadModule('YaMusicAPI').then((e) => {
+                            (e.videoAd.loadModule('YaMusicAPI').then((e) => {
                                 this.adsdkAudioModule = e;
                             }),
                                 e.videoAd.loadModule('AdLoader').then((e) => {
                                     this.adsdkVideoModule = e;
-                                });
+                                }));
                         }),
-                        this.state.setDefaultState();
+                        this.state.setDefaultState());
                 }
                 async playAdvert(e) {
                     let { afterTrackResponse: t, advertType: a } = e;
@@ -15914,7 +15931,7 @@
                                       e(t);
                                   })
                                   .catch((t) => {
-                                      t && 'NO_AD_SECTION' === t.code && e(null), r(t);
+                                      (t && 'NO_AD_SECTION' === t.code && e(null), r(t));
                                   })
                             : r(new c.t('Adsdk script was not inited', { code: 'NO_ADSDK' }));
                     });
@@ -15935,10 +15952,10 @@
                                     t.loadAd()
                                         .then((t) => {
                                             let a = t.createPlaybackController(r, i);
-                                            (this.videoAdvertPlaybackController = a), e(a);
+                                            ((this.videoAdvertPlaybackController = a), e(a));
                                         })
                                         .catch((t) => {
-                                            t instanceof d.d && 'NO_AD_SECTION' === t.code && e(null), n(t);
+                                            (t instanceof d.d && 'NO_AD_SECTION' === t.code && e(null), n(t));
                                         });
                                 })
                                 .catch(n);
@@ -15961,15 +15978,15 @@
                                       a
                                           ? (a.subscribe('AdStopped', () => {
                                                 var e;
-                                                this.state.setDefaultState(),
+                                                (this.state.setDefaultState(),
                                                     (this.videoAdvertPlaybackController = null),
                                                     null == (e = this.advertFeedbackCallback) || e.call(this),
-                                                    t();
+                                                    t());
                                             }),
                                             a.subscribe('AdStarted', () => {
                                                 let t = a.getCurrentViewerAssets(),
                                                     r = { clickThroughUrl: null == t ? void 0 : t.targetUrl, adTitle: null == t ? void 0 : t.title };
-                                                this.state.setVideoAdvert(e, r), this.state.setClickThrough(null == t ? void 0 : t.clickThrough);
+                                                (this.state.setVideoAdvert(e, r), this.state.setClickThrough(null == t ? void 0 : t.clickThrough));
                                             }),
                                             a.playAd())
                                           : t();
@@ -15980,7 +15997,7 @@
                 }
                 async playAudioAdvert(e) {
                     return new Promise((t, a) => {
-                        (this.audioAdvertResolve = t),
+                        ((this.audioAdvertResolve = t),
                             this.getAudioAdvert({ partnerId: Number(e.ad.adsParams.partnerId), category: Number(e.ad.adsParams.categoryId) })
                                 .then((r) => {
                                     if (r) {
@@ -15994,7 +16011,7 @@
                                             .catch(a);
                                     } else t();
                                 })
-                                .catch(a);
+                                .catch(a));
                     });
                 }
                 pauseVideoAdvert() {
@@ -16009,7 +16026,7 @@
                     this.advertFeedbackCallback = e;
                 }
                 constructor(e) {
-                    (0, u._)(this, 'adsdkAudioModule', null),
+                    ((0, u._)(this, 'adsdkAudioModule', null),
                         (0, u._)(this, 'adsdkVideoModule', null),
                         (0, u._)(this, 'videoSlotId', void 0),
                         (0, u._)(this, 'videoElementId', void 0),
@@ -16021,9 +16038,9 @@
                         (0, u._)(this, 'videoAdvertPlaybackController', null),
                         (0, u._)(this, 'advertFeedbackCallback', null),
                         (0, u._)(this, 'videoContentUrl', null),
-                        (0, u._)(this, 'videoContentDuration', null);
+                        (0, u._)(this, 'videoContentDuration', null));
                     let { videoSlotId: t, videoElementId: a, logger: r } = e;
-                    (this.videoElementId = a), (this.videoSlotId = t), (this.logger = r);
+                    ((this.videoElementId = a), (this.videoSlotId = t), (this.logger = r));
                 }
             }
             var A = a(78305),
@@ -16046,7 +16063,7 @@
                     }, [d.tld]),
                     (0, n.useEffect)(() => {
                         var e;
-                        null == I || I.setVideoContentUrl((null == (e = c.entityMeta) ? void 0 : e.url) || null), null == I || I.setVideoContentDuration(c.duration);
+                        (null == I || I.setVideoContentUrl((null == (e = c.entityMeta) ? void 0 : e.url) || null), null == I || I.setVideoContentDuration(c.duration));
                     }, [null == (t = c.entityMeta) ? void 0 : t.url, c.duration]),
                     (0, n.useEffect)(() => {
                         if (!u.isAuthorized) return;
@@ -16056,8 +16073,8 @@
                                 : I.state.isAdvertPlaying.onChange((e) => {
                                       if ((s.setAdvertShown(e), e)) {
                                           var t, a;
-                                          s.setType((null == I || null == (t = I.state.advertData) ? void 0 : t.type) || null),
-                                              s.setData((null == I || null == (a = I.state.advertData) ? void 0 : a.data) || null);
+                                          (s.setType((null == I || null == (t = I.state.advertData) ? void 0 : t.type) || null),
+                                              s.setData((null == I || null == (a = I.state.advertData) ? void 0 : a.data) || null));
                                       } else s.reset();
                                   });
                         return () => {
@@ -16203,7 +16220,7 @@
         },
         79884: (e, t, a) => {
             'use strict';
-            a.d(t, { RumScript: () => r }), a(32290);
+            (a.d(t, { RumScript: () => r }), a(32290));
             let r = (e) => {
                 let { nonce: t, requestId: a, assetPrefix: r, rumSettings: i } = e;
                 return null;
@@ -16260,17 +16277,17 @@
         83778: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { h: () => r }),
+            (a.d(t, { h: () => r }),
                 (function (e) {
-                    (e.BASED_ON_ENTITY_BY_DEFAULT = 'BASED_ON_ENTITY_BY_DEFAULT'),
+                    ((e.BASED_ON_ENTITY_BY_DEFAULT = 'BASED_ON_ENTITY_BY_DEFAULT'),
                         (e.USER_TRACKS = 'USER_TRACKS'),
                         (e.DOWNLOADED_TRACKS = 'DOWNLOADED_TRACKS'),
                         (e.SEARCH = 'SEARCH'),
                         (e.MUSIC_HISTORY = 'MUSIC_HISTORY'),
                         (e.MUSIC_HISTORY_SEARCH = 'MUSIC_HISTORY_SEARCH'),
                         (e.ARTIST_MY_COLLECTION = 'ARTIST_MY_COLLECTION'),
-                        (e.ARTIST_FAMILIAR_FROM_WAVE = 'ARTIST_FAMILIAR_FROM_WAVE');
-                })(r || (r = {}));
+                        (e.ARTIST_FAMILIAR_FROM_WAVE = 'ARTIST_FAMILIAR_FROM_WAVE'));
+                })(r || (r = {})));
         },
         83920: (e, t, a) => {
             'use strict';
@@ -16376,7 +16393,7 @@
                 i = (e) =>
                     r.reduce((t, a) => {
                         let { queryKey: r, resultKey: i } = a;
-                        return 'string' == typeof e[r] && (t[i] = e[r]), t;
+                        return ('string' == typeof e[r] && (t[i] = e[r]), t);
                     }, {});
         },
         89337: (e) => {
@@ -16505,40 +16522,74 @@
             // for PulseSync WebHost: reserve the native size while the spinner chunk loads.
             const NativeSpinnerComponent = i.lazy(() => a.e(6341).then(() => ({ default: a(99902).y })));
             function NativeSpinner({ size, label }) {
-                return i.createElement('span', {
-                    role: 'status',
-                    'aria-label': label,
-                    style: { display: 'inline-flex', flexShrink: 0, width: `var(--ym-icon-size-${size})`, height: `var(--ym-icon-size-${size})` },
-                }, i.createElement(i.Suspense, { fallback: null }, i.createElement(NativeSpinnerComponent, { size })));
+                return i.createElement(
+                    'span',
+                    {
+                        role: 'status',
+                        'aria-label': label,
+                        style: { display: 'inline-flex', flexShrink: 0, width: `var(--ym-icon-size-${size})`, height: `var(--ym-icon-size-${size})` },
+                    },
+                    i.createElement(i.Suspense, { fallback: null }, i.createElement(NativeSpinnerComponent, { size })),
+                );
             }
             // for PulseSync WebHost: native tab buttons with addon-owned panel content.
-            const NativeTabsComponent = i.lazy(() => a.e(4797).then(() => {
-                const native = a(15299);
-                const Tab = ({ itemDisabled, ...props }) => i.createElement(native.oz, { ...props, disabled: props.disabled || itemDisabled });
-                return { default: function NativeTabs({ id, label, value, items, disabled, onChange }) {
-                    const enabled = items.filter(item => !item.disabled);
-                    const focusValue = enabled.some(item => item.value === value) ? value : enabled[0]?.value;
-                    const select = next => {
-                        if (!disabled && next !== value && enabled.some(item => item.value === next)) onChange(next);
+            const NativeTabsComponent = i.lazy(() =>
+                a.e(4797).then(() => {
+                    const native = a(15299);
+                    const Tab = ({ itemDisabled, ...props }) => i.createElement(native.oz, { ...props, disabled: props.disabled || itemDisabled });
+                    return {
+                        default: function NativeTabs({ id, label, value, items, disabled, onChange }) {
+                            const enabled = items.filter((item) => !item.disabled);
+                            const focusValue = enabled.some((item) => item.value === value) ? value : enabled[0]?.value;
+                            const select = (next) => {
+                                if (!disabled && next !== value && enabled.some((item) => item.value === next)) onChange(next);
+                            };
+                            const keyDown = (event) => {
+                                if (disabled || event.altKey || event.ctrlKey || event.metaKey || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+                                const buttons = Array.from(event.currentTarget.querySelectorAll('[role="tab"]:not(:disabled)'));
+                                const index = buttons.indexOf(event.target.closest('[role="tab"]'));
+                                if (index < 0 || !buttons.length) return;
+                                const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+                                const offset = (event.key === 'ArrowRight' ? 1 : -1) * (rtl ? -1 : 1);
+                                const nextIndex =
+                                    event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + offset + buttons.length) % buttons.length;
+                                event.preventDefault();
+                                event.stopPropagation();
+                                buttons[nextIndex].focus();
+                                select(buttons[nextIndex].getAttribute('data-pulsesync-tab-value'));
+                            };
+                            return i.createElement(
+                                native.tU,
+                                {
+                                    elementId: id,
+                                    value,
+                                    disabled,
+                                    'aria-label': label,
+                                    'aria-orientation': 'horizontal',
+                                    style: { scrollbarWidth: 'none' },
+                                    onTabChange: select,
+                                    onKeyDown: keyDown,
+                                },
+                                items.map((item) =>
+                                    i.createElement(
+                                        Tab,
+                                        {
+                                            key: item.value,
+                                            value: item.value,
+                                            itemDisabled: item.disabled,
+                                            tabIndex: !disabled && item.value === focusValue ? 0 : -1,
+                                            size: 'm',
+                                            radius: 'xxxl',
+                                            'data-pulsesync-tab-value': item.value,
+                                        },
+                                        item.label,
+                                    ),
+                                ),
+                            );
+                        },
                     };
-                    const keyDown = event => {
-                        if (disabled || event.altKey || event.ctrlKey || event.metaKey || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-                        const buttons = Array.from(event.currentTarget.querySelectorAll('[role="tab"]:not(:disabled)'));
-                        const index = buttons.indexOf(event.target.closest('[role="tab"]'));
-                        if (index < 0 || !buttons.length) return;
-                        const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
-                        const offset = (event.key === 'ArrowRight' ? 1 : -1) * (rtl ? -1 : 1);
-                        const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + offset + buttons.length) % buttons.length;
-                        event.preventDefault();
-                        event.stopPropagation();
-                        buttons[nextIndex].focus();
-                        select(buttons[nextIndex].getAttribute('data-pulsesync-tab-value'));
-                    };
-                    return i.createElement(native.tU, { elementId: id, value, disabled, 'aria-label': label, 'aria-orientation': 'horizontal', style: { scrollbarWidth: 'none' }, onTabChange: select, onKeyDown: keyDown },
-                        items.map(item => i.createElement(Tab, { key: item.value, value: item.value, itemDisabled: item.disabled, tabIndex: !disabled && item.value === focusValue ? 0 : -1, size: 'm', radius: 'xxxl', 'data-pulsesync-tab-value': item.value }, item.label)),
-                    );
-                } };
-            }));
+                }),
+            );
             const nativeControlDom = a(51767),
                 nativeControlButton = a(63423),
                 nativeControlIcon = a(82586),
@@ -16564,7 +16615,9 @@
                 NativeLegacyTooltip = ({ anchor, title, description, onClose }) =>
                     i.createElement(nativeControlTooltip.m_, {
                         open: true,
-                        onOpenChange: (open) => { if (!open) onClose(); },
+                        onOpenChange: (open) => {
+                            if (!open) onClose();
+                        },
                         isHoverEnabled: false,
                         isFocusEnabled: false,
                         enableAriaDescribedby: true,
@@ -16573,9 +16626,12 @@
                         flipOptions: { padding: 8 },
                         children: [
                             i.createElement(NativeTooltipReference, { anchor, key: 'reference' }),
-                            i.createElement(nativeControlTooltip.ZI, { key: 'content' },
+                            i.createElement(
+                                nativeControlTooltip.ZI,
+                                { key: 'content' },
                                 i.createElement(nativeControlCaption.HL, { variant: 'div', type: 'text', size: 's', weight: description ? 'bold' : 'medium' }, title),
-                                description ? i.createElement(nativeControlCaption.HL, { variant: 'div', type: 'text', size: 's', weight: 'normal' }, description) : null),
+                                description ? i.createElement(nativeControlCaption.HL, { variant: 'div', type: 'text', size: 's', weight: 'normal' }, description) : null,
+                            ),
                         ],
                     }),
                 nativeControlTools = {
@@ -16598,7 +16654,11 @@
                     ready();
                     return () => document.removeEventListener('pulsesync:runtime-ready', ready);
                 }, []);
-                i.useSyncExternalStore(renderer?.subscribe ?? nativeControlEmptySubscribe, renderer?.getSnapshot ?? nativeControlEmptySnapshot, nativeControlEmptySnapshot);
+                i.useSyncExternalStore(
+                    renderer?.subscribe ?? nativeControlEmptySubscribe,
+                    renderer?.getSnapshot ?? nativeControlEmptySnapshot,
+                    nativeControlEmptySnapshot,
+                );
                 return renderer?.render() ?? null;
             }
             // for PulseSync WebHost
@@ -16613,7 +16673,11 @@
                     ready();
                     return () => document.removeEventListener('pulsesync:runtime-ready', ready);
                 }, []);
-                const modal = i.useSyncExternalStore(api?.registerNativeModals ?? nativeControlEmptySubscribe, api?.getNativeModal ?? nativeModalEmptySnapshot, nativeModalEmptySnapshot);
+                const modal = i.useSyncExternalStore(
+                    api?.registerNativeModals ?? nativeControlEmptySubscribe,
+                    api?.getNativeModal ?? nativeModalEmptySnapshot,
+                    nativeModalEmptySnapshot,
+                );
                 const requested = i.useRef(false);
                 if (modal) requested.current = true;
                 return requested.current ? i.createElement(i.Suspense, { fallback: null }, i.createElement(NativeAddonModalContent, { modal })) : null;
@@ -16626,7 +16690,7 @@
                     b = (0, s.c)((e) => {
                         p() || a || (m(u.W), g(e));
                     });
-                (0, i.useLayoutEffect)(() => {
+                ((0, i.useLayoutEffect)(() => {
                     a || (0, l.Z)(f);
                 }, [f, a]),
                     ((e) => {
@@ -16646,10 +16710,18 @@
                     })({ onSystemThemeChange: b }),
                     (0, i.useLayoutEffect)(() => {
                         b((0, d.V)());
-                    }, [b]);
+                    }, [b]));
                 let E = (0, i.useMemo)(() => ({ theme: f, setTheme: g }), [f]);
                 // for PulseSync WebHost
-                return (0, r.jsx)(h.D.Provider, { value: E, children: (0, r.jsx)(i.Suspense, { fallback: (0, r.jsx)(v.MainSuspenseLoader, {}), children: (0, r.jsxs)(i.Fragment, { children: [t, (0, r.jsx)(NativeAddonControls, {}), (0, r.jsx)(i.Suspense, { fallback: null, children: (0, r.jsx)(NativeAddonModals, {}) })] }) }) });
+                return (0, r.jsx)(h.D.Provider, {
+                    value: E,
+                    children: (0, r.jsx)(i.Suspense, {
+                        fallback: (0, r.jsx)(v.MainSuspenseLoader, {}),
+                        children: (0, r.jsxs)(i.Fragment, {
+                            children: [t, (0, r.jsx)(NativeAddonControls, {}), (0, r.jsx)(i.Suspense, { fallback: null, children: (0, r.jsx)(NativeAddonModals, {}) })],
+                        }),
+                    }),
+                });
             };
         },
         96923: (e, t, a) => {
@@ -16667,14 +16739,14 @@
                     { settings: r } = (0, l.g)(),
                     u = (0, o.u)(),
                     d = a.get(s.vg);
-                r.setBrowserInfo(t),
+                (r.setBrowserInfo(t),
                     u && r.setPlatform(u),
                     (0, i.useLayoutEffect)(() => {
-                        r.initializeLiteVersionMode(), r.initializeCustomPlayerThumb();
+                        (r.initializeLiteVersionMode(), r.initializeCustomPlayerThumb());
                     }, []),
                     (0, i.useEffect)(() => {
                         r.liteVersionMode && d.count(r.liteVersionMode, 'liteVersionMode');
-                    }, [d, r.liteVersionMode]);
+                    }, [d, r.liteVersionMode]));
             });
         },
         97201: (e, t, a) => {
@@ -16737,7 +16809,7 @@
                         y = (0, l.c)(() => {
                             c.current.getTime() < Date.now() - (null != a ? a : 18e5) && !n && (r.open(), v());
                         });
-                    (0, o.useEffect)(() => {
+                    ((0, o.useEffect)(() => {
                         if (!t) return;
                         let e =
                             null == h
@@ -16763,7 +16835,7 @@
                                     e.abort();
                                 }
                             );
-                        }, [t, v]);
+                        }, [t, v]));
                 })({
                     isEnabled: t.isAuthorized && y && !r,
                     intervalMs: ((e) => {
@@ -16800,7 +16872,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 8153, 7182, 2497, 8420, 7034, 4755, 6639, 5718, 6706, 1311, 1588, 8892, 2536, 66, 5835, 2812, 8035, 551, 1410, 6252, 1330, 9736, 1693, 6477, 7275, 2586,
@@ -16808,6 +16880,6 @@
             ],
             () => e((e.s = 22692)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

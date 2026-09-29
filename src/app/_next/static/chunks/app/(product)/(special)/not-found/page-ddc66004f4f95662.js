@@ -3,7 +3,7 @@
     {
         7748: (e, n, t) => {
             'use strict';
-            t.r(n), t.d(n, { NotFound: () => j });
+            (t.r(n), t.d(n, { NotFound: () => j }));
             var o = t(32290),
                 a = t(63618),
                 r = t(96103),
@@ -94,7 +94,7 @@
                                 logger: o,
                                 context: 'useSendEventOnNotFoundNavigated',
                             });
-                            a && (0, p.Mu)(n.evgenInstance, a), e();
+                            (a && (0, p.Mu)(n.evgenInstance, a), e());
                         }, [n, t, o, e]),
                     };
                 })(O);
@@ -172,11 +172,11 @@
             };
         },
         82580: (e, n, t) => {
-            Promise.resolve().then(t.bind(t, 18171)), Promise.resolve().then(t.bind(t, 7748));
+            (Promise.resolve().then(t.bind(t, 18171)), Promise.resolve().then(t.bind(t, 7748)));
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 3183, 7231, 7972, 6347, 6732, 8420, 9030, 6639, 6184, 9763, 6151, 6706, 1311, 5201, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 9755, 697,
@@ -184,6 +184,6 @@
             ],
             () => e((e.s = 82580)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

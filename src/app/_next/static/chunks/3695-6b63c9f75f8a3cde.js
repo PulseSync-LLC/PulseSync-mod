@@ -46,10 +46,10 @@
         8246: (e, t, i) => {
             'use strict';
             var l;
-            i.d(t, { x: () => l }),
+            (i.d(t, { x: () => l }),
                 (function (e) {
-                    (e.ASC = 'asc'), (e.DESC = 'desc');
-                })(l || (l = {}));
+                    ((e.ASC = 'asc'), (e.DESC = 'desc'));
+                })(l || (l = {})));
         },
         8626: (e, t, i) => {
             'use strict';
@@ -59,10 +59,10 @@
         10398: (e, t, i) => {
             'use strict';
             var l;
-            i.d(t, { S: () => l }),
+            (i.d(t, { S: () => l }),
                 (function (e) {
-                    (e.MUSIC = 'music'), (e.CHILDREN = 'children');
-                })(l || (l = {}));
+                    ((e.MUSIC = 'music'), (e.CHILDREN = 'children'));
+                })(l || (l = {})));
         },
         11675: (e) => {
             e.exports = {
@@ -318,7 +318,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), a.isOpened && (l.reset(), a.close()), r.modal.isOpened && r.modal.close();
+                                    (null == e || e.stopPropagation(), a.isOpened && (l.reset(), a.close()), r.modal.isOpened && r.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     s.modal.isOpened && (s.modal.close(), s.reset());
@@ -328,11 +328,11 @@
                         })({
                             artist: t,
                             callback: (0, p.c)((e) => {
-                                A && S.isOpened && S.close(), L(e);
+                                (A && S.isOpened && S.close(), L(e));
                             }),
                         }),
                         P = (0, p.c)((e) => {
-                            j({ to: m.QT.ArtistScreen }), null == N || N(), E(e);
+                            (j({ to: m.QT.ArtistScreen }), null == N || N(), E(e));
                         });
                     return i && !t.various
                         ? (0, l.jsx)(k.N, {
@@ -549,7 +549,7 @@
                         } = (0, n.g)(),
                         b = 1 === i.length,
                         I = (0, a.useCallback)((e) => {
-                            P(!0), e.preventDefault();
+                            (P(!0), e.preventDefault());
                         }, []),
                         O = (0, a.useMemo)(() => {
                             let e = i;
@@ -877,7 +877,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [a, c, d];
-                                    return 'ru' === s && e.push(n), e.push(u), e;
+                                    return ('ru' === s && e.push(n), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [a, c, d, u];
@@ -993,10 +993,10 @@
                         let s = { ...(0, r.HO)(e), url: e.url, isLiked: !e.isLiked };
                         m(!0);
                         let a = await e.toggleLike();
-                        m(!1),
+                        (m(!1),
                             a === o.f.OK
                                 ? i((0, l.jsx)(h, { playlist: s }), { containerId: n.u.INFO })
-                                : i((0, l.jsx)(u.h, { error: p({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, l.jsx)(u.h, { error: p({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [t.isAuthorized, _, e, p, i]);
                 };
         },
@@ -1037,10 +1037,10 @@
                         let s = { ...(0, r.HO)(e), url: e.url, isPinned: !e.isPinned };
                         h(!0);
                         let a = await e.togglePin();
-                        h(!1),
+                        (h(!1),
                             a
                                 ? i((0, l.jsx)(m, { playlist: s }), { containerId: o.u.INFO })
-                                : i((0, l.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, l.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [t.isAuthorized, _, e, i, u]);
                 };
         },
@@ -1092,7 +1092,7 @@
                         );
                     }, [t, i]),
                     g = (0, c.c)((e) => {
-                        s.modal.isOpened && s.modal.close(), k({ to: o.QT.ArtistScreen }), v(e);
+                        (s.modal.isOpened && s.modal.close(), k({ to: o.QT.ArtistScreen }), v(e));
                     });
                 return (0, l.jsxs)(l.Fragment, {
                     children: [
@@ -1232,7 +1232,7 @@
                                     {
                                         icon: (0, l.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: icon, size: 'xxs' }),
                                         onClick: () => {
-                                            activate(), r?.(!1);
+                                            (activate(), r?.(!1));
                                         },
                                         children: label,
                                         'data-pulsesync-addon-menu-item': '',
@@ -1280,33 +1280,33 @@
                     eh = (0, k.P)(),
                     ep = (0, u.c)((e) => {
                         if ((e.stopPropagation(), eh())) return void e.preventDefault();
-                        U.setUtmLink(X), U.openPlaylistTrailer(i.id), em(n.ky.Playlist, i.id);
+                        (U.setUtmLink(X), U.openPlaylistTrailer(i.id), em(n.ky.Playlist, i.id));
                     }),
                     [ex, ev] = (0, a.useState)(!1),
                     { isPlaying: ey, togglePlay: eC } = (0, P.D)({
                         playContextParams: { contextData: { type: d.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: W, utmLink: X }, loadContextMeta: !0 },
                     }),
                     ek = (0, u.c)(() => {
-                        ed({ to: n.QT.PlaylistScreen }), null == Q || Q();
+                        (ed({ to: n.QT.PlaylistScreen }), null == Q || Q());
                     }),
                     ef = (0, u.c)((e) => {
-                        ek(), e_(e);
+                        (ek(), e_(e));
                     }),
                     eg = (0, N.N)(),
                     eS = (0, u.c)(() => {
                         if (!eh()) {
                             if (eg) return void $.open();
-                            et || ey || (ei(!0), null == ee || ee()), eC(), eu(!ey);
+                            (et || ey || (ei(!0), null == ee || ee()), eC(), eu(!ey));
                         }
                     }),
                     eA = (0, u.c)(() => {
-                        el || i.isLiked || (er(!0), null == Z || Z()), en();
+                        (el || i.isLiked || (er(!0), null == Z || Z()), en());
                     }),
                     eL = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eN = (0, u.c)((e) => {
-                        ea(e), ev(e);
+                        (ea(e), ev(e));
                     }),
                     ej = (0, a.useMemo)(() => {
                         var e;

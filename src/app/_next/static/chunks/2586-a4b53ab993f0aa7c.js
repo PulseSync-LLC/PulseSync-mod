@@ -10,7 +10,7 @@
                 a = {
                     5881: (e, r, t) => {
                         function s() {
-                            for (var e, r, t = 0, s = ''; t < arguments.length; )
+                            for (var e, r, t = 0, s = ''; t < arguments.length;)
                                 (e = arguments[t++]) &&
                                     (r = (function e(r) {
                                         var t,
@@ -25,11 +25,11 @@
                                     (s && (s += ' '), (s += r));
                             return s;
                         }
-                        t.r(r), t.d(r, { clsx: () => s, default: () => n });
+                        (t.r(r), t.d(r, { clsx: () => s, default: () => n }));
                         let n = s;
                     },
                     123: (e, r, t) => {
-                        t.r(r), t.d(r, { default: () => s });
+                        (t.r(r), t.d(r, { default: () => s }));
                         let s = {
                             root_size_xxxs: 'Rkdd2vKC_3xa1eUdRdHP',
                             root_size_xxs: 'l3tE1hAMmBj2aoPPwU08',
@@ -51,7 +51,7 @@
                             else s = r;
                             return { $$typeof: t, type: e, key: n, ref: void 0 !== (r = s.ref) ? r : null, props: s };
                         }
-                        (r.Fragment = Symbol.for('react.fragment')), (r.jsx = s), (r.jsxs = s);
+                        ((r.Fragment = Symbol.for('react.fragment')), (r.jsx = s), (r.jsxs = s));
                     },
                     4377: (e, r, t) => {
                         e.exports = t(9097);
@@ -2113,13 +2113,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(r, '__esModule', { value: !0 }), (r.Icon = r.IconComponent = void 0);
+                        (Object.defineProperty(r, '__esModule', { value: !0 }), (r.Icon = r.IconComponent = void 0));
                         let n = t(4377),
                             a = t(810),
                             i = t(5881),
                             l = t(5151),
                             c = s(t(123));
-                        (r.IconComponent = (e) => {
+                        ((r.IconComponent = (e) => {
                             let { 'aria-label': r, className: t, focusable: s = !1, variant: a, size: f, forwardRef: o, ...x } = e,
                                 u = f ? ''.concat(a, '_').concat(f) : a,
                                 d = l.iconsCollection[u];
@@ -2134,7 +2134,7 @@
                                   })
                                 : null;
                         }),
-                            (r.Icon = (0, a.forwardRef)((e, t) => (0, n.jsx)(r.IconComponent, { forwardRef: t, ...e })));
+                            (r.Icon = (0, a.forwardRef)((e, t) => (0, n.jsx)(r.IconComponent, { forwardRef: t, ...e }))));
                     },
                     5151: function (e, r, t) {
                         var s =
@@ -2142,7 +2142,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(r, '__esModule', { value: !0 }), (r.iconsCollection = r.iconsCollectionBySize = void 0);
+                        (Object.defineProperty(r, '__esModule', { value: !0 }), (r.iconsCollection = r.iconsCollectionBySize = void 0));
                         let n = s(t(4962)),
                             a = s(t(4656)),
                             i = s(t(1954)),
@@ -2399,7 +2399,7 @@
                             so = s(t(5760)),
                             sx = s(t(5667)),
                             su = s(t(2639));
-                        (r.iconsCollectionBySize = {
+                        ((r.iconsCollectionBySize = {
                             xxxs: [
                                 'add',
                                 'adult',
@@ -2914,7 +2914,7 @@
                                 yandexPayRu: so.default,
                                 yandexPlusEn: sx.default,
                                 yandexPlusRu: su.default,
-                            });
+                            }));
                     },
                     810: (e) => {
                         e.exports = s || (s = t.t(n, 2));
@@ -2925,19 +2925,19 @@
                 var r = i[e];
                 if (void 0 !== r) return r.exports;
                 var t = (i[e] = { exports: {} });
-                return a[e].call(t.exports, t, t.exports, l), t.exports;
+                return (a[e].call(t.exports, t, t.exports, l), t.exports);
             }
-            (l.d = (e, r) => {
+            ((l.d = (e, r) => {
                 for (var t in r) l.o(r, t) && !l.o(e, t) && Object.defineProperty(e, t, { enumerable: !0, get: r[t] });
             }),
                 (l.o = (e, r) => Object.prototype.hasOwnProperty.call(e, r)),
                 (l.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var c = {};
             (() => {
-                Object.defineProperty(c, '__esModule', { value: !0 }), (c.Icon = void 0);
+                (Object.defineProperty(c, '__esModule', { value: !0 }), (c.Icon = void 0));
                 var e = l(5189);
                 Object.defineProperty(c, 'Icon', {
                     enumerable: !0,

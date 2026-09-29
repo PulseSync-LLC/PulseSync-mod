@@ -566,7 +566,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [s, c, d];
-                                    return 'ru' === i && e.push(a), e.push(u), e;
+                                    return ('ru' === i && e.push(a), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [s, c, d, u];
@@ -696,7 +696,7 @@
                         };
                     })(),
                     f = (0, s.useCallback)(() => {
-                        C(), (window.location.href = x.Z.main.href);
+                        (C(), (window.location.href = x.Z.main.href));
                     }, [C]),
                     { contentRef: S } = (0, g.g)();
                 return (0, l.jsxs)('div', {
@@ -738,7 +738,7 @@
             });
         },
         66526: (e, t, o) => {
-            Promise.resolve().then(o.bind(o, 3377)), Promise.resolve().then(o.bind(o, 15260));
+            (Promise.resolve().then(o.bind(o, 3377)), Promise.resolve().then(o.bind(o, 15260)));
         },
         77088: (e) => {
             e.exports = {
@@ -795,7 +795,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 7231, 7972, 6347, 3183, 9763, 6639, 7258, 7679, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 6477, 7275, 2586, 8347,
@@ -803,6 +803,6 @@
             ],
             () => e((e.s = 66526)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

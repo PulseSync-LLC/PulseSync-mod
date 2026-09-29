@@ -5,7 +5,7 @@
             'use strict';
             n.d(t, { v: () => o });
             var o = (function (e) {
-                return (e.PLAY_VIBE = 'play-vibe'), (e.SHOW_MULTIVIBE_PROMO = 'show-multivibe-promo'), (e.SHOW_MULTIVIBE_INVITE = 'show-multivibe-invite'), e;
+                return ((e.PLAY_VIBE = 'play-vibe'), (e.SHOW_MULTIVIBE_PROMO = 'show-multivibe-promo'), (e.SHOW_MULTIVIBE_INVITE = 'show-multivibe-invite'), e);
             })({});
         },
         3377: (e, t, n) => {
@@ -53,14 +53,14 @@
         3961: (e, t, n) => {
             'use strict';
             var o;
-            n.d(t, { z: () => o }),
+            (n.d(t, { z: () => o }),
                 (function (e) {
-                    (e.ROOM_DUPLICATION = 'ROOM_DUPLICATION'), (e.ROOM_NOT_FOUND = 'ROOM_NOT_FOUND'), (e.ROOM_LIMIT_EXCEEDED = 'ROOM_LIMIT_EXCEEDED');
-                })(o || (o = {}));
+                    ((e.ROOM_DUPLICATION = 'ROOM_DUPLICATION'), (e.ROOM_NOT_FOUND = 'ROOM_NOT_FOUND'), (e.ROOM_LIMIT_EXCEEDED = 'ROOM_LIMIT_EXCEEDED'));
+                })(o || (o = {})));
         },
         7748: (e, t, n) => {
             'use strict';
-            n.r(t), n.d(t, { NotFound: () => O });
+            (n.r(t), n.d(t, { NotFound: () => O }));
             var o = n(32290),
                 i = n(63618),
                 a = n(96103),
@@ -151,7 +151,7 @@
                                 logger: o,
                                 context: 'useSendEventOnNotFoundNavigated',
                             });
-                            i && (0, m.Mu)(t.evgenInstance, i), e();
+                            (i && (0, m.Mu)(t.evgenInstance, i), e());
                         }, [t, n, o, e]),
                     };
                 })(k);
@@ -275,10 +275,10 @@
                     { canBack: N, canForward: h, moveBack: I, moveForward: g } = (0, m.J)(v),
                     y = (0, s.useRef)(null),
                     E = (0, c.c)((e) => {
-                        e.stopPropagation(), I();
+                        (e.stopPropagation(), I());
                     }),
                     O = (0, c.c)((e) => {
-                        e.stopPropagation(), g();
+                        (e.stopPropagation(), g());
                     });
                 return (
                     (0, s.useEffect)(() => {
@@ -324,7 +324,7 @@
             let l = (0, o.PA)((e) => {
                 let { children: t } = e,
                     { multivibe: n } = (0, s.g)();
-                return n.isEnabled || (0, i.redirect)(a.Z.main.href), t;
+                return (n.isEnabled || (0, i.redirect)(a.Z.main.href), t);
             });
         },
         20472: (e, t, n) => {
@@ -404,7 +404,7 @@
                 let t = (0, o.useRef)(!1),
                     n = (0, i.z)();
                 (0, o.useEffect)(() => {
-                    e && (null == n || n.disable(), (t.current = !0)), !e && t.current && (null == n || n.enable(), (t.current = !1));
+                    (e && (null == n || n.disable(), (t.current = !0)), !e && t.current && (null == n || n.enable(), (t.current = !1)));
                 }, [e, n]);
             };
         },
@@ -615,7 +615,7 @@
         },
         87615: (e, t, n) => {
             'use strict';
-            n.r(t), n.d(t, { default: () => I });
+            (n.r(t), n.d(t, { default: () => I }));
             var o = n(32290),
                 i = n(21916),
                 a = n(3377),
@@ -640,15 +640,15 @@
                         I = (0, u.c)(async (e) => {
                             var t;
                             if ((await a.getRoomById({ roomId: e }), a.isGetRoomByIdRejected && a.errorName !== c.z.ROOM_NOT_FOUND)) {
-                                h(!0), a.resetErrorName();
+                                (h(!0), a.resetErrorName());
                                 return;
                             }
                             let o = a.invitationRoom,
                                 i = new URLSearchParams();
-                            (null == o ? void 0 : o.isEnabled) && (null == (t = o.wave) ? void 0 : t.seedsId)
+                            ((null == o ? void 0 : o.isEnabled) && (null == (t = o.wave) ? void 0 : t.seedsId)
                                 ? (i.set(f.K.DEEPLINK, v.v.PLAY_VIBE), i.set(f.K.SEEDS, o.wave.seedsId))
                                 : (i.set(f.K.DEEPLINK, v.v.SHOW_MULTIVIBE_INVITE), i.set(f.K.MULTIVIBE_INVITE_ROOM_ID, e)),
-                                n.replace(''.concat(p.Z.main.href, '?').concat(i.toString()));
+                                n.replace(''.concat(p.Z.main.href, '?').concat(i.toString())));
                         });
                     return ((0, r.useEffect)(() => {
                         s && t && I(t);
@@ -665,7 +665,7 @@
                     return ((0, r.useEffect)(() => {
                         if (!t) return;
                         let n = new URLSearchParams();
-                        n.set(f.K.DEEPLINK, v.v.SHOW_MULTIVIBE_PROMO), e.replace(''.concat(p.Z.main.href, '?').concat(n.toString()));
+                        (n.set(f.K.DEEPLINK, v.v.SHOW_MULTIVIBE_PROMO), e.replace(''.concat(p.Z.main.href, '?').concat(n.toString())));
                     }, [t, e]),
                     n)
                         ? null
@@ -745,6 +745,6 @@
         },
     },
     (e) => {
-        e.O(0, [5718, 7034, 6639, 6706, 8892, 2536, 66, 5835, 2812, 6477, 7275, 2586, 8347, 4522, 4220, 9562, 7358], () => e((e.s = 32674))), (_N_E = e.O());
+        (e.O(0, [5718, 7034, 6639, 6706, 8892, 2536, 66, 5835, 2812, 6477, 7275, 2586, 8347, 4522, 4220, 9562, 7358], () => e((e.s = 32674))), (_N_E = e.O()));
     },
 ]);

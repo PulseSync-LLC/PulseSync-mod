@@ -3,7 +3,7 @@
     [6966],
     {
         46966: (e, t, n) => {
-            n.d(t, {
+            (n.d(t, {
                 iv: () => b,
                 bq: () => i,
                 O5: () => R,
@@ -21,8 +21,8 @@
                 fD: () => I,
             }),
                 (function (e) {
-                    (e.UPDATED = 'UPDATED'), (e.PARSING_ERROR = 'PARSING_ERROR');
-                })(r || (r = {}));
+                    ((e.UPDATED = 'UPDATED'), (e.PARSING_ERROR = 'PARSING_ERROR'));
+                })(r || (r = {})));
             var r,
                 i,
                 o,
@@ -47,8 +47,8 @@
                 S,
                 N,
                 R = 1;
-            !(function (e) {
-                (e.UNSPECIFIED = 'UNSPECIFIED'),
+            (!(function (e) {
+                ((e.UNSPECIFIED = 'UNSPECIFIED'),
                     (e.WEB = 'WEB'),
                     (e.ANDROID = 'ANDROID'),
                     (e.IOS = 'IOS'),
@@ -58,31 +58,31 @@
                     (e.APPLE_TV = 'APPLE_TV'),
                     (e.ANDROID_WEAR = 'ANDROID_WEAR'),
                     (e.WEB_DESKTOP = 'WEB_DESKTOP'),
-                    (e.UNRECOGNIZED = 'UNRECOGNIZED');
+                    (e.UNRECOGNIZED = 'UNRECOGNIZED'));
             })(i || (i = {})),
                 (function (e) {
-                    (e.UNSPECIFIED = 'UNSPECIFIED'),
+                    ((e.UNSPECIFIED = 'UNSPECIFIED'),
                         (e.TRACK = 'TRACK'),
                         (e.LOCAL_TRACK = 'LOCAL_TRACK'),
                         (e.INFINITE = 'INFINITE'),
                         (e.VIDEO_CLIP = 'VIDEO_CLIP'),
-                        (e.UNRECOGNIZED = 'UNRECOGNIZED');
+                        (e.UNRECOGNIZED = 'UNRECOGNIZED'));
                 })(o || (o = {})),
                 (function (e) {
-                    (e.UNSPECIFIED = 'UNSPECIFIED'),
+                    ((e.UNSPECIFIED = 'UNSPECIFIED'),
                         (e.RECOMMENDED = 'RECOMMENDED'),
                         (e.ON_DEMAND = 'ON_DEMAND'),
                         (e.SEARCH = 'SEARCH'),
                         (e.ARTIST = 'ARTIST'),
                         (e.OWN = 'OWN'),
                         (e.EDITORIAL_CHOICE = 'EDITORIAL_CHOICE'),
-                        (e.UNRECOGNIZED = 'UNRECOGNIZED');
+                        (e.UNRECOGNIZED = 'UNRECOGNIZED'));
                 })(a || (a = {})),
                 (function (e) {
-                    (e.UNSPECIFIED = 'UNSPECIFIED'), (e.ALICE_SHOT = 'ALICE_SHOT'), (e.AD = 'AD'), (e.PREROLL = 'PREROLL'), (e.UNRECOGNIZED = 'UNRECOGNIZED');
+                    ((e.UNSPECIFIED = 'UNSPECIFIED'), (e.ALICE_SHOT = 'ALICE_SHOT'), (e.AD = 'AD'), (e.PREROLL = 'PREROLL'), (e.UNRECOGNIZED = 'UNRECOGNIZED'));
                 })(s || (s = {})),
                 (function (e) {
-                    (e.UNSPECIFIED = 'UNSPECIFIED'),
+                    ((e.UNSPECIFIED = 'UNSPECIFIED'),
                         (e.ARTIST = 'ARTIST'),
                         (e.PLAYLIST = 'PLAYLIST'),
                         (e.ALBUM = 'ALBUM'),
@@ -92,10 +92,10 @@
                         (e.FM_RADIO = 'FM_RADIO'),
                         (e.VIDEO_WAVE = 'VIDEO_WAVE'),
                         (e.LOCAL_TRACKS = 'LOCAL_TRACKS'),
-                        (e.UNRECOGNIZED = 'UNRECOGNIZED');
+                        (e.UNRECOGNIZED = 'UNRECOGNIZED'));
                 })(l || (l = {})),
                 (function (e) {
-                    (e.BASED_ON_ENTITY_BY_DEFAULT = 'BASED_ON_ENTITY_BY_DEFAULT'),
+                    ((e.BASED_ON_ENTITY_BY_DEFAULT = 'BASED_ON_ENTITY_BY_DEFAULT'),
                         (e.USER_TRACKS = 'USER_TRACKS'),
                         (e.DOWNLOADED_TRACKS = 'DOWNLOADED_TRACKS'),
                         (e.SEARCH = 'SEARCH'),
@@ -103,27 +103,27 @@
                         (e.MUSIC_HISTORY_SEARCH = 'MUSIC_HISTORY_SEARCH'),
                         (e.ARTIST_MY_COLLECTION = 'ARTIST_MY_COLLECTION'),
                         (e.ARTIST_FAMILIAR_FROM_WAVE = 'ARTIST_FAMILIAR_FROM_WAVE'),
-                        (e.UNRECOGNIZED = 'UNRECOGNIZED');
+                        (e.UNRECOGNIZED = 'UNRECOGNIZED'));
                 })(c || (c = {})),
                 (function (e) {
-                    (e.ONLINE_BY_DEFAULT = 'ONLINE_BY_DEFAULT'), (e.OFFLINE = 'OFFLINE'), (e.UNRECOGNIZED = 'UNRECOGNIZED');
+                    ((e.ONLINE_BY_DEFAULT = 'ONLINE_BY_DEFAULT'), (e.OFFLINE = 'OFFLINE'), (e.UNRECOGNIZED = 'UNRECOGNIZED'));
                 })(u || (u = {})),
                 (function (e) {
-                    (e.UNSPECIFIED = 'UNSPECIFIED'), (e.NONE = 'NONE'), (e.ONE = 'ONE'), (e.ALL = 'ALL'), (e.UNRECOGNIZED = 'UNRECOGNIZED');
+                    ((e.UNSPECIFIED = 'UNSPECIFIED'), (e.NONE = 'NONE'), (e.ONE = 'ONE'), (e.ALL = 'ALL'), (e.UNRECOGNIZED = 'UNRECOGNIZED'));
                 })(f || (f = {})),
                 (function (e) {
-                    (e.UNSPECIFIED_TYPE = 'UNSPECIFIED_TYPE'),
+                    ((e.UNSPECIFIED_TYPE = 'UNSPECIFIED_TYPE'),
                         (e.STANDARD = 'STANDARD'),
                         (e.PRIVATE_GROUP = 'PRIVATE_GROUP'),
                         (e.SPECTATOR = 'SPECTATOR'),
-                        (e.UNRECOGNIZED = 'UNRECOGNIZED');
+                        (e.UNRECOGNIZED = 'UNRECOGNIZED'));
                 })(p || (p = {})),
                 (function (e) {
-                    (e.DO_NOT_INTERCEPT_BY_DEFAULT = 'DO_NOT_INTERCEPT_BY_DEFAULT'),
+                    ((e.DO_NOT_INTERCEPT_BY_DEFAULT = 'DO_NOT_INTERCEPT_BY_DEFAULT'),
                         (e.INTERCEPT_IF_NO_ONE_ACTIVE = 'INTERCEPT_IF_NO_ONE_ACTIVE'),
                         (e.INTERCEPT_EAGER = 'INTERCEPT_EAGER'),
-                        (e.UNRECOGNIZED = 'UNRECOGNIZED');
-                })(d || (d = {}));
+                        (e.UNRECOGNIZED = 'UNRECOGNIZED'));
+                })(d || (d = {})));
             var I = function (e, t) {
                 return { device_id: e, version: Math.floor(0x8000000000000000 * Math.random()) + 0, timestamp_ms: void 0 !== t ? t : Date.now() };
             };
@@ -151,7 +151,7 @@
                         function r() {
                             this.constructor = t;
                         }
-                        e(t, n), (t.prototype = null === n ? Object.create(n) : ((r.prototype = n.prototype), new r()));
+                        (e(t, n), (t.prototype = null === n ? Object.create(n) : ((r.prototype = n.prototype), new r())));
                     };
                 })(),
                 A = (function (e) {
@@ -165,7 +165,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (t, n, r) {
-                                return e.prototype.on.call(this, t, n, r), this;
+                                return (e.prototype.on.call(this, t, n, r), this);
                             },
                         }),
                         Object.defineProperty(t.prototype, 'once', {
@@ -173,7 +173,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (t, n, r) {
-                                return e.prototype.once.call(this, t, n, r), this;
+                                return (e.prototype.once.call(this, t, n, r), this);
                             },
                         }),
                         Object.defineProperty(t.prototype, 'emit', {
@@ -181,7 +181,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (t, n, r) {
-                                return e.prototype.emit.call(this, t, n, r), this;
+                                return (e.prototype.emit.call(this, t, n, r), this);
                             },
                         }),
                         Object.defineProperty(t.prototype, 'off', {
@@ -189,7 +189,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (t, n) {
-                                return e.prototype.off.call(this, t, n), this;
+                                return (e.prototype.off.call(this, t, n), this);
                             },
                         }),
                         t
@@ -226,7 +226,7 @@
                 M = n(29222),
                 ymConstants = n(15808);
             function L(e, t, n) {
-                return void 0 === e && (e = !1), !!e || !t || !n || Number(t.timestamp_ms) < Number(n.timestamp_ms);
+                return (void 0 === e && (e = !1), !!e || !t || !n || Number(t.timestamp_ms) < Number(n.timestamp_ms));
             }
             var G = function () {
                     return (G =
@@ -239,7 +239,7 @@
                 },
                 k = (function () {
                     function e(e) {
-                        Object.defineProperty(this, 'state', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        (Object.defineProperty(this, 'state', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'prevState', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'diff', { enumerable: !0, configurable: !0, writable: !0, value: {} }),
                             Object.defineProperty(this, 'options', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -277,7 +277,7 @@
                                     },
                                     player_queue_inject_optional: function () {},
                                 },
-                            });
+                            }));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'on', {
@@ -327,7 +327,7 @@
                                     n = [this.diffCalculators];
                                 this.diff = {};
                                 try {
-                                    for (var i = e.isSetNewState; n.length > 0; )
+                                    for (var i = e.isSetNewState; n.length > 0;)
                                         for (var o = n.pop(), a = 0, s = Object.keys(o); a < s.length; a++) {
                                             var l = o[s[a]];
                                             'function' == typeof l ? l(e) : n.push(l);
@@ -335,11 +335,11 @@
                                     var c = Object.keys(this.diff);
                                     if ((void 0 === i || i) && c.length) {
                                         var u = P(this.state);
-                                        c.forEach(function (n) {
+                                        (c.forEach(function (n) {
                                             (n in e.newState || n in t.state) && (u[n] = e.newState[n]);
                                         }),
                                             (this.prevState = P(this.state)),
-                                            (this.state = u);
+                                            (this.state = u));
                                     }
                                     this.updateLastRemoteControllerDevice();
                                     var f = G(G({}, this.fullState), { options: e });
@@ -409,7 +409,7 @@
                                     })(this.state.devices, n.devices),
                                     u = c.isAnyoneConnectionChanged,
                                     f = c.changedConnectionStatusDevice;
-                                f && (this.diff.changedConnectionStatusDevice = f), ((s && l) || u) && (this.diff.devices = n.devices);
+                                (f && (this.diff.changedConnectionStatusDevice = f), ((s && l) || u) && (this.diff.devices = n.devices));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'calculateEntityIdDiff', {
@@ -606,9 +606,9 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t) {
-                                this.diff.player_state || (this.diff.player_state = {}),
+                                (this.diff.player_state || (this.diff.player_state = {}),
                                     e && !this.diff.player_state.player_queue && (this.diff.player_state.player_queue = {}),
-                                    t && !this.diff.player_state.status && (this.diff.player_state.status = {});
+                                    t && !this.diff.player_state.status && (this.diff.player_state.status = {}));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'getLastActiveRemoteControllerDevice', {
@@ -665,11 +665,11 @@
                                                 (null == (n = this.lastActiveRemoteControllerDevice.info) ? void 0 : n.device_id)
                                         )
                                             return l;
-                                        this.onlineRemoteControllerDevice &&
+                                        (this.onlineRemoteControllerDevice &&
                                             (null == (r = l.info) ? void 0 : r.device_id) ===
                                                 (null == (i = this.onlineRemoteControllerDevice.info) ? void 0 : i.device_id) &&
                                             (o = l),
-                                            o || (o = l);
+                                            o || (o = l));
                                     }
                                 }
                                 return o;
@@ -681,25 +681,25 @@
                             writable: !0,
                             value: function () {
                                 var e = this.getLastActiveRemoteControllerDevice();
-                                e ? (this.onlineRemoteControllerDevice = void 0) : (this.onlineRemoteControllerDevice = this.getOnlineRemoteControllerDevice()),
-                                    (this.lastActiveRemoteControllerDevice = e);
+                                (e ? (this.onlineRemoteControllerDevice = void 0) : (this.onlineRemoteControllerDevice = this.getOnlineRemoteControllerDevice()),
+                                    (this.lastActiveRemoteControllerDevice = e));
                             },
                         }),
                         e
                     );
                 })();
-            !(function (e) {
-                (e.PRODUCTION = 'ynison.music.yandex.ru'), (e.QA = 'qa.ynison.music.yandex.ru');
+            (!(function (e) {
+                ((e.PRODUCTION = 'ynison.music.yandex.ru'), (e.QA = 'qa.ynison.music.yandex.ru'));
             })(v || (v = {})),
                 (function (e) {
-                    (e.CONNECTING = 'CONNECTING'),
+                    ((e.CONNECTING = 'CONNECTING'),
                         (e.CONNECTED = 'CONNECTED'),
                         (e.DISCONNECTED = 'DISCONNECTED'),
                         (e.WAITING_FOR_RECONNECT = 'WAITING_FOR_RECONNECT'),
-                        (e.READY_TO_RECONNECT = 'READY_TO_RECONNECT');
+                        (e.READY_TO_RECONNECT = 'READY_TO_RECONNECT'));
                 })(b || (b = {})),
                 (function (e) {
-                    (e.RECEIVE_MESSAGE = 'RECEIVE_MESSAGE'),
+                    ((e.RECEIVE_MESSAGE = 'RECEIVE_MESSAGE'),
                         (e.NEW_CONNECTION_ATTEMPT = 'NEW_CONNECTION_ATTEMPT'),
                         (e.CONNECTED = 'CONNECTED'),
                         (e.CONNECTION_ERROR = 'CONNECTION_ERROR'),
@@ -707,19 +707,19 @@
                         (e.HUB_MESSAGE_PARSING_ERROR = 'HUB_MESSAGE_PARSING_ERROR'),
                         (e.DISCONNECTED = 'DISCONNECTED'),
                         (e.MESSAGE_SENT = 'MESSAGE_SENT'),
-                        (e.MESSAGE_LOST = 'MESSAGE_LOST');
+                        (e.MESSAGE_LOST = 'MESSAGE_LOST'));
                 })(h || (h = {})),
                 (function (e) {
-                    (e.ynisonBackoffMillis = 'ynison-backoff-millis'),
+                    ((e.ynisonBackoffMillis = 'ynison-backoff-millis'),
                         (e.ynisonErrorCode = 'ynison-error-code'),
-                        (e.ynisonGoAwayForSeconds = 'ynison-go-away-for-seconds');
+                        (e.ynisonGoAwayForSeconds = 'ynison-go-away-for-seconds'));
                 })(y || (y = {})),
                 (function (e) {
-                    (e.CLIENT = 'CLIENT'), (e.SERVER = 'SERVER');
+                    ((e.CLIENT = 'CLIENT'), (e.SERVER = 'SERVER'));
                 })(_ || (_ = {})),
                 (function (e) {
-                    (e.REDIRECTOR = 'REDIRECTOR'), (e.HUB = 'HUB');
-                })(E || (E = {}));
+                    ((e.REDIRECTOR = 'REDIRECTOR'), (e.HUB = 'HUB'));
+                })(E || (E = {})));
             var V = (function () {
                     var e = function (t, n) {
                         return (e =
@@ -737,7 +737,7 @@
                         function r() {
                             this.constructor = t;
                         }
-                        e(t, n), (t.prototype = null === n ? Object.create(n) : ((r.prototype = n.prototype), new r()));
+                        (e(t, n), (t.prototype = null === n ? Object.create(n) : ((r.prototype = n.prototype), new r())));
                     };
                 })(),
                 Y = function () {
@@ -774,21 +774,21 @@
                             i
                         );
                     }
-                    return V(t, e), t;
+                    return (V(t, e), t);
                 })(M.t),
                 H = n(46862),
                 q = function (e) {
-                    Object.defineProperty(this, 'redirectorResponse', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                    (Object.defineProperty(this, 'redirectorResponse', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'connectionState', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.redirectorResponse = new H.cJ(e.redirectorResponse)),
-                        (this.connectionState = new H.cJ(e.connectionState));
+                        (this.connectionState = new H.cJ(e.connectionState)));
                 };
             !(function (e) {
-                (e.ynisonDeviceId = 'Ynison-Device-Id'),
+                ((e.ynisonDeviceId = 'Ynison-Device-Id'),
                     (e.ynisonRedirectTicket = 'Ynison-Redirect-Ticket'),
                     (e.ynisonSessionId = 'Ynison-Session-Id'),
                     (e.ynisonDeviceInfo = 'Ynison-Device-Info'),
-                    (e.multiAuthUserId = 'X-Yandex-Music-Multi-Auth-User-Id');
+                    (e.multiAuthUserId = 'X-Yandex-Music-Multi-Auth-User-Id'));
             })(O || (O = {}));
             var x = (function () {
                     var e = function (t, n) {
@@ -807,7 +807,7 @@
                         function r() {
                             this.constructor = t;
                         }
-                        e(t, n), (t.prototype = null === n ? Object.create(n) : ((r.prototype = n.prototype), new r()));
+                        (e(t, n), (t.prototype = null === n ? Object.create(n) : ((r.prototype = n.prototype), new r())));
                     };
                 })(),
                 W = function () {
@@ -844,7 +844,7 @@
                             i
                         );
                     }
-                    return x(t, e), t;
+                    return (x(t, e), t);
                 })(M.t);
             function J(e) {
                 var t;
@@ -886,7 +886,7 @@
                         return function (l) {
                             var c = [s, l];
                             if (n) throw TypeError('Generator is already executing.');
-                            for (; o && ((o = 0), c[0] && (a = 0)), a; )
+                            for (; o && ((o = 0), c[0] && (a = 0)), a;)
                                 try {
                                     if (
                                         ((n = 1),
@@ -899,12 +899,12 @@
                                             i = c;
                                             break;
                                         case 4:
-                                            return a.label++, { value: c[1], done: !1 };
+                                            return (a.label++, { value: c[1], done: !1 });
                                         case 5:
-                                            a.label++, (r = c[1]), (c = [0]);
+                                            (a.label++, (r = c[1]), (c = [0]));
                                             continue;
                                         case 7:
-                                            (c = a.ops.pop()), a.trys.pop();
+                                            ((c = a.ops.pop()), a.trys.pop());
                                             continue;
                                         default:
                                             if (!(i = (i = a.trys).length > 0 && i[i.length - 1]) && (6 === c[0] || 2 === c[0])) {
@@ -916,19 +916,19 @@
                                                 break;
                                             }
                                             if (6 === c[0] && a.label < i[1]) {
-                                                (a.label = i[1]), (i = c);
+                                                ((a.label = i[1]), (i = c));
                                                 break;
                                             }
                                             if (i && a.label < i[2]) {
-                                                (a.label = i[2]), a.ops.push(c);
+                                                ((a.label = i[2]), a.ops.push(c));
                                                 break;
                                             }
-                                            i[2] && a.ops.pop(), a.trys.pop();
+                                            (i[2] && a.ops.pop(), a.trys.pop());
                                             continue;
                                     }
                                     c = t.call(e, a);
                                 } catch (e) {
-                                    (c = [6, e]), (r = 0);
+                                    ((c = [6, e]), (r = 0));
                                 } finally {
                                     n = i = 0;
                                 }
@@ -939,10 +939,10 @@
                 },
                 X = (function () {
                     function e(e) {
-                        Object.defineProperty(this, 'device', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        (Object.defineProperty(this, 'device', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'connectionConfig', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             (this.device = e.device),
-                            (this.connectionConfig = e.connectionConfig);
+                            (this.connectionConfig = e.connectionConfig));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'getHub', {
@@ -978,9 +978,9 @@
                                                             ((o = {})[O.ynisonDeviceId] = a),
                                                             (o[O.ynisonDeviceInfo] = JSON.stringify({ app_name: s, app_version: l, type: c })),
                                                             o);
-                                                    void 0 !== u && (d.authorization = 'OAuth '.concat(u)),
+                                                    (void 0 !== u && (d.authorization = 'OAuth '.concat(u)),
                                                         void 0 !== f && (d[O.multiAuthUserId] = String(f)),
-                                                        void 0 !== p && (d[O.ynisonSessionId] = p);
+                                                        void 0 !== p && (d[O.ynisonSessionId] = p));
                                                     var v = new WebSocket(Object.values(t.connectionConfig).join(''), [
                                                             'Bearer',
                                                             'v2',
@@ -1003,9 +1003,9 @@
                                                             r(new K('Error in connection to redirector', { data: { redirectorResponse: {} } }));
                                                         },
                                                         y = function () {
-                                                            v.removeEventListener('message', b), v.removeEventListener('error', h), v.removeEventListener('close', y);
+                                                            (v.removeEventListener('message', b), v.removeEventListener('error', h), v.removeEventListener('close', y));
                                                         };
-                                                    v.addEventListener('message', b), v.addEventListener('error', h), v.addEventListener('close', y);
+                                                    (v.addEventListener('message', b), v.addEventListener('error', h), v.addEventListener('close', y));
                                                 }),
                                             ];
                                         });
@@ -1062,16 +1062,16 @@
                             o = void 0 === i ? Date.now() : i,
                             a = t.activity_interception_type,
                             s = void 0 === a ? d.DO_NOT_INTERCEPT_BY_DEFAULT : a;
-                        (r.player_action_timestamp_ms = o), (r.activity_interception_type = s);
-                    } else (r.player_action_timestamp_ms = Date.now()), (r.activity_interception_type = d.DO_NOT_INTERCEPT_BY_DEFAULT);
+                        ((r.player_action_timestamp_ms = o), (r.activity_interception_type = s));
+                    } else ((r.player_action_timestamp_ms = Date.now()), (r.activity_interception_type = d.DO_NOT_INTERCEPT_BY_DEFAULT));
                     return { request: r, rid: n };
                 },
                 et = (function () {
                     function e(e) {
-                        Object.defineProperty(this, 'history', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        (Object.defineProperty(this, 'history', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'limit', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             (this.limit = e.limit),
-                            (this.history = new Map());
+                            (this.history = new Map()));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'onMessageSent', {
@@ -1079,7 +1079,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t) {
-                                this.history.set(e, t), this.deleteOldRecords();
+                                (this.history.set(e, t), this.deleteOldRecords());
                             },
                         }),
                         Object.defineProperty(e.prototype, 'shouldIgnoreIncomingMessage', {
@@ -1105,7 +1105,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function () {
-                                for (var e = this.history.keys(); this.history.size >= this.limit; ) this.history.delete(e.next().value);
+                                for (var e = this.history.keys(); this.history.size >= this.limit;) this.history.delete(e.next().value);
                             },
                         }),
                         e
@@ -1128,7 +1128,7 @@
                         function r() {
                             this.constructor = t;
                         }
-                        e(t, n), (t.prototype = null === n ? Object.create(n) : ((r.prototype = n.prototype), new r()));
+                        (e(t, n), (t.prototype = null === n ? Object.create(n) : ((r.prototype = n.prototype), new r())));
                     };
                 })(),
                 er = function () {
@@ -1165,7 +1165,7 @@
                             i
                         );
                     }
-                    return en(t, e), t;
+                    return (en(t, e), t);
                 })(M.t),
                 ea = function () {
                     return (ea =
@@ -1179,7 +1179,7 @@
                 es = '[CLIENT-REASON] ',
                 el = (function () {
                     function e(e) {
-                        Object.defineProperty(this, 'connectorConfig', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        (Object.defineProperty(this, 'connectorConfig', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'socket', { enumerable: !0, configurable: !0, writable: !0, value: null }),
                             Object.defineProperty(this, 'redirectorSocket', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'reconnectTimeout', { enumerable: !0, configurable: !0, writable: !0, value: null }),
@@ -1194,7 +1194,7 @@
                             }),
                             (this.connectorConfig = e.config),
                             (this.redirectorSocket = new X({ device: this.connectorConfig.device, connectionConfig: this.connectorConfig.redirectorConnectionConfig })),
-                            (this.historyController = new et({ limit: this.connectorConfig.historyLimit }));
+                            (this.historyController = new et({ limit: this.connectorConfig.historyLimit })));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'on', {
@@ -1226,7 +1226,7 @@
                                 var n = ee({ update_full_state: ea({}, e) }, ea({ player_action_timestamp_ms: 0 }, t)),
                                     r = n.request,
                                     i = n.rid;
-                                return this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !1 }), i;
+                                return (this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !1 }), i);
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updatePlayingStatus', {
@@ -1237,7 +1237,7 @@
                                 var n = ee({ update_playing_status: ea({}, e) }, t),
                                     r = n.request,
                                     i = n.rid;
-                                return this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !0 }), i;
+                                return (this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !0 }), i);
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updateActiveDevice', {
@@ -1248,7 +1248,7 @@
                                 var n = ee({ update_active_device: e }, t),
                                     r = n.request,
                                     i = n.rid;
-                                return this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !0 }), i;
+                                return (this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !0 }), i);
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updateSessionParams', {
@@ -1259,7 +1259,7 @@
                                 var n = ee({ update_session_params: e }, t),
                                     r = n.request,
                                     i = n.rid;
-                                return this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !0 }), i;
+                                return (this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !0 }), i);
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updatePlayerState', {
@@ -1270,7 +1270,7 @@
                                 var n = ee({ update_player_state: ea({}, e) }, t),
                                     r = n.request,
                                     i = n.rid;
-                                return this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !0 }), i;
+                                return (this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !0 }), i);
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updateVolumeInfo', {
@@ -1281,7 +1281,7 @@
                                 var n = ee({ update_volume_info: ea({}, e) }, t),
                                     r = n.request,
                                     i = n.rid;
-                                return this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !0 }), i;
+                                return (this.sendRequest(r), this.historyController.onMessageSent(i, { ignoreResponse: !0 }), i);
                             },
                         }),
                         Object.defineProperty(e.prototype, 'connect', {
@@ -1292,7 +1292,7 @@
                                 var t = this,
                                     n = e.oauth,
                                     r = e.multiAuthUserId;
-                                void 0 !== n && (this.connectorConfig.oauth = n),
+                                (void 0 !== n && (this.connectorConfig.oauth = n),
                                     void 0 !== r && (this.connectorConfig.multiAuthUserId = r),
                                     [b.DISCONNECTED, b.READY_TO_RECONNECT].includes(this.state.connectionState.value) &&
                                         ((this.state.connectionState.value = b.CONNECTING),
@@ -1304,7 +1304,7 @@
                                                 sessionId: this.connectorConfig.sessionId,
                                             })
                                             .then(function (e) {
-                                                (t.state.redirectorResponse.value = e), t.connectToHub();
+                                                ((t.state.redirectorResponse.value = e), t.connectToHub());
                                             })
                                             .catch(function (e) {
                                                 var n =
@@ -1316,8 +1316,8 @@
                                                             ? 1e3 * Number(e.data.redirectorResponse.extra_headers[y.ynisonGoAwayForSeconds])
                                                             : t.connectorConfig.defaultReconnectTimeoutMS;
                                                     t.reconnect({ timeout: r });
-                                                } else (t.state.connectionState.value = b.DISCONNECTED), (t.reconnectAttempts = 0);
-                                            }));
+                                                } else ((t.state.connectionState.value = b.DISCONNECTED), (t.reconnectAttempts = 0));
+                                            })));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'disconnect', {
@@ -1325,10 +1325,10 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                this.reconnectTimeout && (clearTimeout(this.reconnectTimeout), (this.reconnectTimeout = null)),
+                                (this.reconnectTimeout && (clearTimeout(this.reconnectTimeout), (this.reconnectTimeout = null)),
                                     (this.reconnectAttempts = 0),
                                     this.closeConnection(1e3, ''.concat(es).concat(e)),
-                                    (this.state.connectionState.value = b.DISCONNECTED);
+                                    (this.state.connectionState.value = b.DISCONNECTED));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'closeConnection', {
@@ -1347,7 +1347,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function () {
-                                (this.socket = null), this.historyController.clear();
+                                ((this.socket = null), this.historyController.clear());
                             },
                         }),
                         Object.defineProperty(e.prototype, 'connectToHub', {
@@ -1388,10 +1388,10 @@
                                             (c[O.ynisonSessionId] = v),
                                             (c[O.ynisonDeviceInfo] = JSON.stringify({ app_name: f, app_version: p, type: g })),
                                             c);
-                                    void 0 !== n && (C.authorization = 'OAuth '.concat(n)), void 0 !== i && (C['X-Yandex-Music-Multi-Auth-User-Id'] = String(i));
+                                    (void 0 !== n && (C.authorization = 'OAuth '.concat(n)), void 0 !== i && (C['X-Yandex-Music-Multi-Auth-User-Id'] = String(i)));
                                     var S = ''.concat(a).concat(m).concat(s),
                                         N = ['Bearer', 'v2', encodeURIComponent(JSON.stringify(C))];
-                                    (this.socket = new WebSocket(S, N)),
+                                    ((this.socket = new WebSocket(S, N)),
                                         this.socket.addEventListener('message', function (t) {
                                             e.onReceiveMessage(t);
                                         }),
@@ -1401,17 +1401,17 @@
                                                 r = new eo('Error in connection to hub', {
                                                     data: { redirectorResponse: e.state.redirectorResponse.value || {}, connectingState: t },
                                                 });
-                                            e.emitter.emit(h.CONNECTION_ERROR, { destination: E.HUB, error: r, shouldReconnect: n }),
-                                                n ? e.reconnect() : ((e.state.connectionState.value = b.DISCONNECTED), (e.reconnectAttempts = 0));
+                                            (e.emitter.emit(h.CONNECTION_ERROR, { destination: E.HUB, error: r, shouldReconnect: n }),
+                                                n ? e.reconnect() : ((e.state.connectionState.value = b.DISCONNECTED), (e.reconnectAttempts = 0)));
                                         }),
                                         this.socket.addEventListener('open', function () {
-                                            (e.state.connectionState.value = b.CONNECTED), e.emitter.emit(h.CONNECTED, {});
+                                            ((e.state.connectionState.value = b.CONNECTED), e.emitter.emit(h.CONNECTED, {}));
                                         }),
                                         this.socket.addEventListener('close', function (t) {
-                                            (e.state.connectionState.value = b.DISCONNECTED), e.clearConnection();
+                                            ((e.state.connectionState.value = b.DISCONNECTED), e.clearConnection());
                                             var n = t.reason.includes(es);
                                             e.emitter.emit(h.DISCONNECTED, { trigger: n ? _.CLIENT : _.SERVER, event: t });
-                                        });
+                                        }));
                                 }
                             },
                         }),
@@ -1424,11 +1424,11 @@
                                 void 0 === e && (e = {});
                                 var n = e.timeout,
                                     r = void 0 === n ? this.connectorConfig.defaultReconnectTimeoutMS : n;
-                                (this.reconnectAttempts += 1),
+                                ((this.reconnectAttempts += 1),
                                     (this.reconnectTimeout = setTimeout(function () {
-                                        (t.state.connectionState.value = b.READY_TO_RECONNECT), t.connect({});
+                                        ((t.state.connectionState.value = b.READY_TO_RECONNECT), t.connect({}));
                                     }, r)),
-                                    (this.state.connectionState.value = b.WAITING_FOR_RECONNECT);
+                                    (this.state.connectionState.value = b.WAITING_FOR_RECONNECT));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'onReceiveMessage', {
@@ -1449,10 +1449,10 @@
                                                 ? 1e3 * Number(t.error.details[y.ynisonGoAwayForSeconds])
                                                 : this.connectorConfig.defaultReconnectTimeoutMS;
                                             this.reconnect({ timeout: i });
-                                        } else (this.state.connectionState.value = b.DISCONNECTED), (this.reconnectAttempts = 0);
+                                        } else ((this.state.connectionState.value = b.DISCONNECTED), (this.reconnectAttempts = 0));
                                     } else
-                                        (this.reconnectAttempts = 0),
-                                            this.historyController.shouldIgnoreIncomingMessage(t.rid) || this.emitter.emit(h.RECEIVE_MESSAGE, { rawData: t });
+                                        ((this.reconnectAttempts = 0),
+                                            this.historyController.shouldIgnoreIncomingMessage(t.rid) || this.emitter.emit(h.RECEIVE_MESSAGE, { rawData: t }));
                                 } catch (t) {
                                     var o = new B('Error while processing message from hub', {
                                         data: { redirectorResponse: this.state.redirectorResponse.value || {}, hubResponse: {}, hubResponseRaw: e.data },
@@ -1497,7 +1497,7 @@
                 ef = (function () {
                     function e(e) {
                         var t = this;
-                        Object.defineProperty(this, 'stateController', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        (Object.defineProperty(this, 'stateController', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'connector', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'metricsController', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'deviceConfig', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -1507,9 +1507,9 @@
                             Object.defineProperty(this, 'isUpdateFullStateCompleted', { enumerable: !0, configurable: !0, writable: !0, value: !1 }),
                             (this.deviceConfig = e.deviceConfig),
                             (this.variables = e.variables),
-                            (this.logger = e.logger);
+                            (this.logger = e.logger));
                         var n = (Math.floor(0x225c17d02 * Math.random() + 1).toString() + Math.floor(0x3b9ac9fe * Math.random() + 1).toString()).slice(0, 19);
-                        (this.stateController = new k({ deviceConfig: this.deviceConfig })),
+                        ((this.stateController = new k({ deviceConfig: this.deviceConfig })),
                             (this.connector = new el({
                                 config: {
                                     device: this.deviceConfig.info,
@@ -1566,7 +1566,7 @@
                             }),
                             this.connector.on(h.HUB_ERROR, function (e) {
                                 t.logger.error('[Ynison] Hub error: '.concat(e.error.message), eu({}, e));
-                            });
+                            }));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'isActive', {
@@ -1590,7 +1590,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function () {
-                                this.connector.on(h.NEW_CONNECTION_ATTEMPT, this.metricsController.onNewConnectionAttempt.bind(this.metricsController)),
+                                (this.connector.on(h.NEW_CONNECTION_ATTEMPT, this.metricsController.onNewConnectionAttempt.bind(this.metricsController)),
                                     this.connector.on(h.CONNECTED, this.metricsController.onConnected.bind(this.metricsController)),
                                     this.connector.on(h.CONNECTION_ERROR, this.metricsController.onConnectionError.bind(this.metricsController)),
                                     this.connector.on(h.HUB_ERROR, this.metricsController.onHubError.bind(this.metricsController)),
@@ -1598,7 +1598,7 @@
                                     this.connector.on(h.DISCONNECTED, this.metricsController.onDisconnected.bind(this.metricsController)),
                                     this.connector.on(h.MESSAGE_SENT, this.metricsController.onMessageSent.bind(this.metricsController)),
                                     this.connector.on(h.MESSAGE_LOST, this.metricsController.onMessageLost.bind(this.metricsController)),
-                                    this.stateController.on(r.PARSING_ERROR, this.metricsController.onYnisonStateParsingError.bind(this.metricsController));
+                                    this.stateController.on(r.PARSING_ERROR, this.metricsController.onYnisonStateParsingError.bind(this.metricsController)));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'onMessageReceived', {
@@ -1737,7 +1737,7 @@
                                                 : 0.5,
                                         version: null != (o = null == (i = null == u ? void 0 : u.volume_info) ? void 0 : i.version) ? o : null,
                                     };
-                                    (c.volume = f.volume), (c.volume_info = f);
+                                    ((c.volume = f.volume), (c.volume_info = f));
                                 }
                                 return s;
                             },
@@ -1833,7 +1833,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function () {
-                                (this.isUpdateFullStateCompleted = !1), (this.updateFullStateMessageRid = null);
+                                ((this.isUpdateFullStateCompleted = !1), (this.updateFullStateMessageRid = null));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'interceptActivity', {
@@ -1841,11 +1841,14 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                void 0 === e && (e = d.INTERCEPT_EAGER),
-                                    this.connector.updatePlayerState({ player_state: this.stateController.currentState.player_state }, { activity_interception_type: e });
+                                (void 0 === e && (e = d.INTERCEPT_EAGER),
+                                    this.connector.updatePlayerState(
+                                        { player_state: this.stateController.currentState.player_state },
+                                        { activity_interception_type: e },
+                                    ));
                                 var t = this.stateController.currentState;
-                                (t.active_device_id_optional = this.deviceConfig.info.device_id),
-                                    this.stateController.updateState({ newState: t, trigger: 'WSConnector' });
+                                ((t.active_device_id_optional = this.deviceConfig.info.device_id),
+                                    this.stateController.updateState({ newState: t, trigger: 'WSConnector' }));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'becomePassive', {
@@ -1855,10 +1858,10 @@
                             value: function () {
                                 this.connector.updateActiveDevice({ device_id_optional: null });
                                 var e = this.stateController.currentState;
-                                (e.active_device_id_optional = null),
+                                ((e.active_device_id_optional = null),
                                     (e.player_state.status.paused = !0),
                                     (e.player_state.status.version = I(this.deviceConfig.info.device_id)),
-                                    this.stateController.updateState({ newState: e, trigger: 'WSConnector' });
+                                    this.stateController.updateState({ newState: e, trigger: 'WSConnector' }));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'updateVariables', {
@@ -1906,7 +1909,7 @@
                         return function (l) {
                             var c = [s, l];
                             if (n) throw TypeError('Generator is already executing.');
-                            for (; o && ((o = 0), c[0] && (a = 0)), a; )
+                            for (; o && ((o = 0), c[0] && (a = 0)), a;)
                                 try {
                                     if (
                                         ((n = 1),
@@ -1919,12 +1922,12 @@
                                             i = c;
                                             break;
                                         case 4:
-                                            return a.label++, { value: c[1], done: !1 };
+                                            return (a.label++, { value: c[1], done: !1 });
                                         case 5:
-                                            a.label++, (r = c[1]), (c = [0]);
+                                            (a.label++, (r = c[1]), (c = [0]));
                                             continue;
                                         case 7:
-                                            (c = a.ops.pop()), a.trys.pop();
+                                            ((c = a.ops.pop()), a.trys.pop());
                                             continue;
                                         default:
                                             if (!(i = (i = a.trys).length > 0 && i[i.length - 1]) && (6 === c[0] || 2 === c[0])) {
@@ -1936,19 +1939,19 @@
                                                 break;
                                             }
                                             if (6 === c[0] && a.label < i[1]) {
-                                                (a.label = i[1]), (i = c);
+                                                ((a.label = i[1]), (i = c));
                                                 break;
                                             }
                                             if (i && a.label < i[2]) {
-                                                (a.label = i[2]), a.ops.push(c);
+                                                ((a.label = i[2]), a.ops.push(c));
                                                 break;
                                             }
-                                            i[2] && a.ops.pop(), a.trys.pop();
+                                            (i[2] && a.ops.pop(), a.trys.pop());
                                             continue;
                                     }
                                     c = t.call(e, a);
                                 } catch (e) {
-                                    (c = [6, e]), (r = 0);
+                                    ((c = [6, e]), (r = 0));
                                 } finally {
                                     n = i = 0;
                                 }
@@ -2037,7 +2040,7 @@
                         return function (l) {
                             var c = [s, l];
                             if (n) throw TypeError('Generator is already executing.');
-                            for (; o && ((o = 0), c[0] && (a = 0)), a; )
+                            for (; o && ((o = 0), c[0] && (a = 0)), a;)
                                 try {
                                     if (
                                         ((n = 1),
@@ -2050,12 +2053,12 @@
                                             i = c;
                                             break;
                                         case 4:
-                                            return a.label++, { value: c[1], done: !1 };
+                                            return (a.label++, { value: c[1], done: !1 });
                                         case 5:
-                                            a.label++, (r = c[1]), (c = [0]);
+                                            (a.label++, (r = c[1]), (c = [0]));
                                             continue;
                                         case 7:
-                                            (c = a.ops.pop()), a.trys.pop();
+                                            ((c = a.ops.pop()), a.trys.pop());
                                             continue;
                                         default:
                                             if (!(i = (i = a.trys).length > 0 && i[i.length - 1]) && (6 === c[0] || 2 === c[0])) {
@@ -2067,19 +2070,19 @@
                                                 break;
                                             }
                                             if (6 === c[0] && a.label < i[1]) {
-                                                (a.label = i[1]), (i = c);
+                                                ((a.label = i[1]), (i = c));
                                                 break;
                                             }
                                             if (i && a.label < i[2]) {
-                                                (a.label = i[2]), a.ops.push(c);
+                                                ((a.label = i[2]), a.ops.push(c));
                                                 break;
                                             }
-                                            i[2] && a.ops.pop(), a.trys.pop();
+                                            (i[2] && a.ops.pop(), a.trys.pop());
                                             continue;
                                     }
                                     c = t.call(e, a);
                                 } catch (e) {
-                                    (c = [6, e]), (r = 0);
+                                    ((c = [6, e]), (r = 0));
                                 } finally {
                                     n = i = 0;
                                 }
@@ -2142,28 +2145,28 @@
                         e
                     );
                 })();
-            !(function (e) {
-                (e.YNISON_START = 'YNISON_START'),
+            (!(function (e) {
+                ((e.YNISON_START = 'YNISON_START'),
                     (e.YNISON_CONNECTED = 'YNISON_CONNECTED'),
                     (e.YNISON_CONNECTING_ERROR = 'YNISON_CONNECTING_ERROR'),
                     (e.YNISON_CLIENT_DISCONNECTED = 'YNISON_CLIENT_DISCONNECTED'),
                     (e.YNISON_EVENT_SENDED = 'YNISON_EVENT_SENDED'),
                     (e.YNISON_EVENT_LOST = 'YNISON_EVENT_LOST'),
                     (e.YNISON_CHANNEL_ERROR = 'YNISON_CHANNEL_ERROR'),
-                    (e.YNISON_STATE_ERROR = 'YNISON_STATE_ERROR');
+                    (e.YNISON_STATE_ERROR = 'YNISON_STATE_ERROR'));
             })(g || (g = {})),
                 (function (e) {
-                    (e.ACTIVE = 'active'), (e.PASSIVE = 'passive'), (e.SHADOW = 'shadow');
+                    ((e.ACTIVE = 'active'), (e.PASSIVE = 'passive'), (e.SHADOW = 'shadow'));
                 })(m || (m = {})),
                 (function (e) {
-                    (e.MOBILE = 'mobile'), (e.WIFI = 'wifi'), (e.UNKNOWN = 'unknown');
+                    ((e.MOBILE = 'mobile'), (e.WIFI = 'wifi'), (e.UNKNOWN = 'unknown'));
                 })(C || (C = {})),
                 (function (e) {
-                    (e.WS = 'other'), (e.IO = 'io'), (e.SERVER = 'server'), (e.OTHER = 'other');
+                    ((e.WS = 'other'), (e.IO = 'io'), (e.SERVER = 'server'), (e.OTHER = 'other'));
                 })(S || (S = {})),
                 (function (e) {
-                    (e.REDIRECTOR = 'redirector'), (e.HUB = 'hub');
-                })(N || (N = {}));
+                    ((e.REDIRECTOR = 'redirector'), (e.HUB = 'hub'));
+                })(N || (N = {})));
             var eh = [
                     'update_full_state',
                     'update_active_device',
@@ -2184,12 +2187,12 @@
                 },
                 e_ = (function () {
                     function e(e) {
-                        Object.defineProperty(this, 'transports', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        (Object.defineProperty(this, 'transports', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'state', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'variables', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             (this.transports = e.transports),
                             (this.variables = e.variables),
-                            (this.state = { uuid: e.sessionId });
+                            (this.state = { uuid: e.sessionId }));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'onYnisonStateParsingError', {
@@ -2208,7 +2211,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function () {
-                                (this.state.connectionStartTimestamp = Date.now()), this.sendEvent({ name: g.YNISON_START, data: this.getBaseEventPayload() });
+                                ((this.state.connectionStartTimestamp = Date.now()), this.sendEvent({ name: g.YNISON_START, data: this.getBaseEventPayload() }));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'onConnected', {
@@ -2217,9 +2220,9 @@
                             writable: !0,
                             value: function () {
                                 var e = 0;
-                                this.state.connectionStartTimestamp &&
+                                (this.state.connectionStartTimestamp &&
                                     ((e = Date.now() - this.state.connectionStartTimestamp), delete this.state.connectionStartTimestamp),
-                                    this.sendEvent({ name: g.YNISON_CONNECTED, data: ey(ey({}, this.getBaseEventPayload()), { time: e }) });
+                                    this.sendEvent({ name: g.YNISON_CONNECTED, data: ey(ey({}, this.getBaseEventPayload()), { time: e }) }));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'onConnectionError', {
@@ -2246,7 +2249,7 @@
                                     r = e.error.message,
                                     i = null != (t = e.error.data.redirectorResponse.message) ? t : '',
                                     o = S.OTHER;
-                                void 0 !== n && (o = S.WS),
+                                (void 0 !== n && (o = S.WS),
                                     this.sendEvent({
                                         name: g.YNISON_CONNECTING_ERROR,
                                         data: ey(ey({}, this.getBaseEventPayload()), {
@@ -2255,7 +2258,7 @@
                                             code: n,
                                             errorDescription: ''.concat(r, ' ').concat(i),
                                         }),
-                                    });
+                                    }));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'onHubConnectionError', {
@@ -2395,10 +2398,10 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                this.logEvent({ event: e, eventName: e.name }),
+                                (this.logEvent({ event: e, eventName: e.name }),
                                     this.transports.forEach(function (t) {
                                         t.send(e);
-                                    });
+                                    }));
                             },
                         }),
                         e

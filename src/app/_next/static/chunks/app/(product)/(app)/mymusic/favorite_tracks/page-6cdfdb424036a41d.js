@@ -61,7 +61,7 @@
                         let e = () => {
                             for (let e of n()) (0, r.X6)(i, e);
                         };
-                        return e(), window.addEventListener(l, e), () => window.removeEventListener(l, e);
+                        return (e(), window.addEventListener(l, e), () => window.removeEventListener(l, e));
                     }, [n, l, i]),
                     { store: i, patchesRef: s }
                 );
@@ -69,7 +69,7 @@
         },
         7748: (e, t, n) => {
             'use strict';
-            n.r(t), n.d(t, { NotFound: () => x });
+            (n.r(t), n.d(t, { NotFound: () => x }));
             var r = n(32290),
                 o = n(63618),
                 l = n(96103),
@@ -160,7 +160,7 @@
                                 logger: r,
                                 context: 'useSendEventOnNotFoundNavigated',
                             });
-                            o && (0, g.Mu)(t.evgenInstance, o), e();
+                            (o && (0, g.Mu)(t.evgenInstance, o), e());
                         }, [t, n, r, e]),
                     };
                 })(R);
@@ -263,11 +263,11 @@
                 o = n(50891);
             class l extends o.m {
                 constructor(e, t) {
-                    super(e, { code: 'E_HTTP_CLIENT_NON_2XX_3XX_RESPONSE', cause: t.cause }),
+                    (super(e, { code: 'E_HTTP_CLIENT_NON_2XX_3XX_RESPONSE', cause: t.cause }),
                         (0, r._)(this, 'name', 'HttpErrorException'),
                         (0, r._)(this, 'statusCode', void 0),
                         (this.statusCode = t.statusCode),
-                        Object.setPrototypeOf(this, l.prototype);
+                        Object.setPrototypeOf(this, l.prototype));
                 }
             }
         },
@@ -299,10 +299,10 @@
                     { canBack: h, canForward: f, moveBack: y, moveForward: N } = (0, g.J)(E),
                     S = (0, s.useRef)(null),
                     T = (0, c.c)((e) => {
-                        e.stopPropagation(), y();
+                        (e.stopPropagation(), y());
                     }),
                     x = (0, c.c)((e) => {
-                        e.stopPropagation(), N();
+                        (e.stopPropagation(), N());
                     });
                 return (
                     (0, s.useEffect)(() => {
@@ -431,22 +431,22 @@
                             let { landingResource: t, modelActionsLogger: n } = (0, l._$)(e);
                             if (e.loadingState !== a.G.PENDING)
                                 try {
-                                    (e.loadingState = a.G.PENDING),
+                                    ((e.loadingState = a.G.PENDING),
                                         (e.playlistUuid = (yield t.getBlock({
                                             source: { uri: '/landing/block/collection/playlist-with-likes', countWeb: 8 },
                                             type: i.t.COLLECTION_PLAYLIST_WITH_LIKES,
                                         })).playlist.playlistUuid),
-                                        e.loadingState !== a.G.IDLE && (e.loadingState = a.G.RESOLVE);
+                                        e.loadingState !== a.G.IDLE && (e.loadingState = a.G.RESOLVE));
                                 } catch (t) {
-                                    n.error(t),
+                                    (n.error(t),
                                         t instanceof s.GX &&
                                             (t.statusCode === s.X1.NOT_FOUND || t.statusCode === s.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = s.X1.NOT_FOUND),
-                                        e.loadingState !== a.G.IDLE && (e.loadingState = a.G.REJECT);
+                                        e.loadingState !== a.G.IDLE && (e.loadingState = a.G.REJECT));
                                 }
                         }),
                         reset() {
-                            (e.loadingState = a.G.IDLE), (e.playlistUuid = null);
+                            ((e.loadingState = a.G.IDLE), (e.playlistUuid = null));
                         },
                     })),
                 g = { loadingState: a.G.IDLE },
@@ -462,7 +462,7 @@
                 let t = (0, r.useRef)(!1),
                     n = (0, o.z)();
                 (0, r.useEffect)(() => {
-                    e && (null == n || n.disable(), (t.current = !0)), !e && t.current && (null == n || n.enable(), (t.current = !1));
+                    (e && (null == n || n.disable(), (t.current = !0)), !e && t.current && (null == n || n.enable(), (t.current = !1)));
                 }, [e, n]);
             };
         },
@@ -609,14 +609,14 @@
         33898: (e, t, n) => {
             'use strict';
             var r;
-            n.d(t, { Z: () => r }),
+            (n.d(t, { Z: () => r }),
                 (function (e) {
-                    (e.METHOD_NOT_SUPPORTED = 'E_BEACON_METHOD_NOT_SUPPORTED'),
+                    ((e.METHOD_NOT_SUPPORTED = 'E_BEACON_METHOD_NOT_SUPPORTED'),
                         (e.NOT_AVAILABLE = 'E_BEACON_NOT_AVAILABLE'),
                         (e.QUEUE_FAILED = 'E_BEACON_QUEUE_FAILED'),
                         (e.NO_RESPONSE_DATA = 'E_BEACON_NO_RESPONSE_DATA'),
-                        (e.RETRY_EXHAUSTED = 'E_BEACON_RETRY_EXHAUSTED');
-                })(r || (r = {}));
+                        (e.RETRY_EXHAUSTED = 'E_BEACON_RETRY_EXHAUSTED'));
+                })(r || (r = {})));
         },
         39407: (e, t, n) => {
             'use strict';
@@ -719,7 +719,7 @@
                         o = () => {
                             var e, t;
                             let r = null != (t = null == (e = window.__PAGE_STATE_PATCHES__) ? void 0 : e[n]) ? t : [];
-                            return window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[n], r;
+                            return (window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[n], r);
                         };
                     return {
                         pageStoreProvider: (e) => {
@@ -755,7 +755,7 @@
             'use strict';
             n.d(t, { G: () => r });
             var r = (function (e) {
-                return (e.IDLE = 'IDLE'), (e.PENDING = 'PENDING'), (e.RESOLVE = 'RESOLVE'), (e.REJECT = 'REJECT'), e;
+                return ((e.IDLE = 'IDLE'), (e.PENDING = 'PENDING'), (e.RESOLVE = 'RESOLVE'), (e.REJECT = 'REJECT'), e);
             })({});
         },
         50891: (e, t, n) => {
@@ -765,22 +765,22 @@
                 o = n(29222);
             class l extends o.t {
                 constructor(e = 'Http Client error', { code: t = 'E_HTTP_CLIENT', ...n } = {}) {
-                    super(e, { code: t, ...n }), (0, r._)(this, 'name', 'HttpException'), Object.setPrototypeOf(this, l.prototype);
+                    (super(e, { code: t, ...n }), (0, r._)(this, 'name', 'HttpException'), Object.setPrototypeOf(this, l.prototype));
                 }
             }
         },
         50961: (e, t, n) => {
             'use strict';
             var r;
-            n.d(t, { X: () => r }),
+            (n.d(t, { X: () => r }),
                 (function (e) {
-                    (e[(e.NOT_MODIFIED = 304)] = 'NOT_MODIFIED'),
+                    ((e[(e.NOT_MODIFIED = 304)] = 'NOT_MODIFIED'),
                         (e[(e.NOT_FOUND = 404)] = 'NOT_FOUND'),
                         (e[(e.BAD_REQUEST = 400)] = 'BAD_REQUEST'),
                         (e[(e.REQUEST_TIMEOUT = 408)] = 'REQUEST_TIMEOUT'),
                         (e[(e.PRECONDITION_FAILED = 412)] = 'PRECONDITION_FAILED'),
-                        (e[(e.TEAPOT = 418)] = 'TEAPOT');
-                })(r || (r = {}));
+                        (e[(e.TEAPOT = 418)] = 'TEAPOT'));
+                })(r || (r = {})));
         },
         52068: (e, t, n) => {
             'use strict';
@@ -831,7 +831,7 @@
                 try {
                     return JSON.parse(e);
                 } catch (e) {
-                    return console.error(e), null;
+                    return (console.error(e), null);
                 }
             }
             class l {
@@ -886,7 +886,7 @@
                         let s = o(l);
                         if (!s) return null;
                         let i = null != (r = null == s ? void 0 : s.value) ? r : null;
-                        if ((null == s ? void 0 : s.expires) && Date.now() > new Date(s.expires).getTime()) return this.remove(e), null;
+                        if ((null == s ? void 0 : s.expires) && Date.now() > new Date(s.expires).getTime()) return (this.remove(e), null);
                         return i;
                     } catch (e) {
                         return null;
@@ -895,7 +895,7 @@
                 set(e, t, n) {
                     if ('number' == typeof (null == n ? void 0 : n.expires)) {
                         let e = new Date();
-                        e.setMilliseconds(e.getMilliseconds() + 864e5 * n.expires), (n.expires = e);
+                        (e.setMilliseconds(e.getMilliseconds() + 864e5 * n.expires), (n.expires = e));
                     }
                     let r = s('localStorage');
                     if (r)
@@ -918,9 +918,9 @@
                 c = n(29222);
             class u extends c.t {
                 constructor(e, t, { code: n = 'E_STORAGE', ...r } = {}) {
-                    super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: n, ...r }),
+                    (super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: n, ...r }),
                         (0, a._)(this, 'name', 'Storage Exception'),
-                        Object.setPrototypeOf(this, u.prototype);
+                        Object.setPrototypeOf(this, u.prototype));
                 }
             }
             class d {
@@ -937,7 +937,7 @@
                     throw new u(this.platform, this.type);
                 }
                 constructor(e, t) {
-                    (0, a._)(this, 'platform', ''), (0, a._)(this, 'type', ''), (this.platform = e), (this.type = t);
+                    ((0, a._)(this, 'platform', ''), (0, a._)(this, 'type', ''), (this.platform = e), (this.type = t));
                 }
             }
             class g {
@@ -1013,10 +1013,10 @@
             };
         },
         67925: (e, t, n) => {
-            Promise.resolve().then(n.bind(n, 3377)),
+            (Promise.resolve().then(n.bind(n, 3377)),
                 Promise.resolve().then(n.bind(n, 27032)),
                 Promise.resolve().then(n.bind(n, 95324)),
-                Promise.resolve().then(n.bind(n, 9634));
+                Promise.resolve().then(n.bind(n, 9634)));
         },
         73715: (e, t, n) => {
             'use strict';
@@ -1081,7 +1081,7 @@
                         (function (e) {
                             if ('number' == typeof e.expires) {
                                 var t = new Date();
-                                t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t);
+                                (t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t));
                             }
                             return (
                                 o('Expires', e.expires ? e.expires.toUTCString() : '') +
@@ -1255,6 +1255,6 @@
         },
     },
     (e) => {
-        e.O(0, [5718, 7034, 6639, 6706, 1311, 8892, 2536, 66, 5835, 2812, 6477, 7275, 2586, 8347, 4522, 4220, 9562, 7358], () => e((e.s = 67925))), (_N_E = e.O());
+        (e.O(0, [5718, 7034, 6639, 6706, 1311, 8892, 2536, 66, 5835, 2812, 6477, 7275, 2586, 8347, 4522, 4220, 9562, 7358], () => e((e.s = 67925))), (_N_E = e.O()));
     },
 ]);

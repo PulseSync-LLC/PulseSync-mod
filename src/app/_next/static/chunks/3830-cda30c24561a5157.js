@@ -51,9 +51,9 @@
         3785: (e, t, a) => {
             'use strict';
             var i;
-            a.d(t, { M: () => i }),
+            (a.d(t, { M: () => i }),
                 (function (e) {
-                    (e.MODAL = 'modal'),
+                    ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
                         (e.AGE_18 = 'age18'),
@@ -62,8 +62,8 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                        (e.SUBSTITUTED_ICON = 'substitutedIcon');
-                })(i || (i = {}));
+                        (e.SUBSTITUTED_ICON = 'substitutedIcon'));
+                })(i || (i = {})));
         },
         4332: (e) => {
             e.exports = { root: 'RelatedContent_root__Dl1Nr', carousel: 'RelatedContent_carousel__pmv5c', header: 'RelatedContent_header__527S3' };
@@ -225,7 +225,7 @@
             'use strict';
             a.d(t, { r: () => i });
             var i = (function (e) {
-                return (e.TRACK = 'track'), (e.TEXT = 'text'), e;
+                return ((e.TRACK = 'track'), (e.TEXT = 'text'), e);
             })({});
         },
         17024: (e, t, a) => {
@@ -299,7 +299,7 @@
                         T = (0, b.N)().get(m.U2),
                         L = (0, d.c)(() => {
                             if (g) return g();
-                            k.canBack && k.back(), N();
+                            (k.canBack && k.back(), N());
                         }),
                         P = (null == y || null == (t = y.details) ? void 0 : t.url) && y.details.text,
                         I = (0, d.c)(() => {
@@ -312,13 +312,13 @@
                                     null != (e = null == a ? void 0 : a.entityKey)
                                         ? e
                                         : ''.concat(null == a ? void 0 : a.entityType, '_').concat(null == a ? void 0 : a.entityId);
-                            t ? T.set(_.c.ExEx, [...t, s], { expires: new Date(l) }) : T.set(_.c.ExEx, [s], { expires: new Date(l) }),
+                            (t ? T.set(_.c.ExEx, [...t, s], { expires: new Date(l) }) : T.set(_.c.ExEx, [s], { expires: new Date(l) }),
                                 null == g || g(),
-                                (null == a ? void 0 : a.onDisclaimerConfirmHandler) && a.onDisclaimerConfirmHandler();
+                                (null == a ? void 0 : a.onDisclaimerConfirmHandler) && a.onDisclaimerConfirmHandler());
                         }),
                         S = (0, d.c)(() => {
-                            (null == a ? void 0 : a.shouldHistoryBack) ? (null == g || g(), k.canBack && k.back(), N()) : null == g || g(),
-                                (null == a ? void 0 : a.onDisclaimerRejectHandler) && a.onDisclaimerRejectHandler();
+                            ((null == a ? void 0 : a.shouldHistoryBack) ? (null == g || g(), k.canBack && k.back(), N()) : null == g || g(),
+                                (null == a ? void 0 : a.onDisclaimerRejectHandler) && a.onDisclaimerRejectHandler());
                         });
                     (0, n.useEffect)(
                         () => () => {
@@ -423,7 +423,7 @@
             let i = (e, t) => {
                 let a = new URL(window.location.href),
                     i = a.searchParams;
-                return i.set(e, t), (a.search = i.toString()), a.toString();
+                return (i.set(e, t), (a.search = i.toString()), a.toString());
             };
         },
         31286: (e, t, a) => {
@@ -484,7 +484,7 @@
                 return (0, l.c)(() => {
                     let l = e.reduce((e, t) => {
                         let a = v(t);
-                        return a && e.push({ type: s.z4.Unloaded, meta: { id: a } }), e;
+                        return (a && e.push({ type: s.z4.Unloaded, meta: { id: a } }), e);
                     }, []);
                     if (!l.length) return;
                     switch (t) {
@@ -586,7 +586,7 @@
                     i = Math.floor((t % 3600) / 60),
                     l = t % 60,
                     s = 'PT';
-                return a > 0 && (s += ''.concat(a, 'H')), i > 0 && (s += ''.concat(i, 'M')), (l > 0 || 'PT' === s) && (s += ''.concat(l, 'S')), s;
+                return (a > 0 && (s += ''.concat(a, 'H')), i > 0 && (s += ''.concat(i, 'M')), (l > 0 || 'PT' === s) && (s += ''.concat(l, 'S')), s);
             };
         },
         39231: (e, t, a) => {
@@ -870,7 +870,7 @@
                         if (null === e) return;
                         e.delete(n.K.CLID);
                         let t = new URL(window.location.href);
-                        (t.search = e.toString()), a(t.toString());
+                        ((t.search = e.toString()), a(t.toString()));
                     }),
                     b = (0, l.c)((e, t) => {
                         if (!e || !t) return;
@@ -1204,7 +1204,7 @@
                     { formatMessage: o } = (0, es.A)(),
                     d = (0, n.useCallback)(
                         (e) => {
-                            s.openModal(), e.stopPropagation();
+                            (s.openModal(), e.stopPropagation());
                         },
                         [s],
                     ),
@@ -1379,7 +1379,7 @@
                     a = t.filter((e) => !e.various),
                     i = e.filter((e) => e.isComposer && !e.various),
                     l = [];
-                return a.length > 0 ? (l = a) : t.length > 0 && (l = t), l.concat(i);
+                return (a.length > 0 ? (l = a) : t.length > 0 && (l = t), l.concat(i));
             };
             var eJ = a(98508),
                 e0 = a.n(eJ);
@@ -1436,10 +1436,8 @@
                                 children: o.year,
                             }),
                     ].filter(Boolean),
-                    pulseSyncAlbumMetaItems = window.pulsesyncApi?.injectNativeSlotItems?.(
-                        'headerInfoItems',
-                        pulseSyncNativeAlbumMetaItems,
-                        {
+                    pulseSyncAlbumMetaItems =
+                        window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', pulseSyncNativeAlbumMetaItems, {
                             eventDetail: null,
                             renderItem: ({ key, payload, position }) => {
                                 const text = String(payload?.text ?? '').trim(),
@@ -1462,8 +1460,7 @@
                                     key,
                                 );
                             },
-                        },
-                    ) ?? pulseSyncNativeAlbumMetaItems;
+                        }) ?? pulseSyncNativeAlbumMetaItems;
                 return (0, i.jsx)(ek.B, {
                     objectType: o.mainObjectType,
                     objectId: String(o.id),
@@ -1622,7 +1619,7 @@
                 tr = a(58054),
                 td = a(32468),
                 tc = (function (e) {
-                    return (e.ABOUT = 'about'), (e.TRACKS = 'track-list'), e;
+                    return ((e.ABOUT = 'about'), (e.TRACKS = 'track-list'), e);
                 })({});
             let tu = [tc.ABOUT, tc.TRACKS];
             var tm = a(96333),
@@ -1645,7 +1642,7 @@
                 tx = a(32496),
                 th = a(34223),
                 t_ = (function (e) {
-                    return (e.TRACK = 'TRACK'), (e.TEXT = 'TEXT'), e;
+                    return ((e.TRACK = 'TRACK'), (e.TEXT = 'TEXT'), e);
                 })({}),
                 tA = a(52547),
                 tg = a.n(tA);
@@ -1704,7 +1701,7 @@
                     { ref: s, intersectionPropertyId: n } = (0, tP.n)({ callback: l, withViewUuid: !0 }),
                     r = (0, h.Z)(t),
                     d = (0, m.c)((e) => {
-                        a(o.QT.Link, t), r(e);
+                        (a(o.QT.Link, t), r(e));
                     });
                 return (0, i.jsx)(tL.v, { onClick: d, ref: s, 'data-intersection-property-id': n });
             });
@@ -1721,10 +1718,10 @@
                         d = (0, h.Z)(s),
                         c = (0, h.Z)(t.artist.url),
                         u = (0, m.c)((e) => {
-                            a(o.QT.ArtistScreen), c(e);
+                            (a(o.QT.ArtistScreen), c(e));
                         }),
                         b = (0, m.c)(() => {
-                            a(o.QT.Link, s), d();
+                            (a(o.QT.Link, s), d());
                         }),
                         v = (0, tM.S)({ artist: t.artist, callback: u });
                     return (0, i.jsx)(tE.X, {
@@ -1826,7 +1823,7 @@
                         n = (0, tT.C)(),
                         { ref: r, intersectionPropertyId: d } = (0, tP.n)({ callback: n, withViewUuid: !0 }),
                         c = (0, m.c)(() => {
-                            s(), l();
+                            (s(), l());
                         });
                     return (0, i.jsxs)(
                         tD.Dr,
@@ -1936,12 +1933,12 @@
                         d = (0, ey.f)(),
                         [c, u] = (0, tZ.d)(),
                         { virtualizer: m, resizeObserver: b } = (0, tJ.r)({ count: t, getEstimateSize: () => 56, containerRef: c });
-                    (0, n.useEffect)(() => {
+                    ((0, n.useEffect)(() => {
                         d();
                     }, [d]),
                         (0, n.useEffect)(() => {
                             !m.isScrolling && m.range && a(m.range);
-                        }, [a, m.isScrolling, m.range]);
+                        }, [a, m.isScrolling, m.range]));
                     let v = m.getTotalSize(),
                         p = m.getVirtualItems();
                     return (0, i.jsx)('div', {
@@ -2106,7 +2103,7 @@
                     R = D && C,
                     { showBuySubscriptionModal: U } = (0, eT.q)(),
                     H = g.isPlusCPAPlayerBarEnabled(A.id, null == (e = A.meta) ? void 0 : e.isNonMusic) && C;
-                (0, n.useEffect)(
+                ((0, n.useEffect)(
                     () => () => {
                         v.current = 0;
                     },
@@ -2119,12 +2116,12 @@
                         var e, t;
                         if ((null == (e = A.otherArtistAlbums) ? void 0 : e.isRejected) || (null == (t = A.latestGenreAlbums) ? void 0 : t.isRejected)) {
                             if (!v || v.current > 0) return;
-                            x((0, i.jsx)(er.h, { error: L({ id: 'album-errors.error-during-loading-similar-albums' }) }), { containerId: en.u.ERROR }), v.current++;
+                            (x((0, i.jsx)(er.h, { error: L({ id: 'album-errors.error-during-loading-similar-albums' }) }), { containerId: en.u.ERROR }), v.current++);
                         }
                     }, [null == (t = A.latestGenreAlbums) ? void 0 : t.isRejected, null == (a = A.otherArtistAlbums) ? void 0 : a.isRejected, L, x]),
                     (0, n.useEffect)(() => {
                         A.isResolved && A.hasOtherAlbumVersions && I(!0);
-                    }, [A.hasOtherAlbumVersions, A.isResolved]);
+                    }, [A.hasOtherAlbumVersions, A.isResolved]));
                 let z = (0, n.useCallback)(() => {
                         let e = b.current;
                         null == e || e.scrollIntoView({ behavior: 'smooth' });
@@ -2563,7 +2560,7 @@
                             if (!L()) {
                                 if (p) return void x();
                                 if (M) return void k.open();
-                                V(), T(!F);
+                                (V(), T(!F));
                             }
                         }),
                         W = (0, n.useMemo)(
@@ -2688,7 +2685,7 @@
                         Z = tv({ album: O });
                     (0, n.useEffect)(
                         () => () => {
-                            (P.current = 0), B.resetPodcast();
+                            ((P.current = 0), B.resetPodcast());
                         },
                         [O, B],
                     );
@@ -2945,7 +2942,7 @@
                             let { albumId: t, deprecationTargetAlbumId: a, trackId: i, realId: l, searchParams: s } = e,
                                 n = Number(t),
                                 o = new URLSearchParams(s);
-                            o.delete('albumId'), o.delete('trackId');
+                            (o.delete('albumId'), o.delete('trackId'));
                             let r = Object.fromEntries(o);
                             if ('number' == typeof a && a !== n) {
                                 if (i) {
@@ -2970,7 +2967,7 @@
                         eh = (0, k.c)({ album: Q.meta, shouldHistoryBack: !0 }),
                         e_ = !!(null == (m = Q.meta) ? void 0 : m.isNonMusic),
                         eA = !!(I && w(V));
-                    (0, T.A)(),
+                    ((0, T.A)(),
                         ((e) => {
                             var t;
                             let { albumId: a, trackId: i, isNonMusic: l } = e,
@@ -3013,7 +3010,7 @@
                             () => (
                                 Q.id && Q.id !== Number(N) && (Q.reset(J), ei()),
                                 () => {
-                                    Q.reset(J), ei();
+                                    (Q.reset(J), ei());
                                 }
                             ),
                             [Q, N, J, ei, ee],
@@ -3062,10 +3059,10 @@
                                 }
                             ),
                             [N, em],
-                        );
+                        ));
                     let eg = (0, d.L)(() => (e_ ? (0, i.jsx)(aM, {}) : (0, i.jsx)(an, {}))),
                         ej = [];
-                    N &&
+                    (N &&
                         Q.isNeededToLoad &&
                         (ej.push(Q.getData({ albumId: Number(N), resumeStream: !1, preloadedAlbum: O, sonataState: J }), Q.getDonations({ albumId: Number(N) })),
                         ($ || B) && ej.push(ee.getCpa({ albumId: Number(N), preloadedCpa: B }))),
@@ -3088,12 +3085,12 @@
                                         let n = (null == (e = t.meta) ? void 0 : e.isPodcast)
                                             ? s({ id: 'podcast-errors.error-during-loading-podcast' })
                                             : s({ id: 'album-errors.error-during-loading-album' });
-                                        l((0, i.jsx)(er.h, { error: n }), { containerId: en.u.ERROR }), a.current++;
+                                        (l((0, i.jsx)(er.h, { error: n }), { containerId: en.u.ERROR }), a.current++);
                                     }
                                 },
                                 [t.isLoading, t.isNotFound, t.isRejected, t.meta, s, l],
                             )();
-                        })({ album: Q });
+                        })({ album: Q }));
                     let ef = eA
                         ? null != (A = null == (v = Z.meta) ? void 0 : v.resolvedModalData)
                             ? A
@@ -3344,14 +3341,14 @@
                             p.current ||
                                 (p.current = new ResizeObserver((e) => {
                                     let t = !1;
-                                    e.forEach((e) => {
+                                    (e.forEach((e) => {
                                         let a = e.target.getAttribute('data-index');
                                         if (e.target && a) {
                                             let i = e.contentRect.height;
                                             i && i !== v.current.get(a) && (v.current.set(a, e.contentRect.height), (t = !0));
                                         }
                                     }),
-                                        t && g();
+                                        t && g());
                                 }));
                         }, [g]),
                         { virtualizer: A, resizeObserver: p.current }
@@ -3554,7 +3551,7 @@
                             let i = new URLSearchParams(e);
                             i.set('wl', d[t]);
                             let l = e.get(r.K.UTM_CAMPAIGN);
-                            return l && i.set('meta', 'campaignid_'.concat(l)), (0, o.C)(a, i);
+                            return (l && i.set('meta', 'campaignid_'.concat(l)), (0, o.C)(a, i));
                         },
                         [t, e],
                     );
@@ -3589,10 +3586,10 @@
         96151: (e, t, a) => {
             'use strict';
             var i;
-            a.d(t, { Q: () => i }),
+            (a.d(t, { Q: () => i }),
                 (function (e) {
-                    (e.FROM_ALBUM_COVER = 'from-album-cover'), (e.FROM_ARTIST_PHOTOS = 'from-artist-photos'), (e.PIC = 'pic'), (e.MOSAIC = 'mosaic');
-                })(i || (i = {}));
+                    ((e.FROM_ALBUM_COVER = 'from-album-cover'), (e.FROM_ARTIST_PHOTOS = 'from-artist-photos'), (e.PIC = 'pic'), (e.MOSAIC = 'mosaic'));
+                })(i || (i = {})));
         },
         96434: (e, t, a) => {
             'use strict';

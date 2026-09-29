@@ -19,7 +19,7 @@
                         let e = () => {
                             for (let e of r()) (0, i.X6)(s, e);
                         };
-                        return e(), window.addEventListener(l, e), () => window.removeEventListener(l, e);
+                        return (e(), window.addEventListener(l, e), () => window.removeEventListener(l, e));
                     }, [r, l, s]),
                     { store: s, patchesRef: a }
                 );
@@ -31,11 +31,11 @@
                 n = r(50891);
             class l extends n.m {
                 constructor(e, t) {
-                    super(e, { code: 'E_HTTP_CLIENT_NON_2XX_3XX_RESPONSE', cause: t.cause }),
+                    (super(e, { code: 'E_HTTP_CLIENT_NON_2XX_3XX_RESPONSE', cause: t.cause }),
                         (0, i._)(this, 'name', 'HttpErrorException'),
                         (0, i._)(this, 'statusCode', void 0),
                         (this.statusCode = t.statusCode),
-                        Object.setPrototypeOf(this, l.prototype);
+                        Object.setPrototypeOf(this, l.prototype));
                 }
             }
         },
@@ -190,14 +190,14 @@
         },
         33898: (e, t, r) => {
             var i;
-            r.d(t, { Z: () => i }),
+            (r.d(t, { Z: () => i }),
                 (function (e) {
-                    (e.METHOD_NOT_SUPPORTED = 'E_BEACON_METHOD_NOT_SUPPORTED'),
+                    ((e.METHOD_NOT_SUPPORTED = 'E_BEACON_METHOD_NOT_SUPPORTED'),
                         (e.NOT_AVAILABLE = 'E_BEACON_NOT_AVAILABLE'),
                         (e.QUEUE_FAILED = 'E_BEACON_QUEUE_FAILED'),
                         (e.NO_RESPONSE_DATA = 'E_BEACON_NO_RESPONSE_DATA'),
-                        (e.RETRY_EXHAUSTED = 'E_BEACON_RETRY_EXHAUSTED');
-                })(i || (i = {}));
+                        (e.RETRY_EXHAUSTED = 'E_BEACON_RETRY_EXHAUSTED'));
+                })(i || (i = {})));
         },
         35597: (e, t, r) => {
             r.d(t, { t: () => n });
@@ -256,21 +256,21 @@
                 n = r(29222);
             class l extends n.t {
                 constructor(e = 'Http Client error', { code: t = 'E_HTTP_CLIENT', ...r } = {}) {
-                    super(e, { code: t, ...r }), (0, i._)(this, 'name', 'HttpException'), Object.setPrototypeOf(this, l.prototype);
+                    (super(e, { code: t, ...r }), (0, i._)(this, 'name', 'HttpException'), Object.setPrototypeOf(this, l.prototype));
                 }
             }
         },
         50961: (e, t, r) => {
             var i;
-            r.d(t, { X: () => i }),
+            (r.d(t, { X: () => i }),
                 (function (e) {
-                    (e[(e.NOT_MODIFIED = 304)] = 'NOT_MODIFIED'),
+                    ((e[(e.NOT_MODIFIED = 304)] = 'NOT_MODIFIED'),
                         (e[(e.NOT_FOUND = 404)] = 'NOT_FOUND'),
                         (e[(e.BAD_REQUEST = 400)] = 'BAD_REQUEST'),
                         (e[(e.REQUEST_TIMEOUT = 408)] = 'REQUEST_TIMEOUT'),
                         (e[(e.PRECONDITION_FAILED = 412)] = 'PRECONDITION_FAILED'),
-                        (e[(e.TEAPOT = 418)] = 'TEAPOT');
-                })(i || (i = {}));
+                        (e[(e.TEAPOT = 418)] = 'TEAPOT'));
+                })(i || (i = {})));
         },
         52947: (e, t, r) => {
             r.d(t, { E: () => s });
@@ -337,7 +337,7 @@
                                 if (0 === r.length) return null;
                                 return r;
                             } catch (e) {
-                                return r.error(e), null;
+                                return (r.error(e), null);
                             }
                         });
                     return {
@@ -382,7 +382,7 @@
                 try {
                     return JSON.parse(e);
                 } catch (e) {
-                    return console.error(e), null;
+                    return (console.error(e), null);
                 }
             }
             class l {
@@ -437,7 +437,7 @@
                         let a = n(l);
                         if (!a) return null;
                         let s = null != (i = null == a ? void 0 : a.value) ? i : null;
-                        if ((null == a ? void 0 : a.expires) && Date.now() > new Date(a.expires).getTime()) return this.remove(e), null;
+                        if ((null == a ? void 0 : a.expires) && Date.now() > new Date(a.expires).getTime()) return (this.remove(e), null);
                         return s;
                     } catch (e) {
                         return null;
@@ -446,7 +446,7 @@
                 set(e, t, r) {
                     if ('number' == typeof (null == r ? void 0 : r.expires)) {
                         let e = new Date();
-                        e.setMilliseconds(e.getMilliseconds() + 864e5 * r.expires), (r.expires = e);
+                        (e.setMilliseconds(e.getMilliseconds() + 864e5 * r.expires), (r.expires = e));
                     }
                     let i = a('localStorage');
                     if (i)
@@ -469,9 +469,9 @@
                 u = r(29222);
             class g extends u.t {
                 constructor(e, t, { code: r = 'E_STORAGE', ...i } = {}) {
-                    super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: r, ...i }),
+                    (super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: r, ...i }),
                         (0, o._)(this, 'name', 'Storage Exception'),
-                        Object.setPrototypeOf(this, g.prototype);
+                        Object.setPrototypeOf(this, g.prototype));
                 }
             }
             class d {
@@ -488,7 +488,7 @@
                     throw new g(this.platform, this.type);
                 }
                 constructor(e, t) {
-                    (0, o._)(this, 'platform', ''), (0, o._)(this, 'type', ''), (this.platform = e), (this.type = t);
+                    ((0, o._)(this, 'platform', ''), (0, o._)(this, 'type', ''), (this.platform = e), (this.type = t));
                 }
             }
             class c {
@@ -616,7 +616,7 @@
                             let { library: t, user: r } = (0, s.M)(e);
                             if (r.isAuthorized) {
                                 let n = yield t.toggleArtistLike({ entityId: e.id, userId: r.account.data.uid });
-                                return (0, i._n)(e) && n === a.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), n;
+                                return ((0, i._n)(e) && n === a.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), n);
                             }
                         }),
                         toggleDislike() {
@@ -642,10 +642,10 @@
         },
         63849: (e, t, r) => {
             var i;
-            r.d(t, { K: () => i }),
+            (r.d(t, { K: () => i }),
                 (function (e) {
-                    (e.EXPLICIT = 'explicit'), (e.CLEAN = 'clean');
-                })(i || (i = {}));
+                    ((e.EXPLICIT = 'explicit'), (e.CLEAN = 'clean'));
+                })(i || (i = {})));
         },
         69757: (e, t, r) => {
             r.d(t, { e: () => a });
@@ -734,7 +734,7 @@
                 a = r(64605),
                 s = r(90404);
             !(function (e) {
-                (e.KIDS = 'kids'), (e.BOOKMATE = 'bookmate');
+                ((e.KIDS = 'kids'), (e.BOOKMATE = 'bookmate'));
             })(i || (i = {}));
             var o = r(63380),
                 u = r(15567),
@@ -841,7 +841,7 @@
                         let { library: t, user: r } = (0, u.M)(e);
                         if (r.isAuthorized) {
                             let i = yield t.toggleAlbumLike({ entityId: e.id, userId: r.account.data.uid });
-                            return (0, n._n)(e) && i === o.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), i;
+                            return ((0, n._n)(e) && i === o.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), i);
                         }
                     }),
                     togglePin: (0, n.L3)(function* () {
@@ -909,10 +909,10 @@
         },
         96151: (e, t, r) => {
             var i;
-            r.d(t, { Q: () => i }),
+            (r.d(t, { Q: () => i }),
                 (function (e) {
-                    (e.FROM_ALBUM_COVER = 'from-album-cover'), (e.FROM_ARTIST_PHOTOS = 'from-artist-photos'), (e.PIC = 'pic'), (e.MOSAIC = 'mosaic');
-                })(i || (i = {}));
+                    ((e.FROM_ALBUM_COVER = 'from-album-cover'), (e.FROM_ARTIST_PHOTOS = 'from-artist-photos'), (e.PIC = 'pic'), (e.MOSAIC = 'mosaic'));
+                })(i || (i = {})));
         },
         96218: (e, t, r) => {
             r.d(t, { O: () => n, s: () => i });

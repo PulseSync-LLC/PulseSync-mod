@@ -110,9 +110,9 @@
                                 objectPosY: M,
                                 objectsCount: P,
                             };
-                            a.qG.includes(A) && ((_.tabId = N), (_.tabPos = L), (_.isTabSelectedByDefault = C)),
+                            (a.qG.includes(A) && ((_.tabId = N), (_.tabPos = L), (_.isTabSelectedByDefault = C)),
                                 D && (_.skeletonId = D),
-                                Q && f && ((_.mainObjectType = f), (_.mainObjectId = Q));
+                                Q && f && ((_.mainObjectType = f), (_.mainObjectId = Q)));
                             let s = (0, i.Fx)({ params: _, logger: t, context: 'useSendEventOnBlockStarted' });
                             s && (0, i.er)(e.evgenInstance, s);
                         },
@@ -127,7 +127,7 @@
         6752: (e, t, n) => {
             n.d(t, { L: () => i });
             var r = {};
-            Object.defineProperty(r, '__esModule', { value: !0 }), (r.useReturnValue = void 0), (r.useReturnValue = (e) => e()), r.__esModule;
+            (Object.defineProperty(r, '__esModule', { value: !0 }), (r.useReturnValue = void 0), (r.useReturnValue = (e) => e()), r.__esModule);
             var i = r.useReturnValue;
         },
         9848: (e, t, n) => {
@@ -220,8 +220,8 @@
                 i = n(55178),
                 l = {
                     5663: (e, t, n) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
-                            (t.useIntersectionObserver = t.createIntersectionObserver = t.getElementNameByDataAttribute = t.isInViewportNow = t.defaultOptions = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                            (t.useIntersectionObserver = t.createIntersectionObserver = t.getElementNameByDataAttribute = t.isInViewportNow = t.defaultOptions = void 0));
                         let r = n(810),
                             { innerWidth: i = 0, innerHeight: l = 0 } = window;
                         function o(e) {
@@ -241,7 +241,7 @@
                             }, t);
                             return n;
                         }
-                        (t.defaultOptions = { threshold: 0, preflightCheck: !0 }),
+                        ((t.defaultOptions = { threshold: 0, preflightCheck: !0 }),
                             (t.isInViewportNow = o),
                             (t.getElementNameByDataAttribute = _),
                             (t.createIntersectionObserver = c),
@@ -258,8 +258,8 @@
                                                       let t = _(e.target);
                                                       if (t && T) {
                                                           if (d.current.has(t)) return;
-                                                          S((n) => ({ ...n, [t]: { isIntersecting: e.isIntersecting } })),
-                                                              l && e.isIntersecting && (d.current.add(t), T.unobserve(e.target));
+                                                          (S((n) => ({ ...n, [t]: { isIntersecting: e.isIntersecting } })),
+                                                              l && e.isIntersecting && (d.current.add(t), T.unobserve(e.target)));
                                                       }
                                                   }, s),
                                         [u],
@@ -287,7 +287,7 @@
                                     ),
                                     I
                                 );
-                            });
+                            }));
                     },
                     810: (e) => {
                         e.exports = r || (r = n.t(i, 2));
@@ -298,7 +298,7 @@
                     var n = o[t];
                     if (void 0 !== n) return n.exports;
                     var r = (o[t] = { exports: {} });
-                    return l[t](r, r.exports, e), r.exports;
+                    return (l[t](r, r.exports, e), r.exports);
                 })(5663);
             _.__esModule;
             var c = _.createIntersectionObserver;
@@ -376,12 +376,12 @@
                             from: a.W[N],
                             to: l,
                         };
-                        void 0 !== D && ((d.filterKey = D), (d.filterValue = U), (d.filterPos = B)),
+                        (void 0 !== D && ((d.filterKey = D), (d.filterValue = U), (d.filterPos = B)),
                             s.qG.includes(N) && ((d.tabId = O), (d.tabPos = R), (d.isTabSelectedByDefault = b)),
                             j && (d.skeletonId = j),
                             u && (d.deepLink = u),
                             M && g && ((d.mainObjectType = g), (d.mainObjectId = M)),
-                            G && (d.displayReasonId = G);
+                            G && (d.displayReasonId = G));
                         let T = (0, i.Fx)({ params: d, logger: t, context: 'useSendEventOnBlockNavigated' });
                         T && (0, i.QS)(e.evgenInstance, T);
                     },
@@ -613,7 +613,7 @@
                 l = {
                     5881: (e, t, n) => {
                         function r() {
-                            for (var e, t, n = 0, r = ''; n < arguments.length; )
+                            for (var e, t, n = 0, r = ''; n < arguments.length;)
                                 (e = arguments[n++]) &&
                                     (t = (function e(t) {
                                         var n,
@@ -628,11 +628,11 @@
                                     (r && (r += ' '), (r += t));
                             return r;
                         }
-                        n.r(t), n.d(t, { clsx: () => r, default: () => i });
+                        (n.r(t), n.d(t, { clsx: () => r, default: () => i }));
                         let i = r;
                     },
                     9829: (e, t, n) => {
-                        n.r(t), n.d(t, { default: () => r });
+                        (n.r(t), n.d(t, { default: () => r }));
                         let r = {
                             root: 'buOTZq_TKQOVyjMLrXvB',
                             block: 'BSPmaubc8UL2KHOMLV4A',
@@ -652,7 +652,7 @@
                             else r = t;
                             return { $$typeof: n, type: e, key: i, ref: void 0 !== (t = r.ref) ? t : null, props: r };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r));
                     },
                     4377: (e, t, n) => {
                         e.exports = n(9097);
@@ -663,7 +663,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Link = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Link = void 0));
                         let i = n(4377),
                             l = n(810),
                             o = n(5881),
@@ -735,19 +735,19 @@
                 var t = o[e];
                 if (void 0 !== t) return t.exports;
                 var n = (o[e] = { exports: {} });
-                return l[e].call(n.exports, n, n.exports, _), n.exports;
+                return (l[e].call(n.exports, n, n.exports, _), n.exports);
             }
-            (_.d = (e, t) => {
+            ((_.d = (e, t) => {
                 for (var n in t) _.o(t, n) && !_.o(e, n) && Object.defineProperty(e, n, { enumerable: !0, get: t[n] });
             }),
                 (_.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (_.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var c = {};
             (() => {
-                Object.defineProperty(c, 'X', { value: !0 }), (c.r = void 0);
+                (Object.defineProperty(c, 'X', { value: !0 }), (c.r = void 0));
                 var e = _(3937);
                 Object.defineProperty(c, 'r', {
                     enumerable: !0,
@@ -787,7 +787,7 @@
                             let { pageId: t, blockId: n } = e;
                             return (0, r.useMemo)(() => {
                                 let e = ['desktop'];
-                                return t && e.push(t.toLowerCase()), n && e.push(n.toLowerCase()), e.push('default'), e.join('-');
+                                return (t && e.push(t.toLowerCase()), n && e.push(n.toLowerCase()), e.push('default'), e.join('-'));
                             }, [n, t]);
                         })(t),
                         _ = ((e) => {
@@ -942,7 +942,7 @@
                 i = (e) =>
                     r.reduce((t, n) => {
                         let { queryKey: r, resultKey: i } = n;
-                        return 'string' == typeof e[r] && (t[i] = e[r]), t;
+                        return ('string' == typeof e[r] && (t[i] = e[r]), t);
                     }, {});
         },
     },

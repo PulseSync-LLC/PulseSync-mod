@@ -9,12 +9,12 @@
             let a = (e) => {
                 let t = (0, i.usePathname)(),
                     [n, a] = (0, o.useState)(!1);
-                (0, o.useEffect)(() => {
-                    window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t);
+                ((0, o.useEffect)(() => {
+                    (window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t));
                 }),
                     (0, o.useEffect)(() => {
                         window.Ya.Rum.spa.getLastSpaSubPage(t) && e && !n && (window.Ya.Rum.spa.finishDataLoading(t), window.Ya.Rum.spa.startDataRendering(t), a(!0));
-                    }, [e, n, t]);
+                    }, [e, n, t]));
             };
         },
         8097: (e, t, n) => {
@@ -295,11 +295,11 @@
                             objectPosX: E,
                             objectPosY: B,
                         };
-                        void 0 !== k && ((l.filterKey = k), (l.filterValue = R), (l.filterPos = M)),
+                        (void 0 !== k && ((l.filterKey = k), (l.filterValue = R), (l.filterPos = M)),
                             d.qG.includes(v) && ((l.tabId = y), (l.tabPos = h), (l.isTabSelectedByDefault = j)),
                             D && (l.skeletonId = D),
                             'string' == typeof A && 'string' == typeof L && ((l.mainObjectType = L), (l.mainObjectId = A)),
-                            z && (l.displayReasonId = z);
+                            z && (l.displayReasonId = z));
                         let c = (0, o.Fx)({ params: l, logger: e, context: 'useSendEventOnBlockShowedOrHidden' });
                         c && (i ? (0, o.Pf)(t.evgenInstance, c) : (0, o.nv)(t.evgenInstance, c));
                     },
@@ -315,7 +315,7 @@
                 a = {
                     5881: (e, t, n) => {
                         function i() {
-                            for (var e, t, n = 0, i = ''; n < arguments.length; )
+                            for (var e, t, n = 0, i = ''; n < arguments.length;)
                                 (e = arguments[n++]) &&
                                     (t = (function e(t) {
                                         var n,
@@ -330,11 +330,11 @@
                                     (i && (i += ' '), (i += t));
                             return i;
                         }
-                        n.r(t), n.d(t, { clsx: () => i, default: () => o });
+                        (n.r(t), n.d(t, { clsx: () => i, default: () => o }));
                         let o = i;
                     },
                     4831: (e, t, n) => {
-                        n.r(t), n.d(t, { default: () => i });
+                        (n.r(t), n.d(t, { default: () => i }));
                         let i = {
                             root: 'KL50tMDvfAdw_9MzcVht',
                             bottom: 'bL0wE1Bui8zpIZbvMVL3',
@@ -349,7 +349,7 @@
                         };
                     },
                     8346: (e, t, n) => {
-                        n.r(t), n.d(t, { default: () => i });
+                        (n.r(t), n.d(t, { default: () => i }));
                         let i = {
                             root: 'laBJlJAaqEVS0i_4Ot3l',
                             titleContainer: 'LmhA6nlLyzxwYIX31gYa',
@@ -367,15 +367,15 @@
                         };
                     },
                     6132: (e, t, n) => {
-                        n.r(t), n.d(t, { default: () => i });
+                        (n.r(t), n.d(t, { default: () => i }));
                         let i = { root: 'LizdJ2L0HW7JWOvPrfly' };
                     },
                     4517: (e, t, n) => {
-                        n.r(t), n.d(t, { default: () => i });
+                        (n.r(t), n.d(t, { default: () => i }));
                         let i = { root: 'eaYyesBmJL_NbkgoYR1c', focusable: 'uL1dD5rxgI4bPmfyMMe7' };
                     },
                     6951: (e, t, n) => {
-                        n.r(t), n.d(t, { default: () => i });
+                        (n.r(t), n.d(t, { default: () => i }));
                         let i = {
                             root_controls_xxs: 'tRaaBpDMg9Qu8v6gKjtn',
                             root_entity_xxs: 'M9zvtlcpLUVn6DKdcHhj',
@@ -398,7 +398,7 @@
                         };
                     },
                     2223: (e, t, n) => {
-                        n.r(t), n.d(t, { default: () => i });
+                        (n.r(t), n.d(t, { default: () => i }));
                         let i = {
                             root_size_xs: 'qJJ288377iHlWN_RXeEE',
                             root_size_s: '_sd8Q9d_Ttn0Ufe4ISWS',
@@ -414,7 +414,7 @@
                         };
                     },
                     5882: (e, t, n) => {
-                        n.r(t), n.d(t, { default: () => i });
+                        (n.r(t), n.d(t, { default: () => i }));
                         let i = {
                             root: '_MWOVuZRvUQdXKTMcOPx',
                             root_clamp: 'LezmJlldtbHWqU7l1950',
@@ -431,7 +431,7 @@
                             else i = t;
                             return { $$typeof: n, type: e, key: o, ref: void 0 !== (t = i.ref) ? t : null, props: i };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i));
                     },
                     4377: (e, t, n) => {
                         e.exports = n(9097);
@@ -442,7 +442,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.CardControls = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.CardControls = void 0));
                         let o = n(4377),
                             a = n(5881),
                             r = n(9e3),
@@ -490,7 +490,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.EntityCard = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.EntityCard = void 0));
                         let o = n(4377),
                             a = n(810),
                             r = n(5881),
@@ -564,7 +564,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Label = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Label = void 0));
                         let o = n(4377),
                             a = n(5881),
                             r = n(2582),
@@ -583,7 +583,7 @@
                         };
                     },
                     9e3: (e, t, n) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Label = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Label = void 0));
                         var i = n(2);
                         Object.defineProperty(t, 'Label', {
                             enumerable: !0,
@@ -598,7 +598,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.SROnly = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.SROnly = void 0));
                         let o = n(4377),
                             a = n(5881),
                             r = n(810),
@@ -612,7 +612,7 @@
                         };
                     },
                     3758: (e, t, n) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.SROnly = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.SROnly = void 0));
                         var i = n(2865);
                         Object.defineProperty(t, 'SROnly', {
                             enumerable: !0,
@@ -627,13 +627,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0));
                         let o = n(4377),
                             a = n(5881),
                             r = n(810),
                             l = n(4721),
                             s = i(n(6951));
-                        (t.CaptionComponent = (e) => {
+                        ((t.CaptionComponent = (e) => {
                             let { forwardRef: t, variant: n, type: i = 'text', size: r = 's', className: d, children: c, weight: u = 'medium', ...f } = e;
                             return (0, o.jsx)(l.Typography, {
                                 variant: n,
@@ -643,7 +643,7 @@
                                 children: c,
                             });
                         }),
-                            (t.Caption = (0, r.forwardRef)((e, n) => (0, o.jsx)(t.CaptionComponent, { forwardRef: n, ...e })));
+                            (t.Caption = (0, r.forwardRef)((e, n) => (0, o.jsx)(t.CaptionComponent, { forwardRef: n, ...e }))));
                     },
                     404: function (e, t, n) {
                         var i =
@@ -651,13 +651,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.HeadingComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.HeadingComponent = void 0));
                         let o = n(4377),
                             a = n(5881),
                             r = n(810),
                             l = n(4721),
                             s = i(n(2223));
-                        (t.HeadingComponent = (e) => {
+                        ((t.HeadingComponent = (e) => {
                             let { forwardRef: t, variant: n, weight: i = 'bold', size: r = 's', className: d, children: c, ...u } = e;
                             return (0, o.jsx)(l.Typography, {
                                 variant: n,
@@ -667,7 +667,7 @@
                                 children: c,
                             });
                         }),
-                            (t.Heading = (0, r.forwardRef)((e, n) => (0, o.jsx)(t.HeadingComponent, { forwardRef: n, ...e })));
+                            (t.Heading = (0, r.forwardRef)((e, n) => (0, o.jsx)(t.HeadingComponent, { forwardRef: n, ...e }))));
                     },
                     4721: function (e, t, n) {
                         var i =
@@ -675,7 +675,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0));
                         let o = n(4377),
                             a = n(5881),
                             r = n(810),
@@ -696,10 +696,10 @@
                                 children: r,
                             });
                         }
-                        (t.TypographyComponent = s), (t.Typography = (0, r.forwardRef)((e, t) => (0, o.jsx)(s, { forwardRef: t, ...e })));
+                        ((t.TypographyComponent = s), (t.Typography = (0, r.forwardRef)((e, t) => (0, o.jsx)(s, { forwardRef: t, ...e }))));
                     },
                     2582: (e, t, n) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.Caption = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.Caption = void 0));
                         var i = n(7743);
                         Object.defineProperty(t, 'Caption', {
                             enumerable: !0,
@@ -724,19 +724,19 @@
                 var t = r[e];
                 if (void 0 !== t) return t.exports;
                 var n = (r[e] = { exports: {} });
-                return a[e].call(n.exports, n, n.exports, l), n.exports;
+                return (a[e].call(n.exports, n, n.exports, l), n.exports);
             }
-            (l.d = (e, t) => {
+            ((l.d = (e, t) => {
                 for (var n in t) l.o(t, n) && !l.o(e, n) && Object.defineProperty(e, n, { enumerable: !0, get: t[n] });
             }),
                 (l.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (l.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var s = {};
             (() => {
-                Object.defineProperty(s, 'X$', { value: !0 }), (s.kk = s.m7 = void 0);
+                (Object.defineProperty(s, 'X$', { value: !0 }), (s.kk = s.m7 = void 0));
                 var e = l(440);
                 Object.defineProperty(s, 'm7', {
                     enumerable: !0,
@@ -790,7 +790,7 @@
                     d = (0, i.useContext)(a.B),
                     c = (0, i.useCallback)(
                         (i, o) => {
-                            e ? e(i, n ? o : void 0) : l(i, o), t && d.unobserveElement(s);
+                            (e ? e(i, n ? o : void 0) : l(i, o), t && d.unobserveElement(s));
                         },
                         [e, d, s, l, t, n],
                     );

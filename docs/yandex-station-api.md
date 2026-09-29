@@ -116,8 +116,8 @@ Authorization: OAuth <derived music_token>
 
 ```json
 {
-  "status": "ok",
-  "token": "<conversationToken>"
+    "status": "ok",
+    "token": "<conversationToken>"
 }
 ```
 
@@ -135,12 +135,12 @@ Diagnostic request:
 
 ```json
 {
-  "conversationToken": "...",
-  "id": "<uuid>",
-  "payload": {
-    "command": "softwareVersion"
-  },
-  "sentTime": 1710000000000
+    "conversationToken": "...",
+    "id": "<uuid>",
+    "payload": {
+        "command": "softwareVersion"
+    },
+    "sentTime": 1710000000000
 }
 ```
 

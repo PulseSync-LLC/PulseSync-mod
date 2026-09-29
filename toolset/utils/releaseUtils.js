@@ -247,12 +247,12 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
     }
 
     async function prepareCompressedAsarForUpload(sourcePath) {
-        const zstdOutputPath = await zstdUtils.ensureCompressedAsarArtifact(sourcePath)
+        const zstdOutputPath = await zstdUtils.ensureCompressedAsarArtifact(sourcePath);
         return {
             filePath: zstdOutputPath,
             compressionType: 'zstd',
             shouldCleanup: false,
-        }
+        };
     }
 
     async function sendAuthorizedJson(method, endpointPath, payload) {
@@ -313,10 +313,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         }
     }
 
-    async function uploadUnpacked({
-        sourcePath = undefined,
-        endpointPath = '/cdn/upload/unpacked',
-    } = {}) {
+    async function uploadUnpacked({ sourcePath = undefined, endpointPath = '/cdn/upload/unpacked' } = {}) {
         let tempZipPath = null;
 
         try {
@@ -518,13 +515,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         });
     }
 
-    async function release({
-        dest,
-        versions = undefined,
-        onlyUploadAppAsar = false,
-        onlyUploadUnpacked = false,
-        onlySendPatchNotes = false,
-    }) {
+    async function release({ dest, versions = undefined, onlyUploadAppAsar = false, onlyUploadUnpacked = false, onlySendPatchNotes = false }) {
         const exclusiveModes = [
             ['onlyUploadAppAsar', onlyUploadAppAsar],
             ['onlyUploadUnpacked', onlyUploadUnpacked],

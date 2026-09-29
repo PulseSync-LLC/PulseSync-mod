@@ -4,10 +4,10 @@
     {
         38126: (e, t, o) => {
             var r;
-            o.d(t, { r: () => r }),
+            (o.d(t, { r: () => r }),
                 (function (e) {
-                    (e.RU = 'ru'), (e.COM = 'com'), (e.KZ = 'kz'), (e.BY = 'by'), (e.UZ = 'uz');
-                })(r || (r = {}));
+                    ((e.RU = 'ru'), (e.COM = 'com'), (e.KZ = 'kz'), (e.BY = 'by'), (e.UZ = 'uz'));
+                })(r || (r = {})));
         },
         62016: (e, t, o) => {
             o.d(t, { config: () => c });

@@ -4,9 +4,9 @@
         3785: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { M: () => a }),
+            (i.d(t, { M: () => a }),
                 (function (e) {
-                    (e.MODAL = 'modal'),
+                    ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
                         (e.AGE_18 = 'age18'),
@@ -15,8 +15,8 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                        (e.SUBSTITUTED_ICON = 'substitutedIcon');
-                })(a || (a = {}));
+                        (e.SUBSTITUTED_ICON = 'substitutedIcon'));
+                })(a || (a = {})));
         },
         3796: (e, t, i) => {
             'use strict';
@@ -26,12 +26,12 @@
             let n = (e) => {
                 let t = (0, a.usePathname)(),
                     [i, n] = (0, r.useState)(!1);
-                (0, r.useEffect)(() => {
-                    window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t);
+                ((0, r.useEffect)(() => {
+                    (window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t));
                 }),
                     (0, r.useEffect)(() => {
                         window.Ya.Rum.spa.getLastSpaSubPage(t) && e && !i && (window.Ya.Rum.spa.finishDataLoading(t), window.Ya.Rum.spa.startDataRendering(t), n(!0));
-                    }, [e, i, t]);
+                    }, [e, i, t]));
             };
         },
         4820: (e, t, i) => {
@@ -97,7 +97,7 @@
                     p = null != u ? u : _({ id: 'play-queue.delete-from-queue' }),
                     g = (0, s.useCallback)(
                         (e) => {
-                            null == r || r(), e.stopPropagation();
+                            (null == r || r(), e.stopPropagation());
                         },
                         [r],
                     );
@@ -171,14 +171,14 @@
                         Q = W.hasPlus,
                         ee = !h.isRemoved && h.isAvailable && !B,
                         et = (0, u.c)(async () => {
-                            $ || h.isLiked || (Y(!0), null == K || K()), await q(), null == w || w(h.isLiked);
+                            ($ || h.isLiked || (Y(!0), null == K || K()), await q(), null == w || w(h.isLiked));
                         }),
                         ei = (0, u.c)((e) => {
                             e.stopPropagation();
                         }),
                         ea = (0, u.c)((e) => {
                             if ((e.stopPropagation(), V())) return void e.preventDefault();
-                            H.openTrackTrailer(h.id), Z(c.ky.Track, h.id);
+                            (H.openTrackTrailer(h.id), Z(c.ky.Track, h.id));
                         }),
                         er = (0, s.useMemo)(() => {
                             if (ee)
@@ -293,7 +293,7 @@
                     r = t[0];
                 return i.e(t[1]).then(() => i.t(r, 19));
             }
-            (r.keys = () => Object.keys(a)), (r.id = 12526), (e.exports = r);
+            ((r.keys = () => Object.keys(a)), (r.id = 12526), (e.exports = r));
         },
         12989: (e, t, i) => {
             'use strict';
@@ -344,11 +344,11 @@
                             objectPosX: M,
                             objectPosY: P,
                         };
-                        void 0 !== j && ((l.filterKey = j), (l.filterValue = E), (l.filterPos = w)),
+                        (void 0 !== j && ((l.filterKey = j), (l.filterValue = E), (l.filterPos = w)),
                             c.qG.includes(x) && ((l.tabId = f), (l.tabPos = k), (l.isTabSelectedByDefault = A)),
                             U && (l.skeletonId = U),
                             'string' == typeof L && 'string' == typeof I && ((l.mainObjectType = I), (l.mainObjectId = L)),
-                            z && (l.displayReasonId = z);
+                            z && (l.displayReasonId = z));
                         let d = (0, r.Fx)({ params: l, logger: e, context: 'useSendEventOnBlockShowedOrHidden' });
                         d && (a ? (0, r.Pf)(t.evgenInstance, d) : (0, r.nv)(t.evgenInstance, d));
                     },
@@ -521,9 +521,9 @@
         18870: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { $: () => a }),
+            (i.d(t, { $: () => a }),
                 (function (e) {
-                    (e.RU = 'ru'),
+                    ((e.RU = 'ru'),
                         (e.EN = 'en'),
                         (e.UK = 'uk'),
                         (e.BE = 'be'),
@@ -544,8 +544,8 @@
                         (e.EL = 'el'),
                         (e.RO = 'ro'),
                         (e.MO = 'mo'),
-                        (e.AR = 'ar');
-                })(a || (a = {}));
+                        (e.AR = 'ar'));
+                })(a || (a = {})));
         },
         20753: (e) => {
             e.exports = { root: 'DragAndDropIcon_root__OstQU', root_active: 'DragAndDropIcon_root_active__xOTKt' };
@@ -557,13 +557,13 @@
                     let i = window.document.querySelector('meta['.concat(e, '="').concat(t, '"]'));
                     if (i) return i;
                     let a = window.document.createElement('meta');
-                    return a.setAttribute(e, t), a;
+                    return (a.setAttribute(e, t), a);
                 },
                 r = (e) => {
                     let { title: t, description: i, openGraph: r } = e;
                     if (('string' == typeof t && (window.document.title = t), 'string' == typeof i)) {
                         let e = a('name', 'description');
-                        e.setAttribute('content', i), window.document.head.appendChild(e);
+                        (e.setAttribute('content', i), window.document.head.appendChild(e));
                     }
                     let n = '';
                     if (r) {
@@ -574,12 +574,12 @@
                         let s = a('property', 'og:title'),
                             l = a('property', 'og:description'),
                             o = a('property', 'og:image');
-                        s.setAttribute('content', e),
+                        (s.setAttribute('content', e),
                             l.setAttribute('content', t),
                             o.setAttribute('content', n),
                             window.document.head.appendChild(s),
                             window.document.head.appendChild(l),
-                            window.document.head.appendChild(o);
+                            window.document.head.appendChild(o));
                     }
                 };
         },
@@ -622,7 +622,7 @@
                     c = (0, a.useContext)(n.B),
                     d = (0, a.useCallback)(
                         (a, r) => {
-                            e ? e(a, i ? r : void 0) : l(a, r), t && c.unobserveElement(o);
+                            (e ? e(a, i ? r : void 0) : l(a, r), t && c.unobserveElement(o));
                         },
                         [e, c, o, l, t, i],
                     );
@@ -724,7 +724,7 @@
                         L = (0, _.N)().get(m.U2),
                         I = (0, c.c)(() => {
                             if (k) return k();
-                            N.canBack && N.back(), b();
+                            (N.canBack && N.back(), b());
                         }),
                         S = (null == T || null == (t = T.details) ? void 0 : t.url) && T.details.text,
                         j = (0, c.c)(() => {
@@ -737,13 +737,13 @@
                                     null != (e = null == i ? void 0 : i.entityKey)
                                         ? e
                                         : ''.concat(null == i ? void 0 : i.entityType, '_').concat(null == i ? void 0 : i.entityId);
-                            t ? L.set(v.c.ExEx, [...t, n], { expires: new Date(r) }) : L.set(v.c.ExEx, [n], { expires: new Date(r) }),
+                            (t ? L.set(v.c.ExEx, [...t, n], { expires: new Date(r) }) : L.set(v.c.ExEx, [n], { expires: new Date(r) }),
                                 null == k || k(),
-                                (null == i ? void 0 : i.onDisclaimerConfirmHandler) && i.onDisclaimerConfirmHandler();
+                                (null == i ? void 0 : i.onDisclaimerConfirmHandler) && i.onDisclaimerConfirmHandler());
                         }),
                         E = (0, c.c)(() => {
-                            (null == i ? void 0 : i.shouldHistoryBack) ? (null == k || k(), N.canBack && N.back(), b()) : null == k || k(),
-                                (null == i ? void 0 : i.onDisclaimerRejectHandler) && i.onDisclaimerRejectHandler();
+                            ((null == i ? void 0 : i.shouldHistoryBack) ? (null == k || k(), N.canBack && N.back(), b()) : null == k || k(),
+                                (null == i ? void 0 : i.onDisclaimerRejectHandler) && i.onDisclaimerRejectHandler());
                         });
                     (0, s.useEffect)(
                         () => () => {
@@ -1028,7 +1028,7 @@
         },
         34803: (e, t, i) => {
             'use strict';
-            i.r(t), i.d(t, { default: () => q });
+            (i.r(t), i.d(t, { default: () => q }));
             var a = i(32290),
                 r = i(21916),
                 n = i(63618),
@@ -1115,7 +1115,7 @@
                     Q = (0, A.W)(),
                     ee = (0, T.w)(),
                     et = (0, x.S)({ artist: null == (t = B.meta) ? void 0 : t.artist, shouldHistoryBack: !0 });
-                (0, $.G)(U),
+                ((0, $.G)(U),
                     (0, l.useEffect)(() => {
                         var e;
                         (null == (e = B.meta) ? void 0 : e.artist.isUnsafeLegal) && et();
@@ -1128,7 +1128,7 @@
                         [B],
                     ),
                     B.fullTracksListSubpage.isNotFound && (0, r.notFound)(),
-                    (0, y.J)(B.fullTracksListSubpage.isResolved);
+                    (0, y.J)(B.fullTracksListSubpage.isResolved));
                 let ei = (0, l.useMemo)(() => ({ Footer: () => (0, a.jsx)(S.A, { children: (0, a.jsx)(I.w, { className: G().footer }) }) }), []),
                     ea = (0, m.c)((e) => {
                         let t = [];
@@ -1220,7 +1220,7 @@
             var V = i(17024);
             let q = () => {
                 let e = (0, r.useSearchParams)().get('artistId');
-                return (e && (0, V.L)(e)) || (0, r.notFound)(), (0, a.jsx)(X, { artistId: e });
+                return ((e && (0, V.L)(e)) || (0, r.notFound)(), (0, a.jsx)(X, { artistId: e }));
             };
         },
         35587: (e) => {
@@ -1324,7 +1324,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), s.isOpened && (a.reset(), s.close()), r.modal.isOpened && r.modal.close();
+                                    (null == e || e.stopPropagation(), s.isOpened && (a.reset(), s.close()), r.modal.isOpened && r.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     n.modal.isOpened && (n.modal.close(), n.reset());
@@ -1334,11 +1334,11 @@
                         })({
                             artist: t,
                             callback: (0, g.c)((e) => {
-                                T && y.isOpened && y.close(), N(e);
+                                (T && y.isOpened && y.close(), N(e));
                             }),
                         }),
                         S = (0, g.c)((e) => {
-                            L({ to: _.QT.ArtistScreen }), null == b || b(), I(e);
+                            (L({ to: _.QT.ArtistScreen }), null == b || b(), I(e));
                         });
                     return i && !t.various
                         ? (0, a.jsx)(k.N, {
@@ -1555,7 +1555,7 @@
                         } = (0, o.g)(),
                         w = 1 === i.length,
                         R = (0, s.useCallback)((e) => {
-                            S(!0), e.preventDefault();
+                            (S(!0), e.preventDefault());
                         }, []),
                         O = (0, s.useMemo)(() => {
                             let e = i;
@@ -1625,7 +1625,7 @@
                     return (e, t) => {
                         let n = null == r ? void 0 : r[e.id],
                             s = '';
-                        return (Array.isArray(n) || 'string' == typeof n) && (s = new a.S(n, i).format(t)), Array.isArray(s) ? s.join('') : s;
+                        return ((Array.isArray(n) || 'string' == typeof n) && (s = new a.S(n, i).format(t)), Array.isArray(s) ? s.join('') : s);
                     };
                 };
         },
@@ -1801,7 +1801,7 @@
                     r = t[0];
                 return i.e(t[1]).then(() => i.t(r, 19));
             }
-            (r.keys = () => Object.keys(a)), (r.id = 46646), (e.exports = r);
+            ((r.keys = () => Object.keys(a)), (r.id = 46646), (e.exports = r));
         },
         47216: (e, t, i) => {
             'use strict';
@@ -2040,7 +2040,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [s, c, d];
-                                    return 'ru' === n && e.push(o), e.push(u), e;
+                                    return ('ru' === n && e.push(o), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [s, c, d, u];
@@ -2175,11 +2175,11 @@
                                 let m = { ...(0, u.HO)(n), url: n.url, isLiked: !n.isLiked };
                                 i(!0);
                                 let p = await n.toggleLike();
-                                i(!1),
+                                (i(!1),
                                     c &&
                                         (p === _.f.OK
                                             ? e((0, a.jsx)(x, { withLink: o, album: m }), { containerId: l.u.INFO })
-                                            : e((0, a.jsx)(d.h, { error: s({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
+                                            : e((0, a.jsx)(d.h, { error: s({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR })));
                             });
                         })(),
                         { pageAlbumId: f } = (0, s.T)();
@@ -2272,7 +2272,7 @@
                         };
                     })(),
                     C = (0, s.useCallback)(() => {
-                        A(), (window.location.href = x.Z.main.href);
+                        (A(), (window.location.href = x.Z.main.href));
                     }, [A]),
                     { contentRef: y } = (0, h.g)();
                 return (0, a.jsxs)('div', {
@@ -2655,7 +2655,7 @@
                     try {
                         this.dictionary = await (0, d.M)(e);
                     } catch (t) {
-                        t instanceof Error && this.logger.error(t, { language: e }), (this.dictionary = {});
+                        (t instanceof Error && this.logger.error(t, { language: e }), (this.dictionary = {}));
                     }
                     return this.dictionary;
                 }
@@ -2749,7 +2749,7 @@
                         );
                     }, [t, i]),
                     C = (0, c.c)((e) => {
-                        n.modal.isOpened && n.modal.close(), k({ to: l.QT.ArtistScreen }), x(e);
+                        (n.modal.isOpened && n.modal.close(), k({ to: l.QT.ArtistScreen }), x(e));
                     });
                 return (0, a.jsxs)(a.Fragment, {
                     children: [
@@ -2880,10 +2880,10 @@
         92013: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { T: () => a }),
+            (i.d(t, { T: () => a }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(a || (a = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(a || (a = {})));
         },
         92102: (e, t, i) => {
             'use strict';
@@ -2972,7 +2972,7 @@
                         if (!$()) {
                             if (V) return void D();
                             if (J) return void W.open();
-                            ei || b || (ea(!0), null == et || et()), Z(), K(!b), null == j || j(!b);
+                            (ei || b || (ea(!0), null == et || et()), Z(), K(!b), null == j || j(!b));
                         }
                     }),
                     en = (0, l.c)(() => {
@@ -2981,7 +2981,7 @@
                     }),
                     es = (0, l.c)((e) => {
                         if (!n.isAvailable && !n.hasModalAccess) {
-                            O && n.isAvailableOnlyForPlus && D(), q && n.isAvailableOnlyForPlus && W.open();
+                            (O && n.isAvailableOnlyForPlus && D(), q && n.isAvailableOnlyForPlus && W.open());
                             return;
                         }
                         if (V) return void D();
@@ -3013,19 +3013,19 @@
             'use strict';
             i.d(t, { W: () => a });
             var a = (function (e) {
-                return (e.APP = 'app'), (e.SUMMARY_LARGE_IMAGE = 'summary_large_image'), e;
+                return ((e.APP = 'app'), (e.SUMMARY_LARGE_IMAGE = 'summary_large_image'), e);
             })({});
         },
         98350: (e, t, i) => {
             'use strict';
             i.d(t, { X: () => a });
             var a = (function (e) {
-                return (e.PLAYLIST = 'playlist'), (e.ALBUM = 'album'), e;
+                return ((e.PLAYLIST = 'playlist'), (e.ALBUM = 'album'), e);
             })({});
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 3183, 7972, 8868, 7231, 6347, 9763, 6639, 7258, 6986, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 3266, 6477, 7275,
@@ -3033,6 +3033,6 @@
             ],
             () => e((e.s = 55379)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

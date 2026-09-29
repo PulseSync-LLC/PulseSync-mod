@@ -118,7 +118,7 @@
                                 if (!k.onTabChange || e === k.value) return;
                                 k.onTabChange(e);
                                 let i = null == (t = n.genres[e]) ? void 0 : t.id;
-                                n.setFilter(i), null == W || W.scrollTo({ top: 0 });
+                                (n.setFilter(i), null == W || W.scrollTo({ top: 0 }));
                             },
                             [n, k, W],
                         ),
@@ -164,15 +164,15 @@
                         n.filter && V();
                     }, [n.filter, V]);
                     let U = (0, r.useCallback)(async () => {
-                        await n.getGenres(), V();
+                        (await n.getGenres(), V());
                     }, [n, V]);
-                    (0, r.useEffect)(() => {
+                    ((0, r.useEffect)(() => {
                         n.modal.isOpened && U();
                     }, [n, n.modal.isOpened, U]),
                         (0, r.useEffect)(() => {
                             n.loadingState === x.G.REJECT &&
                                 (n.modal.close(), j((0, s.jsx)(z.h, { error: i({ id: 'error-messages.error-load-wizard' }) }), { containerId: p.u.ERROR }));
-                        }, [n, n.getGenres, n.loadingState, i, j]);
+                        }, [n, n.getGenres, n.loadingState, i, j]));
                     let K = (0, r.useMemo)(
                             () =>
                                 (0, s.jsx)(f.DZ, {
@@ -186,8 +186,8 @@
                             [],
                         ),
                         Z = (0, r.useCallback)(async () => {
-                            n.selectedArtistsCounter < 3 ? n.getArtists() : (await n.finish()) === S.F.OK && (await R.getSettings(), await (null == t ? void 0 : t())),
-                                n.modal.close();
+                            (n.selectedArtistsCounter < 3 ? n.getArtists() : (await n.finish()) === S.F.OK && (await R.getSettings(), await (null == t ? void 0 : t())),
+                                n.modal.close());
                         }, [t, R, n]);
                     return (
                         (0, r.useEffect)(
@@ -497,7 +497,7 @@
                             t = Math.round((Date.now() - h) * 100) / 100,
                             s = t / 16,
                             l = (e, t) => {
-                                for (e = String(e); e.length < t; ) e = ' ' + e;
+                                for (e = String(e); e.length < t;) e = ' ' + e;
                                 return e;
                             };
                         console.info(
@@ -509,7 +509,7 @@
                             null == i ? void 0 : i.key,
                         );
                     }
-                    return null == (a = null == i ? void 0 : i.onChange) || a.call(i, s), s;
+                    return (null == (a = null == i ? void 0 : i.onChange) || a.call(i, s), s);
                 }
                 return (
                     (n.updateDeps = (e) => {
@@ -525,7 +525,7 @@
             let o = (e, t, i) => {
                     let s;
                     return function (...l) {
-                        e.clearTimeout(s), (s = e.setTimeout(() => t.apply(this, l), i));
+                        (e.clearTimeout(s), (s = e.setTimeout(() => t.apply(this, l), i)));
                     };
                 },
                 a = (e) => e,
@@ -598,16 +598,16 @@
                                   ),
                         r = (s) => () => {
                             let { horizontal: r, isRtl: o } = e.options;
-                            (l = r ? i.scrollLeft * ((o && -1) || 1) : i.scrollTop), n(), t(l, s);
+                            ((l = r ? i.scrollLeft * ((o && -1) || 1) : i.scrollTop), n(), t(l, s));
                         },
                         a = r(!0),
                         d = r(!1);
-                    d(), i.addEventListener('scroll', a, c);
+                    (d(), i.addEventListener('scroll', a, c));
                     let h = e.options.useScrollendEvent && m;
                     return (
                         h && i.addEventListener('scrollend', d, c),
                         () => {
-                            i.removeEventListener('scroll', a), h && i.removeEventListener('scrollend', d);
+                            (i.removeEventListener('scroll', a), h && i.removeEventListener('scrollend', d));
                         }
                     );
                 },
@@ -628,16 +628,16 @@
                                       e.options.isScrollingResetDelay,
                                   ),
                         r = (s) => () => {
-                            (l = i[e.options.horizontal ? 'scrollX' : 'scrollY']), n(), t(l, s);
+                            ((l = i[e.options.horizontal ? 'scrollX' : 'scrollY']), n(), t(l, s));
                         },
                         a = r(!0),
                         d = r(!1);
-                    d(), i.addEventListener('scroll', a, c);
+                    (d(), i.addEventListener('scroll', a, c));
                     let h = e.options.useScrollendEvent && m;
                     return (
                         h && i.addEventListener('scrollend', d, c),
                         () => {
-                            i.removeEventListener('scroll', a), h && i.removeEventListener('scrollend', d);
+                            (i.removeEventListener('scroll', a), h && i.removeEventListener('scrollend', d));
                         }
                     );
                 },
@@ -658,7 +658,7 @@
                 };
             class b {
                 constructor(e) {
-                    (this.unsubs = []),
+                    ((this.unsubs = []),
                         (this.scrollElement = null),
                         (this.targetWindow = null),
                         (this.isScrolling = !1),
@@ -688,7 +688,7 @@
                             return {
                                 disconnect: () => {
                                     var i;
-                                    null == (i = t()) || i.disconnect(), (e = null);
+                                    (null == (i = t()) || i.disconnect(), (e = null));
                                 },
                                 observe: (e) => {
                                     var i;
@@ -702,7 +702,7 @@
                         })()),
                         (this.range = null),
                         (this.setOptions = (e) => {
-                            Object.entries(e).forEach(([t, i]) => {
+                            (Object.entries(e).forEach(([t, i]) => {
                                 void 0 === i && delete e[t];
                             }),
                                 (this.options = {
@@ -730,7 +730,7 @@
                                     useScrollendEvent: !1,
                                     useAnimationFrameWithResizeObserver: !1,
                                     ...e,
-                                });
+                                }));
                         }),
                         (this.notify = (e) => {
                             var t, i;
@@ -748,11 +748,11 @@
                             },
                         )),
                         (this.cleanup = () => {
-                            this.unsubs.filter(Boolean).forEach((e) => e()),
+                            (this.unsubs.filter(Boolean).forEach((e) => e()),
                                 (this.unsubs = []),
                                 this.observer.disconnect(),
                                 (this.scrollElement = null),
-                                (this.targetWindow = null);
+                                (this.targetWindow = null));
                         }),
                         (this._didMount = () => () => {
                             this.cleanup();
@@ -762,7 +762,7 @@
                             let t = this.options.enabled ? this.options.getScrollElement() : null;
                             if (this.scrollElement !== t) {
                                 if ((this.cleanup(), !t)) return void this.maybeNotify();
-                                (this.scrollElement = t),
+                                ((this.scrollElement = t),
                                     this.scrollElement && 'ownerDocument' in this.scrollElement
                                         ? (this.targetWindow = this.scrollElement.ownerDocument.defaultView)
                                         : (this.targetWindow = (null == (e = this.scrollElement) ? void 0 : e.window) ?? null),
@@ -772,18 +772,18 @@
                                     this._scrollToOffset(this.getScrollOffset(), { adjustments: void 0, behavior: void 0 }),
                                     this.unsubs.push(
                                         this.options.observeElementRect(this, (e) => {
-                                            (this.scrollRect = e), this.maybeNotify();
+                                            ((this.scrollRect = e), this.maybeNotify());
                                         }),
                                     ),
                                     this.unsubs.push(
                                         this.options.observeElementOffset(this, (e, t) => {
-                                            (this.scrollAdjustments = 0),
+                                            ((this.scrollAdjustments = 0),
                                                 (this.scrollDirection = t ? (this.getScrollOffset() < e ? 'forward' : 'backward') : null),
                                                 (this.scrollOffset = e),
                                                 (this.isScrolling = t),
-                                                this.maybeNotify();
+                                                this.maybeNotify());
                                         }),
-                                    );
+                                    ));
                             }
                         }),
                         (this.getSize = () =>
@@ -817,7 +817,7 @@
                         (this.getMeasurements = n(
                             () => [this.getMeasurementOptions(), this.itemSizeCache],
                             ({ count: e, paddingStart: t, scrollMargin: i, getItemKey: s, enabled: l }, n) => {
-                                if (!l) return (this.measurementsCache = []), this.itemSizeCache.clear(), [];
+                                if (!l) return ((this.measurementsCache = []), this.itemSizeCache.clear(), []);
                                 0 === this.measurementsCache.length &&
                                     ((this.measurementsCache = this.options.initialMeasurementsCache),
                                     this.measurementsCache.forEach((e) => {
@@ -836,7 +836,7 @@
                                         u = r ? r.lane : l % this.options.lanes;
                                     o[l] = { index: l, start: a, size: h, end: c, key: e, lane: u };
                                 }
-                                return (this.measurementsCache = o), o;
+                                return ((this.measurementsCache = o), o);
                             },
                             { key: !1, debug: () => this.options.debug },
                         )),
@@ -849,19 +849,19 @@
                                               let l = e.length - 1,
                                                   n = C(0, l, (t) => e[t].start, i),
                                                   r = n;
-                                              if (1 === s) for (; r < l && e[r].end < i + t; ) r++;
+                                              if (1 === s) for (; r < l && e[r].end < i + t;) r++;
                                               else if (s > 1) {
                                                   let o = Array(s).fill(0);
-                                                  for (; r < l && o.some((e) => e < i + t); ) {
+                                                  for (; r < l && o.some((e) => e < i + t);) {
                                                       let t = e[r];
-                                                      (o[t.lane] = t.end), r++;
+                                                      ((o[t.lane] = t.end), r++);
                                                   }
                                                   let a = Array(s).fill(i + t);
-                                                  for (; n > 0 && a.some((e) => e >= i); ) {
+                                                  for (; n > 0 && a.some((e) => e >= i);) {
                                                       let t = e[n];
-                                                      (a[t.lane] = t.start), n--;
+                                                      ((a[t.lane] = t.start), n--);
                                                   }
-                                                  (n = Math.max(0, n - (n % s))), (r = Math.min(l, r + (s - 1 - (r % s))));
+                                                  ((n = Math.max(0, n - (n % s))), (r = Math.min(l, r + (s - 1 - (r % s)))));
                                               }
                                               return { startIndex: n, endIndex: r };
                                           })({ measurements: e, outerSize: t, scrollOffset: i, lanes: s })
@@ -893,8 +893,8 @@
                             if (!s) return;
                             let l = s.key,
                                 n = this.elementsCache.get(l);
-                            n !== e && (n && this.observer.unobserve(n), this.observer.observe(e), this.elementsCache.set(l, e)),
-                                e.isConnected && this.resizeItem(i, this.options.measureElement(e, t, this));
+                            (n !== e && (n && this.observer.unobserve(n), this.observer.observe(e), this.elementsCache.set(l, e)),
+                                e.isConnected && this.resizeItem(i, this.options.measureElement(e, t, this)));
                         }),
                         (this.resizeItem = (e, t) => {
                             let i = this.measurementsCache[e];
@@ -935,7 +935,7 @@
                         (this.getOffsetForAlignment = (e, t, i = 0) => {
                             let s = this.getSize(),
                                 l = this.getScrollOffset();
-                            'auto' === t && (t = e >= l + s ? 'end' : 'start'), 'center' === t ? (e += (i - s) / 2) : 'end' === t && (e -= s);
+                            ('auto' === t && (t = e >= l + s ? 'end' : 'start'), 'center' === t ? (e += (i - s) / 2) : 'end' === t && (e -= s));
                             let n = this.options.horizontal ? 'scrollWidth' : 'scrollHeight';
                             return Math.max(
                                 Math.min(
@@ -971,18 +971,18 @@
                                 (this.targetWindow.clearTimeout(this.scrollToIndexTimeoutId), (this.scrollToIndexTimeoutId = null));
                         }),
                         (this.scrollToOffset = (e, { align: t = 'start', behavior: i } = {}) => {
-                            this.cancelScrollToIndex(),
+                            (this.cancelScrollToIndex(),
                                 'smooth' === i && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.'),
-                                this._scrollToOffset(this.getOffsetForAlignment(e, t), { adjustments: void 0, behavior: i });
+                                this._scrollToOffset(this.getOffsetForAlignment(e, t), { adjustments: void 0, behavior: i }));
                         }),
                         (this.scrollToIndex = (e, { align: t = 'auto', behavior: i } = {}) => {
-                            (e = Math.max(0, Math.min(e, this.options.count - 1))),
+                            ((e = Math.max(0, Math.min(e, this.options.count - 1))),
                                 this.cancelScrollToIndex(),
-                                'smooth' === i && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.');
+                                'smooth' === i && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.'));
                             let s = this.getOffsetForIndex(e, t);
                             if (!s) return;
                             let [l, n] = s;
-                            this._scrollToOffset(l, { adjustments: void 0, behavior: i }),
+                            (this._scrollToOffset(l, { adjustments: void 0, behavior: i }),
                                 'smooth' !== i &&
                                     this.isDynamicMode() &&
                                     this.targetWindow &&
@@ -991,12 +991,12 @@
                                             let [t] = r(this.getOffsetForIndex(e, n));
                                             1 > Math.abs(t - this.getScrollOffset()) || this.scrollToIndex(e, { align: n, behavior: i });
                                         } else this.scrollToIndex(e, { align: n, behavior: i });
-                                    }));
+                                    })));
                         }),
                         (this.scrollBy = (e, { behavior: t } = {}) => {
-                            this.cancelScrollToIndex(),
+                            (this.cancelScrollToIndex(),
                                 'smooth' === t && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.'),
-                                this._scrollToOffset(this.getScrollOffset() + e, { adjustments: void 0, behavior: t });
+                                this._scrollToOffset(this.getScrollOffset() + e, { adjustments: void 0, behavior: t }));
                         }),
                         (this.getTotalSize = () => {
                             var e;
@@ -1007,9 +1007,9 @@
                             else {
                                 let e = Array(this.options.lanes).fill(null),
                                     s = i.length - 1;
-                                for (; s > 0 && e.some((e) => null === e); ) {
+                                for (; s > 0 && e.some((e) => null === e);) {
                                     let t = i[s];
-                                    null === e[t.lane] && (e[t.lane] = t.end), s--;
+                                    (null === e[t.lane] && (e[t.lane] = t.end), s--);
                                 }
                                 t = Math.max(...e.filter((e) => null !== e));
                             }
@@ -1019,13 +1019,13 @@
                             this.options.scrollToFn(e, { behavior: i, adjustments: t }, this);
                         }),
                         (this.measure = () => {
-                            (this.itemSizeCache = new Map()), this.notify(!1);
+                            ((this.itemSizeCache = new Map()), this.notify(!1));
                         }),
-                        this.setOptions(e);
+                        this.setOptions(e));
                 }
             }
             let C = (e, t, i, s) => {
-                    for (; e <= t; ) {
+                    for (; e <= t;) {
                         let l = ((e + t) / 2) | 0,
                             n = i(l);
                         if (n < s) e = l + 1;
@@ -1043,11 +1043,11 @@
                         ...e,
                         onChange: (i, s) => {
                             var n;
-                            s ? (0, l.flushSync)(t) : t(), null == (n = e.onChange) || n.call(e, i, s);
+                            (s ? (0, l.flushSync)(t) : t(), null == (n = e.onChange) || n.call(e, i, s));
                         },
                     },
                     [n] = s.useState(() => new b(i));
-                return n.setOptions(i), w(() => n._didMount(), []), w(() => n._willUpdate()), n;
+                return (n.setOptions(i), w(() => n._didMount(), []), w(() => n._willUpdate()), n);
             }
             function x(e) {
                 return S({ observeElementRect: h, observeElementOffset: f, scrollToFn: _, ...e });

@@ -1,6 +1,13 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
-exports.corsHandler = exports.isUrlAllowed = exports.getAllowedUrls = exports.setAllowedUrls = exports.addAllowedUrls = exports.DIRECT_URLS = exports.METRIKA_URLS = void 0;
+exports.corsHandler =
+    exports.isUrlAllowed =
+    exports.getAllowedUrls =
+    exports.setAllowedUrls =
+    exports.addAllowedUrls =
+    exports.DIRECT_URLS =
+    exports.METRIKA_URLS =
+        void 0;
 const url = require('url');
 const config_js_1 = require('../../../config.js');
 const cors_js_1 = require('../../../constants/cors.js');
@@ -15,7 +22,18 @@ exports.DIRECT_URLS = DIRECT_URLS;
 
 const LOCAL_IPS = ['http://192.168.0.210', 'https://192.168.0.210'];
 const STATIC_ALLOWED_URLS = METRIKA_URLS.concat(DIRECT_URLS, LOCAL_IPS);
-const WILDCARD_HOSTS = ['yandex.ru', 'yandex.net', 'yastatic.net', "yastatic-net.ru", 'lrclib.net', 'passport.yandex.ru', 'ws.audioscrobbler.com', 'www.last.fm', 'last.fm', "lastfm-img.freetls.fastly.net"];
+const WILDCARD_HOSTS = [
+    'yandex.ru',
+    'yandex.net',
+    'yastatic.net',
+    'yastatic-net.ru',
+    'lrclib.net',
+    'passport.yandex.ru',
+    'ws.audioscrobbler.com',
+    'www.last.fm',
+    'last.fm',
+    'lastfm-img.freetls.fastly.net',
+];
 
 const ACCESS_CONTROL_ALLOW_ORIGIN_HEADER = 'access-control-allow-origin';
 const NEW_HEADER_VALUE = [`${config_js_1.config.app.appProtocol}://${config_js_1.config.app.appHostname}`];

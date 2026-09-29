@@ -42,8 +42,8 @@
                         if (t instanceof RegExp) {
                             var o;
                             if (!a) return t;
-                            for (var n = /\((?:\?<(.*?)>)?(?!\?)/g, l = 0, u = n.exec(t.source); u; )
-                                a.push({ name: u[1] || l++, prefix: '', suffix: '', modifier: '', pattern: '' }), (u = n.exec(t.source));
+                            for (var n = /\((?:\?<(.*?)>)?(?!\?)/g, l = 0, u = n.exec(t.source); u;)
+                                (a.push({ name: u[1] || l++, prefix: '', suffix: '', modifier: '', pattern: '' }), (u = n.exec(t.source)));
                             return t;
                         }
                         return Array.isArray(t)
@@ -100,11 +100,11 @@
                                           else g += '(?:'.concat(b).concat(y, ')').concat(k.modifier);
                                       }
                                   }
-                                  if (void 0 === l || l) o || (g += ''.concat(p, '?')), (g += a.endsWith ? '(?='.concat(m, ')') : '$');
+                                  if (void 0 === l || l) (o || (g += ''.concat(p, '?')), (g += a.endsWith ? '(?='.concat(m, ')') : '$'));
                                   else {
                                       var w = e[e.length - 1],
                                           x = 'string' == typeof w ? p.indexOf(w[w.length - 1]) > -1 : void 0 === w;
-                                      o || (g += '(?:'.concat(p, '(?=').concat(m, '))?')), x || (g += '(?='.concat(p, '|').concat(m, ')'));
+                                      (o || (g += '(?:'.concat(p, '(?=').concat(m, '))?')), x || (g += '(?='.concat(p, '|').concat(m, ')')));
                                   }
                                   return new RegExp(g, r(a));
                               })(
@@ -112,7 +112,7 @@
                                       void 0 === t && (t = {});
                                       for (
                                           var a = (function (e) {
-                                                  for (var t = [], a = 0; a < e.length; ) {
+                                                  for (var t = [], a = 0; a < e.length;) {
                                                       var s = e[a];
                                                       if ('*' === s || '+' === s || '?' === s) {
                                                           t.push({ type: 'MODIFIER', index: a, value: e[a++] });
@@ -131,7 +131,7 @@
                                                           continue;
                                                       }
                                                       if (':' === s) {
-                                                          for (var r = '', i = a + 1; i < e.length; ) {
+                                                          for (var r = '', i = a + 1; i < e.length;) {
                                                               var o = e.charCodeAt(i);
                                                               if ((o >= 48 && o <= 57) || (o >= 65 && o <= 90) || (o >= 97 && o <= 122) || 95 === o) {
                                                                   r += e[i++];
@@ -140,7 +140,7 @@
                                                               break;
                                                           }
                                                           if (!r) throw TypeError('Missing parameter name at '.concat(a));
-                                                          t.push({ type: 'NAME', index: a, value: r }), (a = i);
+                                                          (t.push({ type: 'NAME', index: a, value: r }), (a = i));
                                                           continue;
                                                       }
                                                       if ('(' === s) {
@@ -148,7 +148,7 @@
                                                               l = '',
                                                               i = a + 1;
                                                           if ('?' === e[i]) throw TypeError('Pattern cannot start with "?" at '.concat(i));
-                                                          for (; i < e.length; ) {
+                                                          for (; i < e.length;) {
                                                               if ('\\' === e[i]) {
                                                                   l += e[i++] + e[i++];
                                                                   continue;
@@ -164,12 +164,12 @@
                                                           }
                                                           if (n) throw TypeError('Unbalanced pattern at '.concat(a));
                                                           if (!l) throw TypeError('Missing pattern at '.concat(a));
-                                                          t.push({ type: 'PATTERN', index: a, value: l }), (a = i);
+                                                          (t.push({ type: 'PATTERN', index: a, value: l }), (a = i));
                                                           continue;
                                                       }
                                                       t.push({ type: 'CHAR', index: a, value: e[a++] });
                                                   }
-                                                  return t.push({ type: 'END', index: a, value: '' }), t;
+                                                  return (t.push({ type: 'END', index: a, value: '' }), t);
                                               })(e),
                                               r = t.prefixes,
                                               i = void 0 === r ? './' : r,
@@ -191,7 +191,7 @@
                                                   throw TypeError('Unexpected '.concat(r, ' at ').concat(i, ', expected ').concat(e));
                                               },
                                               p = function () {
-                                                  for (var e, t = ''; (e = d('CHAR') || d('ESCAPED_CHAR')); ) t += e;
+                                                  for (var e, t = ''; (e = d('CHAR') || d('ESCAPED_CHAR'));) t += e;
                                                   return t;
                                               },
                                               g = function (e) {
@@ -208,16 +208,15 @@
                                                   return !a || g(a) ? '[^'.concat(s(n), ']+?') : '(?:(?!'.concat(s(a), ')[^').concat(s(n), '])+?');
                                               };
                                           c < a.length;
-
                                       ) {
                                           var k = d('CHAR'),
                                               b = d('NAME'),
                                               y = d('PATTERN');
                                           if (b || y) {
                                               var v = k || '';
-                                              -1 === i.indexOf(v) && ((h += v), (v = '')),
+                                              (-1 === i.indexOf(v) && ((h += v), (v = '')),
                                                   h && (l.push(h), (h = '')),
-                                                  l.push({ name: b || u++, prefix: v, suffix: '', pattern: y || f(v), modifier: d('MODIFIER') || '' });
+                                                  l.push({ name: b || u++, prefix: v, suffix: '', pattern: y || f(v), modifier: d('MODIFIER') || '' }));
                                               continue;
                                           }
                                           var w = k || d('ESCAPED_CHAR');
@@ -230,8 +229,14 @@
                                                   x = d('NAME') || '',
                                                   S = d('PATTERN') || '',
                                                   j = p();
-                                              m('CLOSE'),
-                                                  l.push({ name: x || (S ? u++ : ''), pattern: x && !S ? f(v) : S, prefix: v, suffix: j, modifier: d('MODIFIER') || '' });
+                                              (m('CLOSE'),
+                                                  l.push({
+                                                      name: x || (S ? u++ : ''),
+                                                      pattern: x && !S ? f(v) : S,
+                                                      prefix: v,
+                                                      suffix: j,
+                                                      modifier: d('MODIFIER') || '',
+                                                  }));
                                               continue;
                                           }
                                           m('END');
@@ -303,10 +308,10 @@
                     })(h((a = null != e ? c(p(e)) : {}), 'default', { value: e, enumerable: !0 }), e))(
                     ((e, t) =>
                         function () {
-                            return t || (0, e[m(e)[0]])((t = { exports: {} }).exports, t), t.exports;
+                            return (t || (0, e[m(e)[0]])((t = { exports: {} }).exports, t), t.exports);
                         })({
                         'node_modules/.pnpm/cookie@1.1.1/node_modules/cookie/dist/index.js'(e) {
-                            Object.defineProperty(e, '__esModule', { value: !0 }),
+                            (Object.defineProperty(e, '__esModule', { value: !0 }),
                                 (e.parseCookie = l),
                                 (e.parse = l),
                                 (e.stringifyCookie = function (e, s) {
@@ -331,7 +336,7 @@
                                         o = h(e, 0, r),
                                         n = -1 === o ? { name: '', value: a(d(e, 0, r)) } : { name: d(e, 0, o), value: a(d(e, o + 1, r)) },
                                         l = r + 1;
-                                    for (; l < s; ) {
+                                    for (; l < s;) {
                                         let t = c(e, l, s),
                                             a = h(e, l, t),
                                             r = -1 === a ? d(e, l, t) : d(e, l, a),
@@ -375,7 +380,7 @@
                                     return n;
                                 }),
                                 (e.stringifySetCookie = u),
-                                (e.serialize = u);
+                                (e.serialize = u));
                             var t = /^[\u0021-\u003A\u003C\u003E-\u007E]+$/,
                                 a = /^[\u0021-\u003A\u003C-\u007E]*$/,
                                 s = /^([.]?[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)([.][a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i,
@@ -384,7 +389,7 @@
                                 o = Object.prototype.toString,
                                 n = (() => {
                                     let e = function () {};
-                                    return (e.prototype = Object.create(null)), e;
+                                    return ((e.prototype = Object.create(null)), e);
                                 })();
                             function l(e, t) {
                                 let a = new n(),
@@ -401,7 +406,7 @@
                                         continue;
                                     }
                                     let n = d(e, i, t);
-                                    void 0 === a[n] && (a[n] = r(d(e, t + 1, o))), (i = o + 1);
+                                    (void 0 === a[n] && (a[n] = r(d(e, t + 1, o))), (i = o + 1));
                                 } while (i < s);
                                 return a;
                             }
@@ -476,7 +481,7 @@
                                     let t = e.charCodeAt(s);
                                     if (32 !== t && 9 !== t) break;
                                 } while (++s < r);
-                                for (; r > s; ) {
+                                for (; r > s;) {
                                     let t = e.charCodeAt(r - 1);
                                     if (32 !== t && 9 !== t) break;
                                     r--;
@@ -511,12 +516,19 @@
             var S = a(10930),
                 j = a(61034),
                 E = ((e) => (
-                    (e.HEAD = 'HEAD'), (e.GET = 'GET'), (e.POST = 'POST'), (e.PUT = 'PUT'), (e.PATCH = 'PATCH'), (e.OPTIONS = 'OPTIONS'), (e.DELETE = 'DELETE'), e
+                    (e.HEAD = 'HEAD'),
+                    (e.GET = 'GET'),
+                    (e.POST = 'POST'),
+                    (e.PUT = 'PUT'),
+                    (e.PATCH = 'PATCH'),
+                    (e.OPTIONS = 'OPTIONS'),
+                    (e.DELETE = 'DELETE'),
+                    e
                 ))(E || {});
             class C extends j.w {
                 constructor(e, t, a, s) {
                     let r = 'function' == typeof t ? '[custom predicate]' : t;
-                    super({ info: { header: `${e}${r ? ` ${r}` : ''}`, path: t, method: e }, resolver: a, options: s }), this.checkRedundantQueryParameters();
+                    (super({ info: { header: `${e}${r ? ` ${r}` : ''}`, path: t, method: e }, resolver: a, options: s }), this.checkRedundantQueryParameters());
                 }
                 checkRedundantQueryParameters() {
                     let { method: e, path: t } = this.info;
@@ -576,7 +588,7 @@
                         r = await i(e.request),
                         o = await n(e.response),
                         l = (t = o.status) < 300 ? '#69AB32' : t < 400 ? '#F0BB4B' : '#E95F5D';
-                    console.groupCollapsed(
+                    (console.groupCollapsed(
                         s.J.formatMessage(
                             `${(function (e) {
                                 let t = new Date();
@@ -589,7 +601,7 @@
                         console.log('Request', r),
                         console.log('Handler:', this),
                         console.log('Response', o),
-                        console.groupEnd();
+                        console.groupEnd());
                 }
             }
             function L(e) {
@@ -626,7 +638,7 @@
                 [i] = null;
                 constructor(e, t) {
                     let a = (0, r.Tl)(t);
-                    super(e, a), (0, r.fX)(this, a);
+                    (super(e, a), (0, r.fX)(this, a));
                 }
                 static error() {
                     return super.error();
@@ -634,10 +646,10 @@
                 static text(e, t) {
                     let a = (0, r.Tl)(t),
                         s = a.headers.has('Content-Type');
-                    s || a.headers.set('Content-Type', 'text/plain'),
-                        a.headers.has('Content-Length') || a.headers.set('Content-Length', e ? new Blob([e]).size.toString() : '0');
+                    (s || a.headers.set('Content-Type', 'text/plain'),
+                        a.headers.has('Content-Length') || a.headers.set('Content-Length', e ? new Blob([e]).size.toString() : '0'));
                     let i = new n(e, a);
-                    return s || Object.defineProperty(i, o, { value: !0, enumerable: !1 }), i;
+                    return (s || Object.defineProperty(i, o, { value: !0, enumerable: !1 }), i);
                 }
                 static json(e, t) {
                     let a = (0, r.Tl)(t),
@@ -646,29 +658,29 @@
                     let i = JSON.stringify(e);
                     a.headers.has('Content-Length') || a.headers.set('Content-Length', i ? new Blob([i]).size.toString() : '0');
                     let l = new n(i, a);
-                    return s || Object.defineProperty(l, o, { value: !0, enumerable: !1 }), l;
+                    return (s || Object.defineProperty(l, o, { value: !0, enumerable: !1 }), l);
                 }
                 static xml(e, t) {
                     let a = (0, r.Tl)(t),
                         s = a.headers.has('Content-Type');
                     s || a.headers.set('Content-Type', 'text/xml');
                     let i = new n(e, a);
-                    return s || Object.defineProperty(i, o, { value: !0, enumerable: !1 }), i;
+                    return (s || Object.defineProperty(i, o, { value: !0, enumerable: !1 }), i);
                 }
                 static html(e, t) {
                     let a = (0, r.Tl)(t),
                         s = a.headers.has('Content-Type');
                     s || a.headers.set('Content-Type', 'text/html');
                     let i = new n(e, a);
-                    return s || Object.defineProperty(i, o, { value: !0, enumerable: !1 }), i;
+                    return (s || Object.defineProperty(i, o, { value: !0, enumerable: !1 }), i);
                 }
                 static arrayBuffer(e, t) {
                     let a = (0, r.Tl)(t),
                         s = a.headers.has('Content-Type');
-                    s || a.headers.set('Content-Type', 'application/octet-stream'),
-                        e && !a.headers.has('Content-Length') && a.headers.set('Content-Length', e.byteLength.toString());
+                    (s || a.headers.set('Content-Type', 'application/octet-stream'),
+                        e && !a.headers.has('Content-Length') && a.headers.set('Content-Length', e.byteLength.toString()));
                     let i = new n(e, a);
-                    return s || Object.defineProperty(i, o, { value: !0, enumerable: !1 }), i;
+                    return (s || Object.defineProperty(i, o, { value: !0, enumerable: !1 }), i);
                 }
                 static formData(e, t) {
                     return new n(e, (0, r.Tl)(t));
@@ -695,7 +707,7 @@
                     a.url,
                 );
                 let r = a.clone();
-                return r.headers.append('accept', 'msw/passthrough'), r;
+                return (r.headers.append('accept', 'msw/passthrough'), r);
             }
         },
         22389: (e, t, a) => {
@@ -734,7 +746,7 @@
                     var L = (0, m.A)(S),
                         q = !L && (0, g.A)(S),
                         z = !L && !q && (0, y.A)(S);
-                    (E = S),
+                    ((E = S),
                         L || q || z
                             ? (0, m.A)(x)
                                 ? (E = x)
@@ -747,9 +759,9 @@
                                       : (E = [])
                             : (0, b.A)(S) || (0, d.A)(S)
                               ? ((E = x), (0, d.A)(x) ? (E = (0, w.A)(x)) : (!(0, k.A)(x) || (0, f.A)(x)) && (E = (0, h.A)(S)))
-                              : (C = !1);
+                              : (C = !1));
                 }
-                C && (n.set(S, E), r(E, S, s, i, n), n.delete(S)), o(e, a, E);
+                (C && (n.set(S, E), r(E, S, s, i, n), n.delete(S)), o(e, a, E));
             };
             var S = a(73184);
             let j = function e(t, a, r, i, l) {
@@ -760,7 +772,7 @@
                             if ((l || (l = new s.A()), (0, k.A)(n))) x(t, a, u, r, e, i, l);
                             else {
                                 var c = i ? i(v(t, u), n, u + '', t, a, l) : void 0;
-                                void 0 === c && (c = n), o(t, u, c);
+                                (void 0 === c && (c = n), o(t, u, c));
                             }
                         },
                         S.A,
@@ -795,7 +807,7 @@
             var m = (0, s.S)(),
                 p = class {
                     constructor(e) {
-                        (this.name = e), (this.prefix = `[${this.name}]`);
+                        ((this.name = e), (this.prefix = `[${this.name}]`));
                         let t = v('DEBUG'),
                             a = v('LOG_LEVEL');
                         '1' === t || 'true' === t || (void 0 !== t && this.name.startsWith(t))
@@ -817,14 +829,14 @@
                         this.logEntry({ level: 'info', message: e, positionals: t, prefix: this.prefix, colors: { prefix: 'blue' } });
                         let a = new g();
                         return (e, ...t) => {
-                            a.measure(),
+                            (a.measure(),
                                 this.logEntry({
                                     level: 'info',
                                     message: `${e} ${c(`${a.deltaTime}ms`)}`,
                                     positionals: t,
                                     prefix: this.prefix,
                                     colors: { prefix: 'blue' },
-                                });
+                                }));
                         };
                     }
                     success(e, ...t) {
@@ -918,17 +930,17 @@
                 return globalThis[e] || void 0;
             }
             let E = (function (e) {
-                return (e.INACTIVE = 'INACTIVE'), (e.APPLYING = 'APPLYING'), (e.APPLIED = 'APPLIED'), (e.DISPOSING = 'DISPOSING'), (e.DISPOSED = 'DISPOSED'), e;
+                return ((e.INACTIVE = 'INACTIVE'), (e.APPLYING = 'APPLYING'), (e.APPLIED = 'APPLIED'), (e.DISPOSING = 'DISPOSING'), (e.DISPOSED = 'DISPOSED'), e);
             })({});
             var C = class {
                 constructor(e) {
-                    (this.symbol = e),
+                    ((this.symbol = e),
                         (this.readyState = E.INACTIVE),
                         (this.emitter = new S.v()),
                         (this.subscriptions = []),
                         (this.logger = new p(e.description)),
                         this.emitter.setMaxListeners(0),
-                        this.logger.info('constructing the interceptor...');
+                        this.logger.info('constructing the interceptor...'));
                 }
                 checkEnvironment() {
                     return !0;
@@ -940,19 +952,19 @@
                     this.readyState = E.APPLYING;
                     let t = this.getInstance();
                     if (t) {
-                        e.info('found a running instance, reusing...'),
+                        (e.info('found a running instance, reusing...'),
                             (this.on = (a, s) => (
                                 e.info('proxying the "%s" listener', a),
                                 t.emitter.addListener(a, s),
                                 this.subscriptions.push(() => {
-                                    t.emitter.removeListener(a, s), e.info('removed proxied "%s" listener!', a);
+                                    (t.emitter.removeListener(a, s), e.info('removed proxied "%s" listener!', a));
                                 }),
                                 this
                             )),
-                            (this.readyState = E.APPLIED);
+                            (this.readyState = E.APPLIED));
                         return;
                     }
-                    e.info('no running instance found, setting up a new instance...'), this.setup(), this.setInstance(), (this.readyState = E.APPLIED);
+                    (e.info('no running instance found, setting up a new instance...'), this.setup(), this.setInstance(), (this.readyState = E.APPLIED));
                 }
                 setup() {}
                 on(e, t) {
@@ -965,13 +977,13 @@
                     );
                 }
                 once(e, t) {
-                    return this.emitter.once(e, t), this;
+                    return (this.emitter.once(e, t), this);
                 }
                 off(e, t) {
-                    return this.emitter.off(e, t), this;
+                    return (this.emitter.off(e, t), this);
                 }
                 removeAllListeners(e) {
-                    return this.emitter.removeAllListeners(e), this;
+                    return (this.emitter.removeAllListeners(e), this);
                 }
                 dispose() {
                     let e = this.logger.extend('dispose');
@@ -980,21 +992,21 @@
                         return void e.info('no interceptors running, skipping dispose...');
                     if ((this.clearInstance(), e.info('global symbol deleted:', j(this.symbol)), this.subscriptions.length > 0)) {
                         for (let t of (e.info('disposing of %d subscriptions...', this.subscriptions.length), this.subscriptions)) t();
-                        (this.subscriptions = []), e.info('disposed of all subscriptions!', this.subscriptions.length);
+                        ((this.subscriptions = []), e.info('disposed of all subscriptions!', this.subscriptions.length));
                     }
-                    this.emitter.removeAllListeners(), e.info('destroyed the listener!'), (this.readyState = E.DISPOSED);
+                    (this.emitter.removeAllListeners(), e.info('destroyed the listener!'), (this.readyState = E.DISPOSED));
                 }
                 getInstance() {
                     let e = j(this.symbol);
-                    return this.logger.info('retrieved global instance:', e?.constructor?.name), e;
+                    return (this.logger.info('retrieved global instance:', e?.constructor?.name), e);
                 }
                 setInstance() {
                     var e;
-                    (e = this.symbol), (globalThis[e] = this), this.logger.info('set global instance!', this.symbol.description);
+                    ((e = this.symbol), (globalThis[e] = this), this.logger.info('set global instance!', this.symbol.description));
                 }
                 clearInstance() {
                     var e;
-                    (e = this.symbol), delete globalThis[e], this.logger.info('cleared global instance!', this.symbol.description);
+                    ((e = this.symbol), delete globalThis[e], this.logger.info('cleared global instance!', this.symbol.description));
                 }
             };
             function L() {
@@ -1018,7 +1030,7 @@
                 l = Object.prototype.hasOwnProperty,
                 u = (e, t) =>
                     function () {
-                        return t || (0, e[o(e)[0]])((t = { exports: {} }).exports, t), t.exports;
+                        return (t || (0, e[o(e)[0]])((t = { exports: {} }).exports, t), t.exports);
                     },
                 c = u({
                     'node_modules/.pnpm/statuses@2.0.2/node_modules/statuses/codes.json'(e, t) {
@@ -1113,7 +1125,7 @@
                                 if (!Object.prototype.hasOwnProperty.call(o.code, a)) throw Error('invalid status message: "' + e + '"');
                                 return o.code[a];
                             }
-                            (t.exports = o),
+                            ((t.exports = o),
                                 (o.message = r),
                                 (s = {}),
                                 Object.keys((a = r)).forEach(function (e) {
@@ -1127,7 +1139,7 @@
                                 })),
                                 (o.redirect = { 300: !0, 301: !0, 302: !0, 303: !0, 305: !0, 307: !0, 308: !0 }),
                                 (o.empty = { 204: !0, 205: !0, 304: !0 }),
-                                (o.retry = { 502: !0, 503: !0, 504: !0 });
+                                (o.retry = { 502: !0, 503: !0, 504: !0 }));
                         },
                     })(),
                     0,
@@ -1143,7 +1155,7 @@
                     #e;
                     #t;
                     constructor() {
-                        (this.#e = []), (this.#t = new Map());
+                        ((this.#e = []), (this.#t = new Map()));
                     }
                     get [Symbol.iterator]() {
                         return this.#e[Symbol.iterator].bind(this.#e);
@@ -1158,10 +1170,10 @@
                         return this.#e.map(([, e]) => e);
                     }
                     append(e, t) {
-                        this.#e.push([e, t]), this.#a(e, (e) => e.push(t));
+                        (this.#e.push([e, t]), this.#a(e, (e) => e.push(t)));
                     }
                     prepend(e, t) {
-                        this.#e.unshift([e, t]), this.#a(e, (e) => e.unshift(t));
+                        (this.#e.unshift([e, t]), this.#a(e, (e) => e.unshift(t)));
                     }
                     delete(e, t) {
                         if (0 === this.size) return !1;
@@ -1200,16 +1212,16 @@
                     [o];
                     [n];
                     constructor(...e) {
-                        super(e[0], e[1]), (this[i] = !1);
+                        (super(e[0], e[1]), (this[i] = !1));
                     }
                     get defaultPrevented() {
                         return this[i];
                     }
                     preventDefault() {
-                        super.preventDefault(), (this[i] = !0);
+                        (super.preventDefault(), (this[i] = !0));
                     }
                     stopImmediatePropagation() {
-                        super.stopImmediatePropagation(), (this[n] = !0);
+                        (super.stopImmediatePropagation(), (this[n] = !0));
                     }
                 },
                 u = class {
@@ -1222,7 +1234,7 @@
                     #c;
                     hooks;
                     constructor() {
-                        (this.#r = new r()),
+                        ((this.#r = new r()),
                             (this.#i = new WeakMap()),
                             (this.#o = new WeakMap()),
                             (this.#n = new WeakSet()),
@@ -1242,17 +1254,17 @@
                                                 r = () => {
                                                     this.#h(e, t);
                                                 };
-                                            s.addEventListener('abort', r, { once: !0 }),
+                                            (s.addEventListener('abort', r, { once: !0 }),
                                                 this.#c.set(t, () => {
                                                     s.removeEventListener('abort', r);
-                                                });
+                                                }));
                                         }
                                     }
                                 },
                                 removeListener: (e, t) => {
                                     this.#h(e, t);
                                 },
-                            });
+                            }));
                     }
                     #h(e, t) {
                         this.#l.delete(e, t);
@@ -1262,16 +1274,16 @@
                     #d(e, t) {
                         let a = this.#r.delete(e, t),
                             s = this.#o.get(t);
-                        return s && (s(), this.#o.delete(t)), a;
+                        return (s && (s(), this.#o.delete(t)), a);
                     }
                     on(e, t, a) {
-                        return this.#m(e, t, a), this;
+                        return (this.#m(e, t, a), this);
                     }
                     once(e, t, a) {
                         return this.on(e, t, { ...(a || {}), once: !0 });
                     }
                     earlyOn(e, t, a) {
-                        return this.#m(e, t, a, 'prepend'), this;
+                        return (this.#m(e, t, a, 'prepend'), this);
                     }
                     earlyOnce(e, t, a) {
                         return this.earlyOn(e, t, { ...(a || {}), once: !0 });
@@ -1281,23 +1293,23 @@
                         let t = this.listenerCount(e.type) > 0,
                             a = this.#p(e);
                         for (let t of this.#g(e.type)) {
-                            if (null != a.event[o] && a.event[o] !== this) return a.revoke(), !1;
+                            if (null != a.event[o] && a.event[o] !== this) return (a.revoke(), !1);
                             if (a.event[n]) break;
                             this.#f(a.event, t);
                         }
-                        return a.revoke(), t;
+                        return (a.revoke(), t);
                     }
                     async emitAsPromise(e) {
                         if (0 === this.#r.size) return [];
                         let t = [],
                             a = this.#p(e);
                         for (let s of this.#g(e.type)) {
-                            if (null != a.event[o] && a.event[o] !== this) return a.revoke(), [];
+                            if (null != a.event[o] && a.event[o] !== this) return (a.revoke(), []);
                             if (a.event[n]) break;
                             let e = await Promise.resolve(this.#f(a.event, s));
                             this.#k(s) || t.push(e);
                         }
-                        return a.revoke(), Promise.allSettled(t).then((e) => e.map((e) => ('fulfilled' === e.status ? e.value : e.reason)));
+                        return (a.revoke(), Promise.allSettled(t).then((e) => e.map((e) => ('fulfilled' === e.status ? e.value : e.reason))));
                     }
                     *emitAsGenerator(e) {
                         if (0 === this.#r.size) return;
@@ -1316,12 +1328,12 @@
                     }
                     removeAllListeners(e) {
                         if (null == e) {
-                            for (let [e, t] of this.#r.entries()) for (; t.length > 0; ) this.removeListener(e, t[0]);
+                            for (let [e, t] of this.#r.entries()) for (; t.length > 0;) this.removeListener(e, t[0]);
                             for (let [e, t] of [...this.#l]) this.#u.get(t)?.persist || this.#h(e, t);
                             return;
                         }
                         let t = this.listeners(e);
-                        for (; t.length > 0; ) this.removeListener(e, t[0]);
+                        for (; t.length > 0;) this.removeListener(e, t[0]);
                     }
                     listeners(e) {
                         return null == e ? this.#r.getAll() : this.#r.get(e);
@@ -1337,10 +1349,10 @@
                                     r = () => {
                                         this.removeListener(e, t);
                                     };
-                                s.addEventListener('abort', r, { once: !0 }),
+                                (s.addEventListener('abort', r, { once: !0 }),
                                     this.#o.set(t, () => {
                                         s.removeEventListener('abort', r);
-                                    });
+                                    }));
                             }
                         }
                     }
@@ -1348,7 +1360,7 @@
                         let { stopPropagation: t } = e;
                         return (
                             (e.stopPropagation = () => {
-                                (e[o] = this), t.call(e);
+                                ((e[o] = this), t.call(e));
                             }),
                             {
                                 event: e,
@@ -1380,7 +1392,7 @@
             class c extends l {
                 frame;
                 constructor(e, t) {
-                    super(e, {}), (this.frame = t);
+                    (super(e, {}), (this.frame = t));
                 }
             }
             class h {
@@ -1471,13 +1483,13 @@
                 constructor(e) {
                     super();
                     let t = this.getInitialState(e);
-                    (this.#v = t.initialHandlers), (this.#y = t.handlers);
+                    ((this.#v = t.initialHandlers), (this.#y = t.handlers));
                 }
                 getState() {
                     return { initialHandlers: this.#v, handlers: this.#y };
                 }
                 setState(e) {
-                    e.initialHandlers && (this.#v = e.initialHandlers), e.handlers && (this.#y = e.handlers);
+                    (e.initialHandlers && (this.#v = e.initialHandlers), e.handlers && (this.#y = e.handlers));
                 }
             }
             class k {
@@ -1485,7 +1497,7 @@
                 dispose() {
                     let e,
                         t = [];
-                    for (; (e = this.subscriptions.shift()); )
+                    for (; (e = this.subscriptions.shift());)
                         try {
                             e();
                         } catch (e) {
@@ -1523,7 +1535,7 @@
             }
             class x {
                 constructor(e, t) {
-                    (this.protocol = e), (this.data = t), (this.events = new u());
+                    ((this.protocol = e), (this.data = t), (this.events = new u()));
                 }
                 events;
             }
@@ -1592,7 +1604,7 @@
                 requestId;
                 request;
                 constructor(e, t) {
-                    super(e, {}), (this.requestId = t.requestId), (this.request = t.request);
+                    (super(e, {}), (this.requestId = t.requestId), (this.request = t.request));
                 }
             }
             class O extends l {
@@ -1600,7 +1612,7 @@
                 request;
                 response;
                 constructor(e, t) {
-                    super(e, {}), (this.requestId = t.requestId), (this.request = t.request), (this.response = t.response);
+                    (super(e, {}), (this.requestId = t.requestId), (this.request = t.request), (this.response = t.response));
                 }
             }
             class I extends l {
@@ -1608,7 +1620,7 @@
                 requestId;
                 request;
                 constructor(e, t) {
-                    super(e, {}), (this.error = t.error), (this.requestId = t.requestId), (this.request = t.request);
+                    (super(e, {}), (this.error = t.error), (this.requestId = t.requestId), (this.request = t.request));
                 }
             }
             class P extends x {
@@ -1641,7 +1653,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                     let { id: s, request: r } = this.data,
                         i = a?.quiet ? null : r.clone();
                     if ((this.events.emit(new A('request:start', { requestId: s, request: r })), r.headers.get('accept')?.includes('msw/passthrough')))
-                        return this.events.emit(new A('request:end', { requestId: s, request: r })), this.passthrough(), null;
+                        return (this.events.emit(new A('request:end', { requestId: s, request: r })), this.passthrough(), null);
                     let [o, n] = await w(() => j({ requestId: s, request: r, handlers: e, resolutionContext: { baseUrl: a?.baseUrl?.toString(), quiet: a?.quiet } }));
                     if (null != o)
                         return (
@@ -1670,7 +1682,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                         (this.events.emit(new A('request:match', { requestId: s, request: r })),
                         null == l || (302 === l.status && 'passthrough' === l.headers.get('x-msw-intention')))
                     )
-                        return this.events.emit(new A('request:end', { requestId: s, request: r })), this.passthrough(), null;
+                        return (this.events.emit(new A('request:end', { requestId: s, request: r })), this.passthrough(), null);
                     let h = a?.quiet ? null : l.clone();
                     return (
                         await L(r, l),
@@ -1688,13 +1700,13 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
             }
             var D = a(74422);
             function W(e, t) {
-                return Object.defineProperties(t, { target: { value: e, enumerable: !0, writable: !0 }, currentTarget: { value: e, enumerable: !0, writable: !0 } }), t;
+                return (Object.defineProperties(t, { target: { value: e, enumerable: !0, writable: !0 }, currentTarget: { value: e, enumerable: !0, writable: !0 } }), t);
             }
             let N = Symbol('kCancelable'),
                 M = Symbol('kDefaultPrevented');
             var $ = class extends MessageEvent {
                     constructor(e, t) {
-                        super(e, t), (this[N] = !!t.cancelable), (this[M] = !1);
+                        (super(e, t), (this[N] = !!t.cancelable), (this[M] = !1));
                     }
                     get cancelable() {
                         return this[N];
@@ -1714,15 +1726,15 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                 },
                 H = class extends Event {
                     constructor(e, t = {}) {
-                        super(e, t),
+                        (super(e, t),
                             (this.code = void 0 === t.code ? 0 : t.code),
                             (this.reason = void 0 === t.reason ? '' : t.reason),
-                            (this.wasClean = void 0 !== t.wasClean && t.wasClean);
+                            (this.wasClean = void 0 !== t.wasClean && t.wasClean));
                     }
                 },
                 U = class extends H {
                     constructor(e, t = {}) {
-                        super(e, t), (this[N] = !!t.cancelable), (this[M] = !1);
+                        (super(e, t), (this[N] = !!t.cancelable), (this[M] = !1));
                     }
                     get cancelable() {
                         return this[N];
@@ -1744,18 +1756,18 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                 F = Symbol('kBoundListener');
             var G = class {
                 constructor(e, t) {
-                    (this.socket = e),
+                    ((this.socket = e),
                         (this.transport = t),
                         (this.id = (0, T.t)()),
                         (this.url = new URL(e.url)),
                         (this[_] = new EventTarget()),
                         this.transport.addEventListener('outgoing', (e) => {
                             let t = W(this.socket, new $('message', { data: e.data, origin: e.origin, cancelable: !0 }));
-                            this[_].dispatchEvent(t), t.defaultPrevented && e.preventDefault();
+                            (this[_].dispatchEvent(t), t.defaultPrevented && e.preventDefault());
                         }),
                         this.transport.addEventListener('close', (e) => {
                             this[_].dispatchEvent(W(this.socket, new H('close', e)));
-                        });
+                        }));
                 }
                 addEventListener(e, t, a) {
                     if (!Reflect.has(t, F)) {
@@ -1792,7 +1804,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                     this.CLOSED = 3;
                 }
                 constructor(e, t) {
-                    super(),
+                    (super(),
                         (this.CONNECTING = 0),
                         (this.OPEN = 1),
                         (this.CLOSING = 2),
@@ -1826,28 +1838,28 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                             (await this[J]) ||
                                 ((this.protocol = 'string' == typeof t ? t : Array.isArray(t) && t.length > 0 ? t[0] : ''),
                                 this.readyState === this.CONNECTING && ((this.readyState = this.OPEN), this.dispatchEvent(W(this, new Event('open')))));
-                        });
+                        }));
                 }
                 set onopen(e) {
-                    this.removeEventListener('open', this._onopen), (this._onopen = e), null !== e && this.addEventListener('open', e);
+                    (this.removeEventListener('open', this._onopen), (this._onopen = e), null !== e && this.addEventListener('open', e));
                 }
                 get onopen() {
                     return this._onopen;
                 }
                 set onmessage(e) {
-                    this.removeEventListener('message', this._onmessage), (this._onmessage = e), null !== e && this.addEventListener('message', e);
+                    (this.removeEventListener('message', this._onmessage), (this._onmessage = e), null !== e && this.addEventListener('message', e));
                 }
                 get onmessage() {
                     return this._onmessage;
                 }
                 set onerror(e) {
-                    this.removeEventListener('error', this._onerror), (this._onerror = e), null !== e && this.addEventListener('error', e);
+                    (this.removeEventListener('error', this._onerror), (this._onerror = e), null !== e && this.addEventListener('error', e));
                 }
                 get onerror() {
                     return this._onerror;
                 }
                 set onclose(e) {
-                    this.removeEventListener('close', this._onclose), (this._onclose = e), null !== e && this.addEventListener('close', e);
+                    (this.removeEventListener('close', this._onclose), (this._onclose = e), null !== e && this.addEventListener('close', e));
                 }
                 get onclose() {
                     return this._onclose;
@@ -1859,23 +1871,23 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                         this.readyState !== this.CLOSED &&
                         ((this.bufferedAmount += 'string' == typeof (t = e) ? t.length : t instanceof Blob ? t.size : t.byteLength),
                         queueMicrotask(() => {
-                            (this.bufferedAmount = 0), this[V]?.(e);
+                            ((this.bufferedAmount = 0), this[V]?.(e));
                         }));
                 }
                 close(e = 1e3, t) {
-                    (0, s.V1)(e, B), (0, s.V1)(1e3 === e || (e >= 3e3 && e <= 4999), B), this[Y](e, t);
+                    ((0, s.V1)(e, B), (0, s.V1)(1e3 === e || (e >= 3e3 && e <= 4999), B), this[Y](e, t));
                 }
                 [Y](e = 1e3, t, a = !0) {
                     this.readyState !== this.CLOSING &&
                         this.readyState !== this.CLOSED &&
                         ((this.readyState = this.CLOSING),
                         queueMicrotask(() => {
-                            (this.readyState = this.CLOSED),
+                            ((this.readyState = this.CLOSED),
                                 this.dispatchEvent(W(this, new H('close', { code: e, reason: t, wasClean: a }))),
                                 (this._onopen = null),
                                 (this._onmessage = null),
                                 (this._onerror = null),
-                                (this._onclose = null);
+                                (this._onclose = null));
                         }));
                 }
                 addEventListener(e, t, a) {
@@ -1890,7 +1902,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                 Z = Symbol('kSend');
             var ee = class {
                     constructor(e, t, a) {
-                        (this.client = e),
+                        ((this.client = e),
                             (this.transport = t),
                             (this.createConnection = a),
                             (this[K] = new EventTarget()),
@@ -1902,7 +1914,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                                         e.defaultPrevented || this[Z](e.data);
                                     });
                             }),
-                            this.transport.addEventListener('incoming', this.handleIncomingMessage.bind(this));
+                            this.transport.addEventListener('incoming', this.handleIncomingMessage.bind(this)));
                     }
                     get socket() {
                         return (
@@ -1919,7 +1931,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                             'Failed to call "connect()" on the original WebSocket instance: the connection already open',
                         );
                         let e = this.createConnection();
-                        (e.binaryType = this.client.binaryType),
+                        ((e.binaryType = this.client.binaryType),
                             e.addEventListener(
                                 'open',
                                 (e) => {
@@ -1946,9 +1958,9 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                             ),
                             e.addEventListener('error', () => {
                                 let t = W(e, new Event('error', { cancelable: !0 }));
-                                this[K].dispatchEvent(t), t.defaultPrevented || this.client.dispatchEvent(W(this.client, new Event('error')));
+                                (this[K].dispatchEvent(t), t.defaultPrevented || this.client.dispatchEvent(W(this.client, new Event('error'))));
                             }),
-                            (this.realWebSocket = e);
+                            (this.realWebSocket = e));
                     }
                     addEventListener(e, t, a) {
                         if (!Reflect.has(t, Q)) {
@@ -1986,7 +1998,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                     }
                     close() {
                         let { realWebSocket: e } = this;
-                        (0, s.V1)(
+                        ((0, s.V1)(
                             e,
                             'Failed to close server connection for "%s": the connection is not open. Did you forget to call "server.connect()"?',
                             this.client.url,
@@ -1997,12 +2009,12 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                                 (e.close(),
                                 queueMicrotask(() => {
                                     this[K].dispatchEvent(W(this.realWebSocket, new U('close', { code: 1e3, cancelable: !0 })));
-                                }));
+                                })));
                     }
                     handleIncomingMessage(e) {
                         let t = W(e.target, new $('message', { data: e.data, origin: e.origin, cancelable: !0 }));
-                        this[K].dispatchEvent(t),
-                            t.defaultPrevented || this.client.dispatchEvent(W(this.client, new MessageEvent('message', { data: e.data, origin: e.origin })));
+                        (this[K].dispatchEvent(t),
+                            t.defaultPrevented || this.client.dispatchEvent(W(this.client, new MessageEvent('message', { data: e.data, origin: e.origin }))));
                     }
                     handleMockClose(e) {
                         this.realWebSocket && this.realWebSocket.close();
@@ -2010,19 +2022,19 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                     handleRealClose(e) {
                         this.mockCloseController.abort();
                         let t = W(this.realWebSocket, new U('close', { code: e.code, reason: e.reason, wasClean: e.wasClean, cancelable: !0 }));
-                        this[K].dispatchEvent(t), t.defaultPrevented || this.client[Y](e.code, e.reason);
+                        (this[K].dispatchEvent(t), t.defaultPrevented || this.client[Y](e.code, e.reason));
                     }
                 },
                 et = class extends EventTarget {
                     constructor(e) {
-                        super(),
+                        (super(),
                             (this.socket = e),
                             this.socket.addEventListener('close', (e) => {
                                 this.dispatchEvent(W(this.socket, new H('close', e)));
                             }),
                             (this.socket[V] = (e) => {
                                 this.dispatchEvent(W(this.socket, new $('outgoing', { data: e, origin: this.socket.url, cancelable: !0 })));
-                            });
+                            }));
                     }
                     addEventListener(e, t, a) {
                         return super.addEventListener(e, t, a);
@@ -2051,7 +2063,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                         this.socket[Y](e, t);
                     }
                 };
-            (class e extends T.r {
+            ((class e extends T.r {
                 static {
                     this.symbol = Symbol('websocket');
                 }
@@ -2075,7 +2087,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                 }
                 setup() {
                     let e = Object.getOwnPropertyDescriptor(globalThis, 'WebSocket');
-                    Object.defineProperty(globalThis, 'WebSocket', {
+                    (Object.defineProperty(globalThis, 'WebSocket', {
                         value: new Proxy(globalThis.WebSocket, {
                             construct: (e, t, a) => {
                                 let [s, r] = t,
@@ -2087,14 +2099,14 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                                         try {
                                             let e = new ee(o, n, i),
                                                 t = this.emitter.listenerCount('connection') > 0;
-                                            await R(this.emitter, 'connection', { client: new G(o, n), server: e, info: { protocols: r } }),
+                                            (await R(this.emitter, 'connection', { client: new G(o, n), server: e, info: { protocols: r } }),
                                                 t
                                                     ? o[J].resolve(!1)
                                                     : (o[J].resolve(!0),
                                                       e.connect(),
                                                       e.addEventListener('open', () => {
-                                                          o.dispatchEvent(W(o, new Event('open'))), e.realWebSocket && (o.protocol = e.realWebSocket.protocol);
-                                                      }));
+                                                          (o.dispatchEvent(W(o, new Event('open'))), e.realWebSocket && (o.protocol = e.realWebSocket.protocol));
+                                                      })));
                                         } catch (e) {
                                             e instanceof Error &&
                                                 (o.dispatchEvent(new Event('error')),
@@ -2110,12 +2122,12 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                     }),
                         this.subscriptions.push(() => {
                             Object.defineProperty(globalThis, 'WebSocket', e);
-                        });
+                        }));
                 }
             }),
                 a(24171),
                 Symbol('kEmitter'),
-                Symbol('kSender');
+                Symbol('kSender'));
             let ea = Symbol('kConnect'),
                 es = Symbol('kAutoConnect'),
                 er = Symbol('kStopPropagationPatched'),
@@ -2124,7 +2136,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                 url;
                 protocols;
                 constructor(e, t) {
-                    super(e, {}), (this.url = t.url), (this.protocols = t.protocols);
+                    (super(e, {}), (this.url = t.url), (this.protocols = t.protocols));
                 }
             }
             class en extends l {
@@ -2132,7 +2144,7 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                 protocols;
                 error;
                 constructor(e, t) {
-                    super(e, {}), (this.url = t.url), (this.protocols = t.protocols), (this.error = t.error);
+                    (super(e, {}), (this.url = t.url), (this.protocols = t.protocols), (this.error = t.error));
                 }
             }
             class el extends x {
@@ -2162,13 +2174,13 @@ Read more: https://mswjs.io/docs/http/intercepting-requests`;
                             t[ea](e) || i?.();
                         } catch (e) {
                             throw (
-                                (this.events.emit(new en('unhandledException', { error: e, url: s.client.url, protocols: s.info.protocols })) ||
+                                this.events.emit(new en('unhandledException', { error: e, url: s.client.url, protocols: s.info.protocols })) ||
                                     (console.error(e),
                                     d.J.error(
                                         'Encountered an unhandled exception during the handler lookup for "%s". Please see the original error above.',
                                         s.client.url,
                                     )),
-                                e)
+                                e
                             );
                         }
                     }
@@ -2196,21 +2208,21 @@ Read more: https://mswjs.io/docs/websocket`;
                 #w;
                 #x;
                 constructor(e) {
-                    super(), (this.#w = new v.qL({ name: 'interceptor-source', interceptors: e.interceptors })), (this.#x = new Map());
+                    (super(), (this.#w = new v.qL({ name: 'interceptor-source', interceptors: e.interceptors })), (this.#x = new Map()));
                 }
                 enable() {
-                    this.#w.apply(), this.#w.on('request', this.#S.bind(this)).on('response', this.#j.bind(this)).on('connection', this.#E.bind(this));
+                    (this.#w.apply(), this.#w.on('request', this.#S.bind(this)).on('response', this.#j.bind(this)).on('connection', this.#E.bind(this)));
                 }
                 disable() {
-                    super.disable(), this.#w.dispose(), this.#x.clear();
+                    (super.disable(), this.#w.dispose(), this.#x.clear());
                 }
                 async #S({ requestId: e, request: t, controller: a }) {
                     let s = new ec({ id: e, request: t, controller: a });
-                    this.#x.set(e, s), await this.queue(s);
+                    (this.#x.set(e, s), await this.queue(s));
                 }
                 async #j({ requestId: e, request: t, response: a, isMockedResponse: s }) {
                     let r = this.#x.get(e);
-                    this.#x.delete(e),
+                    (this.#x.delete(e),
                         null != r &&
                             queueMicrotask(() => {
                                 try {
@@ -2218,7 +2230,7 @@ Read more: https://mswjs.io/docs/websocket`;
                                 } finally {
                                     r.events.removeAllListeners();
                                 }
-                            });
+                            }));
                 }
                 async #E(e) {
                     await this.queue(new eh({ connection: e }));
@@ -2227,7 +2239,7 @@ Read more: https://mswjs.io/docs/websocket`;
             class ec extends P {
                 #C;
                 constructor(e) {
-                    super({ id: e.id, request: e.request }), (this.#C = e.controller);
+                    (super({ id: e.id, request: e.request }), (this.#C = e.controller));
                 }
                 passthrough() {
                     var e = this.data.request;
@@ -2247,20 +2259,20 @@ Read more: https://mswjs.io/docs/websocket`;
             }
             class eh extends el {
                 constructor(e) {
-                    super({ connection: e.connection }),
+                    (super({ connection: e.connection }),
                         e.connection.client.addEventListener(
                             'close',
                             () => {
                                 this.events.removeAllListeners();
                             },
                             { once: !0 },
-                        );
+                        ));
                 }
                 errorWith(e) {
                     if (e instanceof Error) {
                         let { client: t } = this.data.connection,
                             a = new Event('error');
-                        Object.defineProperty(a, 'cause', { enumerable: !0, configurable: !1, value: e }), t.socket.dispatchEvent(a);
+                        (Object.defineProperty(a, 'cause', { enumerable: !0, configurable: !1, value: e }), t.socket.dispatchEvent(a));
                     }
                 }
                 passthrough() {
@@ -2294,19 +2306,19 @@ Read more: https://mswjs.io/docs/websocket`;
                         })(t[a], i);
                         return s ? e : (a++, o);
                     });
-                return a < t.length && (s += ` ${t.slice(a).join(' ')}`), (s = s.replace(/%{2,2}/g, '%'));
+                return (a < t.length && (s += ` ${t.slice(a).join(' ')}`), (s = s.replace(/%{2,2}/g, '%')));
             }
             var ek = class extends Error {
                     constructor(e, ...t) {
-                        super(e),
+                        (super(e),
                             (this.message = e),
                             (this.name = 'Invariant Violation'),
                             (this.message = ef(e, ...t)),
                             (function (e) {
                                 if (!e.stack) return;
                                 let t = e.stack.split('\n');
-                                t.splice(1, 2), (e.stack = t.join('\n'));
-                            })(this);
+                                (t.splice(1, 2), (e.stack = t.join('\n')));
+                            })(this));
                     }
                 },
                 eb = (e, t, ...a) => {
@@ -2355,7 +2367,7 @@ Read more: https://mswjs.io/docs/websocket`;
             var eL = ey(),
                 eq = class {
                     constructor(e) {
-                        (this.name = e), (this.prefix = `[${this.name}]`);
+                        ((this.name = e), (this.prefix = `[${this.name}]`));
                         let t = eT('DEBUG'),
                             a = eT('LOG_LEVEL');
                         '1' === t || 'true' === t || (void 0 !== t && this.name.startsWith(t))
@@ -2377,14 +2389,14 @@ Read more: https://mswjs.io/docs/websocket`;
                         this.logEntry({ level: 'info', message: e, positionals: t, prefix: this.prefix, colors: { prefix: 'blue' } });
                         let a = new ez();
                         return (e, ...t) => {
-                            a.measure(),
+                            (a.measure(),
                                 this.logEntry({
                                     level: 'info',
                                     message: `${e} ${ej(`${a.deltaTime}ms`)}`,
                                     positionals: t,
                                     prefix: this.prefix,
                                     colors: { prefix: 'blue' },
-                                });
+                                }));
                         };
                     }
                     success(e, ...t) {
@@ -2475,11 +2487,11 @@ Read more: https://mswjs.io/docs/websocket`;
             }
             var eW = class extends Error {
                     constructor(e, t, a) {
-                        super(`Possible EventEmitter memory leak detected. ${a} ${t.toString()} listeners added. Use emitter.setMaxListeners() to increase limit`),
+                        (super(`Possible EventEmitter memory leak detected. ${a} ${t.toString()} listeners added. Use emitter.setMaxListeners() to increase limit`),
                             (this.emitter = e),
                             (this.type = t),
                             (this.count = a),
-                            (this.name = 'MaxListenersExceededWarning');
+                            (this.name = 'MaxListenersExceededWarning'));
                     }
                 },
                 eN = class {
@@ -2487,7 +2499,7 @@ Read more: https://mswjs.io/docs/websocket`;
                         return e.listenerCount(t);
                     }
                     constructor() {
-                        (this.events = new Map()), (this.maxListeners = eN.defaultMaxListeners), (this.hasWarnedAboutPotentialMemoryLeak = !1);
+                        ((this.events = new Map()), (this.maxListeners = eN.defaultMaxListeners), (this.hasWarnedAboutPotentialMemoryLeak = !1));
                     }
                     _emitInternalEvent(e, t, a) {
                         this.emit(e, t, a);
@@ -2497,14 +2509,14 @@ Read more: https://mswjs.io/docs/websocket`;
                     }
                     _removeListener(e, t) {
                         let a = e.indexOf(t);
-                        return a > -1 && e.splice(a, 1), [];
+                        return (a > -1 && e.splice(a, 1), []);
                     }
                     _wrapOnceListener(e, t) {
                         let a = (...s) => (this.removeListener(e, a), t.apply(this, s));
-                        return Object.defineProperty(a, 'name', { value: t.name }), a;
+                        return (Object.defineProperty(a, 'name', { value: t.name }), a);
                     }
                     setMaxListeners(e) {
-                        return (this.maxListeners = e), this;
+                        return ((this.maxListeners = e), this);
                     }
                     getMaxListeners() {
                         return this.maxListeners;
@@ -2552,13 +2564,13 @@ Read more: https://mswjs.io/docs/websocket`;
                     }
                     removeListener(e, t) {
                         let a = this._getListeners(e);
-                        return a.length > 0 && (this._removeListener(a, t), this.events.set(e, a), this._emitInternalEvent('removeListener', e, t)), this;
+                        return (a.length > 0 && (this._removeListener(a, t), this.events.set(e, a), this._emitInternalEvent('removeListener', e, t)), this);
                     }
                     off(e, t) {
                         return this.removeListener(e, t);
                     }
                     removeAllListeners(e) {
-                        return e ? this.events.delete(e) : this.events.clear(), this;
+                        return (e ? this.events.delete(e) : this.events.clear(), this);
                     }
                     listeners(e) {
                         return Array.from(this._getListeners(e));
@@ -2575,17 +2587,17 @@ Read more: https://mswjs.io/docs/websocket`;
             }
             eN.defaultMaxListeners = 10;
             var e$ = (function (e) {
-                    return (e.INACTIVE = 'INACTIVE'), (e.APPLYING = 'APPLYING'), (e.APPLIED = 'APPLIED'), (e.DISPOSING = 'DISPOSING'), (e.DISPOSED = 'DISPOSED'), e;
+                    return ((e.INACTIVE = 'INACTIVE'), (e.APPLYING = 'APPLYING'), (e.APPLIED = 'APPLIED'), (e.DISPOSING = 'DISPOSING'), (e.DISPOSED = 'DISPOSED'), e);
                 })({}),
                 eH = class {
                     constructor(e) {
-                        (this.symbol = e),
+                        ((this.symbol = e),
                             (this.readyState = e$.INACTIVE),
                             (this.emitter = new eN()),
                             (this.subscriptions = []),
                             (this.logger = new eq(e.description)),
                             this.emitter.setMaxListeners(0),
-                            this.logger.info('constructing the interceptor...');
+                            this.logger.info('constructing the interceptor...'));
                     }
                     checkEnvironment() {
                         return !0;
@@ -2597,19 +2609,19 @@ Read more: https://mswjs.io/docs/websocket`;
                         this.readyState = e$.APPLYING;
                         let t = this.getInstance();
                         if (t) {
-                            e.info('found a running instance, reusing...'),
+                            (e.info('found a running instance, reusing...'),
                                 (this.on = (a, s) => (
                                     e.info('proxying the "%s" listener', a),
                                     t.emitter.addListener(a, s),
                                     this.subscriptions.push(() => {
-                                        t.emitter.removeListener(a, s), e.info('removed proxied "%s" listener!', a);
+                                        (t.emitter.removeListener(a, s), e.info('removed proxied "%s" listener!', a));
                                     }),
                                     this
                                 )),
-                                (this.readyState = e$.APPLIED);
+                                (this.readyState = e$.APPLIED));
                             return;
                         }
-                        e.info('no running instance found, setting up a new instance...'), this.setup(), this.setInstance(), (this.readyState = e$.APPLIED);
+                        (e.info('no running instance found, setting up a new instance...'), this.setup(), this.setInstance(), (this.readyState = e$.APPLIED));
                     }
                     setup() {}
                     on(e, t) {
@@ -2622,13 +2634,13 @@ Read more: https://mswjs.io/docs/websocket`;
                         );
                     }
                     once(e, t) {
-                        return this.emitter.once(e, t), this;
+                        return (this.emitter.once(e, t), this);
                     }
                     off(e, t) {
-                        return this.emitter.off(e, t), this;
+                        return (this.emitter.off(e, t), this);
                     }
                     removeAllListeners(e) {
-                        return this.emitter.removeAllListeners(e), this;
+                        return (this.emitter.removeAllListeners(e), this);
                     }
                     dispose() {
                         let e = this.logger.extend('dispose');
@@ -2637,21 +2649,21 @@ Read more: https://mswjs.io/docs/websocket`;
                             return void e.info('no interceptors running, skipping dispose...');
                         if ((this.clearInstance(), e.info('global symbol deleted:', eM(this.symbol)), this.subscriptions.length > 0)) {
                             for (let t of (e.info('disposing of %d subscriptions...', this.subscriptions.length), this.subscriptions)) t();
-                            (this.subscriptions = []), e.info('disposed of all subscriptions!', this.subscriptions.length);
+                            ((this.subscriptions = []), e.info('disposed of all subscriptions!', this.subscriptions.length));
                         }
-                        this.emitter.removeAllListeners(), e.info('destroyed the listener!'), (this.readyState = e$.DISPOSED);
+                        (this.emitter.removeAllListeners(), e.info('destroyed the listener!'), (this.readyState = e$.DISPOSED));
                     }
                     getInstance() {
                         let e = eM(this.symbol);
-                        return this.logger.info('retrieved global instance:', e?.constructor?.name), e;
+                        return (this.logger.info('retrieved global instance:', e?.constructor?.name), e);
                     }
                     setInstance() {
                         var e;
-                        (e = this.symbol), (globalThis[e] = this), this.logger.info('set global instance!', this.symbol.description);
+                        ((e = this.symbol), (globalThis[e] = this), this.logger.info('set global instance!', this.symbol.description));
                     }
                     clearInstance() {
                         var e;
-                        (e = this.symbol), delete globalThis[e], this.logger.info('cleared global instance!', this.symbol.description);
+                        ((e = this.symbol), delete globalThis[e], this.logger.info('cleared global instance!', this.symbol.description));
                     }
                 };
             function eU() {
@@ -2682,7 +2694,7 @@ Read more: https://mswjs.io/docs/websocket`;
                 constructor(e = null) {
                     let t = (function () {
                         let e = (t, a) => {
-                            (e.state = 'pending'),
+                            ((e.state = 'pending'),
                                 (e.resolve = (a) =>
                                     'pending' !== e.state
                                         ? void 0
@@ -2695,16 +2707,16 @@ Read more: https://mswjs.io/docs/websocket`;
                                             }),
                                             a((e.rejectionReason = t))
                                         );
-                                });
+                                }));
                         };
                         return e;
                     })();
-                    super((a, s) => {
-                        t(a, s), e?.(t.resolve, t.reject);
+                    (super((a, s) => {
+                        (t(a, s), e?.(t.resolve, t.reject));
                     }),
                         (this.#L = t),
                         (this.resolve = this.#L.resolve),
-                        (this.reject = this.#L.reject);
+                        (this.reject = this.#L.reject));
                 }
                 get state() {
                     return this.#L.state;
@@ -2726,13 +2738,13 @@ Read more: https://mswjs.io/docs/websocket`;
                 }
             };
             function eB(e, t) {
-                return Object.defineProperties(t, { target: { value: e, enumerable: !0, writable: !0 }, currentTarget: { value: e, enumerable: !0, writable: !0 } }), t;
+                return (Object.defineProperties(t, { target: { value: e, enumerable: !0, writable: !0 }, currentTarget: { value: e, enumerable: !0, writable: !0 } }), t);
             }
             var eJ = Symbol('kCancelable'),
                 eV = Symbol('kDefaultPrevented'),
                 eY = class extends MessageEvent {
                     constructor(e, t) {
-                        super(e, t), (this[eJ] = !!t.cancelable), (this[eV] = !1);
+                        (super(e, t), (this[eJ] = !!t.cancelable), (this[eV] = !1));
                     }
                     get cancelable() {
                         return this[eJ];
@@ -2752,15 +2764,15 @@ Read more: https://mswjs.io/docs/websocket`;
                 },
                 eX = class extends Event {
                     constructor(e, t = {}) {
-                        super(e, t),
+                        (super(e, t),
                             (this.code = void 0 === t.code ? 0 : t.code),
                             (this.reason = void 0 === t.reason ? '' : t.reason),
-                            (this.wasClean = void 0 !== t.wasClean && t.wasClean);
+                            (this.wasClean = void 0 !== t.wasClean && t.wasClean));
                     }
                 },
                 eK = class extends eX {
                     constructor(e, t = {}) {
-                        super(e, t), (this[eJ] = !!t.cancelable), (this[eV] = !1);
+                        (super(e, t), (this[eJ] = !!t.cancelable), (this[eV] = !1));
                     }
                     get cancelable() {
                         return this[eJ];
@@ -2782,18 +2794,18 @@ Read more: https://mswjs.io/docs/websocket`;
                 eZ = Symbol('kBoundListener'),
                 e1 = class {
                     constructor(e, t) {
-                        (this.socket = e),
+                        ((this.socket = e),
                             (this.transport = t),
                             (this.id = eU()),
                             (this.url = new URL(e.url)),
                             (this[eQ] = new EventTarget()),
                             this.transport.addEventListener('outgoing', (e) => {
                                 let t = eB(this.socket, new eY('message', { data: e.data, origin: e.origin, cancelable: !0 }));
-                                this[eQ].dispatchEvent(t), t.defaultPrevented && e.preventDefault();
+                                (this[eQ].dispatchEvent(t), t.defaultPrevented && e.preventDefault());
                             }),
                             this.transport.addEventListener('close', (e) => {
                                 this[eQ].dispatchEvent(eB(this.socket, new eX('close', e)));
-                            });
+                            }));
                     }
                     addEventListener(e, t, a) {
                         if (!Reflect.has(t, eZ)) {
@@ -2830,7 +2842,7 @@ Read more: https://mswjs.io/docs/websocket`;
                         this.CLOSED = 3;
                     }
                     constructor(e, t) {
-                        super(),
+                        (super(),
                             (this.CONNECTING = 0),
                             (this.OPEN = 1),
                             (this.CLOSING = 2),
@@ -2864,28 +2876,28 @@ Read more: https://mswjs.io/docs/websocket`;
                                 (await this[e2]) ||
                                     ((this.protocol = 'string' == typeof t ? t : Array.isArray(t) && t.length > 0 ? t[0] : ''),
                                     this.readyState === this.CONNECTING && ((this.readyState = this.OPEN), this.dispatchEvent(eB(this, new Event('open')))));
-                            });
+                            }));
                     }
                     set onopen(e) {
-                        this.removeEventListener('open', this._onopen), (this._onopen = e), null !== e && this.addEventListener('open', e);
+                        (this.removeEventListener('open', this._onopen), (this._onopen = e), null !== e && this.addEventListener('open', e));
                     }
                     get onopen() {
                         return this._onopen;
                     }
                     set onmessage(e) {
-                        this.removeEventListener('message', this._onmessage), (this._onmessage = e), null !== e && this.addEventListener('message', e);
+                        (this.removeEventListener('message', this._onmessage), (this._onmessage = e), null !== e && this.addEventListener('message', e));
                     }
                     get onmessage() {
                         return this._onmessage;
                     }
                     set onerror(e) {
-                        this.removeEventListener('error', this._onerror), (this._onerror = e), null !== e && this.addEventListener('error', e);
+                        (this.removeEventListener('error', this._onerror), (this._onerror = e), null !== e && this.addEventListener('error', e));
                     }
                     get onerror() {
                         return this._onerror;
                     }
                     set onclose(e) {
-                        this.removeEventListener('close', this._onclose), (this._onclose = e), null !== e && this.addEventListener('close', e);
+                        (this.removeEventListener('close', this._onclose), (this._onclose = e), null !== e && this.addEventListener('close', e));
                     }
                     get onclose() {
                         return this._onclose;
@@ -2897,23 +2909,23 @@ Read more: https://mswjs.io/docs/websocket`;
                             this.readyState !== this.CLOSED &&
                             ((this.bufferedAmount += 'string' == typeof (t = e) ? t.length : t instanceof Blob ? t.size : t.byteLength),
                             queueMicrotask(() => {
-                                (this.bufferedAmount = 0), this[e3]?.(e);
+                                ((this.bufferedAmount = 0), this[e3]?.(e));
                             }));
                     }
                     close(e = 1e3, t) {
-                        eb(e, e0), eb(1e3 === e || (e >= 3e3 && e <= 4999), e0), this[e4](e, t);
+                        (eb(e, e0), eb(1e3 === e || (e >= 3e3 && e <= 4999), e0), this[e4](e, t));
                     }
                     [e4](e = 1e3, t, a = !0) {
                         this.readyState !== this.CLOSING &&
                             this.readyState !== this.CLOSED &&
                             ((this.readyState = this.CLOSING),
                             queueMicrotask(() => {
-                                (this.readyState = this.CLOSED),
+                                ((this.readyState = this.CLOSED),
                                     this.dispatchEvent(eB(this, new eX('close', { code: e, reason: t, wasClean: a }))),
                                     (this._onopen = null),
                                     (this._onmessage = null),
                                     (this._onerror = null),
-                                    (this._onclose = null);
+                                    (this._onclose = null));
                             }));
                     }
                     addEventListener(e, t, a) {
@@ -2928,7 +2940,7 @@ Read more: https://mswjs.io/docs/websocket`;
                 e6 = Symbol('kSend'),
                 e8 = class {
                     constructor(e, t, a) {
-                        (this.client = e),
+                        ((this.client = e),
                             (this.transport = t),
                             (this.createConnection = a),
                             (this[e9] = new EventTarget()),
@@ -2940,7 +2952,7 @@ Read more: https://mswjs.io/docs/websocket`;
                                         e.defaultPrevented || this[e6](e.data);
                                     });
                             }),
-                            this.transport.addEventListener('incoming', this.handleIncomingMessage.bind(this));
+                            this.transport.addEventListener('incoming', this.handleIncomingMessage.bind(this)));
                     }
                     get socket() {
                         return (
@@ -2957,7 +2969,7 @@ Read more: https://mswjs.io/docs/websocket`;
                             'Failed to call "connect()" on the original WebSocket instance: the connection already open',
                         );
                         let e = this.createConnection();
-                        (e.binaryType = this.client.binaryType),
+                        ((e.binaryType = this.client.binaryType),
                             e.addEventListener(
                                 'open',
                                 (e) => {
@@ -2984,9 +2996,9 @@ Read more: https://mswjs.io/docs/websocket`;
                             ),
                             e.addEventListener('error', () => {
                                 let t = eB(e, new Event('error', { cancelable: !0 }));
-                                this[e9].dispatchEvent(t), t.defaultPrevented || this.client.dispatchEvent(eB(this.client, new Event('error')));
+                                (this[e9].dispatchEvent(t), t.defaultPrevented || this.client.dispatchEvent(eB(this.client, new Event('error'))));
                             }),
-                            (this.realWebSocket = e);
+                            (this.realWebSocket = e));
                     }
                     addEventListener(e, t, a) {
                         if (!Reflect.has(t, e7)) {
@@ -3020,19 +3032,19 @@ Read more: https://mswjs.io/docs/websocket`;
                     }
                     close() {
                         let { realWebSocket: e } = this;
-                        eb(e, 'Failed to close server connection for "%s": the connection is not open. Did you forget to call "server.connect()"?', this.client.url),
+                        (eb(e, 'Failed to close server connection for "%s": the connection is not open. Did you forget to call "server.connect()"?', this.client.url),
                             this.realCloseController.abort(),
                             e.readyState !== WebSocket.CLOSING &&
                                 e.readyState !== WebSocket.CLOSED &&
                                 (e.close(),
                                 queueMicrotask(() => {
                                     this[e9].dispatchEvent(eB(this.realWebSocket, new eK('close', { code: 1e3, cancelable: !0 })));
-                                }));
+                                })));
                     }
                     handleIncomingMessage(e) {
                         let t = eB(e.target, new eY('message', { data: e.data, origin: e.origin, cancelable: !0 }));
-                        this[e9].dispatchEvent(t),
-                            t.defaultPrevented || this.client.dispatchEvent(eB(this.client, new MessageEvent('message', { data: e.data, origin: e.origin })));
+                        (this[e9].dispatchEvent(t),
+                            t.defaultPrevented || this.client.dispatchEvent(eB(this.client, new MessageEvent('message', { data: e.data, origin: e.origin }))));
                     }
                     handleMockClose(e) {
                         this.realWebSocket && this.realWebSocket.close();
@@ -3040,19 +3052,19 @@ Read more: https://mswjs.io/docs/websocket`;
                     handleRealClose(e) {
                         this.mockCloseController.abort();
                         let t = eB(this.realWebSocket, new eK('close', { code: e.code, reason: e.reason, wasClean: e.wasClean, cancelable: !0 }));
-                        this[e9].dispatchEvent(t), t.defaultPrevented || this.client[e4](e.code, e.reason);
+                        (this[e9].dispatchEvent(t), t.defaultPrevented || this.client[e4](e.code, e.reason));
                     }
                 },
                 te = class extends EventTarget {
                     constructor(e) {
-                        super(),
+                        (super(),
                             (this.socket = e),
                             this.socket.addEventListener('close', (e) => {
                                 this.dispatchEvent(eB(this.socket, new eX('close', e)));
                             }),
                             (this.socket[e3] = (e) => {
                                 this.dispatchEvent(eB(this.socket, new eY('outgoing', { data: e, origin: this.socket.url, cancelable: !0 })));
-                            });
+                            }));
                     }
                     addEventListener(e, t, a) {
                         return super.addEventListener(e, t, a);
@@ -3093,7 +3105,7 @@ Read more: https://mswjs.io/docs/websocket`;
                     }
                     setup() {
                         let e = Object.getOwnPropertyDescriptor(globalThis, 'WebSocket');
-                        Object.defineProperty(globalThis, 'WebSocket', {
+                        (Object.defineProperty(globalThis, 'WebSocket', {
                             value: new Proxy(globalThis.WebSocket, {
                                 construct: (e, t, a) => {
                                     let [s, r] = t,
@@ -3105,14 +3117,14 @@ Read more: https://mswjs.io/docs/websocket`;
                                             try {
                                                 let e = new e8(o, n, i),
                                                     t = this.emitter.listenerCount('connection') > 0;
-                                                await e_(this.emitter, 'connection', { client: new e1(o, n), server: e, info: { protocols: r } }),
+                                                (await e_(this.emitter, 'connection', { client: new e1(o, n), server: e, info: { protocols: r } }),
                                                     t
                                                         ? o[e2].resolve(!1)
                                                         : (o[e2].resolve(!0),
                                                           e.connect(),
                                                           e.addEventListener('open', () => {
-                                                              o.dispatchEvent(eB(o, new Event('open'))), e.realWebSocket && (o.protocol = e.realWebSocket.protocol);
-                                                          }));
+                                                              (o.dispatchEvent(eB(o, new Event('open'))), e.realWebSocket && (o.protocol = e.realWebSocket.protocol));
+                                                          })));
                                             } catch (e) {
                                                 e instanceof Error &&
                                                     (o.dispatchEvent(new Event('error')),
@@ -3128,7 +3140,7 @@ Read more: https://mswjs.io/docs/websocket`;
                         }),
                             this.subscriptions.push(() => {
                                 Object.defineProperty(globalThis, 'WebSocket', e);
-                            });
+                            }));
                     }
                 };
             function ta() {
@@ -3141,7 +3153,7 @@ Read more: https://mswjs.io/docs/websocket`;
                     constructor(e = null) {
                         let t = (function () {
                             let e = (t, a) => {
-                                (e.state = 'pending'),
+                                ((e.state = 'pending'),
                                     (e.resolve = (a) =>
                                         'pending' !== e.state
                                             ? void 0
@@ -3154,16 +3166,16 @@ Read more: https://mswjs.io/docs/websocket`;
                                                 }),
                                                 a((e.rejectionReason = t))
                                             );
-                                    });
+                                    }));
                             };
                             return e;
                         })();
-                        super((a, s) => {
-                            t(a, s), e?.(t.resolve, t.reject);
+                        (super((a, s) => {
+                            (t(a, s), e?.(t.resolve, t.reject));
                         }),
                             (this.#L = t),
                             (this.resolve = this.#L.resolve),
-                            (this.reject = this.#L.reject);
+                            (this.reject = this.#L.reject));
                     }
                     get state() {
                         return this.#L.state;
@@ -3187,7 +3199,7 @@ Read more: https://mswjs.io/docs/websocket`;
                 tr = Symbol('isPatchedModule'),
                 ti = class e extends Error {
                     constructor(t) {
-                        super(t), (this.name = 'InterceptorError'), Object.setPrototypeOf(this, e.prototype);
+                        (super(t), (this.name = 'InterceptorError'), Object.setPrototypeOf(this, e.prototype));
                     }
                 },
                 to = class e {
@@ -3204,13 +3216,13 @@ Read more: https://mswjs.io/docs/websocket`;
                         this.ERROR = 3;
                     }
                     constructor(t, a) {
-                        (this.request = t), (this.source = a), (this.readyState = e.PENDING), (this.handled = new eG());
+                        ((this.request = t), (this.source = a), (this.readyState = e.PENDING), (this.handled = new eG()));
                     }
                     get #z() {
                         return this.handled;
                     }
                     async passthrough() {
-                        eb.as(
+                        (eb.as(
                             ti,
                             this.readyState === e.PENDING,
                             'Failed to passthrough the "%s %s" request: the request has already been handled',
@@ -3219,10 +3231,10 @@ Read more: https://mswjs.io/docs/websocket`;
                         ),
                             (this.readyState = e.PASSTHROUGH),
                             await this.source.passthrough(),
-                            this.#z.resolve();
+                            this.#z.resolve());
                     }
                     respondWith(t) {
-                        eb.as(
+                        (eb.as(
                             ti,
                             this.readyState === e.PENDING,
                             'Failed to respond to the "%s %s" request with "%d %s": the request has already been handled (%d)',
@@ -3234,10 +3246,10 @@ Read more: https://mswjs.io/docs/websocket`;
                         ),
                             (this.readyState = e.RESPONSE),
                             this.#z.resolve(),
-                            this.source.respondWith(t);
+                            this.source.respondWith(t));
                     }
                     errorWith(t) {
-                        eb.as(
+                        (eb.as(
                             ti,
                             this.readyState === e.PENDING,
                             'Failed to error the "%s %s" request with "%s": the request has already been handled (%d)',
@@ -3248,12 +3260,12 @@ Read more: https://mswjs.io/docs/websocket`;
                         ),
                             (this.readyState = e.ERROR),
                             this.source.errorWith(t),
-                            this.#z.resolve();
+                            this.#z.resolve());
                     }
                 };
             function tn(e) {
                 try {
-                    return new URL(e), !0;
+                    return (new URL(e), !0);
                 } catch (e) {
                     return !1;
                 }
@@ -3323,7 +3335,7 @@ Read more: https://mswjs.io/docs/websocket`;
                         r = await navigator.serviceWorker.getRegistrations().then((e) => e.filter((e) => tp(e, s, a)));
                     !navigator.serviceWorker.controller && r.length > 0 && location.reload();
                     let [i] = r;
-                    if (i) return i.update(), [tp(i, s, a), i];
+                    if (i) return (i.update(), [tp(i, s, a), i]);
                     let [o, n] = await tm(async () => {
                         let r = await navigator.serviceWorker.register(e, t);
                         return [tp(r, s, a), r];
@@ -3348,7 +3360,7 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                     #e;
                     #t;
                     constructor() {
-                        (this.#e = []), (this.#t = new Map());
+                        ((this.#e = []), (this.#t = new Map()));
                     }
                     get [Symbol.iterator]() {
                         return this.#e[Symbol.iterator].bind(this.#e);
@@ -3363,10 +3375,10 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                         return this.#e.map(([, e]) => e);
                     }
                     append(e, t) {
-                        this.#e.push([e, t]), this.#a(e, (e) => e.push(t));
+                        (this.#e.push([e, t]), this.#a(e, (e) => e.push(t)));
                     }
                     prepend(e, t) {
-                        this.#e.unshift([e, t]), this.#a(e, (e) => e.unshift(t));
+                        (this.#e.unshift([e, t]), this.#a(e, (e) => e.unshift(t)));
                     }
                     delete(e, t) {
                         if (0 === this.size) return !1;
@@ -3405,16 +3417,16 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                     [tb];
                     [ty];
                     constructor(...e) {
-                        super(e[0], e[1]), (this[tk] = !1);
+                        (super(e[0], e[1]), (this[tk] = !1));
                     }
                     get defaultPrevented() {
                         return this[tk];
                     }
                     preventDefault() {
-                        super.preventDefault(), (this[tk] = !0);
+                        (super.preventDefault(), (this[tk] = !0));
                     }
                     stopImmediatePropagation() {
-                        super.stopImmediatePropagation(), (this[ty] = !0);
+                        (super.stopImmediatePropagation(), (this[ty] = !0));
                     }
                 },
                 tw = class {
@@ -3427,7 +3439,7 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                     #c;
                     hooks;
                     constructor() {
-                        (this.#r = new tf()),
+                        ((this.#r = new tf()),
                             (this.#i = new WeakMap()),
                             (this.#o = new WeakMap()),
                             (this.#n = new WeakSet()),
@@ -3447,17 +3459,17 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                                                 r = () => {
                                                     this.#h(e, t);
                                                 };
-                                            s.addEventListener('abort', r, { once: !0 }),
+                                            (s.addEventListener('abort', r, { once: !0 }),
                                                 this.#c.set(t, () => {
                                                     s.removeEventListener('abort', r);
-                                                });
+                                                }));
                                         }
                                     }
                                 },
                                 removeListener: (e, t) => {
                                     this.#h(e, t);
                                 },
-                            });
+                            }));
                     }
                     #h(e, t) {
                         this.#l.delete(e, t);
@@ -3467,16 +3479,16 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                     #d(e, t) {
                         let a = this.#r.delete(e, t),
                             s = this.#o.get(t);
-                        return s && (s(), this.#o.delete(t)), a;
+                        return (s && (s(), this.#o.delete(t)), a);
                     }
                     on(e, t, a) {
-                        return this.#m(e, t, a), this;
+                        return (this.#m(e, t, a), this);
                     }
                     once(e, t, a) {
                         return this.on(e, t, { ...(a || {}), once: !0 });
                     }
                     earlyOn(e, t, a) {
-                        return this.#m(e, t, a, 'prepend'), this;
+                        return (this.#m(e, t, a, 'prepend'), this);
                     }
                     earlyOnce(e, t, a) {
                         return this.earlyOn(e, t, { ...(a || {}), once: !0 });
@@ -3486,23 +3498,23 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                         let t = this.listenerCount(e.type) > 0,
                             a = this.#p(e);
                         for (let t of this.#g(e.type)) {
-                            if (null != a.event[tb] && a.event[tb] !== this) return a.revoke(), !1;
+                            if (null != a.event[tb] && a.event[tb] !== this) return (a.revoke(), !1);
                             if (a.event[ty]) break;
                             this.#f(a.event, t);
                         }
-                        return a.revoke(), t;
+                        return (a.revoke(), t);
                     }
                     async emitAsPromise(e) {
                         if (0 === this.#r.size) return [];
                         let t = [],
                             a = this.#p(e);
                         for (let s of this.#g(e.type)) {
-                            if (null != a.event[tb] && a.event[tb] !== this) return a.revoke(), [];
+                            if (null != a.event[tb] && a.event[tb] !== this) return (a.revoke(), []);
                             if (a.event[ty]) break;
                             let e = await Promise.resolve(this.#f(a.event, s));
                             this.#k(s) || t.push(e);
                         }
-                        return a.revoke(), Promise.allSettled(t).then((e) => e.map((e) => ('fulfilled' === e.status ? e.value : e.reason)));
+                        return (a.revoke(), Promise.allSettled(t).then((e) => e.map((e) => ('fulfilled' === e.status ? e.value : e.reason))));
                     }
                     *emitAsGenerator(e) {
                         if (0 === this.#r.size) return;
@@ -3521,12 +3533,12 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                     }
                     removeAllListeners(e) {
                         if (null == e) {
-                            for (let [e, t] of this.#r.entries()) for (; t.length > 0; ) this.removeListener(e, t[0]);
+                            for (let [e, t] of this.#r.entries()) for (; t.length > 0;) this.removeListener(e, t[0]);
                             for (let [e, t] of [...this.#l]) this.#u.get(t)?.persist || this.#h(e, t);
                             return;
                         }
                         let t = this.listeners(e);
-                        for (; t.length > 0; ) this.removeListener(e, t[0]);
+                        for (; t.length > 0;) this.removeListener(e, t[0]);
                     }
                     listeners(e) {
                         return null == e ? this.#r.getAll() : this.#r.get(e);
@@ -3542,10 +3554,10 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                                     r = () => {
                                         this.removeListener(e, t);
                                     };
-                                s.addEventListener('abort', r, { once: !0 }),
+                                (s.addEventListener('abort', r, { once: !0 }),
                                     this.#o.set(t, () => {
                                         s.removeEventListener('abort', r);
-                                    });
+                                    }));
                             }
                         }
                     }
@@ -3553,7 +3565,7 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                         let { stopPropagation: t } = e;
                         return (
                             (e.stopPropagation = () => {
-                                (e[tb] = this), t.call(e);
+                                ((e[tb] = this), t.call(e));
                             }),
                             {
                                 event: e,
@@ -3586,7 +3598,7 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                 tS = class extends tv {
                     #A;
                     constructor(e) {
-                        super(e.data.type, { data: e.data.payload }), (this.#A = e);
+                        (super(e.data.type, { data: e.data.payload }), (this.#A = e));
                     }
                     get ports() {
                         return this.#A.ports;
@@ -3599,7 +3611,7 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                     #O;
                     #C;
                     constructor(e) {
-                        super(),
+                        (super(),
                             eb(tx, 'Failed to open a WorkerChannel: Service Worker is not supported in this environment.'),
                             (this.#O = e.getWorker),
                             (this.#C = new AbortController()),
@@ -3616,19 +3628,19 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                                         this.emit(new tS(e));
                                 },
                                 { signal: this.#C.signal },
-                            );
+                            ));
                     }
                     postMessage(e) {
-                        eb(
+                        (eb(
                             tx,
                             'Failed to post message on a WorkerChannel: the Service Worker API is unavailable in this environment. This is likely an issue with MSW. Please report it on GitHub: https://github.com/mswjs/msw/issues',
                         ),
                             this.#O().then((t) => {
                                 t.postMessage(e);
-                            });
+                            }));
                     }
                     terminate() {
-                        this.#C.abort(), this.removeAllListeners();
+                        (this.#C.abort(), this.removeAllListeners());
                     }
                 };
             function tE(e) {
@@ -3645,11 +3657,11 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                         if (null == e.#I) e.#I = new e(t);
                         else {
                             var a;
-                            (a = e.#I.#P),
+                            ((a = e.#I.#P),
                                 (a.findWorker !== t.findWorker ||
                                     a.serviceWorker.url !== t.serviceWorker.url ||
                                     JSON.stringify(a.serviceWorker.options) !== JSON.stringify(t.serviceWorker.options)) &&
-                                    (await e.#I.terminate(), (e.#I = new e(t)));
+                                    (await e.#I.terminate(), (e.#I = new e(t))));
                         }
                         return e.#I;
                     }
@@ -3662,12 +3674,12 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                     #N;
                     workerPromise;
                     constructor(e) {
-                        super(),
+                        (super(),
                             eb(ta(), 'Failed to use Service Worker as the network source: the Service Worker API is not supported in this environment'),
                             (this.#P = e),
                             (this.#x = new Map()),
                             (this.workerPromise = new ts()),
-                            (this.#T = new tj({ getWorker: () => this.workerPromise.then(([e]) => e) }));
+                            (this.#T = new tj({ getWorker: () => this.workerPromise.then(([e]) => e) })));
                     }
                     async enable() {
                         if ('fulfilled' === this.workerPromise.state && void 0 === this.#N)
@@ -3677,12 +3689,12 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                                 ),
                                 this.workerPromise.then(([, e]) => e)
                             );
-                        (this.#N = void 0), this.#T.removeAllListeners(), this.#x.clear(), (this.#R = new AbortController());
+                        ((this.#N = void 0), this.#T.removeAllListeners(), this.#x.clear(), (this.#R = new AbortController()));
                         let [e, t] = await this.#M();
                         if ('activated' !== e.state) {
                             let t = new AbortController(),
                                 a = new ts();
-                            a.then(() => t.abort()),
+                            (a.then(() => t.abort()),
                                 e.addEventListener(
                                     'statechange',
                                     () => {
@@ -3690,7 +3702,7 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                                     },
                                     { signal: t.signal },
                                 ),
-                                await a;
+                                await a);
                         }
                         this.#T.postMessage('MOCK_ACTIVATE');
                         let a = new ts();
@@ -3709,7 +3721,7 @@ Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/i
                             return void d.J.warn(
                                 'Found a redundant "worker.stop()" call. Notice that stopping the worker after it has already been stopped has no effect. Consider removing this "worker.stop()" call.',
                             );
-                        (this.#N = Date.now()), this.#R?.abort(), (this.#R = void 0), this.#T.postMessage('CLIENT_CLOSED'), this.#P.quiet || this.#H();
+                        ((this.#N = Date.now()), this.#R?.abort(), (this.#R = void 0), this.#T.postMessage('CLIENT_CLOSED'), this.#P.quiet || this.#H());
                     }
                     async terminate() {
                         if (
@@ -3761,17 +3773,17 @@ Please consider using a custom "serviceWorker.url" option to point to the actual
                             window.addEventListener(
                                 'beforeunload',
                                 () => {
-                                    'redundant' !== t.state && this.#T.postMessage('CLIENT_CLOSED'),
+                                    ('redundant' !== t.state && this.#T.postMessage('CLIENT_CLOSED'),
                                         clearInterval(this.#W),
-                                        window.postMessage({ type: 'msw/worker:stop' });
+                                        window.postMessage({ type: 'msw/worker:stop' }));
                                 },
                                 { signal: this.#R?.signal },
                             ),
                             await this.#_().catch((e) => {
-                                d.J.error(
+                                (d.J.error(
                                     'Error while checking the worker script integrity. Please report this on GitHub (https://github.com/mswjs/msw/issues) and include the original error below.',
                                 ),
-                                    console.error(e);
+                                    console.error(e));
                             }),
                             (this.#W = window.setInterval(() => {
                                 this.#T.postMessage('KEEPALIVE_REQUEST');
@@ -3791,13 +3803,13 @@ Please consider using a custom "serviceWorker.url" option to point to the actual
                         let t = tE(e.data);
                         ed.w.cache.set(t, t.clone());
                         let a = new tL({ event: e, request: t });
-                        this.#x.set(e.data.id, a), await this.queue(a);
+                        (this.#x.set(e.data.id, a), await this.queue(a));
                     }
                     async #j(e) {
                         let { request: t, response: a, isMockedResponse: s } = e.data,
                             r = this.#x.get(t.id);
                         if (a.type?.includes('opaque')) {
-                            this.#x.delete(t.id), r?.events.removeAllListeners();
+                            (this.#x.delete(t.id), r?.events.removeAllListeners());
                             return;
                         }
                         if ((this.#x.delete(t.id), null == r)) return;
@@ -3816,7 +3828,7 @@ Please consider using a custom "serviceWorker.url" option to point to the actual
                             this.#T.postMessage('INTEGRITY_CHECK_REQUEST'),
                             this.#T.once('INTEGRITY_CHECK_RESPONSE', (t) => {
                                 let { checksum: a, packageVersion: s } = t.data;
-                                '4db4a41e972cec1b64cc569c66952d82' !== a &&
+                                ('4db4a41e972cec1b64cc569c66952d82' !== a &&
                                     d.J
                                         .warn(`The currently registered Service Worker has been generated by a different version of MSW (${s}) and may not be fully compatible with the installed version.
 
@@ -3825,7 +3837,7 @@ It's recommended you update your worker script by running this command:
   \u2022 npx msw init <PUBLIC_DIR>
 
 You can also automate this process and make the worker script update automatically upon the library installations. Read more: https://mswjs.io/docs/cli/init.`),
-                                    e.resolve();
+                                    e.resolve());
                             }),
                             e
                         );
@@ -3835,13 +3847,13 @@ You can also automate this process and make the worker script update automatical
                         eb(null != this.#D, '[ServiceWorkerSource] Failed to print a start message: client confirmation not received');
                         let e = await this.#D,
                             [t, a] = await this.workerPromise;
-                        console.groupCollapsed(`%c${d.J.formatMessage('Mocking enabled.')}`, 'color:orangered;font-weight:bold;'),
+                        (console.groupCollapsed(`%c${d.J.formatMessage('Mocking enabled.')}`, 'color:orangered;font-weight:bold;'),
                             console.log('%cDocumentation: %chttps://mswjs.io/docs', 'font-weight:bold', 'font-weight:normal'),
                             console.log('Found an issue? https://github.com/mswjs/msw/issues'),
                             console.log('Worker script URL:', t.scriptURL),
                             console.log('Worker scope:', a.scope),
                             e && console.log('Client ID: %s (%s)', e.id, e.frameType),
-                            console.groupEnd();
+                            console.groupEnd());
                     }
                     #H() {
                         console.log(`%c${d.J.formatMessage('Mocking disabled.')}`, 'color:orangered;font-weight:bold;');
@@ -3850,7 +3862,7 @@ You can also automate this process and make the worker script update automatical
                 tL = class extends P {
                     #F;
                     constructor(e) {
-                        super({ request: e.request }), (this.#F = e.event);
+                        (super({ request: e.request }), (this.#F = e.event));
                     }
                     passthrough() {
                         this.#F.postMessage('PASSTHROUGH');
@@ -3872,17 +3884,17 @@ You can also automate this process and make the worker script update automatical
                         let t,
                             a,
                             s = { status: e.status, statusText: e.statusText, headers: Object.fromEntries(e.headers.entries()) };
-                        !(function () {
+                        (!(function () {
                             try {
                                 let e = new ReadableStream({ start: (e) => e.close() });
-                                return new MessageChannel().port1.postMessage(e, [e]), !0;
+                                return (new MessageChannel().port1.postMessage(e, [e]), !0);
                             } catch {
                                 return !1;
                             }
                         })()
                             ? (t = null == e.body ? null : await e.clone().arrayBuffer())
                             : ((t = e.body), (a = null == e.body ? void 0 : [e.body])),
-                            this.#F.postMessage('MOCK_RESPONSE', { ...s, body: t }, a);
+                            this.#F.postMessage('MOCK_RESPONSE', { ...s, body: t }, a));
                     }
                 },
                 tq = async (e) => {
@@ -3900,7 +3912,7 @@ You can also automate this process and make the worker script update automatical
             }
             function tA(e, t) {
                 try {
-                    return e[t], !0;
+                    return (e[t], !0);
                 } catch {
                     return !1;
                 }
@@ -3988,28 +4000,28 @@ You can also automate this process and make the worker script update automatical
                 if ((Object.defineProperty(e, tR, { value: (Reflect.get(e, tR) || 0) + 1 }), 'cors' === e.mode && (a.username || a.password) && !tW(s, a)))
                     return Promise.reject(tP('cross origin not allowed for request mode "cors"'));
                 let r = {};
-                (([301, 302].includes(t.status) && 'POST' === e.method) || (303 === t.status && !['HEAD', 'GET'].includes(e.method))) &&
+                ((([301, 302].includes(t.status) && 'POST' === e.method) || (303 === t.status && !['HEAD', 'GET'].includes(e.method))) &&
                     ((r.method = 'GET'),
                     (r.body = null),
                     tT.forEach((t) => {
                         e.headers.delete(t);
                     })),
                     tW(s, a) || (e.headers.delete('authorization'), e.headers.delete('proxy-authorization'), e.headers.delete('cookie'), e.headers.delete('host')),
-                    (r.headers = e.headers);
+                    (r.headers = e.headers));
                 let i = await fetch(new Request(a, r));
-                return Object.defineProperty(i, 'redirected', { value: !0, configurable: !0 }), i;
+                return (Object.defineProperty(i, 'redirected', { value: !0, configurable: !0 }), i);
             }
             function tW(e, t) {
                 return (e.origin === t.origin && 'null' === e.origin) || (e.protocol === t.protocol && e.hostname === t.hostname && e.port === t.port);
             }
             var tN = class extends TransformStream {
                     constructor() {
-                        console.warn('[Interceptors]: Brotli decompression of response streams is not supported in the browser'),
+                        (console.warn('[Interceptors]: Brotli decompression of response streams is not supported in the browser'),
                             super({
                                 transform(e, t) {
                                     t.enqueue(e);
                                 },
-                            });
+                            }));
                     }
                 },
                 tM = class extends TransformStream {
@@ -4031,7 +4043,7 @@ You can also automate this process and make the worker script update automatical
                     }
                     async setup() {
                         let e = globalThis.fetch;
-                        eb(!e[tr], 'Failed to patch the "fetch" module: already patched.'),
+                        (eb(!e[tr], 'Failed to patch the "fetch" module: already patched.'),
                             (globalThis.fetch = async (t, a) => {
                                 let s = eU(),
                                     r = new Request('string' != typeof t || 'undefined' == typeof location || tn(t) ? t : new URL(t, location.href), a);
@@ -4052,7 +4064,7 @@ You can also automate this process and make the worker script update automatical
                                         },
                                         respondWith: async (e) => {
                                             if (tO(e)) {
-                                                this.logger.info('request has errored!', { response: e }), i.reject(tP(e));
+                                                (this.logger.info('request has errored!', { response: e }), i.reject(tP(e)));
                                                 return;
                                             }
                                             this.logger.info('received mocked response!', { rawResponse: e });
@@ -4095,13 +4107,13 @@ You can also automate this process and make the worker script update automatical
                                                         },
                                                     );
                                             }
-                                            this.emitter.listenerCount('response') > 0 &&
+                                            (this.emitter.listenerCount('response') > 0 &&
                                                 (this.logger.info('emitting the "response" event...'),
                                                 await e_(this.emitter, 'response', { response: a.clone(), isMockedResponse: !0, request: r, requestId: s })),
-                                                i.resolve(a);
+                                                i.resolve(a));
                                         },
                                         errorWith: (e) => {
-                                            this.logger.info('request has been aborted!', { reason: e }), i.reject(e);
+                                            (this.logger.info('request has been aborted!', { reason: e }), i.reject(e));
                                         },
                                     });
                                 return (
@@ -4114,15 +4126,15 @@ You can also automate this process and make the worker script update automatical
                             }),
                             Object.defineProperty(globalThis.fetch, tr, { enumerable: !0, configurable: !0, value: !0 }),
                             this.subscriptions.push(() => {
-                                Object.defineProperty(globalThis.fetch, tr, { value: void 0 }),
+                                (Object.defineProperty(globalThis.fetch, tr, { value: void 0 }),
                                     (globalThis.fetch = e),
-                                    this.logger.info('restored native "globalThis.fetch"!', globalThis.fetch.name);
-                            });
+                                    this.logger.info('restored native "globalThis.fetch"!', globalThis.fetch.name));
+                            }));
                     }
                 },
                 tH = class {
                     constructor(e, t) {
-                        (this.NONE = 0),
+                        ((this.NONE = 0),
                             (this.CAPTURING_PHASE = 1),
                             (this.AT_TARGET = 2),
                             (this.BUBBLING_PHASE = 3),
@@ -4143,13 +4155,13 @@ You can also automate this process and make the worker script update automatical
                             (this.type = e),
                             (this.target = t?.target || null),
                             (this.currentTarget = t?.currentTarget || null),
-                            (this.timeStamp = Date.now());
+                            (this.timeStamp = Date.now()));
                     }
                     composedPath() {
                         return [];
                     }
                     initEvent(e, t, a) {
-                        (this.type = e), (this.bubbles = !!t), (this.cancelable = !!a);
+                        ((this.type = e), (this.bubbles = !!t), (this.cancelable = !!a));
                     }
                     preventDefault() {
                         this.defaultPrevented = !0;
@@ -4159,11 +4171,11 @@ You can also automate this process and make the worker script update automatical
                 },
                 tU = class extends tH {
                     constructor(e, t) {
-                        super(e),
+                        (super(e),
                             (this.lengthComputable = t?.lengthComputable || !1),
                             (this.composed = t?.composed || !1),
                             (this.loaded = t?.loaded || 0),
-                            (this.total = t?.total || 0);
+                            (this.total = t?.total || 0));
                     }
                 },
                 t_ = 'undefined' != typeof ProgressEvent;
@@ -4219,7 +4231,7 @@ You can also automate this process and make the worker script update automatical
                 tV = Symbol('kFetchRequest'),
                 tY = class {
                     constructor(e, t) {
-                        (this.initialRequest = e),
+                        ((this.initialRequest = e),
                             (this.logger = t),
                             (this.method = 'GET'),
                             (this.url = null),
@@ -4234,7 +4246,7 @@ You can also automate this process and make the worker script update automatical
                                     if ('ontimeout' !== e) return a();
                                     {
                                         let s = e.slice(2);
-                                        return this.request.addEventListener(s, t), a();
+                                        return (this.request.addEventListener(s, t), a());
                                     }
                                 },
                                 methodCall: ([e, t], a) => {
@@ -4250,11 +4262,11 @@ You can also automate this process and make the worker script update automatical
                                         }
                                         case 'addEventListener': {
                                             let [e, s] = t;
-                                            return this.registerEvent(e, s), this.logger.info('addEventListener', e, s), a();
+                                            return (this.registerEvent(e, s), this.logger.info('addEventListener', e, s), a());
                                         }
                                         case 'setRequestHeader': {
                                             let [e, s] = t;
-                                            return this.requestHeaders.set(e, s), this.logger.info('setRequestHeader', e, s), a();
+                                            return (this.requestHeaders.set(e, s), this.logger.info('setRequestHeader', e, s), a());
                                         }
                                         case 'send': {
                                             let [e] = t;
@@ -4282,7 +4294,7 @@ You can also automate this process and make the worker script update automatical
                                             });
                                             let s = 'string' == typeof e ? td.encode(e) : e,
                                                 r = this.toFetchApiRequest(s);
-                                            (this[tV] = r.clone()),
+                                            ((this[tV] = r.clone()),
                                                 queueMicrotask(() => {
                                                     (this.onRequest?.call(this, { request: r, requestId: this.requestId }) || Promise.resolve()).finally(() => {
                                                         if (!this[tB])
@@ -4295,7 +4307,7 @@ You can also automate this process and make the worker script update automatical
                                                                 a()
                                                             );
                                                     });
-                                                });
+                                                }));
                                             break;
                                         }
                                         default:
@@ -4325,65 +4337,65 @@ You can also automate this process and make the worker script update automatical
                                     methodCall: ([e, t], a) => {
                                         if ('addEventListener' === e) {
                                             let [e, s] = t;
-                                            return this.registerUploadEvent(e, s), this.logger.info('upload.addEventListener', e, s), a();
+                                            return (this.registerUploadEvent(e, s), this.logger.info('upload.addEventListener', e, s), a());
                                         }
                                     },
                                 }),
-                            );
+                            ));
                     }
                     registerEvent(e, t) {
                         let a = (this.events.get(e) || []).concat(t);
-                        this.events.set(e, a), this.logger.info('registered event "%s"', e, t);
+                        (this.events.set(e, a), this.logger.info('registered event "%s"', e, t));
                     }
                     registerUploadEvent(e, t) {
                         let a = (this.uploadEvents.get(e) || []).concat(t);
-                        this.uploadEvents.set(e, a), this.logger.info('registered upload event "%s"', e, t);
+                        (this.uploadEvents.set(e, a), this.logger.info('registered upload event "%s"', e, t));
                     }
                     async respondWith(e) {
                         if (((this[tB] = !0), this[tV])) {
                             let e = await tG(this[tV]);
-                            this.trigger('loadstart', this.request.upload, { loaded: 0, total: e }),
+                            (this.trigger('loadstart', this.request.upload, { loaded: 0, total: e }),
                                 this.trigger('progress', this.request.upload, { loaded: e, total: e }),
                                 this.trigger('load', this.request.upload, { loaded: e, total: e }),
-                                this.trigger('loadend', this.request.upload, { loaded: e, total: e });
+                                this.trigger('loadend', this.request.upload, { loaded: e, total: e }));
                         }
-                        this.logger.info('responding with a mocked response: %d %s', e.status, e.statusText),
+                        (this.logger.info('responding with a mocked response: %d %s', e.status, e.statusText),
                             tK(this.request, 'status', e.status),
                             tK(this.request, 'statusText', e.statusText),
                             tK(this.request, 'responseURL', this.url.href),
                             (this.request.getResponseHeader = new Proxy(this.request.getResponseHeader, {
                                 apply: (t, a, s) => {
                                     if ((this.logger.info('getResponseHeader', s[0]), this.request.readyState < this.request.HEADERS_RECEIVED))
-                                        return this.logger.info('headers not received yet, returning null'), null;
+                                        return (this.logger.info('headers not received yet, returning null'), null);
                                     let r = e.headers.get(s[0]);
-                                    return this.logger.info('resolved response header "%s" to', s[0], r), r;
+                                    return (this.logger.info('resolved response header "%s" to', s[0], r), r);
                                 },
                             })),
                             (this.request.getAllResponseHeaders = new Proxy(this.request.getAllResponseHeaders, {
                                 apply: () => {
                                     if ((this.logger.info('getAllResponseHeaders'), this.request.readyState < this.request.HEADERS_RECEIVED))
-                                        return this.logger.info('headers not received yet, returning empty string'), '';
+                                        return (this.logger.info('headers not received yet, returning empty string'), '');
                                     let t = Array.from(e.headers.entries())
                                         .map(([e, t]) => `${e}: ${t}`)
                                         .join('\r\n');
-                                    return this.logger.info('resolved all response headers to', t), t;
+                                    return (this.logger.info('resolved all response headers to', t), t);
                                 },
                             })),
                             Object.defineProperties(this.request, {
                                 response: { enumerable: !0, configurable: !1, get: () => this.response },
                                 responseText: { enumerable: !0, configurable: !1, get: () => this.responseText },
                                 responseXML: { enumerable: !0, configurable: !1, get: () => this.responseXML },
-                            });
+                            }));
                         let t = await tG(e.clone());
-                        this.logger.info('calculated response body length', t),
+                        (this.logger.info('calculated response body length', t),
                             this.trigger('loadstart', this.request, { loaded: 0, total: t }),
                             this.setReadyState(this.request.HEADERS_RECEIVED),
-                            this.setReadyState(this.request.LOADING);
+                            this.setReadyState(this.request.LOADING));
                         let a = () => {
-                            this.logger.info('finalizing the mocked response...'),
+                            (this.logger.info('finalizing the mocked response...'),
                                 this.setReadyState(this.request.DONE),
                                 this.trigger('load', this.request, { loaded: this.responseBuffer.byteLength, total: t }),
-                                this.trigger('loadend', this.request, { loaded: this.responseBuffer.byteLength, total: t });
+                                this.trigger('loadend', this.request, { loaded: this.responseBuffer.byteLength, total: t }));
                         };
                         if (e.body) {
                             this.logger.info('mocked response has body, streaming...');
@@ -4391,24 +4403,24 @@ You can also automate this process and make the worker script update automatical
                                 r = async () => {
                                     let { value: e, done: i } = await s.read();
                                     if (i) {
-                                        this.logger.info('response body stream done!'), a();
+                                        (this.logger.info('response body stream done!'), a());
                                         return;
                                     }
-                                    e &&
+                                    (e &&
                                         (this.logger.info('read response body chunk:', e),
                                         (this.responseBuffer = (function (e, t) {
                                             let a = new Uint8Array(e.byteLength + t.byteLength);
-                                            return a.set(e, 0), a.set(t, e.byteLength), a;
+                                            return (a.set(e, 0), a.set(t, e.byteLength), a);
                                         })(this.responseBuffer, e)),
                                         this.trigger('progress', this.request, { loaded: this.responseBuffer.byteLength, total: t })),
-                                        r();
+                                        r());
                                 };
                             r();
                         } else a();
                     }
                     responseBufferToText() {
                         var e;
-                        return (e = this.responseBuffer), new TextDecoder(void 0).decode(e);
+                        return ((e = this.responseBuffer), new TextDecoder(void 0).decode(e));
                     }
                     get response() {
                         if ((this.logger.info('getResponse (responseType: %s)', this.request.responseType), this.request.readyState !== this.request.DONE)) return null;
@@ -4421,21 +4433,21 @@ You can also automate this process and make the worker script update automatical
                                         return null;
                                     }
                                 })(this.responseBufferToText());
-                                return this.logger.info('resolved response JSON', e), e;
+                                return (this.logger.info('resolved response JSON', e), e);
                             }
                             case 'arraybuffer': {
                                 var e;
                                 let t = (e = this.responseBuffer).buffer.slice(e.byteOffset, e.byteOffset + e.byteLength);
-                                return this.logger.info('resolved response ArrayBuffer', t), t;
+                                return (this.logger.info('resolved response ArrayBuffer', t), t);
                             }
                             case 'blob': {
                                 let e = this.request.getResponseHeader('Content-Type') || 'text/plain',
                                     t = new Blob([this.responseBufferToText()], { type: e });
-                                return this.logger.info('resolved response Blob (mime type: %s)', t, e), t;
+                                return (this.logger.info('resolved response Blob (mime type: %s)', t, e), t);
                             }
                             default: {
                                 let e = this.responseBufferToText();
-                                return this.logger.info('resolving "%s" response type as text', this.request.responseType, e), e;
+                                return (this.logger.info('resolving "%s" response type as text', this.request.responseType, e), e);
                             }
                         }
                     }
@@ -4446,7 +4458,7 @@ You can also automate this process and make the worker script update automatical
                         )
                             return '';
                         let e = this.responseBufferToText();
-                        return this.logger.info('getResponseText: "%s"', e), e;
+                        return (this.logger.info('getResponseText: "%s"', e), e);
                     }
                     get responseXML() {
                         if (
@@ -4465,18 +4477,18 @@ You can also automate this process and make the worker script update automatical
                               : null;
                     }
                     errorWith(e) {
-                        (this[tB] = !0),
+                        ((this[tB] = !0),
                             this.logger.info('responding with an error'),
                             this.setReadyState(this.request.DONE),
                             this.trigger('error', this.request),
-                            this.trigger('loadend', this.request);
+                            this.trigger('loadend', this.request));
                     }
                     setReadyState(e) {
                         if ((this.logger.info('setReadyState: %d -> %d', this.request.readyState, e), this.request.readyState === e))
                             return void this.logger.info('ready state identical, skipping transition...');
-                        tK(this.request, 'readyState', e),
+                        (tK(this.request, 'readyState', e),
                             this.logger.info('set readyState to: %d', e),
-                            e !== this.request.UNSENT && (this.logger.info('triggering "readystatechange" event...'), this.trigger('readystatechange', this.request));
+                            e !== this.request.UNSENT && (this.logger.info('triggering "readystatechange" event...'), this.trigger('readystatechange', this.request)));
                     }
                     trigger(e, t, a) {
                         let s = t[`on${e}`],
@@ -4550,7 +4562,7 @@ You can also automate this process and make the worker script update automatical
                         let e = this.logger.extend('setup');
                         e.info('patching "XMLHttpRequest" module...');
                         let t = globalThis.XMLHttpRequest;
-                        eb(!t[tr], 'Failed to patch the "XMLHttpRequest" module: already patched.'),
+                        (eb(!t[tr], 'Failed to patch the "XMLHttpRequest" module: already patched.'),
                             (globalThis.XMLHttpRequest = (function ({ emitter: e, logger: t }) {
                                 return new Proxy(globalThis.XMLHttpRequest, {
                                     construct(a, s, r) {
@@ -4570,16 +4582,16 @@ You can also automate this process and make the worker script update automatical
                                                         await this.respondWith(e);
                                                     },
                                                     errorWith: (e) => {
-                                                        this.logger.info('request errored!', { error: e }), e instanceof Error && this.errorWith(e);
+                                                        (this.logger.info('request errored!', { error: e }), e instanceof Error && this.errorWith(e));
                                                     },
                                                 });
-                                                this.logger.info('awaiting mocked response...'),
+                                                (this.logger.info('awaiting mocked response...'),
                                                     this.logger.info('emitting the "request" event for %s listener(s)...', e.listenerCount('request')),
-                                                    await tI({ request: t, requestId: a, controller: s, emitter: e });
+                                                    await tI({ request: t, requestId: a, controller: s, emitter: e }));
                                             }),
                                             (n.onResponse = async function ({ response: t, isMockedResponse: a, request: s, requestId: r }) {
-                                                this.logger.info('emitting the "response" event for %s listener(s)...', e.listenerCount('response')),
-                                                    e.emit('response', { response: t, isMockedResponse: a, request: s, requestId: r });
+                                                (this.logger.info('emitting the "response" event for %s listener(s)...', e.listenerCount('response')),
+                                                    e.emit('response', { response: t, isMockedResponse: a, request: s, requestId: r }));
                                             }),
                                             n.request
                                         );
@@ -4589,27 +4601,27 @@ You can also automate this process and make the worker script update automatical
                             e.info('native "XMLHttpRequest" module patched!', globalThis.XMLHttpRequest.name),
                             Object.defineProperty(globalThis.XMLHttpRequest, tr, { enumerable: !0, configurable: !0, value: !0 }),
                             this.subscriptions.push(() => {
-                                Object.defineProperty(globalThis.XMLHttpRequest, tr, { value: void 0 }),
+                                (Object.defineProperty(globalThis.XMLHttpRequest, tr, { value: void 0 }),
                                     (globalThis.XMLHttpRequest = t),
-                                    e.info('native "XMLHttpRequest" module restored!', globalThis.XMLHttpRequest.name);
-                            });
+                                    e.info('native "XMLHttpRequest" module restored!', globalThis.XMLHttpRequest.name));
+                            }));
                     }
                 },
                 tZ = class extends eu {
                     constructor(e) {
-                        super({ interceptors: [new tQ(), new t$()] }), (this.options = e);
+                        (super({ interceptors: [new tQ(), new t$()] }), (this.options = e));
                     }
                     enable() {
-                        super.enable(), this.options.quiet || this.#$();
+                        (super.enable(), this.options.quiet || this.#$());
                     }
                     disable() {
-                        super.disable(), this.options.quiet || this.#H();
+                        (super.disable(), this.options.quiet || this.#H());
                     }
                     #$() {
-                        console.groupCollapsed(`%c${d.J.formatMessage('Mocking enabled (fallback mode).')}`, 'color:orangered;font-weight:bold;'),
+                        (console.groupCollapsed(`%c${d.J.formatMessage('Mocking enabled (fallback mode).')}`, 'color:orangered;font-weight:bold;'),
                             console.log('%cDocumentation: %chttps://mswjs.io/docs', 'font-weight:bold', 'font-weight:normal'),
                             console.log('Found an issue? https://github.com/mswjs/msw/issues'),
-                            console.groupEnd();
+                            console.groupEnd());
                     }
                     #H() {
                         console.log(`%c${d.J.formatMessage('Mocking disabled.')}`, 'color:orangered;font-weight:bold;');
@@ -4630,12 +4642,12 @@ You can also automate this process and make the worker script update automatical
                         },
                         events: a,
                         configure(e) {
-                            (0, s.V1)(0 === t, 'Failed to call "configure()" on the network: cannot configure an already enabled network.'),
+                            ((0, s.V1)(0 === t, 'Failed to call "configure()" on the network: cannot configure an already enabled network.'),
                                 e.handlers && !Object.is(e.handlers, o.handlers) && (n = i(e.handlers)),
-                                (o = { ...o, ...e });
+                                (o = { ...o, ...e }));
                         },
                         enable() {
-                            (0, s.V1)(0 === t, 'Failed to call "enable" on the network: already enabled'), (t = 1);
+                            ((0, s.V1)(0 === t, 'Failed to call "enable" on the network: already enabled'), (t = 1));
                             let e = { active: !0 };
                             return (
                                 r.subscriptions.push(() => {
@@ -4659,7 +4671,10 @@ You can also automate this process and make the worker script update automatical
                             );
                         },
                         disable: () => (
-                            (0, s.V1)(1 === t, 'Failed to call "disable" on the network: already disabled'), (t = 0), r.dispose(), b(o.sources.map((e) => e.disable()))
+                            (0, s.V1)(1 === t, 'Failed to call "disable" on the network: already disabled'),
+                            (t = 0),
+                            r.dispose(),
+                            b(o.sources.map((e) => e.disable()))
                         ),
                         use(...e) {
                             n.use(e);
@@ -4673,7 +4688,7 @@ You can also automate this process and make the worker script update automatical
                         listHandlers: () =>
                             (function (e) {
                                 let t = [...e];
-                                return Object.freeze(t), t;
+                                return (Object.freeze(t), t);
                             })(n.currentHandlers()),
                     };
                 })({ sources: [], handlers: e });
@@ -4738,7 +4753,7 @@ You can also automate this process and make the worker script update automatical
                             return void d.J.warn(
                                 'Found a redundant "worker.stop()" call. Notice that stopping the worker after it has already been stopped has no effect. Consider removing this "worker.stop()" call.',
                             );
-                        t.disable(), window.postMessage({ type: 'msw/worker:stop' });
+                        (t.disable(), window.postMessage({ type: 'msw/worker:stop' }));
                     },
                     events: t.events,
                     use: t.use.bind(t),
@@ -4780,7 +4795,6 @@ You can also automate this process and make the worker script update automatical
                             n && (0, r.A)(a[0], a[1], n) && ((o = i < 3 ? void 0 : o), (i = 1)),
                             t = Object(t);
                         ++s < i;
-
                     ) {
                         var l = a[s];
                         l && e(t, l, s, o);
@@ -4799,8 +4813,8 @@ You can also automate this process and make the worker script update automatical
                     r = !1;
                 if (!t) {
                     if (e.startsWith('data:')) return null;
-                    for (; a < e.length && 32 >= e.charCodeAt(a); ) a += 1;
-                    for (; s > a + 1 && 32 >= e.charCodeAt(s - 1); ) s -= 1;
+                    for (; a < e.length && 32 >= e.charCodeAt(a);) a += 1;
+                    for (; s > a + 1 && 32 >= e.charCodeAt(s - 1);) s -= 1;
                     if (47 === e.charCodeAt(a) && 47 === e.charCodeAt(a + 1)) a += 2;
                     else {
                         let t = e.indexOf(':/', a);
@@ -4820,7 +4834,7 @@ You can also automate this process and make the worker script update automatical
                                     let t = 32 | e.charCodeAt(s);
                                     if (!((t >= 97 && t <= 122) || (t >= 48 && t <= 57) || 46 === t || 45 === t || 43 === t)) return null;
                                 }
-                            for (a = t + 2; 47 === e.charCodeAt(a); ) a += 1;
+                            for (a = t + 2; 47 === e.charCodeAt(a);) a += 1;
                         }
                     }
                     let t = -1,
@@ -4837,7 +4851,7 @@ You can also automate this process and make the worker script update automatical
                     if ((-1 !== t && t > a && t < s && (a = t + 1), 91 === e.charCodeAt(a))) return -1 !== i ? e.slice(a + 1, i).toLowerCase() : null;
                     -1 !== o && o > a && o < s && (s = o);
                 }
-                for (; s > a + 1 && 46 === e.charCodeAt(s - 1); ) s -= 1;
+                for (; s > a + 1 && 46 === e.charCodeAt(s - 1);) s -= 1;
                 let i = 0 !== a || s !== e.length ? e.slice(a, s) : e;
                 return r ? i.toLowerCase() : i;
             }
@@ -13793,9 +13807,9 @@ You can also automate this process and make the worker script update automatical
             function d(e, t, a, s) {
                 let r = null,
                     i = t;
-                for (; void 0 !== i && ((i[0] & s) != 0 && (r = { index: a + 1, isIcann: 1 === i[0], isPrivate: 2 === i[0] }), -1 !== a); ) {
+                for (; void 0 !== i && ((i[0] & s) != 0 && (r = { index: a + 1, isIcann: 1 === i[0], isPrivate: 2 === i[0] }), -1 !== a);) {
                     let t = i[1];
-                    (i = Object.prototype.hasOwnProperty.call(t, e[a]) ? t[e[a]] : t['*']), (a -= 1);
+                    ((i = Object.prototype.hasOwnProperty.call(t, e[a]) ? t[e[a]] : t['*']), (a -= 1));
                 }
                 return r;
             }
@@ -13809,12 +13823,12 @@ You can also automate this process and make the worker script update automatical
                                 r = e.charCodeAt(t - 1),
                                 i = e.charCodeAt(t - 2),
                                 o = e.charCodeAt(t - 3);
-                            if (109 === s && 111 === r && 99 === i && 46 === o) return (a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'com'), !0;
-                            if (103 === s && 114 === r && 111 === i && 46 === o) return (a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'org'), !0;
-                            if (117 === s && 100 === r && 101 === i && 46 === o) return (a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'edu'), !0;
-                            else if (118 === s && 111 === r && 103 === i && 46 === o) return (a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'gov'), !0;
-                            else if (116 === s && 101 === r && 110 === i && 46 === o) return (a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'net'), !0;
-                            else if (101 === s && 100 === r && 46 === i) return (a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'de'), !0;
+                            if (109 === s && 111 === r && 99 === i && 46 === o) return ((a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'com'), !0);
+                            if (103 === s && 114 === r && 111 === i && 46 === o) return ((a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'org'), !0);
+                            if (117 === s && 100 === r && 101 === i && 46 === o) return ((a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'edu'), !0);
+                            else if (118 === s && 111 === r && 103 === i && 46 === o) return ((a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'gov'), !0);
+                            else if (116 === s && 101 === r && 110 === i && 46 === o) return ((a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'net'), !0);
+                            else if (101 === s && 100 === r && 46 === i) return ((a.isIcann = !0), (a.isPrivate = !1), (a.publicSuffix = 'de'), !0);
                         }
                         return !1;
                     })(e, t, a)
@@ -13824,15 +13838,15 @@ You can also automate this process and make the worker script update automatical
                     i = (2 * !!t.allowPrivateDomains) | !!t.allowIcannDomains,
                     o = d(r, c, r.length - 1, i);
                 if (null !== o) {
-                    (a.isIcann = o.isIcann), (a.isPrivate = o.isPrivate), (a.publicSuffix = r.slice(o.index + 1).join('.'));
+                    ((a.isIcann = o.isIcann), (a.isPrivate = o.isPrivate), (a.publicSuffix = r.slice(o.index + 1).join('.')));
                     return;
                 }
                 let n = d(r, h, r.length - 1, i);
                 if (null !== n) {
-                    (a.isIcann = n.isIcann), (a.isPrivate = n.isPrivate), (a.publicSuffix = r.slice(n.index).join('.'));
+                    ((a.isIcann = n.isIcann), (a.isPrivate = n.isPrivate), (a.publicSuffix = r.slice(n.index).join('.')));
                     return;
                 }
-                (a.isIcann = !1), (a.isPrivate = !1), (a.publicSuffix = null != (s = r[r.length - 1]) ? s : null);
+                ((a.isIcann = !1), (a.isPrivate = !1), (a.publicSuffix = null != (s = r[r.length - 1]) ? s : null));
             }
             let p = { domain: null, domainWithoutSuffix: null, hostname: null, isIcann: null, isIp: null, isPrivate: null, publicSuffix: null, subdomain: null };
             function g(e, t) {
@@ -13910,7 +13924,7 @@ You can also automate this process and make the worker script update automatical
                                             for (let e of a.validHosts) if (t.endsWith(e) && (t.length === e.length || '.' === t[t.length - e.length - 1])) return e;
                                         }
                                         let s = 0;
-                                        if (t.startsWith('.')) for (; s < t.length && '.' === t[s]; ) s += 1;
+                                        if (t.startsWith('.')) for (; s < t.length && '.' === t[s];) s += 1;
                                         if (e.length === t.length - s) return null;
                                         let r = t.length - e.length - 2,
                                             i = t.lastIndexOf('.', r);
@@ -13969,7 +13983,7 @@ You can also automate this process and make the worker script update automatical
                     a,
                     s,
                     r = new Promise((e, t) => {
-                        (a = e), (s = t);
+                        ((a = e), (s = t));
                     });
                 return {
                     promise: r,
@@ -13995,7 +14009,7 @@ You can also automate this process and make the worker script update automatical
             }
             var E = class extends v {
                 constructor() {
-                    super(), (this.synchronous = !0), (this.idx = Object.create(null));
+                    (super(), (this.synchronous = !0), (this.idx = Object.create(null)));
                 }
                 findCookie(e, t, a, s) {
                     let r = j(s);
@@ -14040,9 +14054,9 @@ You can also automate this process and make the worker script update automatical
                                     .reverse(),
                                 r = a,
                                 i = [r];
-                            for (; s.length; ) {
+                            for (; s.length;) {
                                 let e = s.shift();
-                                (r = `${e}.${r}`), i.push(r);
+                                ((r = `${e}.${r}`), i.push(r));
                             }
                             return i;
                         })(e, a) || [e],
@@ -14062,7 +14076,7 @@ You can also automate this process and make the worker script update automatical
                     let o = this.idx[s] ?? Object.create(null);
                     this.idx[s] = o;
                     let n = o[r] ?? Object.create(null);
-                    return (o[r] = n), (n[i] = e), a.resolve(void 0);
+                    return ((o[r] = n), (n[i] = e), a.resolve(void 0));
                 }
                 updateCookie(e, t, a) {
                     if (!a) return this.putCookie(t);
@@ -14070,16 +14084,16 @@ You can also automate this process and make the worker script update automatical
                 }
                 removeCookie(e, t, a, s) {
                     let r = j(s);
-                    return delete this.idx[e]?.[t]?.[a], r.resolve(void 0);
+                    return (delete this.idx[e]?.[t]?.[a], r.resolve(void 0));
                 }
                 removeCookies(e, t, a) {
                     let s = j(a),
                         r = this.idx[e];
-                    return r && (t ? delete r[t] : delete this.idx[e]), s.resolve(void 0);
+                    return (r && (t ? delete r[t] : delete this.idx[e]), s.resolve(void 0));
                 }
                 removeAllCookies(e) {
                     let t = j(e);
-                    return (this.idx = Object.create(null)), t.resolve(void 0);
+                    return ((this.idx = Object.create(null)), t.resolve(void 0));
                 }
                 getAllCookies(e) {
                     let t = j(e),
@@ -14290,7 +14304,7 @@ You can also automate this process and make the worker script update automatical
                 },
                 K = class e {
                     constructor(t = {}) {
-                        (this.key = t.key ?? X.key),
+                        ((this.key = t.key ?? X.key),
                             (this.value = t.value ?? X.value),
                             (this.expires = t.expires ?? X.expires),
                             (this.maxAge = t.maxAge ?? X.maxAge),
@@ -14306,7 +14320,7 @@ You can also automate this process and make the worker script update automatical
                             (this.sameSite = t.sameSite ?? X.sameSite),
                             (this.creation = t.creation ?? new Date()),
                             Object.defineProperty(this, 'creationIndex', { configurable: !1, enumerable: !1, writable: !0, value: ++e.cookiesCreated }),
-                            (this.creationIndex = e.cookiesCreated);
+                            (this.creationIndex = e.cookiesCreated));
                     }
                     [Symbol.for('nodejs.util.inspect.custom')]() {
                         let e = Date.now(),
@@ -14448,14 +14462,14 @@ You can also automate this process and make the worker script update automatical
                                     else if (r <= 0) return;
                                     if ((r <= 0 ? ((a = ''), (s = e.trim())) : ((a = e.slice(0, r).trim()), (s = e.slice(r + 1).trim())), J.test(a) || J.test(s))) return;
                                     let i = new Q();
-                                    return (i.key = a), (i.value = s), i;
+                                    return ((i.key = a), (i.value = s), i);
                                 })(-1 === a ? e : e.slice(0, a), t?.loose ?? !1);
                             if (!s) return;
                             if (-1 === a) return s;
                             let r = e.slice(a + 1).trim();
                             if (0 === r.length) return s;
                             let i = r.split(';');
-                            for (; i.length; ) {
+                            for (; i.length;) {
                                 let e,
                                     t,
                                     a = (i.shift() ?? '').trim();
@@ -14507,7 +14521,7 @@ You can also automate this process and make the worker script update automatical
                                         }
                                         break;
                                     default:
-                                        (s.extensions = s.extensions || []), s.extensions.push(a);
+                                        ((s.extensions = s.extensions || []), s.extensions.push(a));
                                 }
                             }
                             return s;
@@ -14517,7 +14531,7 @@ You can also automate this process and make the worker script update automatical
                         return Y(e);
                     }
                 };
-            (K.cookiesCreated = 0),
+            ((K.cookiesCreated = 0),
                 (K.sameSiteLevel = { strict: 3, lax: 2, none: 1 }),
                 (K.sameSiteCanonical = { strict: 'Strict', lax: 'Lax' }),
                 (K.serializableProperties = [
@@ -14535,7 +14549,7 @@ You can also automate this process and make the worker script update automatical
                     'creation',
                     'lastAccessed',
                     'sameSite',
-                ]);
+                ]));
             var Q = K;
             function Z(e, t) {
                 let a,
@@ -14598,13 +14612,13 @@ You can also automate this process and make the worker script update automatical
             }
             var el = class e {
                 constructor(e, t) {
-                    'boolean' == typeof t && (t = { rejectPublicSuffixes: t }),
+                    ('boolean' == typeof t && (t = { rejectPublicSuffixes: t }),
                         (this.rejectPublicSuffixes = t?.rejectPublicSuffixes ?? !0),
                         (this.enableLooseMode = t?.looseMode ?? !1),
                         (this.allowSpecialUseDomain = t?.allowSpecialUseDomain ?? !0),
                         (this.allowSecureOnLocal = t?.allowSecureOnLocal ?? !0),
                         (this.prefixSecurity = en(t?.prefixSecurity ?? 'silent')),
-                        (this.store = e ?? new E());
+                        (this.store = e ?? new E()));
                 }
                 callSync(e) {
                     let t;
@@ -14612,7 +14626,7 @@ You can also automate this process and make the worker script update automatical
                     let a = null;
                     try {
                         e.call(this, (e, s) => {
-                            (a = e), (t = s);
+                            ((a = e), (t = s));
                         });
                     } catch (e) {
                         a = e;
@@ -14665,7 +14679,7 @@ You can also automate this process and make the worker script update automatical
                             return a?.ignoreError ? i.resolve(void 0) : i.reject(t);
                         }
                         null == e.hostOnly && (e.hostOnly = !1);
-                    } else (e.hostOnly = !0), (e.domain = n);
+                    } else ((e.hostOnly = !0), (e.domain = n));
                     if (
                         ((e.path && '/' === e.path[0]) ||
                             ((e.path = (function (e) {
@@ -14715,7 +14729,7 @@ You can also automate this process and make the worker script update automatical
                             };
                             if (s) {
                                 if (a && 'http' in a && !1 === a.http && s.httpOnly) {
-                                    (t = Error("old Cookie is HttpOnly and this isn't an HTTP API")), a.ignoreError ? o(null, void 0) : o(t);
+                                    ((t = Error("old Cookie is HttpOnly and this isn't an HTTP API")), a.ignoreError ? o(null, void 0) : o(t));
                                     return;
                                 }
                                 e instanceof Q && ((e.creation = s.creation), (e.creationIndex = s.creationIndex), (e.lastAccessed = c), p.updateCookie(s, e, r));
@@ -14734,7 +14748,7 @@ You can also automate this process and make the worker script update automatical
                     let r = j(a),
                         i = r.callback;
                     try {
-                        'string' == typeof e && A(C(e), i, e), (s = ei(e)), A(z(t), i, S(t)), A('function' == typeof i, i);
+                        ('string' == typeof e && A(C(e), i, e), (s = ei(e)), A(z(t), i, S(t)), A('function' == typeof i, i));
                     } catch (e) {
                         return r.reject(e);
                     }
@@ -14785,7 +14799,7 @@ You can also automate this process and make the worker script update automatical
                         p.findCookies(o, m ? null : n, this.allowSpecialUseDomain, (e, a) => {
                             if (e) return void i(e);
                             if (null == a) return void i(null, []);
-                            (a = a.filter(f)), 'sort' in t && !1 !== t.sort && (a = a.sort(Z));
+                            ((a = a.filter(f)), 'sort' in t && !1 !== t.sort && (a = a.sort(Z)));
                             let s = new Date();
                             for (let e of a) e.lastAccessed = s;
                             i(null, a);
@@ -14857,7 +14871,7 @@ You can also automate this process and make the worker script update automatical
                                     ? void t.callback(null, s)
                                     : void ((s.cookies = a.map((e) => {
                                           let t = e.toJSON();
-                                          return delete t.creationIndex, t;
+                                          return (delete t.creationIndex, t);
                                       })),
                                       t.callback(null, s)),
                           ),
@@ -14900,7 +14914,7 @@ You can also automate this process and make the worker script update automatical
                     'function' == typeof t && ((a = t), (t = void 0));
                     let s = j(a),
                         r = s.callback;
-                    return this.serialize((a, i) => (a ? s.reject(a) : e.deserialize(i ?? '', t, r))), s.promise;
+                    return (this.serialize((a, i) => (a ? s.reject(a) : e.deserialize(i ?? '', t, r))), s.promise);
                 }
                 _cloneSync(e) {
                     let t = e && 'function' != typeof e ? this.clone.bind(this, e) : this.clone.bind(this);
@@ -14994,7 +15008,7 @@ You can also automate this process and make the worker script update automatical
                             ),
                         });
                     if (!o.store.synchronous) throw Error('CookieJar store is not synchronous; use async API instead.');
-                    return o._importCookiesSync(s), o;
+                    return (o._importCookiesSync(s), o);
                 }
                 static fromJSON(t, a) {
                     return e.deserializeSync(t, a);
@@ -15005,20 +15019,20 @@ You can also automate this process and make the worker script update automatical
                 #J;
                 #V;
                 constructor() {
-                    (0, s.S)() ||
+                    ((0, s.S)() ||
                         (0, r.V1)(
                             'undefined' != typeof localStorage,
                             'Failed to create a CookieStore: `localStorage` is not available in this environment. This is likely an issue with your environment, which has been detected as browser (or browser-like) environment and must implement global browser APIs correctly.',
                         ),
                         (this.#V = new E()),
                         (this.#V.idx = this.getCookieStoreIndex()),
-                        (this.#J = new el(this.#V));
+                        (this.#J = new el(this.#V)));
                 }
                 getCookies(e) {
                     return this.#J.getCookiesSync(e);
                 }
                 async setCookie(e, t) {
-                    await this.#J.setCookie(e, t), this.persist();
+                    (await this.#J.setCookie(e, t), this.persist());
                 }
                 getCookieStoreIndex() {
                     if ('undefined' == typeof localStorage || 'function' != typeof localStorage.getItem) return {};
@@ -15131,13 +15145,13 @@ You can also automate this process and make the worker script update automatical
                                     return 'set-cookie' === e.toLowerCase();
                                 })
                             ];
-                        a ||
+                        (a ||
                             !e.headers.cookie ||
                             t.silent ||
                             console.warn(
                                 'Warning: set-cookie-parser appears to have been called on a request object. It is designed to parse Set-Cookie headers from responses, not Cookie headers from requests. Set the option {silent: true} to suppress this warning.',
                             ),
-                            (e = a);
+                            (e = a));
                     }
                 var s = t.split,
                     u = Array.isArray(e);
@@ -15150,7 +15164,7 @@ You can also automate this process and make the worker script update automatical
                 var h = o();
                 return e.reduce(function (e, a) {
                     var s = l(a, t);
-                    return s && !i(s.name) && (e[s.name] = s), e;
+                    return (s && !i(s.name) && (e[s.name] = s), e);
                 }, h);
             }
             function c(e) {
@@ -15164,20 +15178,20 @@ You can also automate this process and make the worker script update automatical
                     o = [],
                     n = 0;
                 function l() {
-                    for (; n < e.length && /\s/.test(e.charAt(n)); ) n += 1;
+                    for (; n < e.length && /\s/.test(e.charAt(n));) n += 1;
                     return n < e.length;
                 }
-                for (; n < e.length; ) {
-                    for (t = n, i = !1; l(); )
+                for (; n < e.length;) {
+                    for (t = n, i = !1; l();)
                         if (',' === (a = e.charAt(n))) {
-                            for (s = n, n += 1, l(), r = n; n < e.length && '=' !== (a = e.charAt(n)) && ';' !== a && ',' !== a; ) n += 1;
+                            for (s = n, n += 1, l(), r = n; n < e.length && '=' !== (a = e.charAt(n)) && ';' !== a && ',' !== a;) n += 1;
                             n < e.length && '=' === e.charAt(n) ? ((i = !0), (n = r), o.push(e.substring(t, s)), (t = n)) : (n = s + 1);
                         } else n += 1;
                     (!i || n >= e.length) && o.push(e.substring(t, e.length));
                 }
                 return o;
             }
-            (u.parseSetCookie = u), (u.parse = u), (u.parseString = l), (u.splitCookiesString = c);
+            ((u.parseSetCookie = u), (u.parse = u), (u.parseString = l), (u.splitCookiesString = c));
             let h = /[^a-z0-9\-#$%&'*+.^_`|~]/i;
             function d(e) {
                 if (h.test(e) || '' === e.trim()) throw TypeError('Invalid character in header field name');
@@ -15208,7 +15222,7 @@ You can also automate this process and make the worker script update automatical
                 y = Symbol('rawHeaderNames');
             var v = class e {
                 constructor(t) {
-                    (this[b] = {}),
+                    ((this[b] = {}),
                         (this[y] = new Map()),
                         (this[s] = 'Headers'),
                         ['Headers', 'HeadersPolyfill'].includes(t?.constructor?.name) ||
@@ -15225,7 +15239,7 @@ You can also automate this process and make the worker script update automatical
                                 Object.getOwnPropertyNames(t).forEach((e) => {
                                     let a = t[e];
                                     this.append(e, Array.isArray(a) ? a.join(', ') : a);
-                                });
+                                }));
                 }
                 [((s = Symbol.toStringTag), Symbol.iterator)]() {
                     return this.entries();
@@ -15253,7 +15267,7 @@ You can also automate this process and make the worker script update automatical
                     if (!f(e) || !k(t)) return;
                     let a = d(e),
                         s = g(t);
-                    (this[b][a] = g(s)), this[y].set(a, e);
+                    ((this[b][a] = g(s)), this[y].set(a, e));
                 }
                 append(e, t) {
                     if (!f(e) || !k(t)) return;
@@ -15265,7 +15279,7 @@ You can also automate this process and make the worker script update automatical
                 delete(e) {
                     if (!f(e) || !this.has(e)) return;
                     let t = d(e);
-                    delete this[b][t], this[y].delete(t);
+                    (delete this[b][t], this[y].delete(t));
                 }
                 forEach(e, t) {
                     for (let [a, s] of this.entries()) e.call(t, s, a, this);
@@ -15291,7 +15305,7 @@ You can also automate this process and make the worker script update automatical
                 info;
                 isUsed;
                 constructor(e) {
-                    (this.resolver = e.resolver), (this.options = e.options), (this.scheduledCleanups = new Map());
+                    ((this.resolver = e.resolver), (this.options = e.options), (this.scheduledCleanups = new Map()));
                     let t = (function (e) {
                         let t = e.stack;
                         if (!t) return;
@@ -15301,15 +15315,15 @@ You can also automate this process and make the worker script update automatical
                             .find((e) => !(w.test(e) || x.test(e)));
                         if (a) return a.replace(/\s*at [^()]*\(([^)]+)\)/, '$1').replace(/^@/, '');
                     })(Error());
-                    (this.info = { ...e.info, callFrame: t }), (this.isUsed = !1);
+                    ((this.info = { ...e.info, callFrame: t }), (this.isUsed = !1));
                 }
                 reset() {
                     this.scheduledCleanups.clear();
                     let e = this.resolverIterator;
-                    (this.resolverIterator = void 0),
+                    ((this.resolverIterator = void 0),
                         (this.resolverIteratorResult = void 0),
                         (this.resolverIteratorCleanups = void 0),
-                        'function' == typeof e?.return && Promise.resolve(e.return());
+                        'function' == typeof e?.return && Promise.resolve(e.return()));
                 }
                 restore() {
                     this.options?.once && (this.reset(), (this.isUsed = !1));
@@ -15328,7 +15342,7 @@ You can also automate this process and make the worker script update automatical
                     let t = E.cache.get(e);
                     if (void 0 !== t) return t;
                     let a = e.clone();
-                    return E.cache.set(e, a), a;
+                    return (E.cache.set(e, a), a);
                 }
                 async run(e) {
                     if (this.isUsed && this.options?.once) return null;
@@ -15378,10 +15392,10 @@ You can also automate this process and make the worker script update automatical
                                 throw (await this.runScheduledCleanups(t.requestId), e);
                             }
                             if (!((a = s) && (Reflect.has(a, Symbol.iterator) || Reflect.has(a, Symbol.asyncIterator))))
-                                return await this.runScheduledCleanups(t.requestId), s;
+                                return (await this.runScheduledCleanups(t.requestId), s);
                             let r = this.scheduledCleanups.get(t.requestId);
-                            null != r && r.length > 0 && ((this.resolverIteratorCleanups = r), this.scheduledCleanups.delete(t.requestId)),
-                                (this.resolverIterator = Symbol.iterator in s ? s[Symbol.iterator]() : s[Symbol.asyncIterator]());
+                            (null != r && r.length > 0 && ((this.resolverIteratorCleanups = r), this.scheduledCleanups.delete(t.requestId)),
+                                (this.resolverIterator = Symbol.iterator in s ? s[Symbol.iterator]() : s[Symbol.asyncIterator]()));
                         }
                         this.isUsed = !1;
                         let { done: s, value: r } = await this.resolverIterator.next(),
@@ -15397,7 +15411,7 @@ You can also automate this process and make the worker script update automatical
                 scheduleCleanup(e, t) {
                     if (this.resolverIterator) return void (this.resolverIteratorCleanups ||= []).unshift(t);
                     let a = this.scheduledCleanups.get(e) || [];
-                    a.unshift(t), this.scheduledCleanups.set(e, a);
+                    (a.unshift(t), this.scheduledCleanups.set(e, a));
                 }
                 async exhaustCleanups(e) {
                     let t = [];
@@ -15444,7 +15458,7 @@ You can also automate this process and make the worker script update automatical
                 constructor(e = null) {
                     let t = (function () {
                         let e = (t, a) => {
-                            (e.state = 'pending'),
+                            ((e.state = 'pending'),
                                 (e.resolve = (a) =>
                                     'pending' !== e.state
                                         ? void 0
@@ -15457,16 +15471,16 @@ You can also automate this process and make the worker script update automatical
                                             }),
                                             a((e.rejectionReason = t))
                                         );
-                                });
+                                }));
                         };
                         return e;
                     })();
-                    super((a, s) => {
-                        t(a, s), e?.(t.resolve, t.reject);
+                    (super((a, s) => {
+                        (t(a, s), e?.(t.resolve, t.reject));
                     }),
                         (this.#L = t),
                         (this.resolve = this.#L.resolve),
-                        (this.reject = this.#L.reject);
+                        (this.reject = this.#L.reject));
                 }
                 get state() {
                     return this.#L.state;
@@ -15501,7 +15515,7 @@ You can also automate this process and make the worker script update automatical
             Symbol('isPatchedModule');
             var i = class e extends Error {
                 constructor(t) {
-                    super(t), (this.name = 'InterceptorError'), Object.setPrototypeOf(this, e.prototype);
+                    (super(t), (this.name = 'InterceptorError'), Object.setPrototypeOf(this, e.prototype));
                 }
             };
             function o(e, t) {
@@ -15522,13 +15536,13 @@ You can also automate this process and make the worker script update automatical
                     this.ERROR = 3;
                 }
                 constructor(t, a) {
-                    (this.request = t), (this.source = a), (this.readyState = e.PENDING), (this.handled = new s.Z());
+                    ((this.request = t), (this.source = a), (this.readyState = e.PENDING), (this.handled = new s.Z()));
                 }
                 get #z() {
                     return this.handled;
                 }
                 async passthrough() {
-                    r.V1.as(
+                    (r.V1.as(
                         i,
                         this.readyState === e.PENDING,
                         'Failed to passthrough the "%s %s" request: the request has already been handled',
@@ -15537,10 +15551,10 @@ You can also automate this process and make the worker script update automatical
                     ),
                         (this.readyState = e.PASSTHROUGH),
                         await this.source.passthrough(),
-                        this.#z.resolve();
+                        this.#z.resolve());
                 }
                 respondWith(t) {
-                    r.V1.as(
+                    (r.V1.as(
                         i,
                         this.readyState === e.PENDING,
                         'Failed to respond to the "%s %s" request with "%d %s": the request has already been handled (%d)',
@@ -15552,10 +15566,10 @@ You can also automate this process and make the worker script update automatical
                     ),
                         (this.readyState = e.RESPONSE),
                         this.#z.resolve(),
-                        this.source.respondWith(t);
+                        this.source.respondWith(t));
                 }
                 errorWith(t) {
-                    r.V1.as(
+                    (r.V1.as(
                         i,
                         this.readyState === e.PENDING,
                         'Failed to error the "%s %s" request with "%s": the request has already been handled (%d)',
@@ -15566,7 +15580,7 @@ You can also automate this process and make the worker script update automatical
                     ),
                         (this.readyState = e.ERROR),
                         this.source.errorWith(t),
-                        this.#z.resolve();
+                        this.#z.resolve());
                 }
             });
             var n = class e extends Response {
@@ -15591,7 +15605,7 @@ You can also automate this process and make the worker script update automatical
                         'about:' === e ||
                         !(function (e) {
                             try {
-                                return new URL(e), !0;
+                                return (new URL(e), !0);
                             } catch (e) {
                                 return !1;
                             }
@@ -15621,15 +15635,15 @@ You can also automate this process and make the worker script update automatical
             new TextEncoder();
             var u = class e extends l.r {
                 constructor(t) {
-                    (e.symbol = Symbol(t.name)), super(e.symbol), (this.interceptors = t.interceptors);
+                    ((e.symbol = Symbol(t.name)), super(e.symbol), (this.interceptors = t.interceptors));
                 }
                 setup() {
                     let e = this.logger.extend('setup');
                     for (let t of (e.info('applying all %d interceptors...', this.interceptors.length), this.interceptors))
-                        e.info('applying "%s" interceptor...', t.constructor.name),
+                        (e.info('applying "%s" interceptor...', t.constructor.name),
                             t.apply(),
                             e.info('adding interceptor dispose subscription'),
-                            this.subscriptions.push(() => t.dispose());
+                            this.subscriptions.push(() => t.dispose()));
                 }
                 on(e, t) {
                     for (let a of this.interceptors) a.on(e, t);
@@ -15670,7 +15684,7 @@ You can also automate this process and make the worker script update automatical
             };
             class o extends Error {
                 constructor(e) {
-                    super(e), (this.name = 'InternalError');
+                    (super(e), (this.name = 'InternalError'));
                 }
             }
         },
@@ -15700,19 +15714,19 @@ You can also automate this process and make the worker script update automatical
                         })(t[a], i);
                         return s ? e : (a++, o);
                     });
-                return a < t.length && (i += ` ${t.slice(a).join(' ')}`), (i = i.replace(/%{2,2}/g, '%'));
+                return (a < t.length && (i += ` ${t.slice(a).join(' ')}`), (i = i.replace(/%{2,2}/g, '%')));
             }
             var i = class extends Error {
                     constructor(e, ...t) {
-                        super(e),
+                        (super(e),
                             (this.message = e),
                             (this.name = 'Invariant Violation'),
                             (this.message = r(e, ...t)),
                             (function (e) {
                                 if (!e.stack) return;
                                 let t = e.stack.split('\n');
-                                t.splice(1, 2), (e.stack = t.join('\n'));
-                            })(this);
+                                (t.splice(1, 2), (e.stack = t.join('\n')));
+                            })(this));
                     }
                 },
                 o = (e, t, ...a) => {
@@ -15744,7 +15758,7 @@ You can also automate this process and make the worker script update automatical
             function o(e, t) {
                 t.type && Object.defineProperty(e, 'type', { value: t.type, enumerable: !0, writable: !1 });
                 let a = t.headers.get('set-cookie');
-                return a && Object.defineProperty(e, r, { value: a, enumerable: !1, writable: !1 }), e;
+                return (a && Object.defineProperty(e, r, { value: a, enumerable: !1, writable: !1 }), e);
             }
             function n(e) {
                 return Reflect.get(e, r);
@@ -15754,7 +15768,7 @@ You can also automate this process and make the worker script update automatical
             a.d(t, { A: () => s });
             let s = function (e) {
                 return function (t, a, s) {
-                    for (var r = -1, i = Object(t), o = s(t), n = o.length; n--; ) {
+                    for (var r = -1, i = Object(t), o = s(t), n = o.length; n--;) {
                         var l = o[e ? n : ++r];
                         if (!1 === a(i[l], l, i)) break;
                     }

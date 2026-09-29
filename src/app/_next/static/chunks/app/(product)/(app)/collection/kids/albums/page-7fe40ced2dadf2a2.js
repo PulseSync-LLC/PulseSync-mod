@@ -49,7 +49,7 @@
             let l = () => ({ year: 'numeric' });
         },
         10654: (e, t, o) => {
-            Promise.resolve().then(o.bind(o, 3377)), Promise.resolve().then(o.bind(o, 62302));
+            (Promise.resolve().then(o.bind(o, 3377)), Promise.resolve().then(o.bind(o, 62302)));
         },
         11262: (e, t, o) => {
             'use strict';
@@ -66,15 +66,15 @@
                     u = (0, i.useRef)(void 0),
                     _ = (0, s.c)(() => {
                         var o;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let l = [...(null != (o = e.lastRejectedPagesList) ? o : [])].reverse().filter((t) => {
                             var o;
                             return (null == (o = e.pageStates) ? void 0 : o[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             l.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, i.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = o((0, l.jsx)(n.L, { reloadBlocks: _ }), { containerId: r.u.ERROR, autoClose: !1 }));
@@ -461,7 +461,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [n, c, d];
-                                    return 'ru' === s && e.push(a), e.push(u), e;
+                                    return ('ru' === s && e.push(a), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [n, c, d, u];
@@ -778,7 +778,7 @@
                         };
                     })(),
                     C = (0, n.useCallback)(() => {
-                        y(), (window.location.href = x.Z.main.href);
+                        (y(), (window.location.href = x.Z.main.href));
                     }, [y]),
                     { contentRef: v } = (0, p.g)();
                 return (0, l.jsxs)('div', {
@@ -933,7 +933,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 7231, 7972, 6347, 3183, 9763, 6639, 7258, 3907, 7349, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 6477, 7275, 2586,
@@ -941,6 +941,6 @@
             ],
             () => e((e.s = 10654)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

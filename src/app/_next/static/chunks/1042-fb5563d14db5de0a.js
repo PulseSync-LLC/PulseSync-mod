@@ -3,7 +3,7 @@
     {
         7748: (e, t, n) => {
             'use strict';
-            n.r(t), n.d(t, { NotFound: () => b });
+            (n.r(t), n.d(t, { NotFound: () => b }));
             var l = n(32290),
                 o = n(63618),
                 s = n(96103),
@@ -94,7 +94,7 @@
                                 logger: l,
                                 context: 'useSendEventOnNotFoundNavigated',
                             });
-                            o && (0, p.Mu)(t.evgenInstance, o), e();
+                            (o && (0, p.Mu)(t.evgenInstance, o), e());
                         }, [t, n, l, e]),
                     };
                 })(w);
@@ -185,10 +185,10 @@
                     { canBack: y, canForward: x, moveBack: _, moveForward: h } = (0, p.J)(g),
                     k = (0, i.useRef)(null),
                     F = (0, r.c)((e) => {
-                        e.stopPropagation(), _();
+                        (e.stopPropagation(), _());
                     }),
                     b = (0, r.c)((e) => {
-                        e.stopPropagation(), h();
+                        (e.stopPropagation(), h());
                     });
                 return (
                     (0, i.useEffect)(() => {
@@ -301,7 +301,7 @@
                 let t = (0, l.useRef)(!1),
                     n = (0, o.z)();
                 (0, l.useEffect)(() => {
-                    e && (null == n || n.disable(), (t.current = !0)), !e && t.current && (null == n || n.enable(), (t.current = !1));
+                    (e && (null == n || n.disable(), (t.current = !0)), !e && t.current && (null == n || n.enable(), (t.current = !1)));
                 }, [e, n]);
             };
         },

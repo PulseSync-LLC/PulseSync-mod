@@ -259,10 +259,10 @@
                         objectPosX: L,
                         objectPosY: I,
                     };
-                    a.qG.includes(m) && ((s.tabId = C), (s.tabPos = p), (s.isTabSelectedByDefault = h)),
+                    (a.qG.includes(m) && ((s.tabId = C), (s.tabPos = p), (s.isTabSelectedByDefault = h)),
                         T && (s.skeletonId = T),
                         b && (s.mainObjectType = b),
-                        A && (s.mainObjectId = A);
+                        A && (s.mainObjectId = A));
                     let l = (0, i.Fx)({ params: s, logger: y, context: 'useSendEventOnClipShowedOrHidden' });
                     if (l) {
                         if (o) return void (0, i.Pf)(t.evgenInstance, l);
@@ -289,13 +289,13 @@
                 },
                 _ = {},
                 m = {};
-            (() => {
-                Object.defineProperty(m, '__esModule', { value: !0 }), (m.useForwardRef = void 0);
+            ((() => {
+                (Object.defineProperty(m, '__esModule', { value: !0 }), (m.useForwardRef = void 0));
                 let e = (function e(t) {
                     var r = _[t];
                     if (void 0 !== r) return r.exports;
                     var i = (_[t] = { exports: {} });
-                    return u[t](i, i.exports, e), i.exports;
+                    return (u[t](i, i.exports, e), i.exports);
                 })(810);
                 m.useForwardRef = function (t, r) {
                     let i = (0, e.useRef)(r);
@@ -307,7 +307,7 @@
                     );
                 };
             })(),
-                m.__esModule;
+                m.__esModule);
             var C = m.useForwardRef,
                 p = r(54667),
                 h = r(57594),
@@ -354,7 +354,7 @@
                         g = (0, l.useCallback)(
                             (e) => {
                                 var t, i;
-                                T(e), null == (t = (i = r.props).onTabChange) || t.call(i, e);
+                                (T(e), null == (t = (i = r.props).onTabChange) || t.call(i, e));
                             },
                             [r, T],
                         ),
@@ -530,11 +530,11 @@
                         let c = { ...(0, o.HO)(e), isLiked: !e.isLiked };
                         h(!0);
                         let d = await e.toggleLike();
-                        h(!1),
+                        (h(!1),
                             _.clips.reset(),
                             d === l.f.OK
                                 ? m((0, i.jsx)(p, { clip: c }), { containerId: s })
-                                : m((0, i.jsx)(u.h, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: a });
+                                : m((0, i.jsx)(u.h, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: a }));
                     }, [e, t.isAuthorized, C, v, m, r.modal.isOpened, _.clips]);
                 };
         },
@@ -556,7 +556,7 @@
                 p = r(23338),
                 h = r.n(p),
                 v = (function (e) {
-                    return (e.ONE = 'one'), (e.TWO = 'two'), e;
+                    return ((e.ONE = 'one'), (e.TWO = 'two'), e);
                 })({});
             let f = (e) => {
                     let {
@@ -687,17 +687,17 @@
             'use strict';
             r.d(t, { P: () => i, u: () => o });
             var i = (function (e) {
-                    return (e[(e.Mobile = 768)] = 'Mobile'), (e[(e.Desktop = 1440)] = 'Desktop'), e;
+                    return ((e[(e.Mobile = 768)] = 'Mobile'), (e[(e.Desktop = 1440)] = 'Desktop'), e);
                 })({}),
                 o = (function (e) {
-                    return (e.Mobile = 'Mobile'), (e.Desktop = 'Desktop'), e;
+                    return ((e.Mobile = 'Mobile'), (e.Desktop = 'Desktop'), e);
                 })({});
         },
         56755: (e, t, r) => {
             'use strict';
             r.d(t, { V: () => i });
             var i = (function (e) {
-                return (e.TRAILER = 'TRAILER'), (e.ADVERT = 'ADVERT'), (e.CLIP = 'CLIP'), (e.PROMO_LANDING = 'PROMO_LANDING'), e;
+                return ((e.TRAILER = 'TRAILER'), (e.ADVERT = 'ADVERT'), (e.CLIP = 'CLIP'), (e.PROMO_LANDING = 'PROMO_LANDING'), e);
             })({});
         },
         56797: (e, t, r) => {
@@ -740,10 +740,10 @@
                         from: a.W[C],
                         to: i.QT.VideoScreen,
                     };
-                    l.qG.includes(C) && ((o.tabId = p), (o.tabPos = h), (o.isTabSelectedByDefault = v)),
+                    (l.qG.includes(C) && ((o.tabId = p), (o.tabPos = h), (o.isTabSelectedByDefault = v)),
                         f && (o.skeletonId = f),
                         w && (o.mainObjectType = w),
-                        N && (o.mainObjectId = N);
+                        N && (o.mainObjectId = N));
                     let s = (0, i.Fx)({ params: o, logger: g, context: 'useSendEventOnClipNavigated' });
                     s && e && (0, i.QS)(t.evgenInstance, s);
                 });
@@ -777,7 +777,7 @@
                 (0, m.N)(r);
                 let R = (0, u.K)(A),
                     S = (0, n.c)(() => {
-                        N.setClipId(A.clipId), N.modal.open();
+                        (N.setClipId(A.clipId), N.modal.open());
                     }),
                     O = { variant: p.Y.CLIP, id: A.clipId, title: A.title, path: T };
                 return (0, i.jsxs)(d.W1, {
@@ -826,7 +826,7 @@
             'use strict';
             r.d(t, { H: () => i });
             var i = (function (e) {
-                return (e.VARIOUS_CLIP_CONTEXT = 'various-clip-context'), e;
+                return ((e.VARIOUS_CLIP_CONTEXT = 'various-clip-context'), e);
             })({});
         },
         69951: (e, t, r) => {
@@ -946,7 +946,7 @@
             'use strict';
             r.d(t, { v: () => i });
             var i = (function (e) {
-                return (e.SPACE = 'Space'), (e.ENTER = 'Enter'), (e.ESCAPE = 'Escape'), e;
+                return ((e.SPACE = 'Space'), (e.ENTER = 'Enter'), (e.ESCAPE = 'Escape'), e);
             })({});
         },
         96299: (e) => {

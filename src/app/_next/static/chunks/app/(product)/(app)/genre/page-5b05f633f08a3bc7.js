@@ -35,9 +35,9 @@
         3785: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { M: () => a }),
+            (i.d(t, { M: () => a }),
                 (function (e) {
-                    (e.MODAL = 'modal'),
+                    ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
                         (e.AGE_18 = 'age18'),
@@ -46,8 +46,8 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                        (e.SUBSTITUTED_ICON = 'substitutedIcon');
-                })(a || (a = {}));
+                        (e.SUBSTITUTED_ICON = 'substitutedIcon'));
+                })(a || (a = {})));
         },
         5942: (e, t, i) => {
             'use strict';
@@ -89,10 +89,10 @@
                         let l = { ...(0, r.HO)(e), isLiked: !e.isLiked };
                         _(!0);
                         let s = await e.toggleLike();
-                        _(!1),
+                        (_(!1),
                             s === o.f.OK
                                 ? i((0, a.jsx)(C, { artist: l }), { containerId: n.u.INFO })
-                                : i((0, a.jsx)(u.h, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, a.jsx)(u.h, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [e, t.isAuthorized, m, v, i]);
                 };
         },
@@ -164,7 +164,7 @@
                     ep = (0, x.P)(),
                     eA = (0, u.c)((e) => {
                         if ((e.stopPropagation(), ep())) return void e.preventDefault();
-                        V.openArtistTrailer(t.id), ek(n.ky.Artist, t.id);
+                        (V.openArtistTrailer(t.id), ek(n.ky.Artist, t.id));
                     }),
                     ex = (0, s.useMemo)(() => {
                         let e = q({ id: 'entity-names.artist-name' }, { artistName: eu }),
@@ -177,23 +177,23 @@
                     eL = (0, k.S)({ artist: t, callback: ev }),
                     ey = (0, k.S)({ artist: t, callback: eS }),
                     eT = (0, u.c)((e) => {
-                        null == er || er(), es({ to: n.QT.ArtistScreen }), eL(e);
+                        (null == er || er(), es({ to: n.QT.ArtistScreen }), eL(e));
                     }),
                     eb = (0, b.N)(),
                     eg = (0, u.c)(() => {
                         if (!ep()) {
                             if (eb) return void $.open();
-                            Q || ef || (Z(!0), null == el || el()), ey(), eo(!ef);
+                            (Q || ef || (Z(!0), null == el || el()), ey(), eo(!ef));
                         }
                     }),
                     eI = (0, u.c)(() => {
-                        J || e_ || (ee(!0), null == ea || ea()), en();
+                        (J || e_ || (ee(!0), null == ea || ea()), en());
                     }),
                     ej = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eN = (0, u.c)((e) => {
-                        ei(e), eh(e);
+                        (ei(e), eh(e));
                     }),
                     eR = (0, s.useMemo)(
                         () =>
@@ -345,7 +345,7 @@
         },
         8612: (e, t, i) => {
             'use strict';
-            i.r(t), i.d(t, { default: () => W });
+            (i.r(t), i.d(t, { default: () => W }));
             var a = i(32290),
                 r = i(21916),
                 l = i(55178),
@@ -584,7 +584,7 @@
                 },
                 W = () => {
                     let e = (0, r.useSearchParams)().get('metatagId');
-                    return e || (0, r.notFound)(), (0, a.jsx)(l.Suspense, { fallback: (0, a.jsx)(V, {}), children: (0, a.jsx)(F, { metatagId: e }) });
+                    return (e || (0, r.notFound)(), (0, a.jsx)(l.Suspense, { fallback: (0, a.jsx)(V, {}), children: (0, a.jsx)(F, { metatagId: e }) }));
                 };
         },
         11675: (e) => {
@@ -1062,11 +1062,11 @@
                 var t = o[e];
                 if (void 0 !== t) return t.exports;
                 var i = (o[e] = { exports: {} });
-                return s[e](i, i.exports, n), i.exports;
+                return (s[e](i, i.exports, n), i.exports);
             }
             var c = {};
-            (() => {
-                Object.defineProperty(c, 'X', { value: !0 }), (c.l = void 0);
+            ((() => {
+                (Object.defineProperty(c, 'X', { value: !0 }), (c.l = void 0));
                 let e = n(810),
                     t = n(352);
                 c.l = (i) => {
@@ -1076,7 +1076,7 @@
                             let e = null == i ? void 0 : i.current;
                             e && (r(0 === e.scrollLeft), s(e.scrollWidth - e.scrollLeft <= e.offsetWidth + 10));
                         };
-                    (0, e.useEffect)(() => {
+                    ((0, e.useEffect)(() => {
                         o();
                     }, [i, o]),
                         (0, e.useEffect)(() => {
@@ -1085,10 +1085,10 @@
                                 null == e || e.addEventListener('scroll', o),
                                 window.addEventListener('resize', o),
                                 () => {
-                                    null == e || e.removeEventListener('scroll', o), window.removeEventListener('resize', o);
+                                    (null == e || e.removeEventListener('scroll', o), window.removeEventListener('resize', o));
                                 }
                             );
-                        }, [i, o]);
+                        }, [i, o]));
                     let n = (0, e.useMemo)(
                         () =>
                             (0, t.throttle)(
@@ -1119,7 +1119,7 @@
                     };
                 };
             })(),
-                c.X;
+                c.X);
             var d = c.l;
         },
         49522: (e, t, i) => {
@@ -1147,13 +1147,13 @@
                     { swipeBackward: h, swipeForward: k, shouldBackwardButtonBeDisabled: p, shouldForwardButtonBeDisabled: A, shouldHideControls: x } = (0, o.Y)(t),
                     f = (0, l.useCallback)(
                         (e) => {
-                            h(), e.stopPropagation();
+                            (h(), e.stopPropagation());
                         },
                         [h],
                     ),
                     S = (0, l.useCallback)(
                         (e) => {
-                            k(), e.stopPropagation();
+                            (k(), e.stopPropagation());
                         },
                         [k],
                     );
@@ -1329,10 +1329,10 @@
                         let l = { ...(0, r.HO)(e), isPinned: !e.isPinned };
                         v(!0);
                         let s = await e.togglePin();
-                        v(!1),
+                        (v(!1),
                             s
                                 ? i((0, a.jsx)(_, { artist: l }), { containerId: o.u.INFO })
-                                : i((0, a.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, a.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [e, t.isAuthorized, m, u, i]);
                 };
         },
@@ -1374,10 +1374,10 @@
                         let l = { ...(0, r.HO)(e), url: e.url, isLiked: !e.isLiked };
                         _(!0);
                         let s = await e.toggleLike();
-                        _(!1),
+                        (_(!1),
                             s === o.f.OK
                                 ? i((0, a.jsx)(v, { playlist: l }), { containerId: n.u.INFO })
-                                : i((0, a.jsx)(u.h, { error: C({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, a.jsx)(u.h, { error: C({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [t.isAuthorized, m, e, C, i]);
                 };
         },
@@ -1418,10 +1418,10 @@
                         let l = { ...(0, r.HO)(e), url: e.url, isPinned: !e.isPinned };
                         v(!0);
                         let s = await e.togglePin();
-                        v(!1),
+                        (v(!1),
                             s
                                 ? i((0, a.jsx)(_, { playlist: l }), { containerId: o.u.INFO })
-                                : i((0, a.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, a.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [t.isAuthorized, m, e, i, u]);
                 };
         },
@@ -1433,7 +1433,7 @@
                 l = {
                     5881: (e, t, i) => {
                         function a() {
-                            for (var e, t, i = 0, a = ''; i < arguments.length; )
+                            for (var e, t, i = 0, a = ''; i < arguments.length;)
                                 (e = arguments[i++]) &&
                                     (t = (function e(t) {
                                         var i,
@@ -1448,11 +1448,11 @@
                                     (a && (a += ' '), (a += t));
                             return a;
                         }
-                        i.r(t), i.d(t, { clsx: () => a, default: () => r });
+                        (i.r(t), i.d(t, { clsx: () => a, default: () => r }));
                         let r = a;
                     },
                     9058: (e, t, i) => {
-                        i.r(t), i.d(t, { default: () => a });
+                        (i.r(t), i.d(t, { default: () => a }));
                         let a = { root: 'IZnFMW4gXBshJODnvB1P', item: 'VJ9IexhAEuYSCyGiMfN4' };
                     },
                     9097: (e, t) => {
@@ -1464,7 +1464,7 @@
                             else a = t;
                             return { $$typeof: i, type: e, key: r, ref: void 0 !== (t = a.ref) ? t : null, props: a };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = a), (t.jsxs = a);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = a), (t.jsxs = a));
                     },
                     4377: (e, t, i) => {
                         e.exports = i(9097);
@@ -1475,7 +1475,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Carousel = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Carousel = void 0));
                         let r = i(4377),
                             l = i(5881),
                             s = i(810),
@@ -1501,19 +1501,19 @@
                 var t = s[e];
                 if (void 0 !== t) return t.exports;
                 var i = (s[e] = { exports: {} });
-                return l[e].call(i.exports, i, i.exports, o), i.exports;
+                return (l[e].call(i.exports, i, i.exports, o), i.exports);
             }
-            (o.d = (e, t) => {
+            ((o.d = (e, t) => {
                 for (var i in t) o.o(t, i) && !o.o(e, i) && Object.defineProperty(e, i, { enumerable: !0, get: t[i] });
             }),
                 (o.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (o.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var n = {};
             (() => {
-                Object.defineProperty(n, 'X', { value: !0 }), (n.l = void 0);
+                (Object.defineProperty(n, 'X', { value: !0 }), (n.l = void 0));
                 var e = o(5056);
                 Object.defineProperty(n, 'l', {
                     enumerable: !0,
@@ -1693,10 +1693,10 @@
                             let l = { ...(0, m.HO)(e), isDisliked: !e.isDisliked };
                             s(!0);
                             let n = await e.toggleDislike();
-                            s(!1),
+                            (s(!1),
                                 n === v.f.OK
                                     ? i((0, a.jsx)(b, { coverUri: l.coverUri, title: l.name, isDisliked: l.isDisliked }), { containerId: C.u.INFO })
-                                    : i((0, a.jsx)(p.h, { error: o({ id: 'error-messages.error-during-action' }) }), { containerId: C.u.ERROR });
+                                    : i((0, a.jsx)(p.h, { error: o({ id: 'error-messages.error-during-action' }) }), { containerId: C.u.ERROR }));
                         });
                     })(A),
                     er = (0, E.F)(),
@@ -1869,7 +1869,7 @@
                                     {
                                         icon: (0, a.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: icon, size: 'xxs' }),
                                         onClick: () => {
-                                            activate(), r?.(!1);
+                                            (activate(), r?.(!1));
                                         },
                                         children: label,
                                         'data-pulsesync-addon-menu-item': '',
@@ -1917,33 +1917,33 @@
                     ev = (0, x.P)(),
                     eC = (0, u.c)((e) => {
                         if ((e.stopPropagation(), ev())) return void e.preventDefault();
-                        Y.setUtmLink(X), Y.openPlaylistTrailer(i.id), e_(n.ky.Playlist, i.id);
+                        (Y.setUtmLink(X), Y.openPlaylistTrailer(i.id), e_(n.ky.Playlist, i.id));
                     }),
                     [eh, ek] = (0, s.useState)(!1),
                     { isPlaying: ep, togglePlay: eA } = (0, j.D)({
                         playContextParams: { contextData: { type: d.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: $, utmLink: X }, loadContextMeta: !0 },
                     }),
                     ex = (0, u.c)(() => {
-                        ed({ to: n.QT.PlaylistScreen }), null == J || J();
+                        (ed({ to: n.QT.PlaylistScreen }), null == J || J());
                     }),
                     ef = (0, u.c)((e) => {
-                        ex(), em(e);
+                        (ex(), em(e));
                     }),
                     eS = (0, b.N)(),
                     eL = (0, u.c)(() => {
                         if (!ev()) {
                             if (eS) return void W.open();
-                            et || ep || (ei(!0), null == ee || ee()), eA(), eu(!ep);
+                            (et || ep || (ei(!0), null == ee || ee()), eA(), eu(!ep));
                         }
                     }),
                     ey = (0, u.c)(() => {
-                        ea || i.isLiked || (er(!0), null == Q || Q()), en();
+                        (ea || i.isLiked || (er(!0), null == Q || Q()), en());
                     }),
                     eT = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eb = (0, u.c)((e) => {
-                        es(e), ek(e);
+                        (es(e), ek(e));
                     }),
                     eg = (0, s.useMemo)(() => {
                         var e;
@@ -2193,10 +2193,10 @@
                     return (0, a.useCallback)(() => {
                         if (!t || !p || !c.xK.includes(p) || !h.includes(p) || e.current) return;
                         let a = { hash: k, pageId: n.F[p], entityType: y, entityId: L, entityPosX: T, entityPosY: E, objectsCount: j };
-                        void 0 !== N && ((a.filterKey = N), (a.filterValue = R), (a.filterPos = P)),
+                        (void 0 !== N && ((a.filterKey = N), (a.filterValue = R), (a.filterPos = P)),
                             c.qG.includes(p) && ((a.tabId = A), (a.tabPos = x), (a.isTabSelectedByDefault = f)),
                             O && (a.skeletonId = O),
-                            I && g && ((a.mainObjectType = g), (a.mainObjectId = I));
+                            I && g && ((a.mainObjectType = g), (a.mainObjectId = I)));
                         let l = (0, r.Fx)({ params: a, logger: i, context: 'useSendEventOnBlockLoaded' });
                         l && ((0, r.uY)(t.evgenInstance, l), (e.current = !0));
                     }, [t, p, k, y, L, T, E, N, R, P, j, O, I, g, i, A, x, f]);
@@ -2301,7 +2301,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 7258, 7231, 7972, 6347, 3183, 9763, 3048, 6706, 1311, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 6252, 3266, 6477, 7275, 2586, 8347,
@@ -2309,6 +2309,6 @@
             ],
             () => e((e.s = 87736)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

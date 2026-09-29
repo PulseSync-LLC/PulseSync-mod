@@ -239,7 +239,9 @@ function createAdaptivePatchHelpers(deps) {
             throw new Error(`Не удалось найти целевой файл для ${filePatch.newPath || filePatch.oldPath} по контексту patch`);
         }
 
-        scoredMatches.sort((left, right) => right.score - left.score || right.exactLineMatches - left.exactLineMatches || left.matchedPath.localeCompare(right.matchedPath));
+        scoredMatches.sort(
+            (left, right) => right.score - left.score || right.exactLineMatches - left.exactLineMatches || left.matchedPath.localeCompare(right.matchedPath),
+        );
         const bestMatch = scoredMatches[0];
         return scoredMatches.filter((candidate) => candidate.score === bestMatch.score && candidate.exactLineMatches === bestMatch.exactLineMatches);
     }
@@ -388,7 +390,7 @@ function createAdaptivePatchHelpers(deps) {
             points.push({ oldBoundary: match.oldIndex + 1, targetBoundary: match.targetIndex + 1 });
         }
 
-        points.sort((left, right) => (left.oldBoundary - right.oldBoundary) || (left.targetBoundary - right.targetBoundary));
+        points.sort((left, right) => left.oldBoundary - right.oldBoundary || left.targetBoundary - right.targetBoundary);
         const boundaries = new Array(oldLength + 1).fill(0);
 
         for (let boundaryIndex = 0; boundaryIndex <= oldLength; boundaryIndex += 1) {
@@ -672,7 +674,12 @@ function createAdaptivePatchHelpers(deps) {
             const sourceExpressions = extractComparableExpressions(sourceLine);
             const targetExpressions = extractComparableExpressions(bestTargetLine);
             const sourceIndex = sourceExpressions.indexOf(expression);
-            if (sourceIndex >= 0 && sourceExpressions.length === targetExpressions.length && targetExpressions[sourceIndex] && targetExpressions[sourceIndex] !== expression) {
+            if (
+                sourceIndex >= 0 &&
+                sourceExpressions.length === targetExpressions.length &&
+                targetExpressions[sourceIndex] &&
+                targetExpressions[sourceIndex] !== expression
+            ) {
                 replacements.set(expression, targetExpressions[sourceIndex]);
             }
         }
@@ -681,9 +688,7 @@ function createAdaptivePatchHelpers(deps) {
             replacements.set(from, to);
         }
 
-        return [...replacements.entries()]
-            .sort((left, right) => right[0].length - left[0].length)
-            .map(([from, to]) => ({ from, to }));
+        return [...replacements.entries()].sort((left, right) => right[0].length - left[0].length).map(([from, to]) => ({ from, to }));
     }
 
     function buildModuleExportsById(lines) {
@@ -856,9 +861,7 @@ function createAdaptivePatchHelpers(deps) {
 
     function getAddedImports(oldLines, newLines) {
         const oldAliases = new Set(oldLines.map((line) => parseRequireImportLine(line)?.alias).filter(Boolean));
-        return newLines
-            .map((line) => parseRequireImportLine(line))
-            .filter((entry) => entry && !oldAliases.has(entry.alias));
+        return newLines.map((line) => parseRequireImportLine(line)).filter((entry) => entry && !oldAliases.has(entry.alias));
     }
 
     function getAliasExportNames(lines, alias) {
@@ -969,20 +972,14 @@ function createAdaptivePatchHelpers(deps) {
                 continue;
             }
 
-            const localUsageCount = exportNames.reduce(
-                (sum, exportName) => sum + (localModuleUsage.usageByModuleId.get(moduleEntry.moduleId)?.get(exportName) ?? 0),
-                0,
-            );
+            const localUsageCount = exportNames.reduce((sum, exportName) => sum + (localModuleUsage.usageByModuleId.get(moduleEntry.moduleId)?.get(exportName) ?? 0), 0);
             const localImportCount = localModuleUsage.importCountByModuleId.get(moduleEntry.moduleId) ?? 0;
 
             if (
                 !bestMatch ||
                 exportMatchCount > bestMatch.exportMatchCount ||
-                (exportMatchCount === bestMatch.exportMatchCount &&
-                    localImportCount > bestMatch.localImportCount) ||
-                (exportMatchCount === bestMatch.exportMatchCount &&
-                    localImportCount === bestMatch.localImportCount &&
-                    localUsageCount > bestMatch.localUsageCount)
+                (exportMatchCount === bestMatch.exportMatchCount && localImportCount > bestMatch.localImportCount) ||
+                (exportMatchCount === bestMatch.exportMatchCount && localImportCount === bestMatch.localImportCount && localUsageCount > bestMatch.localUsageCount)
             ) {
                 bestMatch = {
                     moduleId: moduleEntry.moduleId,
@@ -1024,10 +1021,7 @@ function createAdaptivePatchHelpers(deps) {
         let translatedLine = line;
 
         aliasReplacements.forEach((replacement, index) => {
-            translatedLine = translatedLine.replace(
-                new RegExp(`\\b${replacement.fromAlias}\\.([A-Za-z_$][\\w$]*|\\$)`, 'g'),
-                `__PULSESYNC_ALIAS_${index}__.$1`,
-            );
+            translatedLine = translatedLine.replace(new RegExp(`\\b${replacement.fromAlias}\\.([A-Za-z_$][\\w$]*|\\$)`, 'g'), `__PULSESYNC_ALIAS_${index}__.$1`);
         });
 
         aliasReplacements.forEach((replacement, index) => {

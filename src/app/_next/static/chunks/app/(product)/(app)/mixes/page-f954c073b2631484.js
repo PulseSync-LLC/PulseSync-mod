@@ -27,21 +27,21 @@
             let s = (e) => {
                 let t = (0, n.usePathname)(),
                     [r, s] = (0, i.useState)(!1);
-                (0, i.useEffect)(() => {
-                    window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t);
+                ((0, i.useEffect)(() => {
+                    (window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t));
                 }),
                     (0, i.useEffect)(() => {
                         window.Ya.Rum.spa.getLastSpaSubPage(t) && e && !r && (window.Ya.Rum.spa.finishDataLoading(t), window.Ya.Rum.spa.startDataRendering(t), s(!0));
-                    }, [e, r, t]);
+                    }, [e, r, t]));
             };
         },
         4550: (e, t, r) => {
             'use strict';
             var n;
-            r.d(t, { R: () => n }),
+            (r.d(t, { R: () => n }),
                 (function (e) {
-                    (e.RADIAL = 'RADIAL'), (e.STACK = 'STACK');
-                })(n || (n = {}));
+                    ((e.RADIAL = 'RADIAL'), (e.STACK = 'STACK'));
+                })(n || (n = {})));
         },
         5245: (e, t, r) => {
             'use strict';
@@ -61,7 +61,7 @@
                         let e = () => {
                             for (let e of r()) (0, n.X6)(a, e);
                         };
-                        return e(), window.addEventListener(s, e), () => window.removeEventListener(s, e);
+                        return (e(), window.addEventListener(s, e), () => window.removeEventListener(s, e));
                     }, [r, s, a]),
                     { store: a, patchesRef: o }
                 );
@@ -79,11 +79,11 @@
                 i = r(50891);
             class s extends i.m {
                 constructor(e, t) {
-                    super(e, { code: 'E_HTTP_CLIENT_NON_2XX_3XX_RESPONSE', cause: t.cause }),
+                    (super(e, { code: 'E_HTTP_CLIENT_NON_2XX_3XX_RESPONSE', cause: t.cause }),
                         (0, n._)(this, 'name', 'HttpErrorException'),
                         (0, n._)(this, 'statusCode', void 0),
                         (this.statusCode = t.statusCode),
-                        Object.setPrototypeOf(this, s.prototype);
+                        Object.setPrototypeOf(this, s.prototype));
                 }
             }
         },
@@ -104,7 +104,7 @@
         },
         17552: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { default: () => $ });
+            (r.r(t), r.d(t, { default: () => $ }));
             var n = r(32290),
                 i = r(21916),
                 s = r(55178),
@@ -142,17 +142,17 @@
                                         e.errorStatusCode = c.X1.NOT_FOUND;
                                         return;
                                     }
-                                    (e.title = n.title), (e.items = (0, l.wg)(n.leaves.map(u))), e.loadingState !== m.G.IDLE && (e.loadingState = m.G.RESOLVE);
+                                    ((e.title = n.title), (e.items = (0, l.wg)(n.leaves.map(u))), e.loadingState !== m.G.IDLE && (e.loadingState = m.G.RESOLVE));
                                 } catch (t) {
-                                    n.error(t),
+                                    (n.error(t),
                                         t instanceof c.GX &&
                                             (t.statusCode === c.X1.NOT_FOUND || t.statusCode === c.X1.BAD_REQUEST) &&
                                             (e.errorStatusCode = c.X1.NOT_FOUND),
-                                        e.loadingState !== m.G.IDLE && (e.loadingState = m.G.REJECT);
+                                        e.loadingState !== m.G.IDLE && (e.loadingState = m.G.REJECT));
                                 }
                         }),
                         reset() {
-                            (e.loadingState = m.G.IDLE), (e.title = null), (e.items = (0, l.wg)([])), (e.errorStatusCode = null);
+                            ((e.loadingState = m.G.IDLE), (e.title = null), (e.items = (0, l.wg)([])), (e.errorStatusCode = null));
                         },
                     })),
                 p = { title: null, loadingState: m.G.IDLE, items: [] },
@@ -550,11 +550,11 @@
                             try {
                                 e.loadingState = a.G.PENDING;
                                 let i = yield r.getBlock({ source: { uri: '/landing/block/mixes', fullList: t }, type: s.t.MIXES });
-                                (e.items = { items: (0, n.wg)(i.items.map((e) => (0, c.J)(e.data))) }.items), (e.loadingState = a.G.RESOLVE);
+                                ((e.items = { items: (0, n.wg)(i.items.map((e) => (0, c.J)(e.data))) }.items), (e.loadingState = a.G.RESOLVE));
                             } catch (t) {
-                                o.error(t),
+                                (o.error(t),
                                     t instanceof i.GX && (t.statusCode === i.X1.NOT_FOUND || t.statusCode === i.X1.BAD_REQUEST) && (e.errorStatusCode = i.X1.NOT_FOUND),
-                                    e.loadingState !== a.G.IDLE && (e.loadingState = a.G.REJECT);
+                                    e.loadingState !== a.G.IDLE && (e.loadingState = a.G.REJECT));
                             }
                     }),
                 }));
@@ -565,14 +565,14 @@
         33898: (e, t, r) => {
             'use strict';
             var n;
-            r.d(t, { Z: () => n }),
+            (r.d(t, { Z: () => n }),
                 (function (e) {
-                    (e.METHOD_NOT_SUPPORTED = 'E_BEACON_METHOD_NOT_SUPPORTED'),
+                    ((e.METHOD_NOT_SUPPORTED = 'E_BEACON_METHOD_NOT_SUPPORTED'),
                         (e.NOT_AVAILABLE = 'E_BEACON_NOT_AVAILABLE'),
                         (e.QUEUE_FAILED = 'E_BEACON_QUEUE_FAILED'),
                         (e.NO_RESPONSE_DATA = 'E_BEACON_NO_RESPONSE_DATA'),
-                        (e.RETRY_EXHAUSTED = 'E_BEACON_RETRY_EXHAUSTED');
-                })(n || (n = {}));
+                        (e.RETRY_EXHAUSTED = 'E_BEACON_RETRY_EXHAUSTED'));
+                })(n || (n = {})));
         },
         37240: (e, t, r) => {
             'use strict';
@@ -590,8 +590,8 @@
                 i = r(55178),
                 s = {
                     5663: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
-                            (t.useIntersectionObserver = t.createIntersectionObserver = t.getElementNameByDataAttribute = t.isInViewportNow = t.defaultOptions = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
+                            (t.useIntersectionObserver = t.createIntersectionObserver = t.getElementNameByDataAttribute = t.isInViewportNow = t.defaultOptions = void 0));
                         let n = r(810),
                             { innerWidth: i = 0, innerHeight: s = 0 } = window;
                         function o(e) {
@@ -611,7 +611,7 @@
                             }, t);
                             return r;
                         }
-                        (t.defaultOptions = { threshold: 0, preflightCheck: !0 }),
+                        ((t.defaultOptions = { threshold: 0, preflightCheck: !0 }),
                             (t.isInViewportNow = o),
                             (t.getElementNameByDataAttribute = a),
                             (t.createIntersectionObserver = l),
@@ -628,8 +628,8 @@
                                                       let t = a(e.target);
                                                       if (t && h) {
                                                           if (g.current.has(t)) return;
-                                                          m((r) => ({ ...r, [t]: { isIntersecting: e.isIntersecting } })),
-                                                              s && e.isIntersecting && (g.current.add(t), h.unobserve(e.target));
+                                                          (m((r) => ({ ...r, [t]: { isIntersecting: e.isIntersecting } })),
+                                                              s && e.isIntersecting && (g.current.add(t), h.unobserve(e.target)));
                                                       }
                                                   }, u),
                                         [d],
@@ -657,7 +657,7 @@
                                     ),
                                     _
                                 );
-                            });
+                            }));
                     },
                     810: (e) => {
                         e.exports = n || (n = r.t(i, 2));
@@ -668,7 +668,7 @@
                     var r = o[t];
                     if (void 0 !== r) return r.exports;
                     var n = (o[t] = { exports: {} });
-                    return s[t](n, n.exports, e), n.exports;
+                    return (s[t](n, n.exports, e), n.exports);
                 })(5663);
             a.__esModule;
             var l = a.createIntersectionObserver;
@@ -745,7 +745,7 @@
                         i = () => {
                             var e, t;
                             let n = null != (t = null == (e = window.__PAGE_STATE_PATCHES__) ? void 0 : e[r]) ? t : [];
-                            return window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[r], n;
+                            return (window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[r], n);
                         };
                     return {
                         pageStoreProvider: (e) => {
@@ -811,22 +811,22 @@
                 i = r(29222);
             class s extends i.t {
                 constructor(e = 'Http Client error', { code: t = 'E_HTTP_CLIENT', ...r } = {}) {
-                    super(e, { code: t, ...r }), (0, n._)(this, 'name', 'HttpException'), Object.setPrototypeOf(this, s.prototype);
+                    (super(e, { code: t, ...r }), (0, n._)(this, 'name', 'HttpException'), Object.setPrototypeOf(this, s.prototype));
                 }
             }
         },
         50961: (e, t, r) => {
             'use strict';
             var n;
-            r.d(t, { X: () => n }),
+            (r.d(t, { X: () => n }),
                 (function (e) {
-                    (e[(e.NOT_MODIFIED = 304)] = 'NOT_MODIFIED'),
+                    ((e[(e.NOT_MODIFIED = 304)] = 'NOT_MODIFIED'),
                         (e[(e.NOT_FOUND = 404)] = 'NOT_FOUND'),
                         (e[(e.BAD_REQUEST = 400)] = 'BAD_REQUEST'),
                         (e[(e.REQUEST_TIMEOUT = 408)] = 'REQUEST_TIMEOUT'),
                         (e[(e.PRECONDITION_FAILED = 412)] = 'PRECONDITION_FAILED'),
-                        (e[(e.TEAPOT = 418)] = 'TEAPOT');
-                })(n || (n = {}));
+                        (e[(e.TEAPOT = 418)] = 'TEAPOT'));
+                })(n || (n = {})));
         },
         52068: (e, t, r) => {
             'use strict';
@@ -885,7 +885,7 @@
                 try {
                     return JSON.parse(e);
                 } catch (e) {
-                    return console.error(e), null;
+                    return (console.error(e), null);
                 }
             }
             class s {
@@ -940,7 +940,7 @@
                         let o = i(s);
                         if (!o) return null;
                         let a = null != (n = null == o ? void 0 : o.value) ? n : null;
-                        if ((null == o ? void 0 : o.expires) && Date.now() > new Date(o.expires).getTime()) return this.remove(e), null;
+                        if ((null == o ? void 0 : o.expires) && Date.now() > new Date(o.expires).getTime()) return (this.remove(e), null);
                         return a;
                     } catch (e) {
                         return null;
@@ -949,7 +949,7 @@
                 set(e, t, r) {
                     if ('number' == typeof (null == r ? void 0 : r.expires)) {
                         let e = new Date();
-                        e.setMilliseconds(e.getMilliseconds() + 864e5 * r.expires), (r.expires = e);
+                        (e.setMilliseconds(e.getMilliseconds() + 864e5 * r.expires), (r.expires = e));
                     }
                     let n = o('localStorage');
                     if (n)
@@ -972,9 +972,9 @@
                 c = r(29222);
             class u extends c.t {
                 constructor(e, t, { code: r = 'E_STORAGE', ...n } = {}) {
-                    super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: r, ...n }),
+                    (super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: r, ...n }),
                         (0, l._)(this, 'name', 'Storage Exception'),
-                        Object.setPrototypeOf(this, u.prototype);
+                        Object.setPrototypeOf(this, u.prototype));
                 }
             }
             class d {
@@ -991,7 +991,7 @@
                     throw new u(this.platform, this.type);
                 }
                 constructor(e, t) {
-                    (0, l._)(this, 'platform', ''), (0, l._)(this, 'type', ''), (this.platform = e), (this.type = t);
+                    ((0, l._)(this, 'platform', ''), (0, l._)(this, 'type', ''), (this.platform = e), (this.type = t));
                 }
             }
             class _ {
@@ -1149,7 +1149,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [o, c, u];
-                                    return 'ru' === s && e.push(l), e.push(d), e;
+                                    return ('ru' === s && e.push(l), e.push(d), e);
                                 }
                                 case 'desktop':
                                     return [o, c, u, d];
@@ -1243,7 +1243,7 @@
                 s = {
                     5881: (e, t, r) => {
                         function n() {
-                            for (var e, t, r = 0, n = ''; r < arguments.length; )
+                            for (var e, t, r = 0, n = ''; r < arguments.length;)
                                 (e = arguments[r++]) &&
                                     (t = (function e(t) {
                                         var r,
@@ -1258,11 +1258,11 @@
                                     (n && (n += ' '), (n += t));
                             return n;
                         }
-                        r.r(t), r.d(t, { clsx: () => n, default: () => i });
+                        (r.r(t), r.d(t, { clsx: () => n, default: () => i }));
                         let i = n;
                     },
                     9829: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => n });
+                        (r.r(t), r.d(t, { default: () => n }));
                         let n = {
                             root: 'buOTZq_TKQOVyjMLrXvB',
                             block: 'BSPmaubc8UL2KHOMLV4A',
@@ -1282,7 +1282,7 @@
                             else n = t;
                             return { $$typeof: r, type: e, key: i, ref: void 0 !== (t = n.ref) ? t : null, props: n };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = n), (t.jsxs = n);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = n), (t.jsxs = n));
                     },
                     4377: (e, t, r) => {
                         e.exports = r(9097);
@@ -1293,7 +1293,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Link = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Link = void 0));
                         let i = r(4377),
                             s = r(810),
                             o = r(5881),
@@ -1365,19 +1365,19 @@
                 var t = o[e];
                 if (void 0 !== t) return t.exports;
                 var r = (o[e] = { exports: {} });
-                return s[e].call(r.exports, r, r.exports, a), r.exports;
+                return (s[e].call(r.exports, r, r.exports, a), r.exports);
             }
-            (a.d = (e, t) => {
+            ((a.d = (e, t) => {
                 for (var r in t) a.o(t, r) && !a.o(e, r) && Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
             }),
                 (a.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (a.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var l = {};
             (() => {
-                Object.defineProperty(l, 'X', { value: !0 }), (l.r = void 0);
+                (Object.defineProperty(l, 'X', { value: !0 }), (l.r = void 0));
                 var e = a(3937);
                 Object.defineProperty(l, 'r', {
                     enumerable: !0,
@@ -1468,7 +1468,7 @@
                         };
                     })(),
                     S = (0, o.useCallback)(() => {
-                        y(), (window.location.href = f.Z.main.href);
+                        (y(), (window.location.href = f.Z.main.href));
                     }, [y]),
                     { contentRef: N } = (0, p.g)();
                 return (0, n.jsxs)('div', {
@@ -1598,7 +1598,7 @@
                 s = {
                     5881: (e, t, r) => {
                         function n() {
-                            for (var e, t, r = 0, n = ''; r < arguments.length; )
+                            for (var e, t, r = 0, n = ''; r < arguments.length;)
                                 (e = arguments[r++]) &&
                                     (t = (function e(t) {
                                         var r,
@@ -1613,11 +1613,11 @@
                                     (n && (n += ' '), (n += t));
                             return n;
                         }
-                        r.r(t), r.d(t, { clsx: () => n, default: () => i });
+                        (r.r(t), r.d(t, { clsx: () => n, default: () => i }));
                         let i = n;
                     },
                     7152: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => n });
+                        (r.r(t), r.d(t, { default: () => n }));
                         let n = {
                             root: 'qaIScXjx1qyXuaIHXQIo',
                             root_radius_xs: 'wdE2qVRIlWUesuBfzCis',
@@ -1640,7 +1640,7 @@
                             else n = t;
                             return { $$typeof: r, type: e, key: i, ref: void 0 !== (t = n.ref) ? t : null, props: n };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = n), (t.jsxs = n);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = n), (t.jsxs = n));
                     },
                     4377: (e, t, r) => {
                         e.exports = r(9097);
@@ -1651,7 +1651,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Paper = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Paper = void 0));
                         let i = r(4377),
                             s = r(5881),
                             o = r(810),
@@ -1683,19 +1683,19 @@
                 var t = o[e];
                 if (void 0 !== t) return t.exports;
                 var r = (o[e] = { exports: {} });
-                return s[e].call(r.exports, r, r.exports, a), r.exports;
+                return (s[e].call(r.exports, r, r.exports, a), r.exports);
             }
-            (a.d = (e, t) => {
+            ((a.d = (e, t) => {
                 for (var r in t) a.o(t, r) && !a.o(e, r) && Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
             }),
                 (a.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (a.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var l = {};
             (() => {
-                Object.defineProperty(l, 'U', { value: !0 }), (l.X = void 0);
+                (Object.defineProperty(l, 'U', { value: !0 }), (l.X = void 0));
                 var e = a(4788);
                 Object.defineProperty(l, 'X', {
                     enumerable: !0,
@@ -1880,7 +1880,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 768, 1431, 7258, 4865, 6639, 6706, 1311, 8892, 2536, 66, 5835, 2812, 2732, 1410, 2021, 6477, 7275, 2586, 8347, 4522, 7702, 4668, 1175, 4220,
@@ -1888,6 +1888,6 @@
             ],
             () => e((e.s = 33763)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

@@ -19,7 +19,7 @@
                         let e = () => {
                             for (let e of n()) (0, r.X6)(l, e);
                         };
-                        return e(), window.addEventListener(a, e), () => window.removeEventListener(a, e);
+                        return (e(), window.addEventListener(a, e), () => window.removeEventListener(a, e));
                     }, [n, a, l]),
                     { store: l, patchesRef: o }
                 );
@@ -37,7 +37,7 @@
                     i = t[0];
                 return n.e(t[1]).then(() => n.t(i, 19));
             }
-            (i.keys = () => Object.keys(r)), (i.id = 12526), (e.exports = i);
+            ((i.keys = () => Object.keys(r)), (i.id = 12526), (e.exports = i));
         },
         14190: (e, t, n) => {
             'use strict';
@@ -77,9 +77,9 @@
         18870: (e, t, n) => {
             'use strict';
             var r;
-            n.d(t, { $: () => r }),
+            (n.d(t, { $: () => r }),
                 (function (e) {
-                    (e.RU = 'ru'),
+                    ((e.RU = 'ru'),
                         (e.EN = 'en'),
                         (e.UK = 'uk'),
                         (e.BE = 'be'),
@@ -100,8 +100,8 @@
                         (e.EL = 'el'),
                         (e.RO = 'ro'),
                         (e.MO = 'mo'),
-                        (e.AR = 'ar');
-                })(r || (r = {}));
+                        (e.AR = 'ar'));
+                })(r || (r = {})));
         },
         20472: (e, t, n) => {
             'use strict';
@@ -152,13 +152,13 @@
                     let n = window.document.querySelector('meta['.concat(e, '="').concat(t, '"]'));
                     if (n) return n;
                     let r = window.document.createElement('meta');
-                    return r.setAttribute(e, t), r;
+                    return (r.setAttribute(e, t), r);
                 },
                 i = (e) => {
                     let { title: t, description: n, openGraph: i } = e;
                     if (('string' == typeof t && (window.document.title = t), 'string' == typeof n)) {
                         let e = r('name', 'description');
-                        e.setAttribute('content', n), window.document.head.appendChild(e);
+                        (e.setAttribute('content', n), window.document.head.appendChild(e));
                     }
                     let a = '';
                     if (i) {
@@ -169,12 +169,12 @@
                         let o = r('property', 'og:title'),
                             l = r('property', 'og:description'),
                             s = r('property', 'og:image');
-                        o.setAttribute('content', e),
+                        (o.setAttribute('content', e),
                             l.setAttribute('content', t),
                             s.setAttribute('content', a),
                             window.document.head.appendChild(o),
                             window.document.head.appendChild(l),
-                            window.document.head.appendChild(s);
+                            window.document.head.appendChild(s));
                     }
                 };
         },
@@ -401,7 +401,7 @@
                     return (e, t) => {
                         let a = null == i ? void 0 : i[e.id],
                             o = '';
-                        return (Array.isArray(a) || 'string' == typeof a) && (o = new r.S(a, n).format(t)), Array.isArray(o) ? o.join('') : o;
+                        return ((Array.isArray(a) || 'string' == typeof a) && (o = new r.S(a, n).format(t)), Array.isArray(o) ? o.join('') : o);
                     };
                 };
         },
@@ -469,7 +469,7 @@
                     i = t[0];
                 return n.e(t[1]).then(() => n.t(i, 19));
             }
-            (i.keys = () => Object.keys(r)), (i.id = 46646), (e.exports = i);
+            ((i.keys = () => Object.keys(r)), (i.id = 46646), (e.exports = i));
         },
         47216: (e, t, n) => {
             'use strict';
@@ -530,7 +530,7 @@
                         i = () => {
                             var e, t;
                             let r = null != (t = null == (e = window.__PAGE_STATE_PATCHES__) ? void 0 : e[n]) ? t : [];
-                            return window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[n], r;
+                            return (window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[n], r);
                         };
                     return {
                         pageStoreProvider: (e) => {
@@ -571,7 +571,7 @@
                 try {
                     return JSON.parse(e);
                 } catch (e) {
-                    return console.error(e), null;
+                    return (console.error(e), null);
                 }
             }
             class a {
@@ -626,7 +626,7 @@
                         let o = i(a);
                         if (!o) return null;
                         let l = null != (r = null == o ? void 0 : o.value) ? r : null;
-                        if ((null == o ? void 0 : o.expires) && Date.now() > new Date(o.expires).getTime()) return this.remove(e), null;
+                        if ((null == o ? void 0 : o.expires) && Date.now() > new Date(o.expires).getTime()) return (this.remove(e), null);
                         return l;
                     } catch (e) {
                         return null;
@@ -635,7 +635,7 @@
                 set(e, t, n) {
                     if ('number' == typeof (null == n ? void 0 : n.expires)) {
                         let e = new Date();
-                        e.setMilliseconds(e.getMilliseconds() + 864e5 * n.expires), (n.expires = e);
+                        (e.setMilliseconds(e.getMilliseconds() + 864e5 * n.expires), (n.expires = e));
                     }
                     let r = o('localStorage');
                     if (r)
@@ -658,9 +658,9 @@
                 c = n(29222);
             class u extends c.t {
                 constructor(e, t, { code: n = 'E_STORAGE', ...r } = {}) {
-                    super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: n, ...r }),
+                    (super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: n, ...r }),
                         (0, s._)(this, 'name', 'Storage Exception'),
-                        Object.setPrototypeOf(this, u.prototype);
+                        Object.setPrototypeOf(this, u.prototype));
                 }
             }
             class g {
@@ -677,7 +677,7 @@
                     throw new u(this.platform, this.type);
                 }
                 constructor(e, t) {
-                    (0, s._)(this, 'platform', ''), (0, s._)(this, 'type', ''), (this.platform = e), (this.type = t);
+                    ((0, s._)(this, 'platform', ''), (0, s._)(this, 'type', ''), (this.platform = e), (this.type = t));
                 }
             }
             class d {
@@ -808,7 +808,7 @@
                         };
                     })(),
                     S = (0, o.useCallback)(() => {
-                        A(), (window.location.href = y.Z.main.href);
+                        (A(), (window.location.href = y.Z.main.href));
                     }, [A]),
                     { contentRef: w } = (0, m.g)();
                 return (0, r.jsxs)('div', {
@@ -921,7 +921,7 @@
                     try {
                         this.dictionary = await (0, u.M)(e);
                     } catch (t) {
-                        t instanceof Error && this.logger.error(t, { language: e }), (this.dictionary = {});
+                        (t instanceof Error && this.logger.error(t, { language: e }), (this.dictionary = {}));
                     }
                     return this.dictionary;
                 }
@@ -998,7 +998,7 @@
                         (function (e) {
                             if ('number' == typeof e.expires) {
                                 var t = new Date();
-                                t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t);
+                                (t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t));
                             }
                             return (
                                 i('Expires', e.expires ? e.expires.toUTCString() : '') +
@@ -1022,16 +1022,16 @@
             'use strict';
             n.d(t, { W: () => r });
             var r = (function (e) {
-                return (e.APP = 'app'), (e.SUMMARY_LARGE_IMAGE = 'summary_large_image'), e;
+                return ((e.APP = 'app'), (e.SUMMARY_LARGE_IMAGE = 'summary_large_image'), e);
             })({});
         },
         96151: (e, t, n) => {
             'use strict';
             var r;
-            n.d(t, { Q: () => r }),
+            (n.d(t, { Q: () => r }),
                 (function (e) {
-                    (e.FROM_ALBUM_COVER = 'from-album-cover'), (e.FROM_ARTIST_PHOTOS = 'from-artist-photos'), (e.PIC = 'pic'), (e.MOSAIC = 'mosaic');
-                })(r || (r = {}));
+                    ((e.FROM_ALBUM_COVER = 'from-album-cover'), (e.FROM_ARTIST_PHOTOS = 'from-artist-photos'), (e.PIC = 'pic'), (e.MOSAIC = 'mosaic'));
+                })(r || (r = {})));
         },
         96218: (e, t, n) => {
             'use strict';

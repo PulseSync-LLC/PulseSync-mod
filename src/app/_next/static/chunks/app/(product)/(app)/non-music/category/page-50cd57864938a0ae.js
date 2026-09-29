@@ -3,7 +3,7 @@
     {
         19650: (e, r, t) => {
             'use strict';
-            t.r(r), t.d(r, { default: () => a });
+            (t.r(r), t.d(r, { default: () => a }));
             var n = t(32290),
                 u = t(21916),
                 s = t(36477);
@@ -14,13 +14,13 @@
                 },
                 a = () => {
                     let e = (0, u.useSearchParams)().get('id');
-                    return e || (0, u.notFound)(), (0, n.jsx)(o, { id: e });
+                    return (e || (0, u.notFound)(), (0, n.jsx)(o, { id: e }));
                 };
         },
         21916: (e, r, t) => {
             'use strict';
             var n = t(23948);
-            t.o(n, 'ServerInsertedHTMLContext') &&
+            (t.o(n, 'ServerInsertedHTMLContext') &&
                 t.d(r, {
                     ServerInsertedHTMLContext: function () {
                         return n.ServerInsertedHTMLContext;
@@ -61,13 +61,13 @@
                         useServerInsertedHTML: function () {
                             return n.useServerInsertedHTML;
                         },
-                    });
+                    }));
         },
         22303: (e, r, t) => {
             Promise.resolve().then(t.bind(t, 19650));
         },
     },
     (e) => {
-        e.O(0, [8892, 6477, 4220, 9562, 7358], () => e((e.s = 22303))), (_N_E = e.O());
+        (e.O(0, [8892, 6477, 4220, 9562, 7358], () => e((e.s = 22303))), (_N_E = e.O()));
     },
 ]);

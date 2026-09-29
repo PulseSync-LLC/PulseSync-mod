@@ -225,7 +225,6 @@ class PulseSyncAppInstaller {
     }
 
     async isInstalled() {
-
         if (this.platform === 'linux') return true;
 
         const found = await this.findInstalledPath();

@@ -102,7 +102,7 @@
                         }, [t]),
                         X = (0, r.useCallback)(
                             (e) => {
-                                H(e, w.quality), w.setQuality(e), null == K || K.setQuality(e), P.set(D.c.YmPlayerQuality, e, { expires: 365 });
+                                (H(e, w.quality), w.setQuality(e), null == K || K.setQuality(e), P.set(D.c.YmPlayerQuality, e, { expires: 365 }));
                             },
                             [K, w, P, H],
                         ),
@@ -280,7 +280,7 @@
                             { state: B, handleDebouncedToggle: h, reset: b } = (0, u.F)({ delay: 1e4, throttleTimeout: 0 }),
                             { state: x, handleDebouncedToggle: N, reset: D } = (0, u.F)({ delay: 1e4, throttleTimeout: 0 }),
                             v = (0, o.c)(() => {
-                                b(), D();
+                                (b(), D());
                             });
                         (0, n.useEffect)(() => {
                             (null == e ? void 0 : e.id) && v();
@@ -299,18 +299,18 @@
                                 try {
                                     switch (n) {
                                         case l.Q.TimestampLike:
-                                            D(), h();
+                                            (D(), h());
                                             break;
                                         case l.Q.TimestampDislike:
-                                            b(), N();
+                                            (b(), N());
                                     }
                                     let t = s.currentContext.value.restartsCount;
-                                    s.queueState.entityList.value.find((t) => {
+                                    (s.queueState.entityList.value.find((t) => {
                                         var i, a;
                                         let { entity: n } = t;
                                         return (null == (a = n.data) || null == (i = a.meta) ? void 0 : i.id) === e.id;
                                     }) && (await s.currentContext.value.sendFeedback(n, o)),
-                                        s.currentContext.value.restartsCount > t && v();
+                                        s.currentContext.value.restartsCount > t && v());
                                 } catch (t) {
                                     v();
                                     let e = i.modal.isOpened ? d.u.FULLSCREEN_ERROR : d.u.ERROR;
@@ -356,7 +356,7 @@
                 let { closeToast: t, onOpenQualitySettingsMenu: i, message: p, ariaLabel: C, isMobile: E } = e,
                     { formatMessage: A } = (0, s.A)(),
                     y = (0, n.useCallback)(() => {
-                        i(), null == t || t();
+                        (i(), null == t || t());
                     }, [t, i]),
                     g = (0, n.useMemo)(
                         () =>
@@ -452,7 +452,7 @@
                     b = (0, _.m)(),
                     x = (0, r.useCallback)(
                         (e) => {
-                            null == m || m(e), e.stopPropagation(), b({ actionType: o.X2.Dislike });
+                            (null == m || m(e), e.stopPropagation(), b({ actionType: o.X2.Dislike }));
                         },
                         [m, b],
                     );
@@ -527,7 +527,7 @@
                             s.repeatMode,
                             s.isVibeContext,
                         );
-                        null == i || i.setRepeatMode(o, l), e((0, a.jsx)(y, { repeatMode: o }), { containerId: t.modal.isOpened ? r.u.FULLSCREEN_INFO : r.u.INFO });
+                        (null == i || i.setRepeatMode(o, l), e((0, a.jsx)(y, { repeatMode: o }), { containerId: t.modal.isOpened ? r.u.FULLSCREEN_INFO : r.u.INFO }));
                     });
                 };
         },
@@ -585,22 +585,28 @@
                     P = j.get(g.oo),
                     w = (0, T.$)(),
                     pulseSyncR128Audio = (0, J.i)(),
-                    [pulseSyncR128Enabled, setPulseSyncR128Enabled] = (0, r.useState)(
-                        () => window.nativeSettings.get('modSettings.r128Normalization') ?? !0,
+                    [pulseSyncR128Enabled, setPulseSyncR128Enabled] = (0, r.useState)(() => window.nativeSettings.get('modSettings.r128Normalization') ?? !0),
+                    onPulseSyncR128Toggle = (0, r.useCallback)(
+                        (e) => {
+                            let i = 'boolean' == typeof e ? e : !(window.nativeSettings.get('modSettings.r128Normalization') ?? !0),
+                                a =
+                                    null == t.state ||
+                                    null == t.state.queueState ||
+                                    null == t.state.queueState.currentEntity ||
+                                    null == t.state.queueState.currentEntity.value
+                                        ? void 0
+                                        : t.state.queueState.currentEntity.value.entity,
+                                r = null == a || null == a.data || null == a.data.meta ? void 0 : a.data.meta.r128;
+                            (setPulseSyncR128Enabled(i),
+                                window.nativeSettings.set('modSettings.r128Normalization', i),
+                                null == pulseSyncR128Audio ||
+                                    null == pulseSyncR128Audio.graphs ||
+                                    pulseSyncR128Audio.graphs.forEach((e) => {
+                                        e.setR128Gain(r, i);
+                                    }));
+                        },
+                        [t.state, pulseSyncR128Audio],
                     ),
-                    onPulseSyncR128Toggle = (0, r.useCallback)((e) => {
-                        let i = 'boolean' == typeof e ? e : !(window.nativeSettings.get('modSettings.r128Normalization') ?? !0),
-                            a = null == t.state || null == t.state.queueState || null == t.state.queueState.currentEntity || null == t.state.queueState.currentEntity.value
-                                ? void 0
-                                : t.state.queueState.currentEntity.value.entity,
-                            r = null == a || null == a.data || null == a.data.meta ? void 0 : a.data.meta.r128;
-                        setPulseSyncR128Enabled(i), window.nativeSettings.set('modSettings.r128Normalization', i),
-                            null == pulseSyncR128Audio ||
-                                null == pulseSyncR128Audio.graphs ||
-                                pulseSyncR128Audio.graphs.forEach((e) => {
-                                    e.setR128Gain(r, i);
-                                });
-                    }, [t.state, pulseSyncR128Audio]),
                     [pulseSyncWasapiQuickEnabled, setPulseSyncWasapiQuickEnabled] = (0, r.useState)(() =>
                         Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput')),
                     ),
@@ -610,14 +616,14 @@
                     [pulseSyncWasapiQuickSupported, setPulseSyncWasapiQuickSupported] = (0, r.useState)(!1),
                     pulseSyncIsWindows = window.PLATFORM === 'win32',
                     onPulseSyncWasapiQuickToggle = (0, r.useCallback)((e) => {
-                        setPulseSyncWasapiQuickEnabled(e),
+                        (setPulseSyncWasapiQuickEnabled(e),
                             Promise.resolve(window.nativeAudioOutput?.setWasapiExclusiveOutputEnabled?.(e)).catch((t) => {
-                                setPulseSyncWasapiQuickEnabled(!e), console.error('Failed to change WASAPI Exclusive setting:', t);
-                            });
+                                (setPulseSyncWasapiQuickEnabled(!e), console.error('Failed to change WASAPI Exclusive setting:', t));
+                            }));
                     }, []),
                     V = (0, r.useCallback)(
                         (e) => {
-                            w(e, t.quality), t.setQuality(e), null == z || z.setQuality(e), P.set(v.c.YmPlayerQuality, e, { expires: 365 });
+                            (w(e, t.quality), t.setQuality(e), null == z || z.setQuality(e), P.set(v.c.YmPlayerQuality, e, { expires: 365 }));
                         },
                         [z, t, P, w],
                     ),
@@ -634,7 +640,7 @@
                     G = (0, r.useCallback)(
                         (e, i) => () => {
                             if (t.quality === e) return;
-                            s.modal.close(), V(e);
+                            (s.modal.close(), V(e));
                             let { message: n, ariaLabel: r } = Q(i);
                             M((0, a.jsx)(S.J, { onOpenQualitySettingsMenu: s.modal.open, message: n, ariaLabel: r }), { containerId: b.u.INFO });
                         },
@@ -693,8 +699,8 @@
                 }, [s.modal.isOpened]);
                 (0, r.useEffect)(() => {
                     if (!s.modal.isOpened || !pulseSyncIsWindows) return;
-                    setPulseSyncWasapiQuickEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput'))),
-                        setPulseSyncYaspTapQuickEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap')));
+                    (setPulseSyncWasapiQuickEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput'))),
+                        setPulseSyncYaspTapQuickEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap'))));
                     let e = !1;
                     return (
                         Promise.resolve(window.nativeAudioOutput?.getWasapiExclusiveStatus?.())
@@ -796,14 +802,7 @@
                                 }),
                             ],
                         });
-                    }, [
-                        e,
-                        pulseSyncIsWindows,
-                        pulseSyncWasapiQuickEnabled,
-                        pulseSyncWasapiQuickSupported,
-                        pulseSyncYaspTapQuickEnabled,
-                        onPulseSyncWasapiQuickToggle,
-                    ]);
+                    }, [e, pulseSyncIsWindows, pulseSyncWasapiQuickEnabled, pulseSyncWasapiQuickSupported, pulseSyncYaspTapQuickEnabled, onPulseSyncWasapiQuickToggle]);
                 return (0, a.jsxs)(m.a, {
                     size: 'fitContent',
                     placement: e ? 'default' : 'right',
@@ -847,7 +846,7 @@
             'use strict';
             i.d(t, { q: () => a });
             var a = (function (e) {
-                return (e.VERTICAL = 'vertical'), (e.HORIZONTAL = 'horizontal'), e;
+                return ((e.VERTICAL = 'vertical'), (e.HORIZONTAL = 'horizontal'), e);
             })({});
         },
         45495: (e) => {
@@ -859,7 +858,7 @@
             var a = i(80451),
                 n = {
                     7858: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.findColorBucketByLightness = t.findColorBucketByHue = t.findColorBucketByName = t.LIGHTNESS_COLOR_BUCKETS = t.COLOR_BUCKETS = void 0),
                             (t.COLOR_BUCKETS = [
                                 { name: 'coral', start: 2, end: 19, primary: '#F53700', secondary: '#FFD7CC' },
@@ -894,10 +893,10 @@
                                     ((e, i, a) => (a === t.LIGHTNESS_COLOR_BUCKETS.length - 1 ? i >= e.start && i <= e.end : i >= e.start && i < e.end))(i, e, a),
                                 );
                                 return (0, t.findColorBucketByName)(null == i ? void 0 : i.name);
-                            });
+                            }));
                     },
                     768: (e, t, i) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getVibePaletteColors =
                                 t.getVibeColorBucketSelection =
                                 t.getVibePaletteByBucketName =
@@ -906,10 +905,10 @@
                                 t.SECONDARY_GRADIENT_STOPS =
                                 t.PRIMARY_GRADIENT_STOPS =
                                 t.PRIMARY_DARK_IDLE_STOPS =
-                                    void 0);
+                                    void 0));
                         let a = i(2660),
                             n = i(7858);
-                        (t.PRIMARY_DARK_IDLE_STOPS = Array.from({ length: 16 }, () => '#000000')),
+                        ((t.PRIMARY_DARK_IDLE_STOPS = Array.from({ length: 16 }, () => '#000000')),
                             (t.PRIMARY_GRADIENT_STOPS = {
                                 carmine: [
                                     '#F5002E',
@@ -1497,7 +1496,7 @@
                                 primaryStops: t.PRIMARY_GRADIENT_STOPS[t.FALLBACK_NAME],
                                 secondaryStops: t.SECONDARY_GRADIENT_STOPS[t.FALLBACK_NAME],
                                 primaryDarkIdleStops: t.PRIMARY_DARK_IDLE_STOPS,
-                            });
+                            }));
                         let s = (e) => ({
                             primary: e.primary,
                             secondary: e.secondary,
@@ -1505,7 +1504,7 @@
                             secondaryStops: t.SECONDARY_GRADIENT_STOPS[e.name],
                             primaryDarkIdleStops: t.PRIMARY_DARK_IDLE_STOPS,
                         });
-                        (t.getVibePaletteByBucketName = (e) => {
+                        ((t.getVibePaletteByBucketName = (e) => {
                             let i = (0, n.findColorBucketByName)(e);
                             return i ? s(i) : t.FALLBACK_PALETTE;
                         }),
@@ -1518,7 +1517,7 @@
                                 if (!e) return t.FALLBACK_PALETTE;
                                 let { bucket: i } = (0, t.getVibeColorBucketSelection)(e);
                                 return i ? s(i) : t.FALLBACK_PALETTE;
-                            });
+                            }));
                     },
                     2660: (e) => {
                         e.exports = a;
@@ -1529,16 +1528,16 @@
                     var i = s[t];
                     if (void 0 !== i) return i.exports;
                     var a = (s[t] = { exports: {} });
-                    return n[t](a, a.exports, e), a.exports;
+                    return (n[t](a, a.exports, e), a.exports);
                 })(768);
-            r.FALLBACK_NAME,
+            (r.FALLBACK_NAME,
                 r.FALLBACK_PALETTE,
                 r.PRIMARY_DARK_IDLE_STOPS,
                 r.PRIMARY_GRADIENT_STOPS,
                 r.SECONDARY_GRADIENT_STOPS,
                 r.__esModule,
                 r.getVibeColorBucketSelection,
-                r.getVibePaletteByBucketName;
+                r.getVibePaletteByBucketName);
             var l = r.getVibePaletteColors;
         },
         58625: (e, t, i) => {
@@ -1581,7 +1580,7 @@
                     ariaLabel: y,
                     ariaPressed: p,
                     onClickHandler: (0, d.useCallback)(async () => {
-                        u.setApplyingSetting(n), await c(n, l), u.setApplyingSetting();
+                        (u.setApplyingSetting(n), await c(n, l), u.setApplyingSetting());
                     }, [c, l, n, u]),
                 };
             };
@@ -1886,7 +1885,7 @@
                     });
                 (0, r.useEffect)(() => {
                     let e = () => {
-                            I(), document.activeElement instanceof HTMLElement && document.activeElement.blur();
+                            (I(), document.activeElement instanceof HTMLElement && document.activeElement.blur());
                         },
                         t = () => {
                             document.hidden && e();
@@ -1895,12 +1894,12 @@
                         document.addEventListener('visibilitychange', t),
                         window.addEventListener('blur', e),
                         () => {
-                            document.removeEventListener('visibilitychange', t), window.removeEventListener('blur', e);
+                            (document.removeEventListener('visibilitychange', t), window.removeEventListener('blur', e));
                         }
                     );
                 }, [I]);
                 let L = (0, u.c)((e) => {
-                        D(e), O(e), null == h || h(e);
+                        (D(e), O(e), null == h || h(e));
                     }),
                     R = (0, u.c)(async (e) => {
                         await B(f, e);
@@ -2039,11 +2038,11 @@
                 var t = l[e];
                 if (void 0 !== t) return t.exports;
                 var i = (l[e] = { exports: {} });
-                return r[e](i, i.exports, o), i.exports;
+                return (r[e](i, i.exports, o), i.exports);
             }
             var u = {};
-            (() => {
-                Object.defineProperty(u, '__esModule', { value: !0 }), (u.useDebouncedToggle = void 0);
+            ((() => {
+                (Object.defineProperty(u, '__esModule', { value: !0 }), (u.useDebouncedToggle = void 0));
                 let e = o(352),
                     t = o(810);
                 u.useDebouncedToggle = (i) => {
@@ -2053,16 +2052,16 @@
                         u = (0, t.useMemo)(
                             () =>
                                 (0, e.throttle)(() => {
-                                    o(!n),
+                                    (o(!n),
                                         r.current && window.clearTimeout(r.current),
                                         (r.current = window.setTimeout(() => {
                                             o(!!n);
-                                        }, a));
+                                        }, a)));
                                 }, s),
                             [a, n, s],
                         ),
                         d = (0, t.useCallback)(() => {
-                            o(!!n), r.current && window.clearTimeout(r.current);
+                            (o(!!n), r.current && window.clearTimeout(r.current));
                         }, [n]);
                     return (
                         (0, t.useEffect)(
@@ -2075,7 +2074,7 @@
                     );
                 };
             })(),
-                u.__esModule;
+                u.__esModule);
             var d = u.useDebouncedToggle;
         },
         90829: (e, t, i) => {

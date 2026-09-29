@@ -154,14 +154,14 @@
                 return (0, g.useMemo)(() => [...t].filter((e) => null != e), [...t]);
             }
             !(function (e) {
-                (e.DragStart = 'dragStart'),
+                ((e.DragStart = 'dragStart'),
                     (e.DragMove = 'dragMove'),
                     (e.DragEnd = 'dragEnd'),
                     (e.DragCancel = 'dragCancel'),
                     (e.DragOver = 'dragOver'),
                     (e.RegisterDroppable = 'registerDroppable'),
                     (e.SetDroppableDisabled = 'setDroppableDisabled'),
-                    (e.UnregisterDroppable = 'unregisterDroppable');
+                    (e.UnregisterDroppable = 'unregisterDroppable'));
             })(l || (l = {}));
             let M = Object.freeze({ x: 0, y: 0 });
             function k(e, t) {
@@ -200,7 +200,7 @@
                 return t ? n[t] : n;
             }
             function I(e, t, n) {
-                return void 0 === t && (t = e.left), void 0 === n && (n = e.top), { x: t + 0.5 * e.width, y: n + 0.5 * e.height };
+                return (void 0 === t && (t = e.left), void 0 === n && (n = e.top), { x: t + 0.5 * e.width, y: n + 0.5 * e.height });
             }
             let z = (e) => {
                     let { collisionRect: t, droppableRects: n, droppableContainers: r } = e,
@@ -306,7 +306,7 @@
                     ? (function r(l) {
                           var i;
                           if ((null != t && n.length >= t) || !l) return n;
-                          if ((0, v.wz)(l) && null != l.scrollingElement && !n.includes(l.scrollingElement)) return n.push(l.scrollingElement), n;
+                          if ((0, v.wz)(l) && null != l.scrollingElement && !n.includes(l.scrollingElement)) return (n.push(l.scrollingElement), n);
                           if (!(0, v.sb)(l) || (0, v.xZ)(l) || n.includes(l)) return n;
                           let a = (0, v.zk)(e).getComputedStyle(l);
                           return (l !== e &&
@@ -364,7 +364,7 @@
                 return { isTop: l, isLeft: i, isBottom: e.scrollTop >= r.y, isRight: e.scrollLeft >= r.x, maxScroll: r, minScroll: t };
             }
             !(function (e) {
-                (e[(e.Forward = 1)] = 'Forward'), (e[(e.Backward = -1)] = 'Backward');
+                ((e[(e.Forward = 1)] = 'Forward'), (e[(e.Backward = -1)] = 'Backward'));
             })(i || (i = {}));
             let Q = { x: 0.2, y: 0.2 };
             function Z(e) {
@@ -393,13 +393,13 @@
             ];
             class et {
                 constructor(e, t) {
-                    (this.rect = void 0),
+                    ((this.rect = void 0),
                         (this.width = void 0),
                         (this.height = void 0),
                         (this.top = void 0),
                         (this.bottom = void 0),
                         (this.right = void 0),
-                        (this.left = void 0);
+                        (this.left = void 0));
                     let n = X(t),
                         r = Z(n);
                     for (let [t, l, i] of ((this.rect = { ...e }), (this.width = e.width), (this.height = e.height), ee))
@@ -417,7 +417,7 @@
             }
             class en {
                 constructor(e) {
-                    (this.target = void 0),
+                    ((this.target = void 0),
                         (this.listeners = []),
                         (this.removeAll = () => {
                             this.listeners.forEach((e) => {
@@ -425,11 +425,11 @@
                                 return null == (t = this.target) ? void 0 : t.removeEventListener(...e);
                             });
                         }),
-                        (this.target = e);
+                        (this.target = e));
                 }
                 add(e, t, n) {
                     var r;
-                    null == (r = this.target) || r.addEventListener(e, t, n), this.listeners.push([e, t, n]);
+                    (null == (r = this.target) || r.addEventListener(e, t, n), this.listeners.push([e, t, n]));
                 }
             }
             function er(e, t) {
@@ -443,24 +443,24 @@
             function ei(e) {
                 e.stopPropagation();
             }
-            !(function (e) {
-                (e.Click = 'click'),
+            (!(function (e) {
+                ((e.Click = 'click'),
                     (e.DragStart = 'dragstart'),
                     (e.Keydown = 'keydown'),
                     (e.ContextMenu = 'contextmenu'),
                     (e.Resize = 'resize'),
                     (e.SelectionChange = 'selectionchange'),
-                    (e.VisibilityChange = 'visibilitychange');
+                    (e.VisibilityChange = 'visibilitychange'));
             })(a || (a = {})),
                 (function (e) {
-                    (e.Space = 'Space'),
+                    ((e.Space = 'Space'),
                         (e.Down = 'ArrowDown'),
                         (e.Right = 'ArrowRight'),
                         (e.Left = 'ArrowLeft'),
                         (e.Up = 'ArrowUp'),
                         (e.Esc = 'Escape'),
-                        (e.Enter = 'Enter');
-                })(o || (o = {}));
+                        (e.Enter = 'Enter'));
+                })(o || (o = {})));
             let ea = { start: [o.Space, o.Enter], cancel: [o.Esc], end: [o.Space, o.Enter] },
                 eo = (e, t) => {
                     let { currentCoordinates: n } = t;
@@ -477,32 +477,32 @@
                 };
             class eu {
                 constructor(e) {
-                    (this.props = void 0),
+                    ((this.props = void 0),
                         (this.autoScrollEnabled = !1),
                         (this.referenceCoordinates = void 0),
                         (this.listeners = void 0),
                         (this.windowListeners = void 0),
-                        (this.props = e);
+                        (this.props = e));
                     let {
                         event: { target: t },
                     } = e;
-                    (this.props = e),
+                    ((this.props = e),
                         (this.listeners = new en((0, v.TW)(t))),
                         (this.windowListeners = new en((0, v.zk)(t))),
                         (this.handleKeyDown = this.handleKeyDown.bind(this)),
                         (this.handleCancel = this.handleCancel.bind(this)),
-                        this.attach();
+                        this.attach());
                 }
                 attach() {
-                    this.handleStart(),
+                    (this.handleStart(),
                         this.windowListeners.add(a.Resize, this.handleCancel),
                         this.windowListeners.add(a.VisibilityChange, this.handleCancel),
-                        setTimeout(() => this.listeners.add(a.Keydown, this.handleKeyDown));
+                        setTimeout(() => this.listeners.add(a.Keydown, this.handleKeyDown)));
                 }
                 handleStart() {
                     let { activeNode: e, onStart: t } = this.props,
                         n = e.node.current;
-                    n && $(n), t(M);
+                    (n && $(n), t(M));
                 }
                 handleKeyDown(e) {
                     if ((0, v.kx)(e)) {
@@ -540,16 +540,16 @@
                                     let e = n.scrollLeft + t.x,
                                         i = (l === o.Right && e <= f.x) || (l === o.Left && e >= h.x);
                                     if (i && !t.y) return void n.scrollTo({ left: e, behavior: a });
-                                    i ? (r.x = n.scrollLeft - e) : (r.x = l === o.Right ? n.scrollLeft - f.x : n.scrollLeft - h.x),
-                                        r.x && n.scrollBy({ left: -r.x, behavior: a });
+                                    (i ? (r.x = n.scrollLeft - e) : (r.x = l === o.Right ? n.scrollLeft - f.x : n.scrollLeft - h.x),
+                                        r.x && n.scrollBy({ left: -r.x, behavior: a }));
                                     break;
                                 }
                                 if (b && p.y !== d.y) {
                                     let e = n.scrollTop + t.y,
                                         i = (l === o.Down && e <= f.y) || (l === o.Up && e >= h.y);
                                     if (i && !t.x) return void n.scrollTo({ top: e, behavior: a });
-                                    i ? (r.y = n.scrollTop - e) : (r.y = l === o.Down ? n.scrollTop - f.y : n.scrollTop - h.y),
-                                        r.y && n.scrollBy({ top: -r.y, behavior: a });
+                                    (i ? (r.y = n.scrollTop - e) : (r.y = l === o.Down ? n.scrollTop - f.y : n.scrollTop - h.y),
+                                        r.y && n.scrollBy({ top: -r.y, behavior: a }));
                                     break;
                                 }
                             }
@@ -559,18 +559,18 @@
                 }
                 handleMove(e, t) {
                     let { onMove: n } = this.props;
-                    e.preventDefault(), n(t);
+                    (e.preventDefault(), n(t));
                 }
                 handleEnd(e) {
                     let { onEnd: t } = this.props;
-                    e.preventDefault(), this.detach(), t();
+                    (e.preventDefault(), this.detach(), t());
                 }
                 handleCancel(e) {
                     let { onCancel: t } = this.props;
-                    e.preventDefault(), this.detach(), t();
+                    (e.preventDefault(), this.detach(), t());
                 }
                 detach() {
-                    this.listeners.removeAll(), this.windowListeners.removeAll();
+                    (this.listeners.removeAll(), this.windowListeners.removeAll());
                 }
             }
             function es(e) {
@@ -597,7 +597,7 @@
             class ed {
                 constructor(e, t, n) {
                     var r;
-                    void 0 === n &&
+                    (void 0 === n &&
                         (n = (function (e) {
                             let { EventTarget: t } = (0, v.zk)(e);
                             return e instanceof t ? e : (0, v.TW)(e);
@@ -613,10 +613,10 @@
                         (this.documentListeners = void 0),
                         (this.windowListeners = void 0),
                         (this.props = e),
-                        (this.events = t);
+                        (this.events = t));
                     let { event: l } = e,
                         { target: i } = l;
-                    (this.props = e),
+                    ((this.props = e),
                         (this.events = t),
                         (this.document = (0, v.TW)(i)),
                         (this.documentListeners = new en(this.document)),
@@ -629,7 +629,7 @@
                         (this.handleCancel = this.handleCancel.bind(this)),
                         (this.handleKeydown = this.handleKeydown.bind(this)),
                         (this.removeTextSelection = this.removeTextSelection.bind(this)),
-                        this.attach();
+                        this.attach());
                 }
                 attach() {
                     let {
@@ -658,10 +658,10 @@
                     this.handleStart();
                 }
                 detach() {
-                    this.listeners.removeAll(),
+                    (this.listeners.removeAll(),
                         this.windowListeners.removeAll(),
                         setTimeout(this.documentListeners.removeAll, 50),
-                        null !== this.timeoutId && (clearTimeout(this.timeoutId), (this.timeoutId = null));
+                        null !== this.timeoutId && (clearTimeout(this.timeoutId), (this.timeoutId = null)));
                 }
                 handleStart() {
                     let { initialCoordinates: e } = this,
@@ -690,15 +690,15 @@
                         }
                         return ec(a) && er(u, a.tolerance) ? this.handleCancel() : void 0;
                     }
-                    e.cancelable && e.preventDefault(), i(o);
+                    (e.cancelable && e.preventDefault(), i(o));
                 }
                 handleEnd() {
                     let { onEnd: e } = this.props;
-                    this.detach(), e();
+                    (this.detach(), e());
                 }
                 handleCancel() {
                     let { onCancel: e } = this.props;
-                    this.detach(), e();
+                    (this.detach(), e());
                 }
                 handleKeydown(e) {
                     e.code === o.Esc && this.handleCancel();
@@ -759,7 +759,7 @@
                     function e() {}
                 }
             }
-            (eb.activators = [
+            ((eb.activators = [
                 {
                     eventName: 'onTouchStart',
                     handler: (e, t) => {
@@ -771,16 +771,16 @@
                 },
             ]),
                 (function (e) {
-                    (e[(e.Pointer = 0)] = 'Pointer'), (e[(e.DraggableRect = 1)] = 'DraggableRect');
+                    ((e[(e.Pointer = 0)] = 'Pointer'), (e[(e.DraggableRect = 1)] = 'DraggableRect'));
                 })(s || (s = {})),
                 (function (e) {
-                    (e[(e.TreeOrder = 0)] = 'TreeOrder'), (e[(e.ReversedTreeOrder = 1)] = 'ReversedTreeOrder');
-                })(c || (c = {}));
+                    ((e[(e.TreeOrder = 0)] = 'TreeOrder'), (e[(e.ReversedTreeOrder = 1)] = 'ReversedTreeOrder'));
+                })(c || (c = {})));
             let em = { x: { [i.Backward]: !1, [i.Forward]: !1 }, y: { [i.Backward]: !1, [i.Forward]: !1 } };
-            !(function (e) {
-                (e[(e.Always = 0)] = 'Always'), (e[(e.BeforeDragging = 1)] = 'BeforeDragging'), (e[(e.WhileDragging = 2)] = 'WhileDragging');
+            (!(function (e) {
+                ((e[(e.Always = 0)] = 'Always'), (e[(e.BeforeDragging = 1)] = 'BeforeDragging'), (e[(e.WhileDragging = 2)] = 'WhileDragging'));
             })(d || (d = {})),
-                ((f || (f = {})).Optimized = 'optimized');
+                ((f || (f = {})).Optimized = 'optimized'));
             let ey = new Map();
             function ew(e, t) {
                 return (0, v.KG)((n) => (e ? n || ('function' == typeof t ? t(e) : e) : null), [t, e]);
@@ -793,7 +793,7 @@
                         let { ResizeObserver: e } = window;
                         return new e(r);
                     }, [n]);
-                return (0, g.useEffect)(() => () => (null == l ? void 0 : l.disconnect()), [l]), l;
+                return ((0, g.useEffect)(() => () => (null == l ? void 0 : l.disconnect()), [l]), l);
             }
             function eE(e) {
                 return new et(F(e), e);
@@ -817,7 +817,7 @@
                                 let { MutationObserver: e } = window;
                                 return new e(r);
                             }, [r, n]);
-                        return (0, g.useEffect)(() => () => (null == l ? void 0 : l.disconnect()), [l]), l;
+                        return ((0, g.useEffect)(() => () => (null == l ? void 0 : l.disconnect()), [l]), l);
                     })({
                         callback(t) {
                             if (e)
@@ -833,10 +833,10 @@
                     a = ex({ callback: l });
                 return (
                     (0, v.Es)(() => {
-                        l(),
+                        (l(),
                             e
                                 ? (null == a || a.observe(e), null == i || i.observe(document.body, { childList: !0, subtree: !0 }))
-                                : (null == a || a.disconnect(), null == i || i.disconnect());
+                                : (null == a || a.disconnect(), null == i || i.disconnect()));
                     }, [e]),
                     r
                 );
@@ -851,7 +851,7 @@
                     }, t),
                     (0, g.useEffect)(() => {
                         let t = e !== M;
-                        t && !n.current && (n.current = e), !t && n.current && (n.current = null);
+                        (t && !n.current && (n.current = e), !t && n.current && (n.current = null));
                     }, [e]),
                     n.current ? (0, v.Re)(e, n.current) : M
                 );
@@ -959,21 +959,21 @@
                         let { element: n } = t,
                             { id: r } = n,
                             l = new eN(e.droppable.containers);
-                        return l.set(r, n), { ...e, droppable: { ...e.droppable, containers: l } };
+                        return (l.set(r, n), { ...e, droppable: { ...e.droppable, containers: l } });
                     }
                     case l.SetDroppableDisabled: {
                         let { id: n, key: r, disabled: l } = t,
                             i = e.droppable.containers.get(n);
                         if (!i || r !== i.key) return e;
                         let a = new eN(e.droppable.containers);
-                        return a.set(n, { ...i, disabled: l }), { ...e, droppable: { ...e.droppable, containers: a } };
+                        return (a.set(n, { ...i, disabled: l }), { ...e, droppable: { ...e.droppable, containers: a } });
                     }
                     case l.UnregisterDroppable: {
                         let { id: n, key: r } = t,
                             l = e.droppable.containers.get(n);
                         if (!l || r !== l.key) return e;
                         let i = new eN(e.droppable.containers);
-                        return i.delete(n), { ...e, droppable: { ...e.droppable, containers: i } };
+                        return (i.delete(n), { ...e, droppable: { ...e.droppable, containers: i } });
                     }
                     default:
                         return e;
@@ -1013,7 +1013,7 @@
             }
             let eF = (0, g.createContext)({ ...M, scaleX: 1, scaleY: 1 });
             !(function (e) {
-                (e[(e.Uninitialized = 0)] = 'Uninitialized'), (e[(e.Initializing = 1)] = 'Initializing'), (e[(e.Initialized = 2)] = 'Initialized');
+                ((e[(e.Uninitialized = 0)] = 'Uninitialized'), (e[(e.Initializing = 1)] = 'Initializing'), (e[(e.Initialized = 2)] = 'Initialized'));
             })(h || (h = {}));
             let ej = (0, g.memo)(function (e) {
                     var t, n, r, a, o, u;
@@ -1084,7 +1084,7 @@
                                 h = (0, v.YN)(f),
                                 p = (0, g.useCallback)(
                                     function (e) {
-                                        void 0 === e && (e = []), h.current || a((t) => (null === t ? e : t.concat(e.filter((e) => !t.includes(e)))));
+                                        (void 0 === e && (e = []), h.current || a((t) => (null === t ? e : t.concat(e.filter((e) => !t.includes(e))))));
                                     },
                                     [h],
                                 ),
@@ -1102,7 +1102,7 @@
                                                 }
                                                 let e = n.node.current,
                                                     r = e ? new et(u(e), e) : null;
-                                                (n.rect.current = r), r && t.set(n.id, r);
+                                                ((n.rect.current = r), r && t.set(n.id, r));
                                             }
                                             return t;
                                         }
@@ -1125,7 +1125,7 @@
                                         'number' != typeof o ||
                                         null !== b.current ||
                                         (b.current = setTimeout(() => {
-                                            p(), (b.current = null);
+                                            (p(), (b.current = null));
                                         }, o));
                                 }, [o, f, p, ...r]),
                                 { droppableRects: m, measureDroppableContainers: p, measuringScheduled: null != i }
@@ -1208,7 +1208,7 @@
                                 i = (0, g.useCallback)(
                                     (e) => {
                                         let n = ek(e);
-                                        null == l || l.disconnect(), n && (null == l || l.observe(n)), r(n ? t(n) : null);
+                                        (null == l || l.disconnect(), n && (null == l || l.observe(n)), r(n ? t(n) : null));
                                     },
                                     [t, l],
                                 ),
@@ -1281,10 +1281,10 @@
                                                 return t ? (t.addEventListener('scroll', l, { passive: !0 }), [t, H(t)]) : null;
                                             })
                                             .filter((e) => null != e);
-                                        n(a.length ? new Map(a) : null), (r.current = e);
+                                        (n(a.length ? new Map(a) : null), (r.current = e));
                                     }
                                     return () => {
-                                        i(e), i(t);
+                                        (i(e), i(t));
                                     };
                                     function i(e) {
                                         e.forEach((e) => {
@@ -1328,10 +1328,10 @@
                                             let { onDragStart: r } = eo.current,
                                                 i = { active: { id: t, data: n.data, rect: $ } };
                                             (0, p.unstable_batchedUpdates)(() => {
-                                                null == r || r(i),
+                                                (null == r || r(i),
                                                     z(h.Initializing),
                                                     T({ type: l.DragStart, initialCoordinates: e, active: t }),
-                                                    L({ type: 'onDragStart', event: i });
+                                                    L({ type: 'onDragStart', event: i }));
                                             });
                                         },
                                         onMove(e) {
@@ -1346,22 +1346,22 @@
                                             o = null;
                                         if (t && i) {
                                             let { cancelDrop: u } = eo.current;
-                                            (o = { activatorEvent: a, active: t, collisions: n, delta: i, over: r }),
-                                                e === l.DragEnd && 'function' == typeof u && (await Promise.resolve(u(o))) && (e = l.DragCancel);
+                                            ((o = { activatorEvent: a, active: t, collisions: n, delta: i, over: r }),
+                                                e === l.DragEnd && 'function' == typeof u && (await Promise.resolve(u(o))) && (e = l.DragCancel));
                                         }
-                                        (en.current = null),
+                                        ((en.current = null),
                                             (0, p.unstable_batchedUpdates)(() => {
-                                                T({ type: e }), z(h.Uninitialized), e6(null), el(null), ea(null);
+                                                (T({ type: e }), z(h.Uninitialized), e6(null), el(null), ea(null));
                                                 let t = e === l.DragEnd ? 'onDragEnd' : 'onDragCancel';
                                                 if (o) {
                                                     let e = eo.current[t];
-                                                    null == e || e(o), L({ type: t, event: o });
+                                                    (null == e || e(o), L({ type: t, event: o }));
                                                 }
-                                            });
+                                            }));
                                     };
                                 }
                                 (0, p.unstable_batchedUpdates)(() => {
-                                    el(o), ea(e.nativeEvent);
+                                    (el(o), ea(e.nativeEvent));
                                 });
                             },
                             [K],
@@ -1386,7 +1386,7 @@
                                 }, []),
                             [x, e7],
                         );
-                    (0, g.useEffect)(
+                    ((0, g.useEffect)(
                         () => {
                             if (!v.Sw) return;
                             let e = x.map((e) => {
@@ -1411,7 +1411,7 @@
                             if (!t || !n) return;
                             let i = { active: t, activatorEvent: n, collisions: r, delta: { x: e1.x, y: e1.y }, over: l };
                             (0, p.unstable_batchedUpdates)(() => {
-                                null == e || e(i), L({ type: 'onDragMove', event: i });
+                                (null == e || e(i), L({ type: 'onDragMove', event: i }));
                             });
                         }, [e1.x, e1.y]),
                         (0, g.useEffect)(() => {
@@ -1422,11 +1422,11 @@
                                 o = a && a.rect.current ? { id: a.id, rect: a.rect.current, data: a.data, disabled: a.disabled } : null,
                                 u = { active: e, activatorEvent: t, collisions: n, delta: { x: l.x, y: l.y }, over: o };
                             (0, p.unstable_batchedUpdates)(() => {
-                                e6(o), null == i || i(u), L({ type: 'onDragOver', event: u });
+                                (e6(o), null == i || i(u), L({ type: 'onDragOver', event: u }));
                             });
                         }, [e8]),
                         (0, v.Es)(() => {
-                            (eI.current = {
+                            ((eI.current = {
                                 activatorEvent: ei,
                                 active: ee,
                                 activeNode: eg,
@@ -1441,7 +1441,7 @@
                                 scrollableAncestors: eH,
                                 scrollAdjustedTranslate: e1,
                             }),
-                                ($.current = { initial: eU, translated: e2 });
+                                ($.current = { initial: eU, translated: e2 }));
                         }, [ee, eg, e5, e2, K, eX, eU, ed, G, e9, eH, e1]),
                         (function (e) {
                             let {
@@ -1501,7 +1501,7 @@
                                     if (!n) continue;
                                     let { direction: l, speed: a } = (function (e, t, n, r, l) {
                                         let { top: a, left: o, right: u, bottom: s } = n;
-                                        void 0 === r && (r = 10), void 0 === l && (l = Q);
+                                        (void 0 === r && (r = 10), void 0 === l && (l = Q));
                                         let { isTop: c, isBottom: d, isLeft: f, isRight: h } = V(e),
                                             g = { x: 0, y: 0 },
                                             p = { x: 0, y: 0 },
@@ -1518,13 +1518,13 @@
                                     })(e, n, D, t, b);
                                     for (let e of ['x', 'y']) m[e][l[e]] || ((a[e] = 0), (l[e] = 0));
                                     if (a.x > 0 || a.y > 0) {
-                                        w(), (C.current = e), y(S, o), (x.current = a), (E.current = l);
+                                        (w(), (C.current = e), y(S, o), (x.current = a), (E.current = l));
                                         return;
                                     }
                                 }
-                                (x.current = { x: 0, y: 0 }), (E.current = { x: 0, y: 0 }), w();
+                                ((x.current = { x: 0, y: 0 }), (E.current = { x: 0, y: 0 }), w());
                             }, [t, S, r, w, a, o, JSON.stringify(D), JSON.stringify(m), y, f, R, h, JSON.stringify(b)]);
-                        })({ ...ev, delta: j, draggingRect: e2, pointerCoordinates: eQ, scrollableAncestors: eH, scrollableAncestorRects: eJ });
+                        })({ ...ev, delta: j, draggingRect: e2, pointerCoordinates: eQ, scrollableAncestors: eH, scrollableAncestorRects: eJ }));
                     let tt = (0, g.useMemo)(
                             () => ({
                                 active: ee,
@@ -1654,10 +1654,10 @@
                                 f.current = !0;
                                 return;
                             }
-                            null != p.current && clearTimeout(p.current),
+                            (null != p.current && clearTimeout(p.current),
                                 (p.current = setTimeout(() => {
-                                    c(Array.isArray(w.current) ? w.current : [w.current]), (p.current = null);
-                                }, y));
+                                    (c(Array.isArray(w.current) ? w.current : [w.current]), (p.current = null));
+                                }, y)));
                         }, [y]),
                         disabled: b || !o,
                     }),
@@ -1847,7 +1847,7 @@
                                                       v = a.node.animate(f, { duration: t, easing: n, fill: 'forwards' });
                                                   return new Promise((e) => {
                                                       v.onfinish = () => {
-                                                          null == p || p(), e();
+                                                          (null == p || p(), e());
                                                       };
                                                   });
                                               };
@@ -1902,7 +1902,7 @@
                 i = n(81829);
             function a(e, t, n) {
                 let r = e.slice();
-                return r.splice(n < 0 ? r.length + n : n, 0, r.splice(t, 1)[0]), r;
+                return (r.splice(n < 0 ? r.length + n : n, 0, r.splice(t, 1)[0]), r);
             }
             function o(e) {
                 return null !== e && e >= 0;
@@ -1974,12 +1974,12 @@
                     })(y, D.current),
                     S = (-1 !== E && -1 === x) || C,
                     R = 'boolean' == typeof s ? { draggable: s, droppable: s } : s;
-                (0, i.Es)(() => {
+                ((0, i.Es)(() => {
                     C && w && v(y);
                 }, [C, y, w, v]),
                     (0, r.useEffect)(() => {
                         D.current = y;
-                    }, [y]);
+                    }, [y]));
                 let M = (0, r.useMemo)(
                     () => ({
                         activeIndex: x,
@@ -1991,7 +1991,7 @@
                         useDragOverlay: m,
                         sortedRects: y.reduce((e, t, n) => {
                             let r = g.get(t);
-                            return r && (e[n] = r), e;
+                            return (r && (e[n] = r), e);
                         }, Array(y.length)),
                         strategy: o,
                     }),
@@ -2113,9 +2113,9 @@
                     })({ disabled: !eu, index: A, node: B, rect: W });
                 return (
                     (0, r.useEffect)(() => {
-                        $ && ea.current.newIndex !== el && (ea.current.newIndex = el),
+                        ($ && ea.current.newIndex !== el && (ea.current.newIndex = el),
                             R !== ea.current.containerId && (ea.current.containerId = R),
-                            S !== ea.current.items && (ea.current.items = S);
+                            S !== ea.current.items && (ea.current.items = S));
                     }, [$, el, R, S]),
                     (0, r.useEffect)(() => {
                         if (ei === ea.current.activeId) return;
@@ -2214,7 +2214,7 @@
             }
         },
         79259: (e, t, n) => {
-            n.d(t, { FN: () => l, gj: () => r }), n(81829);
+            (n.d(t, { FN: () => l, gj: () => r }), n(81829));
             let r = (e) => {
                     let { containerNodeRect: t, draggingNodeRect: n, transform: r } = e;
                     return n && t
@@ -2332,14 +2332,14 @@
                 let n = (0, r.useRef)();
                 return (0, r.useMemo)(() => {
                     let t = e(n.current);
-                    return (n.current = t), t;
+                    return ((n.current = t), t);
                 }, [...t]);
             }
             function m(e) {
                 let t = g(e),
                     n = (0, r.useRef)(null),
                     l = (0, r.useCallback)((e) => {
-                        e !== n.current && (null == t || t(e, n.current)), (n.current = e);
+                        (e !== n.current && (null == t || t(e, n.current)), (n.current = e));
                     }, []);
                 return [n, l];
             }
@@ -2357,7 +2357,7 @@
                 return (0, r.useMemo)(() => {
                     if (t) return t;
                     let n = null == w[e] ? 0 : w[e] + 1;
-                    return (w[e] = n), e + '-' + n;
+                    return ((w[e] = n), e + '-' + n);
                 }, [e, t]);
             }
             function E(e) {

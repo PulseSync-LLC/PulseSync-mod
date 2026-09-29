@@ -4,9 +4,9 @@
         3785: (e, t, l) => {
             'use strict';
             var r;
-            l.d(t, { M: () => r }),
+            (l.d(t, { M: () => r }),
                 (function (e) {
-                    (e.MODAL = 'modal'),
+                    ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
                         (e.AGE_18 = 'age18'),
@@ -15,8 +15,8 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                        (e.SUBSTITUTED_ICON = 'substitutedIcon');
-                })(r || (r = {}));
+                        (e.SUBSTITUTED_ICON = 'substitutedIcon'));
+                })(r || (r = {})));
         },
         8626: (e, t, l) => {
             'use strict';
@@ -38,15 +38,15 @@
                     u = (0, a.useRef)(void 0),
                     m = (0, o.c)(() => {
                         var l;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let r = [...(null != (l = e.lastRejectedPagesList) ? l : [])].reverse().filter((t) => {
                             var l;
                             return (null == (l = e.pageStates) ? void 0 : l[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             r.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, a.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = l((0, r.jsx)(i.L, { reloadBlocks: m }), { containerId: s.u.ERROR, autoClose: !1 }));
@@ -70,7 +70,7 @@
         },
         30174: (e, t, l) => {
             'use strict';
-            l.r(t), l.d(t, { default: () => $ });
+            (l.r(t), l.d(t, { default: () => $ }));
             var r = l(32290),
                 a = l(21916),
                 o = l(55178),
@@ -152,7 +152,7 @@
                         },
                         [s, t],
                     );
-                (0, E.X)(s.pagesLoader, w),
+                ((0, E.X)(s.pagesLoader, w),
                     (0, o.useEffect)(
                         () => () => {
                             s.reset();
@@ -183,7 +183,7 @@
                                     (0, k.j)(e);
                                 });
                         }, [e]);
-                    })(s);
+                    })(s));
                 let F = (0, o.useMemo)(() => ({ Footer: () => (0, r.jsx)(R.A, { children: (0, r.jsx)(A.w, { className: Y().footer }) }) }), []);
                 if ((t && s.isNeededToLoad && (0, o.use)(s.getData({ preloadedMeta: l, metatagId: t, page: 0, pageSize: T.cM })), s.isSomethingWrong))
                     return (0, r.jsx)(u.SomethingWentWrong, {});
@@ -258,7 +258,7 @@
                 },
                 $ = () => {
                     let e = (0, a.useSearchParams)().get('metatagId');
-                    return e || (0, a.notFound)(), (0, r.jsx)(o.Suspense, { fallback: (0, r.jsx)(B, {}), children: (0, r.jsx)(U, { metatagId: e }) });
+                    return (e || (0, a.notFound)(), (0, r.jsx)(o.Suspense, { fallback: (0, r.jsx)(B, {}), children: (0, r.jsx)(U, { metatagId: e }) }));
                 };
         },
         31010: (e, t, l) => {
@@ -684,7 +684,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [i, c, d];
-                                    return 'ru' === o && e.push(n), e.push(u), e;
+                                    return ('ru' === o && e.push(n), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [i, c, d, u];
@@ -854,7 +854,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 7231, 7972, 6347, 3183, 9763, 6639, 7258, 6004, 6706, 1311, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 3266, 6477, 7275,
@@ -862,6 +862,6 @@
             ],
             () => e((e.s = 97725)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

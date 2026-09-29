@@ -19,7 +19,7 @@
                         let e = () => {
                             for (let e of r()) (0, n.X6)(i, e);
                         };
-                        return e(), window.addEventListener(l, e), () => window.removeEventListener(l, e);
+                        return (e(), window.addEventListener(l, e), () => window.removeEventListener(l, e));
                     }, [r, l, i]),
                     { store: i, patchesRef: s }
                 );
@@ -430,7 +430,7 @@
                         o = () => {
                             var e, t;
                             let n = null != (t = null == (e = window.__PAGE_STATE_PATCHES__) ? void 0 : e[r]) ? t : [];
-                            return window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[r], n;
+                            return (window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[r], n);
                         };
                     return {
                         pageStoreProvider: (e) => {
@@ -471,7 +471,7 @@
                 try {
                     return JSON.parse(e);
                 } catch (e) {
-                    return console.error(e), null;
+                    return (console.error(e), null);
                 }
             }
             class l {
@@ -526,7 +526,7 @@
                         let s = o(l);
                         if (!s) return null;
                         let i = null != (n = null == s ? void 0 : s.value) ? n : null;
-                        if ((null == s ? void 0 : s.expires) && Date.now() > new Date(s.expires).getTime()) return this.remove(e), null;
+                        if ((null == s ? void 0 : s.expires) && Date.now() > new Date(s.expires).getTime()) return (this.remove(e), null);
                         return i;
                     } catch (e) {
                         return null;
@@ -535,7 +535,7 @@
                 set(e, t, r) {
                     if ('number' == typeof (null == r ? void 0 : r.expires)) {
                         let e = new Date();
-                        e.setMilliseconds(e.getMilliseconds() + 864e5 * r.expires), (r.expires = e);
+                        (e.setMilliseconds(e.getMilliseconds() + 864e5 * r.expires), (r.expires = e));
                     }
                     let n = s('localStorage');
                     if (n)
@@ -558,9 +558,9 @@
                 c = r(29222);
             class u extends c.t {
                 constructor(e, t, { code: r = 'E_STORAGE', ...n } = {}) {
-                    super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: r, ...n }),
+                    (super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: r, ...n }),
                         (0, a._)(this, 'name', 'Storage Exception'),
-                        Object.setPrototypeOf(this, u.prototype);
+                        Object.setPrototypeOf(this, u.prototype));
                 }
             }
             class d {
@@ -577,7 +577,7 @@
                     throw new u(this.platform, this.type);
                 }
                 constructor(e, t) {
-                    (0, a._)(this, 'platform', ''), (0, a._)(this, 'type', ''), (this.platform = e), (this.type = t);
+                    ((0, a._)(this, 'platform', ''), (0, a._)(this, 'type', ''), (this.platform = e), (this.type = t));
                 }
             }
             class g {
@@ -747,7 +747,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [s, c, u];
-                                    return 'ru' === l && e.push(a), e.push(d), e;
+                                    return ('ru' === l && e.push(a), e.push(d), e);
                                 }
                                 case 'desktop':
                                     return [s, c, u, d];
@@ -877,7 +877,7 @@
                         };
                     })(),
                     y = (0, s.useCallback)(() => {
-                        v(), (window.location.href = f.Z.main.href);
+                        (v(), (window.location.href = f.Z.main.href));
                     }, [v]),
                     { contentRef: w } = (0, m.g)();
                 return (0, n.jsxs)('div', {
@@ -977,7 +977,7 @@
                         (function (e) {
                             if ('number' == typeof e.expires) {
                                 var t = new Date();
-                                t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t);
+                                (t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t));
                             }
                             return (
                                 o('Expires', e.expires ? e.expires.toUTCString() : '') +

@@ -63,15 +63,15 @@
                     u = (0, s.useRef)(void 0),
                     _ = (0, r.c)(() => {
                         var i;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let l = [...(null != (i = e.lastRejectedPagesList) ? i : [])].reverse().filter((t) => {
                             var i;
                             return (null == (i = e.pageStates) ? void 0 : i[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             l.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, s.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = i((0, l.jsx)(a.L, { reloadBlocks: _ }), { containerId: o.u.ERROR, autoClose: !1 }));
@@ -181,7 +181,7 @@
             e.exports = { icon: 'CardLikes_icon__l95lW', root: 'CardLikes_root__g8ala' };
         },
         23254: (e, t, i) => {
-            Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 69114));
+            (Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 69114)));
         },
         29268: (e, t, i) => {
             'use strict';
@@ -335,7 +335,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), a.isOpened && (l.reset(), a.close()), s.modal.isOpened && s.modal.close();
+                                    (null == e || e.stopPropagation(), a.isOpened && (l.reset(), a.close()), s.modal.isOpened && s.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     r.modal.isOpened && (r.modal.close(), r.reset());
@@ -345,11 +345,11 @@
                         })({
                             artist: t,
                             callback: (0, h.c)((e) => {
-                                A && S.isOpened && S.close(), N(e);
+                                (A && S.isOpened && S.close(), N(e));
                             }),
                         }),
                         E = (0, h.c)((e) => {
-                            j({ to: m.QT.ArtistScreen }), null == L || L(), P(e);
+                            (j({ to: m.QT.ArtistScreen }), null == L || L(), P(e));
                         });
                     return i && !t.various
                         ? (0, l.jsx)(g.N, {
@@ -566,7 +566,7 @@
                         } = (0, n.g)(),
                         b = 1 === i.length,
                         I = (0, a.useCallback)((e) => {
-                            E(!0), e.preventDefault();
+                            (E(!0), e.preventDefault());
                         }, []),
                         O = (0, a.useMemo)(() => {
                             let e = i;
@@ -904,7 +904,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [a, c, d];
-                                    return 'ru' === r && e.push(n), e.push(u), e;
+                                    return ('ru' === r && e.push(n), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [a, c, d, u];
@@ -1028,14 +1028,14 @@
                     },
                     [t, e.account.data.uid],
                 );
-                (0, y.X)(t.pagesLoader, R),
+                ((0, y.X)(t.pagesLoader, R),
                     (0, a.useEffect)(
                         () => () => {
                             t.reset();
                         },
                         [t],
                     ),
-                    e.account.data.uid && t.isNeededToLoad && (0, a.use)(t.getData({ userId: e.account.data.uid, page: 0, pageSize: 20 }));
+                    e.account.data.uid && t.isNeededToLoad && (0, a.use)(t.getData({ userId: e.account.data.uid, page: 0, pageSize: 20 })));
                 let T = t.isShimmerVisible ? 20 : t.items.length;
                 return (0, l.jsx)(p.n, {
                     pageId: m._Q.OWN_PLAYLISTS,
@@ -1181,10 +1181,10 @@
                         let r = { ...(0, s.HO)(e), url: e.url, isLiked: !e.isLiked };
                         m(!0);
                         let a = await e.toggleLike();
-                        m(!1),
+                        (m(!1),
                             a === o.f.OK
                                 ? i((0, l.jsx)(p, { playlist: r }), { containerId: n.u.INFO })
-                                : i((0, l.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, l.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [t.isAuthorized, _, e, h, i]);
                 };
         },
@@ -1225,10 +1225,10 @@
                         let r = { ...(0, s.HO)(e), url: e.url, isPinned: !e.isPinned };
                         p(!0);
                         let a = await e.togglePin();
-                        p(!1),
+                        (p(!1),
                             a
                                 ? i((0, l.jsx)(m, { playlist: r }), { containerId: o.u.INFO })
-                                : i((0, l.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, l.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [t.isAuthorized, _, e, i, u]);
                 };
         },
@@ -1280,7 +1280,7 @@
                         );
                     }, [t, i]),
                     k = (0, c.c)((e) => {
-                        r.modal.isOpened && r.modal.close(), g({ to: o.QT.ArtistScreen }), v(e);
+                        (r.modal.isOpened && r.modal.close(), g({ to: o.QT.ArtistScreen }), v(e));
                     });
                 return (0, l.jsxs)(l.Fragment, {
                     children: [
@@ -1420,7 +1420,7 @@
                                     {
                                         icon: (0, l.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: icon, size: 'xxs' }),
                                         onClick: () => {
-                                            activate(), s?.(!1);
+                                            (activate(), s?.(!1));
                                         },
                                         children: label,
                                         'data-pulsesync-addon-menu-item': '',
@@ -1468,33 +1468,33 @@
                     ep = (0, g.P)(),
                     eh = (0, u.c)((e) => {
                         if ((e.stopPropagation(), ep())) return void e.preventDefault();
-                        V.setUtmLink(X), V.openPlaylistTrailer(i.id), em(n.ky.Playlist, i.id);
+                        (V.setUtmLink(X), V.openPlaylistTrailer(i.id), em(n.ky.Playlist, i.id));
                     }),
                     [ex, ev] = (0, a.useState)(!1),
                     { isPlaying: eC, togglePlay: ey } = (0, E.D)({
                         playContextParams: { contextData: { type: d.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: W, utmLink: X }, loadContextMeta: !0 },
                     }),
                     eg = (0, u.c)(() => {
-                        ed({ to: n.QT.PlaylistScreen }), null == Z || Z();
+                        (ed({ to: n.QT.PlaylistScreen }), null == Z || Z());
                     }),
                     ef = (0, u.c)((e) => {
-                        eg(), e_(e);
+                        (eg(), e_(e));
                     }),
                     ek = (0, L.N)(),
                     eS = (0, u.c)(() => {
                         if (!ep()) {
                             if (ek) return void $.open();
-                            et || eC || (ei(!0), null == ee || ee()), ey(), eu(!eC);
+                            (et || eC || (ei(!0), null == ee || ee()), ey(), eu(!eC));
                         }
                     }),
                     eA = (0, u.c)(() => {
-                        el || i.isLiked || (es(!0), null == J || J()), en();
+                        (el || i.isLiked || (es(!0), null == J || J()), en());
                     }),
                     eN = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eL = (0, u.c)((e) => {
-                        ea(e), ev(e);
+                        (ea(e), ev(e));
                     }),
                     ej = (0, a.useMemo)(() => {
                         var e;
@@ -1724,7 +1724,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 7231, 6347, 3183, 9763, 6639, 7258, 2225, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6477, 7275, 2586, 8347, 7702, 6874,
@@ -1732,6 +1732,6 @@
             ],
             () => e((e.s = 23254)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

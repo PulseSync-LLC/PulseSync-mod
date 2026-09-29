@@ -22,7 +22,7 @@
             _settings: {},
             _vars: {},
             init: function (e, t) {
-                (r._settings = e), (r._vars = t);
+                ((r._settings = e), (r._vars = t));
             },
             getTime:
                 t && t.now
@@ -44,7 +44,7 @@
                 n && 0 !== n.length && n.push(r.getTime(), t);
             },
             sendTimeMark: function (e, t, n, i) {
-                void 0 === t && (t = r.getTime()), r.emit({ metricName: 'defTimes', data: [e, t, i] }), r.mark(e, t);
+                (void 0 === t && (t = r.getTime()), r.emit({ metricName: 'defTimes', data: [e, t, i] }), r.mark(e, t));
             },
             sendDelta: function (e, t, n, i) {
                 var s,
@@ -59,10 +59,10 @@
                 if (i && (t || r.isTimeAfterPageShow(r.getTime()))) {
                     var n = '2616.' + e;
                     i(function () {
-                        r.getSetting('sendFirstRaf') && r.sendTimeMark(n + '.205'),
+                        (r.getSetting('sendFirstRaf') && r.sendTimeMark(n + '.205'),
                             i(function () {
                                 r.sendTimeMark(n + '.1928');
-                            });
+                            }));
                     });
                 }
             },
@@ -120,13 +120,13 @@
             emit: function (e) {
                 if (!r.getSetting('noEvents')) {
                     var t = (r.getSetting('eventsLimits') && r.getSetting('eventsLimits')[e.metricName]) || 20;
-                    this._eventLisneters[e.metricName] &&
+                    (this._eventLisneters[e.metricName] &&
                         this._eventLisneters[e.metricName].forEach(function (t) {
                             t(e);
                         }),
                         (this._eventsBuffer[e.metricName] = this._eventsBuffer[e.metricName] || []),
                         this._eventsBuffer[e.metricName].push(e),
-                        this._eventsBuffer[e.metricName].length > t && (this._eventsBuffer[e.metricName].length = Math.floor(t / 2));
+                        this._eventsBuffer[e.metricName].length > t && (this._eventsBuffer[e.metricName].length = Math.floor(t / 2)));
                 }
             },
             getBufferedEvents: function (e) {
@@ -144,9 +144,9 @@
             },
         });
     function a() {
-        (Ya.Rum.vsChanged = !0), (Ya.Rum.vsChangeTime = r.getTime()), removeEventListener('visibilitychange', a);
+        ((Ya.Rum.vsChanged = !0), (Ya.Rum.vsChangeTime = r.getTime()), removeEventListener('visibilitychange', a));
     }
-    addEventListener('visibilitychange', a), (r._onVisibilityChange = a);
+    (addEventListener('visibilitychange', a), (r._onVisibilityChange = a));
 })(window);
 
 !(function () {
@@ -162,29 +162,29 @@
     if (s) {
         var l;
         function c() {
-            removeEventListener('visibilitychange', u), clearTimeout(l), (s = 0), h();
+            (removeEventListener('visibilitychange', u), clearTimeout(l), (s = 0), h());
         }
         function u() {
             document.hidden && c();
         }
-        (l = setTimeout(c, s)), addEventListener('visibilitychange', u);
+        ((l = setTimeout(c, s)), addEventListener('visibilitychange', u));
     }
     function h() {
         if (t && a.length) {
             for (var n = 0, i = 0, s = 0; i < a.length && s <= r && n < o; i++) (s += (i ? 2 : 0) + a[i].length) <= r && n++;
             var l = a.splice(0, n);
-            f(t, l.join('\r\n')), a.length && (e = setTimeout(h, g));
+            (f(t, l.join('\r\n')), a.length && (e = setTimeout(h, g)));
         } else a.length = 0;
     }
     function f(e, t) {
         if (!(navigator.sendBeacon && n && navigator.sendBeacon(e, t))) {
             var o = Boolean(i.getSetting('sendCookie')),
                 r = new XMLHttpRequest();
-            r.open('POST', e), (r.withCredentials = o), r.send(t);
+            (r.open('POST', e), (r.withCredentials = o), r.send(t));
         }
     }
     i.send = function (l, c, u, f, d, v, m, S) {
-        (t = i.getSetting('clck')),
+        ((t = i.getSetting('clck')),
             (n = i.getSetting('beacon')),
             (o = i.getSetting('maxBatchCounters') || o),
             (r = i.getSetting('maxBatchLength') || r),
@@ -214,14 +214,14 @@
                           })()
                               ? h()
                               : (e = setTimeout(h, g))));
-            })(i.getSetting('reqid'), m, c, d, i.getSetting('slots'), i.getSetting('experiments'), u);
+            })(i.getSetting('reqid'), m, c, d, i.getSetting('slots'), i.getSetting('experiments'), u));
     };
 })();
 
 !(function () {
     if (window.PerformanceLongTaskTiming) {
         var e = function (e, n) {
-                return (e = e.concat(n)).length > 300 && (e = e.slice(e.length - 300)), e;
+                return ((e = e.concat(n)).length > 300 && (e = e.slice(e.length - 300)), e);
             },
             n = 'undefined' != typeof PerformanceLongAnimationFrameTiming,
             t = n ? ['longtask', 'long-animation-frame'] : ['longtask'];
@@ -234,16 +234,16 @@
                 observer: new PerformanceObserver(function (t) {
                     var o = t.getEntriesByType('longtask'),
                         s = t.getEntriesByType('long-animation-frame');
-                    (r.events = e(r.events, o)), n && (r.loafEvents = e(r.loafEvents, s)), r.fired && (r.eventsAfterTTI = e(r.eventsAfterTTI, o));
+                    ((r.events = e(r.events, o)), n && (r.loafEvents = e(r.loafEvents, s)), r.fired && (r.eventsAfterTTI = e(r.eventsAfterTTI, o)));
                 }),
             });
-            r.observer.observe({ entryTypes: t }),
+            (r.observer.observe({ entryTypes: t }),
                 Ya.Rum._unsubscribers &&
                     Ya.Rum._unsubscribers.push(function () {
                         r.observer.disconnect();
-                    });
+                    }));
         }
-        r(), Ya.Rum._onInit.push(r);
+        (r(), Ya.Rum._onInit.push(r));
     }
 })();
 
@@ -277,7 +277,7 @@ Ya.Rum.observeDOMNode = window.IntersectionObserver
                 !(function d() {
                     t(function () {
                         var t = e.getTime();
-                        n.push(t - o),
+                        (n.push(t - o),
                             (o = t),
                             t - s < i
                                 ? d()
@@ -299,7 +299,7 @@ Ya.Rum.observeDOMNode = window.IntersectionObserver
                                           return t.length % 2 ? t[a] : (t[a - 1] + t[a]) / 2;
                                       })(n),
                                       r,
-                                  ));
+                                  )));
                     });
                 })();
             }
@@ -308,9 +308,9 @@ Ya.Rum.observeDOMNode = window.IntersectionObserver
             r = {};
         e.spa = {
             makeSpaSubPage: function (t, a, n, s, o) {
-                (a = a || { finishDataLoadingMetric: !0, startDataRenderingMetric: !0, finishDataRenderingMetric: !0 }),
+                ((a = a || { finishDataLoadingMetric: !0, startDataRenderingMetric: !0, finishDataRenderingMetric: !0 }),
                     (n = n || !1),
-                    (s = s || !1) && e.completeSession();
+                    (s = s || !1) && e.completeSession());
                 var d = e.makeSubPage((n ? 'block' : 'page') + '.' + t);
                 return (
                     o &&
@@ -330,13 +330,13 @@ Ya.Rum.observeDOMNode = window.IntersectionObserver
                     if (g.stubRenderingStartTime) a.error('startStubRendering have been called repeatedly for subpage ' + s + '.');
                     else {
                         var p = e.getTime();
-                        (g.stubRenderingStartTime = p),
+                        ((g.stubRenderingStartTime = p),
                             g.spaMetricsOptions && g.spaMetricsOptions.startStubRenderingMetric && e.sendDelta('stub.render.start', p - Number(d[689.2322]), d),
                             o &&
                                 t &&
                                 t(function () {
                                     n(s);
-                                });
+                                }));
                     }
                 else a.error('No subpage ' + s + '.');
             },
@@ -348,8 +348,8 @@ Ya.Rum.observeDOMNode = window.IntersectionObserver
                     if (s.dataLoadingStartTime) a.error('startDataLoading have been called repeatedly for subpage ' + t + '.');
                     else {
                         var o = e.getTime();
-                        (s.dataLoadingStartTime = o),
-                            s.spaMetricsOptions && s.spaMetricsOptions.startDataLoadingMetric && e.sendDelta('data.load.start', o - Number(n[689.2322]), n);
+                        ((s.dataLoadingStartTime = o),
+                            s.spaMetricsOptions && s.spaMetricsOptions.startDataLoadingMetric && e.sendDelta('data.load.start', o - Number(n[689.2322]), n));
                     }
                 else a.error('No subpage ' + t + '.');
             },
@@ -361,19 +361,19 @@ Ya.Rum.observeDOMNode = window.IntersectionObserver
                     if (o.dataLoadingFinishTime) a.error('finishDataLoading have been called repeatedly for subpage ' + t + '.');
                     else {
                         var d = e.getTime();
-                        (o.dataLoadingFinishTime = d),
+                        ((o.dataLoadingFinishTime = d),
                             !o.dataLoadingStartTime &&
                                 o.spaMetricsOptions &&
                                 o.spaMetricsOptions.startDataLoadingMetric &&
                                 a.error('No dataLoadingStartTime for subpage ' + t + '.'),
                             o.spaMetricsOptions &&
                                 o.spaMetricsOptions.finishDataLoadingMetric &&
-                                e.sendDelta('data.load.finish.' + (n ? 'cache' : 'network'), d - (o.dataLoadingStartTime || Number(s[689.2322])), s);
+                                e.sendDelta('data.load.finish.' + (n ? 'cache' : 'network'), d - (o.dataLoadingStartTime || Number(s[689.2322])), s));
                     }
                 else a.error('No subpage ' + t + '.');
             },
             startDataRendering: function (n, o, d, g) {
-                (o = o || ''), (d = !1 !== d), (g = 'number' == typeof g ? g : 1e3);
+                ((o = o || ''), (d = !1 !== d), (g = 'number' == typeof g ? g : 1e3));
                 var p = i[n],
                     u = r[n];
                 if (p && u)
@@ -381,7 +381,7 @@ Ya.Rum.observeDOMNode = window.IntersectionObserver
                         if (u.dataRenderingStartTime) a.error('startDataRendering have been called repeatedly for subpage ' + n + '.');
                         else {
                             var c = e.getTime();
-                            (u.dataRenderingStartTime = c),
+                            ((u.dataRenderingStartTime = c),
                                 u.spaMetricsOptions &&
                                     u.spaMetricsOptions.startDataRenderingMetric &&
                                     e.sendDelta('data.render.start' + (o ? '.' + o : ''), c - u.dataLoadingFinishTime, p),
@@ -389,7 +389,7 @@ Ya.Rum.observeDOMNode = window.IntersectionObserver
                                     t &&
                                     t(function () {
                                         s(n, o, g);
-                                    });
+                                    }));
                         }
                     else a.error('No dataLoadingFinishTime for subpage ' + n + '.');
                 else a.error('No subpage ' + n + '.');
@@ -410,19 +410,19 @@ Ya.Rum.observeDOMNode = window.IntersectionObserver
             if (s.stubRenderingFinishTime) a.error('finishStubRendering have been called repeatedly for subpage ' + t + '.');
             else {
                 var o = e.getTime();
-                (s.stubRenderingFinishTime = o),
+                ((s.stubRenderingFinishTime = o),
                     !s.stubRenderingStartTime &&
                         s.spaMetricsOptions &&
                         s.spaMetricsOptions.startStubRenderingMetric &&
                         a.error('No stubRenderingStartTime for subpage ' + t + '.'),
                     s.spaMetricsOptions &&
                         s.spaMetricsOptions.finishStubRenderingMetric &&
-                        e.sendDelta('stub.render.finish', o - (s.stubRenderingStartTime || Number(n[689.2322])), n);
+                        e.sendDelta('stub.render.finish', o - (s.stubRenderingStartTime || Number(n[689.2322])), n));
             }
         else a.error('No subpage ' + t + '.');
     }
     function s(t, n, s) {
-        (n = n || ''), (s = 'number' == typeof s ? s : 1e3);
+        ((n = n || ''), (s = 'number' == typeof s ? s : 1e3));
         var o = i[t],
             d = r[t];
         if (o && d)
@@ -430,14 +430,14 @@ Ya.Rum.observeDOMNode = window.IntersectionObserver
                 if (d.dataRenderingFinishTime) a.error('finishDataRendering have been called repeatedly for subpage ' + t + '.');
                 else {
                     var g = e.getTime();
-                    (d.dataRenderingFinishTime = g),
+                    ((d.dataRenderingFinishTime = g),
                         d.spaMetricsOptions &&
                             d.spaMetricsOptions.finishDataRenderingMetric &&
                             e.sendDelta('data.render.finish' + (n ? '.' + n : ''), g - d.dataRenderingStartTime, o),
                         d.spaMetricsOptions &&
                             d.spaMetricsOptions.animationSpeedMetric &&
                             e.sendAnimationSpeed &&
-                            e.sendAnimationSpeed('data.render' + (n ? '.' + n : '') + '.animation', s, o);
+                            e.sendAnimationSpeed('data.render' + (n ? '.' + n : '') + '.animation', s, o));
                 }
             else a.error('No dataRenderingStartTime for subpage ' + t + '.');
         else a.error('No subpage ' + t + '.');
@@ -475,7 +475,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             if (!n) {
                 var a = o || {};
                 if (e) {
-                    (a.type = e), a.hasOwnProperty('buffered') || (a.buffered = !0);
+                    ((a.type = e), a.hasOwnProperty('buffered') || (a.buffered = !0));
                     var s = new PerformanceObserver(function (e, n) {
                         return i(e.getEntries(), n);
                     });
@@ -506,13 +506,13 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             );
         }
         function o(e, n, i) {
-            addEventListener(e, n, i),
+            (addEventListener(e, n, i),
                 t(function () {
                     removeEventListener(e, n, i);
-                });
+                }));
         }
         function a(e, n, t) {
-            o('visibilitychange', function i() {
+            (o('visibilitychange', function i() {
                 if ('hidden' === document.visibilityState) {
                     try {
                         t || (removeEventListener('visibilitychange', i), e.disconnect());
@@ -520,7 +520,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                     n();
                 }
             }),
-                o('beforeunload', n);
+                o('beforeunload', n));
         }
         function s(e, n) {
             return 'string' == typeof e ? encodeURIComponent(e) : Math.round(1e3 * (e - (n || 0))) / 1e3;
@@ -533,7 +533,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
         }
         function u(e) {
             function n() {
-                removeEventListener('DOMContentLoaded', n), removeEventListener('load', n), e();
+                (removeEventListener('DOMContentLoaded', n), removeEventListener('load', n), e());
             }
             'loading' === document.readyState ? (o('DOMContentLoaded', n), o('load', n)) : e();
         }
@@ -583,13 +583,13 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             workerStart: 2137,
         };
         function v(n, t) {
-            Object.keys(m).forEach(function (e) {
+            (Object.keys(m).forEach(function (e) {
                 if (e in t) {
                     var i = t[e];
                     (i || 0 === i) && n.push(m[e] + '=' + s(i));
                 }
             }),
-                n.push(''.concat(625, '=').concat(e.version));
+                n.push(''.concat(625, '=').concat(e.version)));
         }
         var g,
             p,
@@ -602,17 +602,17 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             E = 'function' == typeof w.getEntriesByType,
             C = 0;
         function k(n, t, i, r, o) {
-            void 0 === t && (t = e.getTime()), (void 0 !== i && !0 !== i) || e.mark(n, t);
+            (void 0 === t && (t = e.getTime()), (void 0 !== i && !0 !== i) || e.mark(n, t));
             var a = L(n);
             if ((a.push('207=' + s(t)), _(a, r))) {
-                O('690.2096.207', a, o && o.force), (g[n] = g[n] || []), g[n].push(t);
+                (O('690.2096.207', a, o && o.force), (g[n] = g[n] || []), g[n].push(t));
                 var c = e._markListeners[n];
-                c &&
+                (c &&
                     c.length &&
                     c.forEach(function (e) {
                         e(t);
                     }),
-                    e.emit({ metricName: n, value: t, params: r });
+                    e.emit({ metricName: n, value: t, params: r }));
             }
         }
         function L(n) {
@@ -624,7 +624,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             ]);
         }
         function P() {
-            (y = l()), e.getSetting('sendClientUa') && y.push('1042=' + encodeURIComponent(navigator.userAgent));
+            ((y = l()), e.getSetting('sendClientUa') && y.push('1042=' + encodeURIComponent(navigator.userAgent)));
         }
         function M() {
             var e = window.performance && window.performance.timing && window.performance.timing.navigationStart;
@@ -634,7 +634,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             if (n) {
                 if (n.isCanceled && n.isCanceled()) return !1;
                 var t = e.reduce(function (e, n, t) {
-                    return 'string' == typeof n && (e[n.split('=')[0]] = t), e;
+                    return ('string' == typeof n && (e[n.split('=')[0]] = t), e);
                 }, {});
                 Object.keys(n).forEach(function (i) {
                     if ('function' != typeof n[i]) {
@@ -669,13 +669,13 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                 void 0 !== o && void 0 !== a)
             ) {
                 var d = L(n);
-                d.push('207.2154=' + s(o), '207.1428=' + s(a), '2877=' + s(a - o)),
+                (d.push('207.2154=' + s(o), '207.1428=' + s(a), '2877=' + s(a - o)),
                     _(d, i) &&
                         _(d, c) &&
                         (O('690.2096.2877', d, r && r.force),
                         C < T && ((p[n] = p[n] || []), p[n].push(a - o), C++),
                         e.emit({ metricName: n, value: a - o, params: { start: o, end: a } }),
-                        delete h[n]);
+                        delete h[n]));
             }
         }
         function x(e, n) {
@@ -697,7 +697,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
         }
         function j(n, t, i, r) {
             var o = L(n);
-            e.getSetting('sendUrlInResTiming') && o.push('13=' + encodeURIComponent(i)), v(o, t), _(o, r), O('690.2096.2044', o);
+            (e.getSetting('sendUrlInResTiming') && o.push('13=' + encodeURIComponent(i)), v(o, t), _(o, r), O('690.2096.2044', o));
         }
         function z() {
             return y;
@@ -745,8 +745,8 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             K = 1 / 0,
             X = Boolean(
                 window.PerformanceObserver &&
-                    window.PerformanceObserver.supportedEntryTypes &&
-                    -1 !== window.PerformanceObserver.supportedEntryTypes.indexOf('layout-shift'),
+                window.PerformanceObserver.supportedEntryTypes &&
+                -1 !== window.PerformanceObserver.supportedEntryTypes.indexOf('layout-shift'),
             )
                 ? 0
                 : null;
@@ -787,18 +787,18 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             Z();
         }
         function te() {
-            (F = X), (D = void 0), (W = null), (H = null), (J = null), (G = !1);
+            ((F = X), (D = void 0), (W = null), (H = null), (J = null), (G = !1));
         }
         function ie(n) {
             if (null != F && !G) {
                 var t = Math.round(1e6 * F) / 1e6;
                 if (D !== t) {
-                    (D = t), e.getSetting('enableContinuousCollection') || (G = !0);
+                    ((D = t), e.getSetting('enableContinuousCollection') || (G = !0));
                     var i = ee(W),
                         r = ['s=' + t];
                     r.push('target=' + c(i && i.node));
                     var o = e.getCLSAdditionalParams(i);
-                    o && _(r, o), I('690.2096.4004', r, n), e.emit({ metricName: 'cls-debug', value: F, params: { clsEntries: H, target: i, isFinalized: G } });
+                    (o && _(r, o), I('690.2096.4004', r, n), e.emit({ metricName: 'cls-debug', value: F, params: { clsEntries: H, target: i, isFinalized: G } }));
                 }
             }
         }
@@ -808,19 +808,19 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                 ((Q = e.correctTime(t.renderTime || t.loadTime)), (Y = t), e.emit({ metricName: 'largest-contentful-paint-debug', value: Q, params: { entry: t } }), !q)
             ) {
                 var i = Q;
-                e.whenActivated(function () {
+                (e.whenActivated(function () {
                     return k('largest-loading-elem-paint', i);
                 }),
-                    (q = !0);
+                    (q = !0));
             }
         }
         function oe(n) {
             if (null != Q) {
                 var t = e.getLCPAdditionalParams(Y);
-                k('largest-contentful-paint', Q, !1, t, n && { force: !0 }),
+                (k('largest-contentful-paint', Q, !1, t, n && { force: !0 }),
                     e.emit({ metricName: 'largest-contentful-paint-debug', value: Q, params: { additionalParams: t, entry: Y, isFinalized: !0 } }),
                     (Q = null),
-                    (Y = null);
+                    (Y = null));
             }
         }
         e.getLCPAdditionalParams === e.noop &&
@@ -828,11 +828,11 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                 var t = {},
                     i = n.element;
                 if (i) {
-                    (t['-className'] = e.getSelector(i)), (t['-tagName'] = i.tagName.toLowerCase());
+                    ((t['-className'] = e.getSelector(i)), (t['-tagName'] = i.tagName.toLowerCase()));
                     var r = i.getBoundingClientRect();
-                    (t['-width'] = r.width), (t['-height'] = r.height);
+                    ((t['-width'] = r.width), (t['-height'] = r.height));
                 }
-                return n.size && (t['-size'] = n.size), t;
+                return (n.size && (t['-size'] = n.size), t);
             });
         var ae = { 'first-paint': 2793, 'first-contentful-paint': 2794 },
             se = Object.keys(ae).length,
@@ -848,7 +848,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                             var t = n[i],
                                 r = ae[t.name];
                             if (r && !ce[t.name]) {
-                                (ce[t.name] = !0), fe++;
+                                ((ce[t.name] = !0), fe++);
                                 var o = '1926.' + r;
                                 e.whenActivated(function () {
                                     return k(o, e.correctTime(t.startTime));
@@ -894,12 +894,12 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                             ((u['loaf.2797'] = Se(d, void 0, { useName: !1 })),
                             1 === e.getSetting('longAnimationFramesMode') && (u['-additional'] = encodeURIComponent(JSON.stringify({ loaf: ((c = d), c.map(Te)) }))));
                     }
-                    i &&
+                    (i &&
                         Object.keys(i).forEach(function (e) {
                             u[e] = i[e];
                         }),
                         k(n || '2795', a, !0, u, { force: Boolean(o) }),
-                        (e._tti.fired = !0);
+                        (e._tti.fired = !0));
                 }, t);
             }
         }
@@ -914,7 +914,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                         c = e.getTime(),
                         u = 1 === o ? me() : ve() || [],
                         d = u.length;
-                    0 !== d && ((a = u[d - 1]), (s = Math.max(s, Math.floor(a.startTime + a.duration)))), c - s >= 3e3 ? n(s) : r(i, 1e3);
+                    (0 !== d && ((a = u[d - 1]), (s = Math.max(s, Math.floor(a.startTime + a.duration)))), c - s >= 3e3 ? n(s) : r(i, 1e3));
                 })());
         }
         function Se(e, n) {
@@ -985,7 +985,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                 if (0 !== t.indexOf('/clck')) {
                     var i = t.lastIndexOf('.'),
                         r = '';
-                    return -1 !== i && t.lastIndexOf('/') < i && t.length - i <= 5 && (r = t.slice(i + 1)), { size: n, domain: Ee.hostname, extension: r };
+                    return (-1 !== i && t.lastIndexOf('/') < i && t.length - i <= 5 && (r = t.slice(i + 1)), { size: n, domain: Ee.hostname, extension: r });
                 }
             }
         }
@@ -997,7 +997,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                     a = ke[o];
                 i += encodeURIComponent(o) + '!' + a.count + '!' + a.size + ';';
             }
-            return i.length && (Ce++, I('690.2096.361', ['d=' + i, 't=' + s(e.getTime())])), (ke = {}), Ce < n;
+            return (i.length && (Ce++, I('690.2096.361', ['d=' + i, 't=' + s(e.getTime())])), (ke = {}), Ce < n);
         }
         d(Pe);
         var Me = { visible: 1, hidden: 2, prerender: 3 },
@@ -1027,13 +1027,13 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                         navigator.deviceMemory && '3140=' + navigator.deviceMemory,
                         navigator.hardwareConcurrency && '3141=' + navigator.hardwareConcurrency,
                     ];
-                Object.keys(m).forEach(function (e) {
+                (Object.keys(m).forEach(function (e) {
                     e in Ie && Ie[e] && a.push(m[e] + '=' + s(Ie[e], Ne));
                 }),
                     e.vsStart ? (a.push('1484=' + (Me[e.vsStart] || 2771)), e.vsChanged && a.push('1484.719=1')) : a.push('1484=' + Me.visible),
                     Oe && (Oe.redirectCount && a.push('1384.1385=' + Oe.redirectCount), (1 !== Oe.type && 2 !== Oe.type) || a.push('770.76=' + Oe.type)),
                     U(a),
-                    I('690.1033', a);
+                    I('690.1033', a));
             } else r(Re, 50);
         }
         var xe = window.performance || {},
@@ -1041,11 +1041,11 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
         if (!e) throw new Error('Rum: interface is not included');
         if (e.enabled) {
             function je() {
-                (g = {}), (p = {}), (C = 0), (h = e._deltaMarks), P(), M(), (e.ajaxStart = 0), (e.ajaxComplete = 0), u(Be);
+                ((g = {}), (p = {}), (C = 0), (h = e._deltaMarks), P(), M(), (e.ajaxStart = 0), (e.ajaxComplete = 0), u(Be));
             }
             function ze() {
                 var n;
-                (e.sendTimeMark = k), (e.sendResTiming = A), (e.sendTiming = j), (e.timeEnd = N);
+                ((e.sendTimeMark = k), (e.sendResTiming = A), (e.sendTiming = j), (e.timeEnd = N));
                 var t = (e.getBufferedEvents(['defRes']).defRes || []).map(function (e) {
                     return e.data;
                 });
@@ -1055,10 +1055,10 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                     return e.data;
                 });
                 for (n = 0; n < i.length; n++) k(i[n][0], i[n][1], !1, i[n][2]);
-                e.clearEvents('defTimes'),
+                (e.clearEvents('defTimes'),
                     Object.keys(h).forEach(function (e) {
                         R(e);
-                    });
+                    }));
             }
             function Be() {
                 var n = window.performance && window.performance.timing && window.performance.timing.navigationStart,
@@ -1074,7 +1074,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                         addEventListener('visibilitychange', s);
                     }
                     r(function () {
-                        ze(),
+                        (ze(),
                             ((!t && !a) || (a && 'visible' === e.vsStart)) && Re(),
                             e.getSetting('disableFCP') ||
                                 (le(),
@@ -1082,7 +1082,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                                     i(
                                         'paint',
                                         function (e, n) {
-                                            le(), n && fe >= se && n.disconnect();
+                                            (le(), n && fe >= se && n.disconnect());
                                         },
                                         { buffered: !0 },
                                     )),
@@ -1097,7 +1097,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                                     })),
                             o('pageshow', De),
                             he(),
-                            'complete' === document.readyState ? Ve({ skipTimingApi: t }) : o('load', Ve.bind(void 0, { skipTimingApi: t }));
+                            'complete' === document.readyState ? Ve({ skipTimingApi: t }) : o('load', Ve.bind(void 0, { skipTimingApi: t })));
                     }, 0);
                 }
             }
@@ -1111,7 +1111,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                                 var n = xe.getEntriesByType('navigation')[0];
                                 if (n) {
                                     var t = [];
-                                    v(t, n), U(t);
+                                    (v(t, n), U(t));
                                     var i = xe.getEntriesByName('yndxNavigationSource')[0];
                                     i && t.push('2091.186=' + i.value);
                                     var r = xe.getEntriesByName('yndxNavigationToken', 'yndxEntry')[0];
@@ -1133,7 +1133,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                     o('beforeunload', Fe),
                     (function () {
                         if (window.PerformanceObserver) {
-                            (ke = {}), (Ce = 0);
+                            ((ke = {}), (Ce = 0));
                             var e = function (e) {
                                 !(function (e) {
                                     if (e && e.length)
@@ -1142,12 +1142,12 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                                             if (i) {
                                                 var r = i.domain + '-' + i.extension,
                                                     o = (n[r] = n[r] || { count: 0, size: 0 });
-                                                o.count++, (o.size += i.size);
+                                                (o.count++, (o.size += i.size));
                                             }
                                         }
                                 })(e);
                             };
-                            i('resource', e), i('navigation', e), f().push(Pe);
+                            (i('resource', e), i('navigation', e), f().push(Pe));
                         }
                     })(),
                     e.getSetting('disableFID') ||
@@ -1160,9 +1160,9 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                                         o = { duration: i.duration, js: i.processingEnd - r, name: i.name };
                                     i.target && (o.target = c(i.target));
                                     var a = r - i.startTime;
-                                    R('first-input', a, o),
+                                    (R('first-input', a, o),
                                         e.emit({ metricName: 'first-input-debug', value: a, params: { entry: i, additionalParams: o } }),
-                                        t.disconnect();
+                                        t.disconnect());
                                 }
                             },
                             { buffered: !0 },
@@ -1209,37 +1209,37 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
             }
             function Fe() {
                 var e = !1;
-                f().forEach(function (n) {
+                (f().forEach(function (n) {
                     n() && (e = !0);
                 }),
-                    e || clearInterval(Ue);
+                    e || clearInterval(Ue));
             }
-            d(ze),
+            (d(ze),
                 (e.destroy = function (n) {
                     var t = e._unsubscribers;
-                    n.shouldComplete && e.completeSession(!0), (e._onComplete = []);
+                    (n.shouldComplete && e.completeSession(!0), (e._onComplete = []));
                     for (var i = 0; i < t.length; i++) t[i]();
-                    removeEventListener('visibilitychange', e._onVisibilityChange),
+                    (removeEventListener('visibilitychange', e._onVisibilityChange),
                         (e._unsubscribers = []),
                         (e._periodicTasks = []),
                         (e._markListeners = {}),
-                        (e._deltaMarks = {});
+                        (e._deltaMarks = {}));
                 }),
                 (e.restart = function (n, t, i) {
-                    e.destroy({ shouldComplete: i }),
+                    (e.destroy({ shouldComplete: i }),
                         e.init(n, t),
                         addEventListener('visibilitychange', e._onVisibilityChange),
                         je(),
                         (function () {
                             for (var n = 0; n < e._onInit.length; n++) e._onInit[n]();
-                        })();
+                        })());
                 }),
                 (e.setVars = function (n) {
-                    Object.keys(n).forEach(function (t) {
+                    (Object.keys(n).forEach(function (t) {
                         e._vars[t] = n[t];
                     }),
                         P(),
-                        M();
+                        M());
                 }),
                 (e.completeSession = function (n) {
                     for (var t = e._onComplete, i = 0; i < t.length; i++) t[i](n);
@@ -1302,9 +1302,9 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                 e.whenActivated ||
                     (e.whenActivated = function (e) {
                         return e();
-                    });
+                    }));
         } else
-            (e.getSetting = function () {
+            ((e.getSetting = function () {
                 return '';
             }),
                 (e.getVarsList = function () {
@@ -1329,7 +1329,7 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
                     e.sendHeroElement =
                     e.onReady =
                     e.onQuietWindow =
-                        function () {});
+                        function () {}));
     })();
 
     Ya.Rum.observeDOMNode('2876', heroElement);

@@ -56,20 +56,20 @@
                               var a,
                                   r,
                                   i = 1 === e.length ? o : c;
-                              return (a = t.cache.create()), (r = t.serializer), i.bind(this, e, a, r);
+                              return ((a = t.cache.create()), (r = t.serializer), i.bind(this, e, a, r));
                           }
                 )(e, { cache: a, serializer: r });
             }
             function o(e, t, a, r) {
                 var i = null == r || 'number' == typeof r || 'boolean' == typeof r ? r : a(r),
                     l = t.get(i);
-                return void 0 === l && ((l = e.call(this, r)), t.set(i, l)), l;
+                return (void 0 === l && ((l = e.call(this, r)), t.set(i, l)), l);
             }
             function c(e, t, a) {
                 var r = Array.prototype.slice.call(arguments, 3),
                     i = a(r),
                     l = t.get(i);
-                return void 0 === l && ((l = e.apply(this, r)), t.set(i, l)), l;
+                return (void 0 === l && ((l = e.apply(this, r)), t.set(i, l)), l);
             }
             var d = function () {
                 return JSON.stringify(arguments);
@@ -77,12 +77,12 @@
             function u() {
                 this.cache = Object.create(null);
             }
-            (u.prototype.get = function (e) {
+            ((u.prototype.get = function (e) {
                 return this.cache[e];
             }),
                 (u.prototype.set = function (e, t) {
                     this.cache[e] = t;
-                });
+                }));
             var m = {
                     create: function () {
                         return new u();
@@ -91,20 +91,20 @@
                 p = {
                     variadic: function (e, t) {
                         var a, r;
-                        return (a = t.cache.create()), (r = t.serializer), c.bind(this, e, a, r);
+                        return ((a = t.cache.create()), (r = t.serializer), c.bind(this, e, a, r));
                     },
                     monadic: function (e, t) {
                         var a, r;
-                        return (a = t.cache.create()), (r = t.serializer), o.bind(this, e, a, r);
+                        return ((a = t.cache.create()), (r = t.serializer), o.bind(this, e, a, r));
                     },
                 };
             !(function (e) {
-                (e.MISSING_VALUE = 'MISSING_VALUE'), (e.INVALID_VALUE = 'INVALID_VALUE'), (e.MISSING_INTL_API = 'MISSING_INTL_API');
+                ((e.MISSING_VALUE = 'MISSING_VALUE'), (e.INVALID_VALUE = 'INVALID_VALUE'), (e.MISSING_INTL_API = 'MISSING_INTL_API'));
             })(r || (r = {}));
             var _ = (function (e) {
                     function t(t, a, r) {
                         var i = e.call(this, t) || this;
-                        return (i.code = a), (i.originalMessage = r), i;
+                        return ((i.code = a), (i.originalMessage = r), i);
                     }
                     return (
                         (0, l.__extends)(t, e),
@@ -125,13 +125,13 @@
                             ) || this
                         );
                     }
-                    return (0, l.__extends)(t, e), t;
+                    return ((0, l.__extends)(t, e), t);
                 })(_),
                 g = (function (e) {
                     function t(t, a, i) {
                         return e.call(this, 'Value for "'.concat(t, '" must be of type ').concat(a), r.INVALID_VALUE, i) || this;
                     }
-                    return (0, l.__extends)(t, e), t;
+                    return ((0, l.__extends)(t, e), t);
                 })(_),
                 v = (function (e) {
                     function t(t, a) {
@@ -139,7 +139,7 @@
                             e.call(this, 'The intl string context variable "'.concat(t, '" was not provided to the string "').concat(a, '"'), r.MISSING_VALUE, a) || this
                         );
                     }
-                    return (0, l.__extends)(t, e), t;
+                    return ((0, l.__extends)(t, e), t);
                 })(_);
             function f(e) {
                 return {
@@ -156,7 +156,7 @@
                 };
             }
             !(function (e) {
-                (e[(e.literal = 0)] = 'literal'), (e[(e.object = 1)] = 'object');
+                ((e[(e.literal = 0)] = 'literal'), (e[(e.object = 1)] = 'object'));
             })(i || (i = {}));
             var h = (function () {
                 function e(t, a, o, c) {
@@ -170,7 +170,7 @@
                             var t = m.formatToParts(e);
                             if (1 === t.length) return t[0].value;
                             var a = t.reduce(function (e, t) {
-                                return e.length && t.type === i.literal && 'string' == typeof e[e.length - 1] ? (e[e.length - 1] += t.value) : e.push(t.value), e;
+                                return (e.length && t.type === i.literal && 'string' == typeof e[e.length - 1] ? (e[e.length - 1] += t.value) : e.push(t.value), e);
                             }, []);
                             return a.length <= 1 ? a[0] || '' : a;
                         }),
@@ -191,8 +191,8 @@
                                     if (!(o && f in o)) throw new v(f, d);
                                     var h = o[f];
                                     if ((0, n.isArgumentElement)(p)) {
-                                        (h && 'string' != typeof h && 'number' != typeof h) || (h = 'string' == typeof h || 'number' == typeof h ? String(h) : ''),
-                                            u.push({ type: 'string' == typeof h ? i.literal : i.object, value: h });
+                                        ((h && 'string' != typeof h && 'number' != typeof h) || (h = 'string' == typeof h || 'number' == typeof h ? String(h) : ''),
+                                            u.push({ type: 'string' == typeof h ? i.literal : i.object, value: h }));
                                         continue;
                                     }
                                     if ((0, n.isDateElement)(p)) {
@@ -207,7 +207,7 @@
                                     }
                                     if ((0, n.isNumberElement)(p)) {
                                         var A = 'string' == typeof p.style ? s.number[p.style] : (0, n.isNumberSkeleton)(p.style) ? p.style.parsedOptions : void 0;
-                                        A && A.scale && (h *= A.scale || 1), u.push({ type: i.literal, value: l.getNumberFormat(a, A).format(h) });
+                                        (A && A.scale && (h *= A.scale || 1), u.push({ type: i.literal, value: l.getNumberFormat(a, A).format(h) }));
                                         continue;
                                     }
                                     if ((0, n.isTagElement)(p)) {
@@ -220,13 +220,13 @@
                                                 return e.value;
                                             }),
                                         );
-                                        Array.isArray(E) || (E = [E]),
+                                        (Array.isArray(E) || (E = [E]),
                                             u.push.apply(
                                                 u,
                                                 E.map(function (e) {
                                                     return { type: 'string' == typeof e ? i.literal : i.object, value: e };
                                                 }),
-                                            );
+                                            ));
                                     }
                                     if ((0, n.isSelectElement)(p)) {
                                         var b = p.options[h] || p.options.other;
@@ -255,7 +255,7 @@
                                     ? u
                                     : u.reduce(function (e, t) {
                                           var a = e[e.length - 1];
-                                          return a && a.type === i.literal && t.type === i.literal ? (a.value += t.value) : e.push(t), e;
+                                          return (a && a.type === i.literal && t.type === i.literal ? (a.value += t.value) : e.push(t), e);
                                       }, []);
                             })(m.ast, m.locales, m.formatters, m.formats, e, void 0, m.message);
                         }),
@@ -276,7 +276,7 @@
                         this.ast = e.__parse(t, (0, l.__assign)((0, l.__assign)({}, A), { locale: this.resolvedLocale }));
                     } else this.ast = t;
                     if (!Array.isArray(this.ast)) throw TypeError('A message must be provided as a String or AST.');
-                    (this.formats =
+                    ((this.formats =
                         ((d = e.formats),
                         o
                             ? Object.keys(d).reduce(
@@ -289,7 +289,7 @@
                                                   ? (0, l.__assign)(
                                                         (0, l.__assign)((0, l.__assign)({}, a || {}), r || {}),
                                                         Object.keys(a).reduce(function (e, t) {
-                                                            return (e[t] = (0, l.__assign)((0, l.__assign)({}, a[t]), r[t] || {})), e;
+                                                            return ((e[t] = (0, l.__assign)((0, l.__assign)({}, a[t]), r[t] || {})), e);
                                                         }, {}),
                                                     )
                                                   : a)),
@@ -324,12 +324,12 @@
                                     },
                                     { cache: f(u.pluralRules), strategy: p.variadic },
                                 ),
-                            }));
+                            })));
                 }
                 return (
                     Object.defineProperty(e, 'defaultLocale', {
                         get: function () {
-                            return e.memoizedDefaultLocale || (e.memoizedDefaultLocale = new Intl.NumberFormat().resolvedOptions().locale), e.memoizedDefaultLocale;
+                            return (e.memoizedDefaultLocale || (e.memoizedDefaultLocale = new Intl.NumberFormat().resolvedOptions().locale), e.memoizedDefaultLocale);
                         },
                         enumerable: !1,
                         configurable: !0,
@@ -526,7 +526,7 @@
                     return s.split(n).reduce((e, i, l) => {
                         e.push(i);
                         let { 1: n, 2: s } = o[l] || [];
-                        return n && s && e.push((0, r.jsx)(t, { href: s, ...a, children: n })), e;
+                        return (n && s && e.push((0, r.jsx)(t, { href: s, ...a, children: n })), e);
                     }, []);
                 };
         },
@@ -544,9 +544,9 @@
         18870: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { $: () => r }),
+            (a.d(t, { $: () => r }),
                 (function (e) {
-                    (e.RU = 'ru'),
+                    ((e.RU = 'ru'),
                         (e.EN = 'en'),
                         (e.UK = 'uk'),
                         (e.BE = 'be'),
@@ -567,8 +567,8 @@
                         (e.EL = 'el'),
                         (e.RO = 'ro'),
                         (e.MO = 'mo'),
-                        (e.AR = 'ar');
-                })(r || (r = {}));
+                        (e.AR = 'ar'));
+                })(r || (r = {})));
         },
         19088: (e) => {
             e.exports = {
@@ -600,7 +600,7 @@
                         let { tabId: l = '', tabPos: n = 1, isTabSelectedByDefault: o = !1 } = r;
                         if (!e || !u) return;
                         let c = { hash: a, pageId: s.W[u], tabId: l, tabPos: n, isTabSelectedByDefault: o };
-                        _ && (c.skeletonId = _), p && m && ((c.mainObjectType = m), (c.mainObjectId = p));
+                        (_ && (c.skeletonId = _), p && m && ((c.mainObjectType = m), (c.mainObjectId = p)));
                         let d = (0, i.Fx)({ params: c, logger: t, context: 'useSendEventOnTabOpened' });
                         d && (0, i.TV)(e.evgenInstance, d);
                     },
@@ -637,7 +637,7 @@
             'use strict';
             a.d(t, { h: () => r });
             var r = (function (e) {
-                return (e.EMPTY = 'empty'), (e.DIRECT = 'direct'), (e.CREATIVE = 'creative'), (e.BRANDING = 'branding'), e;
+                return ((e.EMPTY = 'empty'), (e.DIRECT = 'direct'), (e.CREATIVE = 'creative'), (e.BRANDING = 'branding'), e);
             })({});
         },
         27478: (e, t, a) => {
@@ -676,13 +676,13 @@
                 },
                 m = {},
                 p = {};
-            (() => {
-                Object.defineProperty(p, '__esModule', { value: !0 }), (p.useForwardRef = void 0);
+            ((() => {
+                (Object.defineProperty(p, '__esModule', { value: !0 }), (p.useForwardRef = void 0));
                 let e = (function e(t) {
                     var a = m[t];
                     if (void 0 !== a) return a.exports;
                     var r = (m[t] = { exports: {} });
-                    return u[t](r, r.exports, e), r.exports;
+                    return (u[t](r, r.exports, e), r.exports);
                 })(810);
                 p.useForwardRef = function (t, a) {
                     let r = (0, e.useRef)(a);
@@ -694,7 +694,7 @@
                     );
                 };
             })(),
-                p.__esModule;
+                p.__esModule);
             var _ = p.useForwardRef,
                 y = a(54667),
                 g = a(57594),
@@ -741,7 +741,7 @@
                         I = (0, s.useCallback)(
                             (e) => {
                                 var t, r;
-                                k(e), null == (t = (r = a.props).onTabChange) || t.call(r, e);
+                                (k(e), null == (t = (r = a.props).onTabChange) || t.call(r, e));
                             },
                             [a, k],
                         ),
@@ -873,7 +873,7 @@
                                 let { tabId: c = '', tabPos: d = 1, isTabSelectedByDefault: u = !1 } = n;
                                 if (!t || !i || e.current) return;
                                 let m = { hash: r, pageId: v.W[i], tabId: c, tabPos: d, isTabSelectedByDefault: u };
-                                o && (m.skeletonId = o), s && l && ((m.mainObjectType = l), (m.mainObjectId = s));
+                                (o && (m.skeletonId = o), s && l && ((m.mainObjectType = l), (m.mainObjectId = s)));
                                 let p = (0, _.Fx)({ params: m, logger: a, context: 'useSendEventOnTabLoaded' });
                                 p && ((0, _.hc)(t.evgenInstance, p), (e.current = !0));
                             },
@@ -992,7 +992,7 @@
                 return (0, i.c)(() => {
                     let i = e.reduce((e, t) => {
                         let a = _(t);
-                        return a && e.push({ type: l.z4.Unloaded, meta: { id: a } }), e;
+                        return (a && e.push({ type: l.z4.Unloaded, meta: { id: a } }), e);
                     }, []);
                     if (!i.length) return;
                     switch (t) {
@@ -1134,10 +1134,10 @@
         51496: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { U: () => r }),
+            (a.d(t, { U: () => r }),
                 (function (e) {
-                    (e.UNKNOWN = 'unknown'), (e.MALE = 'male'), (e.FEMALE = 'female');
-                })(r || (r = {}));
+                    ((e.UNKNOWN = 'unknown'), (e.MALE = 'male'), (e.FEMALE = 'female'));
+                })(r || (r = {})));
         },
         54578: (e, t, a) => {
             'use strict';
@@ -1145,7 +1145,7 @@
             var r = {
                     5881: (e, t, a) => {
                         function r() {
-                            for (var e, t, a = 0, r = ''; a < arguments.length; )
+                            for (var e, t, a = 0, r = ''; a < arguments.length;)
                                 (e = arguments[a++]) &&
                                     (t = (function e(t) {
                                         var a,
@@ -1160,11 +1160,11 @@
                                     (r && (r += ' '), (r += t));
                             return r;
                         }
-                        a.r(t), a.d(t, { clsx: () => r, default: () => i });
+                        (a.r(t), a.d(t, { clsx: () => r, default: () => i }));
                         let i = r;
                     },
                     9201: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => r });
+                        (a.r(t), a.d(t, { default: () => r }));
                         let r = { root: 'sLuudThzDxW_5ARYjgjx', horizontal: 'xd6ji7lvp0et4nirt0TL', hasLabel: 'abbPp8VtL2D_PdW0Q_Wc', vertical: 'sMz62rSqViFDkXAMfGeO' };
                     },
                     9097: (e, t) => {
@@ -1176,7 +1176,7 @@
                             else r = t;
                             return { $$typeof: a, type: e, key: i, ref: void 0 !== (t = r.ref) ? t : null, props: r };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r));
                     },
                     4377: (e, t, a) => {
                         e.exports = a(9097);
@@ -1187,7 +1187,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Divider = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Divider = void 0));
                         let i = a(4377),
                             l = a(5881),
                             n = r(a(9201));
@@ -1209,19 +1209,19 @@
                 var t = i[e];
                 if (void 0 !== t) return t.exports;
                 var a = (i[e] = { exports: {} });
-                return r[e].call(a.exports, a, a.exports, l), a.exports;
+                return (r[e].call(a.exports, a, a.exports, l), a.exports);
             }
-            (l.d = (e, t) => {
+            ((l.d = (e, t) => {
                 for (var a in t) l.o(t, a) && !l.o(e, a) && Object.defineProperty(e, a, { enumerable: !0, get: t[a] });
             }),
                 (l.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (l.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var n = {};
             (() => {
-                Object.defineProperty(n, '__esModule', { value: !0 }), (n.Divider = void 0);
+                (Object.defineProperty(n, '__esModule', { value: !0 }), (n.Divider = void 0));
                 var e = l(5455);
                 Object.defineProperty(n, 'Divider', {
                     enumerable: !0,
@@ -1237,10 +1237,10 @@
             'use strict';
             a.d(t, { P: () => r, u: () => i });
             var r = (function (e) {
-                    return (e[(e.Mobile = 768)] = 'Mobile'), (e[(e.Desktop = 1440)] = 'Desktop'), e;
+                    return ((e[(e.Mobile = 768)] = 'Mobile'), (e[(e.Desktop = 1440)] = 'Desktop'), e);
                 })({}),
                 i = (function (e) {
-                    return (e.Mobile = 'Mobile'), (e.Desktop = 'Desktop'), e;
+                    return ((e.Mobile = 'Mobile'), (e.Desktop = 'Desktop'), e);
                 })({});
         },
         55509: (e, t, a) => {
@@ -1493,7 +1493,7 @@
                         } = (0, q.gl)({ id: String(null == (a = c.items[n]) ? void 0 : a.key) }),
                         g = (0, s.useCallback)(
                             (e) => {
-                                m(e), 'function' == typeof t && t(e);
+                                (m(e), 'function' == typeof t && t(e));
                             },
                             [t, m],
                         ),
@@ -1897,10 +1897,10 @@
                             return;
                         }
                         if (g) return void _(!0);
-                        null == c || c.download(t), y.count(tn.x.MY_FAVORITES_PLAYLIST_DOWNLOAD, ts.l);
+                        (null == c || c.download(t), y.count(tn.x.MY_FAVORITES_PLAYLIST_DOWNLOAD, ts.l));
                     }),
                     A = (0, eK.c)(() => {
-                        null == c || c.delete(t), y.count(tn.x.MY_FAVORITES_PLAYLIST_DELETE, ts.l), null == l || l();
+                        (null == c || c.delete(t), y.count(tn.x.MY_FAVORITES_PLAYLIST_DELETE, ts.l), null == l || l());
                     }),
                     C = (0, s.useMemo)(
                         () =>
@@ -2044,10 +2044,10 @@
                     }),
                     j = (0, eK.c)((e) => {
                         var t;
-                        null == e || e.stopPropagation(), null == y || null == (t = y.current) || t.click();
+                        (null == e || e.stopPropagation(), null == y || null == (t = y.current) || t.click());
                     }),
                     B = (0, eK.c)((e) => {
-                        e.stopPropagation(), 'Enter' === e.key && j();
+                        (e.stopPropagation(), 'Enter' === e.key && j());
                     }),
                     R = (0, eK.c)((e) => {
                         e.stopPropagation();
@@ -2057,15 +2057,15 @@
                             a = e.target,
                             r = (a.files || [])[0] || null;
                         if (((a.value = ''), !r || ((t = r.type), !tS.includes(t)) || !((e) => e > 0 && e <= 2e7)(r.size))) return void D();
-                        g && b(g), h(!1), v(URL.createObjectURL(r));
+                        (g && b(g), h(!1), v(URL.createObjectURL(r)));
                         let i = new FormData();
-                        i.append('image', r), C(i);
+                        (i.append('image', r), C(i));
                     }),
                     O = (0, s.useCallback)(
                         async (e) => {
                             let t = e.target,
                                 r = () => {
-                                    v(E), D(), h(!0);
+                                    (v(E), D(), h(!0));
                                 };
                             if ((u && (t.currentSrc === x || t.currentSrc === P)) || !m || E === t.currentSrc) return;
                             if (
@@ -2079,7 +2079,7 @@
                                 return void r();
                             S(!0);
                             let i = await a.changePlaylistCover(A);
-                            S(!1), i === e5.F.ERROR ? r() : h(!0);
+                            (S(!1), i === e5.F.ERROR ? r() : h(!0));
                         },
                         [D, E, a, A, u, m, x, P],
                     ),
@@ -2230,32 +2230,33 @@
                         );
                     }, []);
                     const pulseSyncNativePlaylistMetaItems = [c],
-                        pulseSyncPlaylistMetaItems = window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', pulseSyncNativePlaylistMetaItems, {
-                            eventDetail: null,
-                            renderItem: ({ key, payload, position, positionIndex }) => {
-                                const text = String(payload?.text ?? '').trim(),
-                                    icon = String(payload?.icon ?? '').trim(),
-                                    label = String(payload?.label ?? text).trim();
-                                if (!text && !icon) return null;
-                                return (0, r.jsxs)(
-                                    eC.HL,
-                                    {
-                                        variant: 'span',
-                                        type: 'text',
-                                        size: 'm',
-                                        weight: 'medium',
-                                        ...(label ? { 'aria-label': label } : {}),
-                                        'data-pulsesync-addon-header-item': 'meta',
-                                        children: [
-                                            (position > 0 || positionIndex > 0) && '\u00a0•\u00a0',
-                                            icon && (0, r.jsx)(eG.I, { variant: icon, size: 'xxxs' }),
-                                            text,
-                                        ],
-                                    },
-                                    key,
-                                );
-                            },
-                        }) ?? pulseSyncNativePlaylistMetaItems;
+                        pulseSyncPlaylistMetaItems =
+                            window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', pulseSyncNativePlaylistMetaItems, {
+                                eventDetail: null,
+                                renderItem: ({ key, payload, position, positionIndex }) => {
+                                    const text = String(payload?.text ?? '').trim(),
+                                        icon = String(payload?.icon ?? '').trim(),
+                                        label = String(payload?.label ?? text).trim();
+                                    if (!text && !icon) return null;
+                                    return (0, r.jsxs)(
+                                        eC.HL,
+                                        {
+                                            variant: 'span',
+                                            type: 'text',
+                                            size: 'm',
+                                            weight: 'medium',
+                                            ...(label ? { 'aria-label': label } : {}),
+                                            'data-pulsesync-addon-header-item': 'meta',
+                                            children: [
+                                                (position > 0 || positionIndex > 0) && '\u00a0•\u00a0',
+                                                icon && (0, r.jsx)(eG.I, { variant: icon, size: 'xxxs' }),
+                                                text,
+                                            ],
+                                        },
+                                        key,
+                                    );
+                                },
+                            }) ?? pulseSyncNativePlaylistMetaItems;
                     return (0, r.jsx)(eC.HL, {
                         variant: 'span',
                         className: a,
@@ -2279,9 +2280,9 @@
                         { state: m, toggleTrue: p, toggleFalse: _ } = (0, tN.e)(!1),
                         [y, g] = (0, s.useState)(t.description || ''),
                         v = (0, s.useCallback)(async () => {
-                            _(),
+                            (_(),
                                 (await t.changeDescription(y)) === e5.F.ERROR &&
-                                    n((0, r.jsx)(eo.h, { error: a({ id: 'playlist-errors.failed-to-change-description' }) }), { containerId: en.u.ERROR });
+                                    n((0, r.jsx)(eo.h, { error: a({ id: 'playlist-errors.failed-to-change-description' }) }), { containerId: en.u.ERROR }));
                         }, [a, y, n, t, _]),
                         f = (0, s.useCallback)((e) => {
                             g(e);
@@ -2434,14 +2435,16 @@
                     C = (0, s.useRef)(null),
                     x = (0, s.useRef)(null),
                     P = _.trim(),
-                    E = !!P && !((e) => {
-                        try {
-                            let t = new URL(e);
-                            return 'http:' === t.protocol || 'https:' === t.protocol;
-                        } catch (e) {
-                            return !1;
-                        }
-                    })(P),
+                    E =
+                        !!P &&
+                        !((e) => {
+                            try {
+                                let t = new URL(e);
+                                return 'http:' === t.protocol || 'https:' === t.protocol;
+                            } catch (e) {
+                                return !1;
+                            }
+                        })(P),
                     b =
                         !E &&
                         !!P &&
@@ -2463,18 +2466,18 @@
                         p(!0);
                     }),
                     I = (0, s.useCallback)(() => {
-                        A.current += 1,
+                        ((A.current += 1),
                             C.current && clearTimeout(C.current),
                             (C.current = null),
                             (x.current = null),
                             p(!1),
                             y(''),
-                            v({ status: 'idle', trackCount: 0, message: '' });
+                            v({ status: 'idle', trackCount: 0, message: '' }));
                     }, []),
                     D = (0, s.useCallback)(
                         (e) => {
                             let a = e.target.files;
-                            a && a.length > 0 && (i.appendFiles([...a], t), I()), (e.target.value = '');
+                            (a && a.length > 0 && (i.appendFiles([...a], t), I()), (e.target.value = ''));
                         },
                         [t, i, I],
                     ),
@@ -2485,7 +2488,7 @@
                         let e = P;
                         if (!e || E || !L || f) return;
                         let a = `playlist-link-import|${Date.now()}|${Math.random().toString(36).slice(2)}`;
-                        (x.current = a), h(!0);
+                        ((x.current = a), h(!0));
                         try {
                             if (!(null == window ? void 0 : window.playlistLinkImporter)) throw new Error('Импорт по ссылке недоступен');
                             let importResult = await window.playlistLinkImporter.importTrack(e, a),
@@ -2516,13 +2519,13 @@
                         let a = e.trackToken;
                         try {
                             let r = new File([e.arrayBuffer], e.fileName || 'imported_track.mp3', { type: e.mimeType || 'audio/mpeg' });
-                            Object.defineProperty(r, 'pulseSyncImportToken', { value: a, configurable: !0 }),
+                            (Object.defineProperty(r, 'pulseSyncImportToken', { value: a, configurable: !0 }),
                                 window.playlistLinkImporter?.reportUploadState?.({ trackToken: a, status: 'accepted' }),
-                                i.appendFiles([r], t);
+                                i.appendFiles([r], t));
                         } catch (e) {
                             let t = e instanceof Error ? e.message : 'Не удалось обработать импортированный трек';
-                            window.playlistLinkImporter?.reportUploadState?.({ trackToken: a, status: 'failed', error: t }),
-                                u((0, r.jsx)(eo.h, { error: t }), { containerId: n.modal.isOpened ? en.u.FULLSCREEN_ERROR : en.u.ERROR });
+                            (window.playlistLinkImporter?.reportUploadState?.({ trackToken: a, status: 'failed', error: t }),
+                                u((0, r.jsx)(eo.h, { error: t }), { containerId: n.modal.isOpened ? en.u.FULLSCREEN_ERROR : en.u.ERROR }));
                         }
                     });
                 }, [i, t, u, n.modal.isOpened]);
@@ -2541,7 +2544,7 @@
                         return;
                     }
                     let e = ++A.current;
-                    v({ status: 'loading', trackCount: 0, message: 'Проверка ссылки...' }),
+                    (v({ status: 'loading', trackCount: 0, message: 'Проверка ссылки...' }),
                         (C.current = setTimeout(async () => {
                             try {
                                 let t = await window.playlistLinkImporter.prefetchTrack(P);
@@ -2561,9 +2564,9 @@
                             } finally {
                                 A.current === e && (C.current = null);
                             }
-                        }, 400));
+                        }, 400)));
                     return () => {
-                        C.current && clearTimeout(C.current), (C.current = null);
+                        (C.current && clearTimeout(C.current), (C.current = null));
                     };
                 }, [m, P, E]);
                 return (0, r.jsxs)(r.Fragment, {
@@ -2611,162 +2614,166 @@
                                           boxShadow: '0 1rem 4rem rgba(0, 0, 0, 0.45)',
                                       },
                                       children: [
-                                      (0, r.jsxs)('div', {
-                                          className: pulseSyncImportModalStyles.header,
-                                          children: [
-                                              (0, r.jsx)(eC.DZ, {
-                                                  variant: 'h4',
-                                                  size: 'm',
-                                                  weight: 'bold',
-                                                  className: pulseSyncImportModalStyles.title,
-                                                  children: 'Импорт треков',
-                                              }),
-                                              (0, r.jsx)(ti.$, {
-                                                  radius: 'round',
-                                                  color: 'secondary',
-                                                  size: 'xxs',
-                                                  icon: (0, r.jsx)(eG.I, { variant: 'close', size: 'xxs' }),
-                                                  onClick: I,
-                                                  disabled: f,
-                                                  'aria-label': l({ id: 'ugc.close-edit-popup' }),
-                                                  'data-test-id': d.e8.ugc.UGC_EDIT_MODAL_CLOSE_BUTTON,
-                                              }),
-                                          ],
-                                      }),
-                                      (0, r.jsxs)('div', {
-                                          className: pulseSyncImportModalStyles.content,
-                                          children: [
-                                              (0, r.jsxs)('div', {
-                                                  className: pulseSyncImportModalStyles.field,
-                                                  style: {
-                                                      display: 'flex',
-                                                      alignItems: 'center',
-                                                      justifyContent: 'space-between',
-                                                      gap: 'var(--ym-spacer-size-m)',
-                                                      flexWrap: 'wrap',
-                                                  },
-                                                  children: [
-                                                      (0, r.jsx)(eC.HL, {
-                                                          variant: 'div',
-                                                          size: 'm',
-                                                          className: pulseSyncImportModalStyles.label,
-                                                          style: { marginBlockEnd: 0 },
-                                                          children: 'Локальные треки',
-                                                      }),
-                                                      (0, r.jsx)(ti.$, {
-                                                          radius: 'xxxl',
-                                                          color: 'secondary',
-                                                          size: c ? 'l' : 'm',
-                                                          className: pulseSyncImportModalStyles.button,
-                                                          onClick: S,
-                                                          disabled: f,
-                                                          children: 'Выбрать файлы',
-                                                      }),
-                                                  ],
-                                              }),
-                                              (0, r.jsxs)('div', {
-                                                  className: pulseSyncImportModalStyles.field,
-                                                  style: { display: 'flex', alignItems: 'center', gap: 'var(--ym-spacer-size-s)' },
-                                                  children: [
-                                                      (0, r.jsx)('div', { style: { flex: 1, height: '1px', background: 'var(--ym-controls-color-secondary-default-enabled)' } }),
-                                                      (0, r.jsx)(eC.HL, {
-                                                          variant: 'div',
-                                                          size: 's',
-                                                          style: { color: 'var(--ym-controls-color-secondary-text-enabled)', whiteSpace: 'nowrap' },
-                                                          children: 'или',
-                                                      }),
-                                                      (0, r.jsx)('div', { style: { flex: 1, height: '1px', background: 'var(--ym-controls-color-secondary-default-enabled)' } }),
-                                                  ],
-                                              }),
-                                              (0, r.jsxs)('div', {
-                                                  className: pulseSyncImportModalStyles.field,
-                                                  children: [
-                                                      (0, r.jsx)(eC.HL, {
-                                                          variant: 'div',
-                                                          size: 'm',
-                                                          className: pulseSyncImportModalStyles.label,
-                                                          children: 'Ссылка',
-                                                      }),
-                                                      (0, r.jsx)('input', {
-                                                          value: _,
-                                                          type: 'url',
-                                                          inputMode: 'url',
-                                                          autoCapitalize: 'none',
-                                                          autoCorrect: 'off',
-                                                          spellCheck: !1,
-                                                          disabled: f,
-                                                          'aria-invalid': E || 'error' === g.status || 'invalid' === g.status,
-                                                          className:
-                                                              E || 'error' === g.status || 'invalid' === g.status
-                                                                  ? ''.concat(pulseSyncImportModalStyles.input, ' ').concat(pulseSyncImportModalStyles.input_error)
-                                                                  : pulseSyncImportModalStyles.input,
-                                                          style: {
-                                                              boxSizing: 'border-box',
-                                                              width: '100%',
-                                                              minHeight: '2.75rem',
-                                                              padding: '0 var(--ym-spacer-size-m)',
-                                                              border: 0,
-                                                              outline: 0,
-                                                              color: 'var(--ym-controls-color-primary-text-enabled)',
-                                                              font: 'inherit',
-                                                          },
-                                                          placeholder: 'https://...',
-                                                          onChange: N,
-                                                          minLength: 1,
-                                                          maxLength: 2048,
-                                                      }),
-                                                      P &&
-                                                          (E || 'idle' !== g.status) &&
+                                          (0, r.jsxs)('div', {
+                                              className: pulseSyncImportModalStyles.header,
+                                              children: [
+                                                  (0, r.jsx)(eC.DZ, {
+                                                      variant: 'h4',
+                                                      size: 'm',
+                                                      weight: 'bold',
+                                                      className: pulseSyncImportModalStyles.title,
+                                                      children: 'Импорт треков',
+                                                  }),
+                                                  (0, r.jsx)(ti.$, {
+                                                      radius: 'round',
+                                                      color: 'secondary',
+                                                      size: 'xxs',
+                                                      icon: (0, r.jsx)(eG.I, { variant: 'close', size: 'xxs' }),
+                                                      onClick: I,
+                                                      disabled: f,
+                                                      'aria-label': l({ id: 'ugc.close-edit-popup' }),
+                                                      'data-test-id': d.e8.ugc.UGC_EDIT_MODAL_CLOSE_BUTTON,
+                                                  }),
+                                              ],
+                                          }),
+                                          (0, r.jsxs)('div', {
+                                              className: pulseSyncImportModalStyles.content,
+                                              children: [
+                                                  (0, r.jsxs)('div', {
+                                                      className: pulseSyncImportModalStyles.field,
+                                                      style: {
+                                                          display: 'flex',
+                                                          alignItems: 'center',
+                                                          justifyContent: 'space-between',
+                                                          gap: 'var(--ym-spacer-size-m)',
+                                                          flexWrap: 'wrap',
+                                                      },
+                                                      children: [
+                                                          (0, r.jsx)(eC.HL, {
+                                                              variant: 'div',
+                                                              size: 'm',
+                                                              className: pulseSyncImportModalStyles.label,
+                                                              style: { marginBlockEnd: 0 },
+                                                              children: 'Локальные треки',
+                                                          }),
+                                                          (0, r.jsx)(ti.$, {
+                                                              radius: 'xxxl',
+                                                              color: 'secondary',
+                                                              size: c ? 'l' : 'm',
+                                                              className: pulseSyncImportModalStyles.button,
+                                                              onClick: S,
+                                                              disabled: f,
+                                                              children: 'Выбрать файлы',
+                                                          }),
+                                                      ],
+                                                  }),
+                                                  (0, r.jsxs)('div', {
+                                                      className: pulseSyncImportModalStyles.field,
+                                                      style: { display: 'flex', alignItems: 'center', gap: 'var(--ym-spacer-size-s)' },
+                                                      children: [
+                                                          (0, r.jsx)('div', {
+                                                              style: { flex: 1, height: '1px', background: 'var(--ym-controls-color-secondary-default-enabled)' },
+                                                          }),
                                                           (0, r.jsx)(eC.HL, {
                                                               variant: 'div',
                                                               size: 's',
-                                                              style: {
-                                                                  color:
-                                                                      E || 'error' === g.status || 'invalid' === g.status
-                                                                          ? 'var(--ym-message-color-error-text-enabled)'
-                                                                          : 'var(--ym-controls-color-primary-text-enabled)',
-                                                                  marginBlockStart: 'var(--ym-spacer-size-xs)',
-                                                              },
-                                                              children: E ? 'Введите корректную http(s) ссылку' : g.message,
+                                                              style: { color: 'var(--ym-controls-color-secondary-text-enabled)', whiteSpace: 'nowrap' },
+                                                              children: 'или',
                                                           }),
-                                                  ],
-                                              }),
-                                              b &&
-                                                  (0, r.jsx)(eC.HL, {
-                                                      variant: 'div',
-                                                      size: 's',
-                                                      style: {
-                                                          color: 'var(--ym-controls-color-secondary-text-enabled)',
-                                                          marginBlockStart: 'calc(var(--ym-spacer-size-s) * -1)',
-                                                          marginBlockEnd: 'var(--ym-spacer-size-m)',
-                                                      },
-                                                      children: 'Не забудьте добавить в proxy/VPN процесс yt-dlp.exe',
+                                                          (0, r.jsx)('div', {
+                                                              style: { flex: 1, height: '1px', background: 'var(--ym-controls-color-secondary-default-enabled)' },
+                                                          }),
+                                                      ],
                                                   }),
-                                              (0, r.jsxs)('div', {
-                                                  className: pulseSyncImportModalStyles.buttons,
-                                                  children: [
-                                                      (0, r.jsx)(ti.$, {
-                                                          radius: 'xxxl',
-                                                          color: 'secondary',
-                                                          size: c ? 'l' : 'm',
-                                                          className: pulseSyncImportModalStyles.button,
-                                                          onClick: I,
-                                                          disabled: f,
-                                                          children: (0, r.jsx)(eW.A, { id: 'interface-actions.cancel' }),
+                                                  (0, r.jsxs)('div', {
+                                                      className: pulseSyncImportModalStyles.field,
+                                                      children: [
+                                                          (0, r.jsx)(eC.HL, {
+                                                              variant: 'div',
+                                                              size: 'm',
+                                                              className: pulseSyncImportModalStyles.label,
+                                                              children: 'Ссылка',
+                                                          }),
+                                                          (0, r.jsx)('input', {
+                                                              value: _,
+                                                              type: 'url',
+                                                              inputMode: 'url',
+                                                              autoCapitalize: 'none',
+                                                              autoCorrect: 'off',
+                                                              spellCheck: !1,
+                                                              disabled: f,
+                                                              'aria-invalid': E || 'error' === g.status || 'invalid' === g.status,
+                                                              className:
+                                                                  E || 'error' === g.status || 'invalid' === g.status
+                                                                      ? ''.concat(pulseSyncImportModalStyles.input, ' ').concat(pulseSyncImportModalStyles.input_error)
+                                                                      : pulseSyncImportModalStyles.input,
+                                                              style: {
+                                                                  boxSizing: 'border-box',
+                                                                  width: '100%',
+                                                                  minHeight: '2.75rem',
+                                                                  padding: '0 var(--ym-spacer-size-m)',
+                                                                  border: 0,
+                                                                  outline: 0,
+                                                                  color: 'var(--ym-controls-color-primary-text-enabled)',
+                                                                  font: 'inherit',
+                                                              },
+                                                              placeholder: 'https://...',
+                                                              onChange: N,
+                                                              minLength: 1,
+                                                              maxLength: 2048,
+                                                          }),
+                                                          P &&
+                                                              (E || 'idle' !== g.status) &&
+                                                              (0, r.jsx)(eC.HL, {
+                                                                  variant: 'div',
+                                                                  size: 's',
+                                                                  style: {
+                                                                      color:
+                                                                          E || 'error' === g.status || 'invalid' === g.status
+                                                                              ? 'var(--ym-message-color-error-text-enabled)'
+                                                                              : 'var(--ym-controls-color-primary-text-enabled)',
+                                                                      marginBlockStart: 'var(--ym-spacer-size-xs)',
+                                                                  },
+                                                                  children: E ? 'Введите корректную http(s) ссылку' : g.message,
+                                                              }),
+                                                      ],
+                                                  }),
+                                                  b &&
+                                                      (0, r.jsx)(eC.HL, {
+                                                          variant: 'div',
+                                                          size: 's',
+                                                          style: {
+                                                              color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                              marginBlockStart: 'calc(var(--ym-spacer-size-s) * -1)',
+                                                              marginBlockEnd: 'var(--ym-spacer-size-m)',
+                                                          },
+                                                          children: 'Не забудьте добавить в proxy/VPN процесс yt-dlp.exe',
                                                       }),
-                                                      (0, r.jsx)(ti.$, {
-                                                          radius: 'xxxl',
-                                                          color: 'primary',
-                                                          size: c ? 'l' : 'm',
-                                                          className: pulseSyncImportModalStyles.button,
-                                                          onClick: j,
-                                                          disabled: !L || f,
-                                                          children: f ? 'Импортируем...' : 'Импортировать по ссылке',
-                                                      }),
-                                                  ],
-                                              }),
-                                          ],
-                                      }),
+                                                  (0, r.jsxs)('div', {
+                                                      className: pulseSyncImportModalStyles.buttons,
+                                                      children: [
+                                                          (0, r.jsx)(ti.$, {
+                                                              radius: 'xxxl',
+                                                              color: 'secondary',
+                                                              size: c ? 'l' : 'm',
+                                                              className: pulseSyncImportModalStyles.button,
+                                                              onClick: I,
+                                                              disabled: f,
+                                                              children: (0, r.jsx)(eW.A, { id: 'interface-actions.cancel' }),
+                                                          }),
+                                                          (0, r.jsx)(ti.$, {
+                                                              radius: 'xxxl',
+                                                              color: 'primary',
+                                                              size: c ? 'l' : 'm',
+                                                              className: pulseSyncImportModalStyles.button,
+                                                              onClick: j,
+                                                              disabled: !L || f,
+                                                              children: f ? 'Импортируем...' : 'Импортировать по ссылке',
+                                                          }),
+                                                      ],
+                                                  }),
+                                              ],
+                                          }),
                                       ],
                                   }),
                               })
@@ -2934,15 +2941,15 @@
                                 await t.create({ title: s({ id: 'entity-names.new-playlist' }), visibility: D.L.PUBLIC });
                                 let o = t.meta;
                                 if (!(null == o ? void 0 : o.uuid)) {
-                                    i((0, r.jsx)(t3, {}), n), t.reset();
+                                    (i((0, r.jsx)(t3, {}), n), t.reset());
                                     return;
                                 }
                                 if ((await o.changePlaylist((0, ei.M)({ operation: el.y.INSERT, position: 0, tracks: e }))) === er.Y.OK) {
                                     let { href: e } = (0, K.u)('/playlists/:playlistUuid', { params: { playlistUuid: o.uuid } });
-                                    t.reset(), a.modal.isOpened && a.modal.close(), l.push(e);
+                                    (t.reset(), a.modal.isOpened && a.modal.close(), l.push(e));
                                     return;
                                 }
-                                t.reset(), i((0, r.jsx)(t3, {}), n);
+                                (t.reset(), i((0, r.jsx)(t3, {}), n));
                             });
                         })(p),
                         h = (0, eK.c)((e) => {
@@ -2952,7 +2959,7 @@
                             g('');
                         }),
                         C = (0, eK.c)((e) => {
-                            e.stopPropagation(), e.nativeEvent.stopImmediatePropagation();
+                            (e.stopPropagation(), e.nativeEvent.stopImmediatePropagation());
                         }),
                         x = (0, eK.c)(async () => {
                             let e = c.account.data.uid;
@@ -3161,7 +3168,7 @@
                                         {
                                             icon: (0, r.jsx)(eG.I, { variant: icon, size: 'xxs' }),
                                             onClick: () => {
-                                                activate(), m(!1);
+                                                (activate(), m(!1));
                                             },
                                             children: label,
                                             'data-pulsesync-addon-menu-item': '',
@@ -3295,7 +3302,7 @@
                             if (!K()) {
                                 if (_) return void y();
                                 if (B) return void I.open();
-                                et(), A.setPlaylistFilter(x);
+                                (et(), A.setPlaylistFilter(x));
                             }
                         });
                     (0, s.useEffect)(() => {
@@ -3526,7 +3533,7 @@
                     ),
                     p = (0, s.useCallback)(
                         (e) => {
-                            e.stopPropagation(), null == l || l(a);
+                            (e.stopPropagation(), null == l || l(a));
                         },
                         [a, l],
                     ),
@@ -3595,9 +3602,9 @@
                         () =>
                             (0, ab.A)((e) => {
                                 let t = e.trim();
-                                C.setText(t),
+                                (C.setText(t),
                                     t && (null == A ? void 0 : A.meta) && (C.reset(), C.getTracks({ uid: A.meta.uid, kind: A.meta.kind })),
-                                    (t && 0 !== t.length) || (S && (k(!1), A.refreshTracks()), C.setIdleState());
+                                    (t && 0 !== t.length) || (S && (k(!1), A.refreshTracks()), C.setIdleState()));
                             }, 100),
                         [C, A, S],
                     ),
@@ -3755,7 +3762,7 @@
                     o = (0, s.useRef)(null);
                 return (
                     (0, s.useEffect)(() => {
-                        (null == o ? void 0 : o.current) && l(o), a && n(a);
+                        ((null == o ? void 0 : o.current) && l(o), a && n(a));
                     }, [o, a, l, n]),
                     (0, s.useEffect)(
                         () => () => {
@@ -3783,11 +3790,11 @@
                 let d = (0, eK.c)((e) => {
                         var t;
                         if (!n.onTabChange || e === n.value) return;
-                        setTimeout(() => {
+                        (setTimeout(() => {
                             var t, a, r;
                             null == (r = o.current) || null == (a = r.children[e]) || null == (t = a.focus) || t.call(a);
                         }),
-                            n.onTabChange(e);
+                            n.onTabChange(e));
                         let r = null == (t = a.filters.items) ? void 0 : t[e];
                         r && (a.filters.handleFilterClick(r), c({ tabId: r.id, tabPos: e + 1 }));
                     }),
@@ -4094,7 +4101,7 @@
                                 : Z;
                         }, [R.isRewind2024Playlist, null == (a = R.meta) ? void 0 : a.personalColor, Z]),
                         { topColorStyle: ee, headerStyle: et } = (0, y.Q)(J, X);
-                    ((e) => {
+                    (((e) => {
                         var t;
                         let { setDeeplink: a } = null != (t = (0, W.P)()) ? t : {};
                         (0, s.useEffect)(() => {
@@ -4176,7 +4183,7 @@
                                 R.reset();
                             },
                             [R, N, A, C],
-                        );
+                        ));
                     let ea = (0, s.useMemo)(
                             () => ({
                                 Header: () => (0, r.jsx)(ra, { playlistHeaderRef: q }),
@@ -4276,13 +4283,13 @@
         },
         63670: (e, t, a) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }), (t._Parser = t.parse = void 0);
+            (Object.defineProperty(t, '__esModule', { value: !0 }), (t._Parser = t.parse = void 0));
             var r = a(30782);
-            (t.parse = function () {
+            ((t.parse = function () {
                 throw Error("You're trying to format an uncompiled message with react-intl without parser, please import from 'react-intl' instead");
             }),
                 r.__exportStar(a(88222), t),
-                (t._Parser = void 0);
+                (t._Parser = void 0));
         },
         64170: (e, t, a) => {
             'use strict';
@@ -4363,7 +4370,7 @@
                         };
                     })(),
                     x = (0, n.useCallback)(() => {
-                        C(), (window.location.href = v.Z.main.href);
+                        (C(), (window.location.href = v.Z.main.href));
                     }, [C]),
                     { contentRef: P } = (0, g.g)();
                 return (0, r.jsxs)('div', {
@@ -4477,7 +4484,7 @@
                 l = a(55178),
                 n = {
                     6699: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0));
                         let r = a(352),
                             i = a(810);
                         t.useDebouncedToggle = (e) => {
@@ -4487,16 +4494,16 @@
                                 c = (0, i.useMemo)(
                                     () =>
                                         (0, r.throttle)(() => {
-                                            o(!a),
+                                            (o(!a),
                                                 n.current && window.clearTimeout(n.current),
                                                 (n.current = window.setTimeout(() => {
                                                     o(!!a);
-                                                }, t));
+                                                }, t)));
                                         }, l),
                                     [t, a, l],
                                 ),
                                 d = (0, i.useCallback)(() => {
-                                    o(!!a), n.current && window.clearTimeout(n.current);
+                                    (o(!!a), n.current && window.clearTimeout(n.current));
                                 }, [a]);
                             return (
                                 (0, i.useEffect)(
@@ -4510,7 +4517,7 @@
                         };
                     },
                     2767: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0));
                         let r = a(810);
                         t.useForceUpdateRef = () => {
                             let [e, t] = (0, r.useState)(null);
@@ -4523,7 +4530,7 @@
                         };
                     },
                     2067: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0));
                         let r = a(810),
                             i = a(361),
                             l = a(6699);
@@ -4531,7 +4538,7 @@
                             let { onScroll: t, listenIsScrolling: a, elementRef: n } = e,
                                 { state: s, handleDebouncedToggle: o } = (0, l.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                                 c = (0, r.useCallback)(() => {
-                                    a && o(), null == t || t();
+                                    (a && o(), null == t || t());
                                 }, [a, o, t]);
                             return (
                                 (0, r.useEffect)(() => {
@@ -4539,21 +4546,21 @@
                                     if (null === e) return;
                                     let t = null != e ? e : window,
                                         a = { capture: !0, passive: !0 };
-                                    return t.addEventListener('scroll', c, a), () => t.removeEventListener('scroll', c, a);
+                                    return (t.addEventListener('scroll', c, a), () => t.removeEventListener('scroll', c, a));
                                 }, [n, c]),
                                 s
                             );
                         };
                     },
                     361: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            });
+                            }));
                     },
                     352: (e) => {
                         e.exports = i;
@@ -4567,11 +4574,11 @@
                 var t = s[e];
                 if (void 0 !== t) return t.exports;
                 var a = (s[e] = { exports: {} });
-                return n[e](a, a.exports, o), a.exports;
+                return (n[e](a, a.exports, o), a.exports);
             }
             var c = {};
-            (() => {
-                Object.defineProperty(c, '__esModule', { value: !0 }), (c.useElementOffsetY = void 0);
+            ((() => {
+                (Object.defineProperty(c, '__esModule', { value: !0 }), (c.useElementOffsetY = void 0));
                 let e = o(810),
                     t = o(2067),
                     a = o(2767);
@@ -4582,10 +4589,10 @@
                             let e = null == i ? void 0 : i.getBoundingClientRect();
                             e && s(e.y);
                         }, [i]);
-                    return (0, e.useLayoutEffect)(o), (0, t.useScroll)({ onScroll: o, elementRef: r }), { forceUpdateRefCallback: l, offsetY: n };
+                    return ((0, e.useLayoutEffect)(o), (0, t.useScroll)({ onScroll: o, elementRef: r }), { forceUpdateRefCallback: l, offsetY: n });
                 };
             })(),
-                c.__esModule;
+                c.__esModule);
             var d = c.useElementOffsetY;
         },
         66318: (e) => {
@@ -4761,13 +4768,13 @@
                                 null == _ || _(s.h.CREATIVE);
                             },
                             onRender: () => {
-                                b.log('[AdvertBanner] Render'), null == y || y();
+                                (b.log('[AdvertBanner] Render'), null == y || y());
                             },
                             onStub: () => {
-                                b.log('[AdvertBanner] Stub'), null == g || g();
+                                (b.log('[AdvertBanner] Stub'), null == g || g());
                             },
                             onError: (e) => {
-                                b.log('[AdvertBanner] Error', { error: e }), null == v || v();
+                                (b.log('[AdvertBanner] Error', { error: e }), null == v || v());
                             },
                         });
                     }, []),
@@ -4776,7 +4783,7 @@
                             T.current = !1;
                             return;
                         }
-                        b.log('[AdvertBanner] Destroy'), x(i), b.log('[AdvertBanner] Initialize'), P(i);
+                        (b.log('[AdvertBanner] Destroy'), x(i), b.log('[AdvertBanner] Initialize'), P(i));
                     }, [h, A, i, x, P, b]),
                     (0, r.jsx)('div', { id: i, className: t, tabIndex: -1, 'aria-hidden': !0 })
                 );
@@ -4804,20 +4811,20 @@
             'use strict';
             a.d(t, { Q: () => r });
             var r = (function (e) {
-                return (e.ALL = 'all'), e;
+                return ((e.ALL = 'all'), e);
             })({});
         },
         86562: (e, t, a) => {
             'use strict';
             a.d(t, { v: () => r });
             var r = (function (e) {
-                return (e.SPACE = 'Space'), (e.ENTER = 'Enter'), (e.ESCAPE = 'Escape'), e;
+                return ((e.SPACE = 'Space'), (e.ENTER = 'Enter'), (e.ESCAPE = 'Escape'), e);
             })({});
         },
         88222: (e, t) => {
             'use strict';
             var a, r;
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 (t.createNumberElement =
                     t.createLiteralElement =
                     t.isDateTimeSkeleton =
@@ -4835,7 +4842,7 @@
                     t.TYPE =
                         void 0),
                 (function (e) {
-                    (e[(e.literal = 0)] = 'literal'),
+                    ((e[(e.literal = 0)] = 'literal'),
                         (e[(e.argument = 1)] = 'argument'),
                         (e[(e.number = 2)] = 'number'),
                         (e[(e.date = 3)] = 'date'),
@@ -4843,10 +4850,10 @@
                         (e[(e.select = 5)] = 'select'),
                         (e[(e.plural = 6)] = 'plural'),
                         (e[(e.pound = 7)] = 'pound'),
-                        (e[(e.tag = 8)] = 'tag');
+                        (e[(e.tag = 8)] = 'tag'));
                 })(a || (t.TYPE = a = {})),
                 (function (e) {
-                    (e[(e.number = 0)] = 'number'), (e[(e.dateTime = 1)] = 'dateTime');
+                    ((e[(e.number = 0)] = 'number'), (e[(e.dateTime = 1)] = 'dateTime'));
                 })(r || (t.SKELETON_TYPE = r = {})),
                 (t.isLiteralElement = function (e) {
                     return e.type === a.literal;
@@ -4886,7 +4893,7 @@
                 }),
                 (t.createNumberElement = function (e, t) {
                     return { type: a.number, value: e, style: t };
-                });
+                }));
         },
         88763: (e, t, a) => {
             'use strict';
@@ -4919,7 +4926,7 @@
                 m = (e) => e.toString(16).padStart(2, '0');
             var p = a(7050),
                 _ = (function (e) {
-                    return (e.PLAYLIST_GRADIENT = 'branded_playlist_gradient'), (e.AXE_GRADIENT = 'branded_axe_gradient'), e;
+                    return ((e.PLAYLIST_GRADIENT = 'branded_playlist_gradient'), (e.AXE_GRADIENT = 'branded_axe_gradient'), e);
                 })({});
             let y = (0, i.PA)((e) => {
                 let { children: t } = e,
@@ -5062,10 +5069,10 @@
         96151: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { Q: () => r }),
+            (a.d(t, { Q: () => r }),
                 (function (e) {
-                    (e.FROM_ALBUM_COVER = 'from-album-cover'), (e.FROM_ARTIST_PHOTOS = 'from-artist-photos'), (e.PIC = 'pic'), (e.MOSAIC = 'mosaic');
-                })(r || (r = {}));
+                    ((e.FROM_ALBUM_COVER = 'from-album-cover'), (e.FROM_ARTIST_PHOTOS = 'from-artist-photos'), (e.PIC = 'pic'), (e.MOSAIC = 'mosaic'));
+                })(r || (r = {})));
         },
         97409: (e) => {
             e.exports = {
@@ -5088,7 +5095,7 @@
                 n = {
                     5881: (e, t, a) => {
                         function r() {
-                            for (var e, t, a = 0, r = ''; a < arguments.length; )
+                            for (var e, t, a = 0, r = ''; a < arguments.length;)
                                 (e = arguments[a++]) &&
                                     (t = (function e(t) {
                                         var a,
@@ -5103,11 +5110,11 @@
                                     (r && (r += ' '), (r += t));
                             return r;
                         }
-                        a.r(t), a.d(t, { clsx: () => r, default: () => i });
+                        (a.r(t), a.d(t, { clsx: () => r, default: () => i }));
                         let i = r;
                     },
                     7122: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => r });
+                        (a.r(t), a.d(t, { default: () => r }));
                         let r = {
                             contentContainer: 'JjlbHZ4FaP9EAcR_1DxF',
                             contentContainer_block: 'iOlzvyUREgDkthkrx7Sf',
@@ -5174,7 +5181,7 @@
                         };
                     },
                     9775: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => r });
+                        (a.r(t), a.d(t, { default: () => r }));
                         let r = {
                             root: 'rqUESGQ8jp3tbDawOzuG',
                             root_checked: 'GJh5PwV9GyFuKhlG6pQz',
@@ -5191,13 +5198,13 @@
                             else r = t;
                             return { $$typeof: a, type: e, key: i, ref: void 0 !== (t = r.ref) ? t : null, props: r };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r));
                     },
                     4377: (e, t, a) => {
                         e.exports = a(9097);
                     },
                     7858: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.findColorBucketByLightness = t.findColorBucketByHue = t.findColorBucketByName = t.LIGHTNESS_COLOR_BUCKETS = t.COLOR_BUCKETS = void 0),
                             (t.COLOR_BUCKETS = [
                                 { name: 'coral', start: 2, end: 19, primary: '#F53700', secondary: '#FFD7CC' },
@@ -5232,10 +5239,10 @@
                                     ((e, a, r) => (r === t.LIGHTNESS_COLOR_BUCKETS.length - 1 ? a >= e.start && a <= e.end : a >= e.start && a < e.end))(a, e, r),
                                 );
                                 return (0, t.findColorBucketByName)(null == a ? void 0 : a.name);
-                            });
+                            }));
                     },
                     8796: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.createRipple = void 0),
                             (t.createRipple = function (e, t, a) {
                                 let r = null != a ? a : e.currentTarget,
@@ -5245,27 +5252,27 @@
                                     s = r.getBoundingClientRect(),
                                     o = 0 === e.clientX ? Math.round(s.width / 2) : e.clientX - s.left,
                                     c = 0 === e.clientY ? Math.round(s.height / 2) : e.clientY - s.top;
-                                (i.style.width = ''.concat(l, 'px')),
+                                ((i.style.width = ''.concat(l, 'px')),
                                     (i.style.height = ''.concat(l, 'px')),
                                     (i.style.left = 0 === e.clientX ? '0px' : ''.concat(o - n, 'px')),
                                     (i.style.top = ''.concat(c - n, 'px')),
-                                    i.classList.add(t);
+                                    i.classList.add(t));
                                 let d = r.getElementsByClassName(t)[0];
-                                d && d.remove(), r.insertBefore(i, r.firstChild);
-                            });
+                                (d && d.remove(), r.insertBefore(i, r.firstChild));
+                            }));
                     },
                     361: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            });
+                            }));
                     },
                     768: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getVibePaletteColors =
                                 t.getVibeColorBucketSelection =
                                 t.getVibePaletteByBucketName =
@@ -5274,10 +5281,10 @@
                                 t.SECONDARY_GRADIENT_STOPS =
                                 t.PRIMARY_GRADIENT_STOPS =
                                 t.PRIMARY_DARK_IDLE_STOPS =
-                                    void 0);
+                                    void 0));
                         let r = a(2660),
                             i = a(7858);
-                        (t.PRIMARY_DARK_IDLE_STOPS = Array.from({ length: 16 }, () => '#000000')),
+                        ((t.PRIMARY_DARK_IDLE_STOPS = Array.from({ length: 16 }, () => '#000000')),
                             (t.PRIMARY_GRADIENT_STOPS = {
                                 carmine: [
                                     '#F5002E',
@@ -5865,7 +5872,7 @@
                                 primaryStops: t.PRIMARY_GRADIENT_STOPS[t.FALLBACK_NAME],
                                 secondaryStops: t.SECONDARY_GRADIENT_STOPS[t.FALLBACK_NAME],
                                 primaryDarkIdleStops: t.PRIMARY_DARK_IDLE_STOPS,
-                            });
+                            }));
                         let l = (e) => ({
                             primary: e.primary,
                             secondary: e.secondary,
@@ -5873,7 +5880,7 @@
                             secondaryStops: t.SECONDARY_GRADIENT_STOPS[e.name],
                             primaryDarkIdleStops: t.PRIMARY_DARK_IDLE_STOPS,
                         });
-                        (t.getVibePaletteByBucketName = (e) => {
+                        ((t.getVibePaletteByBucketName = (e) => {
                             let a = (0, i.findColorBucketByName)(e);
                             return a ? l(a) : t.FALLBACK_PALETTE;
                         }),
@@ -5886,10 +5893,10 @@
                                 if (!e) return t.FALLBACK_PALETTE;
                                 let { bucket: a } = (0, t.getVibeColorBucketSelection)(e);
                                 return a ? l(a) : t.FALLBACK_PALETTE;
-                            });
+                            }));
                     },
                     8216: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.getVibePaletteColors = t.getElementFromRefOrElement = t.createRipple = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.getVibePaletteColors = t.getElementFromRefOrElement = t.createRipple = void 0));
                         var r = a(8796);
                         Object.defineProperty(t, 'createRipple', {
                             enumerable: !0,
@@ -5918,7 +5925,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Button = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Button = void 0));
                         let i = a(4377),
                             l = a(810),
                             n = a(5881),
@@ -6015,7 +6022,7 @@
                         t.Button = (0, l.forwardRef)((e, t) => (0, i.jsx)(c, { forwardRef: t, ...e }));
                     },
                     5928: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Button = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Button = void 0));
                         var r = a(8119);
                         Object.defineProperty(t, 'Button', {
                             enumerable: !0,
@@ -6030,7 +6037,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Toggle = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Toggle = void 0));
                         let i = a(4377),
                             l = a(5881),
                             n = a(810),
@@ -6045,7 +6052,7 @@
                                 [p, _] = (0, n.useState)(a),
                                 y = (0, n.useCallback)(() => {
                                     let e = !p;
-                                    _(e), null == r || r(e);
+                                    (_(e), null == r || r(e));
                                 }, [p, r]);
                             return (
                                 (0, n.useEffect)(() => {
@@ -6080,19 +6087,19 @@
                 var t = s[e];
                 if (void 0 !== t) return t.exports;
                 var a = (s[e] = { exports: {} });
-                return n[e].call(a.exports, a, a.exports, o), a.exports;
+                return (n[e].call(a.exports, a, a.exports, o), a.exports);
             }
-            (o.d = (e, t) => {
+            ((o.d = (e, t) => {
                 for (var a in t) o.o(t, a) && !o.o(e, a) && Object.defineProperty(e, a, { enumerable: !0, get: t[a] });
             }),
                 (o.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (o.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var c = {};
             (() => {
-                Object.defineProperty(c, 'X', { value: !0 }), (c.Z = void 0);
+                (Object.defineProperty(c, 'X', { value: !0 }), (c.Z = void 0));
                 var e = o(7459);
                 Object.defineProperty(c, 'Z', {
                     enumerable: !0,

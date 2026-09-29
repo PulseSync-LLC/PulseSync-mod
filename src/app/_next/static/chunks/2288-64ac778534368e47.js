@@ -61,7 +61,7 @@
                     });
                 }
                 constructor({ hooks: t }) {
-                    (0, i._)(this, 'hooks', void 0), (0, i._)(this, 'scheduledErrorReport', Promise.resolve()), (this.hooks = t);
+                    ((0, i._)(this, 'hooks', void 0), (0, i._)(this, 'scheduledErrorReport', Promise.resolve()), (this.hooks = t));
                 }
             }
             class n {
@@ -87,7 +87,7 @@
                     null == (t = this.skeleton) || t.destroy();
                 }
                 constructor({ skeletonFactory: t, visibilityDetectorFactory: e, plugins: a }) {
-                    (0, i._)(this, 'hooks', void 0), (0, i._)(this, 'skeletonSdk', void 0), (0, i._)(this, 'hasVisibilityController', !1);
+                    ((0, i._)(this, 'hooks', void 0), (0, i._)(this, 'skeletonSdk', void 0), (0, i._)(this, 'hasVisibilityController', !1));
                     let s = {
                             beforeSkeletonLoad: new r.AsyncSeriesHook(['loadData']),
                             afterSkeletonLoad: new r.AsyncSeriesHook(['loadData']),
@@ -98,13 +98,13 @@
                             afterError: new r.AsyncSeriesHook(['error']),
                         },
                         n = new d({ hooks: s });
-                    (this.hooks = s),
+                    ((this.hooks = s),
                         (this.skeletonSdk = new o.mz({ skeletonFactory: { create: (e) => t.create({ ...e, hooksEmitter: n }) } })),
                         e && this.createVisibilityController(e),
                         null == a ||
                             a.forEach((t) => {
                                 t.apply({ hooks: this.hooks, landingSdk: this });
-                            });
+                            }));
                 }
             }
             var l = a(96194);
@@ -127,7 +127,7 @@
                 let a,
                     i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [],
                     o = [{ parent: void 0, child: t }];
-                for (; o.length > 0; ) {
+                for (; o.length > 0;) {
                     var r, d, n;
                     let t = o.pop();
                     if (!t) continue;
@@ -153,7 +153,7 @@
             }
             function L(t, e) {
                 let a = [t];
-                for (; a.length > 0; ) {
+                for (; a.length > 0;) {
                     var s;
                     let t = a.pop();
                     e(t);
@@ -171,7 +171,7 @@
                 return (null == t ? void 0 : t.data.nodeType) === s.TABS_BLOCK;
             }
             !(function (t) {
-                (t.TAB = 'TAB'), (t.BLOCK = 'BLOCK'), (t.TABS_BLOCK = 'TABS_BLOCK');
+                ((t.TAB = 'TAB'), (t.BLOCK = 'BLOCK'), (t.TABS_BLOCK = 'TABS_BLOCK'));
             })(s || (s = {}));
             class y {
                 async createTree() {
@@ -180,10 +180,10 @@
                     await this.hooksEmitter.beforeSkeletonLoad({ data: this.data, loadMeta: t });
                     try {
                         var a;
-                        if (!t && this.data.meta) (this.root = E(this.data.meta, this.nodeFactory, this.data.nodesData)), this.initBlocksToShow();
+                        if (!t && this.data.meta) ((this.root = E(this.data.meta, this.nodeFactory, this.data.nodesData)), this.initBlocksToShow());
                         else {
                             let t = await this.skeletonMetadataSource.load(this.data);
-                            (this.data.meta = t), (this.root = E(t, this.nodeFactory, this.data.nodesData)), this.initBlocksToShow();
+                            ((this.data.meta = t), (this.root = E(t, this.nodeFactory, this.data.nodesData)), this.initBlocksToShow());
                         }
                         await this.hooksEmitter.afterSkeletonLoad({ data: this.data, rootId: null == (a = this.root) ? void 0 : a.data.id });
                     } catch (t) {
@@ -196,7 +196,7 @@
                         return (function (t, e) {
                             let a = [t],
                                 s = new Set();
-                            for (; a.length > 0; ) {
+                            for (; a.length > 0;) {
                                 var i;
                                 let t = a.pop();
                                 if (s.has(t)) continue;
@@ -220,7 +220,7 @@
                                 a.push(t.load());
                             }
                         };
-                    L(this.root, s), a.length > 0 && (await Promise.allSettled(a));
+                    (L(this.root, s), a.length > 0 && (await Promise.allSettled(a)));
                 }
                 getPreloadedBlocksMeta() {
                     let t = {};
@@ -281,7 +281,7 @@
                     this.root && L(this.root, (t) => t.onVisibilityChange());
                 }
                 destroy() {
-                    this.offBlocksLoadingStatusChangeInTab(), this.offNodesVisibilityChange();
+                    (this.offBlocksLoadingStatusChangeInTab(), this.offNodesVisibilityChange());
                 }
                 offBlocksLoadingStatusChangeInTab() {
                     this.root &&
@@ -293,7 +293,7 @@
                     this.root && L(this.root, (t) => t.offVisibilityChange());
                 }
                 constructor({ data: t, skeletonMetadataSource: e, nodeFactory: a, hooksEmitter: s }) {
-                    (0, i._)(this, 'data', void 0),
+                    ((0, i._)(this, 'data', void 0),
                         (0, i._)(this, 'skeletonMetadataSource', void 0),
                         (0, i._)(this, 'root', void 0),
                         (0, i._)(this, 'nodeFactory', void 0),
@@ -301,16 +301,16 @@
                         (this.data = t),
                         (this.skeletonMetadataSource = e),
                         (this.nodeFactory = a),
-                        (this.hooksEmitter = s);
+                        (this.hooksEmitter = s));
                 }
             }
             var v = a(46862);
             class T {
                 constructor({ loadingStatus: t, visibilityStatus: e }) {
-                    (0, i._)(this, 'loadingStatus', void 0),
+                    ((0, i._)(this, 'loadingStatus', void 0),
                         (0, i._)(this, 'visibilityStatus', void 0),
                         (this.loadingStatus = new v.cJ(t)),
-                        (this.visibilityStatus = new v.cJ(e));
+                        (this.visibilityStatus = new v.cJ(e)));
                 }
             }
             let _ = (t) => !!(t && 'object' == typeof t && 'source' in t);
@@ -330,19 +330,19 @@
                 async load() {
                     if (this.state.loadingStatus.value !== o.rl.IDLE) return;
                     let t = { blockId: this.data.id, blockType: this.data.type, status: o.rl.IDLE };
-                    (this.state.loadingStatus.value = o.rl.PENDING), await this.hooksEmitter.beforeBlockLoad(t);
+                    ((this.state.loadingStatus.value = o.rl.PENDING), await this.hooksEmitter.beforeBlockLoad(t));
                     try {
-                        _(this.data.dataFromSkeleton) && (await this.loadMetadata()),
+                        (_(this.data.dataFromSkeleton) && (await this.loadMetadata()),
                             (this.state.loadingStatus.value = o.rl.RESOLVE),
-                            await this.hooksEmitter.afterBlockLoad({ ...t, status: o.rl.RESOLVE });
+                            await this.hooksEmitter.afterBlockLoad({ ...t, status: o.rl.RESOLVE }));
                     } catch (e) {
-                        (this.state.loadingStatus.value = o.rl.REJECT),
+                        ((this.state.loadingStatus.value = o.rl.REJECT),
                             await this.hooksEmitter.afterError(e),
-                            await this.hooksEmitter.afterBlockLoad({ ...t, status: o.rl.REJECT });
+                            await this.hooksEmitter.afterBlockLoad({ ...t, status: o.rl.REJECT }));
                     }
                 }
                 async reload() {
-                    (this.state.loadingStatus.value = o.rl.IDLE), await this.load();
+                    ((this.state.loadingStatus.value = o.rl.IDLE), await this.load());
                 }
                 onVisibilityChange() {
                     this.visibilityChangeUnsub = this.state.visibilityStatus.onChange(this.visibilityHandler.bind(this));
@@ -355,14 +355,14 @@
                     this.state.visibilityStatus.value === o.zE.VISIBLE && this.load();
                 }
                 constructor({ data: t, hooksEmitter: e }) {
-                    (0, i._)(this, 'data', void 0),
+                    ((0, i._)(this, 'data', void 0),
                         (0, i._)(this, 'children', []),
                         (0, i._)(this, 'state', void 0),
                         (0, i._)(this, 'visibilityChangeUnsub', void 0),
                         (0, i._)(this, 'hooksEmitter', void 0),
                         (this.data = t),
                         (this.hooksEmitter = e),
-                        (this.state = new T({ loadingStatus: o.rl.IDLE, visibilityStatus: o.zE.HIDDEN }));
+                        (this.state = new T({ loadingStatus: o.rl.IDLE, visibilityStatus: o.zE.HIDDEN })));
                 }
             }
             var w = a(99424);
@@ -382,27 +382,27 @@
                 changeSelectedTab(t) {
                     let e = this.tabIndex.value,
                         a = { tabsBlockId: this.data.id, previousIndex: e, nextIndex: t };
-                    this.hooksEmitter.beforeTabChange(a), (this.tabIndex.value = t), this.hooksEmitter.afterTabChange(a);
+                    (this.hooksEmitter.beforeTabChange(a), (this.tabIndex.value = t), this.hooksEmitter.afterTabChange(a));
                 }
                 constructor({ data: t, selectedTabIndex: e, hooksEmitter: a }) {
                     var s, o;
-                    super({ data: t, hooksEmitter: a }),
+                    (super({ data: t, hooksEmitter: a }),
                         (0, i._)(this, 'children', []),
                         (0, i._)(this, 'selectedTab', void 0),
                         (0, i._)(this, 'tabIndex', void 0),
                         (this.tabIndex = new v.cJ(null != (o = null != e ? e : null == (s = t.dataFromSkeleton) ? void 0 : s.selectedTabIndex) ? o : 0)),
-                        (this.selectedTab = new v.rm(() => this.children[this.tabIndex.value]));
+                        (this.selectedTab = new v.rm(() => this.children[this.tabIndex.value])));
                 }
             }
             class R {
                 updateBlocksToShow() {
                     let t = [];
-                    this.children.forEach((e, a) => {
+                    (this.children.forEach((e, a) => {
                         var s;
                         if (e.isVisible.value) return void t.push(a);
                         k(e) && (null == (s = e.data.dataFromSkeleton) ? void 0 : s.showPolicy) === w.E.LOAD_AND_SHOW && e.isNeededToLoad && t.push(a);
                     }),
-                        (this.blocksIndexesToShow.value = t);
+                        (this.blocksIndexesToShow.value = t));
                 }
                 initBlocksToShow() {
                     for (let t = 0; t < this.children.length; t++) this.blocksIndexesToShow.value.push(t);
@@ -460,7 +460,7 @@
                     null == (t = this.visibilityChangeUnsub) || t.call(this);
                 }
                 constructor({ data: t }) {
-                    (0, i._)(this, 'data', void 0),
+                    ((0, i._)(this, 'data', void 0),
                         (0, i._)(this, 'nodeType', 'tab'),
                         (0, i._)(this, 'children', []),
                         (0, i._)(this, 'state', void 0),
@@ -469,7 +469,7 @@
                         (0, i._)(this, 'visibilityChangeUnsub', void 0),
                         (0, i._)(this, 'blocksLoadingStatusChangeUnsubs', []),
                         (this.data = t),
-                        (this.state = new T({ loadingStatus: o.rl.IDLE, visibilityStatus: o.zE.HIDDEN }));
+                        (this.state = new T({ loadingStatus: o.rl.IDLE, visibilityStatus: o.zE.HIDDEN })));
                 }
             }
             class A {
@@ -483,10 +483,10 @@
                 }
                 update(t) {
                     let e = new URL(window.location.href);
-                    e.searchParams.set('tab', t), window.history.replaceState(window.history.state, '', e.toString());
+                    (e.searchParams.set('tab', t), window.history.replaceState(window.history.state, '', e.toString()));
                 }
                 constructor(t) {
-                    (0, i._)(this, 'requestUrl', void 0), (this.requestUrl = t);
+                    ((0, i._)(this, 'requestUrl', void 0), (this.requestUrl = t));
                 }
             }
         },
@@ -500,18 +500,18 @@
                     let { hooks: e } = t;
                     e.afterError.tapPromise('LandingLoggerPlugin', async (t) => {
                         let e;
-                        (e = t instanceof o.t ? t : new o.t('Error in LandingSdk', { code: 'E_LANDING_SDK', cause: t })),
+                        ((e = t instanceof o.t ? t : new o.t('Error in LandingSdk', { code: 'E_LANDING_SDK', cause: t })),
                             this.logger.error('[LandingSdk] '.concat(e.message), { ...e.data, code: e.code, cause: e.cause }),
-                            await Promise.resolve();
+                            await Promise.resolve());
                     });
                 }
                 constructor({ logger: t }) {
-                    (0, i._)(this, 'logger', void 0), (this.logger = t);
+                    ((0, i._)(this, 'logger', void 0), (this.logger = t));
                 }
             }
             var d = a(4628);
             !(function (t) {
-                (t.LANDING_PAGE = 'LANDING_PAGE'), (t.ARTIST_PAGE = 'ARTIST_PAGE');
+                ((t.LANDING_PAGE = 'LANDING_PAGE'), (t.ARTIST_PAGE = 'ARTIST_PAGE'));
             })(s || (s = {}));
             class n {
                 async load(t) {
@@ -525,7 +525,7 @@
                     }
                 }
                 constructor({ artistsResource: t, landingResource: e }) {
-                    (0, i._)(this, 'artistsResource', void 0), (0, i._)(this, 'landingResource', void 0), (this.artistsResource = t), (this.landingResource = e);
+                    ((0, i._)(this, 'artistsResource', void 0), (0, i._)(this, 'landingResource', void 0), (this.artistsResource = t), (this.landingResource = e));
                 }
             }
             var l = a(96194),
@@ -540,12 +540,12 @@
                     this.data.meta = await this.metadataSource.load(this.data);
                 }
                 constructor(t) {
-                    super(t), (0, i._)(this, 'metadataSource', void 0), (this.metadataSource = t.metadataSource);
+                    (super(t), (0, i._)(this, 'metadataSource', void 0), (this.metadataSource = t.metadataSource));
                 }
             }
             class S extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -558,12 +558,12 @@
                                     (null != (s = null == (a = this.data.meta) || null == (e = a.chart) || null == (t = e.tracks) ? void 0 : t.length) ? s : 0) > 0
                                 );
                             }),
-                        );
+                        ));
                 }
             }
             class m extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -581,12 +581,12 @@
                                     })
                                 );
                             }),
-                        );
+                        ));
                 }
             }
             class E extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -601,12 +601,12 @@
                                     isNotEmpty: (null != (a = null == (e = this.data.meta) || null == (t = e.concerts) ? void 0 : t.length) ? a : 0) > 0,
                                 });
                             }),
-                        );
+                        ));
                 }
             }
             class L extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -621,12 +621,12 @@
                                     isNotEmpty: (null != (a = null == (e = this.data.meta) || null == (t = e.donations) ? void 0 : t.length) ? a : 0) > 0,
                                 });
                             }),
-                        );
+                        ));
                 }
             }
             class k extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -641,13 +641,13 @@
                                     isNotEmpty: (null != (a = null == (e = this.data.meta) || null == (t = e.items) ? void 0 : t.length) ? a : 0) > 0,
                                 });
                             }),
-                        );
+                        ));
                 }
             }
             var g = a(41670);
             class y {
                 constructor({ artists: t, album: e, releaseDate: a, cover: s, trailer: o }) {
-                    (0, i._)(this, 'artists', void 0),
+                    ((0, i._)(this, 'artists', void 0),
                         (0, i._)(this, 'album', void 0),
                         (0, i._)(this, 'releaseDate', void 0),
                         (0, i._)(this, 'cover', void 0),
@@ -656,7 +656,7 @@
                         (this.album = e),
                         (this.releaseDate = a),
                         (this.cover = s),
-                        (this.trailer = o);
+                        (this.trailer = o));
                 }
             }
             class v extends u {
@@ -671,7 +671,7 @@
                     null == (t = this.loadingStatusChangeUnsub) || t.call(this);
                 }
                 constructor(t) {
-                    super(t),
+                    (super(t),
                         (0, i._)(this, 'loadingStatusChangeUnsub', void 0),
                         (0, i._)(this, 'items', []),
                         (0, i._)(
@@ -689,12 +689,12 @@
                                 });
                             }),
                         ),
-                        this.onLoadingStatusChange();
+                        this.onLoadingStatusChange());
                 }
             }
             class T extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -712,7 +712,7 @@
                                     isNotEmpty: !a || !s,
                                 });
                             }),
-                        );
+                        ));
                 }
             }
             class _ {
@@ -726,7 +726,7 @@
                     };
                 }
                 constructor(t) {
-                    (0, i._)(this, 'landingResource', void 0), (this.landingResource = t);
+                    ((0, i._)(this, 'landingResource', void 0), (this.landingResource = t));
                 }
             }
             class b extends d.r1 {
@@ -747,7 +747,7 @@
                     }
                 }
                 constructor({ data: t, tabIdQueryParamController: e, metadataSource: a, hooksEmitter: s }) {
-                    super({
+                    (super({
                         data: t,
                         selectedTabIndex: (function (t, e) {
                             var a, s, i, o, r;
@@ -764,12 +764,12 @@
                         (0, i._)(this, 'tabIdQueryParamController', void 0),
                         (0, i._)(this, 'isVisible', new h.rm(() => !0)),
                         (this.metadataSource = a),
-                        (this.tabIdQueryParamController = e);
+                        (this.tabIdQueryParamController = e));
                 }
             }
             class w extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -782,12 +782,12 @@
                                     !!((null == (t = this.data.meta) ? void 0 : t.favorites) && (null == (e = this.data.meta) ? void 0 : e.history))
                                 );
                             }),
-                        );
+                        ));
                 }
             }
             class f extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -800,12 +800,12 @@
                                     (null != (a = null == (e = this.data.meta) || null == (t = e.items) ? void 0 : t.length) ? a : 0) > 0
                                 );
                             }),
-                        );
+                        ));
                 }
             }
             class I extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -818,12 +818,12 @@
                                     (null != (e = null == (t = this.data.meta) ? void 0 : t.items.length) ? e : 0) > 0
                                 );
                             }),
-                        );
+                        ));
                 }
             }
             class R extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -841,12 +841,12 @@
                                     })
                                 );
                             }),
-                        );
+                        ));
                 }
             }
             class A extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -861,12 +861,12 @@
                                     isNotEmpty: !!t,
                                 });
                             }),
-                        );
+                        ));
                 }
             }
             class C extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -883,17 +883,17 @@
                                     isNotEmpty: !a && !s,
                                 });
                             }),
-                        );
+                        ));
                 }
             }
             class p extends u {
                 constructor(...t) {
-                    super(...t), (0, i._)(this, 'isVisible', new h.rm(() => !0));
+                    (super(...t), (0, i._)(this, 'isVisible', new h.rm(() => !0)));
                 }
             }
             class P extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -906,12 +906,12 @@
                                     (null != (e = null == (t = this.data.meta) ? void 0 : t.items.length) ? e : 0) > 0
                                 );
                             }),
-                        );
+                        ));
                 }
             }
             class N extends u {
                 constructor(...t) {
-                    super(...t),
+                    (super(...t),
                         (0, i._)(
                             this,
                             'isVisible',
@@ -926,12 +926,12 @@
                                     isNeededToLoad: this.isNeededToLoad,
                                 });
                             }),
-                        );
+                        ));
                 }
             }
             class B extends u {
                 constructor(...t) {
-                    super(...t), (0, i._)(this, 'isVisible', new h.rm(() => !!this.isLoading || !!this.isRejected || !!this.isNeededToLoad || !!this.data.meta));
+                    (super(...t), (0, i._)(this, 'isVisible', new h.rm(() => !!this.isLoading || !!this.isRejected || !!this.isNeededToLoad || !!this.data.meta)));
                 }
             }
             class O {
@@ -1025,12 +1025,12 @@
                     return new d.ZZ(t);
                 }
                 constructor(t) {
-                    (0, i._)(this, 'hooksEmitter', void 0),
+                    ((0, i._)(this, 'hooksEmitter', void 0),
                         (0, i._)(this, 'metadataSourceFactory', void 0),
                         (0, i._)(this, 'tabIdQueryParamController', void 0),
                         (this.metadataSourceFactory = new _(t.landingResource)),
                         (this.tabIdQueryParamController = t.tabIdQueryParamController),
-                        (this.hooksEmitter = t.hooksEmitter);
+                        (this.hooksEmitter = t.hooksEmitter));
                 }
             }
             class D {
@@ -1041,12 +1041,12 @@
                     return new d.xd({ data: e, hooksEmitter: a, skeletonMetadataSource: s, nodeFactory: i });
                 }
                 constructor({ landingResource: t, artistsResource: e, tabIdQueryParamController: a }) {
-                    (0, i._)(this, 'landingResource', void 0),
+                    ((0, i._)(this, 'landingResource', void 0),
                         (0, i._)(this, 'artistsResource', void 0),
                         (0, i._)(this, 'tabIdQueryParamController', void 0),
                         (this.landingResource = t),
                         (this.artistsResource = e),
-                        (this.tabIdQueryParamController = a);
+                        (this.tabIdQueryParamController = a));
                 }
             }
         },

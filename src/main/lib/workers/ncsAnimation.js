@@ -160,12 +160,12 @@ void main() {
             for (let band = 0; band < 2; band++) {
                 const center = band === 0 ? 100 : 1000;
                 const first = Math.max(1, Math.floor(center / 4 / binHz));
-                const last = Math.min(linearSpectrum.length - 1, Math.ceil(center * 4 / binHz));
+                const last = Math.min(linearSpectrum.length - 1, Math.ceil((center * 4) / binHz));
                 let power = 0;
                 for (let bin = first; bin <= last; bin++) {
                     const amplitude = Number(linearSpectrum[bin]);
                     if (!Number.isFinite(amplitude) || amplitude <= 0) continue;
-                    const distance = Math.log2(bin * binHz / center) / 0.5;
+                    const distance = Math.log2((bin * binHz) / center) / 0.5;
                     power += amplitude * amplitude * Math.exp(-0.5 * distance * distance);
                 }
                 this.bandTargets[band] = 1 - Math.exp(-12 * Math.sqrt(power));
@@ -294,10 +294,14 @@ void main() {
     // variants preserves Low / Medium / High without rewriting the setting.
     function getResolution(resolution) {
         switch (Number(resolution)) {
-            case 300: return 700;
-            case 650: return 1400;
-            case 1400: return 2000;
-            default: return resolution;
+            case 300:
+                return 700;
+            case 650:
+                return 1400;
+            case 1400:
+                return 2000;
+            default:
+                return resolution;
         }
     }
 

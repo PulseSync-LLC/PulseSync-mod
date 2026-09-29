@@ -84,10 +84,10 @@
                     { canBack: b, canForward: S, moveBack: E, moveForward: O } = (0, f.J)(v),
                     h = (0, i.useRef)(null),
                     C = (0, u.c)((e) => {
-                        e.stopPropagation(), E();
+                        (e.stopPropagation(), E());
                     }),
                     y = (0, u.c)((e) => {
-                        e.stopPropagation(), O();
+                        (e.stopPropagation(), O());
                     });
                 return (
                     (0, i.useEffect)(() => {
@@ -127,7 +127,7 @@
             'use strict';
             r.d(t, { V: () => n });
             var n = (function (e) {
-                return (e.WINDOWS = 'Windows'), (e.MACOS = 'MacOS'), (e.LINUX = 'Linux'), e;
+                return ((e.WINDOWS = 'Windows'), (e.MACOS = 'MacOS'), (e.LINUX = 'Linux'), e);
             })({});
         },
         15509: (e, t, r) => {
@@ -156,7 +156,7 @@
                             ...b
                         } = e,
                         S = (0, o.c)((e) => {
-                            e.stopPropagation(), e.preventDefault(), null == d || d();
+                            (e.stopPropagation(), e.preventDefault(), null == d || d());
                         });
                     return f
                         ? (0, n.jsx)(l.W, { className: t, isActive: c, radius: 'xxxl' })
@@ -278,7 +278,7 @@
             'use strict';
             r.d(t, { z: () => n });
             var n = (function (e) {
-                return (e.MUSIC = 'music'), e;
+                return ((e.MUSIC = 'music'), e);
             })({});
         },
         27246: (e, t, r) => {
@@ -310,7 +310,7 @@
             'use strict';
             r.d(t, { N: () => n });
             var n = (function (e) {
-                return (e.IntroPlan = 'IntroPlan'), (e.IntroUntilPlan = 'IntroUntilPlan'), (e.TrialPlan = 'TrialPlan'), (e.TrialUntilPlan = 'TrialUntilPlan'), e;
+                return ((e.IntroPlan = 'IntroPlan'), (e.IntroUntilPlan = 'IntroUntilPlan'), (e.TrialPlan = 'TrialPlan'), (e.TrialUntilPlan = 'TrialUntilPlan'), e);
             })({});
         },
         47197: (e, t, r) => {
@@ -336,7 +336,7 @@
             'use strict';
             r.d(t, { G: () => n });
             var n = (function (e) {
-                return (e.IDLE = 'IDLE'), (e.PENDING = 'PENDING'), (e.RESOLVE = 'RESOLVE'), (e.REJECT = 'REJECT'), e;
+                return ((e.IDLE = 'IDLE'), (e.PENDING = 'PENDING'), (e.RESOLVE = 'RESOLVE'), (e.REJECT = 'REJECT'), e);
             })({});
         },
         54862: (e, t, r) => {
@@ -351,13 +351,13 @@
                 },
                 i = {},
                 l = {};
-            (() => {
-                Object.defineProperty(l, '__esModule', { value: !0 }), (l.useForceUpdateRef = void 0);
+            ((() => {
+                (Object.defineProperty(l, '__esModule', { value: !0 }), (l.useForceUpdateRef = void 0));
                 let e = (function e(t) {
                     var r = i[t];
                     if (void 0 !== r) return r.exports;
                     var n = (i[t] = { exports: {} });
-                    return o[t](n, n.exports, e), n.exports;
+                    return (o[t](n, n.exports, e), n.exports);
                 })(810);
                 l.useForceUpdateRef = () => {
                     let [t, r] = (0, e.useState)(null);
@@ -369,7 +369,7 @@
                     ];
                 };
             })(),
-                l.__esModule;
+                l.__esModule);
             var s = l.useForceUpdateRef;
         },
         61945: (e, t, r) => {
@@ -435,7 +435,7 @@
             var n = {
                     5881: (e, t, r) => {
                         function n() {
-                            for (var e, t, r = 0, n = ''; r < arguments.length; )
+                            for (var e, t, r = 0, n = ''; r < arguments.length;)
                                 (e = arguments[r++]) &&
                                     (t = (function e(t) {
                                         var r,
@@ -450,11 +450,11 @@
                                     (n && (n += ' '), (n += t));
                             return n;
                         }
-                        r.r(t), r.d(t, { clsx: () => n, default: () => a });
+                        (r.r(t), r.d(t, { clsx: () => n, default: () => a }));
                         let a = n;
                     },
                     631: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => n });
+                        (r.r(t), r.d(t, { default: () => n }));
                         let n = {
                             root: 'JD1RZC0EtdwegdYvGm6W',
                             root_active: 'K4G7ASZk9TWzXzAWMZKF',
@@ -478,7 +478,7 @@
                             else n = t;
                             return { $$typeof: r, type: e, key: a, ref: void 0 !== (t = n.ref) ? t : null, props: n };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = n), (t.jsxs = n);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = n), (t.jsxs = n));
                     },
                     4377: (e, t, r) => {
                         e.exports = r(9097);
@@ -489,7 +489,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Shimmer = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Shimmer = void 0));
                         let a = r(4377),
                             o = r(5881),
                             i = n(r(631));
@@ -516,19 +516,19 @@
                 var t = a[e];
                 if (void 0 !== t) return t.exports;
                 var r = (a[e] = { exports: {} });
-                return n[e].call(r.exports, r, r.exports, o), r.exports;
+                return (n[e].call(r.exports, r, r.exports, o), r.exports);
             }
-            (o.d = (e, t) => {
+            ((o.d = (e, t) => {
                 for (var r in t) o.o(t, r) && !o.o(e, r) && Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
             }),
                 (o.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (o.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var i = {};
             (() => {
-                Object.defineProperty(i, 'X', { value: !0 }), (i.q = void 0);
+                (Object.defineProperty(i, 'X', { value: !0 }), (i.q = void 0));
                 var e = o(3186);
                 Object.defineProperty(i, 'q', {
                     enumerable: !0,
@@ -676,7 +676,7 @@
                         { frontSessionStart: r, loadOffersResulted: n } = S(t),
                         i = (0, o.j)(),
                         l = e.getLoadingState(i.page);
-                    (0, a.useEffect)(() => {
+                    ((0, a.useEffect)(() => {
                         l === E.G.RESOLVE && !e.isFrontSessionStartSent && t && (r({ serviceSessionId: e.serviceSessionId }), e.toggleIsFrontSessionStartSentTrue());
                     }, [e, l, e.isFrontSessionStartSent, r, i.page, t]),
                         (0, a.useEffect)(() => {
@@ -694,7 +694,7 @@
                                     })(e, i),
                                 ),
                                 e.toggleIsLoadOffersResultSentTrue(i.page));
-                        }, [e, l, e.getIsLoadOffersResultSent, n, i, t]);
+                        }, [e, l, e.getIsLoadOffersResultSent, n, i, t]));
                 },
                 C = function (e) {
                     let t = !(arguments.length > 1) || void 0 === arguments[1] || arguments[1],
@@ -797,9 +797,9 @@
                     Z = (0, a.useRef)(!1),
                     $ = (0, a.useRef)(!1),
                     Q = (0, a.useCallback)(() => {
-                        ($.current = !0), (Z.current = !1), R && (X(), (Z.current = !0));
+                        (($.current = !0), (Z.current = !1), R && (X(), (Z.current = !0)));
                     }, [R, X]);
-                (0, a.useEffect)(() => {
+                ((0, a.useEffect)(() => {
                     $.current && R && !Z.current && (X(), (Z.current = !0));
                 }, [R, X]),
                     ((e) => {
@@ -814,7 +814,7 @@
                             v = (0, y.c)(r),
                             _ = (0, a.useMemo)(() => (c ? ((i.current = c), [i]) : []), [c]),
                             { isIntersecting: m } = null != (t = (0, x.BL)(_, { preflightCheck: !1 }, !c || !o)[null != f ? f : '']) ? t : {};
-                        (0, a.useEffect)(() => {
+                        ((0, a.useEffect)(() => {
                             g ? (!0 !== d.current && !0 === p && (u.current = !0), (d.current = p)) : (u.current = !0);
                         }, [p, g, f]),
                             (0, a.useEffect)(() => {
@@ -834,15 +834,15 @@
                                 let e = m && (void 0 === p || p) && !l.current && u.current,
                                     t = !1 === m || (void 0 !== p && !1 === p);
                                 e ? (v(), (l.current = !0)) : t && l.current && (l.current = !1);
-                            }, [m, p, v, f]);
+                            }, [m, p, v, f]));
                     })({ offerElement: g, isEnabled: v, onShow: Q }),
                     ((e) => {
                         let { onClick: t, offerElement: r, isEnabled: n } = e,
                             { element: o } = r || {};
                         (0, a.useEffect)(() => {
-                            if (o && n) return o.addEventListener('click', t), () => o.removeEventListener('click', t);
+                            if (o && n) return (o.addEventListener('click', t), () => o.removeEventListener('click', t));
                         }, [o, t, n]);
-                    })({ offerElement: g, isEnabled: v, onClick: J });
+                    })({ offerElement: g, isEnabled: v, onClick: J }));
                 let ee = (0, a.useCallback)(() => {
                         let e = m.get(i.QG),
                             t = m.get(i.vH);

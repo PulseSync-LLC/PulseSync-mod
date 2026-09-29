@@ -4,10 +4,10 @@
         3961: (e, t, r) => {
             'use strict';
             var l;
-            r.d(t, { z: () => l }),
+            (r.d(t, { z: () => l }),
                 (function (e) {
-                    (e.ROOM_DUPLICATION = 'ROOM_DUPLICATION'), (e.ROOM_NOT_FOUND = 'ROOM_NOT_FOUND'), (e.ROOM_LIMIT_EXCEEDED = 'ROOM_LIMIT_EXCEEDED');
-                })(l || (l = {}));
+                    ((e.ROOM_DUPLICATION = 'ROOM_DUPLICATION'), (e.ROOM_NOT_FOUND = 'ROOM_NOT_FOUND'), (e.ROOM_LIMIT_EXCEEDED = 'ROOM_LIMIT_EXCEEDED'));
+                })(l || (l = {})));
         },
         14537: (e, t, r) => {
             'use strict';
@@ -79,31 +79,31 @@
                             [i, c] = (0, s.useState)(!1),
                             p = (0, s.useRef)(!1),
                             f = (0, n.c)(() => {
-                                c(!1), (p.current = !1);
+                                (c(!1), (p.current = !1));
                             });
                         return {
                             createVibeRoom: (0, n.c)(async () => {
                                 if (p.current) return;
-                                c(!0), (p.current = !0);
+                                (c(!0), (p.current = !0));
                                 let e = await r.createRoom(),
                                     n = r.createdRoomId;
                                 if (e === h.F.ERROR && r.errorName === L.z.ROOM_LIMIT_EXCEEDED) {
-                                    C((0, l.jsx)(b, {}), { containerId: d.u.INFO }), r.resetErrorName(), f();
+                                    (C((0, l.jsx)(b, {}), { containerId: d.u.INFO }), r.resetErrorName(), f());
                                     return;
                                 }
                                 if (e === h.F.OK && n) {
-                                    await o({ roomId: n, onSuccess: t }), f();
+                                    (await o({ roomId: n, onSuccess: t }), f());
                                     return;
                                 }
-                                C((0, l.jsx)(V.h, { error: a({ id: 'error-messages.multivibe-create-link' }) }), { containerId: d.u.ERROR }), f();
+                                (C((0, l.jsx)(V.h, { error: a({ id: 'error-messages.multivibe-create-link' }) }), { containerId: d.u.ERROR }), f());
                             }),
                             isPending: i,
                         };
                     })({ onSuccess: C }),
                     M = (0, c.m)(),
                     E = (0, n.c)(() => {
-                        M({ actionType: a.X2.Copied, objectType: a.ky.Link, userInteractionType: a.gi.Tap, objectPosX: 1, objectPosY: 1, objectCount: 0, objectId: '' }),
-                            p();
+                        (M({ actionType: a.X2.Copied, objectType: a.ky.Link, userInteractionType: a.gi.Tap, objectPosX: 1, objectPosY: 1, objectCount: 0, objectId: '' }),
+                            p());
                     });
                 return (0, l.jsx)(o.$, {
                     color: 'primary',
@@ -513,7 +513,7 @@
                             let { roomId: C, onSuccess: n } = r;
                             try {
                                 let { href: t } = (0, a.getLinkAttributesBase)('/multivibe/:roomId', { params: { roomId: C }, options: { host: 'https://'.concat(d) } });
-                                await window.navigator.clipboard.writeText(t), e((0, l.jsx)(f, {}), { containerId: c.u.INFO }), null == n || n();
+                                (await window.navigator.clipboard.writeText(t), e((0, l.jsx)(f, {}), { containerId: c.u.INFO }), null == n || n());
                             } catch (r) {
                                 e((0, l.jsx)(L.h, { error: t({ id: 'error-messages.multivibe-create-link' }) }), { containerId: c.u.ERROR });
                             }
@@ -621,7 +621,7 @@
                         (e) => {
                             if (s && ['Enter', 'Escape'].includes(e.key)) {
                                 var t;
-                                'Escape' === e.key && (h.current = !0), null == (t = e.currentTarget) || t.blur();
+                                ('Escape' === e.key && (h.current = !0), null == (t = e.currentTarget) || t.blur());
                             }
                         },
                         [s],
@@ -630,7 +630,7 @@
                         let e = m.trim();
                         h.current || (o && e.length < o) ? ((h.current = !1), null == L || L(r)) : null == L || L(e);
                     }, [m, h, o, L, r]);
-                (0, n.useEffect)(() => {
+                ((0, n.useEffect)(() => {
                     V.current && ((V.current.selectionStart = V.current.value.length), (V.current.selectionEnd = V.current.value.length));
                 }, []),
                     (0, n.useLayoutEffect)(() => {
@@ -640,7 +640,7 @@
                             let t = e.scrollHeight;
                             e.style.height = ''.concat(t, 'px');
                         }
-                    }, [V, m]);
+                    }, [V, m]));
                 let E = (0, n.useMemo)(() => ('textarea' === c ? (e) => (0, l.jsx)('textarea', { ref: V, rows: 6, ...e }) : (e) => (0, l.jsx)('input', { ...e })), [c]);
                 return (0, l.jsx)(E, {
                     className: (0, C.$)(i().root, t, { [i().root_textarea]: 'textarea' === c, [i().root_outline]: d }),
@@ -708,7 +708,7 @@
                     L = (0, s.Z)(c.Z.collectionVibeRooms.href),
                     d = (0, i.N)(),
                     m = (0, n.c)(() => {
-                        L(), null == r || r(), d({ to: a.QT.MultivibeScreen, objectType: a.ky.Link });
+                        (L(), null == r || r(), d({ to: a.QT.MultivibeScreen, objectType: a.ky.Link }));
                     });
                 return (0, l.jsx)(o.$, {
                     color: 'secondary',

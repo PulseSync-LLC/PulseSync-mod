@@ -3,7 +3,7 @@
     {
         11560: (e, i, t) => {
             'use strict';
-            t.r(i), t.d(i, { VibeWidgetFallbackAnimation: () => g });
+            (t.r(i), t.d(i, { VibeWidgetFallbackAnimation: () => g }));
             var a = t(32290),
                 _ = t(63618),
                 n = t(96103),

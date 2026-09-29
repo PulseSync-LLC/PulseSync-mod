@@ -62,7 +62,7 @@
                         if (!Q()) {
                             if (L) return void w();
                             if (D) return void z.open();
-                            G || U || (J(!0), null == X || X()), Z(), H(!U);
+                            (G || U || (J(!0), null == X || X()), Z(), H(!U));
                         }
                     }),
                     ti = (0, _.c)(() => {
@@ -71,7 +71,7 @@
                     }),
                     te = (0, _.c)((t) => {
                         if (!s.isAvailable && !s.hasModalAccess) {
-                            L && s.isAvailableOnlyForPlus && w(), D && s.isAvailableOnlyForPlus && z.open();
+                            (L && s.isAvailableOnlyForPlus && w(), D && s.isAvailableOnlyForPlus && z.open());
                             return;
                         }
                         if (L) return void w();
@@ -194,7 +194,7 @@
                     Z = (0, n.c)(() => {
                         if (!V()) {
                             if (R) return void U(!0);
-                            B || K || (z(!0), null == H || H()), F(), Y(!K);
+                            (B || K || (z(!0), null == H || H()), F(), Y(!K));
                         }
                     }),
                     q = (0, n.c)(() => {
@@ -369,12 +369,12 @@
                         m = (0, L.K)(s),
                         [x, p] = (0, r.useState)(!1),
                         v = (0, _.c)(async () => {
-                            x || s.isLiked || (p(!0), null == A || A()), await m();
+                            (x || s.isLiked || (p(!0), null == A || A()), await m());
                         }),
                         k = (0, w.F)(),
                         b = (0, _.c)((t) => {
                             if ((t.stopPropagation(), u())) return void t.preventDefault();
-                            d.openArtistTrailer(s.id), k(n.ky.Artist, s.id);
+                            (d.openArtistTrailer(s.id), k(n.ky.Artist, s.id));
                         });
                     return (0, a.jsxs)('div', {
                         className: (0, l.$)(z().root, z().controls, e, { [z().controls_disabled]: !s.isAvailable }),
@@ -434,19 +434,19 @@
                         G = (0, m.S)({ artist: e, callback: Y }),
                         J = (0, m.S)({ artist: e, callback: X }),
                         tt = (0, _.c)((t) => {
-                            null == V || V(), F({ to: n.QT.ArtistScreen }), G(t);
+                            (null == V || V(), F({ to: n.QT.ArtistScreen }), G(t));
                         }),
                         ti = (0, _.c)(() => {
                             if (!U()) {
                                 if (Z) return void Q.open();
-                                R || q || (H(!0), null == K || K()), J(), O(!q);
+                                (R || q || (H(!0), null == K || K()), J(), O(!q));
                             }
                         }),
                         te = (0, _.c)((t) => {
-                            (0, u.P)(t, T.$f.ripple), tt(t);
+                            ((0, u.P)(t, T.$f.ripple), tt(t));
                         }),
                         ta = (0, _.c)((t) => {
-                            t.stopPropagation(), tt(t);
+                            (t.stopPropagation(), tt(t));
                         }),
                         tl = (0, r.useCallback)(
                             (t) =>
@@ -501,10 +501,10 @@
         44884: (t, i, e) => {
             'use strict';
             var a;
-            e.d(i, { b: () => a }),
+            (e.d(i, { b: () => a }),
                 (function (t) {
-                    (t.Album = 'album'), (t.Artist = 'artist'), (t.Playlist = 'playlist'), (t.Radio = 'fm_radio'), (t.Other = 'other'), (t.Search = 'search');
-                })(a || (a = {}));
+                    ((t.Album = 'album'), (t.Artist = 'artist'), (t.Playlist = 'playlist'), (t.Radio = 'fm_radio'), (t.Other = 'other'), (t.Search = 'search'));
+                })(a || (a = {})));
         },
         50476: (t, i, e) => {
             'use strict';
@@ -554,12 +554,12 @@
                     C = (0, w.K)(s),
                     [p, v] = (0, r.useState)(!1),
                     k = (0, u.c)(async () => {
-                        p || s.isLiked || (v(!0), null == A || A()), await C();
+                        (p || s.isLiked || (v(!0), null == A || A()), await C());
                     }),
                     b = (0, M.F)(),
                     y = (0, u.c)((t) => {
                         if ((t.stopPropagation(), _())) return void t.preventDefault();
-                        d.openPlaylistTrailer(s.id), b(c.ky.Playlist, s.id);
+                        (d.openPlaylistTrailer(s.id), b(c.ky.Playlist, s.id));
                     });
                 return (0, a.jsxs)('div', {
                     className: (0, l.$)(D().root, D().controls, e, { [D().controls_disabled]: !s.isAvailable }),
@@ -621,19 +621,19 @@
                     } = (0, f.D)({ playContextParams: { contextData: { type: _.K.Playlist, meta: { id: e.id, uuid: e.uuid }, from: z }, loadContextMeta: !0 } }),
                     te = (0, h.Z)(e.url),
                     ta = (0, u.c)((t) => {
-                        null == Z || Z(), W({ to: c.QT.PlaylistScreen }), t.preventDefault(), te(t);
+                        (null == Z || Z(), W({ to: c.QT.PlaylistScreen }), t.preventDefault(), te(t));
                     }),
                     tl = (0, u.c)(() => {
                         if (!Q()) {
                             if (G) return void X.open();
-                            D || J || (H(!0), null == q || q()), ti(), O(!J);
+                            (D || J || (H(!0), null == q || q()), ti(), O(!J));
                         }
                     }),
                     ts = (0, u.c)((t) => {
-                        (0, A.P)(t, P.$f.ripple), ta(t);
+                        ((0, A.P)(t, P.$f.ripple), ta(t));
                     }),
                     tr = (0, u.c)((t) => {
-                        t.stopPropagation(), ta(t);
+                        (t.stopPropagation(), ta(t));
                     }),
                     to = (0, r.useCallback)(
                         (t) =>
@@ -859,7 +859,7 @@
             'use strict';
             e.d(i, { h: () => a });
             var a = (function (t) {
-                return (t.SMALL = 'small'), (t.LARGE = 'large'), t;
+                return ((t.SMALL = 'small'), (t.LARGE = 'large'), t);
             })({});
         },
         88446: (t, i, e) => {
@@ -911,12 +911,12 @@
                         m = (0, M.K)(s),
                         [C, x] = (0, r.useState)(!1),
                         v = (0, d.c)(async () => {
-                            C || s.isLiked || (x(!0), null == A || A()), await m();
+                            (C || s.isLiked || (x(!0), null == A || A()), await m());
                         }),
                         k = (0, $.F)(),
                         b = (0, d.c)((t) => {
                             if ((t.stopPropagation(), u())) return void t.preventDefault();
-                            _.openAlbumTrailer(s.id), k(o.ky.Album, String(s.id));
+                            (_.openAlbumTrailer(s.id), k(o.ky.Album, String(s.id)));
                         });
                     return (0, a.jsxs)('div', {
                         className: (0, l.$)(R().root, R().controls, e, { [R().controls_disabled]: !s.isAvailable }),
@@ -976,19 +976,19 @@
                         ti = (0, m.c)({ album: e, callback: K }),
                         te = (0, m.c)({ album: e, callback: tt }),
                         ta = (0, d.c)((t) => {
-                            null == Q || Q(), q({ to: o.QT.AlbumScreen }), ti(t);
+                            (null == Q || Q(), q({ to: o.QT.AlbumScreen }), ti(t));
                         }),
                         tl = (0, d.c)(() => {
                             if (!F()) {
                                 if (X) return void W.open();
-                                O || G || (U(!0), null == Z || Z()), te(), V(!G);
+                                (O || G || (U(!0), null == Z || Z()), te(), V(!G));
                             }
                         }),
                         ts = (0, d.c)((t) => {
-                            (0, u.P)(t, I.$f.ripple), ta(t);
+                            ((0, u.P)(t, I.$f.ripple), ta(t));
                         }),
                         tr = (0, d.c)((t) => {
-                            t.stopPropagation(), ta(t);
+                            (t.stopPropagation(), ta(t));
                         }),
                         to = (0, r.useCallback)(
                             (t) =>

@@ -3,7 +3,7 @@
     {
         3187: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { default: () => G });
+            (r.r(t), r.d(t, { default: () => G }));
             var l = r(32290),
                 o = r(21916),
                 s = r(55178),
@@ -105,12 +105,12 @@
                         p.getData({ labelId: Number(t), page: e, pageSize: 20, sortBy: null != (r = p.sort.sortBy) ? r : S });
                     }),
                     Z = (0, c.c)(() => {
-                        p.reset(), J(0);
+                        (p.reset(), J(0));
                     });
-                ((e) => {
+                (((e) => {
                     let { sortModel: t } = e,
                         r = (0, v.X)();
-                    (0, s.useLayoutEffect)(() => {
+                    ((0, s.useLayoutEffect)(() => {
                         let e = new URL(window.location.href).searchParams.get(x.K.SORT);
                         e && (0, N.W)(e) ? t.setSortBy(e) : t.setSortBy(g.g.YEAR);
                     }, [t]),
@@ -119,18 +119,18 @@
                                 let e = (0, b.b)(x.K.SORT, t.sortBy);
                                 e && r(e);
                             }
-                        }, [r, t.sortBy]);
+                        }, [r, t.sortBy]));
                 })({ sortModel: p.sort }),
                     (0, D.X)(p.pagesLoader, J),
                     (0, s.useEffect)(
                         () => () => {
-                            A(), p.reset();
+                            (A(), p.reset());
                         },
                         [A, p],
                     ),
                     p.isNotFound && (0, o.notFound)(),
                     (0, W.Q)({ id: Number(f), name: null != C ? C : '', type: null != R ? R : '' }, W.T.ALBUMS),
-                    (0, B.J)(p.isResolved);
+                    (0, B.J)(p.isResolved));
                 let ee = (0, s.useMemo)(() => ({ Footer: () => (0, l.jsx)(M.A, { children: (0, l.jsx)(k.w, { className: z().footer }) }) }), []),
                     et = H({ id: 'entity-names.label-albums-list' }),
                     er = [];
@@ -225,7 +225,7 @@
             var q = r(17024);
             let G = () => {
                 let e = (0, o.useSearchParams)().get('labelId');
-                return (e && (0, q.L)(e)) || (0, o.notFound)(), (0, l.jsx)(s.Suspense, { fallback: (0, l.jsx)(Y, {}), children: (0, l.jsx)(X, { labelId: e }) });
+                return ((e && (0, q.L)(e)) || (0, o.notFound)(), (0, l.jsx)(s.Suspense, { fallback: (0, l.jsx)(Y, {}), children: (0, l.jsx)(X, { labelId: e }) }));
             };
         },
         4359: (e, t, r) => {
@@ -249,15 +249,15 @@
                     u = (0, o.useRef)(void 0),
                     m = (0, s.c)(() => {
                         var r;
-                        c({ notificationId: u.current }), (u.current = 0);
+                        (c({ notificationId: u.current }), (u.current = 0));
                         let l = [...(null != (r = e.lastRejectedPagesList) ? r : [])].reverse().filter((t) => {
                             var r;
                             return (null == (r = e.pageStates) ? void 0 : r[t]) === d.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             l.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, o.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = r((0, l.jsx)(a.L, { reloadBlocks: m }), { containerId: i.u.ERROR, autoClose: !1 }));
@@ -278,16 +278,16 @@
             let l = (e, t) => {
                 let r = new URL(window.location.href),
                     l = r.searchParams;
-                return l.set(e, t), (r.search = l.toString()), r.toString();
+                return (l.set(e, t), (r.search = l.toString()), r.toString());
             };
         },
         37215: (e, t, r) => {
             'use strict';
             var l;
-            r.d(t, { g: () => l }),
+            (r.d(t, { g: () => l }),
                 (function (e) {
-                    (e.RATING = 'rating'), (e.YEAR = 'year');
-                })(l || (l = {}));
+                    ((e.RATING = 'rating'), (e.YEAR = 'year'));
+                })(l || (l = {})));
         },
         39684: (e) => {
             e.exports = {
@@ -595,7 +595,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 7231, 7972, 6347, 3183, 9763, 6639, 7258, 8817, 6706, 1311, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 3266, 6477, 7275,
@@ -603,6 +603,6 @@
             ],
             () => e((e.s = 85844)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

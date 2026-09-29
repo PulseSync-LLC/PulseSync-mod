@@ -3,13 +3,13 @@
     {
         40121: (e, t) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'styles', {
                     enumerable: !0,
                     get: function () {
                         return l;
                     },
-                });
+                }));
             let l = {
                 error: {
                     fontFamily: 'system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"',
@@ -30,13 +30,13 @@
         },
         44406: (e, t, l) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'HTTPAccessErrorFallback', {
                     enumerable: !0,
                     get: function () {
                         return o;
                     },
-                });
+                }));
             let r = l(32290),
                 n = l(40121);
             function o(e) {
@@ -75,13 +75,13 @@
         },
         79536: (e, t, l) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'default', {
                     enumerable: !0,
                     get: function () {
                         return o;
                     },
-                });
+                }));
             let r = l(32290),
                 n = l(44406),
                 o = function () {
@@ -95,6 +95,6 @@
         },
     },
     (e) => {
-        e.O(0, [4220, 9562, 7358], () => e((e.s = 59548))), (_N_E = e.O());
+        (e.O(0, [4220, 9562, 7358], () => e((e.s = 59548))), (_N_E = e.O()));
     },
 ]);

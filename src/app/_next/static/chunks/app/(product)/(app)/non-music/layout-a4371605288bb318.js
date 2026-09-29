@@ -63,7 +63,7 @@
                         function i() {
                             this.constructor = t;
                         }
-                        e(t, o), (t.prototype = null === o ? Object.create(o) : ((i.prototype = o.prototype), new i()));
+                        (e(t, o), (t.prototype = null === o ? Object.create(o) : ((i.prototype = o.prototype), new i())));
                     };
                 })(),
                 n = function (e, t) {
@@ -96,7 +96,7 @@
                             a
                         );
                     }
-                    return i(t, e), t;
+                    return (i(t, e), t);
                 })(Error);
         },
         57594: (e, t, o) => {
@@ -239,11 +239,11 @@
             let r = (0, i.PA)((e) => {
                 let { children: t } = e,
                     { experiments: o } = (0, b.g)();
-                return o.checkExperiment(l.z.WebNextDisableNonMusic, 'on') && (0, n.redirect)(a.Z.main.href), t;
+                return (o.checkExperiment(l.z.WebNextDisableNonMusic, 'on') && (0, n.redirect)(a.Z.main.href), t);
             });
         },
     },
     (e) => {
-        e.O(0, [6706, 8892, 8511, 6477, 4220, 9562, 7358], () => e((e.s = 70015))), (_N_E = e.O());
+        (e.O(0, [6706, 8892, 8511, 6477, 4220, 9562, 7358], () => e((e.s = 70015))), (_N_E = e.O()));
     },
 ]);

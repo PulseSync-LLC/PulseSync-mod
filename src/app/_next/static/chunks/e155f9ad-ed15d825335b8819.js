@@ -15,11 +15,11 @@
                 p = r(92708),
                 f = r(49124);
             !(function (e) {
-                (e.afterCreate = 'afterCreate'),
+                ((e.afterCreate = 'afterCreate'),
                     (e.afterAttach = 'afterAttach'),
                     (e.afterCreationFinalization = 'afterCreationFinalization'),
                     (e.beforeDetach = 'beforeDetach'),
-                    (e.beforeDestroy = 'beforeDestroy');
+                    (e.beforeDestroy = 'beforeDestroy'));
             })(n || (n = {}));
             var b = function (e, t) {
                 return (b =
@@ -37,7 +37,7 @@
                 function r() {
                     this.constructor = e;
                 }
-                b(e, t), (e.prototype = null === t ? Object.create(t) : ((r.prototype = t.prototype), new r()));
+                (b(e, t), (e.prototype = null === t ? Object.create(t) : ((r.prototype = t.prototype), new r())));
             }
             var d = function () {
                 return (d =
@@ -56,7 +56,7 @@
                 if (e && 'number' == typeof e.length)
                     return {
                         next: function () {
-                            return e && n >= e.length && (e = void 0), { value: e && e[n++], done: !e };
+                            return (e && n >= e.length && (e = void 0), { value: e && e[n++], done: !e });
                         },
                     };
                 throw TypeError(t ? 'Object is not iterable.' : 'Symbol.iterator is not defined.');
@@ -69,7 +69,7 @@
                     a = r.call(e),
                     o = [];
                 try {
-                    for (; (void 0 === t || t-- > 0) && !(n = a.next()).done; ) o.push(n.value);
+                    for (; (void 0 === t || t-- > 0) && !(n = a.next()).done;) o.push(n.value);
                 } catch (e) {
                     i = { error: e };
                 } finally {
@@ -87,10 +87,10 @@
                 return e.concat(n || Array.prototype.slice.call(t));
             }
             function m(e) {
-                return en(e, 1), ei(e).type;
+                return (en(e, 1), ei(e).type);
             }
             function w(e, t) {
-                en(e, 1),
+                (en(e, 1),
                     eN(
                         t,
                         function (e) {
@@ -99,23 +99,23 @@
                         'object or array',
                         2,
                     ),
-                    ei(e).applyPatches(ey(t));
+                    ei(e).applyPatches(ey(t)));
             }
             function P(e, t) {
-                void 0 === t && (t = !0), en(e, 1);
+                (void 0 === t && (t = !0), en(e, 1));
                 var r = ei(e);
                 return t ? r.snapshot : ew(r.type.getSnapshot(r, !1));
             }
             function O(e) {
-                return en(e, 1), ei(e).root.storedValue;
+                return (en(e, 1), ei(e).root.storedValue);
             }
             function j(e, t) {
-                void 0 === t && (t = !0), en(e, 1);
+                (void 0 === t && (t = !0), en(e, 1));
                 var r = ei(e);
                 return r.type.create(r.snapshot, !0 === t ? r.root.environment : !1 === t ? void 0 : t);
             }
             function _(e) {
-                return en(e, 1), ei(e).detach(), e;
+                return (en(e, 1), ei(e).detach(), e);
             }
             function S(e) {
                 en(e, 1);
@@ -123,7 +123,7 @@
                 t.isRoot ? t.die() : t.parent.removeChild(t.subpath);
             }
             function I(e) {
-                return en(e, 1), ei(e).observableIsAlive;
+                return (en(e, 1), ei(e).observableIsAlive);
             }
             function A(e) {
                 en(e, 1);
@@ -138,7 +138,7 @@
             'function' == typeof SuppressedError && SuppressedError;
             var E = (function () {
                     function e(e, t, r, n) {
-                        Object.defineProperty(this, 'type', { enumerable: !0, configurable: !0, writable: !0, value: e }),
+                        (Object.defineProperty(this, 'type', { enumerable: !0, configurable: !0, writable: !0, value: e }),
                             Object.defineProperty(this, 'environment', { enumerable: !0, configurable: !0, writable: !0, value: n }),
                             Object.defineProperty(this, '_escapedSubpath', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, '_subpath', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -151,7 +151,7 @@
                             Object.defineProperty(this, '_parent', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'pathAtom', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             (this.environment = n),
-                            this.baseSetParent(t, r);
+                            this.baseSetParent(t, r));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'subpath', {
@@ -208,7 +208,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t) {
-                                return this._hookSubscribers || (this._hookSubscribers = new eI()), this._hookSubscribers.register(e, t);
+                                return (this._hookSubscribers || (this._hookSubscribers = new eI()), this._hookSubscribers.register(e, t));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'parent', {
@@ -231,7 +231,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t) {
-                                (this._parent = e), (this._subpath = t), (this._escapedSubpath = void 0), this.pathAtom && this.pathAtom.reportChanged();
+                                ((this._parent = e), (this._subpath = t), (this._escapedSubpath = void 0), this.pathAtom && this.pathAtom.reportChanged());
                             },
                         }),
                         Object.defineProperty(e.prototype, 'path', {
@@ -275,7 +275,7 @@
                         }),
                         Object.defineProperty(e.prototype, 'observableIsAlive', {
                             get: function () {
-                                return this.aliveAtom || (this.aliveAtom = (0, p.MN)('alive')), this.aliveAtom.reportObserved(), this.isAlive;
+                                return (this.aliveAtom || (this.aliveAtom = (0, p.MN)('alive')), this.aliveAtom.reportObserved(), this.isAlive);
                             },
                             enumerable: !1,
                             configurable: !0,
@@ -291,7 +291,7 @@
                                         if (this.parent.state !== c.FINALIZED) return;
                                         this.fireHook(n.afterAttach);
                                     }
-                                    (this.state = c.FINALIZED), e && e();
+                                    ((this.state = c.FINALIZED), e && e());
                                 }
                             },
                         }),
@@ -300,11 +300,11 @@
                             configurable: !0,
                             writable: !0,
                             value: function () {
-                                this._hookSubscribers && this._hookSubscribers.clearAll(),
+                                (this._hookSubscribers && this._hookSubscribers.clearAll(),
                                     (this._subpathUponDeath = this._subpath),
                                     (this._pathUponDeath = this.getEscapedPath(!1)),
                                     this.baseSetParent(null, ''),
-                                    (this.state = c.DEAD);
+                                    (this.state = c.DEAD));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'baseAboutToDie', {
@@ -326,7 +326,7 @@
                         } catch (e) {
                             throw ((o.state = c.DEAD), e);
                         }
-                        return (o.state = c.CREATED), o.finalizeCreation(), o;
+                        return ((o.state = c.CREATED), o.finalizeCreation(), o);
                     }
                     return (
                         h(t, e),
@@ -347,7 +347,7 @@
                                     n = this.subpath !== t;
                                 if (r || n) {
                                     0;
-                                    (this.environment = void 0), this.baseSetParent(this.parent, t);
+                                    ((this.environment = void 0), this.baseSetParent(this.parent, t));
                                 }
                             },
                         }),
@@ -423,12 +423,12 @@
                 })(E);
             C.prototype.die = (0, p.XI)(C.prototype.die);
             var N = 1;
-            !(function (e) {
-                (e[(e.UNINITIALIZED = 0)] = 'UNINITIALIZED'), (e[(e.CREATING = 1)] = 'CREATING'), (e[(e.CREATED = 2)] = 'CREATED');
+            (!(function (e) {
+                ((e[(e.UNINITIALIZED = 0)] = 'UNINITIALIZED'), (e[(e.CREATING = 1)] = 'CREATING'), (e[(e.CREATED = 2)] = 'CREATED'));
             })(i || (i = {})),
                 (function (e) {
-                    (e.Dispose = 'dispose'), (e.Patch = 'patch'), (e.Snapshot = 'snapshot');
-                })(a || (a = {}));
+                    ((e.Dispose = 'dispose'), (e.Patch = 'patch'), (e.Snapshot = 'snapshot'));
+                })(a || (a = {})));
             var V = {
                     onError: function (e) {
                         throw e;
@@ -478,9 +478,9 @@
                             }
                             if ('string' != typeof u && 'number' != typeof u)
                                 throw new ef("Instance identifier '".concat(l.identifierAttribute, "' for type '").concat(l.type.name, "' must be a string or a number"));
-                            (l.identifier = '' + u), (l.unnormalizedIdentifier = u);
+                            ((l.identifier = '' + u), (l.unnormalizedIdentifier = u));
                         }
-                        return r ? r.root.identifierCache.addNodeToCache(l) : l.identifierCache.addNodeToCache(l), l;
+                        return (r ? r.root.identifierCache.addNodeToCache(l) : l.identifierCache.addNodeToCache(l), l);
                     }
                     return (
                         h(t, e),
@@ -489,7 +489,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                this.createObservableInstanceIfNeeded(), this._applyPatches(e);
+                                (this.createObservableInstanceIfNeeded(), this._applyPatches(e));
                             },
                         }),
                         Object.defineProperty(t.prototype, 'applySnapshot', {
@@ -497,7 +497,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                this.createObservableInstanceIfNeeded(), this._applySnapshot(e);
+                                (this.createObservableInstanceIfNeeded(), this._applySnapshot(e));
                             },
                         }),
                         Object.defineProperty(t.prototype, 'createObservableInstanceIfNeeded', {
@@ -505,7 +505,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                void 0 === e && (e = !0), this._observableInstanceState === i.UNINITIALIZED && this.createObservableInstance(e);
+                                (void 0 === e && (e = !0), this._observableInstanceState === i.UNINITIALIZED && this.createObservableInstance(e));
                             },
                         }),
                         Object.defineProperty(t.prototype, 'createObservableInstance', {
@@ -513,9 +513,9 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                void 0 === e && (e = !0), 0;
+                                (void 0 === e && (e = !0), 0);
                                 this._observableInstanceState = i.CREATING;
-                                for (var t, r, a, o, l = [], u = this.parent; u && u._observableInstanceState === i.UNINITIALIZED; ) l.unshift(u), (u = u.parent);
+                                for (var t, r, a, o, l = [], u = this.parent; u && u._observableInstanceState === i.UNINITIALIZED;) (l.unshift(u), (u = u.parent));
                                 try {
                                     for (var s = y(l), p = s.next(); !p.done; p = s.next()) {
                                         var f = p.value;
@@ -532,10 +532,10 @@
                                 }
                                 var b = this.type;
                                 try {
-                                    (this.storedValue = b.createNewInstance(this._childNodes)),
+                                    ((this.storedValue = b.createNewInstance(this._childNodes)),
                                         this.preboot(),
                                         (this._isRunningAction = !0),
-                                        b.finalizeNewInstance(this, this.storedValue);
+                                        b.finalizeNewInstance(this, this.storedValue));
                                 } catch (e) {
                                     throw ((this.state = c.DEAD), e);
                                 } finally {
@@ -549,11 +549,11 @@
                                     (this.state = c.CREATED),
                                     e)
                                 ) {
-                                    this.fireHook(n.afterCreate), this.finalizeCreation();
+                                    (this.fireHook(n.afterCreate), this.finalizeCreation());
                                     try {
                                         for (var h = y(l.reverse()), d = h.next(); !d.done; d = h.next()) {
                                             var f = d.value;
-                                            f.fireHook(n.afterCreate), f.finalizeCreation();
+                                            (f.fireHook(n.afterCreate), f.finalizeCreation());
                                         }
                                     } catch (e) {
                                         a = { error: e };
@@ -588,7 +588,7 @@
                                         r = t.environment,
                                         i = t.identifierCache.splitCache(this);
                                     try {
-                                        this.parent.removeChild(this.subpath), this.baseSetParent(null, ''), (this.environment = r), (this.identifierCache = i);
+                                        (this.parent.removeChild(this.subpath), this.baseSetParent(null, ''), (this.environment = r), (this.identifierCache = i));
                                     } finally {
                                         this.state = e;
                                     }
@@ -628,7 +628,7 @@
                         }),
                         Object.defineProperty(t.prototype, 'snapshot', {
                             get: function () {
-                                return this.hasSnapshotPostProcessor && this.createObservableInstanceIfNeeded(), this._snapshotComputed.get();
+                                return (this.hasSnapshotPostProcessor && this.createObservableInstanceIfNeeded(), this._snapshotComputed.get());
                             },
                             enumerable: !1,
                             configurable: !0,
@@ -662,7 +662,7 @@
                                     var e = this.type,
                                         t = this._childNodes,
                                         r = this._initialSnapshot;
-                                    (this._cachedInitialSnapshot = e.processInitialSnapshot(t, r)), (this._cachedInitialSnapshotCreated = !0);
+                                    ((this._cachedInitialSnapshot = e.processInitialSnapshot(t, r)), (this._cachedInitialSnapshotCreated = !0));
                                 }
                                 return this._cachedInitialSnapshot;
                             },
@@ -713,7 +713,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                this.assertAlive({ subpath: e }), (this._autoUnbox = !1);
+                                (this.assertAlive({ subpath: e }), (this._autoUnbox = !1));
                                 try {
                                     return this._observableInstanceState === i.CREATED ? this.type.getChildNode(this, e) : this._childNodes[e];
                                 } finally {
@@ -726,7 +726,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function () {
-                                this.assertAlive(es), (this._autoUnbox = !1);
+                                (this.assertAlive(es), (this._autoUnbox = !1));
                                 try {
                                     return this._observableInstanceState === i.CREATED ? this.type.getChildren(this) : el(this._childNodes);
                                 } finally {
@@ -826,14 +826,14 @@
                             writable: !0,
                             value: function () {
                                 var e = this;
-                                (this._applyPatches = W(this.storedValue, '@APPLY_PATCHES', function (t) {
+                                ((this._applyPatches = W(this.storedValue, '@APPLY_PATCHES', function (t) {
                                     t.forEach(function (t) {
                                         if (!t.path) return void e.type.applySnapshot(e, t.value);
                                         var r = (function (e) {
                                             var t = e.split('/').map(eR);
                                             if (!('' === e || '.' === e || '..' === e || eT(e, '/') || eT(e, './') || eT(e, '../')))
                                                 throw new ef("a json path must be either rooted, empty or relative, but got '".concat(e, "'"));
-                                            return '' === t[0] && t.shift(), t;
+                                            return ('' === t[0] && t.shift(), t);
                                         })(t.path);
                                         (function (e, t, r) {
                                             void 0 === r && (r = !0);
@@ -870,7 +870,7 @@
                                         if (t !== e.snapshot) return e.type.applySnapshot(e, t);
                                     })),
                                     e_(this.storedValue, '$treenode', this),
-                                    e_(this.storedValue, 'toJSON', eo);
+                                    e_(this.storedValue, 'toJSON', eo));
                             },
                         }),
                         Object.defineProperty(t.prototype, 'die', {
@@ -900,12 +900,12 @@
                             configurable: !0,
                             writable: !0,
                             value: function () {
-                                this.getChildren().forEach(function (e) {
+                                (this.getChildren().forEach(function (e) {
                                     e.finalizeDeath();
                                 }),
-                                    this.root.identifierCache.notifyDied(this);
+                                    this.root.identifierCache.notifyDied(this));
                                 var e = this.snapshot;
-                                (this._snapshotUponDeath = e), this._internalEventsClearAll(), this.baseFinalizeDeath();
+                                ((this._snapshotUponDeath = e), this._internalEventsClearAll(), this.baseFinalizeDeath());
                             },
                         }),
                         Object.defineProperty(t.prototype, 'onSnapshot', {
@@ -913,7 +913,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                return this._addSnapshotReaction(), this._internalEventsRegister(a.Snapshot, e);
+                                return (this._addSnapshotReaction(), this._internalEventsRegister(a.Snapshot, e));
                             },
                         }),
                         Object.defineProperty(t.prototype, 'emitSnapshot', {
@@ -1041,7 +1041,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t) {
-                                this.assertWritable({ subpath: e }), this.createObservableInstanceIfNeeded(), this.type.applyPatchLocally(this, e, t);
+                                (this.assertWritable({ subpath: e }), this.createObservableInstanceIfNeeded(), this.type.applyPatchLocally(this, e, t));
                             },
                         }),
                         Object.defineProperty(t.prototype, '_addSnapshotReaction', {
@@ -1060,7 +1060,7 @@
                                         },
                                         V,
                                     );
-                                    this.addDisposer(t), (this._hasSnapshotReaction = !0);
+                                    (this.addDisposer(t), (this._hasSnapshotReaction = !0));
                                 }
                             },
                         }),
@@ -1077,7 +1077,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t, r) {
-                                return void 0 === r && (r = !1), this._internalEvents || (this._internalEvents = new eI()), this._internalEvents.register(e, t, r);
+                                return (void 0 === r && (r = !1), this._internalEvents || (this._internalEvents = new eI()), this._internalEvents.register(e, t, r));
                             },
                         }),
                         Object.defineProperty(t.prototype, '_internalEventsHas', {
@@ -1124,11 +1124,11 @@
                         t
                     );
                 })(E);
-            (D.prototype.createObservableInstance = (0, p.XI)(D.prototype.createObservableInstance)),
+            ((D.prototype.createObservableInstance = (0, p.XI)(D.prototype.createObservableInstance)),
                 (D.prototype.detach = (0, p.XI)(D.prototype.detach)),
                 (D.prototype.die = (0, p.XI)(D.prototype.die)),
                 (function (e) {
-                    (e[(e.String = 1)] = 'String'),
+                    ((e[(e.String = 1)] = 'String'),
                         (e[(e.Number = 2)] = 'Number'),
                         (e[(e.Boolean = 4)] = 'Boolean'),
                         (e[(e.Date = 8)] = 'Date'),
@@ -1150,20 +1150,20 @@
                         (e[(e.SnapshotProcessor = 524288)] = 'SnapshotProcessor'),
                         (e[(e.Lazy = 1048576)] = 'Lazy'),
                         (e[(e.Finite = 2097152)] = 'Finite'),
-                        (e[(e.Float = 4194304)] = 'Float');
-                })(l || (l = {}));
+                        (e[(e.Float = 4194304)] = 'Float'));
+                })(l || (l = {})));
             var x = 'cannotDetermine',
                 k = Symbol('$type'),
                 z = (function () {
                     function e(e) {
-                        Object.defineProperty(this, o, { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        (Object.defineProperty(this, o, { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'C', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'S', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'T', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'N', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'isType', { enumerable: !0, configurable: !0, writable: !0, value: !0 }),
                             Object.defineProperty(this, 'name', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
-                            (this.name = e);
+                            (this.name = e));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'create', {
@@ -1171,7 +1171,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t) {
-                                return K(this, e), this.instantiate(null, '', t, e).value;
+                                return (K(this, e), this.instantiate(null, '', t, e).value);
                             },
                         }),
                         Object.defineProperty(e.prototype, 'getSnapshot', {
@@ -1249,11 +1249,11 @@
                         e
                     );
                 })();
-            (o = k), (z.prototype.create = (0, p.XI)(z.prototype.create));
+            ((o = k), (z.prototype.create = (0, p.XI)(z.prototype.create)));
             var R = (function (e) {
                 function t(t) {
                     var r = e.call(this, t) || this;
-                    return Object.defineProperty(r, 'identifierAttribute', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }), r;
+                    return (Object.defineProperty(r, 'identifierAttribute', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }), r);
                 }
                 return (
                     h(t, e),
@@ -1262,7 +1262,7 @@
                         configurable: !0,
                         writable: !0,
                         value: function (t, r) {
-                            return void 0 === t && (t = this.getDefaultSnapshot()), e.prototype.create.call(this, t, r);
+                            return (void 0 === t && (t = this.getDefaultSnapshot()), e.prototype.create.call(this, t, r));
                         },
                     }),
                     Object.defineProperty(t.prototype, 'getValue', {
@@ -1270,7 +1270,7 @@
                         configurable: !0,
                         writable: !0,
                         value: function (e) {
-                            return e.createObservableInstanceIfNeeded(), e.storedValue;
+                            return (e.createObservableInstanceIfNeeded(), e.storedValue);
                         },
                     }),
                     Object.defineProperty(t.prototype, 'isMatchingSnapshotId', {
@@ -1298,10 +1298,10 @@
                         configurable: !0,
                         writable: !0,
                         value: function (e, t, r, n) {
-                            if (this.tryToReconcileNode(e, t)) return e.setParent(r, n), e;
+                            if (this.tryToReconcileNode(e, t)) return (e.setParent(r, n), e);
                             if ((e.die(), er(t) && this.isAssignableFrom(m(t)))) {
                                 var i = ei(t);
-                                return i.setParent(r, n), i;
+                                return (i.setParent(r, n), i);
                             }
                             return this.instantiate(r, n, void 0, t);
                         },
@@ -1355,7 +1355,7 @@
                         value: function (e, t, r, n) {
                             if (!e.isDetaching && e.type === this && e.storedValue === t) return e;
                             var i = this.instantiate(r, n, void 0, t);
-                            return e.die(), i;
+                            return (e.die(), i);
                         },
                     }),
                     Object.defineProperty(t.prototype, 'getSubTypes', {
@@ -1377,13 +1377,13 @@
             }
             !(function () {
                 function e(e, t) {
-                    Object.defineProperty(this, 'hooks', { enumerable: !0, configurable: !0, writable: !0, value: e }),
+                    (Object.defineProperty(this, 'hooks', { enumerable: !0, configurable: !0, writable: !0, value: e }),
                         Object.defineProperty(this, 'call', { enumerable: !0, configurable: !0, writable: !0, value: t }),
                         Object.defineProperty(this, 'flowsPending', { enumerable: !0, configurable: !0, writable: !0, value: 0 }),
                         Object.defineProperty(this, 'running', { enumerable: !0, configurable: !0, writable: !0, value: !0 }),
-                        e && e.onStart(t);
+                        e && e.onStart(t));
                 }
-                Object.defineProperty(e.prototype, 'finish', {
+                (Object.defineProperty(e.prototype, 'finish', {
                     enumerable: !1,
                     configurable: !0,
                     writable: !0,
@@ -1413,7 +1413,7 @@
                         },
                         enumerable: !1,
                         configurable: !0,
-                    });
+                    }));
             })();
             var L = 1;
             function U(e, t) {
@@ -1441,10 +1441,10 @@
                             (i(
                                 t,
                                 function (t, r) {
-                                    (a = !0), (f = e(t)), r && (f = r(f));
+                                    ((a = !0), (f = e(t)), r && (f = r(f)));
                                 },
                                 function (e) {
-                                    (o = !0), (f = e);
+                                    ((o = !0), (f = e));
                                 },
                             ),
                             (function () {
@@ -1473,7 +1473,7 @@
                         return f;
                     })(l);
                 } finally {
-                    (u = a), (r._isRunningAction = i);
+                    ((u = a), (r._isRunningAction = i));
                 }
             }
             function Z(e) {
@@ -1501,15 +1501,15 @@
                         r,
                     );
                 };
-                return (n._isMSTAction = !0), (n._isFlowAction = r._isFlowAction), n;
+                return ((n._isMSTAction = !0), (n._isFlowAction = r._isFlowAction), n);
             }
             var G = (function () {
                 function e(e, t) {
-                    Object.defineProperty(this, 'arrayIndex', { enumerable: !0, configurable: !0, writable: !0, value: 0 }),
+                    (Object.defineProperty(this, 'arrayIndex', { enumerable: !0, configurable: !0, writable: !0, value: 0 }),
                         Object.defineProperty(this, 'inArrayIndex', { enumerable: !0, configurable: !0, writable: !0, value: 0 }),
                         Object.defineProperty(this, 'middlewares', { enumerable: !0, configurable: !0, writable: !0, value: [] }),
-                        t.$mst_middleware && this.middlewares.push(t.$mst_middleware);
-                    for (var r = e; r; ) r.middlewares && this.middlewares.push(r.middlewares), (r = r.parent);
+                        t.$mst_middleware && this.middlewares.push(t.$mst_middleware));
+                    for (var r = e; r;) (r.middlewares && this.middlewares.push(r.middlewares), (r = r.parent));
                 }
                 return (
                     Object.defineProperty(e.prototype, 'isEmpty', {
@@ -1616,9 +1616,9 @@
             var q = 0,
                 Q = (function () {
                     function e() {
-                        Object.defineProperty(this, 'cacheId', { enumerable: !0, configurable: !0, writable: !0, value: q++ }),
+                        (Object.defineProperty(this, 'cacheId', { enumerable: !0, configurable: !0, writable: !0, value: q++ }),
                             Object.defineProperty(this, 'cache', { enumerable: !0, configurable: !0, writable: !0, value: p.sH.map() }),
-                            Object.defineProperty(this, 'lastCacheModificationPerId', { enumerable: !0, configurable: !0, writable: !0, value: p.sH.map() });
+                            Object.defineProperty(this, 'lastCacheModificationPerId', { enumerable: !0, configurable: !0, writable: !0, value: p.sH.map() }));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'updateLastCacheModificationPerId', {
@@ -1649,7 +1649,7 @@
                                     this.cache.has(r) || this.cache.set(r, p.sH.array([], ep));
                                     var n = this.cache.get(r);
                                     if (-1 !== n.indexOf(e)) throw new ef('Already registered');
-                                    n.push(e), t && this.updateLastCacheModificationPerId(r);
+                                    (n.push(e), t && this.updateLastCacheModificationPerId(r));
                                 }
                             },
                         }),
@@ -1756,7 +1756,7 @@
                                 .concat(r, "', but it lives already at '")
                                 .concat(a.path, "'"),
                         );
-                    return t && a.setParent(t, r), a;
+                    return (t && a.setParent(t, r), a);
                 }
                 return new D(e, t, r, n, i);
             }
@@ -1792,11 +1792,11 @@
                 );
             }
             !(function (e) {
-                (e[(e.INITIALIZING = 0)] = 'INITIALIZING'),
+                ((e[(e.INITIALIZING = 0)] = 'INITIALIZING'),
                     (e[(e.CREATED = 1)] = 'CREATED'),
                     (e[(e.FINALIZED = 2)] = 'FINALIZED'),
                     (e[(e.DETACHING = 3)] = 'DETACHING'),
-                    (e[(e.DEAD = 4)] = 'DEAD');
+                    (e[(e.DEAD = 4)] = 'DEAD'));
             })(c || (c = {}));
             var eu = Object.toString(),
                 ec = Object.freeze([]),
@@ -1805,9 +1805,9 @@
             Object.freeze(ep);
             var ef = (function (e) {
                 function t(t) {
-                    return void 0 === t && (t = 'Illegal state'), e.call(this, '[mobx-state-tree] '.concat(t)) || this;
+                    return (void 0 === t && (t = 'Illegal state'), e.call(this, '[mobx-state-tree] '.concat(t)) || this);
                 }
-                return h(t, e), t;
+                return (h(t, e), t);
             })(Error);
             function eb(e) {
                 return e;
@@ -1829,7 +1829,7 @@
                 return null !== e && 'object' == typeof e && !(e instanceof Date) && !(e instanceof RegExp);
             }
             function em(e, t) {
-                return void 0 === t && (t = !0), null == e || 'string' == typeof e || 'number' == typeof e || 'boolean' == typeof e || (t && e instanceof Date);
+                return (void 0 === t && (t = !0), null == e || 'string' == typeof e || 'number' == typeof e || 'boolean' == typeof e || (t && e instanceof Date));
             }
             function ew(e) {
                 return e;
@@ -1931,9 +1931,9 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t, r) {
-                                void 0 === r && (r = !1), this.eventHandlers || (this.eventHandlers = {});
+                                (void 0 === r && (r = !1), this.eventHandlers || (this.eventHandlers = {}));
                                 var n = this.eventHandlers[e];
-                                return n || (n = this.eventHandlers[e] = new eS()), n.register(t, r);
+                                return (n || (n = this.eventHandlers[e] = new eS()), n.register(t, r));
                             },
                         }),
                         Object.defineProperty(e.prototype, 'has', {
@@ -2006,7 +2006,7 @@
                 );
             }
             function eD(e, t, r) {
-                void 0 === r && (r = !0),
+                (void 0 === r && (r = !0),
                     eN(
                         e,
                         function (e) {
@@ -2023,7 +2023,7 @@
                             },
                             'not empty string',
                             t,
-                        );
+                        ));
             }
             function ex(e) {
                 'function' == typeof queueMicrotask ? queueMicrotask(e) : 'function' == typeof setImmediate ? setImmediate(e) : setTimeout(e, 1);
@@ -2052,12 +2052,12 @@
                             },
                             l = arguments;
                         function c(e, t, r) {
-                            return (e.$mst_middleware = n.$mst_middleware), U(d(d({}, o), { type: t, args: [r] }), e);
+                            return ((e.$mst_middleware = n.$mst_middleware), U(d(d({}, o), { type: t, args: [r] }), e));
                         }
                         return new Promise(function (e, t) {
                             var i,
                                 a = function () {
-                                    (i = r.apply(null, arguments)), u(void 0);
+                                    ((i = r.apply(null, arguments)), u(void 0));
                                 };
                             function u(e) {
                                 var r;
@@ -2122,7 +2122,7 @@
                                 if (!t.value || 'function' != typeof t.value.then) throw new ef('Only promises can be yielded to `async`, got: ' + t);
                                 return t.value.then(u, s);
                             }
-                            (a.$mst_middleware = n.$mst_middleware), U(d(d({}, o), { type: 'flow_spawn', args: eA(l) }), a);
+                            ((a.$mst_middleware = n.$mst_middleware), U(d(d({}, o), { type: 'flow_spawn', args: eA(l) }), a));
                         });
                     })._isFlowAction = !0),
                     n
@@ -2204,7 +2204,7 @@
                             value: function (e) {
                                 var t,
                                     r = this;
-                                (function (e, t) {
+                                ((function (e, t) {
                                     for (var r, n, i = [], a = 2; a < arguments.length; a++) i[a - 2] = arguments[a];
                                     try {
                                         for (var o = y(i), l = o.next(); !l.done; l = o.next()) {
@@ -2221,15 +2221,15 @@
                                         }
                                     }
                                 })(e.type, this, 'create'),
-                                    e instanceof D && (e.hasSnapshotPostProcessor = !!this._processors.postProcessor);
+                                    e instanceof D && (e.hasSnapshotPostProcessor = !!this._processors.postProcessor));
                                 var n = e.getSnapshot;
-                                (e.getSnapshot = function () {
+                                ((e.getSnapshot = function () {
                                     return r.postProcessSnapshot(n.call(e), e);
                                 }),
                                     (H((t = this._subtype)) && (t.flags & l.Union) > 0) ||
                                         (e.getReconciliationType = function () {
                                             return r;
-                                        });
+                                        }));
                             },
                         }),
                         Object.defineProperty(t.prototype, 'instantiate', {
@@ -2239,7 +2239,7 @@
                             value: function (e, t, r, n) {
                                 var i = er(n) ? n : this.preProcessSnapshot(n),
                                     a = this._subtype.instantiate(e, t, r, i);
-                                return this._fixNode(a), a;
+                                return (this._fixNode(a), a);
                             },
                         }),
                         Object.defineProperty(t.prototype, 'reconcile', {
@@ -2248,7 +2248,7 @@
                             writable: !0,
                             value: function (e, t, r, n) {
                                 var i = this._subtype.reconcile(e, er(t) ? t : this.preProcessSnapshot(t), r, n);
-                                return i !== e && this._fixNode(i), i;
+                                return (i !== e && this._fixNode(i), i);
                             },
                         }),
                         Object.defineProperty(t.prototype, 'getSnapshot', {
@@ -2310,7 +2310,7 @@
                 })(z),
                 eL = 'Map.put can only be used to store complex values that have an identifier type attribute';
             !(function (e) {
-                (e[(e.UNKNOWN = 0)] = 'UNKNOWN'), (e[(e.YES = 1)] = 'YES'), (e[(e.NO = 2)] = 'NO');
+                ((e[(e.UNKNOWN = 0)] = 'UNKNOWN'), (e[(e.YES = 1)] = 'YES'), (e[(e.NO = 2)] = 'NO'));
             })(s || (s = {}));
             var eU = (function (e) {
                     function t(t, r) {
@@ -2359,7 +2359,7 @@
                                 if (er(e)) {
                                     var t = ei(e);
                                     if (null === t.identifier) throw new ef(eL);
-                                    return this.set(t.identifier, e), e;
+                                    return (this.set(t.identifier, e), e);
                                 }
                                 if (eg(e)) {
                                     var r = ei(this),
@@ -2371,7 +2371,7 @@
                                         return this.put(P(a));
                                     }
                                     var o = '' + i;
-                                    return this.set(o, e), this.get(o);
+                                    return (this.set(o, e), this.get(o));
                                 }
                                 throw new ef('Map.put can only be used to store complex values');
                             },
@@ -2410,7 +2410,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t, r, n) {
-                                return this._determineIdentifierMode(), ee(this, e, t, r, n);
+                                return (this._determineIdentifierMode(), ee(this, e, t, r, n));
                             },
                         }),
                         Object.defineProperty(t.prototype, '_determineIdentifierMode', {
@@ -2443,7 +2443,7 @@
                                                     }
                                                 }
                                             }
-                                            return t instanceof eq && r.push(t), !0;
+                                            return (t instanceof eq && r.push(t), !0);
                                         })(this._subType, e)
                                     ) {
                                         var t = e.reduce(
@@ -2494,7 +2494,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t) {
-                                (0, p.pA)(t, e.unbox),
+                                ((0, p.pA)(t, e.unbox),
                                     e.type.hookInitializers.forEach(function (e) {
                                         var r = e(t);
                                         Object.keys(r).forEach(function (e) {
@@ -2504,7 +2504,7 @@
                                         });
                                     }),
                                     (0, p.Zc)(t, this.willChange),
-                                    (0, p.lB)(t, this.didChange);
+                                    (0, p.lB)(t, this.didChange));
                             },
                         }),
                         Object.defineProperty(t.prototype, 'describe', {
@@ -2547,10 +2547,10 @@
                                     case 'update':
                                         var a = e.newValue;
                                         if (a === e.object.get(r)) return null;
-                                        K(i, a), (e.newValue = i.reconcile(t.getChildNode(r), e.newValue, t, r)), n.processIdentifier(r, e.newValue);
+                                        (K(i, a), (e.newValue = i.reconcile(t.getChildNode(r), e.newValue, t, r)), n.processIdentifier(r, e.newValue));
                                         break;
                                     case 'add':
-                                        K(i, e.newValue), (e.newValue = i.instantiate(t, r, void 0, e.newValue)), n.processIdentifier(r, e.newValue);
+                                        (K(i, e.newValue), (e.newValue = i.instantiate(t, r, void 0, e.newValue)), n.processIdentifier(r, e.newValue));
                                 }
                                 return e;
                             },
@@ -2615,7 +2615,7 @@
                                         return void t.emitPatch({ op: 'add', path: ez(e.name), value: e.newValue.snapshot, oldValue: void 0 }, t);
                                     case 'delete':
                                         var r = e.oldValue.snapshot;
-                                        return e.oldValue.die(), void t.emitPatch({ op: 'remove', path: ez(e.name), oldValue: r }, t);
+                                        return (e.oldValue.die(), void t.emitPatch({ op: 'remove', path: ez(e.name), oldValue: r }, t));
                                 }
                             },
                         }),
@@ -2649,7 +2649,7 @@
                                     }),
                                     t)
                                 )
-                                    for (var i in t) r.set(i, t[i]), (n['' + i] = !0);
+                                    for (var i in t) (r.set(i, t[i]), (n['' + i] = !0));
                                 Object.keys(n).forEach(function (e) {
                                     !1 === n[e] && r.delete(e);
                                 });
@@ -2760,7 +2760,7 @@
                         configurable: !0,
                         writable: !0,
                         value: function (e, t) {
-                            ((0, p.Mr)(t).dehancer = e.unbox),
+                            (((0, p.Mr)(t).dehancer = e.unbox),
                                 e.type.hookInitializers.forEach(function (e) {
                                     var r = e(t);
                                     Object.keys(r).forEach(function (e) {
@@ -2770,7 +2770,7 @@
                                     });
                                 }),
                                 (0, p.Zc)(t, this.willChange),
-                                (0, p.lB)(t, this.didChange);
+                                (0, p.lB)(t, this.didChange));
                         },
                     }),
                     Object.defineProperty(t.prototype, 'describe', {
@@ -2916,7 +2916,7 @@
                         configurable: !0,
                         writable: !0,
                         value: function (e, t) {
-                            K(this, t), e.storedValue.replace(t);
+                            (K(this, t), e.storedValue.replace(t));
                         },
                     }),
                     Object.defineProperty(t.prototype, 'getChildType', {
@@ -2994,7 +2994,7 @@
                                 var h = e$(t, e, p, s);
                                 r.splice(o, 0, h);
                             }
-                        else (a = !1), r.splice(o, 1), c instanceof D && c.createObservableInstanceIfNeeded(), c.die(), o--;
+                        else ((a = !1), r.splice(o, 1), c instanceof D && c.createObservableInstanceIfNeeded(), c.die(), o--);
                     else break;
                 }
                 return a ? null : r;
@@ -3004,11 +3004,11 @@
                 var a = (function () {
                     if (er(n)) {
                         var a = ei(n);
-                        if ((a.assertAlive(es), null !== a.parent && a.parent === t)) return a.setParent(t, r), a;
+                        if ((a.assertAlive(es), null !== a.parent && a.parent === t)) return (a.setParent(t, r), a);
                     }
                     return i ? e.reconcile(i, n, t, r) : e.instantiate(t, r, void 0, n);
                 })();
-                return i && i !== a && (i instanceof D && i.createObservableInstanceIfNeeded(), i.die()), a;
+                return (i && i !== a && (i instanceof D && i.createObservableInstanceIfNeeded(), i.die()), a);
             }
             function eX(e, t) {
                 if (!e.isAlive) return !1;
@@ -3203,7 +3203,7 @@
                                 return this.cloneAndEnhance({
                                     initializers: [
                                         function (r) {
-                                            return t.instantiateActions(r, e(r)), r;
+                                            return (t.instantiateActions(r, e(r)), r);
                                         },
                                     ],
                                 });
@@ -3227,14 +3227,14 @@
                                     if (i in n && o) {
                                         var l = a;
                                         a = function () {
-                                            o.apply(null, arguments), l.apply(null, arguments);
+                                            (o.apply(null, arguments), l.apply(null, arguments));
                                         };
                                     }
                                     var u = a.$mst_middleware,
                                         c = a.bind(t);
-                                    (c._isFlowAction = a._isFlowAction || !1), (c.$mst_middleware = u);
+                                    ((c._isFlowAction = a._isFlowAction || !1), (c.$mst_middleware = u));
                                     var s = W(e, i, c);
-                                    (t[i] = s), e_(e, i, s);
+                                    ((t[i] = s), e_(e, i, s));
                                 });
                             },
                         }),
@@ -3249,7 +3249,7 @@
                                 return this.cloneAndEnhance({
                                     initializers: [
                                         function (r) {
-                                            return t.instantiateVolatileState(r, e(r)), r;
+                                            return (t.instantiateVolatileState(r, e(r)), r);
                                         },
                                     ],
                                 });
@@ -3296,7 +3296,7 @@
                                                         "'",
                                                     ),
                                                 );
-                                            return o && t.instantiateVolatileState(r, o), a && t.instantiateViews(r, a), i && t.instantiateActions(r, i), r;
+                                            return (o && t.instantiateVolatileState(r, o), a && t.instantiateViews(r, a), i && t.instantiateActions(r, i), r);
                                         },
                                     ],
                                 });
@@ -3311,7 +3311,7 @@
                                 return this.cloneAndEnhance({
                                     initializers: [
                                         function (r) {
-                                            return t.instantiateViews(r, e(r)), r;
+                                            return (t.instantiateViews(r, e(r)), r);
                                         },
                                     ],
                                 });
@@ -3328,7 +3328,7 @@
                                     if (n in r.properties) throw new ef("'".concat(n, "' is a property and cannot be declared as a view"));
                                     var i,
                                         a = Object.getOwnPropertyDescriptor(t, n);
-                                    if ('get' in a) (0, p.n8)(e, n, a), (0, p.Gn)(e, (((i = {})[n] = p.EW), i));
+                                    if ('get' in a) ((0, p.n8)(e, n, a), (0, p.Gn)(e, (((i = {})[n] = p.EW), i)));
                                     else if ('function' == typeof a.value) e_(e, n, a.value);
                                     else throw new ef('A view member should either be a function or getter based property');
                                 });
@@ -3372,7 +3372,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e, t) {
-                                e_(t, 'toString', eJ),
+                                (e_(t, 'toString', eJ),
                                     this.forAllProps(function (r) {
                                         (0, p.pA)(t, r, e.unbox);
                                     }),
@@ -3380,7 +3380,7 @@
                                         return t(e);
                                     }, t),
                                     (0, p.Zc)(t, this.willChange),
-                                    (0, p.lB)(t, this.didChange);
+                                    (0, p.lB)(t, this.didChange));
                             },
                         }),
                         Object.defineProperty(t.prototype, 'willChange', {
@@ -3392,7 +3392,7 @@
                                     r = e.name;
                                 t.assertWritable({ subpath: r });
                                 var n = t.type.properties[r];
-                                return n && (K(n, e.newValue), (e.newValue = n.reconcile(t.getChildNode(r), e.newValue, t, r))), e;
+                                return (n && (K(n, e.newValue), (e.newValue = n.reconcile(t.getChildNode(r), e.newValue, t, r))), e);
                             },
                         }),
                         Object.defineProperty(t.prototype, 'didChange', {
@@ -3444,7 +3444,7 @@
                                 void 0 === t && (t = !0);
                                 var n = {};
                                 return (this.forAllProps(function (t, i) {
-                                    (0, p.go)(e.storedValue, t).reportObserved(), (n[t] = r.getChildNode(e, t).snapshot);
+                                    ((0, p.go)(e.storedValue, t).reportObserved(), (n[t] = r.getChildNode(e, t).snapshot));
                                 }),
                                 t)
                                     ? this.applySnapshotPostProcessor(n)
@@ -3509,7 +3509,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                return eD(e, 1), this.properties[e];
+                                return (eD(e, 1), this.properties[e]);
                             },
                         }),
                         Object.defineProperty(t.prototype, 'isValidSnapshot', {
@@ -3704,7 +3704,7 @@
                 );
             })(F);
             function te(e) {
-                return eN(e, em, 'primitive', 1), new e9(e);
+                return (eN(e, em, 'primitive', 1), new e9(e));
             }
             var tt = (function (e) {
                     function t(t, r, n, i) {
@@ -3970,7 +3970,7 @@
                         writable: !0,
                         value: function () {
                             var e = 'function' == typeof this._defaultValue ? this._defaultValue() : this._defaultValue;
-                            return 'function' == typeof this._defaultValue && K(this, e), e;
+                            return ('function' == typeof this._defaultValue && K(this, e), e);
                         },
                     }),
                     Object.defineProperty(t.prototype, 'isValidSnapshot', {
@@ -4003,13 +4003,13 @@
             function ta(e, t, r) {
                 if ('function' != typeof t && er(t))
                     throw new ef('default value cannot be an instance, pass a snapshot or a function that creates an instance/snapshot instead');
-                return M(e, 1), new ti(e, t, r || to);
+                return (M(e, 1), new ti(e, t, r || to));
             }
             var to = [void 0],
                 tl = ta(e7, void 0),
                 tu = ta(e3, null);
             function tc(e) {
-                return M(e, 1), tn(e, tl);
+                return (M(e, 1), tn(e, tl));
             }
             var ts = (function (e) {
                     function t(t, r) {
@@ -4122,12 +4122,12 @@
                                 function () {
                                     n.options.loadType().then(
                                         (0, p.XI)(function (e) {
-                                            (n.loadedType = e),
+                                            ((n.loadedType = e),
                                                 n.pendingNodeList.forEach(function (e) {
                                                     e.parent &&
                                                         n.loadedType &&
                                                         e.parent.applyPatches([{ op: 'replace', path: '/'.concat(e.subpath), value: e.snapshot }]);
-                                                });
+                                                }));
                                         }),
                                     );
                                 },
@@ -4268,7 +4268,7 @@
                         }),
                         Object.defineProperty(e.prototype, 'resolvedValue', {
                             get: function () {
-                                return this.updateResolvedReference(this.node), this.resolvedReference.node.value;
+                                return (this.updateResolvedReference(this.node), this.resolvedReference.node.value);
                             },
                             enumerable: !1,
                             configurable: !0,
@@ -4279,9 +4279,9 @@
                 td = (function (e) {
                     function t(r) {
                         var n = e.call(this, r) || this;
-                        return Object.setPrototypeOf(n, t.prototype), n;
+                        return (Object.setPrototypeOf(n, t.prototype), n);
                     }
-                    return h(t, e), t;
+                    return (h(t, e), t);
                 })(Error),
                 ty = (function (e) {
                     function t(t, r) {
@@ -4371,7 +4371,7 @@
                                         l = a.registerHook(n.beforeDetach, o),
                                         u = a.registerHook(n.beforeDestroy, o);
                                     return function () {
-                                        l(), u();
+                                        (l(), u());
                                     };
                                 }
                             },
@@ -4443,7 +4443,7 @@
                                 var i = er(n) ? (en(n, 1), ei(n).identifier) : n,
                                     a = new th(n, this.targetType),
                                     o = et(this, e, t, r, a);
-                                return (a.node = o), this.watchTargetNodeForInvalidations(o, i, void 0), o;
+                                return ((a.node = o), this.watchTargetNodeForInvalidations(o, i, void 0), o);
                             },
                         }),
                         Object.defineProperty(t.prototype, 'reconcile', {
@@ -4454,10 +4454,10 @@
                                 if (!e.isDetaching && e.type === this) {
                                     var i = er(t),
                                         a = e.storedValue;
-                                    if ((!i && a.identifier === t) || (i && a.resolvedValue === t)) return e.setParent(r, n), e;
+                                    if ((!i && a.identifier === t) || (i && a.resolvedValue === t)) return (e.setParent(r, n), e);
                                 }
                                 var o = this.instantiate(r, n, void 0, t);
-                                return e.die(), o;
+                                return (e.die(), o);
                             },
                         }),
                         t
@@ -4466,7 +4466,7 @@
                 tg = (function (e) {
                     function t(t, r, n) {
                         var i = e.call(this, t, n) || this;
-                        return Object.defineProperty(i, 'options', { enumerable: !0, configurable: !0, writable: !0, value: r }), i;
+                        return (Object.defineProperty(i, 'options', { enumerable: !0, configurable: !0, writable: !0, value: r }), i);
                     }
                     return (
                         h(t, e),
@@ -4493,7 +4493,7 @@
                             value: function (e, t, r, n) {
                                 var i = er(n) ? this.options.set(n, e ? e.storedValue : null) : n,
                                     a = et(this, e, t, r, i);
-                                return this.watchTargetNodeForInvalidations(a, i, this.options), a;
+                                return (this.watchTargetNodeForInvalidations(a, i, this.options), a);
                             },
                         }),
                         Object.defineProperty(t.prototype, 'reconcile', {
@@ -4502,9 +4502,9 @@
                             writable: !0,
                             value: function (e, t, r, n) {
                                 var i = er(t) ? this.options.set(t, e ? e.storedValue : null) : t;
-                                if (!e.isDetaching && e.type === this && e.storedValue === i) return e.setParent(r, n), e;
+                                if (!e.isDetaching && e.type === this && e.storedValue === i) return (e.setParent(r, n), e);
                                 var a = this.instantiate(r, n, void 0, i);
-                                return e.die(), a;
+                                return (e.die(), a);
                             },
                         }),
                         t
@@ -4545,7 +4545,7 @@
                                     throw new ef(
                                         "Tried to change identifier from '".concat(e.storedValue, "' to '").concat(t, "'. Changing identifiers is not allowed."),
                                     );
-                                return e.setParent(r, n), e;
+                                return (e.setParent(r, n), e);
                             },
                         }),
                         Object.defineProperty(t.prototype, 'isValidSnapshot', {
@@ -4564,7 +4564,7 @@
                 tP = (function (e) {
                     function t() {
                         var t = e.call(this, 'identifier', 'string') || this;
-                        return Object.defineProperty(t, 'flags', { enumerable: !0, configurable: !0, writable: !0, value: l.Identifier }), t;
+                        return (Object.defineProperty(t, 'flags', { enumerable: !0, configurable: !0, writable: !0, value: l.Identifier }), t);
                     }
                     return (
                         h(t, e),
@@ -4661,10 +4661,10 @@
                             writable: !0,
                             value: function (e, t, r, n) {
                                 var i = !this.options.isTargetType(t);
-                                if (!e.isDetaching && e.type === this && (i ? t === e.snapshot : t === e.storedValue)) return e.setParent(r, n), e;
+                                if (!e.isDetaching && e.type === this && (i ? t === e.snapshot : t === e.storedValue)) return (e.setParent(r, n), e);
                                 var a = i ? this.options.fromSnapshot(t, r.root.environment) : t,
                                     o = this.instantiate(r, n, void 0, a);
-                                return e.die(), o;
+                                return (e.die(), o);
                             },
                         }),
                         t
@@ -4684,7 +4684,7 @@
                                 !1,
                             ),
                         );
-                        return 'string' == typeof e && (r.name = e), r;
+                        return ('string' == typeof e && (r.name = e), r);
                     },
                     model: function () {
                         for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
@@ -4722,7 +4722,7 @@
                             e,
                             d(d({}, t), {
                                 onInvalidated: function (e) {
-                                    t && t.onInvalidated && t.onInvalidated(e), e.removeRef();
+                                    (t && t.onInvalidated && t.onInvalidated(e), e.removeRef());
                                 },
                             }),
                         );
@@ -4733,7 +4733,7 @@
                     literal: te,
                     maybe: tc,
                     maybeNull: function (e) {
-                        return M(e, 1), tn(e, tu);
+                        return (M(e, 1), tn(e, tu));
                     },
                     refinement: function () {
                         for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
@@ -4745,7 +4745,7 @@
                                 : function (e) {
                                       return 'Value does not respect the refinement predicate';
                                   };
-                        return M(n, [1, 2]), eD(r, 1), eV(i, [2, 3]), eV(a, [3, 4]), new tt(r, n, i, a);
+                        return (M(n, [1, 2]), eD(r, 1), eV(i, [2, 3]), eV(a, [3, 4]), new tt(r, n, i, a));
                     },
                     string: e0,
                     boolean: e6,
@@ -4758,7 +4758,7 @@
                         return new eZ('Map<string, '.concat(e.name, '>'), e);
                     },
                     array: function (e) {
-                        return M(e, 1), new eW(''.concat(e.name, '[]'), e);
+                        return (M(e, 1), new eW(''.concat(e.name, '[]'), e));
                     },
                     frozen: function (e) {
                         return 0 == arguments.length ? tb : H(e) ? new tf(e) : ta(tb, e);
@@ -4776,7 +4776,7 @@
                     undefined: e7,
                     null: e3,
                     snapshotProcessor: function (e, t, r) {
-                        return M(e, 1), new eM(e, t, r);
+                        return (M(e, 1), new eM(e, t, r));
                     },
                 };
         },

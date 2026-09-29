@@ -183,8 +183,8 @@ function forgetConnections(source: AudioNode, args: any[]) {
 function isAudioDestination(source: AudioNode, destination: unknown): destination is AudioDestinationNode {
     return Boolean(
         destination &&
-            typeof destination === 'object' &&
-            ((typeof AudioDestinationNode !== 'undefined' && destination instanceof AudioDestinationNode) || destination === source.context.destination),
+        typeof destination === 'object' &&
+        ((typeof AudioDestinationNode !== 'undefined' && destination instanceof AudioDestinationNode) || destination === source.context.destination),
     );
 }
 

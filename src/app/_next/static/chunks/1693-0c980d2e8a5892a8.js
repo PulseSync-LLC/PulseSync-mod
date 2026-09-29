@@ -37,7 +37,7 @@
         },
         1987: (e, t) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 !(function (e, t) {
                     for (var r in t) Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
                 })(t, {
@@ -50,7 +50,7 @@
                     createSnapshot: function () {
                         return o;
                     },
-                });
+                }));
             let r = Object.defineProperty(Error('Invariant: AsyncLocalStorage accessed in runtime where it is not available'), '__NEXT_ERROR_CODE', {
                 value: 'E504',
                 enumerable: !1,
@@ -129,13 +129,13 @@
                             d = c[1],
                             h = (0, i.useCallback)(
                                 function () {
-                                    d(!0), null == o || o();
+                                    (d(!0), null == o || o());
                                 },
                                 [d, o],
                             ),
                             f = (0, i.useCallback)(
                                 function () {
-                                    d(!1), null == l || l();
+                                    (d(!1), null == l || l());
                                 },
                                 [d, l],
                             ),
@@ -150,18 +150,18 @@
                             i.createElement(t, (0, n.__assign)({}, v, { onClose: f }), i.createElement(a.U, (0, n.__assign)({}, g))),
                         );
                     };
-                return (o.displayName = "'withUserID(" + (null != (r = e.displayName) ? r : e) + ")'"), o;
+                return ((o.displayName = "'withUserID(" + (null != (r = e.displayName) ? r : e) + ")'"), o);
             }
         },
         5353: (e, t) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'setAttributesFromProps', {
                     enumerable: !0,
                     get: function () {
                         return a;
                     },
-                });
+                }));
             let r = { acceptCharset: 'accept-charset', className: 'class', htmlFor: 'for', httpEquiv: 'http-equiv', noModule: 'noModule' },
                 n = ['onLoad', 'onReady', 'dangerouslySetInnerHTML', 'children', 'onError', 'strategy', 'stylesheets'];
             function i(e) {
@@ -171,8 +171,8 @@
                 for (let [a, s] of Object.entries(t)) {
                     if (!t.hasOwnProperty(a) || n.includes(a) || void 0 === s) continue;
                     let o = r[a] || a.toLowerCase();
-                    'SCRIPT' === e.tagName && i(o) ? (e[o] = !!s) : e.setAttribute(o, String(s)),
-                        (!1 === s || ('SCRIPT' === e.tagName && i(o) && (!s || 'false' === s))) && (e.setAttribute(o, ''), e.removeAttribute(o));
+                    ('SCRIPT' === e.tagName && i(o) ? (e[o] = !!s) : e.setAttribute(o, String(s)),
+                        (!1 === s || ('SCRIPT' === e.tagName && i(o) && (!s || 'false' === s))) && (e.setAttribute(o, ''), e.removeAttribute(o)));
                 }
             }
             ('function' == typeof t.default || ('object' == typeof t.default && null !== t.default)) &&
@@ -198,7 +198,7 @@
                         u = t(a);
                     if (c && u) {
                         if ((o = i.length) != a.length) return !1;
-                        for (s = o; 0 != s--; ) if (!e(i[s], a[s])) return !1;
+                        for (s = o; 0 != s--;) if (!e(i[s], a[s])) return !1;
                         return !0;
                     }
                     if (c != u) return !1;
@@ -212,8 +212,8 @@
                     if (f && m) return i.toString() == a.toString();
                     var p = r(i);
                     if ((o = p.length) !== r(a).length) return !1;
-                    for (s = o; 0 != s--; ) if (!n.call(a, p[s])) return !1;
-                    for (s = o; 0 != s--; ) if (!e(i[(l = p[s])], a[l])) return !1;
+                    for (s = o; 0 != s--;) if (!n.call(a, p[s])) return !1;
+                    for (s = o; 0 != s--;) if (!e(i[(l = p[s])], a[l])) return !1;
                     return !0;
                 }
                 return i != i && a != a;
@@ -228,19 +228,19 @@
                 s,
                 o,
                 l = {};
-            r.r(l),
+            (r.r(l),
                 r.d(l, { g: () => n, r: () => i }),
                 (function (e) {
-                    (e.Start = 'Start'),
+                    ((e.Start = 'Start'),
                         (e.Watched4Sec = '4SecWatched'),
                         (e.Watched10Sec = '10SecWatched'),
                         (e.Watched20Sec = '20SecWatched'),
                         (e.Heartbeat30Sec = '30SecHeartbeat'),
-                        (e.End = 'End');
+                        (e.End = 'End'));
                 })(n || (n = {})),
                 (function (e) {
-                    (e.PLAY = 'play'), (e.PAUSE = 'pause'), (e.BUFFERING = 'buffering'), (e.END = 'end');
-                })(i || (i = {}));
+                    ((e.PLAY = 'play'), (e.PAUSE = 'pause'), (e.BUFFERING = 'buffering'), (e.END = 'end'));
+                })(i || (i = {})));
             var c = r(27158);
             function u(e) {
                 return Math.floor(e / 30);
@@ -301,24 +301,24 @@
                 startTime;
                 timer;
                 constructor(e, t) {
-                    (this.onTick = e),
+                    ((this.onTick = e),
                         (this.onFlush = t),
                         (this.startTime = this.lastFlushTime = (0, y.lh)()),
                         (this.timer = window.setTimeout(() => {
-                            this.onTick(), this.nextTick();
-                        }, 0));
+                            (this.onTick(), this.nextTick());
+                        }, 0)));
                 }
                 next() {
                     this.isDestroyed || (window.clearTimeout(this.timer), this.handleFlush(), this.nextTick());
                 }
                 destroy() {
-                    window.clearTimeout(this.timer), (this.isDestroyed = !0);
+                    (window.clearTimeout(this.timer), (this.isDestroyed = !0));
                 }
                 nextTick() {
                     this.isDestroyed || (window.clearTimeout(this.timer), (this.timer = window.setTimeout(this.handleTimeout, this.getTimeout())));
                 }
                 handleTimeout = () => {
-                    this.onTick(), this.handleFlush(), this.nextTick();
+                    (this.onTick(), this.handleFlush(), this.nextTick());
                 };
                 handleFlush() {
                     this.needFlush() && (this.onFlush(), (this.lastFlushTime = this.wasFirstFlush ? (0, y.lh)() : this.startTime), (this.wasFirstFlush = !0));
@@ -341,12 +341,12 @@
                 },
                 E = NaN;
             function x() {}
-            !(function (e) {
-                (e[(e.PLAYING = 1)] = 'PLAYING'), (e[(e.NOT_PLAYING = 2)] = 'NOT_PLAYING');
+            (!(function (e) {
+                ((e[(e.PLAYING = 1)] = 'PLAYING'), (e[(e.NOT_PLAYING = 2)] = 'NOT_PLAYING'));
             })(a || (a = {})),
                 (function (e) {
-                    (e.preroll = 'preroll'), (e.midroll = 'midroll'), (e.postPauseroll = 'postPauseroll'), (e.postroll = 'postroll'), (e.inroll = 'inroll');
-                })(s || (s = {}));
+                    ((e.preroll = 'preroll'), (e.midroll = 'midroll'), (e.postPauseroll = 'postPauseroll'), (e.postroll = 'postroll'), (e.inroll = 'inroll'));
+                })(s || (s = {})));
             class T {
                 props;
                 prevState = void 0;
@@ -354,22 +354,22 @@
                 timer;
                 destroyHandlers = [];
                 constructor(e) {
-                    (this.props = e),
+                    ((this.props = e),
                         (this.timer = new S(
                             () => this.writeState(),
                             () => this.flushStates(),
-                        ));
+                        )));
                 }
                 addDestroyHandler(e) {
                     this.destroyHandlers.push(e);
                 }
                 destroy() {
-                    this.timer.destroy(),
+                    (this.timer.destroy(),
                         this.flushStates(),
                         this.destroyHandlers.forEach((e) => {
                             e();
                         }),
-                        (this.destroyHandlers = []);
+                        (this.destroyHandlers = []));
                 }
                 getStates() {
                     return [...this.states];
@@ -377,26 +377,26 @@
                 flushStates() {
                     this.writeStateManually.now();
                     let e = this.getStates();
-                    e.length > 0 && this.props.onFlushStates(e), (this.states.length = 0);
+                    (e.length > 0 && this.props.onFlushStates(e), (this.states.length = 0));
                 }
                 writeStateManually = (function (e, t, r, n) {
                     3 == arguments.length && 'boolean' != typeof r && ((n = r), (r = !1));
                     let i = null,
                         a = x;
                     function s() {
-                        null !== i && clearTimeout(i), (i = null);
+                        (null !== i && clearTimeout(i), (i = null));
                     }
                     let o = function () {
                         let o = arguments;
-                        (n = n || this),
+                        ((n = n || this),
                             (a = () => {
-                                s(), (a = x), e.apply(n, o);
+                                (s(), (a = x), e.apply(n, o));
                             }),
                             r && null === i && e.apply(n, o),
                             s(),
                             (i = window.setTimeout(function () {
-                                r || e.apply(n, o), (i = null);
-                            }, t));
+                                (r || e.apply(n, o), (i = null));
+                            }, t)));
                     };
                     return (
                         (o.cancel = s),
@@ -406,7 +406,7 @@
                         o
                     );
                 })(() => {
-                    this.writeState(), this.timer.next();
+                    (this.writeState(), this.timer.next());
                 }, 0);
                 writeState() {
                     let e = this.getPlayerAliveState();
@@ -498,7 +498,7 @@
                 }
             }
             !(function (e) {
-                (e.Init = 'Init'),
+                ((e.Init = 'Init'),
                     (e.SetSource = 'SetSource'),
                     (e.Seek = 'Seek'),
                     (e.VideoTrackChange = 'VideoTrackChange'),
@@ -513,7 +513,7 @@
                     (e.AdStart = 'AdStart'),
                     (e.AdOther = 'AdOther'),
                     (e.AdBetween = 'AdBetween'),
-                    (e.AdEnd = 'AdEnd');
+                    (e.AdEnd = 'AdEnd'));
             })(o || (o = {}));
             let I = [0, 1, 4, 5],
                 k = (0, c.fP)(0),
@@ -555,10 +555,10 @@
                 isFirstKnock = !0;
                 count = 0;
                 constructor(e, t = new L()) {
-                    (this.distributionFunction = e), (this.clock = t);
+                    ((this.distributionFunction = e), (this.clock = t));
                 }
                 setEnabled(e) {
-                    return e ? this.start() : this.stop(), this;
+                    return (e ? this.start() : this.stop(), this);
                 }
                 stop() {
                     return (
@@ -578,15 +578,15 @@
                     );
                 }
                 destroy() {
-                    this.cancelTimeout(), (this.stopped = !0), (this.destroyed = !0);
+                    (this.cancelTimeout(), (this.stopped = !0), (this.destroyed = !0));
                 }
                 knock(e) {
-                    (this.lastNow = e), (this.lastKnockTime = this.clock.now()), this.isFirstKnock ? (this.isFirstKnock = !1) : this.count++;
+                    ((this.lastNow = e), (this.lastKnockTime = this.clock.now()), this.isFirstKnock ? (this.isFirstKnock = !1) : this.count++);
                     let t = (this.restTime = this.lastTimeout = this.distributionFunction({ time: e, count: this.count }));
                     this.stopped || this.destroyed || this.setTimeout(() => this.knock(e + t), t);
                 }
                 cancelTimeout() {
-                    void 0 !== this.cancel && this.cancel(), (this.cancel = void 0);
+                    (void 0 !== this.cancel && this.cancel(), (this.cancel = void 0));
                 }
                 setTimeout(e, t) {
                     this.cancelTimeout();
@@ -613,7 +613,7 @@
                 stalledTime = (0, c.fP)(0);
                 stalledCount = 0;
                 constructor({ getState: e, logEvent: t }) {
-                    (this.getState = e), (this.logEvent = t);
+                    ((this.getState = e), (this.logEvent = t));
                 }
                 setBuffering(e, t = (0, c.Wj)(0)) {
                     if (e !== this.isBuffering)
@@ -631,22 +631,22 @@
                                             !1
                                         );
                                     }
-                                    return e.push(a), !0;
+                                    return (e.push(a), !0);
                                 });
-                            this.currentStalled && (this.stalledDurationRemainder = (0, c.gL)((0, c.Qr)(t, 1e3), this.currentStalled.duration)),
+                            (this.currentStalled && (this.stalledDurationRemainder = (0, c.gL)((0, c.Qr)(t, 1e3), this.currentStalled.duration)),
                                 r.length && (r[0] = r[0] - this.stalledDurationRemainder),
                                 (this.timer = new D(({ count: t }) => {
                                     let n = this.currentStalled ? this.currentStalled.expectedStalled : this.getExpectedStalled();
                                     if (t > 0) {
                                         let r = (0, c.fP)(e[t - 1]),
                                             i = this.currentStalled ? this.currentStalled.id : this.stalledId++;
-                                        !this.currentStalled && this.stalledCount++,
+                                        (!this.currentStalled && this.stalledCount++,
                                             (this.currentStalled = { id: i, expectedStalled: n, duration: r, getElapsedTime: N() }),
-                                            this.send(!1, n, r, i);
+                                            this.send(!1, n, r, i));
                                     }
                                     return t >= r.length ? (this.destroyTimer(), 1 / 0) : 1e3 * r[t];
                                 })),
-                                this.timer.start();
+                                this.timer.start());
                         } else {
                             if (this.currentStalled) {
                                 var r;
@@ -655,10 +655,10 @@
                                         void 0 === (r = this.currentStalled) ? (0, c.fP)(0) : (0, c.WQ)(r.duration, (0, c.Qr)(r.getElapsedTime(), 1e3)),
                                         this.stalledDurationRemainder,
                                     );
-                                this.send(!0, e, (0, c.WQ)(n), t),
+                                (this.send(!0, e, (0, c.WQ)(n), t),
                                     (this.currentStalled = void 0),
                                     (this.stalledDurationRemainder = (0, c.fP)(0)),
-                                    (this.stalledTime = (0, c.WQ)(n, this.stalledTime));
+                                    (this.stalledTime = (0, c.WQ)(n, this.stalledTime)));
                                 let i = this.getState()?.adState?.state === a.PLAYING ? o.AdOther : o.Other;
                                 this.setExpectedStalled(R(i, void 0));
                             }
@@ -670,7 +670,7 @@
                     return { stalledCount: (0, c.Pn)(e), stalledTime: (0, c.PY)(t) };
                 }
                 clearStalledHistory() {
-                    (this.stalledCount = 0), (this.stalledTime = (0, c.fP)(0));
+                    ((this.stalledCount = 0), (this.stalledTime = (0, c.fP)(0)));
                 }
                 destroy() {
                     this.destroyTimer();
@@ -749,22 +749,22 @@
                 }
                 detach(e) {
                     let t = this.contexts.indexOf(e);
-                    -1 !== t && this.contexts.splice(t, 1), 0 === this.contexts.length && clearInterval(this.intervalId);
+                    (-1 !== t && this.contexts.splice(t, 1), 0 === this.contexts.length && clearInterval(this.intervalId));
                 }
                 destroy() {
-                    this.flush(), (this.contexts.length = 0), clearInterval(this.intervalId);
+                    (this.flush(), (this.contexts.length = 0), clearInterval(this.intervalId));
                 }
                 flush() {
                     let e = [],
                         t = this.contexts.map(z),
                         r = Math.min(...t);
-                    this.contexts.forEach((n, i) => {
+                    (this.contexts.forEach((n, i) => {
                         (function (e) {
                             try {
                                 let t = e.performance.getEntriesByType ?? e.performance.webkitGetEntriesByType,
                                     r = e.performance.clearResourceTimings ?? e.performance.webkitClearResourceTimings,
                                     n = t.call(e.performance, 'resource');
-                                return r.call(e.performance), n;
+                                return (r.call(e.performance), n);
                             } catch {
                                 return [];
                             }
@@ -832,7 +832,7 @@
                                 );
                         });
                     }),
-                        0 !== e.length && this.config.sendLog(e, { perfnow: String((0, y.x3)()), navstart: String(r) });
+                        0 !== e.length && this.config.sendLog(e, { perfnow: String((0, y.x3)()), navstart: String(r) }));
                 }
             }
             function z(e) {
@@ -865,23 +865,23 @@
                 intervalId = void 0;
                 watchedTimeCounter = new q();
                 constructor(e, t) {
-                    (this.getState = e), (this.onChange = t), (this.intervalId = setInterval(this.onTick, 100));
+                    ((this.getState = e), (this.onChange = t), (this.intervalId = setInterval(this.onTick, 100)));
                 }
                 onTick = () => {
                     let e = this.getState();
                     if (!e) return;
                     let { currentTime: t, playbackRate: r = 1, playingState: n, adState: s } = e,
                         o = s?.state === a.PLAYING;
-                    this.watchedTimeCounter.calc(t, r, n === i.PLAY && !o), this.onChange?.(this.watchedTimeCounter.get());
+                    (this.watchedTimeCounter.calc(t, r, n === i.PLAY && !o), this.onChange?.(this.watchedTimeCounter.get()));
                 };
                 reset() {
-                    (this.watchedTimeCounter = new q()), this.onChange?.(this.watchedTimeCounter.get());
+                    ((this.watchedTimeCounter = new q()), this.onChange?.(this.watchedTimeCounter.get()));
                 }
                 getWatchedTime() {
                     return this.watchedTimeCounter.get();
                 }
                 destroy() {
-                    clearInterval(this.intervalId), (this.intervalId = void 0);
+                    (clearInterval(this.intervalId), (this.intervalId = void 0));
                 }
             }
             var K = r(37956);
@@ -895,7 +895,7 @@
                 interval;
                 getTime;
                 constructor(e = y.lh) {
-                    (this.getTime = e), (this.lastDateNow = X()), (this.lastPerformanceNow = e()), (this.interval = setInterval(this.now, 1e3));
+                    ((this.getTime = e), (this.lastDateNow = X()), (this.lastPerformanceNow = e()), (this.interval = setInterval(this.now, 1e3)));
                 }
                 now = () => {
                     let e = X(),
@@ -940,7 +940,7 @@
                 reportNumber = 0;
                 sourceIndexes = { current: 0, last: 0 };
                 constructor({ sendLog: e, playerInfo: t, getState: r }) {
-                    (this.playerInfo = t),
+                    ((this.playerInfo = t),
                         (this.sendLog = e),
                         (this.getState = r),
                         (this.playbackTracker = new d({ onEvent: (e) => this.logEvent({ name: e }) })),
@@ -955,7 +955,7 @@
                         })),
                         (this.fatalTracker = new h()),
                         this.initOnVisibilityChangeHandling(),
-                        (this.timer = new J());
+                        (this.timer = new J()));
                 }
                 getLogTimestamp() {
                     return Math.round(this.timerStartTime + this.timer.now());
@@ -970,7 +970,7 @@
                         let n = () => {
                             t(B(e));
                         };
-                        return e.addEventListener(r, n), () => e.removeEventListener(r, n);
+                        return (e.addEventListener(r, n), () => e.removeEventListener(r, n));
                     })(document, (e) => {
                         e || this.playerAliveController.flushStates();
                     });
@@ -983,12 +983,12 @@
                     this.remoteProgressSavingInfo.enabled = e;
                 }
                 updateWatchedTime() {
-                    this.useOfDeprecatedMethodIsLogged ||
+                    (this.useOfDeprecatedMethodIsLogged ||
                         (this.logEvent({ name: 'DeprecatedTelemetryMethodUsed', data: { method: 'updateWatchedTime' } }), (this.useOfDeprecatedMethodIsLogged = !0)),
-                        M(Error('Deprecated method used. Method is Telemetry#updateWatchedTime(). Just remove. Telemetry calculates watchedTime itself now.'));
+                        M(Error('Deprecated method used. Method is Telemetry#updateWatchedTime(). Just remove. Telemetry calculates watchedTime itself now.')));
                 }
                 setPlayingState(e) {
-                    this.playbackTracker.onPlayingStateChange(e), this.handleInitialBuffering(), e === i.BUFFERING ? this.setBuffering(!0) : this.setBuffering(!1);
+                    (this.playbackTracker.onPlayingStateChange(e), this.handleInitialBuffering(), e === i.BUFFERING ? this.setBuffering(!0) : this.setBuffering(!1));
                 }
                 logEvent(e, t) {
                     if (this.destroyed) return;
@@ -1076,7 +1076,7 @@
                 setExpectedBuffering({ reason: e, details: t }) {
                     switch ((this.checkInitBuffering(e), e)) {
                         case o.SetSource:
-                            this.setBuffering(!1), this.clearBufferingHistory();
+                            (this.setBuffering(!1), this.clearBufferingHistory());
                             break;
                         case o.Init:
                             break;
@@ -1102,17 +1102,17 @@
                     if (this.wasInitBufferingLogged) return;
                     let t = this.initialStalledTimestamp && !this.initialStalledTimestampStop,
                         r = this.initialStalledTimestamp && this.initialStalledTimestampStop;
-                    (this.initialStalledDuration = t
+                    ((this.initialStalledDuration = t
                         ? (0, c.gL)((0, c.Wj)((0, y.lh)()), this.initialStalledTimestamp)
                         : r
                           ? (0, c.gL)(this.initialStalledTimestampStop, this.initialStalledTimestamp)
                           : (0, c.Wj)(0)),
-                        (this.externalStalledDuration = e ?? (0, c.Wj)(0));
+                        (this.externalStalledDuration = e ?? (0, c.Wj)(0)));
                     let { playingState: n } = this.getState() || {};
-                    'pause' !== n && this.handleInitialBuffering(),
+                    ('pause' !== n && this.handleInitialBuffering(),
                         (this.wasInitBufferingLogged = !0),
                         (this.initialStalledTimestamp = void 0),
-                        (this.initialStalledTimestampStop = void 0);
+                        (this.initialStalledTimestampStop = void 0));
                 }
                 handleInitialBuffering() {
                     this.wasInitBufferingHandled ||
@@ -1121,12 +1121,12 @@
                         (this.wasInitBufferingHandled = !0));
                 }
                 destroy(e) {
-                    this.stalledController.destroy(),
+                    (this.stalledController.destroy(),
                         this.playerAliveController.destroy(),
                         this.watchedTimeTracker.destroy(),
                         this.logEvent({ name: 'DestroyPlayer', data: { reason: e?.reason } }),
                         this.timer.stop(),
-                        (this.destroyed = !0);
+                        (this.destroyed = !0));
                 }
                 getExpectedStalled() {
                     return this.stalledController.getExpectedStalled();
@@ -1135,9 +1135,9 @@
                     return this.stalledController.clearStalledHistory();
                 }
                 setPreloadDetails() {
-                    this.useOfDeprecatedMethodIsLogged ||
+                    (this.useOfDeprecatedMethodIsLogged ||
                         (this.logEvent({ name: 'DeprecatedTelemetryMethodUsed', data: { method: 'setPreloadDetails' } }), (this.useOfDeprecatedMethodIsLogged = !0)),
-                        M(Error('Deprecated method used. Method is Telemetry#setPreloadDetails(). Just remove it.'));
+                        M(Error('Deprecated method used. Method is Telemetry#setPreloadDetails(). Just remove it.')));
                 }
                 writePlayerAliveStateManually() {
                     return this.playerAliveController.writeStateManually();
@@ -1158,24 +1158,24 @@
                     return ++this.sourceIndexes.last;
                 }
                 onSetSource(e, t, r) {
-                    this.flushStates(),
+                    (this.flushStates(),
                         (this.sourceIndexes.current = this.sourceIndexes.last > this.sourceIndexes.current ? this.sourceIndexes.last : ++this.sourceIndexes.last),
                         this.watchedTimeTracker.reset(),
                         r && this.setStaticParams(r),
                         this.logEvent({ name: 'SetSource', data: e }),
-                        this.setExpectedBuffering({ reason: o.SetSource, details: t });
+                        this.setExpectedBuffering({ reason: o.SetSource, details: t }));
                     let n = this.getState()?.playingState;
                     n !== i.PAUSE && n !== i.END && this.setBuffering(!0);
                 }
                 sendReportLog(e, t, r = !0) {
                     let n = t ?? this.generateReportId();
-                    return this.logEvent({ name: 'ReportLog', data: { reportId: n, reported: r, reportData: e } }), n;
+                    return (this.logEvent({ name: 'ReportLog', data: { reportId: n, reported: r, reportData: e } }), n);
                 }
                 generateReportId() {
                     return `${this.playerInfo.vsid}x${this.reportNumber++}`;
                 }
                 onExpectedBuffering({ reason: e, details: t }) {
-                    return this.checkInitBuffering(e), this.stalledController.setExpectedStalled(R(e, t));
+                    return (this.checkInitBuffering(e), this.stalledController.setExpectedStalled(R(e, t)));
                 }
                 onSeek(e) {
                     this.setExpectedBuffering({ reason: o.Seek, details: e });
@@ -1215,7 +1215,7 @@
         13489: () => {},
         14755: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { withUserID: () => n.B });
+            (r.r(t), r.d(t, { withUserID: () => n.B }));
             var n = r(3238);
         },
         18677: () => {},
@@ -1233,16 +1233,16 @@
             'use strict';
             Object.defineProperty(t, '__esModule', { value: !0 });
             var n = r(30782);
-            n.__exportStar(r(57676), t),
+            (n.__exportStar(r(57676), t),
                 n.__exportStar(r(20065), t),
                 n.__exportStar(r(5487), t),
                 n.__exportStar(r(74100), t),
                 n.__exportStar(r(86180), t),
-                n.__exportStar(r(14755), t);
+                n.__exportStar(r(14755), t));
         },
         20065: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { Dialog: () => n.l });
+            (r.r(t), r.d(t, { Dialog: () => n.l }));
             var n = r(62340);
         },
         24586: (e, t, r) => {
@@ -1297,7 +1297,7 @@
         },
         32522: (e, t, r) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 !(function (e, t) {
                     for (var r in t) Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
                 })(t, {
@@ -1310,7 +1310,7 @@
                     initScriptLoader: function () {
                         return p;
                     },
-                });
+                }));
             let n = r(33399),
                 i = r(79476),
                 a = r(32290),
@@ -1336,24 +1336,24 @@
                         m = r || t;
                     if (m && h.has(m)) return;
                     if (d.has(t)) {
-                        h.add(m), d.get(t).then(n, u);
+                        (h.add(m), d.get(t).then(n, u));
                         return;
                     }
                     let p = () => {
-                            i && i(), h.add(m);
+                            (i && i(), h.add(m));
                         },
                         g = document.createElement('script'),
                         v = new Promise((e, t) => {
-                            g.addEventListener('load', function (t) {
-                                e(), n && n.call(this, t), p();
+                            (g.addEventListener('load', function (t) {
+                                (e(), n && n.call(this, t), p());
                             }),
                                 g.addEventListener('error', function (e) {
                                     t(e);
-                                });
+                                }));
                         }).catch(function (e) {
                             u && u(e);
                         });
-                    a
+                    (a
                         ? ((g.innerHTML = a.__html || ''), p())
                         : o
                           ? ((g.textContent = 'string' == typeof o ? o : Array.isArray(o) ? o.join('') : ''), p())
@@ -1371,11 +1371,11 @@
                                     let t = document.head;
                                     e.forEach((e) => {
                                         let r = document.createElement('link');
-                                        (r.type = 'text/css'), (r.rel = 'stylesheet'), (r.href = e), t.appendChild(r);
+                                        ((r.type = 'text/css'), (r.rel = 'stylesheet'), (r.href = e), t.appendChild(r));
                                     });
                                 }
                             })(f),
-                        document.body.appendChild(g);
+                        document.body.appendChild(g));
                 };
             function m(e) {
                 let { strategy: t = 'afterInteractive' } = e;
@@ -1386,13 +1386,13 @@
                     : f(e);
             }
             function p(e) {
-                e.forEach(m),
+                (e.forEach(m),
                     [...document.querySelectorAll('[data-nscript="beforeInteractive"]'), ...document.querySelectorAll('[data-nscript="beforePageRender"]')].forEach(
                         (e) => {
                             let t = e.id || e.getAttribute('src');
                             h.add(t);
                         },
-                    );
+                    ));
             }
             function g(e) {
                 let { id: t, src: r = '', onLoad: n = () => {}, onReady: i = null, strategy: c = 'afterInteractive', onError: d, stylesheets: m, ...p } = e,
@@ -1481,7 +1481,7 @@
                 prefix;
                 path;
                 constructor(e = {}) {
-                    (this.prefix = e.prefix || 'ss_'), (this.path = e.path || '/');
+                    ((this.prefix = e.prefix || 'ss_'), (this.path = e.path || '/'));
                 }
                 getItem(e) {
                     let t = `${this.prefix}${e}=`,
@@ -1540,7 +1540,7 @@
                             t = new a();
                         t.setItem(e, '1');
                         let r = t.getItem(e);
-                        return t.removeItem(e), '1' === r;
+                        return (t.removeItem(e), '1' === r);
                     } catch {
                         return !1;
                     }
@@ -1571,7 +1571,7 @@
             function o(e) {
                 let t = '__test_storage__';
                 try {
-                    return e.setItem(t, 'test'), e.removeItem(t), !0;
+                    return (e.setItem(t, 'test'), e.removeItem(t), !0);
                 } catch {
                     return !1;
                 }
@@ -1671,7 +1671,7 @@
                 };
             }
             let f = h(c);
-            h(u), h(d);
+            (h(u), h(d));
             var m = r(95939);
             let p = 'qwertyuiopasdfghjklzxcvbnm0123456789',
                 g =
@@ -1687,13 +1687,13 @@
         },
         40199: (e, t, r) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'workAsyncStorage', {
                     enumerable: !0,
                     get: function () {
                         return n.workAsyncStorageInstance;
                     },
-                });
+                }));
             let n = r(89957);
         },
         41952: (e, t, r) => {
@@ -1744,7 +1744,7 @@
                             ((e) => !!o(e) && !!s(e.name) && !!s(e.message))(t) || ('object' == typeof t && t && 'code' in t && 'details' in t)
                                 ? t
                                 : { message: String(t || h.message) };
-                    super(),
+                    (super(),
                         Object.defineProperty(this, 'originalError', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'message', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'code', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -1753,10 +1753,10 @@
                         Object.defineProperty(this, 'toString', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'toJSON', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.originalError = 'object' == typeof t && t ? t : { unknown: t, unknownStr: String(t) }),
-                        d()(this, f.prototype);
+                        d()(this, f.prototype));
                     let i = r.code || n.code || n.id || h.code,
                         l = r.message || n.message || h.message;
-                    (this.message = `VAS Error [${i}]` + (l ? `[${l}]` : '')), (this.code = i), (this.details = r.details || n.details || h.details);
+                    ((this.message = `VAS Error [${i}]` + (l ? `[${l}]` : '')), (this.code = i), (this.details = r.details || n.details || h.details));
                     let u =
                             n.stack ||
                             (function (e) {
@@ -1771,7 +1771,7 @@
                         } catch (e) {
                             this.stack = m = e.stack || h.stack;
                         }
-                    (this.toString = () =>
+                    ((this.toString = () =>
                         JSON.stringify(
                             this.toJSON(),
                             (function () {
@@ -1815,13 +1815,13 @@
                                     }
                                     let l = t.get(n);
                                     if (s(l) && l.length > 0) return `[Circular ${l}]`;
-                                    for (; e.length > 0 && e[e.length - 1].value[r] !== n; ) e.pop();
+                                    for (; e.length > 0 && e[e.length - 1].value[r] !== n;) e.pop();
                                     let c = (e.length > 0 ? e[e.length - 1].path : '') + (r ? `/${r}` : '~');
-                                    return e.push({ path: c, value: n }), t.set(n, c), n;
+                                    return (e.push({ path: c, value: n }), t.set(n, c), n);
                                 };
                             })(),
                         )),
-                        (this.toJSON = () => ({ originalError: this.originalError, message: this.message, code: this.code, details: this.details, stack: m }));
+                        (this.toJSON = () => ({ originalError: this.originalError, message: this.message, code: this.code, details: this.details, stack: m })));
                 }
             }
         },
@@ -1859,7 +1859,7 @@
                 let { moduleIds: t } = e;
                 return null;
             }
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'PreloadChunks', {
                     enumerable: !0,
                     get: function () {
@@ -1869,7 +1869,7 @@
                 r(32290),
                 r(51767),
                 r(40199),
-                r(15406);
+                r(15406));
         },
         46853: () => {},
         52469: (e, t, r) => {
@@ -1977,11 +1977,11 @@
                                         return r;
                                     }
                             })(e.documentElement).map((e) => e.ownerDocument);
-                            return t.unshift(e), t.map((e) => ({ location: (0, u.K)(e.defaultView), referrer: e.referrer }));
+                            return (t.unshift(e), t.map((e) => ({ location: (0, u.K)(e.defaultView), referrer: e.referrer })));
                         })(e)
                             .reverse()
                             .forEach(({ location: e, referrer: n }) => {
-                                (t = t || e), (r = r || n);
+                                ((t = t || e), (r = r || n));
                             }),
                     { location: t, referrer: r }
                 );
@@ -1990,7 +1990,7 @@
         53657: () => {},
         57676: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { Content: () => n.U, cnUserID: () => n.K });
+            (r.r(t), r.d(t, { Content: () => n.U, cnUserID: () => n.K }));
             var n = r(2853);
         },
         59569: (e, t, r) => {
@@ -2074,18 +2074,18 @@
                 let { reason: t, children: r } = e;
                 return r;
             }
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'BailoutToCSR', {
                     enumerable: !0,
                     get: function () {
                         return n;
                     },
                 }),
-                r(82105);
+                r(82105));
         },
         63749: (e, t) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 !(function (e, t) {
                     for (var r in t) Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
                 })(t, {
@@ -2095,7 +2095,7 @@
                     requestIdleCallback: function () {
                         return r;
                     },
-                });
+                }));
             let r =
                     ('undefined' != typeof self && self.requestIdleCallback && self.requestIdleCallback.bind(window)) ||
                     function (e) {
@@ -2138,12 +2138,12 @@
         },
         70679: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { useIsomorphicLayoutEffect: () => n.E });
+            (r.r(t), r.d(t, { useIsomorphicLayoutEffect: () => n.E }));
             var n = r(24586);
         },
         74100: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { User: () => m, UserBase: () => h });
+            (r.r(t), r.d(t, { User: () => m, UserBase: () => h }));
             var n = r(55178),
                 i = r(99448),
                 a = r(18956),
@@ -2222,7 +2222,7 @@
                         )
                     );
                 };
-            (c.displayName = 'UserIDAvatar'), r(98561);
+            ((c.displayName = 'UserIDAvatar'), r(98561));
             var u = function (e) {
                 var t = e.children,
                     r = e.fetchMail,
@@ -2256,7 +2256,7 @@
                     v = ['UserID-Badge-Dot', 'UserID-Badge-Dot_colorScheme_' + c, 'UserID-Badge-Dot_variant_' + l].join(' ');
                 return n.createElement('div', { className: 'UserID-Badge' }, t, g && n.createElement('div', { className: v }, 'number' === l && p));
             };
-            (u.displayName = 'UserIDBadge'), r(53657);
+            ((u.displayName = 'UserIDBadge'), r(53657));
             var d = (0, i.cn)('UserID', 'Wrapper'),
                 h = (0, n.forwardRef)(function (e, t) {
                     var r = e.tld,
@@ -2328,7 +2328,7 @@
                 Object.setPrototypeOf ||
                 ({ __proto__: [] } instanceof Array
                     ? function (e, t) {
-                          return (e.__proto__ = t), e;
+                          return ((e.__proto__ = t), e);
                       }
                     : function (e, t) {
                           for (var r in t) Object.prototype.hasOwnProperty.call(e, r) || (e[r] = t[r]);
@@ -2337,7 +2337,7 @@
         },
         78657: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { lock: () => v, unlock: () => y });
+            (r.r(t), r.d(t, { lock: () => v, unlock: () => y }));
             var n,
                 i = r(68956);
             function a(e) {
@@ -2364,13 +2364,13 @@
                         var t = function () {
                             return null;
                         };
-                        window.addEventListener('testPassive', t, {
+                        (window.addEventListener('testPassive', t, {
                             get passive() {
                                 e = !0;
                                 return;
                             },
                         }),
-                            window.removeEventListener('testPassive', t);
+                            window.removeEventListener('testPassive', t));
                     } catch (e) {}
                     return e;
                 })()
@@ -2380,7 +2380,7 @@
             function f(e) {
                 1 === e.changedTouches.length &&
                     ((h.scrollable = (function (e) {
-                        for (var t; e && ((t = getComputedStyle(e)), !/(auto|scroll)/.test(t.overflow + t.overflowX + t.overflowY)); ) e = e.parentElement;
+                        for (var t; e && ((t = getComputedStyle(e)), !/(auto|scroll)/.test(t.overflow + t.overflowX + t.overflowY));) e = e.parentElement;
                         return e || document.documentElement;
                     })(e.target)),
                     l(h.scrollable) || ((h.lastX = e.changedTouches[0].pageX), (h.lastY = e.changedTouches[0].pageY)));
@@ -2399,7 +2399,7 @@
                         u = t.scrollLeft,
                         d = t.scrollWidth - t.clientWidth,
                         f = !s && ((u <= 0 && i > r) || (u >= d && i < r));
-                    ((s && ((o <= 0 && a > n) || (o >= c && a < n))) || f) && e.preventDefault(), (h.lastX = i), (h.lastY = a);
+                    (((s && ((o <= 0 && a > n) || (o >= c && a < n))) || f) && e.preventDefault(), (h.lastX = i), (h.lastY = a));
                 }
             }
             function p() {
@@ -2411,7 +2411,7 @@
             function v(e) {
                 if (i.O) {
                     var t = g(e);
-                    !(function (e) {
+                    (!(function (e) {
                         var t = e[u];
                         if (t) return t.count++;
                         var r = (function (e) {
@@ -2422,9 +2422,9 @@
                                     if ('undefined' == typeof document) return 0;
                                     if (void 0 === n) {
                                         var a = document.createElement('div');
-                                        (a.style.width = '100%'), (a.style.height = '200px');
+                                        ((a.style.width = '100%'), (a.style.height = '200px'));
                                         var s = document.createElement('div');
-                                        (s.style.position = 'absolute'),
+                                        ((s.style.position = 'absolute'),
                                             (s.style.top = '0'),
                                             (s.style.left = '0'),
                                             (s.style.pointerEvents = 'none'),
@@ -2433,11 +2433,11 @@
                                             (s.style.height = '150px'),
                                             (s.style.overflow = 'hidden'),
                                             s.appendChild(a),
-                                            document.body.appendChild(s);
+                                            document.body.appendChild(s));
                                         var o = a.offsetWidth;
                                         s.style.overflow = 'scroll';
                                         var c = a.offsetWidth;
-                                        o === c && (c = s.clientWidth), document.body.removeChild(s), (n = o - c);
+                                        (o === c && (c = s.clientWidth), document.body.removeChild(s), (n = o - c));
                                     }
                                     return n;
                                 }
@@ -2455,14 +2455,14 @@
                                 (h.scrollY = window.pageYOffset),
                                 document.addEventListener('touchstart', f, d),
                                 document.addEventListener('touchmove', m, d),
-                                document.addEventListener('touchend', p, d)));
+                                document.addEventListener('touchend', p, d))));
                 }
             }
             function y(e) {
                 if (i.O) {
                     var t = g(e),
                         r = t[u];
-                    r && (r.count--, 0 === r.count) && (o(t, r.initialStyle), delete t[u]),
+                    (r && (r.count--, 0 === r.count) && (o(t, r.initialStyle), delete t[u]),
                         s() &&
                             l(t) &&
                             0 !== h.count &&
@@ -2471,7 +2471,7 @@
                                 (document.removeEventListener('touchstart', f),
                                 document.removeEventListener('touchmove', m),
                                 document.removeEventListener('touchend', p),
-                                window.scrollTo(h.scrollX, h.scrollY)));
+                                window.scrollTo(h.scrollX, h.scrollY))));
                 }
             }
         },
@@ -2521,29 +2521,29 @@
                 ('Escape' === t || 'Esc' === t) && f(e, 'esc');
             }
             function p(e) {
-                (u = e.target), (d = h()), f(e, 'click', 'pressdown');
+                ((u = e.target), (d = h()), f(e, 'click', 'pressdown'));
             }
             function g(e) {
                 var t = u;
                 u = null;
                 var r = d;
-                (d = null), e.button > 0 || r !== h() || (t === e.target && f(e, 'click', 'pressup'));
+                ((d = null), e.button > 0 || r !== h() || (t === e.target && f(e, 'click', 'pressup')));
             }
             var v = Object.freeze({
                     count: function () {
                         return c.length;
                     },
                     addOverlay: function (e) {
-                        0 === c.length &&
+                        (0 === c.length &&
                             (document.addEventListener('keyup', m), document.addEventListener('pointerdown', p, !0), document.addEventListener('click', g, !0)),
-                            c.push(e);
+                            c.push(e));
                     },
                     removeOverlay: function (e) {
-                        c.splice(c.indexOf(e), 1),
+                        (c.splice(c.indexOf(e), 1),
                             0 === c.length &&
                                 (document.removeEventListener('keyup', m),
                                 document.removeEventListener('pointerdown', p, !0),
-                                document.removeEventListener('click', g, !0));
+                                document.removeEventListener('click', g, !0)));
                     },
                     getTopOverlayOptions: h,
                 }),
@@ -2697,7 +2697,7 @@
                             },
                             [t],
                         ));
-                (0, o.N)(eh, _ || (0, s.createRef)()), (ef = null != N ? N : ef), (em = null != Y ? Y : em);
+                ((0, o.N)(eh, _ || (0, s.createRef)()), (ef = null != N ? N : ef), (em = null != Y ? Y : em));
                 var eg = (0, a.__read)((0, s.useState)(!0), 2),
                     ev = eg[0],
                     ey = eg[1],
@@ -2768,7 +2768,7 @@
                     eP = (0, s.useCallback)(
                         function () {
                             var e;
-                            null == (e = eh.current) || e.focus(), null == V || V();
+                            (null == (e = eh.current) || e.focus(), null == V || V());
                         },
                         [V],
                     ),
@@ -2804,7 +2804,7 @@
                                 var r;
                                 switch (e.methodCall) {
                                     case 'onInit':
-                                        U && eR(e.params[0]), null == Q || Q();
+                                        (U && eR(e.params[0]), null == Q || Q());
                                         break;
                                     case 'onDataLoad':
                                         var n = ed.current;
@@ -2814,7 +2814,7 @@
                                             eW.current({ methodCall: 'onSendTimeToInteractive', params: [{ delta: i }] });
                                         }
                                     case 'updateUserHeight':
-                                        ej(e.params[0].height), ey(!1);
+                                        (ej(e.params[0].height), ey(!1));
                                         break;
                                     case 'ITEM_CLICK':
                                         var s = e.params[0];
@@ -2902,7 +2902,7 @@
                         [n, i],
                     ),
                     { sendMessage: h }).sendMessage;
-                (eW.current = eB),
+                ((eW.current = eB),
                     (0, s.useEffect)(
                         function () {
                             eB({ methodCall: 'updateRetpath', params: [{ retpath: eS }] });
@@ -2920,7 +2920,7 @@
                             eB({ methodCall: 'updateTheme', params: [{ colorScheme: L, theme: ea }] });
                         },
                         [L, eB, ea],
-                    );
+                    ));
                 var eA = (0, s.useCallback)(
                         function (e) {
                             eB({ methodCall: 'focusFirst', params: [{ fromKeyboard: e }] });
@@ -2933,13 +2933,13 @@
                         },
                         [eA, q, eb, eu, eP],
                     );
-                (p = (m = {
+                ((p = (m = {
                     visible: eu,
                     onClose: eP,
                     essentialRefs: (0, s.useMemo)(
                         function () {
                             var e = [ef, eh];
-                            return A && e.push(A), e;
+                            return (A && e.push(A), e);
                         },
                         [ef, eh, A],
                     ),
@@ -2969,7 +2969,7 @@
                             eu && (null != (e = ed.current).start || (e.start = w()));
                         },
                         [eu],
-                    );
+                    ));
                 var eU = { colorScheme: L, height: eO, loading: ev, preload: eb, ref: em, src: eI, width: 'desktop' === ek ? 320 : '100%' },
                     eH = { className: D, colorScheme: L, platform: ek, ref: ef, visible: eu, onClose: eP, loading: ev };
                 return {
@@ -2981,22 +2981,22 @@
         },
         86180: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { useUserID: () => n.w });
+            (r.r(t), r.d(t, { useUserID: () => n.w }));
             var n = r(85438);
         },
         88249: (e) => {
             function t() {}
-            (t.prototype = {
+            ((t.prototype = {
                 on: function (e, t, r) {
                     var n = this.e || (this.e = {});
-                    return (n[e] || (n[e] = [])).push({ fn: t, ctx: r }), this;
+                    return ((n[e] || (n[e] = [])).push({ fn: t, ctx: r }), this);
                 },
                 once: function (e, t, r) {
                     var n = this;
                     function i() {
-                        n.off(e, i), t.apply(r, arguments);
+                        (n.off(e, i), t.apply(r, arguments));
                     }
-                    return (i._ = t), this.on(e, i, r);
+                    return ((i._ = t), this.on(e, i, r));
                 },
                 emit: function (e) {
                     for (var t = [].slice.call(arguments, 1), r = ((this.e || (this.e = {}))[e] || []).slice(), n = 0, i = r.length; n < i; n++)
@@ -3008,21 +3008,21 @@
                         n = r[e],
                         i = [];
                     if (n && t) for (var a = 0, s = n.length; a < s; a++) n[a].fn !== t && n[a].fn._ !== t && i.push(n[a]);
-                    return i.length ? (r[e] = i) : delete r[e], this;
+                    return (i.length ? (r[e] = i) : delete r[e], this);
                 },
             }),
                 (e.exports = t),
-                (e.exports.TinyEmitter = t);
+                (e.exports.TinyEmitter = t));
         },
         89957: (e, t, r) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 Object.defineProperty(t, 'workAsyncStorageInstance', {
                     enumerable: !0,
                     get: function () {
                         return n;
                     },
-                });
+                }));
             let n = (0, r(1987).createAsyncLocalStorage)();
         },
         90110: (e, t, r) => {
@@ -3037,7 +3037,7 @@
                     r = e.containerRef,
                     n = (0, i.useRef)(null),
                     o = (0, i.useRef)(!1);
-                (0, a.useIsomorphicLayoutEffect)(function () {
+                ((0, a.useIsomorphicLayoutEffect)(function () {
                     var e = r ? r.current : null;
                     n.current !== e && (t && o.current && (s.unlock(n.current), s.lock(e)), (n.current = e));
                 }),
@@ -3048,12 +3048,12 @@
                                     (o.current = !0),
                                     s.lock(n.current),
                                     function () {
-                                        (o.current = !1), s.unlock(n.current);
+                                        ((o.current = !1), s.unlock(n.current));
                                     }
                                 );
                         },
                         [t],
-                    );
+                    ));
             };
         },
         95939: (e, t, r) => {

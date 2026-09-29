@@ -77,12 +77,12 @@
                     T = (0, x.m)(),
                     I = (0, W.l)({ mainObjectType: c.ky.NonApplicable }),
                     f = (0, m.c)(async () => {
-                        T({ actionType: c.X2.Remove, userInteractionType: c.gi.Tap, objectType: c.ky.Wave }), await j();
+                        (T({ actionType: c.X2.Remove, userInteractionType: c.gi.Tap, objectType: c.ky.Wave }), await j());
                     }),
                     g = (0, m.c)(async () => {
-                        T({ actionType: c.X2.Pin, userInteractionType: c.gi.Tap, objectType: c.ky.Wave }), await A();
+                        (T({ actionType: c.X2.Pin, userInteractionType: c.gi.Tap, objectType: c.ky.Wave }), await A());
                     });
-                (0, U.N)(p),
+                ((0, U.N)(p),
                     (0, l.useEffect)(() => {
                         if (p)
                             return (
@@ -91,7 +91,7 @@
                                     I(!1);
                                 }
                             );
-                    }, [p, I]);
+                    }, [p, I]));
                 let L = !(null == i ? void 0 : i.isDisabled),
                     k = !(null == i ? void 0 : i.isDisabled) && !C;
                 return (0, a.jsxs)(D.W1, {
@@ -209,20 +209,20 @@
                                 er({ actionType: eb ? c.X2.Pause : c.X2.Play, userInteractionType: c.gi.Tap, objectType: c.ky.Wave })));
                     }),
                     eN = (0, m.c)(async () => {
-                        er({ actionType: c.X2.Pin, userInteractionType: c.gi.Tap, objectType: c.ky.Wave }), await ea();
+                        (er({ actionType: c.X2.Pin, userInteractionType: c.gi.Tap, objectType: c.ky.Wave }), await ea());
                     }),
                     eT = (0, m.c)(() => {
                         if (D.isDisabled) {
-                            X.setDisabledRoomId(D.id), X.disabledRoomInfoModal.open(), el({ to: c.QT.MultivibeAloneScreen, objectType: c.ky.Link });
+                            (X.setDisabledRoomId(D.id), X.disabledRoomInfoModal.open(), el({ to: c.QT.MultivibeAloneScreen, objectType: c.ky.Link }));
                             return;
                         }
                         eC && ej();
                     }),
                     eI = (0, m.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     ef = (0, m.c)((e) => {
-                        e && el({ to: c.QT.MultivibeActionScreen, objectType: c.ky.Link }), en(e), ed(e);
+                        (e && el({ to: c.QT.MultivibeActionScreen, objectType: c.ky.Link }), en(e), ed(e));
                     }),
                     eg = (0, m.c)((e) => {
                         e.target === e.currentTarget && (e.code === L.v.SPACE || e.code === L.v.ENTER) && (e.preventDefault(), eT());
@@ -230,12 +230,12 @@
                     [eS, eL] = (0, l.useState)(!1),
                     ek = (0, l.useCallback)(
                         (e) => {
-                            eL(!1), ep(e), er({ actionType: c.X2.Rename, userInteractionType: c.gi.Tap, objectType: c.ky.Wave });
+                            (eL(!1), ep(e), er({ actionType: c.X2.Rename, userInteractionType: c.gi.Tap, objectType: c.ky.Wave }));
                         },
                         [ep, er, eL],
                     ),
                     ey = (0, l.useCallback)(() => {
-                        eL(!0), el({ to: c.QT.MultivibeRenameScreen, objectType: c.ky.Link });
+                        (eL(!0), el({ to: c.QT.MultivibeRenameScreen, objectType: c.ky.Link }));
                     }, [el, eL]),
                     eR = (0, _.L)(() =>
                         (0, a.jsx)(N.n, {
@@ -538,18 +538,18 @@
                             try {
                                 e || (await i.getData(!0));
                             } finally {
-                                e || (!t && i.isAwakened && E({ actionType: r.X2.LumenAwakened }), P(!1), (u.current = null)), k(e);
+                                (e || (!t && i.isAwakened && E({ actionType: r.X2.LumenAwakened }), P(!1), (u.current = null)), k(e));
                             }
                         }),
                         O = (0, l.c)(() => w(!1)),
                         M = (0, l.c)(() => {
                             var e;
-                            null == (e = u.current) || e.call(u), w(!1);
+                            (null == (e = u.current) || e.call(u), w(!1));
                         });
                     return (
                         (0, s.useEffect)(() => {
                             t.current = (e) => {
-                                (u.current = e), P(!0), k(!0);
+                                ((u.current = e), P(!0), k(!0));
                             };
                         }, [t, P]),
                         (0, s.useEffect)(() => {
@@ -642,10 +642,10 @@
         4550: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { R: () => a }),
+            (i.d(t, { R: () => a }),
                 (function (e) {
-                    (e.RADIAL = 'RADIAL'), (e.STACK = 'STACK');
-                })(a || (a = {}));
+                    ((e.RADIAL = 'RADIAL'), (e.STACK = 'STACK'));
+                })(a || (a = {})));
         },
         4772: (e, t, i) => {
             'use strict';
@@ -703,10 +703,10 @@
         6791: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { z: () => a }),
+            (i.d(t, { z: () => a }),
                 (function (e) {
-                    (e.NONE = 'none'), (e.DEFAULT = 'default'), (e.CUSTOM = 'custom');
-                })(a || (a = {}));
+                    ((e.NONE = 'none'), (e.DEFAULT = 'default'), (e.CUSTOM = 'custom'));
+                })(a || (a = {})));
         },
         6943: (e) => {
             e.exports = { trailer: 'PlaylistWithTracks_trailer__dOp1u', root: 'PlaylistWithTracks_root__jchZL' };
@@ -810,7 +810,7 @@
                     x = (0, u.N)(),
                     b = t && i,
                     A = (0, c.c)(() => {
-                        x({ to: n.QT.MultivibeSendingInvitationScreen, objectType: n.ky.Shortcut }), r.promoModal.open();
+                        (x({ to: n.QT.MultivibeSendingInvitationScreen, objectType: n.ky.Shortcut }), r.promoModal.open());
                     });
                 return (0, a.jsxs)('div', {
                     className: (0, s.$)(C().root, { [C().root_mobile]: b }),
@@ -908,7 +908,7 @@
                                 let i = e.get(v.K.UTM_CAMPAIGN);
                                 if (!i) return t;
                                 let a = new URLSearchParams();
-                                return a.set(v.K.UTM_SOURCE, 'campaignid_'.concat(i)), (0, u.C)(t, a);
+                                return (a.set(v.K.UTM_SOURCE, 'campaignid_'.concat(i)), (0, u.C)(t, a));
                             },
                             [e],
                         );
@@ -1283,7 +1283,7 @@
                         let { tabId: r = '', tabPos: l = 1, isTabSelectedByDefault: n = !1 } = a;
                         if (!e || !m) return;
                         let c = { hash: i, pageId: o.W[m], tabId: r, tabPos: l, isTabSelectedByDefault: n };
-                        v && (c.skeletonId = v), u && _ && ((c.mainObjectType = _), (c.mainObjectId = u));
+                        (v && (c.skeletonId = v), u && _ && ((c.mainObjectType = _), (c.mainObjectId = u)));
                         let d = (0, s.Fx)({ params: c, logger: t, context: 'useSendEventOnTabOpened' });
                         d && (0, s.TV)(e.evgenInstance, d);
                     },
@@ -1318,7 +1318,7 @@
                 u = i(21732),
                 v = i(71483);
             !(function (e) {
-                (e.TOP = 'top'), (e.CENTER = 'center');
+                ((e.TOP = 'top'), (e.CENTER = 'center'));
             })(a || (a = {}));
             var p = i(91027),
                 h = i(86269),
@@ -1362,16 +1362,16 @@
                         },
                     }),
                     z = (0, p.c)((e) => {
-                        t.setClicked(), n({ to: o.QT.AlbumScreen }), w(e);
+                        (t.setClicked(), n({ to: o.QT.AlbumScreen }), w(e));
                     }),
                     K = (0, p.c)(() => {
-                        t.setClicked(), H();
+                        (t.setClicked(), H());
                     }),
                     Y = (0, x.c)({ album: t.album, callback: K }),
                     F = (0, p.c)(() => {
                         if (!B()) {
                             if (V) return void D.open();
-                            Y(), M(!U);
+                            (Y(), M(!U));
                         }
                     }),
                     $ = i({ id: 'entity-names.album-name' }, { albumName: t.album.title }),
@@ -1490,13 +1490,13 @@
                 },
                 z = {},
                 K = {};
-            (() => {
-                Object.defineProperty(K, 'X', { value: !0 }), (K.q = void 0);
+            ((() => {
+                (Object.defineProperty(K, 'X', { value: !0 }), (K.q = void 0));
                 var e = (function e(t) {
                     var i = z[t];
                     if (void 0 !== i) return i.exports;
                     var a = (z[t] = { exports: {} });
-                    return H[t](a, a.exports, e), a.exports;
+                    return (H[t](a, a.exports, e), a.exports);
                 })(1964);
                 Object.defineProperty(K, 'q', {
                     enumerable: !0,
@@ -1505,7 +1505,7 @@
                     },
                 });
             })(),
-                K.X;
+                K.X);
             var Y = K.q,
                 F = i(42406);
             let $ = (e) => {
@@ -1513,11 +1513,11 @@
                     { callback: i, visibleTime: a, threshold: s } = e;
                 return (0, F.Gv)(
                     (e, s) => {
-                        e.isIntersecting &&
+                        (e.isIntersecting &&
                             (t = setTimeout(() => {
-                                i(), s.disconnect();
+                                (i(), s.disconnect());
                             }, a)),
-                            e.isIntersecting || clearTimeout(t);
+                            e.isIntersecting || clearTimeout(t));
                     },
                     { threshold: s },
                 );
@@ -1584,7 +1584,7 @@
                                                 visibleTime: null != (t = null == o ? void 0 : o.blockImpression.timeMs) ? t : 2100,
                                                 callback: () => {
                                                     let e = null == o ? void 0 : o.blockImpression.url;
-                                                    e && (null == r || r(e)), s();
+                                                    (e && (null == r || r(e)), s());
                                                 },
                                             },
                                             {
@@ -1678,18 +1678,18 @@
                             playContextParams: { contextData: { type: v.K.Album, meta: { id: a.id }, from: T, utmLink: I }, loadContextMeta: !0 },
                         }),
                         K = (0, p.c)(() => {
-                            null == _ || _(), z();
+                            (null == _ || _(), z());
                         }),
                         Y = (0, x.c)({ album: a, callback: O }),
                         F = (0, x.c)({ album: a, callback: K }),
                         $ = (0, j.N)(),
                         X = (0, p.c)((e) => {
-                            (0, ee.P)(e, ei().ripple), e.stopPropagation(), null == _ || _(), $({ to: o.QT.AlbumScreen }), Y(e);
+                            ((0, ee.P)(e, ei().ripple), e.stopPropagation(), null == _ || _(), $({ to: o.QT.AlbumScreen }), Y(e));
                         }),
                         G = (0, p.c)(() => {
                             if (!M()) {
                                 if (W) return void V.open();
-                                F(), D(!H);
+                                (F(), D(!H));
                             }
                         }),
                         Q = (0, l.useMemo)(() => {
@@ -2639,7 +2639,7 @@
                                 m(!u));
                         }),
                         j = (0, p.c)((e) => {
-                            (0, ee.P)(e, tg().ripple), b();
+                            ((0, ee.P)(e, tg().ripple), b());
                         }),
                         T = (0, eM.L)(() => {
                             var e;
@@ -2902,7 +2902,7 @@
                                               e.key,
                                           ),
                                       );
-                            return null == e || e.unshift((0, r.jsx)(tY.B, {}, 'create-playlist-card')), e;
+                            return (null == e || e.unshift((0, r.jsx)(tY.B, {}, 'create-playlist-card')), e);
                         }, [null == m ? void 0 : m.items]);
                     return (0, r.jsx)(eJ.O, {
                         className: u,
@@ -3751,13 +3751,13 @@
                     }, [A, N, d, a, I, x, b, n]),
                     V = (0, l.useCallback)(
                         (e) => {
-                            L({ to: o.QT.ConcertPurchaseScreen }), R(), null == e || e.stopPropagation();
+                            (L({ to: o.QT.ConcertPurchaseScreen }), R(), null == e || e.stopPropagation());
                         },
                         [R, L],
                     ),
                     W = (0, p.c)((e) => {
                         if (!M) {
-                            V(e), L({ to: o.QT.ConcertScreen });
+                            (V(e), L({ to: o.QT.ConcertScreen }));
                             return;
                         }
                         O(e);
@@ -4100,7 +4100,7 @@
                                     let t = (null == X ? void 0 : X.endPositionSec) || 0,
                                         i = e.position,
                                         a = i - ((null == G ? void 0 : G.endPositionSec) || 0);
-                                    null == X || X.updateEndPositionSec(t + a), null == G || G.updateEndPositionSec(i);
+                                    (null == X || X.updateEndPositionSec(t + a), null == G || G.updateEndPositionSec(i));
                                 }
                             },
                             [Z.streamProgress, X, G, ei],
@@ -4172,14 +4172,14 @@
                                 null == g
                                     ? void 0
                                     : g.state.queueState.currentEntity.onChange(() => {
-                                          null == e || e(),
+                                          (null == e || e(),
                                               (e = g.state.playerState.progress.onChange(() => {
                                                   let e = g.state.playerState.progress.value;
                                                   J && en(e);
-                                              }));
+                                              })));
                                       });
                         return () => {
-                            null == t || t(), null == e || e();
+                            (null == t || t(), null == e || e());
                         };
                     }, [g, en, J, Z.streamProgress]);
                     let eu = ei ? Z.mainAlbum.title : Z.title,
@@ -4392,10 +4392,10 @@
                         n = (0, S.Z)(t.artist.url),
                         c = (0, j.N)(),
                         d = (0, p.c)(() => {
-                            c({ to: o.QT.ArtistScreen }), n();
+                            (c({ to: o.QT.ArtistScreen }), n());
                         }),
                         m = (0, p.c)(() => {
-                            c({ to: o.QT.Link, deepLink: s }), l();
+                            (c({ to: o.QT.Link, deepLink: s }), l());
                         }),
                         _ = (0, a_.S)({ artist: t.artist, callback: d });
                     return (0, r.jsx)(am.X, {
@@ -4480,7 +4480,7 @@
                                     ((0, ee.P)(e, ab().ripple),
                                     _(),
                                     A().finally(() => {
-                                        v(), j(!b);
+                                        (v(), j(!b));
                                     }));
                             },
                             [v, _, A, b, j, h],
@@ -5241,7 +5241,7 @@
                         }),
                         d = (0, l.useCallback)(
                             (e) => {
-                                (0, ee.P)(e, s_().ripple), n();
+                                ((0, ee.P)(e, s_().ripple), n());
                             },
                             [n],
                         ),
@@ -5335,11 +5335,11 @@
                     { from: M, utmLink: D } = (0, I.f)({ contextId: s.id, contextType: v.K.Album }),
                     V = (0, j.N)(),
                     W = (0, p.c)((e) => {
-                        V({ to: o.QT.ArtistScreen, objectId: null == _ ? void 0 : _.id, objectType: o.ky.Artist }), R(e);
+                        (V({ to: o.QT.ArtistScreen, objectId: null == _ ? void 0 : _.id, objectType: o.ky.Artist }), R(e));
                     }),
                     U = (0, p.c)((e) => {
                         if (O()) {
-                            e.stopPropagation(), e.preventDefault();
+                            (e.stopPropagation(), e.preventDefault());
                             return;
                         }
                         (null == s ? void 0 : s.id) && (e.stopPropagation(), N.openAlbumTrailer(s.id), P(o.ky.Album, String(s.id)));
@@ -5903,11 +5903,11 @@
                         S = (0, p.c)((e) => {
                             var t;
                             if (!N.onTabChange || e === N.value || !_) return;
-                            setTimeout(() => {
+                            (setTimeout(() => {
                                 var t, i, a;
                                 null == (a = T.current) || null == (i = a.children[e]) || null == (t = i.focus) || t.call(i);
                             }),
-                                N.onTabChange(e);
+                                N.onTabChange(e));
                             let i = null == (t = _.filters.items) ? void 0 : t[e];
                             i && (_.handleFilterClick(i), f({ tabId: i.id, tabPos: e + 1 }));
                         });
@@ -6274,7 +6274,7 @@
                         () => (
                             N.shouldUpdateHistory && (h(), N.setShouldUpdateHistory(!1)),
                             () => {
-                                N.hasCleared && h(), N.reset();
+                                (N.hasCleared && h(), N.reset());
                             }
                         ),
                         [N, h],
@@ -7084,7 +7084,7 @@
                 d = i(72812),
                 m = {
                     4601: (e, t, i) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useToggle = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useToggle = void 0));
                         let a = i(810);
                         t.useToggle = (e) => {
                             let [t, i] = (0, a.useState)(e);
@@ -7115,11 +7115,11 @@
                 var t = _[e];
                 if (void 0 !== t) return t.exports;
                 var i = (_[e] = { exports: {} });
-                return m[e](i, i.exports, u), i.exports;
+                return (m[e](i, i.exports, u), i.exports);
             }
             var v = {};
-            (() => {
-                Object.defineProperty(v, '__esModule', { value: !0 }), (v.useTruncate = void 0);
+            ((() => {
+                (Object.defineProperty(v, '__esModule', { value: !0 }), (v.useTruncate = void 0));
                 let e = u(352),
                     t = u(810),
                     i = u(4601);
@@ -7153,7 +7153,7 @@
                     );
                 };
             })(),
-                v.__esModule;
+                v.__esModule);
             var p = v.useTruncate,
                 h = i(63423),
                 C = i(71926),
@@ -7253,7 +7253,7 @@
             'use strict';
             i.d(t, { H: () => a });
             var a = (function (e) {
-                return (e.LIKED_ALBUMS = 'liked'), (e.UPCOMING_ALBUMS = 'upcoming'), e;
+                return ((e.LIKED_ALBUMS = 'liked'), (e.UPCOMING_ALBUMS = 'upcoming'), e);
             })({});
         },
         30310: (e) => {
@@ -7296,7 +7296,7 @@
             let a = (e, t) => {
                 let i = new URL(window.location.href),
                     a = i.searchParams;
-                return a.set(e, t), (i.search = a.toString()), i.toString();
+                return (a.set(e, t), (i.search = a.toString()), i.toString());
             };
         },
         31906: (e) => {
@@ -7341,7 +7341,7 @@
                                 let { tabId: c = '', tabPos: d = 1, isTabSelectedByDefault: m = !1 } = l;
                                 if (!t || !s || e.current) return;
                                 let _ = { hash: a, pageId: C.W[s], tabId: c, tabPos: d, isTabSelectedByDefault: m };
-                                n && (_.skeletonId = n), o && r && ((_.mainObjectType = r), (_.mainObjectId = o));
+                                (n && (_.skeletonId = n), o && r && ((_.mainObjectType = r), (_.mainObjectId = o)));
                                 let u = (0, v.Fx)({ params: _, logger: i, context: 'useSendEventOnTabLoaded' });
                                 u && ((0, v.hc)(t.evgenInstance, u), (e.current = !0));
                             },
@@ -7587,10 +7587,10 @@
         37184: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { l: () => a }),
+            (i.d(t, { l: () => a }),
                 (function (e) {
-                    (e.PLAYLIST_LIKED_TAB = 'liked_playlist_tab'), (e.PLAYLIST_CREATED_TAB = 'created_playlist_tab');
-                })(a || (a = {}));
+                    ((e.PLAYLIST_LIKED_TAB = 'liked_playlist_tab'), (e.PLAYLIST_CREATED_TAB = 'created_playlist_tab'));
+                })(a || (a = {})));
         },
         37340: (e, t, i) => {
             'use strict';
@@ -7948,25 +7948,25 @@
                         { notify: s, dismiss: r } = (0, D.l)(),
                         l = (0, o.useRef)(void 0),
                         n = (0, c.c)(() => {
-                            i.blocks.forEach((e) => {
+                            (i.blocks.forEach((e) => {
                                 e.isRejected && (0, f.v)(e.meta) && t.getBlock(e);
                             }),
                                 r({ notificationId: l.current }),
-                                i.setShouldReloadNotification(!1);
+                                i.setShouldReloadNotification(!1));
                         });
-                    (0, o.useEffect)(() => {
+                    ((0, o.useEffect)(() => {
                         i.hasErrorBlocks &&
                             !i.shouldReloadNotification &&
                             setTimeout(() => {
-                                (l.current = s((0, a.jsx)(V.L, { reloadBlocks: n }), { containerId: B.u.ERROR, autoClose: !1 })), i.setShouldReloadNotification(!0);
+                                ((l.current = s((0, a.jsx)(V.L, { reloadBlocks: n }), { containerId: B.u.ERROR, autoClose: !1 })), i.setShouldReloadNotification(!0));
                             });
                     }, [s, n, i.hasErrorBlocks, i.shouldReloadNotification, i]),
                         (0, o.useEffect)(
                             () => () => {
-                                r(), (0, M._n)(i) && i.setShouldReloadNotification(!1);
+                                (r(), (0, M._n)(i) && i.setShouldReloadNotification(!1));
                             },
                             [r, i],
-                        );
+                        ));
                 },
                 U = (0, r.PA)((e) => {
                     var t;
@@ -8035,11 +8035,11 @@
                         [b, A] = (0, o.useState)(() => Array.from({ length: r.blocks.length }, (e, t) => t)),
                         j = (0, c.c)(() => {
                             let e = [];
-                            r.blocks.forEach((t, i) => {
+                            (r.blocks.forEach((t, i) => {
                                 var a;
                                 (t.isVisible || ((null == (a = t.meta) ? void 0 : a.showPolicy) === H.E.LOAD_AND_SHOW && t.isNeededToLoad)) && e.push(i);
                             }),
-                                A(e);
+                                A(e));
                         }),
                         N = (0, c.c)((e) => {
                             let t = b[e];
@@ -8060,7 +8060,7 @@
                             i = r.blocks.findIndex((e) => e.id === t);
                         if (!b.includes(i)) return;
                         let a = null == (e = T.getOffsetForIndex(i, 'center')) ? void 0 : e[0];
-                        T.scrollToIndex(i, { align: 'center', behavior: 'auto' }), T.scrollOffset && a && 100 > Math.abs(T.scrollOffset - a) && (C.current = !1);
+                        (T.scrollToIndex(i, { align: 'center', behavior: 'auto' }), T.scrollOffset && a && 100 > Math.abs(T.scrollOffset - a) && (C.current = !1));
                     }, [b, d, r.blocks, T]);
                     let f = T.getTotalSize(),
                         g = T.getVirtualItems();
@@ -8129,7 +8129,7 @@
                         V = B.checkExperiment(h.z.WebNextVirtualSkeleton, 'on') ? G : U,
                         W = (0, c.c)((e) => {
                             var t;
-                            D ? window.scrollTo(0, 0) : M && (M.scrollTop = 0), null == (t = u.onTabChange) || t.call(u, e);
+                            (D ? window.scrollTo(0, 0) : M && (M.scrollTop = 0), null == (t = u.onTabChange) || t.call(u, e));
                         });
                     return (0, a.jsxs)(a.Fragment, {
                         children: [
@@ -8411,7 +8411,7 @@
                         if (e) {
                             let { href: t } = (0, x.u)('/playlists/:playlistUuid', { params: { playlistUuid: e } });
                             N.push(t);
-                        } else A((0, a.jsx)(b.h, { error: i({ id: 'playlist-errors.failed-to-create-playlist' }) }), { containerId: p.u.ERROR }), (T.current = !1);
+                        } else (A((0, a.jsx)(b.h, { error: i({ id: 'playlist-errors.failed-to-create-playlist' }) }), { containerId: p.u.ERROR }), (T.current = !1));
                     }, [r, i, N, A]);
                 return (
                     (0, o.useEffect)(
@@ -8549,7 +8549,7 @@
                         M = (0, c.f)(),
                         { settings: B, experiments: D } = (0, m.g)(),
                         V = !D.checkExperiment(_.z.WebNextVirtualSkeleton, 'on') && B.browserInfo && !B.browserInfo.isSafari;
-                    (0, l.useEffect)(() => {
+                    ((0, l.useEffect)(() => {
                         (r || !g) && A && (0, v.v)(k) && t.getBlock(i);
                     }, [i, r, A, g, t, k]),
                         (0, l.useEffect)(() => {
@@ -8557,7 +8557,7 @@
                         }, [N, T, d]),
                         (0, l.useEffect)(() => {
                             !R && N && (M(), E(!0));
-                        }, [R, N, M, E]);
+                        }, [R, N, M, E]));
                     let W = (0, o.L)(() => {
                         if (((e) => !!(e && 'object' == typeof e && 'current' in e))(n)) {
                             var e;
@@ -8725,7 +8725,7 @@
             let I = ' • ',
                 f = (e, t) => {
                     let i = [];
-                    return e.city && i.push(e.city), e.place && i.push(e.place), i.join(t);
+                    return (e.city && i.push(e.city), e.place && i.push(e.place), i.join(t));
                 };
             var g = i(10570),
                 S = i.n(g);
@@ -8792,11 +8792,11 @@
                     H = (0, h.Z)(U),
                     z = W(I),
                     K = (0, n.c)((e) => {
-                        V({ to: l.QT.ConcertPurchaseScreen }), P(), null == e || e.stopPropagation();
+                        (V({ to: l.QT.ConcertPurchaseScreen }), P(), null == e || e.stopPropagation());
                     }),
                     Y = (0, n.c)((e) => {
                         if (!D) return void K(e);
-                        V({ to: l.QT.ConcertScreen }), H(e);
+                        (V({ to: l.QT.ConcertScreen }), H(e));
                     }),
                     F = (0, n.c)((e) => {
                         (e.code === b.v.SPACE || e.code === b.v.ENTER) && (e.preventDefault(), Y());
@@ -9032,14 +9032,14 @@
                         x = (0, C.P)(),
                         b = (0, O.F)(),
                         A = (0, c.c)(() => {
-                            v(!u), h(!u);
+                            (v(!u), h(!u));
                         }),
                         j = (0, c.c)((e) => {
-                            e.preventDefault(), e.stopPropagation();
+                            (e.preventDefault(), e.stopPropagation());
                         }),
                         N = (0, c.c)((e) => {
                             if ((e.stopPropagation(), x())) return void e.preventDefault();
-                            n.openTrackTrailer(t.id), b(E.ky.Track, t.id);
+                            (n.openTrackTrailer(t.id), b(E.ky.Track, t.id));
                         }),
                         T = (0, d.L)(() => {
                             var e;
@@ -9144,7 +9144,7 @@
                             O.open({ trackId: R.id, albumId: R.albumId });
                         }),
                         et = (0, c.c)(() => {
-                            D || Z || (V(!0), null == K || K()), J();
+                            (D || Z || (V(!0), null == K || K()), J());
                         }),
                         ei = (0, v.c)({ album: R.mainAlbum, callback: $ }),
                         ea = (0, L.w)({ track: R, callback: X }),
@@ -9154,19 +9154,19 @@
                         eo = (0, c.c)(() => {
                             if (!Q()) {
                                 if (el) return void M.open();
-                                er(), G(!Z);
+                                (er(), G(!Z));
                             }
                         }),
                         en = (0, c.c)(() => {
                             R.hasTrackLink && es();
                         }),
                         ec = (0, c.c)(() => {
-                            W || R.isLiked || (H(!0), null == z || z()), F();
+                            (W || R.isLiked || (H(!0), null == z || z()), F());
                         }),
                         ed = (0, c.c)((e) => {
                             var t;
                             if (R.hasTrackLink) {
-                                null == Y || Y(), ea(e);
+                                (null == Y || Y(), ea(e));
                                 return;
                             }
                             R.hasAlbumLink && (null == (t = R.mainAlbum) ? void 0 : t.url) && ei(e);
@@ -9299,7 +9299,7 @@
                 let { id: t, concert: i, withCashback: s = !0, withInlineMeta: m = !1, titleSize: u = 'm' } = e,
                     v = [],
                     p = (0, a.jsx)(c.HL, { variant: 'span', size: 'm', weight: 'medium', 'aria-hidden': !0, children: '•' });
-                (null == i ? void 0 : i.eventKind) &&
+                ((null == i ? void 0 : i.eventKind) &&
                     v.push(
                         (0, a.jsx)(c.HL, {
                             variant: 'span',
@@ -9319,7 +9319,7 @@
                                 'data-test-id': o.OA.concert.CONCERT_CARD_CONTENT_RATING,
                                 children: i.contentRating,
                             }),
-                        );
+                        ));
                 let h = (0, n.L)(() =>
                     (null == i ? void 0 : i.city)
                         ? (0, a.jsx)(c.HL, {
@@ -9520,7 +9520,7 @@
                         };
                     })(),
                     N = (0, l.useCallback)(() => {
-                        j(), (window.location.href = C.Z.main.href);
+                        (j(), (window.location.href = C.Z.main.href));
                     }, [j]),
                     { contentRef: T } = (0, h.g)();
                 return (0, a.jsxs)('div', {
@@ -9658,7 +9658,7 @@
                     [m, u] = (0, o.useState)(!1),
                     [v, p] = (0, o.useState)(!1),
                     h = (0, _.c)(() => {
-                        m || i.isLiked || (u(!0), null == n || n()), c();
+                        (m || i.isLiked || (u(!0), null == n || n()), c());
                     });
                 return (0, a.jsx)('div', {
                     className: (0, s.$)(F().root, F().controls, t, { [F().controls_disabled]: !i.isAvailable }),
@@ -9727,11 +9727,11 @@
                         playbackId: y.V.CLIP,
                     }),
                     em = (0, _.c)(() => {
-                        es([i.clipId]), ee || ed || (et(!0), null == ea || ea()), null == ei || ei(), X();
+                        (es([i.clipId]), ee || ed || (et(!0), null == ea || ea()), null == ei || ei(), X());
                     }),
                     e_ = (0, B.X)({ clip: i, callback: em }),
                     eu = (0, _.c)((e) => {
-                        (0, v.P)(e, P.$f.ripple), e_(e);
+                        ((0, v.P)(e, P.$f.ripple), e_(e));
                     }),
                     ev = (0, u.L)(() =>
                         (0, a.jsx)(C.HL, {
@@ -9928,9 +9928,9 @@
         73474: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { p: () => a }),
+            (i.d(t, { p: () => a }),
                 (function (e) {
-                    (e.WEB_MAIN = 'web_main'),
+                    ((e.WEB_MAIN = 'web_main'),
                         (e.MAIN = 'main'),
                         (e.WEB_COLLECTION = 'web_collection'),
                         (e.NON_MUSIC = 'non_music'),
@@ -9939,8 +9939,8 @@
                         (e.SEARCH = 'Search'),
                         (e.ARTIST = 'artist_web'),
                         (e.CONCERTS = 'concerts'),
-                        (e.CONCERT_PAGE = 'concert_page');
-                })(a || (a = {}));
+                        (e.CONCERT_PAGE = 'concert_page'));
+                })(a || (a = {})));
         },
         73654: (e, t, i) => {
             'use strict';
@@ -10032,10 +10032,10 @@
                         let r = { ...(0, s.HO)(e), isPresave: !e.isPresave };
                         u(!0);
                         let l = await e.toggleLike();
-                        u(!1),
+                        (u(!1),
                             l === o.J.OK
                                 ? i((0, a.jsx)(I, { upcomingAlbum: r }), { containerId: n.u.INFO })
-                                : i((0, a.jsx)(m.h, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, a.jsx)(m.h, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [t.isAuthorized, _, e, i, v]);
                 };
         },
@@ -10226,14 +10226,14 @@
                             p.current ||
                                 (p.current = new ResizeObserver((e) => {
                                     let t = !1;
-                                    e.forEach((e) => {
+                                    (e.forEach((e) => {
                                         let i = e.target.getAttribute('data-index');
                                         if (e.target && i) {
                                             let a = e.contentRect.height;
                                             a && a !== v.current.get(i) && (v.current.set(i, e.contentRect.height), (t = !0));
                                         }
                                     }),
-                                        t && A();
+                                        t && A());
                                 }));
                         }, [A]),
                         { virtualizer: b, resizeObserver: p.current }
@@ -10328,10 +10328,10 @@
                     $ = (0, l.useId)(),
                     X = (0, f.Y)()(i),
                     G = (0, c.c)((e) => {
-                        (0, m.P)(e, k().ripple), V && (U(e), z(o.H2.ConcertScreen));
+                        ((0, m.P)(e, k().ripple), V && (U(e), z(o.H2.ConcertScreen)));
                     }),
                     Q = (0, c.c)((e) => {
-                        M(), z(o.H2.ConcertPurchaseScreen), e.stopPropagation(), e.preventDefault();
+                        (M(), z(o.H2.ConcertPurchaseScreen), e.stopPropagation(), e.preventDefault());
                     });
                 return (0, a.jsxs)(u.t, {
                     radius: y,
@@ -10718,7 +10718,7 @@
             'use strict';
             i.d(t, { Q: () => a });
             var a = (function (e) {
-                return (e.ALL = 'all'), e;
+                return ((e.ALL = 'all'), e);
             })({});
         },
         86384: (e) => {
@@ -10860,10 +10860,10 @@
         90346: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { J: () => a }),
+            (i.d(t, { J: () => a }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(a || (a = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(a || (a = {})));
         },
         90625: (e, t, i) => {
             'use strict';
@@ -10903,10 +10903,10 @@
                 if (a) {
                     let t = e.markers().find((e) => e.name === a);
                     if (!t) return;
-                    (l = t.time), (o = t.time + t.duration);
+                    ((l = t.time), (o = t.time + t.duration));
                 } else if (s) {
                     var n;
-                    (l = s.start), (o = null != (n = s.end) ? n : e.totalFrames);
+                    ((l = s.start), (o = null != (n = s.end) ? n : e.totalFrames));
                 }
                 null !== l &&
                     null !== o &&
@@ -10952,13 +10952,13 @@
                         togglePlay: en,
                         isCurrent: ec,
                     } = (0, T.B)({ blockIdForFrom: K, pageIdForFrom: z, seeds: null != (s = null == U ? void 0 : U.seeds) ? s : [] });
-                (0, c.useEffect)(() => X(), [X]),
+                ((0, c.useEffect)(() => X(), [X]),
                     (0, c.useEffect)(() => {
                         if (!ea || et.current) return;
                         let e = () => {
-                            (et.current = !0), R(ea, ei.current);
+                            ((et.current = !0), R(ea, ei.current));
                         };
-                        return ea.addEventListener('load', e), () => ea.removeEventListener('load', e);
+                        return (ea.addEventListener('load', e), () => ea.removeEventListener('load', e));
                     }, [ea]),
                     (0, c.useEffect)(() => {
                         let e = ((e, t, i, a) =>
@@ -10980,18 +10980,18 @@
                                   ? void 0
                                   : a.loading)(ei.current, eo, !!U, w);
                         e && e !== ei.current && ((ei.current = e), ea && et.current && R(ea, e));
-                    }, [w, ea, ec, eo, U]);
+                    }, [w, ea, ec, eo, U]));
                 let ed = (0, u.c)(() => {
-                        er || eo || (el(!0), null == Y || Y()), en(), F(!0);
+                        (er || eo || (el(!0), null == Y || Y()), en(), F(!0));
                     }),
                     em = (0, u.c)(() => {
                         if (U) {
                             if (eo) {
-                                en(), F(!1);
+                                (en(), F(!1));
                                 return;
                             }
                             if (Z.isEnabled && !Z.isAwakened) {
-                                $({ to: m.QT.LumenAwakeningScreen }), null == W || W(ed);
+                                ($({ to: m.QT.LumenAwakeningScreen }), null == W || W(ed));
                                 return;
                             }
                             ed();
@@ -11059,7 +11059,7 @@
                             let a = new URLSearchParams(e);
                             a.set('wl', c[t]);
                             let s = e.get(n.K.UTM_CAMPAIGN);
-                            return s && a.set('meta', 'campaignid_'.concat(s)), (0, o.C)(i, a);
+                            return (s && a.set('meta', 'campaignid_'.concat(s)), (0, o.C)(i, a));
                         },
                         [t, e],
                     );
@@ -11079,10 +11079,10 @@
         91118: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { n: () => a }),
+            (i.d(t, { n: () => a }),
                 (function (e) {
-                    (e.ALBUM = 'album_tab'), (e.PRESAVED_ALBUM = 'presaved_album_tab');
-                })(a || (a = {}));
+                    ((e.ALBUM = 'album_tab'), (e.PRESAVED_ALBUM = 'presaved_album_tab'));
+                })(a || (a = {})));
         },
         91555: (e) => {
             e.exports = {
@@ -11156,10 +11156,10 @@
         99424: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { E: () => a }),
+            (i.d(t, { E: () => a }),
                 (function (e) {
-                    (e.SHOW_AND_LOAD = 'SHOW_AND_LOAD'), (e.LOAD_AND_SHOW = 'LOAD_AND_SHOW');
-                })(a || (a = {}));
+                    ((e.SHOW_AND_LOAD = 'SHOW_AND_LOAD'), (e.LOAD_AND_SHOW = 'LOAD_AND_SHOW'));
+                })(a || (a = {})));
         },
     },
 ]);

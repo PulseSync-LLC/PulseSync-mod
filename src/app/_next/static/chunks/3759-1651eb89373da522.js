@@ -210,7 +210,7 @@
                     p = null != u ? u : m({ id: 'play-queue.delete-from-queue' }),
                     h = (0, o.useCallback)(
                         (t) => {
-                            null == s || s(), t.stopPropagation();
+                            (null == s || s(), t.stopPropagation());
                         },
                         [s],
                     );
@@ -284,14 +284,14 @@
                         J = z.hasPlus,
                         tt = !x.isRemoved && x.isAvailable && !Y,
                         te = (0, u.c)(async () => {
-                            G || x.isLiked || (U(!0), null == K || K()), await V(), null == E || E(x.isLiked);
+                            (G || x.isLiked || (U(!0), null == K || K()), await V(), null == E || E(x.isLiked));
                         }),
                         ti = (0, u.c)((t) => {
                             t.stopPropagation();
                         }),
                         ta = (0, u.c)((t) => {
                             if ((t.stopPropagation(), X())) return void t.preventDefault();
-                            H.openTrackTrailer(x.id), Z(d.ky.Track, x.id);
+                            (H.openTrackTrailer(x.id), Z(d.ky.Track, x.id));
                         }),
                         ts = (0, o.useMemo)(() => {
                             if (tt)
@@ -399,7 +399,7 @@
             i.d(e, { r: () => s, L: () => r });
             let a = (t, e) => t.getDate() === e.getDate() && t.getMonth() === e.getMonth() && t.getFullYear() === e.getFullYear();
             var s = (function (t) {
-                return (t.TODAY = 'today'), (t.YESTERDAY = 'yesterday'), (t.DATE = 'date'), (t.DATE_WITH_YEAR = 'date-with-year'), t;
+                return ((t.TODAY = 'today'), (t.YESTERDAY = 'yesterday'), (t.DATE = 'date'), (t.DATE_WITH_YEAR = 'date-with-year'), t);
             })({});
             let r = (t) => {
                 let e = new Date();
@@ -537,7 +537,7 @@
                     tv = S.pubDate && R && !th,
                     tk = (0, k.l)({ entity: null != (E = S.mainAlbum) ? E : null, entityType: y.n.PODCAST, callback: tu }),
                     tC = (0, _.c)((t) => {
-                        te.modal.isOpened && te.modal.close(), tk(t);
+                        (te.modal.isOpened && te.modal.close(), tk(t));
                     }),
                     tg = (0, b.O)({ track: S, withSavingQueryParams: q, entityType: y.n.PODCAST }),
                     tA = (0, n.useCallback)(() => {
@@ -982,7 +982,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let t = [o, d, c];
-                                    return 'ru' === r && t.push(l), t.push(u), t;
+                                    return ('ru' === r && t.push(l), t.push(u), t);
                                 }
                                 case 'desktop':
                                     return [o, d, c, u];
@@ -1062,7 +1062,7 @@
                     [w, B] = (0, o.useState)(!1),
                     F = (0, v.$)(),
                     { isPlaying: Y, isCurrent: z } = (0, m.D)({ playContextParams: D, entityId: f ? ''.concat(b, ':').concat(f) : b });
-                (0, o.useEffect)(() => {
+                ((0, o.useEffect)(() => {
                     if (!z) return void B(!1);
                     let t =
                         null == S
@@ -1082,7 +1082,7 @@
                     }, [I, null == O ? void 0 : O.allTracksUnfinished, null == O || null == (e = O.meta) ? void 0 : e.listeningFinished]),
                     (0, o.useEffect)(() => {
                         var t, e;
-                        z &&
+                        (z &&
                             (null == L || null == (t = L.entityMeta) ? void 0 : t.streamProgress) &&
                             I &&
                             L.entityMeta.streamProgress.hasEverFinished !== I.hasEverFinished &&
@@ -1091,7 +1091,7 @@
                                 ((null == L || null == (e = L.entityMeta) ? void 0 : e.streamProgress) &&
                                     z &&
                                     (L.entityMeta.streamProgress.updateEverFinished(!0), L.entityMeta.streamProgress.updateEndPositionSec(0)),
-                                null == I || I.updateEverFinished(!0));
+                                null == I || I.updateEverFinished(!0)));
                     }, [
                         z,
                         null == L || null == (i = L.entityMeta) ? void 0 : i.streamProgress,
@@ -1110,15 +1110,15 @@
                                       var t;
                                       let e = S.state.playerState.progress.value,
                                           i = null == L || null == (t = L.entityMeta) ? void 0 : t.streamProgress;
-                                      0 !== e.position && w && I.updateEndPositionSec(e.position),
+                                      (0 !== e.position && w && I.updateEndPositionSec(e.position),
                                           z &&
                                               parseInt(''.concat(null == i ? void 0 : i.endPositionSec), 10) !== parseInt(''.concat(e.position), 10) &&
-                                              (null == i || i.updateEndPositionSec(e.position));
+                                              (null == i || i.updateEndPositionSec(e.position)));
                                   });
                         return () => {
                             null == t || t();
                         };
-                    }, [S, I, z, Y, w, b, null == L ? void 0 : L.entityMeta]);
+                    }, [S, I, z, Y, w, b, null == L ? void 0 : L.entityMeta]));
                 let H = (z && (null == L || null == (A = L.entityMeta) || null == (g = A.streamProgress) ? void 0 : g.endPositionSec)) || I.endPositionSec,
                     $ = (0, x.m)(null != H ? H : 0, R),
                     K = (0, o.useMemo)(() => {
@@ -1194,7 +1194,7 @@
             'use strict';
             i.d(e, { D: () => a });
             var a = (function (t) {
-                return (t.ALBUM = 'album'), (t.PLAYLIST = 'playlist'), t;
+                return ((t.ALBUM = 'album'), (t.PLAYLIST = 'playlist'), t);
             })({});
         },
         66436: (t, e, i) => {
@@ -1438,7 +1438,7 @@
                         if (!G()) {
                             if (X) return void O();
                             if (Q) return void z.open();
-                            ti || b || (ta(!0), null == te || te()), Z(), K(!b), null == D || D(!b);
+                            (ti || b || (ta(!0), null == te || te()), Z(), K(!b), null == D || D(!b));
                         }
                     }),
                     tr = (0, n.c)(() => {
@@ -1447,7 +1447,7 @@
                     }),
                     to = (0, n.c)((t) => {
                         if (!r.isAvailable && !r.hasModalAccess) {
-                            L && r.isAvailableOnlyForPlus && O(), V && r.isAvailableOnlyForPlus && z.open();
+                            (L && r.isAvailableOnlyForPlus && O(), V && r.isAvailableOnlyForPlus && z.open());
                             return;
                         }
                         if (X) return void O();
@@ -1637,7 +1637,7 @@
             'use strict';
             i.d(e, { X: () => a });
             var a = (function (t) {
-                return (t.PLAYLIST = 'playlist'), (t.ALBUM = 'album'), t;
+                return ((t.PLAYLIST = 'playlist'), (t.ALBUM = 'album'), t);
             })({});
         },
     },
