@@ -957,6 +957,8 @@ const handleApplicationEvents = (window) => {
     electron_1.ipcMain.on(events_js_1.Events.APPLICATION_INIT_FINISHED, () => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_INIT_FINISHED);
 
+        window.webContents.setBackgroundThrottling(true);
+
         isApplicationInitFinished = true;
         applicationInitFinishedAt = Date.now();
         pulseSyncManager_js_1.markApplicationInitFinished();
