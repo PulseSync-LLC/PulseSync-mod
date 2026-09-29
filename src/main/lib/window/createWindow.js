@@ -64,6 +64,7 @@ const createWindow = async () => {
             contextIsolation: true,
             autoplayPolicy: 'no-user-gesture-required',
             preload: node_path_1.default.join(__dirname, '..', 'preload.js'),
+            backgroundThrottling: false,
         },
     });
     window.isMainWindow = true;
@@ -75,7 +76,6 @@ const createWindow = async () => {
 
         (0, toggleWindowVisibility_js_1.toggleWindowVisibility)(window, shouldShow);
     });
-    window.removel;
     return window;
 };
 exports.createWindow = createWindow;
