@@ -18,8 +18,8 @@ export function SettingToggle({ badge, checked, description, disabled = false, o
             <div className={styles.text}>
                 <div className={styles.titleLine}>
                     <div className={styles.title}>{title}</div>
-                    {titleAction}
                     {badge ? <SettingBadge {...badge} /> : null}
+                    {titleAction}
                 </div>
                 {description ? <div className={styles.description}>{description}</div> : null}
             </div>
