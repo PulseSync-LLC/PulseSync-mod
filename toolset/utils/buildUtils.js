@@ -1,6 +1,6 @@
 function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, modernizeUtils, zstdUtils }) {
-    const { asar, fs, fsp, path, crypto, minify, execSync } = runtime.deps;
-    const { REPO_ROOT, SRC_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, PRETTIER_CONFIG_PATH } = runtime.constants;
+    const { asar, fs, fsp, path, crypto, minify, execSync, execFileSync } = runtime.deps;
+    const { REPO_ROOT, SRC_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, OXFMT_CONFIG_PATH } = runtime.constants;
 
     const MINIFIABLE_EXTENSIONS = new Set(['.js', '.mjs', '.cjs']);
 
@@ -640,7 +640,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
 
         const resolvedDest = destDir ?? deriveOutputDir(resolvedSrc, modernize ? '@modernized-pretty' : '@pretty');
-        console.log('Форматирование через Prettier');
+        console.log('Форматирование через Oxfmt');
         console.time('Форматирование завершено');
 
         if (modernize) {
@@ -650,7 +650,18 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             await fsp.cp(resolvedSrc, resolvedDest, { recursive: true, force: true });
         }
 
-        execSync(`prettier --config "${PRETTIER_CONFIG_PATH}" --ignore-path "${path.join(REPO_ROOT, '.prettierignore')}" --write "${resolvedDest}"`);
+        const files = require('fast-glob').sync('**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,json5,css,scss,less,html,htm,md,mdx,yml,yaml,vue,svelte,graphql,gql}', {
+            cwd: resolvedDest,
+            absolute: true,
+            dot: true,
+            onlyFiles: true,
+            followSymbolicLinks: false,
+            ignore: ['**/node_modules/**', '**/.webpack/**', '**/.idea/**', '**/out/**', '**/ReactDevTools/**', '**/temp_build/**'],
+        });
+        const oxfmt = path.join(REPO_ROOT, 'node_modules/oxfmt/bin/oxfmt');
+        for (let i = 0; i < files.length; i += 50) {
+            execFileSync(process.execPath, [oxfmt, '--config', OXFMT_CONFIG_PATH, ...files.slice(i, i + 50)], { stdio: 'inherit' });
+        }
         console.timeEnd('Форматирование завершено');
         console.log(`Результат pretty: ${resolvedDest}`);
 

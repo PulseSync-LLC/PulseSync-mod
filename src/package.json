@@ -94,5 +94,8 @@
         "TRADEMARK": "Яндекс Музыка",
         "DESCRIPTION": "Personal recommendations, mixes for any occasion and the latest musical releases",
         "DESCRIPTION_LOCALIZED": "Персональные рекомендации, подборки на любой случай и музыкальные новинки"
+    },
+    "devDependencies": {
+        "oxfmt": "0.71.0"
     }
 }

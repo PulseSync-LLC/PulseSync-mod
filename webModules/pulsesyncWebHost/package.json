@@ -5,7 +5,8 @@
     "type": "module",
     "scripts": {
         "build": "tsc -b && vite build && vite build --config vite.isolated.config.ts",
-        "lint": "oxlint src vite.config.ts vite.isolated.config.ts"
+        "lint": "oxlint src vite.config.ts vite.isolated.config.ts",
+        "format": "oxfmt ."
     },
     "dependencies": {
         "react": "19.2.8",
@@ -20,6 +21,7 @@
         "oxlint": "^1.81.0",
         "sass-embedded": "1.103.1",
         "typescript": "~7.0.2",
-        "vite": "^8.2.2"
+        "vite": "^8.2.2",
+        "oxfmt": "0.71.0"
     }
 }
