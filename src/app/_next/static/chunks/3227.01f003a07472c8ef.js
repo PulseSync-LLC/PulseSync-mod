@@ -23,10 +23,10 @@
             r.d(e, { M: () => s });
             class s extends Error {
                 constructor(t) {
-                    super('Request timed out'),
+                    (super('Request timed out'),
                         Object.defineProperty(this, 'request', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.name = 'TimeoutError'),
-                        (this.request = t);
+                        (this.request = t));
                 }
             }
         },
@@ -37,7 +37,7 @@
                 o = r(85172);
             let i = function (t, e) {
                 e = (0, s.A)(e, t);
-                for (var r = 0, i = e.length; null != t && r < i; ) t = t[(0, o.A)(e[r++])];
+                for (var r = 0, i = e.length; null != t && r < i;) t = t[(0, o.A)(e[r++])];
                 return r && r == i ? t : void 0;
             };
         },
@@ -49,14 +49,14 @@
                     let s = t.status || 0 === t.status ? t.status : '',
                         o = t.statusText || '',
                         i = `${s} ${o}`.trim();
-                    super(`Request failed with ${i ? `status code ${i}` : 'an unknown error'}`),
+                    (super(`Request failed with ${i ? `status code ${i}` : 'an unknown error'}`),
                         Object.defineProperty(this, 'response', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'request', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'options', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.name = 'HTTPError'),
                         (this.response = t),
                         (this.request = e),
-                        (this.options = r);
+                        (this.options = r));
                 }
             }
         },
@@ -71,7 +71,7 @@
             let u = function (t, e, r, u) {
                 if (!(0, n.A)(t)) return t;
                 e = (0, o.A)(e, t);
-                for (var l = -1, h = e.length, f = h - 1, c = t; null != c && ++l < h; ) {
+                for (var l = -1, h = e.length, f = h - 1, c = t; null != c && ++l < h;) {
                     var p = (0, a.A)(e[l]),
                         d = r;
                     if ('__proto__' === p || 'constructor' === p || 'prototype' === p) break;
@@ -79,7 +79,7 @@
                         var b = c[p];
                         void 0 === (d = u ? u(b, p, c) : void 0) && (d = (0, n.A)(b) ? b : (0, i.A)(e[l + 1]) ? [] : {});
                     }
-                    (0, s.A)(c, p, d), (c = c[p]);
+                    ((0, s.A)(c, p, d), (c = c[p]));
                 }
                 return t;
             };
@@ -117,9 +117,9 @@
                     let e = {},
                         r = {};
                     for (let s of t)
-                        if (Array.isArray(s)) Array.isArray(e) || (e = []), (e = [...e, ...s]);
+                        if (Array.isArray(s)) (Array.isArray(e) || (e = []), (e = [...e, ...s]));
                         else if (i(s)) {
-                            for (let [t, r] of Object.entries(s)) i(r) && t in e && (r = u(e[t], r)), (e = { ...e, [t]: r });
+                            for (let [t, r] of Object.entries(s)) (i(r) && t in e && (r = u(e[t], r)), (e = { ...e, [t]: r }));
                             i(s.headers) && ((r = a(r, s.headers)), (e.headers = r));
                         }
                     return e;
@@ -135,7 +135,7 @@
                                 body: new globalThis.ReadableStream(),
                                 method: 'POST',
                                 get duplex() {
-                                    return (t = !0), 'half';
+                                    return ((t = !0), 'half');
                                 },
                             }).headers.has('Content-Type')),
                         t && !e
@@ -159,7 +159,7 @@
             async function m(t, e, r) {
                 return new Promise((s, i) => {
                     let n = setTimeout(() => {
-                        e && e.abort(), i(new o.M(t));
+                        (e && e.abort(), i(new o.M(t)));
                     }, r.timeout);
                     r.fetch(t)
                         .then(s)
@@ -173,7 +173,7 @@
             function w(t) {
                 if (g) return new DOMException(t?.reason ?? 'The operation was aborted.', 'AbortError');
                 let e = Error(t?.reason ?? 'The operation was aborted.');
-                return (e.name = 'AbortError'), e;
+                return ((e.name = 'AbortError'), e);
             }
             async function v(t, { signal: e }) {
                 return new Promise((r, s) => {
@@ -182,10 +182,10 @@
                         e.addEventListener('abort', o, { once: !0 });
                     }
                     function o() {
-                        s(w(e)), clearTimeout(i);
+                        (s(w(e)), clearTimeout(i));
                     }
                     let i = setTimeout(() => {
-                        e?.removeEventListener('abort', o), r();
+                        (e?.removeEventListener('abort', o), r());
                     }, t);
                 });
             }
@@ -255,7 +255,7 @@
                         throw TypeError('`input` must be a string, URL, or Request');
                     if (this._options.prefixUrl && 'string' == typeof this._input) {
                         if (this._input.startsWith('/')) throw Error('`input` must not begin with a slash when using `prefixUrl`');
-                        this._options.prefixUrl.endsWith('/') || (this._options.prefixUrl += '/'), (this._input = this._options.prefixUrl + this._input);
+                        (this._options.prefixUrl.endsWith('/') || (this._options.prefixUrl += '/'), (this._input = this._options.prefixUrl + this._input));
                     }
                     if (h) {
                         if (((this.abortController = new globalThis.AbortController()), this._options.signal)) {
@@ -272,10 +272,10 @@
                                     ? this._options.searchParams.replace(/^\?/, '')
                                     : new URLSearchParams(this._options.searchParams).toString(),
                             e = this.request.url.replace(/(?:\?.*?)?(?=#|$)/, '?' + t);
-                        ((c && this._options.body instanceof globalThis.FormData) || this._options.body instanceof URLSearchParams) &&
+                        (((c && this._options.body instanceof globalThis.FormData) || this._options.body instanceof URLSearchParams) &&
                             !(this._options.headers && this._options.headers['content-type']) &&
                             this.request.headers.delete('content-type'),
-                            (this.request = new globalThis.Request(new globalThis.Request(e, { ...this.request }), this._options));
+                            (this.request = new globalThis.Request(new globalThis.Request(e, { ...this.request }), this._options)));
                     }
                     void 0 !== this._options.json &&
                         ((this._options.body = JSON.stringify(this._options.json)),
@@ -301,7 +301,7 @@
                     return 0;
                 }
                 _decorateResponse(t) {
-                    return this._options.parseJson && (t.json = async () => this._options.parseJson(await t.text())), t;
+                    return (this._options.parseJson && (t.json = async () => this._options.parseJson(await t.text())), t);
                 }
                 async _retry(t) {
                     try {
@@ -340,9 +340,11 @@
                                       async function n() {
                                           let { done: t, value: a } = await i.read();
                                           if (t) return void o.close();
-                                          e && ((s += a.byteLength), e({ percent: 0 === r ? 0 : s / r, transferredBytes: s, totalBytes: r }, a)), o.enqueue(a), await n();
+                                          (e && ((s += a.byteLength), e({ percent: 0 === r ? 0 : s / r, transferredBytes: s, totalBytes: r }, a)),
+                                              o.enqueue(a),
+                                              await n());
                                       }
-                                      e && e({ percent: 0, transferredBytes: 0, totalBytes: r }, new Uint8Array()), await n();
+                                      (e && e({ percent: 0, transferredBytes: 0, totalBytes: r }, new Uint8Array()), await n());
                                   },
                               }),
                               { status: t.status, statusText: t.statusText, headers: t.headers },
@@ -352,7 +354,7 @@
             let T = (t) => {
                     let e = (e, r) => A.create(e, n(t, r));
                     for (let r of p) e[r] = (e, s) => A.create(e, n(t, s, { method: r }));
-                    return (e.create = (t) => T(n(t))), (e.extend = (e) => T(n(t, e))), (e.stop = b), e;
+                    return ((e.create = (t) => T(n(t))), (e.extend = (e) => T(n(t, e))), (e.stop = b), e);
                 },
                 R = T();
         },
@@ -371,7 +373,7 @@
                     function (o, i) {
                         if (r.length > 0) {
                             var n = r.indexOf(this);
-                            ~n ? r.splice(n + 1) : r.push(this), ~n ? s.splice(n, 1 / 0, o) : s.push(o), ~r.indexOf(i) && (i = e.call(this, o, i));
+                            (~n ? r.splice(n + 1) : r.push(this), ~n ? s.splice(n, 1 / 0, o) : s.push(o), ~r.indexOf(i) && (i = e.call(this, o, i)));
                         } else r.push(i);
                         return null == t ? i : t.call(this, o, i);
                     }
@@ -397,7 +399,7 @@
                 i = /\\(\\)?/g;
             let n = (function (t) {
                 var e = (0, s.A)(t, function (t) {
-                        return 500 === r.size && r.clear(), t;
+                        return (500 === r.size && r.clear(), t);
                     }),
                     r = e.cache;
                 return e;
@@ -414,17 +416,17 @@
         },
         88249: (t) => {
             function e() {}
-            (e.prototype = {
+            ((e.prototype = {
                 on: function (t, e, r) {
                     var s = this.e || (this.e = {});
-                    return (s[t] || (s[t] = [])).push({ fn: e, ctx: r }), this;
+                    return ((s[t] || (s[t] = [])).push({ fn: e, ctx: r }), this);
                 },
                 once: function (t, e, r) {
                     var s = this;
                     function o() {
-                        s.off(t, o), e.apply(r, arguments);
+                        (s.off(t, o), e.apply(r, arguments));
                     }
-                    return (o._ = e), this.on(t, o, r);
+                    return ((o._ = e), this.on(t, o, r));
                 },
                 emit: function (t) {
                     for (var e = [].slice.call(arguments, 1), r = ((this.e || (this.e = {}))[t] || []).slice(), s = 0, o = r.length; s < o; s++)
@@ -436,11 +438,11 @@
                         s = r[t],
                         o = [];
                     if (s && e) for (var i = 0, n = s.length; i < n; i++) s[i].fn !== e && s[i].fn._ !== e && o.push(s[i]);
-                    return o.length ? (r[t] = o) : delete r[t], this;
+                    return (o.length ? (r[t] = o) : delete r[t], this);
                 },
             }),
                 (t.exports = e),
-                (t.exports.TinyEmitter = e);
+                (t.exports.TinyEmitter = e));
         },
         97608: (t, e, r) => {
             'use strict';
@@ -465,9 +467,9 @@
                         i = r.cache;
                     if (i.has(o)) return i.get(o);
                     var n = t.apply(this, s);
-                    return (r.cache = i.set(o, n) || i), n;
+                    return ((r.cache = i.set(o, n) || i), n);
                 };
-                return (r.cache = new (o.Cache || s.A)()), r;
+                return ((r.cache = new (o.Cache || s.A)()), r);
             }
             o.Cache = s.A;
             let i = o;

@@ -21,7 +21,7 @@
                         function b() {
                             this.constructor = t;
                         }
-                        e(t, a), (t.prototype = null === a ? Object.create(a) : ((b.prototype = a.prototype), new b()));
+                        (e(t, a), (t.prototype = null === a ? Object.create(a) : ((b.prototype = a.prototype), new b())));
                     };
                 })(),
                 n = function (e, t) {
@@ -54,7 +54,7 @@
                             o
                         );
                     }
-                    return b(t, e), t;
+                    return (b(t, e), t);
                 })(Error);
         },
         32845: (e, t, a) => {
@@ -67,7 +67,7 @@
             let i = (0, b.PA)((e) => {
                 let { children: t } = e,
                     { experiments: a } = (0, o.g)();
-                return a.checkExperiment(r.z.WebNextDisableConcertsTab, 'on') && (0, n.redirect)('/'), t;
+                return (a.checkExperiment(r.z.WebNextDisableConcertsTab, 'on') && (0, n.redirect)('/'), t);
             });
         },
         57594: (e, t, a) => {

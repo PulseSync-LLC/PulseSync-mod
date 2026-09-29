@@ -53,7 +53,7 @@
                     { contentScrollRef: i, setContentScrollRef: S } = (0, N.g)(),
                     { formatMessage: v } = (0, a.A)(),
                     j = !e.landing.isRejected && !!o.collectionHue;
-                (0, r.useEffect)(() => () => e.landing.reset(), [e.landing]), (0, D.J)(e.landing.isResolved);
+                ((0, r.useEffect)(() => () => e.landing.reset(), [e.landing]), (0, D.J)(e.landing.isResolved));
                 let p = (0, C._)(e.landing),
                     f = (0, r.useMemo)(() => {
                         if (j && o.collectionHue) return { '--collection-color': (0, P.e)(o.collectionHue) };
@@ -139,11 +139,11 @@
             };
         },
         54257: (e, o, l) => {
-            Promise.resolve().then(l.bind(l, 3377)),
+            (Promise.resolve().then(l.bind(l, 3377)),
                 Promise.resolve().then(l.bind(l, 34598)),
                 Promise.resolve().then(l.bind(l, 11044)),
                 Promise.resolve().then(l.bind(l, 92498)),
-                Promise.resolve().then(l.bind(l, 4008));
+                Promise.resolve().then(l.bind(l, 4008)));
         },
         55332: (e, o, l) => {
             'use strict';
@@ -198,7 +198,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 3379, 3647, 8497, 6347, 7258, 7680, 3183, 7972, 8868, 7231, 9763, 5108, 5583, 5976, 5367, 4413, 1914, 6723, 4761, 992, 3931, 6639, 6706, 1311,
@@ -207,6 +207,6 @@
             ],
             () => e((e.s = 54257)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

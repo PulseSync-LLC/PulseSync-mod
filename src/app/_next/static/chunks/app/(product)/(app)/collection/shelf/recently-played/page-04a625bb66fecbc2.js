@@ -119,7 +119,7 @@
             var a,
                 o = l(71483);
             !(function (e) {
-                (e.ALBUM = 'album'), (e.PLAYLIST = 'playlist');
+                ((e.ALBUM = 'album'), (e.PLAYLIST = 'playlist'));
             })(a || (a = {}));
             let i = (e, t) => {
                 var l, i;
@@ -139,11 +139,11 @@
             };
         },
         98882: (e, t, l) => {
-            Promise.resolve().then(l.bind(l, 3377)), Promise.resolve().then(l.bind(l, 73624));
+            (Promise.resolve().then(l.bind(l, 3377)), Promise.resolve().then(l.bind(l, 73624)));
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 3183, 7972, 8868, 7231, 6347, 9763, 6639, 7258, 4835, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 6477, 7275, 2586,
@@ -151,6 +151,6 @@
             ],
             () => e((e.s = 98882)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

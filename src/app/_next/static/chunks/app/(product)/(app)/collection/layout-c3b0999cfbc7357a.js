@@ -66,7 +66,7 @@
                         function i() {
                             this.constructor = t;
                         }
-                        e(t, o), (t.prototype = null === o ? Object.create(o) : ((i.prototype = o.prototype), new i()));
+                        (e(t, o), (t.prototype = null === o ? Object.create(o) : ((i.prototype = o.prototype), new i())));
                     };
                 })(),
                 n = function (e, t) {
@@ -99,7 +99,7 @@
                             a
                         );
                     }
-                    return i(t, e), t;
+                    return (i(t, e), t);
                 })(Error);
         },
         32087: (e, t, o) => {
@@ -290,6 +290,6 @@
         },
     },
     (e) => {
-        e.O(0, [6706, 8892, 3749, 6477, 4220, 9562, 7358], () => e((e.s = 5217))), (_N_E = e.O());
+        (e.O(0, [6706, 8892, 3749, 6477, 4220, 9562, 7358], () => e((e.s = 5217))), (_N_E = e.O()));
     },
 ]);

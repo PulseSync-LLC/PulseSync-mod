@@ -109,7 +109,7 @@
                         function o() {
                             this.constructor = t;
                         }
-                        e(t, r), (t.prototype = null === r ? Object.create(r) : ((o.prototype = r.prototype), new o()));
+                        (e(t, r), (t.prototype = null === r ? Object.create(r) : ((o.prototype = r.prototype), new o())));
                     };
                 })(),
                 n = function (e, t) {
@@ -142,7 +142,7 @@
                             s
                         );
                     }
-                    return o(t, e), t;
+                    return (o(t, e), t);
                 })(Error);
         },
         34186: (e, t, r) => {
@@ -338,7 +338,7 @@
         },
         80451: (e, t, r) => {
             'use strict';
-            r.r(t),
+            (r.r(t),
                 r.d(t, {
                     AVATAR_DEFAULT_SIZE: () => g,
                     BurstDebounce: () => T,
@@ -358,12 +358,12 @@
                                             void 0 === s || (('cause' === n || 'error' === n) && 'object' == typeof s && null !== s ? (o[n] = e(s, r)) : (o[n] = s)), o
                                         );
                                     }, {});
-                                    return (o.ownProperties = Object.getOwnPropertyNames(t).reduce((e, r) => (R.includes(r) || (e[r] = t[r]), e), {})), o;
+                                    return ((o.ownProperties = Object.getOwnPropertyNames(t).reduce((e, r) => (R.includes(r) || (e[r] = t[r]), e), {})), o);
                                 }
                                 return { error: t };
                             } catch (r) {
                                 let e = { name: '', message: '' };
-                                return r instanceof Error && ((e.name = r.name), (e.message = r.message)), { error: t, serializationError: e };
+                                return (r instanceof Error && ((e.name = r.name), (e.message = r.message)), { error: t, serializationError: e });
                             }
                         },
                     createVsid: () => v,
@@ -378,7 +378,7 @@
                     sanitizeDOM: () => u,
                     stringifyJSONSafely: () => c,
                     toBoolean: () => s,
-                });
+                }));
             var o = r(31534);
             let n = ['1', 'true', 'on', 'yes'];
             function s(e) {
@@ -426,7 +426,7 @@
                 };
             function v(e, t) {
                 let r = '';
-                for (; r.length < 44; ) r += (Math.random() + 1).toString(36).substring(3);
+                for (; r.length < 44;) r += (Math.random() + 1).toString(36).substring(3);
                 r = r.slice(0, 44);
                 let o = e.toString().slice(0, 10);
                 return ''.concat(r, 'x').concat(t, 'x0001x').concat(o);
@@ -463,7 +463,7 @@
                             })(c, d),
                             rel: ((e, t) => e || (t ? 'noreferrer noopener' : ''))(c, d),
                         };
-                    return 'alternate' === c && l && (g.hrefLang = l), g;
+                    return ('alternate' === c && l && (g.hrefLang = l), g);
                 };
             function O(e) {
                 let t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : console;
@@ -471,7 +471,7 @@
                 try {
                     return JSON.parse(e);
                 } catch (e) {
-                    return (e instanceof Error || 'string' == typeof e) && t.error(e), null;
+                    return ((e instanceof Error || 'string' == typeof e) && t.error(e), null);
                 }
             }
             function k(e, t) {
@@ -494,7 +494,7 @@
                 E = (e) =>
                     Object.entries(e).reduce((e, t) => {
                         let [r, o] = t;
-                        return w.test(r) && 'string' == typeof o && (e[r] = o), e;
+                        return (w.test(r) && 'string' == typeof o && (e[r] = o), e);
                     }, {});
             var P = r(91945),
                 _ = r(62060);
@@ -507,11 +507,11 @@
                         var n, s;
                         if (!e) return;
                         let i = M[null != (n = null == o ? void 0 : o.type) ? n : 'state'];
-                        null != (s = null == o ? void 0 : o.collapsed) && s
+                        (null != (s = null == o ? void 0 : o.collapsed) && s
                             ? console.groupCollapsed('%c'.concat(C, ' ').concat(t), i)
                             : console.group('%c'.concat(C, ' ').concat(t), i),
                             r && (Object.values(r).some((e) => null !== e && 'object' == typeof e) ? console.log('%c'.concat(C), 'color: #6B7280', r) : console.table(r)),
-                            console.groupEnd();
+                            console.groupEnd());
                     },
                 };
             }
@@ -519,24 +519,24 @@
                 invoke() {
                     let e = Date.now();
                     if ((this.refreshBurstIdle(e), this.registerAndCheckBurst(e), this.isBurstMode)) {
-                        (this.isPendingState = !0), this.logEvent('invoke -> schedule debounced callback'), this.debouncedCallback();
+                        ((this.isPendingState = !0), this.logEvent('invoke -> schedule debounced callback'), this.debouncedCallback());
                         return;
                     }
-                    this.logEvent('invoke -> execute callback immediately'), this.callback();
+                    (this.logEvent('invoke -> execute callback immediately'), this.callback());
                 }
                 cancel() {
-                    (this.isPendingState = !1), this.debouncedCallback.cancel(), this.logLifecycle('cancel pending callback');
+                    ((this.isPendingState = !1), this.debouncedCallback.cancel(), this.logLifecycle('cancel pending callback'));
                 }
                 get isPending() {
                     return this.isPendingState;
                 }
                 dispose() {
-                    (this.isPendingState = !1),
+                    ((this.isPendingState = !1),
                         this.debouncedCallback.cancel(),
                         (this.recentTimestamps = []),
                         (this.isBurstMode = !1),
                         (this.lastInvokeAt = 0),
-                        this.logLifecycle('dispose instance state');
+                        this.logLifecycle('dispose instance state'));
                 }
                 refreshBurstIdle(e) {
                     this.isBurstMode &&
@@ -563,7 +563,7 @@
                 }
                 registerAndCheckBurst(e) {
                     let t = this.config.burstThreshold;
-                    for (this.recentTimestamps.push(e); this.recentTimestamps.length > t; ) this.recentTimestamps.shift();
+                    for (this.recentTimestamps.push(e); this.recentTimestamps.length > t;) this.recentTimestamps.shift();
                     if (this.recentTimestamps.length === t) {
                         let t = this.recentTimestamps[0];
                         void 0 !== t && e - t <= this.config.burstWindowMs && (this.isBurstMode = !0);
@@ -583,13 +583,13 @@
                         !Number.isInteger(t.burstThreshold) || t.burstThreshold < 1)
                     )
                         throw RangeError('BurstDebounce config.burstThreshold must be a positive integer, got '.concat(t.burstThreshold));
-                    (this.callback = e),
+                    ((this.callback = e),
                         (this.config = t),
                         (this.debugLogger = A(r)),
                         this.logLifecycle('created', { ...this.config }),
                         (this.debouncedCallback = (0, _.A)(() => {
-                            (this.isPendingState = !1), this.logEvent('debounced callback execute'), this.callback();
-                        }, t.delay));
+                            ((this.isPendingState = !1), this.logEvent('debounced callback execute'), this.callback());
+                        }, t.delay)));
                 }
             }
             let x = (e) => ({ r: parseInt(e.slice(1, 3), 16), g: parseInt(e.slice(3, 5), 16), b: parseInt(e.slice(5, 7), 16) }),
@@ -651,7 +651,7 @@
                                     e.startsWith('#') && (e = e.slice(1)),
                                     e.split('&').reduce((e, t) => {
                                         let [r = '', o = ''] = t.split('=');
-                                        return (e[r] = o), e;
+                                        return ((e[r] = o), e);
                                     }, {})
                                 ))(e);
                                 if (r.expires_in && r.access_token && r.state) {
@@ -671,6 +671,6 @@
         },
     },
     (e) => {
-        e.O(0, [6639, 6706, 8892, 1410, 8219, 2586, 4220, 9562, 7358], () => e((e.s = 21650))), (_N_E = e.O());
+        (e.O(0, [6639, 6706, 8892, 1410, 8219, 2586, 4220, 9562, 7358], () => e((e.s = 21650))), (_N_E = e.O()));
     },
 ]);

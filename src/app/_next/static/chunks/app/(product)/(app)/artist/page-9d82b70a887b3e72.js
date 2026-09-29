@@ -4,9 +4,9 @@
         3785: (e, t, r) => {
             'use strict';
             var a;
-            r.d(t, { M: () => a }),
+            (r.d(t, { M: () => a }),
                 (function (e) {
-                    (e.MODAL = 'modal'),
+                    ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
                         (e.AGE_18 = 'age18'),
@@ -15,8 +15,8 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                        (e.SUBSTITUTED_ICON = 'substitutedIcon');
-                })(a || (a = {}));
+                        (e.SUBSTITUTED_ICON = 'substitutedIcon'));
+                })(a || (a = {})));
         },
         5749: (e, t, r) => {
             'use strict';
@@ -157,11 +157,11 @@
                 i = r(50891);
             class l extends i.m {
                 constructor(e, t) {
-                    super(e, { code: 'E_HTTP_CLIENT_NON_2XX_3XX_RESPONSE', cause: t.cause }),
+                    (super(e, { code: 'E_HTTP_CLIENT_NON_2XX_3XX_RESPONSE', cause: t.cause }),
                         (0, a._)(this, 'name', 'HttpErrorException'),
                         (0, a._)(this, 'statusCode', void 0),
                         (this.statusCode = t.statusCode),
-                        Object.setPrototypeOf(this, l.prototype);
+                        Object.setPrototypeOf(this, l.prototype));
                 }
             }
         },
@@ -176,9 +176,9 @@
         18870: (e, t, r) => {
             'use strict';
             var a;
-            r.d(t, { $: () => a }),
+            (r.d(t, { $: () => a }),
                 (function (e) {
-                    (e.RU = 'ru'),
+                    ((e.RU = 'ru'),
                         (e.EN = 'en'),
                         (e.UK = 'uk'),
                         (e.BE = 'be'),
@@ -199,8 +199,8 @@
                         (e.EL = 'el'),
                         (e.RO = 'ro'),
                         (e.MO = 'mo'),
-                        (e.AR = 'ar');
-                })(a || (a = {}));
+                        (e.AR = 'ar'));
+                })(a || (a = {})));
         },
         20279: (e) => {
             e.exports = {
@@ -285,7 +285,7 @@
                         I = (0, v.N)().get(m.U2),
                         S = (0, d.c)(() => {
                             if (A) return A();
-                            b.canBack && b.back(), j();
+                            (b.canBack && b.back(), j());
                         }),
                         k = (null == C || null == (t = C.details) ? void 0 : t.url) && C.details.text,
                         O = (0, d.c)(() => {
@@ -298,13 +298,13 @@
                                     null != (e = null == r ? void 0 : r.entityKey)
                                         ? e
                                         : ''.concat(null == r ? void 0 : r.entityType, '_').concat(null == r ? void 0 : r.entityId);
-                            t ? I.set(p.c.ExEx, [...t, l], { expires: new Date(i) }) : I.set(p.c.ExEx, [l], { expires: new Date(i) }),
+                            (t ? I.set(p.c.ExEx, [...t, l], { expires: new Date(i) }) : I.set(p.c.ExEx, [l], { expires: new Date(i) }),
                                 null == A || A(),
-                                (null == r ? void 0 : r.onDisclaimerConfirmHandler) && r.onDisclaimerConfirmHandler();
+                                (null == r ? void 0 : r.onDisclaimerConfirmHandler) && r.onDisclaimerConfirmHandler());
                         }),
                         P = (0, d.c)(() => {
-                            (null == r ? void 0 : r.shouldHistoryBack) ? (null == A || A(), b.canBack && b.back(), j()) : null == A || A(),
-                                (null == r ? void 0 : r.onDisclaimerRejectHandler) && r.onDisclaimerRejectHandler();
+                            ((null == r ? void 0 : r.shouldHistoryBack) ? (null == A || A(), b.canBack && b.back(), j()) : null == A || A(),
+                                (null == r ? void 0 : r.onDisclaimerRejectHandler) && r.onDisclaimerRejectHandler());
                         });
                     (0, o.useEffect)(
                         () => () => {
@@ -419,14 +419,14 @@
         33898: (e, t, r) => {
             'use strict';
             var a;
-            r.d(t, { Z: () => a }),
+            (r.d(t, { Z: () => a }),
                 (function (e) {
-                    (e.METHOD_NOT_SUPPORTED = 'E_BEACON_METHOD_NOT_SUPPORTED'),
+                    ((e.METHOD_NOT_SUPPORTED = 'E_BEACON_METHOD_NOT_SUPPORTED'),
                         (e.NOT_AVAILABLE = 'E_BEACON_NOT_AVAILABLE'),
                         (e.QUEUE_FAILED = 'E_BEACON_QUEUE_FAILED'),
                         (e.NO_RESPONSE_DATA = 'E_BEACON_NO_RESPONSE_DATA'),
-                        (e.RETRY_EXHAUSTED = 'E_BEACON_RETRY_EXHAUSTED');
-                })(a || (a = {}));
+                        (e.RETRY_EXHAUSTED = 'E_BEACON_RETRY_EXHAUSTED'));
+                })(a || (a = {})));
         },
         37318: (e) => {
             e.exports = {
@@ -747,22 +747,22 @@
                 i = r(29222);
             class l extends i.t {
                 constructor(e = 'Http Client error', { code: t = 'E_HTTP_CLIENT', ...r } = {}) {
-                    super(e, { code: t, ...r }), (0, a._)(this, 'name', 'HttpException'), Object.setPrototypeOf(this, l.prototype);
+                    (super(e, { code: t, ...r }), (0, a._)(this, 'name', 'HttpException'), Object.setPrototypeOf(this, l.prototype));
                 }
             }
         },
         50961: (e, t, r) => {
             'use strict';
             var a;
-            r.d(t, { X: () => a }),
+            (r.d(t, { X: () => a }),
                 (function (e) {
-                    (e[(e.NOT_MODIFIED = 304)] = 'NOT_MODIFIED'),
+                    ((e[(e.NOT_MODIFIED = 304)] = 'NOT_MODIFIED'),
                         (e[(e.NOT_FOUND = 404)] = 'NOT_FOUND'),
                         (e[(e.BAD_REQUEST = 400)] = 'BAD_REQUEST'),
                         (e[(e.REQUEST_TIMEOUT = 408)] = 'REQUEST_TIMEOUT'),
                         (e[(e.PRECONDITION_FAILED = 412)] = 'PRECONDITION_FAILED'),
-                        (e[(e.TEAPOT = 418)] = 'TEAPOT');
-                })(a || (a = {}));
+                        (e[(e.TEAPOT = 418)] = 'TEAPOT'));
+                })(a || (a = {})));
         },
         51714: (e, t, r) => {
             'use strict';
@@ -860,7 +860,7 @@
                 l = r(55178),
                 o = {
                     6699: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0));
                         let a = r(352),
                             i = r(810);
                         t.useDebouncedToggle = (e) => {
@@ -870,16 +870,16 @@
                                 d = (0, i.useMemo)(
                                     () =>
                                         (0, a.throttle)(() => {
-                                            n(!r),
+                                            (n(!r),
                                                 o.current && window.clearTimeout(o.current),
                                                 (o.current = window.setTimeout(() => {
                                                     n(!!r);
-                                                }, t));
+                                                }, t)));
                                         }, l),
                                     [t, r, l],
                                 ),
                                 c = (0, i.useCallback)(() => {
-                                    n(!!r), o.current && window.clearTimeout(o.current);
+                                    (n(!!r), o.current && window.clearTimeout(o.current));
                                 }, [r]);
                             return (
                                 (0, i.useEffect)(
@@ -893,7 +893,7 @@
                         };
                     },
                     2767: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useForceUpdateRef = void 0));
                         let a = r(810);
                         t.useForceUpdateRef = () => {
                             let [e, t] = (0, a.useState)(null);
@@ -906,7 +906,7 @@
                         };
                     },
                     2067: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useScroll = void 0));
                         let a = r(810),
                             i = r(361),
                             l = r(6699);
@@ -914,7 +914,7 @@
                             let { onScroll: t, listenIsScrolling: r, elementRef: o } = e,
                                 { state: s, handleDebouncedToggle: n } = (0, l.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                                 d = (0, a.useCallback)(() => {
-                                    r && n(), null == t || t();
+                                    (r && n(), null == t || t());
                                 }, [r, n, t]);
                             return (
                                 (0, a.useEffect)(() => {
@@ -922,21 +922,21 @@
                                     if (null === e) return;
                                     let t = null != e ? e : window,
                                         r = { capture: !0, passive: !0 };
-                                    return t.addEventListener('scroll', d, r), () => t.removeEventListener('scroll', d, r);
+                                    return (t.addEventListener('scroll', d, r), () => t.removeEventListener('scroll', d, r));
                                 }, [o, d]),
                                 s
                             );
                         };
                     },
                     361: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            });
+                            }));
                     },
                     352: (e) => {
                         e.exports = i;
@@ -950,11 +950,11 @@
                 var t = s[e];
                 if (void 0 !== t) return t.exports;
                 var r = (s[e] = { exports: {} });
-                return o[e](r, r.exports, n), r.exports;
+                return (o[e](r, r.exports, n), r.exports);
             }
             var d = {};
-            (() => {
-                Object.defineProperty(d, '__esModule', { value: !0 }), (d.useElementOffsetY = void 0);
+            ((() => {
+                (Object.defineProperty(d, '__esModule', { value: !0 }), (d.useElementOffsetY = void 0));
                 let e = n(810),
                     t = n(2067),
                     r = n(2767);
@@ -965,10 +965,10 @@
                             let e = null == i ? void 0 : i.getBoundingClientRect();
                             e && s(e.y);
                         }, [i]);
-                    return (0, e.useLayoutEffect)(n), (0, t.useScroll)({ onScroll: n, elementRef: a }), { forceUpdateRefCallback: l, offsetY: o };
+                    return ((0, e.useLayoutEffect)(n), (0, t.useScroll)({ onScroll: n, elementRef: a }), { forceUpdateRefCallback: l, offsetY: o });
                 };
             })(),
-                d.__esModule;
+                d.__esModule);
             var c = d.useElementOffsetY;
         },
         73155: (e, t, r) => {
@@ -1006,7 +1006,7 @@
         },
         79288: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { default: () => te });
+            (r.r(t), r.d(t, { default: () => te }));
             var a = r(32290),
                 i = r(21916),
                 l = r(96103),
@@ -1064,7 +1064,7 @@
                     u = (0, $.C)(),
                     { ref: m, intersectionPropertyId: v } = (0, Z.n)({ callback: u, withViewUuid: !0 }),
                     _ = (0, c.c)((e) => {
-                        d(g.QT.Link, t), n(e);
+                        (d(g.QT.Link, t), n(e));
                     });
                 return (0, a.jsx)('div', {
                     ref: s,
@@ -1095,7 +1095,7 @@
                         d = (0, eo.z)({ id: el.h.ARTIST_DONATION_BUTTON, ref: s }),
                         [u, m] = (0, o.useState)(d),
                         v = (0, c.c)(() => {
-                            m(!1), l(!1);
+                            (m(!1), l(!1));
                         }),
                         _ = (0, c.c)((e) => {
                             e || (v(), l(!1));
@@ -1211,7 +1211,7 @@
                             if (!ep()) {
                                 if (Z) return void q();
                                 if (ej) return void eg.open();
-                                eH(), ex(!eD);
+                                (eH(), ex(!eD));
                             }
                         }),
                         eB = (0, o.useMemo)(() => {
@@ -1424,28 +1424,29 @@
                                         ],
                                     }),
                             ].filter(Boolean),
-                            pulseSyncArtistMetaItems = window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', pulseSyncNativeArtistMetaItems, {
-                                eventDetail: null,
-                                renderItem: ({ key, payload }) => {
-                                    const text = String(payload?.text ?? '').trim(),
-                                        icon = String(payload?.icon ?? '').trim(),
-                                        label = String(payload?.label ?? text).trim();
-                                    if (!text && !icon) return null;
-                                    return (0, a.jsxs)(
-                                        'div',
-                                        {
-                                            className: ed().label,
-                                            ...(label ? { 'aria-label': label } : {}),
-                                            'data-pulsesync-addon-header-item': 'meta',
-                                            children: [
-                                                icon && (0, a.jsx)(h.I, { variant: icon, size: 'xxxs' }),
-                                                (0, a.jsx)(A.HL, { type: 'text', size: 'm', weight: 'medium', variant: 'span', children: text }),
-                                            ],
-                                        },
-                                        key,
-                                    );
-                                },
-                            }) ?? pulseSyncNativeArtistMetaItems;
+                            pulseSyncArtistMetaItems =
+                                window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', pulseSyncNativeArtistMetaItems, {
+                                    eventDetail: null,
+                                    renderItem: ({ key, payload }) => {
+                                        const text = String(payload?.text ?? '').trim(),
+                                            icon = String(payload?.icon ?? '').trim(),
+                                            label = String(payload?.label ?? text).trim();
+                                        if (!text && !icon) return null;
+                                        return (0, a.jsxs)(
+                                            'div',
+                                            {
+                                                className: ed().label,
+                                                ...(label ? { 'aria-label': label } : {}),
+                                                'data-pulsesync-addon-header-item': 'meta',
+                                                children: [
+                                                    icon && (0, a.jsx)(h.I, { variant: icon, size: 'xxxs' }),
+                                                    (0, a.jsx)(A.HL, { type: 'text', size: 'm', weight: 'medium', variant: 'span', children: text }),
+                                                ],
+                                            },
+                                            key,
+                                        );
+                                    },
+                                }) ?? pulseSyncNativeArtistMetaItems;
                         return (0, a.jsx)('div', { className: ed().meta, children: pulseSyncArtistMetaItems });
                     }, [null == v ? void 0 : v.lastMonthListeners, pulseSyncHeaderInfoRevision]);
                     return (0, a.jsx)('div', {
@@ -1555,7 +1556,7 @@
                     S = (0, c.c)(() => {
                         r.tracksController && g.ids && p.getData(r.tracksController, g.ids);
                     });
-                (0, eX.L)(S),
+                ((0, eX.L)(S),
                     (0, o.useEffect)(() => {
                         f.meta && p.isResolved && p.items && f.setTracksCount(p.items.length);
                     }, [f, f.meta, p.isResolved, p.items]),
@@ -1568,7 +1569,7 @@
                         },
                         [f, t],
                     ),
-                    (0, eN.J)(f.isResolved);
+                    (0, eN.J)(f.isResolved));
                 let k = (0, o.useMemo)(
                         () =>
                             f.isLoading || !f.meta
@@ -1659,7 +1660,7 @@
                         { topColorStyle: R, headerStyle: L } = (0, ef.Q)(P, k),
                         y = null == (l = A.meta) ? void 0 : l.hasCovers,
                         D = (0, i.useSearchParams)();
-                    (0, eW.G)(x),
+                    ((0, eW.G)(x),
                         (0, ep.A)(),
                         (0, o.useEffect)(() => {
                             let e = D.get(eb.K.BLOCK);
@@ -1676,13 +1677,13 @@
                                         r.scrollTo({ top: t - 10, behavior: 'smooth' });
                                     }
                                 })({ blockId: e, scrollRef: j, headerRef: O });
-                        }, [A.infoLoadingState.isResolved, A.landing.isLoaded, j, D]);
+                        }, [A.infoLoadingState.isResolved, A.landing.isLoaded, j, D]));
                     let H = (0, ex.S)({ artist: null == (_ = A.meta) ? void 0 : _.artist, shouldHistoryBack: !0 });
-                    (0, o.useEffect)(() => {
+                    ((0, o.useEffect)(() => {
                         var e;
                         (null == (e = A.meta) ? void 0 : e.artist.isUnsafeLegal) && H();
                     }, [null == (f = A.meta) ? void 0 : f.artist.isUnsafeLegal, H]),
-                        (0, eF._)(A, x);
+                        (0, eF._)(A, x));
                     let w = (0, c.c)(() => {
                         var e;
                         (null == (e = A.meta) ? void 0 : e.hasCovers) && A.meta.covers && E.openImages({ images: A.meta.covers });
@@ -1692,7 +1693,7 @@
                         let { href: e } = (0, ej.u)('/artist/:artistId', { params: { artistId: A.deprecationTargetArtistId } });
                         (0, i.redirect)(e);
                     }
-                    (0, o.useMemo)(
+                    ((0, o.useMemo)(
                         () => () => {
                             (A.infoLoadingState.isRejected || (!A.meta && !A.infoLoadingState.isLoading && !A.infoLoadingState.isNeededToLoad)) &&
                                 b &&
@@ -1713,7 +1714,7 @@
                                         (0, eL.j)(e);
                                     });
                             }, [null == e ? void 0 : e.meta, null == e ? void 0 : e.infoLoadingState.isLoading, null == e || null == (t = e.meta) ? void 0 : t.artist]);
-                        })(A);
+                        })(A));
                     let M = (0, o.useMemo)(
                             () =>
                                 A.infoLoadingState.isLoading || !A.meta
@@ -1753,7 +1754,7 @@
             var e9 = r(17024);
             let te = () => {
                 let e = (0, i.useSearchParams)().get('artistId');
-                return (e && (0, e9.L)(e)) || (0, i.notFound)(), (0, a.jsx)(e4, { artistId: e });
+                return ((e && (0, e9.L)(e)) || (0, i.notFound)(), (0, a.jsx)(e4, { artistId: e }));
             };
         },
         81442: (e, t, r) => {
@@ -1801,7 +1802,8 @@
                             null == (a = r.store) || a.tracks.events.on(i.je.ENTITY_CHANGED, n),
                             () => {
                                 var t, a;
-                                null == (t = r.store) || t.tracks.events.off(i.je.STATE_CHANGED, e), null == (a = r.store) || a.tracks.events.off(i.je.ENTITY_CHANGED, n);
+                                (null == (t = r.store) || t.tracks.events.off(i.je.STATE_CHANGED, e),
+                                    null == (a = r.store) || a.tracks.events.off(i.je.ENTITY_CHANGED, n));
                             }
                         );
                     }, [e, n, null == (t = r.store) ? void 0 : t.tracks.events]);
@@ -1869,7 +1871,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 9117, 7034, 7231, 5718, 9763, 6347, 3183, 7258, 5367, 6639, 7972, 8868, 3379, 3647, 8497, 7680, 5108, 5583, 5976, 4413, 1914, 6723, 4761, 992, 3931, 6706,
@@ -1878,6 +1880,6 @@
             ],
             () => e((e.s = 81442)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

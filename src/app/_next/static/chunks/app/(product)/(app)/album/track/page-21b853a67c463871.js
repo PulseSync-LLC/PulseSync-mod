@@ -6,7 +6,7 @@
         },
         97964: (e, s, r) => {
             'use strict';
-            r.r(s), r.d(s, { default: () => n });
+            (r.r(s), r.d(s, { default: () => n }));
             var t = r(32290),
                 a = r(21916),
                 u = r(55178),
@@ -16,12 +16,12 @@
                 let e = (0, a.useSearchParams)(),
                     s = e.get('albumId'),
                     r = e.get('trackId');
-                return (s && r && (0, d.L)(r) && (0, d.L)(s)) || (0, a.notFound)(), (0, t.jsx)(u.Suspense, { children: (0, t.jsx)(l.l, { albumId: s, trackId: r }) });
+                return ((s && r && (0, d.L)(r) && (0, d.L)(s)) || (0, a.notFound)(), (0, t.jsx)(u.Suspense, { children: (0, t.jsx)(l.l, { albumId: s, trackId: r }) }));
             };
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 6639, 7034, 7231, 5718, 7972, 6347, 3183, 9763, 7258, 9117, 1541, 5367, 422, 5108, 149, 8868, 324, 3379, 3647, 9297, 6706, 1311, 5201, 8892, 2536, 66,
@@ -30,6 +30,6 @@
             ],
             () => e((e.s = 90434)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

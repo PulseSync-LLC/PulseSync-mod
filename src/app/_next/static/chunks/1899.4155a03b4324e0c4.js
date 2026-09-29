@@ -26,7 +26,7 @@
                 let r = y().implementation.createHTMLDocument(),
                     n = r.createElement('base'),
                     a = r.createElement('a');
-                return r.head.appendChild(n), r.body.appendChild(a), t && (n.href = t), (a.href = e), a.href;
+                return (r.head.appendChild(n), r.body.appendChild(a), t && (n.href = t), (a.href = e), a.href);
             }
             function y(e) {
                 return (e && f(e) ? e?.ownerDocument : e) ?? window.document;
@@ -60,16 +60,16 @@
             function E(e, t) {
                 return new Promise((r, n) => {
                     let a = new FileReader();
-                    (a.onload = () => r(a.result)),
+                    ((a.onload = () => r(a.result)),
                         (a.onerror = () => n(a.error)),
                         (a.onabort = () => n(Error(`Failed read blob to ${t}`))),
-                        'dataUrl' === t ? a.readAsDataURL(e) : 'arrayBuffer' === t && a.readAsArrayBuffer(e);
+                        'dataUrl' === t ? a.readAsDataURL(e) : 'arrayBuffer' === t && a.readAsArrayBuffer(e));
                 });
             }
             let v = (e) => E(e, 'dataUrl');
             function x(e, t) {
                 let r = y(t).createElement('img');
-                return (r.decoding = 'sync'), (r.loading = 'eager'), (r.src = e), r;
+                return ((r.decoding = 'sync'), (r.loading = 'eager'), (r.src = e), r);
             }
             function N(e, t) {
                 return new Promise((r) => {
@@ -78,20 +78,20 @@
                         s = null,
                         c = null;
                     function u() {
-                        r(i), s && clearTimeout(s), c?.();
+                        (r(i), s && clearTimeout(s), c?.());
                     }
                     if ((n && (s = setTimeout(u, n)), 'VIDEO' === i.tagName)) {
                         let e = i.currentSrc || i.src;
                         if (!e) return i.poster ? N(i.poster, t).then(r) : u();
                         if (i.readyState >= 2) return u();
                         let n = (t) => {
-                            l?.('Failed video load', e, t), o?.(t), u();
+                            (l?.('Failed video load', e, t), o?.(t), u());
                         };
-                        (c = () => {
-                            i.removeEventListener('loadeddata', u), i.removeEventListener('error', n);
+                        ((c = () => {
+                            (i.removeEventListener('loadeddata', u), i.removeEventListener('error', n));
                         }),
                             i.addEventListener('loadeddata', u, { once: !0 }),
-                            i.addEventListener('error', n, { once: !0 });
+                            i.addEventListener('error', n, { once: !0 }));
                     } else {
                         let e = 'image' === i.tagName ? i.href.baseVal : i.currentSrc || i.src;
                         if (!e) return u();
@@ -105,14 +105,14 @@
                                 u();
                             },
                             r = (t) => {
-                                l?.('Failed image load', i.dataset.originalSrc || e, t), u();
+                                (l?.('Failed image load', i.dataset.originalSrc || e, t), u());
                             };
                         if ('IMG' === i.tagName && i.complete) return t();
-                        (c = () => {
-                            i.removeEventListener('load', t), i.removeEventListener('error', r);
+                        ((c = () => {
+                            (i.removeEventListener('load', t), i.removeEventListener('error', r));
                         }),
                             i.addEventListener('load', t, { once: !0 }),
-                            i.addEventListener('error', r, { once: !0 });
+                            i.addEventListener('error', r, { once: !0 }));
                     }
                 });
             }
@@ -210,7 +210,7 @@
                                         e
                                     );
                                 } catch (e) {
-                                    return m.log.warn('Failed to new Worker', e), null;
+                                    return (m.log.warn('Failed to new Worker', e), null);
                                 }
                             })
                             .filter(Boolean),
@@ -219,7 +219,7 @@
                         acceptOfImage: `${[
                             (function (e) {
                                 let t = e?.createElement?.('canvas');
-                                return t && (t.height = t.width = 1), !!t && 'toDataURL' in t && !!t.toDataURL('image/webp').includes('image/webp');
+                                return (t && (t.height = t.width = 1), !!t && 'toDataURL' in t && !!t.toDataURL('image/webp').includes('image/webp'));
                             })(u) && 'image/webp',
                             'image/svg+xml',
                             'image/*',
@@ -234,16 +234,16 @@
                         isEnable: (e) => ('restoreScrollPosition' === e ? 'boolean' != typeof c && (c[e] ?? !1) : 'boolean' == typeof c ? c : (c[e] ?? !0)),
                         shadowRoots: [],
                     };
-                m.log.time('wait until load'), await A(e, { timeout: m.timeout, onWarn: m.log.warn }), m.log.timeEnd('wait until load');
+                (m.log.time('wait until load'), await A(e, { timeout: m.timeout, onWarn: m.log.warn }), m.log.timeEnd('wait until load'));
                 let { width: h, height: w } = (function (e, t) {
                     let { width: r, height: n } = t;
                     if (f(e) && (!r || !n)) {
                         let t = e.getBoundingClientRect();
-                        (r = r || t.width || Number(e.getAttribute('width')) || 0), (n = n || t.height || Number(e.getAttribute('height')) || 0);
+                        ((r = r || t.width || Number(e.getAttribute('width')) || 0), (n = n || t.height || Number(e.getAttribute('height')) || 0));
                     }
                     return { width: r, height: n };
                 })(e, m);
-                return (m.width = h), (m.height = w), m;
+                return ((m.width = h), (m.height = w), m);
             }
             function I(e) {
                 if (!e) return;
@@ -254,7 +254,7 @@
   -webkit-background-clip: text;
 }
 `);
-                return t.appendChild(r), t;
+                return (t.appendChild(r), t);
             }
             async function F(e, t) {
                 let { log: r, timeout: n, drawImageCount: a, drawImageInterval: o } = t;
@@ -263,7 +263,7 @@
                     { canvas: i, context2d: s } = (function (e, t) {
                         let { width: r, height: n, scale: a, backgroundColor: o, maximumCanvasSize: l } = t,
                             i = e.createElement('canvas');
-                        (i.width = Math.floor(r * a)),
+                        ((i.width = Math.floor(r * a)),
                             (i.height = Math.floor(n * a)),
                             (i.style.width = `${r}px`),
                             (i.style.height = `${n}px`),
@@ -275,9 +275,9 @@
                                         : ((i.width *= l / i.height), (i.height = l))
                                     : i.width > l
                                       ? ((i.height *= l / i.width), (i.width = l))
-                                      : ((i.width *= l / i.height), (i.height = l)));
+                                      : ((i.width *= l / i.height), (i.height = l))));
                         let s = i.getContext('2d');
-                        return s && o && ((s.fillStyle = o), s.fillRect(0, 0, i.width, i.height)), { canvas: i, context2d: s };
+                        return (s && o && ((s.fillStyle = o), s.fillRect(0, 0, i.width, i.height)), { canvas: i, context2d: s });
                     })(e.ownerDocument, t),
                     c = () => {
                         try {
@@ -290,10 +290,10 @@
                     for (let e = 0; e < a; e++)
                         await new Promise((t) => {
                             setTimeout(() => {
-                                s?.clearRect(0, 0, i.width, i.height), c(), t();
+                                (s?.clearRect(0, 0, i.width, i.height), c(), t());
                             }, e + o);
                         });
-                return (t.drawImageCount = 0), r.timeEnd('image to canvas'), i;
+                return ((t.drawImageCount = 0), r.timeEnd('image to canvas'), i);
             }
             function P(e, t) {
                 if (e.ownerDocument)
@@ -316,17 +316,17 @@
             async function R(e, t) {
                 if (e.ownerDocument && !e.currentSrc && e.poster) return x(e.poster, e.ownerDocument);
                 let r = e.cloneNode(!1);
-                (r.crossOrigin = 'anonymous'), e.currentSrc && e.currentSrc !== e.src && (r.src = e.currentSrc);
+                ((r.crossOrigin = 'anonymous'), e.currentSrc && e.currentSrc !== e.src && (r.src = e.currentSrc));
                 let n = r.ownerDocument;
                 if (n) {
                     let a = !0;
                     if ((await N(r, { onError: () => (a = !1), onWarn: t.log.warn }), !a)) return e.poster ? x(e.poster, e.ownerDocument) : r;
-                    (r.currentTime = e.currentTime),
+                    ((r.currentTime = e.currentTime),
                         await new Promise((e) => {
                             r.addEventListener('seeked', e, { once: !0 });
-                        });
+                        }));
                     let o = n.createElement('canvas');
-                    (o.width = e.offsetWidth), (o.height = e.offsetHeight);
+                    ((o.width = e.offsetWidth), (o.height = e.offsetHeight));
                     try {
                         let e = o.getContext('2d');
                         e && e.drawImage(r, 0, 0, o.width, o.height);
@@ -372,7 +372,7 @@
                     d = u?.contentWindow;
                 if (!d) return new Map();
                 let f = d?.document;
-                i
+                (i
                     ? ((a = (n = f.createElementNS(b, 'svg')).ownerDocument.createElementNS(n.namespaceURI, l)),
                       s.forEach(([e, t]) => {
                           a.setAttributeNS(null, e, t);
@@ -380,14 +380,14 @@
                       n.appendChild(a))
                     : (n = a = f.createElement(l)),
                     (a.textContent = ' '),
-                    f.body.appendChild(n);
+                    f.body.appendChild(n));
                 let g = d.getComputedStyle(a, t),
                     m = new Map();
                 for (let e = g.length, t = 0; t < e; t++) {
                     let e = g.item(t);
                     _.includes(e) || m.set(e, g.getPropertyValue(e));
                 }
-                return f.body.removeChild(n), o.set(c, m), m;
+                return (f.body.removeChild(n), o.set(c, m), m);
             }
             function L(e, t, r) {
                 let n = new Map(),
@@ -403,7 +403,7 @@
                         c = s > -1 ? r.substring(0, s) : void 0;
                     if (c) {
                         let e = o.get(c);
-                        e || ((e = new Map()), o.set(c, e)), e.set(r, [l, i]);
+                        (e || ((e = new Map()), o.set(c, e)), e.set(r, [l, i]));
                     }
                     (t.get(r) !== l || i) && (c ? a.push(c) : n.set(r, [l, i]));
                 }
@@ -424,7 +424,7 @@
                 if ((f(r) && ('STYLE' === r.tagName || 'SCRIPT' === r.tagName)) || (n.filter && !n.filter(r))) return;
                 W.has(t.nodeName) || W.has(r.nodeName) ? (n.currentParentNodeStyle = void 0) : (n.currentParentNodeStyle = n.currentNodeStyle);
                 let o = await q(r, n, !1, a);
-                n.isEnable('restoreScrollPosition') &&
+                (n.isEnable('restoreScrollPosition') &&
                     (function (e, t) {
                         if (!g(e) || !g(t)) return;
                         let { scrollTop: r, scrollLeft: n } = e;
@@ -432,7 +432,7 @@
                         let { transform: a } = t.style,
                             o = new DOMMatrix(a),
                             { a: l, b: i, c: s, d: c } = o;
-                        (o.a = 1),
+                        ((o.a = 1),
                             (o.b = 0),
                             (o.c = 0),
                             (o.d = 1),
@@ -441,9 +441,9 @@
                             (o.b = i),
                             (o.c = s),
                             (o.d = c),
-                            (t.style.transform = o.toString());
+                            (t.style.transform = o.toString()));
                     })(e, o),
-                    t.appendChild(o);
+                    t.appendChild(o));
             }
             async function V(e, t, r, n) {
                 let a = e.firstChild;
@@ -458,7 +458,7 @@
             let z = /^[\w-:]+$/;
             async function q(e, t, r = !1, n) {
                 let { ownerDocument: a, ownerWindow: o, fontFamilies: l, onCloneEachNode: i } = t;
-                if (a && 3 === e.nodeType) return n && /\S/.test(e.data) && n(e.data), a.createTextNode(e.data);
+                if (a && 3 === e.nodeType) return (n && /\S/.test(e.data) && n(e.data), a.createTextNode(e.data));
                 if (a && o && f(e) && (g(e) || 'object' == typeof e.className)) {
                     let n = await (function (e, t) {
                         if ('CANVAS' === e.tagName) return P(e, t);
@@ -472,7 +472,9 @@
                         }
                         if ('IMG' === e.tagName) {
                             let t = e.cloneNode(!1);
-                            return e.currentSrc && e.currentSrc !== e.src && ((t.src = e.currentSrc), (t.srcset = '')), 'lazy' === t.loading && (t.loading = 'eager'), t;
+                            return (
+                                e.currentSrc && e.currentSrc !== e.src && ((t.src = e.currentSrc), (t.srcset = '')), 'lazy' === t.loading && (t.loading = 'eager'), t
+                            );
                         }
                         return 'VIDEO' === e.tagName ? R(e, t) : e.cloneNode(!1);
                     })(e, t);
@@ -492,7 +494,7 @@
                             u.delete(t);
                         });
                         let d = L(s, u, o);
-                        d.delete('transition-property'),
+                        (d.delete('transition-property'),
                             d.delete('all'),
                             d.delete('d'),
                             d.delete('content'),
@@ -512,7 +514,7 @@
                                 (d.get('overflow-x')?.[0] === 'hidden' || d.get('overflow-y')?.[0] === 'hidden') &&
                                     d.get('text-overflow')?.[0] === 'ellipsis' &&
                                     e.scrollWidth === e.clientWidth &&
-                                    d.set('text-overflow', ['clip', '']));
+                                    d.set('text-overflow', ['clip', ''])));
                         for (let e = i.length, t = 0; t < e; t++) i.removeProperty(i.item(t));
                         return (
                             d.forEach(([e, t], r) => {
@@ -542,15 +544,15 @@
                         f = k(a.get('font-family')?.[0]),
                         g = f
                             ? (e) => {
-                                  'uppercase' === d
+                                  ('uppercase' === d
                                       ? (e = e.toUpperCase())
                                       : 'lowercase' === d
                                         ? (e = e.toLowerCase())
                                         : 'capitalize' === d && (e = e[0].toUpperCase() + e.substring(1)),
                                       f.forEach((t) => {
                                           let r = l.get(t);
-                                          r || l.set(t, (r = new Set())), e.split('').forEach((e) => r.add(e));
-                                      });
+                                          (r || l.set(t, (r = new Set())), e.split('').forEach((e) => r.add(e)));
+                                      }));
                               }
                             : void 0;
                     var s = o;
@@ -559,14 +561,14 @@
                         let a = m.getComputedStyle(e, r),
                             o = a.getPropertyValue('content');
                         if (!o || 'none' === o) return;
-                        g?.(o), (o = o.replace(/(')|(")|(counter\(.+\))/g, ''));
+                        (g?.(o), (o = o.replace(/(')|(")|(counter\(.+\))/g, '')));
                         let l = [C()],
                             i = B(e, r, t);
                         p?.forEach((e, t) => {
                             i.delete(t);
                         });
                         let s = L(a, i, t.includeStyleProperties);
-                        s.delete('content'), s.delete('-webkit-locale'), s.get('background-clip')?.[0] === 'text' && n.classList.add('______background-clip--text');
+                        (s.delete('content'), s.delete('-webkit-locale'), s.get('background-clip')?.[0] === 'text' && n.classList.add('______background-clip--text'));
                         let c = [`content: '${o}';`];
                         if (
                             (s.forEach(([e, t], r) => {
@@ -583,7 +585,7 @@
                         }
                         let u = c.join('\n  '),
                             d = w.get(u);
-                        d || ((d = []), w.set(u, d)), d.push(`.${l[0]}${r}`);
+                        (d || ((d = []), w.set(u, d)), d.push(`.${l[0]}${r}`));
                     }
                     return (
                         h && m && (U.forEach(u), s && j.forEach(u)),
@@ -594,7 +596,7 @@
                     );
                 }
                 let d = e.cloneNode(!1);
-                return await V(e, d, t), await i?.(d), d;
+                return (await V(e, d, t), await i?.(d), d);
             }
             function G(e, t) {
                 let { url: r, requestType: n = 'text', responseType: a = 'text', imageDom: o } = t,
@@ -624,14 +626,14 @@
                             });
                     let S = t && d.size,
                         E = { url: l, timeout: i, responseType: S ? 'arrayBuffer' : a, headers: 'image' === n ? { accept: s } : void 0, ...g };
-                    ((b = { type: n, resolve: void 0, reject: void 0, response: null }).response = (async () => {
+                    (((b = { type: n, resolve: void 0, reject: void 0, response: null }).response = (async () => {
                         if (f && 'image' === n) {
                             let e = await f(r);
                             if (e) return e;
                         }
                         if (!u && r.startsWith('http') && p.length)
                             return new Promise((e, t) => {
-                                p[c.size & (p.length - 1)].postMessage({ rawUrl: r, ...E }), (b.resolve = e), (b.reject = t);
+                                (p[c.size & (p.length - 1)].postMessage({ rawUrl: r, ...E }), (b.resolve = e), (b.reject = t));
                             });
                         let { url: e, timeout: t, responseType: a, ...o } = E,
                             l = new AbortController(),
@@ -651,10 +653,10 @@
                             .finally(() => clearTimeout(i));
                     })().catch((t) => {
                         if ((c.delete(r), 'image' === n && h))
-                            return e.log.warn('Failed to fetch image base64, trying to use placeholder image', l), 'string' == typeof h ? h : h(o);
+                            return (e.log.warn('Failed to fetch image base64, trying to use placeholder image', l), 'string' == typeof h ? h : h(o));
                         throw t;
                     })),
-                        c.set(r, b);
+                        c.set(r, b));
                 }
                 return b.response;
             }
@@ -662,7 +664,7 @@
                 if (!X(e)) return e;
                 for (let [a, o] of (function (e, t) {
                     let r = [];
-                    return e.replace(Y, (e, n, a) => (r.push([a, p(a, t)]), e)), r.filter(([e]) => !w(e));
+                    return (e.replace(Y, (e, n, a) => (r.push([a, p(a, t)]), e)), r.filter(([e]) => !w(e)));
                 })(e, t))
                     try {
                         let t = await G(r, { url: o, requestType: n ? 'image' : 'text', responseType: 'dataUrl' });
@@ -697,10 +699,10 @@
                             try {
                                 return 'cssRules' in e && !!e.cssRules.length;
                             } catch (r) {
-                                return t.log.warn(`Error while reading CSS rules from ${e.href}`, r), !1;
+                                return (t.log.warn(`Error while reading CSS rules from ${e.href}`, r), !1);
                             }
                         });
-                        await Promise.all(
+                        (await Promise.all(
                             e.flatMap((e) =>
                                 Array.from(e.cssRules).map(async (r, n) => {
                                     if ('CSSImportRule' === r.constructor.name) {
@@ -762,15 +764,15 @@
                                           )
                                         : l.push(
                                               H(e.cssText, e.parentStyleSheet ? e.parentStyleSheet.href : null, t).then((a) => {
-                                                  (a = er(a, t)),
+                                                  ((a = er(a, t)),
                                                       o.set(e.cssText, a),
                                                       n.appendChild(
                                                           r.createTextNode(`${a}
 `),
-                                                      );
+                                                      ));
                                               }),
                                           );
-                                });
+                                }));
                     }
             }
             let J = /(\/\*[\s\S]*?\*\/)/g,
@@ -811,22 +813,22 @@
                 let v = await q(r.node, r, !0);
                 if (l && n) {
                     let e = '';
-                    s.forEach((t, r) => {
+                    (s.forEach((t, r) => {
                         e += `${t.join(',\n')} {
   ${r}
 }
 `;
                     }),
-                        l.appendChild(n.createTextNode(e));
+                        l.appendChild(n.createTextNode(e)));
                 }
-                a.timeEnd('clone node'),
+                (a.timeEnd('clone node'),
                     await p?.(v),
                     !1 !== c && f(v) && (a.time('embed web font'), await Q(v, r), a.timeEnd('embed web font')),
                     a.time('embed node'),
                     (function e(t, r) {
                         var n;
                         let { tasks: a } = r;
-                        f(t) &&
+                        (f(t) &&
                             (('IMG' === t.tagName || 'image' === t.tagName) &&
                                 a.push(
                                     ...(function (e, t) {
@@ -887,8 +889,8 @@
                                 ),
                             t.childNodes.forEach((t) => {
                                 e(t, r);
-                            });
-                    })(v, r);
+                            }));
+                    })(v, r));
                 let x = o.length,
                     N = 0,
                     A = async () => {
@@ -903,7 +905,7 @@
                             m?.(++N, x);
                         }
                     };
-                m?.(N, x), await Promise.all([...Array.from({ length: 4 })].map(A)), a.timeEnd('embed node'), await S?.(v);
+                (m?.(N, x), await Promise.all([...Array.from({ length: 4 })].map(A)), a.timeEnd('embed node'), await S?.(v));
                 let C = (function (e, t) {
                     let { width: r, height: n } = t,
                         a = (function (e, t, r) {
@@ -947,7 +949,7 @@
                                 }
                                 e.sandbox = void 0;
                             }
-                            (e.workers = []), e.fontFamilies.clear(), e.fontCssTexts.clear(), e.requests.clear(), (e.tasks = []), (e.shadowRoots = []);
+                            ((e.workers = []), e.fontFamilies.clear(), e.fontCssTexts.clear(), e.requests.clear(), (e.tasks = []), (e.shadowRoots = []));
                         })(r),
                     await E?.(C),
                     C
@@ -978,7 +980,7 @@
                     if ('image/png' === o)
                         e = (function (e, t, r = !1) {
                             let a = new Uint8Array(13);
-                            (t *= 39.3701),
+                            ((t *= 39.3701),
                                 (a[0] = 112),
                                 (a[1] = 72),
                                 (a[2] = 89),
@@ -991,7 +993,7 @@
                                 (a[9] = a[5]),
                                 (a[10] = a[6]),
                                 (a[11] = a[7]),
-                                (a[12] = 1);
+                                (a[12] = 1));
                             let o = (function (e) {
                                     let t = -1;
                                     n ||
@@ -1015,22 +1017,22 @@
                                         if (9 === e[r - 4] && 112 === e[r - 3] && 72 === e[r - 2] && 89 === e[r - 1] && 115 === e[r]) return r - 3;
                                     return 0;
                                 })(e);
-                                return e.set(a, t), e.set(l, t + 13), e;
+                                return (e.set(a, t), e.set(l, t + 13), e);
                             }
                             {
                                 let t = new Uint8Array(4);
-                                (t[0] = 0), (t[1] = 0), (t[2] = 0), (t[3] = 9);
+                                ((t[0] = 0), (t[1] = 0), (t[2] = 0), (t[3] = 9));
                                 let r = new Uint8Array(54);
-                                return r.set(e, 0), r.set(t, 33), r.set(a, 37), r.set(l, 50), r;
+                                return (r.set(e, 0), r.set(t, 33), r.set(a, 37), r.set(l, 50), r);
                             }
                         })(e, i);
                     else {
                         var u;
                         'image/jpeg' === o && (((u = e)[13] = 1), (u[14] = i >> 8), (u[15] = 255 & i), (u[16] = i >> 8), (u[17] = 255 & i), (e = u));
                     }
-                    return a.timeEnd('canvas to blob'), new Blob([e, c.slice(33)], { type: o });
+                    return (a.timeEnd('canvas to blob'), new Blob([e, c.slice(33)], { type: o }));
                 }
-                return a.timeEnd('canvas to blob'), c;
+                return (a.timeEnd('canvas to blob'), c);
             }
         },
     },

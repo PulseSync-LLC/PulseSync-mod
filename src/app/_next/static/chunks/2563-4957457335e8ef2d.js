@@ -43,7 +43,7 @@
                 s = i(60900),
                 a = i(64605),
                 n = (function (e) {
-                    return (e.PIN = 'pin'), e;
+                    return ((e.PIN = 'pin'), e);
                 })({});
             let l = (e, t) => {
                 let { formatMessage: i } = (0, s.A)();
@@ -67,10 +67,10 @@
         13365: (e, t, i) => {
             'use strict';
             var r;
-            i.d(t, { _: () => r }),
+            (i.d(t, { _: () => r }),
                 (function (e) {
-                    (e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new');
-                })(r || (r = {}));
+                    ((e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new'));
+                })(r || (r = {})));
         },
         13798: (e, t, i) => {
             'use strict';
@@ -123,45 +123,45 @@
                         children:
                             v === o.JU.SUBSTITUTED
                                 ? (0, r.jsxs)('svg', {
-                                    className: (0, s.$)(h().explicitMark, t),
-                                    viewBox: '0 0 16 16',
-                                    role: 'img',
-                                    'aria-label': T,
-                                    style: {
-                                        width: 'var(--ym-icon-size-'.concat(A, ')'),
-                                        height: 'var(--ym-icon-size-'.concat(A, ')'),
-                                    },
-                                    ...x,
-                                    'data-test-id': d.S7.EXPLICIT_MARK_ICON,
-                                    children: [
-                                        (0, r.jsx)('circle', {
-                                            cx: '8',
-                                            cy: '8',
-                                            r: '5.5',
-                                            fill: 'none',
-                                            stroke: 'currentColor',
-                                            strokeWidth: '1.5',
-                                        }),
-                                        (0, r.jsx)('text', {
-                                            x: '8',
-                                            y: '9',
-                                            fill: 'currentColor',
-                                            fontSize: '7',
-                                            fontWeight: '700',
-                                            textAnchor: 'middle',
-                                            dominantBaseline: 'middle',
-                                            children: 'S',
-                                        }),
-                                    ],
-                                })
+                                      className: (0, s.$)(h().explicitMark, t),
+                                      viewBox: '0 0 16 16',
+                                      role: 'img',
+                                      'aria-label': T,
+                                      style: {
+                                          width: 'var(--ym-icon-size-'.concat(A, ')'),
+                                          height: 'var(--ym-icon-size-'.concat(A, ')'),
+                                      },
+                                      ...x,
+                                      'data-test-id': d.S7.EXPLICIT_MARK_ICON,
+                                      children: [
+                                          (0, r.jsx)('circle', {
+                                              cx: '8',
+                                              cy: '8',
+                                              r: '5.5',
+                                              fill: 'none',
+                                              stroke: 'currentColor',
+                                              strokeWidth: '1.5',
+                                          }),
+                                          (0, r.jsx)('text', {
+                                              x: '8',
+                                              y: '9',
+                                              fill: 'currentColor',
+                                              fontSize: '7',
+                                              fontWeight: '700',
+                                              textAnchor: 'middle',
+                                              dominantBaseline: 'middle',
+                                              children: 'S',
+                                          }),
+                                      ],
+                                  })
                                 : (0, r.jsx)(u.I, {
-                                    className: (0, s.$)(h().explicitMark, t),
-                                    'aria-label': T,
-                                    variant: f,
-                                    size: A,
-                                    ...x,
-                                    'data-test-id': d.S7.EXPLICIT_MARK_ICON,
-                                }),
+                                      className: (0, s.$)(h().explicitMark, t),
+                                      'aria-label': T,
+                                      variant: f,
+                                      size: A,
+                                      ...x,
+                                      'data-test-id': d.S7.EXPLICIT_MARK_ICON,
+                                  }),
                     }),
                 });
             });
@@ -241,10 +241,15 @@
                                     .flat()
                                     .map((e) => (e?.id ? ''.concat(e.id, ':').concat(t.id) : null))
                                     .filter(Boolean),
-                                a = Array.isArray(t.artists) ? t.artists.map((e) => e.name).filter(Boolean).join(', ') : t.artistName,
+                                a = Array.isArray(t.artists)
+                                    ? t.artists
+                                          .map((e) => e.name)
+                                          .filter(Boolean)
+                                          .join(', ')
+                                    : t.artistName,
                                 n = [t.title];
-                            ['album', 'single'].includes(t.type ?? 'album') && a && n.unshift(a),
-                                s.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', s, t.type ?? 'album', n.join(' — '));
+                            (['album', 'single'].includes(t.type ?? 'album') && a && n.unshift(a),
+                                s.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', s, t.type ?? 'album', n.join(' — ')));
                         } catch (e) {
                             try {
                                 (0, pulseSyncMst._$)(t).modelActionsLogger.error(e);
@@ -343,7 +348,7 @@
                                     {
                                         icon: (0, r.jsx)(M.I, { variant: icon, size: 'xxs' }),
                                         onClick: () => {
-                                            activate(), R(!1);
+                                            (activate(), R(!1));
                                         },
                                         children: label,
                                         'data-pulsesync-addon-menu-item': '',
@@ -475,7 +480,7 @@
                     eD = a.isAvailable || eU || a.isAudiobook,
                     eK = (0, _.c)((e) => {
                         if ((e.stopPropagation(), ew())) return void e.preventDefault();
-                        el.openAlbumTrailer(a.id), eI(o.ky.Album, String(a.id));
+                        (el.openAlbumTrailer(a.id), eI(o.ky.Album, String(a.id)));
                     }),
                     eH = a.type === u._.SINGLE ? em({ id: 'entity-names.single' }) : void 0,
                     eW = a.releaseDate ? ep(a.releaseDate, er()) : void 0,
@@ -499,19 +504,19 @@
                     eJ = (0, x.c)({ album: a, callback: eS }),
                     eX = (0, x.c)({ album: a, callback: eY }),
                     eq = (0, _.c)((e) => {
-                        eN({ to: o.QT.AlbumScreen }), null == ev || ev(), eJ(e);
+                        (eN({ to: o.QT.AlbumScreen }), null == ev || ev(), eJ(e));
                     }),
                     eZ = (0, _.c)(() => {
                         if (!ew()) {
                             if (ez) return void ec.open();
-                            eb || eG || (eg(!0), null == eA || eA()), eX(), ey(!eG);
+                            (eb || eG || (eg(!0), null == eA || eA()), eX(), ey(!eG));
                         }
                     }),
                     eQ = (0, _.c)(() => {
-                        ex || a.isLiked || (eC(!0), null == eh || eh()), ej();
+                        (ex || a.isLiked || (eC(!0), null == eh || eh()), ej());
                     }),
                     e0 = (0, _.c)((e) => {
-                        ef(e), eE(e);
+                        (ef(e), eE(e));
                     }),
                     e2 = (0, n.useMemo)(() => {
                         var e;
@@ -912,7 +917,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), n.isOpened && (r.reset(), n.close()), s.modal.isOpened && s.modal.close();
+                                    (null == e || e.stopPropagation(), n.isOpened && (r.reset(), n.close()), s.modal.isOpened && s.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     a.modal.isOpened && (a.modal.close(), a.reset());
@@ -922,11 +927,11 @@
                         })({
                             artist: t,
                             callback: (0, h.c)((e) => {
-                                N && f.isOpened && f.close(), y(e);
+                                (N && f.isOpened && f.close(), y(e));
                             }),
                         }),
                         L = (0, h.c)((e) => {
-                            T({ to: m.QT.ArtistScreen }), null == j || j(), S(e);
+                            (T({ to: m.QT.ArtistScreen }), null == j || j(), S(e));
                         });
                     return i && !t.various
                         ? (0, r.jsx)(b.N, {
@@ -1143,7 +1148,7 @@
                         } = (0, o.g)(),
                         O = 1 === i.length,
                         M = (0, n.useCallback)((e) => {
-                            L(!0), e.preventDefault();
+                            (L(!0), e.preventDefault());
                         }, []),
                         w = (0, n.useMemo)(() => {
                             let e = i;
@@ -1341,11 +1346,11 @@
                                 let _ = { ...(0, u.HO)(a), url: a.url, isLiked: !a.isLiked };
                                 i(!0);
                                 let p = await a.toggleLike();
-                                i(!1),
+                                (i(!1),
                                     d &&
                                         (p === m.f.OK
                                             ? e((0, r.jsx)(A, { withLink: o, album: _ }), { containerId: l.u.INFO })
-                                            : e((0, r.jsx)(c.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
+                                            : e((0, r.jsx)(c.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR })));
                             });
                         })(),
                         { pageAlbumId: C } = (0, n.T)();
@@ -1451,7 +1456,7 @@
             'use strict';
             i.d(t, { z: () => r });
             var r = (function (e) {
-                return (e.PAGE = 'PAGE'), (e.CARD = 'CARD'), e;
+                return ((e.PAGE = 'PAGE'), (e.CARD = 'CARD'), e);
             })({});
         },
         78176: (e, t, i) => {
@@ -1486,7 +1491,7 @@
                         );
                     }, [t, i]),
                     k = (0, d.c)((e) => {
-                        a.modal.isOpened && a.modal.close(), b({ to: l.QT.ArtistScreen }), A(e);
+                        (a.modal.isOpened && a.modal.close(), b({ to: l.QT.ArtistScreen }), A(e));
                     });
                 return (0, r.jsxs)(r.Fragment, {
                     children: [
@@ -1661,10 +1666,10 @@
                         let a = { ...(0, s.HO)(e), url: e.url, isPinned: !e.isPinned };
                         m(!0);
                         let n = await e.togglePin();
-                        m(!1),
+                        (m(!1),
                             n
                                 ? i((0, r.jsx)(p, { album: a }), { containerId: l.u.INFO })
-                                : i((0, r.jsx)(c.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR });
+                                : i((0, r.jsx)(c.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
                     }, [e, u, i, _, t.isAuthorized]);
                 };
         },
@@ -1674,10 +1679,10 @@
         92013: (e, t, i) => {
             'use strict';
             var r;
-            i.d(t, { T: () => r }),
+            (i.d(t, { T: () => r }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(r || (r = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(r || (r = {})));
         },
     },
 ]);

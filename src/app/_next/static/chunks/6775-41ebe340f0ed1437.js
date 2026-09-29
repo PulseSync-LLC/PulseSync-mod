@@ -360,7 +360,7 @@
                 n = a(60900),
                 r = a(64605),
                 s = (function (e) {
-                    return (e.PIN = 'pin'), e;
+                    return ((e.PIN = 'pin'), e);
                 })({});
             let o = (e, t) => {
                 let { formatMessage: a } = (0, n.A)();
@@ -806,7 +806,7 @@
                                 null == A || A.addShortcutsListener(m.M.MAIN, _.l.LIKE, j),
                                 null == A || A.addShortcutsListener(m.M.MAIN, _.l.DISLIKE, k),
                                 () => {
-                                    null == A || A.removeShortcutsListener(m.M.MAIN, _.l.LIKE), null == A || A.removeShortcutsListener(m.M.MAIN, _.l.DISLIKE);
+                                    (null == A || A.removeShortcutsListener(m.M.MAIN, _.l.LIKE), null == A || A.removeShortcutsListener(m.M.MAIN, _.l.DISLIKE));
                                 }
                             );
                     }, [k, j, A, f.isGenerativeContext]);
@@ -980,10 +980,10 @@
                                 null == k || k.addShortcutsListener(m.M.MAIN, _.l.TOGGLE_REPEAT, q),
                                 null == k || k.addShortcutsListener(m.M.MAIN, _.l.TOGGLE_SHUFFLE, Z),
                                 () => {
-                                    null == k || k.removeShortcutsListener(m.M.MAIN, _.l.TOGGLE_PLAY),
+                                    (null == k || k.removeShortcutsListener(m.M.MAIN, _.l.TOGGLE_PLAY),
                                         I.isAdvertShown ||
                                             (null == k || k.removeShortcutsListener(m.M.MAIN, _.l.TOGGLE_SHUFFLE),
-                                            null == k || k.removeShortcutsListener(m.M.MAIN, _.l.TOGGLE_REPEAT));
+                                            null == k || k.removeShortcutsListener(m.M.MAIN, _.l.TOGGLE_REPEAT)));
                                 }
                             );
                     }, [pulseSyncIsFullscreen, V, q, Z, k, I.isAdvertShown]);
@@ -1070,7 +1070,7 @@
             a.d(t, { r: () => n, L: () => r });
             let i = (e, t) => e.getDate() === t.getDate() && e.getMonth() === t.getMonth() && e.getFullYear() === t.getFullYear();
             var n = (function (e) {
-                return (e.TODAY = 'today'), (e.YESTERDAY = 'yesterday'), (e.DATE = 'date'), (e.DATE_WITH_YEAR = 'date-with-year'), e;
+                return ((e.TODAY = 'today'), (e.YESTERDAY = 'yesterday'), (e.DATE = 'date'), (e.DATE_WITH_YEAR = 'date-with-year'), e);
             })({});
             let r = (e) => {
                 let t = new Date();
@@ -1177,7 +1177,7 @@
             'use strict';
             a.d(t, { S: () => i });
             var i = (function (e) {
-                return (e.Dark = 'dark'), (e.Light = 'light'), e;
+                return ((e.Dark = 'dark'), (e.Light = 'light'), e);
             })({});
         },
         14960: (e, t, a) => {
@@ -1333,7 +1333,7 @@
                 let t = !(arguments.length > 1) || void 0 === arguments[1] || arguments[1],
                     { theme: a } = (0, V.W)(),
                     i = (0, b.useRef)(a);
-                (0, b.useLayoutEffect)(() => {
+                ((0, b.useLayoutEffect)(() => {
                     i.current = a;
                 }, [a]),
                     (0, b.useLayoutEffect)(() => {
@@ -1349,10 +1349,10 @@
                         return (
                             r.observe(document.body, { attributes: !0, attributeFilter: ['class'] }),
                             () => {
-                                r.disconnect(), (0, z.Z)(i.current);
+                                (r.disconnect(), (0, z.Z)(i.current));
                             }
                         );
-                    }, [e, t]);
+                    }, [e, t]));
             };
             var K = a(79406),
                 G = a(32675),
@@ -1479,26 +1479,26 @@
                                     return o <= 0 ? n : o >= n ? (r ? n : 0) : r ? n : Math.max(0, n - o);
                                 }),
                                 l = (0, C.c)((e) => {
-                                    a(Math.round(e)), (r.current = e);
+                                    (a(Math.round(e)), (r.current = e));
                                 }),
                                 d = (0, C.c)(() => {
                                     s.current = ec();
                                 }),
                                 c = (0, C.c)((e) => {
                                     let t = i.current;
-                                    null !== t && cancelAnimationFrame(t),
+                                    (null !== t && cancelAnimationFrame(t),
                                         (i.current = requestAnimationFrame(() => {
                                             i.current = null;
                                             let t = o(e),
                                                 a = Math.abs(t - r.current),
                                                 n = s.current;
                                             (0 === t || t >= n || a >= 2) && l(t);
-                                        }));
+                                        })));
                                 });
                             (0, b.useLayoutEffect)(() => {
                                 if (!e) {
                                     let e = ec();
-                                    (s.current = e), l(e), (n.current = !1);
+                                    ((s.current = e), l(e), (n.current = !1));
                                     return;
                                 }
                                 if (n.current) return;
@@ -1510,7 +1510,7 @@
                                 () =>
                                     e
                                         ? (0, ed.A)(() => {
-                                              d(), c(e);
+                                              (d(), c(e));
                                           }, 100)
                                         : null,
                                 [e, c, d],
@@ -1526,7 +1526,7 @@
                                     let a = new ResizeObserver(u);
                                     a.observe(e);
                                     let n = () => {
-                                        d(), u();
+                                        (d(), u());
                                     };
                                     return (
                                         window.addEventListener('resize', n, { passive: !0 }),
@@ -1535,7 +1535,11 @@
                                             let o = i.current;
                                             null !== o && (cancelAnimationFrame(o), (i.current = null));
                                             let l = ec();
-                                            (r.current = l), (s.current = l), e.removeEventListener('scroll', t), a.disconnect(), window.removeEventListener('resize', n);
+                                            ((r.current = l),
+                                                (s.current = l),
+                                                e.removeEventListener('scroll', t),
+                                                a.disconnect(),
+                                                window.removeEventListener('resize', n));
                                         }
                                     );
                                 }, [e, c, u, d]),
@@ -1618,7 +1622,7 @@
                 eS = {
                     5881: (e, t, a) => {
                         function i() {
-                            for (var e, t, a = 0, i = ''; a < arguments.length; )
+                            for (var e, t, a = 0, i = ''; a < arguments.length;)
                                 (e = arguments[a++]) &&
                                     (t = (function e(t) {
                                         var a,
@@ -1633,11 +1637,11 @@
                                     (i && (i += ' '), (i += t));
                             return i;
                         }
-                        a.r(t), a.d(t, { clsx: () => i, default: () => n });
+                        (a.r(t), a.d(t, { clsx: () => i, default: () => n }));
                         let n = i;
                     },
                     3980: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => i });
+                        (a.r(t), a.d(t, { default: () => i }));
                         let i = {
                             root: 'NGdj0oZ2Bt8qdZhP2Tzt',
                             root_collapsed: 'rece5errcONnjJeX0YW8',
@@ -1646,11 +1650,11 @@
                         };
                     },
                     674: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => i });
+                        (a.r(t), a.d(t, { default: () => i }));
                         let i = { root: 'yuyI2hMAT7qyL1N14MAQ', root_direction_vertical: 'xfFtKQpgAYvC2jI1tBtS', root_direction_horizontal: 'OGlYJO0lZgpSOhfU2Iru' };
                     },
                     7391: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => i });
+                        (a.r(t), a.d(t, { default: () => i }));
                         let i = {
                             root: 'Bp1d3U6W8Nrbqi3MRQS_',
                             root_direction_vertical: 'hYfgO_Y8c4rrQsZJWTDZ',
@@ -1671,7 +1675,7 @@
                         };
                     },
                     3162: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => i });
+                        (a.r(t), a.d(t, { default: () => i }));
                         let i = {
                             root: 'HcfYy4VfnRHqgXzIdL7w',
                             root_direction_vertical: 'kRmUIkcHKD5AgtpPo8wT',
@@ -1698,13 +1702,13 @@
                             else i = t;
                             return { $$typeof: a, type: e, key: n, ref: void 0 !== (t = i.ref) ? t : null, props: i };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i));
                     },
                     4377: (e, t, a) => {
                         e.exports = a(9097);
                     },
                     7858: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.findColorBucketByLightness = t.findColorBucketByHue = t.findColorBucketByName = t.LIGHTNESS_COLOR_BUCKETS = t.COLOR_BUCKETS = void 0),
                             (t.COLOR_BUCKETS = [
                                 { name: 'coral', start: 2, end: 19, primary: '#F53700', secondary: '#FFD7CC' },
@@ -1739,10 +1743,10 @@
                                     ((e, a, i) => (i === t.LIGHTNESS_COLOR_BUCKETS.length - 1 ? a >= e.start && a <= e.end : a >= e.start && a < e.end))(a, e, i),
                                 );
                                 return (0, t.findColorBucketByName)(null == a ? void 0 : a.name);
-                            });
+                            }));
                     },
                     8796: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.createRipple = void 0),
                             (t.createRipple = function (e, t, a) {
                                 let i = null != a ? a : e.currentTarget,
@@ -1752,27 +1756,27 @@
                                     o = i.getBoundingClientRect(),
                                     l = 0 === e.clientX ? Math.round(o.width / 2) : e.clientX - o.left,
                                     d = 0 === e.clientY ? Math.round(o.height / 2) : e.clientY - o.top;
-                                (n.style.width = ''.concat(r, 'px')),
+                                ((n.style.width = ''.concat(r, 'px')),
                                     (n.style.height = ''.concat(r, 'px')),
                                     (n.style.left = 0 === e.clientX ? '0px' : ''.concat(l - s, 'px')),
                                     (n.style.top = ''.concat(d - s, 'px')),
-                                    n.classList.add(t);
+                                    n.classList.add(t));
                                 let c = i.getElementsByClassName(t)[0];
-                                c && c.remove(), i.insertBefore(n, i.firstChild);
-                            });
+                                (c && c.remove(), i.insertBefore(n, i.firstChild));
+                            }));
                     },
                     361: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            });
+                            }));
                     },
                     768: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getVibePaletteColors =
                                 t.getVibeColorBucketSelection =
                                 t.getVibePaletteByBucketName =
@@ -1781,10 +1785,10 @@
                                 t.SECONDARY_GRADIENT_STOPS =
                                 t.PRIMARY_GRADIENT_STOPS =
                                 t.PRIMARY_DARK_IDLE_STOPS =
-                                    void 0);
+                                    void 0));
                         let i = a(2660),
                             n = a(7858);
-                        (t.PRIMARY_DARK_IDLE_STOPS = Array.from({ length: 16 }, () => '#000000')),
+                        ((t.PRIMARY_DARK_IDLE_STOPS = Array.from({ length: 16 }, () => '#000000')),
                             (t.PRIMARY_GRADIENT_STOPS = {
                                 carmine: [
                                     '#F5002E',
@@ -2372,7 +2376,7 @@
                                 primaryStops: t.PRIMARY_GRADIENT_STOPS[t.FALLBACK_NAME],
                                 secondaryStops: t.SECONDARY_GRADIENT_STOPS[t.FALLBACK_NAME],
                                 primaryDarkIdleStops: t.PRIMARY_DARK_IDLE_STOPS,
-                            });
+                            }));
                         let r = (e) => ({
                             primary: e.primary,
                             secondary: e.secondary,
@@ -2380,7 +2384,7 @@
                             secondaryStops: t.SECONDARY_GRADIENT_STOPS[e.name],
                             primaryDarkIdleStops: t.PRIMARY_DARK_IDLE_STOPS,
                         });
-                        (t.getVibePaletteByBucketName = (e) => {
+                        ((t.getVibePaletteByBucketName = (e) => {
                             let a = (0, n.findColorBucketByName)(e);
                             return a ? r(a) : t.FALLBACK_PALETTE;
                         }),
@@ -2393,10 +2397,10 @@
                                 if (!e) return t.FALLBACK_PALETTE;
                                 let { bucket: a } = (0, t.getVibeColorBucketSelection)(e);
                                 return a ? r(a) : t.FALLBACK_PALETTE;
-                            });
+                            }));
                     },
                     8216: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.getVibePaletteColors = t.getElementFromRefOrElement = t.createRipple = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.getVibePaletteColors = t.getElementFromRefOrElement = t.createRipple = void 0));
                         var i = a(8796);
                         Object.defineProperty(t, 'createRipple', {
                             enumerable: !0,
@@ -2425,7 +2429,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Navigation = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Navigation = void 0));
                         let n = a(4377),
                             r = a(5881),
                             s = a(7786),
@@ -2445,15 +2449,15 @@
                         };
                     },
                     7786: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationProvider = t.NavigationContext = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationProvider = t.NavigationContext = void 0));
                         let i = a(4377),
                             n = a(810);
-                        (t.NavigationContext = (0, n.createContext)({ collapsed: !1, direction: 'vertical' })),
+                        ((t.NavigationContext = (0, n.createContext)({ collapsed: !1, direction: 'vertical' })),
                             (t.NavigationProvider = (e) => {
                                 let { collapsed: a, direction: r, children: s } = e,
                                     o = (0, n.useMemo)(() => ({ collapsed: a, direction: r }), [a, r]);
                                 return (0, i.jsx)(t.NavigationContext.Provider, { value: o, children: s });
-                            });
+                            }));
                     },
                     8106: function (e, t, a) {
                         var i =
@@ -2461,7 +2465,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationGroup = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationGroup = void 0));
                         let n = a(4377),
                             r = a(810),
                             s = a(5881),
@@ -2480,7 +2484,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationItem = t.NavigationItemComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.NavigationItem = t.NavigationItemComponent = void 0));
                         let n = a(4377),
                             r = a(810),
                             s = a(5881),
@@ -2546,7 +2550,7 @@
                                 children: y,
                             });
                         }
-                        (t.NavigationItemComponent = u), (t.NavigationItem = (0, r.forwardRef)((e, t) => (0, n.jsx)(u, { forwardRef: t, ...e })));
+                        ((t.NavigationItemComponent = u), (t.NavigationItem = (0, r.forwardRef)((e, t) => (0, n.jsx)(u, { forwardRef: t, ...e }))));
                     },
                     2660: (e) => {
                         e.exports = eE;
@@ -2560,19 +2564,19 @@
                 var t = eB[e];
                 if (void 0 !== t) return t.exports;
                 var a = (eB[e] = { exports: {} });
-                return eS[e].call(a.exports, a, a.exports, eI), a.exports;
+                return (eS[e].call(a.exports, a, a.exports, eI), a.exports);
             }
-            (eI.d = (e, t) => {
+            ((eI.d = (e, t) => {
                 for (var a in t) eI.o(t, a) && !eI.o(e, a) && Object.defineProperty(e, a, { enumerable: !0, get: t[a] });
             }),
                 (eI.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (eI.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var ej = {};
             (() => {
-                Object.defineProperty(ej, 'X$', { value: !0 }), (ej.Dx = ej.KB = ej.W_ = void 0);
+                (Object.defineProperty(ej, 'X$', { value: !0 }), (ej.Dx = ej.KB = ej.W_ = void 0));
                 var e = eI(19);
                 Object.defineProperty(ej, 'W_', {
                     enumerable: !0,
@@ -2838,7 +2842,7 @@
                         d = (0, e1.z)({ id: t.id, ref: o }),
                         [c, u] = (0, b.useState)(d && t.isEnabled),
                         _ = (0, C.c)((e) => {
-                            null == e || e.stopPropagation(), u(!1), s(!1);
+                            (null == e || e.stopPropagation(), u(!1), s(!1));
                         }),
                         p = (0, C.c)((e) => {
                             e || _();
@@ -2911,13 +2915,13 @@
                                     return e;
                                 })(i),
                             );
-                        return (i.state = { contextValue: { isMounting: !0 }, handleExited: n, firstRender: !0 }), i;
+                        return ((i.state = { contextValue: { isMounting: !0 }, handleExited: n, firstRender: !0 }), i);
                     }
                     (0, te.A)(t, e);
                     var a = t.prototype;
                     return (
                         (a.componentDidMount = function () {
-                            (this.mounted = !0), this.setState({ contextValue: { isMounting: !1 } });
+                            ((this.mounted = !0), this.setState({ contextValue: { isMounting: !1 } }));
                         }),
                         (a.componentWillUnmount = function () {
                             this.mounted = !1;
@@ -2943,7 +2947,7 @@
                                               function a(a) {
                                                   return a in t ? t[a] : e[a];
                                               }
-                                              (e = e || {}), (t = t || {});
+                                              ((e = e || {}), (t = t || {}));
                                               var i,
                                                   n = Object.create(null),
                                                   r = [];
@@ -2998,7 +3002,7 @@
                                 this.mounted &&
                                     this.setState(function (t) {
                                         var a = (0, e8.A)({}, t.children);
-                                        return delete a[e.key], { children: a };
+                                        return (delete a[e.key], { children: a });
                                     }));
                         }),
                         (a.render = function () {
@@ -3015,13 +3019,13 @@
                         t
                     );
                 })(b.Component);
-            (tr.propTypes = {}),
+            ((tr.propTypes = {}),
                 (tr.defaultProps = {
                     component: 'div',
                     childFactory: function (e) {
                         return e;
                     },
-                });
+                }));
             var ts = a(9612),
                 to = a(90404),
                 tl = a(50162),
@@ -3160,7 +3164,7 @@
                             let { actionType: r, isCollapsed: s, mainObjectType: o, mainObjectId: l } = n;
                             if (!e) return;
                             let d = { hash: t, actionType: r, user_interaction_type: eg.gi.Tap, pageId: eg.QT.Sidebar, sidebarSize: s || i ? eg.JQ.Small : eg.JQ.Medium };
-                            o && (d.mainObjectType = o), l && (d.mainObjectId = l);
+                            (o && (d.mainObjectType = o), l && (d.mainObjectId = l));
                             let c = (0, eg.Fx)({ params: d, logger: a, context: 'useSendEventOnSidebarActionPerformed' });
                             c && (0, eg.dL)(e.evgenInstance, c);
                         },
@@ -3174,10 +3178,10 @@
                         [r, s] = (0, b.useState)(!1),
                         o = tj(),
                         l = (0, b.useCallback)((e) => {
-                            e.preventDefault(), e.stopPropagation();
+                            (e.preventDefault(), e.stopPropagation());
                         }, []),
                         d = (0, b.useCallback)(() => {
-                            t(), o({ actionType: eg.X2.Unpin, isCollapsed: null != n && n });
+                            (t(), o({ actionType: eg.X2.Unpin, isCollapsed: null != n && n }));
                         }, [n, t, o]);
                     return (
                         (0, tB.N)(r),
@@ -3227,7 +3231,7 @@
                                     return;
                                 }
                                 if (r(t)) {
-                                    null == e || e.preventDefault(), s(n(t, a));
+                                    (null == e || e.preventDefault(), s(n(t, a)));
                                     return;
                                 }
                                 null == i || i(e);
@@ -3235,7 +3239,7 @@
                         })({ albumId: i.id, albumUrl: i.url, callback: h }),
                         x = (0, tu.c)({ album: i, callback: v }),
                         f = (0, C.c)((e) => {
-                            u(null != o && o, _), x(e);
+                            (u(null != o && o, _), x(e));
                         }),
                         A = (0, b.useMemo)(
                             () =>
@@ -3297,7 +3301,7 @@
                         u = (0, tv.Z)(i.url),
                         _ = (0, tL.S)({ artist: i, callback: u }),
                         h = (0, C.c)((e) => {
-                            c(null != o && o, eg.QT.ArtistScreen), _(e);
+                            (c(null != o && o, eg.QT.ArtistScreen), _(e));
                         }),
                         v = (0, b.useMemo)(
                             () =>
@@ -3666,7 +3670,7 @@
                 at = a.n(ae),
                 aa = a(82273),
                 ai = (function (e) {
-                    return (e.WINDOWS = 'WINDOWS'), (e.MACOS = 'MACOS'), (e.UNKNOWN = 'UNKNOWN'), e;
+                    return ((e.WINDOWS = 'WINDOWS'), (e.MACOS = 'MACOS'), (e.UNKNOWN = 'UNKNOWN'), e);
                 })({}),
                 an = a(54773),
                 ar = a.n(an);
@@ -3862,10 +3866,10 @@
                         }, [null == (t = i.browserInfo) ? void 0 : t.OSFamily]),
                         u = (0, aa._)(s.downloadDesktop.url),
                         _ = (0, b.useCallback)(() => {
-                            d(), window.open(u, '_blank', 'noreferrer noopener');
+                            (d(), window.open(u, '_blank', 'noreferrer noopener'));
                         }, [d, u]),
                         p = (0, b.useCallback)(() => {
-                            r.set(ef.c.NavbarDownloadBarIsHidden, !0, { expires: 30 }), l(!0);
+                            (r.set(ef.c.NavbarDownloadBarIsHidden, !0, { expires: 30 }), l(!0));
                         }, [r]);
                     return o
                         ? null
@@ -4427,7 +4431,7 @@
                                                             className: (0, p.$)({ [at().disabledNavigationItem]: !e.isEnabled }),
                                                             onClick: a
                                                                 ? (e) => {
-                                                                      e.preventDefault(), i(), J((e) => !e);
+                                                                      (e.preventDefault(), i(), J((e) => !e));
                                                                   }
                                                                 : i,
                                                             'data-test-id': eX[e.id],
@@ -4787,9 +4791,9 @@
                         v = null != n ? n : d,
                         x = (0, b.useMemo)(() => (o ? a1 : aX), [o]),
                         f = (0, C.c)((e) => {
-                            e.stopPropagation(), e.preventDefault();
+                            (e.stopPropagation(), e.preventDefault());
                             let t = !h;
-                            r.set(ef.c.NavbarCollapsed, t, { expires: 180 }), v(t), u(!0);
+                            (r.set(ef.c.NavbarCollapsed, t, { expires: 180 }), v(t), u(!0));
                         });
                     return (
                         (0, b.useEffect)(() => {
@@ -4805,7 +4809,7 @@
                 a5 = { pp: 'g', ps: 'clni', p2: 'joqc', puid1: '', puid2: '', puid3: '' };
             var a3 = a(7050),
                 a4 = (function (e) {
-                    return (e.PLAYER = 'branded_player'), e;
+                    return ((e.PLAYER = 'branded_player'), e);
                 })({});
             let a6 = (0, h.PA)(() => {
                 let {
@@ -4987,7 +4991,7 @@
                     _ = (0, C.c)(() => {
                         n.status === im.MT.PLAYING ? null == s || s.play() : null == s || s.pause();
                     });
-                (0, b.useEffect)(() => {
+                ((0, b.useEffect)(() => {
                     if (!a) return;
                     if ((0, ib.J)(a.href)) return void d(a.href);
                     let e = ip.z[a.href];
@@ -5017,15 +5021,15 @@
                             u.current && clearTimeout(u.current);
                         },
                         [],
-                    );
+                    ));
                 let h = (0, C.c)(() => {
-                        u.current && (clearTimeout(u.current), (u.current = null)), null == i || i();
+                        (u.current && (clearTimeout(u.current), (u.current = null)), null == i || i());
                     }),
                     v = (0, C.c)(() => {
                         i &&
                             (u.current && clearTimeout(u.current),
                             (u.current = setTimeout(() => {
-                                null == i || i(), (u.current = null);
+                                (null == i || i(), (u.current = null));
                             }, 800)));
                     }),
                     x = (0, C.c)(() => {
@@ -5269,7 +5273,7 @@
                                   ? { thumb: null == (t = (0, ip.r)(y).get(f.selectedThumbId)) ? void 0 : t.thumb }
                                   : void 0;
                         });
-                    (0, b.useEffect)(() => {
+                    ((0, b.useEffect)(() => {
                         (null == u ? void 0 : u.state.playerState.status.value) === im.MT.PLAYING && W();
                     }, [W, null == u ? void 0 : u.state.playerState.status.value]),
                         (0, b.useEffect)(() => {
@@ -5280,14 +5284,14 @@
                                     null == e || e();
                                 }
                             );
-                        }, [z, W, null == u ? void 0 : u.state.queueState.currentEntity]);
+                        }, [z, W, null == u ? void 0 : u.state.queueState.currentEntity]));
                     let K = (0, C.c)((e, t) => {
                             v.isAdvertShown || ((h.current = !t), t ? null == u || u.setProgress(e, c) : S(e));
                         }),
                         G = (0, C.c)((e, t) => {
                             null !== e && null !== t && (e === 1 / 0 ? (I(0), S(0)) : (I(e), h.current || S(t)));
                         });
-                    (0, b.useEffect)(() => {
+                    ((0, b.useEffect)(() => {
                         c || G(x.duration, x.position);
                     }, [x.duration, x.position, G, c]),
                         (0, b.useEffect)(() => {
@@ -5314,7 +5318,7 @@
                             return () => {
                                 null == t || t();
                             };
-                        }, [null == T || null == (a = T.audioAdvertPlayback) ? void 0 : a.state.playerState.progress, G, v.isAdvertShown]);
+                        }, [null == T || null == (a = T.audioAdvertPlayback) ? void 0 : a.state.playerState.progress, G, v.isAdvertShown]));
                     let Y = (k / 100) * w - 6;
                     (0, b.useEffect)(() => {
                         let e = new ResizeObserver(() => {
@@ -5452,7 +5456,7 @@
                     const a = new Set();
                     return e.map((e) => {
                         const i = pulseSyncFindLocalStation(e, t, a);
-                        return i && a.add(i), { accountSpeaker: e, localSpeaker: i ?? void 0, canUseLocal: !!i };
+                        return (i && a.add(i), { accountSpeaker: e, localSpeaker: i ?? void 0, canUseLocal: !!i });
                     });
                 },
                 pulseSyncGetCastDevicePlatform = (e) =>
@@ -5606,7 +5610,7 @@
                                     setDevicesLoading: P,
                                 });
                             } catch (e) {
-                                console.warn('Failed to load Yandex Station cast devices', e), y([]), S(!1), P(!1);
+                                (console.warn('Failed to load Yandex Station cast devices', e), y([]), S(!1), P(!1));
                             }
                         }, [castEnabled]),
                         M = (0, pulseSyncPlayerReact.useCallback)(() => {
@@ -5960,7 +5964,7 @@
                         ee = (0, C.c)((e) => {
                             if (!j.isGenerativeContext && i) {
                                 if (((0, y.P)(e, i9().ripple), 2 === e.detail)) {
-                                    O.close(), J(e);
+                                    (O.close(), J(e));
                                     return;
                                 }
                                 _ && 1 === e.detail && (null == i ? void 0 : i.hasTrackLink) && !k.modal.isOpened && Z();
@@ -6185,7 +6189,7 @@
                                     );
                                 },
                             }) ?? items;
-                    (0, b.useEffect)(() => {
+                    ((0, b.useEffect)(() => {
                         let e = (e, t, a) => {
                             'trackDownloadCurrent' === t && setDownloadProgress(a);
                         };
@@ -6198,32 +6202,32 @@
                     }, []),
                         (0, b.useEffect)(() => {
                             let e = (device_info) => {
-                                    setIsRemoteDeviceConnected(!0),
+                                    (setIsRemoteDeviceConnected(!0),
                                         setRemoteDevice(device_info),
                                         (window.isRemoteDeviceConnected = !0),
-                                        (window.remoteDevice = device_info);
+                                        (window.remoteDevice = device_info));
                                 },
                                 t = () => {
-                                    setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null);
+                                    (setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null));
                                 };
                             return (
                                 (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
                                 (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
                                 () => {
-                                    (window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
-                                        (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t));
+                                    ((window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
+                                        (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t)));
                                 }
                             );
                         }, []),
                         (0, b.useEffect)(() => {
                             let e = window?.PulseSyncTrackQuality?.getLastInfo?.();
-                            e ? setParsedTrackQualityInfo(e) : updateParsedTrackQualityInfo(null, !0),
+                            (e ? setParsedTrackQualityInfo(e) : updateParsedTrackQualityInfo(null, !0),
                                 window?.nativeAudioOutput
                                     ?.getYaspAudioFormat?.()
                                     ?.then?.((e) => {
                                         updateParsedTrackQualityInfo(e, !0);
                                     })
-                                    ?.catch?.(() => {});
+                                    ?.catch?.(() => {}));
                             let t = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED', (e, t) => {
                                 updateParsedTrackQualityInfo(t, Boolean(t));
                             });
@@ -6248,10 +6252,10 @@
                             return (
                                 a && setDownloadInfo(a),
                                 () => {
-                                    e && clearInterval(e), 'function' == typeof t && t();
+                                    (e && clearInterval(e), 'function' == typeof t && t());
                                 }
                             );
-                        });
+                        }));
                     return (0, m.jsx)('section', {
                         style: w.isAdvertShown ? void 0 : q,
                         className: (0, p.$)(i9().root, i9().important, a, { [i9().root_interactive]: _ }),
@@ -6593,9 +6597,9 @@
                                 null == d || d.addShortcutsListener(a9.M.MAIN, a7.l.LIKE, s),
                                 null == d || d.addShortcutsListener(a9.M.MAIN, a7.l.DISLIKE, l),
                                 () => {
-                                    null == d || d.removeShortcutsListener(a9.M.MAIN, a7.l.TOGGLE_FULLSCREEN_PLAYER),
+                                    (null == d || d.removeShortcutsListener(a9.M.MAIN, a7.l.TOGGLE_FULLSCREEN_PLAYER),
                                         null == d || d.removeShortcutsListener(a9.M.MAIN, a7.l.LIKE),
-                                        null == d || d.removeShortcutsListener(a9.M.MAIN, a7.l.DISLIKE);
+                                        null == d || d.removeShortcutsListener(a9.M.MAIN, a7.l.DISLIKE));
                                 }
                             );
                     }, [l, s, d, i.isGenerativeContext, i.entityMeta, c]);
@@ -6677,9 +6681,9 @@
                         let e = { title: {}, text: {}, bg: {}, disclaimerTrigger: {} };
                         if (!o.barBelowItem) return e;
                         let { titleColor: t, textColor: a, bgColor: i, bgUrl: n } = o.barBelowItem.content;
-                        t && (e.title.color = t), a && (e.text.color = a), i && (e.bg.backgroundColor = i), n && (e.bg.backgroundImage = 'url("'.concat(n, '")'));
+                        (t && (e.title.color = t), a && (e.text.color = a), i && (e.bg.backgroundColor = i), n && (e.bg.backgroundImage = 'url("'.concat(n, '")')));
                         let r = a || t;
-                        return r && (e.disclaimerTrigger['--adv-disclaimer-color'] = r), e;
+                        return (r && (e.disclaimerTrigger['--adv-disclaimer-color'] = r), e);
                     }, [o]),
                     x = (0, b.useMemo)(() => {
                         var e;
@@ -6827,7 +6831,7 @@
                             o();
                         }),
                         x = (0, C.c)(() => {
-                            t.close(), i.authorizationUrl && a.push(i.authorizationUrl);
+                            (t.close(), i.authorizationUrl && a.push(i.authorizationUrl));
                         });
                     return (0, m.jsxs)(m.Fragment, {
                         children: [
@@ -6897,7 +6901,7 @@
                             buttonText: f,
                         } = (0, eM.D)({ storeName: 'music', offerElement: { element: o, intersectionPropertyId: nA } }),
                         g = (0, C.c)(() => {
-                            t.close(), d();
+                            (t.close(), d());
                         });
                     return (0, m.jsxs)(m.Fragment, {
                         children: [
@@ -7266,7 +7270,7 @@
                                         let e = h.get(i);
                                         return r('string' == typeof e ? e : null);
                                     } catch (e) {
-                                        return x.error('Failed to get sessionStorage', { type: 'useSearchParamVisibility', storageKey: i }), !1;
+                                        return (x.error('Failed to get sessionStorage', { type: 'useSearchParamVisibility', storageKey: i }), !1);
                                     }
                                 }),
                                 N = (0, C.c)(() => {
@@ -7292,7 +7296,7 @@
                                                 })(g, o)) ||
                                             f(g),
                                         a = A();
-                                    e && N(), _(!(e || a));
+                                    (e && N(), _(!(e || a)));
                                 }, [g, o, s, d, t, f, A, N]),
                                 { shouldShow: !!d && u, searchParamValue: g }
                             );
@@ -7377,7 +7381,7 @@
                         } = (0, L.g)(),
                         { formatMessage: s } = (0, g.A)(),
                         o = (0, C.c)((e) => {
-                            void 0 !== e && r.setType(e), i();
+                            (void 0 !== e && r.setType(e), i());
                         });
                     return (0, m.jsx)('section', {
                         ref: a,
@@ -7417,10 +7421,10 @@
                     } = (0, L.g)(),
                     x = (!_.isAuthorized || u) && v.isVisible,
                     f = (0, b.useCallback)(() => {
-                        r(!1), i(!0);
+                        (r(!1), i(!0));
                     }, [r, i]),
                     g = (0, b.useCallback)(() => {
-                        r(!0), i(!1);
+                        (r(!0), i(!1));
                     }, [r, i]),
                     A = (0, b.useCallback)(() => {
                         o(!1);
@@ -7445,7 +7449,7 @@
                         }
                         if (!n || (!t && s)) return;
                         let u = !t;
-                        i(u), u && o(!0);
+                        (i(u), u && o(!0));
                     }, [l, d, N, n, C, h, s, i, r, o]);
                 (0, b.useEffect)(() => {
                     y();
@@ -7465,23 +7469,33 @@
                 if (kind === 'error' && !iconProps && !coverUrl && !link) return (0, m.jsx)(a(90357).h, { error: message, closeToast });
                 const caption = (0, m.jsxs)(a(71926).HL, {
                     className: kind === 'error' ? a(17679).message : undefined,
-                    variant: 'div', type: 'controls', size: 'm', role: kind === 'error' ? 'alert' : 'status',
-                    children: [message, link && ' ', link && (0, m.jsx)(a(61258).N, {
-                        href: link.href,
-                        className: a(70627).link,
-                        onClick: (event) => {
-                            if (!isActive()) return event.preventDefault();
-                            closeToast?.();
-                        },
-                        children: (0, m.jsx)(a(71926).HL, { className: a(70627).title, variant: 'span', type: 'controls', size: 'm', children: link.label }),
-                    })],
+                    variant: 'div',
+                    type: 'controls',
+                    size: 'm',
+                    role: kind === 'error' ? 'alert' : 'status',
+                    children: [
+                        message,
+                        link && ' ',
+                        link &&
+                            (0, m.jsx)(a(61258).N, {
+                                href: link.href,
+                                className: a(70627).link,
+                                onClick: (event) => {
+                                    if (!isActive()) return event.preventDefault();
+                                    closeToast?.();
+                                },
+                                children: (0, m.jsx)(a(71926).HL, { className: a(70627).title, variant: 'span', type: 'controls', size: 'm', children: link.label }),
+                            }),
+                    ],
                 });
                 return (0, m.jsx)(a(58534).$, {
                     className: kind === 'error' ? a(17679).root : undefined,
                     message: caption,
                     cover: coverUrl
                         ? (0, m.jsx)(a(50162)._V, { src: coverUrl, size: 100, fit: 'cover', className: a(70627).image, 'aria-hidden': true })
-                        : iconProps ? (0, m.jsx)(a(82586).I, iconProps) : undefined,
+                        : iconProps
+                          ? (0, m.jsx)(a(82586).I, iconProps)
+                          : undefined,
                     coverRadius: 's',
                     closeToast,
                 });
@@ -7590,13 +7604,13 @@
                             l = (0, b.useCallback)(async () => {
                                 o(!1);
                                 let e = [];
-                                n.settings.loadingState === nz.G.REJECT && e.push(n.getSettings()),
+                                (n.settings.loadingState === nz.G.REJECT && e.push(n.getSettings()),
                                     i.loadingState === nz.G.REJECT && e.push(i.getData()),
                                     t({ notificationId: a.current, forceClose: !0 }),
                                     await Promise.allSettled(e),
-                                    o(!0);
+                                    o(!0));
                             }, [t, i, n]);
-                        (0, b.useEffect)(() => {
+                        ((0, b.useEffect)(() => {
                             let t = [n.settings.loadingState];
                             (0, nU.g)(r) || t.push(i.loadingState);
                             let o = t.every((e) => e !== nz.G.PENDING);
@@ -7607,7 +7621,7 @@
                                     t({ notificationId: a.current, forceClose: !0 });
                                 },
                                 [t],
-                            );
+                            ));
                     })();
                     let R = (!y.isAuthorized || k) && (null == h ? void 0 : h.isTouch),
                         M = N.checkExperiment(K.z.WebNextDeeplinksToMobile, 'on') && y.hasPlus && !!(null == h ? void 0 : h.isMobile) && !1,
@@ -7720,12 +7734,12 @@
                     T = ro().root;
                 if (A) {
                     let e = g.isShuffleVibe && b.isVibeContext;
-                    (n = ((e) => {
+                    ((n = ((e) => {
                         let { palette: t, isPlaying: a } = e;
                         return (a ? t.primaryStops : t.primaryDarkIdleStops).reduce((e, t, a) => ((e['--vibe-gradient-stop-'.concat(a)] = t), e), {});
                     })({ palette: (0, x.OH)(e || null == (i = b.entityMeta) ? void 0 : i.averageColor), isPlaying: b.isPlaying })),
                         (y = ro().rootNewVibe_withBarBelow),
-                        (T = ro().rootNewVibe);
+                        (T = ro().rootNewVibe));
                 }
                 let E = (0, p.$)(
                     Y().root,
@@ -8111,7 +8125,7 @@
             'use strict';
             a.d(t, { h: () => i });
             var i = (function (e) {
-                return (e.EMPTY = 'empty'), (e.DIRECT = 'direct'), (e.CREATIVE = 'creative'), (e.BRANDING = 'branding'), e;
+                return ((e.EMPTY = 'empty'), (e.DIRECT = 'direct'), (e.CREATIVE = 'creative'), (e.BRANDING = 'branding'), e);
             })({});
         },
         27616: (e, t, a) => {
@@ -8199,7 +8213,7 @@
                     ex = w.pubDate && D && !eh,
                     eb = (0, b.l)({ entity: null != (P = w.mainAlbum) ? P : null, entityType: N.n.PODCAST, callback: eu }),
                     ef = (0, _.c)((e) => {
-                        et.modal.isOpened && et.modal.close(), eb(e);
+                        (et.modal.isOpened && et.modal.close(), eb(e));
                     }),
                     eg = (0, E.O)({ track: w, withSavingQueryParams: $, entityType: N.n.PODCAST }),
                     eA = (0, o.useCallback)(() => {
@@ -8445,7 +8459,7 @@
                     A = t || a !== s.pM.ONE ? 'repeat' : 'repeat_one',
                     N = (0, u.z)(a, g, t),
                     C = (0, o.c)((e) => {
-                        null == f || f(), e.stopPropagation();
+                        (null == f || f(), e.stopPropagation());
                     });
                 return (0, i.jsx)(l.$, {
                     className: _,
@@ -8486,7 +8500,7 @@
             let i = (e, t) => {
                 let a = new URL(window.location.href),
                     i = a.searchParams;
-                return i.set(e, t), (a.search = i.toString()), a.toString();
+                return (i.set(e, t), (a.search = i.toString()), a.toString());
             };
         },
         32675: (e) => {
@@ -8533,7 +8547,7 @@
                         if (null == u ? void 0 : u.current) return !1;
                         if (a === e) {
                             if (i) return !1;
-                            return (m.current = !0), _(!0), !0;
+                            return ((m.current = !0), _(!0), !0);
                         }
                         if (!i) break;
                     }
@@ -8587,7 +8601,7 @@
                     return e ? (0, n.jsx)(t, {}) : a;
                 }
                 constructor(...e) {
-                    super(...e), (0, i._)(this, 'state', { hasError: !1 });
+                    (super(...e), (0, i._)(this, 'state', { hasError: !1 }));
                 }
             }
             let d = (function (e) {
@@ -8595,7 +8609,7 @@
                     let a = (0, o.N)().get(s.Zf);
                     return (0, n.jsx)(e, { ...t, logger: a });
                 };
-                return (t.displayName = 'withContainer('.concat(e.displayName || e.name || 'Component', ')')), t;
+                return ((t.displayName = 'withContainer('.concat(e.displayName || e.name || 'Component', ')')), t);
             })(l);
         },
         39231: (e, t, a) => {
@@ -8623,7 +8637,7 @@
                 r = a(55178),
                 s = {
                     6699: (e, t, a) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0));
                         let i = a(352),
                             n = a(810);
                         t.useDebouncedToggle = (e) => {
@@ -8633,16 +8647,16 @@
                                 d = (0, n.useMemo)(
                                     () =>
                                         (0, i.throttle)(() => {
-                                            l(!a),
+                                            (l(!a),
                                                 s.current && window.clearTimeout(s.current),
                                                 (s.current = window.setTimeout(() => {
                                                     l(!!a);
-                                                }, t));
+                                                }, t)));
                                         }, r),
                                     [t, a, r],
                                 ),
                                 c = (0, n.useCallback)(() => {
-                                    l(!!a), s.current && window.clearTimeout(s.current);
+                                    (l(!!a), s.current && window.clearTimeout(s.current));
                                 }, [a]);
                             return (
                                 (0, n.useEffect)(
@@ -8656,14 +8670,14 @@
                         };
                     },
                     361: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            });
+                            }));
                     },
                     352: (e) => {
                         e.exports = n;
@@ -8677,11 +8691,11 @@
                 var t = o[e];
                 if (void 0 !== t) return t.exports;
                 var a = (o[e] = { exports: {} });
-                return s[e](a, a.exports, l), a.exports;
+                return (s[e](a, a.exports, l), a.exports);
             }
             var d = {};
-            (() => {
-                Object.defineProperty(d, '__esModule', { value: !0 }), (d.useScroll = void 0);
+            ((() => {
+                (Object.defineProperty(d, '__esModule', { value: !0 }), (d.useScroll = void 0));
                 let e = l(810),
                     t = l(361),
                     a = l(6699);
@@ -8689,7 +8703,7 @@
                     let { onScroll: n, listenIsScrolling: r, elementRef: s } = i,
                         { state: o, handleDebouncedToggle: l } = (0, a.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                         d = (0, e.useCallback)(() => {
-                            r && l(), null == n || n();
+                            (r && l(), null == n || n());
                         }, [r, l, n]);
                     return (
                         (0, e.useEffect)(() => {
@@ -8697,13 +8711,13 @@
                             if (null === e) return;
                             let a = null != e ? e : window,
                                 i = { capture: !0, passive: !0 };
-                            return a.addEventListener('scroll', d, i), () => a.removeEventListener('scroll', d, i);
+                            return (a.addEventListener('scroll', d, i), () => a.removeEventListener('scroll', d, i));
                         }, [s, d]),
                         o
                     );
                 };
             })(),
-                d.__esModule;
+                d.__esModule);
             var c = d.useScroll;
         },
         41566: (e, t, a) => {
@@ -8781,7 +8795,7 @@
                                 entity: t,
                                 callback: a,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), s.isOpened && (i.reset(), s.close()), n.modal.isOpened && n.modal.close();
+                                    (null == e || e.stopPropagation(), s.isOpened && (i.reset(), s.close()), n.modal.isOpened && n.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     r.modal.isOpened && (r.modal.close(), r.reset());
@@ -8791,11 +8805,11 @@
                         })({
                             artist: t,
                             callback: (0, h.c)((e) => {
-                                y && C.isOpened && C.close(), T(e);
+                                (y && C.isOpened && C.close(), T(e));
                             }),
                         }),
                         I = (0, h.c)((e) => {
-                            S({ to: m.QT.ArtistScreen }), null == E || E(), B(e);
+                            (S({ to: m.QT.ArtistScreen }), null == E || E(), B(e));
                         });
                     return a && !t.various
                         ? (0, i.jsx)(g.N, {
@@ -9012,7 +9026,7 @@
                         } = (0, l.g)(),
                         P = 1 === a.length,
                         w = (0, s.useCallback)((e) => {
-                            I(!0), e.preventDefault();
+                            (I(!0), e.preventDefault());
                         }, []),
                         L = (0, s.useMemo)(() => {
                             let e = a;
@@ -9134,7 +9148,7 @@
                     let a = null == W || null == (e = W.audioAdvertPlayback) ? void 0 : e.state.playerState.progress.onChange(Z),
                         i = null == H || null == (t = H.playerState) ? void 0 : t.progress.onChange(Z);
                     return () => {
-                        null == i || i(), null == a || a();
+                        (null == i || i(), null == a || a());
                     };
                 }, [
                     null == W || null == (t = W.audioAdvertPlayback) ? void 0 : t.state.playerState.progress,
@@ -9190,7 +9204,7 @@
             var i = a(75314),
                 n = a(14257);
             let r = (e) => {
-                document.body.classList.remove(...Object.values(i.o)), e && Object.values(n.S).includes(e) && document.body.classList.add(i.o[e]);
+                (document.body.classList.remove(...Object.values(i.o)), e && Object.values(n.S).includes(e) && document.body.classList.add(i.o[e]));
             };
         },
         44482: (e) => {
@@ -9215,13 +9229,13 @@
                 },
                 s = {},
                 o = {};
-            (() => {
-                Object.defineProperty(o, '__esModule', { value: !0 }), (o.useToggle = void 0);
+            ((() => {
+                (Object.defineProperty(o, '__esModule', { value: !0 }), (o.useToggle = void 0));
                 let e = (function e(t) {
                     var a = s[t];
                     if (void 0 !== a) return a.exports;
                     var i = (s[t] = { exports: {} });
-                    return r[t](i, i.exports, e), i.exports;
+                    return (r[t](i, i.exports, e), i.exports);
                 })(810);
                 o.useToggle = (t) => {
                     let [a, i] = (0, e.useState)(t);
@@ -9240,7 +9254,7 @@
                     return { state: a, toggle: n, setState: i, toggleTrue: r, toggleFalse: s };
                 };
             })(),
-                o.__esModule;
+                o.__esModule);
             var l = o.useToggle;
         },
         45031: (e) => {
@@ -9389,10 +9403,10 @@
         52138: (e, t, a) => {
             'use strict';
             var i;
-            a.d(t, { h: () => i }),
+            (a.d(t, { h: () => i }),
                 (function (e) {
-                    (e.ALBUM = 'album'), (e.PLAYLIST = 'playlist'), (e.TRACK = 'track'), (e.ARTIST = 'artist');
-                })(i || (i = {}));
+                    ((e.ALBUM = 'album'), (e.PLAYLIST = 'playlist'), (e.TRACK = 'track'), (e.ARTIST = 'artist'));
+                })(i || (i = {})));
         },
         52598: (e) => {
             e.exports = { root: 'SeparatedArtistsWithContextMenuMobile_root__4BiJL', important: 'SeparatedArtistsWithContextMenuMobile_important__fSF1h' };
@@ -9408,7 +9422,7 @@
             var i = {
                     5881: (e, t, a) => {
                         function i() {
-                            for (var e, t, a = 0, i = ''; a < arguments.length; )
+                            for (var e, t, a = 0, i = ''; a < arguments.length;)
                                 (e = arguments[a++]) &&
                                     (t = (function e(t) {
                                         var a,
@@ -9423,11 +9437,11 @@
                                     (i && (i += ' '), (i += t));
                             return i;
                         }
-                        a.r(t), a.d(t, { clsx: () => i, default: () => n });
+                        (a.r(t), a.d(t, { clsx: () => i, default: () => n }));
                         let n = i;
                     },
                     9201: (e, t, a) => {
-                        a.r(t), a.d(t, { default: () => i });
+                        (a.r(t), a.d(t, { default: () => i }));
                         let i = { root: 'sLuudThzDxW_5ARYjgjx', horizontal: 'xd6ji7lvp0et4nirt0TL', hasLabel: 'abbPp8VtL2D_PdW0Q_Wc', vertical: 'sMz62rSqViFDkXAMfGeO' };
                     },
                     9097: (e, t) => {
@@ -9439,7 +9453,7 @@
                             else i = t;
                             return { $$typeof: a, type: e, key: n, ref: void 0 !== (t = i.ref) ? t : null, props: i };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = i), (t.jsxs = i));
                     },
                     4377: (e, t, a) => {
                         e.exports = a(9097);
@@ -9450,7 +9464,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Divider = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Divider = void 0));
                         let n = a(4377),
                             r = a(5881),
                             s = i(a(9201));
@@ -9472,19 +9486,19 @@
                 var t = n[e];
                 if (void 0 !== t) return t.exports;
                 var a = (n[e] = { exports: {} });
-                return i[e].call(a.exports, a, a.exports, r), a.exports;
+                return (i[e].call(a.exports, a, a.exports, r), a.exports);
             }
-            (r.d = (e, t) => {
+            ((r.d = (e, t) => {
                 for (var a in t) r.o(t, a) && !r.o(e, a) && Object.defineProperty(e, a, { enumerable: !0, get: t[a] });
             }),
                 (r.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (r.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var s = {};
             (() => {
-                Object.defineProperty(s, '__esModule', { value: !0 }), (s.Divider = void 0);
+                (Object.defineProperty(s, '__esModule', { value: !0 }), (s.Divider = void 0));
                 var e = r(5455);
                 Object.defineProperty(s, 'Divider', {
                     enumerable: !0,
@@ -9623,7 +9637,7 @@
                     [R, M] = (0, s.useState)(!1),
                     F = (0, x.$)(),
                     { isPlaying: U, isCurrent: z } = (0, m.D)({ playContextParams: j, entityId: S ? ''.concat(E, ':').concat(S) : E });
-                (0, s.useEffect)(() => {
+                ((0, s.useEffect)(() => {
                     if (!z) return void M(!1);
                     let e =
                         null == w
@@ -9643,7 +9657,7 @@
                     }, [B, null == O ? void 0 : O.allTracksUnfinished, null == O || null == (t = O.meta) ? void 0 : t.listeningFinished]),
                     (0, s.useEffect)(() => {
                         var e, t;
-                        z &&
+                        (z &&
                             (null == L || null == (e = L.entityMeta) ? void 0 : e.streamProgress) &&
                             B &&
                             L.entityMeta.streamProgress.hasEverFinished !== B.hasEverFinished &&
@@ -9652,7 +9666,7 @@
                                 ((null == L || null == (t = L.entityMeta) ? void 0 : t.streamProgress) &&
                                     z &&
                                     (L.entityMeta.streamProgress.updateEverFinished(!0), L.entityMeta.streamProgress.updateEndPositionSec(0)),
-                                null == B || B.updateEverFinished(!0));
+                                null == B || B.updateEverFinished(!0)));
                     }, [
                         z,
                         null == L || null == (a = L.entityMeta) ? void 0 : a.streamProgress,
@@ -9671,15 +9685,15 @@
                                       var e;
                                       let t = w.state.playerState.progress.value,
                                           a = null == L || null == (e = L.entityMeta) ? void 0 : e.streamProgress;
-                                      0 !== t.position && R && B.updateEndPositionSec(t.position),
+                                      (0 !== t.position && R && B.updateEndPositionSec(t.position),
                                           z &&
                                               parseInt(''.concat(null == a ? void 0 : a.endPositionSec), 10) !== parseInt(''.concat(t.position), 10) &&
-                                              (null == a || a.updateEndPositionSec(t.position));
+                                              (null == a || a.updateEndPositionSec(t.position)));
                                   });
                         return () => {
                             null == e || e();
                         };
-                    }, [w, B, z, U, R, E, null == L ? void 0 : L.entityMeta]);
+                    }, [w, B, z, U, R, E, null == L ? void 0 : L.entityMeta]));
                 let W = (z && (null == L || null == (A = L.entityMeta) || null == (g = A.streamProgress) ? void 0 : g.endPositionSec)) || B.endPositionSec,
                     V = (0, v.m)(null != W ? W : 0, D),
                     H = (0, s.useMemo)(() => {
@@ -9755,7 +9769,7 @@
             'use strict';
             a.d(t, { h: () => i });
             var i = (function (e) {
-                return (e.ARTIST_DONATION_BUTTON = 'artist_donation_button'), (e.TRAILER_BUTTON = 'trailer_button'), (e.CONCERTS_TAB = 'concerts_tab'), e;
+                return ((e.ARTIST_DONATION_BUTTON = 'artist_donation_button'), (e.TRAILER_BUTTON = 'trailer_button'), (e.CONCERTS_TAB = 'concerts_tab'), e);
             })({});
         },
         59564: (e, t, a) => {
@@ -9908,7 +9922,7 @@
                         P = (0, o.c)(() => {
                             var e;
                             let t = (I + 1) % u.pp.length;
-                            j(t), null == T || T.setSpeed(Number(null != (e = u.pp[t]) ? e : 1)), null == v || v();
+                            (j(t), null == T || T.setSpeed(Number(null != (e = u.pp[t]) ? e : 1)), null == v || v());
                         });
                     return (
                         (0, n.useEffect)(() => {
@@ -9992,11 +10006,11 @@
                                 let _ = { ...(0, u.HO)(r), url: r.url, isLiked: !r.isLiked };
                                 a(!0);
                                 let p = await r.toggleLike();
-                                a(!1),
+                                (a(!1),
                                     d &&
                                         (p === m.f.OK
                                             ? e((0, i.jsx)(x, { withLink: l, album: _ }), { containerId: o.u.INFO })
-                                            : e((0, i.jsx)(c.h, { error: s({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
+                                            : e((0, i.jsx)(c.h, { error: s({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR })));
                             });
                         })(),
                         { pageAlbumId: f } = (0, s.T)();
@@ -10081,7 +10095,7 @@
                         s = a.get(e.pinId);
                     h(!0);
                     let d = await e.togglePin();
-                    h(!1),
+                    (h(!1),
                         s &&
                             s.type === o._.WAVE_ITEM &&
                             s.data.backgroundImageUrl &&
@@ -10094,7 +10108,7 @@
                             d.data.agent && (r.agent = (0, C.K)(d.data.agent))),
                         d
                             ? _((0, i.jsx)(N, { vibe: r }), { containerId: l.u.INFO })
-                            : _((0, i.jsx)(u.h, { error: m({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR });
+                            : _((0, i.jsx)(u.h, { error: m({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
                 }, [m, _, p, a, t.isAuthorized, e]);
             };
         },
@@ -10177,7 +10191,7 @@
                         };
                     })(),
                     N = (0, s.useCallback)(() => {
-                        A(), (window.location.href = x.Z.main.href);
+                        (A(), (window.location.href = x.Z.main.href));
                     }, [A]),
                     { contentRef: C } = (0, v.g)();
                 return (0, i.jsxs)('div', {
@@ -10290,7 +10304,7 @@
                         if (null === e) return;
                         e.delete(s.K.CLID);
                         let t = new URL(window.location.href);
-                        (t.search = e.toString()), a(t.toString());
+                        ((t.search = e.toString()), a(t.toString()));
                     }),
                     m = (0, n.c)((e, t) => {
                         if (!e || !t) return;
@@ -10366,7 +10380,7 @@
             'use strict';
             a.d(t, { j: () => i });
             var i = (function (e) {
-                return (e.ANDROID = 'Android'), (e.IOS = 'iOS'), (e.MACOS = 'MacOS'), (e.WINDOWS = 'Windows'), e;
+                return ((e.ANDROID = 'Android'), (e.IOS = 'iOS'), (e.MACOS = 'MacOS'), (e.WINDOWS = 'Windows'), e);
             })({});
         },
         67732: (e, t, a) => {
@@ -10568,7 +10582,7 @@
             'use strict';
             a.d(t, { T: () => i });
             var i = (function (e) {
-                return (e.BRANDED = 'branded'), (e.DEFAULT = 'default'), (e.DUCK = 'duck'), (e.CAR = 'car'), e;
+                return ((e.BRANDED = 'branded'), (e.DEFAULT = 'default'), (e.DUCK = 'duck'), (e.CAR = 'car'), e);
             })({});
         },
         70314: (e, t, a) => {
@@ -10607,7 +10621,7 @@
                         if (A.action)
                             switch ((f && g && A.action.id && S.action(f, g, A.action.id, T), A.action.type)) {
                                 case l.T.PAYWALL:
-                                    I(), null == E || E();
+                                    (I(), null == E || E());
                                     return;
                                 case l.T.LINK:
                                     A.action.value && (k(e), null == E || E());
@@ -10681,10 +10695,10 @@
                         let r = { ...(0, n.HO)(e), isPinned: !e.isPinned };
                         p(!0);
                         let s = await e.togglePin();
-                        p(!1),
+                        (p(!1),
                             s
                                 ? a((0, i.jsx)(m, { artist: r }), { containerId: o.u.INFO })
-                                : a((0, i.jsx)(c.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : a((0, i.jsx)(c.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [e, t.isAuthorized, _, u, a]);
                 };
         },
@@ -10769,7 +10783,7 @@
                                       n = e.get('channel'),
                                       r = e.get('tags'),
                                       s = { campaign: 'yamusicweb', channel: null != n ? n : 'musicmain', deep_link_value: t, af_dp: t };
-                                  a && (s.login = a), i && ((s.deep_link_value = l.Lz + i), (s.af_dp = l.Lz + i), (s.deeplink_url = i)), r && (s.pid = r);
+                                  (a && (s.login = a), i && ((s.deep_link_value = l.Lz + i), (s.af_dp = l.Lz + i), (s.deeplink_url = i)), r && (s.pid = r));
                                   let c = Object.keys(s).reduce((e, t) => {
                                           let a = s[t];
                                           if (void 0 !== a) {
@@ -10832,7 +10846,7 @@
                 let { isDisabled: t, shuffle: a, className: c, size: _ = 'xxxs', variant: m = 'default', iconSize: p = 'xs', color: h, onClick: v } = e,
                     { formatMessage: x } = (0, r.A)(),
                     b = (0, s.c)((e) => {
-                        null == v || v(), e.stopPropagation();
+                        (null == v || v(), e.stopPropagation());
                     });
                 return (0, i.jsx)(o.$, {
                     className: c,
@@ -10892,19 +10906,19 @@
                         let r = { ...(0, n.HO)(e), url: e.url, isPinned: !e.isPinned };
                         p(!0);
                         let s = await e.togglePin();
-                        p(!1),
+                        (p(!1),
                             s
                                 ? a((0, i.jsx)(m, { playlist: r }), { containerId: o.u.INFO })
-                                : a((0, i.jsx)(c.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : a((0, i.jsx)(c.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [t.isAuthorized, _, e, a, u]);
                 };
         },
         73474: (e, t, a) => {
             'use strict';
             var i;
-            a.d(t, { p: () => i }),
+            (a.d(t, { p: () => i }),
                 (function (e) {
-                    (e.WEB_MAIN = 'web_main'),
+                    ((e.WEB_MAIN = 'web_main'),
                         (e.MAIN = 'main'),
                         (e.WEB_COLLECTION = 'web_collection'),
                         (e.NON_MUSIC = 'non_music'),
@@ -10913,8 +10927,8 @@
                         (e.SEARCH = 'Search'),
                         (e.ARTIST = 'artist_web'),
                         (e.CONCERTS = 'concerts'),
-                        (e.CONCERT_PAGE = 'concert_page');
-                })(i || (i = {}));
+                        (e.CONCERT_PAGE = 'concert_page'));
+                })(i || (i = {})));
         },
         74523: (e, t, a) => {
             'use strict';
@@ -10990,7 +11004,7 @@
                         );
                     }, [t, a]),
                     N = (0, d.c)((e) => {
-                        r.modal.isOpened && r.modal.close(), g({ to: o.QT.ArtistScreen }), x(e);
+                        (r.modal.isOpened && r.modal.close(), g({ to: o.QT.ArtistScreen }), x(e));
                     });
                 return (0, i.jsxs)(i.Fragment, {
                     children: [
@@ -11087,13 +11101,13 @@
                                 null == p || p(o.h.CREATIVE);
                             },
                             onRender: () => {
-                                T.log('[AdvertBanner] Render'), null == h || h();
+                                (T.log('[AdvertBanner] Render'), null == h || h());
                             },
                             onStub: () => {
-                                T.log('[AdvertBanner] Stub'), null == v || v();
+                                (T.log('[AdvertBanner] Stub'), null == v || v());
                             },
                             onError: (e) => {
-                                T.log('[AdvertBanner] Error', { error: e }), null == x || x();
+                                (T.log('[AdvertBanner] Error', { error: e }), null == x || x());
                             },
                         });
                     }, []),
@@ -11102,7 +11116,7 @@
                             E.current = !1;
                             return;
                         }
-                        T.log('[AdvertBanner] Destroy'), N(n), T.log('[AdvertBanner] Initialize'), C(n);
+                        (T.log('[AdvertBanner] Destroy'), N(n), T.log('[AdvertBanner] Initialize'), C(n));
                     }, [f, g, n, N, C, T]),
                     (0, i.jsx)('div', { id: n, className: t, tabIndex: -1, 'aria-hidden': !0 })
                 );
@@ -11221,9 +11235,9 @@
         90404: (e, t, a) => {
             'use strict';
             var i;
-            a.d(t, { _: () => i }),
+            (a.d(t, { _: () => i }),
                 (function (e) {
-                    (e.ALBUM_ITEM = 'album_item'),
+                    ((e.ALBUM_ITEM = 'album_item'),
                         (e.ARTIST_ITEM = 'artist_item'),
                         (e.PLAYLIST_ITEM = 'playlist_item'),
                         (e.TRACK_ITEM = 'track_item'),
@@ -11242,8 +11256,8 @@
                         (e.CLIP = 'clip'),
                         (e.CLIP_ITEM = 'clip_item'),
                         (e.CONCERT_ITEM = 'concert_item'),
-                        (e.QUERY_TO_VIBE_ITEM = 'q2v_item');
-                })(i || (i = {}));
+                        (e.QUERY_TO_VIBE_ITEM = 'q2v_item'));
+                })(i || (i = {})));
         },
         91253: (e, t, a) => {
             'use strict';
@@ -11284,10 +11298,10 @@
                         let r = { ...(0, n.HO)(e), url: e.url, isPinned: !e.isPinned };
                         m(!0);
                         let s = await e.togglePin();
-                        m(!1),
+                        (m(!1),
                             s
                                 ? a((0, i.jsx)(p, { album: r }), { containerId: o.u.INFO })
-                                : a((0, i.jsx)(c.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : a((0, i.jsx)(c.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [e, u, a, _, t.isAuthorized]);
                 };
         },
@@ -11318,10 +11332,10 @@
         92013: (e, t, a) => {
             'use strict';
             var i;
-            a.d(t, { T: () => i }),
+            (a.d(t, { T: () => i }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(i || (i = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(i || (i = {})));
         },
         92854: (e) => {
             e.exports = {
@@ -11355,7 +11369,7 @@
                 _ = (e) => e.toString(16).padStart(2, '0');
             var m = a(7050),
                 p = (function (e) {
-                    return (e.PLAYLIST_GRADIENT = 'branded_playlist_gradient'), (e.AXE_GRADIENT = 'branded_axe_gradient'), e;
+                    return ((e.PLAYLIST_GRADIENT = 'branded_playlist_gradient'), (e.AXE_GRADIENT = 'branded_axe_gradient'), e);
                 })({});
             let h = (0, n.PA)((e) => {
                 let { children: t } = e,
@@ -11448,10 +11462,10 @@
         96764: (e, t, a) => {
             'use strict';
             var i;
-            a.d(t, { T: () => i }),
+            (a.d(t, { T: () => i }),
                 (function (e) {
-                    (e.CLOSE = 'close'), (e.LINK = 'link'), (e.PAYWALL = 'paywall');
-                })(i || (i = {}));
+                    ((e.CLOSE = 'close'), (e.LINK = 'link'), (e.PAYWALL = 'paywall'));
+                })(i || (i = {})));
         },
         97153: (e) => {
             e.exports = {

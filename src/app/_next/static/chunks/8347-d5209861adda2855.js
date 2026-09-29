@@ -1012,7 +1012,7 @@
                 L = {
                     5881: (_, T, E) => {
                         function A() {
-                            for (var _, T, E = 0, A = ''; E < arguments.length; )
+                            for (var _, T, E = 0, A = ''; E < arguments.length;)
                                 (_ = arguments[E++]) &&
                                     (T = (function _(T) {
                                         var E,
@@ -1027,11 +1027,11 @@
                                     (A && (A += ' '), (A += T));
                             return A;
                         }
-                        E.r(T), E.d(T, { clsx: () => A, default: () => I });
+                        (E.r(T), E.d(T, { clsx: () => A, default: () => I }));
                         let I = A;
                     },
                     7122: (_, T, E) => {
-                        E.r(T), E.d(T, { default: () => A });
+                        (E.r(T), E.d(T, { default: () => A }));
                         let A = {
                             contentContainer: 'JjlbHZ4FaP9EAcR_1DxF',
                             contentContainer_block: 'iOlzvyUREgDkthkrx7Sf',
@@ -1106,13 +1106,13 @@
                             else A = T;
                             return { $$typeof: E, type: _, key: I, ref: void 0 !== (T = A.ref) ? T : null, props: A };
                         }
-                        (T.Fragment = Symbol.for('react.fragment')), (T.jsx = A), (T.jsxs = A);
+                        ((T.Fragment = Symbol.for('react.fragment')), (T.jsx = A), (T.jsxs = A));
                     },
                     4377: (_, T, E) => {
                         _.exports = E(9097);
                     },
                     7858: (_, T) => {
-                        Object.defineProperty(T, '__esModule', { value: !0 }),
+                        (Object.defineProperty(T, '__esModule', { value: !0 }),
                             (T.findColorBucketByLightness = T.findColorBucketByHue = T.findColorBucketByName = T.LIGHTNESS_COLOR_BUCKETS = T.COLOR_BUCKETS = void 0),
                             (T.COLOR_BUCKETS = [
                                 { name: 'coral', start: 2, end: 19, primary: '#F53700', secondary: '#FFD7CC' },
@@ -1147,10 +1147,10 @@
                                     ((_, E, A) => (A === T.LIGHTNESS_COLOR_BUCKETS.length - 1 ? E >= _.start && E <= _.end : E >= _.start && E < _.end))(E, _, A),
                                 );
                                 return (0, T.findColorBucketByName)(null == E ? void 0 : E.name);
-                            });
+                            }));
                     },
                     8796: (_, T) => {
-                        Object.defineProperty(T, '__esModule', { value: !0 }),
+                        (Object.defineProperty(T, '__esModule', { value: !0 }),
                             (T.createRipple = void 0),
                             (T.createRipple = function (_, T, E) {
                                 let A = null != E ? E : _.currentTarget,
@@ -1160,27 +1160,27 @@
                                     C = A.getBoundingClientRect(),
                                     N = 0 === _.clientX ? Math.round(C.width / 2) : _.clientX - C.left,
                                     S = 0 === _.clientY ? Math.round(C.height / 2) : _.clientY - C.top;
-                                (I.style.width = ''.concat(O, 'px')),
+                                ((I.style.width = ''.concat(O, 'px')),
                                     (I.style.height = ''.concat(O, 'px')),
                                     (I.style.left = 0 === _.clientX ? '0px' : ''.concat(N - L, 'px')),
                                     (I.style.top = ''.concat(S - L, 'px')),
-                                    I.classList.add(T);
+                                    I.classList.add(T));
                                 let R = A.getElementsByClassName(T)[0];
-                                R && R.remove(), A.insertBefore(I, A.firstChild);
-                            });
+                                (R && R.remove(), A.insertBefore(I, A.firstChild));
+                            }));
                     },
                     361: (_, T) => {
-                        Object.defineProperty(T, '__esModule', { value: !0 }),
+                        (Object.defineProperty(T, '__esModule', { value: !0 }),
                             (T.getElementFromRefOrElement = void 0),
                             (T.getElementFromRefOrElement = (_) => {
                                 if (void 0 !== _) {
                                     if (null === _ || _ instanceof HTMLElement) return _;
                                     if (null === _.current || _.current instanceof HTMLElement) return _.current;
                                 }
-                            });
+                            }));
                     },
                     768: (_, T, E) => {
-                        Object.defineProperty(T, '__esModule', { value: !0 }),
+                        (Object.defineProperty(T, '__esModule', { value: !0 }),
                             (T.getVibePaletteColors =
                                 T.getVibeColorBucketSelection =
                                 T.getVibePaletteByBucketName =
@@ -1189,10 +1189,10 @@
                                 T.SECONDARY_GRADIENT_STOPS =
                                 T.PRIMARY_GRADIENT_STOPS =
                                 T.PRIMARY_DARK_IDLE_STOPS =
-                                    void 0);
+                                    void 0));
                         let A = E(2660),
                             I = E(7858);
-                        (T.PRIMARY_DARK_IDLE_STOPS = Array.from({ length: 16 }, () => '#000000')),
+                        ((T.PRIMARY_DARK_IDLE_STOPS = Array.from({ length: 16 }, () => '#000000')),
                             (T.PRIMARY_GRADIENT_STOPS = {
                                 carmine: [
                                     '#F5002E',
@@ -1780,7 +1780,7 @@
                                 primaryStops: T.PRIMARY_GRADIENT_STOPS[T.FALLBACK_NAME],
                                 secondaryStops: T.SECONDARY_GRADIENT_STOPS[T.FALLBACK_NAME],
                                 primaryDarkIdleStops: T.PRIMARY_DARK_IDLE_STOPS,
-                            });
+                            }));
                         let O = (_) => ({
                             primary: _.primary,
                             secondary: _.secondary,
@@ -1788,7 +1788,7 @@
                             secondaryStops: T.SECONDARY_GRADIENT_STOPS[_.name],
                             primaryDarkIdleStops: T.PRIMARY_DARK_IDLE_STOPS,
                         });
-                        (T.getVibePaletteByBucketName = (_) => {
+                        ((T.getVibePaletteByBucketName = (_) => {
                             let E = (0, I.findColorBucketByName)(_);
                             return E ? O(E) : T.FALLBACK_PALETTE;
                         }),
@@ -1801,10 +1801,10 @@
                                 if (!_) return T.FALLBACK_PALETTE;
                                 let { bucket: E } = (0, T.getVibeColorBucketSelection)(_);
                                 return E ? O(E) : T.FALLBACK_PALETTE;
-                            });
+                            }));
                     },
                     8216: (_, T, E) => {
-                        Object.defineProperty(T, '__esModule', { value: !0 }), (T.getVibePaletteColors = T.getElementFromRefOrElement = T.createRipple = void 0);
+                        (Object.defineProperty(T, '__esModule', { value: !0 }), (T.getVibePaletteColors = T.getElementFromRefOrElement = T.createRipple = void 0));
                         var A = E(8796);
                         Object.defineProperty(T, 'createRipple', {
                             enumerable: !0,
@@ -1833,7 +1833,7 @@
                             function (_) {
                                 return _ && _.__esModule ? _ : { default: _ };
                             };
-                        Object.defineProperty(T, '__esModule', { value: !0 }), (T.Button = void 0);
+                        (Object.defineProperty(T, '__esModule', { value: !0 }), (T.Button = void 0));
                         let I = E(4377),
                             O = E(810),
                             L = E(5881),
@@ -1941,19 +1941,19 @@
                 var T = C[_];
                 if (void 0 !== T) return T.exports;
                 var E = (C[_] = { exports: {} });
-                return L[_].call(E.exports, E, E.exports, N), E.exports;
+                return (L[_].call(E.exports, E, E.exports, N), E.exports);
             }
-            (N.d = (_, T) => {
+            ((N.d = (_, T) => {
                 for (var E in T) N.o(T, E) && !N.o(_, E) && Object.defineProperty(_, E, { enumerable: !0, get: T[E] });
             }),
                 (N.o = (_, T) => Object.prototype.hasOwnProperty.call(_, T)),
                 (N.r = (_) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(_, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(_, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(_, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(_, '__esModule', { value: !0 }));
+                }));
             var S = {};
             (() => {
-                Object.defineProperty(S, '__esModule', { value: !0 }), (S.Button = void 0);
+                (Object.defineProperty(S, '__esModule', { value: !0 }), (S.Button = void 0));
                 var _ = N(8119);
                 Object.defineProperty(S, 'Button', {
                     enumerable: !0,
@@ -1972,7 +1972,7 @@
                 O = {
                     5881: (_, T, E) => {
                         function A() {
-                            for (var _, T, E = 0, A = ''; E < arguments.length; )
+                            for (var _, T, E = 0, A = ''; E < arguments.length;)
                                 (_ = arguments[E++]) &&
                                     (T = (function _(T) {
                                         var E,
@@ -1987,11 +1987,11 @@
                                     (A && (A += ' '), (A += T));
                             return A;
                         }
-                        E.r(T), E.d(T, { clsx: () => A, default: () => I });
+                        (E.r(T), E.d(T, { clsx: () => A, default: () => I }));
                         let I = A;
                     },
                     6951: (_, T, E) => {
-                        E.r(T), E.d(T, { default: () => A });
+                        (E.r(T), E.d(T, { default: () => A }));
                         let A = {
                             root_controls_xxs: 'tRaaBpDMg9Qu8v6gKjtn',
                             root_entity_xxs: 'M9zvtlcpLUVn6DKdcHhj',
@@ -2014,7 +2014,7 @@
                         };
                     },
                     2223: (_, T, E) => {
-                        E.r(T), E.d(T, { default: () => A });
+                        (E.r(T), E.d(T, { default: () => A }));
                         let A = {
                             root_size_xs: 'qJJ288377iHlWN_RXeEE',
                             root_size_s: '_sd8Q9d_Ttn0Ufe4ISWS',
@@ -2030,7 +2030,7 @@
                         };
                     },
                     5882: (_, T, E) => {
-                        E.r(T), E.d(T, { default: () => A });
+                        (E.r(T), E.d(T, { default: () => A }));
                         let A = {
                             root: '_MWOVuZRvUQdXKTMcOPx',
                             root_clamp: 'LezmJlldtbHWqU7l1950',
@@ -2047,7 +2047,7 @@
                             else A = T;
                             return { $$typeof: E, type: _, key: I, ref: void 0 !== (T = A.ref) ? T : null, props: A };
                         }
-                        (T.Fragment = Symbol.for('react.fragment')), (T.jsx = A), (T.jsxs = A);
+                        ((T.Fragment = Symbol.for('react.fragment')), (T.jsx = A), (T.jsxs = A));
                     },
                     4377: (_, T, E) => {
                         _.exports = E(9097);
@@ -2058,13 +2058,13 @@
                             function (_) {
                                 return _ && _.__esModule ? _ : { default: _ };
                             };
-                        Object.defineProperty(T, '__esModule', { value: !0 }), (T.Caption = T.CaptionComponent = void 0);
+                        (Object.defineProperty(T, '__esModule', { value: !0 }), (T.Caption = T.CaptionComponent = void 0));
                         let I = E(4377),
                             O = E(5881),
                             L = E(810),
                             C = E(4721),
                             N = A(E(6951));
-                        (T.CaptionComponent = (_) => {
+                        ((T.CaptionComponent = (_) => {
                             let { forwardRef: T, variant: E, type: A = 'text', size: L = 's', className: S, children: R, weight: U = 'medium', ...B } = _;
                             return (0, I.jsx)(C.Typography, {
                                 variant: E,
@@ -2074,7 +2074,7 @@
                                 children: R,
                             });
                         }),
-                            (T.Caption = (0, L.forwardRef)((_, E) => (0, I.jsx)(T.CaptionComponent, { forwardRef: E, ..._ })));
+                            (T.Caption = (0, L.forwardRef)((_, E) => (0, I.jsx)(T.CaptionComponent, { forwardRef: E, ..._ }))));
                     },
                     404: function (_, T, E) {
                         var A =
@@ -2082,13 +2082,13 @@
                             function (_) {
                                 return _ && _.__esModule ? _ : { default: _ };
                             };
-                        Object.defineProperty(T, '__esModule', { value: !0 }), (T.Heading = T.HeadingComponent = void 0);
+                        (Object.defineProperty(T, '__esModule', { value: !0 }), (T.Heading = T.HeadingComponent = void 0));
                         let I = E(4377),
                             O = E(5881),
                             L = E(810),
                             C = E(4721),
                             N = A(E(2223));
-                        (T.HeadingComponent = (_) => {
+                        ((T.HeadingComponent = (_) => {
                             let { forwardRef: T, variant: E, weight: A = 'bold', size: L = 's', className: S, children: R, ...U } = _;
                             return (0, I.jsx)(C.Typography, {
                                 variant: E,
@@ -2098,7 +2098,7 @@
                                 children: R,
                             });
                         }),
-                            (T.Heading = (0, L.forwardRef)((_, E) => (0, I.jsx)(T.HeadingComponent, { forwardRef: E, ..._ })));
+                            (T.Heading = (0, L.forwardRef)((_, E) => (0, I.jsx)(T.HeadingComponent, { forwardRef: E, ..._ }))));
                     },
                     4721: function (_, T, E) {
                         var A =
@@ -2106,7 +2106,7 @@
                             function (_) {
                                 return _ && _.__esModule ? _ : { default: _ };
                             };
-                        Object.defineProperty(T, '__esModule', { value: !0 }), (T.Typography = T.TypographyComponent = void 0);
+                        (Object.defineProperty(T, '__esModule', { value: !0 }), (T.Typography = T.TypographyComponent = void 0));
                         let I = E(4377),
                             O = E(5881),
                             L = E(810),
@@ -2127,7 +2127,7 @@
                                 children: L,
                             });
                         }
-                        (T.TypographyComponent = N), (T.Typography = (0, L.forwardRef)((_, T) => (0, I.jsx)(N, { forwardRef: T, ..._ })));
+                        ((T.TypographyComponent = N), (T.Typography = (0, L.forwardRef)((_, T) => (0, I.jsx)(N, { forwardRef: T, ..._ }))));
                     },
                     810: (_) => {
                         _.exports = A || (A = E.t(I, 2));
@@ -2138,19 +2138,19 @@
                 var T = L[_];
                 if (void 0 !== T) return T.exports;
                 var E = (L[_] = { exports: {} });
-                return O[_].call(E.exports, E, E.exports, C), E.exports;
+                return (O[_].call(E.exports, E, E.exports, C), E.exports);
             }
-            (C.d = (_, T) => {
+            ((C.d = (_, T) => {
                 for (var E in T) C.o(T, E) && !C.o(_, E) && Object.defineProperty(_, E, { enumerable: !0, get: T[E] });
             }),
                 (C.o = (_, T) => Object.prototype.hasOwnProperty.call(_, T)),
                 (C.r = (_) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(_, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(_, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(_, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(_, '__esModule', { value: !0 }));
+                }));
             var N = {};
             (() => {
-                Object.defineProperty(N, '__esModule', { value: !0 }), (N.Heading = N.Caption = void 0);
+                (Object.defineProperty(N, '__esModule', { value: !0 }), (N.Heading = N.Caption = void 0));
                 var _ = C(7743);
                 Object.defineProperty(N, 'Caption', {
                     enumerable: !0,
@@ -2181,13 +2181,13 @@
                 },
                 L = {},
                 C = {};
-            (() => {
-                Object.defineProperty(C, '__esModule', { value: !0 }), (C.useCallbackRef = void 0);
+            ((() => {
+                (Object.defineProperty(C, '__esModule', { value: !0 }), (C.useCallbackRef = void 0));
                 let _ = (function _(T) {
                     var E = L[T];
                     if (void 0 !== E) return E.exports;
                     var A = (L[T] = { exports: {} });
-                    return O[T](A, A.exports, _), A.exports;
+                    return (O[T](A, A.exports, _), A.exports);
                 })(810);
                 C.useCallbackRef = function (T) {
                     let E = (0, _.useRef)({
@@ -2205,14 +2205,14 @@
                     );
                 };
             })(),
-                C.__esModule;
+                C.__esModule);
             var N = C.useCallbackRef;
         },
         96194: (_, T, E) => {
             var A;
-            E.d(T, { t: () => A }),
+            (E.d(T, { t: () => A }),
                 (function (_) {
-                    (_.ALBUM_PROMO = 'ALBUM_PROMO'),
+                    ((_.ALBUM_PROMO = 'ALBUM_PROMO'),
                         (_.ARTIST_PICK = 'ARTIST_PICK'),
                         (_.ARTIST_CONCERTS = 'ARTIST_CONCERTS'),
                         (_.ARTIST_PLAYLISTS = 'ARTIST_PLAYLISTS'),
@@ -2312,8 +2312,8 @@
                         (_.CONCERT_PLACE = 'CONCERT_PLACE'),
                         (_.COLLECTION_ARTISTS_AND_TOP_WITH_ITEMS = 'COLLECTION_ARTISTS_AND_TOP_WITH_ITEMS'),
                         (_.NON_MUSIC_CATEGORY = 'NON_MUSIC_CATEGORY'),
-                        (_.PODCASTS_CHART_ALBUMS = 'PODCASTS_CHART_ALBUMS');
-                })(A || (A = {}));
+                        (_.PODCASTS_CHART_ALBUMS = 'PODCASTS_CHART_ALBUMS'));
+                })(A || (A = {})));
         },
     },
 ]);

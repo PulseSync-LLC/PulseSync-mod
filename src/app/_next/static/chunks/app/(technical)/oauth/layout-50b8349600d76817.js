@@ -20,7 +20,7 @@
                         .concat(N)
                         .concat(I ? '?' : '')
                         .concat(I);
-                (a = E),
+                ((a = E),
                     (b = ''
                         .concat(E)
                         .concat(N)
@@ -36,14 +36,14 @@
                         })(E) || 'ru',
                     ),
                     T.setOrigin(a),
-                    T.setHref(b);
+                    T.setHref(b));
             });
         },
         42224: (e, t, T) => {
-            Promise.resolve().then(T.bind(T, 5285)),
+            (Promise.resolve().then(T.bind(T, 5285)),
                 Promise.resolve().then(T.bind(T, 39670)),
                 Promise.resolve().then(T.bind(T, 75170)),
-                Promise.resolve().then(T.bind(T, 9634));
+                Promise.resolve().then(T.bind(T, 9634)));
         },
         57594: (e, t, T) => {
             'use strict';
@@ -61,16 +61,16 @@
             'use strict';
             T.d(t, { O: () => N });
             var N = (function (e) {
-                return (e.MACOS = 'darwin'), (e.WINDOWS = 'win32'), (e.LINUX = 'linux'), e;
+                return ((e.MACOS = 'darwin'), (e.WINDOWS = 'win32'), (e.LINUX = 'linux'), e);
             })({});
         },
         76232: (e, t, T) => {
             'use strict';
             var N;
-            T.d(t, { e: () => N }),
+            (T.d(t, { e: () => N }),
                 (function (e) {
-                    (e.HIGH_QUALITY = 'high_quality'), (e.BALANCED = 'balanced'), (e.EFFICIENT = 'efficient'), (e.PREVIEW = 'preview');
-                })(N || (N = {}));
+                    ((e.HIGH_QUALITY = 'high_quality'), (e.BALANCED = 'balanced'), (e.EFFICIENT = 'efficient'), (e.PREVIEW = 'preview'));
+                })(N || (N = {})));
         },
         79406: (e, t, T) => {
             'use strict';
@@ -189,9 +189,9 @@
         96194: (e, t, T) => {
             'use strict';
             var N;
-            T.d(t, { t: () => N }),
+            (T.d(t, { t: () => N }),
                 (function (e) {
-                    (e.ALBUM_PROMO = 'ALBUM_PROMO'),
+                    ((e.ALBUM_PROMO = 'ALBUM_PROMO'),
                         (e.ARTIST_PICK = 'ARTIST_PICK'),
                         (e.ARTIST_CONCERTS = 'ARTIST_CONCERTS'),
                         (e.ARTIST_PLAYLISTS = 'ARTIST_PLAYLISTS'),
@@ -291,21 +291,21 @@
                         (e.CONCERT_PLACE = 'CONCERT_PLACE'),
                         (e.COLLECTION_ARTISTS_AND_TOP_WITH_ITEMS = 'COLLECTION_ARTISTS_AND_TOP_WITH_ITEMS'),
                         (e.NON_MUSIC_CATEGORY = 'NON_MUSIC_CATEGORY'),
-                        (e.PODCASTS_CHART_ALBUMS = 'PODCASTS_CHART_ALBUMS');
-                })(N || (N = {}));
+                        (e.PODCASTS_CHART_ALBUMS = 'PODCASTS_CHART_ALBUMS'));
+                })(N || (N = {})));
         },
         97323: (e, t, T) => {
             'use strict';
             T.d(t, { s: () => N });
             var N = (function (e) {
-                return (e.DIVERSITY = 'diversity'), (e.MOOD_ENERGY = 'moodEnergy'), (e.LANGUAGE = 'language'), e;
+                return ((e.DIVERSITY = 'diversity'), (e.MOOD_ENERGY = 'moodEnergy'), (e.LANGUAGE = 'language'), e);
             })({});
         },
     },
     (e) => {
-        e.O(0, [6639, 6706, 1311, 1588, 8892, 2536, 5835, 1410, 6252, 1330, 4970, 6477, 7275, 2586, 6874, 1647, 4547, 5283, 9385, 4220, 9562, 7358], () =>
+        (e.O(0, [6639, 6706, 1311, 1588, 8892, 2536, 5835, 1410, 6252, 1330, 4970, 6477, 7275, 2586, 6874, 1647, 4547, 5283, 9385, 4220, 9562, 7358], () =>
             e((e.s = 42224)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

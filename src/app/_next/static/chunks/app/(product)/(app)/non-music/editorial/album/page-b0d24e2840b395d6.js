@@ -5,7 +5,7 @@
             'use strict';
             r.d(t, { x: () => l });
             var l = (function (e) {
-                return (e.CATEGORY = 'category'), (e.EDITORIAL = 'editorial'), e;
+                return ((e.CATEGORY = 'category'), (e.EDITORIAL = 'editorial'), e);
             })({});
         },
         8626: (e, t, r) => {
@@ -68,14 +68,14 @@
         },
         41256: (e, t, r) => {
             'use strict';
-            r.r(t), r.d(t, { default: () => i });
+            (r.r(t), r.d(t, { default: () => i }));
             var l = r(32290),
                 o = r(21916),
                 s = r(7443),
                 n = r(51819);
             let i = () => {
                 let e = (0, o.useSearchParams)().get('id');
-                return e || (0, o.notFound)(), (0, l.jsx)(n.g, { id: e, variant: s.x.EDITORIAL });
+                return (e || (0, o.notFound)(), (0, l.jsx)(n.g, { id: e, variant: s.x.EDITORIAL }));
             };
         },
         45257: (e, t, r) => {
@@ -257,14 +257,14 @@
                     { contentScrollRef: M, setContentScrollRef: P } = (0, p.g)(),
                     T = (0, x.W)(),
                     b = k.layout === g.u.Mobile;
-                (I.isNotFound || !s) && (0, n.notFound)(),
+                ((I.isNotFound || !s) && (0, n.notFound)(),
                     (0, E.J)(I.isResolved),
                     (0, i.useEffect)(
                         () => () => {
                             I.reset();
                         },
                         [I],
-                    );
+                    ));
                 let w = (0, i.useCallback)(
                         (e) => {
                             I.getAlbumsByRange(e.startIndex, e.endIndex);
@@ -329,10 +329,10 @@
             'use strict';
             r.d(t, { P: () => l, u: () => o });
             var l = (function (e) {
-                    return (e[(e.Mobile = 768)] = 'Mobile'), (e[(e.Desktop = 1440)] = 'Desktop'), e;
+                    return ((e[(e.Mobile = 768)] = 'Mobile'), (e[(e.Desktop = 1440)] = 'Desktop'), e);
                 })({}),
                 o = (function (e) {
-                    return (e.Mobile = 'Mobile'), (e.Desktop = 'Desktop'), e;
+                    return ((e.Mobile = 'Mobile'), (e.Desktop = 'Desktop'), e);
                 })({});
         },
         57594: (e, t, r) => {
@@ -453,7 +453,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [n, c, d];
-                                    return 'ru' === s && e.push(a), e.push(u), e;
+                                    return ('ru' === s && e.push(a), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [n, c, d, u];
@@ -525,7 +525,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 7231, 5718, 7972, 6347, 3183, 9763, 6639, 7258, 3778, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 6477, 7275, 2586, 8347,
@@ -533,6 +533,6 @@
             ],
             () => e((e.s = 61948)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

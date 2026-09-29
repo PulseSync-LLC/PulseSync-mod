@@ -9,12 +9,12 @@
             let r = (e) => {
                 let t = (0, s.usePathname)(),
                     [i, r] = (0, a.useState)(!1);
-                (0, a.useEffect)(() => {
-                    window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t);
+                ((0, a.useEffect)(() => {
+                    (window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t));
                 }),
                     (0, a.useEffect)(() => {
                         window.Ya.Rum.spa.getLastSpaSubPage(t) && e && !i && (window.Ya.Rum.spa.finishDataLoading(t), window.Ya.Rum.spa.startDataRendering(t), r(!0));
-                    }, [e, i, t]);
+                    }, [e, i, t]));
             };
         },
         4820: (e, t, i) => {
@@ -75,7 +75,7 @@
                     p = null != m ? m : _({ id: 'play-queue.delete-from-queue' }),
                     h = (0, n.useCallback)(
                         (e) => {
-                            null == a || a(), e.stopPropagation();
+                            (null == a || a(), e.stopPropagation());
                         },
                         [a],
                     );
@@ -149,14 +149,14 @@
                         J = U.hasPlus,
                         ee = !x.isRemoved && x.isAvailable && !W,
                         et = (0, m.c)(async () => {
-                            Y || x.isLiked || (F(!0), null == K || K()), await X(), null == O || O(x.isLiked);
+                            (Y || x.isLiked || (F(!0), null == K || K()), await X(), null == O || O(x.isLiked));
                         }),
                         ei = (0, m.c)((e) => {
                             e.stopPropagation();
                         }),
                         es = (0, m.c)((e) => {
                             if ((e.stopPropagation(), q())) return void e.preventDefault();
-                            $.openTrackTrailer(x.id), Z(c.ky.Track, x.id);
+                            ($.openTrackTrailer(x.id), Z(c.ky.Track, x.id));
                         }),
                         ea = (0, n.useMemo)(() => {
                             if (ee)
@@ -308,11 +308,11 @@
                             objectPosX: L,
                             objectPosY: D,
                         };
-                        void 0 !== S && ((o.filterKey = S), (o.filterValue = R), (o.filterPos = O)),
+                        (void 0 !== S && ((o.filterKey = S), (o.filterValue = R), (o.filterPos = O)),
                             c.qG.includes(v) && ((o.tabId = k), (o.tabPos = A), (o.isTabSelectedByDefault = g)),
                             B && (o.skeletonId = B),
                             'string' == typeof w && 'string' == typeof I && ((o.mainObjectType = I), (o.mainObjectId = w)),
-                            z && (o.displayReasonId = z);
+                            z && (o.displayReasonId = z));
                         let d = (0, a.Fx)({ params: o, logger: e, context: 'useSendEventOnBlockShowedOrHidden' });
                         d && (s ? (0, a.Pf)(t.evgenInstance, d) : (0, a.nv)(t.evgenInstance, d));
                     },
@@ -323,10 +323,10 @@
         13365: (e, t, i) => {
             'use strict';
             var s;
-            i.d(t, { _: () => s }),
+            (i.d(t, { _: () => s }),
                 (function (e) {
-                    (e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new');
-                })(s || (s = {}));
+                    ((e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new'));
+                })(s || (s = {})));
         },
         13798: (e, t, i) => {
             'use strict';
@@ -521,7 +521,7 @@
             e.exports = { root: 'ArtistItem_root__Q_mgJ', image: 'ArtistItem_image__5rKWF', cover: 'ArtistItem_cover__FTvHo' };
         },
         19564: (e, t, i) => {
-            Promise.resolve().then(i.bind(i, 55646)), Promise.resolve().then(i.bind(i, 25023));
+            (Promise.resolve().then(i.bind(i, 55646)), Promise.resolve().then(i.bind(i, 25023)));
         },
         22714: (e, t, i) => {
             'use strict';
@@ -549,7 +549,7 @@
                     c = (0, s.useContext)(r.B),
                     d = (0, s.useCallback)(
                         (s, a) => {
-                            e ? e(s, i ? a : void 0) : o(s, a), t && c.unobserveElement(l);
+                            (e ? e(s, i ? a : void 0) : o(s, a), t && c.unobserveElement(l));
                         },
                         [e, c, l, o, t, i],
                     );
@@ -876,7 +876,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), n.isOpened && (s.reset(), n.close()), a.modal.isOpened && a.modal.close();
+                                    (null == e || e.stopPropagation(), n.isOpened && (s.reset(), n.close()), a.modal.isOpened && a.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     r.modal.isOpened && (r.modal.close(), r.reset());
@@ -886,11 +886,11 @@
                         })({
                             artist: t,
                             callback: (0, h.c)((e) => {
-                                T && f.isOpened && f.close(), N(e);
+                                (T && f.isOpened && f.close(), N(e));
                             }),
                         }),
                         y = (0, h.c)((e) => {
-                            w({ to: _.QT.ArtistScreen }), null == j || j(), I(e);
+                            (w({ to: _.QT.ArtistScreen }), null == j || j(), I(e));
                         });
                     return i && !t.various
                         ? (0, s.jsx)(A.N, {
@@ -1107,7 +1107,7 @@
                         } = (0, l.g)(),
                         O = 1 === i.length,
                         P = (0, n.useCallback)((e) => {
-                            y(!0), e.preventDefault();
+                            (y(!0), e.preventDefault());
                         }, []),
                         M = (0, n.useMemo)(() => {
                             let e = i;
@@ -1431,11 +1431,11 @@
                                 let u = { ...(0, m.HO)(r), url: r.url, isLiked: !r.isLiked };
                                 i(!0);
                                 let p = await r.toggleLike();
-                                i(!1),
+                                (i(!1),
                                     c &&
                                         (p === _.f.OK
                                             ? e((0, s.jsx)(v, { withLink: l, album: u }), { containerId: o.u.INFO })
-                                            : e((0, s.jsx)(d.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
+                                            : e((0, s.jsx)(d.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR })));
                             });
                         })(),
                         { pageAlbumId: k } = (0, n.T)();
@@ -1748,7 +1748,7 @@
                         );
                     }, [t, i]),
                     b = (0, c.c)((e) => {
-                        r.modal.isOpened && r.modal.close(), A({ to: o.QT.ArtistScreen }), v(e);
+                        (r.modal.isOpened && r.modal.close(), A({ to: o.QT.ArtistScreen }), v(e));
                     });
                 return (0, s.jsxs)(s.Fragment, {
                     children: [
@@ -1829,10 +1829,10 @@
         92013: (e, t, i) => {
             'use strict';
             var s;
-            i.d(t, { T: () => s }),
+            (i.d(t, { T: () => s }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(s || (s = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(s || (s = {})));
         },
         92102: (e, t, i) => {
             'use strict';
@@ -1921,7 +1921,7 @@
                         if (!Y()) {
                             if (q) return void E();
                             if (Q) return void U.open();
-                            ei || j || (es(!0), null == et || et()), Z(), K(!j), null == S || S(!j);
+                            (ei || j || (es(!0), null == et || et()), Z(), K(!j), null == S || S(!j));
                         }
                     }),
                     er = (0, o.c)(() => {
@@ -1930,7 +1930,7 @@
                     }),
                     en = (0, o.c)((e) => {
                         if (!r.isAvailable && !r.hasModalAccess) {
-                            M && r.isAvailableOnlyForPlus && E(), X && r.isAvailableOnlyForPlus && U.open();
+                            (M && r.isAvailableOnlyForPlus && E(), X && r.isAvailableOnlyForPlus && U.open());
                             return;
                         }
                         if (q) return void E();
@@ -1962,12 +1962,12 @@
             'use strict';
             i.d(t, { X: () => s });
             var s = (function (e) {
-                return (e.PLAYLIST = 'playlist'), (e.ALBUM = 'album'), e;
+                return ((e.PLAYLIST = 'playlist'), (e.ALBUM = 'album'), e);
             })({});
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 7972, 3183, 7231, 6347, 9763, 6639, 7258, 6087, 6706, 1311, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 6477, 7275, 2586,
@@ -1975,6 +1975,6 @@
             ],
             () => e((e.s = 19564)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

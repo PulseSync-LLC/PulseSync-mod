@@ -66,7 +66,7 @@
                 b = s(29038),
                 p = s(97201),
                 g = (function (e) {
-                    return (e[(e.LIKED_ALBUMS = 0)] = 'LIKED_ALBUMS'), (e[(e.UPCOMING_ALBUMS = 1)] = 'UPCOMING_ALBUMS'), e;
+                    return ((e[(e.LIKED_ALBUMS = 0)] = 'LIKED_ALBUMS'), (e[(e.UPCOMING_ALBUMS = 1)] = 'UPCOMING_ALBUMS'), e);
                 })({}),
                 A = s(73744),
                 v = s.n(A),
@@ -395,13 +395,13 @@
                             return g.LIKED_ALBUMS;
                         }, [e]),
                         y = (0, n.zb)(I);
-                    (0, _.J)(s.albums.isResolved),
+                    ((0, _.J)(s.albums.isResolved),
                         (0, o.useEffect)(
                             () => () => {
                                 s.albums.reset();
                             },
                             [s.albums],
-                        );
+                        ));
                     let E = (0, o.useMemo)(() => {
                         switch (y.value) {
                             case g.LIKED_ALBUMS:
@@ -510,7 +510,7 @@
                 l = s(98411),
                 o = (function () {
                     function e(e) {
-                        (this.observableValue = (0, l.vP)(e)), (this.prevValueByListener = new Map());
+                        ((this.observableValue = (0, l.vP)(e)), (this.prevValueByListener = new Map()));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'value', {
@@ -535,7 +535,7 @@
                                             i = !1;
                                             return;
                                         }
-                                        s.prevValueByListener.set(e, a), e(a);
+                                        (s.prevValueByListener.set(e, a), e(a));
                                     }
                                 })
                             );
@@ -545,9 +545,9 @@
                 })();
             !(function () {
                 function e(e) {
-                    (this.observableValue = (0, l.EW)(e)), (this.prevValueByListener = new Map());
+                    ((this.observableValue = (0, l.EW)(e)), (this.prevValueByListener = new Map()));
                 }
-                Object.defineProperty(e.prototype, 'value', {
+                (Object.defineProperty(e.prototype, 'value', {
                     get: function () {
                         return this.observableValue.value;
                     },
@@ -566,11 +566,11 @@
                                         i = !1;
                                         return;
                                     }
-                                    s.prevValueByListener.set(e, a), e(a);
+                                    (s.prevValueByListener.set(e, a), e(a));
                                 }
                             })
                         );
-                    });
+                    }));
             })();
             class r extends Error {
                 name = 'BaseException';
@@ -581,14 +581,14 @@
                 constructor(e, t = {}) {
                     let { code: s = 'E_INTERNAL', data: i = {}, ...a } = t,
                         l = e || 'Internal error';
-                    super(l, a), (this.message = l), (this.code = s), (this.data = i), (this.stack = Error(l).stack), Object.setPrototypeOf(this, r.prototype);
+                    (super(l, a), (this.message = l), (this.code = s), (this.data = i), (this.stack = Error(l).stack), Object.setPrototypeOf(this, r.prototype));
                 }
             }
             class n extends r {
                 name = 'DisclaimerDictionaryLoadError';
                 constructor(e) {
-                    super('Failed to load disclaimer dictionary', { code: 'E_DISCLAIMER_DICTIONARY_LOAD', cause: e, data: { valueType: typeof e } }),
-                        Object.setPrototypeOf(this, n.prototype);
+                    (super('Failed to load disclaimer dictionary', { code: 'E_DISCLAIMER_DICTIONARY_LOAD', cause: e, data: { valueType: typeof e } }),
+                        Object.setPrototypeOf(this, n.prototype));
                 }
             }
             class c extends r {
@@ -596,17 +596,17 @@
                 disclaimerId;
                 retryAttempted;
                 constructor(e, t) {
-                    super(`Disclaimer with id "${e}" not found${t ? ' after retry' : ''}`, {
+                    (super(`Disclaimer with id "${e}" not found${t ? ' after retry' : ''}`, {
                         code: 'E_DISCLAIMER_NOT_FOUND',
                         data: { disclaimerId: e, retryAttempted: t },
                     }),
                         (this.disclaimerId = e),
                         (this.retryAttempted = t),
-                        Object.setPrototypeOf(this, c.prototype);
+                        Object.setPrototypeOf(this, c.prototype));
                 }
             }
             !(function (e) {
-                (e.MODAL = 'modal'),
+                ((e.MODAL = 'modal'),
                     (e.FOREIGN_AGENT = 'foreignAgent'),
                     (e.INFORMATIONAL = 'informational'),
                     (e.AGE_18 = 'age18'),
@@ -617,7 +617,7 @@
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
                     (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                    (e.SUBSTITUTED_ICON = 'substitutedIcon');
+                    (e.SUBSTITUTED_ICON = 'substitutedIcon'));
             })(i || (i = {}));
             let u = (e) => {
                     let t = [];
@@ -639,7 +639,7 @@
                 loadingPromise;
                 isDestroyed;
                 constructor(e) {
-                    (this.dataSource = e.dataSource),
+                    ((this.dataSource = e.dataSource),
                         (this.itemsObservable = new o(null)),
                         (this.isLoadingObservable = new o(!1)),
                         (this.errorObservable = new o(null)),
@@ -647,12 +647,12 @@
                         (this.isDestroyed = !1),
                         (this.items = this.itemsObservable),
                         (this.isLoading = this.isLoadingObservable),
-                        (this.error = this.errorObservable);
+                        (this.error = this.errorObservable));
                 }
                 async load() {
                     if (this.isDestroyed) return;
                     if (this.loadingPromise) return void (await this.loadingPromise);
-                    (this.isLoadingObservable.value = !0), (this.errorObservable.value = null);
+                    ((this.isLoadingObservable.value = !0), (this.errorObservable.value = null));
                     let e = this.dataSource
                         .loadAll()
                         .then((e) => {
@@ -665,7 +665,7 @@
                         .finally(() => {
                             this.loadingPromise = null;
                         });
-                    (this.loadingPromise = e), await e;
+                    ((this.loadingPromise = e), await e);
                 }
                 async getById(e) {
                     let t = this.findItemById(e);
@@ -692,16 +692,16 @@
                     for (let e of s)
                         if (e) {
                             let t = i[e.disclaimerType] ?? [];
-                            t.push(e.disclaimerItem), (i[e.disclaimerType] = t);
+                            (t.push(e.disclaimerItem), (i[e.disclaimerType] = t));
                         }
                     return i;
                 }
                 destroy() {
-                    (this.isDestroyed = !0),
+                    ((this.isDestroyed = !0),
                         (this.loadingPromise = null),
                         (this.itemsObservable.value = null),
                         (this.isLoadingObservable.value = !1),
-                        (this.errorObservable.value = null);
+                        (this.errorObservable.value = null));
                 }
                 findItemById(e) {
                     let t = this.itemsObservable.value;
@@ -709,7 +709,7 @@
                 }
             }
             !(function (e) {
-                (e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted');
+                ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted'));
             })(a || (a = {}));
             let _ = new Map([
                     [i.EXPLICIT_ICON, a.E],
@@ -738,7 +738,7 @@
             'use strict';
             s.d(t, { H: () => i });
             var i = (function (e) {
-                return (e.LIKED_ALBUMS = 'liked'), (e.UPCOMING_ALBUMS = 'upcoming'), e;
+                return ((e.LIKED_ALBUMS = 'liked'), (e.UPCOMING_ALBUMS = 'upcoming'), e);
             })({});
         },
         31010: (e, t, s) => {
@@ -899,7 +899,7 @@
             });
         },
         44273: (e, t, s) => {
-            Promise.resolve().then(s.bind(s, 3377)), Promise.resolve().then(s.bind(s, 14083));
+            (Promise.resolve().then(s.bind(s, 3377)), Promise.resolve().then(s.bind(s, 14083)));
         },
         45257: (e, t, s) => {
             'use strict';
@@ -1197,7 +1197,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [o, c, u];
-                                    return 'ru' === l && e.push(n), e.push(d), e;
+                                    return ('ru' === l && e.push(n), e.push(d), e);
                                 }
                                 case 'desktop':
                                     return [o, c, u, d];
@@ -1350,10 +1350,10 @@
                         let l = { ...(0, a.HO)(e), isPresave: !e.isPresave };
                         _(!0);
                         let o = await e.toggleLike();
-                        _(!1),
+                        (_(!1),
                             o === r.J.OK
                                 ? s((0, i.jsx)(E, { upcomingAlbum: l }), { containerId: n.u.INFO })
-                                : s((0, i.jsx)(d.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : s((0, i.jsx)(d.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [t.isAuthorized, m, e, s, h]);
                 };
         },
@@ -1395,10 +1395,10 @@
         90346: (e, t, s) => {
             'use strict';
             var i;
-            s.d(t, { J: () => i }),
+            (s.d(t, { J: () => i }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(i || (i = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(i || (i = {})));
         },
         94218: (e, t, s) => {
             'use strict';
@@ -1467,7 +1467,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 7231, 7972, 6347, 3183, 9763, 6639, 7258, 3379, 3647, 8091, 9103, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6477, 7275,
@@ -1475,6 +1475,6 @@
             ],
             () => e((e.s = 44273)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

@@ -51,7 +51,7 @@
         },
         36572: (e, t, a) => {
             'use strict';
-            a.r(t), a.d(t, { ShareButton: () => R });
+            (a.r(t), a.d(t, { ShareButton: () => R }));
             var l = a(32290),
                 A = a(63618),
                 E = a(55178),

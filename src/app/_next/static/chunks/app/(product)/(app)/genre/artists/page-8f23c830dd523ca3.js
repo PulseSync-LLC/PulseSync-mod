@@ -12,9 +12,9 @@
         3785: (e, t, i) => {
             'use strict';
             var r;
-            i.d(t, { M: () => r }),
+            (i.d(t, { M: () => r }),
                 (function (e) {
-                    (e.MODAL = 'modal'),
+                    ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
                         (e.AGE_18 = 'age18'),
@@ -23,8 +23,8 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                        (e.SUBSTITUTED_ICON = 'substitutedIcon');
-                })(r || (r = {}));
+                        (e.SUBSTITUTED_ICON = 'substitutedIcon'));
+                })(r || (r = {})));
         },
         5942: (e, t, i) => {
             'use strict';
@@ -66,10 +66,10 @@
                         let n = { ...(0, a.HO)(e), isLiked: !e.isLiked };
                         _(!0);
                         let s = await e.toggleLike();
-                        _(!1),
+                        (_(!1),
                             s === l.f.OK
                                 ? i((0, r.jsx)(x, { artist: n }), { containerId: o.u.INFO })
-                                : i((0, r.jsx)(u.h, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, r.jsx)(u.h, { error: v({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [e, t.isAuthorized, m, v, i]);
                 };
         },
@@ -139,7 +139,7 @@
                     ep = (0, C.P)(),
                     ef = (0, u.c)((e) => {
                         if ((e.stopPropagation(), ep())) return void e.preventDefault();
-                        Y.openArtistTrailer(t.id), eg(o.ky.Artist, t.id);
+                        (Y.openArtistTrailer(t.id), eg(o.ky.Artist, t.id));
                     }),
                     eC = (0, s.useMemo)(() => {
                         let e = q({ id: 'entity-names.artist-name' }, { artistName: eu }),
@@ -152,23 +152,23 @@
                     eT = (0, g.S)({ artist: t, callback: ev }),
                     ek = (0, g.S)({ artist: t, callback: eN }),
                     eE = (0, u.c)((e) => {
-                        null == ea || ea(), es({ to: o.QT.ArtistScreen }), eT(e);
+                        (null == ea || ea(), es({ to: o.QT.ArtistScreen }), eT(e));
                     }),
                     eR = (0, R.N)(),
                     ej = (0, u.c)(() => {
                         if (!ep()) {
                             if (eR) return void W.open();
-                            J || eA || (Q(!0), null == en || en()), ek(), el(!eA);
+                            (J || eA || (Q(!0), null == en || en()), ek(), el(!eA));
                         }
                     }),
                     eI = (0, u.c)(() => {
-                        Z || e_ || (ee(!0), null == er || er()), eo();
+                        (Z || e_ || (ee(!0), null == er || er()), eo());
                     }),
                     ey = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eb = (0, u.c)((e) => {
-                        ei(e), eh(e);
+                        (ei(e), eh(e));
                     }),
                     eS = (0, s.useMemo)(
                         () =>
@@ -338,15 +338,15 @@
                     u = (0, a.useRef)(void 0),
                     m = (0, n.c)(() => {
                         var i;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let r = [...(null != (i = e.lastRejectedPagesList) ? i : [])].reverse().filter((t) => {
                             var i;
                             return (null == (i = e.pageStates) ? void 0 : i[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             r.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, a.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = i((0, r.jsx)(s.L, { reloadBlocks: m }), { containerId: l.u.ERROR, autoClose: !1 }));
@@ -713,7 +713,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [s, c, d];
-                                    return 'ru' === n && e.push(o), e.push(u), e;
+                                    return ('ru' === n && e.push(o), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [s, c, d, u];
@@ -823,10 +823,10 @@
                         let n = { ...(0, a.HO)(e), isPinned: !e.isPinned };
                         v(!0);
                         let s = await e.togglePin();
-                        v(!1),
+                        (v(!1),
                             s
                                 ? i((0, r.jsx)(_, { artist: n }), { containerId: l.u.INFO })
-                                : i((0, r.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR });
+                                : i((0, r.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
                     }, [e, t.isAuthorized, m, u, i]);
                 };
         },
@@ -949,14 +949,14 @@
                             x.current ||
                                 (x.current = new ResizeObserver((e) => {
                                     let t = !1;
-                                    e.forEach((e) => {
+                                    (e.forEach((e) => {
                                         let i = e.target.getAttribute('data-index');
                                         if (e.target && i) {
                                             let r = e.contentRect.height;
                                             r && r !== v.current.get(i) && (v.current.set(i, e.contentRect.height), (t = !0));
                                         }
                                     }),
-                                        t && C();
+                                        t && C());
                                 }));
                         }, [C]),
                         { virtualizer: f, resizeObserver: x.current }
@@ -1059,10 +1059,10 @@
                             let n = { ...(0, m.HO)(e), isDisliked: !e.isDisliked };
                             s(!0);
                             let o = await e.toggleDislike();
-                            s(!1),
+                            (s(!1),
                                 o === v.f.OK
                                     ? i((0, r.jsx)(R, { coverUri: n.coverUri, title: n.name, isDisliked: n.isDisliked }), { containerId: x.u.INFO })
-                                    : i((0, r.jsx)(p.h, { error: l({ id: 'error-messages.error-during-action' }) }), { containerId: x.u.ERROR });
+                                    : i((0, r.jsx)(p.h, { error: l({ id: 'error-messages.error-during-action' }) }), { containerId: x.u.ERROR }));
                         });
                     })(f),
                     ea = (0, L.F)(),
@@ -1155,7 +1155,7 @@
         },
         86064: (e, t, i) => {
             'use strict';
-            i.r(t), i.d(t, { default: () => K });
+            (i.r(t), i.d(t, { default: () => K }));
             var r = i(32290),
                 a = i(21916),
                 n = i(55178),
@@ -1367,7 +1367,7 @@
                 },
                 K = () => {
                     let e = (0, a.useSearchParams)().get('metatagId');
-                    return e || (0, a.notFound)(), (0, r.jsx)(n.Suspense, { fallback: (0, r.jsx)(Y, {}), children: (0, r.jsx)(G, { metatagId: e }) });
+                    return (e || (0, a.notFound)(), (0, r.jsx)(n.Suspense, { fallback: (0, r.jsx)(Y, {}), children: (0, r.jsx)(G, { metatagId: e }) }));
                 };
         },
         87151: (e, t, i) => {
@@ -1598,7 +1598,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 7231, 6347, 9763, 3183, 6639, 7258, 9198, 6706, 1311, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 3266, 7307, 6477, 7275, 2586, 8347,
@@ -1606,6 +1606,6 @@
             ],
             () => e((e.s = 42019)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

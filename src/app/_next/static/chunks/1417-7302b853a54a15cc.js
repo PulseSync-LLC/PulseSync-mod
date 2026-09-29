@@ -36,7 +36,7 @@
             }
             function p(e, t) {
                 let n = e(1, (e) => {
-                    n(), t(e);
+                    (n(), t(e));
                 });
                 return n;
             }
@@ -84,11 +84,11 @@
             }
             function x(e) {
                 var t;
-                return (t = g()), h(e, t), t;
+                return ((t = g()), h(e, t), t);
             }
             function T(e, t) {
                 var n;
-                return (n = v(t)), h(e, n), n;
+                return ((n = v(t)), h(e, n), n);
             }
             function I(e, ...t) {
                 let n = (function (...e) {
@@ -136,21 +136,21 @@
                 let t,
                     n = null;
                 return (o) => (r) => {
-                    (n = r),
+                    ((n = r),
                         t ||
                             (t = setTimeout(() => {
-                                (t = void 0), o(n);
-                            }, e));
+                                ((t = void 0), o(n));
+                            }, e)));
                 };
             }
             function R(e) {
                 let t, n;
                 return (o) => (r) => {
-                    (t = r),
+                    ((t = r),
                         n && clearTimeout(n),
                         (n = setTimeout(() => {
                             o(t);
-                        }, e));
+                        }, e)));
                 };
             }
             function B(...e) {
@@ -163,7 +163,7 @@
                         let i = Math.pow(2, l);
                         e(1, (e) => {
                             let u = n;
-                            (n |= i), (t[l] = e), u !== r && n === r && o && (o(), (o = null));
+                            ((n |= i), (t[l] = e), u !== r && n === r && o && (o(), (o = null)));
                         });
                     }),
                     (e) => (l) => {
@@ -200,13 +200,13 @@
                     e.forEach((e, l) => {
                         let i = Math.pow(2, l);
                         e(1, (e) => {
-                            (n[l] = e), (o |= i) === r && t(0, n);
+                            ((n[l] = e), (o |= i) === r && t(0, n));
                         });
                     }),
                     function (e, l) {
                         switch (e) {
                             case 1:
-                                return o === r && l(n), t(1, l);
+                                return (o === r && l(n), t(1, l));
                             case 2:
                                 return f(t);
                             default:
@@ -229,7 +229,7 @@
                 function s(e, n) {
                     var o, i, u, a;
                     for (let l of (e.propsReady && ((o = e.propsReady), o(0, !1)), r)) {
-                        (i = e[t.required[l]]), i(0, n[l]);
+                        ((i = e[t.required[l]]), i(0, n[l]));
                     }
                     for (let o of l) {
                         o in n && ((u = e[t.optional[o]]), u(0, n[o]));
@@ -246,11 +246,11 @@
                                 return function (r, l) {
                                     switch (r) {
                                         case 1:
-                                            if (!l) return o(), c;
+                                            if (!l) return (o(), c);
                                             if (n === l) return;
-                                            return o(), (n = l), (t = e(1, l));
+                                            return (o(), (n = l), (t = e(1, l)));
                                         case 2:
-                                            o(), (n = null);
+                                            (o(), (n = null));
                                             return;
                                         default:
                                             throw Error(`unrecognized action ${r}`);
@@ -274,7 +274,7 @@
                                             n = ({ id: e, constructor: o, dependencies: r, singleton: l }) => {
                                                 if (l && t.has(e)) return t.get(e);
                                                 let i = o(r.map((e) => n(e)));
-                                                return l && t.set(e, i), i;
+                                                return (l && t.set(e, i), i);
                                             };
                                         return n(e);
                                     })(e)),
@@ -299,7 +299,7 @@
                                     (e, n) => (
                                         (e[n] = (e) => {
                                             var o;
-                                            (o = v[t.methods[n]]), o(0, e);
+                                            ((o = v[t.methods[n]]), o(0, e));
                                         }),
                                         e
                                     ),
@@ -318,7 +318,7 @@
                                                   o = {},
                                                   r = 0,
                                                   l = e.length;
-                                              for (; r < l; ) (o[e[r]] = 1), (r += 1);
+                                              for (; r < l;) ((o[e[r]] = 1), (r += 1));
                                               for (let e in t) o.hasOwnProperty(e) || (n[e] = t[e]);
                                               return n;
                                           })([...r, ...l, ...u], g),
@@ -422,10 +422,10 @@
                                     return l;
                                 })(n.children, t, 'offsetHeight', l),
                                 c = n.parentElement;
-                            for (; !c.dataset.virtuosoScroller; ) c = c.parentElement;
+                            for (; !c.dataset.virtuosoScroller;) c = c.parentElement;
                             let d = 'window' === c.lastElementChild.dataset.viewportType,
                                 f = u ? u.scrollTop : d ? window.pageYOffset || document.documentElement.scrollTop : c.scrollTop;
-                            r({
+                            (r({
                                 scrollTop: Math.max(f, 0),
                                 scrollHeight: u ? u.scrollHeight : d ? document.documentElement.scrollHeight : c.scrollHeight,
                                 viewportHeight: u ? u.offsetHeight : d ? window.innerHeight : c.offsetHeight,
@@ -439,7 +439,7 @@
                                             ? 0
                                             : parseInt(null != o ? o : '0', 10)),
                                     ),
-                                null !== s && e(s);
+                                null !== s && e(s));
                         },
                         [e, t, l, i, u, r],
                     ),
@@ -466,10 +466,10 @@
                                 d = () => {
                                     e({ scrollTop: Math.max(i, 0), scrollHeight: u, viewportHeight: c });
                                 };
-                            n.suppressFlushSync ? d() : r.flushSync(d),
+                            (n.suppressFlushSync ? d() : r.flushSync(d),
                                 null !== a.current &&
                                     (i === a.current || i <= 0 || i === u - c) &&
-                                    ((a.current = null), t(!0), s.current && (clearTimeout(s.current), (s.current = null)));
+                                    ((a.current = null), t(!0), s.current && (clearTimeout(s.current), (s.current = null))));
                         },
                         [e, t],
                     );
@@ -481,7 +481,7 @@
                             d({ target: e, suppressFlushSync: !0 }),
                             e.addEventListener('scroll', d, { passive: !0 }),
                             () => {
-                                l(null), e.removeEventListener('scroll', d);
+                                (l(null), e.removeEventListener('scroll', d));
                             }
                         );
                     }, [u, d, n, l, i]),
@@ -506,17 +506,17 @@
                                 (n.top = Math.ceil(Math.max(Math.min(r - o, n.top), 0))),
                                 j(o, r) || n.top === l)
                             ) {
-                                e({ scrollTop: l, scrollHeight: r, viewportHeight: o }), c && t(!0);
+                                (e({ scrollTop: l, scrollHeight: r, viewportHeight: o }), c && t(!0));
                                 return;
                             }
-                            c
+                            (c
                                 ? ((a.current = n.top),
                                   s.current && clearTimeout(s.current),
                                   (s.current = setTimeout(() => {
-                                      (s.current = null), (a.current = null), t(!0);
+                                      ((s.current = null), (a.current = null), t(!0));
                                   }, 1e3)))
                                 : (a.current = null),
-                                i.scrollTo(n);
+                                i.scrollTo(n));
                         },
                     }
                 );
@@ -637,7 +637,7 @@
                         if (J(t)) return [];
                         let { k: r, v: l, l: i, r: u } = t,
                             a = [];
-                        return r > n && (a = a.concat(e(i, n, o))), r >= n && r <= o && a.push({ k: r, v: l }), r <= o && (a = a.concat(e(u, n, o))), a;
+                        return (r > n && (a = a.concat(e(i, n, o))), r >= n && r <= o && a.push({ k: r, v: l }), r <= o && (a = a.concat(e(u, n, o))), a);
                     })(e, o, n),
                     ({ k: e, v: t }) => ({ index: e, value: t }),
                 );
@@ -649,9 +649,9 @@
                     l = [];
                 for (let i = 1; i < n; i++) {
                     let { index: n, value: u } = t(e[i]);
-                    l.push({ start: o, end: n - 1, value: r }), (o = n), (r = u);
+                    (l.push({ start: o, end: n - 1, value: r }), (o = n), (r = u));
                 }
-                return l.push({ start: o, end: 1 / 0, value: r }), l;
+                return (l.push({ start: o, end: 1 / 0, value: r }), l);
             }
             function eu(e) {
                 let { r: t, lvl: n } = e;
@@ -663,7 +663,7 @@
             }
             function es(e, t, n, o = 0) {
                 let r = e.length - 1;
-                for (; o <= r; ) {
+                for (; o <= r;) {
                     let l = Math.floor((o + r) / 2),
                         i = n(e[l], t);
                     if (0 === i) return l;
@@ -681,7 +681,7 @@
             function ed(e, t) {
                 let n = 0,
                     o = 0;
-                for (; n < e; ) (n += t[o + 1] - t[o] - 1), o++;
+                for (; n < e;) ((n += t[o + 1] - t[o] - 1), o++);
                 return o - (n !== e);
             }
             function ef({ index: e }, t) {
@@ -700,14 +700,14 @@
                     u = 0,
                     a = 0;
                 if (0 !== t) {
-                    (a = es(r, t - 1, ef)), (u = r[a].offset);
+                    ((a = es(r, t - 1, ef)), (u = r[a].offset));
                     let e = X(n, t - 1);
-                    (l = e[0]), (i = e[1]), r.length && r[a].size === X(n, t)[1] && (a -= 1), (r = r.slice(0, a + 1));
+                    ((l = e[0]), (i = e[1]), r.length && r[a].size === X(n, t)[1] && (a -= 1), (r = r.slice(0, a + 1)));
                 } else r = [];
                 for (let { start: e, value: a } of el(n, t, 1 / 0)) {
                     let t = e - l,
                         n = t * i + u + t * o;
-                    r.push({ offset: n, size: a, index: e }), (l = e), (u = n), (i = a);
+                    (r.push({ offset: n, size: a, index: e }), (l = e), (u = n), (i = a));
                 }
                 return { offsetTree: r, lastIndex: l, lastOffset: u, lastSize: i };
             }
@@ -742,7 +742,7 @@
                             let u = !1,
                                 a = !1;
                             for (let { start: n, end: o, value: r } of i)
-                                u
+                                (u
                                     ? (l >= n || t === r) &&
                                       (e = (function e(t, n) {
                                           if (J(t)) return Y;
@@ -767,7 +767,7 @@
                                           return n < o ? er(en(t, { l: e(r, n) })) : er(en(t, { r: e(l, n) }));
                                       })(e, n))
                                     : ((a = r !== t), (u = !0)),
-                                    o > l && l >= n && r !== t && (e = ee(e, l + 1, r));
+                                    o > l && l >= n && r !== t && (e = ee(e, l + 1, r)));
                             a && (e = ee(e, r, t));
                         }
                         return [e, n];
@@ -801,7 +801,7 @@
             function eT(e, t) {
                 if (!eI(t)) return e;
                 let n = 0;
-                for (; t.groupIndices[n] <= e + n; ) n++;
+                for (; t.groupIndices[n] <= e + n;) n++;
                 return e + n;
             }
             function eI(e) {
@@ -833,7 +833,7 @@
                                 ),
                                 [],
                             );
-                        h(
+                        (h(
                             I(
                                 a,
                                 E((e) => e.length > 0),
@@ -854,7 +854,7 @@
                                 ),
                                 n,
                             ),
-                            h(s, c);
+                            h(s, c));
                         let z = T(
                             I(
                                 s,
@@ -878,16 +878,16 @@
                                 S((e) => e.changed),
                             ),
                         );
-                        I(
+                        (I(
                             u,
                             b((e, t) => ({ diff: e.prev - t, prev: t }), { diff: 0, prev: 0 }),
                             S((e) => e.diff),
                         )(1, (e) => {
                             let { groupIndices: n } = m(y);
-                            if (e > 0) t(0, !0), l(0, e + ed(e, n));
+                            if (e > 0) (t(0, !0), l(0, e + ed(e, n)));
                             else if (e < 0) {
                                 let t = m(H);
-                                t.length > 0 && (e -= ed(-e, t)), i(0, e);
+                                (t.length > 0 && (e -= ed(-e, t)), i(0, e));
                             }
                         }),
                             I(u, B(e))(1, ([e, t]) => {
@@ -897,7 +897,7 @@
                                         { firstItemIndex: u },
                                         N.ERROR,
                                     );
-                            });
+                            }));
                         let k = x(l);
                         h(
                             I(
@@ -911,13 +911,13 @@
                                         let n = Q(t.sizeTree, 0),
                                             l = 0,
                                             i = 0;
-                                        for (; l < e; ) {
+                                        for (; l < e;) {
                                             let e = t.groupIndices[i],
                                                 u = t.groupIndices.length === i + 1 ? 1 / 0 : t.groupIndices[i + 1] - e - 1;
-                                            o.push({ startIndex: e, endIndex: e, size: n }),
+                                            (o.push({ startIndex: e, endIndex: e, size: n }),
                                                 o.push({ startIndex: e + 1, endIndex: e + 1 + u - 1, size: r }),
                                                 i++,
-                                                (l += u + 1);
+                                                (l += u + 1));
                                         }
                                         let u = et(t.sizeTree);
                                         return (
@@ -966,10 +966,10 @@
                                                 l = 0,
                                                 i = 0,
                                                 u = 0;
-                                            for (; l < -e; ) {
+                                            for (; l < -e;) {
                                                 u = r[i];
                                                 let e = r[i + 1] - u - 1;
-                                                i++, (l += e + 1);
+                                                (i++, (l += e + 1));
                                             }
                                             return (
                                                 (o = et(t.sizeTree).reduce((t, { k: n, v: o }) => ee(t, Math.max(0, n + e), o), o)),
@@ -1012,7 +1012,7 @@
                 eE = 'undefined' != typeof document && 'scrollBehavior' in document.documentElement.style;
             function eS(e) {
                 let t = 'number' == typeof e ? { index: e } : e;
-                return t.align || (t.align = 'start'), (t.behavior && eE) || (t.behavior = 'auto'), t.offset || (t.offset = 0), t;
+                return (t.align || (t.align = 'start'), (t.behavior && eE) || (t.behavior = 'auto'), t.offset || (t.offset = 0), t);
             }
             let ey = O(
                     ([
@@ -1035,7 +1035,7 @@
                             w = null,
                             C = null;
                         function E() {
-                            T && (T(), (T = null)), C && (C(), (C = null)), w && (clearTimeout(w), (w = null)), r(0, !1);
+                            (T && (T(), (T = null)), C && (C(), (C = null)), w && (clearTimeout(w), (w = null)), r(0, !1));
                         }
                         return (
                             h(
@@ -1049,26 +1049,26 @@
                                             y = l - 1,
                                             b = ex(g, t, y),
                                             H = ev(b, t.offsetTree, d) + a;
-                                        'end' === v
+                                        ('end' === v
                                             ? ((H += f + X(t.sizeTree, b)[1] - o + h), b === y && (H += s))
                                             : 'center' === v
                                               ? (H += (f + X(t.sizeTree, b)[1] - o + h) / 2)
                                               : (H -= i),
-                                            S && (H += S);
+                                            S && (H += S));
                                         let z = (t) => {
-                                            E(),
+                                            (E(),
                                                 t
                                                     ? (c('retrying to scroll to', { location: e }, N.DEBUG), m(0, e))
-                                                    : c('list did not change, scroll successful', {}, N.DEBUG);
+                                                    : c('list did not change, scroll successful', {}, N.DEBUG));
                                         };
                                         if ((E(), 'smooth' === x)) {
                                             let e = !1;
-                                            (C = n(1, (t) => {
+                                            ((C = n(1, (t) => {
                                                 e = e || t;
                                             })),
                                                 (T = p(u, () => {
                                                     z(e);
-                                                }));
+                                                })));
                                         } else
                                             T = p(
                                                 I(n, (e) => {
@@ -1110,7 +1110,7 @@
                         d = v(0),
                         f = T(I(k(I(L(t), H(1), y(!0)), I(L(t), H(1), y(!1), R(100))), C()), !1),
                         p = T(I(k(I(l, y(!0)), I(l, y(!1), R(200))), C()), !1);
-                    h(
+                    (h(
                         I(
                             P(L(t), L(d)),
                             S(([e, t]) => e <= t),
@@ -1118,7 +1118,7 @@
                         ),
                         u,
                     ),
-                        h(I(u, z(50)), s);
+                        h(I(u, z(50)), s));
                     let w = x(
                             I(
                                 P(e, L(n), L(o), L(r), L(c)),
@@ -1169,16 +1169,16 @@
                             ),
                             0,
                         );
-                    h(
+                    (h(
                         I(
                             w,
                             S((e) => e.atBottom),
                         ),
                         i,
                     ),
-                        h(I(i, z(50)), a);
+                        h(I(i, z(50)), a));
                     let M = v(eb);
-                    h(
+                    (h(
                         I(
                             e,
                             S(({ scrollTop: e }) => e),
@@ -1191,7 +1191,7 @@
                         ),
                         M,
                     ),
-                        h(I(e, z(50), y('none')), M);
+                        h(I(e, z(50), y('none')), M));
                     let F = v(0);
                     return (
                         h(
@@ -1269,15 +1269,15 @@
                                 E(([[, e], t, { sizeTree: n }, o, r]) => e && (!J(n) || s(o)) && !t && !r),
                                 B(u),
                             )(1, ([, e]) => {
-                                a(0, !0),
+                                (a(0, !0),
                                     (function e(t, n) {
                                         0 == t ? n() : requestAnimationFrame(() => e(t - 1, n));
                                     })(2, () => {
-                                        p(o, () => {
+                                        (p(o, () => {
                                             i(0, !0);
                                         }),
-                                            r(0, e);
-                                    });
+                                            r(0, e));
+                                    }));
                             }),
                             { scrolledToInitialItem: i, initialTopMostItemIndex: u }
                         );
@@ -1330,10 +1330,10 @@
                             }),
                             E(({ shouldFollow: e }) => e),
                         )(1, ({ totalCount: e, followOutputBehavior: n }) => {
-                            f && (f(), (f = null)),
+                            (f && (f(), (f = null)),
                                 (f = p(t, () => {
-                                    m(a)('following output to ', { totalCount: e }, N.DEBUG), h(n), (f = null);
-                                }));
+                                    (m(a)('following output to ', { totalCount: e }, N.DEBUG), h(n), (f = null));
+                                })));
                         }),
                         I(
                             P(L(c), e, i),
@@ -1458,9 +1458,9 @@
                     a = 0;
                 for (let r of e) {
                     let e;
-                    (!o || o.end < r.index) && ((o = u.shift()), (a = t.groupIndices.indexOf(o.start))),
+                    ((!o || o.end < r.index) && ((o = u.shift()), (a = t.groupIndices.indexOf(o.start))),
                         (e = r.index === o.start ? { type: 'group', index: a } : { index: r.index - (a + 1) + n, groupIndex: a }),
-                        i.push({ ...e, size: r.size, offset: r.offset, originalIndex: r.index, data: r.data });
+                        i.push({ ...e, size: r.size, offset: r.offset, originalIndex: r.index, data: r.data }));
                 }
                 return i;
             }
@@ -1545,7 +1545,7 @@
                                             let r = o.value,
                                                 l = Math.max(o.start, e),
                                                 i = Math.min(o.end, t);
-                                            for (let e = l; e <= i; e++) f.push({ index: e, size: r, offset: n, data: s && s[e] }), (n += r);
+                                            for (let e = l; e <= i; e++) (f.push({ index: e, size: r, offset: n, data: s && s[e] }), (n += r));
                                         }
                                     }
                                     if (!l) return eU([], f, n, a, o, u);
@@ -1567,7 +1567,7 @@
                                     let p = n - 1;
                                     return eU(
                                         (function (e, t) {
-                                            return t(e), e;
+                                            return (t(e), e);
                                         })([], (n) => {
                                             for (let o of h) {
                                                 let r = o.value,
@@ -1580,7 +1580,7 @@
                                                 }
                                                 i < m && ((l += (m - i) * u), (i = m));
                                                 let c = Math.min(o.end, p);
-                                                for (let e = i; e <= c && !(l >= t); e++) n.push({ index: e, size: u, offset: l, data: s && s[e] }), (l += u + a);
+                                                for (let e = i; e <= c && !(l >= t); e++) (n.push({ index: e, size: u, offset: l, data: s && s[e] }), (l += u + a));
                                             }
                                         }),
                                         f,
@@ -1595,7 +1595,7 @@
                             ),
                             eG,
                         );
-                        h(
+                        (h(
                             I(
                                 n,
                                 E(s),
@@ -1624,7 +1624,7 @@
                                     S((e) => e.items),
                                 ),
                                 b,
-                            );
+                            ));
                         let R = x(
                                 I(
                                     H,
@@ -1652,8 +1652,8 @@
                                     S(({ items: e }) => {
                                         let t = 0,
                                             n = e.length - 1;
-                                        for (; 'group' === e[t].type && t < n; ) t++;
-                                        for (; 'group' === e[n].type && n > t; ) n--;
+                                        for (; 'group' === e[t].type && t < n;) t++;
+                                        for (; 'group' === e[n].type && n > t;) n--;
                                         return { startIndex: e[t].index, endIndex: e[n].index };
                                     }),
                                     C(eF),
@@ -1753,7 +1753,7 @@
                                 ),
                                 0,
                             );
-                        return h(L(i), l), { totalListHeight: i, totalListHeightChanged: l };
+                        return (h(L(i), l), { totalListHeight: i, totalListHeightChanged: l });
                     },
                     u(q, e$),
                     { singleton: !0 },
@@ -1829,23 +1829,23 @@
                                             i = Q(o, 0),
                                             u = 0,
                                             a = 0;
-                                        for (; u < e; ) {
-                                            u++, (l += i);
+                                        for (; u < e;) {
+                                            (u++, (l += i));
                                             let o = n.length === a + 1 ? 1 / 0 : n[a + 1] - n[a] - 1;
-                                            u + o > e && ((l -= i), (o = e - u + 1)), (u += o), (l += o * (t + r)), a++;
+                                            (u + o > e && ((l -= i), (o = e - u + 1)), (u += o), (l += o * (t + r)), a++);
                                         }
                                         return l;
                                     }
                                 }),
                             )(1, (t) => {
-                                n(0, t),
+                                (n(0, t),
                                     requestAnimationFrame(() => {
-                                        e(0, { top: t }),
+                                        (e(0, { top: t }),
                                             requestAnimationFrame(() => {
                                                 var e;
-                                                (e = 0), n(0, 0), p(0, !1);
-                                            });
-                                    });
+                                                ((e = 0), n(0, 0), p(0, !1));
+                                            }));
+                                    }));
                             }),
                             { deviation: n }
                         );
@@ -2083,7 +2083,7 @@
                 te = eZ(() => {
                     if ('undefined' == typeof document) return e9;
                     let e = document.createElement('div');
-                    return (e.style.position = e8), e.style.position === e8 ? e8 : e9;
+                    return ((e.style.position = e8), e.style.position === e8 ? e8 : e9);
                 });
             function tt(e, t) {
                 let n = o.useRef(null),
@@ -2096,9 +2096,9 @@
                             if (t) {
                                 let e = t.getBoundingClientRect(),
                                     n = i.top - e.top;
-                                (r = e.height - Math.max(0, n)), (l = n + t.scrollTop);
-                            } else (r = window.innerHeight - Math.max(0, i.top)), (l = i.top + window.pageYOffset);
-                            (n.current = { offsetTop: l, visibleHeight: r, visibleWidth: u }), e(n.current);
+                                ((r = e.height - Math.max(0, n)), (l = n + t.scrollTop));
+                            } else ((r = window.innerHeight - Math.max(0, i.top)), (l = i.top + window.pageYOffset));
+                            ((n.current = { offsetTop: l, visibleHeight: r, visibleWidth: u }), e(n.current));
                         },
                         [e, t],
                     ),
@@ -2113,7 +2113,7 @@
                                 window.addEventListener('scroll', u),
                                 window.addEventListener('resize', u),
                                 () => {
-                                    window.removeEventListener('scroll', u), window.removeEventListener('resize', u);
+                                    (window.removeEventListener('scroll', u), window.removeEventListener('resize', u));
                                 }
                             );
                         {
@@ -2122,7 +2122,7 @@
                             return (
                                 e.observe(t),
                                 () => {
-                                    t.removeEventListener('scroll', u), e.unobserve(t);
+                                    (t.removeEventListener('scroll', u), e.unobserve(t));
                                 }
                             );
                         }
@@ -2469,7 +2469,7 @@
                         G = v(0),
                         _ = v(void 0),
                         U = v({ row: 0, column: 0 });
-                    h(
+                    (h(
                         I(
                             w,
                             B(F, _),
@@ -2488,7 +2488,7 @@
                                     if (0 === e || 0 === d) return tH;
                                     if (0 === c) {
                                         var f;
-                                        return (f = tO(0, 0, i)), { ...tz, items: f };
+                                        return ((f = tO(0, 0, i)), { ...tz, items: f });
                                     }
                                     let m = tD(d, c, a),
                                         h = m * tk((t + u) / (s + u)),
@@ -2527,7 +2527,7 @@
                                 C(eM),
                             ),
                             n,
-                        );
+                        ));
                     let $ = v(!1);
                     h(
                         I(
@@ -2563,7 +2563,7 @@
                                 C(eF),
                             ),
                         );
-                    h(q, m.scrollSeekRangeChanged),
+                    (h(q, m.scrollSeekRangeChanged),
                         h(
                             I(
                                 D,
@@ -2582,7 +2582,7 @@
                                 }),
                             ),
                             i,
-                        );
+                        ));
                     let Y = T(
                         I(
                             A,
@@ -2701,8 +2701,8 @@
                         p = _((e) => {
                             u(e.parentElement.parentElement.scrollHeight);
                             let t = e.firstChild;
-                            t && f(t.getBoundingClientRect()),
-                                m({ row: t0('row-gap', getComputedStyle(e).rowGap, h), column: t0('column-gap', getComputedStyle(e).columnGap, h) });
+                            (t && f(t.getBoundingClientRect()),
+                                m({ row: t0('row-gap', getComputedStyle(e).rowGap, h), column: t0('column-gap', getComputedStyle(e).columnGap, h) }));
                         });
                     return o.createElement(
                         s,

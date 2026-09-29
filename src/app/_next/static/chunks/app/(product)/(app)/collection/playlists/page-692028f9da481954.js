@@ -4,10 +4,10 @@
         2047: (e, t, a) => {
             'use strict';
             var l;
-            a.d(t, { L: () => l }),
+            (a.d(t, { L: () => l }),
                 (function (e) {
-                    (e.PUBLIC = 'public'), (e.PRIVATE = 'private');
-                })(l || (l = {}));
+                    ((e.PUBLIC = 'public'), (e.PRIVATE = 'private'));
+                })(l || (l = {})));
         },
         9813: (e) => {
             e.exports = {
@@ -47,7 +47,7 @@
             'use strict';
             a.d(t, { a: () => l });
             var l = (function (e) {
-                return (e[(e.CREATED = 0)] = 'CREATED'), (e[(e.LIKED = 1)] = 'LIKED'), e;
+                return ((e[(e.CREATED = 0)] = 'CREATED'), (e[(e.LIKED = 1)] = 'LIKED'), e);
             })({});
         },
         44277: (e, t, a) => {
@@ -86,7 +86,7 @@
                         if (e) {
                             let { href: t } = (0, P.u)('/playlists/:playlistUuid', { params: { playlistUuid: e } });
                             b.push(t);
-                        } else p((0, l.jsx)(I.h, { error: a({ id: 'playlist-errors.failed-to-create-playlist' }) }), { containerId: C.u.ERROR }), (T.current = !1);
+                        } else (p((0, l.jsx)(I.h, { error: a({ id: 'playlist-errors.failed-to-create-playlist' }) }), { containerId: C.u.ERROR }), (T.current = !1));
                     }, [i, a, b, p]);
                 return (
                     (0, o.useEffect)(
@@ -123,7 +123,7 @@
             });
         },
         52302: (e, t, a) => {
-            Promise.resolve().then(a.bind(a, 3377)), Promise.resolve().then(a.bind(a, 67671));
+            (Promise.resolve().then(a.bind(a, 3377)), Promise.resolve().then(a.bind(a, 67671)));
         },
         67081: (e) => {
             e.exports = {
@@ -155,7 +155,7 @@
                 p = a(3796),
                 g = a(57594),
                 b = (function (e) {
-                    return (e.CREATED = 'created'), (e.LIKED = 'liked'), e;
+                    return ((e.CREATED = 'created'), (e.LIKED = 'liked'), e);
                 })({}),
                 T = a(97201),
                 x = a(58054),
@@ -543,7 +543,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 7231, 6347, 3183, 9763, 6639, 7258, 808, 3379, 3647, 1722, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6477, 7275, 2586,
@@ -551,6 +551,6 @@
             ],
             () => e((e.s = 52302)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

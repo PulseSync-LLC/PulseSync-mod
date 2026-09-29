@@ -143,13 +143,13 @@
                     s = (0, L.W)(),
                     { from: E } = (0, N.f)({ pageId: g._Q.COLLECTION_KIDS }),
                     { formatMessage: K } = (0, l.A)();
-                (0, o.useEffect)(
+                ((0, o.useEffect)(
                     () => () => {
                         e.reset();
                     },
                     [e],
                 ),
-                    (0, A.J)(e.isResolved);
+                    (0, A.J)(e.isResolved));
                 let z = (0, m.L)(() =>
                     e.tracks.loadedItems.slice(0, 5).map((t, i) => {
                         let a = {
@@ -489,11 +489,11 @@
                 var t = l[e];
                 if (void 0 !== t) return t.exports;
                 var i = (l[e] = { exports: {} });
-                return o[e](i, i.exports, n), i.exports;
+                return (o[e](i, i.exports, n), i.exports);
             }
             var c = {};
-            (() => {
-                Object.defineProperty(c, 'X', { value: !0 }), (c.l = void 0);
+            ((() => {
+                (Object.defineProperty(c, 'X', { value: !0 }), (c.l = void 0));
                 let e = n(810),
                     t = n(352);
                 c.l = (i) => {
@@ -503,7 +503,7 @@
                             let e = null == i ? void 0 : i.current;
                             e && (a(0 === e.scrollLeft), o(e.scrollWidth - e.scrollLeft <= e.offsetWidth + 10));
                         };
-                    (0, e.useEffect)(() => {
+                    ((0, e.useEffect)(() => {
                         l();
                     }, [i, l]),
                         (0, e.useEffect)(() => {
@@ -512,10 +512,10 @@
                                 null == e || e.addEventListener('scroll', l),
                                 window.addEventListener('resize', l),
                                 () => {
-                                    null == e || e.removeEventListener('scroll', l), window.removeEventListener('resize', l);
+                                    (null == e || e.removeEventListener('scroll', l), window.removeEventListener('resize', l));
                                 }
                             );
-                        }, [i, l]);
+                        }, [i, l]));
                     let n = (0, e.useMemo)(
                         () =>
                             (0, t.throttle)(
@@ -546,7 +546,7 @@
                     };
                 };
             })(),
-                c.X;
+                c.X);
             var d = c.l;
         },
         49518: (e, t, i) => {
@@ -567,7 +567,7 @@
                 p = i(23338),
                 v = i.n(p),
                 k = (function (e) {
-                    return (e.ONE = 'one'), (e.TWO = 'two'), e;
+                    return ((e.ONE = 'one'), (e.TWO = 'two'), e);
                 })({});
             let C = (e) => {
                     let {
@@ -697,13 +697,13 @@
                     { swipeBackward: v, swipeForward: k, shouldBackwardButtonBeDisabled: C, shouldForwardButtonBeDisabled: x, shouldHideControls: f } = (0, l.Y)(t),
                     y = (0, s.useCallback)(
                         (e) => {
-                            v(), e.stopPropagation();
+                            (v(), e.stopPropagation());
                         },
                         [v],
                     ),
                     g = (0, s.useCallback)(
                         (e) => {
-                            k(), e.stopPropagation();
+                            (k(), e.stopPropagation());
                         },
                         [k],
                     );
@@ -837,7 +837,7 @@
                         };
                     })(),
                     g = (0, o.useCallback)(() => {
-                        y(), (window.location.href = k.Z.main.href);
+                        (y(), (window.location.href = k.Z.main.href));
                     }, [y]),
                     { contentRef: j } = (0, v.g)();
                 return (0, r.jsxs)('div', {
@@ -1257,10 +1257,10 @@
                         let s = { ...(0, a.HO)(e), url: e.url, isLiked: !e.isLiked };
                         _(!0);
                         let o = await e.toggleLike();
-                        _(!1),
+                        (_(!1),
                             o === l.f.OK
                                 ? i((0, r.jsx)(h, { playlist: s }), { containerId: n.u.INFO })
-                                : i((0, r.jsx)(u.h, { error: p({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, r.jsx)(u.h, { error: p({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [t.isAuthorized, m, e, p, i]);
                 };
         },
@@ -1301,10 +1301,10 @@
                         let s = { ...(0, a.HO)(e), url: e.url, isPinned: !e.isPinned };
                         h(!0);
                         let o = await e.togglePin();
-                        h(!1),
+                        (h(!1),
                             o
                                 ? i((0, r.jsx)(_, { playlist: s }), { containerId: l.u.INFO })
-                                : i((0, r.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR });
+                                : i((0, r.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
                     }, [t.isAuthorized, m, e, i, u]);
                 };
         },
@@ -1316,7 +1316,7 @@
                 s = {
                     5881: (e, t, i) => {
                         function r() {
-                            for (var e, t, i = 0, r = ''; i < arguments.length; )
+                            for (var e, t, i = 0, r = ''; i < arguments.length;)
                                 (e = arguments[i++]) &&
                                     (t = (function e(t) {
                                         var i,
@@ -1331,11 +1331,11 @@
                                     (r && (r += ' '), (r += t));
                             return r;
                         }
-                        i.r(t), i.d(t, { clsx: () => r, default: () => a });
+                        (i.r(t), i.d(t, { clsx: () => r, default: () => a }));
                         let a = r;
                     },
                     9058: (e, t, i) => {
-                        i.r(t), i.d(t, { default: () => r });
+                        (i.r(t), i.d(t, { default: () => r }));
                         let r = { root: 'IZnFMW4gXBshJODnvB1P', item: 'VJ9IexhAEuYSCyGiMfN4' };
                     },
                     9097: (e, t) => {
@@ -1347,7 +1347,7 @@
                             else r = t;
                             return { $$typeof: i, type: e, key: a, ref: void 0 !== (t = r.ref) ? t : null, props: r };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = r), (t.jsxs = r));
                     },
                     4377: (e, t, i) => {
                         e.exports = i(9097);
@@ -1358,7 +1358,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Carousel = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Carousel = void 0));
                         let a = i(4377),
                             s = i(5881),
                             o = i(810),
@@ -1384,19 +1384,19 @@
                 var t = o[e];
                 if (void 0 !== t) return t.exports;
                 var i = (o[e] = { exports: {} });
-                return s[e].call(i.exports, i, i.exports, l), i.exports;
+                return (s[e].call(i.exports, i, i.exports, l), i.exports);
             }
-            (l.d = (e, t) => {
+            ((l.d = (e, t) => {
                 for (var i in t) l.o(t, i) && !l.o(e, i) && Object.defineProperty(e, i, { enumerable: !0, get: t[i] });
             }),
                 (l.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (l.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var n = {};
             (() => {
-                Object.defineProperty(n, 'X', { value: !0 }), (n.l = void 0);
+                (Object.defineProperty(n, 'X', { value: !0 }), (n.l = void 0));
                 var e = l(5056);
                 Object.defineProperty(n, 'l', {
                     enumerable: !0,
@@ -1481,7 +1481,7 @@
                 u = (0, a.forwardRef)((e, t) => (0, r.jsx)(d, { forwardRef: t, ...e }));
         },
         77514: (e, t, i) => {
-            Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 16890));
+            (Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 16890)));
         },
         81354: (e, t, i) => {
             'use strict';
@@ -1491,19 +1491,19 @@
                 s = i(30782),
                 o = i(55178),
                 l = i(60900);
-            !(function (e) {
-                (e.formatDate = 'FormattedDate'),
+            (!(function (e) {
+                ((e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName');
+                    (e.formatDisplayName = 'FormattedDisplayName'));
             })(r || (r = {})),
                 (function (e) {
-                    (e.formatDate = 'FormattedDateParts'),
+                    ((e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts');
-                })(a || (a = {}));
+                        (e.formatList = 'FormattedListParts'));
+                })(a || (a = {})));
             var n = function (e) {
                 var t = (0, l.A)(),
                     i = e.value,
@@ -1520,7 +1520,7 @@
                         n = 'string' == typeof r ? new Date(r || 0) : r;
                     return a('formatDate' === e ? i.formatDateToParts(n, o) : i.formatTimeToParts(n, o));
                 };
-                return (t.displayName = a[e]), t;
+                return ((t.displayName = a[e]), t);
             }
             function d(e) {
                 var t = function (t) {
@@ -1533,11 +1533,11 @@
                     var d = i.textComponent || o.Fragment;
                     return o.createElement(d, null, c);
                 };
-                return (t.displayName = r[e]), t;
+                return ((t.displayName = r[e]), t);
             }
-            (n.displayName = 'FormattedNumberParts'), (n.displayName = 'FormattedNumberParts');
+            ((n.displayName = 'FormattedNumberParts'), (n.displayName = 'FormattedNumberParts'));
             var u = d('formatDate');
-            d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime');
+            (d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime'));
         },
         83460: (e, t, i) => {
             'use strict';
@@ -1640,7 +1640,7 @@
                                     {
                                         icon: (0, r.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: icon, size: 'xxs' }),
                                         onClick: () => {
-                                            activate(), a?.(!1);
+                                            (activate(), a?.(!1));
                                         },
                                         children: label,
                                         'data-pulsesync-addon-menu-item': '',
@@ -1688,33 +1688,33 @@
                     eh = (0, f.P)(),
                     ep = (0, u.c)((e) => {
                         if ((e.stopPropagation(), eh())) return void e.preventDefault();
-                        M.setUtmLink(X), M.openPlaylistTrailer(i.id), e_(n.ky.Playlist, i.id);
+                        (M.setUtmLink(X), M.openPlaylistTrailer(i.id), e_(n.ky.Playlist, i.id));
                     }),
                     [ev, ek] = (0, o.useState)(!1),
                     { isPlaying: eC, togglePlay: ex } = (0, T.D)({
                         playContextParams: { contextData: { type: d.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: Y, utmLink: X }, loadContextMeta: !0 },
                     }),
                     ef = (0, u.c)(() => {
-                        ed({ to: n.QT.PlaylistScreen }), null == J || J();
+                        (ed({ to: n.QT.PlaylistScreen }), null == J || J());
                     }),
                     ey = (0, u.c)((e) => {
-                        ef(), em(e);
+                        (ef(), em(e));
                     }),
                     eg = (0, b.N)(),
                     ej = (0, u.c)(() => {
                         if (!eh()) {
                             if (eg) return void V.open();
-                            et || eC || (ei(!0), null == ee || ee()), ex(), eu(!eC);
+                            (et || eC || (ei(!0), null == ee || ee()), ex(), eu(!eC));
                         }
                     }),
                     eN = (0, u.c)(() => {
-                        er || i.isLiked || (ea(!0), null == q || q()), en();
+                        (er || i.isLiked || (ea(!0), null == q || q()), en());
                     }),
                     eL = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eb = (0, u.c)((e) => {
-                        eo(e), ek(e);
+                        (eo(e), ek(e));
                     }),
                     eA = (0, o.useMemo)(() => {
                         var e;
@@ -1953,10 +1953,10 @@
                     return (0, r.useCallback)(() => {
                         if (!t || !C || !c.xK.includes(C) || !v.includes(C) || e.current) return;
                         let r = { hash: k, pageId: n.F[C], entityType: N, entityId: j, entityPosX: L, entityPosY: I, objectsCount: T };
-                        void 0 !== P && ((r.filterKey = P), (r.filterValue = B), (r.filterPos = w)),
+                        (void 0 !== P && ((r.filterKey = P), (r.filterValue = B), (r.filterPos = w)),
                             c.qG.includes(C) && ((r.tabId = x), (r.tabPos = f), (r.isTabSelectedByDefault = y)),
                             R && (r.skeletonId = R),
-                            S && A && ((r.mainObjectType = A), (r.mainObjectId = S));
+                            S && A && ((r.mainObjectType = A), (r.mainObjectId = S)));
                         let s = (0, a.Fx)({ params: r, logger: i, context: 'useSendEventOnBlockLoaded' });
                         s && ((0, a.uY)(t.evgenInstance, s), (e.current = !0));
                     }, [t, C, k, N, j, L, I, P, B, w, T, R, S, A, i, x, f, y]);
@@ -2061,7 +2061,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 7258, 7231, 7972, 6347, 3183, 9763, 8868, 6639, 313, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 6252, 6477, 7275, 2586, 8347,
@@ -2069,6 +2069,6 @@
             ],
             () => e((e.s = 77514)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

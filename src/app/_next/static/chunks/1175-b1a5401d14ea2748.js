@@ -37,10 +37,10 @@
                             t = _ ? Number(_.offsetTop) - e : e;
                         t < 0 && (t = 0);
                         let l = (e) => {
-                            B(e > t),
+                            (B(e > t),
                                 h && y(e > 30),
                                 (null == T ? void 0 : T.current) && b(c({ element: null == T ? void 0 : T.current, scrollTop: e, isMobile: R })),
-                                (null == x ? void 0 : x.current) && w(c({ element: null == x ? void 0 : x.current, scrollTop: e, isMobile: R }));
+                                (null == x ? void 0 : x.current) && w(c({ element: null == x ? void 0 : x.current, scrollTop: e, isMobile: R })));
                         };
                         R ? l(window.scrollY) : r && l(r.scrollTop);
                     }, [u, _, R, h, T, x, r]);
@@ -98,7 +98,7 @@
                 s = r(55178),
                 n = {
                     6699: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDebouncedToggle = void 0));
                         let l = r(352),
                             i = r(810);
                         t.useDebouncedToggle = (e) => {
@@ -108,16 +108,16 @@
                                 d = (0, i.useMemo)(
                                     () =>
                                         (0, l.throttle)(() => {
-                                            o(!r),
+                                            (o(!r),
                                                 n.current && window.clearTimeout(n.current),
                                                 (n.current = window.setTimeout(() => {
                                                     o(!!r);
-                                                }, t));
+                                                }, t)));
                                         }, s),
                                     [t, r, s],
                                 ),
                                 c = (0, i.useCallback)(() => {
-                                    o(!!r), n.current && window.clearTimeout(n.current);
+                                    (o(!!r), n.current && window.clearTimeout(n.current));
                                 }, [r]);
                             return (
                                 (0, i.useEffect)(
@@ -131,14 +131,14 @@
                         };
                     },
                     361: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }),
+                        (Object.defineProperty(t, '__esModule', { value: !0 }),
                             (t.getElementFromRefOrElement = void 0),
                             (t.getElementFromRefOrElement = (e) => {
                                 if (void 0 !== e) {
                                     if (null === e || e instanceof HTMLElement) return e;
                                     if (null === e.current || e.current instanceof HTMLElement) return e.current;
                                 }
-                            });
+                            }));
                     },
                     352: (e) => {
                         e.exports = i;
@@ -152,11 +152,11 @@
                 var t = a[e];
                 if (void 0 !== t) return t.exports;
                 var r = (a[e] = { exports: {} });
-                return n[e](r, r.exports, o), r.exports;
+                return (n[e](r, r.exports, o), r.exports);
             }
             var d = {};
-            (() => {
-                Object.defineProperty(d, '__esModule', { value: !0 }), (d.useScroll = void 0);
+            ((() => {
+                (Object.defineProperty(d, '__esModule', { value: !0 }), (d.useScroll = void 0));
                 let e = o(810),
                     t = o(361),
                     r = o(6699);
@@ -164,7 +164,7 @@
                     let { onScroll: i, listenIsScrolling: s, elementRef: n } = l,
                         { state: a, handleDebouncedToggle: o } = (0, r.useDebouncedToggle)({ delay: 1e3, throttleTimeout: 100 }),
                         d = (0, e.useCallback)(() => {
-                            s && o(), null == i || i();
+                            (s && o(), null == i || i());
                         }, [s, o, i]);
                     return (
                         (0, e.useEffect)(() => {
@@ -172,13 +172,13 @@
                             if (null === e) return;
                             let r = null != e ? e : window,
                                 l = { capture: !0, passive: !0 };
-                            return r.addEventListener('scroll', d, l), () => r.removeEventListener('scroll', d, l);
+                            return (r.addEventListener('scroll', d, l), () => r.removeEventListener('scroll', d, l));
                         }, [n, d]),
                         a
                     );
                 };
             })(),
-                d.__esModule;
+                d.__esModule);
             var c = d.useScroll;
         },
         47584: (e) => {

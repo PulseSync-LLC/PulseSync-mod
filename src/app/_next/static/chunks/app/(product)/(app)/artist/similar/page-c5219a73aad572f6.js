@@ -12,9 +12,9 @@
         3785: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { M: () => a }),
+            (i.d(t, { M: () => a }),
                 (function (e) {
-                    (e.MODAL = 'modal'),
+                    ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
                         (e.AGE_18 = 'age18'),
@@ -23,8 +23,8 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                        (e.SUBSTITUTED_ICON = 'substitutedIcon');
-                })(a || (a = {}));
+                        (e.SUBSTITUTED_ICON = 'substitutedIcon'));
+                })(a || (a = {})));
         },
         5942: (e, t, i) => {
             'use strict';
@@ -66,10 +66,10 @@
                         let r = { ...(0, n.HO)(e), isLiked: !e.isLiked };
                         g(!0);
                         let s = await e.toggleLike();
-                        g(!1),
+                        (g(!1),
                             s === l.f.OK
                                 ? i((0, a.jsx)(_, { artist: r }), { containerId: o.u.INFO })
-                                : i((0, a.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, a.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [e, t.isAuthorized, m, h, i]);
                 };
         },
@@ -139,7 +139,7 @@
                     ef = (0, A.P)(),
                     ex = (0, u.c)((e) => {
                         if ((e.stopPropagation(), ef())) return void e.preventDefault();
-                        G.openArtistTrailer(t.id), ev(o.ky.Artist, t.id);
+                        (G.openArtistTrailer(t.id), ev(o.ky.Artist, t.id));
                     }),
                     eA = (0, s.useMemo)(() => {
                         let e = J({ id: 'entity-names.artist-name' }, { artistName: eu }),
@@ -152,23 +152,23 @@
                     eE = (0, v.S)({ artist: t, callback: eh }),
                     eN = (0, v.S)({ artist: t, callback: ek }),
                     eC = (0, u.c)((e) => {
-                        null == en || en(), es({ to: o.QT.ArtistScreen }), eE(e);
+                        (null == en || en(), es({ to: o.QT.ArtistScreen }), eE(e));
                     }),
                     ej = (0, j.N)(),
                     eS = (0, u.c)(() => {
                         if (!ef()) {
                             if (ej) return void Y.open();
-                            V || ey || (q(!0), null == er || er()), eN(), el(!ey);
+                            (V || ey || (q(!0), null == er || er()), eN(), el(!ey));
                         }
                     }),
                     eT = (0, u.c)(() => {
-                        Q || eg || (ee(!0), null == ea || ea()), eo();
+                        (Q || eg || (ee(!0), null == ea || ea()), eo());
                     }),
                     eL = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eb = (0, u.c)((e) => {
-                        ei(e), ep(e);
+                        (ei(e), ep(e));
                     }),
                     eI = (0, s.useMemo)(
                         () =>
@@ -335,7 +335,7 @@
                     n = t[0];
                 return i.e(t[1]).then(() => i.t(n, 19));
             }
-            (n.keys = () => Object.keys(a)), (n.id = 12526), (e.exports = n);
+            ((n.keys = () => Object.keys(a)), (n.id = 12526), (e.exports = n));
         },
         14190: (e, t, i) => {
             'use strict';
@@ -405,9 +405,9 @@
         18870: (e, t, i) => {
             'use strict';
             var a;
-            i.d(t, { $: () => a }),
+            (i.d(t, { $: () => a }),
                 (function (e) {
-                    (e.RU = 'ru'),
+                    ((e.RU = 'ru'),
                         (e.EN = 'en'),
                         (e.UK = 'uk'),
                         (e.BE = 'be'),
@@ -428,8 +428,8 @@
                         (e.EL = 'el'),
                         (e.RO = 'ro'),
                         (e.MO = 'mo'),
-                        (e.AR = 'ar');
-                })(a || (a = {}));
+                        (e.AR = 'ar'));
+                })(a || (a = {})));
         },
         20472: (e, t, i) => {
             'use strict';
@@ -480,13 +480,13 @@
                     let i = window.document.querySelector('meta['.concat(e, '="').concat(t, '"]'));
                     if (i) return i;
                     let a = window.document.createElement('meta');
-                    return a.setAttribute(e, t), a;
+                    return (a.setAttribute(e, t), a);
                 },
                 n = (e) => {
                     let { title: t, description: i, openGraph: n } = e;
                     if (('string' == typeof t && (window.document.title = t), 'string' == typeof i)) {
                         let e = a('name', 'description');
-                        e.setAttribute('content', i), window.document.head.appendChild(e);
+                        (e.setAttribute('content', i), window.document.head.appendChild(e));
                     }
                     let r = '';
                     if (n) {
@@ -497,12 +497,12 @@
                         let s = a('property', 'og:title'),
                             l = a('property', 'og:description'),
                             o = a('property', 'og:image');
-                        s.setAttribute('content', e),
+                        (s.setAttribute('content', e),
                             l.setAttribute('content', t),
                             o.setAttribute('content', r),
                             window.document.head.appendChild(s),
                             window.document.head.appendChild(l),
-                            window.document.head.appendChild(o);
+                            window.document.head.appendChild(o));
                     }
                 };
         },
@@ -606,7 +606,7 @@
                         S = (0, g.N)().get(m.U2),
                         T = (0, c.c)(() => {
                             if (A) return A();
-                            C.canBack && C.back(), j();
+                            (C.canBack && C.back(), j());
                         }),
                         L = (null == N || null == (t = N.details) ? void 0 : t.url) && N.details.text,
                         b = (0, c.c)(() => {
@@ -619,13 +619,13 @@
                                     null != (e = null == i ? void 0 : i.entityKey)
                                         ? e
                                         : ''.concat(null == i ? void 0 : i.entityType, '_').concat(null == i ? void 0 : i.entityId);
-                            t ? S.set(f.c.ExEx, [...t, r], { expires: new Date(n) }) : S.set(f.c.ExEx, [r], { expires: new Date(n) }),
+                            (t ? S.set(f.c.ExEx, [...t, r], { expires: new Date(n) }) : S.set(f.c.ExEx, [r], { expires: new Date(n) }),
                                 null == A || A(),
-                                (null == i ? void 0 : i.onDisclaimerConfirmHandler) && i.onDisclaimerConfirmHandler();
+                                (null == i ? void 0 : i.onDisclaimerConfirmHandler) && i.onDisclaimerConfirmHandler());
                         }),
                         I = (0, c.c)(() => {
-                            (null == i ? void 0 : i.shouldHistoryBack) ? (null == A || A(), C.canBack && C.back(), j()) : null == A || A(),
-                                (null == i ? void 0 : i.onDisclaimerRejectHandler) && i.onDisclaimerRejectHandler();
+                            ((null == i ? void 0 : i.shouldHistoryBack) ? (null == A || A(), C.canBack && C.back(), j()) : null == A || A(),
+                                (null == i ? void 0 : i.onDisclaimerRejectHandler) && i.onDisclaimerRejectHandler());
                         });
                     (0, s.useEffect)(
                         () => () => {
@@ -873,7 +873,7 @@
                     return (e, t) => {
                         let r = null == n ? void 0 : n[e.id],
                             s = '';
-                        return (Array.isArray(r) || 'string' == typeof r) && (s = new a.S(r, i).format(t)), Array.isArray(s) ? s.join('') : s;
+                        return ((Array.isArray(r) || 'string' == typeof r) && (s = new a.S(r, i).format(t)), Array.isArray(s) ? s.join('') : s);
                     };
                 };
         },
@@ -896,7 +896,7 @@
                     n = t[0];
                 return i.e(t[1]).then(() => i.t(n, 19));
             }
-            (n.keys = () => Object.keys(a)), (n.id = 46646), (e.exports = n);
+            ((n.keys = () => Object.keys(a)), (n.id = 46646), (e.exports = n));
         },
         47216: (e, t, i) => {
             'use strict';
@@ -1094,7 +1094,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [s, c, d];
-                                    return 'ru' === r && e.push(o), e.push(u), e;
+                                    return ('ru' === r && e.push(o), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [s, c, d, u];
@@ -1224,7 +1224,7 @@
                         };
                     })(),
                     k = (0, s.useCallback)(() => {
-                        y(), (window.location.href = v.Z.main.href);
+                        (y(), (window.location.href = v.Z.main.href));
                     }, [y]),
                     { contentRef: E } = (0, p.g)();
                 return (0, a.jsxs)('div', {
@@ -1327,16 +1327,16 @@
                         let r = { ...(0, n.HO)(e), isPinned: !e.isPinned };
                         h(!0);
                         let s = await e.togglePin();
-                        h(!1),
+                        (h(!1),
                             s
                                 ? i((0, a.jsx)(g, { artist: r }), { containerId: l.u.INFO })
-                                : i((0, a.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR });
+                                : i((0, a.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
                     }, [e, t.isAuthorized, m, u, i]);
                 };
         },
         72404: (e, t, i) => {
             'use strict';
-            i.r(t), i.d(t, { default: () => K });
+            (i.r(t), i.d(t, { default: () => K }));
             var a = i(32290),
                 n = i(21916),
                 r = i(96103),
@@ -1410,7 +1410,7 @@
                     { contentScrollRef: P, setContentScrollRef: W } = (0, x.g)(),
                     H = (0, f.W)(),
                     F = (0, _.S)({ artist: null == (t = R.meta) ? void 0 : t.artist, shouldHistoryBack: !0 });
-                (0, z.G)(b),
+                ((0, z.G)(b),
                     (0, s.useEffect)(() => {
                         var e;
                         (null == (e = R.meta) ? void 0 : e.artist.isUnsafeLegal) && F();
@@ -1423,7 +1423,7 @@
                         [R],
                     ),
                     R.similarArtistsSubPage.isNotFound && (0, n.notFound)(),
-                    (0, A.J)(R.similarArtistsSubPage.isResolved);
+                    (0, A.J)(R.similarArtistsSubPage.isResolved));
                 let K = (0, s.useMemo)(() => {
                         if (R.similarArtistsSubPage.isResolved) {
                             var e;
@@ -1497,7 +1497,7 @@
             var F = i(17024);
             let K = () => {
                 let e = (0, n.useSearchParams)().get('artistId');
-                return (e && (0, F.L)(e)) || (0, n.notFound)(), (0, a.jsx)(H, { artistId: e });
+                return ((e && (0, F.L)(e)) || (0, n.notFound)(), (0, a.jsx)(H, { artistId: e }));
             };
         },
         73422: (e, t, i) => {
@@ -1554,7 +1554,7 @@
                     try {
                         this.dictionary = await (0, d.M)(e);
                     } catch (t) {
-                        t instanceof Error && this.logger.error(t, { language: e }), (this.dictionary = {});
+                        (t instanceof Error && this.logger.error(t, { language: e }), (this.dictionary = {}));
                     }
                     return this.dictionary;
                 }
@@ -1721,10 +1721,10 @@
                             let r = { ...(0, m.HO)(e), isDisliked: !e.isDisliked };
                             s(!0);
                             let o = await e.toggleDislike();
-                            s(!1),
+                            (s(!1),
                                 o === h.f.OK
                                     ? i((0, a.jsx)(j, { coverUri: r.coverUri, title: r.name, isDisliked: r.isDisliked }), { containerId: _.u.INFO })
-                                    : i((0, a.jsx)(f.h, { error: l({ id: 'error-messages.error-during-action' }) }), { containerId: _.u.ERROR });
+                                    : i((0, a.jsx)(f.h, { error: l({ id: 'error-messages.error-during-action' }) }), { containerId: _.u.ERROR }));
                         });
                     })(x),
                     en = (0, w.F)(),
@@ -1888,12 +1888,12 @@
             'use strict';
             i.d(t, { W: () => a });
             var a = (function (e) {
-                return (e.APP = 'app'), (e.SUMMARY_LARGE_IMAGE = 'summary_large_image'), e;
+                return ((e.APP = 'app'), (e.SUMMARY_LARGE_IMAGE = 'summary_large_image'), e);
             })({});
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 7231, 6347, 9763, 3183, 6639, 7258, 9180, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 3266, 6477, 7275, 2586, 8347, 4522, 7702,
@@ -1901,6 +1901,6 @@
             ],
             () => e((e.s = 23090)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

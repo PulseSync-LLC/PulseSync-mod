@@ -51,12 +51,12 @@
             let a = (e) => {
                 let t = (0, s.usePathname)(),
                     [i, a] = (0, r.useState)(!1);
-                (0, r.useEffect)(() => {
-                    window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t);
+                ((0, r.useEffect)(() => {
+                    (window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t));
                 }),
                     (0, r.useEffect)(() => {
                         window.Ya.Rum.spa.getLastSpaSubPage(t) && e && !i && (window.Ya.Rum.spa.finishDataLoading(t), window.Ya.Rum.spa.startDataRendering(t), a(!0));
-                    }, [e, i, t]);
+                    }, [e, i, t]));
             };
         },
         4820: (e, t, i) => {
@@ -150,11 +150,11 @@
                             objectPosX: W,
                             objectPosY: D,
                         };
-                        void 0 !== I && ((o.filterKey = I), (o.filterValue = C), (o.filterPos = L)),
+                        (void 0 !== I && ((o.filterKey = I), (o.filterValue = C), (o.filterPos = L)),
                             c.qG.includes(f) && ((o.tabId = g), (o.tabPos = A), (o.isTabSelectedByDefault = b)),
                             z && (o.skeletonId = z),
                             'string' == typeof y && 'string' == typeof E && ((o.mainObjectType = E), (o.mainObjectId = y)),
-                            F && (o.displayReasonId = F);
+                            F && (o.displayReasonId = F));
                         let d = (0, r.Fx)({ params: o, logger: e, context: 'useSendEventOnBlockShowedOrHidden' });
                         d && (s ? (0, r.Pf)(t.evgenInstance, d) : (0, r.nv)(t.evgenInstance, d));
                     },
@@ -273,7 +273,7 @@
                     c = (0, s.useContext)(a.B),
                     d = (0, s.useCallback)(
                         (s, r) => {
-                            e ? e(s, i ? r : void 0) : o(s, r), t && c.unobserveElement(l);
+                            (e ? e(s, i ? r : void 0) : o(s, r), t && c.unobserveElement(l));
                         },
                         [e, c, l, o, t, i],
                     );
@@ -380,7 +380,7 @@
             };
         },
         39597: (e, t, i) => {
-            Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 40942));
+            (Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 40942)));
         },
         40484: (e) => {
             e.exports = {
@@ -619,7 +619,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), n.isOpened && (s.reset(), n.close()), r.modal.isOpened && r.modal.close();
+                                    (null == e || e.stopPropagation(), n.isOpened && (s.reset(), n.close()), r.modal.isOpened && r.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     a.modal.isOpened && (a.modal.close(), a.reset());
@@ -629,11 +629,11 @@
                         })({
                             artist: t,
                             callback: (0, _.c)((e) => {
-                                S && N.isOpened && N.close(), k(e);
+                                (S && N.isOpened && N.close(), k(e));
                             }),
                         }),
                         w = (0, _.c)((e) => {
-                            y({ to: p.QT.ArtistScreen }), null == T || T(), E(e);
+                            (y({ to: p.QT.ArtistScreen }), null == T || T(), E(e));
                         });
                     return i && !t.various
                         ? (0, s.jsx)(A.N, {
@@ -850,7 +850,7 @@
                         } = (0, l.g)(),
                         L = 1 === i.length,
                         O = (0, n.useCallback)((e) => {
-                            w(!0), e.preventDefault();
+                            (w(!0), e.preventDefault());
                         }, []),
                         R = (0, n.useMemo)(() => {
                             let e = i;
@@ -1012,11 +1012,11 @@
                                 let u = { ...(0, m.HO)(a), url: a.url, isLiked: !a.isLiked };
                                 i(!0);
                                 let h = await a.toggleLike();
-                                i(!1),
+                                (i(!1),
                                     c &&
                                         (h === p.f.OK
                                             ? e((0, s.jsx)(f, { withLink: l, album: u }), { containerId: o.u.INFO })
-                                            : e((0, s.jsx)(d.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
+                                            : e((0, s.jsx)(d.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR })));
                             });
                         })(),
                         { pageAlbumId: g } = (0, n.T)();
@@ -1109,7 +1109,7 @@
                         };
                     })(),
                     j = (0, n.useCallback)(() => {
-                        b(), (window.location.href = f.Z.main.href);
+                        (b(), (window.location.href = f.Z.main.href));
                     }, [b]),
                     { contentRef: N } = (0, x.g)();
                 return (0, s.jsxs)('div', {
@@ -1191,7 +1191,7 @@
                         );
                     }, [t, i]),
                     j = (0, c.c)((e) => {
-                        a.modal.isOpened && a.modal.close(), A({ to: o.QT.ArtistScreen }), f(e);
+                        (a.modal.isOpened && a.modal.close(), A({ to: o.QT.ArtistScreen }), f(e));
                     });
                 return (0, s.jsxs)(s.Fragment, {
                     children: [
@@ -1244,19 +1244,19 @@
                 a = i(30782),
                 n = i(55178),
                 o = i(60900);
-            !(function (e) {
-                (e.formatDate = 'FormattedDate'),
+            (!(function (e) {
+                ((e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName');
+                    (e.formatDisplayName = 'FormattedDisplayName'));
             })(s || (s = {})),
                 (function (e) {
-                    (e.formatDate = 'FormattedDateParts'),
+                    ((e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts');
-                })(r || (r = {}));
+                        (e.formatList = 'FormattedListParts'));
+                })(r || (r = {})));
             var l = function (e) {
                 var t = (0, o.A)(),
                     i = e.value,
@@ -1273,7 +1273,7 @@
                         l = 'string' == typeof s ? new Date(s || 0) : s;
                     return r('formatDate' === e ? i.formatDateToParts(l, n) : i.formatTimeToParts(l, n));
                 };
-                return (t.displayName = r[e]), t;
+                return ((t.displayName = r[e]), t);
             }
             function d(e) {
                 var t = function (t) {
@@ -1286,11 +1286,11 @@
                     var d = i.textComponent || n.Fragment;
                     return n.createElement(d, null, c);
                 };
-                return (t.displayName = s[e]), t;
+                return ((t.displayName = s[e]), t);
             }
-            (l.displayName = 'FormattedNumberParts'), (l.displayName = 'FormattedNumberParts');
+            ((l.displayName = 'FormattedNumberParts'), (l.displayName = 'FormattedNumberParts'));
             var m = d('formatDate');
-            d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime');
+            (d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime'));
         },
         82535: (e) => {
             e.exports = {
@@ -1317,10 +1317,10 @@
         92013: (e, t, i) => {
             'use strict';
             var s;
-            i.d(t, { T: () => s }),
+            (i.d(t, { T: () => s }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(s || (s = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(s || (s = {})));
         },
         94218: (e, t, i) => {
             'use strict';
@@ -1361,7 +1361,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 6639, 3183, 7972, 8868, 7231, 6347, 9763, 7258, 3244, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 6252, 6477, 7275, 2586, 8347,
@@ -1369,6 +1369,6 @@
             ],
             () => e((e.s = 39597)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

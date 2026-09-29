@@ -7,7 +7,7 @@
         21916: (e, r, t) => {
             'use strict';
             var n = t(23948);
-            t.o(n, 'ServerInsertedHTMLContext') &&
+            (t.o(n, 'ServerInsertedHTMLContext') &&
                 t.d(r, {
                     ServerInsertedHTMLContext: function () {
                         return n.ServerInsertedHTMLContext;
@@ -48,11 +48,11 @@
                         useServerInsertedHTML: function () {
                             return n.useServerInsertedHTML;
                         },
-                    });
+                    }));
         },
         51751: (e, r, t) => {
             'use strict';
-            t.r(r), t.d(r, { default: () => a });
+            (t.r(r), t.d(r, { default: () => a }));
             var n = t(32290),
                 u = t(21916),
                 s = t(36477);
@@ -63,11 +63,11 @@
                 },
                 a = () => {
                     let e = (0, u.useSearchParams)().get('categoryId');
-                    return e || (0, u.notFound)(), (0, n.jsx)(o, { categoryId: e });
+                    return (e || (0, u.notFound)(), (0, n.jsx)(o, { categoryId: e }));
                 };
         },
     },
     (e) => {
-        e.O(0, [8892, 6477, 4220, 9562, 7358], () => e((e.s = 17013))), (_N_E = e.O());
+        (e.O(0, [8892, 6477, 4220, 9562, 7358], () => e((e.s = 17013))), (_N_E = e.O()));
     },
 ]);

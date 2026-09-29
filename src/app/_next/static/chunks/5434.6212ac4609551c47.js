@@ -5,10 +5,10 @@
         24634: () => {},
         33806: (e, t, l) => {
             'use strict';
-            Object.defineProperty(t, '__esModule', { value: !0 }),
-                (t.libraryName = t.xlsx = t.getWorksheetColumnWidths = t.getJsonSheetRow = t.getContentProperty = t.utils = void 0);
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
+                (t.libraryName = t.xlsx = t.getWorksheetColumnWidths = t.getJsonSheetRow = t.getContentProperty = t.utils = void 0));
             let o = l(23526);
-            Object.defineProperty(t, 'utils', {
+            (Object.defineProperty(t, 'utils', {
                 enumerable: !0,
                 get: function () {
                     return o.utils;
@@ -35,7 +35,7 @@
                         }),
                         o
                     );
-                });
+                }));
             let r = (e) => {
                 var t;
                 let l = o.utils.decode_range(null != (t = e['!ref']) ? t : ''),
@@ -46,7 +46,7 @@
                 }
                 return r;
             };
-            (t.getWorksheetColumnWidths = (e, t = 1) =>
+            ((t.getWorksheetColumnWidths = (e, t = 1) =>
                 r(e).map((l) => ({
                     width:
                         Object.keys(e)
@@ -111,11 +111,11 @@
                         ((e, t = {}) => {
                             var l, r, n;
                             let s = !!t.RTL;
-                            null != e.Workbook || (e.Workbook = {}),
+                            (null != e.Workbook || (e.Workbook = {}),
                                 null != (n = e.Workbook).Views || (n.Views = [{}]),
                                 e.Workbook.Views.forEach((e) => {
                                     e.RTL = s;
-                                });
+                                }));
                             let u = `${null != (l = t.fileName) ? l : 'Spreadsheet'}.xlsx`,
                                 i = null != (r = t.writeOptions) ? r : {};
                             return 'write' === t.writeMode
@@ -134,7 +134,7 @@
                 (e.exports.getContentProperty = t.getContentProperty),
                 (e.exports.getJsonSheetRow = t.getJsonSheetRow),
                 (e.exports.getWorksheetColumnWidths = t.getWorksheetColumnWidths),
-                (e.exports.utils = o.utils);
+                (e.exports.utils = o.utils));
         },
         43677: () => {},
         56551: () => {},

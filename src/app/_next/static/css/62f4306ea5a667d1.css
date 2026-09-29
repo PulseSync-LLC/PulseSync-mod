@@ -43,9 +43,9 @@
         user-select: none;
         font-size: 14px;
         transition:
-                border 0.2s,
-                color 0.2s,
-                border 0.2s;
+            border 0.2s,
+            color 0.2s,
+            border 0.2s;
 
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
@@ -64,9 +64,9 @@
         user-select: none;
         font-size: 14px;
         transition:
-                border 0.2s,
-                color 0.2s,
-                border 0.2s;
+            border 0.2s,
+            color 0.2s,
+            border 0.2s;
 
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -96,9 +96,9 @@
         transform: translateX(1px) translateY(0);
         transform-origin: var(--settingBarWithDropdown-origin, top right);
         transition:
-                opacity 0.18s ease,
-                transform 0.18s ease,
-                visibility 0s linear 0s;
+            opacity 0.18s ease,
+            transform 0.18s ease,
+            visibility 0s linear 0s;
 
         @starting-style {
             opacity: 0;
@@ -112,9 +112,9 @@
         pointer-events: none;
         transform: translateX(1px) translateY(var(--settingBarWithDropdown-offset-y, -6px));
         transition:
-                opacity 0.18s ease,
-                transform 0.18s ease,
-                visibility 0s linear 0.18s;
+            opacity 0.18s ease,
+            transform 0.18s ease,
+            visibility 0s linear 0.18s;
     }
     .settingBarWithDropdown_menuItem {
         display: flex;

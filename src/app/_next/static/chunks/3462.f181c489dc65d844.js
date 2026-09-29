@@ -3,7 +3,7 @@
     [3462],
     {
         43462: (e, a, d) => {
-            d.r(a),
+            (d.r(a),
                 d.d(a, {
                     a12a3079e14ced46e69ba52b8a90b21a: () => b,
                     a31fdeb0419e4dc4bc3224a8660727df: () => c,
@@ -22,7 +22,7 @@
                     ede45a9d33c1d66bbba25436b60d6a95: () => r,
                     ee994cf3b332789eb244a908278f0b73: () => h,
                     f2830a8323ec0a6762018becc24daea8: () => I,
-                });
+                }));
             let b = [{ type: 0, value: 'IP' }],
                 c = [{ type: 0, value: 'Additional parameters' }],
                 f = [{ type: 0, value: 'Ready' }],

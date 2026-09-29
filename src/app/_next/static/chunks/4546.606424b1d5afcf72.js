@@ -6,7 +6,7 @@
         },
         14546: (e, t, n) => {
             'use strict';
-            n.r(t), n.d(t, { VibeAnimation: () => I });
+            (n.r(t), n.d(t, { VibeAnimation: () => I }));
             var i = n(32290),
                 r = n(96103),
                 l = n(55178),
@@ -70,13 +70,13 @@
                         if (!P.transferControlToOffscreen) return void B();
                         let n = P.transferControlToOffscreen(),
                             i = new b.a6({ offscreenCanvas: n, state: v, collectionHue: C.collectionHue, shaderOptions: void 0, onMessage: O, onError: B });
-                        S(i), R(new b.Rv(b.p4, q));
+                        (S(i), R(new b.Rv(b.p4, q)));
                         let r = null == (t = D.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
                             l = C.collectionHue;
                         i.applySettings({ hue: r, collectionHue: l });
                     }, [I, P, B, O, R, S, null == (n = D.entityMeta) || null == (t = n.trackParameters) ? void 0 : t.hue, q, C.collectionHue, v, N]);
                     let Q = (0, s.c)(() => {
-                        null == N || N.destroy(), S(null), null == I || I.stop(), R(null);
+                        (null == N || N.destroy(), S(null), null == I || I.stop(), R(null));
                     });
                     return ((0, l.useEffect)(
                         () => () => {
@@ -98,7 +98,7 @@
                         let a = null == (t = D.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
                             o = null == (i = D.entityMeta) || null == (n = i.trackParameters) ? void 0 : n.energy,
                             s = null == (l = D.entityMeta) || null == (r = l.trackParameters) ? void 0 : r.userCollectionHue;
-                        s && C.setUserCollectionHue(s), z ? null == N || N.playAnimation({ hue: a, energy: o, collectionHue: s }) : null == N || N.idleAnimation();
+                        (s && C.setUserCollectionHue(s), z ? null == N || N.playAnimation({ hue: a, energy: o, collectionHue: s }) : null == N || N.idleAnimation());
                     }, [
                         z,
                         null == (a = D.entityMeta) || null == (r = a.trackParameters) ? void 0 : r.energy,
@@ -147,7 +147,7 @@
                 c = function (e, t, n) {
                     return function () {
                         var i;
-                        e.props[t] && (i = e.props)[t].apply(i, arguments), n();
+                        (e.props[t] && (i = e.props)[t].apply(i, arguments), n());
                     };
                 },
                 d =
@@ -209,7 +209,7 @@
                             ((t = e.call.apply(e, [this].concat(i)) || this).state = { status: o._K, current: null }),
                             (t.appeared = !1),
                             (t.changeState = function (e, n) {
-                                void 0 === n && (n = t.state.current), t.setState({ status: e, current: n });
+                                (void 0 === n && (n = t.state.current), t.setState({ status: e, current: n }));
                             }),
                             t
                         );
@@ -256,14 +256,14 @@
                         t
                     );
                 })(a.Component);
-            (v.propTypes = {}), (v.defaultProps = { mode: u.out });
+            ((v.propTypes = {}), (v.defaultProps = { mode: u.out }));
             let m = v;
         },
         53453: (e, t, n) => {
             'use strict';
             n.d(t, { w: () => i });
             var i = (function (e) {
-                return (e.DISABLED = 'DISABLED'), (e.ENABLED = 'ENABLED'), e;
+                return ((e.DISABLED = 'DISABLED'), (e.ENABLED = 'ENABLED'), e);
             })({});
         },
         59688: (e) => {
@@ -289,8 +289,8 @@
                 (0, i.useEffect)(() => {
                     let e = () => {
                         var e, t, n, i;
-                        s.id === (null == (e = c.entityMeta) ? void 0 : e.id) && !s.isLiked && (null == (i = c.entityMeta) ? void 0 : i.isLiked) && a(),
-                            u({ id: null == (t = c.entityMeta) ? void 0 : t.id, isLiked: null == (n = c.entityMeta) ? void 0 : n.isLiked });
+                        (s.id === (null == (e = c.entityMeta) ? void 0 : e.id) && !s.isLiked && (null == (i = c.entityMeta) ? void 0 : i.isLiked) && a(),
+                            u({ id: null == (t = c.entityMeta) ? void 0 : t.id, isLiked: null == (n = c.entityMeta) ? void 0 : n.isLiked }));
                     };
                     o ? c.contextType === r.K.Vibe && e() : e();
                 }, [a, o, c.contextType, null == (t = c.entityMeta) ? void 0 : t.id, null == (n = c.entityMeta) ? void 0 : n.isLiked, s.id, s.isLiked]);
@@ -379,7 +379,7 @@
                             }
                             if ((n.current++, !(n.current < 3))) {
                                 if (((n.current = 0), E !== a.IU.LITE)) {
-                                    b(a.IU.LITE), h.count('liteAnimation', A);
+                                    (b(a.IU.LITE), h.count('liteAnimation', A));
                                     return;
                                 }
                                 p ||
@@ -429,7 +429,7 @@
         },
         88158: (e, t, n) => {
             'use strict';
-            n.r(t), n.d(t, { VibeFallbackAnimation: () => _, VibeFallbackAnimationComponent: () => m });
+            (n.r(t), n.d(t, { VibeFallbackAnimation: () => _, VibeFallbackAnimationComponent: () => m }));
             var i = n(32290),
                 r = n(63618),
                 l = n(96103),

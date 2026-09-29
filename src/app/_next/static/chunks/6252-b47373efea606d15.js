@@ -9,7 +9,7 @@
                 a = i(98411),
                 l = (function () {
                     function e(e) {
-                        (this.observableValue = (0, a.vP)(e)), (this.prevValueByListener = new Map());
+                        ((this.observableValue = (0, a.vP)(e)), (this.prevValueByListener = new Map()));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'value', {
@@ -34,7 +34,7 @@
                                             r = !1;
                                             return;
                                         }
-                                        i.prevValueByListener.set(e, s), e(s);
+                                        (i.prevValueByListener.set(e, s), e(s));
                                     }
                                 })
                             );
@@ -44,9 +44,9 @@
                 })();
             !(function () {
                 function e(e) {
-                    (this.observableValue = (0, a.EW)(e)), (this.prevValueByListener = new Map());
+                    ((this.observableValue = (0, a.EW)(e)), (this.prevValueByListener = new Map()));
                 }
-                Object.defineProperty(e.prototype, 'value', {
+                (Object.defineProperty(e.prototype, 'value', {
                     get: function () {
                         return this.observableValue.value;
                     },
@@ -65,11 +65,11 @@
                                         r = !1;
                                         return;
                                     }
-                                    i.prevValueByListener.set(e, s), e(s);
+                                    (i.prevValueByListener.set(e, s), e(s));
                                 }
                             })
                         );
-                    });
+                    }));
             })();
             class n extends Error {
                 name = 'BaseException';
@@ -80,14 +80,14 @@
                 constructor(e, t = {}) {
                     let { code: i = 'E_INTERNAL', data: r = {}, ...s } = t,
                         a = e || 'Internal error';
-                    super(a, s), (this.message = a), (this.code = i), (this.data = r), (this.stack = Error(a).stack), Object.setPrototypeOf(this, n.prototype);
+                    (super(a, s), (this.message = a), (this.code = i), (this.data = r), (this.stack = Error(a).stack), Object.setPrototypeOf(this, n.prototype));
                 }
             }
             class o extends n {
                 name = 'DisclaimerDictionaryLoadError';
                 constructor(e) {
-                    super('Failed to load disclaimer dictionary', { code: 'E_DISCLAIMER_DICTIONARY_LOAD', cause: e, data: { valueType: typeof e } }),
-                        Object.setPrototypeOf(this, o.prototype);
+                    (super('Failed to load disclaimer dictionary', { code: 'E_DISCLAIMER_DICTIONARY_LOAD', cause: e, data: { valueType: typeof e } }),
+                        Object.setPrototypeOf(this, o.prototype));
                 }
             }
             class u extends n {
@@ -95,17 +95,17 @@
                 disclaimerId;
                 retryAttempted;
                 constructor(e, t) {
-                    super(`Disclaimer with id "${e}" not found${t ? ' after retry' : ''}`, {
+                    (super(`Disclaimer with id "${e}" not found${t ? ' after retry' : ''}`, {
                         code: 'E_DISCLAIMER_NOT_FOUND',
                         data: { disclaimerId: e, retryAttempted: t },
                     }),
                         (this.disclaimerId = e),
                         (this.retryAttempted = t),
-                        Object.setPrototypeOf(this, u.prototype);
+                        Object.setPrototypeOf(this, u.prototype));
                 }
             }
             !(function (e) {
-                (e.MODAL = 'modal'),
+                ((e.MODAL = 'modal'),
                     (e.FOREIGN_AGENT = 'foreignAgent'),
                     (e.INFORMATIONAL = 'informational'),
                     (e.AGE_18 = 'age18'),
@@ -116,7 +116,7 @@
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
                     (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                    (e.SUBSTITUTED_ICON = 'substitutedIcon');
+                    (e.SUBSTITUTED_ICON = 'substitutedIcon'));
             })(r || (r = {}));
             let d = (e) => {
                     let t = [];
@@ -138,7 +138,7 @@
                 loadingPromise;
                 isDestroyed;
                 constructor(e) {
-                    (this.dataSource = e.dataSource),
+                    ((this.dataSource = e.dataSource),
                         (this.itemsObservable = new l(null)),
                         (this.isLoadingObservable = new l(!1)),
                         (this.errorObservable = new l(null)),
@@ -146,12 +146,12 @@
                         (this.isDestroyed = !1),
                         (this.items = this.itemsObservable),
                         (this.isLoading = this.isLoadingObservable),
-                        (this.error = this.errorObservable);
+                        (this.error = this.errorObservable));
                 }
                 async load() {
                     if (this.isDestroyed) return;
                     if (this.loadingPromise) return void (await this.loadingPromise);
-                    (this.isLoadingObservable.value = !0), (this.errorObservable.value = null);
+                    ((this.isLoadingObservable.value = !0), (this.errorObservable.value = null));
                     let e = this.dataSource
                         .loadAll()
                         .then((e) => {
@@ -164,7 +164,7 @@
                         .finally(() => {
                             this.loadingPromise = null;
                         });
-                    (this.loadingPromise = e), await e;
+                    ((this.loadingPromise = e), await e);
                 }
                 async getById(e) {
                     let t = this.findItemById(e);
@@ -191,16 +191,16 @@
                     for (let e of i)
                         if (e) {
                             let t = r[e.disclaimerType] ?? [];
-                            t.push(e.disclaimerItem), (r[e.disclaimerType] = t);
+                            (t.push(e.disclaimerItem), (r[e.disclaimerType] = t));
                         }
                     return r;
                 }
                 destroy() {
-                    (this.isDestroyed = !0),
+                    ((this.isDestroyed = !0),
                         (this.loadingPromise = null),
                         (this.itemsObservable.value = null),
                         (this.isLoadingObservable.value = !1),
-                        (this.errorObservable.value = null);
+                        (this.errorObservable.value = null));
                 }
                 findItemById(e) {
                     let t = this.itemsObservable.value;
@@ -208,7 +208,7 @@
                 }
             }
             !(function (e) {
-                (e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted');
+                ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted'));
             })(s || (s = {}));
             let v = new Map([
                     [r.EXPLICIT_ICON, s.E],

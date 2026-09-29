@@ -4,10 +4,10 @@
         8246: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { x: () => r }),
+            (a.d(t, { x: () => r }),
                 (function (e) {
-                    (e.ASC = 'asc'), (e.DESC = 'desc');
-                })(r || (r = {}));
+                    ((e.ASC = 'asc'), (e.DESC = 'desc'));
+                })(r || (r = {})));
         },
         12388: (e, t, a) => {
             'use strict';
@@ -39,18 +39,18 @@
         13365: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { _: () => r }),
+            (a.d(t, { _: () => r }),
                 (function (e) {
-                    (e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new');
-                })(r || (r = {}));
+                    ((e.UP = 'up'), (e.DOWN = 'down'), (e.SAME = 'same'), (e.NEW = 'new'));
+                })(r || (r = {})));
         },
         37215: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { g: () => r }),
+            (a.d(t, { g: () => r }),
                 (function (e) {
-                    (e.RATING = 'rating'), (e.YEAR = 'year');
-                })(r || (r = {}));
+                    ((e.RATING = 'rating'), (e.YEAR = 'year'));
+                })(r || (r = {})));
         },
         45066: (e, t, a) => {
             'use strict';
@@ -120,7 +120,7 @@
                         s = () => {
                             var e, t;
                             let r = null != (t = null == (e = window.__PAGE_STATE_PATCHES__) ? void 0 : e[a]) ? t : [];
-                            return window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[a], r;
+                            return (window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[a], r);
                         };
                     return {
                         pageStoreProvider: (e) => {
@@ -156,7 +156,7 @@
             'use strict';
             a.d(t, { G: () => r });
             var r = (function (e) {
-                return (e.IDLE = 'IDLE'), (e.PENDING = 'PENDING'), (e.RESOLVE = 'RESOLVE'), (e.REJECT = 'REJECT'), e;
+                return ((e.IDLE = 'IDLE'), (e.PENDING = 'PENDING'), (e.RESOLVE = 'RESOLVE'), (e.REJECT = 'REJECT'), e);
             })({});
         },
         55985: (e, t, a) => {
@@ -181,23 +181,23 @@
             'use strict';
             a.d(t, { F: () => r });
             var r = (function (e) {
-                return (e.OK = 'ok'), (e.ERROR = 'error'), e;
+                return ((e.OK = 'ok'), (e.ERROR = 'error'), e);
             })({});
         },
         63380: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { f: () => r }),
+            (a.d(t, { f: () => r }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(r || (r = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(r || (r = {})));
         },
         64605: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { _: () => r }),
+            (a.d(t, { _: () => r }),
                 (function (e) {
-                    (e.UNKNOWN = 'unknown'),
+                    ((e.UNKNOWN = 'unknown'),
                         (e.ALBUM = 'album'),
                         (e.SINGLE = 'single'),
                         (e.COMPILATION = 'compilation'),
@@ -208,8 +208,8 @@
                         (e.VIDEO_ALBUM = 'video-album'),
                         (e.RADIO = 'radio'),
                         (e.ASMR = 'asmr'),
-                        (e.NOISE = 'noise');
-                })(r || (r = {}));
+                        (e.NOISE = 'noise'));
+                })(r || (r = {})));
         },
         72428: (e, t, a) => {
             'use strict';
@@ -229,10 +229,10 @@
             'use strict';
             a.d(t, { Z: () => r, n: () => s });
             var r = (function (e) {
-                    return (e.REJECT = 'REJECT'), (e.UNSAFE = 'UNSAFE'), e;
+                    return ((e.REJECT = 'REJECT'), (e.UNSAFE = 'UNSAFE'), e);
                 })({}),
                 s = (function (e) {
-                    return (e.ALBUM = 'album'), (e.PODCAST = 'podcast'), (e.AUDIOBOOK = 'audiobook'), (e.ARTIST = 'artist'), (e.TRACK = 'track'), (e.CLIP = 'clip'), e;
+                    return ((e.ALBUM = 'album'), (e.PODCAST = 'podcast'), (e.AUDIOBOOK = 'audiobook'), (e.ARTIST = 'artist'), (e.TRACK = 'track'), (e.CLIP = 'clip'), e);
                 })({});
         },
         86634: (e, t, a) => {
@@ -303,14 +303,14 @@
                                     );
                                 }
                                 let d = Math.max(r + 1, l);
-                                t.ensurePageStatesInitialized(d), e.pageStates && (e.pageStates[r] = s), s === i.G.REJECT && t.addLastRejectedPageToList(r);
+                                (t.ensurePageStatesInitialized(d), e.pageStates && (e.pageStates[r] = s), s === i.G.REJECT && t.addLastRejectedPageToList(r));
                             },
                             setItems: (n, o) => {
                                 var u;
                                 let { page: g, pager: d, responseStatus: p } = o;
                                 if (((e.requestsCount = (null != (u = e.requestsCount) ? u : 0) + 1), p === s.F.ERROR || !n || !d))
                                     return void t.setPageState(g, i.G.REJECT);
-                                e.pager
+                                (e.pager
                                     ? a && ((e.pager.lastPage = d.lastPage), (e.pager.perPage = d.perPage))
                                     : (e.pager = { page: d.page, perPage: d.perPage, total: d.total, lastPage: d.lastPage }),
                                     t.setPageState(g, i.G.RESOLVE),
@@ -318,7 +318,7 @@
                                     a
                                         ? (e.items || (e.items = (0, r.wg)([])), e.items && e.items.push(...n))
                                         : (e.items || (e.items = (0, r.wg)(Array.from({ length: e.pager.total }, () => null))),
-                                          e.items && (0, l.I)({ items: e.items, mappedRawItems: n, page: g, pageSize: e.pager.perPage }));
+                                          e.items && (0, l.I)({ items: e.items, mappedRawItems: n, page: g, pageSize: e.pager.perPage })));
                             },
                             resetRejectedPagesState() {
                                 var t, a, r;
@@ -327,7 +327,7 @@
                             },
                             addLastRejectedPageToList(t) {
                                 var a, r, s;
-                                for (e.lastRejectedPagesList.push(t); (null != (r = null == (a = e.lastRejectedPagesList) ? void 0 : a.length) ? r : 0) > 5; )
+                                for (e.lastRejectedPagesList.push(t); (null != (r = null == (a = e.lastRejectedPagesList) ? void 0 : a.length) ? r : 0) > 5;)
                                     null == (s = e.lastRejectedPagesList) || s.shift();
                             },
                             ensurePageStatesInitialized(t) {
@@ -344,10 +344,10 @@
                                 }
                             },
                             reset() {
-                                (e.initialRequestLoadingState = i.G.IDLE),
+                                ((e.initialRequestLoadingState = i.G.IDLE),
                                     (e.requestsCount = 0),
                                     (e.lastRejectedPagesList = (0, r.wg)([])),
-                                    e.destroyItems([e.items, e.pager, e.pageStates]);
+                                    e.destroyItems([e.items, e.pager, e.pageStates]));
                             },
                         };
                         return t;
@@ -360,7 +360,7 @@
                 let { items: t, mappedRawItems: a, page: r, pageSize: s } = e,
                     i = r * s,
                     l = 0;
-                for (let e = i; e < i + s; e++) a[l] && (t[e] = a[l]), l++;
+                for (let e = i; e < i + s; e++) (a[l] && (t[e] = a[l]), l++);
             }
             a.d(t, { I: () => r });
         },
@@ -384,9 +384,9 @@
         90404: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { _: () => r }),
+            (a.d(t, { _: () => r }),
                 (function (e) {
-                    (e.ALBUM_ITEM = 'album_item'),
+                    ((e.ALBUM_ITEM = 'album_item'),
                         (e.ARTIST_ITEM = 'artist_item'),
                         (e.PLAYLIST_ITEM = 'playlist_item'),
                         (e.TRACK_ITEM = 'track_item'),
@@ -405,8 +405,8 @@
                         (e.CLIP = 'clip'),
                         (e.CLIP_ITEM = 'clip_item'),
                         (e.CONCERT_ITEM = 'concert_item'),
-                        (e.QUERY_TO_VIBE_ITEM = 'q2v_item');
-                })(r || (r = {}));
+                        (e.QUERY_TO_VIBE_ITEM = 'q2v_item'));
+                })(r || (r = {})));
         },
         90825: (e, t, a) => {
             'use strict';
@@ -417,7 +417,7 @@
                 l = a(60754),
                 n = a(87953);
             !(function (e) {
-                (e.MUSICAL = 'musical'), (e.PUBLISHER = 'publisher');
+                ((e.MUSICAL = 'musical'), (e.PUBLISHER = 'publisher'));
             })(r || (r = {}));
             var o = a(72428),
                 u = a(12388),
@@ -475,13 +475,13 @@
                                     let l = t.albums.map(o.p);
                                     e.pagesLoader.setItems(l, { page: r, pager: t.pager });
                                 } catch (t) {
-                                    d.error(t),
+                                    (d.error(t),
                                         t instanceof n.GX && t.statusCode === n.X1.NOT_FOUND && (e.errorStatusCode = n.X1.NOT_FOUND),
-                                        e.pagesLoader.setItems(null, { responseStatus: S.F.ERROR, page: r });
+                                        e.pagesLoader.setItems(null, { responseStatus: S.F.ERROR, page: r }));
                                 }
                         }),
                         reset() {
-                            e.pagesLoader.reset(), (e.errorStatusCode = null);
+                            (e.pagesLoader.reset(), (e.errorStatusCode = null));
                         },
                     })),
                 T = l.gK
@@ -529,13 +529,13 @@
                                     let l = t.artists.map(g.d);
                                     e.pagesLoader.setItems(l, { page: r, pager: t.pager });
                                 } catch (t) {
-                                    u.error(t),
+                                    (u.error(t),
                                         t instanceof n.GX && t.statusCode === n.X1.NOT_FOUND && (e.errorStatusCode = n.X1.NOT_FOUND),
-                                        e.pagesLoader.setItems(null, { responseStatus: S.F.ERROR, page: r });
+                                        e.pagesLoader.setItems(null, { responseStatus: S.F.ERROR, page: r }));
                                 }
                         }),
                         reset() {
-                            e.pagesLoader.reset(), (e.errorStatusCode = null);
+                            (e.pagesLoader.reset(), (e.errorStatusCode = null));
                         },
                     })),
                 R = l.gK
@@ -597,7 +597,7 @@
                                     let r = yield a.getAlbums(t);
                                     e.albums = (0, l.wg)(r.albums.map(o.p));
                                 } catch (t) {
-                                    r.error(t), t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = n.X1.NOT_FOUND);
+                                    (r.error(t), t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = n.X1.NOT_FOUND));
                                 }
                             }),
                             getArtists: (0, l.L3)(function* (t) {
@@ -606,7 +606,7 @@
                                     let r = yield a.getArtists(t);
                                     e.artists = (0, l.wg)(r.artists.map(g.d));
                                 } catch (t) {
-                                    r.error(t), t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = n.X1.NOT_FOUND);
+                                    (r.error(t), t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = n.X1.NOT_FOUND));
                                 }
                             }),
                             getData: (0, l.L3)(function* (a) {
@@ -616,25 +616,25 @@
                                     try {
                                         e.loadingState = p.G.PENDING;
                                         let a = s;
-                                        a || (a = yield o.getData({ labelId: r })),
+                                        (a || (a = yield o.getData({ labelId: r })),
                                             (e.id = String(a.id)),
                                             (e.name = a.name),
                                             (e.type = a.type),
                                             i && (yield t.getAlbums({ labelId: r, pageSize: 8 }), yield t.getArtists({ labelId: r, pageSize: 8 })),
-                                            (e.loadingState = p.G.RESOLVE);
+                                            (e.loadingState = p.G.RESOLVE));
                                     } catch (t) {
-                                        u.error(t),
+                                        (u.error(t),
                                             t instanceof n.GX && [n.X1.BAD_REQUEST, n.X1.NOT_FOUND].includes(t.statusCode) && (e.errorStatusCode = t.statusCode),
-                                            e.loadingState !== p.G.IDLE && (e.loadingState = p.G.REJECT);
+                                            e.loadingState !== p.G.IDLE && (e.loadingState = p.G.REJECT));
                                     }
                             }),
                             reset() {
-                                (e.loadingState = p.G.IDLE),
+                                ((e.loadingState = p.G.IDLE),
                                     (e.id = null),
                                     (e.name = null),
                                     (e.type = null),
                                     (e.errorStatusCode = null),
-                                    e.destroyItems([e.albums, e.artists]);
+                                    e.destroyItems([e.albums, e.artists]));
                             },
                         };
                         return t;
@@ -655,23 +655,23 @@
             var r = a(60754);
             let s = r.gK.model('ModelDestroyManager').actions(() => ({
                 destroyItems(e) {
-                    e.forEach((e) => {
+                    (e.forEach((e) => {
                         e && (0, r.Yo)(e);
                     }),
                         queueMicrotask(() => {
                             e.forEach((e) => {
                                 e && (0, r.zr)(e);
                             });
-                        });
+                        }));
                 },
             }));
         },
         96333: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { S: () => r }),
+            (a.d(t, { S: () => r }),
                 (function (e) {
-                    (e.TRACK = 'track'),
+                    ((e.TRACK = 'track'),
                         (e.MUSIC = 'music'),
                         (e.NOISE = 'noise'),
                         (e.PODCAST = 'podcast-episode'),
@@ -683,11 +683,11 @@
                         (e.LECTURE = 'lecture'),
                         (e.FAIRY_TALE = 'fairy-tale'),
                         (e.AUDIOBOOK = 'audiobook'),
-                        (e.POETRY = 'poetry');
-                })(r || (r = {}));
+                        (e.POETRY = 'poetry'));
+                })(r || (r = {})));
         },
     },
     (e) => {
-        e.O(0, [6706, 1311, 8892, 6252, 4756, 6477, 7275, 1647, 4220, 9562, 7358], () => e((e.s = 76944))), (_N_E = e.O());
+        (e.O(0, [6706, 1311, 8892, 6252, 4756, 6477, 7275, 1647, 4220, 9562, 7358], () => e((e.s = 76944))), (_N_E = e.O()));
     },
 ]);

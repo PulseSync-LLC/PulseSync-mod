@@ -9,12 +9,12 @@
             let r = (e) => {
                 let t = (0, i.usePathname)(),
                     [s, r] = (0, a.useState)(!1);
-                (0, a.useEffect)(() => {
-                    window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t);
+                ((0, a.useEffect)(() => {
+                    (window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t));
                 }),
                     (0, a.useEffect)(() => {
                         window.Ya.Rum.spa.getLastSpaSubPage(t) && e && !s && (window.Ya.Rum.spa.finishDataLoading(t), window.Ya.Rum.spa.startDataRendering(t), r(!0));
-                    }, [e, s, t]);
+                    }, [e, s, t]));
             };
         },
         4820: (e, t, s) => {
@@ -59,7 +59,7 @@
                 a = s(60900),
                 r = s(64605),
                 l = (function (e) {
-                    return (e.PIN = 'pin'), e;
+                    return ((e.PIN = 'pin'), e);
                 })({});
             let n = (e, t) => {
                 let { formatMessage: s } = (0, a.A)();
@@ -129,11 +129,11 @@
                             objectPosX: D,
                             objectPosY: M,
                         };
-                        void 0 !== y && ((n.filterKey = y), (n.filterValue = L), (n.filterPos = O)),
+                        (void 0 !== y && ((n.filterKey = y), (n.filterValue = L), (n.filterPos = O)),
                             c.qG.includes(x) && ((n.tabId = A), (n.tabPos = b), (n.isTabSelectedByDefault = g)),
                             H && (n.skeletonId = H),
                             'string' == typeof E && 'string' == typeof I && ((n.mainObjectType = I), (n.mainObjectId = E)),
-                            U && (n.displayReasonId = U);
+                            U && (n.displayReasonId = U));
                         let d = (0, a.Fx)({ params: n, logger: e, context: 'useSendEventOnBlockShowedOrHidden' });
                         d && (i ? (0, a.Pf)(t.evgenInstance, d) : (0, a.nv)(t.evgenInstance, d));
                     },
@@ -252,7 +252,7 @@
                     c = (0, i.useContext)(r.B),
                     d = (0, i.useCallback)(
                         (i, a) => {
-                            e ? e(i, s ? a : void 0) : n(i, a), t && c.unobserveElement(o);
+                            (e ? e(i, s ? a : void 0) : n(i, a), t && c.unobserveElement(o));
                         },
                         [e, c, o, n, t, s],
                     );
@@ -436,7 +436,7 @@
                                 entity: t,
                                 callback: s,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), l.isOpened && (i.reset(), l.close()), a.modal.isOpened && a.modal.close();
+                                    (null == e || e.stopPropagation(), l.isOpened && (i.reset(), l.close()), a.modal.isOpened && a.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     r.modal.isOpened && (r.modal.close(), r.reset());
@@ -446,11 +446,11 @@
                         })({
                             artist: t,
                             callback: (0, _.c)((e) => {
-                                T && S.isOpened && S.close(), k(e);
+                                (T && S.isOpened && S.close(), k(e));
                             }),
                         }),
                         N = (0, _.c)((e) => {
-                            E({ to: p.QT.ArtistScreen }), null == j || j(), I(e);
+                            (E({ to: p.QT.ArtistScreen }), null == j || j(), I(e));
                         });
                     return s && !t.various
                         ? (0, i.jsx)(b.N, {
@@ -667,7 +667,7 @@
                         } = (0, o.g)(),
                         O = 1 === s.length,
                         P = (0, l.useCallback)((e) => {
-                            N(!0), e.preventDefault();
+                            (N(!0), e.preventDefault());
                         }, []),
                         R = (0, l.useMemo)(() => {
                             let e = s;
@@ -721,7 +721,7 @@
                 });
         },
         46977: (e, t, s) => {
-            Promise.resolve().then(s.bind(s, 3377)), Promise.resolve().then(s.bind(s, 57139));
+            (Promise.resolve().then(s.bind(s, 3377)), Promise.resolve().then(s.bind(s, 57139)));
         },
         48736: (e) => {
             e.exports = { root: 'TooltipWithTitle_root__7jLY3', text: 'TooltipWithTitle_text__ElBtq', description: 'TooltipWithTitle_description__HsGcR' };
@@ -955,11 +955,11 @@
                                 let m = { ...(0, u.HO)(r), url: r.url, isLiked: !r.isLiked };
                                 s(!0);
                                 let h = await r.toggleLike();
-                                s(!1),
+                                (s(!1),
                                     c &&
                                         (h === p.f.OK
                                             ? e((0, i.jsx)(x, { withLink: o, album: m }), { containerId: n.u.INFO })
-                                            : e((0, i.jsx)(d.h, { error: l({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
+                                            : e((0, i.jsx)(d.h, { error: l({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR })));
                             });
                         })(),
                         { pageAlbumId: A } = (0, l.T)();
@@ -988,7 +988,7 @@
             var i,
                 a = s(71483);
             !(function (e) {
-                (e.ALBUM = 'album'), (e.PLAYLIST = 'playlist');
+                ((e.ALBUM = 'album'), (e.PLAYLIST = 'playlist'));
             })(i || (i = {}));
             let r = (e, t) => {
                 var s, r;
@@ -1039,7 +1039,7 @@
                         );
                     }, [t, s]),
                     C = (0, c.c)((e) => {
-                        r.modal.isOpened && r.modal.close(), b({ to: n.QT.ArtistScreen }), x(e);
+                        (r.modal.isOpened && r.modal.close(), b({ to: n.QT.ArtistScreen }), x(e));
                     });
                 return (0, i.jsxs)(i.Fragment, {
                     children: [
@@ -1099,10 +1099,10 @@
         92013: (e, t, s) => {
             'use strict';
             var i;
-            s.d(t, { T: () => i }),
+            (s.d(t, { T: () => i }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(i || (i = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(i || (i = {})));
         },
         92237: (e) => {
             e.exports = {
@@ -1113,7 +1113,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 6639, 6347, 3183, 3931, 7972, 7231, 8868, 9763, 7258, 963, 6054, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 6252, 6477, 7275,
@@ -1121,6 +1121,6 @@
             ],
             () => e((e.s = 46977)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

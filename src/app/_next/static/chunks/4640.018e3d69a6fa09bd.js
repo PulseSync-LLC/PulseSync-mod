@@ -7,21 +7,21 @@
                 r = '~';
             function n() {}
             function i(e, t, r) {
-                (this.fn = e), (this.context = t), (this.once = r || !1);
+                ((this.fn = e), (this.context = t), (this.once = r || !1));
             }
             function s(e, t, n, s, a) {
                 if ('function' != typeof n) throw TypeError('The listener must be a function');
                 var o = new i(n, s || e, a),
                     l = r ? r + t : t;
-                return e._events[l] ? (e._events[l].fn ? (e._events[l] = [e._events[l], o]) : e._events[l].push(o)) : ((e._events[l] = o), e._eventsCount++), e;
+                return (e._events[l] ? (e._events[l].fn ? (e._events[l] = [e._events[l], o]) : e._events[l].push(o)) : ((e._events[l] = o), e._eventsCount++), e);
             }
             function a(e, t) {
                 0 == --e._eventsCount ? (e._events = new n()) : delete e._events[t];
             }
             function o() {
-                (this._events = new n()), (this._eventsCount = 0);
+                ((this._events = new n()), (this._eventsCount = 0));
             }
-            Object.create && ((n.prototype = Object.create(null)), new n().__proto__ || (r = !1)),
+            (Object.create && ((n.prototype = Object.create(null)), new n().__proto__ || (r = !1)),
                 (o.prototype.eventNames = function () {
                     var e,
                         n,
@@ -53,17 +53,17 @@
                     if (d.fn) {
                         switch ((d.once && this.removeListener(e, d.fn, void 0, !0), h)) {
                             case 1:
-                                return d.fn.call(d.context), !0;
+                                return (d.fn.call(d.context), !0);
                             case 2:
-                                return d.fn.call(d.context, t), !0;
+                                return (d.fn.call(d.context, t), !0);
                             case 3:
-                                return d.fn.call(d.context, t, n), !0;
+                                return (d.fn.call(d.context, t, n), !0);
                             case 4:
-                                return d.fn.call(d.context, t, n, i), !0;
+                                return (d.fn.call(d.context, t, n, i), !0);
                             case 5:
-                                return d.fn.call(d.context, t, n, i, s), !0;
+                                return (d.fn.call(d.context, t, n, i, s), !0);
                             case 6:
-                                return d.fn.call(d.context, t, n, i, s, a), !0;
+                                return (d.fn.call(d.context, t, n, i, s, a), !0);
                         }
                         for (u = 1, l = Array(h - 1); u < h; u++) l[u - 1] = arguments[u];
                         d.fn.apply(d.context, l);
@@ -100,7 +100,7 @@
                 (o.prototype.removeListener = function (e, t, n, i) {
                     var s = r ? r + e : e;
                     if (!this._events[s]) return this;
-                    if (!t) return a(this, s), this;
+                    if (!t) return (a(this, s), this);
                     var o = this._events[s];
                     if (o.fn) o.fn !== t || (i && !o.once) || (n && o.context !== n) || a(this, s);
                     else {
@@ -111,13 +111,13 @@
                 }),
                 (o.prototype.removeAllListeners = function (e) {
                     var t;
-                    return e ? ((t = r ? r + e : e), this._events[t] && a(this, t)) : ((this._events = new n()), (this._eventsCount = 0)), this;
+                    return (e ? ((t = r ? r + e : e), this._events[t] && a(this, t)) : ((this._events = new n()), (this._eventsCount = 0)), this);
                 }),
                 (o.prototype.off = o.prototype.removeListener),
                 (o.prototype.addListener = o.prototype.on),
                 (o.prefixed = r),
                 (o.EventEmitter = o),
-                (e.exports = o);
+                (e.exports = o));
         },
         42744: (e, t, r) => {
             r.d(t, { x: () => n });
@@ -126,7 +126,7 @@
             }
         },
         54640: (e, t, r) => {
-            r.r(t),
+            (r.r(t),
                 r.d(t, {
                     HlsCoreAdapter: () => w,
                     HtmlAudioCoreAdapter: () => T,
@@ -134,7 +134,7 @@
                     YaspLoader: () => m,
                     checkBuffering: () => H,
                     getRemainingBufferedTime: () => y,
-                });
+                }));
             var n = r(91945),
                 i = r(96533),
                 s = r(37956);
@@ -178,13 +178,13 @@
             let l = (0, r(42744).x)();
             async function u(e) {
                 if (o(() => l.Ya)?.YaspVideoElement) return Promise.resolve();
-                await a({ file: 'yasp.js', version: e?.version, testid: e?.testid, bundleUrl: e?.bundleUrl, checkLoad: () => !!o(() => l.Ya)?.preloadYaspScripts }),
-                    await l.Ya.preloadYaspScripts();
+                (await a({ file: 'yasp.js', version: e?.version, testid: e?.testid, bundleUrl: e?.bundleUrl, checkLoad: () => !!o(() => l.Ya)?.preloadYaspScripts }),
+                    await l.Ya.preloadYaspScripts());
             }
             var d = r(29222);
             class h extends d.t {
                 constructor(e = '[Sonata] YASP loading aborted', { code: t = 'E_SONATA', ...r } = {}) {
-                    super(e, { code: t, ...r }), (0, n._)(this, 'name', 'YaspLoadingAbortedException'), Object.setPrototypeOf(this, h.prototype);
+                    (super(e, { code: t, ...r }), (0, n._)(this, 'name', 'YaspLoadingAbortedException'), Object.setPrototypeOf(this, h.prototype));
                 }
             }
             class m {
@@ -199,7 +199,7 @@
                     return new Promise((e, n) => {
                         if (null == s ? void 0 : s.aborted) return void n(new h());
                         let l = () => {
-                            o && clearTimeout(o), n(new h());
+                            (o && clearTimeout(o), n(new h()));
                         };
                         null == s || s.addEventListener('abort', l, { once: !0 });
                         let m = () => {
@@ -211,17 +211,17 @@
                                     let a = window.Ya.YaspAudioElement;
                                     a.messenger.on('yasp-event', this.yaspEventHandler);
                                     let o = this.getTelemetryTestIds ? this.getTelemetryTestIds() : void 0;
-                                    null == (t = this.yaspTelemetry) || t.setStaticParams({ testIds: o }),
+                                    (null == (t = this.yaspTelemetry) || t.setStaticParams({ testIds: o }),
                                         a.setWorkerConfig({ sourceLimit: r, perfLogUrl: i }),
                                         null == (n = this.yaspTelemetry) || n.onCreatePlayer({ sourceLimit: r }),
-                                        e();
+                                        e());
                                 })
                                 .catch((e) => {
                                     let r = new d.t('[Sonata] Error in loading YASP', { code: 'E_SONATA', cause: e });
-                                    this.logger.error(r, { yaspVersion: t }),
+                                    (this.logger.error(r, { yaspVersion: t }),
                                         new Promise((e) => {
                                             o = setTimeout(e, a);
-                                        }).then(() => m());
+                                        }).then(() => m()));
                                 });
                         };
                         m();
@@ -241,13 +241,13 @@
                     t.isYaspAudioElement(e) || t.attach(e);
                 }
                 constructor({ logger: e, yaspTelemetry: t, getTelemetryTestIds: r }) {
-                    (0, n._)(this, 'logger', void 0),
+                    ((0, n._)(this, 'logger', void 0),
                         (0, n._)(this, 'yaspTelemetry', void 0),
                         (0, n._)(this, 'getTelemetryTestIds', void 0),
                         (this.logger = e),
                         (this.yaspTelemetry = t),
                         (this.getTelemetryTestIds = r),
-                        (this.yaspEventHandler = this.yaspEventHandler.bind(this));
+                        (this.yaspEventHandler = this.yaspEventHandler.bind(this)));
                 }
             }
             var c = r(88461),
@@ -279,7 +279,7 @@
             }
             class E {
                 setupAudioElement() {
-                    (this.audioElement.autoplay = !1),
+                    ((this.audioElement.autoplay = !1),
                         (this.audioElement.loop = !1),
                         (this.audioElement.preload = 'auto'),
                         (this.audioElement.crossOrigin = 'anonymous'),
@@ -288,18 +288,18 @@
                         this.audioElement.addEventListener('pause', this.pauseHandler),
                         this.audioElement.addEventListener('error', this.audioErrorHandler),
                         this.audioElement.addEventListener('volumechange', this.volumeChangeHandler),
-                        this.audioElement.addEventListener('ratechange', this.speedChangeHandler);
+                        this.audioElement.addEventListener('ratechange', this.speedChangeHandler));
                 }
                 get source() {
                     return this.audioElement;
                 }
                 async play(e) {
                     let { source: t, positionSec: r } = e;
-                    (this.audioElement.src = t.src), this.audioElement.load(), await this.audioElement.play(), void 0 !== r && (this.audioElement.currentTime = r);
+                    ((this.audioElement.src = t.src), this.audioElement.load(), await this.audioElement.play(), void 0 !== r && (this.audioElement.currentTime = r));
                 }
                 setSrc(e) {
                     let { source: t, positionSec: r } = e;
-                    (this.audioElement.src = t.src), this.audioElement.load(), void 0 !== r && (this.audioElement.currentTime = r);
+                    ((this.audioElement.src = t.src), this.audioElement.load(), void 0 !== r && (this.audioElement.currentTime = r));
                 }
                 preloadSrc(e) {
                     return Promise.resolve();
@@ -308,23 +308,23 @@
                     return Promise.resolve();
                 }
                 pause() {
-                    return this.audioElement.pause(), Promise.resolve();
+                    return (this.audioElement.pause(), Promise.resolve());
                 }
                 async resume() {
-                    await this.audioElement.play(), this.emitter.emit('resume');
+                    (await this.audioElement.play(), this.emitter.emit('resume'));
                 }
                 setProgress(e) {
                     let t = e >= this.audioElement.duration ? this.audioElement.duration - 0.01 : e;
-                    return (this.audioElement.currentTime = t), Promise.resolve(this.audioElement.currentTime);
+                    return ((this.audioElement.currentTime = t), Promise.resolve(this.audioElement.currentTime));
                 }
                 setVolume(e) {
-                    return (this.audioElement.volume = e), Promise.resolve(this.audioElement.volume);
+                    return ((this.audioElement.volume = e), Promise.resolve(this.audioElement.volume));
                 }
                 setSpeed(e) {
-                    return (this.audioElement.defaultPlaybackRate = e), (this.audioElement.playbackRate = e), Promise.resolve(this.audioElement.playbackRate);
+                    return ((this.audioElement.defaultPlaybackRate = e), (this.audioElement.playbackRate = e), Promise.resolve(this.audioElement.playbackRate));
                 }
                 stop() {
-                    return this.audioElement.removeAttribute('src'), this.audioElement.load(), Promise.resolve();
+                    return (this.audioElement.removeAttribute('src'), this.audioElement.load(), Promise.resolve());
                 }
                 onEnd(e) {
                     this.audioElement.addEventListener('ended', e);
@@ -357,7 +357,7 @@
                     this.audioElement.addEventListener('stalled', e);
                 }
                 onCanplay(e) {
-                    this.ensureNativeCanplayListenerInstalled(), this.audioElement.addEventListener('canplay', e);
+                    (this.ensureNativeCanplayListenerInstalled(), this.audioElement.addEventListener('canplay', e));
                 }
                 onPlaying(e) {
                     this.audioElement.addEventListener('playing', e);
@@ -444,10 +444,10 @@
                 resolvePendingCanplay(e) {
                     if (!this.pendingCanplay) return;
                     let { resolve: t } = this.pendingCanplay;
-                    (this.pendingCanplay = null), t(e);
+                    ((this.pendingCanplay = null), t(e));
                 }
                 constructor() {
-                    (0, n._)(this, 'emitter', new c.b()),
+                    ((0, n._)(this, 'emitter', new c.b()),
                         (0, n._)(this, 'nativeCanplayListenerInstalled', !1),
                         (0, n._)(this, 'pendingCanplay', null),
                         (this.progressHandler = this.progressHandler.bind(this)),
@@ -455,7 +455,7 @@
                         (this.speedChangeHandler = this.speedChangeHandler.bind(this)),
                         (this.audioErrorHandler = this.audioErrorHandler.bind(this)),
                         (this.pauseHandler = this.pauseHandler.bind(this)),
-                        (this.nativeCanplayHandler = this.nativeCanplayHandler.bind(this));
+                        (this.nativeCanplayHandler = this.nativeCanplayHandler.bind(this)));
                 }
             }
             function f(e) {
@@ -472,7 +472,7 @@
             }
             class L extends d.t {
                 constructor(e = 'The play() request was interrupted', { code: t = 'E_SONATA', ...r } = {}) {
-                    super(e, { code: t, ...r }), (0, n._)(this, 'name', 'AbortError'), Object.setPrototypeOf(this, L.prototype);
+                    (super(e, { code: t, ...r }), (0, n._)(this, 'name', 'AbortError'), Object.setPrototypeOf(this, L.prototype));
                 }
             }
             class C extends E {
@@ -495,27 +495,27 @@
                         let i = this.audioElement,
                             s = this.createPlayRequestAbortedError();
                         function a() {
-                            i.removeEventListener('playing', l),
+                            (i.removeEventListener('playing', l),
                                 i.removeEventListener('error', u),
                                 i.removeEventListener('yasp-error', d),
-                                t.removeEventListener('abort', o);
+                                t.removeEventListener('abort', o));
                         }
                         function o() {
-                            a(), n(s);
+                            (a(), n(s));
                         }
                         function l() {
                             i.src === e && (a(), r());
                         }
                         function u() {
                             if (i.src !== e || t.aborted) return void o();
-                            a(), n(Error('[Sonata] HTMLMediaElement error during YASP startup'));
+                            (a(), n(Error('[Sonata] HTMLMediaElement error during YASP startup')));
                         }
                         function d(r) {
                             if (i.src !== e || t.aborted) return void o();
-                            a(), n(r);
+                            (a(), n(r));
                         }
                         if (t.aborted) return void o();
-                        i.addEventListener('playing', l), i.addEventListener('error', u), i.addEventListener('yasp-error', d), t.addEventListener('abort', o);
+                        (i.addEventListener('playing', l), i.addEventListener('error', u), i.addEventListener('yasp-error', d), t.addEventListener('abort', o));
                     });
                 }
                 yaspEventHandler(e) {
@@ -528,10 +528,10 @@
                 }
                 play(e) {
                     let { source: t, positionSec: r } = e;
-                    this.abortPendingStartup(), (t.positionSec = r);
+                    (this.abortPendingStartup(), (t.positionSec = r));
                     let n = this.audioElement.src,
                         i = t.src;
-                    window.Ya.YaspAudioElement.configureSource(t.src, { audioDecodingKey: t.key, mirrorUrls: t.mirrorUrls }), (this.audioElement.src = i);
+                    (window.Ya.YaspAudioElement.configureSource(t.src, { audioDecodingKey: t.key, mirrorUrls: t.mirrorUrls }), (this.audioElement.src = i));
                     let s = new AbortController();
                     this.pendingStartupAbortController = s;
                     let a = Promise.resolve();
@@ -567,24 +567,24 @@
                 }
                 setSrc(e) {
                     let { source: t, positionSec: r } = e;
-                    (t.positionSec = r),
+                    ((t.positionSec = r),
                         window.Ya.YaspAudioElement.configureSource(t.src, { audioDecodingKey: t.key, mirrorUrls: t.mirrorUrls }),
-                        (this.audioElement.src = t.src);
+                        (this.audioElement.src = t.src));
                 }
                 setProgress(e) {
                     var t;
-                    return null == (t = this.yaspTelemetry) || t.onSeek(this.audioElement.currentTime, e), super.setProgress(e);
+                    return (null == (t = this.yaspTelemetry) || t.onSeek(this.audioElement.currentTime, e), super.setProgress(e));
                 }
                 stop() {
-                    return this.cancelPendingCanplay(), this.abortPendingStartup(), this.audioElement.yaspReleaseSrc(this.audioElement.src).then(), super.stop();
+                    return (this.cancelPendingCanplay(), this.abortPendingStartup(), this.audioElement.yaspReleaseSrc(this.audioElement.src).then(), super.stop());
                 }
                 detachYasp() {
-                    this.audioElement.removeEventListener('yasp-event', this.yaspEventHandler),
+                    (this.audioElement.removeEventListener('yasp-event', this.yaspEventHandler),
                         this.audioElement.removeEventListener('yasp-error', this.yaspErrorHandler),
-                        this.audioElement.detach();
+                        this.audioElement.detach());
                 }
                 constructor({ yaspAudioElement: e, yaspTelemetry: t }) {
-                    super(),
+                    (super(),
                         (0, n._)(this, 'audioElement', void 0),
                         (0, n._)(this, 'yaspTelemetry', void 0),
                         (0, n._)(this, 'pendingStartupAbortController', null),
@@ -594,7 +594,7 @@
                         (this.yaspErrorHandler = this.yaspErrorHandler.bind(this)),
                         this.setupAudioElement(),
                         this.audioElement.addEventListener('yasp-event', this.yaspEventHandler),
-                        this.audioElement.addEventListener('yasp-error', this.yaspErrorHandler);
+                        this.audioElement.addEventListener('yasp-error', this.yaspErrorHandler));
                 }
             }
             var b = r(39014);
@@ -611,7 +611,7 @@
                     return null != (r = e.audioCodec) ? r : P(e.codecs || (null == (t = e.attrs) ? void 0 : t.CODECS));
                 },
                 _ = (e, t) => {
-                    if (!t) return (e.startLevel = -1), (e.autoLevelCapping = -1), (e.loadLevel = -1), 'auto';
+                    if (!t) return ((e.startLevel = -1), (e.autoLevelCapping = -1), (e.loadLevel = -1), 'auto');
                     let r = ((e, t) => {
                         var r, n, i, s;
                         let a = e
@@ -723,10 +723,10 @@
                     this.hls && (this.hls.once(e, t), this.hlsListeners.push({ event: e, listener: t, once: !0 }));
                 }
                 removeAllHlsEvents() {
-                    this.hlsListeners.forEach((e) => {
+                    (this.hlsListeners.forEach((e) => {
                         this.hls && this.hls.off(e.event, e.listener, void 0, e.once);
                     }),
-                        (this.hlsListeners = []);
+                        (this.hlsListeners = []));
                 }
                 getHlsErrorLogData(e, t) {
                     var r, n;
@@ -753,16 +753,16 @@
                         switch (t.type) {
                             case b.wU.NETWORK_ERROR:
                                 if ((this.retryCounter++, this.retryCounter > this.hlsErrorRetryLimit)) {
-                                    this.logHlsError(t, 'emitError'), this.destroyHls();
+                                    (this.logHlsError(t, 'emitError'), this.destroyHls());
                                     let e = new d.t('HLS error', { data: t });
                                     this.emitter.emit('error', e);
-                                } else this.logHlsError(t, 'startLoad'), this.hls.startLoad();
+                                } else (this.logHlsError(t, 'startLoad'), this.hls.startLoad());
                                 break;
                             case b.Ay.ErrorTypes.MEDIA_ERROR:
-                                this.logHlsError(t, 'recoverMediaError'), this.hls.recoverMediaError();
+                                (this.logHlsError(t, 'recoverMediaError'), this.hls.recoverMediaError());
                                 break;
                             default:
-                                this.logHlsError(t, 'emitError'), this.destroyHls(), this.emitter.emit('error', new d.t('HLS error', { data: t }));
+                                (this.logHlsError(t, 'emitError'), this.destroyHls(), this.emitter.emit('error', new d.t('HLS error', { data: t })));
                         }
                 }
                 levelToManualQuality(e) {
@@ -770,24 +770,25 @@
                     return { bitrate: e.bitrate, audioCodec: null != (r = e.audioCodec) ? r : P(e.codecs || (null == (t = e.attrs) ? void 0 : t.CODECS)) };
                 }
                 setErrorListener(e) {
-                    this.removeErrorListener(), this.hls && ((this.hlsJsErrorListener = e), this.hls.on(b.sV.ERROR, e));
+                    (this.removeErrorListener(), this.hls && ((this.hlsJsErrorListener = e), this.hls.on(b.sV.ERROR, e)));
                 }
                 removeErrorListener() {
-                    this.hls && this.hlsJsErrorListener && this.hls.off(b.sV.ERROR, this.hlsJsErrorListener), (this.hlsJsErrorListener = null);
+                    (this.hls && this.hlsJsErrorListener && this.hls.off(b.sV.ERROR, this.hlsJsErrorListener), (this.hlsJsErrorListener = null));
                 }
                 onFragChanged(e, t) {
                     var r;
                     (null == (r = t.frag) ? void 0 : r.programDateTime) && this.onProgramDateTimeUpdate && this.onProgramDateTimeUpdate(t.frag.programDateTime);
                 }
                 setProgramDateTimeListener(e) {
-                    this.removeProgramDateTimeListener(), this.hls && ((this.programDateTimeListener = e), this.hls.on(b.sV.FRAG_CHANGED, this.programDateTimeListener));
+                    (this.removeProgramDateTimeListener(),
+                        this.hls && ((this.programDateTimeListener = e), this.hls.on(b.sV.FRAG_CHANGED, this.programDateTimeListener)));
                 }
                 removeProgramDateTimeListener() {
-                    this.hls && this.programDateTimeListener && this.hls.off(b.sV.FRAG_CHANGED, this.programDateTimeListener), (this.programDateTimeListener = null);
+                    (this.hls && this.programDateTimeListener && this.hls.off(b.sV.FRAG_CHANGED, this.programDateTimeListener), (this.programDateTimeListener = null));
                 }
                 constructor(e) {
                     var t, r;
-                    super(),
+                    (super(),
                         (0, n._)(this, 'audioElement', document.createElement('audio')),
                         (0, n._)(this, 'hls', null),
                         (0, n._)(this, 'retryCounter', 0),
@@ -811,12 +812,12 @@
                         (this.errorListener = this.errorListener.bind(this)),
                         (this.onFragChanged = this.onFragChanged.bind(this)),
                         this.initHls(),
-                        null == (t = this.manualQualityController) || t.manualQuality.onChange(this.applyManualQuality);
+                        null == (t = this.manualQualityController) || t.manualQuality.onChange(this.applyManualQuality));
                 }
             }
             class T extends E {
                 constructor() {
-                    super(), (0, n._)(this, 'audioElement', document.createElement('audio')), this.setupAudioElement();
+                    (super(), (0, n._)(this, 'audioElement', document.createElement('audio')), this.setupAudioElement());
                 }
             }
             let A = (0, p.fP)(0.15);
@@ -849,7 +850,7 @@
                         }
                         let a = r,
                             o = 0;
-                        t &&
+                        (t &&
                             s > 0 &&
                             (a = (e) => {
                                 if ((r(e), o > 0)) {
@@ -881,9 +882,9 @@
                                     } = t,
                                     v = s.document.createElement('script'),
                                     y = (n) => {
-                                        l > 0 ? (u(n), e({ ...t, src: r, retries: l - 1 })) : p(n), v.parentNode?.removeChild(v);
+                                        (l > 0 ? (u(n), e({ ...t, src: r, retries: l - 1 })) : p(n), v.parentNode?.removeChild(v));
                                     };
-                                (v.type = 'text/javascript'),
+                                ((v.type = 'text/javascript'),
                                     (v.async = o),
                                     (v.onload = () => (h(v) ? c() : y(Error(`checkLoad for ${r} failed`)))),
                                     (v.onerror = (e) => {
@@ -899,9 +900,9 @@
                                     (function (e) {
                                         let t = e.document,
                                             r = t.getElementsByTagName('head')[0];
-                                        return r || ((r = t.createElement('head')), t.documentElement.appendChild(r)), r;
-                                    })(s).appendChild(v);
-                            })({ ...e, onBeforeLoad: a });
+                                        return (r || ((r = t.createElement('head')), t.documentElement.appendChild(r)), r);
+                                    })(s).appendChild(v));
+                            })({ ...e, onBeforeLoad: a }));
                     })({ ...e, onLoad: t, onError: r });
                 });
             }

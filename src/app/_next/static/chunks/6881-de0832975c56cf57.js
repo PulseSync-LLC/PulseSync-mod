@@ -376,7 +376,7 @@
                         i = () => {
                             var e, t;
                             let r = null != (t = null == (e = window.__PAGE_STATE_PATCHES__) ? void 0 : e[a]) ? t : [];
-                            return window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[a], r;
+                            return (window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[a], r);
                         };
                     return {
                         pageStoreProvider: (e) => {
@@ -434,7 +434,7 @@
                     try {
                         return yield a.markFinished(t);
                     } catch (e) {
-                        return n.error(e), i.T.ERROR;
+                        return (n.error(e), i.T.ERROR);
                     }
                 }),
                 markUnlistened: (0, r.L3)(function* (t) {
@@ -442,7 +442,7 @@
                     try {
                         return yield a.markUnfinished(t);
                     } catch (e) {
-                        return n.error(e), i.T.ERROR;
+                        return (n.error(e), i.T.ERROR);
                     }
                 }),
             }));
@@ -482,23 +482,23 @@
                             try {
                                 e.loadingState = l.G.PENDING;
                                 let i = yield t.getTracks(a);
-                                (e.tracks = i), (e.items = (0, r.wg)(i.map((e) => (0, n.v)(e)))), e.loadingState !== l.G.IDLE && (e.loadingState = l.G.RESOLVE);
+                                ((e.tracks = i), (e.items = (0, r.wg)(i.map((e) => (0, n.v)(e)))), e.loadingState !== l.G.IDLE && (e.loadingState = l.G.RESOLVE));
                             } catch (t) {
-                                i.error(t), e.loadingState !== l.G.IDLE && (e.loadingState = l.G.REJECT);
+                                (i.error(t), e.loadingState !== l.G.IDLE && (e.loadingState = l.G.REJECT));
                             }
                     }),
                     reset() {
-                        (e.items = null), (e.tracks = null), (e.loadingState = l.G.IDLE);
+                        ((e.items = null), (e.tracks = null), (e.loadingState = l.G.IDLE));
                     },
                 }));
         },
         68100: (e, t, a) => {
             'use strict';
             var r;
-            a.d(t, { J: () => r }),
+            (a.d(t, { J: () => r }),
                 (function (e) {
-                    (e.OWN = 'OWN'), (e.UGC = 'UGC'), (e.OWN_REPLACED_TO_UGC = 'OWN_REPLACED_TO_UGC'), (e.EXTERNAL = 'EXTERNAL');
-                })(r || (r = {}));
+                    ((e.OWN = 'OWN'), (e.UGC = 'UGC'), (e.OWN_REPLACED_TO_UGC = 'OWN_REPLACED_TO_UGC'), (e.EXTERNAL = 'EXTERNAL'));
+                })(r || (r = {})));
         },
         75819: (e, t, a) => {
             'use strict';
@@ -600,7 +600,7 @@
                         (function (e) {
                             if ('number' == typeof e.expires) {
                                 var t = new Date();
-                                t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t);
+                                (t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t));
                             }
                             return (
                                 i('Expires', e.expires ? e.expires.toUTCString() : '') +
@@ -865,7 +865,7 @@
                         N = (0, c.c)(() => {
                             t.tracksController && K.getData(t.tracksController);
                         });
-                    (0, u.L)(N),
+                    ((0, u.L)(N),
                         (0, s.useEffect)(() => {
                             K.isNeededToLoad && N();
                         }, [K.isNeededToLoad, N]),
@@ -875,7 +875,7 @@
                             },
                             [K],
                         ),
-                        (0, T.J)(K.isResolved);
+                        (0, T.J)(K.isResolved));
                     let R = (0, s.useMemo)(
                         () => ({ Header: () => (0, r.jsx)(Q, {}), Footer: () => (0, r.jsx)(P.A, { children: (0, r.jsx)(C.w, { className: w().footer }) }) }),
                         [],
@@ -950,7 +950,8 @@
                             null == (r = a.store) || r.tracks.events.on(i.je.ENTITY_CHANGED, o),
                             () => {
                                 var t, r;
-                                null == (t = a.store) || t.tracks.events.off(i.je.STATE_CHANGED, e), null == (r = a.store) || r.tracks.events.off(i.je.ENTITY_CHANGED, o);
+                                (null == (t = a.store) || t.tracks.events.off(i.je.STATE_CHANGED, e),
+                                    null == (r = a.store) || r.tracks.events.off(i.je.ENTITY_CHANGED, o));
                             }
                         );
                     }, [e, o, null == (t = a.store) ? void 0 : t.tracks.events]);
@@ -1003,7 +1004,7 @@
                         if (e.artists.map((e) => e.name).join(', ') === a && t === e.title) return o.F.OK;
                         try {
                             var l;
-                            yield i.changeTrack({ trackId: e.id, title: t, artist: a }), (e.title = t);
+                            (yield i.changeTrack({ trackId: e.id, title: t, artist: a }), (e.title = t));
                             let s = (null == (l = e.artists[0]) ? void 0 : l.id) || '0';
                             if (((e.artists = (0, r.wg)([])), a)) {
                                 let t = n.P.create({ id: s, name: a, isAvailable: !0 });
@@ -1011,7 +1012,7 @@
                             }
                             return o.F.OK;
                         } catch (e) {
-                            return s.error(e), o.F.ERROR;
+                            return (s.error(e), o.F.ERROR);
                         }
                     }),
                 }))

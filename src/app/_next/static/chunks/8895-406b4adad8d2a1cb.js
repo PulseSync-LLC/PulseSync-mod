@@ -40,13 +40,13 @@
                     });
                 }
                 onTerminatedHandler() {
-                    (this.idbIsAvailable = !1),
+                    ((this.idbIsAvailable = !1),
                         (this.idb = this.openIdb({
                             onBlocked: () => this.onBlockedHandler(),
                             onTerminated: () => {
                                 this.idbIsAvailable = !1;
                             },
-                        }));
+                        })));
                 }
                 async openIdb(e) {
                     let { dbName: t, dbVersion: i, onUpgrade: n } = this.config;
@@ -64,7 +64,7 @@
                                 n(e);
                             },
                         });
-                        return (this.idbIsAvailable = !0), a;
+                        return ((this.idbIsAvailable = !0), a);
                     } catch (e) {
                         this.idbIsAvailable = !1;
                     }
@@ -79,11 +79,11 @@
                         : Promise.resolve();
                 }
                 constructor(e) {
-                    (0, n._)(this, 'config', void 0),
+                    ((0, n._)(this, 'config', void 0),
                         (0, n._)(this, 'idb', void 0),
                         (0, n._)(this, 'idbIsAvailable', void 0),
                         (this.config = e),
-                        (this.idbIsAvailable = !1);
+                        (this.idbIsAvailable = !1));
                 }
             }
         },
@@ -166,7 +166,7 @@
                     return this.cursor[Symbol.asyncIterator]();
                 }
                 constructor(e) {
-                    Object.defineProperty(this, 'cursor', { enumerable: !0, configurable: !0, writable: !0, value: e }),
+                    (Object.defineProperty(this, 'cursor', { enumerable: !0, configurable: !0, writable: !0, value: e }),
                         Object.defineProperty(this, 'key', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'direction', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'request', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -180,7 +180,7 @@
                         (this.key = e.key),
                         (this.advance = e.advance.bind(e)),
                         (this.continue = e.continue.bind(e)),
-                        (this.continuePrimaryKey = e.continuePrimaryKey.bind(e));
+                        (this.continuePrimaryKey = e.continuePrimaryKey.bind(e)));
                 }
             }
             class r extends a {
@@ -188,10 +188,10 @@
                     return this.cursor[Symbol.asyncIterator]();
                 }
                 constructor(e) {
-                    super(e),
+                    (super(e),
                         Object.defineProperty(this, 'cursor', { enumerable: !0, configurable: !0, writable: !0, value: e }),
                         Object.defineProperty(this, 'value', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
-                        (this.value = e.value);
+                        (this.value = e.value));
                 }
             }
             var s = function (e, t, i, n) {
@@ -269,7 +269,7 @@
                     return this.index.iterate(e, t);
                 }
                 constructor(e) {
-                    Object.defineProperty(this, 'index', { enumerable: !0, configurable: !0, writable: !0, value: e }),
+                    (Object.defineProperty(this, 'index', { enumerable: !0, configurable: !0, writable: !0, value: e }),
                         Object.defineProperty(this, 'keyPath', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'multiEntry', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'name', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
@@ -277,7 +277,7 @@
                         (this.keyPath = e.keyPath),
                         (this.multiEntry = e.multiEntry),
                         (this.name = e.name),
-                        (this.unique = e.unique);
+                        (this.unique = e.unique));
                 }
             }
             var l = function (e, t, i, n) {
@@ -383,13 +383,13 @@
                     return this.objectStore[Symbol.asyncIterator]();
                 }
                 constructor(e) {
-                    Object.defineProperty(this, 'objectStore', { enumerable: !0, configurable: !0, writable: !0, value: e }),
+                    (Object.defineProperty(this, 'objectStore', { enumerable: !0, configurable: !0, writable: !0, value: e }),
                         Object.defineProperty(this, 'autoIncrement', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'keyPath', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'name', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.autoIncrement = e.autoIncrement),
                         (this.keyPath = e.keyPath),
-                        (this.name = e.name);
+                        (this.name = e.name));
                 }
             }
             class d {
@@ -427,13 +427,13 @@
                     return this.transaction.dispatchEvent(e);
                 }
                 constructor(e) {
-                    Object.defineProperty(this, 'transaction', { enumerable: !0, configurable: !0, writable: !0, value: e }),
+                    (Object.defineProperty(this, 'transaction', { enumerable: !0, configurable: !0, writable: !0, value: e }),
                         Object.defineProperty(this, 'durability', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'mode', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'objectStoreNames', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.durability = e.durability),
                         (this.mode = e.mode),
-                        (this.objectStoreNames = e.objectStoreNames);
+                        (this.objectStoreNames = e.objectStoreNames));
                 }
             }
             var u = function (e, t, i, n) {
@@ -574,11 +574,11 @@
                     return this.database.dispatchEvent(e);
                 }
                 constructor(e) {
-                    Object.defineProperty(this, 'database', { enumerable: !0, configurable: !0, writable: !0, value: e }),
+                    (Object.defineProperty(this, 'database', { enumerable: !0, configurable: !0, writable: !0, value: e }),
                         Object.defineProperty(this, 'version', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         Object.defineProperty(this, 'name', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                         (this.version = e.version),
-                        (this.name = e.name);
+                        (this.name = e.name));
                 }
             }
             var v = function (e, t, i, n) {
@@ -733,10 +733,10 @@
         25266: (e, t, i) => {
             'use strict';
             var n;
-            i.d(t, { a: () => n }),
+            (i.d(t, { a: () => n }),
                 (function (e) {
-                    (e.LIKE = 'like'), (e.DISLIKE = 'dislike'), (e.NEUTRAL = 'neutral');
-                })(n || (n = {}));
+                    ((e.LIKE = 'like'), (e.DISLIKE = 'dislike'), (e.NEUTRAL = 'neutral'));
+                })(n || (n = {})));
         },
         27515: (e, t, i) => {
             'use strict';
@@ -831,7 +831,7 @@
                         b = (0, v.useMemo)(() => (t ? s({ id: 'vibe-actions.aria-label-pause' }) : s({ id: 'vibe-actions.aria-label-play' })), [s, t]),
                         g = (0, v.useCallback)(
                             (e) => {
-                                r.isApplying || null == i || i(), e.stopPropagation(), e.preventDefault();
+                                (r.isApplying || null == i || i(), e.stopPropagation(), e.preventDefault());
                             },
                             [i, r.isApplying],
                         );
@@ -840,7 +840,7 @@
                             if ('production' === l && 1 === o.length && J) {
                                 var e, t;
                                 let i = Math.round(performance.now());
-                                null == (t = window.Ya) || null == (e = t.Rum) || e.sendTimeMark('my-vibe-button-loading-time', i), (J = !1);
+                                (null == (t = window.Ya) || null == (e = t.Rum) || e.sendTimeMark('my-vibe-button-loading-time', i), (J = !1));
                             }
                         }, []),
                         (0, c.jsx)(A.$, {
@@ -862,7 +862,7 @@
                 ei = i.n(et),
                 en = {
                     4490: (e, t, i) => {
-                        i.r(t), i.d(t, { DOWN: () => o, LEFT: () => a, RIGHT: () => r, UP: () => s, useSwipeable: () => v });
+                        (i.r(t), i.d(t, { DOWN: () => o, LEFT: () => a, RIGHT: () => r, UP: () => s, useSwipeable: () => v }));
                         var n = i(810);
                         let a = 'Left',
                             r = 'Right',
@@ -941,7 +941,7 @@
                                                         velocity: C,
                                                         vxvy: j,
                                                     };
-                                                    P.first && i.onSwipeStart && i.onSwipeStart(P), i.onSwiping && i.onSwiping(P);
+                                                    (P.first && i.onSwipeStart && i.onSwipeStart(P), i.onSwiping && i.onSwiping(P));
                                                     let N = !1;
                                                     return (
                                                         (i.onSwiping || i.onSwiped || i['onSwiped'.concat(k)]) && (N = !0),
@@ -955,7 +955,7 @@
                                                     let n;
                                                     if (e.swiping && e.eventData) {
                                                         if (t.timeStamp - e.start < i.swipeDuration) {
-                                                            (n = Object.assign(Object.assign({}, e.eventData), { event: t })), i.onSwiped && i.onSwiped(n);
+                                                            ((n = Object.assign(Object.assign({}, e.eventData), { event: t })), i.onSwiped && i.onSwiped(n));
                                                             let a = i['onSwiped'.concat(n.dir)];
                                                             a && a(n);
                                                         }
@@ -967,7 +967,7 @@
                                                 });
                                             },
                                             b = (e) => {
-                                                document.removeEventListener(d, n), document.removeEventListener(u, b), v(e);
+                                                (document.removeEventListener(d, n), document.removeEventListener(u, b), v(e));
                                             },
                                             _ = (e, t) => {
                                                 let a = () => {};
@@ -978,7 +978,7 @@
                                                             ['touchmove', n, Object.assign(Object.assign({}, r), t.preventScrollOnSwipe ? { passive: !1 } : {})],
                                                             ['touchend', v, r],
                                                         ];
-                                                    s.forEach((t) => {
+                                                    (s.forEach((t) => {
                                                         let [i, n, a] = t;
                                                         return e.addEventListener(i, n, a);
                                                     }),
@@ -986,7 +986,7 @@
                                                             s.forEach((t) => {
                                                                 let [i, n] = t;
                                                                 return e.removeEventListener(i, n);
-                                                            }));
+                                                            })));
                                                 }
                                                 return a;
                                             },
@@ -1004,7 +1004,7 @@
                                                         });
                                                 },
                                             };
-                                        return t.trackMouse && (p.onMouseDown = i), [p, _];
+                                        return (t.trackMouse && (p.onMouseDown = i), [p, _]);
                                     })((e) => (p.current = e(p.current, h.current)), { trackMouse: _ }),
                                 [_],
                             );
@@ -1025,7 +1025,7 @@
                         }
                     },
                     8691: (e, t, i) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useCallbackRef = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useCallbackRef = void 0));
                         let n = i(810);
                         t.useCallbackRef = function (e) {
                             let t = (0, n.useRef)({
@@ -1045,11 +1045,11 @@
                     },
                     1381: (e, t, i) => {
                         var n;
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useComponentSwipeable = t.SwipeablePlacement = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useComponentSwipeable = t.SwipeablePlacement = void 0));
                         let a = i(4490),
                             r = i(8691);
                         !(function (e) {
-                            (e.TOP = 'top'), (e.BOTTOM = 'bottom'), (e.RIGHT = 'right'), (e.LEFT = 'left');
+                            ((e.TOP = 'top'), (e.BOTTOM = 'bottom'), (e.RIGHT = 'right'), (e.LEFT = 'left'));
                         })(n || (t.SwipeablePlacement = n = {}));
                         let s = (e) => {
                                 let { ref: t, deltaY: i, deltaX: a, placement: r } = e;
@@ -1121,19 +1121,19 @@
                 var t = ea[e];
                 if (void 0 !== t) return t.exports;
                 var i = (ea[e] = { exports: {} });
-                return en[e](i, i.exports, er), i.exports;
+                return (en[e](i, i.exports, er), i.exports);
             }
-            (er.d = (e, t) => {
+            ((er.d = (e, t) => {
                 for (var i in t) er.o(t, i) && !er.o(e, i) && Object.defineProperty(e, i, { enumerable: !0, get: t[i] });
             }),
                 (er.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (er.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var es = {};
-            (() => {
-                Object.defineProperty(es, '__esModule', { value: !0 }), (es.usePopoverSwipeable = void 0);
+            ((() => {
+                (Object.defineProperty(es, '__esModule', { value: !0 }), (es.usePopoverSwipeable = void 0));
                 let e = er(810),
                     t = er(1381);
                 es.usePopoverSwipeable = (i) => {
@@ -1159,7 +1159,7 @@
                     return (0, t.useComponentSwipeable)({ ref: n, swipeableProps: a, onClose: r, disableSwipe: s, placement: c, threshold: l });
                 };
             })(),
-                es.__esModule;
+                es.__esModule);
             var eo = es.usePopoverSwipeable,
                 el = i(44989),
                 ec = i(58359),
@@ -1220,7 +1220,7 @@
                     w = (0, x.c)((e) => {
                         if (!r.isApplying) {
                             var t;
-                            u.current && (0, ec.P)(e, ep().ripple, u.current), g(), null == (t = m.current) || t.focus();
+                            (u.current && (0, ec.P)(e, ep().ripple, u.current), g(), null == (t = m.current) || t.focus());
                         }
                     }),
                     E = (0, v.useMemo)(() => {
@@ -1432,7 +1432,7 @@
                         }, [u.isAuthorized, B.authorizationUrl, s, A, C, j]),
                         en = (0, v.useCallback)(
                             (e) => {
-                                e.stopPropagation(), e.preventDefault(), et();
+                                (e.stopPropagation(), e.preventDefault(), et());
                             },
                             [et],
                         ),
@@ -1611,7 +1611,7 @@
                     const a = new Set();
                     return e.map((e) => {
                         const i = pulseSyncFindLocalStation(e, t, a);
-                        return i && a.add(i), { accountSpeaker: e, localSpeaker: i ?? void 0, canUseLocal: !!i };
+                        return (i && a.add(i), { accountSpeaker: e, localSpeaker: i ?? void 0, canUseLocal: !!i });
                     });
                 },
                 pulseSyncGetCastDevicePlatform = (e) =>
@@ -2079,10 +2079,10 @@
                         B = r.entityMeta,
                         R = !r.isPlaying && (r.isVibeContext || !r.entityMeta),
                         V = (0, x.c)((e) => {
-                            e.stopPropagation(), (0, ec.P)(e, tb().ripple), null == j || j.moveForward(), S({ actionType: eJ.X2.Skip });
+                            (e.stopPropagation(), (0, ec.P)(e, tb().ripple), null == j || j.moveForward(), S({ actionType: eJ.X2.Skip }));
                         }),
                         W = (0, x.c)((e) => {
-                            e.stopPropagation(), (0, ec.P)(e, tb().ripple), null == j || j.moveBackward(), S({ actionType: eJ.X2.Backskip });
+                            (e.stopPropagation(), (0, ec.P)(e, tb().ripple), null == j || j.moveBackward(), S({ actionType: eJ.X2.Backskip }));
                         }),
                         D = (0, x.c)(() => {
                             if (s.isAdvertShown) {
@@ -2091,10 +2091,10 @@
                                 return;
                             }
                             if (!b())
-                                if (B) null == j || j.togglePause(), S({ actionType: r.isPlaying ? eJ.X2.Pause : eJ.X2.Play });
+                                if (B) (null == j || j.togglePause(), S({ actionType: r.isPlaying ? eJ.X2.Pause : eJ.X2.Play }));
                                 else {
                                     if (g) return;
-                                    T(), P(!r.isPlaying);
+                                    (T(), P(!r.isPlaying));
                                 }
                         }),
                         H = (0, x.c)(() => {
@@ -2122,7 +2122,7 @@
                             [K, X, u.isAuthorized, g],
                         ),
                         Y = (0, x.c)(() => {
-                            l.showFullscreenPlayerModal(), w({ to: eJ.QT.PlayerScreen });
+                            (l.showFullscreenPlayerModal(), w({ to: eJ.QT.PlayerScreen }));
                         }),
                         $ = (0, y.L)(() => (null == B ? void 0 : B.coverUri) || (null == n ? void 0 : n.coverUri) || t_),
                         Q = (0, x.c)(() => {
@@ -2255,7 +2255,7 @@
                     g = (0, x.c)(() => {
                         var e;
                         let t = (u + 1) % tT.pp.length;
-                        m(t), null == r || r.setSpeed(Number(null != (e = tT.pp[t]) ? e : 1));
+                        (m(t), null == r || r.setSpeed(Number(null != (e = tT.pp[t]) ? e : 1)));
                     });
                 return (
                     (0, v.useEffect)(() => {
@@ -2294,7 +2294,7 @@
                     l = null !== a.entityMeta,
                     d = !i.isAuthorized && n.checkExperiment(H.z.WebNextVibeQueueButtonLoginPopover, 'on'),
                     u = (0, x.c)(() => {
-                        r.showPlayQueue(), o({ to: eJ.QT.PlayerScreen }), t();
+                        (r.showPlayQueue(), o({ to: eJ.QT.PlayerScreen }), t());
                     }),
                     m = (0, v.useCallback)(
                         (e) => {
@@ -2330,22 +2330,22 @@
                         N(e);
                     }),
                     O = (0, x.c)(() => {
-                        b.modal.open(), S();
+                        (b.modal.open(), S());
                     }),
                     B = (0, x.c)(() => {
-                        v.showSyncLyrics(), w({ to: eJ.QT.PlayerScreen }), S();
+                        (v.showSyncLyrics(), w({ to: eJ.QT.PlayerScreen }), S());
                     }),
                     R = (0, x.c)(() => {
-                        j(u), E({ actionType: eJ.X2.ChangeShuffle });
+                        (j(u), E({ actionType: eJ.X2.ChangeShuffle }));
                     }),
                     L = (0, x.c)(() => {
-                        k(u), E({ actionType: eJ.X2.ChangeRepeatSettings });
+                        (k(u), E({ actionType: eJ.X2.ChangeRepeatSettings }));
                     }),
                     V = (0, x.c)(() => {
-                        I(), S();
+                        (I(), S());
                     }),
                     W = (0, x.c)((e) => {
-                        (0, ec.P)(e, tL().ripple), O();
+                        ((0, ec.P)(e, tL().ripple), O());
                     }),
                     D = (0, e5.P)(),
                     { shouldShowBuySubscriptionModal: F, showBuySubscriptionModal: H } = (0, tj.q)(),
@@ -2397,12 +2397,12 @@
                         return [e, T?.title].filter(Boolean).join(' — ');
                     }),
                     pulseSyncDownloadTrackToFile = (0, x.c)(() => {
-                        T?.id && window.desktopEvents?.send?.('DOWNLOAD_TRACK', T.id, pulseSyncTrackDownloadName), S();
+                        (T?.id && window.desktopEvents?.send?.('DOWNLOAD_TRACK', T.id, pulseSyncTrackDownloadName), S());
                     }),
                     ed = ''.concat(C({ id: 'interface-actions.open-sync-lyrics' }), ' ').concat(C({ id: 'warning-messages.can-break-accessibility' })),
                     eu = (0, y.L)(() => {
                         let e = [];
-                        return ei && e.push((0, c.jsx)(tB, {}, 'speed')), e.length > 0 && e.push((0, c.jsx)('div', { className: tD().divider }, 'speed-divider')), e;
+                        return (ei && e.push((0, c.jsx)(tB, {}, 'speed')), e.length > 0 && e.push((0, c.jsx)('div', { className: tD().divider }, 'speed-divider')), e);
                     }),
                     em = (0, y.L)(() => {
                         let e = [];
@@ -2431,7 +2431,7 @@
                         let e = [];
                         if (T) {
                             var t, i, n, a, r;
-                            e.push(
+                            (e.push(
                                 (0, c.jsx)(
                                     tg.Dr,
                                     {
@@ -2459,9 +2459,9 @@
                                         (null == (r = T.mainAlbum) ? void 0 : r.isAlbum) ||
                                         T.isTrackAudiobook ||
                                         T.isTrackMusic) &&
-                                    e.push((0, c.jsx)(tA.o, { artists: T.artists }, 'navigate-to-artist'));
+                                    e.push((0, c.jsx)(tA.o, { artists: T.artists }, 'navigate-to-artist')));
                         }
-                        return e.length > 0 && e.unshift((0, c.jsx)('div', { className: tD().divider }, 'bottom-divider')), e;
+                        return (e.length > 0 && e.unshift((0, c.jsx)('div', { className: tD().divider }, 'bottom-divider')), e);
                     });
                 return u.isGenerativeContext
                     ? (0, c.jsx)(A.$, {
@@ -2538,7 +2538,7 @@
                 tz = {
                     5881: (e, t, i) => {
                         function n() {
-                            for (var e, t, i = 0, n = ''; i < arguments.length; )
+                            for (var e, t, i = 0, n = ''; i < arguments.length;)
                                 (e = arguments[i++]) &&
                                     (t = (function e(t) {
                                         var i,
@@ -2553,11 +2553,11 @@
                                     (n && (n += ' '), (n += t));
                             return n;
                         }
-                        i.r(t), i.d(t, { clsx: () => n, default: () => a });
+                        (i.r(t), i.d(t, { clsx: () => n, default: () => a }));
                         let a = n;
                     },
                     1858: (e, t, i) => {
-                        i.r(t), i.d(t, { default: () => n });
+                        (i.r(t), i.d(t, { default: () => n }));
                         let n = {
                             root: 'MoGQRtOtKDQCJc5HZNLw',
                             marquee: 'eYOrGFuz5P6VSNQ_IgdM',
@@ -2572,10 +2572,10 @@
                             a = (function (e) {
                                 return e && 'object' == typeof e && 'default' in e ? e : { default: e };
                             })(n);
-                        !(function (e) {
+                        (!(function (e) {
                             if (!e) return;
                             let t = document.createElement('style');
-                            t.setAttribute('type', 'text/css'), (t.innerHTML = e), document.head.appendChild(t);
+                            (t.setAttribute('type', 'text/css'), (t.innerHTML = e), document.head.appendChild(t));
                         })(
                             '.rfm-marquee-container {\n  overflow-x: hidden;\n  display: flex;\n  flex-direction: row;\n  position: relative;\n  width: var(--width);\n  transform: var(--transform);\n}\n.rfm-marquee-container:hover div {\n  animation-play-state: var(--pause-on-hover);\n}\n.rfm-marquee-container:active div {\n  animation-play-state: var(--pause-on-click);\n}\n\n.rfm-overlay {\n  position: absolute;\n  width: 100%;\n  height: 100%;\n}\n.rfm-overlay::before, .rfm-overlay::after {\n  background: linear-gradient(to right, var(--gradient-color), rgba(255, 255, 255, 0));\n  content: "";\n  height: 100%;\n  position: absolute;\n  width: var(--gradient-width);\n  z-index: 2;\n  pointer-events: none;\n  touch-action: none;\n}\n.rfm-overlay::after {\n  right: 0;\n  top: 0;\n  transform: rotateZ(180deg);\n}\n.rfm-overlay::before {\n  left: 0;\n  top: 0;\n}\n\n.rfm-marquee {\n  flex: 0 0 auto;\n  min-width: var(--min-width);\n  z-index: 1;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  animation: scroll var(--duration) linear var(--delay) var(--iteration-count);\n  animation-play-state: var(--play);\n  animation-delay: var(--delay);\n  animation-direction: var(--direction);\n}\n@keyframes scroll {\n  0% {\n    transform: translateX(0%);\n  }\n  100% {\n    transform: translateX(-100%);\n  }\n}\n\n.rfm-initial-child-container {\n  flex: 0 0 auto;\n  display: flex;\n  min-width: auto;\n  flex-direction: row;\n  align-items: center;\n}\n\n.rfm-child {\n  transform: var(--transform);\n}',
                         ),
@@ -2612,13 +2612,13 @@
                                                 t = E.current.getBoundingClientRect(),
                                                 i = e.width,
                                                 n = t.width;
-                                            ('up' === d || 'down' === d) && ((i = e.height), (n = t.height)),
+                                            (('up' === d || 'down' === d) && ((i = e.height), (n = t.height)),
                                                 s && i && n ? I(n < i ? Math.ceil(i / n) : 1) : I(1),
                                                 A(i),
-                                                j(n);
+                                                j(n));
                                         }
                                     }, [s, w, d]);
-                                n.useEffect(() => {
+                                (n.useEffect(() => {
                                     if (P && (T(), E.current && w.current)) {
                                         let e = new ResizeObserver(() => T());
                                         return (
@@ -2638,7 +2638,7 @@
                                     }, []),
                                     n.useEffect(() => {
                                         'function' == typeof x && x();
-                                    }, []);
+                                    }, []));
                                 let M = n.useMemo(() => (s ? (C * k) / u : C < y ? y / u : C / u), [s, y, C, k, u]),
                                     O = n.useMemo(
                                         () =>
@@ -2692,7 +2692,7 @@
                                           a.default.createElement('div', { className: 'rfm-marquee', style: R }, V(k)),
                                       )
                                     : null;
-                            }));
+                            })));
                     },
                     9097: (e, t) => {
                         var i = Symbol.for('react.transitional.element');
@@ -2703,13 +2703,13 @@
                             else n = t;
                             return { $$typeof: i, type: e, key: a, ref: void 0 !== (t = n.ref) ? t : null, props: n };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = n), (t.jsxs = n);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = n), (t.jsxs = n));
                     },
                     4377: (e, t, i) => {
                         e.exports = i(9097);
                     },
                     998: (e, t) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useReturnValue = void 0), (t.useReturnValue = (e) => e());
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useReturnValue = void 0), (t.useReturnValue = (e) => e()));
                     },
                     9598: function (e, t, i) {
                         var n =
@@ -2717,7 +2717,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.OverflowMarquee = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.OverflowMarquee = void 0));
                         let a = i(4377),
                             r = i(5881),
                             s = i(810),
@@ -2747,7 +2747,7 @@
                                 j = (0, s.useRef)(null),
                                 [k, I] = (0, s.useState)(!1),
                                 [P, N] = (0, s.useState)(!1);
-                            (0, s.useEffect)(() => {
+                            ((0, s.useEffect)(() => {
                                 let e = window.matchMedia('(prefers-reduced-motion: reduce)'),
                                     t = () => {
                                         N(e.matches);
@@ -2779,7 +2779,7 @@
                                             n.disconnect();
                                         }
                                     );
-                                }, []);
+                                }, []));
                             let S = k && !P,
                                 w = S && void 0 !== y ? { marginInlineEnd: ''.concat(y, 'px') } : void 0,
                                 E = (0, l.useReturnValue)(() =>
@@ -2821,19 +2821,19 @@
                 var t = tH[e];
                 if (void 0 !== t) return t.exports;
                 var i = (tH[e] = { exports: {} });
-                return tz[e].call(i.exports, i, i.exports, tK), i.exports;
+                return (tz[e].call(i.exports, i, i.exports, tK), i.exports);
             }
-            (tK.d = (e, t) => {
+            ((tK.d = (e, t) => {
                 for (var i in t) tK.o(t, i) && !tK.o(e, i) && Object.defineProperty(e, i, { enumerable: !0, get: t[i] });
             }),
                 (tK.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (tK.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var tX = {};
             (() => {
-                Object.defineProperty(tX, 'X', { value: !0 }), (tX.W = void 0);
+                (Object.defineProperty(tX, 'X', { value: !0 }), (tX.W = void 0));
                 var e = tK(9598);
                 Object.defineProperty(tX, 'W', {
                     enumerable: !0,
@@ -3010,16 +3010,16 @@
                         I = n.entityMeta,
                         repeatIconVariant = n.repeatMode === th.pM.ONE ? 'repeat_one' : 'repeat',
                         P = (0, x.c)((e) => {
-                            e.stopPropagation(), null == b || b.moveForward(), C({ actionType: eJ.X2.Skip });
+                            (e.stopPropagation(), null == b || b.moveForward(), C({ actionType: eJ.X2.Skip }));
                         }),
                         N = (0, x.c)((e) => {
-                            e.stopPropagation(), null == b || b.moveBackward(), C({ actionType: eJ.X2.Backskip });
+                            (e.stopPropagation(), null == b || b.moveBackward(), C({ actionType: eJ.X2.Backskip }));
                         }),
                         pulseSyncShuffleClick = (0, x.c)((e) => {
-                            e.stopPropagation(), shuffleSetter(n), C({ actionType: eJ.X2.ChangeShuffle });
+                            (e.stopPropagation(), shuffleSetter(n), C({ actionType: eJ.X2.ChangeShuffle }));
                         }),
                         pulseSyncRepeatClick = (0, x.c)((e) => {
-                            e.stopPropagation(), repeatSetter(n), C({ actionType: eJ.X2.ChangeRepeatSettings });
+                            (e.stopPropagation(), repeatSetter(n), C({ actionType: eJ.X2.ChangeRepeatSettings }));
                         }),
                         S = (0, x.c)(() => {
                             if (a.isAdvertShown) {
@@ -3028,10 +3028,10 @@
                                 return;
                             }
                             if (!l())
-                                if (I) null == b || b.togglePause(), C({ actionType: n.isPlaying ? eJ.X2.Pause : eJ.X2.Play });
+                                if (I) (null == b || b.togglePause(), C({ actionType: n.isPlaying ? eJ.X2.Pause : eJ.X2.Play }));
                                 else {
                                     if (u) return;
-                                    k(), g(!n.isPlaying);
+                                    (k(), g(!n.isPlaying));
                                 }
                         }),
                         w = (0, x.c)(() => {
@@ -3195,7 +3195,7 @@
                                 'function' == typeof (null == r.syncLyrics ? void 0 : r.syncLyrics.hasLyricsForTrack) &&
                                 r.syncLyrics.hasLyricsForTrack(S.id)),
                         pulseSyncOpenWaveSyncLyrics = (0, x.c)(() => {
-                            r.showSyncLyrics(), screenNavigation({ to: eJ.QT.PlayerScreen });
+                            (r.showSyncLyrics(), screenNavigation({ to: eJ.QT.PlayerScreen }));
                         }),
                         pulseSyncWaveSyncLyricsLabel = ''
                             .concat(l({ id: 'interface-actions.open-sync-lyrics' }), ' ')
@@ -3207,9 +3207,9 @@
                                 null == u || u.addShortcutsListener(e3.M.MAIN, e4.l.LIKE, p),
                                 null == u || u.addShortcutsListener(e3.M.MAIN, e4.l.DISLIKE, f),
                                 () => {
-                                    null == u || u.removeShortcutsListener(e3.M.MAIN, e4.l.TOGGLE_FULLSCREEN_PLAYER),
+                                    (null == u || u.removeShortcutsListener(e3.M.MAIN, e4.l.TOGGLE_FULLSCREEN_PLAYER),
                                         null == u || u.removeShortcutsListener(e3.M.MAIN, e4.l.LIKE),
-                                        null == u || u.removeShortcutsListener(e3.M.MAIN, e4.l.DISLIKE);
+                                        null == u || u.removeShortcutsListener(e3.M.MAIN, e4.l.DISLIKE));
                                 }
                             );
                     }, [f, p, u, n.isGenerativeContext, n.entityMeta, T]);
@@ -3273,13 +3273,13 @@
                         r.restoreSyncLyricsForTrack,
                     ]);
                     let M = (0, x.c)(async (e, t) => {
-                            t && (0, ec.P)(t, tL().ripple), await m(n, e);
+                            (t && (0, ec.P)(t, tL().ripple), await m(n, e));
                         }),
                         O = (0, x.c)((e) => {
-                            (0, ec.P)(e, tL().ripple), f();
+                            ((0, ec.P)(e, tL().ripple), f());
                         }),
                         B = (0, x.c)((e) => {
-                            e && !s && (0, ec.P)(e, tL().ripple), p();
+                            (e && !s && (0, ec.P)(e, tL().ripple), p());
                         }),
                         R = (0, x.c)(() => {
                             if (a.isAdvertShown) {
@@ -3290,7 +3290,7 @@
                             S ? (null == sonataPlayer || sonataPlayer.togglePause(), I({ actionType: n.isPlaying ? eJ.X2.Pause : eJ.X2.Play })) : (N(), j(!n.isPlaying));
                         }),
                         V = (0, x.c)((e) => {
-                            (0, ec.P)(e, tL().ripple), C() || R();
+                            ((0, ec.P)(e, tL().ripple), C() || R());
                         }),
                         W = (0, y.L)(() =>
                             s
@@ -3401,19 +3401,19 @@
             });
             var ir = {
                     5969: (e, t, i) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDynamicText = t.findOptimalFontSize = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.useDynamicText = t.findOptimalFontSize = void 0));
                         let n = i(810),
                             a = (e) => {
-                                (e.style.wordBreak = 'keep-all'),
+                                ((e.style.wordBreak = 'keep-all'),
                                     (e.style.overflowWrap = 'normal'),
                                     (e.style.maxHeight = 'none'),
                                     (e.style.height = 'auto'),
                                     (e.style.overflow = 'visible'),
                                     Array.from(e.children).forEach((e) => {
                                         e instanceof HTMLElement && a(e);
-                                    });
+                                    }));
                             };
-                        (t.findOptimalFontSize = (e) => {
+                        ((t.findOptimalFontSize = (e) => {
                             let { container: t, containerWidth: i, containerHeight: n, minFontSize: r, maxFontSize: s, lineHeight: o, maxLines: l } = e,
                                 c = ((e, t, i) => {
                                     let n = e.cloneNode(!0);
@@ -3433,7 +3433,7 @@
                                 let e = r,
                                     t = s,
                                     a = r;
-                                for (; e <= t; ) {
+                                for (; e <= t;) {
                                     let r = Math.floor((e + t) / 2);
                                     c.style.setProperty('--dynamic-font-size', ''.concat(r, 'px'));
                                     let s = 'number' == typeof l ? c.scrollHeight <= Math.min(l * r * o, n) : c.scrollHeight <= n,
@@ -3470,7 +3470,7 @@
                                                 maxLines: l,
                                                 fallbackMaxLines: c,
                                             });
-                                            null == a || a(u), e.style.setProperty('--dynamic-font-size', ''.concat(m, 'px'));
+                                            (null == a || a(u), e.style.setProperty('--dynamic-font-size', ''.concat(m, 'px')));
                                         },
                                         n = new ResizeObserver(i),
                                         d = new MutationObserver(i);
@@ -3480,11 +3480,11 @@
                                         document.fonts.ready.then(i),
                                         i(),
                                         () => {
-                                            n.disconnect(), d.disconnect();
+                                            (n.disconnect(), d.disconnect());
                                         }
                                     );
                                 }, [e, a, c, o, s, l, r]);
-                            });
+                            }));
                     },
                     810: (e) => {
                         e.exports = b;
@@ -3495,9 +3495,9 @@
                     var i = is[t];
                     if (void 0 !== i) return i.exports;
                     var n = (is[t] = { exports: {} });
-                    return ir[t](n, n.exports, e), n.exports;
+                    return (ir[t](n, n.exports, e), n.exports);
                 })(5969);
-            io.__esModule, io.findOptimalFontSize;
+            (io.__esModule, io.findOptimalFontSize);
             var il = io.useDynamicText;
             let ic = (e) => {
                 var t;
@@ -3585,7 +3585,7 @@
                     let I = (0, e6.b)(),
                         N = m({ id: 'interface-actions.reset-context' }, { context: i }),
                         S = (0, x.c)(() => {
-                            r(), I(!0);
+                            (r(), I(!0));
                         }),
                         w = o.isShuffleVibe && l.isVibeContext,
                         E = !!(null == (t = o.meta) ? void 0 : t.isQ2V) && l.isVibeContext && u.checkExperiment(H.z.WebNextQ2VContextColor, 'on'),
@@ -3681,7 +3681,7 @@
                     } = (0, z.g)(),
                     { formatMessage: i } = (0, _.A)(),
                     n = (0, x.c)(() => {
-                        e.introModal.close(), e.modal.open();
+                        (e.introModal.close(), e.modal.open());
                     });
                 return (0, c.jsxs)(ij.a, {
                     className: (0, d.$)((0, ik.J)(eK.S.Dark), iP().root, { [iP().root_mobile]: t }),
@@ -3722,7 +3722,7 @@
             let iw = new Set(Object.values(eJ.ky)),
                 iE = (e) => (((e) => 'string' == typeof e && iw.has(e))(e) ? e : void 0);
             var iT = (function (e) {
-                    return (e.SleepingAlice = 'sleeping_alice'), (e.SleepTech = 'sleep_tech'), e;
+                    return ((e.SleepingAlice = 'sleeping_alice'), (e.SleepTech = 'sleep_tech'), e);
                 })({}),
                 iM = i(72676);
             let iO = (e) => {
@@ -3798,7 +3798,7 @@
                                     e.forEach((e) => {
                                         var i;
                                         let n = null != (i = t.get(e.cardId)) ? i : [];
-                                        n.push(e.bigCardId), t.set(e.cardId, n);
+                                        (n.push(e.bigCardId), t.set(e.cardId, n));
                                     }),
                                     Array.from(t.entries()).map((e) => {
                                         let [t, i] = e;
@@ -3860,17 +3860,17 @@
                     }).catch(iV.A);
                 }
                 constructor(e) {
-                    super({
+                    (super({
                         dbName: 'music_words',
                         dbVersion: 2,
                         onUpgrade: (e) => {
-                            e.objectStoreNames.contains(iD) || e.createObjectStore(iD, { keyPath: ['uid', 'cardId'] }).createIndex('uid', 'uid', { unique: !1 }),
+                            (e.objectStoreNames.contains(iD) || e.createObjectStore(iD, { keyPath: ['uid', 'cardId'] }).createIndex('uid', 'uid', { unique: !1 }),
                                 e.objectStoreNames.contains(iF) ||
-                                    e.createObjectStore(iF, { keyPath: ['uid', 'cardId', 'bigCardId'] }).createIndex('uid', 'uid', { unique: !1 });
+                                    e.createObjectStore(iF, { keyPath: ['uid', 'cardId', 'bigCardId'] }).createIndex('uid', 'uid', { unique: !1 }));
                         },
                     }),
                         (0, iL._)(this, 'uid', void 0),
-                        (this.uid = e);
+                        (this.uid = e));
                 }
             }
             var iz = i(12989),
@@ -3886,13 +3886,13 @@
                     [s, o] = (0, v.useState)(null),
                     { formatMessage: l } = (0, _.A)(),
                     d = (0, x.c)((e) => {
-                        o(e), setTimeout(() => o(null), 3e3);
+                        (o(e), setTimeout(() => o(null), 3e3));
                     }),
                     u = (0, x.c)(async (e, s) => {
                         if (t && !a) {
                             r(!0);
                             try {
-                                await t.sendFeedback(e), i(), s && d(s);
+                                (await t.sendFeedback(e), i(), s && d(s));
                             } catch (e) {
                                 n((0, c.jsx)(iG.h, { error: l({ id: 'error-messages.error-during-action' }) }), { containerId: iX.u.ERROR });
                             } finally {
@@ -4073,7 +4073,7 @@
                         n.current !== i && ((n.current = i), s(!0, ''));
                     }, [n, s, i]);
                     let l = (0, x.c)((e) => {
-                        e.stopPropagation(), o({ to: eJ.QT.Link, deepLink: t, objectId: r, objectPosY: 1 });
+                        (e.stopPropagation(), o({ to: eJ.QT.Link, deepLink: t, objectId: r, objectPosY: 1 }));
                     });
                     return (0, c.jsx)(tu.N, {
                         href: t,
@@ -4088,7 +4088,7 @@
                     let { actionType: t, onClick: i, children: n, ...a } = e,
                         r = (0, e7.m)(),
                         s = (0, x.c)((e) => {
-                            r({ actionType: t }), null == i || i(e);
+                            (r({ actionType: t }), null == i || i(e));
                         });
                     return (0, c.jsx)(A.$, { onClick: s, ...a, children: n });
                 },
@@ -4157,7 +4157,7 @@
                         () => (
                             u.modal.isOpened && S && w(!0),
                             () => {
-                                w(!1), l();
+                                (w(!1), l());
                             }
                         ),
                         [l, S, w, u.modal.isOpened],
@@ -4178,7 +4178,7 @@
                             if (((j.current = e), null == (t = k.current) || t.disconnect(), (k.current = null), !e)) return void N(!1);
                             M();
                             let i = new ResizeObserver(M);
-                            i.observe(e), (k.current = i);
+                            (i.observe(e), (k.current = i));
                         }),
                         B = (0, y.L)(() => {
                             var e;
@@ -4378,7 +4378,7 @@
                             settings: { isMobile: l },
                         } = (0, z.g)(),
                         d = (0, x.c)((e) => {
-                            o.modal.onOpenChange(e), e || r();
+                            (o.modal.onOpenChange(e), e || r());
                         });
                     return (0, c.jsx)(ij.a, {
                         className: nt().root,
@@ -4782,7 +4782,7 @@
                                     var t;
                                     if (!e) return null;
                                     let a = Math.floor(Math.random() * i.length);
-                                    return (n.current = a), null != (t = i[a]) ? t : null;
+                                    return ((n.current = a), null != (t = i[a]) ? t : null);
                                 }),
                                 s = (0, v.useRef)(e),
                                 o = (0, v.useRef)(null),
@@ -4790,7 +4790,7 @@
                             if (((s.current = e), e && !l.current)) {
                                 var c;
                                 let e = Math.floor(Math.random() * i.length);
-                                (n.current = e), r(null != (c = i[e]) ? c : null);
+                                ((n.current = e), r(null != (c = i[e]) ? c : null));
                             }
                             return (
                                 (l.current = e),
@@ -4800,7 +4800,7 @@
                                             (o.current = setTimeout(() => {
                                                 if (((o.current = null), s.current)) {
                                                     var e;
-                                                    (n.current = (n.current + 1) % i.length), r(null != (e = i[n.current]) ? e : i[0]);
+                                                    ((n.current = (n.current + 1) % i.length), r(null != (e = i[n.current]) ? e : i[0]));
                                                     return;
                                                 }
                                                 r(null);
@@ -4825,17 +4825,17 @@
                             A(!1);
                         }),
                         F = (0, x.c)(() => {
-                            o.modal.close(), I(void 0);
+                            (o.modal.close(), I(void 0));
                         }),
                         U = (0, x.c)(() => {
                             S(void 0);
                         });
-                    (0, v.useEffect)(() => {
+                    ((0, v.useEffect)(() => {
                         o.modal.isOpened && o.bigCardLoadingState.isRejected && F();
                     }, [F, o.bigCardLoadingState.isRejected, o.modal.isOpened]),
                         (0, v.useEffect)(() => {
                             o.modal.isOpened && o.bigCardLoadingState.isResolved && k && N && W === N && o.markBigCardViewed(k.id, N);
-                        }, [W, N, k, o, o.bigCardLoadingState.isResolved, o.modal.isOpened]);
+                        }, [W, N, k, o, o.bigCardLoadingState.isResolved, o.modal.isOpened]));
                     let { handleLike: K, handleDislike: X, feedbackMessage: q } = iY({ card: a, onClose: D }),
                         { handleLike: G, handleDislike: Y, feedbackMessage: $ } = iY({ card: k, onClose: F }),
                         Q = !(a && (!(null == a ? void 0 : a.isDisliked) || q || $)) && !T,
@@ -4861,7 +4861,7 @@
                                     var e;
                                     let t = Array.from(null != (e = a.bigCardIds) ? e : [])[0];
                                     if (!t) return;
-                                    S(t), I(a), m({ to: eJ.QT.FactScreen }), o.modal.open(), o.loadBigCard(t);
+                                    (S(t), I(a), m({ to: eJ.QT.FactScreen }), o.modal.open(), o.loadBigCard(t));
                                 }
                             }
                         }),
@@ -4993,7 +4993,7 @@
                                     i = null == t ? void 0 : t.getPassportUid();
                                 if (!i) return;
                                 let n = new iU(String(i));
-                                return n.openDatabase(), n;
+                                return (n.openDatabase(), n);
                             }, [e]);
                         })();
                     (() => {
@@ -5033,12 +5033,12 @@
                                         let s = e === iM.So.MOVE_FORWARD || e === iM.So.AUTO_MOVE_FORWARD || e === iM.So.ERROR_MOVE_FORWARD,
                                             o = e === iM.So.MOVE_BACKWARD,
                                             l = [];
-                                        s && iR({ queueState: n, direction: 'forward', isRequested: t.isTrackRequested })
+                                        (s && iR({ queueState: n, direction: 'forward', isRequested: t.isTrackRequested })
                                             ? (l = iO({ queueState: n, direction: 'forward', batchSize: 17 }))
                                             : o && iR({ queueState: n, direction: 'backward', isRequested: t.isTrackRequested })
                                               ? (l = iO({ queueState: n, direction: 'backward', batchSize: 3 }))
                                               : s || o || (l = r),
-                                            l.length > 0 && t.loadCards(l);
+                                            l.length > 0 && t.loadCards(l));
                                     })(null == e ? void 0 : e.lastChangeMethod);
                                 }),
                                 s = n.entityList.onChange(() => {
@@ -5051,7 +5051,7 @@
                                     })();
                                 });
                             return () => {
-                                null == r || r(), null == s || s();
+                                (null == r || r(), null == s || s());
                             };
                         }, [e, i, t]);
                     })();
@@ -5367,7 +5367,7 @@
                                     n(!0);
                                 }),
                                 handleArtistsMenuOpenChange: (0, x.c)((e) => {
-                                    n(e), e || r(null);
+                                    (n(e), e || r(null));
                                 }),
                             };
                         })({ ref: G }),
@@ -5379,7 +5379,7 @@
                             (h.checkExperiment(H.z.WebNextWaveScreenWordsInWave, 'on') || h.checkExperiment(H.z.WebNextWaveScreenWordsInWave, 'on_with_onyx')),
                         en = A.isShuffleVibe && p.isVibeContext,
                         ea = (0, e0.OH)(en || null == (s = p.entityMeta) ? void 0 : s.averageColor);
-                    (0, v.useEffect)(() => {
+                    ((0, v.useEffect)(() => {
                         X || Z(!1);
                     }, [Z, X]),
                         (0, v.useEffect)(() => {
@@ -5402,14 +5402,14 @@
                                 k(!1);
                             },
                             [k],
-                        );
+                        ));
                     let er = (0, y.L)(() =>
                             h.checkExperiment(H.z.WebNextShaderFallbackEnabled, 'on')
                                 ? (0, c.jsx)(O, { className: nO().vibeAnimation })
                                 : (0, c.jsx)(B, { className: nO().vibeAnimation, averageColor: ea.primary }),
                         ),
                         es = (0, x.c)(() => {
-                            g.hasPlus, I();
+                            (g.hasPlus, I());
                         }),
                         eo = (0, y.L)(() => {
                             let e = p.entityMeta,
@@ -5564,18 +5564,18 @@
                     let [pulseSyncShowAudioQualityOnNewWave, setPulseSyncShowAudioQualityOnNewWave] = (0, v.useState)(
                         () => window.nativeSettings?.get?.(pulseSyncShowAudioQualityOnNewWaveSettingKey) !== !1,
                     );
-                    (0, v.useEffect)(() => {
+                    ((0, v.useEffect)(() => {
                         var e, t;
                         if (!n || !R) return;
                         let i = (0, eG.j)(),
                             a = null != (e = null == i ? void 0 : i.get(eq.K.IDS)) ? e : null,
                             r = null != (t = null == i ? void 0 : i.get(eq.K.ACTIVE_INDEX)) ? t : null,
                             { clipIds: s, activeClipIndex: o } = (0, eP.V)(a, r);
-                        L(s, o), l.setOpenedFromMain();
+                        (L(s, o), l.setOpenedFromMain());
                     }, [n, R, l, L]),
                         (0, v.useEffect)(
                             () => () => {
-                                a.reset(), W || a.landing.reset();
+                                (a.reset(), W || a.landing.reset());
                             },
                             [a, a.landing, W],
                         ),
@@ -5631,23 +5631,23 @@
                         (0, eU.J)(a.landing.isResolved),
                         (0, v.useEffect)(() => {
                             let e = (device_info) => {
-                                    setIsRemoteDeviceConnected(!0),
+                                    (setIsRemoteDeviceConnected(!0),
                                         setRemoteDevice(device_info),
                                         (window.isRemoteDeviceConnected = !0),
-                                        (window.remoteDevice = device_info);
+                                        (window.remoteDevice = device_info));
                                 },
                                 t = () => {
-                                    setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null);
+                                    (setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null));
                                 };
                             return (
                                 (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
                                 (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
                                 () => {
-                                    (window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
-                                        (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t));
+                                    ((window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
+                                        (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t)));
                                 }
                             );
-                        }, []);
+                        }, []));
                     const deviceTypeMap = {
                         UNSPECIFIED: 'Неизвестного устройства',
                         WEB: 'Сайта',
@@ -6102,24 +6102,24 @@
                 if (e instanceof IDBRequest) {
                     let t = new Promise((t, i) => {
                         let n = () => {
-                                e.removeEventListener('success', a), e.removeEventListener('error', r);
+                                (e.removeEventListener('success', a), e.removeEventListener('error', r));
                             },
                             a = () => {
-                                t(d(e.result)), n();
+                                (t(d(e.result)), n());
                             },
                             r = () => {
-                                i(e.error), n();
+                                (i(e.error), n());
                             };
-                        e.addEventListener('success', a), e.addEventListener('error', r);
+                        (e.addEventListener('success', a), e.addEventListener('error', r));
                     });
-                    return l.set(t, e), t;
+                    return (l.set(t, e), t);
                 }
                 if (o.has(e)) return o.get(e);
                 let t = (function (e) {
                     if ('function' == typeof e)
                         return (a || (a = [IDBCursor.prototype.advance, IDBCursor.prototype.continue, IDBCursor.prototype.continuePrimaryKey])).includes(e)
                             ? function (...t) {
-                                  return e.apply(u(this), t), d(this.request);
+                                  return (e.apply(u(this), t), d(this.request));
                               }
                             : function (...t) {
                                   return d(e.apply(u(this), t));
@@ -6129,15 +6129,15 @@
                             if (s.has(e)) return;
                             let t = new Promise((t, i) => {
                                 let n = () => {
-                                        e.removeEventListener('complete', a), e.removeEventListener('error', r), e.removeEventListener('abort', r);
+                                        (e.removeEventListener('complete', a), e.removeEventListener('error', r), e.removeEventListener('abort', r));
                                     },
                                     a = () => {
-                                        t(), n();
+                                        (t(), n());
                                     },
                                     r = () => {
-                                        i(e.error || new DOMException('AbortError', 'AbortError')), n();
+                                        (i(e.error || new DOMException('AbortError', 'AbortError')), n());
                                     };
-                                e.addEventListener('complete', a), e.addEventListener('error', r), e.addEventListener('abort', r);
+                                (e.addEventListener('complete', a), e.addEventListener('error', r), e.addEventListener('abort', r));
                             });
                             s.set(e, t);
                         })(e),
@@ -6145,7 +6145,7 @@
                         ? new Proxy(e, c)
                         : e;
                 })(e);
-                return t !== e && (o.set(e, t), l.set(t, e)), t;
+                return (t !== e && (o.set(e, t), l.set(t, e)), t);
             }
             let u = (e) => l.get(e);
             function m(e, t, { blocked: i, upgrade: n, blocking: a, terminated: r } = {}) {
@@ -6159,7 +6159,7 @@
                     i && s.addEventListener('blocked', (e) => i(e.oldVersion, e.newVersion, e)),
                     o
                         .then((e) => {
-                            r && e.addEventListener('close', () => r()), a && e.addEventListener('versionchange', (e) => a(e.oldVersion, e.newVersion, e));
+                            (r && e.addEventListener('close', () => r()), a && e.addEventListener('versionchange', (e) => a(e.oldVersion, e.newVersion, e)));
                         })
                         .catch(() => {}),
                     o
@@ -6167,7 +6167,7 @@
             }
             function v(e, { blocked: t } = {}) {
                 let i = indexedDB.deleteDatabase(e);
-                return t && i.addEventListener('blocked', (e) => t(e.oldVersion, e)), d(i).then(() => void 0);
+                return (t && i.addEventListener('blocked', (e) => t(e.oldVersion, e)), d(i).then(() => void 0));
             }
             let b = ['get', 'getKey', 'getAll', 'getAllKeys', 'count'],
                 _ = ['put', 'add', 'delete', 'clear'],
@@ -6182,9 +6182,9 @@
                 let r = async function (e, ...t) {
                     let r = this.transaction(e, a ? 'readwrite' : 'readonly'),
                         s = r.store;
-                    return n && (s = s.index(t.shift())), (await Promise.all([s[i](...t), a && r.done]))[0];
+                    return (n && (s = s.index(t.shift())), (await Promise.all([s[i](...t), a && r.done]))[0]);
                 };
-                return p.set(t, r), r;
+                return (p.set(t, r), r);
             }
             c = ((e) => ({ ...e, get: (t, i, n) => h(t, i) || e.get(t, i, n), has: (t, i) => !!h(t, i) || e.has(t, i) }))(c);
             let g = ['continue', 'continuePrimaryKey', 'advance'],
@@ -6209,7 +6209,7 @@
                 let t = this;
                 if ((t instanceof IDBCursor || (t = await t.openCursor(...e)), !t)) return;
                 let i = new Proxy(t, A);
-                for (y.set(i, t), l.set(i, u(t)); t; ) yield i, (t = await (f.get(i) || t.continue())), f.delete(i);
+                for (y.set(i, t), l.set(i, u(t)); t;) (yield i, (t = await (f.get(i) || t.continue())), f.delete(i));
             }
             function j(e, t) {
                 return (t === Symbol.asyncIterator && r(e, [IDBIndex, IDBObjectStore, IDBCursor])) || ('iterate' === t && r(e, [IDBIndex, IDBObjectStore]));

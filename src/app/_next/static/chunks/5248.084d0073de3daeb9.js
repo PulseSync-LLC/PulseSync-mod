@@ -135,7 +135,7 @@
                     return this.storage.get(ev.c.YandexUid, !1) || void 0;
                 }
                 constructor(e, t, r) {
-                    super(e, t), (0, eR._)(this, 'language', void 0), (this.language = r);
+                    (super(e, t), (0, eR._)(this, 'language', void 0), (this.language = r));
                 }
             }
             class eG extends eE {
@@ -171,15 +171,15 @@
                         r = (0, o.getTldHost)(this.config.passportCredentials.host, this.tld, eb.B),
                         n = document.createElement('iframe'),
                         i = document.createElement('form');
-                    i.setAttribute('method', 'POST'),
+                    (i.setAttribute('method', 'POST'),
                         i.setAttribute('action', ''.concat(r, '/passport?mode=embeddedauth')),
                         i.setAttribute('target', t),
                         i.setAttribute('class', 'hidden'),
                         n.setAttribute('name', t),
                         n.setAttribute('src', 'about:blank'),
-                        n.setAttribute('class', 'hidden');
+                        n.setAttribute('class', 'hidden'));
                     let a = null != (e = this.storage.get(ev.c.YandexUid, !1)) ? e : '';
-                    Object.entries({
+                    (Object.entries({
                         action: 'change_default',
                         uid: String(this.userId.getPassportUid()),
                         retpath: ''.concat(window.location.origin, '/login-status'),
@@ -187,30 +187,30 @@
                     }).forEach((e) => {
                         let [t, r] = e,
                             n = document.createElement('input');
-                        n.setAttribute('type', 'hidden'), n.setAttribute('name', t), n.setAttribute('value', r), i.appendChild(n);
+                        (n.setAttribute('type', 'hidden'), n.setAttribute('name', t), n.setAttribute('value', r), i.appendChild(n));
                     }),
                         document.body.appendChild(i),
                         document.body.appendChild(n),
-                        i.submit();
+                        i.submit());
                 }
                 observe(e) {
                     if (e) {
-                        (this.observerCallback = this.checkPassportLoginCookieChangeWithMultiAuth.bind(this)), window.addEventListener('focus', this.observerCallback);
+                        ((this.observerCallback = this.checkPassportLoginCookieChangeWithMultiAuth.bind(this)), window.addEventListener('focus', this.observerCallback));
                         return;
                     }
                     this.intervalId = setInterval(this.checkPassportLoginCookieChange.bind(this), 5e3);
                 }
                 disconnect() {
-                    this.observerCallback && window.removeEventListener('focus', this.observerCallback), clearInterval(this.intervalId);
+                    (this.observerCallback && window.removeEventListener('focus', this.observerCallback), clearInterval(this.intervalId));
                 }
                 constructor(e, t, r, n) {
-                    super(e, t, r),
+                    (super(e, t, r),
                         (0, eR._)(this, 'userId', void 0),
                         (0, eR._)(this, 'passportLoginCached', void 0),
                         (0, eR._)(this, 'intervalId', void 0),
                         (0, eR._)(this, 'observerCallback', void 0),
                         (this.userId = n),
-                        (this.passportLoginCached = this.passportLogin);
+                        (this.passportLoginCached = this.passportLogin));
                 }
             }
             var ek = r(51053),
@@ -229,7 +229,7 @@
                     } else window.location.reload();
                 }
                 constructor(e, t) {
-                    (0, eR._)(this, 'tld', void 0), (0, eR._)(this, 'token', void 0), (this.tld = e), (this.token = t);
+                    ((0, eR._)(this, 'tld', void 0), (0, eR._)(this, 'token', void 0), (this.tld = e), (this.token = t));
                 }
             }
             var eW = r(73422),
@@ -285,7 +285,7 @@
                     return this.beforeRequest.bind(this);
                 }
                 constructor(e) {
-                    (0, eR._)(this, 'logger', void 0), (this.logger = e);
+                    ((0, eR._)(this, 'logger', void 0), (this.logger = e));
                 }
             }
             var ej = r(7736);
@@ -300,11 +300,11 @@
             var eZ = (function e(t, r) {
                 function n(e, n, i) {
                     if ('undefined' != typeof document) {
-                        'number' == typeof (i = eO({}, r, i)).expires && (i.expires = new Date(Date.now() + 864e5 * i.expires)),
+                        ('number' == typeof (i = eO({}, r, i)).expires && (i.expires = new Date(Date.now() + 864e5 * i.expires)),
                             i.expires && (i.expires = i.expires.toUTCString()),
                             (e = encodeURIComponent(e)
                                 .replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent)
-                                .replace(/[()]/g, escape));
+                                .replace(/[()]/g, escape)));
                         var s = '';
                         for (var o in i) i[o] && ((s += '; ' + o), !0 !== i[o] && (s += '=' + i[o].split(';')[0]));
                         return (document.cookie = e + '=' + t.write(n, e) + s);
@@ -341,7 +341,7 @@
             })(
                 {
                     read: function (e) {
-                        return '"' === e[0] && (e = e.slice(1, -1)), e.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
+                        return ('"' === e[0] && (e = e.slice(1, -1)), e.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent));
                     },
                     write: function (e) {
                         return encodeURIComponent(e).replace(/%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g, decodeURIComponent);

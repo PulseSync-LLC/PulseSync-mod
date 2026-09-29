@@ -4,10 +4,10 @@
         11051: (e, t, r) => {
             'use strict';
             var s;
-            r.d(t, { Q: () => s }),
+            (r.d(t, { Q: () => s }),
                 (function (e) {
-                    (e.StreamPause = 'streamPause'), (e.StreamPlay = 'streamPlay'), (e.TimestampLike = 'timestampLike'), (e.TimestampDislike = 'timestampDislike');
-                })(s || (s = {}));
+                    ((e.StreamPause = 'streamPause'), (e.StreamPlay = 'streamPlay'), (e.TimestampLike = 'timestampLike'), (e.TimestampDislike = 'timestampDislike'));
+                })(s || (s = {})));
         },
         14177: (e, t, r) => {
             'use strict';
@@ -25,7 +25,7 @@
                 d = {
                     5881: (e, t, r) => {
                         function s() {
-                            for (var e, t, r = 0, s = ''; r < arguments.length; )
+                            for (var e, t, r = 0, s = ''; r < arguments.length;)
                                 (e = arguments[r++]) &&
                                     (t = (function e(t) {
                                         var r,
@@ -40,11 +40,11 @@
                                     (s && (s += ' '), (s += t));
                             return s;
                         }
-                        r.r(t), r.d(t, { clsx: () => s, default: () => n });
+                        (r.r(t), r.d(t, { clsx: () => s, default: () => n }));
                         let n = s;
                     },
                     123: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => s });
+                        (r.r(t), r.d(t, { default: () => s }));
                         let s = {
                             root_size_xxxs: 'Rkdd2vKC_3xa1eUdRdHP',
                             root_size_xxs: 'l3tE1hAMmBj2aoPPwU08',
@@ -58,11 +58,11 @@
                         };
                     },
                     8712: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => s });
+                        (r.r(t), r.d(t, { default: () => s }));
                         let s = { root: 'mdbxU6IWInQTsVjwnapn', text: 'Cl_DNqTqaeGRXa9FZpOO', icon: 'WMUZ6rmDKcZuPFMkQwf6' };
                     },
                     6951: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => s });
+                        (r.r(t), r.d(t, { default: () => s }));
                         let s = {
                             root_controls_xxs: 'tRaaBpDMg9Qu8v6gKjtn',
                             root_entity_xxs: 'M9zvtlcpLUVn6DKdcHhj',
@@ -85,7 +85,7 @@
                         };
                     },
                     2223: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => s });
+                        (r.r(t), r.d(t, { default: () => s }));
                         let s = {
                             root_size_xs: 'qJJ288377iHlWN_RXeEE',
                             root_size_s: '_sd8Q9d_Ttn0Ufe4ISWS',
@@ -101,7 +101,7 @@
                         };
                     },
                     5882: (e, t, r) => {
-                        r.r(t), r.d(t, { default: () => s });
+                        (r.r(t), r.d(t, { default: () => s }));
                         let s = {
                             root: '_MWOVuZRvUQdXKTMcOPx',
                             root_clamp: 'LezmJlldtbHWqU7l1950',
@@ -118,7 +118,7 @@
                             else s = t;
                             return { $$typeof: r, type: e, key: n, ref: void 0 !== (t = s.ref) ? t : null, props: s };
                         }
-                        (t.Fragment = Symbol.for('react.fragment')), (t.jsx = s), (t.jsxs = s);
+                        ((t.Fragment = Symbol.for('react.fragment')), (t.jsx = s), (t.jsxs = s));
                     },
                     4377: (e, t, r) => {
                         e.exports = r(9097);
@@ -2180,13 +2180,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Icon = t.IconComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Icon = t.IconComponent = void 0));
                         let n = r(4377),
                             a = r(810),
                             i = r(5881),
                             l = r(5151),
                             o = s(r(123));
-                        (t.IconComponent = (e) => {
+                        ((t.IconComponent = (e) => {
                             let { 'aria-label': t, className: r, focusable: s = !1, variant: a, size: c, forwardRef: f, ...x } = e,
                                 u = c ? ''.concat(a, '_').concat(c) : a,
                                 d = l.iconsCollection[u];
@@ -2201,7 +2201,7 @@
                                   })
                                 : null;
                         }),
-                            (t.Icon = (0, a.forwardRef)((e, r) => (0, n.jsx)(t.IconComponent, { forwardRef: r, ...e })));
+                            (t.Icon = (0, a.forwardRef)((e, r) => (0, n.jsx)(t.IconComponent, { forwardRef: r, ...e }))));
                     },
                     5151: function (e, t, r) {
                         var s =
@@ -2209,7 +2209,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.iconsCollection = t.iconsCollectionBySize = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.iconsCollection = t.iconsCollectionBySize = void 0));
                         let n = s(r(4962)),
                             a = s(r(4656)),
                             i = s(r(1954)),
@@ -2466,7 +2466,7 @@
                             sf = s(r(5760)),
                             sx = s(r(5667)),
                             su = s(r(2639));
-                        (t.iconsCollectionBySize = {
+                        ((t.iconsCollectionBySize = {
                             xxxs: [
                                 'add',
                                 'adult',
@@ -2981,10 +2981,10 @@
                                 yandexPayRu: sf.default,
                                 yandexPlusEn: sx.default,
                                 yandexPlusRu: su.default,
-                            });
+                            }));
                     },
                     7066: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Icon = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Icon = void 0));
                         var s = r(5189);
                         Object.defineProperty(t, 'Icon', {
                             enumerable: !0,
@@ -2999,7 +2999,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.PlusBadge = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.PlusBadge = void 0));
                         let n = r(4377),
                             a = r(5881),
                             i = r(2660),
@@ -3024,13 +3024,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Caption = t.CaptionComponent = void 0));
                         let n = r(4377),
                             a = r(5881),
                             i = r(810),
                             l = r(4721),
                             o = s(r(6951));
-                        (t.CaptionComponent = (e) => {
+                        ((t.CaptionComponent = (e) => {
                             let { forwardRef: t, variant: r, type: s = 'text', size: i = 's', className: c, children: f, weight: x = 'medium', ...u } = e;
                             return (0, n.jsx)(l.Typography, {
                                 variant: r,
@@ -3040,7 +3040,7 @@
                                 children: f,
                             });
                         }),
-                            (t.Caption = (0, i.forwardRef)((e, r) => (0, n.jsx)(t.CaptionComponent, { forwardRef: r, ...e })));
+                            (t.Caption = (0, i.forwardRef)((e, r) => (0, n.jsx)(t.CaptionComponent, { forwardRef: r, ...e }))));
                     },
                     404: function (e, t, r) {
                         var s =
@@ -3048,13 +3048,13 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.HeadingComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.HeadingComponent = void 0));
                         let n = r(4377),
                             a = r(5881),
                             i = r(810),
                             l = r(4721),
                             o = s(r(2223));
-                        (t.HeadingComponent = (e) => {
+                        ((t.HeadingComponent = (e) => {
                             let { forwardRef: t, variant: r, weight: s = 'bold', size: i = 's', className: c, children: f, ...x } = e;
                             return (0, n.jsx)(l.Typography, {
                                 variant: r,
@@ -3064,7 +3064,7 @@
                                 children: f,
                             });
                         }),
-                            (t.Heading = (0, i.forwardRef)((e, r) => (0, n.jsx)(t.HeadingComponent, { forwardRef: r, ...e })));
+                            (t.Heading = (0, i.forwardRef)((e, r) => (0, n.jsx)(t.HeadingComponent, { forwardRef: r, ...e }))));
                     },
                     4721: function (e, t, r) {
                         var s =
@@ -3072,7 +3072,7 @@
                             function (e) {
                                 return e && e.__esModule ? e : { default: e };
                             };
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Typography = t.TypographyComponent = void 0));
                         let n = r(4377),
                             a = r(5881),
                             i = r(810),
@@ -3093,10 +3093,10 @@
                                 children: i,
                             });
                         }
-                        (t.TypographyComponent = o), (t.Typography = (0, i.forwardRef)((e, t) => (0, n.jsx)(o, { forwardRef: t, ...e })));
+                        ((t.TypographyComponent = o), (t.Typography = (0, i.forwardRef)((e, t) => (0, n.jsx)(o, { forwardRef: t, ...e }))));
                     },
                     2582: (e, t, r) => {
-                        Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.Caption = void 0);
+                        (Object.defineProperty(t, '__esModule', { value: !0 }), (t.Heading = t.Caption = void 0));
                         var s = r(7743);
                         Object.defineProperty(t, 'Caption', {
                             enumerable: !0,
@@ -3124,19 +3124,19 @@
                 var t = _[e];
                 if (void 0 !== t) return t.exports;
                 var r = (_[e] = { exports: {} });
-                return d[e].call(r.exports, r, r.exports, p), r.exports;
+                return (d[e].call(r.exports, r, r.exports, p), r.exports);
             }
-            (p.d = (e, t) => {
+            ((p.d = (e, t) => {
                 for (var r in t) p.o(t, r) && !p.o(e, r) && Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
             }),
                 (p.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)),
                 (p.r = (e) => {
-                    'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
-                        Object.defineProperty(e, '__esModule', { value: !0 });
-                });
+                    ('undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                        Object.defineProperty(e, '__esModule', { value: !0 }));
+                }));
             var g = {};
             (() => {
-                Object.defineProperty(g, 'X', { value: !0 }), (g.R = void 0);
+                (Object.defineProperty(g, 'X', { value: !0 }), (g.R = void 0));
                 var e = p(1093);
                 Object.defineProperty(g, 'R', {
                     enumerable: !0,
@@ -3162,7 +3162,7 @@
                 C = r(19379),
                 A = r(61258),
                 P = (function (e) {
-                    return (e.SETTINGS = 'settings'), (e.LOGOUT = 'logout'), (e.ACCOUNT_ACTION = 'account-action'), e;
+                    return ((e.SETTINGS = 'settings'), (e.LOGOUT = 'logout'), (e.ACCOUNT_ACTION = 'account-action'), e);
                 })({}),
                 S = r(82586),
                 N = r(19740),
@@ -3221,7 +3221,7 @@
                         }
                     }, [S.platform]),
                     er = (0, u.c)((e) => {
-                        z(e), e === R.W ? T((0, j.V)()) : T(e), G(e);
+                        (z(e), e === R.W ? T((0, j.V)()) : T(e), G(e));
                     }),
                     es = (0, l.useCallback)(
                         (e) => {
@@ -3231,7 +3231,7 @@
                     ),
                     en = (0, l.useCallback)(
                         (e, t, r) => {
-                            e === P.SETTINGS && (null == r || r.onClose(), J()), (e === P.LOGOUT || e === P.ACCOUNT_ACTION) && I.remove(C.c.YmUid);
+                            (e === P.SETTINGS && (null == r || r.onClose(), J()), (e === P.LOGOUT || e === P.ACCOUNT_ACTION) && I.remove(C.c.YmUid));
                         },
                         [J, I],
                     ),
@@ -3336,9 +3336,9 @@
         23912: (e, t, r) => {
             'use strict';
             var s;
-            r.d(t, { f: () => s }),
+            (r.d(t, { f: () => s }),
                 (function (e) {
-                    (e.CUSTOM = 'CUSTOM'),
+                    ((e.CUSTOM = 'CUSTOM'),
                         (e.DEFAULT = 'DEFAULT'),
                         (e.CLASSICAL = 'CLASSICAL'),
                         (e.CLUB = 'CLUB'),
@@ -3356,8 +3356,8 @@
                         (e.SKA = 'SKA'),
                         (e.SOFT = 'SOFT'),
                         (e.SOFT_ROCK = 'SOFT_ROCK'),
-                        (e.TECHNO = 'TECHNO');
-                })(s || (s = {}));
+                        (e.TECHNO = 'TECHNO'));
+                })(s || (s = {})));
         },
         26490: (e, t, r) => {
             'use strict';
@@ -3424,7 +3424,7 @@
             'use strict';
             r.d(t, { O: () => s });
             var s = (function (e) {
-                return (e.MACOS = 'darwin'), (e.WINDOWS = 'win32'), (e.LINUX = 'linux'), e;
+                return ((e.MACOS = 'darwin'), (e.WINDOWS = 'win32'), (e.LINUX = 'linux'), e);
             })({});
         },
         64238: (e) => {
@@ -3451,15 +3451,15 @@
                     x = (0, a.r)(),
                     u = (0, n.c)(async (e) => {
                         let { volume: s, playbackId: n } = e;
-                        await (null == t ? void 0 : t.setExponentVolume(s, n)), r.isAdvertShown && (null == x || x.audioAdvertPlayback.setExponentVolume(s));
+                        (await (null == t ? void 0 : t.setExponentVolume(s, n)), r.isAdvertShown && (null == x || x.audioAdvertPlayback.setExponentVolume(s)));
                     });
                 return (0, s.useCallback)(
                     async (t, r, s) => {
-                        if (0 !== r) e.set(f.c.YmPlayerPrevVolume, r, { expires: 365 }), await u({ sonataState: t, volume: 0, playbackId: s });
+                        if (0 !== r) (e.set(f.c.YmPlayerPrevVolume, r, { expires: 365 }), await u({ sonataState: t, volume: 0, playbackId: s }));
                         else {
                             var n;
                             let r = null != (n = e.get(f.c.YmPlayerPrevVolume)) ? n : 1;
-                            e.remove(f.c.YmPlayerPrevVolume), await u({ sonataState: t, volume: r, playbackId: s });
+                            (e.remove(f.c.YmPlayerPrevVolume), await u({ sonataState: t, volume: r, playbackId: s }));
                         }
                     },
                     [e, u],
@@ -3488,10 +3488,10 @@
         76232: (e, t, r) => {
             'use strict';
             var s;
-            r.d(t, { e: () => s }),
+            (r.d(t, { e: () => s }),
                 (function (e) {
-                    (e.HIGH_QUALITY = 'high_quality'), (e.BALANCED = 'balanced'), (e.EFFICIENT = 'efficient'), (e.PREVIEW = 'preview');
-                })(s || (s = {}));
+                    ((e.HIGH_QUALITY = 'high_quality'), (e.BALANCED = 'balanced'), (e.EFFICIENT = 'efficient'), (e.PREVIEW = 'preview'));
+                })(s || (s = {})));
         },
         78305: (e, t, r) => {
             'use strict';
@@ -3547,7 +3547,7 @@
             'use strict';
             r.d(t, { s: () => s });
             var s = (function (e) {
-                return (e.DIVERSITY = 'diversity'), (e.MOOD_ENERGY = 'moodEnergy'), (e.LANGUAGE = 'language'), e;
+                return ((e.DIVERSITY = 'diversity'), (e.MOOD_ENERGY = 'moodEnergy'), (e.LANGUAGE = 'language'), e);
             })({});
         },
     },

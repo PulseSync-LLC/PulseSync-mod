@@ -28,16 +28,16 @@
                     r = i[2],
                     e = i[3],
                     n = h * h + s * s + r * r + e * e;
-                return n > 0 && (n = 1 / Math.sqrt(n)), (t[0] = h * n), (t[1] = s * n), (t[2] = r * n), (t[3] = e * n), t;
+                return (n > 0 && (n = 1 / Math.sqrt(n)), (t[0] = h * n), (t[1] = s * n), (t[2] = r * n), (t[3] = e * n), t);
             };
             class n extends Array {
                 constructor(t = 0, i = 0, h = 0, s = 1) {
-                    super(t, i, h, s), (this.onChange = () => {}), (this._target = this);
+                    (super(t, i, h, s), (this.onChange = () => {}), (this._target = this));
                     let r = ['0', '1', '2', '3'];
                     return new Proxy(this, {
                         set(t, i) {
                             let h = Reflect.set(...arguments);
-                            return h && r.includes(i) && t.onChange(), h;
+                            return (h && r.includes(i) && t.onChange(), h);
                         },
                     });
                 }
@@ -54,20 +54,20 @@
                     return this[3];
                 }
                 set x(t) {
-                    (this._target[0] = t), this.onChange();
+                    ((this._target[0] = t), this.onChange());
                 }
                 set y(t) {
-                    (this._target[1] = t), this.onChange();
+                    ((this._target[1] = t), this.onChange());
                 }
                 set z(t) {
-                    (this._target[2] = t), this.onChange();
+                    ((this._target[2] = t), this.onChange());
                 }
                 set w(t) {
-                    (this._target[3] = t), this.onChange();
+                    ((this._target[3] = t), this.onChange());
                 }
                 identity() {
                     var t;
-                    return ((t = this._target)[0] = 0), (t[1] = 0), (t[2] = 0), (t[3] = 1), this.onChange(), this;
+                    return (((t = this._target)[0] = 0), (t[1] = 0), (t[2] = 0), (t[3] = 1), this.onChange(), this);
                 }
                 set(t, i, h, s) {
                     var r;
@@ -153,21 +153,21 @@
                 }
                 conjugate(t = this._target) {
                     var i;
-                    return (i = this._target), (i[0] = -t[0]), (i[1] = -t[1]), (i[2] = -t[2]), (i[3] = t[3]), this.onChange(), this;
+                    return ((i = this._target), (i[0] = -t[0]), (i[1] = -t[1]), (i[2] = -t[2]), (i[3] = t[3]), this.onChange(), this);
                 }
                 copy(t) {
                     var i;
-                    return (i = this._target), (i[0] = t[0]), (i[1] = t[1]), (i[2] = t[2]), (i[3] = t[3]), this.onChange(), this;
+                    return ((i = this._target), (i[0] = t[0]), (i[1] = t[1]), (i[2] = t[2]), (i[3] = t[3]), this.onChange(), this);
                 }
                 normalize(t = this._target) {
-                    return e(this._target, t), this.onChange(), this;
+                    return (e(this._target, t), this.onChange(), this);
                 }
                 multiply(t, i) {
-                    return i ? r(this._target, t, i) : r(this._target, this._target, t), this.onChange(), this;
+                    return (i ? r(this._target, t, i) : r(this._target, this._target, t), this.onChange(), this);
                 }
                 dot(t) {
                     var i;
-                    return (i = this._target), i[0] * t[0] + i[1] * t[1] + i[2] * t[2] + i[3] * t[3];
+                    return ((i = this._target), i[0] * t[0] + i[1] * t[1] + i[2] * t[2] + i[3] * t[3]);
                 }
                 fromMatrix3(t) {
                     return (
@@ -175,23 +175,23 @@
                             let h,
                                 s = i[0] + i[4] + i[8];
                             if (s > 0)
-                                (h = Math.sqrt(s + 1)),
+                                ((h = Math.sqrt(s + 1)),
                                     (t[3] = 0.5 * h),
                                     (h = 0.5 / h),
                                     (t[0] = (i[5] - i[7]) * h),
                                     (t[1] = (i[6] - i[2]) * h),
-                                    (t[2] = (i[1] - i[3]) * h);
+                                    (t[2] = (i[1] - i[3]) * h));
                             else {
                                 let s = 0;
-                                i[4] > i[0] && (s = 1), i[8] > i[3 * s + s] && (s = 2);
+                                (i[4] > i[0] && (s = 1), i[8] > i[3 * s + s] && (s = 2));
                                 let r = (s + 1) % 3,
                                     e = (s + 2) % 3;
-                                (h = Math.sqrt(i[3 * s + s] - i[3 * r + r] - i[3 * e + e] + 1)),
+                                ((h = Math.sqrt(i[3 * s + s] - i[3 * r + r] - i[3 * e + e] + 1)),
                                     (t[s] = 0.5 * h),
                                     (h = 0.5 / h),
                                     (t[3] = (i[3 * r + e] - i[3 * e + r]) * h),
                                     (t[r] = (i[3 * r + s] + i[3 * s + r]) * h),
-                                    (t[e] = (i[3 * e + s] + i[3 * s + e]) * h);
+                                    (t[e] = (i[3 * e + s] + i[3 * s + e]) * h));
                             }
                         })(this._target, t),
                         this.onChange(),
@@ -263,22 +263,22 @@
                     );
                 }
                 fromArray(t, i = 0) {
-                    return (this._target[0] = t[i]), (this._target[1] = t[i + 1]), (this._target[2] = t[i + 2]), (this._target[3] = t[i + 3]), this.onChange(), this;
+                    return ((this._target[0] = t[i]), (this._target[1] = t[i + 1]), (this._target[2] = t[i + 2]), (this._target[3] = t[i + 3]), this.onChange(), this);
                 }
                 toArray(t = [], i = 0) {
-                    return (t[i] = this[0]), (t[i + 1] = this[1]), (t[i + 2] = this[2]), (t[i + 3] = this[3]), t;
+                    return ((t[i] = this[0]), (t[i + 1] = this[1]), (t[i + 2] = this[2]), (t[i + 3] = this[3]), t);
                 }
             }
             var a = h(81161);
             let o = new a.$();
             class u extends Array {
                 constructor(t = 0, i = t, h = t, s = 'YXZ') {
-                    super(t, i, h), (this.order = s), (this.onChange = () => {}), (this._target = this);
+                    (super(t, i, h), (this.order = s), (this.onChange = () => {}), (this._target = this));
                     let r = ['0', '1', '2'];
                     return new Proxy(this, {
                         set(t, i) {
                             let h = Reflect.set(...arguments);
-                            return h && r.includes(i) && t.onChange(), h;
+                            return (h && r.includes(i) && t.onChange(), h);
                         },
                     });
                 }
@@ -292,22 +292,22 @@
                     return this[2];
                 }
                 set x(t) {
-                    (this._target[0] = t), this.onChange();
+                    ((this._target[0] = t), this.onChange());
                 }
                 set y(t) {
-                    (this._target[1] = t), this.onChange();
+                    ((this._target[1] = t), this.onChange());
                 }
                 set z(t) {
-                    (this._target[2] = t), this.onChange();
+                    ((this._target[2] = t), this.onChange());
                 }
                 set(t, i = t, h = t) {
                     return t.length ? this.copy(t) : ((this._target[0] = t), (this._target[1] = i), (this._target[2] = h), this.onChange(), this);
                 }
                 copy(t) {
-                    return (this._target[0] = t[0]), (this._target[1] = t[1]), (this._target[2] = t[2]), this.onChange(), this;
+                    return ((this._target[0] = t[0]), (this._target[1] = t[1]), (this._target[2] = t[2]), this.onChange(), this);
                 }
                 reorder(t) {
-                    return (this._target.order = t), this.onChange(), this;
+                    return ((this._target.order = t), this.onChange(), this);
                 }
                 fromRotationMatrix(t, i = this.order) {
                     return (
@@ -348,18 +348,18 @@
                     );
                 }
                 fromQuaternion(t, i = this.order, h) {
-                    return o.fromQuaternion(t), this._target.fromRotationMatrix(o, i), h || this.onChange(), this;
+                    return (o.fromQuaternion(t), this._target.fromRotationMatrix(o, i), h || this.onChange(), this);
                 }
                 fromArray(t, i = 0) {
-                    return (this._target[0] = t[i]), (this._target[1] = t[i + 1]), (this._target[2] = t[i + 2]), this;
+                    return ((this._target[0] = t[i]), (this._target[1] = t[i + 1]), (this._target[2] = t[i + 2]), this);
                 }
                 toArray(t = [], i = 0) {
-                    return (t[i] = this[0]), (t[i + 1] = this[1]), (t[i + 2] = this[2]), t;
+                    return ((t[i] = this[0]), (t[i + 1] = this[1]), (t[i + 2] = this[2]), t);
                 }
             }
             class l {
                 constructor() {
-                    (this.parent = null),
+                    ((this.parent = null),
                         (this.children = []),
                         (this.visible = !0),
                         (this.matrix = new a.$()),
@@ -372,38 +372,38 @@
                         (this.rotation = new u()),
                         (this.up = new s.e(0, 1, 0)),
                         (this.rotation._target.onChange = () => this.quaternion.fromEuler(this.rotation, !0)),
-                        (this.quaternion._target.onChange = () => this.rotation.fromQuaternion(this.quaternion, void 0, !0));
+                        (this.quaternion._target.onChange = () => this.rotation.fromQuaternion(this.quaternion, void 0, !0)));
                 }
                 setParent(t, i = !0) {
-                    this.parent && t !== this.parent && this.parent.removeChild(this, !1), (this.parent = t), i && t && t.addChild(this, !1);
+                    (this.parent && t !== this.parent && this.parent.removeChild(this, !1), (this.parent = t), i && t && t.addChild(this, !1));
                 }
                 addChild(t, i = !0) {
-                    ~this.children.indexOf(t) || this.children.push(t), i && t.setParent(this, !1);
+                    (~this.children.indexOf(t) || this.children.push(t), i && t.setParent(this, !1));
                 }
                 removeChild(t, i = !0) {
-                    ~this.children.indexOf(t) && this.children.splice(this.children.indexOf(t), 1), i && t.setParent(null, !1);
+                    (~this.children.indexOf(t) && this.children.splice(this.children.indexOf(t), 1), i && t.setParent(null, !1));
                 }
                 updateMatrixWorld(t) {
-                    this.matrixAutoUpdate && this.updateMatrix(),
+                    (this.matrixAutoUpdate && this.updateMatrix(),
                         (this.worldMatrixNeedsUpdate || t) &&
                             (null === this.parent ? this.worldMatrix.copy(this.matrix) : this.worldMatrix.multiply(this.parent.worldMatrix, this.matrix),
                             (this.worldMatrixNeedsUpdate = !1),
-                            (t = !0));
+                            (t = !0)));
                     for (let i = 0, h = this.children.length; i < h; i++) this.children[i].updateMatrixWorld(t);
                 }
                 updateMatrix() {
-                    this.matrix.compose(this.quaternion, this.position, this.scale), (this.worldMatrixNeedsUpdate = !0);
+                    (this.matrix.compose(this.quaternion, this.position, this.scale), (this.worldMatrixNeedsUpdate = !0));
                 }
                 traverse(t) {
                     if (!t(this)) for (let i = 0, h = this.children.length; i < h; i++) this.children[i].traverse(t);
                 }
                 decompose() {
-                    this.matrix.decompose(this.quaternion._target, this.position, this.scale), this.rotation.fromQuaternion(this.quaternion);
+                    (this.matrix.decompose(this.quaternion._target, this.position, this.scale), this.rotation.fromQuaternion(this.quaternion));
                 }
                 lookAt(t, i = !1) {
-                    i ? this.matrix.lookAt(this.position, t, this.up) : this.matrix.lookAt(t, this.position, this.up),
+                    (i ? this.matrix.lookAt(this.position, t, this.up) : this.matrix.lookAt(t, this.position, this.up),
                         this.matrix.getRotation(this.quaternion._target),
-                        this.rotation.fromQuaternion(this.quaternion);
+                        this.rotation.fromQuaternion(this.quaternion));
                 }
             }
         },
@@ -424,7 +424,7 @@
             var s = h(70413);
             class r extends Array {
                 constructor(t = 0, i = t, h = t) {
-                    return super(t, i, h), this;
+                    return (super(t, i, h), this);
                 }
                 get x() {
                     return this[0];
@@ -448,22 +448,22 @@
                     return t.length ? this.copy(t) : ((0, s.hZ)(this, t, i, h), this);
                 }
                 copy(t) {
-                    return (0, s.C)(this, t), this;
+                    return ((0, s.C)(this, t), this);
                 }
                 add(t, i) {
-                    return i ? (0, s.WQ)(this, t, i) : (0, s.WQ)(this, this, t), this;
+                    return (i ? (0, s.WQ)(this, t, i) : (0, s.WQ)(this, this, t), this);
                 }
                 sub(t, i) {
-                    return i ? (0, s.Re)(this, t, i) : (0, s.Re)(this, this, t), this;
+                    return (i ? (0, s.Re)(this, t, i) : (0, s.Re)(this, this, t), this);
                 }
                 multiply(t) {
-                    return t.length ? (0, s.lw)(this, this, t) : (0, s.hs)(this, this, t), this;
+                    return (t.length ? (0, s.lw)(this, this, t) : (0, s.hs)(this, this, t), this);
                 }
                 divide(t) {
-                    return t.length ? (0, s.Qr)(this, this, t) : (0, s.hs)(this, this, 1 / t), this;
+                    return (t.length ? (0, s.Qr)(this, this, t) : (0, s.hs)(this, this, 1 / t), this);
                 }
                 inverse(t = this) {
-                    return (0, s.DI)(this, t), this;
+                    return ((0, s.DI)(this, t), this);
                 }
                 len() {
                     return (0, s.Bw)(this);
@@ -478,16 +478,16 @@
                     return t ? (0, s.hG)(this, t) : (0, s.m3)(this);
                 }
                 negate(t = this) {
-                    return (0, s.ze)(this, t), this;
+                    return ((0, s.ze)(this, t), this);
                 }
                 cross(t, i) {
-                    return i ? (0, s.$A)(this, t, i) : (0, s.$A)(this, this, t), this;
+                    return (i ? (0, s.$A)(this, t, i) : (0, s.$A)(this, this, t), this);
                 }
                 scale(t) {
-                    return (0, s.hs)(this, this, t), this;
+                    return ((0, s.hs)(this, this, t), this);
                 }
                 normalize() {
-                    return (0, s.S8)(this, this), this;
+                    return ((0, s.S8)(this, this), this);
                 }
                 dot(t) {
                     return (0, s.Om)(this, t);
@@ -496,34 +496,34 @@
                     return (0, s.t2)(this, t);
                 }
                 applyMatrix3(t) {
-                    return (0, s.ei)(this, this, t), this;
+                    return ((0, s.ei)(this, this, t), this);
                 }
                 applyMatrix4(t) {
-                    return (0, s.Z0)(this, this, t), this;
+                    return ((0, s.Z0)(this, this, t), this);
                 }
                 scaleRotateMatrix4(t) {
-                    return (0, s.Sc)(this, this, t), this;
+                    return ((0, s.Sc)(this, this, t), this);
                 }
                 applyQuaternion(t) {
-                    return (0, s.gL)(this, this, t), this;
+                    return ((0, s.gL)(this, this, t), this);
                 }
                 angle(t) {
                     return (0, s.g7)(this, t);
                 }
                 lerp(t, i) {
-                    return (0, s.Cc)(this, this, t, i), this;
+                    return ((0, s.Cc)(this, this, t, i), this);
                 }
                 smoothLerp(t, i, h) {
-                    return (0, s.YO)(this, this, t, i, h), this;
+                    return ((0, s.YO)(this, this, t, i, h), this);
                 }
                 clone() {
                     return new r(this[0], this[1], this[2]);
                 }
                 fromArray(t, i = 0) {
-                    return (this[0] = t[i]), (this[1] = t[i + 1]), (this[2] = t[i + 2]), this;
+                    return ((this[0] = t[i]), (this[1] = t[i + 1]), (this[2] = t[i + 2]), this);
                 }
                 toArray(t = [], i = 0) {
-                    return (t[i] = this[0]), (t[i + 1] = this[1]), (t[i + 2] = this[2]), t;
+                    return ((t[i] = this[0]), (t[i + 1] = this[1]), (t[i + 2] = this[2]), t);
                 }
                 transformDirection(t) {
                     let i = this[0],
@@ -547,25 +547,25 @@
                 return Math.sqrt(i * i + h * h + s * s);
             }
             function r(t, i) {
-                return (t[0] = i[0]), (t[1] = i[1]), (t[2] = i[2]), t;
+                return ((t[0] = i[0]), (t[1] = i[1]), (t[2] = i[2]), t);
             }
             function e(t, i, h, s) {
-                return (t[0] = i), (t[1] = h), (t[2] = s), t;
+                return ((t[0] = i), (t[1] = h), (t[2] = s), t);
             }
             function n(t, i, h) {
-                return (t[0] = i[0] + h[0]), (t[1] = i[1] + h[1]), (t[2] = i[2] + h[2]), t;
+                return ((t[0] = i[0] + h[0]), (t[1] = i[1] + h[1]), (t[2] = i[2] + h[2]), t);
             }
             function a(t, i, h) {
-                return (t[0] = i[0] - h[0]), (t[1] = i[1] - h[1]), (t[2] = i[2] - h[2]), t;
+                return ((t[0] = i[0] - h[0]), (t[1] = i[1] - h[1]), (t[2] = i[2] - h[2]), t);
             }
             function o(t, i, h) {
-                return (t[0] = i[0] * h[0]), (t[1] = i[1] * h[1]), (t[2] = i[2] * h[2]), t;
+                return ((t[0] = i[0] * h[0]), (t[1] = i[1] * h[1]), (t[2] = i[2] * h[2]), t);
             }
             function u(t, i, h) {
-                return (t[0] = i[0] / h[0]), (t[1] = i[1] / h[1]), (t[2] = i[2] / h[2]), t;
+                return ((t[0] = i[0] / h[0]), (t[1] = i[1] / h[1]), (t[2] = i[2] / h[2]), t);
             }
             function l(t, i, h) {
-                return (t[0] = i[0] * h), (t[1] = i[1] * h), (t[2] = i[2] * h), t;
+                return ((t[0] = i[0] * h), (t[1] = i[1] * h), (t[2] = i[2] * h), t);
             }
             function g(t, i) {
                 let h = i[0] - t[0],
@@ -586,17 +586,17 @@
                 return i * i + h * h + s * s;
             }
             function d(t, i) {
-                return (t[0] = -i[0]), (t[1] = -i[1]), (t[2] = -i[2]), t;
+                return ((t[0] = -i[0]), (t[1] = -i[1]), (t[2] = -i[2]), t);
             }
             function f(t, i) {
-                return (t[0] = 1 / i[0]), (t[1] = 1 / i[1]), (t[2] = 1 / i[2]), t;
+                return ((t[0] = 1 / i[0]), (t[1] = 1 / i[1]), (t[2] = 1 / i[2]), t);
             }
             function p(t, i) {
                 let h = i[0],
                     s = i[1],
                     r = i[2],
                     e = h * h + s * s + r * r;
-                return e > 0 && (e = 1 / Math.sqrt(e)), (t[0] = i[0] * e), (t[1] = i[1] * e), (t[2] = i[2] * e), t;
+                return (e > 0 && (e = 1 / Math.sqrt(e)), (t[0] = i[0] * e), (t[1] = i[1] * e), (t[2] = i[2] * e), t);
             }
             function m(t, i) {
                 return t[0] * i[0] + t[1] * i[1] + t[2] * i[2];
@@ -608,20 +608,20 @@
                     n = h[0],
                     a = h[1],
                     o = h[2];
-                return (t[0] = r * o - e * a), (t[1] = e * n - s * o), (t[2] = s * a - r * n), t;
+                return ((t[0] = r * o - e * a), (t[1] = e * n - s * o), (t[2] = s * a - r * n), t);
             }
             function _(t, i, h, s) {
                 let r = i[0],
                     e = i[1],
                     n = i[2];
-                return (t[0] = r + s * (h[0] - r)), (t[1] = e + s * (h[1] - e)), (t[2] = n + s * (h[2] - n)), t;
+                return ((t[0] = r + s * (h[0] - r)), (t[1] = e + s * (h[1] - e)), (t[2] = n + s * (h[2] - n)), t);
             }
             function y(t, i, h, s, r) {
                 let e = Math.exp(-s * r),
                     n = i[0],
                     a = i[1],
                     o = i[2];
-                return (t[0] = h[0] + (n - h[0]) * e), (t[1] = h[1] + (a - h[1]) * e), (t[2] = h[2] + (o - h[2]) * e), t;
+                return ((t[0] = h[0] + (n - h[0]) * e), (t[1] = h[1] + (a - h[1]) * e), (t[2] = h[2] + (o - h[2]) * e), t);
             }
             function C(t, i, h) {
                 let s = i[0],
@@ -653,7 +653,7 @@
                 let s = i[0],
                     r = i[1],
                     e = i[2];
-                return (t[0] = s * h[0] + r * h[3] + e * h[6]), (t[1] = s * h[1] + r * h[4] + e * h[7]), (t[2] = s * h[2] + r * h[5] + e * h[8]), t;
+                return ((t[0] = s * h[0] + r * h[3] + e * h[6]), (t[1] = s * h[1] + r * h[4] + e * h[7]), (t[2] = s * h[2] + r * h[5] + e * h[8]), t);
             }
             function q(t, i, h) {
                 let s = i[0],
@@ -669,7 +669,7 @@
                     M = o * u - n * g,
                     d = n * l - a * u,
                     f = 2 * h[3];
-                return (u *= f), (l *= f), (g *= f), (c *= 2), (M *= 2), (d *= 2), (t[0] = s + u + c), (t[1] = r + l + M), (t[2] = e + g + d), t;
+                return ((u *= f), (l *= f), (g *= f), (c *= 2), (M *= 2), (d *= 2), (t[0] = s + u + c), (t[1] = r + l + M), (t[2] = e + g + d), t);
             }
             h.d(i, {
                 $A: () => x,
@@ -701,7 +701,7 @@
                 let t = [0, 0, 0],
                     i = [0, 0, 0];
                 return function (h, s) {
-                    r(t, h), r(i, s), p(t, t), p(i, i);
+                    (r(t, h), r(i, s), p(t, t), p(i, i));
                     let e = m(t, i);
                     return e > 1 ? 0 : e < -1 ? Math.PI : Math.acos(e);
                 };
@@ -802,7 +802,7 @@
                     o = i[8],
                     u = i[9],
                     l = i[10];
-                return (t[0] = Math.hypot(h, s, r)), (t[1] = Math.hypot(e, n, a)), (t[2] = Math.hypot(o, u, l)), t;
+                return ((t[0] = Math.hypot(h, s, r)), (t[1] = Math.hypot(e, n, a)), (t[2] = Math.hypot(o, u, l)), t);
             }
             let a = (function () {
                 let t = [1, 1, 1];
@@ -878,7 +878,7 @@
             }
             class l extends Array {
                 constructor(t = 1, i = 0, h = 0, s = 0, r = 0, e = 1, n = 0, a = 0, o = 0, u = 0, l = 1, g = 0, c = 0, M = 0, d = 0, f = 1) {
-                    return super(t, i, h, s, r, e, n, a, o, u, l, g, c, M, d, f), this;
+                    return (super(t, i, h, s, r, e, n, a, o, u, l, g, c, M, d, f), this);
                 }
                 get x() {
                     return this[12];
@@ -1040,10 +1040,10 @@
                     );
                 }
                 add(t, i) {
-                    return i ? o(this, t, i) : o(this, this, t), this;
+                    return (i ? o(this, t, i) : o(this, this, t), this);
                 }
                 sub(t, i) {
-                    return i ? u(this, t, i) : u(this, this, t), this;
+                    return (i ? u(this, t, i) : u(this, this, t), this);
                 }
                 multiply(t, i) {
                     return (
@@ -1200,7 +1200,7 @@
                     );
                 }
                 setPosition(t) {
-                    return (this.x = t[0]), (this.y = t[1]), (this.z = t[2]), this;
+                    return ((this.x = t[0]), (this.y = t[1]), (this.z = t[2]), this);
                 }
                 inverse(t = this) {
                     let i, h, s, r, e, n, a, o, u, l, g, c, M, d, f, p, m, x, _, y, C, w, v, q, A, Z, Y, X, b;
@@ -1275,7 +1275,7 @@
                                 y = s[0],
                                 C = s[1],
                                 w = s[2];
-                            (t[0] = (1 - (d + p)) * y),
+                            ((t[0] = (1 - (d + p)) * y),
                                 (t[1] = (c + _) * y),
                                 (t[2] = (M - x) * y),
                                 (t[3] = 0),
@@ -1290,7 +1290,7 @@
                                 (t[12] = h[0]),
                                 (t[13] = h[1]),
                                 (t[14] = h[2]),
-                                (t[15] = 1);
+                                (t[15] = 1));
                         })(this, t, i, h),
                         this
                     );
@@ -1301,12 +1301,12 @@
                             let n = (0, s.Bw)([t[0], t[1], t[2]]),
                                 o = (0, s.Bw)([t[4], t[5], t[6]]),
                                 u = (0, s.Bw)([t[8], t[9], t[10]]);
-                            0 > r(t) && (n = -n), (h[0] = t[12]), (h[1] = t[13]), (h[2] = t[14]);
+                            (0 > r(t) && (n = -n), (h[0] = t[12]), (h[1] = t[13]), (h[2] = t[14]));
                             let l = t.slice(),
                                 g = 1 / n,
                                 c = 1 / o,
                                 M = 1 / u;
-                            (l[0] *= g),
+                            ((l[0] *= g),
                                 (l[1] *= g),
                                 (l[2] *= g),
                                 (l[4] *= c),
@@ -1318,19 +1318,19 @@
                                 a(i, l),
                                 (e[0] = n),
                                 (e[1] = o),
-                                (e[2] = u);
+                                (e[2] = u));
                         })(this, t, i, h),
                         this
                     );
                 }
                 getRotation(t) {
-                    return a(t, this), this;
+                    return (a(t, this), this);
                 }
                 getTranslation(t) {
-                    return (t[0] = this[12]), (t[1] = this[13]), (t[2] = this[14]), this;
+                    return ((t[0] = this[12]), (t[1] = this[13]), (t[2] = this[14]), this);
                 }
                 getScaling(t) {
-                    return n(t, this), this;
+                    return (n(t, this), this);
                 }
                 getMaxScaleOnAxis() {
                     let t, i, h, s, r, e, n, a, o;

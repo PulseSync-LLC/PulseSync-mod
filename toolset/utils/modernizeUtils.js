@@ -40,7 +40,10 @@ function createModernizeUtils(runtime) {
     }
 
     function makeIncludesCall(indexOfCall) {
-        return t.callExpression(t.memberExpression(indexOfCall.callee.object, t.identifier('includes')), indexOfCall.arguments.map((argument) => cloneNode(argument)));
+        return t.callExpression(
+            t.memberExpression(indexOfCall.callee.object, t.identifier('includes')),
+            indexOfCall.arguments.map((argument) => cloneNode(argument)),
+        );
     }
 
     function isEmptyObjectLiteral(node) {
@@ -167,14 +170,22 @@ function createModernizeUtils(runtime) {
 
             if (t.isCallExpression(current) && t.isMemberExpression(current.callee)) {
                 if (sameNode(current.callee, prev)) {
-                    result = t.optionalCallExpression(result, current.arguments.map((argument) => cloneNode(argument)), true);
+                    result = t.optionalCallExpression(
+                        result,
+                        current.arguments.map((argument) => cloneNode(argument)),
+                        true,
+                    );
                     prev = current.callee;
                     continue;
                 }
 
                 if (sameNode(current.callee.object, prev)) {
                     const optionalMember = t.optionalMemberExpression(result, cloneNode(current.callee.property), current.callee.computed, true);
-                    result = t.optionalCallExpression(optionalMember, current.arguments.map((argument) => cloneNode(argument)), false);
+                    result = t.optionalCallExpression(
+                        optionalMember,
+                        current.arguments.map((argument) => cloneNode(argument)),
+                        false,
+                    );
                     prev = current.callee;
                     continue;
                 }

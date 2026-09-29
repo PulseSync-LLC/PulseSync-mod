@@ -143,11 +143,7 @@ function createBuildTask({
 function createWebModulesTask() {
     return {
         title: 'Сборка веб-модулей',
-        task: (_context, task) =>
-            task.newListr(
-                wrapTaskDefinitions([createMiniPlayerTask(), createWebHostTask(), createRuntimeTask()]),
-                EXPANDED_SKIP_REASONS_OPTIONS,
-            ),
+        task: (_context, task) => task.newListr(wrapTaskDefinitions([createMiniPlayerTask(), createWebHostTask(), createRuntimeTask()]), EXPANDED_SKIP_REASONS_OPTIONS),
     };
 }
 
@@ -419,8 +415,7 @@ function createReleaseTask({ title = 'Публикация релиза', versio
                     },
                     {
                         title: 'Публикация GitHub release',
-                        skip: (ctx) =>
-                            ctx.options.onlyUploadAppAsar || ctx.options.onlySendPatchNotes ? 'отключено выбранным режимом release' : false,
+                        skip: (ctx) => (ctx.options.onlyUploadAppAsar || ctx.options.onlySendPatchNotes ? 'отключено выбранным режимом release' : false),
                         task: async (ctx) => {
                             const payload = ctx.state.releasePayload;
                             await ctx.core.releaseUtils.createGitHubRelease(payload.version, payload.dest, payload.patchNote);

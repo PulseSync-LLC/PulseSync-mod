@@ -21,15 +21,15 @@
                     u = (0, a.useRef)(void 0),
                     m = (0, l.c)(() => {
                         var i;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let r = [...(null != (i = e.lastRejectedPagesList) ? i : [])].reverse().filter((t) => {
                             var i;
                             return (null == (i = e.pageStates) ? void 0 : i[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             r.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, a.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = i((0, r.jsx)(s.L, { reloadBlocks: m }), { containerId: n.u.ERROR, autoClose: !1 }));
@@ -303,7 +303,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), s.isOpened && (r.reset(), s.close()), a.modal.isOpened && a.modal.close();
+                                    (null == e || e.stopPropagation(), s.isOpened && (r.reset(), s.close()), a.modal.isOpened && a.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     l.modal.isOpened && (l.modal.close(), l.reset());
@@ -313,11 +313,11 @@
                         })({
                             artist: t,
                             callback: (0, h.c)((e) => {
-                                N && S.isOpened && S.close(), A(e);
+                                (N && S.isOpened && S.close(), A(e));
                             }),
                         }),
                         E = (0, h.c)((e) => {
-                            P({ to: _.QT.ArtistScreen }), null == j || j(), L(e);
+                            (P({ to: _.QT.ArtistScreen }), null == j || j(), L(e));
                         });
                     return i && !t.various
                         ? (0, r.jsx)(y.N, {
@@ -534,7 +534,7 @@
                         } = (0, o.g)(),
                         b = 1 === i.length,
                         I = (0, s.useCallback)((e) => {
-                            E(!0), e.preventDefault();
+                            (E(!0), e.preventDefault());
                         }, []),
                         w = (0, s.useMemo)(() => {
                             let e = i;
@@ -883,7 +883,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [s, c, d];
-                                    return 'ru' === l && e.push(o), e.push(u), e;
+                                    return ('ru' === l && e.push(o), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [s, c, d, u];
@@ -1070,10 +1070,10 @@
                         let l = { ...(0, a.HO)(e), url: e.url, isLiked: !e.isLiked };
                         _(!0);
                         let s = await e.toggleLike();
-                        _(!1),
+                        (_(!1),
                             s === n.f.OK
                                 ? i((0, r.jsx)(p, { playlist: l }), { containerId: o.u.INFO })
-                                : i((0, r.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, r.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [t.isAuthorized, m, e, h, i]);
                 };
         },
@@ -1114,10 +1114,10 @@
                         let l = { ...(0, a.HO)(e), url: e.url, isPinned: !e.isPinned };
                         p(!0);
                         let s = await e.togglePin();
-                        p(!1),
+                        (p(!1),
                             s
                                 ? i((0, r.jsx)(_, { playlist: l }), { containerId: n.u.INFO })
-                                : i((0, r.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, r.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [t.isAuthorized, m, e, i, u]);
                 };
         },
@@ -1169,7 +1169,7 @@
                         );
                     }, [t, i]),
                     k = (0, c.c)((e) => {
-                        l.modal.isOpened && l.modal.close(), y({ to: n.QT.ArtistScreen }), x(e);
+                        (l.modal.isOpened && l.modal.close(), y({ to: n.QT.ArtistScreen }), x(e));
                     });
                 return (0, r.jsxs)(r.Fragment, {
                     children: [
@@ -1309,7 +1309,7 @@
                                     {
                                         icon: (0, r.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: icon, size: 'xxs' }),
                                         onClick: () => {
-                                            activate(), a?.(!1);
+                                            (activate(), a?.(!1));
                                         },
                                         children: label,
                                         'data-pulsesync-addon-menu-item': '',
@@ -1357,33 +1357,33 @@
                     ep = (0, y.P)(),
                     eh = (0, u.c)((e) => {
                         if ((e.stopPropagation(), ep())) return void e.preventDefault();
-                        V.setUtmLink(X), V.openPlaylistTrailer(i.id), e_(o.ky.Playlist, i.id);
+                        (V.setUtmLink(X), V.openPlaylistTrailer(i.id), e_(o.ky.Playlist, i.id));
                     }),
                     [ev, ex] = (0, s.useState)(!1),
                     { isPlaying: eg, togglePlay: eC } = (0, E.D)({
                         playContextParams: { contextData: { type: d.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: $, utmLink: X }, loadContextMeta: !0 },
                     }),
                     ey = (0, u.c)(() => {
-                        ed({ to: o.QT.PlaylistScreen }), null == Z || Z();
+                        (ed({ to: o.QT.PlaylistScreen }), null == Z || Z());
                     }),
                     ef = (0, u.c)((e) => {
-                        ey(), em(e);
+                        (ey(), em(e));
                     }),
                     ek = (0, j.N)(),
                     eS = (0, u.c)(() => {
                         if (!ep()) {
                             if (ek) return void K.open();
-                            et || eg || (ei(!0), null == ee || ee()), eC(), eu(!eg);
+                            (et || eg || (ei(!0), null == ee || ee()), eC(), eu(!eg));
                         }
                     }),
                     eN = (0, u.c)(() => {
-                        er || i.isLiked || (ea(!0), null == J || J()), eo();
+                        (er || i.isLiked || (ea(!0), null == J || J()), eo());
                     }),
                     eA = (0, u.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     ej = (0, u.c)((e) => {
-                        es(e), ex(e);
+                        (es(e), ex(e));
                     }),
                     eP = (0, s.useMemo)(() => {
                         var e;
@@ -1588,7 +1588,7 @@
         },
         97554: (e, t, i) => {
             'use strict';
-            i.r(t), i.d(t, { default: () => $ });
+            (i.r(t), i.d(t, { default: () => $ }));
             var r = i(32290),
                 a = i(21916),
                 l = i(55178),
@@ -1670,7 +1670,7 @@
                         },
                         [n, t],
                     );
-                (0, k.X)(n.pagesLoader, O),
+                ((0, k.X)(n.pagesLoader, O),
                     (0, l.useEffect)(
                         () => () => {
                             n.reset();
@@ -1701,7 +1701,7 @@
                                     (0, E.j)(e);
                                 });
                         }, [e]);
-                    })(n);
+                    })(n));
                 let M = (0, l.useMemo)(() => ({ Footer: () => (0, r.jsx)(N.A, { children: (0, r.jsx)(S.w, { className: Y().footer }) }) }), []);
                 if ((t && n.isNeededToLoad && (0, l.use)(n.getData({ preloadedMeta: i, metatagId: t, page: 0, pageSize: L.cM })), n.isSomethingWrong))
                     return (0, r.jsx)(u.SomethingWentWrong, {});
@@ -1776,12 +1776,12 @@
                 },
                 $ = () => {
                     let e = (0, a.useSearchParams)().get('metatagId');
-                    return e || (0, a.notFound)(), (0, r.jsx)(l.Suspense, { fallback: (0, r.jsx)(K, {}), children: (0, r.jsx)(U, { metatagId: e }) });
+                    return (e || (0, a.notFound)(), (0, r.jsx)(l.Suspense, { fallback: (0, r.jsx)(K, {}), children: (0, r.jsx)(U, { metatagId: e }) }));
                 };
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 7231, 6347, 3183, 9763, 6639, 7258, 1680, 6706, 1311, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 3266, 6477, 7275, 2586, 8347,
@@ -1789,6 +1789,6 @@
             ],
             () => e((e.s = 44414)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

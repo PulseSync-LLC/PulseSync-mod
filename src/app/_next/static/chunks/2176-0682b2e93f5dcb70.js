@@ -18,20 +18,20 @@
                               var n,
                                   i,
                                   s = 1 === e.length ? a : u;
-                              return (n = t.cache.create()), (i = t.serializer), s.bind(this, e, n, i);
+                              return ((n = t.cache.create()), (i = t.serializer), s.bind(this, e, n, i));
                           }
                 )(e, { cache: n, serializer: i });
             }
             function a(e, t, n, i) {
                 var s = null == i || 'number' == typeof i || 'boolean' == typeof i ? i : n(i),
                     r = t.get(s);
-                return void 0 === r && ((r = e.call(this, i)), t.set(s, r)), r;
+                return (void 0 === r && ((r = e.call(this, i)), t.set(s, r)), r);
             }
             function u(e, t, n) {
                 var i = Array.prototype.slice.call(arguments, 3),
                     s = n(i),
                     r = t.get(s);
-                return void 0 === r && ((r = e.apply(this, i)), t.set(s, r)), r;
+                return (void 0 === r && ((r = e.apply(this, i)), t.set(s, r)), r);
             }
             var h = function () {
                 return JSON.stringify(arguments);
@@ -39,12 +39,12 @@
             function c() {
                 this.cache = Object.create(null);
             }
-            (c.prototype.get = function (e) {
+            ((c.prototype.get = function (e) {
                 return this.cache[e];
             }),
                 (c.prototype.set = function (e, t) {
                     this.cache[e] = t;
-                });
+                }));
             var d = {
                     create: function () {
                         return new c();
@@ -53,20 +53,20 @@
                 m = {
                     variadic: function (e, t) {
                         var n, i;
-                        return (n = t.cache.create()), (i = t.serializer), u.bind(this, e, n, i);
+                        return ((n = t.cache.create()), (i = t.serializer), u.bind(this, e, n, i));
                     },
                     monadic: function (e, t) {
                         var n, i;
-                        return (n = t.cache.create()), (i = t.serializer), a.bind(this, e, n, i);
+                        return ((n = t.cache.create()), (i = t.serializer), a.bind(this, e, n, i));
                     },
                 };
             !(function (e) {
-                (e.MISSING_VALUE = 'MISSING_VALUE'), (e.INVALID_VALUE = 'INVALID_VALUE'), (e.MISSING_INTL_API = 'MISSING_INTL_API');
+                ((e.MISSING_VALUE = 'MISSING_VALUE'), (e.INVALID_VALUE = 'INVALID_VALUE'), (e.MISSING_INTL_API = 'MISSING_INTL_API'));
             })(i || (i = {}));
             var f = (function (e) {
                     function t(t, n, i) {
                         var s = e.call(this, t) || this;
-                        return (s.code = n), (s.originalMessage = i), s;
+                        return ((s.code = n), (s.originalMessage = i), s);
                     }
                     return (
                         (0, r.__extends)(t, e),
@@ -87,13 +87,13 @@
                             ) || this
                         );
                     }
-                    return (0, r.__extends)(t, e), t;
+                    return ((0, r.__extends)(t, e), t);
                 })(f),
                 g = (function (e) {
                     function t(t, n, s) {
                         return e.call(this, 'Value for "'.concat(t, '" must be of type ').concat(n), i.INVALID_VALUE, s) || this;
                     }
-                    return (0, r.__extends)(t, e), t;
+                    return ((0, r.__extends)(t, e), t);
                 })(f),
                 v = (function (e) {
                     function t(t, n) {
@@ -101,7 +101,7 @@
                             e.call(this, 'The intl string context variable "'.concat(t, '" was not provided to the string "').concat(n, '"'), i.MISSING_VALUE, n) || this
                         );
                     }
-                    return (0, r.__extends)(t, e), t;
+                    return ((0, r.__extends)(t, e), t);
                 })(f);
             function y(e) {
                 return {
@@ -118,7 +118,7 @@
                 };
             }
             !(function (e) {
-                (e[(e.literal = 0)] = 'literal'), (e[(e.object = 1)] = 'object');
+                ((e[(e.literal = 0)] = 'literal'), (e[(e.object = 1)] = 'object'));
             })(s || (s = {}));
             var b = (function () {
                 function e(t, n, a, u) {
@@ -132,7 +132,7 @@
                             var t = d.formatToParts(e);
                             if (1 === t.length) return t[0].value;
                             var n = t.reduce(function (e, t) {
-                                return e.length && t.type === s.literal && 'string' == typeof e[e.length - 1] ? (e[e.length - 1] += t.value) : e.push(t.value), e;
+                                return (e.length && t.type === s.literal && 'string' == typeof e[e.length - 1] ? (e[e.length - 1] += t.value) : e.push(t.value), e);
                             }, []);
                             return n.length <= 1 ? n[0] || '' : n;
                         }),
@@ -153,8 +153,8 @@
                                     if (!(a && y in a)) throw new v(y, h);
                                     var b = a[y];
                                     if ((0, l.isArgumentElement)(m)) {
-                                        (b && 'string' != typeof b && 'number' != typeof b) || (b = 'string' == typeof b || 'number' == typeof b ? String(b) : ''),
-                                            c.push({ type: 'string' == typeof b ? s.literal : s.object, value: b });
+                                        ((b && 'string' != typeof b && 'number' != typeof b) || (b = 'string' == typeof b || 'number' == typeof b ? String(b) : ''),
+                                            c.push({ type: 'string' == typeof b ? s.literal : s.object, value: b }));
                                         continue;
                                     }
                                     if ((0, l.isDateElement)(m)) {
@@ -169,7 +169,7 @@
                                     }
                                     if ((0, l.isNumberElement)(m)) {
                                         var E = 'string' == typeof m.style ? o.number[m.style] : (0, l.isNumberSkeleton)(m.style) ? m.style.parsedOptions : void 0;
-                                        E && E.scale && (b *= E.scale || 1), c.push({ type: s.literal, value: r.getNumberFormat(n, E).format(b) });
+                                        (E && E.scale && (b *= E.scale || 1), c.push({ type: s.literal, value: r.getNumberFormat(n, E).format(b) }));
                                         continue;
                                     }
                                     if ((0, l.isTagElement)(m)) {
@@ -182,13 +182,13 @@
                                                 return e.value;
                                             }),
                                         );
-                                        Array.isArray(_) || (_ = [_]),
+                                        (Array.isArray(_) || (_ = [_]),
                                             c.push.apply(
                                                 c,
                                                 _.map(function (e) {
                                                     return { type: 'string' == typeof e ? s.literal : s.object, value: e };
                                                 }),
-                                            );
+                                            ));
                                     }
                                     if ((0, l.isSelectElement)(m)) {
                                         var T = m.options[b] || m.options.other;
@@ -217,7 +217,7 @@
                                     ? c
                                     : c.reduce(function (e, t) {
                                           var n = e[e.length - 1];
-                                          return n && n.type === s.literal && t.type === s.literal ? (n.value += t.value) : e.push(t), e;
+                                          return (n && n.type === s.literal && t.type === s.literal ? (n.value += t.value) : e.push(t), e);
                                       }, []);
                             })(d.ast, d.locales, d.formatters, d.formats, e, void 0, d.message);
                         }),
@@ -238,7 +238,7 @@
                         this.ast = e.__parse(t, (0, r.__assign)((0, r.__assign)({}, E), { locale: this.resolvedLocale }));
                     } else this.ast = t;
                     if (!Array.isArray(this.ast)) throw TypeError('A message must be provided as a String or AST.');
-                    (this.formats =
+                    ((this.formats =
                         ((h = e.formats),
                         a
                             ? Object.keys(h).reduce(
@@ -251,7 +251,7 @@
                                                   ? (0, r.__assign)(
                                                         (0, r.__assign)((0, r.__assign)({}, n || {}), i || {}),
                                                         Object.keys(n).reduce(function (e, t) {
-                                                            return (e[t] = (0, r.__assign)((0, r.__assign)({}, n[t]), i[t] || {})), e;
+                                                            return ((e[t] = (0, r.__assign)((0, r.__assign)({}, n[t]), i[t] || {})), e);
                                                         }, {}),
                                                     )
                                                   : n)),
@@ -286,12 +286,12 @@
                                     },
                                     { cache: y(c.pluralRules), strategy: m.variadic },
                                 ),
-                            }));
+                            })));
                 }
                 return (
                     Object.defineProperty(e, 'defaultLocale', {
                         get: function () {
-                            return e.memoizedDefaultLocale || (e.memoizedDefaultLocale = new Intl.NumberFormat().resolvedOptions().locale), e.memoizedDefaultLocale;
+                            return (e.memoizedDefaultLocale || (e.memoizedDefaultLocale = new Intl.NumberFormat().resolvedOptions().locale), e.memoizedDefaultLocale);
                         },
                         enumerable: !1,
                         configurable: !0,
@@ -324,13 +324,13 @@
             })();
         },
         63670: (e, t, n) => {
-            Object.defineProperty(t, '__esModule', { value: !0 }), (t._Parser = t.parse = void 0);
+            (Object.defineProperty(t, '__esModule', { value: !0 }), (t._Parser = t.parse = void 0));
             var i = n(30782);
-            (t.parse = function () {
+            ((t.parse = function () {
                 throw Error("You're trying to format an uncompiled message with react-intl without parser, please import from 'react-intl' instead");
             }),
                 i.__exportStar(n(88222), t),
-                (t._Parser = void 0);
+                (t._Parser = void 0));
         },
         77307: (e, t, n) => {
             n.d(t, { Te: () => w, XW: () => _ });
@@ -355,7 +355,7 @@
                             t = Math.round((Date.now() - h) * 100) / 100,
                             i = t / 16,
                             s = (e, t) => {
-                                for (e = String(e); e.length < t; ) e = ' ' + e;
+                                for (e = String(e); e.length < t;) e = ' ' + e;
                                 return e;
                             };
                         console.info(
@@ -367,7 +367,7 @@
                             null == n ? void 0 : n.key,
                         );
                     }
-                    return null == (a = null == n ? void 0 : n.onChange) || a.call(n, i), i;
+                    return (null == (a = null == n ? void 0 : n.onChange) || a.call(n, i), i);
                 }
                 return (
                     (r.updateDeps = (e) => {
@@ -383,7 +383,7 @@
             let o = (e, t, n) => {
                     let i;
                     return function (...s) {
-                        e.clearTimeout(i), (i = e.setTimeout(() => t.apply(this, s), n));
+                        (e.clearTimeout(i), (i = e.setTimeout(() => t.apply(this, s), n)));
                     };
                 },
                 a = (e) => e,
@@ -456,16 +456,16 @@
                                   ),
                         l = (i) => () => {
                             let { horizontal: l, isRtl: o } = e.options;
-                            (s = l ? n.scrollLeft * ((o && -1) || 1) : n.scrollTop), r(), t(s, i);
+                            ((s = l ? n.scrollLeft * ((o && -1) || 1) : n.scrollTop), r(), t(s, i));
                         },
                         a = l(!0),
                         u = l(!1);
-                    u(), n.addEventListener('scroll', a, c);
+                    (u(), n.addEventListener('scroll', a, c));
                     let h = e.options.useScrollendEvent && m;
                     return (
                         h && n.addEventListener('scrollend', u, c),
                         () => {
-                            n.removeEventListener('scroll', a), h && n.removeEventListener('scrollend', u);
+                            (n.removeEventListener('scroll', a), h && n.removeEventListener('scrollend', u));
                         }
                     );
                 },
@@ -486,16 +486,16 @@
                                       e.options.isScrollingResetDelay,
                                   ),
                         l = (i) => () => {
-                            (s = n[e.options.horizontal ? 'scrollX' : 'scrollY']), r(), t(s, i);
+                            ((s = n[e.options.horizontal ? 'scrollX' : 'scrollY']), r(), t(s, i));
                         },
                         a = l(!0),
                         u = l(!1);
-                    u(), n.addEventListener('scroll', a, c);
+                    (u(), n.addEventListener('scroll', a, c));
                     let h = e.options.useScrollendEvent && m;
                     return (
                         h && n.addEventListener('scrollend', u, c),
                         () => {
-                            n.removeEventListener('scroll', a), h && n.removeEventListener('scrollend', u);
+                            (n.removeEventListener('scroll', a), h && n.removeEventListener('scrollend', u));
                         }
                     );
                 },
@@ -516,7 +516,7 @@
                 };
             class b {
                 constructor(e) {
-                    (this.unsubs = []),
+                    ((this.unsubs = []),
                         (this.scrollElement = null),
                         (this.targetWindow = null),
                         (this.isScrolling = !1),
@@ -546,7 +546,7 @@
                             return {
                                 disconnect: () => {
                                     var n;
-                                    null == (n = t()) || n.disconnect(), (e = null);
+                                    (null == (n = t()) || n.disconnect(), (e = null));
                                 },
                                 observe: (e) => {
                                     var n;
@@ -560,7 +560,7 @@
                         })()),
                         (this.range = null),
                         (this.setOptions = (e) => {
-                            Object.entries(e).forEach(([t, n]) => {
+                            (Object.entries(e).forEach(([t, n]) => {
                                 void 0 === n && delete e[t];
                             }),
                                 (this.options = {
@@ -588,7 +588,7 @@
                                     useScrollendEvent: !1,
                                     useAnimationFrameWithResizeObserver: !1,
                                     ...e,
-                                });
+                                }));
                         }),
                         (this.notify = (e) => {
                             var t, n;
@@ -606,11 +606,11 @@
                             },
                         )),
                         (this.cleanup = () => {
-                            this.unsubs.filter(Boolean).forEach((e) => e()),
+                            (this.unsubs.filter(Boolean).forEach((e) => e()),
                                 (this.unsubs = []),
                                 this.observer.disconnect(),
                                 (this.scrollElement = null),
-                                (this.targetWindow = null);
+                                (this.targetWindow = null));
                         }),
                         (this._didMount = () => () => {
                             this.cleanup();
@@ -620,7 +620,7 @@
                             let t = this.options.enabled ? this.options.getScrollElement() : null;
                             if (this.scrollElement !== t) {
                                 if ((this.cleanup(), !t)) return void this.maybeNotify();
-                                (this.scrollElement = t),
+                                ((this.scrollElement = t),
                                     this.scrollElement && 'ownerDocument' in this.scrollElement
                                         ? (this.targetWindow = this.scrollElement.ownerDocument.defaultView)
                                         : (this.targetWindow = (null == (e = this.scrollElement) ? void 0 : e.window) ?? null),
@@ -630,18 +630,18 @@
                                     this._scrollToOffset(this.getScrollOffset(), { adjustments: void 0, behavior: void 0 }),
                                     this.unsubs.push(
                                         this.options.observeElementRect(this, (e) => {
-                                            (this.scrollRect = e), this.maybeNotify();
+                                            ((this.scrollRect = e), this.maybeNotify());
                                         }),
                                     ),
                                     this.unsubs.push(
                                         this.options.observeElementOffset(this, (e, t) => {
-                                            (this.scrollAdjustments = 0),
+                                            ((this.scrollAdjustments = 0),
                                                 (this.scrollDirection = t ? (this.getScrollOffset() < e ? 'forward' : 'backward') : null),
                                                 (this.scrollOffset = e),
                                                 (this.isScrolling = t),
-                                                this.maybeNotify();
+                                                this.maybeNotify());
                                         }),
-                                    );
+                                    ));
                             }
                         }),
                         (this.getSize = () =>
@@ -675,7 +675,7 @@
                         (this.getMeasurements = r(
                             () => [this.getMeasurementOptions(), this.itemSizeCache],
                             ({ count: e, paddingStart: t, scrollMargin: n, getItemKey: i, enabled: s }, r) => {
-                                if (!s) return (this.measurementsCache = []), this.itemSizeCache.clear(), [];
+                                if (!s) return ((this.measurementsCache = []), this.itemSizeCache.clear(), []);
                                 0 === this.measurementsCache.length &&
                                     ((this.measurementsCache = this.options.initialMeasurementsCache),
                                     this.measurementsCache.forEach((e) => {
@@ -694,7 +694,7 @@
                                         d = l ? l.lane : s % this.options.lanes;
                                     o[s] = { index: s, start: a, size: h, end: c, key: e, lane: d };
                                 }
-                                return (this.measurementsCache = o), o;
+                                return ((this.measurementsCache = o), o);
                             },
                             { key: !1, debug: () => this.options.debug },
                         )),
@@ -707,19 +707,19 @@
                                               let s = e.length - 1,
                                                   r = E(0, s, (t) => e[t].start, n),
                                                   l = r;
-                                              if (1 === i) for (; l < s && e[l].end < n + t; ) l++;
+                                              if (1 === i) for (; l < s && e[l].end < n + t;) l++;
                                               else if (i > 1) {
                                                   let o = Array(i).fill(0);
-                                                  for (; l < s && o.some((e) => e < n + t); ) {
+                                                  for (; l < s && o.some((e) => e < n + t);) {
                                                       let t = e[l];
-                                                      (o[t.lane] = t.end), l++;
+                                                      ((o[t.lane] = t.end), l++);
                                                   }
                                                   let a = Array(i).fill(n + t);
-                                                  for (; r > 0 && a.some((e) => e >= n); ) {
+                                                  for (; r > 0 && a.some((e) => e >= n);) {
                                                       let t = e[r];
-                                                      (a[t.lane] = t.start), r--;
+                                                      ((a[t.lane] = t.start), r--);
                                                   }
-                                                  (r = Math.max(0, r - (r % i))), (l = Math.min(s, l + (i - 1 - (l % i))));
+                                                  ((r = Math.max(0, r - (r % i))), (l = Math.min(s, l + (i - 1 - (l % i)))));
                                               }
                                               return { startIndex: r, endIndex: l };
                                           })({ measurements: e, outerSize: t, scrollOffset: n, lanes: i })
@@ -751,8 +751,8 @@
                             if (!i) return;
                             let s = i.key,
                                 r = this.elementsCache.get(s);
-                            r !== e && (r && this.observer.unobserve(r), this.observer.observe(e), this.elementsCache.set(s, e)),
-                                e.isConnected && this.resizeItem(n, this.options.measureElement(e, t, this));
+                            (r !== e && (r && this.observer.unobserve(r), this.observer.observe(e), this.elementsCache.set(s, e)),
+                                e.isConnected && this.resizeItem(n, this.options.measureElement(e, t, this)));
                         }),
                         (this.resizeItem = (e, t) => {
                             let n = this.measurementsCache[e];
@@ -793,7 +793,7 @@
                         (this.getOffsetForAlignment = (e, t, n = 0) => {
                             let i = this.getSize(),
                                 s = this.getScrollOffset();
-                            'auto' === t && (t = e >= s + i ? 'end' : 'start'), 'center' === t ? (e += (n - i) / 2) : 'end' === t && (e -= i);
+                            ('auto' === t && (t = e >= s + i ? 'end' : 'start'), 'center' === t ? (e += (n - i) / 2) : 'end' === t && (e -= i));
                             let r = this.options.horizontal ? 'scrollWidth' : 'scrollHeight';
                             return Math.max(
                                 Math.min(
@@ -829,18 +829,18 @@
                                 (this.targetWindow.clearTimeout(this.scrollToIndexTimeoutId), (this.scrollToIndexTimeoutId = null));
                         }),
                         (this.scrollToOffset = (e, { align: t = 'start', behavior: n } = {}) => {
-                            this.cancelScrollToIndex(),
+                            (this.cancelScrollToIndex(),
                                 'smooth' === n && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.'),
-                                this._scrollToOffset(this.getOffsetForAlignment(e, t), { adjustments: void 0, behavior: n });
+                                this._scrollToOffset(this.getOffsetForAlignment(e, t), { adjustments: void 0, behavior: n }));
                         }),
                         (this.scrollToIndex = (e, { align: t = 'auto', behavior: n } = {}) => {
-                            (e = Math.max(0, Math.min(e, this.options.count - 1))),
+                            ((e = Math.max(0, Math.min(e, this.options.count - 1))),
                                 this.cancelScrollToIndex(),
-                                'smooth' === n && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.');
+                                'smooth' === n && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.'));
                             let i = this.getOffsetForIndex(e, t);
                             if (!i) return;
                             let [s, r] = i;
-                            this._scrollToOffset(s, { adjustments: void 0, behavior: n }),
+                            (this._scrollToOffset(s, { adjustments: void 0, behavior: n }),
                                 'smooth' !== n &&
                                     this.isDynamicMode() &&
                                     this.targetWindow &&
@@ -849,12 +849,12 @@
                                             let [t] = l(this.getOffsetForIndex(e, r));
                                             1 > Math.abs(t - this.getScrollOffset()) || this.scrollToIndex(e, { align: r, behavior: n });
                                         } else this.scrollToIndex(e, { align: r, behavior: n });
-                                    }));
+                                    })));
                         }),
                         (this.scrollBy = (e, { behavior: t } = {}) => {
-                            this.cancelScrollToIndex(),
+                            (this.cancelScrollToIndex(),
                                 'smooth' === t && this.isDynamicMode() && console.warn('The `smooth` scroll behavior is not fully supported with dynamic size.'),
-                                this._scrollToOffset(this.getScrollOffset() + e, { adjustments: void 0, behavior: t });
+                                this._scrollToOffset(this.getScrollOffset() + e, { adjustments: void 0, behavior: t }));
                         }),
                         (this.getTotalSize = () => {
                             var e;
@@ -865,9 +865,9 @@
                             else {
                                 let e = Array(this.options.lanes).fill(null),
                                     i = n.length - 1;
-                                for (; i > 0 && e.some((e) => null === e); ) {
+                                for (; i > 0 && e.some((e) => null === e);) {
                                     let t = n[i];
-                                    null === e[t.lane] && (e[t.lane] = t.end), i--;
+                                    (null === e[t.lane] && (e[t.lane] = t.end), i--);
                                 }
                                 t = Math.max(...e.filter((e) => null !== e));
                             }
@@ -877,13 +877,13 @@
                             this.options.scrollToFn(e, { behavior: n, adjustments: t }, this);
                         }),
                         (this.measure = () => {
-                            (this.itemSizeCache = new Map()), this.notify(!1);
+                            ((this.itemSizeCache = new Map()), this.notify(!1));
                         }),
-                        this.setOptions(e);
+                        this.setOptions(e));
                 }
             }
             let E = (e, t, n, i) => {
-                    for (; e <= t; ) {
+                    for (; e <= t;) {
                         let s = ((e + t) / 2) | 0,
                             r = n(s);
                         if (r < i) e = s + 1;
@@ -901,11 +901,11 @@
                         ...e,
                         onChange: (n, i) => {
                             var r;
-                            i ? (0, s.flushSync)(t) : t(), null == (r = e.onChange) || r.call(e, n, i);
+                            (i ? (0, s.flushSync)(t) : t(), null == (r = e.onChange) || r.call(e, n, i));
                         },
                     },
                     [r] = i.useState(() => new b(n));
-                return r.setOptions(n), S(() => r._didMount(), []), S(() => r._willUpdate()), r;
+                return (r.setOptions(n), S(() => r._didMount(), []), S(() => r._willUpdate()), r);
             }
             function w(e) {
                 return I({ observeElementRect: h, observeElementOffset: f, scrollToFn: y, ...e });
@@ -923,7 +923,7 @@
         },
         88222: (e, t) => {
             var n, i;
-            Object.defineProperty(t, '__esModule', { value: !0 }),
+            (Object.defineProperty(t, '__esModule', { value: !0 }),
                 (t.createNumberElement =
                     t.createLiteralElement =
                     t.isDateTimeSkeleton =
@@ -941,7 +941,7 @@
                     t.TYPE =
                         void 0),
                 (function (e) {
-                    (e[(e.literal = 0)] = 'literal'),
+                    ((e[(e.literal = 0)] = 'literal'),
                         (e[(e.argument = 1)] = 'argument'),
                         (e[(e.number = 2)] = 'number'),
                         (e[(e.date = 3)] = 'date'),
@@ -949,10 +949,10 @@
                         (e[(e.select = 5)] = 'select'),
                         (e[(e.plural = 6)] = 'plural'),
                         (e[(e.pound = 7)] = 'pound'),
-                        (e[(e.tag = 8)] = 'tag');
+                        (e[(e.tag = 8)] = 'tag'));
                 })(n || (t.TYPE = n = {})),
                 (function (e) {
-                    (e[(e.number = 0)] = 'number'), (e[(e.dateTime = 1)] = 'dateTime');
+                    ((e[(e.number = 0)] = 'number'), (e[(e.dateTime = 1)] = 'dateTime'));
                 })(i || (t.SKELETON_TYPE = i = {})),
                 (t.isLiteralElement = function (e) {
                     return e.type === n.literal;
@@ -992,7 +992,7 @@
                 }),
                 (t.createNumberElement = function (e, t) {
                     return { type: n.number, value: e, style: t };
-                });
+                }));
         },
     },
 ]);

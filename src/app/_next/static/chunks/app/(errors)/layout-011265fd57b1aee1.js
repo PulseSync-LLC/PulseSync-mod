@@ -12,7 +12,7 @@
             'use strict';
             a.d(t, { v: () => n });
             var n = (function (e) {
-                return (e.PLAY_VIBE = 'play-vibe'), (e.SHOW_MULTIVIBE_PROMO = 'show-multivibe-promo'), (e.SHOW_MULTIVIBE_INVITE = 'show-multivibe-invite'), e;
+                return ((e.PLAY_VIBE = 'play-vibe'), (e.SHOW_MULTIVIBE_PROMO = 'show-multivibe-promo'), (e.SHOW_MULTIVIBE_INVITE = 'show-multivibe-invite'), e);
             })({});
         },
         8623: (e) => {
@@ -90,7 +90,7 @@
             })({});
         },
         22687: (e, t, a) => {
-            Promise.resolve().then(a.bind(a, 29680)),
+            (Promise.resolve().then(a.bind(a, 29680)),
                 Promise.resolve().then(a.bind(a, 25366)),
                 Promise.resolve().then(a.t.bind(a, 36131, 23)),
                 Promise.resolve().then(a.t.bind(a, 12818, 23)),
@@ -98,7 +98,7 @@
                 Promise.resolve().then(a.bind(a, 75170)),
                 Promise.resolve().then(a.bind(a, 96096)),
                 Promise.resolve().then(a.bind(a, 57510)),
-                Promise.resolve().then(a.bind(a, 49932));
+                Promise.resolve().then(a.bind(a, 49932)));
         },
         25366: (e, t, a) => {
             'use strict';
@@ -145,7 +145,7 @@
                                 n = t[2] || '';
                             if (!a) return e;
                             let s = new URLSearchParams(n.startsWith('?') ? n.substring(1) : '');
-                            return s.set('tab', a), '/?'.concat(s.toString());
+                            return (s.set('tab', a), '/?'.concat(s.toString()));
                         },
                     ],
                     [/^\/home$/, () => c.Z.main.href],
@@ -191,7 +191,7 @@
                     let { version: t, formatMessage: a, closeToast: r } = e,
                         l = (0, s.useCallback)(() => {
                             var e;
-                            null == (e = window.desktopEvents) || e.send(o.E.INSTALL_UPDATE), null == r || r();
+                            (null == (e = window.desktopEvents) || e.send(o.E.INSTALL_UPDATE), null == r || r());
                         }, [r]),
                         i = (0, s.useMemo)(
                             () =>
@@ -225,14 +225,14 @@
                     let { version: t, formatMessage: a, closeToast: r } = e,
                         [l, i] = (0, s.useState)(-1),
                         c = (0, s.useCallback)(() => {
-                            window.desktopEvents?.send?.(o.E.INSTALL_MOD_UPDATE), null == r || r();
+                            (window.desktopEvents?.send?.(o.E.INSTALL_MOD_UPDATE), null == r || r());
                         }, [r]),
                         b = (0, s.useCallback)(() => {
                             window.desktopEvents?.send?.(o.E.DOWNLOAD_MOD_UPDATE);
                         }, []),
                         d = (e) => {
                             let t = a({ id: 'offline.download' });
-                            return e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Установить'), t;
+                            return (e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Установить'), t);
                         },
                         N = (0, s.useMemo)(
                             () =>
@@ -263,7 +263,7 @@
                         u = (0, s.useCallback)((e, t, a, n = 0) => {
                             if ('modUpdateToast' !== t) return;
                             if (window.dedupeNonces && window.dedupeNonces[t] === n) return;
-                            window.dedupeNonces || (window.dedupeNonces = {}), n && (window.dedupeNonces[t] = n), i(a);
+                            (window.dedupeNonces || (window.dedupeNonces = {}), n && (window.dedupeNonces[t] = n), i(a));
                         }, []);
                     return (
                         (0, s.useEffect)(() => {
@@ -323,7 +323,7 @@
                         [x, E] = (0, s.useState)('Ожидание...'),
                         W = '__pulseToastProgressCache',
                         p = (0, s.useCallback)(() => {
-                            null == i || i(), b && (null == t || t());
+                            (null == i || i(), b && (null == t || t()));
                         }, [b, i, t]),
                         P = (0, s.useMemo)(
                             () =>
@@ -351,12 +351,12 @@
                                 if (t !== a) return;
                                 if (r && d && r !== d) return;
                                 if (window.dedupeNonces && window.dedupeNonces[t] === s) return;
-                                window.dedupeNonces || (window.dedupeNonces = {}),
+                                (window.dedupeNonces || (window.dedupeNonces = {}),
                                     s && (window.dedupeNonces[t] = s),
                                     window[W] || (window[W] = {}),
                                     (window[W][t] = { progress: n, label: o }),
                                     u(n),
-                                    o && E(o);
+                                    o && E(o));
                             },
                             [a, d],
                         ),
@@ -364,7 +364,7 @@
                             (e, n, s = 0, o = 0) => {
                                 if (o && d && o !== d) return;
                                 if (window['onBasicToastDismiss' + a] === s) return;
-                                s && (window['onBasicToastDismiss' + a] = s), n === a && (window[W] && delete window[W][a], null == t || t());
+                                (s && (window['onBasicToastDismiss' + a] = s), n === a && (window[W] && delete window[W][a], null == t || t()));
                             },
                             [t, a, d],
                         );
@@ -506,7 +506,7 @@
                 {
                     let { theme: t } = (0, Y.W)(),
                         a = (0, L.N)().get(P.vg);
-                    (() => {
+                    ((() => {
                         let [e, t] = (0, s.useState)(!1),
                             {
                                 releaseNotes: { setTranslationsReleaseNotes: a, isReady: n, modal: r, setSortedDescReleaseNotesKeys: l },
@@ -514,11 +514,11 @@
                             i = (0, s.useCallback)(
                                 (e, n) => {
                                     let { needToShowReleaseNotes: s, sortedDescReleaseNotesKeys: o, translationsReleaseNotes: r } = n;
-                                    a(r), l(o), s && t(!0);
+                                    (a(r), l(o), s && t(!0));
                                 },
                                 [l, a],
                             );
-                        (0, s.useEffect)(() => {
+                        ((0, s.useEffect)(() => {
                             e && n && (r.open(), t(!1));
                         }, [n, r, e]),
                             (0, s.useEffect)(() => {
@@ -530,7 +530,7 @@
                                         null == (e = window.desktopEvents) || e.off(o.E.LOAD_RELEASE_NOTES, i);
                                     }
                                 );
-                            }, [i]);
+                            }, [i]));
                     })(),
                         (() => {
                             let { formatMessage: e } = (0, x.A)(),
@@ -549,8 +549,8 @@
                                 N = (0, s.useCallback)(
                                     (t, l, i, c = 0) => {
                                         if (window.modUpdateAvailableEventDedupeNonce === c) return;
-                                        c && (window.modUpdateAvailableEventDedupeNonce = c),
-                                            a((0, n.jsx)(modUpdateToast, { formatMessage: e, version: `${l} -> ${i}`, closeToast: r }), { containerId: E.u.IMPORTANT });
+                                        (c && (window.modUpdateAvailableEventDedupeNonce = c),
+                                            a((0, n.jsx)(modUpdateToast, { formatMessage: e, version: `${l} -> ${i}`, closeToast: r }), { containerId: E.u.IMPORTANT }));
                                     },
                                     [e, a, r],
                                 ),
@@ -560,7 +560,7 @@
                                 P = (0, s.useCallback)(
                                     (e, t = 'GPU_STALL', a = 0) => {
                                         if (window.onGPUStallEventDedupeNonce === a) return;
-                                        a && (window.onGPUStallEventDedupeNonce = a),
+                                        (a && (window.onGPUStallEventDedupeNonce = a),
                                             l(
                                                 (0, n.jsx)(toastWithProgress, {
                                                     toastID: 'GPU_STALL',
@@ -569,14 +569,14 @@
                                                     onButtonClick: u,
                                                 }),
                                                 { containerId: E.u.IMPORTANT },
-                                            );
+                                            ));
                                     },
                                     [l, u],
                                 ),
                                 D = (0, s.useCallback)(
                                     (e, t, a, r, l = 0, i, b) => {
                                         if (window['onBasicToastCreate' + t] === l) return;
-                                        l && (window['onBasicToastCreate' + t] = l),
+                                        (l && (window['onBasicToastCreate' + t] = l),
                                             window['onBasicToastDismiss' + t] && delete window['onBasicToastDismiss' + t],
                                             window.dedupeNonces && delete window.dedupeNonces[t],
                                             window.__pulseToastProgressCache && delete window.__pulseToastProgressCache[t],
@@ -590,11 +590,11 @@
                                                     createNonce: l,
                                                 }),
                                                 { containerId: E.u.IMPORTANT },
-                                            );
+                                            ));
                                     },
                                     [c],
                                 );
-                            (0, s.useEffect)(() => {
+                            ((0, s.useEffect)(() => {
                                 var e;
                                 return (
                                     null == (e = window.desktopEvents) || e.on(o.E.UPDATE_AVAILABLE, d),
@@ -633,12 +633,12 @@
                                             null == (e = window.desktopEvents) || e.off(o.E.GPU_STALL, P);
                                         }
                                     );
-                                }, [P]);
+                                }, [P]));
                         })(),
                         (() => {
                             let { library: e, experiments: t } = (0, D.g)(),
                                 a = (0, s.useCallback)(() => {
-                                    t.getData(), e.getData(), (0, h.Q)();
+                                    (t.getData(), e.getData(), (0, h.Q)());
                                 }, [t, e]);
                             (0, s.useEffect)(() => {
                                 var e;
@@ -746,14 +746,14 @@
                             }, [t]);
                         })(),
                         (0, s.useEffect)(() => {
-                            ((e) => {
+                            (((e) => {
                                 var t;
                                 null == (t = window.desktopEvents) || t.send(o.E.APPLICATION_READY, e);
                             })(e),
                                 document.addEventListener('auxclick', (e) => e.preventDefault()),
                                 document.addEventListener('click', (e) => {
                                     (e.ctrlKey || e.metaKey || e.shiftKey) && e.preventDefault();
-                                });
+                                }));
                         }, [e]),
                         (0, s.useEffect)(() => {
                             let e = (0, C.H)();
@@ -766,7 +766,7 @@
                                     window.desktopEvents.send(o.E.APPLICATION_THEME, t);
                                 })(t),
                                 a.count(t, 'appTheme'));
-                        }, [t]);
+                        }, [t]));
                 }
                 return (0, n.jsx)(U, {});
             };
@@ -789,7 +789,7 @@
                         if ('code' in t && t.code === s.lo.MISSING_DATA) return;
                         let a = t && 'object' == typeof t && 'code' in t && t.code,
                             n = 'IntlProviderError';
-                        a && (n += ':'.concat(a)), e.error(n, { error: null == t ? void 0 : t.message, stack: null == t ? void 0 : t.stack });
+                        (a && (n += ':'.concat(a)), e.error(n, { error: null == t ? void 0 : t.message, stack: null == t ? void 0 : t.stack }));
                     },
                     [e],
                 );
@@ -824,7 +824,7 @@
             var n = a(75314),
                 s = a(14257);
             let o = (e) => {
-                document.body.classList.remove(...Object.values(n.o)), e && Object.values(s.S).includes(e) && document.body.classList.add(n.o[e]);
+                (document.body.classList.remove(...Object.values(n.o)), e && Object.values(s.S).includes(e) && document.body.classList.add(n.o[e]));
             };
         },
         49932: (e, t, a) => {
@@ -872,7 +872,7 @@
             'use strict';
             a.d(t, { O: () => n });
             var n = (function (e) {
-                return (e.MACOS = 'darwin'), (e.WINDOWS = 'win32'), (e.LINUX = 'linux'), e;
+                return ((e.MACOS = 'darwin'), (e.WINDOWS = 'win32'), (e.LINUX = 'linux'), e);
             })({});
         },
         61945: (e, t, a) => {
@@ -933,10 +933,10 @@
         76232: (e, t, a) => {
             'use strict';
             var n;
-            a.d(t, { e: () => n }),
+            (a.d(t, { e: () => n }),
                 (function (e) {
-                    (e.HIGH_QUALITY = 'high_quality'), (e.BALANCED = 'balanced'), (e.EFFICIENT = 'efficient'), (e.PREVIEW = 'preview');
-                })(n || (n = {}));
+                    ((e.HIGH_QUALITY = 'high_quality'), (e.BALANCED = 'balanced'), (e.EFFICIENT = 'efficient'), (e.PREVIEW = 'preview'));
+                })(n || (n = {})));
         },
         79406: (e, t, a) => {
             'use strict';
@@ -1101,7 +1101,7 @@
                     A = (0, o.c)((e) => {
                         E() || a || (W(c.W), v(e));
                     });
-                (0, s.useLayoutEffect)(() => {
+                ((0, s.useLayoutEffect)(() => {
                     a || (0, i.Z)(_);
                 }, [_, a]),
                     ((e) => {
@@ -1121,7 +1121,7 @@
                     })({ onSystemThemeChange: A }),
                     (0, s.useLayoutEffect)(() => {
                         A((0, b.V)());
-                    }, [A]);
+                    }, [A]));
                 let T = (0, s.useMemo)(() => ({ theme: _, setTheme: v }), [_]);
                 return (0, n.jsx)(N.D.Provider, { value: T, children: (0, n.jsx)(s.Suspense, { fallback: (0, n.jsx)(u.MainSuspenseLoader, {}), children: t }) });
             };
@@ -1158,12 +1158,12 @@
             'use strict';
             a.d(t, { s: () => n });
             var n = (function (e) {
-                return (e.DIVERSITY = 'diversity'), (e.MOOD_ENERGY = 'moodEnergy'), (e.LANGUAGE = 'language'), e;
+                return ((e.DIVERSITY = 'diversity'), (e.MOOD_ENERGY = 'moodEnergy'), (e.LANGUAGE = 'language'), e);
             })({});
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 4755, 8153, 7182, 2497, 6639, 6706, 1311, 1588, 8892, 2536, 66, 5835, 2812, 8035, 1410, 6252, 1330, 9736, 6149, 6477, 7275, 2586, 8347, 4522, 6874,
@@ -1171,6 +1171,6 @@
             ],
             () => e((e.s = 22687)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

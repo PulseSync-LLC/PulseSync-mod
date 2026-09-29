@@ -51,12 +51,12 @@
             let s = (e) => {
                 let t = (0, r.usePathname)(),
                     [i, s] = (0, a.useState)(!1);
-                (0, a.useEffect)(() => {
-                    window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t);
+                ((0, a.useEffect)(() => {
+                    (window.Ya.Rum.spa.makeSpaSubPage(t), window.Ya.Rum.spa.startDataLoading(t));
                 }),
                     (0, a.useEffect)(() => {
                         window.Ya.Rum.spa.getLastSpaSubPage(t) && e && !i && (window.Ya.Rum.spa.finishDataLoading(t), window.Ya.Rum.spa.startDataRendering(t), s(!0));
-                    }, [e, i, t]);
+                    }, [e, i, t]));
             };
         },
         4820: (e, t, i) => {
@@ -95,7 +95,7 @@
             };
         },
         5070: (e, t, i) => {
-            Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 25990));
+            (Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 25990)));
         },
         11262: (e, t, i) => {
             'use strict';
@@ -112,15 +112,15 @@
                     u = (0, a.useRef)(void 0),
                     m = (0, s.c)(() => {
                         var i;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let r = [...(null != (i = e.lastRejectedPagesList) ? i : [])].reverse().filter((t) => {
                             var i;
                             return (null == (i = e.pageStates) ? void 0 : i[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             r.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, a.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = i((0, r.jsx)(n.L, { reloadBlocks: m }), { containerId: l.u.ERROR, autoClose: !1 }));
@@ -176,11 +176,11 @@
                             objectPosX: O,
                             objectPosY: z,
                         };
-                        void 0 !== w && ((l.filterKey = w), (l.filterValue = L), (l.filterPos = R)),
+                        (void 0 !== w && ((l.filterKey = w), (l.filterValue = L), (l.filterPos = R)),
                             c.qG.includes(v) && ((l.tabId = f), (l.tabPos = k), (l.isTabSelectedByDefault = b)),
                             W && (l.skeletonId = W),
                             'string' == typeof T && 'string' == typeof y && ((l.mainObjectType = y), (l.mainObjectId = T)),
-                            K && (l.displayReasonId = K);
+                            K && (l.displayReasonId = K));
                         let d = (0, a.Fx)({ params: l, logger: e, context: 'useSendEventOnBlockShowedOrHidden' });
                         d && (r ? (0, a.Pf)(t.evgenInstance, d) : (0, a.nv)(t.evgenInstance, d));
                     },
@@ -311,7 +311,7 @@
                     c = (0, r.useContext)(s.B),
                     d = (0, r.useCallback)(
                         (r, a) => {
-                            e ? e(r, i ? a : void 0) : l(r, a), t && c.unobserveElement(o);
+                            (e ? e(r, i ? a : void 0) : l(r, a), t && c.unobserveElement(o));
                         },
                         [e, c, o, l, t, i],
                     );
@@ -377,13 +377,13 @@
                     { from: O } = (0, f.f)({ pageId: v._Q.COLLECTION_KIDS_TRACKS }),
                     { formatMessage: z } = (0, l.A)(),
                     W = (0, C.w)();
-                (0, n.useEffect)(
+                ((0, n.useEffect)(
                     () => () => {
                         e.reset();
                     },
                     [e],
                 ),
-                    (0, j.J)(e.isResolved);
+                    (0, j.J)(e.isResolved));
                 let K = (0, n.useCallback)(
                     (t) => {
                         e.getData({ page: t, pageSize: R.c });
@@ -669,7 +669,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), n.isOpened && (r.reset(), n.close()), a.modal.isOpened && a.modal.close();
+                                    (null == e || e.stopPropagation(), n.isOpened && (r.reset(), n.close()), a.modal.isOpened && a.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     s.modal.isOpened && (s.modal.close(), s.reset());
@@ -679,11 +679,11 @@
                         })({
                             artist: t,
                             callback: (0, h.c)((e) => {
-                                A && C.isOpened && C.close(), N(e);
+                                (A && C.isOpened && C.close(), N(e));
                             }),
                         }),
                         I = (0, h.c)((e) => {
-                            T({ to: _.QT.ArtistScreen }), null == S || S(), y(e);
+                            (T({ to: _.QT.ArtistScreen }), null == S || S(), y(e));
                         });
                     return i && !t.various
                         ? (0, r.jsx)(k.N, {
@@ -900,7 +900,7 @@
                         } = (0, o.g)(),
                         R = 1 === i.length,
                         E = (0, n.useCallback)((e) => {
-                            I(!0), e.preventDefault();
+                            (I(!0), e.preventDefault());
                         }, []),
                         P = (0, n.useMemo)(() => {
                             let e = i;
@@ -1288,11 +1288,11 @@
                                 let m = { ...(0, u.HO)(s), url: s.url, isLiked: !s.isLiked };
                                 i(!0);
                                 let p = await s.toggleLike();
-                                i(!1),
+                                (i(!1),
                                     c &&
                                         (p === _.f.OK
                                             ? e((0, r.jsx)(v, { withLink: o, album: m }), { containerId: l.u.INFO })
-                                            : e((0, r.jsx)(d.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR }));
+                                            : e((0, r.jsx)(d.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: l.u.ERROR })));
                             });
                         })(),
                         { pageAlbumId: f } = (0, n.T)();
@@ -1385,7 +1385,7 @@
                         };
                     })(),
                     j = (0, n.useCallback)(() => {
-                        b(), (window.location.href = v.Z.main.href);
+                        (b(), (window.location.href = v.Z.main.href));
                     }, [b]),
                     { contentRef: C } = (0, x.g)();
                 return (0, r.jsxs)('div', {
@@ -1781,7 +1781,7 @@
                         );
                     }, [t, i]),
                     j = (0, c.c)((e) => {
-                        s.modal.isOpened && s.modal.close(), k({ to: l.QT.ArtistScreen }), v(e);
+                        (s.modal.isOpened && s.modal.close(), k({ to: l.QT.ArtistScreen }), v(e));
                     });
                 return (0, r.jsxs)(r.Fragment, {
                     children: [
@@ -1834,19 +1834,19 @@
                 s = i(30782),
                 n = i(55178),
                 l = i(60900);
-            !(function (e) {
-                (e.formatDate = 'FormattedDate'),
+            (!(function (e) {
+                ((e.formatDate = 'FormattedDate'),
                     (e.formatTime = 'FormattedTime'),
                     (e.formatNumber = 'FormattedNumber'),
                     (e.formatList = 'FormattedList'),
-                    (e.formatDisplayName = 'FormattedDisplayName');
+                    (e.formatDisplayName = 'FormattedDisplayName'));
             })(r || (r = {})),
                 (function (e) {
-                    (e.formatDate = 'FormattedDateParts'),
+                    ((e.formatDate = 'FormattedDateParts'),
                         (e.formatTime = 'FormattedTimeParts'),
                         (e.formatNumber = 'FormattedNumberParts'),
-                        (e.formatList = 'FormattedListParts');
-                })(a || (a = {}));
+                        (e.formatList = 'FormattedListParts'));
+                })(a || (a = {})));
             var o = function (e) {
                 var t = (0, l.A)(),
                     i = e.value,
@@ -1863,7 +1863,7 @@
                         o = 'string' == typeof r ? new Date(r || 0) : r;
                     return a('formatDate' === e ? i.formatDateToParts(o, n) : i.formatTimeToParts(o, n));
                 };
-                return (t.displayName = a[e]), t;
+                return ((t.displayName = a[e]), t);
             }
             function d(e) {
                 var t = function (t) {
@@ -1876,11 +1876,11 @@
                     var d = i.textComponent || n.Fragment;
                     return n.createElement(d, null, c);
                 };
-                return (t.displayName = r[e]), t;
+                return ((t.displayName = r[e]), t);
             }
-            (o.displayName = 'FormattedNumberParts'), (o.displayName = 'FormattedNumberParts');
+            ((o.displayName = 'FormattedNumberParts'), (o.displayName = 'FormattedNumberParts'));
             var u = d('formatDate');
-            d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime');
+            (d('formatTime'), d('formatNumber'), d('formatList'), d('formatDisplayName'), c('formatDate'), c('formatTime'));
         },
         83598: (e) => {
             e.exports = {
@@ -1906,10 +1906,10 @@
         92013: (e, t, i) => {
             'use strict';
             var r;
-            i.d(t, { T: () => r }),
+            (i.d(t, { T: () => r }),
                 (function (e) {
-                    (e.OK = 'ok'), (e.ERROR = 'error');
-                })(r || (r = {}));
+                    ((e.OK = 'ok'), (e.ERROR = 'error'));
+                })(r || (r = {})));
         },
         94218: (e, t, i) => {
             'use strict';
@@ -1950,7 +1950,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 3183, 7972, 8868, 7231, 6347, 9763, 6639, 7258, 3907, 8722, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 6477, 7275,
@@ -1958,6 +1958,6 @@
             ],
             () => e((e.s = 5070)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

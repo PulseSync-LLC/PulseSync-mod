@@ -83,10 +83,10 @@
                         let l = { ...(0, a.HO)(t), isLiked: !t.isLiked };
                         m(!0);
                         let r = await t.toggleLike();
-                        m(!1),
+                        (m(!1),
                             r === n.f.OK
                                 ? i((0, s.jsx)(T, { artist: l }), { containerId: o.u.INFO })
-                                : i((0, s.jsx)(u.h, { error: A({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, s.jsx)(u.h, { error: A({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [t, e.isAuthorized, _, A, i]);
                 };
         },
@@ -158,7 +158,7 @@
                     tC = (0, S.P)(),
                     tI = (0, u.c)((t) => {
                         if ((t.stopPropagation(), tC())) return void t.preventDefault();
-                        V.openArtistTrailer(e.id), tL(o.ky.Artist, e.id);
+                        (V.openArtistTrailer(e.id), tL(o.ky.Artist, e.id));
                     }),
                     tS = (0, r.useMemo)(() => {
                         let t = $({ id: 'entity-names.artist-name' }, { artistName: tu }),
@@ -171,23 +171,23 @@
                     tk = (0, L.S)({ artist: e, callback: tA }),
                     tp = (0, L.S)({ artist: e, callback: tE }),
                     tR = (0, u.c)((t) => {
-                        null == ta || ta(), tr({ to: o.QT.ArtistScreen }), tk(t);
+                        (null == ta || ta(), tr({ to: o.QT.ArtistScreen }), tk(t));
                     }),
                     ty = (0, y.N)(),
                     tv = (0, u.c)(() => {
                         if (!tC()) {
                             if (ty) return void G.open();
-                            J || th || (Z(!0), null == tl || tl()), tp(), tn(!th);
+                            (J || th || (Z(!0), null == tl || tl()), tp(), tn(!th));
                         }
                     }),
                     tO = (0, u.c)(() => {
-                        Q || tm || (tt(!0), null == ts || ts()), to();
+                        (Q || tm || (tt(!0), null == ts || ts()), to());
                     }),
                     tN = (0, u.c)((t) => {
-                        t.preventDefault(), t.stopPropagation();
+                        (t.preventDefault(), t.stopPropagation());
                     }),
                     tP = (0, u.c)((t) => {
-                        ti(t), tx(t);
+                        (ti(t), tx(t));
                     }),
                     tf = (0, r.useMemo)(
                         () =>
@@ -588,7 +588,7 @@
         },
         52432: (t, e, i) => {
             'use strict';
-            i.r(e), i.d(e, { default: () => B });
+            (i.r(e), i.d(e, { default: () => B }));
             var s = i(32290),
                 a = i(21916),
                 l = i(96103),
@@ -721,13 +721,13 @@
                 U = (0, l.PA)((t) => {
                     let { blockType: e, blockId: i } = t,
                         { landingBlockEntities: l } = (0, h.g)();
-                    (0, r.useEffect)(
+                    ((0, r.useEffect)(
                         () => () => {
                             l.reset();
                         },
                         [l, e, i],
                     ),
-                        (0, g.J)(l.loadingState === M.G.RESOLVE);
+                        (0, g.J)(l.loadingState === M.G.RESOLVE));
                     let n = b[e];
                     return (
                         (l.isNotFound || !n) && (0, a.notFound)(),
@@ -749,7 +749,7 @@
                     let t = (0, a.useSearchParams)(),
                         e = t.get('blockType'),
                         i = t.get('blockId');
-                    return (e && i) || (0, a.notFound)(), (0, s.jsx)(U, { blockType: e, blockId: i });
+                    return ((e && i) || (0, a.notFound)(), (0, s.jsx)(U, { blockType: e, blockId: i }));
                 };
         },
         58046: (t, e, i) => {
@@ -861,7 +861,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let t = [r, c, d];
-                                    return 'ru' === l && t.push(o), t.push(u), t;
+                                    return ('ru' === l && t.push(o), t.push(u), t);
                                 }
                                 case 'desktop':
                                     return [r, c, d, u];
@@ -961,10 +961,10 @@
                         let l = { ...(0, a.HO)(t), isPinned: !t.isPinned };
                         A(!0);
                         let r = await t.togglePin();
-                        A(!1),
+                        (A(!1),
                             r
                                 ? i((0, s.jsx)(m, { artist: l }), { containerId: n.u.INFO })
-                                : i((0, s.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, s.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [t, e.isAuthorized, _, u, i]);
                 };
         },
@@ -1006,10 +1006,10 @@
                         let l = { ...(0, a.HO)(t), url: t.url, isLiked: !t.isLiked };
                         m(!0);
                         let r = await t.toggleLike();
-                        m(!1),
+                        (m(!1),
                             r === n.f.OK
                                 ? i((0, s.jsx)(A, { playlist: l }), { containerId: o.u.INFO })
-                                : i((0, s.jsx)(u.h, { error: T({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, s.jsx)(u.h, { error: T({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [e.isAuthorized, _, t, T, i]);
                 };
         },
@@ -1050,10 +1050,10 @@
                         let l = { ...(0, a.HO)(t), url: t.url, isPinned: !t.isPinned };
                         A(!0);
                         let r = await t.togglePin();
-                        A(!1),
+                        (A(!1),
                             r
                                 ? i((0, s.jsx)(m, { playlist: l }), { containerId: n.u.INFO })
-                                : i((0, s.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, s.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [e.isAuthorized, _, t, i, u]);
                 };
         },
@@ -1169,10 +1169,10 @@
                             let l = { ...(0, _.HO)(t), isDisliked: !t.isDisliked };
                             r(!0);
                             let o = await t.toggleDislike();
-                            r(!1),
+                            (r(!1),
                                 o === A.f.OK
                                     ? i((0, s.jsx)(y, { coverUri: l.coverUri, title: l.name, isDisliked: l.isDisliked }), { containerId: T.u.INFO })
-                                    : i((0, s.jsx)(C.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: T.u.ERROR });
+                                    : i((0, s.jsx)(C.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: T.u.ERROR }));
                         });
                     })(I),
                     ta = (0, M.F)(),
@@ -1345,7 +1345,7 @@
                                     {
                                         icon: (0, s.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: icon, size: 'xxs' }),
                                         onClick: () => {
-                                            activate(), a?.(!1);
+                                            (activate(), a?.(!1));
                                         },
                                         children: label,
                                         'data-pulsesync-addon-menu-item': '',
@@ -1393,33 +1393,33 @@
                     tA = (0, S.P)(),
                     tT = (0, u.c)((t) => {
                         if ((t.stopPropagation(), tA())) return void t.preventDefault();
-                        F.setUtmLink(W), F.openPlaylistTrailer(i.id), tm(o.ky.Playlist, i.id);
+                        (F.setUtmLink(W), F.openPlaylistTrailer(i.id), tm(o.ky.Playlist, i.id));
                     }),
                     [tx, tL] = (0, r.useState)(!1),
                     { isPlaying: tC, togglePlay: tI } = (0, N.D)({
                         playContextParams: { contextData: { type: d.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: G, utmLink: W }, loadContextMeta: !0 },
                     }),
                     tS = (0, u.c)(() => {
-                        td({ to: o.QT.PlaylistScreen }), null == Q || Q();
+                        (td({ to: o.QT.PlaylistScreen }), null == Q || Q());
                     }),
                     th = (0, u.c)((t) => {
-                        tS(), t_(t);
+                        (tS(), t_(t));
                     }),
                     tE = (0, y.N)(),
                     tk = (0, u.c)(() => {
                         if (!tA()) {
                             if (tE) return void X.open();
-                            te || tC || (ti(!0), null == tt || tt()), tI(), tu(!tC);
+                            (te || tC || (ti(!0), null == tt || tt()), tI(), tu(!tC));
                         }
                     }),
                     tp = (0, u.c)(() => {
-                        ts || i.isLiked || (ta(!0), null == J || J()), to();
+                        (ts || i.isLiked || (ta(!0), null == J || J()), to());
                     }),
                     tR = (0, u.c)((t) => {
-                        t.preventDefault(), t.stopPropagation();
+                        (t.preventDefault(), t.stopPropagation());
                     }),
                     ty = (0, u.c)((t) => {
-                        tr(t), tL(t);
+                        (tr(t), tL(t));
                     }),
                     tv = (0, r.useMemo)(() => {
                         var t;
@@ -1569,9 +1569,9 @@
         90404: (t, e, i) => {
             'use strict';
             var s;
-            i.d(e, { _: () => s }),
+            (i.d(e, { _: () => s }),
                 (function (t) {
-                    (t.ALBUM_ITEM = 'album_item'),
+                    ((t.ALBUM_ITEM = 'album_item'),
                         (t.ARTIST_ITEM = 'artist_item'),
                         (t.PLAYLIST_ITEM = 'playlist_item'),
                         (t.TRACK_ITEM = 'track_item'),
@@ -1590,8 +1590,8 @@
                         (t.CLIP = 'clip'),
                         (t.CLIP_ITEM = 'clip_item'),
                         (t.CONCERT_ITEM = 'concert_item'),
-                        (t.QUERY_TO_VIBE_ITEM = 'q2v_item');
-                })(s || (s = {}));
+                        (t.QUERY_TO_VIBE_ITEM = 'q2v_item'));
+                })(s || (s = {})));
         },
         91853: (t, e, i) => {
             'use strict';
@@ -1640,7 +1640,7 @@
         },
     },
     (t) => {
-        t.O(
+        (t.O(
             0,
             [
                 7034, 7231, 5718, 7972, 6347, 3183, 9763, 6639, 7258, 4182, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 6252, 6477, 7275, 2586, 8347, 4522,
@@ -1648,6 +1648,6 @@
             ],
             () => t((t.s = 58046)),
         ),
-            (_N_E = t.O());
+            (_N_E = t.O()));
     },
 ]);

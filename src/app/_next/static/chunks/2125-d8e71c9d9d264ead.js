@@ -4,9 +4,9 @@
         3785: (e, t, n) => {
             'use strict';
             var i;
-            n.d(t, { M: () => i }),
+            (n.d(t, { M: () => i }),
                 (function (e) {
-                    (e.MODAL = 'modal'),
+                    ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
                         (e.AGE_18 = 'age18'),
@@ -15,8 +15,8 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         (e.EXCLAMATION_ICON = 'exclamationIcon'),
-                        (e.SUBSTITUTED_ICON = 'substitutedIcon');
-                })(i || (i = {}));
+                        (e.SUBSTITUTED_ICON = 'substitutedIcon'));
+                })(i || (i = {})));
         },
         8626: (e, t, n) => {
             'use strict';
@@ -38,15 +38,15 @@
                     d = (0, r.useRef)(void 0),
                     g = (0, a.c)(() => {
                         var n;
-                        u({ notificationId: d.current }), (d.current = 0);
+                        (u({ notificationId: d.current }), (d.current = 0));
                         let i = [...(null != (n = e.lastRejectedPagesList) ? n : [])].reverse().filter((t) => {
                             var n;
                             return (null == (n = e.pageStates) ? void 0 : n[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             i.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, r.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !d.current && (d.current = n((0, i.jsx)(l.L, { reloadBlocks: g }), { containerId: o.u.ERROR, autoClose: !1 }));
@@ -65,7 +65,7 @@
                     r = t[0];
                 return n.e(t[1]).then(() => n.t(r, 19));
             }
-            (r.keys = () => Object.keys(i)), (r.id = 12526), (e.exports = r);
+            ((r.keys = () => Object.keys(i)), (r.id = 12526), (e.exports = r));
         },
         14190: (e, t, n) => {
             'use strict';
@@ -135,9 +135,9 @@
         18870: (e, t, n) => {
             'use strict';
             var i;
-            n.d(t, { $: () => i }),
+            (n.d(t, { $: () => i }),
                 (function (e) {
-                    (e.RU = 'ru'),
+                    ((e.RU = 'ru'),
                         (e.EN = 'en'),
                         (e.UK = 'uk'),
                         (e.BE = 'be'),
@@ -158,8 +158,8 @@
                         (e.EL = 'el'),
                         (e.RO = 'ro'),
                         (e.MO = 'mo'),
-                        (e.AR = 'ar');
-                })(i || (i = {}));
+                        (e.AR = 'ar'));
+                })(i || (i = {})));
         },
         20472: (e, t, n) => {
             'use strict';
@@ -210,13 +210,13 @@
                     let n = window.document.querySelector('meta['.concat(e, '="').concat(t, '"]'));
                     if (n) return n;
                     let i = window.document.createElement('meta');
-                    return i.setAttribute(e, t), i;
+                    return (i.setAttribute(e, t), i);
                 },
                 r = (e) => {
                     let { title: t, description: n, openGraph: r } = e;
                     if (('string' == typeof t && (window.document.title = t), 'string' == typeof n)) {
                         let e = i('name', 'description');
-                        e.setAttribute('content', n), window.document.head.appendChild(e);
+                        (e.setAttribute('content', n), window.document.head.appendChild(e));
                     }
                     let a = '';
                     if (r) {
@@ -227,12 +227,12 @@
                         let l = i('property', 'og:title'),
                             o = i('property', 'og:description'),
                             s = i('property', 'og:image');
-                        l.setAttribute('content', e),
+                        (l.setAttribute('content', e),
                             o.setAttribute('content', t),
                             s.setAttribute('content', a),
                             window.document.head.appendChild(l),
                             window.document.head.appendChild(o),
-                            window.document.head.appendChild(s);
+                            window.document.head.appendChild(s));
                     }
                 };
         },
@@ -333,7 +333,7 @@
                         S = (0, m.N)().get(g.U2),
                         I = (0, c.c)(() => {
                             if (y) return y();
-                            N.canBack && N.back(), R();
+                            (N.canBack && N.back(), R());
                         }),
                         O = (null == L || null == (t = L.details) ? void 0 : t.url) && L.details.text,
                         j = (0, c.c)(() => {
@@ -346,13 +346,13 @@
                                     null != (e = null == n ? void 0 : n.entityKey)
                                         ? e
                                         : ''.concat(null == n ? void 0 : n.entityType, '_').concat(null == n ? void 0 : n.entityId);
-                            t ? S.set(x.c.ExEx, [...t, a], { expires: new Date(r) }) : S.set(x.c.ExEx, [a], { expires: new Date(r) }),
+                            (t ? S.set(x.c.ExEx, [...t, a], { expires: new Date(r) }) : S.set(x.c.ExEx, [a], { expires: new Date(r) }),
                                 null == y || y(),
-                                (null == n ? void 0 : n.onDisclaimerConfirmHandler) && n.onDisclaimerConfirmHandler();
+                                (null == n ? void 0 : n.onDisclaimerConfirmHandler) && n.onDisclaimerConfirmHandler());
                         }),
                         C = (0, c.c)(() => {
-                            (null == n ? void 0 : n.shouldHistoryBack) ? (null == y || y(), N.canBack && N.back(), R()) : null == y || y(),
-                                (null == n ? void 0 : n.onDisclaimerRejectHandler) && n.onDisclaimerRejectHandler();
+                            ((null == n ? void 0 : n.shouldHistoryBack) ? (null == y || y(), N.canBack && N.back(), R()) : null == y || y(),
+                                (null == n ? void 0 : n.onDisclaimerRejectHandler) && n.onDisclaimerRejectHandler());
                         });
                     (0, l.useEffect)(
                         () => () => {
@@ -502,7 +502,7 @@
                     return (e, t) => {
                         let a = null == r ? void 0 : r[e.id],
                             l = '';
-                        return (Array.isArray(a) || 'string' == typeof a) && (l = new i.S(a, n).format(t)), Array.isArray(l) ? l.join('') : l;
+                        return ((Array.isArray(a) || 'string' == typeof a) && (l = new i.S(a, n).format(t)), Array.isArray(l) ? l.join('') : l);
                     };
                 };
         },
@@ -665,7 +665,7 @@
                     r = t[0];
                 return n.e(t[1]).then(() => n.t(r, 19));
             }
-            (r.keys = () => Object.keys(i)), (r.id = 46646), (e.exports = r);
+            ((r.keys = () => Object.keys(i)), (r.id = 46646), (e.exports = r));
         },
         47216: (e, t, n) => {
             'use strict';
@@ -854,7 +854,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [l, c, u];
-                                    return 'ru' === a && e.push(s), e.push(d), e;
+                                    return ('ru' === a && e.push(s), e.push(d), e);
                                 }
                                 case 'desktop':
                                     return [l, c, u, d];
@@ -984,7 +984,7 @@
                         };
                     })(),
                     k = (0, l.useCallback)(() => {
-                        E(), (window.location.href = f.Z.main.href);
+                        (E(), (window.location.href = f.Z.main.href));
                     }, [E]),
                     { contentRef: A } = (0, p.g)();
                 return (0, i.jsxs)('div', {
@@ -1162,7 +1162,7 @@
                     try {
                         this.dictionary = await (0, u.M)(e);
                     } catch (t) {
-                        t instanceof Error && this.logger.error(t, { language: e }), (this.dictionary = {});
+                        (t instanceof Error && this.logger.error(t, { language: e }), (this.dictionary = {}));
                     }
                     return this.dictionary;
                 }
@@ -1259,7 +1259,7 @@
             'use strict';
             n.d(t, { W: () => i });
             var i = (function (e) {
-                return (e.APP = 'app'), (e.SUMMARY_LARGE_IMAGE = 'summary_large_image'), e;
+                return ((e.APP = 'app'), (e.SUMMARY_LARGE_IMAGE = 'summary_large_image'), e);
             })({});
         },
     },

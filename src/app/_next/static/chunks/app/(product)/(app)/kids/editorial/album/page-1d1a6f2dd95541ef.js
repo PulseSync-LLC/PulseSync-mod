@@ -21,15 +21,15 @@
                     u = (0, i.useRef)(void 0),
                     _ = (0, n.c)(() => {
                         var o;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let l = [...(null != (o = e.lastRejectedPagesList) ? o : [])].reverse().filter((t) => {
                             var o;
                             return (null == (o = e.pageStates) ? void 0 : o[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             l.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, i.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = o((0, l.jsx)(s.L, { reloadBlocks: _ }), { containerId: r.u.ERROR, autoClose: !1 }));
@@ -393,7 +393,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [s, c, d];
-                                    return 'ru' === n && e.push(a), e.push(u), e;
+                                    return ('ru' === n && e.push(a), e.push(u), e);
                                 }
                                 case 'desktop':
                                     return [s, c, d, u];
@@ -446,7 +446,7 @@
         },
         59411: (e, t, o) => {
             'use strict';
-            o.r(t), o.d(t, { default: () => O });
+            (o.r(t), o.d(t, { default: () => O }));
             var l = o(32290),
                 i = o(21916),
                 n = o(63618),
@@ -487,13 +487,13 @@
                         W = (0, d.c)((e) => {
                             O.getAlbums({ page: e, pageSize: 20 });
                         });
-                    O.isNotFound && (0, i.notFound)(),
+                    (O.isNotFound && (0, i.notFound)(),
                         (0, r.useEffect)(
                             () => () => {
                                 O.reset();
                             },
                             [O],
-                        );
+                        ));
                     let D = (0, u.L)(() => ({ Footer: () => (0, l.jsx)(v.A, { children: (0, l.jsx)(y.w, { className: j().footer }) }) }));
                     if (
                         ((0, N.J)(O.isResolved),
@@ -546,7 +546,7 @@
                 }),
                 O = () => {
                     let e = (0, i.useSearchParams)().get('id');
-                    return e || (0, i.notFound)(), (0, l.jsx)(b, { id: e });
+                    return (e || (0, i.notFound)(), (0, l.jsx)(b, { id: e }));
                 };
         },
         60202: (e, t, o) => {
@@ -631,7 +631,7 @@
                         };
                     })(),
                     k = (0, s.useCallback)(() => {
-                        S(), (window.location.href = x.Z.main.href);
+                        (S(), (window.location.href = x.Z.main.href));
                     }, [S]),
                     { contentRef: y } = (0, p.g)();
                 return (0, l.jsxs)('div', {
@@ -759,7 +759,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 7231, 7972, 6347, 3183, 9763, 6639, 7258, 7426, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 6477, 7275, 2586, 8347,
@@ -767,6 +767,6 @@
             ],
             () => e((e.s = 60202)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

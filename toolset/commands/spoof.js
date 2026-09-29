@@ -22,8 +22,7 @@ module.exports = {
                 },
                 {
                     ...createPrepareReleaseAsarTask(),
-                    enabled: () =>
-                        (options.shouldRelease && !options.onlySendPatchNotes && !options.onlyUploadUnpacked) || options.shouldBuildZstd,
+                    enabled: () => (options.shouldRelease && !options.onlySendPatchNotes && !options.onlyUploadUnpacked) || options.shouldBuildZstd,
                 },
                 {
                     ...createReleaseTask({ versions: (context) => context.state.versions }),

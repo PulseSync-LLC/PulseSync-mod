@@ -52,7 +52,7 @@
             });
         },
         5541: (t, e, i) => {
-            Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 14619));
+            (Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 14619)));
         },
         5942: (t, e, i) => {
             'use strict';
@@ -94,10 +94,10 @@
                         let o = { ...(0, r.HO)(t), isLiked: !t.isLiked };
                         m(!0);
                         let l = await t.toggleLike();
-                        m(!1),
+                        (m(!1),
                             l === a.f.OK
                                 ? i((0, s.jsx)(p, { artist: o }), { containerId: n.u.INFO })
-                                : i((0, s.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR });
+                                : i((0, s.jsx)(u.h, { error: h({ id: 'error-messages.error-during-action' }) }), { containerId: n.u.ERROR }));
                     }, [t, e.isAuthorized, _, h, i]);
                 };
         },
@@ -167,7 +167,7 @@
                     tg = (0, A.P)(),
                     tC = (0, u.c)((t) => {
                         if ((t.stopPropagation(), tg())) return void t.preventDefault();
-                        K.openArtistTrailer(e.id), tv(n.ky.Artist, e.id);
+                        (K.openArtistTrailer(e.id), tv(n.ky.Artist, e.id));
                     }),
                     tA = (0, l.useMemo)(() => {
                         let t = q({ id: 'entity-names.artist-name' }, { artistName: tu }),
@@ -180,23 +180,23 @@
                     ty = (0, v.S)({ artist: e, callback: th }),
                     tT = (0, v.S)({ artist: e, callback: tk }),
                     tN = (0, u.c)((t) => {
-                        null == tr || tr(), tl({ to: n.QT.ArtistScreen }), ty(t);
+                        (null == tr || tr(), tl({ to: n.QT.ArtistScreen }), ty(t));
                     }),
                     tj = (0, j.N)(),
                     tb = (0, u.c)(() => {
                         if (!tg()) {
                             if (tj) return void V.open();
-                            Z || tf || (J(!0), null == to || to()), tT(), ta(!tf);
+                            (Z || tf || (J(!0), null == to || to()), tT(), ta(!tf));
                         }
                     }),
                     tR = (0, u.c)(() => {
-                        Q || tm || (tt(!0), null == ts || ts()), tn();
+                        (Q || tm || (tt(!0), null == ts || ts()), tn());
                     }),
                     tS = (0, u.c)((t) => {
-                        t.preventDefault(), t.stopPropagation();
+                        (t.preventDefault(), t.stopPropagation());
                     }),
                     tE = (0, u.c)((t) => {
-                        ti(t), tx(t);
+                        (ti(t), tx(t));
                     }),
                     tI = (0, l.useMemo)(
                         () =>
@@ -366,15 +366,15 @@
                     u = (0, r.useRef)(void 0),
                     _ = (0, o.c)(() => {
                         var i;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let s = [...(null != (i = t.lastRejectedPagesList) ? i : [])].reverse().filter((e) => {
                             var i;
                             return (null == (i = t.pageStates) ? void 0 : i[e]) === c.G.REJECT;
                         });
-                        t.resetRejectedPagesState(),
+                        (t.resetRejectedPagesState(),
                             s.forEach((t) => {
                                 e(t);
-                            });
+                            }));
                     });
                 (0, r.useEffect)(() => {
                     t.rejectedPagesCount > 0 && !u.current && (u.current = i((0, s.jsx)(l.L, { reloadBlocks: _ }), { containerId: a.u.ERROR, autoClose: !1 }));
@@ -384,10 +384,10 @@
         13365: (t, e, i) => {
             'use strict';
             var s;
-            i.d(e, { _: () => s }),
+            (i.d(e, { _: () => s }),
                 (function (t) {
-                    (t.UP = 'up'), (t.DOWN = 'down'), (t.SAME = 'same'), (t.NEW = 'new');
-                })(s || (s = {}));
+                    ((t.UP = 'up'), (t.DOWN = 'down'), (t.SAME = 'same'), (t.NEW = 'new'));
+                })(s || (s = {})));
         },
         14619: (t, e, i) => {
             'use strict';
@@ -539,13 +539,13 @@
                         { formatMessage: S } = (0, a.A)(),
                         { contentScrollRef: I, setContentScrollRef: P } = (0, A.g)(),
                         O = (0, C.W)();
-                    (0, f.J)(e.artists.isResolved),
+                    ((0, f.J)(e.artists.isResolved),
                         (0, l.useEffect)(
                             () => () => {
                                 e.artists.reset();
                             },
                             [e.artists],
-                        );
+                        ));
                     let L = (0, l.useCallback)(
                         (i) => {
                             t.account.data.uid && e.artists.getData({ userId: t.account.data.uid, page: i, pageSize: 20 });
@@ -1202,7 +1202,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let t = [l, c, d];
-                                    return 'ru' === o && t.push(n), t.push(u), t;
+                                    return ('ru' === o && t.push(n), t.push(u), t);
                                 }
                                 case 'desktop':
                                     return [l, c, d, u];
@@ -1291,10 +1291,10 @@
                         let o = { ...(0, r.HO)(t), isPinned: !t.isPinned };
                         h(!0);
                         let l = await t.togglePin();
-                        h(!1),
+                        (h(!1),
                             l
                                 ? i((0, s.jsx)(m, { artist: o }), { containerId: a.u.INFO })
-                                : i((0, s.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: a.u.ERROR });
+                                : i((0, s.jsx)(d.h, { error: u({ id: 'error-messages.error-during-action' }) }), { containerId: a.u.ERROR }));
                     }, [t, e.isAuthorized, _, u, i]);
                 };
         },
@@ -1328,12 +1328,12 @@
                                     if (t.isIntersecting) {
                                         let t = window.setTimeout(() => {
                                             let t = String((0, o.A)());
-                                            s.callback(!0, t), (s.showed = !0), (s.viewUuid = t);
+                                            (s.callback(!0, t), (s.showed = !0), (s.viewUuid = t));
                                         }, 1e3);
                                         s.timerId = t;
                                     }
-                                    !t.isIntersecting && s.showed && (s.callback(!1, s.viewUuid), (s.showed = !1), (s.viewUuid = '')),
-                                        t.isIntersecting || window.clearTimeout(s.timerId);
+                                    (!t.isIntersecting && s.showed && (s.callback(!1, s.viewUuid), (s.showed = !1), (s.viewUuid = '')),
+                                        t.isIntersecting || window.clearTimeout(s.timerId));
                                 }
                             },
                             { threshold: 0.8 },
@@ -1600,10 +1600,10 @@
                             let o = { ...(0, _.HO)(t), isDisliked: !t.isDisliked };
                             l(!0);
                             let n = await t.toggleDislike();
-                            l(!1),
+                            (l(!1),
                                 n === h.f.OK
                                     ? i((0, s.jsx)(j, { coverUri: o.coverUri, title: o.name, isDisliked: o.isDisliked }), { containerId: p.u.INFO })
-                                    : i((0, s.jsx)(g.h, { error: a({ id: 'error-messages.error-during-action' }) }), { containerId: p.u.ERROR });
+                                    : i((0, s.jsx)(g.h, { error: a({ id: 'error-messages.error-during-action' }) }), { containerId: p.u.ERROR }));
                         });
                     })(C),
                     tr = (0, w.F)(),
@@ -1833,7 +1833,7 @@
         },
     },
     (t) => {
-        t.O(
+        (t.O(
             0,
             [
                 5718, 7034, 7231, 6347, 9763, 3183, 6639, 7258, 7972, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6477, 7275, 2586, 8347, 7702, 6874,
@@ -1841,6 +1841,6 @@
             ],
             () => t((t.s = 5541)),
         ),
-            (_N_E = t.O());
+            (_N_E = t.O()));
     },
 ]);

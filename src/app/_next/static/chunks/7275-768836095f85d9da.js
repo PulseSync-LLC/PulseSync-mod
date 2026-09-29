@@ -9,7 +9,7 @@
                         c = [];
                     return (
                         !(function e() {
-                            c.length > 0 && n(c.splice(0, t)), window.setTimeout(e, r);
+                            (c.length > 0 && n(c.splice(0, t)), window.setTimeout(e, r));
                         })(),
                         {
                             add(e) {
@@ -26,7 +26,7 @@
                 });
                 return {
                     trackEvent(e, c) {
-                        t && n.log(e, c), r.add({ [e]: c });
+                        (t && n.log(e, c), r.add({ [e]: c }));
                     },
                 };
             }
@@ -155,13 +155,13 @@
                     this.evgen.trackEvent(e, n);
                 }
                 constructor(e, n, t) {
-                    (0, Y._)(this, 'evgen', void 0),
+                    ((0, Y._)(this, 'evgen', void 0),
                         (this.evgen = {
                             trackEvent: (r, c) => {
                                 let i = { ...c, ...n.getGlobalParams(), ...t.getPlatformParams() };
                                 e.trackEvent(r, i);
                             },
-                        });
+                        }));
                 }
             }
             function X(e) {
@@ -875,9 +875,9 @@
                     o = { ...n, skeletonId: t, mainObjectType: r, mainObjectId: c, _meta: i };
                 e.trackEvent('Sidebar.Started', o);
             }
-            ((l || (l = {})).ConcertScreen = 'concert_screen'),
+            (((l || (l = {})).ConcertScreen = 'concert_screen'),
                 (function (e) {
-                    (e.Music = 'music'),
+                    ((e.Music = 'music'),
                         (e.Podcast = 'podcast'),
                         (e.FairyTale = 'fairy-tale'),
                         (e.Audiobook = 'audiobook'),
@@ -886,13 +886,13 @@
                         (e.Lecture = 'lecture'),
                         (e.Show = 'show'),
                         (e.Radio = 'radio'),
-                        (e.Unknown = 'unknown');
+                        (e.Unknown = 'unknown'));
                 })(_ || (_ = {})),
                 (function (e) {
-                    (e.Link = 'link'), (e.StoriesScreen = 'stories_screen');
+                    ((e.Link = 'link'), (e.StoriesScreen = 'stories_screen'));
                 })(d || (d = {})),
                 (function (e) {
-                    (e.AboutArtistScreen = 'about_artist_screen'),
+                    ((e.AboutArtistScreen = 'about_artist_screen'),
                         (e.ArtistScreen = 'artist_screen'),
                         (e.ArtistListScreen = 'artist_list_screen'),
                         (e.ArtistConcertsScreen = 'artist_concerts_screen'),
@@ -1072,10 +1072,10 @@
                         (e.MultivibeRenameScreen = 'multivibe_rename_screen'),
                         (e.MultivibeAloneScreen = 'multivibe_alone_screen'),
                         (e.MultivibeLimitScreen = 'multivibe_limit_screen'),
-                        (e.MultivibeActionScreen = 'multivibe_action_screen');
+                        (e.MultivibeActionScreen = 'multivibe_action_screen'));
                 })(u || (u = {})),
                 (function (e) {
-                    (e.SoundQuality = 'sound_quality'),
+                    ((e.SoundQuality = 'sound_quality'),
                         (e.Offline = 'offline'),
                         (e.Crossfade = 'crossfade'),
                         (e.Explicit = 'explicit'),
@@ -1096,23 +1096,23 @@
                         (e.Equalizer = 'equalizer'),
                         (e.PlayingSpeed = 'playing_speed'),
                         (e.Autoplay = 'autoplay'),
-                        (e.VolumeLevel = 'volume_level');
+                        (e.VolumeLevel = 'volume_level'));
                 })(S || (S = {})),
                 (function (e) {
-                    (e.Concert = 'concert'), (e.Shortcut = 'shortcut');
+                    ((e.Concert = 'concert'), (e.Shortcut = 'shortcut'));
                 })(p || (p = {})),
                 (function (e) {
-                    (e.ConcertScreen = 'concert_screen'), (e.ConcertPurchaseScreen = 'concert_purchase_screen'), (e.ArtistConcertsScreen = 'artist_concerts_screen');
+                    ((e.ConcertScreen = 'concert_screen'), (e.ConcertPurchaseScreen = 'concert_purchase_screen'), (e.ArtistConcertsScreen = 'artist_concerts_screen'));
                 })(m || (m = {})),
                 (function (e) {
-                    (e.Link = 'link'), (e.StoriesScreen = 'stories_screen');
+                    ((e.Link = 'link'), (e.StoriesScreen = 'stories_screen'));
                 })(b || (b = {})),
                 (function (e) {
-                    (e.ConcertScreen = 'concert_screen'), (e.ConcertPurchaseScreen = 'concert_purchase_screen');
+                    ((e.ConcertScreen = 'concert_screen'), (e.ConcertPurchaseScreen = 'concert_purchase_screen'));
                 })(k || (k = {})),
                 ((g || (g = {})).ConcertPurchaseScreen = 'concert_purchase_screen'),
                 (function (e) {
-                    (e.Album = 'album'),
+                    ((e.Album = 'album'),
                         (e.Playlist = 'playlist'),
                         (e.Category = 'category'),
                         (e.Promotion = 'promotion'),
@@ -1130,10 +1130,10 @@
                         (e.LastActiveItem = 'last_active_item'),
                         (e.MyShelf = 'my_shelf'),
                         (e.Audiobook = 'audiobook'),
-                        (e.Podcast = 'podcast');
+                        (e.Podcast = 'podcast'));
                 })(h || (h = {})),
                 (function (e) {
-                    (e.Station = 'station'),
+                    ((e.Station = 'station'),
                         (e.Chromecast = 'chromecast'),
                         (e.Airplay = 'airplay'),
                         (e.Bluetooth = 'bluetooth'),
@@ -1147,10 +1147,10 @@
                         (e.WebTv = 'web_tv'),
                         (e.Web = 'web'),
                         (e.WebDesktop = 'web_desktop'),
-                        (e.Unknown = 'unknown');
+                        (e.Unknown = 'unknown'));
                 })(v || (v = {})),
                 (function (e) {
-                    (e.Audiobook = 'audiobook'),
+                    ((e.Audiobook = 'audiobook'),
                         (e.AudiobookChapter = 'audiobook_chapter'),
                         (e.Podcast = 'podcast'),
                         (e.PodcastEpisode = 'podcast_episode'),
@@ -1202,10 +1202,10 @@
                         (e.Q2vWave = 'q2v_wave'),
                         (e.BigFact = 'big_fact'),
                         (e.Lumen = 'lumen'),
-                        (e.LumenUnawakened = 'lumen_unawakened');
+                        (e.LumenUnawakened = 'lumen_unawakened'));
                 })(y || (y = {})),
                 (function (e) {
-                    (e.SearchScreen = 'search_screen'),
+                    ((e.SearchScreen = 'search_screen'),
                         (e.CollectionLandingScreen = 'collection_landing_screen'),
                         (e.MainScreen = 'main_screen'),
                         (e.NonmusicLandingScreen = 'nonmusic_landing_screen'),
@@ -1248,13 +1248,13 @@
                         (e.MultivibeAlreadyExistScreen = 'multivibe_already_exist_screen'),
                         (e.MultivibeScreen = 'multivibe_screen'),
                         (e.MultivibeActionScreen = 'multivibe_action_screen'),
-                        (e.MultivibeAloneScreen = 'multivibe_alone_screen');
+                        (e.MultivibeAloneScreen = 'multivibe_alone_screen'));
                 })(f || (f = {})),
                 (function (e) {
-                    (e.Fullscreen = 'fullscreen'), (e.Bar = 'bar'), (e.Sheet = 'sheet'), (e.Popup = 'popup'), (e.Tooltip = 'tooltip'), (e.ContextMenu = 'context_menu');
+                    ((e.Fullscreen = 'fullscreen'), (e.Bar = 'bar'), (e.Sheet = 'sheet'), (e.Popup = 'popup'), (e.Tooltip = 'tooltip'), (e.ContextMenu = 'context_menu'));
                 })(A || (A = {})),
                 (function (e) {
-                    (e.Fullscreen = 'fullscreen'),
+                    ((e.Fullscreen = 'fullscreen'),
                         (e.Bottom = 'bottom'),
                         (e.Left = 'left'),
                         (e.Right = 'right'),
@@ -1262,34 +1262,34 @@
                         (e.Center = 'center'),
                         (e.Floating = 'floating'),
                         (e.Hover = 'hover'),
-                        (e.BottomRight = 'bottom_right');
+                        (e.BottomRight = 'bottom_right'));
                 })(w || (w = {})),
                 (function (e) {
-                    (e.Next = 'next'), (e.End = 'end');
+                    ((e.Next = 'next'), (e.End = 'end'));
                 })(P || (P = {})),
                 (function (e) {
-                    (e.Tap = 'tap'),
+                    ((e.Tap = 'tap'),
                         (e.LongTap = 'longTap'),
                         (e.DoubleTap = 'doubleTap'),
                         (e.Pan = 'pan'),
                         (e.Swipe = 'swipe'),
                         (e.Hardware = 'hardware'),
-                        (e.Shake = 'shake');
+                        (e.Shake = 'shake'));
                 })(C || (C = {})),
                 (function (e) {
-                    (e.Device = 'device'), (e.Ynison = 'ynison'), (e.Glagol = 'glagol');
+                    ((e.Device = 'device'), (e.Ynison = 'ynison'), (e.Glagol = 'glagol'));
                 })(L || (L = {})),
                 (function (e) {
-                    (e.WaveWithFixedRecommendations = 'wave_with_fixed_recommendations'),
+                    ((e.WaveWithFixedRecommendations = 'wave_with_fixed_recommendations'),
                         (e.WaveWithoutFixedRecommendations = 'wave_without_fixed_recommendations'),
                         (e.Videoclip = 'videoclip'),
                         (e.Generative = 'generative'),
                         (e.Fmradio = 'fmradio'),
                         (e.Local = 'local'),
-                        (e.Unknown = 'unknown');
+                        (e.Unknown = 'unknown'));
                 })(T || (T = {})),
                 (function (e) {
-                    (e.OwnSpeaker = 'own_speaker'),
+                    ((e.OwnSpeaker = 'own_speaker'),
                         (e.Chromecast = 'chromecast'),
                         (e.Bluetooth = 'bluetooth'),
                         (e.Airplay = 'airplay'),
@@ -1304,10 +1304,10 @@
                         (e.AndroidWear = 'android_wear'),
                         (e.AppleTv = 'apple_tv'),
                         (e.YandexStation = 'yandex_station'),
-                        (e.YandexTv = 'yandex_tv');
+                        (e.YandexTv = 'yandex_tv'));
                 })(R || (R = {})),
                 (function (e) {
-                    (e.Carousel = 'carousel'),
+                    ((e.Carousel = 'carousel'),
                         (e.Shelf = 'shelf'),
                         (e.List = 'list'),
                         (e.Header = 'header'),
@@ -1388,13 +1388,13 @@
                         (e.WordsInWave = 'words_in_wave'),
                         (e.Wheel = 'wheel'),
                         (e.Q2vWave = 'q2v_wave'),
-                        (e.Multiwave = 'multiwave');
+                        (e.Multiwave = 'multiwave'));
                 })(E || (E = {})),
                 (function (e) {
-                    (e.UserAction = 'user_action'), (e.OnboardingEnd = 'onboarding_end');
+                    ((e.UserAction = 'user_action'), (e.OnboardingEnd = 'onboarding_end'));
                 })(N || (N = {})),
                 (function (e) {
-                    (e.Ok = 'ok'),
+                    ((e.Ok = 'ok'),
                         (e.Cancel = 'cancel'),
                         (e.Later = 'later'),
                         (e.Add = 'add'),
@@ -1460,21 +1460,21 @@
                         (e.SearchItemSelected = 'search_item_selected'),
                         (e.ShakeWave = 'shake_wave'),
                         (e.LumenAwakened = 'lumen_awakened'),
-                        (e.Rename = 'rename');
+                        (e.Rename = 'rename'));
                 })(M || (M = {})),
                 (function (e) {
-                    (e.Fullscreen = 'fullscreen'),
+                    ((e.Fullscreen = 'fullscreen'),
                         (e.Bottomsheet = 'bottomsheet'),
                         (e.Tooltip = 'tooltip'),
                         (e.Dialog = 'dialog'),
                         (e.Popup = 'popup'),
-                        (e.Miniplayer = 'miniplayer');
+                        (e.Miniplayer = 'miniplayer'));
                 })(F || (F = {})),
                 (function (e) {
-                    (e.Main = 'main'), (e.Podcasts = 'podcasts'), (e.Audiobooks = 'audiobooks'), (e.Kids = 'kids'), (e.Own = 'own'), (e.Concerts = 'concerts');
+                    ((e.Main = 'main'), (e.Podcasts = 'podcasts'), (e.Audiobooks = 'audiobooks'), (e.Kids = 'kids'), (e.Own = 'own'), (e.Concerts = 'concerts'));
                 })(D || (D = {})),
                 (function (e) {
-                    (e.Top = 'top'),
+                    ((e.Top = 'top'),
                         (e.Track = 'track'),
                         (e.Album = 'album'),
                         (e.Artist = 'artist'),
@@ -1489,19 +1489,19 @@
                         (e.Video = 'video'),
                         (e.Clip = 'clip'),
                         (e.Other = 'other'),
-                        (e.Concert = 'concert');
+                        (e.Concert = 'concert'));
                 })(O || (O = {})),
                 (function (e) {
-                    (e.Artist = 'artist'),
+                    ((e.Artist = 'artist'),
                         (e.Track = 'track'),
                         (e.Playlist = 'playlist'),
                         (e.Album = 'album'),
                         (e.Wave = 'wave'),
                         (e.Video = 'video'),
-                        (e.Concert = 'concert');
+                        (e.Concert = 'concert'));
                 })(I || (I = {})),
                 (function (e) {
-                    (e.ArtistScreen = 'artist_screen'),
+                    ((e.ArtistScreen = 'artist_screen'),
                         (e.AlbumScreen = 'album_screen'),
                         (e.CompilationsScreen = 'compilations_screen'),
                         (e.PlaylistScreen = 'playlist_screen'),
@@ -1515,32 +1515,32 @@
                         (e.VideoScreen = 'video_screen'),
                         (e.VideoWaveScreen = 'video_wave_screen'),
                         (e.ConcertScreen = 'concert_screen'),
-                        (e.ConcertPurchaseScreen = 'concert_purchase_screen');
+                        (e.ConcertPurchaseScreen = 'concert_purchase_screen'));
                 })(x || (x = {})),
                 (function (e) {
-                    (e.Small = 'small'), (e.Medium = 'medium');
+                    ((e.Small = 'small'), (e.Medium = 'medium'));
                 })(B || (B = {})),
                 (function (e) {
-                    (e.Top = 'top'), (e.Bottom = 'bottom'), (e.Left = 'left'), (e.Right = 'right');
+                    ((e.Top = 'top'), (e.Bottom = 'bottom'), (e.Left = 'left'), (e.Right = 'right'));
                 })(W || (W = {})),
                 (function (e) {
-                    (e.PersonalResults = 'personal_results'),
+                    ((e.PersonalResults = 'personal_results'),
                         (e.ArtistPersonalResults = 'artist_personal_results'),
                         (e.PodcastResults = 'podcast_results'),
-                        (e.Special = 'special');
+                        (e.Special = 'special'));
                 })(j || (j = {})),
                 (function (e) {
-                    (e.Pult = 'pult'),
+                    ((e.Pult = 'pult'),
                         (e.PultWithStation = 'pult_with_station'),
                         (e.FullScreen = 'full_screen'),
                         (e.NonFullScreen = 'non_full_screen'),
-                        (e.Bottomsheet = 'bottomsheet');
+                        (e.Bottomsheet = 'bottomsheet'));
                 })(U || (U = {})),
                 (function (e) {
-                    (e.Timer = 'timer'), (e.Cross = 'cross');
+                    ((e.Timer = 'timer'), (e.Cross = 'cross'));
                 })(V || (V = {})),
                 (function (e) {
-                    (e.Promotions = 'promotions'),
+                    ((e.Promotions = 'promotions'),
                         (e.Popular = 'popular'),
                         (e.TrackChart = 'track-chart'),
                         (e.AlbumChart = 'album-chart'),
@@ -1559,10 +1559,10 @@
                         (e.Shelf = 'shelf'),
                         (e.BookmateBanner = 'bookmateBanner'),
                         (e.MenuTab = 'menuTab'),
-                        (e.ContinueListen = 'continue-listen');
+                        (e.ContinueListen = 'continue-listen'));
                 })(H || (H = {})),
                 (function (e) {
-                    (e.AlbumListScreen = 'album_list_screen'),
+                    ((e.AlbumListScreen = 'album_list_screen'),
                         (e.PlaylistListScreen = 'playlist_list_screen'),
                         (e.AlbumChartScreen = 'album_chart_screen'),
                         (e.TrackChartScreen = 'track_chart_screen'),
@@ -1574,26 +1574,26 @@
                         (e.MixesTabScreen = 'mixes_tab_screen'),
                         (e.RecentlyPlayedScreen = 'recentlyPlayedScreen'),
                         (e.LikedScreen = 'likedScreen'),
-                        (e.PodcastsTabScreen = 'podcasts_tab_screen');
+                        (e.PodcastsTabScreen = 'podcasts_tab_screen'));
                 })(K || (K = {})),
                 (function (e) {
-                    (e.User = 'user'), (e.Smart = 'smart'), (e.Editor = 'editor'), (e.Liked = 'liked'), (e.Chart = 'chart'), (e.Unknown = 'unknown');
+                    ((e.User = 'user'), (e.Smart = 'smart'), (e.Editor = 'editor'), (e.Liked = 'liked'), (e.Chart = 'chart'), (e.Unknown = 'unknown'));
                 })(q || (q = {})),
                 (function (e) {
-                    (e.AlbumListScreen = 'album_list_screen'),
+                    ((e.AlbumListScreen = 'album_list_screen'),
                         (e.PlaylistListScreen = 'playlist_list_screen'),
                         (e.PlaylistScreen = 'playlist_screen'),
                         (e.AlbumScreen = 'album_screen'),
                         (e.TreesScreen = 'trees_screen'),
                         (e.StoriesScreen = 'stories_screen'),
-                        (e.Link = 'link');
+                        (e.Link = 'link'));
                 })(G || (G = {})),
                 (function (e) {
-                    (e.Square = 'square'), (e.Rectangle = 'rectangle'), (e.RectangleWithRecently = 'rectangle_with_recently'), (e.Unknown = 'unknown');
+                    ((e.Square = 'square'), (e.Rectangle = 'rectangle'), (e.RectangleWithRecently = 'rectangle_with_recently'), (e.Unknown = 'unknown'));
                 })(z || (z = {})),
                 (function (e) {
-                    (e.CLICK = 'click'), (e.SWIPE = 'swipe'), (e.PINCH = 'pinch'), (e.DRAG = 'drag');
-                })(Q || (Q = {}));
+                    ((e.CLICK = 'click'), (e.SWIPE = 'swipe'), (e.PINCH = 'pinch'), (e.DRAG = 'drag'));
+                })(Q || (Q = {})));
         },
         29222: (e, n, t) => {
             t.d(n, { t: () => i });
@@ -1614,7 +1614,7 @@
                         function r() {
                             this.constructor = n;
                         }
-                        e(n, t), (n.prototype = null === t ? Object.create(t) : ((r.prototype = t.prototype), new r()));
+                        (e(n, t), (n.prototype = null === t ? Object.create(t) : ((r.prototype = t.prototype), new r())));
                     };
                 })(),
                 c = function (e, n) {
@@ -1647,7 +1647,7 @@
                             i
                         );
                     }
-                    return r(n, e), n;
+                    return (r(n, e), n);
                 })(Error);
         },
         34186: (e, n, t) => {

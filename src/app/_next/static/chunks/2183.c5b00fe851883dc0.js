@@ -57,7 +57,7 @@
                                 decodeURIComponent(
                                     atob(r).replace(/(.)/g, (e, t) => {
                                         let r = t.charCodeAt(0).toString(16).toUpperCase();
-                                        return r.length < 2 && (r = '0' + r), '%' + r;
+                                        return (r.length < 2 && (r = '0' + r), '%' + r);
                                     }),
                                 )
                             );
@@ -87,9 +87,9 @@
                             let t = localStorage.getItem(e);
                             if (null !== t) return JSON.parse(t);
                             let r = s();
-                            return (!o || r) && localStorage.setItem(e, JSON.stringify(r)), r;
+                            return ((!o || r) && localStorage.setItem(e, JSON.stringify(r)), r);
                         } catch (t) {
-                            return console.error(`Failed to read localStorage key "${e}":`, t), s();
+                            return (console.error(`Failed to read localStorage key "${e}":`, t), s());
                         }
                     });
                 return (
@@ -103,7 +103,7 @@
                                     console.error(`Failed to sync localStorage key "${e}":`, t);
                                 }
                         };
-                        return window.addEventListener('storage', t), () => window.removeEventListener('storage', t);
+                        return (window.addEventListener('storage', t), () => window.removeEventListener('storage', t));
                     }, [e]),
                     {
                         value: i,

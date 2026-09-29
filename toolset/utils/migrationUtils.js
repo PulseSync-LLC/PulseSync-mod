@@ -17,14 +17,7 @@ const MAIN_SRC_IGNORES = [
 ];
 const PREVIEW_LIMIT = 15;
 const FEATURE_TEXT_GLOBS = ['**/*.{js,cjs,mjs,json,css}'];
-const FEATURE_TEXT_IGNORES = [
-    '**/node_modules/**',
-    '**/.git/**',
-    '**/translations/compiled/**',
-    '**/.DS_Store',
-    '**/dist/**',
-    '**/build/**',
-];
+const FEATURE_TEXT_IGNORES = ['**/node_modules/**', '**/.git/**', '**/translations/compiled/**', '**/.DS_Store', '**/dist/**', '**/build/**'];
 const FEATURE_DEFINITIONS = [
     {
         id: 'download_to_file_ui',
@@ -714,12 +707,8 @@ function createMigrationUtils(runtime) {
 
     function formatPackageDiffSummary(packageDiff) {
         const lines = [];
-        lines.push(
-            `Поля package.json: +${packageDiff.fields.added.length} / ~${packageDiff.fields.changed.length} / -${packageDiff.fields.removed.length}`,
-        );
-        lines.push(
-            `dependencies: +${packageDiff.dependencies.added.length} / ~${packageDiff.dependencies.changed.length} / -${packageDiff.dependencies.removed.length}`,
-        );
+        lines.push(`Поля package.json: +${packageDiff.fields.added.length} / ~${packageDiff.fields.changed.length} / -${packageDiff.fields.removed.length}`);
+        lines.push(`dependencies: +${packageDiff.dependencies.added.length} / ~${packageDiff.dependencies.changed.length} / -${packageDiff.dependencies.removed.length}`);
         lines.push(
             `devDependencies: +${packageDiff.devDependencies.added.length} / ~${packageDiff.devDependencies.changed.length} / -${packageDiff.devDependencies.removed.length}`,
         );
@@ -867,11 +856,7 @@ function createMigrationUtils(runtime) {
             const srcPresent = srcMatches.some((item) => item.present);
             const targetPresent = targetMatches.some((item) => item.present);
             const targetCandidates = roots.target
-                ? (
-                      await Promise.all(
-                          feature.roots.map((rootName) => scanCandidateFilesInRoot(roots.target[rootName], feature, rootName)),
-                      )
-                  ).flat()
+                ? (await Promise.all(feature.roots.map((rootName) => scanCandidateFilesInRoot(roots.target[rootName], feature, rootName)))).flat()
                 : [];
 
             featureResults.push({
@@ -929,7 +914,7 @@ function createMigrationUtils(runtime) {
                 lines.push(`- note: ${feature.note}`);
             }
 
-            const previewHits = includeTarget ? feature.target?.hits ?? [] : feature.src.hits;
+            const previewHits = includeTarget ? (feature.target?.hits ?? []) : feature.src.hits;
             formatPreviewSection('Key files', previewHits, (item) => `${item.path} [${item.matchedPatterns.join(', ')}]`).forEach((line) => lines.push(line));
             if (includeTarget && feature.status.missingInTarget) {
                 formatPreviewSection(
@@ -1032,20 +1017,15 @@ function createMigrationUtils(runtime) {
             formatPreviewSection('src files', item.sourceFiles).forEach((line) => lines.push(line));
             formatPreviewSection('target candidates', item.targetCandidates).forEach((line) => lines.push(line));
             if (item.sourceAnchors?.length) {
-                formatPreviewSection(
-                    'src anchors',
-                    item.sourceAnchors,
-                    (anchor) => `${anchor.path} [${anchor.matchedPatterns.join(', ')}]`,
-                ).forEach((line) => lines.push(line));
+                formatPreviewSection('src anchors', item.sourceAnchors, (anchor) => `${anchor.path} [${anchor.matchedPatterns.join(', ')}]`).forEach((line) =>
+                    lines.push(line),
+                );
             }
             if (item.targetAnchors?.length) {
                 formatPreviewSection(
                     'target anchors',
                     item.targetAnchors,
-                    (anchor) =>
-                        `${anchor.path}${anchor.matchedPatterns.length ? ` [${anchor.matchedPatterns.join(', ')}]` : ''}${
-                            anchor.viaHint ? ' {hint}' : ''
-                        }`,
+                    (anchor) => `${anchor.path}${anchor.matchedPatterns.length ? ` [${anchor.matchedPatterns.join(', ')}]` : ''}${anchor.viaHint ? ' {hint}' : ''}`,
                 ).forEach((line) => lines.push(line));
             }
             lines.push('');
@@ -1093,9 +1073,7 @@ function createMigrationUtils(runtime) {
         lines.push('');
         lines.push(...formatDirectoryDiffSummary('app', report.baselineToSrc.appDiff));
         lines.push('');
-        lines.push(
-            `main signals: +${report.baselineToSrc.mainSignals.counts.added} / -${report.baselineToSrc.mainSignals.counts.removed} относительно baseline`,
-        );
+        lines.push(`main signals: +${report.baselineToSrc.mainSignals.counts.added} / -${report.baselineToSrc.mainSignals.counts.removed} относительно baseline`);
         lines.push(...formatPreviewSection('Кастомные main-сигналы src', report.baselineToSrc.mainSignals.added, formatSignalPreview));
         lines.push(...formatPreviewSection('Удалённые baseline main-сигналы', report.baselineToSrc.mainSignals.removed, formatSignalPreview));
         lines.push('');
@@ -1154,12 +1132,7 @@ function createMigrationUtils(runtime) {
 
     async function analyzeMigration({ baselineRoot, srcRoot = SRC_PATH, targetRoot = null, reportDir = null }) {
         const resolvedReportDir =
-            reportDir ??
-            path.join(
-                TEMP_DIR,
-                'migration-reports',
-                `${path.basename(baselineRoot)}__${targetRoot ? path.basename(targetRoot) : 'src-analysis'}`,
-            );
+            reportDir ?? path.join(TEMP_DIR, 'migration-reports', `${path.basename(baselineRoot)}__${targetRoot ? path.basename(targetRoot) : 'src-analysis'}`);
 
         const baselineMainPath = path.join(baselineRoot, 'index.js');
         const baselinePreloadPath = path.join(baselineRoot, 'preload.js');
@@ -1171,17 +1144,25 @@ function createMigrationUtils(runtime) {
         const srcAppPath = path.join(srcRoot, 'app');
         const srcPackagePath = path.join(srcRoot, 'package.json');
 
-        const [baselineAppDiff, baselinePackageDiff, baselineMainSignals, srcMainSignals, baselinePreloadSignals, srcPreloadSignals, baselineEventConstants, srcEventConstants] =
-            await Promise.all([
-                compareDirectoryTrees(baselineAppPath, srcAppPath),
-                comparePackageJson(baselinePackagePath, srcPackagePath),
-                extractSignals(baselineMainPath, 'main-file'),
-                extractSignals(srcMainPath, 'src-main'),
-                extractSignals(baselinePreloadPath, 'preload-file'),
-                extractSignals(srcPreloadPath, 'preload-file'),
-                extractEventEnum(baselineMainPath),
-                extractEventEnum(path.join(srcMainPath, 'types')),
-            ]);
+        const [
+            baselineAppDiff,
+            baselinePackageDiff,
+            baselineMainSignals,
+            srcMainSignals,
+            baselinePreloadSignals,
+            srcPreloadSignals,
+            baselineEventConstants,
+            srcEventConstants,
+        ] = await Promise.all([
+            compareDirectoryTrees(baselineAppPath, srcAppPath),
+            comparePackageJson(baselinePackagePath, srcPackagePath),
+            extractSignals(baselineMainPath, 'main-file'),
+            extractSignals(srcMainPath, 'src-main'),
+            extractSignals(baselinePreloadPath, 'preload-file'),
+            extractSignals(srcPreloadPath, 'preload-file'),
+            extractEventEnum(baselineMainPath),
+            extractEventEnum(path.join(srcMainPath, 'types')),
+        ]);
         const featureAudit = await scanFeatures({ baselineRoot, srcRoot, targetRoot });
 
         const report = {
@@ -1208,13 +1189,7 @@ function createMigrationUtils(runtime) {
             const targetAppPath = path.join(targetRoot, 'app');
             const targetPackagePath = path.join(targetRoot, 'package.json');
 
-            const [
-                baselineTargetAppDiff,
-                baselineTargetPackageDiff,
-                targetMainSignals,
-                targetPreloadSignals,
-                targetEventConstants,
-            ] = await Promise.all([
+            const [baselineTargetAppDiff, baselineTargetPackageDiff, targetMainSignals, targetPreloadSignals, targetEventConstants] = await Promise.all([
                 compareDirectoryTrees(baselineAppPath, targetAppPath),
                 comparePackageJson(baselinePackagePath, targetPackagePath),
                 extractSignals(targetMainPath, 'main-file'),
@@ -1248,10 +1223,7 @@ function createMigrationUtils(runtime) {
         const reportText = buildReportText(report);
         await ensureDir(resolvedReportDir);
 
-        await Promise.all([
-            writeText(path.join(resolvedReportDir, 'report.md'), reportText),
-            writeJson(path.join(resolvedReportDir, 'summary.json'), report),
-        ]);
+        await Promise.all([writeText(path.join(resolvedReportDir, 'report.md'), reportText), writeJson(path.join(resolvedReportDir, 'summary.json'), report)]);
 
         report.artifacts = {
             reportPath: path.join(resolvedReportDir, 'report.md'),

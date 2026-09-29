@@ -27,7 +27,7 @@
                 l = i(60900),
                 s = i(64605),
                 r = (function (t) {
-                    return (t.PIN = 'pin'), t;
+                    return ((t.PIN = 'pin'), t);
                 })({});
             let o = (t, e) => {
                 let { formatMessage: i } = (0, l.A)();
@@ -254,7 +254,7 @@
             });
         },
         59238: (t, e, i) => {
-            Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 57382));
+            (Promise.resolve().then(i.bind(i, 3377)), Promise.resolve().then(i.bind(i, 57382)));
         },
         59449: (t) => {
             t.exports = {
@@ -426,12 +426,12 @@
                         A = (0, S.K)(s),
                         [C, p] = (0, r.useState)(!1),
                         E = (0, d.c)(async () => {
-                            C || s.isLiked || (p(!0), null == m || m()), await A();
+                            (C || s.isLiked || (p(!0), null == m || m()), await A());
                         }),
                         k = (0, j.F)(),
                         h = (0, d.c)((t) => {
                             if ((t.stopPropagation(), u())) return void t.preventDefault();
-                            c.openAlbumTrailer(s.id), k(o.ky.Album, String(s.id));
+                            (c.openAlbumTrailer(s.id), k(o.ky.Album, String(s.id)));
                         });
                     return (0, a.jsxs)('div', {
                         className: (0, l.$)(z().root, z().controls, i, { [z().controls_disabled]: !s.isAvailable }),
@@ -491,19 +491,19 @@
                         te = (0, A.c)({ album: i, callback: V }),
                         ti = (0, A.c)({ album: i, callback: tt }),
                         ta = (0, d.c)((t) => {
-                            null == X || X(), Q({ to: o.QT.AlbumScreen }), te(t);
+                            (null == X || X(), Q({ to: o.QT.AlbumScreen }), te(t));
                         }),
                         tl = (0, d.c)(() => {
                             if (!W()) {
                                 if (G) return void q.open();
-                                $ || Z || (H(!0), null == F || F()), ti(), K(!Z);
+                                ($ || Z || (H(!0), null == F || F()), ti(), K(!Z));
                             }
                         }),
                         ts = (0, d.c)((t) => {
-                            (0, u.P)(t, g.$f.ripple), ta(t);
+                            ((0, u.P)(t, g.$f.ripple), ta(t));
                         }),
                         tr = (0, d.c)((t) => {
-                            t.stopPropagation(), ta(t);
+                            (t.stopPropagation(), ta(t));
                         }),
                         to = (0, r.useCallback)(
                             (t) =>
@@ -565,7 +565,7 @@
         },
     },
     (t) => {
-        t.O(
+        (t.O(
             0,
             [
                 5718, 7034, 6347, 3183, 3931, 7972, 7231, 8868, 9763, 6639, 7258, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6252, 6477, 7275, 2586,
@@ -573,6 +573,6 @@
             ],
             () => t((t.s = 59238)),
         ),
-            (_N_E = t.O());
+            (_N_E = t.O()));
     },
 ]);

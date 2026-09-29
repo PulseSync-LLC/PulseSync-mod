@@ -16,15 +16,15 @@
                     u = (0, i.useRef)(void 0),
                     _ = (0, o.c)(() => {
                         var a;
-                        d({ notificationId: u.current }), (u.current = 0);
+                        (d({ notificationId: u.current }), (u.current = 0));
                         let s = [...(null != (a = e.lastRejectedPagesList) ? a : [])].reverse().filter((t) => {
                             var a;
                             return (null == (a = e.pageStates) ? void 0 : a[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             s.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, i.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !u.current && (u.current = a((0, s.jsx)(l.L, { reloadBlocks: _ }), { containerId: n.u.ERROR, autoClose: !1 }));
@@ -79,7 +79,7 @@
                     },
                     [t, e.account.data.uid],
                 );
-                (0, k.X)(t.pagesLoader, I),
+                ((0, k.X)(t.pagesLoader, I),
                     (0, l.useEffect)(
                         () => () => {
                             t.reset();
@@ -88,7 +88,7 @@
                     ),
                     e.account.data.uid &&
                         t.isNeededToLoad &&
-                        (0, l.use)(t.getData({ userId: e.account.data.uid, sortOrder: d.x.DESC, playlistMetaType: u.S.MUSIC, page: 0, pageSize: 20 }));
+                        (0, l.use)(t.getData({ userId: e.account.data.uid, sortOrder: d.x.DESC, playlistMetaType: u.S.MUSIC, page: 0, pageSize: 20 })));
                 let T = t.isShimmerVisible ? 20 : t.items.length;
                 return (0, s.jsx)(g.n, {
                     pageId: C._Q.OWN_PLAYLISTS,
@@ -147,7 +147,7 @@
             };
         },
         63393: (e, t, a) => {
-            Promise.resolve().then(a.bind(a, 3377)), Promise.resolve().then(a.bind(a, 14824));
+            (Promise.resolve().then(a.bind(a, 3377)), Promise.resolve().then(a.bind(a, 14824)));
         },
         70718: (e) => {
             e.exports = {
@@ -210,7 +210,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 5718, 7034, 7231, 6347, 3183, 9763, 6639, 7258, 2163, 6706, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6477, 7275, 2586, 8347, 7702, 6874,
@@ -218,6 +218,6 @@
             ],
             () => e((e.s = 63393)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

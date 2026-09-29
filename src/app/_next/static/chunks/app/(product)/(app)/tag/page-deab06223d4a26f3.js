@@ -9,10 +9,10 @@
         2047: (e, t, i) => {
             'use strict';
             var r;
-            i.d(t, { L: () => r }),
+            (i.d(t, { L: () => r }),
                 (function (e) {
-                    (e.PUBLIC = 'public'), (e.PRIVATE = 'private');
-                })(r || (r = {}));
+                    ((e.PUBLIC = 'public'), (e.PRIVATE = 'private'));
+                })(r || (r = {})));
         },
         5245: (e, t, i) => {
             'use strict';
@@ -32,7 +32,7 @@
                         let e = () => {
                             for (let e of i()) (0, r.X6)(s, e);
                         };
-                        return e(), window.addEventListener(n, e), () => window.removeEventListener(n, e);
+                        return (e(), window.addEventListener(n, e), () => window.removeEventListener(n, e));
                     }, [i, n, s]),
                     { store: s, patchesRef: l }
                 );
@@ -53,11 +53,11 @@
                 a = i(50891);
             class n extends a.m {
                 constructor(e, t) {
-                    super(e, { code: 'E_HTTP_CLIENT_NON_2XX_3XX_RESPONSE', cause: t.cause }),
+                    (super(e, { code: 'E_HTTP_CLIENT_NON_2XX_3XX_RESPONSE', cause: t.cause }),
                         (0, r._)(this, 'name', 'HttpErrorException'),
                         (0, r._)(this, 'statusCode', void 0),
                         (this.statusCode = t.statusCode),
-                        Object.setPrototypeOf(this, n.prototype);
+                        Object.setPrototypeOf(this, n.prototype));
                 }
             }
         },
@@ -76,15 +76,15 @@
                     d = (0, a.useRef)(void 0),
                     g = (0, n.c)(() => {
                         var i;
-                        u({ notificationId: d.current }), (d.current = 0);
+                        (u({ notificationId: d.current }), (d.current = 0));
                         let r = [...(null != (i = e.lastRejectedPagesList) ? i : [])].reverse().filter((t) => {
                             var i;
                             return (null == (i = e.pageStates) ? void 0 : i[t]) === c.G.REJECT;
                         });
-                        e.resetRejectedPagesState(),
+                        (e.resetRejectedPagesState(),
                             r.forEach((e) => {
                                 t(e);
-                            });
+                            }));
                     });
                 (0, a.useEffect)(() => {
                     e.rejectedPagesCount > 0 && !d.current && (d.current = i((0, r.jsx)(l.L, { reloadBlocks: g }), { containerId: s.u.ERROR, autoClose: !1 }));
@@ -163,7 +163,7 @@
             'use strict';
             i.d(t, { Y: () => r });
             var r = (function (e) {
-                return (e.OK = 'ok'), (e.ERROR = 'error'), (e.RELOAD = 'reload'), e;
+                return ((e.OK = 'ok'), (e.ERROR = 'error'), (e.RELOAD = 'reload'), e);
             })({});
         },
         20472: (e, t, i) => {
@@ -463,14 +463,14 @@
         33898: (e, t, i) => {
             'use strict';
             var r;
-            i.d(t, { Z: () => r }),
+            (i.d(t, { Z: () => r }),
                 (function (e) {
-                    (e.METHOD_NOT_SUPPORTED = 'E_BEACON_METHOD_NOT_SUPPORTED'),
+                    ((e.METHOD_NOT_SUPPORTED = 'E_BEACON_METHOD_NOT_SUPPORTED'),
                         (e.NOT_AVAILABLE = 'E_BEACON_NOT_AVAILABLE'),
                         (e.QUEUE_FAILED = 'E_BEACON_QUEUE_FAILED'),
                         (e.NO_RESPONSE_DATA = 'E_BEACON_NO_RESPONSE_DATA'),
-                        (e.RETRY_EXHAUSTED = 'E_BEACON_RETRY_EXHAUSTED');
-                })(r || (r = {}));
+                        (e.RETRY_EXHAUSTED = 'E_BEACON_RETRY_EXHAUSTED'));
+                })(r || (r = {})));
         },
         34925: (e, t, i) => {
             'use strict';
@@ -582,7 +582,7 @@
                                 entity: t,
                                 callback: i,
                                 onBeforeHandle: (e) => {
-                                    null == e || e.stopPropagation(), l.isOpened && (r.reset(), l.close()), a.modal.isOpened && a.modal.close();
+                                    (null == e || e.stopPropagation(), l.isOpened && (r.reset(), l.close()), a.modal.isOpened && a.modal.close());
                                 },
                                 onAfterHandled: () => {
                                     n.modal.isOpened && (n.modal.close(), n.reset());
@@ -592,11 +592,11 @@
                         })({
                             artist: t,
                             callback: (0, p.c)((e) => {
-                                x && L.isOpened && L.close(), T(e);
+                                (x && L.isOpened && L.close(), T(e));
                             }),
                         }),
                         N = (0, p.c)((e) => {
-                            A({ to: _.QT.ArtistScreen }), null == P || P(), R(e);
+                            (A({ to: _.QT.ArtistScreen }), null == P || P(), R(e));
                         });
                     return i && !t.various
                         ? (0, r.jsx)(f.N, {
@@ -813,7 +813,7 @@
                         } = (0, o.g)(),
                         O = 1 === i.length,
                         b = (0, l.useCallback)((e) => {
-                            N(!0), e.preventDefault();
+                            (N(!0), e.preventDefault());
                         }, []),
                         j = (0, l.useMemo)(() => {
                             let e = i;
@@ -870,7 +870,7 @@
             'use strict';
             i.d(t, { j: () => r });
             var r = (function (e) {
-                return (e[(e.LIKE = 3)] = 'LIKE'), (e[(e.CHART = 1076)] = 'CHART'), e;
+                return ((e[(e.LIKE = 3)] = 'LIKE'), (e[(e.CHART = 1076)] = 'CHART'), e);
             })({});
         },
         45066: (e, t, i) => {
@@ -1104,7 +1104,7 @@
                         a = () => {
                             var e, t;
                             let r = null != (t = null == (e = window.__PAGE_STATE_PATCHES__) ? void 0 : e[i]) ? t : [];
-                            return window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[i], r;
+                            return (window.__PAGE_STATE_PATCHES__ && delete window.__PAGE_STATE_PATCHES__[i], r);
                         };
                     return {
                         pageStoreProvider: (e) => {
@@ -1143,29 +1143,29 @@
                 a = i(29222);
             class n extends a.t {
                 constructor(e = 'Http Client error', { code: t = 'E_HTTP_CLIENT', ...i } = {}) {
-                    super(e, { code: t, ...i }), (0, r._)(this, 'name', 'HttpException'), Object.setPrototypeOf(this, n.prototype);
+                    (super(e, { code: t, ...i }), (0, r._)(this, 'name', 'HttpException'), Object.setPrototypeOf(this, n.prototype));
                 }
             }
         },
         50961: (e, t, i) => {
             'use strict';
             var r;
-            i.d(t, { X: () => r }),
+            (i.d(t, { X: () => r }),
                 (function (e) {
-                    (e[(e.NOT_MODIFIED = 304)] = 'NOT_MODIFIED'),
+                    ((e[(e.NOT_MODIFIED = 304)] = 'NOT_MODIFIED'),
                         (e[(e.NOT_FOUND = 404)] = 'NOT_FOUND'),
                         (e[(e.BAD_REQUEST = 400)] = 'BAD_REQUEST'),
                         (e[(e.REQUEST_TIMEOUT = 408)] = 'REQUEST_TIMEOUT'),
                         (e[(e.PRECONDITION_FAILED = 412)] = 'PRECONDITION_FAILED'),
-                        (e[(e.TEAPOT = 418)] = 'TEAPOT');
-                })(r || (r = {}));
+                        (e[(e.TEAPOT = 418)] = 'TEAPOT'));
+                })(r || (r = {})));
         },
         52598: (e) => {
             e.exports = { root: 'SeparatedArtistsWithContextMenuMobile_root__4BiJL', important: 'SeparatedArtistsWithContextMenuMobile_important__fSF1h' };
         },
         53126: (e, t, i) => {
             'use strict';
-            i.r(t), i.d(t, { default: () => H });
+            (i.r(t), i.d(t, { default: () => H }));
             var r = i(32290),
                 a = i(21916),
                 n = i(55178),
@@ -1223,15 +1223,19 @@
                                             o = l.playlists.map(u.j);
                                         e.pagesLoader.setItems(o, { page: i, pager: s });
                                     } catch (t) {
-                                        n.error(t),
+                                        (n.error(t),
                                             e.pagesLoader.setItems(null, { responseStatus: g.F.ERROR, page: i }),
                                             t instanceof c.GX &&
                                                 (t.statusCode === c.X1.NOT_FOUND || t.statusCode === c.X1.BAD_REQUEST) &&
-                                                (e.errorStatusCode = c.X1.NOT_FOUND);
+                                                (e.errorStatusCode = c.X1.NOT_FOUND));
                                     }
                             }),
                             reset() {
-                                e.pagesLoader.reset(), (e.tagLoadingState = _.G.IDLE), (e.title = void 0), (e.playlistsData = (0, o.wg)([])), (e.errorStatusCode = null);
+                                (e.pagesLoader.reset(),
+                                    (e.tagLoadingState = _.G.IDLE),
+                                    (e.title = void 0),
+                                    (e.playlistsData = (0, o.wg)([])),
+                                    (e.errorStatusCode = null));
                             },
                             getTag: (0, o.L3)(function* (i) {
                                 let { id: r, page: a = 0, pageSize: n = 20 } = i,
@@ -1241,16 +1245,16 @@
                                         var u;
                                         e.tagLoadingState = _.G.PENDING;
                                         let i = yield l.getPlaylistIds({ id: r });
-                                        (e.title = null == (u = i.tag) ? void 0 : u.name),
+                                        ((e.title = null == (u = i.tag) ? void 0 : u.name),
                                             (e.playlistsData = (0, o.wg)(i.ids.map((e) => ({ uid: e.uid, kind: e.kind })))),
                                             e.tagLoadingState !== _.G.IDLE && (e.tagLoadingState = _.G.RESOLVE),
-                                            yield t.getPlaylists({ page: a, pageSize: n });
+                                            yield t.getPlaylists({ page: a, pageSize: n }));
                                     } catch (t) {
-                                        s.error(t),
+                                        (s.error(t),
                                             t instanceof c.GX &&
                                                 (t.statusCode === c.X1.NOT_FOUND || t.statusCode === c.X1.BAD_REQUEST) &&
                                                 (e.errorStatusCode = c.X1.NOT_FOUND),
-                                            e.tagLoadingState !== _.G.IDLE && (e.tagLoadingState = _.G.REJECT);
+                                            e.tagLoadingState !== _.G.IDLE && (e.tagLoadingState = _.G.REJECT));
                                     }
                             }),
                         };
@@ -1388,7 +1392,7 @@
                 try {
                     return JSON.parse(e);
                 } catch (e) {
-                    return console.error(e), null;
+                    return (console.error(e), null);
                 }
             }
             class n {
@@ -1443,7 +1447,7 @@
                         let l = a(n);
                         if (!l) return null;
                         let s = null != (r = null == l ? void 0 : l.value) ? r : null;
-                        if ((null == l ? void 0 : l.expires) && Date.now() > new Date(l.expires).getTime()) return this.remove(e), null;
+                        if ((null == l ? void 0 : l.expires) && Date.now() > new Date(l.expires).getTime()) return (this.remove(e), null);
                         return s;
                     } catch (e) {
                         return null;
@@ -1452,7 +1456,7 @@
                 set(e, t, i) {
                     if ('number' == typeof (null == i ? void 0 : i.expires)) {
                         let e = new Date();
-                        e.setMilliseconds(e.getMilliseconds() + 864e5 * i.expires), (i.expires = e);
+                        (e.setMilliseconds(e.getMilliseconds() + 864e5 * i.expires), (i.expires = e));
                     }
                     let r = l('localStorage');
                     if (r)
@@ -1475,9 +1479,9 @@
                 c = i(29222);
             class u extends c.t {
                 constructor(e, t, { code: i = 'E_STORAGE', ...r } = {}) {
-                    super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: i, ...r }),
+                    (super('There is no '.concat(t, ' storage on the ').concat(e, ' platform'), { code: i, ...r }),
                         (0, o._)(this, 'name', 'Storage Exception'),
-                        Object.setPrototypeOf(this, u.prototype);
+                        Object.setPrototypeOf(this, u.prototype));
                 }
             }
             class d {
@@ -1494,7 +1498,7 @@
                     throw new u(this.platform, this.type);
                 }
                 constructor(e, t) {
-                    (0, o._)(this, 'platform', ''), (0, o._)(this, 'type', ''), (this.platform = e), (this.type = t);
+                    ((0, o._)(this, 'platform', ''), (0, o._)(this, 'type', ''), (this.platform = e), (this.type = t));
                 }
             }
             class g {
@@ -1664,7 +1668,7 @@
                                 case 'spa':
                                 case 'web': {
                                     let e = [l, c, u];
-                                    return 'ru' === n && e.push(o), e.push(d), e;
+                                    return ('ru' === n && e.push(o), e.push(d), e);
                                 }
                                 case 'desktop':
                                     return [l, c, u, d];
@@ -1821,7 +1825,7 @@
                         };
                     })(),
                     C = (0, l.useCallback)(() => {
-                        S(), (window.location.href = v.Z.main.href);
+                        (S(), (window.location.href = v.Z.main.href));
                     }, [S]),
                     { contentRef: L } = (0, h.g)();
                 return (0, r.jsxs)('div', {
@@ -1970,10 +1974,10 @@
                         let n = { ...(0, a.HO)(e), url: e.url, isLiked: !e.isLiked };
                         _(!0);
                         let l = await e.toggleLike();
-                        _(!1),
+                        (_(!1),
                             l === s.f.OK
                                 ? i((0, r.jsx)(m, { playlist: n }), { containerId: o.u.INFO })
-                                : i((0, r.jsx)(d.h, { error: p({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR });
+                                : i((0, r.jsx)(d.h, { error: p({ id: 'error-messages.error-during-action' }) }), { containerId: o.u.ERROR }));
                     }, [t.isAuthorized, g, e, p, i]);
                 };
         },
@@ -2014,10 +2018,10 @@
                         let n = { ...(0, a.HO)(e), url: e.url, isPinned: !e.isPinned };
                         m(!0);
                         let l = await e.togglePin();
-                        m(!1),
+                        (m(!1),
                             l
                                 ? i((0, r.jsx)(_, { playlist: n }), { containerId: s.u.INFO })
-                                : i((0, r.jsx)(u.h, { error: d({ id: 'error-messages.error-during-action' }) }), { containerId: s.u.ERROR });
+                                : i((0, r.jsx)(u.h, { error: d({ id: 'error-messages.error-during-action' }) }), { containerId: s.u.ERROR }));
                     }, [t.isAuthorized, g, e, i, d]);
                 };
         },
@@ -2108,7 +2112,7 @@
                         let { library: t, user: i } = (0, o.M)(e);
                         if (i.isAuthorized) {
                             let a = yield t.togglePlaylistLike({ userId: i.account.data.uid, entityId: e.id, ownerId: e.uid, kindId: e.kind });
-                            return (0, r._n)(e) && a === s.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), a;
+                            return ((0, r._n)(e) && a === s.f.OK && (e.isLiked ? e.likePending() : e.unlikePending()), a);
                         }
                     }),
                     togglePin: (0, r.L3)(function* () {
@@ -2122,7 +2126,7 @@
                         try {
                             var l, s;
                             let r = yield i.changePlaylistRelative({ userId: e.uid, diff: t, revision: null != (l = e.revision) ? l : 0, playlistKind: e.kind });
-                            return (e.revision = r.revision), (e.isAvailable = null == (s = r.available) || s), _.Y.OK;
+                            return ((e.revision = r.revision), (e.isAvailable = null == (s = r.available) || s), _.Y.OK);
                         } catch (e) {
                             if ((n.error(e), e && 'object' == typeof e && 'statusCode' in e && e.statusCode === a.X1.PRECONDITION_FAILED)) return _.Y.RELOAD;
                             return _.Y.ERROR;
@@ -2138,10 +2142,10 @@
                             e.title = t;
                             try {
                                 let a = yield i.changePlaylistTitle({ title: t, userId: e.uid, playlistKind: e.kind });
-                                if (!(null == a ? void 0 : a.title)) return (e.title = r), c.F.ERROR;
-                                return (e.title = a.title), c.F.OK;
+                                if (!(null == a ? void 0 : a.title)) return ((e.title = r), c.F.ERROR);
+                                return ((e.title = a.title), c.F.OK);
                             } catch (t) {
-                                (e.title = r), a.error(t);
+                                ((e.title = r), a.error(t));
                             }
                         }
                         return c.F.ERROR;
@@ -2151,7 +2155,7 @@
                         let { pinsCollection: t } = (0, o.M)(e),
                             { usersResource: i, modelActionsLogger: a } = (0, r._$)(e);
                         try {
-                            return yield i.deletePlaylist({ userId: e.uid, playlistKind: e.kind }), t.isPinned(e.pinId) && t.deletePin(e.pinId), c.F.OK;
+                            return (yield i.deletePlaylist({ userId: e.uid, playlistKind: e.kind }), t.isPinned(e.pinId) && t.deletePin(e.pinId), c.F.OK);
                         } catch (e) {
                             a.error(e);
                         }
@@ -2175,7 +2179,7 @@
                         } catch (e) {
                             a.error(e);
                         }
-                        return (e.visibility = s), c.F.ERROR;
+                        return ((e.visibility = s), c.F.ERROR);
                     }),
                     downloadToFile: (0, r.L3)(function* () {
                         if (!(0, r._n)(e)) return;
@@ -2250,7 +2254,7 @@
                         (function (e) {
                             if ('number' == typeof e.expires) {
                                 var t = new Date();
-                                t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t);
+                                (t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t));
                             }
                             return (
                                 a('Expires', e.expires ? e.expires.toUTCString() : '') +
@@ -2297,7 +2301,7 @@
                         );
                     }, [t, i]),
                     C = (0, c.c)((e) => {
-                        n.modal.isOpened && n.modal.close(), f({ to: s.QT.ArtistScreen }), v(e);
+                        (n.modal.isOpened && n.modal.close(), f({ to: s.QT.ArtistScreen }), v(e));
                     });
                 return (0, r.jsxs)(r.Fragment, {
                     children: [
@@ -2437,7 +2441,7 @@
                                     {
                                         icon: (0, r.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: icon, size: 'xxs' }),
                                         onClick: () => {
-                                            activate(), a?.(!1);
+                                            (activate(), a?.(!1));
                                         },
                                         children: label,
                                         'data-pulsesync-addon-menu-item': '',
@@ -2485,33 +2489,33 @@
                     em = (0, f.P)(),
                     ep = (0, d.c)((e) => {
                         if ((e.stopPropagation(), em())) return void e.preventDefault();
-                        z.setUtmLink(V), z.openPlaylistTrailer(i.id), e_(o.ky.Playlist, i.id);
+                        (z.setUtmLink(V), z.openPlaylistTrailer(i.id), e_(o.ky.Playlist, i.id));
                     }),
                     [eh, ev] = (0, l.useState)(!1),
                     { isPlaying: ey, togglePlay: eE } = (0, N.D)({
                         playContextParams: { contextData: { type: u.K.Playlist, meta: { id: i.id, uuid: i.uuid }, from: X, utmLink: V }, loadContextMeta: !0 },
                     }),
                     ef = (0, d.c)(() => {
-                        eu({ to: o.QT.PlaylistScreen }), null == Z || Z();
+                        (eu({ to: o.QT.PlaylistScreen }), null == Z || Z());
                     }),
                     eS = (0, d.c)((e) => {
-                        ef(), eg(e);
+                        (ef(), eg(e));
                     }),
                     eC = (0, P.N)(),
                     eL = (0, d.c)(() => {
                         if (!em()) {
                             if (eC) return void Y.open();
-                            et || ey || (ei(!0), null == ee || ee()), eE(), ed(!ey);
+                            (et || ey || (ei(!0), null == ee || ee()), eE(), ed(!ey));
                         }
                     }),
                     ex = (0, d.c)(() => {
-                        er || i.isLiked || (ea(!0), null == J || J()), eo();
+                        (er || i.isLiked || (ea(!0), null == J || J()), eo());
                     }),
                     eT = (0, d.c)((e) => {
-                        e.preventDefault(), e.stopPropagation();
+                        (e.preventDefault(), e.stopPropagation());
                     }),
                     eP = (0, d.c)((e) => {
-                        el(e), ev(e);
+                        (el(e), ev(e));
                     }),
                     eA = (0, l.useMemo)(() => {
                         var e;
@@ -2732,14 +2736,14 @@
                                     );
                                 }
                                 let d = Math.max(r + 1, l);
-                                t.ensurePageStatesInitialized(d), e.pageStates && (e.pageStates[r] = a), a === n.G.REJECT && t.addLastRejectedPageToList(r);
+                                (t.ensurePageStatesInitialized(d), e.pageStates && (e.pageStates[r] = a), a === n.G.REJECT && t.addLastRejectedPageToList(r));
                             },
                             setItems: (s, o) => {
                                 var c;
                                 let { page: u, pager: d, responseStatus: g } = o;
                                 if (((e.requestsCount = (null != (c = e.requestsCount) ? c : 0) + 1), g === a.F.ERROR || !s || !d))
                                     return void t.setPageState(u, n.G.REJECT);
-                                e.pager
+                                (e.pager
                                     ? i && ((e.pager.lastPage = d.lastPage), (e.pager.perPage = d.perPage))
                                     : (e.pager = { page: d.page, perPage: d.perPage, total: d.total, lastPage: d.lastPage }),
                                     t.setPageState(u, n.G.RESOLVE),
@@ -2747,7 +2751,7 @@
                                     i
                                         ? (e.items || (e.items = (0, r.wg)([])), e.items && e.items.push(...s))
                                         : (e.items || (e.items = (0, r.wg)(Array.from({ length: e.pager.total }, () => null))),
-                                          e.items && (0, l.I)({ items: e.items, mappedRawItems: s, page: u, pageSize: e.pager.perPage }));
+                                          e.items && (0, l.I)({ items: e.items, mappedRawItems: s, page: u, pageSize: e.pager.perPage })));
                             },
                             resetRejectedPagesState() {
                                 var t, i, r;
@@ -2756,7 +2760,7 @@
                             },
                             addLastRejectedPageToList(t) {
                                 var i, r, a;
-                                for (e.lastRejectedPagesList.push(t); (null != (r = null == (i = e.lastRejectedPagesList) ? void 0 : i.length) ? r : 0) > 5; )
+                                for (e.lastRejectedPagesList.push(t); (null != (r = null == (i = e.lastRejectedPagesList) ? void 0 : i.length) ? r : 0) > 5;)
                                     null == (a = e.lastRejectedPagesList) || a.shift();
                             },
                             ensurePageStatesInitialized(t) {
@@ -2773,10 +2777,10 @@
                                 }
                             },
                             reset() {
-                                (e.initialRequestLoadingState = n.G.IDLE),
+                                ((e.initialRequestLoadingState = n.G.IDLE),
                                     (e.requestsCount = 0),
                                     (e.lastRejectedPagesList = (0, r.wg)([])),
-                                    e.destroyItems([e.items, e.pager, e.pageStates]);
+                                    e.destroyItems([e.items, e.pager, e.pageStates]));
                             },
                         };
                         return t;
@@ -2797,7 +2801,7 @@
                 let { items: t, mappedRawItems: i, page: r, pageSize: a } = e,
                     n = r * a,
                     l = 0;
-                for (let e = n; e < n + a; e++) i[l] && (t[e] = i[l]), l++;
+                for (let e = n; e < n + a; e++) (i[l] && (t[e] = i[l]), l++);
             }
             i.d(t, { I: () => r });
         },
@@ -2842,9 +2846,9 @@
         90404: (e, t, i) => {
             'use strict';
             var r;
-            i.d(t, { _: () => r }),
+            (i.d(t, { _: () => r }),
                 (function (e) {
-                    (e.ALBUM_ITEM = 'album_item'),
+                    ((e.ALBUM_ITEM = 'album_item'),
                         (e.ARTIST_ITEM = 'artist_item'),
                         (e.PLAYLIST_ITEM = 'playlist_item'),
                         (e.TRACK_ITEM = 'track_item'),
@@ -2863,8 +2867,8 @@
                         (e.CLIP = 'clip'),
                         (e.CLIP_ITEM = 'clip_item'),
                         (e.CONCERT_ITEM = 'concert_item'),
-                        (e.QUERY_TO_VIBE_ITEM = 'q2v_item');
-                })(r || (r = {}));
+                        (e.QUERY_TO_VIBE_ITEM = 'q2v_item'));
+                })(r || (r = {})));
         },
         93043: (e, t, i) => {
             'use strict';
@@ -2894,14 +2898,14 @@
             var r = i(60754);
             let a = r.gK.model('ModelDestroyManager').actions(() => ({
                 destroyItems(e) {
-                    e.forEach((e) => {
+                    (e.forEach((e) => {
                         e && (0, r.Yo)(e);
                     }),
                         queueMicrotask(() => {
                             e.forEach((e) => {
                                 e && (0, r.zr)(e);
                             });
-                        });
+                        }));
                 },
             }));
         },
@@ -2913,7 +2917,7 @@
         },
     },
     (e) => {
-        e.O(
+        (e.O(
             0,
             [
                 7034, 5718, 7231, 6347, 3183, 9763, 6639, 7258, 3803, 6706, 1311, 8892, 2536, 66, 5835, 2812, 8035, 551, 2732, 1410, 1417, 6477, 7275, 2586, 8347, 7702,
@@ -2921,6 +2925,6 @@
             ],
             () => e((e.s = 10421)),
         ),
-            (_N_E = e.O());
+            (_N_E = e.O()));
     },
 ]);

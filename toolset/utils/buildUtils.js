@@ -358,8 +358,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         for (const key of Object.keys(environment)) {
             if (key.toLowerCase() === 'path') delete environment[key];
         }
-        environment[process.platform === 'win32' ? 'Path' : 'PATH'] =
-            `${path.join(info.moduleDir, 'node_modules', '.bin')}${path.delimiter}${inheritedPath}`;
+        environment[process.platform === 'win32' ? 'Path' : 'PATH'] = `${path.join(info.moduleDir, 'node_modules', '.bin')}${path.delimiter}${inheritedPath}`;
 
         const installDirectories = [
             ...(moduleConfig.sourceProjectDirNames ?? []).map((projectDirName) => path.join(REPO_ROOT, 'webModules', projectDirName)),
@@ -467,7 +466,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
     }
 
     function installSourceDependencies(workPath) {
-        if(workPath.includes('@pretty')) return
+        if (workPath.includes('@pretty')) return;
         execSync('yarn install --frozen-lockfile', {
             cwd: workPath,
             stdio: 'pipe',

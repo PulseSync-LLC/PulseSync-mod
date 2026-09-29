@@ -6,7 +6,7 @@
                 r = (e, r) => {
                     let n = t.test(e),
                         i = t.test(r);
-                    return n && i && ((e *= 1), (r *= 1)), e === r ? 0 : n && !i ? -1 : i && !n ? 1 : e < r ? -1 : 1;
+                    return (n && i && ((e *= 1), (r *= 1)), e === r ? 0 : n && !i ? -1 : i && !n ? 1 : e < r ? -1 : 1);
                 };
             e.exports = { compareIdentifiers: r, rcompareIdentifiers: (e, t) => r(t, e) };
         },
@@ -39,14 +39,14 @@
                         else e = e.version;
                     else if ('string' != typeof e) throw TypeError(`Invalid version. Must be a string. Got type "${typeof e}".`);
                     if (e.length > i) throw TypeError(`version is longer than ${i} characters`);
-                    n('SemVer', e, t), (this.options = t), (this.loose = !!t.loose), (this.includePrerelease = !!t.includePrerelease);
+                    (n('SemVer', e, t), (this.options = t), (this.loose = !!t.loose), (this.includePrerelease = !!t.includePrerelease));
                     let r = e.trim().match(t.loose ? o[s.LOOSE] : o[s.FULL]);
                     if (!r) throw TypeError(`Invalid Version: ${e}`);
                     if (((this.raw = e), (this.major = +r[1]), (this.minor = +r[2]), (this.patch = +r[3]), this.major > a || this.major < 0))
                         throw TypeError('Invalid major version');
                     if (this.minor > a || this.minor < 0) throw TypeError('Invalid minor version');
                     if (this.patch > a || this.patch < 0) throw TypeError('Invalid patch version');
-                    r[4]
+                    (r[4]
                         ? (this.prerelease = r[4].split('.').map((e) => {
                               if (/^[0-9]+$/.test(e)) {
                                   let t = +e;
@@ -56,7 +56,7 @@
                           }))
                         : (this.prerelease = []),
                         (this.build = r[5] ? r[5].split('.') : []),
-                        this.format();
+                        this.format());
                 }
                 format() {
                     return (
@@ -76,7 +76,7 @@
                     return e.version === this.version ? 0 : this.compareMain(e) || this.comparePre(e);
                 }
                 compareMain(e) {
-                    return e instanceof E || (e = new E(e, this.options)), c(this.major, e.major) || c(this.minor, e.minor) || c(this.patch, e.patch);
+                    return (e instanceof E || (e = new E(e, this.options)), c(this.major, e.major) || c(this.minor, e.minor) || c(this.patch, e.patch));
                 }
                 comparePre(e) {
                     if ((e instanceof E || (e = new E(e, this.options)), this.prerelease.length && !e.prerelease.length)) return -1;
@@ -109,28 +109,28 @@
                 inc(e, t, r) {
                     switch (e) {
                         case 'premajor':
-                            (this.prerelease.length = 0), (this.patch = 0), (this.minor = 0), this.major++, this.inc('pre', t, r);
+                            ((this.prerelease.length = 0), (this.patch = 0), (this.minor = 0), this.major++, this.inc('pre', t, r));
                             break;
                         case 'preminor':
-                            (this.prerelease.length = 0), (this.patch = 0), this.minor++, this.inc('pre', t, r);
+                            ((this.prerelease.length = 0), (this.patch = 0), this.minor++, this.inc('pre', t, r));
                             break;
                         case 'prepatch':
-                            (this.prerelease.length = 0), this.inc('patch', t, r), this.inc('pre', t, r);
+                            ((this.prerelease.length = 0), this.inc('patch', t, r), this.inc('pre', t, r));
                             break;
                         case 'prerelease':
-                            0 === this.prerelease.length && this.inc('patch', t, r), this.inc('pre', t, r);
+                            (0 === this.prerelease.length && this.inc('patch', t, r), this.inc('pre', t, r));
                             break;
                         case 'major':
-                            (0 !== this.minor || 0 !== this.patch || 0 === this.prerelease.length) && this.major++,
+                            ((0 !== this.minor || 0 !== this.patch || 0 === this.prerelease.length) && this.major++,
                                 (this.minor = 0),
                                 (this.patch = 0),
-                                (this.prerelease = []);
+                                (this.prerelease = []));
                             break;
                         case 'minor':
-                            (0 !== this.patch || 0 === this.prerelease.length) && this.minor++, (this.patch = 0), (this.prerelease = []);
+                            ((0 !== this.patch || 0 === this.prerelease.length) && this.minor++, (this.patch = 0), (this.prerelease = []));
                             break;
                         case 'patch':
-                            0 === this.prerelease.length && this.patch++, (this.prerelease = []);
+                            (0 === this.prerelease.length && this.patch++, (this.prerelease = []));
                             break;
                         case 'pre': {
                             let e = +!!Number(r);
@@ -138,7 +138,7 @@
                             if (0 === this.prerelease.length) this.prerelease = [e];
                             else {
                                 let n = this.prerelease.length;
-                                for (; --n >= 0; ) 'number' == typeof this.prerelease[n] && (this.prerelease[n]++, (n = -2));
+                                for (; --n >= 0;) 'number' == typeof this.prerelease[n] && (this.prerelease[n]++, (n = -2));
                                 if (-1 === n) {
                                     if (t === this.prerelease.join('.') && !1 === r) throw Error('invalid increment argument: identifier already exists');
                                     this.prerelease.push(e);
@@ -146,14 +146,14 @@
                             }
                             if (t) {
                                 let n = [t, e];
-                                !1 === r && (n = [t]), 0 === c(this.prerelease[0], t) ? isNaN(this.prerelease[1]) && (this.prerelease = n) : (this.prerelease = n);
+                                (!1 === r && (n = [t]), 0 === c(this.prerelease[0], t) ? isNaN(this.prerelease[1]) && (this.prerelease = n) : (this.prerelease = n));
                             }
                             break;
                         }
                         default:
                             throw Error(`invalid increment argument: ${e}`);
                     }
-                    return (this.raw = this.format()), this.build.length && (this.raw += `+${this.build.join('.')}`), this;
+                    return ((this.raw = this.format()), this.build.length && (this.raw += `+${this.build.join('.')}`), this);
                 }
             }
             e.exports = E;
@@ -182,9 +182,9 @@
                             return e;
                         })(t),
                         i = m++;
-                    o(e, i, t), (E[e] = i), (c[i] = t), (s[i] = new RegExp(t, r ? 'g' : void 0)), (l[i] = new RegExp(n, r ? 'g' : void 0));
+                    (o(e, i, t), (E[e] = i), (c[i] = t), (s[i] = new RegExp(t, r ? 'g' : void 0)), (l[i] = new RegExp(n, r ? 'g' : void 0)));
                 };
-            p('NUMERICIDENTIFIER', '0|[1-9]\\d*'),
+            (p('NUMERICIDENTIFIER', '0|[1-9]\\d*'),
                 p('NUMERICIDENTIFIERLOOSE', '\\d+'),
                 p('NONNUMERICIDENTIFIER', `\\d*[a-zA-Z-]${u}*`),
                 p('MAINVERSION', `(${c[E.NUMERICIDENTIFIER]})\\.(${c[E.NUMERICIDENTIFIER]})\\.(${c[E.NUMERICIDENTIFIER]})`),
@@ -232,7 +232,7 @@
                 p('HYPHENRANGELOOSE', `^\\s*(${c[E.XRANGEPLAINLOOSE]})\\s+-\\s+(${c[E.XRANGEPLAINLOOSE]})\\s*$`),
                 p('STAR', '(<|>)?=?\\s*\\*'),
                 p('GTE0', '^\\s*>=\\s*0\\.0\\.0\\s*$'),
-                p('GTE0PRE', '^\\s*>=\\s*0\\.0\\.0-0\\s*$');
+                p('GTE0PRE', '^\\s*>=\\s*0\\.0\\.0-0\\s*$'));
         },
         60764: (e, t, r) => {
             'use strict';
@@ -246,12 +246,12 @@
                 c = r(19805);
             function E(e, t) {
                 return Object.keys(e).reduce(function (r, i) {
-                    return (r[i] = (0, n.__assign)({ timeZone: t }, e[i])), r;
+                    return ((r[i] = (0, n.__assign)({ timeZone: t }, e[i])), r);
                 }, {});
             }
             function m(e, t) {
                 return Object.keys((0, n.__assign)((0, n.__assign)({}, e), t)).reduce(function (r, i) {
-                    return (r[i] = (0, n.__assign)((0, n.__assign)({}, e[i] || {}), t[i] || {})), r;
+                    return ((r[i] = (0, n.__assign)((0, n.__assign)({}, e[i] || {}), t[i] || {})), r);
                 }, {});
             }
             function u(e, t) {
@@ -439,28 +439,28 @@
                 void 0 === n && (n = {});
                 var i = $(e, t, r, n).reduce(function (e, t) {
                     var r = t.value;
-                    return 'string' != typeof r ? e.push(r) : 'string' == typeof e[e.length - 1] ? (e[e.length - 1] += r) : e.push(r), e;
+                    return ('string' != typeof r ? e.push(r) : 'string' == typeof e[e.length - 1] ? (e[e.length - 1] += r) : e.push(r), e);
                 }, []);
                 return 1 === i.length ? i[0] : 0 === i.length ? '' : i;
             }
             function $(e, t, r, a) {
                 var o = e.locale,
                     s = e.onError;
-                void 0 === a && (a = {}),
+                (void 0 === a && (a = {}),
                     Intl.ListFormat ||
                         s(
                             new v.IF(
                                 'Intl.ListFormat is not available in this environment.\nTry polyfilling it using "@formatjs/intl-listformat"\n',
                                 v.O4.MISSING_INTL_API,
                             ),
-                        );
+                        ));
                 var l = (0, i.J9)(a, O);
                 try {
                     var E = {},
                         m = r.map(function (e, t) {
                             if ('object' == typeof e) {
                                 var r = ''.concat(y, '_').concat(t, '_').concat(y);
-                                return (E[r] = e), r;
+                                return ((E[r] = e), r);
                             }
                             return String(e);
                         });
@@ -529,14 +529,14 @@
             function P(e, t, r, n) {
                 var a = e.locale,
                     o = e.onError;
-                void 0 === n && (n = {}),
+                (void 0 === n && (n = {}),
                     Intl.PluralRules ||
                         o(
                             new v.IF(
                                 'Intl.PluralRules is not available in this environment.\nTry polyfilling it using "@formatjs/intl-pluralrules"\n',
                                 v.O4.MISSING_INTL_API,
                             ),
-                        );
+                        ));
                 var s = (0, i.J9)(n, F);
                 try {
                     return t(a, s).select(r);
@@ -547,7 +547,7 @@
             }
             var w = ['numeric', 'style'];
             function C(e, t, r, n, a) {
-                void 0 === a && (a = {}),
+                (void 0 === a && (a = {}),
                     n || (n = 'second'),
                     Intl.RelativeTimeFormat ||
                         e.onError(
@@ -555,7 +555,7 @@
                                 'Intl.RelativeTimeFormat is not available in this environment.\nTry polyfilling it using "@formatjs/intl-relativetimeformat"\n',
                                 v.O4.MISSING_INTL_API,
                             ),
-                        );
+                        ));
                 try {
                     var o, s, l, E, m, u;
                     return ((o = a),
@@ -575,7 +575,7 @@
                 return e
                     ? Object.keys(e).reduce(function (t, r) {
                           var n = e[r];
-                          return (t[r] = (0, M.RK)(n) ? (0, o.yU)(n) : n), t;
+                          return ((t[r] = (0, M.RK)(n) ? (0, o.yU)(n) : n), t);
                       }, {})
                     : e;
             }
@@ -686,7 +686,7 @@
             let X = (function (e) {
                 function t() {
                     var t = (null !== e && e.apply(this, arguments)) || this;
-                    return (t.cache = (0, i.MT)()), (t.state = { cache: t.cache, intl: U(k(t.props), t.cache), prevConfig: k(t.props) }), t;
+                    return ((t.cache = (0, i.MT)()), (t.state = { cache: t.cache, intl: U(k(t.props), t.cache), prevConfig: k(t.props) }), t);
                 }
                 return (
                     (0, n.__extends)(t, e),
@@ -697,7 +697,7 @@
                         return (0, o.bN)(r, i) ? null : { intl: U(i, n), prevConfig: i };
                     }),
                     (t.prototype.render = function () {
-                        return (0, o.HM)(this.state.intl), a.createElement(x.Kq, { value: this.state.intl }, this.props.children);
+                        return ((0, o.HM)(this.state.intl), a.createElement(x.Kq, { value: this.state.intl }, this.props.children));
                     }),
                     (t.displayName = 'IntlProvider'),
                     (t.defaultProps = o.JF),
@@ -757,7 +757,7 @@
                         (function (e) {
                             if ('number' == typeof e.expires) {
                                 var t = new Date();
-                                t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t);
+                                (t.setMilliseconds(t.getMilliseconds() + 864e5 * e.expires), (e.expires = t));
                             }
                             return (
                                 i('Expires', e.expires ? e.expires.toUTCString() : '') +

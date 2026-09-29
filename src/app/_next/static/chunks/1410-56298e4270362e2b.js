@@ -12,14 +12,14 @@
                 );
             class o {
                 constructor({ brandConfig: e, enableWideLanguageSelectWithBrandLangs: t }) {
-                    i(this, 'brandLangs'),
+                    (i(this, 'brandLangs'),
                         i(this, 'brandDefaultLang'),
                         i(this, 'regionLangs'),
                         i(this, 'enableWideLanguageSelectWithBrandLangs'),
                         (this.brandLangs = e.langs),
                         (this.brandDefaultLang = e.defaultLang),
                         (this.regionLangs = e.regionLangs),
-                        (this.enableWideLanguageSelectWithBrandLangs = t);
+                        (this.enableWideLanguageSelectWithBrandLangs = t));
                 }
                 static parseAcceptLanguage(e) {
                     return n.parse(e).map(({ code: e }) => e);
@@ -64,7 +64,7 @@
                         return t.quality - e.quality;
                     });
             }
-            (e.exports.parse = r),
+            ((e.exports.parse = r),
                 (e.exports.pick = function (e, t, n) {
                     if (((n = n || {}), !e || !e.length || !t)) return null;
                     'string' == typeof t && (t = r(t));
@@ -93,13 +93,13 @@
                             if (s === p && (n.loose || !c || c === f) && (n.loose || !l || l === h)) return e[u];
                         }
                     return null;
-                });
+                }));
         },
         99029: (e, t, r) => {
             'use strict';
-            r.d(t, { s: () => k }), r(40363);
+            (r.d(t, { s: () => k }), r(40363));
             function n(e, t, r) {
-                return (t = o(t)) in e ? Object.defineProperty(e, t, { value: r, enumerable: !0, configurable: !0, writable: !0 }) : (e[t] = r), e;
+                return ((t = o(t)) in e ? Object.defineProperty(e, t, { value: r, enumerable: !0, configurable: !0, writable: !0 }) : (e[t] = r), e);
             }
             function a(e, t) {
                 return (
@@ -122,7 +122,7 @@
                                     l = !1;
                                 } else for (; !(l = (n = i.call(r)).done) && (s.push(n.value), s.length !== t); l = !0);
                             } catch (e) {
-                                (c = !0), (a = e);
+                                ((c = !0), (a = e));
                             } finally {
                                 try {
                                     if (!l && null != r.return && ((o = r.return()), Object(o) !== o)) return;
@@ -170,7 +170,7 @@
                 var r,
                     n,
                     a = c(e, t, 'get');
-                return (r = e), (n = a).get ? n.get.call(r) : n.value;
+                return ((r = e), (n = a).get ? n.get.call(r) : n.value);
             }
             function l(e, t, r) {
                 var n = c(e, t, 'set');
@@ -197,10 +197,10 @@
                 if (t.has(e)) throw TypeError('Cannot initialize the same private elements twice on an object');
             }
             function f(e, t, r) {
-                p(e, t), t.set(e, r);
+                (p(e, t), t.set(e, r));
             }
             function h(e, t) {
-                p(e, t), t.add(e);
+                (p(e, t), t.add(e));
             }
             var d = [
                 ' daum[ /]',
@@ -489,7 +489,7 @@
                             value: function () {
                                 var e = this,
                                     t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [];
-                                [].push.apply(
+                                ([].push.apply(
                                     s(this, g),
                                     t
                                         .filter(function (t) {
@@ -499,13 +499,13 @@
                                             return e.toLowerCase();
                                         }),
                                 ),
-                                    u(this, v, y).call(this);
+                                    u(this, v, y).call(this));
                             },
                         },
                         {
                             key: 'exclude',
                             value: function () {
-                                for (var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [], t = e.length; t--; ) {
+                                for (var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [], t = e.length; t--;) {
                                     var r = u(this, m, w).call(this, e[t]);
                                     r > -1 && s(this, g).splice(r, 1);
                                 }
@@ -522,7 +522,7 @@
                     (function (e, t) {
                         for (var r = 0; r < t.length; r++) {
                             var n = t[r];
-                            (n.enumerable = n.enumerable || !1), (n.configurable = !0), 'value' in n && (n.writable = !0), Object.defineProperty(e, o(n.key), n);
+                            ((n.enumerable = n.enumerable || !1), (n.configurable = !0), 'value' in n && (n.writable = !0), Object.defineProperty(e, o(n.key), n));
                         }
                     })(t.prototype, e),
                     Object.defineProperty(t, 'prototype', { writable: !1 }),

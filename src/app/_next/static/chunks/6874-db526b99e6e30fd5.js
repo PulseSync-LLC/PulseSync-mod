@@ -19,7 +19,7 @@
                     this.livePlayableIndex.value > e && (this.livePlayableIndex.value = e);
                 }
                 constructor(e) {
-                    (0, a._)(this, 'prevIndex', void 0),
+                    ((0, a._)(this, 'prevIndex', void 0),
                         (0, a._)(this, 'index', void 0),
                         (0, a._)(this, 'nextIndex', void 0),
                         (0, a._)(this, 'entityList', void 0),
@@ -30,9 +30,9 @@
                         (0, a._)(this, 'prevEntity', void 0),
                         (0, a._)(this, 'currentEntity', void 0),
                         (0, a._)(this, 'nextEntity', void 0),
-                        (0, a._)(this, 'livePlayableIndex', void 0);
+                        (0, a._)(this, 'livePlayableIndex', void 0));
                     let { prevIndex: t, index: r, nextIndex: i, entityList: n, repeat: o, shuffle: l, order: u, filterParams: h } = e;
-                    (this.index = new s.cJ(r)),
+                    ((this.index = new s.cJ(r)),
                         (this.prevIndex = new s.cJ(t)),
                         (this.nextIndex = new s.cJ(i)),
                         (this.entityList = new s.cJ(n)),
@@ -56,7 +56,7 @@
                         this.index.onChange(() => {
                             let e = this.index.value;
                             e > this.livePlayableIndex.value && (this.livePlayableIndex.value = e);
-                        });
+                        }));
                 }
             }
             function o(e) {
@@ -68,7 +68,7 @@
                         for (let e = t.length - 1; e > 0; e--) {
                             let r = Math.floor(Math.random() * (e + 1)),
                                 i = t[e];
-                            (t[e] = t[r]), (t[r] = i);
+                            ((t[e] = t[r]), (t[r] = i));
                         }
                         return t;
                     })(i.concat(a));
@@ -128,12 +128,12 @@
                         u = l && t <= this.queueState.livePlayableIndex.value,
                         h = this.queueState.livePlayableIndex.value,
                         d = u ? h + e.length : h;
-                    (0, s.vA)(() => {
-                        this.setEntityList(a, i),
+                    ((0, s.vA)(() => {
+                        (this.setEntityList(a, i),
                             this.setOrder(n, i),
-                            l && this.queueState.index.value >= t && (this.queueState.index.value = this.queueState.index.value + e.length);
+                            l && this.queueState.index.value >= t && (this.queueState.index.value = this.queueState.index.value + e.length));
                     }),
-                        (this.queueState.livePlayableIndex.value = d);
+                        (this.queueState.livePlayableIndex.value = d));
                 }
                 remove(e) {
                     let t = arguments.length > 1 && void 0 !== arguments[1] && arguments[1],
@@ -146,21 +146,21 @@
                         if (t > this.queueState.order.value.length - 1 || t < 0) throw Error('No such position');
                         let e = this.queueState.order.value[t],
                             s = this.queueState.entityList.value[e];
-                        (r = r.filter((e) => e !== s)),
+                        ((r = r.filter((e) => e !== s)),
                             (i = i.filter((t) => t !== e)),
                             t < this.queueState.index.value && (a += 1),
-                            t < this.queueState.livePlayableIndex.value && (n += 1);
+                            t < this.queueState.livePlayableIndex.value && (n += 1));
                     }
                     let o = (i = i.map((t) => {
                         let r = e.reduce((e, r) => (this.queueState.order.value[r] < t && e++, e), 0);
                         return t - r;
                     })).length;
                     (0, s.vA)(() => {
-                        this.setEntityList(r, t),
+                        (this.setEntityList(r, t),
                             this.setOrder(i, t),
                             (this.queueState.index.value = this.queueState.index.value - a),
                             n > 0 && this.queueState.shiftLivePlayableIndex(-n),
-                            this.queueState.clampLivePlayableIndex(o);
+                            this.queueState.clampLivePlayableIndex(o));
                     });
                 }
                 getEntityByIndex(e) {
@@ -172,17 +172,17 @@
                 setEntityList(e) {
                     let t = arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
                     if (t) {
-                        for (; 0 !== this.queueState.entityList.value.length; ) this.queueState.entityList.value.shift();
+                        for (; 0 !== this.queueState.entityList.value.length;) this.queueState.entityList.value.shift();
                         let t = e.shift();
-                        for (; void 0 !== t; ) this.queueState.entityList.value.push(t), (t = e.shift());
+                        for (; void 0 !== t;) (this.queueState.entityList.value.push(t), (t = e.shift()));
                     } else this.queueState.entityList.value = e;
                 }
                 setOrder(e) {
                     let t = arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
                     if (t) {
-                        for (; 0 !== this.queueState.order.value.length; ) this.queueState.order.value.pop();
+                        for (; 0 !== this.queueState.order.value.length;) this.queueState.order.value.pop();
                         let t = e.shift();
-                        for (; void 0 !== t; ) this.queueState.order.value.push(t), (t = e.shift());
+                        for (; void 0 !== t;) (this.queueState.order.value.push(t), (t = e.shift()));
                     } else this.queueState.order.value = e;
                 }
                 setShuffle(e) {
@@ -195,13 +195,13 @@
                     if (e) {
                         let e = o({ originalOrderToShuffle: r, index: t });
                         (0, s.vA)(() => {
-                            this.setOrder(e, !0), (this.queueState.shuffle.value = !0), (this.queueState.index.value = 0);
+                            (this.setOrder(e, !0), (this.queueState.shuffle.value = !0), (this.queueState.index.value = 0));
                         });
                     } else {
                         let e = r[t],
                             a = l(i.length);
                         (0, s.vA)(() => {
-                            this.setOrder(a, !0), (this.queueState.shuffle.value = !1), (this.queueState.index.value = e);
+                            (this.setOrder(a, !0), (this.queueState.shuffle.value = !1), (this.queueState.index.value = e));
                         });
                     }
                 }
@@ -251,11 +251,11 @@
                     this.queueState.clampLivePlayableIndex(e);
                 }
                 constructor(e) {
-                    (0, a._)(this, 'queueState', void 0), (this.queueState = new n(e));
+                    ((0, a._)(this, 'queueState', void 0), (this.queueState = new n(e)));
                 }
             }
             !(function (e) {
-                (e.NONE = 'none'), (e.CONTEXT = 'context'), (e.ONE = 'one');
+                ((e.NONE = 'none'), (e.CONTEXT = 'context'), (e.ONE = 'one'));
             })(i || (i = {}));
         },
         46862: (e, t, r) => {
@@ -263,10 +263,10 @@
             var i = r(98411),
                 a = (function () {
                     function e(e) {
-                        Object.defineProperty(this, 'observableValue', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        (Object.defineProperty(this, 'observableValue', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'prevValueByListener', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             (this.observableValue = (0, i.vP)(e)),
-                            (this.prevValueByListener = new Map());
+                            (this.prevValueByListener = new Map()));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'value', {
@@ -295,7 +295,7 @@
                                                 i = !1;
                                                 return;
                                             }
-                                            r.prevValueByListener.set(e, a), e(a);
+                                            (r.prevValueByListener.set(e, a), e(a));
                                         }
                                     })
                                 );
@@ -306,10 +306,10 @@
                 })(),
                 s = (function () {
                     function e(e) {
-                        Object.defineProperty(this, 'observableValue', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
+                        (Object.defineProperty(this, 'observableValue', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             Object.defineProperty(this, 'prevValueByListener', { enumerable: !0, configurable: !0, writable: !0, value: void 0 }),
                             (this.observableValue = (0, i.EW)(e)),
-                            (this.prevValueByListener = new Map());
+                            (this.prevValueByListener = new Map()));
                     }
                     return (
                         Object.defineProperty(e.prototype, 'value', {
@@ -335,7 +335,7 @@
                                                 i = !1;
                                                 return;
                                             }
-                                            r.prevValueByListener.set(e, a), e(a);
+                                            (r.prevValueByListener.set(e, a), e(a));
                                         }
                                     })
                                 );
@@ -350,9 +350,9 @@
         },
         71483: (e, t, r) => {
             var i;
-            r.d(t, { K: () => i }),
+            (r.d(t, { K: () => i }),
                 (function (e) {
-                    (e.Album = 'album'),
+                    ((e.Album = 'album'),
                         (e.Playlist = 'playlist'),
                         (e.Artist = 'artist'),
                         (e.Vibe = 'vibe'),
@@ -360,11 +360,11 @@
                         (e.Generative = 'generative'),
                         (e.Radio = 'fm_radio'),
                         (e.Search = 'search'),
-                        (e.LegacyRadio = 'legacy_radio');
-                })(i || (i = {}));
+                        (e.LegacyRadio = 'legacy_radio'));
+                })(i || (i = {})));
         },
         72676: (e, t, r) => {
-            r.d(t, {
+            (r.d(t, {
                 EX: () => er,
                 z4: () => i,
                 So: () => s,
@@ -384,8 +384,8 @@
             }),
                 ((i || (i = {})).Unloaded = 'unloaded'),
                 (function (e) {
-                    (e.CROSSFADE = 'crossfade'), (e.MIX = 'mix'), (e.NONE = 'none');
-                })(a || (a = {}));
+                    ((e.CROSSFADE = 'crossfade'), (e.MIX = 'mix'), (e.NONE = 'none'));
+                })(a || (a = {})));
             var i,
                 a,
                 s,
@@ -398,37 +398,37 @@
                 c,
                 y,
                 v = r(91945);
-            !(function (e) {
-                (e.MOVE_FORWARD = 'moveForward'),
+            (!(function (e) {
+                ((e.MOVE_FORWARD = 'moveForward'),
                     (e.AUTO_MOVE_FORWARD = 'autoMoveForward'),
                     (e.ERROR_MOVE_FORWARD = 'errorMoveForward'),
                     (e.MOVE_BACKWARD = 'moveBackward'),
                     (e.SET_INDEX = 'setIndex'),
                     (e.RESTART_CONTEXT = 'restartContext'),
-                    (e.PLAY_CONTEXT = 'playContext');
+                    (e.PLAY_CONTEXT = 'playContext'));
             })(s || (s = {})),
                 ((n || (n = {})).ENTITY_CAN_NOT_BE_PLAYED = 'ENTITY_CAN_NOT_BE_PLAYED'),
                 (function (e) {
-                    (e.IDLE = 'idle'),
+                    ((e.IDLE = 'idle'),
                         (e.PLAYING = 'playing'),
                         (e.PAUSED = 'paused'),
                         (e.ENDED = 'ended'),
                         (e.STOPPED = 'stopped'),
                         (e.LOADING_MEDIA_SOURCE = 'loadingMediaSource'),
                         (e.BUFFERING = 'buffering'),
-                        (e.MEDIA_ELEMENT_ERROR = 'mediaElementError');
-                })(o || (o = {}));
+                        (e.MEDIA_ELEMENT_ERROR = 'mediaElementError'));
+                })(o || (o = {})));
             var E = r(67893),
                 p = r(6612);
             !(function (e) {
-                (e.IDLE = 'idle'), (e.PRELOADING_MEDIA_SOURCE_URL = 'preloadingMediaSourceUrl'), (e.PRELOADING_MEDIA_SOURCE_CONTENT = 'preloadingMediaSourceContent');
+                ((e.IDLE = 'idle'), (e.PRELOADING_MEDIA_SOURCE_URL = 'preloadingMediaSourceUrl'), (e.PRELOADING_MEDIA_SOURCE_CONTENT = 'preloadingMediaSourceContent'));
             })(l || (l = {}));
             let f = { status: o.IDLE, preloadingStatus: l.IDLE, progress: { duration: 0, position: 0, loaded: 0 }, event: null, volume: 1, exponentVolume: 1, speed: 1 };
             var g = r(46862),
                 P = r(29222);
             class m extends P.t {
                 constructor(e = 'No current context', { code: t = 'E_NO_CURRENT_CONTEXT', ...r } = {}) {
-                    super(e, { code: t, ...r }), (0, v._)(this, 'name', 'NoCurrentContextExceptions'), Object.setPrototypeOf(this, m.prototype);
+                    (super(e, { code: t, ...r }), (0, v._)(this, 'name', 'NoCurrentContextExceptions'), Object.setPrototypeOf(this, m.prototype));
                 }
             }
             class C {
@@ -436,9 +436,9 @@
                     return this.observableContext;
                 }
                 set currentContext(e) {
-                    this.observableContext.value && (this.observableContext.value.isCurrentContext = !1),
+                    (this.observableContext.value && (this.observableContext.value.isCurrentContext = !1),
                         (this.observableContext.value = e),
-                        this.observableContext.value && (this.observableContext.value.isCurrentContext = !0);
+                        this.observableContext.value && (this.observableContext.value.isCurrentContext = !0));
                 }
                 get currentContext() {
                     return this.observableContext.value;
@@ -460,7 +460,7 @@
                     return this.observableContext.value ? this.observableContext.value.loadContextMeta() : Promise.reject(new m());
                 }
                 constructor(e) {
-                    (0, v._)(this, 'factory', void 0), (0, v._)(this, 'observableContext', new g.cJ(void 0)), (this.factory = e);
+                    ((0, v._)(this, 'factory', void 0), (0, v._)(this, 'observableContext', new g.cJ(void 0)), (this.factory = e));
                 }
             }
             function x(e) {
@@ -473,11 +473,11 @@
                 }
                 return s;
             }
-            !(function (e) {
-                (e.Forward = 'forward'), (e.Backward = 'backward');
+            (!(function (e) {
+                ((e.Forward = 'forward'), (e.Backward = 'backward'));
             })(u || (u = {})),
                 (function (e) {
-                    (e.RESUMED = 'Resumed'),
+                    ((e.RESUMED = 'Resumed'),
                         (e.STOP = 'Stop'),
                         (e.SHOULD_AUTOMOVEFORWARD = 'ShouldAutomoveForward'),
                         (e.END = 'Ended'),
@@ -491,11 +491,11 @@
                         (e.CANPLAY = 'CanPlay'),
                         (e.PLAYING = 'Playing'),
                         (e.MEDIA_ELEMENT_ERROR = 'MediaElementError'),
-                        (e.WAITING = 'Waiting');
-                })(h || (h = {}));
+                        (e.WAITING = 'Waiting'));
+                })(h || (h = {})));
             class S extends P.t {
                 constructor(e, { code: t = 'E_HELPER', ...r } = {}) {
-                    super(e, { code: t, ...r }), (0, v._)(this, 'name', 'HelperException'), Object.setPrototypeOf(this, S.prototype);
+                    (super(e, { code: t, ...r }), (0, v._)(this, 'name', 'HelperException'), Object.setPrototypeOf(this, S.prototype));
                 }
             }
             function b(e) {
@@ -512,7 +512,7 @@
                         h = () => {
                             a === u.Forward ? (n += 1) : (n -= 1);
                         };
-                    for (; l() && null === o; ) {
+                    for (; l() && null === o;) {
                         let e = i[r[n]];
                         e.canBePlayed(s) || b(e) ? (o = n) : h();
                     }
@@ -523,7 +523,7 @@
             }
             class I extends P.t {
                 constructor(e = 'No playable entity', { code: t = 'E_NO_PLAYABLE_ENTITY', ...r } = {}) {
-                    super(e, { code: t, ...r }), (0, v._)(this, 'name', 'NoPlayableEntityExceptions'), Object.setPrototypeOf(this, I.prototype);
+                    (super(e, { code: t, ...r }), (0, v._)(this, 'name', 'NoPlayableEntityExceptions'), Object.setPrototypeOf(this, I.prototype));
                 }
             }
             function _(e) {
@@ -533,10 +533,10 @@
                         n = r.shift(),
                         o = 0,
                         l = [];
-                    for (; o !== t.length; ) {
+                    for (; o !== t.length;) {
                         if (o === s && n) {
                             let e = t[s];
-                            l.push(a.createContextEntityPair(e.context, n, e.sourceContext)), (s = i.shift()), (n = r.shift());
+                            (l.push(a.createContextEntityPair(e.context, n, e.sourceContext)), (s = i.shift()), (n = r.shift()));
                         } else {
                             let e = t[o];
                             l.push(e);
@@ -735,7 +735,7 @@
                             e && b(e)
                                 ? this.loadEntitiesInWindow({ indexes: [i], order: s, contextEntityPairs: a, repeat: n })
                                       .then((e) => {
-                                          this.playerQueue.setEntityList(e, o), t();
+                                          (this.playerQueue.setEntityList(e, o), t());
                                       })
                                       .catch(r)
                                 : (e &&
@@ -775,22 +775,22 @@
                                         l = 0,
                                         u = t,
                                         h = r[u];
-                                    for (; void 0 !== h && l < a; ) {
+                                    for (; void 0 !== h && l < a;) {
                                         let e = i[h];
-                                        s(e) && (o.set(h, { index: h, contextEntityPair: e }), (l += 1)), (u -= 1), (h = r[u]);
+                                        (s(e) && (o.set(h, { index: h, contextEntityPair: e }), (l += 1)), (u -= 1), (h = r[u]));
                                     }
                                     let d = 0,
                                         c = t + 1;
-                                    for (h = r[c]; void 0 !== h && d < a; ) {
+                                    for (h = r[c]; void 0 !== h && d < a;) {
                                         let e = i[h];
-                                        s(e) && (o.set(h, { index: h, contextEntityPair: e }), (d += 1)), (c += 1), (h = r[c]);
+                                        (s(e) && (o.set(h, { index: h, contextEntityPair: e }), (d += 1)), (c += 1), (h = r[c]));
                                     }
                                     if (n === p.pM.CONTEXT && c >= r.length) {
                                         let e = 0,
                                             t = 0;
-                                        for (h = r[0]; void 0 !== h && e < a; ) {
+                                        for (h = r[0]; void 0 !== h && e < a;) {
                                             let a = i[h];
-                                            s(a) && (o.set(h, { index: h, contextEntityPair: a }), (e += 1)), (t += 1), (h = r[t]);
+                                            (s(a) && (o.set(h, { index: h, contextEntityPair: a }), (e += 1)), (t += 1), (h = r[t]));
                                         }
                                     }
                                     return Array.from(o.values());
@@ -814,10 +814,10 @@
                     }
                 }
                 loadEntities(e) {
-                    return L({ contextEntityPairs: e, hooks: this.hooks }), this.entityProvider.loadEntities(e).then((e) => this.contextController.createEntities(e));
+                    return (L({ contextEntityPairs: e, hooks: this.hooks }), this.entityProvider.loadEntities(e).then((e) => this.contextController.createEntities(e)));
                 }
                 constructor(e) {
-                    (0, v._)(this, 'playerQueue', void 0),
+                    ((0, v._)(this, 'playerQueue', void 0),
                         (0, v._)(this, 'windowPaginationConfig', void 0),
                         (0, v._)(this, 'hooks', void 0),
                         (0, v._)(this, 'entityProvider', void 0),
@@ -828,7 +828,7 @@
                         (this.hooks = e.hooks),
                         (this.entityProvider = e.entityProvider),
                         (this.contextController = e.contextController),
-                        (this.factory = e.factory);
+                        (this.factory = e.factory));
                 }
             }
             class T {
@@ -843,11 +843,11 @@
                     return n
                         ? this.getEntitiesFromDataOrContext(t).then((e) => {
                               let t;
-                              !0 === i ? this.playerQueue.setShuffle(!0) : !1 === i && this.playerQueue.setShuffle(!1),
-                                  void 0 !== a && this.playerQueue.updateFilterParams(a);
+                              (!0 === i ? this.playerQueue.setShuffle(!0) : !1 === i && this.playerQueue.setShuffle(!1),
+                                  void 0 !== a && this.playerQueue.updateFilterParams(a));
                               let s = r.entityId,
                                   l = null;
-                              void 0 !== s && (l = e.findIndex((e) => String(e.data.meta.id) === String(s))),
+                              (void 0 !== s && (l = e.findIndex((e) => String(e.data.meta.id) === String(s))),
                                   (t =
                                       'number' == typeof l && -1 !== l
                                           ? l
@@ -855,7 +855,7 @@
                                             ? r.index
                                             : 'number' == typeof n.resumeFromIndex
                                               ? n.resumeFromIndex
-                                              : this.playerQueue.createIndex({ entityListLength: e.length }));
+                                              : this.playerQueue.createIndex({ entityListLength: e.length })));
                               let { order: h, index: d } = this.playerQueue.createOrder({ entityListLength: e.length, index: t }),
                                   c = x({ context: n, entities: e, factory: this.factory });
                               return b(c[h[d]])
@@ -894,12 +894,12 @@
                     return null === o
                         ? null
                         : ((0, g.vA)(() => {
-                              this.playerQueue.setEntityList(t, !1),
+                              (this.playerQueue.setEntityList(t, !1),
                                   this.playerQueue.setOrder(r, !1),
                                   (this.playerQueue.prevIndex = h),
                                   (this.playerQueue.nextIndex = l),
                                   (this.playerQueue.index = o),
-                                  this.playerQueue.resetLivePlayableIndex(o);
+                                  this.playerQueue.resetLivePlayableIndex(o));
                               let e = this.playerQueue.getEntityByIndex({ index: o });
                               e && (e.lastChangeMethod = s.PLAY_CONTEXT);
                           }),
@@ -910,7 +910,7 @@
                         r = this.playerQueue.state.order.value;
                     if (this.playerQueue.state.shuffle.value) {
                         let i = this.playerQueue.createOrder({ entityListLength: this.playerQueue.state.entityList.value.length, index: e });
-                        (t = i.index), (r = i.order);
+                        ((t = i.index), (r = i.order));
                     }
                     let i = { entityChangeMethod: s.SET_INDEX, index: t, filterParams: this.playerQueue.state.filterParams.value };
                     return this.hooks.beforeFindPlayableEntityIndex
@@ -946,12 +946,12 @@
                                                       })
                                                       .finally(() => {
                                                           (0, g.vA)(() => {
-                                                              (t = a), this.playerQueue.state.shuffle.value && this.playerQueue.setOrder(r, !1);
+                                                              ((t = a), this.playerQueue.state.shuffle.value && this.playerQueue.setOrder(r, !1));
                                                               let e = this.playerQueue.getEntityByIndex({ index: t });
-                                                              e && ((e.lastChangeMethod = s.SET_INDEX), (e.entity.hidden = !1)),
+                                                              (e && ((e.lastChangeMethod = s.SET_INDEX), (e.entity.hidden = !1)),
                                                                   (this.playerQueue.prevIndex = i),
                                                                   (this.playerQueue.nextIndex = n),
-                                                                  (this.playerQueue.index = t);
+                                                                  (this.playerQueue.index = t));
                                                           });
                                                       }),
                                               )
@@ -996,10 +996,10 @@
                                                       })
                                                       .finally(() => {
                                                           let t = this.playerQueue.getEntityByIndex({ index: i });
-                                                          t && (t.lastChangeMethod = e),
+                                                          (t && (t.lastChangeMethod = e),
                                                               (this.playerQueue.prevIndex = r),
                                                               (this.playerQueue.nextIndex = a),
-                                                              (this.playerQueue.index = i);
+                                                              (this.playerQueue.index = i));
                                                       }),
                                               )
                                         : (this.hooks.afterContextEnd.promise(e), Promise.resolve({ cause: n.ENTITY_CAN_NOT_BE_PLAYED }));
@@ -1013,7 +1013,7 @@
                         let r = this.playerQueue.state.currentEntity.value,
                             i = this.playerQueue.state.repeat.value === p.pM.CONTEXT && 1 === this.playerQueue.state.order.value.length;
                         if ((this.playerQueue.state.repeat.value === p.pM.ONE || i) && r.canBePlayed(t)) return;
-                        this.playerQueue.state.repeat.value === p.pM.CONTEXT &&
+                        (this.playerQueue.state.repeat.value === p.pM.CONTEXT &&
                             this.playerQueue.isOnLastIndex() &&
                             this.playerQueue.state.order.value.length > 1 &&
                             (e = 0),
@@ -1050,10 +1050,10 @@
                                                               })
                                                               .finally(() => {
                                                                   let e = this.playerQueue.getEntityByIndex({ index: r });
-                                                                  e && (e.lastChangeMethod = s.AUTO_MOVE_FORWARD),
+                                                                  (e && (e.lastChangeMethod = s.AUTO_MOVE_FORWARD),
                                                                       (this.playerQueue.prevIndex = t),
                                                                       (this.playerQueue.nextIndex = i),
-                                                                      (this.playerQueue.index = r);
+                                                                      (this.playerQueue.index = r));
                                                               }),
                                                       )
                                                       .catch((e) => {
@@ -1064,7 +1064,7 @@
                                         .catch((e) => {
                                             this.hooks.afterError.promise(e);
                                         }),
-                                );
+                                ));
                     }
                 }
                 moveBackward() {
@@ -1103,10 +1103,10 @@
                                                       })
                                                       .finally(() => {
                                                           let e = this.playerQueue.getEntityByIndex({ index: r });
-                                                          e && (e.lastChangeMethod = s.MOVE_BACKWARD),
+                                                          (e && (e.lastChangeMethod = s.MOVE_BACKWARD),
                                                               (this.playerQueue.prevIndex = t),
                                                               (this.playerQueue.nextIndex = i),
-                                                              (this.playerQueue.index = r);
+                                                              (this.playerQueue.index = r));
                                                       }),
                                               )
                                         : Promise.resolve({ cause: n.ENTITY_CAN_NOT_BE_PLAYED });
@@ -1129,14 +1129,14 @@
                             d = [],
                             c = h.filter((e, t) => {
                                 let r = b(e);
-                                return r && d.push(t), r;
+                                return (r && d.push(t), r);
                             });
                         c.length && d.length
                             ? this.entityLoader
                                   .loadEntities(c)
                                   .then((e) => {
                                       let t = _({ contextEntityPairs: h, loadedEntities: e, indexes: d, factory: this.factory });
-                                      this.playerQueue.inject(t, u, i), this.recalculatePrevNextIndexes(), this.hooks.afterInject.call({ contextEntityPairs: t });
+                                      (this.playerQueue.inject(t, u, i), this.recalculatePrevNextIndexes(), this.hooks.afterInject.call({ contextEntityPairs: t }));
                                   })
                                   .catch((e) => this.hooks.afterError.promise(e))
                             : (this.playerQueue.inject(h, u, i), this.recalculatePrevNextIndexes());
@@ -1206,7 +1206,7 @@
                             repeat: this.playerQueue.state.repeat.value,
                         })
                         .then(() => {
-                            this.playerQueue.remove(e, t), this.recalculatePrevNextIndexes();
+                            (this.playerQueue.remove(e, t), this.recalculatePrevNextIndexes());
                         });
                 }
                 remove(e, t) {
@@ -1236,11 +1236,11 @@
                                     let e = this.playerQueue.getEntityByIndex({ index: t });
                                     e && !e.entity.hidden && ((e.entity.hidden = !0), t < r && (i += 1));
                                 }
-                                i > 0 && this.playerQueue.shiftLivePlayableIndex(-i),
+                                (i > 0 && this.playerQueue.shiftLivePlayableIndex(-i),
                                     t || (this.playerQueue.state.entityList.value = [...this.playerQueue.state.entityList.value]),
                                     this.recalculatePrevNextIndexes().then(() => {
                                         this.hooks.afterEntityRemove.promise();
-                                    });
+                                    }));
                             });
                 }
                 hideByEntityIds(e) {
@@ -1249,7 +1249,7 @@
                 }
                 toggleShuffle() {
                     (0, g.vA)(() => {
-                        this.playerQueue.toggleShuffle(),
+                        (this.playerQueue.toggleShuffle(),
                             this.entityLoader
                                 .loadEntitiesIfNeeded({
                                     index: this.playerQueue.state.index.value,
@@ -1259,12 +1259,12 @@
                                 })
                                 .catch((e) => {
                                     this.hooks.afterError.promise(e);
-                                });
+                                }));
                     });
                 }
                 setShuffle(e) {
                     (0, g.vA)(() => {
-                        this.playerQueue.setShuffle(e),
+                        (this.playerQueue.setShuffle(e),
                             this.entityLoader
                                 .loadEntitiesIfNeeded({
                                     index: this.playerQueue.state.index.value,
@@ -1274,12 +1274,12 @@
                                 })
                                 .catch((e) => {
                                     this.hooks.afterError.promise(e);
-                                });
+                                }));
                     });
                 }
                 setRepeat(e) {
                     (0, g.vA)(() => {
-                        this.playerQueue.setRepeatMode(e),
+                        (this.playerQueue.setRepeatMode(e),
                             e === p.pM.CONTEXT &&
                                 this.entityLoader
                                     .loadEntitiesIfNeeded({
@@ -1290,12 +1290,12 @@
                                     })
                                     .catch((e) => {
                                         this.hooks.afterError.promise(e);
-                                    });
+                                    }));
                     });
                 }
                 updateFilterParams(e) {
                     (0, g.vA)(() => {
-                        this.playerQueue.updateFilterParams(e),
+                        (this.playerQueue.updateFilterParams(e),
                             this.entityLoader
                                 .loadEntitiesIfNeeded({
                                     index: this.playerQueue.state.index.value,
@@ -1308,7 +1308,7 @@
                                 })
                                 .then(() => {
                                     this.recalculatePrevNextIndexes();
-                                });
+                                }));
                     });
                 }
                 getEntityByIndex(e) {
@@ -1326,18 +1326,18 @@
                         : this.contextController.getContextEntities().then((e) => {
                               if (!i) return e;
                               let t = e.filter((e) => !r.some((t) => String(e.data.meta.id) === String(t.data.meta.id)));
-                              return r.push(...t), r;
+                              return (r.push(...t), r);
                           });
                 }
                 constructor(e) {
-                    (0, v._)(this, 'contextController', void 0),
+                    ((0, v._)(this, 'contextController', void 0),
                         (0, v._)(this, 'playerQueue', void 0),
                         (0, v._)(this, 'playerState', void 0),
                         (0, v._)(this, 'hooks', void 0),
                         (0, v._)(this, 'entityLoader', void 0),
-                        (0, v._)(this, 'factory', void 0);
+                        (0, v._)(this, 'factory', void 0));
                     let { contextController: t, playerQueue: r, playerState: i, hooks: a, entityProvider: s, windowPaginationConfig: n, factory: o } = e;
-                    (this.contextController = t),
+                    ((this.contextController = t),
                         (this.playerQueue = r),
                         (this.playerState = i),
                         (this.hooks = a),
@@ -1355,14 +1355,14 @@
                                 e === p.pM.CONTEXT && this.recalculatePrevNextIndexes();
                             },
                             { skipFirstChange: !0 },
-                        );
+                        ));
                 }
             }
             var O = r(27576),
                 R = r(80451);
-            ((d || (d = {})).MEDIA_ELEMENT_ERROR = 'MEDIA_ELEMENT_ERROR'),
+            (((d || (d = {})).MEDIA_ELEMENT_ERROR = 'MEDIA_ELEMENT_ERROR'),
                 (function (e) {
-                    (e.PLAY = 'E_MEDIA_PLAYER_PLAY'),
+                    ((e.PLAY = 'E_MEDIA_PLAYER_PLAY'),
                         (e.STOP = 'E_MEDIA_PLAYER_STOP'),
                         (e.RESUME = 'E_MEDIA_PLAYER_RESUME'),
                         (e.PAUSE = 'E_MEDIA_PLAYER_PAUSE'),
@@ -1371,39 +1371,39 @@
                         (e.SET_PROGRESS = 'E_MEDIA_PLAYER_SET_PROGRESS'),
                         (e.MEDIA_ELEMENT_ERROR = 'E_MEDIA_ELEMENT_ERROR'),
                         (e.DEFAULT_ERROR_CODE = 'E_MEDIA_PLAYER'),
-                        (e.PRE_FETCH = 'E_MEDIA_PLAYER_PRE_FETCH');
-                })(c || (c = {}));
+                        (e.PRE_FETCH = 'E_MEDIA_PLAYER_PRE_FETCH'));
+                })(c || (c = {})));
             class w extends P.t {
                 constructor(e = 'Media player error', { code: t = c.DEFAULT_ERROR_CODE, ...r } = {}) {
-                    super(e, { code: t, ...r }), (0, v._)(this, 'name', 'MediaPlayerException'), Object.setPrototypeOf(this, w.prototype);
+                    (super(e, { code: t, ...r }), (0, v._)(this, 'name', 'MediaPlayerException'), Object.setPrototypeOf(this, w.prototype));
                 }
             }
             class D {
                 reset() {
-                    (this.event.value = this.initialState.event),
+                    ((this.event.value = this.initialState.event),
                         (this.progress.value = this.initialState.progress),
                         (this.speed.value = this.initialState.speed),
                         (this.status.value = this.initialState.status),
-                        (this.volume.value = this.initialState.volume);
+                        (this.volume.value = this.initialState.volume));
                 }
                 constructor(e) {
-                    (0, v._)(this, 'initialState', void 0),
+                    ((0, v._)(this, 'initialState', void 0),
                         (0, v._)(this, 'status', void 0),
                         (0, v._)(this, 'preloadingStatus', void 0),
                         (0, v._)(this, 'event', void 0),
                         (0, v._)(this, 'progress', void 0),
                         (0, v._)(this, 'volume', void 0),
                         (0, v._)(this, 'speed', void 0),
-                        (0, v._)(this, 'exponentVolume', void 0);
+                        (0, v._)(this, 'exponentVolume', void 0));
                     let { status: t, progress: r, event: i, volume: a, speed: s, preloadingStatus: n } = e;
-                    (this.initialState = e),
+                    ((this.initialState = e),
                         (this.status = new g.cJ(t)),
                         (this.preloadingStatus = new g.cJ(n)),
                         (this.event = new g.cJ(i)),
                         (this.progress = new g.cJ(r)),
                         (this.volume = new g.cJ(a)),
                         (this.speed = new g.cJ(s)),
-                        (this.exponentVolume = new g.rm(() => 1 - Math.log(Math.max(this.volume.value, 0.01)) / Math.log(0.01)));
+                        (this.exponentVolume = new g.rm(() => 1 - Math.log(Math.max(this.volume.value, 0.01)) / Math.log(0.01))));
                 }
             }
             let Q = (e) => {
@@ -1511,10 +1511,10 @@
                     );
                 }
                 getMediaSource(e) {
-                    return (this.state.status.value = o.LOADING_MEDIA_SOURCE), this.mediaProvider.getMediaSource(e);
+                    return ((this.state.status.value = o.LOADING_MEDIA_SOURCE), this.mediaProvider.getMediaSource(e));
                 }
                 subscribeCoreEvents() {
-                    this.core.onEnd(this.handlers.end),
+                    (this.core.onEnd(this.handlers.end),
                         this.core.onPaused(this.handlers.paused),
                         this.core.onResume(this.handlers.resume),
                         this.core.onUpdatingProgress(this.handlers.updatingProgress),
@@ -1526,10 +1526,10 @@
                         this.core.onError(this.handlers.error),
                         this.core.onVolumeChange(this.handlers.volumeChange),
                         this.core.onSpeedChange(this.handlers.speedChange),
-                        this.core.onWaiting(this.handlers.waiting);
+                        this.core.onWaiting(this.handlers.waiting));
                 }
                 unsubscribeCoreEvents() {
-                    this.core.offEnd(this.handlers.end),
+                    (this.core.offEnd(this.handlers.end),
                         this.core.offPaused(this.handlers.paused),
                         this.core.offResume(this.handlers.resume),
                         this.core.offUpdatingProgress(this.handlers.updatingProgress),
@@ -1541,11 +1541,11 @@
                         this.core.offError(this.handlers.error),
                         this.core.offVolumeChange(this.handlers.volumeChange),
                         this.core.offSpeedChange(this.handlers.speedChange),
-                        this.core.offWaiting(this.handlers.waiting);
+                        this.core.offWaiting(this.handlers.waiting));
                 }
                 constructor(e) {
                     var t = this;
-                    (0, v._)(this, 'state', new D(f)),
+                    ((0, v._)(this, 'state', new D(f)),
                         (0, v._)(this, 'mediaProvider', void 0),
                         (0, v._)(this, 'hooks', void 0),
                         (0, v._)(this, 'handlers', {
@@ -1558,18 +1558,18 @@
                                             r.afterError.promise(e);
                                         })
                                         .finally(() => {
-                                            (t.event.value = h.END), (t.status.value = o.ENDED), (t.event.value = h.SHOULD_AUTOMOVEFORWARD);
+                                            ((t.event.value = h.END), (t.status.value = o.ENDED), (t.event.value = h.SHOULD_AUTOMOVEFORWARD));
                                         });
                                 })({ state: this.state, hooks: this.hooks }),
                             paused: () =>
                                 (function (e) {
                                     let { state: t } = e;
-                                    (t.status.value = o.PAUSED), (t.event.value = h.PAUSED);
+                                    ((t.status.value = o.PAUSED), (t.event.value = h.PAUSED));
                                 })({ state: this.state }),
                             resume: () =>
                                 (function (e) {
                                     let { state: t } = e;
-                                    (t.status.value = o.PLAYING), (t.event.value = h.RESUMED);
+                                    ((t.status.value = o.PLAYING), (t.event.value = h.RESUMED));
                                 })({ state: this.state }),
                             seeked: () =>
                                 (function (e) {
@@ -1594,56 +1594,56 @@
                             playing: () => {
                                 !(function (e) {
                                     let { state: t } = e;
-                                    (t.status.value = o.PLAYING), (t.event.value = h.PLAYING);
+                                    ((t.status.value = o.PLAYING), (t.event.value = h.PLAYING));
                                 })({ state: this.state });
                             },
                             error: (e) => {
                                 !(function (e) {
                                     let t,
                                         { state: r, hooks: i, error: a } = e;
-                                    (t = a instanceof P.t ? a : new w('Core media element error', { code: c.MEDIA_ELEMENT_ERROR, cause: a })),
+                                    ((t = a instanceof P.t ? a : new w('Core media element error', { code: c.MEDIA_ELEMENT_ERROR, cause: a })),
                                         i.afterError.promise(t),
                                         (r.status.value = o.MEDIA_ELEMENT_ERROR),
-                                        (r.event.value = h.MEDIA_ELEMENT_ERROR);
+                                        (r.event.value = h.MEDIA_ELEMENT_ERROR));
                                 })({ state: this.state, hooks: this.hooks, error: e });
                             },
                             volumeChange: (e) =>
                                 (function (e) {
                                     let { state: t, volume: r } = e;
-                                    (t.volume.value = r), (t.event.value = h.SET_VOLUME);
+                                    ((t.volume.value = r), (t.event.value = h.SET_VOLUME));
                                 })({ state: this.state, volume: e }),
                             speedChange: (e) => {
                                 !(function (e) {
                                     let { state: t, speed: r } = e;
-                                    (t.speed.value = r), (t.event.value = h.SET_SPEED);
+                                    ((t.speed.value = r), (t.event.value = h.SET_SPEED));
                                 })({ state: this.state, speed: e });
                             },
                             updatingProgress: (e) => {
                                 !(function (e) {
                                     let { state: t, progress: r } = e;
-                                    (t.progress.value = r), (t.event.value = h.UPDATING_PROGRESS);
+                                    ((t.progress.value = r), (t.event.value = h.UPDATING_PROGRESS));
                                 })({ state: this.state, progress: e });
                             },
                             stop: function () {
                                 let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
                                     { triggerAfterMediaEndPlaying: r = !0 } = e,
                                     { state: i, hooks: a, triggerAfterMediaEndPlaying: s = !0 } = { state: t.state, hooks: t.hooks, triggerAfterMediaEndPlaying: r };
-                                (i.status.value = o.STOPPED),
+                                ((i.status.value = o.STOPPED),
                                     (i.event.value = h.STOP),
                                     s &&
                                         a.afterMediaEndPlaying.promise().catch((e) => {
                                             a.afterError.promise(e);
-                                        });
+                                        }));
                             },
                             waiting: () => {
                                 !(function (e) {
                                     let { state: t } = e;
-                                    (t.event.value = h.WAITING), (t.status.value = o.BUFFERING);
+                                    ((t.event.value = h.WAITING), (t.status.value = o.BUFFERING));
                                 })({ state: this.state, hooks: this.hooks });
                             },
                         }),
                         (this.mediaProvider = e.mediaProvider),
-                        (this.hooks = e.hooks);
+                        (this.hooks = e.hooks));
                 }
             }
             class q extends N {
@@ -1681,7 +1681,7 @@
                                             this.corePlay({ source: e, positionSec: t }).then(i).catch(a);
                                             break;
                                         case o.PAUSED:
-                                            this.core.setSrc({ source: e, positionSec: t }), (this.state.status.value = o.PAUSED), i();
+                                            (this.core.setSrc({ source: e, positionSec: t }), (this.state.status.value = o.PAUSED), i());
                                     }
                                 }).then(() => {
                                     this.hooks.afterMediaSourceContentReload.promise().catch((e) => {
@@ -1703,8 +1703,8 @@
                                 })
                                 .finally(() =>
                                     new Promise((t, a) => {
-                                        (this.state.preloadingStatus.value = l.PRELOADING_MEDIA_SOURCE_CONTENT),
-                                            this.core.preloadSrc({ source: e, bufferGoal: r, positionSec: i }).then(t).catch(a);
+                                        ((this.state.preloadingStatus.value = l.PRELOADING_MEDIA_SOURCE_CONTENT),
+                                            this.core.preloadSrc({ source: e, bufferGoal: r, positionSec: i }).then(t).catch(a));
                                     })
                                         .then(() => {
                                             this.hooks.afterMediaSourceContentPreload.promise(t).catch((e) => {
@@ -1747,10 +1747,10 @@
                 getMediaSource(e) {
                     return super.getMediaSource(e).catch((e) => {
                         throw (
-                            (this.stop().catch((e) => {
+                            this.stop().catch((e) => {
                                 this.hooks.afterError.promise(e);
                             }),
-                            e)
+                            e
                         );
                     });
                 }
@@ -1767,14 +1767,14 @@
                     this.core.onEnd(this.handlers.end);
                 }
                 constructor(e) {
-                    super(e),
+                    (super(e),
                         (0, v._)(this, 'core', void 0),
                         (0, v._)(this, 'currentAudioElement', void 0),
                         (0, v._)(this, 'audioElementsStore', void 0),
                         (this.core = e.core),
                         (this.currentAudioElement = new g.cJ(this.core.source)),
                         (this.audioElementsStore = [this.core.source]),
-                        this.subscribeCoreEvents();
+                        this.subscribeCoreEvents());
                 }
             }
             class V extends N {
@@ -1801,14 +1801,14 @@
                     });
                 }
                 constructor(e) {
-                    super(e), (0, v._)(this, 'core', void 0), (this.core = e.core), this.subscribeCoreEvents();
+                    (super(e), (0, v._)(this, 'core', void 0), (this.core = e.core), this.subscribeCoreEvents());
                 }
             }
             class F extends P.t {
                 constructor() {
-                    super('No current entity in queue', { code: 'E_NO_CURRENT_ENTITY' }),
+                    (super('No current entity in queue', { code: 'E_NO_CURRENT_ENTITY' }),
                         (0, v._)(this, 'name', 'NoCurrentEntityException'),
-                        Object.setPrototypeOf(this, F.prototype);
+                        Object.setPrototypeOf(this, F.prototype));
                 }
             }
             let B = { delay: 300, burstWindowMs: 1e3, burstThreshold: 3, burstExitIdleMs: 1200 };
@@ -1820,7 +1820,7 @@
                     if (this.statesMap.has(e)) return;
                     let { skipFirstChange: r = !1 } = t || {},
                         i = [];
-                    i.push(
+                    (i.push(
                         e.event.onChange(
                             () => {
                                 this.event.value = e.event.value;
@@ -1860,7 +1860,7 @@
                                 { skipFirstChange: r },
                             ),
                         ),
-                        this.statesMap.set(e, i);
+                        this.statesMap.set(e, i));
                 }
                 offChange(e) {
                     let t = this.statesMap.get(e);
@@ -1870,13 +1870,13 @@
                     }
                 }
                 offAllStates() {
-                    this.statesMap.forEach((e) => {
+                    (this.statesMap.forEach((e) => {
                         for (let t of e) t();
                     }),
-                        this.statesMap.clear();
+                        this.statesMap.clear());
                 }
                 constructor(...e) {
-                    super(...e), (0, v._)(this, 'statesMap', new Map());
+                    (super(...e), (0, v._)(this, 'statesMap', new Map()));
                 }
             }
             let W = '[CrossMediaPlayer]',
@@ -1902,16 +1902,16 @@
                         this.currentMediaPlayer.offEnd(),
                         this.currentMediaPlayer === this.firstMediaPlayer)
                     ) {
-                        (this.currentMediaPlayer = this.secondMediaPlayer),
+                        ((this.currentMediaPlayer = this.secondMediaPlayer),
                             (this.currentAudioElement.value = this.secondMediaPlayer.currentAudioElement.value),
                             this.secondMediaPlayer.onEnd(),
-                            this.state.onChange(this.secondMediaPlayer.state, { skipFirstChange: !0 });
+                            this.state.onChange(this.secondMediaPlayer.state, { skipFirstChange: !0 }));
                         return;
                     }
-                    (this.currentMediaPlayer = this.firstMediaPlayer),
+                    ((this.currentMediaPlayer = this.firstMediaPlayer),
                         (this.currentAudioElement.value = this.firstMediaPlayer.currentAudioElement.value),
                         this.firstMediaPlayer.onEnd(),
-                        this.state.onChange(this.firstMediaPlayer.state, { skipFirstChange: !0 });
+                        this.state.onChange(this.firstMediaPlayer.state, { skipFirstChange: !0 }));
                 }
                 play(e) {
                     let { prevContextEntityPair: t, currentContextEntityPair: r, nextContextEntityPair: i } = e;
@@ -1933,7 +1933,7 @@
                         ),
                         this.isCrossfadeForceDisabled)
                     )
-                        return this.ticker.clearInterval(), this.playWithoutCrossing(e);
+                        return (this.ticker.clearInterval(), this.playWithoutCrossing(e));
                     if (!this.isEnabled.value && !r.canBePlayedOnlyWithCrossing) return this.playWithoutCrossing(e);
                     let a = t && t.canBeCrossedWith(r);
                     return (this.startTimeTracking(r, i),
@@ -2055,7 +2055,7 @@
                             { currentTime: this.currentAudioElement.value.currentTime },
                         );
                     }
-                    return this.stopTimeTracking(this.currentAudioElement.value.currentTime), this.stopCrossing(), this.currentMediaPlayer.pause();
+                    return (this.stopTimeTracking(this.currentAudioElement.value.currentTime), this.stopCrossing(), this.currentMediaPlayer.pause());
                 }
                 resume() {
                     if (this.isCrossfadeActive()) {
@@ -2068,7 +2068,7 @@
                             { currentTime: this.currentAudioElement.value.currentTime },
                         );
                     }
-                    return this.stopTimeTracking(this.currentAudioElement.value.currentTime), this.stopCrossing(), this.currentMediaPlayer.resume();
+                    return (this.stopTimeTracking(this.currentAudioElement.value.currentTime), this.stopCrossing(), this.currentMediaPlayer.resume());
                 }
                 togglePause() {
                     if (this.isCrossfadeActive()) {
@@ -2081,7 +2081,7 @@
                             { currentTime: this.currentAudioElement.value.currentTime },
                         );
                     }
-                    return this.stopTimeTracking(this.currentAudioElement.value.currentTime), this.stopCrossing(), this.currentMediaPlayer.togglePause();
+                    return (this.stopTimeTracking(this.currentAudioElement.value.currentTime), this.stopCrossing(), this.currentMediaPlayer.togglePause());
                 }
                 stop() {
                     let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
@@ -2137,7 +2137,7 @@
                             }),
                             this.ticker.setInterval(() => {
                                 let a = this.currentAudioElement.value.currentTime;
-                                0.05 >= Math.abs(this.currentEntityEarlyOutStart - a) &&
+                                (0.05 >= Math.abs(this.currentEntityEarlyOutStart - a) &&
                                     ((this.crossOutMediaPlayer = this.currentMediaPlayer),
                                     (this.crossInMediaPlayer = this.currentMediaPlayer === this.firstMediaPlayer ? this.secondMediaPlayer : this.firstMediaPlayer),
                                     this.isReadyForAudioEffect.value ||
@@ -2164,7 +2164,7 @@
                                             { currentTime: a, swapTime: i },
                                         ),
                                         this.ticker.clearInterval(),
-                                        (this.state.event.value = h.SHOULD_AUTOMOVEFORWARD));
+                                        (this.state.event.value = h.SHOULD_AUTOMOVEFORWARD)));
                             }, 50))
                           : void this.logger.log(
                                 'warn',
@@ -2173,27 +2173,27 @@
                 }
                 offVolumeChange() {
                     var e;
-                    this.logger.log(
+                    (this.logger.log(
                         'info',
                         'Изменение громкости заблокировано (Safari) | текущий: '.concat(
                             this.logger.getTrackLabel(null == (e = this.currentContextEntityPair) ? void 0 : e.entity),
                         ),
                     ),
                         this.firstMediaPlayer.offVolumeChange(),
-                        this.secondMediaPlayer.offVolumeChange();
+                        this.secondMediaPlayer.offVolumeChange());
                 }
                 onVolumeChange() {
-                    this.firstMediaPlayer.onVolumeChange(), this.secondMediaPlayer.onVolumeChange();
+                    (this.firstMediaPlayer.onVolumeChange(), this.secondMediaPlayer.onVolumeChange());
                 }
                 offEnd() {
-                    this.firstMediaPlayer.offEnd(), this.secondMediaPlayer.offEnd();
+                    (this.firstMediaPlayer.offEnd(), this.secondMediaPlayer.offEnd());
                 }
                 onEnd() {
-                    this.firstMediaPlayer.onEnd(), this.secondMediaPlayer.onEnd();
+                    (this.firstMediaPlayer.onEnd(), this.secondMediaPlayer.onEnd());
                 }
                 forceStopCrossfade() {
                     var e;
-                    this.logger.log(
+                    (this.logger.log(
                         'warn',
                         'Кроссфейд принудительно остановлен (повтор) | текущий: '.concat(
                             this.logger.getTrackLabel(null == (e = this.currentContextEntityPair) ? void 0 : e.entity),
@@ -2202,7 +2202,7 @@
                         (this.isCrossfadeForceDisabled = !0),
                         this.stopCrossing(),
                         this.ticker.clearInterval(),
-                        (this.isEnabled.value = !1);
+                        (this.isEnabled.value = !1));
                 }
                 eventHandler(e) {
                     if (e === h.END) {
@@ -2228,14 +2228,14 @@
                             { hasCrossOutPlayer: null !== this.crossOutMediaPlayer, stopReadinessForAudioEffect: e },
                         );
                     }
-                    null !== this.crossOutMediaPlayer && this.crossOutMediaPlayer.stop({ triggerAfterMediaEndPlaying: !1 }),
+                    (null !== this.crossOutMediaPlayer && this.crossOutMediaPlayer.stop({ triggerAfterMediaEndPlaying: !1 }),
                         (this.crossOutMediaPlayer = null),
                         (this.crossInMediaPlayer = null),
                         (this.isCrossing.value = !1),
                         e &&
                             ((this.isReadyForAudioEffect.value = !1),
                             (this.isReadyForAudioEffectInStart.value = !1),
-                            this.config.useVolumeForAudioEffect && this.onVolumeChange());
+                            this.config.useVolumeForAudioEffect && this.onVolumeChange()));
                 }
                 isCrossfadeActive() {
                     return this.isCrossing.value || this.isReadyForAudioEffect.value || this.isReadyForAudioEffectInStart.value;
@@ -2245,19 +2245,19 @@
                 }
                 handleTickerError(e) {
                     var t;
-                    this.logger.log(
+                    (this.logger.log(
                         'error',
                         'Ошибка тикера, кроссфейд прерван | текущий: '.concat(this.logger.getTrackLabel(null == (t = this.currentContextEntityPair) ? void 0 : t.entity)),
                         { error: e },
                     ),
                         this.ticker.clearInterval(),
-                        this.stopCrossing();
+                        this.stopCrossing());
                     let r = new P.t('CrossMediaPlayer. Error in ticker runtime.', { cause: e });
                     this.hooks.afterError.promise(r);
                 }
                 constructor({ hooks: e, mediaProvider: t, core: r, additionalCore: i, config: a = {}, ticker: s, isEnabled: n, variables: o }) {
                     var l;
-                    (0, v._)(this, 'currentMediaPlayer', void 0),
+                    ((0, v._)(this, 'currentMediaPlayer', void 0),
                         (0, v._)(this, 'firstMediaPlayer', void 0),
                         (0, v._)(this, 'secondMediaPlayer', void 0),
                         (0, v._)(this, 'crossOutMediaPlayer', null),
@@ -2344,14 +2344,14 @@
                             (e) => {
                                 var t, r;
                                 if (!e && !(null == (t = this.currentContextEntityPair) ? void 0 : t.canBePlayedOnlyWithCrossing)) {
-                                    this.logger.log(
+                                    (this.logger.log(
                                         'warn',
                                         'Кроссфейд выключен извне | текущий: '.concat(
                                             this.logger.getTrackLabel(null == (r = this.currentContextEntityPair) ? void 0 : r.entity),
                                         ),
                                     ),
                                         this.stopCrossing(),
-                                        this.ticker.clearInterval();
+                                        this.ticker.clearInterval());
                                     return;
                                 }
                                 e &&
@@ -2365,7 +2365,7 @@
                                     this.startTimeTracking(this.currentContextEntityPair, this.nextContextEntityPair));
                             },
                             { skipFirstChange: !0 },
-                        );
+                        ));
                 }
             }
             function X(e) {
@@ -2461,7 +2461,7 @@
                 applyInitialProgress(e) {
                     if (this.state.status.value !== o.IDLE || !this.queueState.currentEntity.value) return;
                     let t = this.queueState.currentEntity.value;
-                    (t.positionSec = e.position), (t.lastSeekPosition = e.position), (this.state.progress.value = { ...this.state.progress.value, ...e });
+                    ((t.positionSec = e.position), (t.lastSeekPosition = e.position), (this.state.progress.value = { ...this.state.progress.value, ...e }));
                 }
                 releaseSrc(e) {
                     return X(this.currentMediaPlayer.value) ? this.currentMediaPlayer.value.releaseSrc(e) : Promise.resolve();
@@ -2531,10 +2531,10 @@
                     return (0, O.A)();
                 }
                 subscribeQueue() {
-                    this.unsubArray.push(this.state.event.onChange(this.playerEventChangeHandler)),
+                    (this.unsubArray.push(this.state.event.onChange(this.playerEventChangeHandler)),
                         this.unsubArray.push(this.queueState.currentEntity.onChange(this.currentEntityHandler)),
                         this.unsubArray.push(this.queueState.nextEntity.onChange(this.nextEntityHandler)),
-                        this.unsubArray.push(this.queueState.repeat.onChange(this.repeatModeHandler.bind(this)));
+                        this.unsubArray.push(this.queueState.repeat.onChange(this.repeatModeHandler.bind(this))));
                 }
                 repeatModeHandler(e) {
                     if (et(this.currentMediaPlayer.value)) {
@@ -2620,7 +2620,7 @@
                 }
                 constructor(e) {
                     var t, r, i;
-                    (0, v._)(this, 'state', void 0),
+                    ((0, v._)(this, 'state', void 0),
                         (0, v._)(this, 'mediaPlayersStore', new g.cJ({})),
                         (0, v._)(this, 'currentMediaPlayer', new g.cJ(null)),
                         (0, v._)(this, 'queueState', void 0),
@@ -2629,9 +2629,9 @@
                         (0, v._)(this, 'listenToQueueStateChange', !0),
                         (0, v._)(this, 'variables', void 0),
                         (0, v._)(this, 'burstDebounce', void 0),
-                        (0, v._)(this, 'hooks', void 0);
+                        (0, v._)(this, 'hooks', void 0));
                     let { queueState: a, hooks: s, config: n, mediaPlayerParams: o, state: l, variables: u } = e;
-                    (this.queueState = a),
+                    ((this.queueState = a),
                         (this.hooks = s),
                         (this.state = l),
                         (this.variables = u),
@@ -2652,16 +2652,16 @@
                         (this.currentEntityHandler = this.currentEntityHandler.bind(this)),
                         (this.nextEntityHandler = this.nextEntityHandler.bind(this)),
                         (this.playerEventChangeHandler = this.playerEventChangeHandler.bind(this)),
-                        this.subscribeQueue();
+                        this.subscribeQueue());
                 }
             }
             let K = 5;
             var z = r(68413);
             class Z extends Error {
                 constructor() {
-                    super('setContext completed but the context is no longer current (superseded by another setContext call)'),
+                    (super('setContext completed but the context is no longer current (superseded by another setContext call)'),
                         (0, v._)(this, 'name', 'StaleContextException'),
-                        Object.setPrototypeOf(this, Z.prototype);
+                        Object.setPrototypeOf(this, Z.prototype));
                 }
             }
             class $ {
@@ -2714,7 +2714,7 @@
                                     var t;
                                     (null == (t = this.pendingPlayContextRequest) ? void 0 : t.promise) === e && (this.pendingPlayContextRequest = void 0);
                                 });
-                            return v && (this.pendingPlayContextRequest = { key: v, promise: e }), e;
+                            return (v && (this.pendingPlayContextRequest = { key: v, promise: e }), e);
                         }
                         let { entity: g } = h;
                         if (void 0 === s || void 0 === f || -1 === f) {
@@ -2730,7 +2730,7 @@
                     }
                 }
                 setContext(e) {
-                    this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1);
+                    (this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1));
                     let { context: t, entitiesData: r, queueParams: i, loadContextMeta: a = !0, progress: s } = e;
                     return this.hooks.beforeContextSet
                         .promise()
@@ -2738,16 +2738,16 @@
                             this.hooks.afterError.promise(e);
                         })
                         .finally(() => {
-                            (this.contextController.currentContext = t), this.hooks.afterContextSet.call();
+                            ((this.contextController.currentContext = t), this.hooks.afterContextSet.call());
                             let e = () =>
                                     this.contextController.currentContextObservable.value !== t
                                         ? Promise.reject(new Z())
                                         : this.queueController.setupQueue({ entitiesData: r, queueParams: i }).then(() => {
                                               if (this.contextController.currentContextObservable.value !== t) throw new Z();
-                                              s && this.mediaController.applyInitialProgress(s),
+                                              (s && this.mediaController.applyInitialProgress(s),
                                                   (this.lastStableContext = t),
                                                   (this.mediaController.listenQueueState = !0),
-                                                  this.hooks.afterSetupQueue.call();
+                                                  this.hooks.afterSetupQueue.call());
                                           }),
                                 n = (e) => (
                                     e instanceof Z ||
@@ -2764,7 +2764,7 @@
                         });
                 }
                 restartContext(e) {
-                    this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1);
+                    (this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1));
                     let { playAfterRestart: t = !0, entitiesData: r, queueParams: i } = e;
                     return this.hooks.beforeEntityChange
                         .promise({ method: s.RESTART_CONTEXT, index: this.queueController.queue.state.index.value })
@@ -2795,7 +2795,7 @@
                     });
                 }
                 play() {
-                    return this.mediaController.cancelPendingBurstDebounce(), this.mediaController.play();
+                    return (this.mediaController.cancelPendingBurstDebounce(), this.mediaController.play());
                 }
                 moveForward(e) {
                     return this.queueController
@@ -2827,7 +2827,7 @@
                               });
                 }
                 setEntityByIndex(e, t) {
-                    return t && (this.mediaController.listenQueueState = !1), this.mediaController.cancelPendingBurstDebounce(), this.queueController.setIndex(e);
+                    return (t && (this.mediaController.listenQueueState = !1), this.mediaController.cancelPendingBurstDebounce(), this.queueController.setIndex(e));
                 }
                 inject(e) {
                     this.queueController.inject(e);
@@ -2860,7 +2860,7 @@
                     return (this.mediaController.cancelPendingBurstDebounce(), e) ? this.mediaController.stop() : this.mediaController.pause();
                 }
                 resume() {
-                    return this.mediaController.cancelPendingBurstDebounce(), this.mediaController.resume();
+                    return (this.mediaController.cancelPendingBurstDebounce(), this.mediaController.resume());
                 }
                 togglePause() {
                     let e = this.mediaController.isPendingBurstDebounce;
@@ -2916,13 +2916,13 @@
                     this.mediaController.listenQueueState = !0;
                 }
                 unbindPlayer() {
-                    this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1);
+                    (this.mediaController.cancelPendingBurstDebounce(), (this.mediaController.listenQueueState = !1));
                 }
                 setRepeatMode(e) {
                     this.queueController.setRepeat(e);
                 }
                 stop() {
-                    return this.mediaController.cancelPendingBurstDebounce(), this.mediaController.stop();
+                    return (this.mediaController.cancelPendingBurstDebounce(), this.mediaController.stop());
                 }
                 getEntityByIndex(e) {
                     return this.queueController.getEntityByIndex(e);
@@ -2938,7 +2938,7 @@
                 }
                 constructor(e) {
                     var t;
-                    (0, v._)(this, 'id', void 0),
+                    ((0, v._)(this, 'id', void 0),
                         (0, v._)(this, 'isBlocking', void 0),
                         (0, v._)(this, 'playbackState', void 0),
                         (0, v._)(this, 'queueController', void 0),
@@ -2990,7 +2990,7 @@
                         (0, v._)(this, 'lastStableContext', void 0),
                         (0, v._)(this, 'pendingPlayContextRequest', void 0),
                         (this.id = e.id),
-                        (this.isBlocking = null != (t = e.isBlocking) && t);
+                        (this.isBlocking = null != (t = e.isBlocking) && t));
                     let {
                         queueController: r,
                         contextController: i,
@@ -3026,7 +3026,7 @@
                             throw new S('Error in createPlaybackControllers', { code: 'E_CREATE_PLAYER_CONTROLLERS', cause: e });
                         }
                     })({ ...e, hooks: this.hooks });
-                    (this.queueController = r),
+                    ((this.queueController = r),
                         (this.mediaController = a),
                         (this.contextController = i),
                         (this.playbackState = {
@@ -3035,7 +3035,7 @@
                             mediaPlayersStore: this.mediaController.mediaPlayersStore,
                             queueState: this.queueController.queue.state,
                             currentContext: this.contextController.currentContextObservable,
-                        });
+                        }));
                 }
             }
             function ee(e) {
@@ -3046,7 +3046,7 @@
             }
             class er {}
             !(function (e) {
-                (e.BLOCKED = 'blocked'), (e.UNBLOCKED = 'unblocked');
+                ((e.BLOCKED = 'blocked'), (e.UNBLOCKED = 'unblocked'));
             })(y || (y = {}));
         },
     },
