@@ -70,8 +70,14 @@ export class IsolatedModuleRuntime {
         if (this.init.descriptors[alias].kind !== kind) return Promise.reject(new Error('PulseSync modules: incompatible-api'))
         const existing = this.loads.get(alias)
         if (existing) return existing
-        const promise = this.queue.then(() => this.initialize(alias, kind, options))
-        this.queue = promise.catch(() => {})
+        const promise = new Promise<unknown>((resolve, reject) => {
+            const aborted = () => reject(new Error('PulseSync modules: aborted'))
+            this.abort.signal.addEventListener('abort', aborted, { once: true })
+            void Promise.resolve()
+                .then(() => this.initialize(alias, kind, options))
+                .then(resolve, reject)
+                .finally(() => this.abort.signal.removeEventListener('abort', aborted))
+        })
         this.loads.set(alias, promise)
         void promise.catch(() => {
             if (this.loads.get(alias) === promise) this.loads.delete(alias)
@@ -90,42 +96,47 @@ export class IsolatedModuleRuntime {
             if (!(bytes instanceof Uint8Array) || bytes.byteLength !== descriptor.size) throw new Error('PulseSync modules: integrity-mismatch')
         }
         const pending: { alias: string; definition?: Definition } = { alias }
-        this.registration = pending
-        try {
-            const result = await this.bridge.load(alias, bytes)
+        const execution = this.queue.then(async () => {
             this.assertActive()
-            if (result.kind !== kind) throw new Error('PulseSync modules: incompatible-api')
-            if (kind === 'wasm') {
-                if (!result.bytes) throw new Error('PulseSync modules: integrity-mismatch')
-                const module = await WebAssembly.compile(new Uint8Array(result.bytes).buffer)
-                this.assertActive()
-                if (WebAssembly.Module.imports(module).length) throw new Error('PulseSync modules: incompatible-api')
-                const instance = await WebAssembly.instantiate(module)
-                this.assertActive()
-                const facade = Object.create(null) as Record<string, (...args: unknown[]) => unknown>
-                for (const [name, value] of Object.entries(instance.exports)) {
-                    if (typeof value === 'function')
-                        facade[name] = (...args) => {
-                            this.assertActive()
-                            return value(...args)
-                        }
-                }
-                return Object.freeze(facade)
+            this.registration = pending
+            try {
+                return await this.bridge.load(alias, bytes)
+            } finally {
+                if (this.registration === pending) this.registration = undefined
             }
-            if (!pending.definition) throw new Error('PulseSync modules: initialization-failed')
-            const instance = await pending.definition.create({ api: this.api, signal: this.abort.signal })
-            if (!instance || !Object.hasOwn(instance, 'exports') || (instance.dispose !== undefined && typeof instance.dispose !== 'function')) {
-                throw new Error('PulseSync modules: initialization-failed')
+        })
+        this.queue = execution.catch(() => {})
+        const result = await execution
+        this.assertActive()
+        if (result.kind !== kind) throw new Error('PulseSync modules: incompatible-api')
+        if (kind === 'wasm') {
+            if (!result.bytes) throw new Error('PulseSync modules: integrity-mismatch')
+            const module = await WebAssembly.compile(new Uint8Array(result.bytes).buffer)
+            this.assertActive()
+            if (WebAssembly.Module.imports(module).length) throw new Error('PulseSync modules: incompatible-api')
+            const instance = await WebAssembly.instantiate(module)
+            this.assertActive()
+            const facade = Object.create(null) as Record<string, (...args: unknown[]) => unknown>
+            for (const [name, value] of Object.entries(instance.exports)) {
+                if (typeof value === 'function')
+                    facade[name] = (...args) => {
+                        this.assertActive()
+                        return value(...args)
+                    }
             }
-            if (this.abort.signal.aborted) {
-                instance.dispose?.()
-                this.assertActive()
-            }
-            if (instance.dispose) this.cleanups.add(instance.dispose)
-            return this.exportsGuard.wrap(instance.exports)
-        } finally {
-            if (this.registration === pending) this.registration = undefined
+            return Object.freeze(facade)
         }
+        if (!pending.definition) throw new Error('PulseSync modules: initialization-failed')
+        const instance = await pending.definition.create({ api: this.api, signal: this.abort.signal })
+        if (!instance || !Object.hasOwn(instance, 'exports') || (instance.dispose !== undefined && typeof instance.dispose !== 'function')) {
+            throw new Error('PulseSync modules: initialization-failed')
+        }
+        if (this.abort.signal.aborted) {
+            instance.dispose?.()
+            this.assertActive()
+        }
+        if (instance.dispose) this.cleanups.add(instance.dispose)
+        return this.exportsGuard.wrap(instance.exports)
     }
 
     readonly load = <T = unknown>(alias: string, options: Options): Promise<T> => this.get(alias, 'javascript', options) as Promise<T>

@@ -21,8 +21,12 @@ export class ModuleExportsGuard {
             return guarded
         }
         if (ArrayBuffer.isView(value) || value instanceof ArrayBuffer || value instanceof Date || value instanceof RegExp) return value
-        const target = typeof value === 'function' ? function () {} : Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value))
+        const target = typeof value === 'function' ? function () {} : Array.isArray(value) ? [] : Object.create(null)
         const facade = new Proxy(target, {
+            getPrototypeOf: () => {
+                this.assertActive()
+                return this.wrap(Reflect.getPrototypeOf(value)) as object | null
+            },
             get: (target, key) => {
                 this.assertActive()
                 const own = Reflect.getOwnPropertyDescriptor(target, key)
@@ -31,7 +35,14 @@ export class ModuleExportsGuard {
             },
             apply: (_target, receiver, args) => {
                 this.assertActive()
-                return this.wrap(Reflect.apply(value as (...args: unknown[]) => unknown, this.originals.get(receiver) ?? receiver, args))
+                const keepsReceiver = value === Function.prototype.call || value === Function.prototype.apply || value === Function.prototype.bind
+                return this.wrap(
+                    Reflect.apply(
+                        value as (...args: unknown[]) => unknown,
+                        keepsReceiver ? receiver : (this.originals.get(receiver) ?? receiver),
+                        args,
+                    ),
+                )
             },
             construct: (_target, args) => {
                 this.assertActive()
@@ -61,6 +72,9 @@ export class ModuleExportsGuard {
                     : undefined
             },
             set: () => false,
+            defineProperty: () => false,
+            setPrototypeOf: () => false,
+            preventExtensions: () => false,
         })
         this.facades.set(value, facade)
         this.originals.set(facade, value)

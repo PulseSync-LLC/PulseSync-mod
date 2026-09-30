@@ -1167,13 +1167,28 @@ class PulseSyncManager extends EventEmitter {
             throw new Error('PulseSync modules: unsupported-host');
         }
         if (!/^[a-f0-9]{64}$/.test(transportToken)) throw new Error('PulseSync modules: access-denied');
-        const response = await this.socket
-            .timeout(20000)
-            .emitWithAck('ADDON_MODULE_REQUEST', { ...payload, transportToken })
+        const socket = this.socket;
+        const deadline = Date.now() + 20000;
+        const response = await socket
+            .timeout(Math.max(1, deadline - Date.now()))
+            .emitWithAck('ADDON_MODULE_REQUEST', { ...payload, transportToken, deadline })
             .catch(() => {
+                if (payload.operation !== 'dispose') this.emit('module-revoked', payload.activationId);
+                if (payload.operation !== 'dispose' && socket.connected) {
+                    void socket
+                        .timeout(20000)
+                        .emitWithAck('ADDON_MODULE_REQUEST', { operation: 'dispose', activationId: payload.activationId, transportToken, deadline: Date.now() + 20000 })
+                        .catch(() => {});
+                }
                 throw new Error('PulseSync modules: unavailable');
             });
-        if (!this.isAuthorized || !this.socket?.connected) throw new Error('PulseSync modules: aborted');
+        if (!this.isAuthorized || this.socket !== socket || !socket.connected || Date.now() >= deadline) {
+            if (payload.operation !== 'dispose') {
+                this.emit('module-revoked', payload.activationId);
+                void this.requestAddonModule({ operation: 'dispose', activationId: payload.activationId }).catch(() => {});
+            }
+            throw new Error('PulseSync modules: aborted');
+        }
         if (!response?.ok) throw new Error(`PulseSync modules: ${response?.error || 'unavailable'}`);
         return response.value;
     }
