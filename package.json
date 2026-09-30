@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "dev": "node toolset.js dev",
+        "update:ncs-catalog": "node toolset/utils/updateNcsCatalog.js",
         "release": "node toolset.js release",
         "buildMod": "node toolset.js build -d",
         "buildModProd": "node toolset.js build -m --modernize",
@@ -49,5 +50,8 @@
         "ws": "^8.21.0",
         "zstd-codec": "^0.1.5",
         "oxfmt": "0.71.0"
+    },
+    "devDependencies": {
+        "nocopyrightsounds-api": "3.0.2"
     }
 }

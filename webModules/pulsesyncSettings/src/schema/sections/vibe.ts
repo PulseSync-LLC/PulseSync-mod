@@ -6,7 +6,7 @@ const USE_DYNAMIC_ENERGY_KEY = `${PREFIX}useDynamicEnergy`;
 const SMOOTH_DYNAMIC_ENERGY_KEY = `${PREFIX}smoothDynamicEnergy`;
 const ANIMATION_VARIANT_KEY = `${PREFIX}animationVariant`;
 
-export type AnimationVariant = 'vibe' | 'ncs' | undefined;
+export type AnimationVariant = 'auto' | 'vibe' | 'ncs' | undefined;
 
 const animationDisabled = (context: { getBoolean: (key: string) => boolean }) => context.getBoolean(DISABLE_RENDERING_KEY);
 
@@ -40,21 +40,27 @@ export const vibePerformanceSchema = defineSettingsSection({
             title: 'Разрешение анимации Волны',
             // Values identify the saved quality preset; the NCS worker maps its size.
             options: (context) =>
-                context.get(ANIMATION_VARIANT_KEY) === 'ncs'
+                context.get(ANIMATION_VARIANT_KEY) === 'auto'
                     ? [
-                          { value: '300', label: 'Низкое', description: '700x700' },
-                          { value: '650', label: 'Среднее', description: '1400x1400. По умолчанию' },
-                          { value: '1400', label: 'Высокое', description: '2000x2000' },
+                          { value: '300', label: 'Низкое', description: 'Волна: 300x300, NCS: 700x700' },
+                          { value: '650', label: 'Среднее', description: 'Волна: 650x650, NCS: 1400x1400. По умолчанию' },
+                          { value: '1400', label: 'Высокое', description: 'Волна: 1400x1400, NCS: 2000x2000' },
                       ]
-                    : [
-                          { value: '300', label: 'Низкое', description: '300x300' },
-                          {
-                              value: '650',
-                              label: 'Среднее',
-                              description: '650x650. По умолчанию. Как в ванильном приложении',
-                          },
-                          { value: '1400', label: 'Высокое', description: '1400x1400' },
-                      ],
+                    : context.get(ANIMATION_VARIANT_KEY) === 'ncs'
+                      ? [
+                            { value: '300', label: 'Низкое', description: '700x700' },
+                            { value: '650', label: 'Среднее', description: '1400x1400. По умолчанию' },
+                            { value: '1400', label: 'Высокое', description: '2000x2000' },
+                        ]
+                      : [
+                            { value: '300', label: 'Низкое', description: '300x300' },
+                            {
+                                value: '650',
+                                label: 'Среднее',
+                                description: '650x650. По умолчанию. Как в ванильном приложении',
+                            },
+                            { value: '1400', label: 'Высокое', description: '1400x1400' },
+                        ],
             disabledWhen: animationDisabled,
         },
     ],
@@ -71,12 +77,13 @@ export const vibeAppearanceSchema = defineSettingsSection({
             defaultValue: null,
             title: 'Вариант анимации',
             options: [
+                { value: 'auto', label: 'Auto', description: 'NCS-анимация на треках из каталога NCS, Волна - на остальных' },
                 { value: 'vibe', label: 'Волна' },
                 { value: 'ncs', label: 'NCS', description: 'Сфера из частиц, реагирующая на музыку' },
             ],
             hiddenWhen: (context) => {
                 const value = context.get(ANIMATION_VARIANT_KEY);
-                return value !== 'vibe' && value !== 'ncs';
+                return value !== 'auto' && value !== 'vibe' && value !== 'ncs';
             },
             disabledWhen: animationDisabled,
         },

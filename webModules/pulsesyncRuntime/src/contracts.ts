@@ -2,6 +2,7 @@ import type { PulseSyncApi as PublicPulseSyncApi } from '@pulsesync/yamusic-type
 import type { NativeControlTools, NativeControlsRenderer } from './features/nativeControls';
 import type { NativeNotificationTools } from './features/nativeNotifications';
 import type { NativeModal } from './features/nativeModals';
+import type { findNcsTrack, resolveNcsAnimationVariant } from './features/ncsCatalog';
 
 export type Cleanup = () => void;
 export type UnknownRecord = Record<string, unknown>;
@@ -157,5 +158,6 @@ declare global {
         scrobble?: ScrobbleBridge;
         pulsesyncApi?: PulseSyncApi;
         PulseSyncTrackQuality?: PulseSyncTrackQualityApi;
+        PulseSyncNcs?: { findTrack: typeof findNcsTrack; resolveAnimationVariant: typeof resolveNcsAnimationVariant };
     }
 }
