@@ -1,4 +1,5 @@
 import { getPulseSyncApi } from '../../runtime/pulsesyncApi'
+import { scopeAddonCss } from './scopedStyle'
 import { createStorageHandler } from '../../runtime/addonStorage'
 import type { WebHostAddonAsset } from '../contracts'
 import { ISOLATED_ADDON_SCOPED_API_METHOD_SET, ISOLATED_API_METHOD_SET } from './apiPolicy'
@@ -287,7 +288,7 @@ export class IsolatedAddonRuntime {
         if (!this.addon.css.trim()) return
         const style = document.createElement('style')
         style.dataset.pulsesyncIsolatedAddon = this.addon.id
-        style.textContent = this.addon.css
+        style.textContent = this.addon.cssScope === 'addon' ? scopeAddonCss(this.addon.css, this.addon.id) : this.addon.css
         ;(document.head || document.documentElement).append(style)
         this.style = style
     }

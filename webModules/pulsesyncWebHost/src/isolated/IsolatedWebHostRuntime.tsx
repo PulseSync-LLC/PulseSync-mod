@@ -5,6 +5,9 @@ import * as jsxRuntime from 'react/jsx-runtime'
 import { WEB_HOST_API_VERSION } from '../constants'
 import type { Cleanup, PulseSyncAddonDefinition, PulseSyncAddonFactory, PulseSyncWebHostApi } from '../contracts'
 import { clearAddonModalSessions } from '../runtime/addonModals'
+import { createAddonLifecycle } from '../runtime/addonLifecycle'
+import { createAddonAssets, createAddonNamespaces } from '../runtime/addonResources'
+import { createAddonNet } from '../runtime/addonNet'
 import { IsolatedAddonHost } from './IsolatedAddonHost'
 import { IsolatedBridge } from './IsolatedBridge'
 import { IsolatedTargetRegistry } from './IsolatedTargetRegistry'
@@ -22,6 +25,8 @@ export class IsolatedWebHostRuntime {
     private readonly hostApi: PulseSyncWebHostApi
     private readonly addonQueue: PulseSyncAddonFactory[]
     private addonCleanup?: Cleanup
+    private activation?: AbortController
+    private activationApi?: typeof this.bridge.addonApi
     private currentDefinition?: PulseSyncAddonDefinition
     private definitionGeneration = 0
     private reactRoot?: Root
@@ -83,6 +88,7 @@ export class IsolatedWebHostRuntime {
         let hostApi: PulseSyncWebHostApi
         hostApi = Object.freeze({
             apiVersion: WEB_HOST_API_VERSION,
+            capabilities: this.init.capabilities ?? [],
             React,
             jsxRuntime,
             jsxDevRuntime,
@@ -120,6 +126,7 @@ export class IsolatedWebHostRuntime {
 
         this.rootContainer = document.createElement('div')
         this.rootContainer.dataset.pulsesyncIsolatedRoot = this.init.addon.id
+        this.rootContainer.dataset.pulsesyncAddonScope = this.init.addon.id
         this.rootContainer.style.display = 'contents'
         ;(document.body || document.documentElement).append(this.rootContainer)
         this.reactRoot = createRoot(this.rootContainer)
@@ -131,7 +138,7 @@ export class IsolatedWebHostRuntime {
         this.ensureReactRoot().render(
             <IsolatedAddonHost
                 addonId={this.init.addon.id}
-                addonApi={this.bridge.addonApi}
+                addonApi={this.activationApi ?? this.bridge.addonApi}
                 definition={this.currentDefinition}
                 generation={this.definitionGeneration}
                 reportError={this.reportRuntimeError}
@@ -176,19 +183,47 @@ export class IsolatedWebHostRuntime {
         }
 
         this.unregisterCurrentAddon()
-        let cleanup: void | Cleanup
+        const activation = new AbortController()
+        this.activation = activation
+        const generation = ++this.definitionGeneration
+        const signal = AbortSignal.any([activation.signal, this.bridge.addonApi.signal])
+        const api = Object.freeze({
+            ...this.bridge.addonApi,
+            ...createAddonLifecycle(signal),
+            ...createAddonNamespaces(this.bridge.pulsesyncApi, undefined, signal),
+            assets: createAddonAssets(addonId, signal),
+            net: createAddonNet(signal),
+        })
+        this.activationApi = api
+        let cleanup: void | Cleanup | Promise<void | Cleanup>
         try {
-            cleanup = definition.activate?.(this.bridge.addonApi)
+            cleanup = definition.activate?.(api)
         } catch (error) {
-            clearAddonModalSessions(this.bridge.addonApi.modals)
+            activation.abort()
+            clearAddonModalSessions(api.modals)
+            this.activation = undefined
+            this.activationApi = undefined
             throw error
         }
-        this.addonCleanup = typeof cleanup === 'function' ? cleanup : undefined
-        this.currentDefinition = Object.freeze({ ...definition, id: addonId })
-        this.definitionGeneration += 1
-        const generation = this.definitionGeneration
-        this.renderDefinition()
-        this.scheduleRegistrationReady()
+        const complete = (result: void | Cleanup) => {
+            if (this.disposed || signal.aborted || generation !== this.definitionGeneration) {
+                if (typeof result === 'function') result()
+                return
+            }
+            this.addonCleanup = typeof result === 'function' ? result : undefined
+            this.currentDefinition = Object.freeze({ ...definition, id: addonId })
+            this.renderDefinition()
+            this.scheduleRegistrationReady()
+        }
+        if (cleanup && typeof cleanup !== 'function') {
+            void Promise.resolve(cleanup)
+                .then(complete)
+                .catch(error => {
+                    if (signal.aborted || generation !== this.definitionGeneration) return
+                    this.unregisterCurrentAddon()
+                    this.reportRuntimeError('addon-registration-failed', error)
+                })
+        } else complete(cleanup)
 
         let active = true
         return () => {
@@ -199,6 +234,10 @@ export class IsolatedWebHostRuntime {
     }
 
     private unregisterCurrentAddon(): boolean {
+        this.activation?.abort(new DOMException('Addon disabled', 'AbortError'))
+        this.activation = undefined
+        if (this.activationApi) clearAddonModalSessions(this.activationApi.modals)
+        this.activationApi = undefined
         const hadDefinition = Boolean(this.currentDefinition || this.addonCleanup)
         if (!this.registrationReported) this.clearRegistrationTimer()
         clearAddonModalSessions(this.bridge.addonApi.modals)

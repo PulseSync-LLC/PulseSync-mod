@@ -10,6 +10,7 @@ export type RegisteredAddon = {
     definition: PulseSyncAddonDefinition
     generation: number
     system: boolean
+    pending: boolean
 }
 
 const addons = new Map<string, RegisteredAddon>()
@@ -37,7 +38,7 @@ export function getRegistryRevision() {
 }
 
 export function getRegisteredAddons(): ReadonlyMap<string, RegisteredAddon> {
-    return addons
+    return new Map([...addons].filter(([, addon]) => !addon.pending))
 }
 
 function unregisterAddonInternal(addonId: string, expectedGeneration: number | undefined, allowSystem: boolean) {
@@ -79,7 +80,7 @@ function registerAddonInternal(definition: PulseSyncAddonDefinition, system: boo
     const normalizedDefinition = Object.freeze({ ...definition, id: addonId })
     const lifetime = new AbortController()
     const api = createAddonApi(normalizedDefinition, lifetime.signal)
-    let cleanup: void | Cleanup
+    let cleanup: void | Cleanup | Promise<void | Cleanup>
     try {
         cleanup = definition.activate?.(api)
     } catch (error) {
@@ -95,7 +96,23 @@ function registerAddonInternal(definition: PulseSyncAddonDefinition, system: boo
         definition: normalizedDefinition,
         generation,
         system,
+        pending: Boolean(cleanup && typeof cleanup !== 'function'),
     })
+    if (cleanup && typeof cleanup !== 'function') {
+        void cleanup
+            .then(result => {
+                const current = addons.get(addonId)
+                if (current?.generation === generation && !lifetime.signal.aborted) {
+                    current.cleanup = typeof result === 'function' ? result : undefined
+                    current.pending = false
+                    emitRegistryChange()
+                } else if (typeof result === 'function') result()
+            })
+            .catch(error => {
+                api.logger.error('Activation failed', error)
+                unregisterAddonInternal(addonId, generation, system)
+            })
+    }
 
     emitRegistryChange()
 

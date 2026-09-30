@@ -82,6 +82,16 @@ function hardenSetter(prototype: Record<string, any> | undefined, propertyName: 
 export function installIsolatedDomExecutionPolicy(environment: PolicyEnvironment = globalThis as PolicyEnvironment): void {
     if (environment[POLICY_MARKER]) return
 
+    hardenMethod(
+        environment,
+        'fetch',
+        original =>
+            function (this: unknown, input: RequestInfo | URL, init?: RequestInit) {
+                const request = new environment.Request(input, init)
+                return Reflect.apply(original, this, [new environment.Request(request, { mode: 'cors' })])
+            },
+    )
+
     const DocumentPrototype = environment.Document?.prototype
     const ElementPrototype = environment.Element?.prototype
     const NodePrototype = environment.Node?.prototype

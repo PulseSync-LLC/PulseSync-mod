@@ -40,6 +40,20 @@ const NEW_HEADER_VALUE = [`${config_js_1.config.app.appProtocol}://${config_js_1
 
 const dynamicAllowedUrls = new Set();
 
+function matchesAllowedUrl(value, rule) {
+    try {
+        const target = new url.URL(value);
+        const allowed = new url.URL(rule);
+        if (!['http:', 'https:'].includes(allowed.protocol) || target.username || target.password || allowed.username || allowed.password) return false;
+        if (target.origin !== allowed.origin) return false;
+        const path = allowed.pathname.replace(/\/$/, '');
+        return (!path || target.pathname === path || target.pathname.startsWith(`${path}/`)) && (!allowed.search || target.search === allowed.search);
+    } catch {
+        return false;
+    }
+}
+exports.matchesAllowedUrl = matchesAllowedUrl;
+
 function addAllowedUrls(urls) {
     for (const url of urls || []) {
         if (typeof url === 'string' && url.trim()) {
@@ -82,12 +96,12 @@ function isUrlAllowed(requestUrl) {
         }
     }
     for (const prefix of STATIC_ALLOWED_URLS) {
-        if (normalized.startsWith(prefix)) {
+        if (matchesAllowedUrl(normalized, prefix)) {
             return true;
         }
     }
     for (const prefix of dynamicAllowedUrls) {
-        if (normalized.startsWith(prefix)) {
+        if (matchesAllowedUrl(normalized, prefix)) {
             return true;
         }
     }

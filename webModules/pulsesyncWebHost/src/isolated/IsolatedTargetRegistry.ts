@@ -1,4 +1,4 @@
-import type { Cleanup, PulseSyncAddonMountTarget } from '../contracts'
+import type { Cleanup, PulseSyncAddonMountTarget, PulseSyncAddonDefinition } from '../contracts'
 import { resolveStandardSlot } from '../slots'
 import type { IsolatedLog } from './contracts'
 
@@ -59,5 +59,58 @@ export class IsolatedTargetRegistry {
 
     clear() {
         this.slots.clear()
+    }
+
+    watch(definition?: PulseSyncAddonDefinition): Cleanup {
+        const slots = Object.keys(definition?.slots ?? {})
+        const mounts = definition?.mounts ?? []
+        if (!slots.length && !mounts.length) return () => {}
+        const resolve = () => [...slots.map(slot => this.resolveSlot(slot)), ...mounts.map(mount => this.resolveMountTarget(mount.target))]
+        let previous = resolve()
+        let frame = 0
+        const observer = new MutationObserver(records => {
+            if (records.every(record => record.target instanceof Element && record.target.closest('[data-pulsesync-addon-scope]'))) return
+            if (frame) return
+            frame = requestAnimationFrame(() => {
+                frame = 0
+                const current = resolve()
+                if (current.some((target, index) => target !== previous[index])) {
+                    previous = current
+                    observe()
+                    this.onChange()
+                }
+            })
+        })
+        const observe = () => {
+            observer.disconnect()
+            if (mounts.length || previous.some(target => !target)) {
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    ...(mounts.length ? {} : { attributeFilter: ['data-pulsesync-slot', 'data-pulsesync-slots', 'data-test-id', 'class', 'id'] }),
+                })
+                return
+            }
+            const ancestors = new Set<Element>()
+            for (const target of previous) {
+                let ancestor = target
+                while (ancestor) {
+                    ancestors.add(ancestor)
+                    ancestor = ancestor.parentElement
+                }
+            }
+            for (const ancestor of ancestors)
+                observer.observe(ancestor, {
+                    childList: true,
+                    attributes: true,
+                    attributeFilter: ['data-pulsesync-slot', 'data-pulsesync-slots', 'data-test-id', 'class', 'id'],
+                })
+        }
+        observe()
+        return () => {
+            observer.disconnect()
+            cancelAnimationFrame(frame)
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import type { PulseSyncAddonApi, PulseSyncAddonDefinition } from '../contracts'
 import { AddonErrorBoundary } from '../components/AddonErrorBoundary'
@@ -20,23 +20,9 @@ type IsolatedAddonHostProps = {
 }
 
 export function IsolatedAddonHost({ addonId, addonApi, definition, generation, reportError, targets }: IsolatedAddonHostProps) {
-    const [, setDomRevision] = useState(0)
-
     useEffect(() => installTrackContextMenuTracking(), [])
 
-    useEffect(() => {
-        let animationFrame = 0
-        const observer = new MutationObserver(() => {
-            cancelAnimationFrame(animationFrame)
-            animationFrame = requestAnimationFrame(() => setDomRevision(revision => revision + 1))
-        })
-        observer.observe(document.body, { childList: true, subtree: true })
-
-        return () => {
-            cancelAnimationFrame(animationFrame)
-            observer.disconnect()
-        }
-    }, [])
+    useEffect(() => targets.watch(definition), [targets, definition])
 
     if (!definition) return null
 
@@ -59,7 +45,9 @@ export function IsolatedAddonHost({ addonId, addonApi, definition, generation, r
         content.push(
             createPortal(
                 <AddonErrorBoundary addonId={addonId} onError={handleRenderError}>
-                    <AddonSlot addonId={addonId} api={addonApi} component={Component} slotName={slotName} />
+                    <span data-pulsesync-addon-scope={addonId} style={{ display: 'contents' }}>
+                        <AddonSlot addonId={addonId} api={addonApi} component={Component} slotName={slotName} />
+                    </span>
                 </AddonErrorBoundary>,
                 target,
                 `${generation}:slot:${slotName}`,
@@ -123,7 +111,9 @@ export function IsolatedAddonHost({ addonId, addonApi, definition, generation, r
         content.push(
             createPortal(
                 <AddonErrorBoundary addonId={addonId} onError={handleRenderError}>
-                    <Component addonId={addonId} api={addonApi} />
+                    <span data-pulsesync-addon-scope={addonId} style={{ display: 'contents' }}>
+                        <Component addonId={addonId} api={addonApi} />
+                    </span>
                 </AddonErrorBoundary>,
                 target,
                 `${generation}:mount:${index}`,

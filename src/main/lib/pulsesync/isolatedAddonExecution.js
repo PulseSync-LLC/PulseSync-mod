@@ -3,6 +3,7 @@
 const crypto = require('node:crypto');
 const { parse } = require('@babel/parser');
 const { normalizeModuleManifest } = require('./addonModuleTrust.js');
+const { normalizeWebHostRequirements, validateWebHostRequirements } = require('./webHostRequirements.js');
 
 const ISOLATED_EXECUTION_TTL_MS = 15_000;
 
@@ -145,6 +146,10 @@ const resolveCanonicalAddon = (snapshot, requestedAddonId) => {
     }
 
     const addon = matches[0];
+    for (const capability of ['typed-settings-v1', 'net-per-addon-v1']) {
+        if (addon.requirements?.capabilities?.includes(capability) && !snapshot.clientCapabilities?.includes(capability))
+            throw new Error(`webhost-incompatible: Update the PulseSync client for ${capability}`);
+    }
     if (normalizeAssetType(addon.type) !== 'web-addon') {
         throw createBlockedAddonError(addonId, 'non-executable-asset', 'CSS-only themes cannot be executed');
     }
@@ -155,6 +160,9 @@ const resolveCanonicalAddon = (snapshot, requestedAddonId) => {
         directoryName: typeof addon.directoryName === 'string' && addon.directoryName.trim() ? addon.directoryName : addonId,
         ...(typeof addon.version === 'string' ? { version: addon.version } : {}),
         code,
+        allowedUrls: normalizeAllowedUrls(addon.allowedUrls) ?? [],
+        requirements: validateWebHostRequirements(addon.requirements),
+        cssScope: addon.cssScope === 'addon' ? 'addon' : 'global',
         ...(addon.securityManifest ? { securityManifest: addon.securityManifest, catalogAddonId: addon.catalogAddonId } : {}),
         ...(addon.localModules ? { localModules: addon.localModules } : {}),
     });
@@ -238,6 +246,9 @@ const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
                     ...baseAsset,
                     css: validateCanonicalCss(addonId, sourceAddon?.css),
                     code: validateCanonicalAddonCode(addonId, sourceAddon?.code),
+                    allowedUrls: normalizeAllowedUrls(sourceAddon?.allowedUrls) ?? normalizeAllowedUrls(payload?.allowedUrls) ?? [],
+                    requirements: normalizeWebHostRequirements(sourceAddon?.requirements),
+                    cssScope: sourceAddon?.cssScope === 'addon' ? 'addon' : 'global',
                     ...moduleFields,
                 });
             }
@@ -249,10 +260,28 @@ const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
     }
 
     const suppliedHash = typeof payload?.hash === 'string' ? payload.hash : '';
-    const calculatedHash = hashCanonicalAddons(addons);
-    if (suppliedHash && suppliedHash !== calculatedHash) {
+    const transportHash = crypto
+        .createHash('sha256')
+        .update(
+            JSON.stringify({
+                addons: [...sourceAddons].sort((left, right) => {
+                    const a = JSON.stringify(left);
+                    const b = JSON.stringify(right);
+                    return a < b ? -1 : a > b ? 1 : 0;
+                }),
+                allowedUrls: [...(Array.isArray(payload?.allowedUrls) ? payload.allowedUrls : [])].sort(),
+                ...(Array.isArray(payload?.clientCapabilities) ? { clientCapabilities: [...payload.clientCapabilities].sort() } : {}),
+            }),
+        )
+        .digest('hex');
+    const clientCapabilities = Array.isArray(payload?.clientCapabilities) ? payload.clientCapabilities.filter((value) => typeof value === 'string') : [];
+    const calculatedHash = crypto
+        .createHash('sha256')
+        .update(JSON.stringify([hashCanonicalAddons(addons), clientCapabilities]))
+        .digest('hex');
+    if (suppliedHash && suppliedHash !== transportHash) {
         try {
-            onBlocked(new Error(`[PulseSync Addons] Incoming snapshot hash mismatch: expected ${calculatedHash}, received ${suppliedHash}`));
+            onBlocked(new Error(`[PulseSync Addons] Incoming snapshot hash mismatch: expected ${transportHash}, received ${suppliedHash}`));
         } catch {}
     }
     const allowedUrls = normalizeAllowedUrls(payload?.allowedUrls);
@@ -260,6 +289,7 @@ const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
         runtime: 'isolated',
         hash: calculatedHash,
         addons: Object.freeze(addons),
+        clientCapabilities: Object.freeze(clientCapabilities),
         ...(allowedUrls ? { allowedUrls } : {}),
     });
 };

@@ -1,6 +1,7 @@
 import type { PulseSyncAddonApi, PulseSyncAddonIdentity, PulseSyncApi } from '../contracts'
 import { createAddonAssets, createAddonClient, createAddonIdentity, createAddonNamespaces, createAddonSettingsStore } from './addonResources'
 import { createAddonNet } from './addonNet'
+import { createAddonLifecycle } from './addonLifecycle'
 import { createAddonStorage, createStorageHandler } from './addonStorage'
 
 export function getPulseSyncApi(): PulseSyncApi | undefined {
@@ -38,8 +39,9 @@ export function createAddonApi(
         client,
         pulsesyncApi: client,
         ...namespaces,
+        ...createAddonLifecycle(lifetime),
         settings: createAddonSettingsStore(identity.id, getPulseSyncApi),
-        assets: createAddonAssets(identity.id),
+        assets: createAddonAssets(identity.id, lifetime),
         net: createAddonNet(lifetime),
         storage: createAddonStorage(createStorageHandler(identity.id, () => !lifetime.aborted)),
         logger: Object.freeze({

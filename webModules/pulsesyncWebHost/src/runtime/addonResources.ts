@@ -26,7 +26,7 @@ export function createAddonIdentity(value: Partial<PulseSyncAddonIdentity> & Pic
     })
 }
 
-export function createAddonAssets(addonId: string): PulseSyncAddonAssets {
+export function createAddonAssets(addonId: string, lifetime?: AbortSignal): PulseSyncAddonAssets {
     const createUrl = (fileName?: string) => {
         const url = new URL(fileName ? `/assets/${encodeURIComponent(normalizeFileName(fileName))}` : '/assets', PULSESYNC_LOCAL_ORIGIN)
         url.searchParams.set('id', addonId)
@@ -35,9 +35,13 @@ export function createAddonAssets(addonId: string): PulseSyncAddonAssets {
 
     const assets: PulseSyncAddonAssets = {
         url: fileName => createUrl(fileName),
-        fetch: (fileName, init) => window.fetch(createUrl(fileName), init),
+        fetch: (fileName, init) =>
+            window.fetch(createUrl(fileName), {
+                ...init,
+                ...(lifetime ? { signal: AbortSignal.any([lifetime, ...(init?.signal ? [init.signal] : [])]) } : {}),
+            }),
         async list() {
-            const response = await window.fetch(createUrl())
+            const response = await window.fetch(createUrl(), { signal: lifetime })
             if (!response.ok) throw new Error(`PulseSync addon assets returned HTTP ${response.status}`)
             const payload = (await response.json()) as { files?: unknown }
             if (!payload.files || typeof payload.files !== 'object') return Object.freeze([])

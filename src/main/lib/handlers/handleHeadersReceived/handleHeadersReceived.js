@@ -6,6 +6,7 @@ const framesHandler_js_1 = require('./framesHandler.js');
 const corsHandler_js_1 = require('./corsHandler.js');
 const experimentOverridesHandler_js_1 = require('./remoteExperimentsOverride.js');
 const pulsesyncDevConfig_js_1 = require('../../pulsesyncDevConfig.js');
+const { checkAddonNetworkRequest } = require('../../pulsesync/addonNetworkPolicy.js');
 
 const filter = { urls: ['*://*/*'] };
 const apiFilter = { urls: ['https://api.music.yandex.net/*'] };
@@ -33,9 +34,16 @@ exports.handleHeadersReceived = (window) => {
     const session = window.webContents.session;
     const handlers = [corsHandler_js_1.corsHandler, framesHandler_js_1.framesHandler, experimentOverridesHandler_js_1.experimentOverridesHandler];
     const originMap = new Map();
+    const responseOriginMap = new Map();
 
     session.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
-        const origin = details.requestHeaders['origin'] || details.requestHeaders['Origin'];
+        const responseOrigin = details.requestHeaders['origin'] || details.requestHeaders['Origin'];
+        if (responseOrigin) responseOriginMap.set(details.id, responseOrigin);
+        const origin = originMap.get(details.id) || details.requestHeaders['origin'] || details.requestHeaders['Origin'];
+        if (checkAddonNetworkRequest(details.webContentsId, origin, details.url) === false) {
+            callback({ cancel: true });
+            return;
+        }
         if (origin) originMap.set(details.id, origin);
         callback({ requestHeaders: details.requestHeaders });
     });
@@ -71,9 +79,15 @@ exports.handleHeadersReceived = (window) => {
 
         const url = details.url;
         const origin = originMap.get(details.id);
-        originMap.delete(details.id);
 
-        if (isPulseSyncDevServerUrl(url)) {
+        const addonAllowed = checkAddonNetworkRequest(details.webContentsId, origin, url);
+        if (addonAllowed === true) {
+            responseHeaders['access-control-allow-origin'] = [responseOriginMap.get(details.id) || origin];
+            responseHeaders['access-control-allow-credentials'] = ['true'];
+        } else if (addonAllowed === false) {
+            callback({ cancel: true });
+            return;
+        } else if (isPulseSyncDevServerUrl(url)) {
             responseHeaders['access-control-allow-origin'] = [origin || '*'];
             if (origin) responseHeaders['access-control-allow-credentials'] = ['true'];
         } else if (url.startsWith(LOCAL_PREFIX) || url.startsWith(FONTS_PREFIX)) {
@@ -86,4 +100,10 @@ exports.handleHeadersReceived = (window) => {
 
         callback({ responseHeaders });
     });
+    const clearRequest = (details) => {
+        originMap.delete(details.id);
+        responseOriginMap.delete(details.id);
+    };
+    session.webRequest.onCompleted(filter, clearRequest);
+    session.webRequest.onErrorOccurred(filter, clearRequest);
 };

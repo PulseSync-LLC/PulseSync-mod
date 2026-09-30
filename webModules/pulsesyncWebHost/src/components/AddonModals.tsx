@@ -14,7 +14,9 @@ export function AddonModals({ modals, addonId }: { modals: Modals; addonId: stri
     const entry = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
     return entry ? (
         <AddonErrorBoundary key={entry.id} addonId={addonId} onError={entry.props.controller.fail}>
-            <RenderModal render={entry.render} modalProps={entry.props} />
+            <span data-pulsesync-addon-scope={addonId} style={{ display: 'contents' }}>
+                <RenderModal render={entry.render} modalProps={entry.props} />
+            </span>
         </AddonErrorBoundary>
     ) : null
 }
