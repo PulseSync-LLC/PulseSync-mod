@@ -14,6 +14,7 @@ import { installYaspNativeAudioHooks } from './audio/yasp';
 import { installFindCssRuleHelper } from './dom/findCssRule';
 import { registerDesktopListeners } from './events/desktopEvents';
 import { installTrackQualityApi } from './features/trackQuality';
+import { installNcsCatalog } from './features/ncsCatalog';
 import { installYandexStationPlayerProxy } from './features/yandexStation';
 
 const runtimeServices: RuntimeServices = {
@@ -36,6 +37,7 @@ export function bootstrapPulseSyncRuntime() {
     installNativeAudioOutputMonitor();
     installYaspNativeAudioHooks();
     ensureApi();
+    installNcsCatalog();
     registerDesktopListeners(ensureApi);
     window.__pulsesyncBridgeInitialized = true;
     document.dispatchEvent(new Event('pulsesync:runtime-ready'));

@@ -205,7 +205,10 @@
                         ? { top: V(r, a + 15, s + 10), middle: V(r, a + 15, s + 5), bottom: V(r, a, s) }
                         : { top: V(50, 100, 50), middle: V(330, 100, 50), bottom: V(300, 100, 50) };
                 },
-                Q = () => !window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.() ?? !1;
+                Q = () => !window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.() ?? !1,
+                resolveAnimationVariant = (track) =>
+                    window.PulseSyncNcs?.resolveAnimationVariant(track) ??
+                    (window.nativeSettings.get('modSettings.vibeAnimationEnhancement.animationVariant') === 'ncs' ? 'ncs' : 'vibe');
             var L = i(60196);
             let k = { transparent: !0 },
                 N = (0, r.PA)((e) => {
@@ -216,6 +219,7 @@
                         [N, S] = (0, a.useState)(!1),
                         dynamicEnergyRef = (0, a.useRef)(0),
                         { user: B, sonataState: w, settings: C, vibe: M } = (0, u.g)(),
+                        pulseSyncAnimationVariant = resolveAnimationVariant(w.entityMeta),
                         R = (0, p.U)(),
                         I = (0, A.i)(),
                         P = (0, o.c)((e) => {
@@ -286,7 +290,7 @@
                                 shaderOptions: k,
                                 fps: window.VIBE_ANIMATION_MAX_FPS?.() ?? 25,
                                 resolution: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.canvasResolution') ?? 650,
-                                animationVariant: window.nativeSettings.get('modSettings.vibeAnimationEnhancement.animationVariant'),
+                                animationVariant: pulseSyncAnimationVariant,
                                 onMessage: P,
                                 onError: M,
                             }),
@@ -313,6 +317,7 @@
                         c,
                         B.collectionHue,
                         null == w.entityMeta ? void 0 : w.entityMeta.trackParameters,
+                        pulseSyncAnimationVariant,
                     ]);
                     let D = (0, o.c)(() => {
                         (null == c || c.destroy(), d(null), null == x || x.stop(), V(null));
@@ -334,12 +339,19 @@
                             : null == c || c.applySettings({ hue: i, collectionHue: B.collectionHue });
                     }, [r, w.isPlaying, w.isVibeContext, M.isShuffleVibe, c, B.collectionHue, null == w.entityMeta ? void 0 : w.entityMeta.trackParameters]),
                     (0, a.useEffect)(() => {
+                        if (c && c.animationVariant !== pulseSyncAnimationVariant) c.updateRuntimeSettings({ animationVariant: pulseSyncAnimationVariant });
+                    }, [c, pulseSyncAnimationVariant]),
+                    (0, a.useEffect)(() => {
+                        const syncAnimationVariant = () => {
+                            const variant = resolveAnimationVariant(w.entityMeta);
+                            if (c && c.animationVariant !== variant) c.updateRuntimeSettings({ animationVariant: variant });
+                        };
                         let e = (e) => {
                             let { key: t, value: i } = (null == e ? void 0 : e.detail) || {};
                             if ('modSettings.vibeAnimationEnhancement.disableRendering' === t) return void (i ? c?.disable() : c?.enable());
                             if ('modSettings.vibeAnimationEnhancement.maxFPS' === t) return void c?.updateRuntimeSettings({ fps: Number(i) });
                             if ('modSettings.vibeAnimationEnhancement.canvasResolution' === t) return void c?.updateRuntimeSettings({ resolution: Number(i) });
-                            if ('modSettings.vibeAnimationEnhancement.animationVariant' === t) return void c?.updateRuntimeSettings({ animationVariant: i });
+                            if ('modSettings.vibeAnimationEnhancement.animationVariant' === t) return void syncAnimationVariant();
                             if ('modSettings.vibeAnimationEnhancement.useVibeWidgetColors' !== t) return;
                             let n = w.entityMeta?.trackParameters?.hue;
                             Q()
@@ -352,8 +364,22 @@
                                   })
                                 : c?.applySettings({ hue: n, collectionHue: B.collectionHue });
                         };
-                        return (window.addEventListener('pulse-sync-vibe-setting-change', e), () => window.removeEventListener('pulse-sync-vibe-setting-change', e));
-                    }, [r, w.isPlaying, w.isVibeContext, M.isShuffleVibe, c, B.collectionHue, null == w.entityMeta ? void 0 : w.entityMeta.trackParameters]),
+                        window.addEventListener('pulse-sync-vibe-setting-change', e);
+                        document.addEventListener('pulsesync:runtime-ready', syncAnimationVariant);
+                        return () => {
+                            window.removeEventListener('pulse-sync-vibe-setting-change', e);
+                            document.removeEventListener('pulsesync:runtime-ready', syncAnimationVariant);
+                        };
+                    }, [
+                        r,
+                        w.isPlaying,
+                        w.isVibeContext,
+                        M.isShuffleVibe,
+                        c,
+                        B.collectionHue,
+                        w.entityMeta,
+                        null == w.entityMeta ? void 0 : w.entityMeta.trackParameters,
+                    ]),
                     (0, a.useEffect)(() => {
                         var e, t, n, a, oA;
                         let s = null == (t = w.entityMeta) || null == (e = t.trackParameters) ? void 0 : e.hue,
