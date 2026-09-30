@@ -5,12 +5,12 @@ const { AddonModuleExecutionStore, MODULE_IPC, moduleError } = require('./addonM
 const { verifyModuleToken, assertAddonBinding, sha256 } = require('./addonModuleTrust.js');
 const { resolveCanonicalAddon, validateCanonicalAddonCode } = require('./isolatedAddonExecution.js');
 
-const localFingerprint = (addon) => sha256(JSON.stringify([addon.id, addon.code, addon.securityManifest, addon.localModules]));
+const localFingerprint = (addon) => sha256(JSON.stringify([addon.id, addon.catalogAddonId, addon.code, addon.securityManifest, addon.localModules]));
 
 class AddonModuleHost {
     constructor(allocateWorld, { trustedKeys } = {}) {
         this.store = new AddonModuleExecutionStore({ allocateWorld });
-        this.revision = 0;
+        this.pending = new Map();
         this.manager = null;
         this.webContents = null;
         this.verifyToken = (token, type) => verifyModuleToken(token, type, trustedKeys);
@@ -24,7 +24,9 @@ class AddonModuleHost {
         const reconcile = () => this.reconcile();
         const invalidate = () => this.invalidateAll();
         const revoked = (activationId) => {
-            this.revision++;
+            for (const pending of this.pending.values()) {
+                if (pending.activationId === activationId) this.cancelPending(pending);
+            }
             for (const activation of this.store.active.values()) {
                 if (activation.activationId === activationId) this.invalidate(activation);
             }
@@ -72,8 +74,14 @@ class AddonModuleHost {
     }
 
     invalidateAll() {
-        this.revision++;
+        for (const pending of this.pending.values()) this.cancelPending(pending);
         for (const activation of this.store.active.values()) this.invalidate(activation);
+    }
+
+    cancelPending(pending) {
+        if (pending.cancelled) return;
+        pending.cancelled = true;
+        void pending.manager.requestAddonModule({ operation: 'dispose', activationId: pending.activationId }).catch(() => {});
     }
 
     current(runtimeId) {
@@ -81,7 +89,13 @@ class AddonModuleHost {
     }
 
     reconcile() {
-        this.revision++;
+        for (const pending of this.pending.values()) {
+            try {
+                if (localFingerprint(this.current(pending.addon.id)) !== pending.fingerprint) this.cancelPending(pending);
+            } catch {
+                this.cancelPending(pending);
+            }
+        }
         for (const activation of this.store.active.values()) {
             try {
                 this.assertCurrent(activation);
@@ -91,9 +105,27 @@ class AddonModuleHost {
         }
     }
 
-    async prepare(addon, senderId) {
-        const revision = this.revision;
-        const activationId = crypto.randomUUID();
+    prepare(addon, senderId) {
+        const key = `${senderId}:${addon.id}`;
+        const fingerprint = localFingerprint(addon);
+        const existing = this.pending.get(key);
+        if (existing) this.cancelPending(existing);
+        const pending = { addon, fingerprint, activationId: crypto.randomUUID(), manager: this.manager, cancelled: false };
+        this.pending.set(key, pending);
+        pending.promise = Promise.resolve()
+            .then(() => this.prepareActivation(addon, senderId, pending))
+            .finally(() => {
+                if (this.pending.get(key) === pending) this.pending.delete(key);
+            });
+        return pending.promise;
+    }
+
+    async prepareActivation(addon, senderId, pending) {
+        const { activationId, manager } = pending;
+        const assertPending = () => {
+            if (pending.cancelled || manager !== this.manager || localFingerprint(this.current(addon.id)) !== pending.fingerprint) throw moduleError('aborted');
+        };
+        assertPending();
         if (addon.localModules) {
             const binding = localFingerprint(addon);
             if (localFingerprint(this.current(addon.id)) !== binding) throw moduleError('aborted');
@@ -110,8 +142,8 @@ class AddonModuleHost {
             return { activation, init: { descriptors: activation.descriptors, errors: {}, development: true } };
         }
         try {
-            const response = await this.manager.requestAddonModule({ operation: 'resolve', addonId: addon.id, activationId });
-            if (revision !== this.revision) throw moduleError('aborted');
+            const response = await manager.requestAddonModule({ operation: 'resolve', addonId: addon.id, activationId });
+            assertPending();
             const binding = this.verifyToken(response.releaseBinding, 'ps-addon-release-binding+jwt');
             assertAddonBinding(addon, binding);
             assertAddonBinding(this.current(addon.id), binding);
@@ -142,7 +174,7 @@ class AddonModuleHost {
                 },
             };
         } catch (error) {
-            void this.manager.requestAddonModule({ operation: 'dispose', activationId }).catch(() => {});
+            void manager.requestAddonModule({ operation: 'dispose', activationId }).catch(() => {});
             throw error;
         }
     }
