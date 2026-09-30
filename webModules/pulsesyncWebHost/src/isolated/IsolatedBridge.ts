@@ -3,6 +3,7 @@ import type { PulseSyncPlayerSnapshot, PulseSyncQueueSnapshot, PulseSyncRouteSna
 import { ISOLATED_API_METHOD_SET } from '../addons/isolated/apiPolicy'
 import { createAddonAssets, createAddonIdentity, createAddonNamespaces } from '../runtime/addonResources'
 import { createAddonNet } from '../runtime/addonNet'
+import { createAddonLifecycle } from '../runtime/addonLifecycle'
 import { createAddonStorage } from '../runtime/addonStorage'
 import type { ApiResponse, IsolatedEventKind, IsolatedInit, IsolatedLogLevel } from './contracts'
 
@@ -148,8 +149,9 @@ export class IsolatedBridge {
             client: this.pulsesyncApi,
             pulsesyncApi: this.pulsesyncApi,
             ...namespaces,
+            ...createAddonLifecycle(this.lifetime.signal),
             settings: settingsStore,
-            assets: createAddonAssets(init.addon.id),
+            assets: createAddonAssets(init.addon.id, this.lifetime.signal),
             net: createAddonNet(this.lifetime.signal),
             storage: createAddonStorage((method, args) => this.callRequest(method, args, 'storage')),
             logger: Object.freeze({

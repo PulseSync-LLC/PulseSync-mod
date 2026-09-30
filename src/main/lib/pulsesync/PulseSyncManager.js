@@ -1218,6 +1218,7 @@ class PulseSyncManager extends EventEmitter {
             runtime: 'isolated',
             hash: filtered ? hashRecoveryAsset({ runtime: 'isolated', addons }) : this._webHostAddonsSnapshot.hash,
             addons,
+            clientCapabilities: this._webHostAddonsSnapshot.clientCapabilities ?? [],
             ...(Array.isArray(this._webHostAddonsSnapshot.allowedUrls) ? { allowedUrls: [...this._webHostAddonsSnapshot.allowedUrls] } : {}),
         };
     }

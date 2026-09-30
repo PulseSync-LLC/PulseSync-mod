@@ -23,6 +23,7 @@ function normalizeId(value: unknown) {
 
 function getFailure(error: unknown, fallbackCategory = 'addon-start-failed'): IsolatedAddonFailure {
     const message = error instanceof Error ? error.message : String(error)
+    if (message.includes('webhost-incompatible:')) return { category: 'webhost-incompatible', message }
     const moduleFailure = /PulseSync modules: ([a-z-]+)/.exec(message)
     if (moduleFailure) return { category: `webhost-modules-${moduleFailure[1]}`, message }
     const categoryMatch = /^([a-z0-9-]+):\s*/i.exec(message)
@@ -84,6 +85,14 @@ function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, f
     if (addon.type === 'web-addon' && shouldPersistQuarantine(failure)) {
         void persistWebHostQuarantine(addon, failure)
         void showRecoveryToast(addon, failure)
+    } else if (failure.category === 'webhost-incompatible') {
+        void window.desktopEvents
+            ?.invoke?.(SHOW_TOAST_EVENT, {
+                ownerId: `webhost-incompatible-${addon.id}`,
+                message: `Для аддона «${addon.name}» требуется более новая версия PulseSync. Обновите клиент и мод.`,
+                durationMs: 10000,
+            })
+            .catch(() => {})
     } else if (failure.category.startsWith('webhost-modules-')) {
         void window.desktopEvents
             ?.invoke?.(SHOW_TOAST_EVENT, {
@@ -128,6 +137,7 @@ function normalizeAddon(value: unknown): WebHostAsset | null {
         ...(typeof addon.version === 'string' ? { version: addon.version } : {}),
         ...(normalizeId(addon.fingerprint) ? { fingerprint: normalizeId(addon.fingerprint) } : {}),
         css: typeof addon.css === 'string' ? addon.css : '',
+        cssScope: addon.cssScope === 'addon' ? ('addon' as const) : ('global' as const),
     }
 
     if (addon.type === 'theme') {

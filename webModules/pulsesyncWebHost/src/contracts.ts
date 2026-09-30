@@ -220,10 +220,15 @@ export type PulseSyncAddonDefinition = {
     headerActions?: readonly HeaderActionDefinition[]
     headerItems?: readonly HeaderItemDefinition[]
     mounts?: readonly PulseSyncAddonMount[]
-    activate?: (api: PulseSyncAddonApi) => void | Cleanup
+    activate?: (api: PulseSyncAddonApi) => void | Cleanup | Promise<void | Cleanup>
 }
 
 export type PulseSyncAddonApi = {
+    readonly signal: AbortSignal
+    readonly onCleanup: (cleanup: Cleanup) => Cleanup
+    readonly setTimeout: (callback: () => void, delayMs: number) => Cleanup
+    readonly setInterval: (callback: () => void, delayMs: number) => Cleanup
+    readonly listen: (target: EventTarget, type: string, listener: EventListener, options?: AddEventListenerOptions) => Cleanup
     readonly addonId: string
     readonly addon: PulseSyncAddonIdentity
     readonly client: PulseSyncWebHostClient
@@ -248,6 +253,7 @@ export type PulseSyncAddonApi = {
 export type PulseSyncAddonFactory = (host: PulseSyncWebHostApi) => void | PulseSyncAddonDefinition | Promise<void | PulseSyncAddonDefinition>
 
 export type PulseSyncWebHostApi = {
+    readonly capabilities?: readonly string[]
     readonly apiVersion: number
     readonly React: typeof React
     readonly jsxRuntime: typeof jsxRuntime

@@ -7,6 +7,7 @@ type WebHostAssetBase = {
     version?: string
     fingerprint?: string
     css: string
+    cssScope?: 'addon' | 'global'
 }
 
 export type WebHostAddonAsset = WebHostAssetBase & {

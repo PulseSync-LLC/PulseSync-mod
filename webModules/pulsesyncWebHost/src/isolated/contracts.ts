@@ -6,6 +6,7 @@ export type IsolatedAddonAsset = {
     name: string
     directoryName: string
     version?: string
+    cssScope?: 'addon' | 'global'
 }
 
 export type IsolatedInit = {
@@ -13,6 +14,7 @@ export type IsolatedInit = {
     initialSettings: unknown
     channelToken: string
     modules?: ModuleInit
+    capabilities?: readonly string[]
 }
 
 export type IsolatedEventKind = 'request' | 'response' | 'settings' | 'subscription' | 'event' | 'dispose' | 'status'

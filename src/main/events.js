@@ -1446,7 +1446,9 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, a
         return {
             executionToken,
             worldId,
-            securityOrigin: `pulsesync-isolated://addon-${worldId}`,
+            securityOrigin: require('./lib/pulsesync/addonNetworkPolicy.js').registerAddonNetworkPolicy(event.sender, worldId, addon, () =>
+                manager.getWebHostAddonsSnapshot(),
+            ),
             worldName: `PulseSync addon ${addon.id}`,
             ...(moduleContext ? { moduleCapability: moduleContext.activation.capability } : {}),
         };
@@ -1462,6 +1464,12 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, a
 
     const prepared = isolatedAddonExecutionStore.consume(payload?.executionToken, event.sender.id);
     const { addon, channelToken, initialSettings, worldId, moduleContext } = prepared;
+    const assertCurrentAddon = () => {
+        const manager = pulseSyncManager_js_1 || getPulseSyncManager(mainWindow);
+        const current = resolveCanonicalAddon(manager.getWebHostAddonsSnapshot(), addon.id);
+        if (current.code !== addon.code) throw new Error('PulseSync addon changed during activation');
+    };
+    assertCurrentAddon();
     if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
     const init = {
         addon: {
@@ -1469,9 +1477,11 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, a
             name: addon.name,
             directoryName: addon.directoryName,
             ...(addon.version ? { version: addon.version } : {}),
+            cssScope: addon.cssScope,
         },
         initialSettings,
         channelToken,
+        capabilities: require('./lib/pulsesync/webHostRequirements.js').WEB_HOST_CAPABILITIES,
         ...(moduleContext ? { modules: moduleContext.init } : {}),
     };
     const initCode = `delete globalThis.__PULSESYNC_ISOLATED_RUNTIME_READY__;\nObject.defineProperty(globalThis, '__PULSESYNC_ISOLATED_INIT__', { value: ${JSON.stringify(init)}, configurable: true });\nnull;`;
@@ -1488,8 +1498,10 @@ electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, a
             { code: 'globalThis.__PULSESYNC_ISOLATED_RUNTIME_READY__ === true;', url: `${sourceBase}/runtime-ready.js` },
         ]);
         if (runtimeReady !== true) throw new Error(`[PulseSync Addons] Isolated addon ${addon.id} runtime initialization failed`);
+        assertCurrentAddon();
         if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
         await event.sender.executeJavaScriptInIsolatedWorld(worldId, [{ code: addonCode, url: `${sourceBase}/addon.js` }]);
+        assertCurrentAddon();
         if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
     } catch (error) {
         eventsLogger.error(`[PulseSync Addons] Isolated addon ${addon.id} execution failed:`, error);
