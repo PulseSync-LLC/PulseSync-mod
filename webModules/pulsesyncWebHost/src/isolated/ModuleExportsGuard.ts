@@ -59,7 +59,7 @@ export class ModuleExportsGuard {
             getOwnPropertyDescriptor: (target, key) => {
                 this.assertActive()
                 const own = Reflect.getOwnPropertyDescriptor(target, key)
-                if (own && !own.configurable) return own.writable ? { ...own, value: Reflect.get(value, key, value) } : own
+                if (own && !own.configurable) return own.writable ? { ...own, value: this.wrap(Reflect.get(value, key, value)) } : own
                 return key in value
                     ? {
                           configurable: true,
