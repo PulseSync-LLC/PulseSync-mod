@@ -16,6 +16,7 @@ import type { IsolatedInit, IsolatedWindow } from './contracts'
 import { installIsolatedDomExecutionPolicy } from './domExecutionPolicy'
 
 const REGISTRATION_STABILIZATION_MS = 500
+const ACTIVATION_PENDING_NOTICE_MS = 10_000
 
 export class IsolatedWebHostRuntime {
     private readonly isolatedWindow: IsolatedWindow
@@ -36,6 +37,7 @@ export class IsolatedWebHostRuntime {
     private registrationReported = false
     private registrationFailed = false
     private registrationTimer = 0
+    private activationTimer = 0
     private modules?: IsolatedModuleRuntime
 
     constructor(isolatedWindow: IsolatedWindow, init: IsolatedInit) {
@@ -153,6 +155,12 @@ export class IsolatedWebHostRuntime {
         this.registrationTimer = 0
     }
 
+    private clearActivationTimer() {
+        if (!this.activationTimer) return
+        window.clearTimeout(this.activationTimer)
+        this.activationTimer = 0
+    }
+
     private scheduleRegistrationReady() {
         if (this.registrationReported || this.registrationFailed || this.disposed) return
         this.clearRegistrationTimer()
@@ -205,17 +213,23 @@ export class IsolatedWebHostRuntime {
             this.activationApi = undefined
             throw error
         }
+        this.bridge.reportRegistered()
         const complete = (result: void | Cleanup) => {
             if (this.disposed || signal.aborted || generation !== this.definitionGeneration) {
                 if (typeof result === 'function') result()
                 return
             }
+            this.clearActivationTimer()
             this.addonCleanup = typeof result === 'function' ? result : undefined
             this.currentDefinition = Object.freeze({ ...definition, id: addonId })
             this.renderDefinition()
             this.scheduleRegistrationReady()
         }
         if (cleanup && typeof cleanup !== 'function') {
+            this.activationTimer = window.setTimeout(() => {
+                this.activationTimer = 0
+                if (!signal.aborted && generation === this.definitionGeneration) this.bridge.log('warn', ['Addon activation is still pending'])
+            }, ACTIVATION_PENDING_NOTICE_MS)
             void Promise.resolve(cleanup)
                 .then(complete)
                 .catch(error => {
@@ -234,6 +248,7 @@ export class IsolatedWebHostRuntime {
     }
 
     private unregisterCurrentAddon(): boolean {
+        this.clearActivationTimer()
         this.activation?.abort(new DOMException('Addon disabled', 'AbortError'))
         this.activation = undefined
         if (this.activationApi) clearAddonModalSessions(this.activationApi.modals)

@@ -176,6 +176,10 @@ export class IsolatedBridge {
         window.addEventListener('unhandledrejection', this.handleUnhandledRejection)
     }
 
+    reportRegistered() {
+        this.dispatch('status', { type: 'registered' })
+    }
+
     reportReady() {
         this.dispatch('status', { type: 'ready' })
     }
