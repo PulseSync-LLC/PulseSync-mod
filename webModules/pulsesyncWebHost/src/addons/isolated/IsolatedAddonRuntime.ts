@@ -17,7 +17,7 @@ type ApiRequest = {
 }
 
 type RuntimeStatus = {
-    type: 'ready' | 'log' | 'error'
+    type: 'registered' | 'ready' | 'log' | 'error'
     category?: string
     level?: 'info' | 'warn' | 'error'
     args?: unknown[]
@@ -111,6 +111,7 @@ export class IsolatedAddonRuntime {
     private resolveRegistration!: () => void
     private rejectRegistration!: (error: Error) => void
     private registrationSettled = false
+    private ready = false
     private fatalReported = false
     private runtimeFailureTimestamps: number[] = []
     private readonly onFatalError?: (failure: IsolatedAddonFailure) => void
@@ -242,7 +243,7 @@ export class IsolatedAddonRuntime {
 
     private reportRuntimeFailure(failure: IsolatedAddonFailure) {
         if (this.destroyed || this.fatalReported || !this.onFatalError) return
-        if (failure.category === 'addon-execution-failed') {
+        if (failure.category === 'addon-execution-failed' && this.ready) {
             const now = Date.now()
             this.runtimeFailureTimestamps = this.runtimeFailureTimestamps.filter(timestamp => now - timestamp <= RUNTIME_FAILURE_WINDOW_MS)
             this.runtimeFailureTimestamps.push(now)
@@ -258,12 +259,13 @@ export class IsolatedAddonRuntime {
         const status = parseEventDetail<RuntimeStatus>(event)
         if (!status) return
         const prefix = `[PulseSync isolated addon: ${this.addon.id}]`
-        if (status.type === 'ready') {
+        if (status.type === 'registered' || status.type === 'ready') {
+            if (status.type === 'ready') this.ready = true
             if (!this.registrationSettled) {
                 this.registrationSettled = true
                 this.resolveRegistration()
             }
-            console.info(`${prefix} ready`)
+            console.info(`${prefix} ${status.type}`)
             return
         }
         if (status.type === 'log' && status.level && ['info', 'warn', 'error'].includes(status.level) && Array.isArray(status.args)) {
