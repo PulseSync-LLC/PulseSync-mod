@@ -13,6 +13,7 @@ type WebHostAssetBase = {
 export type WebHostAddonAsset = WebHostAssetBase & {
     type: 'web-addon'
     code: string
+    requirements?: { minHostApi?: number; capabilities?: readonly string[] }
 }
 
 export type WebHostThemeAsset = WebHostAssetBase & {

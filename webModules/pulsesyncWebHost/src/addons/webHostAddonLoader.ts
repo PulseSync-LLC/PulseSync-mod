@@ -1,6 +1,6 @@
 import { ADDON_RECOVERY_EVENT, SHOW_TOAST_EVENT } from '../constants'
 import { ISOLATED_ADDON_RUNTIME } from '../runtimeModes'
-import type { WebHostAddonsSnapshot, WebHostAsset } from './contracts'
+import type { WebHostAddonAsset, WebHostAddonsSnapshot, WebHostAsset } from './contracts'
 import { IsolatedAddonRuntime, type IsolatedAddonFailure } from './isolated/IsolatedAddonRuntime'
 import { CssThemeRuntime } from './theme/CssThemeRuntime'
 
@@ -126,7 +126,12 @@ function applyAddon(addon: WebHostAsset) {
 
 function normalizeAddon(value: unknown): WebHostAsset | null {
     if (!value || typeof value !== 'object') return null
-    const addon = value as Partial<WebHostAsset> & { type?: unknown; code?: unknown; fingerprint?: unknown }
+    const addon = value as Partial<WebHostAsset> & {
+        type?: unknown
+        code?: unknown
+        fingerprint?: unknown
+        requirements?: WebHostAddonAsset['requirements']
+    }
     const id = normalizeId(addon.id)
     if (!id) return null
 
@@ -137,19 +142,27 @@ function normalizeAddon(value: unknown): WebHostAsset | null {
         ...(typeof addon.version === 'string' ? { version: addon.version } : {}),
         ...(normalizeId(addon.fingerprint) ? { fingerprint: normalizeId(addon.fingerprint) } : {}),
         css: typeof addon.css === 'string' ? addon.css : '',
-        cssScope: addon.cssScope === 'addon' ? ('addon' as const) : ('global' as const),
     }
 
     if (addon.type === 'theme') {
         if (!baseAsset.css.trim() || baseAsset.css.trim() === '{}') return null
         if (typeof addon.code === 'string' && addon.code.trim()) return null
-        return { ...baseAsset, type: 'theme' }
+        return { ...baseAsset, type: 'theme', cssScope: 'global' }
     }
 
     if (addon.type !== undefined && addon.type !== 'web-addon') return null
     const code = typeof addon.code === 'string' ? addon.code : ''
     if (!code.trim()) return null
-    return { ...baseAsset, type: 'web-addon', code }
+    return {
+        ...baseAsset,
+        type: 'web-addon',
+        code,
+        requirements: addon.requirements,
+        cssScope:
+            addon.cssScope === 'addon' || (addon.cssScope !== 'global' && addon.requirements?.capabilities?.includes('scoped-css-v1'))
+                ? 'addon'
+                : 'global',
+    }
 }
 
 function normalizeSnapshot(value: unknown): WebHostAddonsSnapshot | null {
@@ -182,6 +195,9 @@ export function applyWebHostAddonsSnapshot(value: unknown) {
             !previous ||
             previous.asset.type !== addon.type ||
             previous.asset.css !== addon.css ||
+            previous.asset.cssScope !== addon.cssScope ||
+            JSON.stringify(previous.asset.type === 'web-addon' ? previous.asset.requirements : undefined) !==
+                JSON.stringify(addon.type === 'web-addon' ? addon.requirements : undefined) ||
             previousCode !== nextCode ||
             previous.asset.fingerprint !== addon.fingerprint
         )
