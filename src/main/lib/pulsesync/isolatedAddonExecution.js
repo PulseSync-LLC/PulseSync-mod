@@ -29,6 +29,9 @@ const normalizeAssetType = (value) => {
     throw createBlockedAddonError('<snapshot>', 'invalid-asset-type', `asset type ${String(value)} is not supported`);
 };
 
+const resolveAddonCssScope = (addon) =>
+    addon.cssScope === 'addon' || (addon.cssScope !== 'global' && addon.requirements?.capabilities?.includes('scoped-css-v1')) ? 'addon' : 'global';
+
 const validateCanonicalCss = (assetId, value, required = false) => {
     const css = typeof value === 'string' ? value : '';
     if (required && (!css.trim() || css.trim() === '{}')) {
@@ -162,7 +165,7 @@ const resolveCanonicalAddon = (snapshot, requestedAddonId) => {
         code,
         allowedUrls: normalizeAllowedUrls(addon.allowedUrls) ?? [],
         requirements: validateWebHostRequirements(addon.requirements),
-        cssScope: addon.cssScope === 'addon' ? 'addon' : 'global',
+        cssScope: resolveAddonCssScope(addon),
         ...(addon.securityManifest ? { securityManifest: addon.securityManifest, catalogAddonId: addon.catalogAddonId } : {}),
         ...(addon.localModules ? { localModules: addon.localModules } : {}),
     });
@@ -248,7 +251,7 @@ const normalizeCanonicalSnapshot = (payload, onBlocked = () => {}) => {
                     code: validateCanonicalAddonCode(addonId, sourceAddon?.code),
                     allowedUrls: normalizeAllowedUrls(sourceAddon?.allowedUrls) ?? normalizeAllowedUrls(payload?.allowedUrls) ?? [],
                     requirements: normalizeWebHostRequirements(sourceAddon?.requirements),
-                    cssScope: sourceAddon?.cssScope === 'addon' ? 'addon' : 'global',
+                    cssScope: resolveAddonCssScope(sourceAddon),
                     ...moduleFields,
                 });
             }
