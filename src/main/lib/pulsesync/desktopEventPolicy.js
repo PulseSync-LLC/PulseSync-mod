@@ -12,6 +12,7 @@ const DESKTOP_EVENT_ALLOWLIST = Object.freeze({
         Events.DOWNLOAD_CURRENT_TRACK,
         Events.DOWNLOAD_TRACK,
         Events.DOWNLOAD_TRACKS,
+        Events.DOWNLOAD_TRACKS_CANCEL,
         Events.YNISON_STATE,
         Events.EXPERIMENTS_METRIC,
         Events.GLOBAL_SHORTCUTS_RECORDING_STATE,

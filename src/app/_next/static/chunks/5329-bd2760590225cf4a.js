@@ -203,6 +203,12 @@
                                 !n || (t && d.containerId !== t) || ((d.count -= d.queue.length), (d.queue = []));
                             }
                             function y(e) {
+                                if (null != e) {
+                                    const cancelled = d.queue.filter(({ toastProps }) => toastProps.toastId === e);
+                                    d.queue = d.queue.filter(({ toastProps }) => toastProps.toastId !== e);
+                                    d.count -= cancelled.length;
+                                    cancelled.forEach(({ toastProps }) => toastProps.onClose?.());
+                                }
                                 a((t) => (null == e ? [] : t.filter((t) => t !== e)));
                             }
                             function v() {
@@ -907,7 +913,17 @@
                 u = n(83214),
                 d = n.n(u);
             let f = (e) => {
-                let { message: t, closeToast: n, cover: u, coverRadius: f, className: p, coverClassName: m, closeButton: y, withDefaultCloseButton: g = !0 } = e;
+                let {
+                    message: t,
+                    closeToast: n,
+                    cover: u,
+                    coverRadius: f,
+                    className: p,
+                    coverClassName: m,
+                    closeButton: y,
+                    withDefaultCloseButton: g = !0,
+                    children: h,
+                } = e;
                 return (0, o.jsxs)(c.t, {
                     radius: 'xl',
                     className: (0, a.$)(d().root, p),
@@ -917,6 +933,7 @@
                             className: (0, a.$)(d().message, { [d().message_withCover]: (0, s.isValidElement)(u) }),
                             'data-test-id': r.S7.NOTIFICATION_TEXT,
                             children: [
+                                ...(h ? h : []),
                                 (0, s.isValidElement)(u) &&
                                     (0, o.jsx)(c.t, {
                                         className: (0, a.$)(d().cover, m),
