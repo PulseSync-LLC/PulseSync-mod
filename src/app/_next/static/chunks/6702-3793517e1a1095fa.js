@@ -9506,12 +9506,102 @@
             var rd = a(4296),
                 rc = a(16017),
                 ru = a.n(rc);
+            const NativeAddonNotification = ({ notification, iconProps, closeToast }) => {
+                const { message, kind, coverUrl, link, isActive } = notification;
+                if (kind === 'error' && !iconProps && !coverUrl && !link)
+                    return (0, m.jsx)(a(57549).h, {
+                        error: message,
+                        closeToast,
+                    });
+                const caption = (0, m.jsxs)(a(4254).HL, {
+                    className: kind === 'error' ? a(23775).message : undefined,
+                    variant: 'div',
+                    type: 'controls',
+                    size: 'm',
+                    role: kind === 'error' ? 'alert' : 'status',
+                    children: [
+                        message,
+                        link && ' ',
+                        link &&
+                            (0, m.jsx)(a(97522).N, {
+                                href: link.href,
+                                className: a(24915).link,
+                                onClick: (event) => {
+                                    if (!isActive()) return event.preventDefault();
+                                    closeToast?.();
+                                },
+                                children: (0, m.jsx)(a(4254).HL, {
+                                    className: a(24915).title,
+                                    variant: 'span',
+                                    type: 'controls',
+                                    size: 'm',
+                                    children: link.label,
+                                }),
+                            }),
+                    ],
+                });
+                return (0, m.jsx)(a(51790).$, {
+                    className: kind === 'error' ? a(23775).root : undefined,
+                    message: caption,
+                    cover: coverUrl
+                        ? (0, m.jsx)(a(23818)._V, {
+                              src: coverUrl,
+                              size: 100,
+                              fit: 'cover',
+                              className: a(24915).image,
+                              'aria-hidden': true,
+                          })
+                        : iconProps
+                          ? (0, m.jsx)(a(66738).I, iconProps)
+                          : undefined,
+                    coverRadius: 's',
+                    closeToast,
+                });
+            };
             let r_ = [{ id: nY.u.INFO }, { id: nY.u.ERROR, limit: 1 }],
-                rm = () =>
-                    r_.map((e) => {
+                rm = () => {
+                    const { notify, dismiss } = (0, nq.l)();
+                    (0, x.useEffect)(() => {
+                        let unregister;
+                        const register = () => {
+                            const api = window.pulsesyncApi;
+                            if (unregister || !api?.registerNativeNotifications) return;
+                            unregister = api.registerNativeNotifications({
+                                show: (notification) => {
+                                    const { id, icon, kind, durationMs, onClose } = notification;
+                                    const iconProps = icon ? a(66738).resolveIcon(icon) : undefined;
+                                    if (icon && !iconProps) throw new TypeError('Notification icon is not in the native catalog');
+                                    const content = (0, m.jsx)(NativeAddonNotification, {
+                                        notification,
+                                        iconProps,
+                                    });
+                                    notify(content, {
+                                        containerId: kind === 'error' ? nY.u.ERROR : nY.u.INFO,
+                                        toastId: id,
+                                        autoClose: durationMs,
+                                        single: false,
+                                        onClose,
+                                    });
+                                },
+                                dismiss: (id) =>
+                                    dismiss({
+                                        notificationId: id,
+                                        forceClose: true,
+                                    }),
+                            });
+                        };
+                        document.addEventListener('pulsesync:runtime-ready', register);
+                        register();
+                        return () => {
+                            document.removeEventListener('pulsesync:runtime-ready', register);
+                            unregister?.();
+                        };
+                    }, [notify, dismiss]);
+                    return r_.map((e) => {
                         let { id: t, limit: a } = e;
                         return (0, m.jsx)(rd.Notification, { className: ru().root, enableMultiContainer: !0, containerId: t, position: 'bottom-center', limit: a }, t);
-                    }),
+                    });
+                },
                 rp = iB.default.default(
                     () =>
                         Promise.all([
