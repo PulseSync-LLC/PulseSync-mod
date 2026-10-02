@@ -56,7 +56,7 @@
     "advert.banner": [
         {
             "type": 0,
-            "value": "Banner"
+            "value": "Ads"
         }
     ],
     "album-errors.error-during-loading-album": [
@@ -1314,7 +1314,7 @@
     "entity-names.collection": [
         {
             "type": 0,
-            "value": "Favorites"
+            "value": "My Collection"
         }
     ],
     "entity-names.compilations": [
@@ -1645,7 +1645,7 @@
     "entity-names.new-albums-in-genre": [
         {
             "type": 0,
-            "value": "New album in this genre"
+            "value": "New albums in this genre"
         }
     ],
     "entity-names.new-playlist": [
@@ -3011,7 +3011,19 @@
     "footer.disclaimer-content": [
         {
             "type": 0,
-            "value": "Yandex Music may contain information not intended for minors. Illegal consumption of narcotics, psychotropic substances, and similar drugs is harmful to health. Their illegal trafficking is prohibited and incurs liability under the law."
+            "value": "Yandex Music is the most accurate music recommendation system. By accuracy of personal recommendations for users in&nbsp;Russia among music streaming services in&nbsp;April 2025. Based on&nbsp;data from Mail Data LLC obtained through a&nbsp;Romir Scan Panel survey of respondents aged&nbsp;18-59."
+        },
+        {
+            "type": 0,
+            "value": "<br/>"
+        },
+        {
+            "type": 0,
+            "value": "<br/>"
+        },
+        {
+            "type": 0,
+            "value": "Yandex&nbsp;Music may contain information not suitable for&nbsp;minors. This content is marked with (!). Illegal consumption of narcotics, psychotropic substances, and&nbsp;similar drugs is harmful to health. Their illegal trafficking is prohibited and&nbsp;incurs liability under the&nbsp;law"
         }
     ],
     "footer.explicit-content": [
@@ -3845,7 +3857,7 @@
     "navigation.page-collection": [
         {
             "type": 0,
-            "value": "Favorites"
+            "value": "My Collection"
         }
     ],
     "navigation.page-main": [
@@ -8235,15 +8247,7 @@
     "paywall.plus-benefit-music": [
         {
             "type": 0,
-            "value": "Ad-free music"
-        },
-        {
-            "type": 1,
-            "value": "br"
-        },
-        {
-            "type": 0,
-            "value": "and"
+            "value": "Music and"
         },
         {
             "type": 1,
@@ -8252,6 +8256,22 @@
         {
             "type": 0,
             "value": "podcasts"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "in"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "high quality"
         }
     ],
     "paywall.plus-part-benefit-devices": [
@@ -9107,7 +9127,7 @@
     "rewind.button-title": [
         {
             "type": 0,
-            "value": "2024 in Rewind"
+            "value": "Unpacking 2025"
         }
     ],
     "search-filters.top": [
@@ -9253,7 +9273,7 @@
     "settings.crossfade": [
         {
             "type": 0,
-            "value": "Smooth transitions between tracks"
+            "value": "Crossfade between tracks"
         }
     ],
     "settings.failed-to-change-child-mode": [
@@ -10850,6 +10870,1466 @@
         {
             "type": 0,
             "value": ") app"
+        }
+    ],
+    "a11y-regions.wheel": [
+        {
+            "type": 0,
+            "value": "Recommendations from My Vibe"
+        }
+    ],
+    "album.external-streamings-title": [
+        {
+            "type": 0,
+            "value": "Listen on other platforms"
+        }
+    ],
+    "artist.official-pages": [
+        {
+            "type": 0,
+            "value": "Official pages"
+        }
+    ],
+    "authorization.enter-and-listen-button": [
+        {
+            "type": 0,
+            "value": "Log in for unlimited listening"
+        }
+    ],
+    "branded-player.car": [
+        {
+            "type": 0,
+            "value": "Car"
+        }
+    ],
+    "branded-player.default": [
+        {
+            "type": 0,
+            "value": "Standard"
+        }
+    ],
+    "branded-player.duck": [
+        {
+            "type": 0,
+            "value": "Duckie"
+        }
+    ],
+    "branded-player.player-type": [
+        {
+            "type": 0,
+            "value": "Player style"
+        }
+    ],
+    "buy-subscription.new-vibe-description": [
+        {
+            "type": 0,
+            "value": "Listen to ad-free music with"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "the"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Yandex"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Plus"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "multi-subscription. In addition, get access to"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Kinopoisk, Yandex"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Books, and"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "bonus points"
+        }
+    ],
+    "buy-subscription.offer-for-you": [
+        {
+            "type": 0,
+            "value": "For you: "
+        },
+        {
+            "type": 1,
+            "value": "offerText"
+        }
+    ],
+    "buy-subscription.plus-benefit-non-music": [
+        {
+            "type": 0,
+            "value": "Music, podcasts, and"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "audiobooks"
+        }
+    ],
+    "buy-subscription.plus-benefit-offline": [
+        {
+            "type": 0,
+            "value": "Listen even without"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "internet"
+        }
+    ],
+    "buy-subscription.plus-benefit-other-services": [
+        {
+            "type": 0,
+            "value": "Plus Kinopoisk and"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Yandex"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Books"
+        }
+    ],
+    "buy-subscription.plus-benefit-recommendations": [
+        {
+            "type": 0,
+            "value": "Spot-on recommendations"
+        }
+    ],
+    "concerts.about-event-kind": [
+        {
+            "options": {
+                "concert": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "About concert"
+                        }
+                    ]
+                },
+                "festival": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "About festival"
+                        }
+                    ]
+                },
+                "musical": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "About musical"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "About "
+                        },
+                        {
+                            "type": 1,
+                            "value": "kind"
+                        }
+                    ]
+                },
+                "tribute": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "About tribute"
+                        }
+                    ]
+                },
+                "unspecified": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "About concert"
+                        }
+                    ]
+                }
+            },
+            "type": 5,
+            "value": "kind"
+        }
+    ],
+    "concerts.cities-list": [
+        {
+            "type": 0,
+            "value": "List of cities"
+        }
+    ],
+    "concerts.concerts-nearby": [
+        {
+            "type": 0,
+            "value": "Concerts nearby"
+        }
+    ],
+    "concerts.details-title": [
+        {
+            "type": 0,
+            "value": "Concerts"
+        }
+    ],
+    "concerts.event-kind": [
+        {
+            "options": {
+                "concert": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Concert"
+                        }
+                    ]
+                },
+                "festival": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Festival"
+                        }
+                    ]
+                },
+                "musical": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Musical"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 1,
+                            "value": "kind"
+                        }
+                    ]
+                },
+                "tribute": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Tribute"
+                        }
+                    ]
+                },
+                "unspecified": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Concert"
+                        }
+                    ]
+                }
+            },
+            "type": 5,
+            "value": "kind"
+        }
+    ],
+    "concerts.find-city": [
+        {
+            "type": 0,
+            "value": "Find city"
+        }
+    ],
+    "concerts.nearby": [
+        {
+            "type": 0,
+            "value": "Nearby"
+        }
+    ],
+    "concerts.nothing-found": [
+        {
+            "type": 0,
+            "value": "Couldn't find anything"
+        }
+    ],
+    "concerts.try-different-query": [
+        {
+            "type": 0,
+            "value": "Try changing your query"
+        }
+    ],
+    "donation.support-artist": [
+        {
+            "offset": 0,
+            "options": {
+                "one": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Support the artist"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Support the artists"
+                        }
+                    ]
+                }
+            },
+            "pluralType": "cardinal",
+            "type": 6,
+            "value": "count"
+        }
+    ],
+    "donation.transfer-any-amount": [
+        {
+            "type": 0,
+            "value": "You can donate any amount"
+        }
+    ],
+    "drag-and-drop.collection-playlist-drag-handle": [
+        {
+            "type": 0,
+            "value": "Drag playlist "
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-cancel": [
+        {
+            "type": 0,
+            "value": "Playlist move canceled."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-error": [
+        {
+            "type": 0,
+            "value": "Couldn't move the playlist."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-instructions": [
+        {
+            "type": 0,
+            "value": "To move the playlist, press Enter or Spacebar. Use the arrow keys to choose a position. Press Enter or Spacebar to save, or Esc to cancel."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-over": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " will be moved to position "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": " of "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-saving": [
+        {
+            "type": 0,
+            "value": "Saving the new position for "
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-start": [
+        {
+            "type": 0,
+            "value": "Moving "
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": ". Current position: "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": " of "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-success": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " moved to position "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": " of "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "entity-names.artist-popular-tracks": [
+        {
+            "type": 0,
+            "value": "Popular tracks by the artist"
+        }
+    ],
+    "entity-names.cashback-percent": [
+        {
+            "type": 0,
+            "value": "Get "
+        },
+        {
+            "type": 1,
+            "value": "value"
+        },
+        {
+            "type": 0,
+            "value": "% back"
+        }
+    ],
+    "entity-names.fairytale": [
+        {
+            "type": 0,
+            "value": "Fairy tale"
+        }
+    ],
+    "entity-names.generative": [
+        {
+            "type": 0,
+            "value": "Neuromusic"
+        }
+    ],
+    "entity-names.music-history": [
+        {
+            "type": 0,
+            "value": "Listening history"
+        }
+    ],
+    "entity-names.percent": [
+        {
+            "type": 1,
+            "value": "value"
+        },
+        {
+            "type": 0,
+            "value": "%"
+        }
+    ],
+    "entity-names.query-to-vibe-loading-description": [
+        {
+            "type": 0,
+            "value": "Lumen is tuning in to your mood"
+        }
+    ],
+    "entity-names.query-to-vibe-loading-title": [
+        {
+            "type": 0,
+            "value": "I feel this way..."
+        }
+    ],
+    "entity-names.search": [
+        {
+            "type": 0,
+            "value": "Search"
+        }
+    ],
+    "entity-names.vibe-room-name": [
+        {
+            "type": 0,
+            "value": "My Vibe "
+        },
+        {
+            "type": 1,
+            "value": "name"
+        },
+        {
+            "type": 0,
+            "value": ". Status "
+        },
+        {
+            "type": 1,
+            "value": "status"
+        }
+    ],
+    "error-messages.empty-collection-vibe-rooms-title": [
+        {
+            "type": 0,
+            "value": "Share the link to listen to My Vibe for two that combines your preferences. This won't affect your personal recommendations"
+        }
+    ],
+    "error-messages.multivibe-create-link": [
+        {
+            "type": 0,
+            "value": "Couldn't create the link. Please try again"
+        }
+    ],
+    "footer.links-privacy-policy": [
+        {
+            "type": 0,
+            "value": "Privacy policy"
+        }
+    ],
+    "interface-actions.add-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Add to another playlist"
+        }
+    ],
+    "interface-actions.create": [
+        {
+            "type": 0,
+            "value": "Create"
+        }
+    ],
+    "interface-actions.delete-multivibe": [
+        {
+            "type": 0,
+            "value": "Quit My Vibe for two"
+        }
+    ],
+    "interface-actions.more": [
+        {
+            "type": 0,
+            "value": "More"
+        }
+    ],
+    "interface-actions.navigate-to-track": [
+        {
+            "type": 0,
+            "value": "Go to track"
+        }
+    ],
+    "interface-actions.open-play-queue": [
+        {
+            "type": 0,
+            "value": "Open queue"
+        }
+    ],
+    "interface-actions.pin-my-vibe": [
+        {
+            "type": 0,
+            "value": "Pin My Vibe"
+        }
+    ],
+    "interface-actions.playlist-made-date": [
+        {
+            "type": 0,
+            "value": "Compiled on "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long"
+                },
+                "pattern": "\"d MMMM\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.playlist-made-date-with-year": [
+        {
+            "type": 0,
+            "value": "Compiled on "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long",
+                    "year": "numeric"
+                },
+                "pattern": "\"d MMMM y\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.playlist-made-today": [
+        {
+            "type": 0,
+            "value": "Compiled today"
+        }
+    ],
+    "interface-actions.playlist-made-yesterday": [
+        {
+            "type": 0,
+            "value": "Compiled yesterday"
+        }
+    ],
+    "interface-actions.rename": [
+        {
+            "type": 0,
+            "value": "Rename"
+        }
+    ],
+    "interface-actions.report-problem": [
+        {
+            "type": 0,
+            "value": "Report problem"
+        }
+    ],
+    "interface-actions.reset-context": [
+        {
+            "type": 0,
+            "value": "Reset "
+        },
+        {
+            "type": 1,
+            "value": "context"
+        },
+        {
+            "type": 0,
+            "value": " and play My Vibe"
+        }
+    ],
+    "interface-actions.unpin-my-vibe": [
+        {
+            "type": 0,
+            "value": "Unpin My Vibe"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-date": [
+        {
+            "type": 0,
+            "value": "Playlist updated on "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long"
+                },
+                "pattern": "\"d MMMM\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-date-with-year": [
+        {
+            "type": 0,
+            "value": "Playlist updated on "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long",
+                    "year": "numeric"
+                },
+                "pattern": "\"d MMMM y\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-today": [
+        {
+            "type": 0,
+            "value": "Playlist updated today"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-yesterday": [
+        {
+            "type": 0,
+            "value": "Playlist updated yesterday"
+        }
+    ],
+    "multivibe.enabled-room-modal-button-text": [
+        {
+            "type": 0,
+            "value": "Listen"
+        }
+    ],
+    "multivibe.enabled-room-modal-description": [
+        {
+            "type": 0,
+            "value": "Listen to My Vibe with combines recommendations"
+        }
+    ],
+    "multivibe.enabled-room-modal-title": [
+        {
+            "type": 0,
+            "value": "My Vibe for two has already been created"
+        }
+    ],
+    "multivibe.go-to-collection-button-text": [
+        {
+            "type": 0,
+            "value": "To My Collection"
+        }
+    ],
+    "multivibe.invite-modal-draft-description": [
+        {
+            "type": 0,
+            "value": "When your invitation is accepted, My Vibe for two will appear in your Collection"
+        }
+    ],
+    "multivibe.invite-modal-draft-title": [
+        {
+            "type": 0,
+            "value": "The invitation hasn't been accepted yet"
+        }
+    ],
+    "multivibe.invite-modal-invalid-button-text": [
+        {
+            "type": 0,
+            "value": "Create"
+        }
+    ],
+    "multivibe.invite-modal-invalid-description": [
+        {
+            "type": 0,
+            "value": "Ask the user to send a new invitation or create My Vibe for two"
+        }
+    ],
+    "multivibe.invite-modal-invalid-title": [
+        {
+            "type": 0,
+            "value": "This invitation is no longer valid"
+        }
+    ],
+    "multivibe.invite-modal-valid-button-text": [
+        {
+            "type": 0,
+            "value": "Join"
+        }
+    ],
+    "multivibe.invite-modal-valid-description": [
+        {
+            "type": 0,
+            "value": "Listen to My Vibe that combines your preferences. This won't&nbsp;affect your personal recommendations"
+        }
+    ],
+    "multivibe.invite-modal-valid-title": [
+        {
+            "type": 1,
+            "value": "name"
+        },
+        {
+            "type": 0,
+            "value": " invites you to My Vibe for two"
+        }
+    ],
+    "multivibe.link-successfully-copied": [
+        {
+            "type": 0,
+            "value": "The link to My Vibe for two has been copied"
+        }
+    ],
+    "multivibe.modal-subtitle": [
+        {
+            "type": 0,
+            "value": "Your real connection"
+        }
+    ],
+    "multivibe.nda": [
+        {
+            "type": 0,
+            "value": "NDA"
+        }
+    ],
+    "multivibe.only-member-modal-description": [
+        {
+            "type": 0,
+            "value": "Share the link again to listen to My Vibe for two"
+        }
+    ],
+    "multivibe.only-member-modal-title": [
+        {
+            "type": 0,
+            "value": "You're the only participant of this My Vibe for two"
+        }
+    ],
+    "multivibe.promo-modal-co-brand-a11y": [
+        {
+            "type": 0,
+            "value": "Available with support from Beeline"
+        }
+    ],
+    "multivibe.promo-modal-description": [
+        {
+            "type": 0,
+            "value": "Share the link to listen to My Vibe that combines your preferences. This won't affect your personal recommendations"
+        }
+    ],
+    "multivibe.promo-modal-title": [
+        {
+            "type": 0,
+            "value": "My Vibe for two"
+        }
+    ],
+    "multivibe.room-limit-exceeded-description": [
+        {
+            "type": 0,
+            "value": "You've already created 50 My Vibes for two. To create a new My Vibe for two, quit one of the current ones"
+        }
+    ],
+    "multivibe.room-limit-exceeded-title": [
+        {
+            "type": 0,
+            "value": "Many second halves!"
+        }
+    ],
+    "multivibe.room-status-disabled": [
+        {
+            "type": 0,
+            "value": "inactive"
+        }
+    ],
+    "multivibe.room-status-enabled": [
+        {
+            "type": 0,
+            "value": "active"
+        }
+    ],
+    "multivibe.room-unavailable": [
+        {
+            "type": 0,
+            "value": "Not available anymore"
+        }
+    ],
+    "navigation.page-for-you-and-trends": [
+        {
+            "type": 0,
+            "value": "For you and Trends"
+        }
+    ],
+    "navigation.page-muzmarket": [
+        {
+            "type": 0,
+            "value": "Muzmarket"
+        }
+    ],
+    "navigation.page-my-vibe": [
+        {
+            "type": 0,
+            "value": "My Vibe"
+        }
+    ],
+    "notifications-info.added-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Tracks have been added to \""
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": "\""
+        }
+    ],
+    "notifications-info.already-added-tracks": [
+        {
+            "type": 0,
+            "value": "All the tracks have already been added to this playlist"
+        }
+    ],
+    "onboarding.try-plus-to-open-collection": [
+        {
+            "type": 0,
+            "value": "Activate the"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "multi-subscription to get access to your Collection"
+        }
+    ],
+    "page.artist-all-concerts-header": [
+        {
+            "type": 0,
+            "value": "All concerts by "
+        },
+        {
+            "type": 1,
+            "value": "artistName"
+        }
+    ],
+    "page.similar-entities-block-title": [
+        {
+            "type": 0,
+            "value": "More like this"
+        }
+    ],
+    "page.summer_2026_title": [
+        {
+            "type": 0,
+            "value": "Unpack your summer"
+        }
+    ],
+    "page.vibe-rooms": [
+        {
+            "type": 0,
+            "value": "My Vibe for two"
+        }
+    ],
+    "page.vibe-rooms-onboarding": [
+        {
+            "type": 0,
+            "value": "Онбординг Моей волны на двоих"
+        }
+    ],
+    "payment.learn-personal-bonus": [
+        {
+            "type": 0,
+            "value": "Check out your personal bonus"
+        }
+    ],
+    "paywall.family-offer-text": [
+        {
+            "type": 0,
+            "value": "Everyone will have their own account and personal"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "recommendations. No extra fees"
+        }
+    ],
+    "paywall.family-offer-title": [
+        {
+            "type": 0,
+            "value": "Music for you "
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "and"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "three of your family members"
+        }
+    ],
+    "paywall.music-benefit-all-in-one-desktop": [
+        {
+            "type": 0,
+            "value": "All in"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "one convenient service"
+        }
+    ],
+    "paywall.music-benefit-all-in-one-mobile": [
+        {
+            "type": 0,
+            "value": "All in"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "one convenient app"
+        }
+    ],
+    "paywall.music-benefit-audio": [
+        {
+            "type": 0,
+            "value": "Music, audiobooks, and"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "podcasts"
+        }
+    ],
+    "paywall.music-benefit-recommendation": [
+        {
+            "type": 0,
+            "value": "Spot-on recommendations"
+        }
+    ],
+    "paywall.music-benefit-without-network": [
+        {
+            "type": 0,
+            "value": "Download and"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "listen even"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "offline"
+        }
+    ],
+    "paywall.music-benefits-title": [
+        {
+            "type": 0,
+            "value": "Let's listen to"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "Yandex Music"
+        }
+    ],
+    "play-queue.album-will-be-played-last": [
+        {
+            "type": 0,
+            "value": "Album "
+        },
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " added to the end of the queue"
+        }
+    ],
+    "play-queue.album-will-be-played-next": [
+        {
+            "type": 0,
+            "value": "Album "
+        },
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " added to the beginning of the queue"
+        }
+    ],
+    "play-queue.now-playing-from-artist-collection": [
+        {
+            "type": 0,
+            "value": "Playing now from Something Familiar"
+        }
+    ],
+    "play-queue.now-playing-from-artist-wave": [
+        {
+            "type": 0,
+            "value": "Playing now from Something Familiar"
+        }
+    ],
+    "play-queue.now-playing-from-downloads": [
+        {
+            "type": 0,
+            "value": "Playing now from downloaded tracks"
+        }
+    ],
+    "play-queue.now-playing-from-history": [
+        {
+            "type": 0,
+            "value": "Playing now from history"
+        }
+    ],
+    "play-queue.now-playing-from-history-search": [
+        {
+            "type": 0,
+            "value": "Playing now from search history"
+        }
+    ],
+    "play-queue.now-playing-from-search": [
+        {
+            "type": 0,
+            "value": "Playing now from search"
+        }
+    ],
+    "play-queue.playlist-will-be-played-last": [
+        {
+            "type": 0,
+            "value": "Playlist "
+        },
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " added to the end of the queue"
+        }
+    ],
+    "play-queue.playlist-will-be-played-next": [
+        {
+            "type": 0,
+            "value": "Playlist "
+        },
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " added to the beginning of the queue"
+        }
+    ],
+    "player-actions.mix": [
+        {
+            "type": 0,
+            "value": "Shuffle"
+        }
+    ],
+    "player-actions.repeat-action": [
+        {
+            "type": 0,
+            "value": "Repeat"
+        }
+    ],
+    "playlist-errors.failed-add-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Couldn't add tracks to the playlist. Please try again"
+        }
+    ],
+    "rewind.download-image": [
+        {
+            "type": 0,
+            "value": "Download image"
+        }
+    ],
+    "rewind.save-choice": [
+        {
+            "type": 0,
+            "value": "Save selection"
+        }
+    ],
+    "search.input-placeholder-q2v": [
+        {
+            "type": 0,
+            "value": "What do you feel or search for?"
+        }
+    ],
+    "search.playlist-placeholder": [
+        {
+            "type": 0,
+            "value": "Playlist search"
+        }
+    ],
+    "search.q2v-input-placeholder-cheerful-not-too-much": [
+        {
+            "type": 0,
+            "value": "Something cheerful, but not too much"
+        }
+    ],
+    "search.q2v-input-placeholder-collection-track": [
+        {
+            "type": 0,
+            "value": "That very track in my Collection"
+        }
+    ],
+    "search.q2v-input-placeholder-favorite-artist": [
+        {
+            "type": 0,
+            "value": "Your favorite artist"
+        }
+    ],
+    "search.q2v-input-placeholder-melodic-and-danceable": [
+        {
+            "type": 0,
+            "value": "Something catchy and upbeat"
+        }
+    ],
+    "search.q2v-suggestions-loading": [
+        {
+            "type": 0,
+            "value": "Thinking of suggestions"
+        }
+    ],
+    "settings.ai-content-reduction": [
+        {
+            "type": 0,
+            "value": "Less AI"
+        }
+    ],
+    "settings.ai-content-reduction-description": [
+        {
+            "type": 0,
+            "value": "AI-generated music will appear less frequently in your recommendations"
+        }
+    ],
+    "vibe-actions.enter-title": [
+        {
+            "type": 0,
+            "value": "Enter the name"
+        }
+    ],
+    "vibe-wheel.activity-description": [
+        {
+            "type": 0,
+            "value": "My Vibe by activity"
+        }
+    ],
+    "vibe-wheel.activity-fall-asleep": [
+        {
+            "type": 0,
+            "value": "Falling asleep"
+        }
+    ],
+    "vibe-wheel.activity-road-trip": [
+        {
+            "type": 0,
+            "value": "On-the-Road"
+        }
+    ],
+    "vibe-wheel.activity-wake-up": [
+        {
+            "type": 0,
+            "value": "Waking up"
+        }
+    ],
+    "vibe-wheel.activity-work-background": [
+        {
+            "type": 0,
+            "value": "Working"
+        }
+    ],
+    "vibe-wheel.activity-workout": [
+        {
+            "type": 0,
+            "value": "Working out"
+        }
+    ],
+    "vibe-wheel.mood-description": [
+        {
+            "type": 0,
+            "value": "My Vibe by mood"
+        }
+    ],
+    "vibe-wheel.mood-energetic": [
+        {
+            "type": 0,
+            "value": "Dynamic"
+        }
+    ],
+    "vibe-wheel.mood-happy": [
+        {
+            "type": 0,
+            "value": "Joyful"
+        }
+    ],
+    "vibe-wheel.mood-sad": [
+        {
+            "type": 0,
+            "value": "Sad"
+        }
+    ],
+    "wizard.description": [
+        {
+            "type": 0,
+            "value": "We'd like to know more about you to recommend music you'll like. Please choose some artists that you like, and our recommendations will adjust to your taste."
+        }
+    ],
+    "wizard.title": [
+        {
+            "type": 0,
+            "value": "Tell us about yourself"
+        }
+    ],
+    "words.ai-description": [
+        {
+            "type": 0,
+            "value": "AI may make mistakes, be sure to double-check important information"
+        }
+    ],
+    "words.dislike": [
+        {
+            "type": 0,
+            "value": "Not cool"
+        }
+    ],
+    "words.dislike-feedback": [
+        {
+            "type": 0,
+            "value": "Thank you for making me become better!"
+        }
+    ],
+    "words.like": [
+        {
+            "type": 0,
+            "value": "More similar replies"
+        }
+    ],
+    "words.like-feedback": [
+        {
+            "type": 0,
+            "value": "Thank you for your rating!"
+        }
+    ],
+    "words.loading-phrase-catching": [
+        {
+            "type": 0,
+            "value": "Getting in the rhythm"
+        }
+    ],
+    "words.loading-phrase-collecting-interesting": [
+        {
+            "type": 0,
+            "value": "Using the AI power to collect interesting stuff"
+        }
+    ],
+    "words.loading-phrase-reading": [
+        {
+            "type": 0,
+            "value": "Reading about the artist"
+        }
+    ],
+    "words.loading-phrase-studying": [
+        {
+            "type": 0,
+            "value": "Analyzing the sound"
+        }
+    ],
+    "words.loading-phrase-tuning": [
+        {
+            "type": 0,
+            "value": "Getting ready"
+        }
+    ],
+    "words.lumen-description": [
+        {
+            "type": 0,
+            "value": "The lumen has just woken up, so it may make mistakes"
+        }
+    ],
+    "words.show-more": [
+        {
+            "type": 0,
+            "value": "Show this more often?"
         }
     ]
 }

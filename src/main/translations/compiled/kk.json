@@ -14,7 +14,7 @@
     "about-app.explicit-content": [
         {
             "type": 0,
-            "value": "Яндекс Музыка қызметі кәмелетке&nbsp;толмағандарға арналған ақпаратты қамтуы&nbsp;мүмкін"
+            "value": "Яндекс Музыка сервисінде кәмелетке толмағандарға арналмаған ақпарат болуы мүмкін. Яндекс Музыка – музыкалық ұсынымдардың ең дәл жүйесі. 2025 жылдың сәуір айында музыкалық стриминг сервистерінің арасында РФ пайдаланушылары үшін дербес ұсынымдарды таңдау дәлдігінің дәрежесі бойынша. Ромир Бірыңғай деректер панелінің базасында 18-59 жас аралығындағы респонденттер арасында «Майл дата» ЖШҚ жүргізген сауалнама нәтижелеріне негізделген."
         }
     ],
     "ads.about-advertiser": [
@@ -56,7 +56,7 @@
     "advert.banner": [
         {
             "type": 0,
-            "value": "Баннер"
+            "value": "Жарнама"
         }
     ],
     "album-errors.error-during-loading-album": [
@@ -2136,56 +2136,58 @@
     ],
     "entity-names.track-type": [
         {
-            "type": 0,
-            "value": "type, select, music"
-        },
-        {
-            "type": 1,
-            "value": "Трек"
-        },
-        {
-            "type": 0,
-            "value": " podcast_episode"
-        },
-        {
-            "type": 1,
-            "value": "Шығарылым"
-        },
-        {
-            "type": 0,
-            "value": " comment"
-        },
-        {
-            "type": 1,
-            "value": "Шығарылым"
-        },
-        {
-            "type": 0,
-            "value": " fairy_tale"
-        },
-        {
-            "type": 1,
-            "value": "Бөлім"
-        },
-        {
-            "type": 0,
-            "value": " audiobook"
-        },
-        {
-            "type": 1,
-            "value": "Бөлім"
-        },
-        {
-            "type": 0,
-            "value": " other"
-        },
-        {
-            "type": 1,
-            "value": "Трек"
-        },
-        {
-            "type": 0,
-            "value": "}"
+            "options": {
+                "audiobook": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Бөлім"
+                        }
+                    ]
+                },
+                "comment": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Шығарылым"
+                        }
+                    ]
+                },
+                "fairy_tale": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Бөлім"
+                        }
+                    ]
+                },
+                "music": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Трек"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Трек"
+                        }
+                    ]
+                },
+                "podcast_episode": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Шығарылым"
+                        }
+                    ]
+                }
+            },
+            "type": 5,
+            "value": "type"
         }
     ],
     "entity-names.tracks": [
@@ -2889,7 +2891,19 @@
     "footer.disclaimer-content": [
         {
             "type": 0,
-            "value": "Яндекс Музыка сервисінде кәмелетке толмағандарға арналмаған ақпарат болуы мүмкін. Есірткі заттарын, психотроптық заттарды, оларға ұқсас заттарды заңсыз пайдалану денсаулыққа зиян келтіреді, олардың заңсыз айналымына тыйым салынған және ол үшін заңнамада жауапкершілік белгіленген"
+            "value": "Яндекс Музыка – ең дәл музыкалық ұсынымдар жүйесі. 2025 жылғы сәуір айында музыкалық&nbsp;стриминг сервистерінің арасында РФ&nbsp;пайдаланушылары үшін дербес ұсынымдарды іріктеп алу дәлдігінің дәрежесі бойынша. 18-59&nbsp;жас аралығындағы респонденттер арасында Ромир&nbsp;Бірыңғай деректер панелінің базасында&nbsp;«Майл дата» ЖШҚ жүргізген сауалнама нәтижелерінің деректеріне негізделген."
+        },
+        {
+            "type": 0,
+            "value": "<br/>"
+        },
+        {
+            "type": 0,
+            "value": "<br/>"
+        },
+        {
+            "type": 0,
+            "value": "Яндекс Музыка&nbsp;сервисінде кәмелетке толмағандарға арналған&nbsp;ақпарат болуы мүмкін. Мұндай материалдар (!) таңбасымен белгіленген. Есірткі заттарын, психотроптық&nbsp;заттарды, оларға ұқсас заттарды заңсыз&nbsp;пайдалану денсаулыққа зиян келтіреді, олардың заңсыз айналымына заңмен&nbsp;тыйым салынған және заңнама бойынша белгіленген жауапкершілік қарастырылған"
         }
     ],
     "footer.explicit-content": [
@@ -3723,7 +3737,7 @@
     "navigation.page-plus": [
         {
             "type": 0,
-            "value": "Сіздің плюсіңіз"
+            "value": "Сіздің Плюсіңіз"
         }
     ],
     "navigation.pins-list": [
@@ -7965,7 +7979,15 @@
     "paywall.plus-benefit-music": [
         {
             "type": 0,
-            "value": "Жарнамасыз"
+            "value": "Жоғары"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "сападағы"
         },
         {
             "type": 1,
@@ -8691,15 +8713,7 @@
         },
         {
             "type": 0,
-            "value": "мультижазылымынан"
-        },
-        {
-            "type": 1,
-            "value": "nbsp"
-        },
-        {
-            "type": 0,
-            "value": "басталады"
+            "value": "мультижазылымынан басталады"
         }
     ],
     "podcast-errors.error-during-loading-podcast": [
@@ -8817,7 +8831,7 @@
     "rewind.button-title": [
         {
             "type": 0,
-            "value": "Жыл қорытындысы — 2024"
+            "value": "Жыл қорытындысы — 2025"
         }
     ],
     "search-filters.top": [
@@ -10382,6 +10396,1438 @@
         {
             "type": 0,
             "value": ") қосымшасы"
+        }
+    ],
+    "a11y-regions.wheel": [
+        {
+            "type": 0,
+            "value": "Менің толқынымның ұсынымы"
+        }
+    ],
+    "album.external-streamings-title": [
+        {
+            "type": 0,
+            "value": "Басқа алаңдардан тыңдау"
+        }
+    ],
+    "artist.official-pages": [
+        {
+            "type": 0,
+            "value": "Ресми парақшалар"
+        }
+    ],
+    "authorization.enter-and-listen-button": [
+        {
+            "type": 0,
+            "value": "Кіру және шектеулерсіз тыңдау"
+        }
+    ],
+    "branded-player.car": [
+        {
+            "type": 0,
+            "value": "Машина"
+        }
+    ],
+    "branded-player.default": [
+        {
+            "type": 0,
+            "value": "Стандартты"
+        }
+    ],
+    "branded-player.duck": [
+        {
+            "type": 0,
+            "value": "Үйрек"
+        }
+    ],
+    "branded-player.player-type": [
+        {
+            "type": 0,
+            "value": "Плеер түрі"
+        }
+    ],
+    "buy-subscription.new-vibe-description": [
+        {
+            "type": 0,
+            "value": "Яндекс"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Плюс"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Мультижазылымымен музыканы"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "жарнамасыз"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "тыңдаңыз. Сондай-ақ Кинопоиск,"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Яндекс"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Музыка және ұпайлар түрінде"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "кешбэкке қолжетімділік алыңыз"
+        }
+    ],
+    "buy-subscription.offer-for-you": [
+        {
+            "type": 0,
+            "value": "Сіз үшін "
+        },
+        {
+            "type": 1,
+            "value": "offerText"
+        }
+    ],
+    "buy-subscription.plus-benefit-non-music": [
+        {
+            "type": 0,
+            "value": "Музыка, подкастар мен"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "аудиокітаптар"
+        }
+    ],
+    "buy-subscription.plus-benefit-offline": [
+        {
+            "type": 0,
+            "value": "Тіпті интернетсіз"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "тыңдай аласыз"
+        }
+    ],
+    "buy-subscription.plus-benefit-other-services": [
+        {
+            "type": 0,
+            "value": "Сондай-ақ Кинопоиск және"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Яндекс"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Книги"
+        }
+    ],
+    "buy-subscription.plus-benefit-recommendations": [
+        {
+            "type": 0,
+            "value": "Ең дәл ұсынымдар"
+        }
+    ],
+    "concerts.about-event-kind": [
+        {
+            "options": {
+                "concert": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Концерт туралы"
+                        }
+                    ]
+                },
+                "festival": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Фестиваль туралы"
+                        }
+                    ]
+                },
+                "musical": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Мюзикл туралы"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 1,
+                            "value": "kind"
+                        },
+                        {
+                            "type": 0,
+                            "value": " туралы"
+                        }
+                    ]
+                },
+                "tribute": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Трибьют туралы"
+                        }
+                    ]
+                },
+                "unspecified": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Концерт туралы"
+                        }
+                    ]
+                }
+            },
+            "type": 5,
+            "value": "kind"
+        }
+    ],
+    "concerts.cities-list": [
+        {
+            "type": 0,
+            "value": "Қалалар тізімі"
+        }
+    ],
+    "concerts.concerts-nearby": [
+        {
+            "type": 0,
+            "value": "Жақын жердегі концерттер"
+        }
+    ],
+    "concerts.details-title": [
+        {
+            "type": 0,
+            "value": "Концерттер"
+        }
+    ],
+    "concerts.event-kind": [
+        {
+            "options": {
+                "concert": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Концерт"
+                        }
+                    ]
+                },
+                "festival": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Фестиваль"
+                        }
+                    ]
+                },
+                "musical": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Мюзикл"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 1,
+                            "value": "kind"
+                        }
+                    ]
+                },
+                "tribute": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Трибьют"
+                        }
+                    ]
+                },
+                "unspecified": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Концерт"
+                        }
+                    ]
+                }
+            },
+            "type": 5,
+            "value": "kind"
+        }
+    ],
+    "concerts.find-city": [
+        {
+            "type": 0,
+            "value": "Қаланы табу"
+        }
+    ],
+    "concerts.nearby": [
+        {
+            "type": 0,
+            "value": "Жанында"
+        }
+    ],
+    "concerts.nothing-found": [
+        {
+            "type": 0,
+            "value": "Ештеңе табылмады"
+        }
+    ],
+    "concerts.try-different-query": [
+        {
+            "type": 0,
+            "value": "Басқаша жазып көріңіз"
+        }
+    ],
+    "donation.support-artist": [
+        {
+            "offset": 0,
+            "options": {
+                "one": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Әртісті қолдау"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Әртістерді қолдау"
+                        }
+                    ]
+                }
+            },
+            "pluralType": "cardinal",
+            "type": 6,
+            "value": "count"
+        }
+    ],
+    "donation.transfer-any-amount": [
+        {
+            "type": 0,
+            "value": "Кез келген соманы аудара аласыз"
+        }
+    ],
+    "drag-and-drop.collection-playlist-drag-handle": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " плейлистін көшіру."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-cancel": [
+        {
+            "type": 0,
+            "value": "Плейлисті көшіру тоқтатылды."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-error": [
+        {
+            "type": 0,
+            "value": "Плейлист позициясын өзгерту мүмкін болмады."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-instructions": [
+        {
+            "type": 0,
+            "value": "Плейлисті көшіру үшін Enter немесе Бос орын пернесін басыңыз. Позицияны таңдау үшін сілтеуіштері бар пернелерді қолданыңыз. Сақтау үшін Enter немесе Бос орын, немесе бас тарту үшін Escape пернесін басыңыз."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-over": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " плейлисті "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": " / "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": " позициясына көшіріледі."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-saving": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " плейлистінің жаңа позициясын сақтап жатырмыз."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-start": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " плейлистін көшіру басталды. Қазіргі позициясы: "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": " / "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-success": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " плейлисті "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": " / "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": " позициясына көшіріледі."
+        }
+    ],
+    "entity-names.artist-popular-tracks": [
+        {
+            "type": 0,
+            "value": "Әртістің танымал тректері"
+        }
+    ],
+    "entity-names.cashback-percent": [
+        {
+            "type": 1,
+            "value": "value"
+        },
+        {
+            "type": 0,
+            "value": "% кешбэк"
+        }
+    ],
+    "entity-names.fairytale": [
+        {
+            "type": 0,
+            "value": "Ертегі"
+        }
+    ],
+    "entity-names.generative": [
+        {
+            "type": 0,
+            "value": "Нейромузыка"
+        }
+    ],
+    "entity-names.music-history": [
+        {
+            "type": 0,
+            "value": "Тыңдау тарихы"
+        }
+    ],
+    "entity-names.percent": [
+        {
+            "type": 1,
+            "value": "value"
+        },
+        {
+            "type": 0,
+            "value": "%"
+        }
+    ],
+    "entity-names.query-to-vibe-loading-description": [
+        {
+            "type": 0,
+            "value": "Люмен сіздің бабыңызды табады"
+        }
+    ],
+    "entity-names.query-to-vibe-loading-title": [
+        {
+            "type": 0,
+            "value": "Маған солай сияқты..."
+        }
+    ],
+    "entity-names.search": [
+        {
+            "type": 0,
+            "value": "Іздеу"
+        }
+    ],
+    "entity-names.vibe-room-name": [
+        {
+            "type": 0,
+            "value": "Менің толқыным "
+        },
+        {
+            "type": 1,
+            "value": "name"
+        },
+        {
+            "type": 0,
+            "value": ". Күйі "
+        },
+        {
+            "type": 1,
+            "value": "status"
+        }
+    ],
+    "error-messages.empty-collection-vibe-rooms-title": [
+        {
+            "type": 0,
+            "value": "Сілтемені бөлісіп, талғамдарыңызды біріктіретін екі адамға арналған Менің толқынымды тыңдаңыз. Жеке ұсынымдар өзгермейді"
+        }
+    ],
+    "error-messages.multivibe-create-link": [
+        {
+            "type": 0,
+            "value": "Сілтеме жасау мүмкін болмады. Қайтадан көріңіз"
+        }
+    ],
+    "footer.links-privacy-policy": [
+        {
+            "type": 0,
+            "value": "Құпиялық саясаты"
+        }
+    ],
+    "interface-actions.add-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Басқа плейлиске қосу"
+        }
+    ],
+    "interface-actions.create": [
+        {
+            "type": 0,
+            "value": "Жасау"
+        }
+    ],
+    "interface-actions.delete-multivibe": [
+        {
+            "type": 0,
+            "value": "Екі адамға арналған Менің толқынымнан шығу"
+        }
+    ],
+    "interface-actions.more": [
+        {
+            "type": 0,
+            "value": "Тағы"
+        }
+    ],
+    "interface-actions.navigate-to-track": [
+        {
+            "type": 0,
+            "value": "Трекке өту"
+        }
+    ],
+    "interface-actions.open-play-queue": [
+        {
+            "type": 0,
+            "value": "Кезекті ашу"
+        }
+    ],
+    "interface-actions.pin-my-vibe": [
+        {
+            "type": 0,
+            "value": "Менің толқынымды бекіту"
+        }
+    ],
+    "interface-actions.playlist-made-date": [
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long"
+                },
+                "pattern": "\"d MMMM\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        },
+        {
+            "type": 0,
+            "value": " жиналды"
+        }
+    ],
+    "interface-actions.playlist-made-date-with-year": [
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long",
+                    "year": "numeric"
+                },
+                "pattern": "\"d MMMM y\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        },
+        {
+            "type": 0,
+            "value": " жиналды"
+        }
+    ],
+    "interface-actions.playlist-made-today": [
+        {
+            "type": 0,
+            "value": "Бүгін жиналды"
+        }
+    ],
+    "interface-actions.playlist-made-yesterday": [
+        {
+            "type": 0,
+            "value": "Кеше жиналды"
+        }
+    ],
+    "interface-actions.rename": [
+        {
+            "type": 0,
+            "value": "Атауын өзгерту"
+        }
+    ],
+    "interface-actions.report-problem": [
+        {
+            "type": 0,
+            "value": "Қиындық туралы хабарлау"
+        }
+    ],
+    "interface-actions.reset-context": [
+        {
+            "type": 1,
+            "value": "context"
+        },
+        {
+            "type": 0,
+            "value": " алып тастау және Менің толқынымды қосу"
+        }
+    ],
+    "interface-actions.unpin-my-vibe": [
+        {
+            "type": 0,
+            "value": "Менің толқынымды алып тастау"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-date": [
+        {
+            "type": 0,
+            "value": "Плейлист "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long"
+                },
+                "pattern": "\"d MMMM\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        },
+        {
+            "type": 0,
+            "value": " жаңартылды"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-date-with-year": [
+        {
+            "type": 0,
+            "value": "Плейлист "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long",
+                    "year": "numeric"
+                },
+                "pattern": "\"d MMMM y\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        },
+        {
+            "type": 0,
+            "value": " жаңартылды"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-today": [
+        {
+            "type": 0,
+            "value": "Плейлист бүгін жаңартылды"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-yesterday": [
+        {
+            "type": 0,
+            "value": "Плейлист кеше жаңартылды"
+        }
+    ],
+    "multivibe.enabled-room-modal-button-text": [
+        {
+            "type": 0,
+            "value": "Тыңдау"
+        }
+    ],
+    "multivibe.enabled-room-modal-description": [
+        {
+            "type": 0,
+            "value": "Бірлескен ұсынымдары бар Менің толқынымды тыңдаңыз"
+        }
+    ],
+    "multivibe.enabled-room-modal-title": [
+        {
+            "type": 0,
+            "value": "Екі адамға арналған Менің толқыным жасалды"
+        }
+    ],
+    "multivibe.go-to-collection-button-text": [
+        {
+            "type": 0,
+            "value": "Коллекцияға өту"
+        }
+    ],
+    "multivibe.invite-modal-draft-description": [
+        {
+            "type": 0,
+            "value": "Шақыруларды қабылдаған кезде сіздің Коллекцияңызда екі адамға арналған Менің толқыным пайда болады"
+        }
+    ],
+    "multivibe.invite-modal-draft-title": [
+        {
+            "type": 0,
+            "value": "Шақыру әлі қабылданған жоқ"
+        }
+    ],
+    "multivibe.invite-modal-invalid-button-text": [
+        {
+            "type": 0,
+            "value": "Жасау"
+        }
+    ],
+    "multivibe.invite-modal-invalid-description": [
+        {
+            "type": 0,
+            "value": "Жаңа шақыру жіберуді сұраңыз немесе екі адамға арналған Менің толқынымды жасаңыз"
+        }
+    ],
+    "multivibe.invite-modal-invalid-title": [
+        {
+            "type": 0,
+            "value": "Бұл шақыру енді жарамсыз"
+        }
+    ],
+    "multivibe.invite-modal-valid-button-text": [
+        {
+            "type": 0,
+            "value": "Қосылу"
+        }
+    ],
+    "multivibe.invite-modal-valid-description": [
+        {
+            "type": 0,
+            "value": "Талғамыңызды біріктіретін Менің толқынымды тыңдаңыз. Жеке ұсынымдар&nbsp;өзгермейді"
+        }
+    ],
+    "multivibe.invite-modal-valid-title": [
+        {
+            "type": 1,
+            "value": "name"
+        },
+        {
+            "type": 0,
+            "value": " сізді екі адамға арналған Менің толқыныма шақырады"
+        }
+    ],
+    "multivibe.link-successfully-copied": [
+        {
+            "type": 0,
+            "value": "Екі адамға арналған Менің толқыныма сілтеме көшіріп алынды"
+        }
+    ],
+    "multivibe.modal-subtitle": [
+        {
+            "type": 0,
+            "value": "Сіздің нағыз байланысыңыз"
+        }
+    ],
+    "multivibe.nda": [
+        {
+            "type": 0,
+            "value": "NDA"
+        }
+    ],
+    "multivibe.only-member-modal-description": [
+        {
+            "type": 0,
+            "value": "Екі адамға арналған Менің толқынымды тыңдау үшін сілтемені қайта жіберіңіз"
+        }
+    ],
+    "multivibe.only-member-modal-title": [
+        {
+            "type": 0,
+            "value": "Екі адамға арналған Менің толқынымда сіз ғанасыз"
+        }
+    ],
+    "multivibe.promo-modal-co-brand-a11y": [
+        {
+            "type": 0,
+            "value": "Билайн қолдауымен қолжетімді"
+        }
+    ],
+    "multivibe.promo-modal-description": [
+        {
+            "type": 0,
+            "value": "Сілтемені жіберіп, талғамдарыңызды үйлестіретін Менің толқынымды тыңдаңыз. Дербес ұсынымдарыңыз өзгермейді"
+        }
+    ],
+    "multivibe.promo-modal-title": [
+        {
+            "type": 0,
+            "value": "Екі адамға арналған Менің толқыным"
+        }
+    ],
+    "multivibe.room-limit-exceeded-description": [
+        {
+            "type": 0,
+            "value": "Сіз екі адам үшін 50 Менің толқынымды жасадыңыз. Жаңасын жасау үшін ағымдағылардың бірінен шығыңыз"
+        }
+    ],
+    "multivibe.room-limit-exceeded-title": [
+        {
+            "type": 0,
+            "value": "Көптеген жұп!"
+        }
+    ],
+    "multivibe.room-status-disabled": [
+        {
+            "type": 0,
+            "value": "белсенді емес"
+        }
+    ],
+    "multivibe.room-status-enabled": [
+        {
+            "type": 0,
+            "value": "белсенді"
+        }
+    ],
+    "multivibe.room-unavailable": [
+        {
+            "type": 0,
+            "value": "Енді қолжетімсіз"
+        }
+    ],
+    "navigation.page-for-you-and-trends": [
+        {
+            "type": 0,
+            "value": "Сіз үшін және трендтер"
+        }
+    ],
+    "navigation.page-muzmarket": [
+        {
+            "type": 0,
+            "value": "Музмаркет"
+        }
+    ],
+    "navigation.page-my-vibe": [
+        {
+            "type": 0,
+            "value": "Менің толқыным"
+        }
+    ],
+    "notifications-info.added-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Тректер «"
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": "» плейлистіне қосылды"
+        }
+    ],
+    "notifications-info.already-added-tracks": [
+        {
+            "type": 0,
+            "value": "Бүкіл тректер берілген плейлиске қосылды"
+        }
+    ],
+    "onboarding.try-plus-to-open-collection": [
+        {
+            "type": 0,
+            "value": "Өз Коллекцияңызды ашу"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "үшін мультижазылымды іске қосыңыз"
+        }
+    ],
+    "page.artist-all-concerts-header": [
+        {
+            "type": 1,
+            "value": "artistName"
+        },
+        {
+            "type": 0,
+            "value": " бүкіл концерттері"
+        }
+    ],
+    "page.similar-entities-block-title": [
+        {
+            "type": 0,
+            "value": "Ұқсасын тыңдаңыз"
+        }
+    ],
+    "page.summer_2026_title": [
+        {
+            "type": 0,
+            "value": "Өз жазыңызды ашыңыз"
+        }
+    ],
+    "page.vibe-rooms": [
+        {
+            "type": 0,
+            "value": "Екі адамға арналған Менің толқыным"
+        }
+    ],
+    "page.vibe-rooms-onboarding": [
+        {
+            "type": 0,
+            "value": "Екі адамға арналған Менің толқыныма онбординг"
+        }
+    ],
+    "payment.learn-personal-bonus": [
+        {
+            "type": 0,
+            "value": "Өз дербес бонусыңызды біліп алыңыз"
+        }
+    ],
+    "paywall.family-offer-text": [
+        {
+            "type": 0,
+            "value": "Әрқайсысының өз аккаунты мен дербес"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "ұсынымдары болады. Қосымша төлемсіз"
+        }
+    ],
+    "paywall.family-offer-title": [
+        {
+            "type": 0,
+            "value": "Сіз бен үш жақыныңызға"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "арналған"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Музыка"
+        }
+    ],
+    "paywall.music-benefit-all-in-one-desktop": [
+        {
+            "type": 0,
+            "value": "Осының бәрі — бір"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "ыңғайлы сервисте"
+        }
+    ],
+    "paywall.music-benefit-all-in-one-mobile": [
+        {
+            "type": 0,
+            "value": "Осының бәрі — бір"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "ыңғайлы қосымшада"
+        }
+    ],
+    "paywall.music-benefit-audio": [
+        {
+            "type": 0,
+            "value": "Музыка, аудиокітаптар мен"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "подкастар"
+        }
+    ],
+    "paywall.music-benefit-recommendation": [
+        {
+            "type": 0,
+            "value": "Ең дәл ұсынымдар"
+        }
+    ],
+    "paywall.music-benefit-without-network": [
+        {
+            "type": 0,
+            "value": "Жүктеп алып,"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "интернет жоқ жерде"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "де тыңдай беріңіз"
+        }
+    ],
+    "paywall.music-benefits-title": [
+        {
+            "type": 0,
+            "value": "Яндекс Музыканы"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "қосайық"
+        }
+    ],
+    "play-queue.album-will-be-played-last": [
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " альбомы кезектің соңына қосылды"
+        }
+    ],
+    "play-queue.album-will-be-played-next": [
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " альбомы кезектің басына қосылды"
+        }
+    ],
+    "play-queue.now-playing-from-artist-collection": [
+        {
+            "type": 0,
+            "value": "Сізге танысы ойнап тұр"
+        }
+    ],
+    "play-queue.now-playing-from-artist-wave": [
+        {
+            "type": 0,
+            "value": "Сізге танысы ойнап тұр"
+        }
+    ],
+    "play-queue.now-playing-from-downloads": [
+        {
+            "type": 0,
+            "value": "Жүктелген тректердегі ойнап тұр"
+        }
+    ],
+    "play-queue.now-playing-from-history": [
+        {
+            "type": 0,
+            "value": "Қазір тарихтағы ойнап тұр"
+        }
+    ],
+    "play-queue.now-playing-from-history-search": [
+        {
+            "type": 0,
+            "value": "Қазір іздеу тарихындағы ойнап тұр"
+        }
+    ],
+    "play-queue.now-playing-from-search": [
+        {
+            "type": 0,
+            "value": "Қазір іздеудегі ойнап тұр"
+        }
+    ],
+    "play-queue.playlist-will-be-played-last": [
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " плейлисті кезектің соңына қосылды"
+        }
+    ],
+    "play-queue.playlist-will-be-played-next": [
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " плейлисті кезектің басына қосылды"
+        }
+    ],
+    "player-actions.mix": [
+        {
+            "type": 0,
+            "value": "Араластыру"
+        }
+    ],
+    "player-actions.repeat-action": [
+        {
+            "type": 0,
+            "value": "Қайталау"
+        }
+    ],
+    "playlist-errors.failed-add-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Тректер плейлиске қосылған жоқ, қайта байқап көріңіз"
+        }
+    ],
+    "rewind.download-image": [
+        {
+            "type": 0,
+            "value": "Суретті жүктеу"
+        }
+    ],
+    "rewind.save-choice": [
+        {
+            "type": 0,
+            "value": "Таңдауды сақтау"
+        }
+    ],
+    "search.input-placeholder-q2v": [
+        {
+            "type": 0,
+            "value": "Кез келген сұрауға сай Музыка"
+        }
+    ],
+    "search.playlist-placeholder": [
+        {
+            "type": 0,
+            "value": "Плейлисті табу"
+        }
+    ],
+    "search.q2v-input-placeholder-cheerful-not-too-much": [
+        {
+            "type": 0,
+            "value": "Тым қатты сергек емес музыка қалаймын"
+        }
+    ],
+    "search.q2v-input-placeholder-collection-track": [
+        {
+            "type": 0,
+            "value": "Коллекциядағы дәл сол трек"
+        }
+    ],
+    "search.q2v-input-placeholder-favorite-artist": [
+        {
+            "type": 0,
+            "value": "Сіздің сүйікті әртісіңіз"
+        }
+    ],
+    "search.q2v-input-placeholder-melodic-and-danceable": [
+        {
+            "type": 0,
+            "value": "Әуенді және билеуге болатын бірдеңе"
+        }
+    ],
+    "search.q2v-suggestions-loading": [
+        {
+            "type": 0,
+            "value": "Не ұсынуға болатынын ойланып жатырмын"
+        }
+    ],
+    "settings.ai-content-reduction": [
+        {
+            "type": 0,
+            "value": "AI азырақ"
+        }
+    ],
+    "settings.ai-content-reduction-description": [
+        {
+            "type": 0,
+            "value": "Ұсынымдарда AI көмегімен жасалған музыка сирек кездесетін болады"
+        }
+    ],
+    "vibe-actions.enter-title": [
+        {
+            "type": 0,
+            "value": "Атауын енгізіңіз"
+        }
+    ],
+    "vibe-wheel.activity-description": [
+        {
+            "type": 0,
+            "value": "Іске сай Менің толқыным"
+        }
+    ],
+    "vibe-wheel.activity-fall-asleep": [
+        {
+            "type": 0,
+            "value": "Ұйықтаймын"
+        }
+    ],
+    "vibe-wheel.activity-road-trip": [
+        {
+            "type": 0,
+            "value": "Жолда"
+        }
+    ],
+    "vibe-wheel.activity-wake-up": [
+        {
+            "type": 0,
+            "value": "Оянамын"
+        }
+    ],
+    "vibe-wheel.activity-work-background": [
+        {
+            "type": 0,
+            "value": "Менің"
+        }
+    ],
+    "vibe-wheel.activity-workout": [
+        {
+            "type": 0,
+            "value": "Жаттығамын"
+        }
+    ],
+    "vibe-wheel.mood-description": [
+        {
+            "type": 0,
+            "value": "Көңіл-күй бойынша Менің толқыным"
+        }
+    ],
+    "vibe-wheel.mood-energetic": [
+        {
+            "type": 0,
+            "value": "Энергетикалық"
+        }
+    ],
+    "vibe-wheel.mood-happy": [
+        {
+            "type": 0,
+            "value": "Қуанышты"
+        }
+    ],
+    "vibe-wheel.mood-sad": [
+        {
+            "type": 0,
+            "value": "Мұңды"
+        }
+    ],
+    "wizard.description": [
+        {
+            "type": 0,
+            "value": "Сізге ұнамды музыка ұсыну үшін сіз туралы көбірек білгіміз келеді. Сүйікті орындаушыларыңызды таңдаңыз, сонда ұсынымдар сізге бейімделеді."
+        }
+    ],
+    "wizard.title": [
+        {
+            "type": 0,
+            "value": "Өзіңіз туралы айтып беріңіз"
+        }
+    ],
+    "words.ai-description": [
+        {
+            "type": 0,
+            "value": "AI қателесуі мүмкін, маңызды ақпаратты тексеріп отырыңыз"
+        }
+    ],
+    "words.dislike": [
+        {
+            "type": 0,
+            "value": "Жарамайды"
+        }
+    ],
+    "words.dislike-feedback": [
+        {
+            "type": 0,
+            "value": "Мені жақсартуға көмектесіп жатқаныңыз үшін рақмет"
+        }
+    ],
+    "words.like": [
+        {
+            "type": 0,
+            "value": "Осындайдан көбірек"
+        }
+    ],
+    "words.like-feedback": [
+        {
+            "type": 0,
+            "value": "Баға қойғаныңыз үшін рақмет"
+        }
+    ],
+    "words.loading-phrase-catching": [
+        {
+            "type": 0,
+            "value": "Ырғақ ұстаудамын"
+        }
+    ],
+    "words.loading-phrase-collecting-interesting": [
+        {
+            "type": 0,
+            "value": "ЖИ күшімен қызық нәрселерді жинаймын"
+        }
+    ],
+    "words.loading-phrase-reading": [
+        {
+            "type": 0,
+            "value": "Әртіс туралы оқып жатырмын"
+        }
+    ],
+    "words.loading-phrase-studying": [
+        {
+            "type": 0,
+            "value": "Дыбысты зерттеп жатырмын"
+        }
+    ],
+    "words.loading-phrase-tuning": [
+        {
+            "type": 0,
+            "value": "Баптап жатырмын"
+        }
+    ],
+    "words.lumen-description": [
+        {
+            "type": 0,
+            "value": "Люмен жаңа ғана оянды, сондықтан қателесуі мүмкін"
+        }
+    ],
+    "words.show-more": [
+        {
+            "type": 0,
+            "value": "Мұндайды жиірек көрсету керек пе?"
         }
     ]
 }

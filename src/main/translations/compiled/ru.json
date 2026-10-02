@@ -56,7 +56,7 @@
     "advert.banner": [
         {
             "type": 0,
-            "value": "Баннер"
+            "value": "Реклама"
         }
     ],
     "album-errors.error-during-loading-album": [
@@ -3083,7 +3083,19 @@
     "footer.disclaimer-content": [
         {
             "type": 0,
-            "value": "Сервис Яндекс Музыка может содержать информацию, не предназначенную для несовершеннолетних. Незаконное потребление наркотических средств, психотропных веществ, их аналогов причиняет вред здоровью, их незаконный оборот запрещен и влечет установленную законодательством ответственность"
+            "value": "Яндекс Музыка – самая точная система музыкальных рекомендаций. По степени точности подбора персональных рекомендаций для&nbsp;пользователей в&nbsp;РФ среди музыкальных стриминговых сервисов в апреле 2025 года. Основано на&nbsp;данных ООО «Майл дата» по&nbsp;результатам опроса на&nbsp;базе Единой панели данных Ромир среди респондентов в возрасте 18-59 лет."
+        },
+        {
+            "type": 0,
+            "value": "<br/>"
+        },
+        {
+            "type": 0,
+            "value": "<br/>"
+        },
+        {
+            "type": 0,
+            "value": "Сервис Яндекс Музыка может содержать информацию, не&nbsp;предназначенную для&nbsp;несовершеннолетних. Эти материалы отмечены значком (!). Незаконное потребление наркотических средств, психотропных веществ, их&nbsp;аналогов причиняет вред здоровью, их&nbsp;незаконный оборот запрещен и&nbsp;влечет установленную законодательством ответственность"
         }
     ],
     "footer.explicit-content": [
@@ -3933,7 +3945,7 @@
     "navigation.page-plus": [
         {
             "type": 0,
-            "value": "Ваш плюс"
+            "value": "Ваш Плюс"
         }
     ],
     "navigation.pins-list": [
@@ -8391,7 +8403,15 @@
         },
         {
             "type": 0,
-            "value": "без рекламы"
+            "value": "в"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "высоком качестве"
         }
     ],
     "paywall.plus-part-benefit-devices": [
@@ -9259,7 +9279,7 @@
     "rewind.button-title": [
         {
             "type": 0,
-            "value": "Итоги года — 2024"
+            "value": "Распаковка 2025"
         }
     ],
     "search-filters.top": [
@@ -11030,6 +11050,1490 @@
         {
             "type": 0,
             "value": ")"
+        }
+    ],
+    "a11y-regions.wheel": [
+        {
+            "type": 0,
+            "value": "Рекомендации моей волны"
+        }
+    ],
+    "album.external-streamings-title": [
+        {
+            "type": 0,
+            "value": "Послушать на других площадках"
+        }
+    ],
+    "artist.official-pages": [
+        {
+            "type": 0,
+            "value": "Официальные страницы"
+        }
+    ],
+    "authorization.enter-and-listen-button": [
+        {
+            "type": 0,
+            "value": "Войти и слушать без ограничений"
+        }
+    ],
+    "branded-player.car": [
+        {
+            "type": 0,
+            "value": "Машинка"
+        }
+    ],
+    "branded-player.default": [
+        {
+            "type": 0,
+            "value": "Стандартный"
+        }
+    ],
+    "branded-player.duck": [
+        {
+            "type": 0,
+            "value": "Уточка"
+        }
+    ],
+    "branded-player.player-type": [
+        {
+            "type": 0,
+            "value": "Вид плеера"
+        }
+    ],
+    "buy-subscription.new-vibe-description": [
+        {
+            "type": 0,
+            "value": "Слушайте музыку без"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "рекламы с"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Мультиподпиской"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Яндекс"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Плюс. А так же получите доступ к"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Кинопоиску, Яндекс"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Книгам и"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "кешбеку баллами"
+        }
+    ],
+    "buy-subscription.offer-for-you": [
+        {
+            "type": 0,
+            "value": "Для вас "
+        },
+        {
+            "type": 1,
+            "value": "offerText"
+        }
+    ],
+    "buy-subscription.plus-benefit-non-music": [
+        {
+            "type": 0,
+            "value": "Музыка, подкасты и"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "аудиокниги"
+        }
+    ],
+    "buy-subscription.plus-benefit-offline": [
+        {
+            "type": 0,
+            "value": "Слушайте даже без"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "интернета"
+        }
+    ],
+    "buy-subscription.plus-benefit-other-services": [
+        {
+            "type": 0,
+            "value": "А еще Кинопоиск и"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Яндекс"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Книги"
+        }
+    ],
+    "buy-subscription.plus-benefit-recommendations": [
+        {
+            "type": 0,
+            "value": "Самые точные рекомендации"
+        }
+    ],
+    "concerts.about-event-kind": [
+        {
+            "options": {
+                "concert": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "О концерте"
+                        }
+                    ]
+                },
+                "festival": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "О фестивале"
+                        }
+                    ]
+                },
+                "musical": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "О мюзикле"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "О "
+                        },
+                        {
+                            "type": 1,
+                            "value": "kind"
+                        }
+                    ]
+                },
+                "tribute": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "О трибьюте"
+                        }
+                    ]
+                },
+                "unspecified": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "О концерте"
+                        }
+                    ]
+                }
+            },
+            "type": 5,
+            "value": "kind"
+        }
+    ],
+    "concerts.cities-list": [
+        {
+            "type": 0,
+            "value": "Список городов"
+        }
+    ],
+    "concerts.concerts-nearby": [
+        {
+            "type": 0,
+            "value": "Концерты рядом"
+        }
+    ],
+    "concerts.details-title": [
+        {
+            "type": 0,
+            "value": "Концерты"
+        }
+    ],
+    "concerts.event-kind": [
+        {
+            "options": {
+                "concert": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Концерт"
+                        }
+                    ]
+                },
+                "festival": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Фестиваль"
+                        }
+                    ]
+                },
+                "musical": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Мюзикл"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 1,
+                            "value": "kind"
+                        }
+                    ]
+                },
+                "tribute": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Трибьют"
+                        }
+                    ]
+                },
+                "unspecified": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Концерт"
+                        }
+                    ]
+                }
+            },
+            "type": 5,
+            "value": "kind"
+        }
+    ],
+    "concerts.find-city": [
+        {
+            "type": 0,
+            "value": "Найти город"
+        }
+    ],
+    "concerts.nearby": [
+        {
+            "type": 0,
+            "value": "Рядом"
+        }
+    ],
+    "concerts.nothing-found": [
+        {
+            "type": 0,
+            "value": "Ничего не нашли"
+        }
+    ],
+    "concerts.try-different-query": [
+        {
+            "type": 0,
+            "value": "Попробуйте написать по-другому"
+        }
+    ],
+    "donation.support-artist": [
+        {
+            "offset": 0,
+            "options": {
+                "one": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Поддержать артиста"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Поддержать артистов"
+                        }
+                    ]
+                }
+            },
+            "pluralType": "cardinal",
+            "type": 6,
+            "value": "count"
+        }
+    ],
+    "donation.transfer-any-amount": [
+        {
+            "type": 0,
+            "value": "Можете перевести любую сумму"
+        }
+    ],
+    "drag-and-drop.collection-playlist-drag-handle": [
+        {
+            "type": 0,
+            "value": "Перетащить плейлист "
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-cancel": [
+        {
+            "type": 0,
+            "value": "Перемещение плейлиста отменено."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-error": [
+        {
+            "type": 0,
+            "value": "Не удалось изменить позицию плейлиста."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-instructions": [
+        {
+            "type": 0,
+            "value": "Чтобы переместить плейлист, нажмите Enter или Пробел. Используйте клавиши со стрелками для выбора позиции. Нажмите Enter или Пробел, чтобы сохранить, или Escape, чтобы отменить."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-over": [
+        {
+            "type": 0,
+            "value": "Плейлист "
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " будет перемещён на позицию "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": " из "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-saving": [
+        {
+            "type": 0,
+            "value": "Сохраняем новую позицию плейлиста "
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-start": [
+        {
+            "type": 0,
+            "value": "Начато перемещение плейлиста "
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": ". Текущая позиция: "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": " из "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-success": [
+        {
+            "type": 0,
+            "value": "Плейлист "
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " перемещён на позицию "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": " из "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": "."
+        }
+    ],
+    "entity-names.artist-popular-tracks": [
+        {
+            "type": 0,
+            "value": "Популярные треки артиста"
+        }
+    ],
+    "entity-names.cashback-percent": [
+        {
+            "type": 0,
+            "value": "Кешбэк "
+        },
+        {
+            "type": 1,
+            "value": "value"
+        },
+        {
+            "type": 0,
+            "value": "%"
+        }
+    ],
+    "entity-names.fairytale": [
+        {
+            "type": 0,
+            "value": "Сказка"
+        }
+    ],
+    "entity-names.generative": [
+        {
+            "type": 0,
+            "value": "Нейромузыка"
+        }
+    ],
+    "entity-names.music-history": [
+        {
+            "type": 0,
+            "value": "История прослушивания"
+        }
+    ],
+    "entity-names.percent": [
+        {
+            "type": 1,
+            "value": "value"
+        },
+        {
+            "type": 0,
+            "value": "%"
+        }
+    ],
+    "entity-names.query-to-vibe-loading-description": [
+        {
+            "type": 0,
+            "value": "Люмен ловит ваш настрой"
+        }
+    ],
+    "entity-names.query-to-vibe-loading-title": [
+        {
+            "type": 0,
+            "value": "Я так чувствую..."
+        }
+    ],
+    "entity-names.search": [
+        {
+            "type": 0,
+            "value": "Поиск"
+        }
+    ],
+    "entity-names.vibe-room-name": [
+        {
+            "type": 0,
+            "value": "Моя волна "
+        },
+        {
+            "type": 1,
+            "value": "name"
+        },
+        {
+            "type": 0,
+            "value": ". Статус "
+        },
+        {
+            "type": 1,
+            "value": "status"
+        }
+    ],
+    "error-messages.empty-collection-vibe-rooms-title": [
+        {
+            "type": 0,
+            "value": "Поделитесь ссылкой и слушайте Мою волну для двоих, которая совместит ваши вкусы. Персональные рекомендации не изменятся"
+        }
+    ],
+    "error-messages.multivibe-create-link": [
+        {
+            "type": 0,
+            "value": "Не удалось создать ссылку. Попробуйте снова"
+        }
+    ],
+    "footer.links-privacy-policy": [
+        {
+            "type": 0,
+            "value": "Политика конфиденциальности"
+        }
+    ],
+    "interface-actions.add-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Добавить в другой плейлист"
+        }
+    ],
+    "interface-actions.create": [
+        {
+            "type": 0,
+            "value": "Создать"
+        }
+    ],
+    "interface-actions.delete-multivibe": [
+        {
+            "type": 0,
+            "value": "Покинуть Мою волну для двоих"
+        }
+    ],
+    "interface-actions.more": [
+        {
+            "type": 0,
+            "value": "Ещё"
+        }
+    ],
+    "interface-actions.navigate-to-track": [
+        {
+            "type": 0,
+            "value": "Перейти к треку"
+        }
+    ],
+    "interface-actions.open-play-queue": [
+        {
+            "type": 0,
+            "value": "Открыть очередь"
+        }
+    ],
+    "interface-actions.pin-my-vibe": [
+        {
+            "type": 0,
+            "value": "Закрепить Мою волну"
+        }
+    ],
+    "interface-actions.playlist-made-date": [
+        {
+            "type": 0,
+            "value": "Cобран "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long"
+                },
+                "pattern": "\"d MMMM\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.playlist-made-date-with-year": [
+        {
+            "type": 0,
+            "value": "Cобран "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long",
+                    "year": "numeric"
+                },
+                "pattern": "\"d MMMM y\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.playlist-made-today": [
+        {
+            "type": 0,
+            "value": "Cобран сегодня"
+        }
+    ],
+    "interface-actions.playlist-made-yesterday": [
+        {
+            "type": 0,
+            "value": "Cобран вчера"
+        }
+    ],
+    "interface-actions.rename": [
+        {
+            "type": 0,
+            "value": "Переименовать"
+        }
+    ],
+    "interface-actions.report-problem": [
+        {
+            "type": 0,
+            "value": "Сообщить о проблеме"
+        }
+    ],
+    "interface-actions.reset-context": [
+        {
+            "type": 0,
+            "value": "Сбросить "
+        },
+        {
+            "type": 1,
+            "value": "context"
+        },
+        {
+            "type": 0,
+            "value": " и включить Мою волну"
+        }
+    ],
+    "interface-actions.unpin-my-vibe": [
+        {
+            "type": 0,
+            "value": "Открепить Мою волну"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-date": [
+        {
+            "type": 0,
+            "value": "Плейлист обновлён "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long"
+                },
+                "pattern": "\"d MMMM\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-date-with-year": [
+        {
+            "type": 0,
+            "value": "Плейлист обновлён "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long",
+                    "year": "numeric"
+                },
+                "pattern": "\"d MMMM y\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-today": [
+        {
+            "type": 0,
+            "value": "Плейлист обновлён сегодня"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-yesterday": [
+        {
+            "type": 0,
+            "value": "Плейлист обновлён вчера"
+        }
+    ],
+    "multivibe.enabled-room-modal-button-text": [
+        {
+            "type": 0,
+            "value": "Слушать"
+        }
+    ],
+    "multivibe.enabled-room-modal-description": [
+        {
+            "type": 0,
+            "value": "Слушайте Мою волну с объединенными рекомендациями"
+        }
+    ],
+    "multivibe.enabled-room-modal-title": [
+        {
+            "type": 0,
+            "value": "Моя волна на двоих уже создана"
+        }
+    ],
+    "multivibe.go-to-collection-button-text": [
+        {
+            "type": 0,
+            "value": "В Коллекцию"
+        }
+    ],
+    "multivibe.invite-modal-draft-description": [
+        {
+            "type": 0,
+            "value": "Когда приглашение примут, Моя волна для двоих появится в вашей Коллекции\n"
+        }
+    ],
+    "multivibe.invite-modal-draft-title": [
+        {
+            "type": 0,
+            "value": "Приглашение пока не принято"
+        }
+    ],
+    "multivibe.invite-modal-invalid-button-text": [
+        {
+            "type": 0,
+            "value": "Создать"
+        }
+    ],
+    "multivibe.invite-modal-invalid-description": [
+        {
+            "type": 0,
+            "value": "Попросите прислать новое приглашение или создайте Мою волну для двоих"
+        }
+    ],
+    "multivibe.invite-modal-invalid-title": [
+        {
+            "type": 0,
+            "value": "Это приглашение больше недействительно"
+        }
+    ],
+    "multivibe.invite-modal-valid-button-text": [
+        {
+            "type": 0,
+            "value": "Присоединиться"
+        }
+    ],
+    "multivibe.invite-modal-valid-description": [
+        {
+            "type": 0,
+            "value": "Слушайте Мою волну, которая совместит ваши вкусы. Персональные рекомендации не&nbsp;изменятся"
+        }
+    ],
+    "multivibe.invite-modal-valid-title": [
+        {
+            "type": 1,
+            "value": "name"
+        },
+        {
+            "type": 0,
+            "value": " приглашает вас в&nbsp;Мою волну для&nbsp;двоих"
+        }
+    ],
+    "multivibe.link-successfully-copied": [
+        {
+            "type": 0,
+            "value": "Ссылка на Мою волну на двоих скопирована"
+        }
+    ],
+    "multivibe.modal-subtitle": [
+        {
+            "type": 0,
+            "value": "Ваша настоящая связь"
+        }
+    ],
+    "multivibe.nda": [
+        {
+            "type": 0,
+            "value": "NDA"
+        }
+    ],
+    "multivibe.only-member-modal-description": [
+        {
+            "type": 0,
+            "value": "Поделитесь ссылкой снова, чтобы слушать Мою волну для двоих"
+        }
+    ],
+    "multivibe.only-member-modal-title": [
+        {
+            "type": 0,
+            "value": "В этой Моей волне для двоих только вы"
+        }
+    ],
+    "multivibe.promo-modal-co-brand-a11y": [
+        {
+            "type": 0,
+            "value": "Доступно при поддержке билайн"
+        }
+    ],
+    "multivibe.promo-modal-description": [
+        {
+            "type": 0,
+            "value": "Поделитесь ссылкой и слушайте Мою волну, которая совместит ваши вкусы. Персональные рекомендации не изменятся"
+        }
+    ],
+    "multivibe.promo-modal-title": [
+        {
+            "type": 0,
+            "value": "Моя волна на двоих"
+        }
+    ],
+    "multivibe.room-limit-exceeded-description": [
+        {
+            "type": 0,
+            "value": "Вы создали уже 50 Моих волн для двоих. Чтобы создать новую, покиньте одну из текущих"
+        }
+    ],
+    "multivibe.room-limit-exceeded-title": [
+        {
+            "type": 0,
+            "value": "Много-много половин!"
+        }
+    ],
+    "multivibe.room-status-disabled": [
+        {
+            "type": 0,
+            "value": "неактивна"
+        }
+    ],
+    "multivibe.room-status-enabled": [
+        {
+            "type": 0,
+            "value": "активна"
+        }
+    ],
+    "multivibe.room-unavailable": [
+        {
+            "type": 0,
+            "value": "Больше недоступно"
+        }
+    ],
+    "navigation.page-for-you-and-trends": [
+        {
+            "type": 0,
+            "value": "Для вас и Тренды"
+        }
+    ],
+    "navigation.page-muzmarket": [
+        {
+            "type": 0,
+            "value": "Музмаркет"
+        }
+    ],
+    "navigation.page-my-vibe": [
+        {
+            "type": 0,
+            "value": "Моя волна"
+        }
+    ],
+    "notifications-info.added-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Треки добавлены в плейлист «"
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": "»"
+        }
+    ],
+    "notifications-info.already-added-tracks": [
+        {
+            "type": 0,
+            "value": "Все треки уже добавлены в данный плейлист"
+        }
+    ],
+    "onboarding.try-plus-to-open-collection": [
+        {
+            "type": 0,
+            "value": "Активируйте мультиподписку, чтобы получить доступ к"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "вашей Коллекции"
+        }
+    ],
+    "page.artist-all-concerts-header": [
+        {
+            "type": 0,
+            "value": "Все концерты "
+        },
+        {
+            "type": 1,
+            "value": "artistName"
+        }
+    ],
+    "page.similar-entities-block-title": [
+        {
+            "type": 0,
+            "value": "Слушайте похожее"
+        }
+    ],
+    "page.summer_2026_title": [
+        {
+            "type": 0,
+            "value": "Распакуйте ваше лето"
+        }
+    ],
+    "page.vibe-rooms": [
+        {
+            "type": 0,
+            "value": "Моя волна на двоих"
+        }
+    ],
+    "page.vibe-rooms-onboarding": [
+        {
+            "type": 0,
+            "value": "Онбординг Моей волны на двоих"
+        }
+    ],
+    "payment.learn-personal-bonus": [
+        {
+            "type": 0,
+            "value": "Узнайте ваш персональный бонус"
+        }
+    ],
+    "paywall.family-offer-text": [
+        {
+            "type": 0,
+            "value": "У каждого свой аккаунт и персональные"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "рекомендации. Без доплат"
+        }
+    ],
+    "paywall.family-offer-title": [
+        {
+            "type": 0,
+            "value": "Музыка для вас "
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "и"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "трёх близких"
+        }
+    ],
+    "paywall.music-benefit-all-in-one-desktop": [
+        {
+            "type": 0,
+            "value": "Всё это — в"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "одном"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "удобном сервисе"
+        }
+    ],
+    "paywall.music-benefit-all-in-one-mobile": [
+        {
+            "type": 0,
+            "value": "Всё это — в"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "одном"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "удобном приложении"
+        }
+    ],
+    "paywall.music-benefit-audio": [
+        {
+            "type": 0,
+            "value": "Музыка, аудиокниги и"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "подкасты"
+        }
+    ],
+    "paywall.music-benefit-recommendation": [
+        {
+            "type": 0,
+            "value": "Самые точные рекомендации"
+        }
+    ],
+    "paywall.music-benefit-without-network": [
+        {
+            "type": 0,
+            "value": "Скачивайте и"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "слушайте даже без"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "интернета"
+        }
+    ],
+    "paywall.music-benefits-title": [
+        {
+            "type": 0,
+            "value": "Давайте включим"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "Яндекс Музыку"
+        }
+    ],
+    "play-queue.album-will-be-played-last": [
+        {
+            "type": 0,
+            "value": "Альбом "
+        },
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " добавлен в конец очереди"
+        }
+    ],
+    "play-queue.album-will-be-played-next": [
+        {
+            "type": 0,
+            "value": "Альбом "
+        },
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " добавлен в начало очереди"
+        }
+    ],
+    "play-queue.now-playing-from-artist-collection": [
+        {
+            "type": 0,
+            "value": "Сейчас играет из знакомое вам"
+        }
+    ],
+    "play-queue.now-playing-from-artist-wave": [
+        {
+            "type": 0,
+            "value": "Сейчас играет из знакомое вам"
+        }
+    ],
+    "play-queue.now-playing-from-downloads": [
+        {
+            "type": 0,
+            "value": "Сейчас играет из скаченных треков"
+        }
+    ],
+    "play-queue.now-playing-from-history": [
+        {
+            "type": 0,
+            "value": "Сейчас играет из истории"
+        }
+    ],
+    "play-queue.now-playing-from-history-search": [
+        {
+            "type": 0,
+            "value": "Сейчас играет из история поиска"
+        }
+    ],
+    "play-queue.now-playing-from-search": [
+        {
+            "type": 0,
+            "value": "Сейчас играет из поиска"
+        }
+    ],
+    "play-queue.playlist-will-be-played-last": [
+        {
+            "type": 0,
+            "value": "Плейлист "
+        },
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " добавлен в конец очереди"
+        }
+    ],
+    "play-queue.playlist-will-be-played-next": [
+        {
+            "type": 0,
+            "value": "Плейлист "
+        },
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " добавлен в начало очереди"
+        }
+    ],
+    "player-actions.mix": [
+        {
+            "type": 0,
+            "value": "Перемешать"
+        }
+    ],
+    "player-actions.repeat-action": [
+        {
+            "type": 0,
+            "value": "Повторять"
+        }
+    ],
+    "playlist-errors.failed-add-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Треки не добавлены в плейлист, попробуйте снова"
+        }
+    ],
+    "rewind.download-image": [
+        {
+            "type": 0,
+            "value": "Скачать картинку"
+        }
+    ],
+    "rewind.save-choice": [
+        {
+            "type": 0,
+            "value": "Сохранить выбор"
+        }
+    ],
+    "search.input-placeholder-q2v": [
+        {
+            "type": 0,
+            "value": "Что вы чувствуете или ищете?"
+        }
+    ],
+    "search.playlist-placeholder": [
+        {
+            "type": 0,
+            "value": "Найти плейлист"
+        }
+    ],
+    "search.q2v-input-placeholder-cheerful-not-too-much": [
+        {
+            "type": 0,
+            "value": "Хочу что-нибудь бодрое, но не слишком"
+        }
+    ],
+    "search.q2v-input-placeholder-collection-track": [
+        {
+            "type": 0,
+            "value": "Тот самый трек в Коллекции"
+        }
+    ],
+    "search.q2v-input-placeholder-favorite-artist": [
+        {
+            "type": 0,
+            "value": "Ваш любимый артист"
+        }
+    ],
+    "search.q2v-input-placeholder-melodic-and-danceable": [
+        {
+            "type": 0,
+            "value": "Что-нибудь мелодичное и танцевальное"
+        }
+    ],
+    "search.q2v-suggestions-loading": [
+        {
+            "type": 0,
+            "value": "Думаю, что предложить"
+        }
+    ],
+    "settings.ai-content-reduction": [
+        {
+            "type": 0,
+            "value": "Меньше ИИ"
+        }
+    ],
+    "settings.ai-content-reduction-description": [
+        {
+            "type": 0,
+            "value": "В рекомендациях будет реже встречаться музыка, созданная с помощью ИИ"
+        }
+    ],
+    "vibe-actions.enter-title": [
+        {
+            "type": 0,
+            "value": "Введите название"
+        }
+    ],
+    "vibe-wheel.activity-description": [
+        {
+            "type": 0,
+            "value": "Моя волна под занятие"
+        }
+    ],
+    "vibe-wheel.activity-fall-asleep": [
+        {
+            "type": 0,
+            "value": "Засыпаю"
+        }
+    ],
+    "vibe-wheel.activity-road-trip": [
+        {
+            "type": 0,
+            "value": "В дороге"
+        }
+    ],
+    "vibe-wheel.activity-wake-up": [
+        {
+            "type": 0,
+            "value": "Просыпаюсь"
+        }
+    ],
+    "vibe-wheel.activity-work-background": [
+        {
+            "type": 0,
+            "value": "Работаю"
+        }
+    ],
+    "vibe-wheel.activity-workout": [
+        {
+            "type": 0,
+            "value": "Тренируюсь"
+        }
+    ],
+    "vibe-wheel.mood-description": [
+        {
+            "type": 0,
+            "value": "Моя волна по настроению"
+        }
+    ],
+    "vibe-wheel.mood-energetic": [
+        {
+            "type": 0,
+            "value": "Энергичное"
+        }
+    ],
+    "vibe-wheel.mood-happy": [
+        {
+            "type": 0,
+            "value": "Радостное"
+        }
+    ],
+    "vibe-wheel.mood-sad": [
+        {
+            "type": 0,
+            "value": "Грустное"
+        }
+    ],
+    "wizard.description": [
+        {
+            "type": 0,
+            "value": "Хотим узнать о вас больше, чтобы советовать подходящую музыку. Выберите любимых исполнителей, и рекомендации подстроятся под вас."
+        }
+    ],
+    "wizard.title": [
+        {
+            "type": 0,
+            "value": "Расскажите о себе"
+        }
+    ],
+    "words.ai-description": [
+        {
+            "type": 0,
+            "value": "AI может ошибаться, проверяйте важное"
+        }
+    ],
+    "words.dislike": [
+        {
+            "type": 0,
+            "value": "Мимо"
+        }
+    ],
+    "words.dislike-feedback": [
+        {
+            "type": 0,
+            "value": "Спасибо, что помогаете мне стать лучше"
+        }
+    ],
+    "words.like": [
+        {
+            "type": 0,
+            "value": "Больше такого"
+        }
+    ],
+    "words.like-feedback": [
+        {
+            "type": 0,
+            "value": "Спасибо за оценку"
+        }
+    ],
+    "words.loading-phrase-catching": [
+        {
+            "type": 0,
+            "value": "Ловлю ритм"
+        }
+    ],
+    "words.loading-phrase-collecting-interesting": [
+        {
+            "type": 0,
+            "value": "Собираю интересное силой ИИ"
+        }
+    ],
+    "words.loading-phrase-reading": [
+        {
+            "type": 0,
+            "value": "Читаю про артиста"
+        }
+    ],
+    "words.loading-phrase-studying": [
+        {
+            "type": 0,
+            "value": "Изучаю звучание"
+        }
+    ],
+    "words.loading-phrase-tuning": [
+        {
+            "type": 0,
+            "value": "Настраиваюсь"
+        }
+    ],
+    "words.lumen-description": [
+        {
+            "type": 0,
+            "value": "Люмен только проснулся, поэтому может ошибаться"
+        }
+    ],
+    "words.show-more": [
+        {
+            "type": 0,
+            "value": "Показывать такое чаще?"
         }
     ]
 }
