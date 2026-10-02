@@ -12,6 +12,7 @@ exports.config = {
     buildInfo: package_json_1.default.buildInfo,
     meta: package_json_1.default.meta,
     common: package_json_1.default.common,
+    certificates: package_json_1.default.certificates,
     modification: package_json_1.default.modification,
 };
 const applyCommonConfig = (commonConfig) => {

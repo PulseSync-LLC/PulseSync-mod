@@ -172,3 +172,14 @@ const getDeviceHostname = () => {
     return (0, node_os_1.hostname)().slice(0, 50).trim();
 };
 exports.getDeviceHostname = getDeviceHostname;
+
+exports.getDesktopRuntimeInfo = () => {
+    const deviceInfo = Object.freeze(exports.getDeviceInfo());
+    return Object.freeze({
+        version: String(config_js_1.config.buildInfo.VERSION),
+        branch: String(config_js_1.config.buildInfo.BRANCH),
+        platform: deviceInfo.os,
+        deviceInfo,
+        deviceHostname: exports.getDeviceHostname(),
+    });
+};
