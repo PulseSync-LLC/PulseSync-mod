@@ -832,8 +832,12 @@
         },
         41707: (e, t, i) => {
             'use strict';
+
             var pulseSyncPlaylistDownloadIcons = i(66738);
             i.d(t, { B: () => Q });
+            var pulseSyncMenuJsx = i(25839),
+                pulseSyncMenuItems = i(10820),
+                pulseSyncMenuIcons = i(66738);
             var r = i(25839),
                 l = i(82298),
                 a = i(88204),
@@ -903,6 +907,39 @@
                     if (d) return void m();
                     S() || (h.openPlaylistTrailer(i.id), k(o.DomainObjectType.Playlist, i.id));
                 });
+                let pulseSyncInjectPlaylistMenuItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
+                        eventDetail: {
+                            id: String(i.kind ?? i.id),
+                            uuid: String(i.uuid ?? ''),
+                            url: String(i.url ?? ''),
+                            ...(i.title
+                                ? {
+                                      title: String(i.title),
+                                  }
+                                : {}),
+                        },
+                        renderItem: ({ key, payload, activate }) => {
+                            const label = String(payload?.label ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim();
+                            if (!label || !icon) return null;
+                            return (0, pulseSyncMenuJsx.jsx)(
+                                pulseSyncMenuItems.Dr,
+                                {
+                                    icon: (0, pulseSyncMenuJsx.jsx)(pulseSyncMenuIcons.I, {
+                                        variant: icon,
+                                        size: 'xxs',
+                                    }),
+                                    onClick: () => {
+                                        (activate(), l?.(!1));
+                                    },
+                                    children: label,
+                                    'data-pulsesync-addon-menu-item': '',
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
                 return (0, r.jsxs)(B.W1, {
                     title: i.title,
                     onOpenChange: l,
@@ -912,7 +949,7 @@
                     ariaLabel: N({ id: 'interface-actions.context-menu' }),
                     containerDataTestId: c.Kq.playlist.PLAYLIST_CONTEXT_MENU,
                     ...s,
-                    children: [
+                    children: pulseSyncInjectPlaylistMenuItems([
                         E && (0, r.jsx)(Y.d, { entityVariant: V.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : P }),
                         !p && (0, r.jsx)(X.L, { onClick: f, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, r.jsx)($.T, { onClick: x, isLiked: i.isLiked, disabled: !v.isAuthorized }),
@@ -923,7 +960,7 @@
                                 children: 'Скачать в файл',
                             }),
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, r.jsx)(G.N, { onClick: j, disabled: !i.isAvailable }),
-                    ],
+                    ]),
                 });
             });
             var q = i(15787),
