@@ -48,7 +48,6 @@ Logger_js_1.Logger.setupLogger();
 const logger = new Logger_js_1.Logger('Main');
 
 logger.log('Application starting...');
-logger.log(process.argv);
 
 if (!pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled && (store_js_1.get('sendModAnonymizedMetrics') ?? true)) {
     initUserCountMetric({
@@ -136,6 +135,7 @@ const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
     getYtDlpInstaller();
     electron_1.app.setAppUserModelId('ru.yandex.desktop.music');
     await electron_1.app.whenReady();
+    await require('./lib/certificateVerification.js').setupCertificateVerification({ updater });
     const window = await (0, createWindow_js_1.createWindow)();
     (0, systemMenu_js_1.setupSystemMenu)(window);
     if ([platform_js_1.Platform.WINDOWS, platform_js_1.Platform.LINUX].includes(deviceInfo_js_1.devicePlatform)) {

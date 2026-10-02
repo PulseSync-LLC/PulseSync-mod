@@ -19,6 +19,12 @@ exports.sendRefreshRepositoryMeta =
     exports.sendNativeStoreUpdate =
         void 0;
 const electron_1 = require('electron');
+const { createIpcEventRegistry, sendToApplicationRenderer } = require('./lib/desktopIpc.js');
+const { IpcChannel, RendererTrustProfile } = require('./types/desktop.js');
+const { authDiagnostics, readPassportLoginWithDiagnostics } = require('./lib/authDiagnostics.js');
+const { isPngSavePayload } = require('./lib/desktopPayloads.js');
+const { handleSavePngImageToLocalDisk } = require('./lib/savePng.js');
+let ipcRegistry;
 const events_js_1 = require('./types/events.js');
 const cookies_js_1 = require('./constants/cookies.js');
 const Logger_js_1 = require('./packages/logger/Logger.js');
@@ -66,7 +72,6 @@ const valid_js_1 = __importDefault(require('semver/functions/valid.js'));
 const i18nKeys_js_1 = require('./constants/i18nKeys.js');
 const dateToDDMonthYYYYProps_js_1 = require('./lib/date/dateToDDMonthYYYYProps.js');
 const eventsLogger = new Logger_js_1.Logger('Events');
-const saveFileToLocalDiskLogger = new Logger_js_1.Logger('SaveFileToLocalDisk');
 const yandexStationLogger = new Logger_js_1.Logger('YandexStation');
 const { throttle } = require('./lib/utils.js');
 const crypto = require('crypto');
@@ -97,7 +102,6 @@ let isolatedAddonRuntimeSource = null;
 const isolatedAddonExecutionStore = new IsolatedAddonExecutionStore();
 const { AddonModuleHost } = require('./lib/pulsesync/addonModuleHost.js');
 const addonModuleHost = new AddonModuleHost(() => nextIsolatedAddonWorldId++);
-addonModuleHost.register(electron_1.ipcMain);
 
 const getIsolatedAddonWorldId = (webContents, addonId) => {
     const key = `${webContents.id}:${addonId}`;
@@ -321,22 +325,21 @@ const restartApplication = () => {
     electron_1.app.exit();
 };
 
-const handleSaveToLocalDisk = async (defaultPath, buffer) => {
-    const { canceled, filePath } = await electron_1.dialog.showSaveDialog({
-        defaultPath,
-    });
-    if (canceled || !filePath) {
-        return;
-    }
-    fs.writeFile(filePath, Buffer.from(buffer), (error) => {
-        if (error) {
-            saveFileToLocalDiskLogger.error('Error saving file to local disk', error);
-        }
-    });
-};
-
 const handleApplicationEvents = (window) => {
+    ipcRegistry?.dispose();
+    ipcRegistry = createIpcEventRegistry(window);
+    window.once('closed', ipcRegistry.dispose);
     mainWindow = window;
+    registerGlobalApplicationEvents();
+    addonModuleHost.register(ipcRegistry);
+    authDiagnostics.startAppAttempt();
+    ipcRegistry.on(IpcChannel.BOOTSTRAP, (event) => {
+        event.returnValue = deviceInfo_js_1.getDesktopRuntimeInfo();
+    });
+    ipcRegistry.on(IpcChannel.AUTH_DIAGNOSTIC, (_event, payload) => authDiagnostics.recordRenderer(payload));
+    ipcRegistry.on(IpcChannel.SAVE_PNG_IMAGE_TO_LOCAL_DISK, async (_event, payload) => {
+        if (isPngSavePayload(payload)) await handleSavePngImageToLocalDisk(payload.defaultPath, payload.buffer);
+    });
     eventsLogger.info('Application events handler initialized');
 
     const updater = (0, updater_js_1.getUpdater)();
@@ -346,29 +349,29 @@ const handleApplicationEvents = (window) => {
         session: window.webContents.session,
     });
 
-    registerYandexStationIpc(electron_1.ipcMain, {
+    registerYandexStationIpc(ipcRegistry, {
         runtime: yandexStationRuntime,
     });
     yandexStationRuntime.on('stateChanged', (state) => {
         if (window?.webContents && typeof window.webContents.send === 'function') {
-            window.webContents.send(events_js_1.Events.YANDEX_STATION_STATE, state);
+            sendToApplicationRenderer(window, events_js_1.Events.YANDEX_STATION_STATE, state);
         }
     });
     yandexStationRuntime.on('playbackStateChanged', (state) => {
         if (window?.webContents && typeof window.webContents.send === 'function') {
-            window.webContents.send(events_js_1.Events.YANDEX_STATION_PLAYBACK_STATE, state);
+            sendToApplicationRenderer(window, events_js_1.Events.YANDEX_STATION_PLAYBACK_STATE, state);
         }
     });
     unsubscribeYaspAudioFormatChanged?.();
     unsubscribeYaspAudioFormatChanged = nativeAudioOutput.onYaspAudioFormatChanged((format) => {
         if (window?.webContents && typeof window.webContents.send === 'function') {
-            window.webContents.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED, format);
+            sendToApplicationRenderer(window, events_js_1.Events.NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED, format);
         }
     });
     unsubscribeWasapiExclusiveOutputStateChanged?.();
     unsubscribeWasapiExclusiveOutputStateChanged = nativeAudioOutput.onWasapiExclusiveOutputStateChanged((state) => {
         if (window?.webContents && typeof window.webContents.send === 'function') {
-            window.webContents.send(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED, state);
+            sendToApplicationRenderer(window, events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED, state);
         }
     });
     if (store_js_1.getModSettings()?.playerBarEnhancement?.enableYandexStationCast ?? true) {
@@ -382,7 +385,7 @@ const handleApplicationEvents = (window) => {
     pulseSyncManager_js_1.start();
     scrobbleManager_js_1.handleRegisterPulseSyncScrobbler(pulseSyncManager_js_1);
 
-    electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_CURRENT_TRACK, async (event, trackId) => {
+    ipcRegistry.on(events_js_1.Events.DOWNLOAD_CURRENT_TRACK, async (event, trackId) => {
         let callback = (progressRenderer, progressWindow) => {
             sendProgressBarChange(window, 'trackDownloadCurrent', progressRenderer * 100);
             window.setProgressBar(progressWindow);
@@ -392,7 +395,7 @@ const handleApplicationEvents = (window) => {
         await trackDownloader.downloadSingleTrack(trackId, throttle(callback, PROGRESS_BAR_THROTTLE_MS));
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_TRACK, async (event, trackId, trackName = '') => {
+    ipcRegistry.on(events_js_1.Events.DOWNLOAD_TRACK, async (event, trackId, trackName = '') => {
         const toastID = `trackDownload|${trackId}`;
         const toastNonce = sendBasicToastCreate(window, toastID, trackName ? 'Загрузка трека: ' + trackName : 'Загрузка трека...', false);
 
@@ -406,7 +409,7 @@ const handleApplicationEvents = (window) => {
         setTimeout(() => sendBasicToastDismiss(window, toastID, toastNonce), 2000);
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_TRACKS, (event, trackIds, dirType = undefined, dirName = undefined) => {
+    ipcRegistry.on(events_js_1.Events.DOWNLOAD_TRACKS, (event, trackIds, dirType = undefined, dirName = undefined) => {
         if (!trackIds?.length) return;
 
         const hash = crypto
@@ -531,7 +534,7 @@ const handleApplicationEvents = (window) => {
             });
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_TRACKS_CANCEL, (event, payload = {}) => {
+    ipcRegistry.on(events_js_1.Events.DOWNLOAD_TRACKS_CANCEL, (event, payload = {}) => {
         const toastID = payload?.toastID;
         const operationNonce = payload?.operationNonce;
         const abortController = operationNonce ? activeTrackDownloadControllers.get(operationNonce) : undefined;
@@ -563,32 +566,32 @@ const handleApplicationEvents = (window) => {
         if (type === 'GPU') mainWindow?.webContents.send(events_js_1.Events.GPU_STALL, reason);
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_RESTART, () => {
+    ipcRegistry.on(events_js_1.Events.APPLICATION_RESTART, () => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_RESTART);
         restartApplication();
     });
 
-    electron_1.ipcMain.handle('scrobble-login', () => {
+    ipcRegistry.handle('scrobble-login', () => {
         scrobbleManager_js_1.scrobblerManager.getScrobblers().forEach((scrobbler) => {
             scrobbler.login();
         });
     });
-    electron_1.ipcMain.handle('scrobble-logout', () => {
+    ipcRegistry.handle('scrobble-logout', () => {
         scrobbleManager_js_1.scrobblerManager.getScrobblers().forEach((scrobbler) => {
             scrobbler.logout();
         });
     });
-    electron_1.ipcMain.handle('scrobble-lastfm-login', async () => {
+    ipcRegistry.handle('scrobble-lastfm-login', async () => {
         await getLastFmScrobbler().login();
         void sendFeaturesMetric(buildLastFmScrobblingStatePatch());
     });
 
-    electron_1.ipcMain.handle('scrobble-lastfm-logout', async () => {
+    ipcRegistry.handle('scrobble-lastfm-logout', async () => {
         await getLastFmScrobbler().logout();
         void sendFeaturesMetric(buildLastFmScrobblingStatePatch());
     });
 
-    electron_1.ipcMain.handle('scrobble-lastfm-get-user', () => {
+    ipcRegistry.handle('scrobble-lastfm-get-user', () => {
         const lastFmScrobbler = getLastFmScrobbler();
         const isStartupAuthProbe = !isLastFmStartupAuthProbeHandled;
         const hasStoredSession = lastFmScrobbler.isLoggedIn();
@@ -608,13 +611,13 @@ const handleApplicationEvents = (window) => {
             return undefined;
         });
     });
-    electron_1.ipcMain.handle('scrobble-lastfm-get-current-playing-track', (event, user) => {
+    ipcRegistry.handle('scrobble-lastfm-get-current-playing-track', (event, user) => {
         return scrobbleManager_js_1.scrobblerManager.getScrobblerByType('Last.fm').api.getCurrentPlayingTrack(user);
     });
-    electron_1.ipcMain.handle('openConfigFile', async () => {
+    ipcRegistry.handle('openConfigFile', async () => {
         return await electron_1.shell.openPath(electron_1.app.getPath('userData') + '/config.json');
     });
-    electron_1.ipcMain.handle('setPathWithNativeDialog', async (event, key, defaultPath = undefined, properties = undefined) => {
+    ipcRegistry.handle('setPathWithNativeDialog', async (event, key, defaultPath = undefined, properties = undefined) => {
         const { canceled, filePaths } = await electron_1.dialog.showOpenDialog({
             defaultPath: defaultPath,
             properties: properties,
@@ -625,7 +628,7 @@ const handleApplicationEvents = (window) => {
 
         sendNativeStoreUpdate(key, filePaths[0], mainWindow);
     });
-    electron_1.ipcMain.on(PLAYLIST_LINK_IMPORT_UPLOAD_STATE, (event, payload) => {
+    ipcRegistry.on(PLAYLIST_LINK_IMPORT_UPLOAD_STATE, (event, payload) => {
         const trackToken = payload?.trackToken;
         const status = payload?.status;
         if (!trackToken || !status) return;
@@ -652,7 +655,7 @@ const handleApplicationEvents = (window) => {
             waiter.reject(new Error(errorMessage));
         }
     });
-    electron_1.ipcMain.handle('playlist-import-track-from-link', async (event, payload) => {
+    ipcRegistry.handle('playlist-import-track-from-link', async (event, payload) => {
         const link = payload?.url;
         const importID = payload?.importID;
         const toastID = `trackImport|${crypto.createHash('md5').update(`${link}|${Date.now()}`).digest('hex')}`;
@@ -745,7 +748,7 @@ const handleApplicationEvents = (window) => {
             throw new Error(errorMessage || 'Не удалось импортировать треки по ссылке');
         }
     });
-    electron_1.ipcMain.handle('playlist-prefetch-track-from-link', async (event, payload) => {
+    ipcRegistry.handle('playlist-prefetch-track-from-link', async (event, payload) => {
         const link = payload?.url;
 
         eventsLogger.info('Event received playlist-prefetch-track-from-link', link);
@@ -780,22 +783,22 @@ const handleApplicationEvents = (window) => {
             };
         }
     });
-    electron_1.ipcMain.on('autoStartupStatus', async (event, data) => {
+    ipcRegistry.on('autoStartupStatus', async (event, data) => {
         electron_1.app.setLoginItemSettings({
             openAtLogin: data ?? false,
             path: electron_1.app.getPath('exe'),
         });
     });
-    electron_1.ipcMain.on(events_js_1.Events.WINDOW_MINIMIZE, () => {
-        eventsLogger.info('Event received', events_js_1.Events.WINDOW_MINIMIZE);
+    ipcRegistry.on(IpcChannel.WINDOW_MINIMIZE, () => {
+        eventsLogger.info('Event received', IpcChannel.WINDOW_MINIMIZE);
         (0, minimize_js_1.minimize)(window);
     });
-    electron_1.ipcMain.on(events_js_1.Events.WINDOW_MAXIMIZE, () => {
-        eventsLogger.info('Event received', events_js_1.Events.WINDOW_MAXIMIZE);
+    ipcRegistry.on(IpcChannel.WINDOW_MAXIMIZE, () => {
+        eventsLogger.info('Event received', IpcChannel.WINDOW_MAXIMIZE);
         (0, toggleMaximize_js_1.toggleMaximize)(window);
     });
-    electron_1.ipcMain.on(events_js_1.Events.WINDOW_CLOSE, () => {
-        eventsLogger.info('Event received', events_js_1.Events.WINDOW_CLOSE);
+    const closeWindow = () => {
+        eventsLogger.info('Event received', IpcChannel.WINDOW_CLOSE);
         if ([platform_js_1.Platform.WINDOWS, platform_js_1.Platform.LINUX].includes(deviceInfo_js_1.devicePlatform)) {
             if (store_js_1.getModSettings()?.window?.toTray ?? state_js_1.state.player.isPlaying) {
                 (0, toggleWindowVisibility_js_1.toggleWindowVisibility)(window, false);
@@ -805,25 +808,27 @@ const handleApplicationEvents = (window) => {
         } else {
             electron_1.app.quit();
         }
-    });
-    electron_1.ipcMain.on(events_js_1.Events.INSTALL_UPDATE, () => {
-        eventsLogger.info('Event received', events_js_1.Events.INSTALL_UPDATE);
+    };
+    ipcRegistry.on(IpcChannel.WINDOW_CLOSE, closeWindow);
+    ipcRegistry.on(IpcChannel.COMMON_WINDOW_CLOSE, closeWindow, RendererTrustProfile.AUTH);
+    ipcRegistry.on(IpcChannel.INSTALL_UPDATE, () => {
+        eventsLogger.info('Event received', IpcChannel.INSTALL_UPDATE);
         updater.install();
     });
-    electron_1.ipcMain.on(events_js_1.Events.APP_STALL_CANCEL_RESTART, () => {
+    ipcRegistry.on(events_js_1.Events.APP_STALL_CANCEL_RESTART, () => {
         eventsLogger.info('Event received', events_js_1.Events.APP_STALL_CANCEL_RESTART);
     });
-    electron_1.ipcMain.on(events_js_1.Events.PULSESYNC_WEBHOST_HEALTH, (event, payload) => {
+    ipcRegistry.on(events_js_1.Events.PULSESYNC_WEBHOST_HEALTH, (event, payload) => {
         if (event.sender !== window.webContents) return;
         const status = ['booting', 'ready', 'failed'].includes(payload?.status) ? payload.status : 'unknown';
         eventsLogger.info('PulseSync WebHost health update', status);
     });
-    electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ADDON_RECOVERY, (event, payload) => {
+    ipcRegistry.handle(events_js_1.Events.PULSESYNC_ADDON_RECOVERY, (event, payload) => {
         if (event.sender !== window.webContents) throw new Error('PulseSync addon recovery rejected an unknown sender');
         return pulseSyncManager_js_1.handleAddonRecoveryRequest(payload);
     });
-    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_READY, async (event, language) => {
-        eventsLogger.info('Event received', events_js_1.Events.APPLICATION_READY);
+    ipcRegistry.on(IpcChannel.APPLICATION_READY, async (event, language) => {
+        eventsLogger.info('Event received', IpcChannel.APPLICATION_READY);
         void sendFeaturesMetric(buildFeaturesSnapshot());
 
         isPlayerReady = false;
@@ -954,7 +959,7 @@ const handleApplicationEvents = (window) => {
             }
         }
     });
-    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_INIT_FINISHED, () => {
+    ipcRegistry.on(events_js_1.Events.APPLICATION_INIT_FINISHED, () => {
         eventsLogger.info('Event received', events_js_1.Events.APPLICATION_INIT_FINISHED);
 
         window.webContents.setBackgroundThrottling(true);
@@ -977,29 +982,29 @@ const handleApplicationEvents = (window) => {
             sendBasicToastCreate(window, 'lastFmStartupAuthError', 'Не удалось авторизоваться в LastFM. Подробнее на странице настроек скробблинга', 'Ясно');
         }
     });
-    electron_1.ipcMain.on(events_js_1.Events.APPLICATION_THEME, (event, backgroundColor) => {
-        eventsLogger.info('Event received', events_js_1.Events.APPLICATION_THEME);
-        window.setBackgroundColor(backgroundColor);
+    ipcRegistry.on(IpcChannel.APPLICATION_THEME, (event, theme) => {
+        eventsLogger.info('Event received', IpcChannel.APPLICATION_THEME);
+        window.setBackgroundColor(theme === 'light' ? '#FFFFFF' : '#000000');
     });
-    electron_1.ipcMain.on(events_js_1.Events.TRACKS_AVAILABILITY_UPDATED, (event) => {
+    ipcRegistry.on(IpcChannel.TRACKS_AVAILABILITY_UPDATED, (event) => {
         const [, setTracksAvailabilityUpdatedAt] = store_js_1.tracksAvailabilityUpdatedAt;
-        eventsLogger.info('Event received', events_js_1.Events.TRACKS_AVAILABILITY_UPDATED);
+        eventsLogger.info('Event received', IpcChannel.TRACKS_AVAILABILITY_UPDATED);
         setTracksAvailabilityUpdatedAt(Date.now());
     });
-    electron_1.ipcMain.on(events_js_1.Events.REPOSITORY_META_UPDATED, (event) => {
+    ipcRegistry.on(IpcChannel.REPOSITORY_META_UPDATED, (event) => {
         const [, setRepositoryMetaUpdatedAtStoreValue] = store_js_1.repositoryMetaUpdatedAt;
-        eventsLogger.info('Event received', events_js_1.Events.REPOSITORY_META_UPDATED);
+        eventsLogger.info('Event received', IpcChannel.REPOSITORY_META_UPDATED);
         setRepositoryMetaUpdatedAtStoreValue(Date.now());
     });
-    electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_INFO, (event, data) => {
+    ipcRegistry.on(events_js_1.Events.DOWNLOAD_INFO, (event, data) => {
         eventsLogger.info('Event received', events_js_1.Events.DOWNLOAD_INFO, data);
         (0, pulseSyncManager_js_1.updateDownloadInfo)(data);
     });
-    electron_1.ipcMain.handle(events_js_1.Events.GET_CORS, () => {
+    ipcRegistry.handle(events_js_1.Events.GET_CORS, () => {
         return getAllowedUrls();
     });
-    electron_1.ipcMain.on(events_js_1.Events.PLAYER_STATE, (event, data) => {
-        eventsLogger.info('Event received', events_js_1.Events.PLAYER_STATE, {
+    ipcRegistry.on(IpcChannel.PLAYER_STATE, (event, data) => {
+        eventsLogger.info('Event received', IpcChannel.PLAYER_STATE, {
             status: data?.status,
             trackId: data?.track?.id,
             position: data?.progress?.position,
@@ -1023,6 +1028,7 @@ const handleApplicationEvents = (window) => {
             normalizeSubstitutedTrack(data?.previousTrack);
             normalizeSubstitutedTrack(data?.nextTrack);
 
+            (0, tray_js_1.updateTrayMenu)(window);
             const isActiveState = ['paused', 'playing'].includes(data?.status);
             const isPlayable = isPlayerReady && data.status !== 'idle' && isActiveState;
 
@@ -1030,7 +1036,6 @@ const handleApplicationEvents = (window) => {
             (0, taskBarExtension_js_1.onPlayerStateChange)(window, data);
 
             if (isPlayable) {
-                (0, tray_js_1.updateTrayMenu)(window);
                 (0, scrobbleManager_js_1.handlePlayingStateEvent)(structuredClone(data));
                 (0, pulseSyncManager_js_1.updatePlayerState)(structuredClone(data));
                 (0, discordRichPresence_js_1.discordRichPresence)(structuredClone(data));
@@ -1049,13 +1054,13 @@ const handleApplicationEvents = (window) => {
             }
         }
     });
-    electron_1.ipcMain.on(events_js_1.Events.YNISON_STATE, (event, data) => {
+    ipcRegistry.on(events_js_1.Events.YNISON_STATE, (event, data) => {
         eventsLogger.info(`Event received`, events_js_1.Events.YNISON_STATE, data);
         (0, scrobbleManager_js_1.handlePlayingStateEventFromYnison)(structuredClone(data));
         (0, discordRichPresence_js_1.fromYnisonState)(structuredClone(data));
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_MOD_UPDATE, async (event, data) => {
+    ipcRegistry.on(events_js_1.Events.DOWNLOAD_MOD_UPDATE, async (event, data) => {
         eventsLogger.info(`Event received`, events_js_1.Events.DOWNLOAD_MOD_UPDATE);
 
         let callback = (progressRenderer, progressWindow) => {
@@ -1065,7 +1070,7 @@ const handleApplicationEvents = (window) => {
         await (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(throttle(callback, PROGRESS_BAR_THROTTLE_MS));
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.INSTALL_MOD_UPDATE, async (event, data) => {
+    ipcRegistry.on(events_js_1.Events.INSTALL_MOD_UPDATE, async (event, data) => {
         eventsLogger.info(`Event received`, events_js_1.Events.INSTALL_MOD_UPDATE);
         await (0, modUpdater_js_1.getModUpdater)().onInstallUpdate();
     });
@@ -1111,61 +1116,61 @@ const handleApplicationEvents = (window) => {
         }
         return value;
     };
-    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_STORE_GET, (event, key) => {
+    ipcRegistry.handle(events_js_1.Events.NATIVE_STORE_GET, (event, key) => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_GET, key);
         return store_js_1.get(key);
     });
-    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
+    ipcRegistry.handle(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, value);
         return setNativeStoreValue(key, value);
     });
-    electron_1.ipcMain.on(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
+    ipcRegistry.on(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, value);
         setNativeStoreValue(key, value);
     });
-    electron_1.ipcMain.on(events_js_1.Events.EXPERIMENTS_METRIC, (event, experiments) => {
+    ipcRegistry.on(events_js_1.Events.EXPERIMENTS_METRIC, (event, experiments) => {
         eventsLogger.info(`Event received`, events_js_1.Events.EXPERIMENTS_METRIC);
         void sendExperimentsMetric(experiments);
     });
-    electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_CONFIGURE_YASP_SOURCE, (event, payload) => {
+    ipcRegistry.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_CONFIGURE_YASP_SOURCE, (event, payload) => {
         nativeAudioOutput.configureYaspSource(payload);
     });
-    electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_YASP_CHUNK, (event, payload, chunk) => {
+    ipcRegistry.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_YASP_CHUNK, (event, payload, chunk) => {
         nativeAudioOutput.receiveYaspChunk(payload, chunk);
     });
-    electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_RESET_YASP_SOURCE, (event, payload) => {
+    ipcRegistry.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_RESET_YASP_SOURCE, (event, payload) => {
         nativeAudioOutput.resetYaspSource(payload);
     });
-    electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_AUDIO_PARKING_STATE, (event, payload) => {
+    ipcRegistry.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_AUDIO_PARKING_STATE, (event, payload) => {
         nativeAudioOutput.updateWasapiExclusiveAudioParkingState(payload);
     });
-    electron_1.ipcMain.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_PLAYER_SEEK, (event, payload) => {
+    ipcRegistry.on(events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_PLAYER_SEEK, (event, payload) => {
         eventsLogger.info('Event received', events_js_1.Events.NATIVE_AUDIO_OUTPUT_WASAPI_PLAYER_SEEK, payload);
         nativeAudioOutput.seekWasapiExclusiveOutput(payload);
     });
-    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_YASP_AUDIO_FORMAT, () => {
+    ipcRegistry.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_YASP_AUDIO_FORMAT, () => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_YASP_AUDIO_FORMAT);
         return nativeAudioOutput.getYaspAudioFormat();
     });
-    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_STATUS, () => {
+    ipcRegistry.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_STATUS, () => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_STATUS);
         return {
             ...nativeAudioOutput.getWasapiExclusiveStatus(),
             selectedDeviceId: store_js_1.get(WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY) ?? null,
         };
     });
-    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_LIST_WASAPI_EXCLUSIVE_DEVICES, (event, options = {}) => {
+    ipcRegistry.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_LIST_WASAPI_EXCLUSIVE_DEVICES, (event, options = {}) => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_LIST_WASAPI_EXCLUSIVE_DEVICES);
         return nativeAudioOutput.listWasapiExclusiveDevices({
             includeDisabled: Boolean(options?.includeDisabled),
             includeFormats: options?.includeFormats !== false,
         });
     });
-    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_DEVICE, () => {
+    ipcRegistry.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_DEVICE, () => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_GET_WASAPI_EXCLUSIVE_DEVICE);
         return store_js_1.get(WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY) ?? null;
     });
-    electron_1.ipcMain.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_SELECT_WASAPI_EXCLUSIVE_DEVICE, (event, deviceId) => {
+    ipcRegistry.handle(events_js_1.Events.NATIVE_AUDIO_OUTPUT_SELECT_WASAPI_EXCLUSIVE_DEVICE, (event, deviceId) => {
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_AUDIO_OUTPUT_SELECT_WASAPI_EXCLUSIVE_DEVICE);
         const normalizedDeviceId = typeof deviceId === 'string' && deviceId.trim() ? deviceId.trim() : null;
 
@@ -1184,37 +1189,30 @@ const handleApplicationEvents = (window) => {
         nativeAudioOutput.refreshWasapiExclusiveDefaultDeviceMonitor();
         return normalizedDeviceId;
     });
-    electron_1.ipcMain.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {
+    ipcRegistry.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {
         eventsLogger.info(`Event received`, events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, value);
         isGlobalShortcutsRecordingActive = Boolean(value);
         updateGlobalShortcuts();
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.TOGGLE_MINIPLAYER, (event) => {
+    ipcRegistry.on(events_js_1.Events.TOGGLE_MINIPLAYER, (event) => {
         eventsLogger.info(`Event received`, events_js_1.Events.TOGGLE_MINIPLAYER);
         MiniPlayer.toggle();
     });
 
-    electron_1.ipcMain.on(events_js_1.Events.SAVE_FILE_TO_LOCAL_DISK, async (event, defaultPath, buffer) => {
-        eventsLogger.info('Event handle', events_js_1.Events.SAVE_FILE_TO_LOCAL_DISK);
-        handleSaveToLocalDisk(defaultPath, buffer);
+    ipcRegistry.handle(IpcChannel.GET_PASSPORT_LOGIN, async () => {
+        eventsLogger.info('Event handle', IpcChannel.GET_PASSPORT_LOGIN);
+        const attempt = authDiagnostics.captureAttempt();
+        return readPassportLoginWithDiagnostics({
+            readPassportCookies: () => electron_1.session.defaultSession.cookies.get({ name: cookies_js_1.PASSPORT_LOGIN, domain: cookies_js_1.PASSPORT_LOGIN_DOMAIN }),
+            readSessionCookies: () => electron_1.session.defaultSession.cookies.get({ name: cookies_js_1.PASSPORT_SESSION, domain: cookies_js_1.PASSPORT_LOGIN_DOMAIN }),
+            record: (payload) => authDiagnostics.recordForAttempt(attempt, payload),
+            onPassportReadError: () => eventsLogger.error('Passport cookie read failed'),
+            onSessionReadError: () => eventsLogger.error('Session cookie read failed'),
+        });
     });
-
-    electron_1.ipcMain.handle(events_js_1.Events.GET_PASSPORT_LOGIN, async () => {
-        eventsLogger.info('Event handle', events_js_1.Events.GET_PASSPORT_LOGIN);
-        try {
-            const cookie = await electron_1.session.defaultSession.cookies.get({
-                name: cookies_js_1.PASSPORT_LOGIN,
-                domain: cookies_js_1.PASSPORT_LOGIN_DOMAIN,
-            });
-            return cookie?.[0]?.value;
-        } catch (error) {
-            eventsLogger.error(`${events_js_1.Events.GET_PASSPORT_LOGIN} event failed.`, error);
-            return;
-        }
-    });
-    electron_1.ipcMain.handle(events_js_1.Events.GET_YANDEX_UID, async () => {
-        eventsLogger.info('Event handle', events_js_1.Events.GET_YANDEX_UID);
+    ipcRegistry.handle(IpcChannel.GET_YANDEX_UID, async () => {
+        eventsLogger.info('Event handle', IpcChannel.GET_YANDEX_UID);
         try {
             const cookie = await electron_1.session.defaultSession.cookies.get({
                 name: cookies_js_1.YANDEX_ID,
@@ -1222,101 +1220,101 @@ const handleApplicationEvents = (window) => {
             });
             return cookie?.[0]?.value;
         } catch (error) {
-            eventsLogger.error(`${events_js_1.Events.GET_YANDEX_UID} event failed.`, error);
+            eventsLogger.error(`${IpcChannel.GET_YANDEX_UID} event failed.`, error);
             return;
         }
     });
 };
 const sendProgressBarChange = (window, elementType, progress, statusLabel, operationNonce) => {
-    window.webContents.send(events_js_1.Events.PROGRESS_BAR_CHANGE, elementType, progress, Date.now(), statusLabel, operationNonce);
+    sendToApplicationRenderer(window, events_js_1.Events.PROGRESS_BAR_CHANGE, elementType, progress, Date.now(), statusLabel, operationNonce);
     eventsLogger.info('Event sent', events_js_1.Events.PROGRESS_BAR_CHANGE, elementType, progress);
 };
 
 exports.sendProgressBarChange = sendProgressBarChange;
 const sendLastFmUserInfoUpdated = (window = mainWindow, userinfo) => {
-    window.webContents.send(events_js_1.Events.LASTFM_USERINFO_UPDATE, userinfo);
+    sendToApplicationRenderer(window, events_js_1.Events.LASTFM_USERINFO_UPDATE, userinfo);
     eventsLogger.info('Event sent', events_js_1.Events.LASTFM_USERINFO_UPDATE, userinfo);
 };
 
 exports.sendLastFmUserInfoUpdated = sendLastFmUserInfoUpdated;
 exports.handleApplicationEvents = handleApplicationEvents;
 const sendProbabilityBucket = (window, bucket) => {
-    window.webContents.send(events_js_1.Events.PROBABILITY_BUCKET, bucket);
-    eventsLogger.info('Event sent', events_js_1.Events.PROBABILITY_BUCKET, bucket);
+    sendToApplicationRenderer(window, IpcChannel.PROBABILITY_BUCKET, bucket);
+    eventsLogger.info('Event sent', IpcChannel.PROBABILITY_BUCKET, bucket);
 };
 exports.sendProbabilityBucket = sendProbabilityBucket;
 const sendLoadReleaseNotes = ({ window, needToShowReleaseNotes, sortedDescReleaseNotesKeys, translationsReleaseNotes }) => {
-    window.webContents.send(events_js_1.Events.LOAD_RELEASE_NOTES, {
+    sendToApplicationRenderer(window, IpcChannel.LOAD_RELEASE_NOTES, {
         needToShowReleaseNotes,
         sortedDescReleaseNotesKeys,
         translationsReleaseNotes,
     });
-    eventsLogger.info('Event sent', events_js_1.Events.LOAD_RELEASE_NOTES);
+    eventsLogger.info('Event sent', IpcChannel.LOAD_RELEASE_NOTES);
 };
 exports.sendLoadReleaseNotes = sendLoadReleaseNotes;
 const sendUpdateAvailable = (window, version) => {
-    window.webContents.send(events_js_1.Events.UPDATE_AVAILABLE, version);
-    eventsLogger.info('Event sent', events_js_1.Events.UPDATE_AVAILABLE, version);
+    sendToApplicationRenderer(window, IpcChannel.UPDATE_AVAILABLE, version);
+    eventsLogger.info('Event sent', IpcChannel.UPDATE_AVAILABLE, version);
 };
 exports.sendUpdateAvailable = sendUpdateAvailable;
 const sendModUpdateAvailable = (window, currVersion, newVersion) => {
-    window.webContents.send(events_js_1.Events.MOD_UPDATE_AVAILABLE, currVersion, newVersion, Date.now());
+    sendToApplicationRenderer(window, events_js_1.Events.MOD_UPDATE_AVAILABLE, currVersion, newVersion, Date.now());
     eventsLogger.info('Event sent', events_js_1.Events.MOD_UPDATE_AVAILABLE, currVersion, newVersion);
 };
 exports.sendModUpdateAvailable = sendModUpdateAvailable;
 const sendBasicToastCreate = (window = mainWindow, toastID, message, dismissable, actionEvent, actionPayload) => {
     const operationNonce = `${Date.now()}:${++toastOperationNonce}`;
     const resolvedActionPayload = typeof actionPayload === 'function' ? actionPayload(operationNonce) : actionPayload;
-    window.webContents.send(events_js_1.Events.BASIC_TOAST_CREATE, toastID, message, dismissable, operationNonce, actionEvent, resolvedActionPayload);
+    sendToApplicationRenderer(window, events_js_1.Events.BASIC_TOAST_CREATE, toastID, message, dismissable, operationNonce, actionEvent, resolvedActionPayload);
     eventsLogger.info('Event sent', events_js_1.Events.BASIC_TOAST_CREATE, toastID, message);
     return operationNonce;
 };
 exports.sendBasicToastCreate = sendBasicToastCreate;
 const sendBasicToastDismiss = (window = mainWindow, toastID, operationNonce) => {
-    window.webContents.send(events_js_1.Events.BASIC_TOAST_DISMISS, toastID, Date.now(), operationNonce);
+    sendToApplicationRenderer(window, events_js_1.Events.BASIC_TOAST_DISMISS, toastID, Date.now(), operationNonce);
     eventsLogger.info('Event sent', events_js_1.Events.BASIC_TOAST_DISMISS, toastID);
 };
 exports.sendBasicToastDismiss = sendBasicToastDismiss;
 const sendRefreshApplicationData = (window) => {
-    window.webContents.send(events_js_1.Events.REFRESH_APPLICATION_DATA);
-    eventsLogger.info('Event sent', events_js_1.Events.REFRESH_APPLICATION_DATA);
+    sendToApplicationRenderer(window, IpcChannel.REFRESH_APPLICATION_DATA);
+    eventsLogger.info('Event sent', IpcChannel.REFRESH_APPLICATION_DATA);
 };
 exports.sendRefreshApplicationData = sendRefreshApplicationData;
 const sendPlayerAction = (window, action, value) => {
-    window.webContents.send(events_js_1.Events.PLAYER_ACTION, action, value, Date.now());
-    eventsLogger.info('Event sent', events_js_1.Events.PLAYER_ACTION, action, value, Date.now());
+    sendToApplicationRenderer(window, IpcChannel.PLAYER_ACTION, action, value, Date.now());
+    eventsLogger.info('Event sent', IpcChannel.PLAYER_ACTION, action, value, Date.now());
 };
 exports.sendPlayerAction = sendPlayerAction;
 const sendOpenDeeplink = (window, pathname) => {
-    window.webContents.send(events_js_1.Events.OPEN_DEEPLINK, pathname);
-    eventsLogger.info('Event sent', events_js_1.Events.OPEN_DEEPLINK);
+    sendToApplicationRenderer(window, IpcChannel.OPEN_DEEPLINK, pathname);
+    eventsLogger.info('Event sent', IpcChannel.OPEN_DEEPLINK);
 };
 exports.sendOpenDeeplink = sendOpenDeeplink;
 const sendOpenModSettingsDeeplink = (window, pathname) => {
-    window.webContents.send(events_js_1.Events.PULSESYNC_OPEN_SETTINGS_DEEPLINK, pathname);
+    sendToApplicationRenderer(window, events_js_1.Events.PULSESYNC_OPEN_SETTINGS_DEEPLINK, pathname);
     eventsLogger.info('Event sent', events_js_1.Events.PULSESYNC_OPEN_SETTINGS_DEEPLINK);
 };
 exports.sendOpenModSettingsDeeplink = sendOpenModSettingsDeeplink;
 const sendAnalyticsOnFirstLaunch = (window) => {
-    window.webContents.send(events_js_1.Events.FIRST_LAUNCH);
-    eventsLogger.info('Event send', events_js_1.Events.FIRST_LAUNCH);
+    sendToApplicationRenderer(window, IpcChannel.FIRST_LAUNCH);
+    eventsLogger.info('Event send', IpcChannel.FIRST_LAUNCH);
 };
 exports.sendAnalyticsOnFirstLaunch = sendAnalyticsOnFirstLaunch;
 const sendRefreshTracksAvailability = (window) => {
-    window.webContents.send(events_js_1.Events.REFRESH_TRACKS_AVAILABILITY);
-    eventsLogger.info('Event sent', events_js_1.Events.REFRESH_TRACKS_AVAILABILITY);
+    sendToApplicationRenderer(window, IpcChannel.REFRESH_TRACKS_AVAILABILITY);
+    eventsLogger.info('Event sent', IpcChannel.REFRESH_TRACKS_AVAILABILITY);
 };
 exports.sendRefreshTracksAvailability = sendRefreshTracksAvailability;
 const sendRefreshRepositoryMeta = (window) => {
-    window.webContents.send(events_js_1.Events.REFRESH_REPOSITORY_META);
-    eventsLogger.info('Event send', events_js_1.Events.REFRESH_REPOSITORY_META);
+    sendToApplicationRenderer(window, IpcChannel.REFRESH_REPOSITORY_META);
+    eventsLogger.info('Event send', IpcChannel.REFRESH_REPOSITORY_META);
 };
 exports.sendRefreshRepositoryMeta = sendRefreshRepositoryMeta;
 
 const sendNativeStoreUpdate = (key, value, window = undefined) => {
     const win = window ?? mainWindow;
     if (win && win.webContents && typeof win.webContents.send === 'function') {
-        win.webContents.send(events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
+        sendToApplicationRenderer(win, events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
         eventsLogger.info('Event sent', events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
         MiniPlayer.updateSettingsState(store_js_1.getModSettings());
     } else {
@@ -1357,177 +1355,179 @@ const setZoomLevel = (event, level) => {
     return (mainWindow.webContents.zoomFactor = Math.min(Math.max(level ?? 1.0, 0.75), 2.0));
 };
 
-electron_1.ipcMain.handle('get-enabled-addons', () => {
-    eventsLogger.info('Event handle', 'get-enabled-addons');
-    try {
-        const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
-        if (!mgr) {
+const registerGlobalApplicationEvents = () => {
+    ipcRegistry.handle('get-enabled-addons', () => {
+        eventsLogger.info('Event handle', 'get-enabled-addons');
+        try {
+            const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
+            if (!mgr) {
+                return { addons: [], themes: [] };
+            }
+            return mgr.getEnabledAddons();
+        } catch (err) {
+            eventsLogger.error('get-enabled-addons handler failed:', err);
             return { addons: [], themes: [] };
         }
-        return mgr.getEnabledAddons();
-    } catch (err) {
-        eventsLogger.error('get-enabled-addons handler failed:', err);
-        return { addons: [], themes: [] };
-    }
-});
+    });
 
-electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_SETTINGS_SNAPSHOT, () => {
-    try {
-        const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
-        return mgr?.getAddonSettingsSnapshot?.() ?? {};
-    } catch (err) {
-        eventsLogger.error('PULSESYNC_SETTINGS_SNAPSHOT handler failed:', err);
-        return {};
-    }
-});
+    ipcRegistry.handle(events_js_1.Events.PULSESYNC_SETTINGS_SNAPSHOT, () => {
+        try {
+            const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
+            return mgr?.getAddonSettingsSnapshot?.() ?? {};
+        } catch (err) {
+            eventsLogger.error('PULSESYNC_SETTINGS_SNAPSHOT handler failed:', err);
+            return {};
+        }
+    });
 
-electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_LEGACY_ASSETS_SNAPSHOT, () => {
-    try {
-        const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
-        return mgr?.getLegacyAssetsSnapshot?.() ?? { runtime: 'legacy', revision: 0, styles: [], scripts: [] };
-    } catch (err) {
-        eventsLogger.error('PULSESYNC_LEGACY_ASSETS_SNAPSHOT handler failed:', err);
-        return { runtime: 'legacy', revision: 0, styles: [], scripts: [] };
-    }
-});
+    ipcRegistry.handle(events_js_1.Events.PULSESYNC_LEGACY_ASSETS_SNAPSHOT, () => {
+        try {
+            const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
+            return mgr?.getLegacyAssetsSnapshot?.() ?? { runtime: 'legacy', revision: 0, styles: [], scripts: [] };
+        } catch (err) {
+            eventsLogger.error('PULSESYNC_LEGACY_ASSETS_SNAPSHOT handler failed:', err);
+            return { runtime: 'legacy', revision: 0, styles: [], scripts: [] };
+        }
+    });
 
-electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_WEBHOST_ADDONS_SNAPSHOT, () => {
-    try {
-        const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
-        return mgr?.getWebHostAddonsSnapshot?.() ?? { runtime: 'isolated', hash: '', addons: [] };
-    } catch (err) {
-        eventsLogger.error('PULSESYNC_WEBHOST_ADDONS_SNAPSHOT handler failed:', err);
-        return { runtime: 'isolated', hash: '', addons: [] };
-    }
-});
+    ipcRegistry.handle(events_js_1.Events.PULSESYNC_WEBHOST_ADDONS_SNAPSHOT, () => {
+        try {
+            const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
+            return mgr?.getWebHostAddonsSnapshot?.() ?? { runtime: 'isolated', hash: '', addons: [] };
+        } catch (err) {
+            eventsLogger.error('PULSESYNC_WEBHOST_ADDONS_SNAPSHOT handler failed:', err);
+            return { runtime: 'isolated', hash: '', addons: [] };
+        }
+    });
 
-electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_SHOW_TOAST, (event, payload) => {
-    if (!mainWindow || event.sender !== mainWindow.webContents) throw new Error('PulseSync toast rejected an unknown sender');
+    ipcRegistry.handle(events_js_1.Events.PULSESYNC_SHOW_TOAST, (event, payload) => {
+        if (!mainWindow || event.sender !== mainWindow.webContents) throw new Error('PulseSync toast rejected an unknown sender');
 
-    const message = typeof payload?.message === 'string' ? payload.message.trim().slice(0, 500) : '';
-    if (!message) throw new TypeError('PulseSync toast message is required');
+        const message = typeof payload?.message === 'string' ? payload.message.trim().slice(0, 500) : '';
+        if (!message) throw new TypeError('PulseSync toast message is required');
 
-    const requestedDuration = Number(payload?.durationMs);
-    const durationMs = Number.isFinite(requestedDuration) ? Math.min(Math.max(requestedDuration, 1500), 10_000) : 4000;
-    const ownerId =
-        typeof payload?.ownerId === 'string'
-            ? payload.ownerId
-                  .trim()
-                  .replace(/[^a-z0-9._-]/gi, '')
-                  .slice(0, 100)
-            : '';
-    const toastId = `pulsesync-addon:${ownerId || crypto.randomUUID()}`;
-    const operationNonce = sendBasicToastCreate(mainWindow, toastId, message, 'Закрыть');
-    const dismissTimer = setTimeout(() => sendBasicToastDismiss(mainWindow, toastId, operationNonce), durationMs);
-    dismissTimer.unref?.();
-});
+        const requestedDuration = Number(payload?.durationMs);
+        const durationMs = Number.isFinite(requestedDuration) ? Math.min(Math.max(requestedDuration, 1500), 10_000) : 4000;
+        const ownerId =
+            typeof payload?.ownerId === 'string'
+                ? payload.ownerId
+                      .trim()
+                      .replace(/[^a-z0-9._-]/gi, '')
+                      .slice(0, 100)
+                : '';
+        const toastId = `pulsesync-addon:${ownerId || crypto.randomUUID()}`;
+        const operationNonce = sendBasicToastCreate(mainWindow, toastId, message, 'Закрыть');
+        const dismissTimer = setTimeout(() => sendBasicToastDismiss(mainWindow, toastId, operationNonce), durationMs);
+        dismissTimer.unref?.();
+    });
 
-electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, async (event, payload) => {
-    if (!mainWindow || event.sender !== mainWindow.webContents || event.senderFrame !== event.sender.mainFrame)
-        throw new Error('PulseSync isolated addon rejected an unknown sender');
+    ipcRegistry.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, async (event, payload) => {
+        if (!mainWindow || event.sender !== mainWindow.webContents || event.senderFrame !== event.sender.mainFrame)
+            throw new Error('PulseSync isolated addon rejected an unknown sender');
 
-    try {
-        const manager = pulseSyncManager_js_1 || getPulseSyncManager(mainWindow);
-        const addon = resolveCanonicalAddon(manager.getWebHostAddonsSnapshot(), payload?.addonId);
-        const channelToken = validateChannelToken(addon.id, payload?.channelToken);
-        const settingsSnapshot = manager.getAddonSettingsSnapshot();
-        const initialSettings = settingsSnapshot?.[addon.id] ?? {};
-        const moduleContext = addon.securityManifest ? await addonModuleHost.prepare(addon, event.sender.id) : null;
-        const worldId = moduleContext?.activation.worldId ?? getIsolatedAddonWorldId(event.sender, addon.id);
-        const executionToken = isolatedAddonExecutionStore.prepare({
-            senderId: event.sender.id,
-            worldId,
-            addon,
-            channelToken,
-            initialSettings,
-            moduleContext,
-        });
+        try {
+            const manager = pulseSyncManager_js_1 || getPulseSyncManager(mainWindow);
+            const addon = resolveCanonicalAddon(manager.getWebHostAddonsSnapshot(), payload?.addonId);
+            const channelToken = validateChannelToken(addon.id, payload?.channelToken);
+            const settingsSnapshot = manager.getAddonSettingsSnapshot();
+            const initialSettings = settingsSnapshot?.[addon.id] ?? {};
+            const moduleContext = addon.securityManifest ? await addonModuleHost.prepare(addon, event.sender.id) : null;
+            const worldId = moduleContext?.activation.worldId ?? getIsolatedAddonWorldId(event.sender, addon.id);
+            const executionToken = isolatedAddonExecutionStore.prepare({
+                senderId: event.sender.id,
+                worldId,
+                addon,
+                channelToken,
+                initialSettings,
+                moduleContext,
+            });
 
-        return {
-            executionToken,
-            worldId,
-            securityOrigin: require('./lib/pulsesync/addonNetworkPolicy.js').registerAddonNetworkPolicy(event.sender, worldId, addon, () =>
-                manager.getWebHostAddonsSnapshot(),
-            ),
-            worldName: `PulseSync addon ${addon.id}`,
-            ...(moduleContext ? { moduleCapability: moduleContext.activation.capability } : {}),
+            return {
+                executionToken,
+                worldId,
+                securityOrigin: require('./lib/pulsesync/addonNetworkPolicy.js').registerAddonNetworkPolicy(event.sender, worldId, addon, () =>
+                    manager.getWebHostAddonsSnapshot(),
+                ),
+                worldName: `PulseSync addon ${addon.id}`,
+                ...(moduleContext ? { moduleCapability: moduleContext.activation.capability } : {}),
+            };
+        } catch (error) {
+            eventsLogger.error('PULSESYNC_ISOLATED_ADDON_PREPARE handler failed:', error);
+            throw error;
+        }
+    });
+
+    ipcRegistry.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, async (event, payload) => {
+        if (!mainWindow || event.sender !== mainWindow.webContents || event.senderFrame !== event.sender.mainFrame)
+            throw new Error('PulseSync isolated addon rejected an unknown sender');
+
+        const prepared = isolatedAddonExecutionStore.consume(payload?.executionToken, event.sender.id);
+        const { addon, channelToken, initialSettings, worldId, moduleContext } = prepared;
+        const assertCurrentAddon = () => {
+            const manager = pulseSyncManager_js_1 || getPulseSyncManager(mainWindow);
+            const current = resolveCanonicalAddon(manager.getWebHostAddonsSnapshot(), addon.id);
+            if (current.code !== addon.code) throw new Error('PulseSync addon changed during activation');
         };
-    } catch (error) {
-        eventsLogger.error('PULSESYNC_ISOLATED_ADDON_PREPARE handler failed:', error);
-        throw error;
-    }
-});
-
-electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, async (event, payload) => {
-    if (!mainWindow || event.sender !== mainWindow.webContents || event.senderFrame !== event.sender.mainFrame)
-        throw new Error('PulseSync isolated addon rejected an unknown sender');
-
-    const prepared = isolatedAddonExecutionStore.consume(payload?.executionToken, event.sender.id);
-    const { addon, channelToken, initialSettings, worldId, moduleContext } = prepared;
-    const assertCurrentAddon = () => {
-        const manager = pulseSyncManager_js_1 || getPulseSyncManager(mainWindow);
-        const current = resolveCanonicalAddon(manager.getWebHostAddonsSnapshot(), addon.id);
-        if (current.code !== addon.code) throw new Error('PulseSync addon changed during activation');
-    };
-    assertCurrentAddon();
-    if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
-    const init = {
-        addon: {
-            id: addon.id,
-            name: addon.name,
-            directoryName: addon.directoryName,
-            ...(addon.version ? { version: addon.version } : {}),
-            cssScope: addon.cssScope,
-        },
-        initialSettings,
-        channelToken,
-        capabilities: require('./lib/pulsesync/webHostRequirements.js').WEB_HOST_CAPABILITIES,
-        ...(moduleContext ? { modules: moduleContext.init } : {}),
-    };
-    const initCode = `delete globalThis.__PULSESYNC_ISOLATED_RUNTIME_READY__;\nObject.defineProperty(globalThis, '__PULSESYNC_ISOLATED_INIT__', { value: ${JSON.stringify(init)}, configurable: true });\nnull;`;
-    const runtimeCode = `${getIsolatedAddonRuntimeSource()}\n;null;`;
-    const addonCode = addon.code;
-    const sourceBase = `pulsesync-isolated://${encodeURIComponent(addon.id)}`;
-
-    try {
-        await event.sender.executeJavaScriptInIsolatedWorld(worldId, [
-            { code: initCode, url: `${sourceBase}/bootstrap.js` },
-            { code: runtimeCode, url: `${sourceBase}/runtime.js` },
-        ]);
-        const runtimeReady = await event.sender.executeJavaScriptInIsolatedWorld(worldId, [
-            { code: 'globalThis.__PULSESYNC_ISOLATED_RUNTIME_READY__ === true;', url: `${sourceBase}/runtime-ready.js` },
-        ]);
-        if (runtimeReady !== true) throw new Error(`[PulseSync Addons] Isolated addon ${addon.id} runtime initialization failed`);
         assertCurrentAddon();
         if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
-        await event.sender.executeJavaScriptInIsolatedWorld(worldId, [{ code: addonCode, url: `${sourceBase}/addon.js` }]);
-        assertCurrentAddon();
-        if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
-    } catch (error) {
-        eventsLogger.error(`[PulseSync Addons] Isolated addon ${addon.id} execution failed:`, error);
-        if (moduleContext) addonModuleHost.invalidate(moduleContext.activation);
-        throw error;
-    }
+        const init = {
+            addon: {
+                id: addon.id,
+                name: addon.name,
+                directoryName: addon.directoryName,
+                ...(addon.version ? { version: addon.version } : {}),
+                cssScope: addon.cssScope,
+            },
+            initialSettings,
+            channelToken,
+            capabilities: require('./lib/pulsesync/webHostRequirements.js').WEB_HOST_CAPABILITIES,
+            ...(moduleContext ? { modules: moduleContext.init } : {}),
+        };
+        const initCode = `delete globalThis.__PULSESYNC_ISOLATED_RUNTIME_READY__;\nObject.defineProperty(globalThis, '__PULSESYNC_ISOLATED_INIT__', { value: ${JSON.stringify(init)}, configurable: true });\nnull;`;
+        const runtimeCode = `${getIsolatedAddonRuntimeSource()}\n;null;`;
+        const addonCode = addon.code;
+        const sourceBase = `pulsesync-isolated://${encodeURIComponent(addon.id)}`;
 
-    return { runtime: 'isolated', worldId };
-});
+        try {
+            await event.sender.executeJavaScriptInIsolatedWorld(worldId, [
+                { code: initCode, url: `${sourceBase}/bootstrap.js` },
+                { code: runtimeCode, url: `${sourceBase}/runtime.js` },
+            ]);
+            const runtimeReady = await event.sender.executeJavaScriptInIsolatedWorld(worldId, [
+                { code: 'globalThis.__PULSESYNC_ISOLATED_RUNTIME_READY__ === true;', url: `${sourceBase}/runtime-ready.js` },
+            ]);
+            if (runtimeReady !== true) throw new Error(`[PulseSync Addons] Isolated addon ${addon.id} runtime initialization failed`);
+            assertCurrentAddon();
+            if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
+            await event.sender.executeJavaScriptInIsolatedWorld(worldId, [{ code: addonCode, url: `${sourceBase}/addon.js` }]);
+            assertCurrentAddon();
+            if (moduleContext) addonModuleHost.assertCurrent(moduleContext.activation);
+        } catch (error) {
+            eventsLogger.error(`[PulseSync Addons] Isolated addon ${addon.id} execution failed:`, error);
+            if (moduleContext) addonModuleHost.invalidate(moduleContext.activation);
+            throw error;
+        }
 
-exports.setZoomLevel = setZoomLevel;
-exports.pulseSyncManager = pulseSyncManager_js_1;
-electron_1.ipcMain.handle('zoom-in', zoomIn);
-electron_1.ipcMain.handle('zoom-out', zoomOut);
-electron_1.ipcMain.handle('reset-zoom', resetZoom);
-electron_1.ipcMain.handle('get-zoom-level', getZoomLevel);
-electron_1.ipcMain.handle('set-zoom-level', setZoomLevel);
+        return { runtime: 'isolated', worldId };
+    });
+
+    exports.setZoomLevel = setZoomLevel;
+    exports.pulseSyncManager = pulseSyncManager_js_1;
+    ipcRegistry.handle('zoom-in', zoomIn);
+    ipcRegistry.handle('zoom-out', zoomOut);
+    ipcRegistry.handle('reset-zoom', resetZoom);
+    ipcRegistry.handle('get-zoom-level', getZoomLevel);
+    ipcRegistry.handle('set-zoom-level', setZoomLevel);
+
+    ipcRegistry.handle('isPremiumUser', () => {
+        eventsLogger.info('Event handle', 'isPremiumUser');
+        return getPulseSyncManager().isPremiumUser;
+    });
+    ipcRegistry.on('isPremiumUserSync', (event) => {
+        event.returnValue = Boolean(getPulseSyncManager()?.isPremiumUser);
+    });
+};
 
 MiniPlayer.onPlayerAction((action, value) => {
     sendPlayerAction(mainWindow, action, value);
-});
-
-electron_1.ipcMain.handle('isPremiumUser', () => {
-    eventsLogger.info('Event handle', 'isPremiumUser');
-    return getPulseSyncManager().isPremiumUser;
-});
-electron_1.ipcMain.on('isPremiumUserSync', (event) => {
-    event.returnValue = Boolean(getPulseSyncManager()?.isPremiumUser);
 });

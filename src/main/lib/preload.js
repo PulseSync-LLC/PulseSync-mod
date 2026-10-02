@@ -1,16 +1,15 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 const electron_1 = require('electron');
+if (!require('./desktopBridge.js').exposeDesktopBridge()) return;
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 const config_js_1 = require('../config.js');
 const getInitialTheme_js_1 = require('./getInitialTheme.js');
-const deviceInfo_js_1 = require('./deviceInfo.js');
 const theme_js_1 = require('../types/theme.js');
 const playerActions_js_1 = require('../types/playerActions.js');
 const hostnamePatterns_js_1 = require('../constants/hostnamePatterns.js');
-const deviceInfo = (0, deviceInfo_js_1.getDeviceInfo)();
 const store_js_1 = require('./store.js');
 const pulsesyncDevConfig_js_1 = require('./pulsesyncDevConfig.js');
 const events_js_1 = require('../types/events.js');
@@ -441,17 +440,12 @@ electron_1.contextBridge.exposeInMainWorld('DISPLAY_MAX_FPS', store_js_1.getDisp
 electron_1.contextBridge.exposeInMainWorld('ENABLE_YNISON_REMOTE_CONTROL', Boolean(store_js_1.getEnableYnisonRemoteControl()));
 electron_1.contextBridge.exposeInMainWorld('YNISON_INTERCEPT_PLAYBACK', Boolean(store_js_1.getYnisonInterceptPlayback()));
 electron_1.contextBridge.exposeInMainWorld('GLOBAL_SHORTCUTS', Boolean(store_js_1.getGlobalShortcuts()));
-electron_1.contextBridge.exposeInMainWorld('VERSION', String(config_js_1.config.buildInfo.VERSION));
 electron_1.contextBridge.exposeInMainWorld('PULSE_VERSION', String(config_js_1.config.modification.version));
 electron_1.contextBridge.exposeInMainWorld('ENABLED_ADDONS', async () => electron_1.ipcRenderer.invoke('get-enabled-addons'));
 electron_1.contextBridge.exposeInMainWorld('HOST_VERSION', String(config_js_1.config.modification.realYMVersion));
 electron_1.contextBridge.exposeInMainWorld('SHOW_CODEC_INSTEAD_OF_QUALITY_MARK', () =>
     Boolean(store_js_1.getModSettings()?.playerBarEnhancement.showCodecInsteadOfQualityMark),
 );
-electron_1.contextBridge.exposeInMainWorld('BRANCH', String(config_js_1.config.buildInfo.BRANCH));
-electron_1.contextBridge.exposeInMainWorld('PLATFORM', deviceInfo.os);
-electron_1.contextBridge.exposeInMainWorld('DEVICE_INFO', deviceInfo);
-electron_1.contextBridge.exposeInMainWorld('DEVICE_HOSTNAME', (0, deviceInfo_js_1.getDeviceHostname)());
 electron_1.contextBridge.exposeInMainWorld('PLAYER_ACTIONS', playerActions_js_1.PlayerActions);
 electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_INTENSITY_COEFFICIENT', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.vibeIntensityCoefficient);
 electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_MAX_FPS', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.maxFPS);
