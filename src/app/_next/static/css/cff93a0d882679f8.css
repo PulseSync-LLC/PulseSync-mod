@@ -1250,7 +1250,7 @@
 .ChangeVolume_slider__fCKGZ {
     --default-thumb-color: var(--ym-controls-color-primary-default-enabled);
     inset-inline-start: 0.5rem;
-    min-width: 12rem;
+    min-width: 10.4rem;
     transform: rotate(-90deg);
     transform-origin: 0.0625rem;
 }

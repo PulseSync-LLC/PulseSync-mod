@@ -48,8 +48,11 @@
         transition: none;
     }
 }
+.SonataControls_root__w8uqu {
+    --yellow-play-button-color: var(--ym-logo-color-primary-player);
+}
 .BaseSonataControlsDesktop_playButtonIcon__TlFqv {
-    color: var(--ym-logo-color-primary-player);
+    color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-on_default-hovered));
 }
 .BaseSonataControlsDesktop_buttonContainer__EB404 {
     align-items: center;
@@ -106,11 +109,11 @@
     }
 }
 .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp {
-    background-color: var(--ym-logo-color-primary-player);
+    background-color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-card-enabled));
 }
 .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp:not(:disabled):focus-visible,
 .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp:not(:disabled):hover {
-    background-color: var(--ym-logo-color-primary-player);
+    background-color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-card-hovered));
     transform: scale(1.05);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -119,6 +122,9 @@
     }
 }
 .SonataFullscreenControlsDesktop_playPauseButtonIcon__IkUNX {
+    color: var(--ym-controls-color-secondary-text-enabled_variant);
+}
+.SonataFullscreenControlsDesktop_playPauseButtonIcon_withYellowPlayButton__osz8_ {
     color: var(--ym-controls-color-secondary-card-enabled);
 }
 .SonataFullscreenControlsDesktop_buttonContainer__SpXWc {
