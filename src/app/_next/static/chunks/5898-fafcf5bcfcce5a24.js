@@ -500,6 +500,45 @@
                 H = i(2144),
                 F = i(90780),
                 V = i(75160);
+            var pulseSyncMst = i(28410);
+            let pulseSyncDownloadAlbumToFile = (0, s.PA)((e) => {
+                let { album: t } = e,
+                    i = (0, a.useCallback)(async () => {
+                        try {
+                            let { albumResource: e, modelActionsLogger: i } = (0, pulseSyncMst._$)(t),
+                                r = await e.getAlbumWithTracksIds({
+                                    albumId: t.id,
+                                    resumeStream: !1,
+                                }),
+                                s = (r?.volumes || [])
+                                    .flat()
+                                    .map((e) => (e?.id ? ''.concat(e.id, ':').concat(t.id) : null))
+                                    .filter(Boolean),
+                                a = Array.isArray(t.artists)
+                                    ? t.artists
+                                          .map((e) => e.name)
+                                          .filter(Boolean)
+                                          .join(', ')
+                                    : t.artistName,
+                                n = [t.title];
+                            (['album', 'single'].includes(t.type ?? 'album') && a && n.unshift(a),
+                                s.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', s, t.type ?? 'album', n.join(' — ')));
+                        } catch (e) {
+                            try {
+                                (0, pulseSyncMst._$)(t).modelActionsLogger.error(e);
+                            } catch {}
+                        }
+                    }, [t]);
+                return (0, r.jsx)(u.Dr, {
+                    onClick: i,
+                    disabled: !t?.id,
+                    icon: (0, r.jsx)(P.I, {
+                        variant: 'download',
+                        size: 'xxs',
+                    }),
+                    children: 'Скачать в файл',
+                });
+            });
             let $ = (0, s.PA)((e) => {
                 var t, i;
                 let { album: s, children: R, onOpenChange: P, open: $, wrapperClassName: G, variant: Y, ...J } = e,
@@ -588,6 +627,7 @@
                         ef,
                         ey,
                         ej,
+                        (0, r.jsx)(pulseSyncDownloadAlbumToFile, { album: s }),
                         R,
                         eo && (0, r.jsx)(z, { onClick: eh, isFinished: s.listeningFinished }),
                         (0, r.jsx)(U.H, { shareLink: ev, entityMeta: eS }),

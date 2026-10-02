@@ -1678,6 +1678,16 @@
                                 trackAlbumId: w.albumId,
                             };
                     }),
+                    pulseSyncTrackDownloadName = (0, y.L)(() => {
+                        let e = (w?.artists || [])
+                            .map((e) => e.name)
+                            .filter(Boolean)
+                            .join(', ');
+                        return [e, w?.title].filter(Boolean).join(' — ');
+                    }),
+                    pulseSyncDownloadTrackToFile = (0, f.c)(() => {
+                        (w?.id && window.desktopEvents?.send?.('DOWNLOAD_TRACK', w.id, pulseSyncTrackDownloadName), I());
+                    }),
                     ed = ''.concat(A({ id: 'interface-actions.open-sync-lyrics' }), ' ').concat(A({ id: 'warning-messages.can-break-accessibility' })),
                     eu = (0, y.L)(() => {
                         let e = [];
@@ -1710,7 +1720,19 @@
                         let e = [];
                         if (w) {
                             var t, i, n, a, r;
-                            (e.push((0, c.jsx)(tT.$, { track: w }, 'add-to-playlist')),
+                            (e.push(
+                                (0, c.jsx)(
+                                    tC.Dr,
+                                    {
+                                        onClick: pulseSyncDownloadTrackToFile,
+                                        disabled: !w.id,
+                                        icon: (0, c.jsx)(X.I, { variant: 'download', size: 'xxs' }),
+                                        children: 'Скачать в файл',
+                                    },
+                                    'download-to-file',
+                                ),
+                            ),
+                                e.push((0, c.jsx)(tT.$, { track: w }, 'add-to-playlist')),
                                 ec && w.isNonUserGenerated && e.push((0, c.jsx)(tM.H, { shareLink: er, entityMeta: ec }, 'share')),
                                 w.isNonUserGenerated &&
                                     w.isTrackMusic &&

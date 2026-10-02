@@ -176,6 +176,29 @@
             var eE = i(4254),
                 eC = i(99013),
                 eh = i.n(eC);
+            let downloadTrackToFile = (0, r.PA)((t) => {
+                let { track: e } = t,
+                    i = (0, n.useMemo)(() => {
+                        let t = (e?.artists ?? [])
+                            .map((t) => t.name)
+                            .filter(Boolean)
+                            .join(', ');
+                        return [t, e?.title].filter(Boolean).join(' — ');
+                    }, [e]),
+                    r = (0, n.useCallback)(() => {
+                        e?.id && window.desktopEvents?.send('DOWNLOAD_TRACK', e.id, i);
+                    }, [e, i]);
+                return (0, a.jsx)(p.Dr, {
+                    onClick: r,
+                    icon: (0, a.jsx)(v.I, {
+                        variant: 'download',
+                        size: 'xxs',
+                    }),
+                    className: eI().root,
+                    'data-test-id': u.S7.CONTEXT_MENU_DOWNLOAD_BUTTON,
+                    children: 'Скачать в файл',
+                });
+            });
             let eO = (0, r.PA)((e) => {
                     let { track: t } = e,
                         {
@@ -482,6 +505,7 @@
                                           children: (0, a.jsx)(c.A, { id: 'non-music.navigate-to-clip' }),
                                       }),
                                   tk && (0, a.jsx)(ek, { track: eL }),
+                                  tk && (0, a.jsx)(downloadTrackToFile, { track: eL }),
                                   t0 &&
                                       (0, a.jsx)(p.Dr, {
                                           onClick: ta,
