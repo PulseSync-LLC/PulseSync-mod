@@ -4721,6 +4721,7 @@
                         (e.COLLECTION = 'COLLECTION'),
                         (e.PLUS = 'PLUS'),
                         (e.MUZMARKET = 'MUZMARKET'),
+                        (e.SETTINGS = 'SETTINGS'),
                         e
                     );
                 })({}),
@@ -4789,6 +4790,14 @@
                                     path: F.Z.collection.href,
                                     availablePaths: [F.Z.collection.href, F.Z.mymusic.href],
                                     title: a({ id: 'navigation.page-collection' }),
+                                    isEnabled: !0,
+                                }),
+                            n &&
+                                c.push({
+                                    id: eV.SETTINGS,
+                                    path: F.Z.settings.href,
+                                    availablePaths: [F.Z.settings.href],
+                                    title: a({ id: 'page.settings' }),
                                     isEnabled: !0,
                                 }),
                             !t(K.z.WebNextDisablePlus, 'on') &&
@@ -4879,6 +4888,13 @@
                             iconNewVersion: 'navigationCollection',
                             iconNewVersionSelected: 'navigationCollection_selected',
                             analyticsParams: { to: eg.AppScreen.CollectionLandingScreen, entityType: eg.EntityTypes.Collection },
+                        }),
+                        [eV.SETTINGS]: () => ({
+                            icon: 'settingsGear',
+                            iconSelected: 'settingsGear',
+                            iconNewVersion: 'settingsGear',
+                            iconNewVersionSelected: 'settingsGear',
+                            analyticsParams: { to: eg.AppScreen.SettingsScreen, entityType: eg.EntityTypes.Profile },
                         }),
                         [eV.PLUS]: () => ({
                             icon: 'plusOutlined',
@@ -6552,11 +6568,13 @@
                         eo = (0, x.useMemo)(() => (l ? v({ id: 'sidebar.uncollapse' }) : v({ id: 'sidebar.collapse' })), [l, v]),
                         el = (0, x.useCallback)(
                             (e, t) =>
-                                e.id === eV.CONCERTS && f.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
-                                    ? (0, m.jsx)(as, { isSelected: t })
-                                    : Z
-                                      ? (0, m.jsx)(S.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
-                                      : (0, m.jsx)(S.I, { variant: t ? e.iconSelected : e.icon, size: 'm' }),
+                                e.id === eV.SETTINGS
+                                    ? (0, m.jsx)(S.I, { variant: 'settingsGear', size: 'xs' })
+                                    : e.id === eV.CONCERTS && f.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
+                                      ? (0, m.jsx)(as, { isSelected: t })
+                                      : Z
+                                        ? (0, m.jsx)(S.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
+                                        : (0, m.jsx)(S.I, { variant: t ? e.iconSelected : e.icon, size: 'm' }),
                             [f, Z],
                         ),
                         ed = (0, N.c)(() => {
@@ -6764,11 +6782,13 @@
                         l = a.checkExperiment(K.z.WebNextNewWaveTab, 'on') || a.checkExperiment(K.z.WebNextNewWaveTab, 'on1'),
                         d = (0, x.useCallback)(
                             (e, t) =>
-                                e.id === eV.CONCERTS && a.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
-                                    ? (0, m.jsx)(as, { isSelected: t || l })
-                                    : l
-                                      ? (0, m.jsx)(S.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
-                                      : (0, m.jsx)(S.I, { variant: t ? e.iconSelected : e.icon, size: 'm' }),
+                                e.id === eV.SETTINGS
+                                    ? (0, m.jsx)(S.I, { variant: 'settingsGear', size: 'xs' })
+                                    : e.id === eV.CONCERTS && a.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
+                                      ? (0, m.jsx)(as, { isSelected: t || l })
+                                      : l
+                                        ? (0, m.jsx)(S.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
+                                        : (0, m.jsx)(S.I, { variant: t ? e.iconSelected : e.icon, size: 'm' }),
                             [a, l],
                         ),
                         c = (0, N.c)((e, t) => () => {

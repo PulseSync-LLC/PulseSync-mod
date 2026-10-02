@@ -782,3 +782,41 @@
 .NavbarMobile_disabledNavigationItem__PA3EE:hover svg {
     color: var(--ym-controls-color-primary-text-disabled);
 }
+
+.TitleBar_root_macos__QjdOZ {
+    box-sizing: border-box;
+    column-gap: 4px;
+    padding-left: 92px;
+    padding-right: 12px;
+}
+.TitleBar_root_macos__QjdOZ .TitleBar_button__9MptL {
+    box-sizing: border-box;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 24px;
+    border-radius: 6px;
+}
+.TitleBar_root_macos__QjdOZ .TitleBar_icon__8Wji9 {
+    display: block;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+}
+.TitleBar_root_macos__QjdOZ .TitleBar_pulseText__FhYv {
+    margin: 0 8px 0 0;
+    font-size: 13px;
+    line-height: 16px;
+    white-space: nowrap;
+}
+.TitleBar_pulseText__FhYv {
+    margin-right: 20px;
+    color: rgba(255, 255, 255, 0.62);
+    font-family: var(--ym-font-text);
+    font-weight: 300;
+    line-height: var(--ym-font-line-height-label-s);
+}
+.ym-light-theme {
+    .TitleBar_pulseText__FhYv {
+        color: rgba(0, 0, 0, 0.62);
+    }
+}

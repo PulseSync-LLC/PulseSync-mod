@@ -2078,6 +2078,14 @@
                             ]);
                         });
                     },
+                    9901: (e, t, r) => {
+                        var n = r(810);
+                        e.exports = n.forwardRef(function (e, t) {
+                            return n.createElement('svg', Object.assign({}, e, { ref: t }), [
+                                n.createElement('use', { key: 'settingsGear_xs', xlinkHref: '/icons/sprite.svg#settingsGear_xs' }),
+                            ]);
+                        });
+                    },
                     7241: (e, t, r) => {
                         var n = r(810);
                         e.exports = n.forwardRef(function (e, t) {
@@ -3244,6 +3252,7 @@
                             tH = n(r(852)),
                             tW = n(r(4380)),
                             tP = n(r(4553)),
+                            tSettingsGear = n(r(9901)),
                             tS = n(r(7873)),
                             tC = n(r(6898)),
                             tT = n(r(3278)),
@@ -3516,6 +3525,7 @@
                                 'rewindForward',
                                 'search',
                                 'settings',
+                                'settingsGear',
                                 'shuffle',
                                 'site',
                                 'speed_1_25x_centered',
@@ -3776,6 +3786,7 @@
                                 rewindForward_xs: tH.default,
                                 search_xs: tW.default,
                                 settings_xs: tP.default,
+                                settingsGear_xs: tSettingsGear.default,
                                 shuffle_xs: tS.default,
                                 site_xs: tC.default,
                                 speed_1_25x_centered_xs: tT.default,
