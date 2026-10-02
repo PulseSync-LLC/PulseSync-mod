@@ -1,6 +1,6 @@
 function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, modernizeUtils, zstdUtils }) {
-    const { asar, fs, fsp, path, crypto, minify, execSync, execFileSync } = runtime.deps;
-    const { REPO_ROOT, SRC_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, OXFMT_CONFIG_PATH } = runtime.constants;
+    const { asar, fs, fsp, path, semver, crypto, minify, execSync, execFileSync } = runtime.deps;
+    const { REPO_ROOT, SRC_PATH, EXTRACTED_DIR_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, OXFMT_CONFIG_PATH } = runtime.constants;
 
     const MINIFIABLE_EXTENSIONS = new Set(['.js', '.mjs', '.cjs']);
 
@@ -466,6 +466,27 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
     }
 
     function installSourceDependencies(workPath) {
+        const extractedRelativePath = path.relative(EXTRACTED_DIR_PATH, workPath);
+        if (extractedRelativePath && extractedRelativePath !== '..' && !extractedRelativePath.startsWith(`..${path.sep}`) && !path.isAbsolute(extractedRelativePath)) {
+            const packageJson = JSON.parse(fs.readFileSync(path.join(workPath, 'package.json'), 'utf8'));
+            for (const [name, versionRange] of Object.entries(packageJson.dependencies ?? {})) {
+                const dependencyPackagePath = path.join(workPath, 'node_modules', name, 'package.json');
+                if (!fs.existsSync(dependencyPackagePath)) {
+                    throw new Error(`В извлечённом билде отсутствует зависимость ${name}. Повторно извлеките полный app.asar: ${workPath}`);
+                }
+
+                const dependencyPackage = JSON.parse(fs.readFileSync(dependencyPackagePath, 'utf8'));
+                if (dependencyPackage.name !== name || !semver.satisfies(dependencyPackage.version, versionRange)) {
+                    throw new Error(
+                        `В извлечённом билде зависимость ${name}@${dependencyPackage.version} не соответствует ${versionRange}. Повторно извлеките app.asar: ${workPath}`,
+                    );
+                }
+            }
+
+            console.log('Используются встроенные зависимости из извлечённого app.asar');
+            return;
+        }
+
         if (workPath.includes('@pretty')) return;
         execSync('yarn install --frozen-lockfile', {
             cwd: workPath,
