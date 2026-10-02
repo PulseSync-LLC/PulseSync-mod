@@ -8096,7 +8096,19 @@
                 (function (e) {
                     ((e.BAR_BELOW = 'barBellow'), (e.FULLSCREEN = 'fullscreen'));
                 })(d || (d = {})));
-            let np = (e) => {
+            let getCommunicationTriggersMode = () => {
+                    try {
+                        let e = window.nativeSettings?.get?.('modSettings.communicationTriggers.mode');
+                        return ['all', 'barBelow', 'fullscreen', 'disabled'].includes(e) ? e : 'disabled';
+                    } catch (e) {
+                        return 'disabled';
+                    }
+                },
+                isCommunicationTriggerAllowed = (e) => {
+                    let t = getCommunicationTriggersMode();
+                    return t === 'all' || (t === 'barBelow' && e === d.BAR_BELOW) || (t === 'fullscreen' && e === d.FULLSCREEN);
+                },
+                np = (e) => {
                     let { text: t, textColor: a, color: i, action: l } = e;
                     return (0, C.wg)({
                         text: t || null,
@@ -8290,6 +8302,7 @@
                         let t = {
                             getData: (0, C.L3)(function* () {
                                 let { dynamicPagesResource: t, modelActionsLogger: a } = (0, C._$)(e);
+                                if (getCommunicationTriggersMode() === 'disabled') return (e.loadingState = M.G.RESOLVE);
                                 if (e.loadingState !== M.G.PENDING && e.loadingState !== M.G.RESOLVE)
                                     try {
                                         e.loadingState = M.G.PENDING;
@@ -8327,27 +8340,33 @@
                                                             var i;
                                                             switch (null == (i = e.triggers[0]) ? void 0 : i.meta.notificationId) {
                                                                 case d.BAR_BELOW:
-                                                                    return void e.triggers.forEach((e) => {
-                                                                        t.push(
-                                                                            ((e) => {
-                                                                                let t = 'data' in e ? ny(e.data) : ny(e.div),
-                                                                                    a = 'feedbackToken' in e ? e.feedbackToken : null,
-                                                                                    i = 'anchorId' in e ? e.anchorId : o.ON_START_BAR_BELOW;
-                                                                                return (0, C.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
-                                                                            })(e),
-                                                                        );
-                                                                    });
+                                                                    return void (
+                                                                        isCommunicationTriggerAllowed(d.BAR_BELOW) &&
+                                                                        e.triggers.forEach((e) => {
+                                                                            t.push(
+                                                                                ((e) => {
+                                                                                    let t = 'data' in e ? ny(e.data) : ny(e.div),
+                                                                                        a = 'feedbackToken' in e ? e.feedbackToken : null,
+                                                                                        i = 'anchorId' in e ? e.anchorId : o.ON_START_BAR_BELOW;
+                                                                                    return (0, C.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
+                                                                                })(e),
+                                                                            );
+                                                                        })
+                                                                    );
                                                                 case d.FULLSCREEN:
-                                                                    return void e.triggers.forEach((e) => {
-                                                                        a.push(
-                                                                            ((e) => {
-                                                                                let t = 'data' in e ? nE(e.data) : nE(e.div),
-                                                                                    a = 'feedbackToken' in e ? e.feedbackToken : null,
-                                                                                    i = 'anchorId' in e ? e.anchorId : o.ON_START_FULLSCREEN;
-                                                                                return (0, C.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
-                                                                            })(e),
-                                                                        );
-                                                                    });
+                                                                    return void (
+                                                                        isCommunicationTriggerAllowed(d.FULLSCREEN) &&
+                                                                        e.triggers.forEach((e) => {
+                                                                            a.push(
+                                                                                ((e) => {
+                                                                                    let t = 'data' in e ? nE(e.data) : nE(e.div),
+                                                                                        a = 'feedbackToken' in e ? e.feedbackToken : null,
+                                                                                        i = 'anchorId' in e ? e.anchorId : o.ON_START_FULLSCREEN;
+                                                                                    return (0, C.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
+                                                                                })(e),
+                                                                            );
+                                                                        })
+                                                                    );
                                                             }
                                                         }),
                                                         (0, C.wg)({ barBelow: { list: t }, modal: { list: a } })
@@ -13521,10 +13540,13 @@
                                 return uN(t, a.get(uh.yc));
                             },
                             getExperiment(a) {
-                                var i;
                                 let l = e.experiments[a],
-                                    r = t.getOverwrittenExperiments();
-                                return r && null != (i = r[a]) ? i : l;
+                                    r = t.getOverwrittenExperiments(),
+                                    s = e.overwrittenExperiments,
+                                    n = s?.[a] ?? r?.[a];
+                                if (n != null) return n;
+                                let o = window.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES?.()?.[a];
+                                return o != null ? { group: o, value: { title: o } } : l;
                             },
                             isExperimentActive(e) {
                                 var a, i;
@@ -13546,20 +13568,8 @@
                                     t.isExperimentEnabled(i) && a.push(i);
                                 return a;
                             },
-                            checkExperiment(t, a) {
-                                let i = e.experiments,
-                                    { containerStorage: l, clientSafeConfig: r } = (0, C._$)(e);
-                                return ((e, t) => {
-                                    let { containerStorage: a, experiments: i } = e;
-                                    return (e, l) => {
-                                        var r;
-                                        let s = null == i ? void 0 : i[e],
-                                            n = uN(a, t);
-                                        if (!n) return (null == s ? void 0 : s.group) === l;
-                                        let o = null == (r = n[e]) ? void 0 : r.group;
-                                        return o ? o === l : (null == s ? void 0 : s.group) === l;
-                                    };
-                                })({ containerStorage: l, experiments: i }, r.get(uh.yc))(t, a);
+                            checkExperiment(e, a) {
+                                return t.getExperiment(e)?.group === a;
                             },
                             isRejected: () => e.loadingState === M.G.REJECT,
                         };
