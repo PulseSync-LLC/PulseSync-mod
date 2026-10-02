@@ -207,6 +207,7 @@
         },
         66738: (e, r, t) => {
             t.d(r, { I: () => c });
+            t.d(r, { resolveIcon: () => resolveIcon });
             var s,
                 n = t(74631),
                 a = {
@@ -3337,6 +3338,26 @@
             })();
             var c = o.Icon;
             o.__esModule;
+            function resolveIcon(name) {
+                const collection = l(7638).iconsCollection;
+                for (const size of ['xs', 'xxs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxs']) {
+                    if (Object.hasOwn(collection, `${name}_${size}`))
+                        return {
+                            variant: name,
+                            size,
+                        };
+                }
+                if (!Object.hasOwn(collection, name)) return;
+                const sized = /^(.*)_(xxxs|xxs|xs|s|m|l|xl|xxl|xxxl)$/.exec(name);
+                return sized
+                    ? {
+                          variant: sized[1],
+                          size: sized[2],
+                      }
+                    : {
+                          variant: name,
+                      };
+            }
         },
         93588: (e, r, t) => {
             t.d(r, { sK: () => E, NN: () => n, R8: () => a, $3: () => s, CP: () => x, tE: () => u, Ef: () => d, $5: () => p, IU: () => y, tk: () => g.t, u0: () => k });
