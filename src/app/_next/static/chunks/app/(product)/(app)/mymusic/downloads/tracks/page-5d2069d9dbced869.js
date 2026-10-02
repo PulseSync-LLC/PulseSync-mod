@@ -1390,14 +1390,38 @@
                     enabled: T,
                     children: (0, r.jsx)('span', {
                         className: p,
-                        children: (0, r.jsx)(u.I, {
-                            className: (0, a.$)(h().explicitMark, t),
-                            'aria-label': k,
-                            variant: y,
-                            size: x,
-                            ...g,
-                            'data-test-id': c.S7.EXPLICIT_MARK_ICON,
-                        }),
+                        children:
+                            v === o.JU.SUBSTITUTED
+                                ? (0, r.jsxs)('svg', {
+                                      className: (0, a.$)(h().explicitMark, t),
+                                      viewBox: '0 0 16 16',
+                                      role: 'img',
+                                      'aria-label': k,
+                                      style: { width: 'var(--ym-icon-size-'.concat(x, ')'), height: 'var(--ym-icon-size-'.concat(x, ')') },
+                                      ...g,
+                                      'data-test-id': c.S7.EXPLICIT_MARK_ICON,
+                                      children: [
+                                          (0, r.jsx)('circle', { cx: '8', cy: '8', r: '5.5', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5' }),
+                                          (0, r.jsx)('text', {
+                                              x: '8',
+                                              y: '9',
+                                              fill: 'currentColor',
+                                              fontSize: '7',
+                                              fontWeight: '700',
+                                              textAnchor: 'middle',
+                                              dominantBaseline: 'middle',
+                                              children: 'S',
+                                          }),
+                                      ],
+                                  })
+                                : (0, r.jsx)(u.I, {
+                                      className: (0, a.$)(h().explicitMark, t),
+                                      'aria-label': k,
+                                      variant: y,
+                                      size: x,
+                                      ...g,
+                                      'data-test-id': c.S7.EXPLICIT_MARK_ICON,
+                                  }),
                     }),
                 });
             });
@@ -1651,7 +1675,7 @@
                     (e.AGE_16_ICON = 'age16Icon'),
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
-                    (e.EXCLAMATION_ICON = 'exclamationIcon'));
+                    ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
             })(r || (r = {}));
             let d = (e) => {
                     let t = [];
@@ -1743,7 +1767,7 @@
                 }
             }
             !(function (e) {
-                ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'));
+                ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), ((e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted')));
             })(a || (a = {}));
             let _ = new Map([
                     [r.EXPLICIT_ICON, a.E],
@@ -1751,8 +1775,9 @@
                     [r.AGE_16_ICON, a.AGE_16],
                     [r.AGE_12_ICON, a.AGE_12],
                     [r.EXCLAMATION_ICON, a.EXCLAMATION],
+                    [r.SUBSTITUTED_ICON, a.SUBSTITUTED],
                 ]),
-                p = [r.EXPLICIT_ICON, r.AGE_18_ICON, r.AGE_16_ICON, r.AGE_12_ICON, r.EXCLAMATION_ICON],
+                p = [r.EXPLICIT_ICON, r.AGE_18_ICON, r.AGE_16_ICON, r.AGE_12_ICON, r.SUBSTITUTED_ICON, r.EXCLAMATION_ICON],
                 h = (e) => {
                     let t = ((e, t) => {
                         for (let i of t) {

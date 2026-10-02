@@ -577,7 +577,7 @@
                     ).json();
                 }
                 async getTracksMeta(t, e) {
-                    return (
+                    let s = await (
                         await this.httpClient.post(
                             'tracks',
                             this.createHttpOptions({
@@ -601,6 +601,30 @@
                             }),
                         )
                     ).json();
+                    return (
+                        s.forEach((t) => {
+                            (t.substituted &&
+                                ((t.isSubstituted = !0),
+                                (t.artists = t.substituted.artists ?? t.artists),
+                                (t.ogImage = t.substituted.ogImage ?? t.substituted.coverUri ?? t.ogImage),
+                                (t.title = t.substituted.title ?? t.title),
+                                (t.derivedColors = t.substituted.derivedColors ?? t.derivedColors),
+                                (t.version = t.substituted.version ?? t.version),
+                                (t.disclaimers = Array.from(
+                                    new Set([...(t.disclaimers ?? []), 'substitutedIcon:pulsesync-substituted', 'descriptionText:pulsesync-substituted']),
+                                ))),
+                                (t.coverUri =
+                                    t.substituted?.coverUri ||
+                                    t.substituted?.ogImage ||
+                                    t.substituted?.cover?.uri ||
+                                    t.substituted?.albums?.[0]?.coverUri ||
+                                    t.albums?.[0]?.coverUri ||
+                                    t.ogImage ||
+                                    t.cover?.uri ||
+                                    t.coverUri));
+                        }),
+                        s
+                    );
                 }
                 async getFullInfoTrack(t, e) {
                     let s = t.albumId ? ''.concat(t.trackId, ':').concat(t.albumId) : t.trackId;
@@ -3014,12 +3038,18 @@
                 a = s(6490);
             class n extends a.X {
                 async getDisclaimers(t, e) {
-                    return (
-                        await this.httpClient.get(
-                            'disclaimers',
-                            this.createHttpOptions({ timeoutKey: 'getDisclaimers', params: t, signal: null == e ? void 0 : e.signal }),
-                        )
-                    ).json();
+                    let i = await (
+                            await this.httpClient.get(
+                                'disclaimers',
+                                this.createHttpOptions({ timeoutKey: 'getDisclaimers', params: t, signal: null == e ? void 0 : e.signal }),
+                            )
+                        ).json(),
+                        s = {
+                            id: 'pulsesync-substituted',
+                            type: 'informational',
+                            title: 'Подменённые данные трека были восстановлены',
+                        };
+                    return Array.isArray(i) && !i.some((e) => e.id === s.id) ? [...i, s] : i;
                 }
                 constructor(t, e) {
                     (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));

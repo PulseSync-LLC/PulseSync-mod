@@ -2399,14 +2399,38 @@
                     enabled: E,
                     children: (0, i.jsx)('span', {
                         className: _,
-                        children: (0, i.jsx)(d.I, {
-                            className: (0, a.$)(h().explicitMark, t),
-                            'aria-label': N,
-                            variant: T,
-                            size: v,
-                            ...f,
-                            'data-test-id': c.S7.EXPLICIT_MARK_ICON,
-                        }),
+                        children:
+                            g === o.JU.SUBSTITUTED
+                                ? (0, i.jsxs)('svg', {
+                                      className: (0, a.$)(h().explicitMark, t),
+                                      viewBox: '0 0 16 16',
+                                      role: 'img',
+                                      'aria-label': N,
+                                      style: { width: 'var(--ym-icon-size-'.concat(v, ')'), height: 'var(--ym-icon-size-'.concat(v, ')') },
+                                      ...f,
+                                      'data-test-id': c.S7.EXPLICIT_MARK_ICON,
+                                      children: [
+                                          (0, i.jsx)('circle', { cx: '8', cy: '8', r: '5.5', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5' }),
+                                          (0, i.jsx)('text', {
+                                              x: '8',
+                                              y: '9',
+                                              fill: 'currentColor',
+                                              fontSize: '7',
+                                              fontWeight: '700',
+                                              textAnchor: 'middle',
+                                              dominantBaseline: 'middle',
+                                              children: 'S',
+                                          }),
+                                      ],
+                                  })
+                                : (0, i.jsx)(d.I, {
+                                      className: (0, a.$)(h().explicitMark, t),
+                                      'aria-label': N,
+                                      variant: T,
+                                      size: v,
+                                      ...f,
+                                      'data-test-id': c.S7.EXPLICIT_MARK_ICON,
+                                  }),
                     }),
                 });
             });
@@ -3102,7 +3126,7 @@
                         (e.DESCRIPTION_TEXT = 'descriptionText'),
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
-                        (e.EXCLAMATION_ICON = 'exclamationIcon'));
+                        ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
                 })(i || (i = {})));
         },
         85957: (e) => {
