@@ -7501,6 +7501,500 @@
             var nr = a(28118),
                 ns = a(24237),
                 no = a.n(ns);
+            const pulseSyncPlayerReact = x,
+                pulseSyncPlayerJsx = m,
+                pulseSyncPlayerIntl = g,
+                pulseSyncPlayerButton = T,
+                pulseSyncNormalizeStationText = (e) =>
+                    String(e ?? '')
+                        .trim()
+                        .toLowerCase()
+                        .replace(/\s+/g, ' '),
+                pulseSyncStationNamesMatch = (e, t) => {
+                    const a = pulseSyncNormalizeStationText(e),
+                        i = pulseSyncNormalizeStationText(t);
+                    return !!a && !!i && (a.includes(i) || i.includes(a));
+                },
+                pulseSyncFindLocalStation = (e, t, a) => {
+                    const i = pulseSyncNormalizeStationText(e?.configuration?.glagolDeviceId);
+                    if (i) {
+                        const e = t.find((e) => !a.has(e) && pulseSyncNormalizeStationText(e?.deviceId) === i);
+                        if (e) return e;
+                    }
+                    const n = pulseSyncNormalizeStationText(e?.configuration?.platform);
+                    return n
+                        ? (t.find(
+                              (t) => !a.has(t) && pulseSyncNormalizeStationText(t?.platform) === n && pulseSyncStationNamesMatch(e?.name, t?.name ?? t?.instanceName),
+                          ) ?? null)
+                        : null;
+                },
+                pulseSyncBuildCastDeviceRows = (e = [], t = []) => {
+                    const a = new Set();
+                    return e.map((e) => {
+                        const i = pulseSyncFindLocalStation(e, t, a);
+                        return (
+                            i && a.add(i),
+                            {
+                                accountSpeaker: e,
+                                localSpeaker: i ?? void 0,
+                                canUseLocal: !!i,
+                            }
+                        );
+                    });
+                },
+                pulseSyncGetCastDevicePlatform = (e) =>
+                    pulseSyncNormalizeStationText(
+                        e?.accountSpeaker?.configuration?.platform ??
+                            e?.accountSpeaker?.configuration?.quasarInfo?.platform ??
+                            e?.localSpeaker?.platform ??
+                            e?.localSpeaker?.txt?.platform,
+                    ),
+                pulseSyncGetCastDeviceIconKind = (e) => {
+                    if (e?.isThisDevice) return 'computer';
+                    const t = pulseSyncGetCastDevicePlatform(e);
+                    const a = {
+                        yandexstation: 'station',
+                        yandexstation_2: 'station',
+                        yandexmidi: 'station2',
+                        yandexmini: 'mini',
+                        yandexmini_2: 'mini',
+                        yandexmicro: 'mini',
+                        yandexmodule: 'module',
+                        yandexmodule_2: 'module',
+                        yandex_tv: 'tv',
+                        saturn: 'chiron',
+                        cucumber: 'cucumber',
+                        bergamot: 'mini',
+                        plum: 'mini',
+                        orion: 'station',
+                        monet: 'tv',
+                        magritte: 'tv',
+                        goya: 'tv',
+                    };
+                    if (a[t]) return a[t];
+                    if (/computer|desktop|windows|win32|darwin|mac|linux|electron/.test(t)) return 'computer';
+                    if (/chiron/.test(t)) return 'chiron';
+                    if (/cucumber/.test(t)) return 'cucumber';
+                    if (/mini/.test(t)) return 'mini';
+                    if (/station[_-]?2|station2|yandexstation[_-]?2|yandex_station[_-]?2/.test(t)) return 'station2';
+                    return 'station';
+                },
+                pulseSyncCastDeviceIconPath = {
+                    computer:
+                        'm14.6,5c1.1024,0 2.01,-0.0016 2.7373,0.0772 0.7461,0.0808 1.4215,0.2556 2.0147,0.6865 0.3394,0.2466 0.6381,0.5453 0.8847,0.8848 0.431,0.5931 0.6057,1.2686 0.6866,2.0146 0.0787,0.7273 0.0771,1.6349 0.0771,2.7373v0.1992c0,1.1024 0.0016,2.01 -0.0771,2.7373 -0.0809,0.7461 -0.2556,1.4215 -0.6866,2.0147 -0.1727,0.2377 -0.3718,0.4545 -0.5918,0.6484h3.3555v2h-22v-2h3.3555c-0.2199,-0.1939 -0.419,-0.4107 -0.5918,-0.6484 -0.4309,-0.5932 -0.6057,-1.2686 -0.6865,-2.0147 -0.0787,-0.7273 -0.0772,-1.6349 -0.0772,-2.7373v-0.1992c0,-1.1024 -0.0016,-2.01 0.0772,-2.7373 0.0808,-0.7461 0.2556,-1.4215 0.6865,-2.0146 0.2466,-0.3394 0.5453,-0.6381 0.8848,-0.8848 0.5932,-0.4309 1.2686,-0.6057 2.0146,-0.6865 0.7273,-0.0787 1.6349,-0.0772 2.7373,-0.0772h5.1992zM9.4008,7c-1.1472,0 -1.9278,0.001 -2.5225,0.0654 -0.5758,0.0624 -0.8583,0.1744 -1.0537,0.3164 -0.1697,0.1233 -0.3191,0.2727 -0.4424,0.4424 -0.142,0.1954 -0.254,0.4779 -0.3164,1.0537 -0.0644,0.5946 -0.0654,1.3754 -0.0654,2.5225v0.1992c0,1.1471 0.001,1.9278 0.0654,2.5225 0.0624,0.5758 0.1744,0.8583 0.3164,1.0537 0.1233,0.1697 0.2727,0.3191 0.4424,0.4424 0.1954,0.1419 0.4779,0.254 1.0537,0.3164 0.5947,0.0644 1.3753,0.0654 2.5225,0.0654h5.1992c1.1472,0 1.9278,-0.001 2.5225,-0.0654 0.5758,-0.0624 0.8583,-0.1745 1.0537,-0.3164 0.1697,-0.1234 0.3191,-0.2727 0.4424,-0.4424 0.1419,-0.1954 0.254,-0.4779 0.3164,-1.0537 0.0644,-0.5947 0.0654,-1.3754 0.0654,-2.5225v-0.1992c0,-1.1471 -0.001,-1.9278 -0.0654,-2.5225 -0.0624,-0.5758 -0.1745,-0.8583 -0.3164,-1.0537 -0.1233,-0.1697 -0.2727,-0.3191 -0.4424,-0.4424 -0.1954,-0.142 -0.4779,-0.254 -1.0537,-0.3164 -0.5947,-0.0644 -1.3753,-0.0654 -2.5225,-0.0654h-5.1992z',
+                    module: 'M15.16 3.75L1 11.3l7.84 4.25L23 8l-7.84-4.25zM1 12.95v3.3l7.84 4.25L23 12.95v-3.3L8.84 17.2l-2.6-1.41V17L3.44 15.5v-1.22L1 12.95z',
+                    tv: 'M19.6 6.4v7.2H4.4V6.4h15.2zM2 4h2.4h15.2H22v2.4v7.2V16h-2.4H4.4H2v-2.4v-7.2V4zm5 16.2h10v-2.4H7v2.4z',
+                    hub: 'M12 5.13l6.6 4.4v9.07h-4.35v-6.1h-4.5v6.1H5.4V9.53l6.6-4.4zM9.75 21H5.4H3v-2.4V8.25l9-6l9 6V18.6V21h-2.4h-4.35h-4.5z',
+                    station:
+                        'm16.454,3.4996c0,1.23 -1.9942,2.2271 -4.4542,2.2271 -2.46,0 -4.4542,-0.9971 -4.4542,-2.2271s1.9942,-2.2271 4.4542,-2.2271c2.46,0 4.4542,0.9971 4.4542,2.2271zM18.7659,18.3616c0.2514,-0.4236 0.2331,-1.0072 0.2331,-2.236v-10.066c0,-0.1388 -0.0361,-0.2752 -0.1048,-0.3958s-0.1675,-0.2213 -0.2868,-0.2921c-0.1194,-0.0708 -0.2551,-0.1094 -0.3939,-0.112 -0.1387,-0.0025 -0.2758,0.0311 -0.3976,0.0975l-0.0704,0.0384c-3.0073,1.6403 -4.3768,2.4605 -5.7462,2.4605 -1.3695,0 -2.739,-0.8202 -5.7463,-2.4605l-0.0704,-0.0384c-0.1218,-0.0665 -0.2589,-0.1001 -0.3976,-0.0975 -0.1388,0.0025 -0.2745,0.0411 -0.3938,0.112 -0.1193,0.0708 -0.2182,0.1715 -0.2869,0.2921 -0.0687,0.1206 -0.1048,0.257 -0.1048,0.3958v10.066c0,1.229 -0.0183,1.8126 0.2331,2.2361 0.2514,0.4235 0.7725,0.6869 1.8514,1.2754 2.5725,1.4032 3.7439,2.1048 4.9153,2.1047 1.1712,0 2.3425,-0.7015 4.9142,-2.1043 1.0795,-0.5888 1.6008,-0.8523 1.8523,-1.2759z',
+                    station2:
+                        'm8.4897,3.8078c-0.4164,0.1864 -0.7401,0.3313 -0.9898,0.4862 -0.5817,0.3609 -0.0566,0.6464 0.2313,0.7626 3.6409,1.4686 5.111,2.0123 6.4594,1.7962 0.7603,-0.1218 1.4819,-0.4853 2.5322,-1.0608 0.6573,-0.3602 0.9884,-0.5985 0.1269,-1.0421 -0.312,-0.1607 -0.7566,-0.3262 -1.3895,-0.5574 -4.3376,-1.5844 -4.807,-1.3701 -6.4444,-0.6224 -0.1744,0.0796 -0.3623,0.1644 -0.5261,0.2377h-0zM16.7201,20.8098c1.8489,-0.8276 2.2799,-1.0205 2.2799,-3.2928v-10.022c0,-0.1382 -0.0473,-0.274 -0.1373,-0.3941s-0.2195,-0.2203 -0.3759,-0.2908c-0.1564,-0.0705 -0.3343,-0.1089 -0.5161,-0.1115 -0.1819,-0.0025 -0.3614,0.031 -0.5211,0.0971l-0.0923,0.0382c-1.502,0.842 -2.3794,1.3667 -3.3171,1.5181 -1.4591,0.2356 -3.0642,-0.433 -7.3956,-2.2173l-0.0923,-0.0382c-0.1597,-0.0662 -0.3392,-0.0996 -0.5211,-0.0971 -0.1819,0.0025 -0.3597,0.0409 -0.5161,0.1115 -0.1564,0.0705 -0.2859,0.1708 -0.3759,0.2909 -0.09,0.1201 -0.1373,0.2559 -0.1373,0.3941v10.022c0,0.1362 -0.0005,0.2648 -0.001,0.3863 -0.0085,2.0629 -0.0087,2.1084 2.7328,3.1098 5.5921,2.0427 6.1973,1.7663 8.3082,0.8024 0.0732,-0.0334 0.1483,-0.0677 0.2254,-0.1027 0.1597,-0.0725 0.3105,-0.14 0.4529,-0.2038z',
+                    chiron: 'm8.4,3h-0.0557c-1.0775,-0 -1.9665,-0 -2.6817,0.0774 -0.7461,0.0808 -1.4206,0.2555 -2.0138,0.6865 -0.3396,0.2467 -0.6382,0.5454 -0.8849,0.8849 -0.431,0.5932 -0.6057,1.2677 -0.6865,2.0138 -0.0775,0.7151 -0.0775,1.6041 -0.0774,2.6817v1.3114c-0,1.0775 -0,1.9665 0.0774,2.6817 0.0808,0.7461 0.2555,1.4206 0.6865,2.0137 0.2467,0.3396 0.5454,0.6383 0.8849,0.885 0.4135,0.3004 0.8665,0.4763 1.3557,0.5826 0.0183,1.4667 0.1098,2.3134 0.5684,2.9447 0.185,0.2546 0.409,0.4786 0.6637,0.6637 0.7886,0.5729 1.9135,0.5729 4.1634,0.5729h3.2c2.2498,0 3.3748,0 4.1634,-0.5729 0.2546,-0.1851 0.4786,-0.4091 0.6637,-0.6637 0.4586,-0.6313 0.5501,-1.478 0.5683,-2.9447 0.4893,-0.1063 0.9423,-0.2822 1.3557,-0.5826 0.3396,-0.2467 0.6383,-0.5454 0.885,-0.885 0.4309,-0.5931 0.6056,-1.2676 0.6865,-2.0137 0.0774,-0.7152 0.0774,-1.6042 0.0774,-2.6817v-1.3114c0,-1.0775 0,-1.9665 -0.0774,-2.6817 -0.0809,-0.7461 -0.2556,-1.4206 -0.6865,-2.0138 -0.2467,-0.3396 -0.5454,-0.6382 -0.885,-0.8849 -0.5931,-0.431 -1.2676,-0.6057 -2.0137,-0.6865 -0.7152,-0.0775 -1.6042,-0.0775 -2.6817,-0.0774h-7.2557zM15.665,15c1.1118,-0.0001 1.8736,-0.0026 2.4569,-0.0658 0.576,-0.0624 0.8583,-0.1742 1.0537,-0.3162 0.1698,-0.1233 0.3191,-0.2726 0.4424,-0.4424 0.142,-0.1954 0.2538,-0.4777 0.3162,-1.0537 0.0644,-0.5946 0.0658,-1.3747 0.0658,-2.5219v-1.2c0,-1.1472 -0.0014,-1.9273 -0.0658,-2.5219 -0.0624,-0.576 -0.1742,-0.8582 -0.3162,-1.0536 -0.1233,-0.1698 -0.2726,-0.3191 -0.4424,-0.4425 -0.1954,-0.142 -0.4777,-0.2538 -1.0537,-0.3162 -0.5946,-0.0644 -1.3747,-0.0658 -2.5219,-0.0658h-7.2c-1.1472,0 -1.9273,0.0014 -2.5219,0.0658 -0.576,0.0624 -0.8582,0.1742 -1.0536,0.3162 -0.1698,0.1234 -0.3191,0.2727 -0.4425,0.4425 -0.142,0.1954 -0.2538,0.4777 -0.3162,1.0536 -0.0644,0.5947 -0.0658,1.3747 -0.0658,2.5219v1.2c0,1.1472 0.0014,1.9273 0.0658,2.5219 0.0624,0.576 0.1742,0.8583 0.3162,1.0537 0.1234,0.1698 0.2727,0.3191 0.4425,0.4424 0.1954,0.142 0.4777,0.2538 1.0536,0.3162 0.5834,0.0632 1.3452,0.0657 2.457,0.0658h7.33z',
+                    cucumber:
+                        'm8.2522,6.6265 l2.4062,1.2031c0.8445,0.4223 1.8387,0.4223 2.6832,0l2.4062,-1.2031c0.5159,-0.258 0.5159,-0.9942 0,-1.2522l-2.4062,-1.2031c-0.8445,-0.4223 -1.8387,-0.4223 -2.6832,0l-2.4062,1.2031c-0.5159,0.258 -0.5159,0.9942 0,1.2522zM12,10.2496c-1.4143,0 -3.3087,-0.7801 -5.6832,-2.3403 -0.1386,-0.0911 -0.3009,-0.1396 -0.4668,-0.1396 -0.4694,0 -0.85,0.3806 -0.85,0.85v6.6321c0,0.8018 0.3845,1.5549 1.0339,2.025 2.5073,1.8153 4.4961,2.7229 5.9661,2.7229s3.4587,-0.9076 5.9661,-2.7229c0.6494,-0.4701 1.0339,-1.2232 1.0339,-2.025v-6.632c0,-0.1659 -0.0485,-0.3282 -0.1396,-0.4668 -0.2578,-0.3923 -0.7849,-0.5014 -1.1772,-0.2436 -2.3745,1.5602 -4.2689,2.3403 -5.6832,2.3403z',
+                    mini: 'm17.939,8.0749c0,1.64 -2.659,2.9695 -5.939,2.9695 -3.2799,0 -5.9389,-1.3295 -5.9389,-2.9695s2.6589,-2.9695 5.9389,-2.9695c3.28,0 5.939,1.3295 5.939,2.9695zM19.8807,11.0635c0.0781,0.1264 0.1194,0.272 0.1194,0.4206v4.3451c0,2.2093 -3.5817,4 -7.9999,4 -4.4183,0 -8.0001,-1.7908 -8.0001,-4v-4.3451c-0.0002,-0.1486 0.0411,-0.2944 0.1191,-0.4208 0.0781,-0.1265 0.1898,-0.2287 0.3227,-0.2952s0.2817,-0.0946 0.4298,-0.0813c0.148,0.0134 0.2894,0.0678 0.4082,0.1571 2.005,1.2692 4.3492,1.8975 6.7203,1.8011 2.371,0.0964 4.7151,-0.5319 6.7201,-1.8011 0.1189,-0.0891 0.2602,-0.1433 0.4081,-0.1566 0.148,-0.0133 0.2967,0.0148 0.4296,0.0813 0.1329,0.0664 0.2446,0.1686 0.3227,0.2949z',
+                },
+                pulseSyncRenderCastDeviceIcon = (e, t = '') =>
+                    (0, pulseSyncPlayerJsx.jsx)('span', {
+                        className: 'PulseSync_castPopoverItemIcon'.concat(t ? ' '.concat(t) : ''),
+                        'aria-hidden': !0,
+                        children: (0, pulseSyncPlayerJsx.jsx)('svg', {
+                            width: '32',
+                            height: '32',
+                            viewBox: '0 0 24 24',
+                            fill: 'none',
+                            xmlns: 'http://www.w3.org/2000/svg',
+                            children: (0, pulseSyncPlayerJsx.jsx)('path', {
+                                d: pulseSyncCastDeviceIconPath[pulseSyncGetCastDeviceIconKind(e)] ?? pulseSyncCastDeviceIconPath.station,
+                                fill: 'currentColor',
+                                fillRule: 'evenodd',
+                                clipRule: 'evenodd',
+                            }),
+                        }),
+                    }),
+                pulseSyncGetActiveCastDeviceRow = (e, t) => (t ? e.find((e) => !e.isThisDevice && e.accountSpeaker?.id === t) : null),
+                pulseSyncCastConnectDelay = (e) => new Promise((t) => setTimeout(t, e)),
+                pulseSyncSelectYandexStationSpeaker = async (e) => {
+                    let t = null;
+                    for (let a = 0; a <= 3; a += 1) {
+                        try {
+                            if (
+                                ((t = window.pulseSyncYandexStationCast?.activate
+                                    ? await window.pulseSyncYandexStationCast.activate(e)
+                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', e)),
+                                t?.ok)
+                            )
+                                return t;
+                        } catch (e) {
+                            t = {
+                                ok: !1,
+                                error: e,
+                            };
+                        }
+                        a < 3 && (await pulseSyncCastConnectDelay(600));
+                    }
+                    return (
+                        t ?? {
+                            ok: !1,
+                        }
+                    );
+                },
+                pulseSyncIsYandexStationCastEnabled = () => {
+                    try {
+                        return window.__pulseSyncYandexStationCastEnabled ?? window.ENABLE_YANDEX_STATION_CAST?.() ?? !0;
+                    } catch (e) {
+                        return !0;
+                    }
+                },
+                pulseSyncApplyYandexStationState = (e, t) => {
+                    const a = Array.isArray(e?.accountSpeakers) ? e.accountSpeakers : [],
+                        i = Array.isArray(e?.localSpeakers) ? e.localSpeakers : [];
+                    t.setActiveSpeakerId(e?.activeSpeaker?.accountSpeaker?.id ?? window.pulseSyncYandexStationCast?.activeSpeakerId ?? null);
+                    t.setDeviceRows([
+                        {
+                            isThisDevice: !0,
+                        },
+                        ...pulseSyncBuildCastDeviceRows(a, i),
+                    ]);
+                    t.setDevicesLoaded(Boolean(e?.firstFlowCompleted));
+                    t.setDevicesLoading(Boolean(e?.refreshing));
+                },
+                pulseSyncGetCastPopoverShift = (e) => {
+                    const t = e?.getBoundingClientRect?.();
+                    if (!t) return 0;
+                    const a = 320,
+                        i = 12,
+                        n = window.innerWidth || document.documentElement?.clientWidth || a,
+                        r = t.left + t.width / 2,
+                        l = r - a / 2,
+                        s = r + a / 2;
+                    if (l < i) return i - l;
+                    if (s > n - i) return n - i - s;
+                    return 0;
+                },
+                pulseSyncYandexStationCastControl = (0, v.PA)((e) => {
+                    let { buttonClassName: t, disabled: a } = e,
+                        { formatMessage: i } = (0, pulseSyncPlayerIntl.A)(),
+                        [r, l] = (0, pulseSyncPlayerReact.useState)(!1),
+                        [s, d] = (0, pulseSyncPlayerReact.useState)(!1),
+                        [_, m] = (0, pulseSyncPlayerReact.useState)(0),
+                        [v, y] = (0, pulseSyncPlayerReact.useState)([]),
+                        [g, b] = (0, pulseSyncPlayerReact.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
+                        [x, A] = (0, pulseSyncPlayerReact.useState)(null),
+                        [f, C] = (0, pulseSyncPlayerReact.useState)(null),
+                        [k, P] = (0, pulseSyncPlayerReact.useState)(!1),
+                        [j, S] = (0, pulseSyncPlayerReact.useState)(!1),
+                        [castHoveredDeviceKey, setCastHoveredDeviceKey] = (0, pulseSyncPlayerReact.useState)(null),
+                        [castEnabled, setCastEnabled] = (0, pulseSyncPlayerReact.useState)(pulseSyncIsYandexStationCastEnabled()),
+                        I = (0, pulseSyncPlayerReact.useRef)(null),
+                        w = (0, pulseSyncPlayerReact.useRef)(null),
+                        L = (0, pulseSyncPlayerReact.useCallback)(async () => {
+                            if (!castEnabled) {
+                                y([]);
+                                S(!1);
+                                P(!1);
+                                return;
+                            }
+                            try {
+                                P(!0);
+                                const e = await (window.desktopEvents?.invoke?.('YANDEX_STATION_STATE') ?? Promise.resolve(null));
+                                pulseSyncApplyYandexStationState(e, {
+                                    setActiveSpeakerId: b,
+                                    setDeviceRows: y,
+                                    setDevicesLoaded: S,
+                                    setDevicesLoading: P,
+                                });
+                            } catch (e) {
+                                (console.warn('Failed to load Yandex Station cast devices', e), y([]), S(!1), P(!1));
+                            }
+                        }, [castEnabled]),
+                        M = (0, pulseSyncPlayerReact.useCallback)(() => {
+                            l(!1);
+                            clearTimeout(w.current);
+                            w.current = setTimeout(() => {
+                                d(!1);
+                                setCastHoveredDeviceKey(null);
+                            }, 160);
+                        }, []),
+                        B = (0, pulseSyncPlayerReact.useCallback)(() => {
+                            m(pulseSyncGetCastPopoverShift(I.current));
+                        }, []),
+                        O = (0, pulseSyncPlayerReact.useCallback)(() => {
+                            clearTimeout(w.current);
+                            d(!0);
+                            requestAnimationFrame(() => {
+                                B();
+                                l(!0);
+                            });
+                        }, [B]),
+                        V = (0, pulseSyncPlayerReact.useCallback)(() => {
+                            r ? M() : O();
+                        }, [r, M, O]);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        void L();
+                    }, [L]);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        const e = (e, t) => {
+                            pulseSyncApplyYandexStationState(t, {
+                                setActiveSpeakerId: b,
+                                setDeviceRows: y,
+                                setDevicesLoaded: S,
+                                setDevicesLoading: P,
+                            });
+                        };
+                        return window.desktopEvents?.on?.('YANDEX_STATION_STATE', e);
+                    }, []);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        const e = (e) => {
+                            b(e.detail?.activeSpeakerId ?? null);
+                        };
+                        return (
+                            window.addEventListener('pulse-sync-yandex-station-cast-change', e),
+                            () => {
+                                window.removeEventListener('pulse-sync-yandex-station-cast-change', e);
+                            }
+                        );
+                    }, []);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        const e = (e) => {
+                            const t = e.detail?.enabled ?? pulseSyncIsYandexStationCastEnabled();
+                            setCastEnabled(t);
+                            t ? (S(!1), void L()) : (M(), y([]), b(null), S(!1), P(!1));
+                        };
+                        return (
+                            window.addEventListener('pulse-sync-yandex-station-cast-setting-change', e),
+                            () => {
+                                window.removeEventListener('pulse-sync-yandex-station-cast-setting-change', e);
+                            }
+                        );
+                    }, [M, L]);
+                    (0, pulseSyncPlayerReact.useEffect)(() => () => clearTimeout(w.current), []);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        if (!s) return;
+                        const e = (e) => {
+                            I.current?.contains?.(e.target) || M();
+                        };
+                        return (
+                            document.addEventListener('pointerdown', e, !0),
+                            () => {
+                                document.removeEventListener('pointerdown', e, !0);
+                            }
+                        );
+                    }, [s, M]);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        if (!s) return;
+                        const e = () => B();
+                        return (
+                            B(),
+                            window.addEventListener('resize', e),
+                            () => {
+                                window.removeEventListener('resize', e);
+                            }
+                        );
+                    }, [s, B]);
+                    return a || !castEnabled
+                        ? null
+                        : (0, pulseSyncPlayerJsx.jsxs)('div', {
+                              ref: I,
+                              style: {
+                                  position: 'relative',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                              },
+                              children: [
+                                  (0, pulseSyncPlayerJsx.jsx)(pulseSyncPlayerButton.$, {
+                                      className: t,
+                                      radius: 'round',
+                                      size: 'xxxs',
+                                      variant: 'text',
+                                      withRipple: !1,
+                                      'aria-label': i({
+                                          id: 'player-actions.cast',
+                                      }),
+                                      icon: g
+                                          ? pulseSyncRenderCastDeviceIcon(pulseSyncGetActiveCastDeviceRow(v, g), 'PulseSync_castPlayerButtonIcon')
+                                          : (0, pulseSyncPlayerJsx.jsx)(S.I, {
+                                                variant: 'cast',
+                                                size: 'xs',
+                                            }),
+                                      onClick: V,
+                                      style: g
+                                          ? {
+                                                color: 'var(--ym-controls-color-primary-text-hovered)',
+                                            }
+                                          : void 0,
+                                  }),
+                                  s &&
+                                      (0, pulseSyncPlayerJsx.jsx)('div', {
+                                          className: 'PulseSync_castPopover',
+                                          style: {
+                                              opacity: r ? 1 : 0,
+                                              transform: 'translateX('.concat(_, 'px) ').concat(r ? 'translateY(0)' : 'translateY(10px)'),
+                                              pointerEvents: r ? 'auto' : 'none',
+                                          },
+                                          children: !j
+                                              ? (0, pulseSyncPlayerJsx.jsx)('div', {
+                                                    className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_shimmer',
+                                                    children: 'Поиск устройств...',
+                                                })
+                                              : (0, pulseSyncPlayerJsx.jsxs)(
+                                                    'div',
+                                                    {
+                                                        className: 'PulseSync_castPopoverContent',
+                                                        children: [
+                                                            (0, pulseSyncPlayerJsx.jsx)(
+                                                                'div',
+                                                                {
+                                                                    className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_refreshing'.concat(
+                                                                        k ? ' PulseSync_castPopoverStatus_visible' : '',
+                                                                    ),
+                                                                    children: 'Обновляем список устройств...',
+                                                                },
+                                                                'cast-refreshing',
+                                                            ),
+                                                            v.length
+                                                                ? v.map((e) => {
+                                                                      const t = !e.isThisDevice && !e.canUseLocal,
+                                                                          a = e.isThisDevice ? void 0 : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
+                                                                          r = e.accountSpeaker?.id,
+                                                                          isConnecting = !e.isThisDevice && x === r && g !== r,
+                                                                          hasConnectionError = !e.isThisDevice && f === r && g !== r,
+                                                                          isDisabled = t || !!x,
+                                                                          isConnected = (e.isThisDevice && !g) || (!e.isThisDevice && g === r),
+                                                                          i = e.isThisDevice
+                                                                              ? g
+                                                                                  ? 'Отключить колонку'
+                                                                                  : 'Сейчас выбрано'
+                                                                              : isConnecting
+                                                                                ? 'Подключение...'
+                                                                                : hasConnectionError
+                                                                                  ? 'Ошибка подключения'
+                                                                                  : g === r
+                                                                                    ? 'Подключено'
+                                                                                    : e.canUseLocal
+                                                                                      ? 'В сети'
+                                                                                      : 'Вне локальной сети',
+                                                                          n = e.isThisDevice
+                                                                              ? 'pulse-sync-this-device'
+                                                                              : (e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId);
+                                                                      return (0, pulseSyncPlayerJsx.jsxs)('button', {
+                                                                          key: n,
+                                                                          type: 'button',
+                                                                          className: 'PulseSync_castPopoverItem'.concat(
+                                                                              isConnected || (!isDisabled && castHoveredDeviceKey === n)
+                                                                                  ? ' PulseSync_castPopoverItem_active'
+                                                                                  : '',
+                                                                          ),
+                                                                          disabled: isDisabled,
+                                                                          onClick: isDisabled
+                                                                              ? void 0
+                                                                              : async () => {
+                                                                                    if (e.isThisDevice) {
+                                                                                        window.pulseSyncYandexStationCast?.clear
+                                                                                            ? await window.pulseSyncYandexStationCast.clear()
+                                                                                            : await window.desktopEvents?.invoke?.('YANDEX_STATION_CLEAR_SPEAKER');
+                                                                                        b(null);
+                                                                                        A(null);
+                                                                                        C(null);
+                                                                                        M();
+                                                                                        return;
+                                                                                    }
+                                                                                    const t = e.accountSpeaker?.id;
+                                                                                    if (!t) return;
+                                                                                    A(t);
+                                                                                    C(null);
+                                                                                    try {
+                                                                                        const e = await pulseSyncSelectYandexStationSpeaker(t);
+                                                                                        e?.ok
+                                                                                            ? (b(t), C(null), M())
+                                                                                            : (C(t), console.warn('Failed to select Yandex Station cast device', e));
+                                                                                    } catch (e) {
+                                                                                        C(t);
+                                                                                        console.warn('Failed to select Yandex Station cast device', e);
+                                                                                    } finally {
+                                                                                        A(null);
+                                                                                    }
+                                                                                },
+                                                                          onMouseEnter: isDisabled ? void 0 : () => setCastHoveredDeviceKey(n),
+                                                                          onMouseLeave: isDisabled ? void 0 : () => setCastHoveredDeviceKey(null),
+                                                                          children: [
+                                                                              pulseSyncRenderCastDeviceIcon(e),
+                                                                              (0, pulseSyncPlayerJsx.jsx)('div', {
+                                                                                  style: {
+                                                                                      display: 'flex',
+                                                                                      alignItems: 'flex-start',
+                                                                                      flexDirection: 'column',
+                                                                                      minWidth: 0,
+                                                                                      flex: '1 1 auto',
+                                                                                  },
+                                                                                  children: [
+                                                                                      (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                          style: {
+                                                                                              display: 'flex',
+                                                                                              gap: '5px',
+                                                                                              alignItems: 'baseline',
+                                                                                              minWidth: 0,
+                                                                                              maxWidth: '100%',
+                                                                                          },
+                                                                                          children: [
+                                                                                              (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                                  className: 'PulseSync_castPopoverItemTitle',
+                                                                                                  children: e.isThisDevice
+                                                                                                      ? 'Это устройство'
+                                                                                                      : (e.accountSpeaker?.name ??
+                                                                                                        e.accountSpeaker?.id ??
+                                                                                                        'Yandex Station'),
+                                                                                              }),
+                                                                                              a &&
+                                                                                                  (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                                      className:
+                                                                                                          'PulseSync_castPopoverItemMeta PulseSync_castPopoverItemRoom',
+                                                                                                      children: (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                                          className: 'PulseSync_castPopoverItemRoomText',
+                                                                                                          children: a,
+                                                                                                      }),
+                                                                                                  }),
+                                                                                          ],
+                                                                                      }),
+                                                                                      (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                          className: 'PulseSync_castPopoverItemMeta'
+                                                                                              .concat(isConnecting ? ' PulseSync_castPopoverItemMeta_shimmer' : '')
+                                                                                              .concat(hasConnectionError ? ' PulseSync_castPopoverItemMeta_error' : ''),
+                                                                                          children: i,
+                                                                                      }),
+                                                                                  ],
+                                                                              }),
+                                                                              isConnected &&
+                                                                                  (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                      children: (0, pulseSyncPlayerJsx.jsx)('svg', {
+                                                                                          width: '16',
+                                                                                          height: '16',
+                                                                                          fill: 'currentColor',
+                                                                                          xmlns: 'http://www.w3.org/2000/svg',
+                                                                                          children: (0, pulseSyncPlayerJsx.jsx)('path', {
+                                                                                              d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z',
+                                                                                          }),
+                                                                                      }),
+                                                                                  }),
+                                                                          ],
+                                                                      });
+                                                                  })
+                                                                : (0, pulseSyncPlayerJsx.jsx)(
+                                                                      'div',
+                                                                      {
+                                                                          className: 'PulseSync_castPopoverStatus',
+                                                                          children: 'Устройства не найдены',
+                                                                      },
+                                                                      'cast-empty',
+                                                                  ),
+                                                        ],
+                                                    },
+                                                    'cast-content',
+                                                ),
+                                      }),
+                              ],
+                          });
+                });
             let nl = (0, v.PA)((e) => {
                 var t;
                 let {
@@ -7763,6 +8257,10 @@
                                                         V && (0, m.jsx)(i6.i, { iconSize: 'l' }),
                                                         ea,
                                                         en,
+                                                        (0, m.jsx)(pulseSyncYandexStationCastControl, {
+                                                            buttonClassName: no().settingsButton,
+                                                            disabled: w.isAdvertShown,
+                                                        }),
                                                         (0, m.jsx)(nr.p$, {
                                                             placement: 'bottom',
                                                             open: F,
@@ -8904,10 +9402,16 @@
                                                         externalSetIsCollapsed: O,
                                                     }),
                                                 (0, m.jsx)(em, {
-                                                    className: (0, p.$)($().content, { [$().content_withPlayerBar]: b && !r, [$().content_withAxeBanner]: j.isVisible }),
+                                                    className: (0, p.$)($().content, {
+                                                        [$().content_withPlayerBar]: b && (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()),
+                                                        [$().content_withAxeBanner]: j.isVisible,
+                                                    }),
                                                     children: (0, m.jsxs)(n7.ErrorBoundary, { fallback: nb.SomethingWentWrong, children: [n, (0, m.jsx)(rm, {})] }, d),
                                                 }),
-                                                !b && V && !r && (0, m.jsx)(nV.n, { pageId: tQ._Q.PLAYER, children: (0, m.jsx)(nm, { className: $().playerBar }) }),
+                                                !b &&
+                                                    V &&
+                                                    (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
+                                                    (0, m.jsx)(nV.n, { pageId: tQ._Q.PLAYER, children: (0, m.jsx)(nm, { className: $().playerBar }) }),
                                                 b &&
                                                     V &&
                                                     (0, m.jsxs)('div', {
@@ -8915,7 +9419,8 @@
                                                         className: (0, p.$)($().compositePlayerBar, { [$().compositePlayerBar_withNewVibe]: r }),
                                                         children: [
                                                             F && (0, m.jsx)(n8, {}),
-                                                            !r && (0, m.jsx)(nV.n, { pageId: tQ._Q.PLAYER, children: (0, m.jsx)(nm, { className: $().playerBar }) }),
+                                                            (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
+                                                                (0, m.jsx)(nV.n, { pageId: tQ._Q.PLAYER, children: (0, m.jsx)(nm, { className: $().playerBar }) }),
                                                             (0, m.jsx)(a7, {
                                                                 className: (0, p.$)(s.navbar, {
                                                                     [s.navbar_application_windows]: f,
@@ -8946,7 +9451,7 @@
                     { className: r, children: s } = e,
                     o = (0, h.usePathname)(),
                     {
-                        settings: { isMobile: l, isWindowsApplication: d, isLinuxApplication: c },
+                        settings: { isMobile: l, isWindowsApplication: d, isLinuxApplication: c, isMacOSApplication: isMacOS },
                         redAlert: u,
                         communication: _,
                         advertBanners: {
@@ -8957,9 +9462,7 @@
                         vibe: g,
                         words: A,
                     } = (0, L.g)(),
-                    C =
-                        (o === F.Z.main.href || o === F.Z.video.href) &&
-                        (f.checkExperiment(K.z.WebNextNewWaveTab, 'on') || f.checkExperiment(K.z.WebNextNewWaveTab, 'on1'));
+                    C = o === F.Z.main.href || o === F.Z.video.href;
                 H(U.S.Dark, C);
                 let N =
                         u.isVisible ||
@@ -8982,7 +9485,18 @@
                         (T = rb().rootNewVibe_withBarBelow),
                         (S = rb().rootNewVibe));
                 }
-                let E = (0, p.$)($().root, S, { [rb().root_applicationPreserveTitleBar]: d || c, [T]: N, [$().root_withAxeBanner]: v.isVisible }, r);
+                let E = (0, p.$)(
+                    $().root,
+                    S,
+                    {
+                        [rb().root_applicationPreserveTitleBar]: d || c || isMacOS,
+                        [T]: N,
+                        [$().root_withAxeBanner]: v.isVisible,
+                        modSettings_alwaysWideBar: window.ALWAYS_WIDE_BAR?.(),
+                        modSettings_showOldPlayerBarOnNewWave: window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.(),
+                    },
+                    r,
+                );
                 return (0, m.jsxs)(rv, { isNewWaveMainTabActive: C, layoutChromeStyles: y, rootClassName: E, rootStyle: n, children: [s, C && (0, m.jsx)(M, {})] });
             });
         },
