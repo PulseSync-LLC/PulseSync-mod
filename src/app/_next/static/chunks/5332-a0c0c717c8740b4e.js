@@ -3032,31 +3032,54 @@
                             (0, c.jsxs)('div', {
                                 className: (0, d.$)(tU().progress, { [tU().progress_visible]: !O }),
                                 children: [
-                                    pulseSyncImprovedWaveLayoutEnabled &&
-                                        (0, c.jsx)(pulseSyncWaveButton.$, {
-                                            className: tU().button,
-                                            radius: 'round',
-                                            size: 'xxxs',
-                                            variant: 'text',
-                                            disabled: !w || s.isGenerativeContext || o.isAdvertShown,
-                                            withRipple: false,
-                                            'aria-label': b({ id: 'player-actions.fullscreen-button' }),
-                                            icon: (0, c.jsx)(X.I, { variant: 'fullscreen', size: 'xs' }),
-                                            onClick: M,
-                                        }),
-                                    H,
-                                    K,
-                                    (0, c.jsx)(t9, {}),
-                                    (0, c.jsx)(tl.c, {
-                                        className: (0, d.$)(tU().button, { [tU().likeButton_mobilePaused]: u && !s.isPlaying }),
-                                        disabled: !w || o.isAdvertShown,
-                                        isLiked: x,
-                                        onClick: V,
-                                        iconSize: 'xs',
+                                    (0, c.jsxs)('div', {
+                                        className: 'PulseSync_waveSideControls PulseSync_waveSideControls_left',
+                                        children: [
+                                            pulseSyncImprovedWaveLayoutEnabled &&
+                                                (0, c.jsx)(pulseSyncWaveButton.$, {
+                                                    className: tU().button,
+                                                    radius: 'round',
+                                                    size: 'xxxs',
+                                                    variant: 'text',
+                                                    disabled: !w || s.isGenerativeContext || o.isAdvertShown,
+                                                    withRipple: false,
+                                                    'aria-label': b({
+                                                        id: 'player-actions.fullscreen-button',
+                                                    }),
+                                                    icon: (0, c.jsx)(X.I, {
+                                                        variant: 'fullscreen',
+                                                        size: 'xs',
+                                                    }),
+                                                    onClick: M,
+                                                }),
+                                            H,
+                                            K,
+                                        ],
                                     }),
-                                    (0, c.jsx)(pulseSyncWaveCastControl, { buttonClassName: tU().button, disabled: o.isAdvertShown }),
-                                    !u &&
-                                        (0, c.jsx)(tY, { buttonClassName: (0, d.$)(tU().button, tU().important), 'data-test-id': g.e8.player.VIBE_CONTEXT_MENU_BUTTON }),
+                                    (0, c.jsx)(t9, {}),
+                                    (0, c.jsxs)('div', {
+                                        className: 'PulseSync_waveSideControls PulseSync_waveSideControls_right',
+                                        children: [
+                                            (0, c.jsx)(tl.c, {
+                                                className: (0, d.$)(tU().button, {
+                                                    [tU().likeButton_mobilePaused]: u && !s.isPlaying,
+                                                }),
+                                                disabled: !w || o.isAdvertShown,
+                                                isLiked: x,
+                                                onClick: V,
+                                                iconSize: 'xs',
+                                            }),
+                                            (0, c.jsx)(pulseSyncWaveCastControl, {
+                                                buttonClassName: tU().button,
+                                                disabled: o.isAdvertShown,
+                                            }),
+                                            !u &&
+                                                (0, c.jsx)(tY, {
+                                                    buttonClassName: (0, d.$)(tU().button, tU().important),
+                                                    'data-test-id': g.e8.player.VIBE_CONTEXT_MENU_BUTTON,
+                                                }),
+                                        ],
+                                    }),
                                     (0, c.jsx)(tu.e, {}),
                                 ],
                             }),

@@ -4218,3 +4218,40 @@
         transform: translateX(min(0px, calc(-100% + 7.5rem)));
     }
 }
+
+.PulseSync_waveSideControls {
+    display: contents;
+}
+@media only screen and (min-width: 768px) {
+    .VibePlayerBar_progress__Cri6E {
+        --pulsesync-wave-side-width: calc(3 * (var(--ym-icon-size-xs) + 2 * var(--ym-spacer-size-m)) + 2 * var(--ym-spacer-size-xxxs));
+        display: grid;
+        grid-template-columns: var(--pulsesync-wave-side-width) minmax(0, 1fr) var(--pulsesync-wave-side-width);
+    }
+    .PulseSync_waveSideControls {
+        align-items: center;
+        display: flex;
+        gap: var(--ym-spacer-size-xxxs);
+        min-width: 0;
+    }
+    .PulseSync_waveSideControls_left {
+        justify-content: flex-end;
+    }
+    .PulseSync_waveSideControls_right {
+        justify-content: flex-start;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 1000px) {
+    .VibePlayerBar_progress__Cri6E {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        max-height: none;
+    }
+    .VibePlayerBar_progress__Cri6E > .VibePlayerbarMeta_root___dH5G {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        height: 4rem;
+    }
+    .PulseSync_waveSideControls {
+        grid-row: 2;
+    }
+}
