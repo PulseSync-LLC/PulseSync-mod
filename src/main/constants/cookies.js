@@ -4,3 +4,5 @@ exports.YANDEX_ID = exports.PASSPORT_LOGIN_DOMAIN = exports.PASSPORT_LOGIN = voi
 exports.PASSPORT_LOGIN = 'yandex_login';
 exports.PASSPORT_LOGIN_DOMAIN = '.yandex.ru';
 exports.YANDEX_ID = 'yandexuid';
+
+exports.PASSPORT_SESSION = 'Session_id';

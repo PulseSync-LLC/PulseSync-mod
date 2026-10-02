@@ -382,7 +382,7 @@ exports.isRevisionChanged = isRevisionChanged;
 
 const getUuid = () => {
     let uuid = getStore(store_js_1.StoreKeys.UUID);
-    if (!uuid) {
+    if (typeof uuid !== 'string' || uuid.length === 0) {
         uuid = (0, uuid_1.v4)();
         setStore(store_js_1.StoreKeys.UUID, uuid);
     }
