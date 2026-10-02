@@ -784,6 +784,7 @@
         },
         41707: (e, t, i) => {
             'use strict';
+            var pulseSyncPlaylistDownloadIcons = i(66738);
             i.d(t, { B: () => Q });
             var l = i(25839),
                 r = i(82298),
@@ -867,6 +868,12 @@
                         E && (0, l.jsx)(Y.d, { entityVariant: $.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : L }),
                         !p && (0, l.jsx)(X.L, { onClick: k, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, l.jsx)(U.T, { onClick: x, isLiked: i.isLiked, disabled: !v.isAuthorized }),
+                        (i.tracksCount ?? 1) > 0 &&
+                            (0, l.jsx)(W.Dr, {
+                                onClick: i.downloadToFile,
+                                icon: (0, l.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: 'download', size: 'xxs' }),
+                                children: 'Скачать в файл',
+                            }),
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, l.jsx)(G.N, { onClick: P, disabled: !i.isAvailable }),
                     ],
                 });

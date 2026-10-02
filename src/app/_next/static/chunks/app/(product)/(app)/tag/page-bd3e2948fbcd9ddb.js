@@ -1021,6 +1021,7 @@
         },
         41707: (e, t, i) => {
             'use strict';
+            var pulseSyncPlaylistDownloadIcons = i(66738);
             i.d(t, { B: () => Z });
             var r = i(25839),
                 l = i(82298),
@@ -1104,6 +1105,12 @@
                         P && (0, r.jsx)(H.d, { entityVariant: z.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : A }),
                         !_ && (0, r.jsx)(X.L, { onClick: C, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, r.jsx)(V.T, { onClick: v, isLiked: i.isLiked, disabled: !h.isAuthorized }),
+                        (i.tracksCount ?? 1) > 0 &&
+                            (0, r.jsx)(U.Dr, {
+                                onClick: i.downloadToFile,
+                                icon: (0, r.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: 'download', size: 'xxs' }),
+                                children: 'Скачать в файл',
+                            }),
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, r.jsx)($.N, { onClick: R, disabled: !i.isAvailable }),
                     ],
                 });
@@ -1524,6 +1531,21 @@
                             l.error(e);
                         }
                         return ((e.visibility = c), o.F.ERROR);
+                    }),
+                    downloadToFile: (0, r.L3)(function* () {
+                        if (!(0, r._n)(e)) return;
+                        let { usersResource: i, modelActionsLogger: t } = (0, r._$)(e);
+                        try {
+                            let { tracks: r = [] } = yield i.getPlaylistWithTracksIds({
+                                    userId: String(e.uid),
+                                    playlistKind: e.kind,
+                                    resumeStream: !1,
+                                }),
+                                n = r.map((e) => (null == e?.id ? null : e.albumId ? ''.concat(e.id, ':').concat(e.albumId) : String(e.id))).filter(Boolean);
+                            n.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', n, 'playlist', e.title || '');
+                        } catch (e) {
+                            t.error(e);
+                        }
                     }),
                     getKey: (t) => ''.concat(t, '_').concat(e.id),
                 }));

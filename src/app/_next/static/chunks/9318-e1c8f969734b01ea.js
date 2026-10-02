@@ -2565,6 +2565,7 @@
                             playlist: {
                                 filters: { activeFilter: C, analyticsParamsActiveFilterIndex: x },
                                 items: P,
+                                trackIds: playlistTrackIds,
                             },
                             user: E,
                             experiments: T,
@@ -2666,6 +2667,12 @@
                             (0, i.jsx)(as, { sourcePlaylistUuid: u.uuid }),
                             !A && (0, i.jsx)(aE.L, { onClick: I, isPinned: u.isPinned }),
                             !u.isFavouritePlaylist && (0, i.jsx)(aP.T, { onClick: L, isLiked: u.isLiked, disabled: !E.isAuthorized }),
+                            playlistTrackIds.length > 0 &&
+                                (0, i.jsx)(ts.Dr, {
+                                    onClick: () => window.desktopEvents?.send?.('DOWNLOAD_TRACKS', playlistTrackIds, 'playlist', u.title || ''),
+                                    icon: (0, i.jsx)(eq.I, { variant: 'download', size: 'xxs' }),
+                                    children: 'Скачать в файл',
+                                }),
                             (null == (r = u.trailer) ? void 0 : r.isAvailable) && (0, i.jsx)(ab.N, { onClick: ee }),
                             (0, i.jsx)(aS.C, { disabled: !u.isAvailable, onClick: J, variant: af.I.PLAYLIST }),
                             U &&

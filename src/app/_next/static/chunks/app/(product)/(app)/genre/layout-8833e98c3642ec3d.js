@@ -1063,6 +1063,21 @@
                         }
                         return ((e.visibility = u), l.F.ERROR);
                     }),
+                    downloadToFile: (0, s.L3)(function* () {
+                        if (!(0, s._n)(e)) return;
+                        let { usersResource: i, modelActionsLogger: t } = (0, s._$)(e);
+                        try {
+                            let { tracks: r = [] } = yield i.getPlaylistWithTracksIds({
+                                    userId: String(e.uid),
+                                    playlistKind: e.kind,
+                                    resumeStream: !1,
+                                }),
+                                n = r.map((e) => (null == e?.id ? null : e.albumId ? ''.concat(e.id, ':').concat(e.albumId) : String(e.id))).filter(Boolean);
+                            n.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', n, 'playlist', e.title || '');
+                        } catch (e) {
+                            t.error(e);
+                        }
+                    }),
                     getKey: (t) => ''.concat(t, '_').concat(e.id),
                 }));
         },
