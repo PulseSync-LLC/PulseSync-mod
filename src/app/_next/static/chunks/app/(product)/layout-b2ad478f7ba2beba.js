@@ -8661,8 +8661,30 @@
                     o = rT(void 0 !== n ? r.get(n) : void 0, i);
                 return { type: q.z4.Unloaded, meta: { id: a.playable_id, albumId: a.album_id_optional }, wasPlayed: s, sourceContextData: o };
             }
+            window.onRemoteDeviceConnected ??= [];
+            window.onRemoteDeviceDisconnected ??= [];
             class rw {
                 onYnisonStateUpdated(e) {
+                    const remoteControlEnabled = window.ENABLE_YNISON_REMOTE_CONTROL;
+                    const localDeviceId = window.ynison?.connector?.config?.device?.device_id;
+                    const sourceDeviceId = e.state.player_state?.status?.version?.device_id;
+                    const currentStatus = this.playback.state.playerState.status.value;
+                    const deviceMatches = !!localDeviceId && e.state.active_device_id_optional === localDeviceId;
+                    const selfState = !!localDeviceId && sourceDeviceId === localDeviceId;
+                    const idleStatuses = [q.MT.ENDED, q.MT.IDLE, q.MT.STOPPED, q.MT.MEDIA_ELEMENT_ERROR];
+                    const canReportRemote = remoteControlEnabled
+                        ? this.variables.shouldApplyState && ((!selfState && deviceMatches) || idleStatuses.includes(currentStatus))
+                        : this.variables.shouldApplyState && [...idleStatuses, q.MT.PAUSED].includes(currentStatus);
+                    if (canReportRemote) {
+                        if (remoteControlEnabled && sourceDeviceId && !selfState) {
+                            const remoteDevice = e.state.devices?.find((device) => device.info?.device_id === sourceDeviceId);
+                            window.onRemoteDeviceConnected.forEach((listener) => listener(remoteDevice));
+                            window.remoteDeviceConnected = true;
+                        }
+                    } else if (remoteControlEnabled && localDeviceId && !deviceMatches) {
+                        window.onRemoteDeviceDisconnected.forEach((listener) => listener());
+                        window.remoteDeviceConnected = false;
+                    }
                     var t;
                     if (this.variables.shouldApplyState) {
                         if (this.shouldRestoreMusicAsVibe(e.state) && (null == (t = e.options) ? void 0 : t.isStateForRestore))
@@ -10873,7 +10895,7 @@
                             () => {
                                 var e, t;
                                 let a = (null == (t = s.stateController.fullState.diff.player_state) || null == (e = t.status) ? void 0 : e.paused) === !1;
-                                !s.isActive && a && s.interceptActivity();
+                                !s.isActive && a && (window.YNISON_INTERCEPT_PLAYBACK ?? false) && s.interceptActivity();
                             },
                             'App',
                         );

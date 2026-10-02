@@ -2126,6 +2126,7 @@
                                 sessionId: n,
                             },
                         })),
+                            (window.ynison = { connector: this.connector, state: this.stateController }),
                             (this.metricsController = new eT({
                                 transports: e.metricsTransport,
                                 sessionId: n,
@@ -2210,6 +2211,10 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
+                                const sourceDeviceId = e.rawData?.player_state?.status?.version?.device_id;
+                                if (sourceDeviceId && sourceDeviceId !== this.deviceConfig.info.device_id) {
+                                    window.desktopEvents?.send?.('YNISON_STATE', { rawData: e.rawData });
+                                }
                                 var t = this.getMessageContext(e);
                                 if ((this.updateFullStateCompletion(t), !this.shouldIgnoreMessage(t))) {
                                     var n = this.processMessageState(e, t);
@@ -2365,7 +2370,7 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
-                                return this.isSpectator ? eg(eg({}, e), { paused: !0 }) : e;
+                                return this.isSpectator || !this.isActive ? eg(eg({}, e), { paused: !0 }) : e;
                             },
                         }),
                         Object.defineProperty(e.prototype, 'createOutgoingDeviceData', {
