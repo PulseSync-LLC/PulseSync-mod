@@ -103,6 +103,150 @@
             var n,
                 o = a(25839),
                 r = a(74631);
+            var pulseToastReact = a(74631),
+                pulseToastJsx = a(25839),
+                pulseToastNotifications = a(92942),
+                pulseToastContainers = a(91149),
+                pulseToastText = a(4254),
+                pulseToastButton = a(4071),
+                pulseToastBase = a(51790),
+                pulseToastClassNames = a(82298),
+                pulseToastStylesModule = a(50175),
+                pulseToastStyles = a.n(pulseToastStylesModule);
+            const PulseSyncProgressToast = (e) => {
+                let { closeToast: t, message: n, buttonLabel: o, onButtonClick: l, disabled: u = false, dismissOnButtonClick: d = false, operation } = e;
+                const [h, v] = pulseToastReact.useState(operation.progress),
+                    [y, g] = pulseToastReact.useState(operation.label);
+                let I = (0, pulseToastReact.useCallback)(() => {
+                        (null == l || l(), d && (null == t || t()));
+                    }, [d, l, t]),
+                    C = (0, pulseToastReact.useMemo)(
+                        () =>
+                            (0, pulseToastJsx.jsxs)('div', {
+                                className: pulseToastStyles().message,
+                                children: [
+                                    (0, pulseToastJsx.jsx)(pulseToastText.HL, {
+                                        className: pulseToastStyles().text,
+                                        variant: 'div',
+                                        type: 'controls',
+                                        size: 'm',
+                                        children: n.replace('#s', y),
+                                    }),
+                                    o &&
+                                        (0, pulseToastJsx.jsx)(pulseToastButton.$, {
+                                            className: pulseToastStyles().button,
+                                            onClick: I,
+                                            variant: 'default',
+                                            color: 'secondary',
+                                            size: 'xs',
+                                            radius: 'xxxl',
+                                            disabled: u,
+                                            children: (0, pulseToastJsx.jsx)(pulseToastText.HL, {
+                                                variant: 'div',
+                                                type: 'controls',
+                                                size: 'm',
+                                                children: o,
+                                            }),
+                                        }),
+                                ],
+                            }),
+                        [u, o, n, I, y],
+                    );
+                pulseToastReact.useEffect(() => {
+                    const update = () => {
+                        v(operation.progress);
+                        g(operation.label);
+                    };
+                    operation.listeners.add(update);
+                    update();
+                    return () => operation.listeners.delete(update);
+                }, [operation]);
+                return (0, pulseToastJsx.jsxs)(pulseToastBase.$, {
+                    className: (0, pulseToastClassNames.$)(pulseToastStyles().root, pulseToastStyles().important),
+                    message: C,
+                    children: [
+                        (0, pulseToastJsx.jsx)('div', {
+                            className: 'qaIScXjx1qyXuaIHXQIo',
+                            style: {
+                                overflow: 'hidden',
+                                left: '0',
+                                top: '0',
+                                position: 'absolute',
+                                width: h + '%',
+                                height: '100%',
+                                backgroundColor: 'rgb(255 255 255)',
+                                opacity: h <= 100 ? 0.1 : 0,
+                                zIndex: 1,
+                                transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                            },
+                        }),
+                    ],
+                });
+            };
+            const usePulseSyncDownloadNotifications = () => {
+                const { notify, dismiss } = pulseToastNotifications.l();
+                pulseToastReact.useEffect(() => {
+                    const operations = new Map(),
+                        seen = new Map();
+                    const close = (operation) => {
+                        if (operations.get(operation.id) !== operation) return;
+                        operations.delete(operation.id);
+                        operation.listeners.clear();
+                        dismiss({ notificationId: operation.notificationId, forceClose: true });
+                    };
+                    const create = (_event, id, message, buttonLabel, nonce = 0, actionEvent, actionPayload) => {
+                        if (nonce && seen.get(id) === nonce) return;
+                        if (nonce) seen.set(id, nonce);
+                        const previous = operations.get(id);
+                        if (previous) close(previous);
+                        const operation = { id, nonce, notificationId: undefined, progress: -1, label: 'Ожидание...', listeners: new Set() };
+                        operations.set(id, operation);
+                        operation.notificationId = notify(
+                            pulseToastJsx.jsx(PulseSyncProgressToast, {
+                                toastID: id,
+                                message,
+                                buttonLabel: buttonLabel || undefined,
+                                operation,
+                                onButtonClick: actionEvent ? () => window.desktopEvents?.send(actionEvent, actionPayload) : undefined,
+                                dismissOnButtonClick: !!buttonLabel,
+                                createNonce: nonce,
+                            }),
+                            {
+                                containerId: pulseToastContainers.u.IMPORTANT,
+                                autoClose: false,
+                                onClose: () => {
+                                    if (operations.get(id) === operation) operations.delete(id);
+                                    operation.listeners.clear();
+                                },
+                            },
+                        );
+                    };
+                    const progress = (_event, id, value, nonce = 0, label, createNonce = 0) => {
+                        const operation = operations.get(id);
+                        if (!operation || (createNonce && operation.nonce && createNonce !== operation.nonce)) return;
+                        if (nonce && operation.progressNonce === nonce && operation.progress === value && (label === undefined || operation.label === label)) return;
+                        operation.progressNonce = nonce;
+                        operation.progress = value;
+                        if (label !== undefined) operation.label = label;
+                        operation.listeners.forEach((update) => update());
+                    };
+                    const remove = (_event, id, _nonce = 0, createNonce = 0) => {
+                        const operation = operations.get(id);
+                        if (!operation || (createNonce && operation.nonce && createNonce !== operation.nonce)) return;
+                        close(operation);
+                    };
+                    const disposers = [
+                        window.desktopEvents?.on?.('BASIC_TOAST_CREATE', create),
+                        window.desktopEvents?.on?.('PROGRESS_BAR_CHANGE', progress),
+                        window.desktopEvents?.on?.('BASIC_TOAST_DISMISS', remove),
+                    ];
+                    return () => {
+                        disposers.forEach((dispose) => dispose?.());
+                        for (const operation of operations.values()) close(operation);
+                        seen.clear();
+                    };
+                }, [notify, dismiss]);
+            };
             (a(93588),
                 !(function (e) {
                     ((e.LIGHT = 'light'), (e.DARK = 'dark'));
@@ -290,6 +434,7 @@
                 });
             var Q = a(96618);
             let z = () => {
+                usePulseSyncDownloadNotifications();
                 let { language: e } = (0, U.h)();
                 {
                     let { theme: t } = (0, Q.W)(),
