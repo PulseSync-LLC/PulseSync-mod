@@ -4754,24 +4754,83 @@
                 }
             }
             var tn = a(11809);
+            var pulseSyncVolumeStorage = a(95067);
             class to {
-                getAverageFrequencies(e) {
+                getNcsSpectrumSnapshot(volumeCompensation) {
+                    const graph = this.currentGraph;
+                    if (!graph?.analyserNode) return null;
+                    this.ncsAnalysers ??= new WeakMap();
+                    let analysis = this.ncsAnalysers.get(graph);
+                    if (!analysis) {
+                        const node = graph.context.createAnalyser();
+                        node.fftSize = 4096;
+                        node.smoothingTimeConstant = 0;
+                        graph.analyserNode.connect(node);
+                        analysis = {
+                            node,
+                            buffer: new Float32Array(node.frequencyBinCount),
+                        };
+                        this.ncsAnalysers.set(graph, analysis);
+                    }
+                    const { node, buffer } = analysis;
+                    const gain = volumeCompensation ?? this.getVolumeCompensation();
+                    node.getFloatFrequencyData(buffer);
+                    const gainDb = gain > 0 ? 20 * Math.log10(gain) : 0;
+                    for (let bin = 0; bin < buffer.length; bin++) {
+                        const db = buffer[bin];
+                        buffer[bin] = gain > 0 && Number.isFinite(db) ? Math.pow(10, (db - gainDb) / 20) : 0;
+                    }
+                    return {
+                        linearSpectrum: buffer,
+                        sampleRate: graph.context.sampleRate,
+                        fftSize: node.fftSize,
+                    };
+                }
+                getSpectrumSnapshot(volumeCompensation) {
+                    if (!this.currentGraph?.analyserNode) return null;
+                    const { context, analyserNode } = this.currentGraph;
+                    const length = analyserNode.frequencyBinCount;
+                    const frequencies =
+                        this.frequencyDomainBuffer.length === length ? this.frequencyDomainBuffer : (this.frequencyDomainBuffer = new Float32Array(length));
+                    const spectrum = this.normalizedSpectrum.length === length ? this.normalizedSpectrum : (this.normalizedSpectrum = new Float32Array(length));
+                    const gain = volumeCompensation ?? this.getVolumeCompensation();
+                    analyserNode.getFloatFrequencyData(frequencies);
+                    const gainDb = gain > 0 ? 20 * Math.log10(gain) : 0;
+                    const range = analyserNode.maxDecibels - analyserNode.minDecibels;
+                    for (let bin = 0; bin < length; bin++) {
+                        const db = frequencies[bin];
+                        spectrum[bin] = gain > 0 && Number.isFinite(db) ? 255 * Math.max(0, Math.min(1, (db - gainDb - analyserNode.minDecibels) / range)) : 0;
+                    }
+                    return {
+                        spectrum,
+                        sampleRate: context.sampleRate,
+                        fftSize: analyserNode.fftSize,
+                    };
+                }
+                getAverageFrequencies(e, snapshot = this.getSpectrumSnapshot()) {
                     if (null === this.currentGraph) return [];
-                    let { analyserNode: t, spectrum: a, bufferLength: r, context: i } = this.currentGraph;
+                    let { analyserNode: t, bufferLength: r, context: i } = this.currentGraph;
                     if (!t) throw new Q.t('No analyser node has been created');
-                    t.getByteFrequencyData(a);
-                    let s = i.sampleRate / r,
+                    const a = snapshot?.spectrum;
+                    if (!a) return [];
+                    let s = i.sampleRate / t.fftSize,
                         n = 0,
                         o = e.map((e) => {
                             let { low: t, high: a } = e,
-                                r = Math.floor(t / s),
-                                i = Math.floor(a / s);
-                            return ((n = Math.max(n, i)), { startIndex: r, endIndex: i });
+                                i = Math.max(0, Math.min(r - 1, Math.ceil(t / s))),
+                                o = Math.max(i, Math.min(r - 1, Math.ceil(a / s) - 1));
+                            return (
+                                (n = Math.max(n, o)),
+                                {
+                                    startIndex: i,
+                                    endIndex: o,
+                                }
+                            );
                         }),
                         l = Array(n + 2).fill(0);
                     for (let e = 0; e < n + 1; e++) {
                         var u, d;
-                        let t = (null != (u = a[e]) ? u : 0) / 256;
+                        let t = (null != (u = a[e]) ? u : 0) / 255;
                         l[e + 1] = (null != (d = l[e]) ? d : 0) + t;
                     }
                     return o.map((e) => {
@@ -4781,14 +4840,107 @@
                         return void 0 === r || void 0 === i ? 0 : (i - r) / (a - t + 1);
                     });
                 }
+                getExponentialVolume = (e) => {
+                    let t = Math.pow(0.01, 1 - e);
+                    return t > 0.01 ? t : 0;
+                };
+                getVolumeCompensation() {
+                    const audioElement = this.currentGraph?.audioElement;
+                    if (audioElement?.muted) return 0;
+                    if (Number.isFinite(audioElement?.volume)) return Math.max(0, Math.min(1, audioElement.volume));
+                    let e = 1;
+                    try {
+                        e = JSON.parse(window.localStorage.getItem(pulseSyncVolumeStorage.c.YmPlayerVolume))?.value ?? 1;
+                    } catch {}
+                    return this.getExponentialVolume(e);
+                }
+                getRMS(volumeCompensation) {
+                    if (null === this.currentGraph) return 0;
+                    let { analyserNode: t } = this.currentGraph;
+                    if (!t) return 0;
+                    let a = t.fftSize,
+                        i = this.timeDomainBuffer.length === a ? this.timeDomainBuffer : (this.timeDomainBuffer = new Float32Array(a));
+                    t.getFloatTimeDomainData(i);
+                    let r = 0,
+                        n = volumeCompensation ?? this.getVolumeCompensation();
+                    for (let e = 0; e < a; e++) {
+                        let t = n > 0 && Number.isFinite(i[e]) ? i[e] / n : 0;
+                        r += t * t;
+                    }
+                    let l = 2 * Math.sqrt(r / a);
+                    if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
+                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
+                        return ((this._prevTimeRms = void 0 !== this._prevTimeRms ? this._prevTimeRms * (1 - e) + l * e : l), this._prevTimeRms);
+                    }
+                    return ((this._prevTimeRms = l), l);
+                }
+                getRMSAlt(volumeCompensation) {
+                    if (null === this.currentGraph) return 0;
+                    let { analyserNode: t } = this.currentGraph;
+                    if (!t) return 0;
+                    let a = t.frequencyBinCount,
+                        i = this.frequencyDomainBuffer.length === a ? this.frequencyDomainBuffer : (this.frequencyDomainBuffer = new Float32Array(a));
+                    t.getFloatFrequencyData(i);
+                    let r = 0,
+                        n = volumeCompensation ?? this.getVolumeCompensation();
+                    for (let e = 0; e < a; e++) {
+                        let t = i[e];
+                        if (!Number.isFinite(t)) continue;
+                        let s = n > 0 ? Math.pow(10, t / 20) / n : 0;
+                        r += s * s;
+                    }
+                    let l = 120 * Math.sqrt(r / a);
+                    if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
+                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
+                        return ((this._prevFrequencyRms = void 0 !== this._prevFrequencyRms ? this._prevFrequencyRms * (1 - e) + l * e : l), this._prevFrequencyRms);
+                    }
+                    return ((this._prevFrequencyRms = l), l);
+                }
                 constructor({ currentAudioElement: e, graphs: t }) {
                     ((0, F._)(this, 'currentGraph', null),
                         (0, F._)(this, 'graphs', void 0),
+                        (0, F._)(this, 'timeDomainBuffer', new Float32Array()),
+                        (0, F._)(this, 'frequencyDomainBuffer', new Float32Array()),
+                        (0, F._)(this, 'normalizedSpectrum', new Float32Array()),
+                        (0, F._)(this, '_prevTimeRms', void 0),
+                        (0, F._)(this, '_prevFrequencyRms', void 0),
                         (this.graphs = t),
                         e.onChange((e) => {
                             let t = this.graphs.find((t) => t.audioElement === e);
-                            t && (this.currentGraph = t);
+                            this.currentGraph = t ?? null;
+                            this._prevTimeRms = void 0;
+                            this._prevFrequencyRms = void 0;
                         }));
+                    this.currentGraph = this.graphs.find((graph) => graph.audioElement === e.value) ?? null;
+                    const getAnalyserNode = () => {
+                        const node = this.currentGraph?.analyserNode;
+                        if (!node) throw new Error('PulseSync Wave analyser is not ready');
+                        return node;
+                    };
+                    const readAnalyserData = (method, ArrayType, frequency) => {
+                        const node = getAnalyserNode();
+                        const buffer = new ArrayType(frequency ? node.frequencyBinCount : node.fftSize);
+                        node[method](buffer);
+                        return buffer;
+                    };
+                    window.pulseSyncWebHost?.registerWaveAnalyser?.({
+                        isAvailable: () => !!this.currentGraph?.analyserNode,
+                        getProperties: () => {
+                            const node = getAnalyserNode();
+                            return {
+                                fftSize: node.fftSize,
+                                frequencyBinCount: node.frequencyBinCount,
+                                minDecibels: node.minDecibels,
+                                maxDecibels: node.maxDecibels,
+                                smoothingTimeConstant: node.smoothingTimeConstant,
+                                sampleRate: node.context.sampleRate,
+                            };
+                        },
+                        getByteFrequencyData: () => readAnalyserData('getByteFrequencyData', Uint8Array, true),
+                        getFloatFrequencyData: () => readAnalyserData('getFloatFrequencyData', Float32Array, true),
+                        getByteTimeDomainData: () => readAnalyserData('getByteTimeDomainData', Uint8Array, false),
+                        getFloatTimeDomainData: () => readAnalyserData('getFloatTimeDomainData', Float32Array, false),
+                    });
                 }
             }
             !(function (e) {
@@ -5267,7 +5419,7 @@
                 }
                 createAnalyzerNode(e) {
                     let t = e.createAnalyser();
-                    return ((t.fftSize = 32), (t.smoothingTimeConstant = 0), t);
+                    return ((t.fftSize = 1024), (t.smoothingTimeConstant = 0), t);
                 }
                 checkAndResumeAudioContext(e) {
                     let t = () => {

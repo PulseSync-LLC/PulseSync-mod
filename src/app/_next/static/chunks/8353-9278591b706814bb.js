@@ -1356,7 +1356,8 @@
                         children: Object.values(f.f).map((e) => (0, a.jsx)(m.c$, { id: e, label: b[e] }, e)),
                     });
                 });
-            var h = r(9794),
+            var Tooltip = r(60924),
+                h = r(9794),
                 v = r(98920),
                 x = r.n(v);
             let S = (e) => {
@@ -1504,18 +1505,41 @@
                                                             ),
                                                             r = Math.round(10 * e.value) / 10;
                                                         return (0, a.jsx)(
-                                                            S,
+                                                            Tooltip.k,
                                                             {
-                                                                isDisabled: E,
-                                                                minValue: -12,
-                                                                maxValue: 12,
-                                                                value: e.value,
-                                                                label: t,
-                                                                onChange: D(e.key),
-                                                                'aria-label': f({ id: 'equalizer.slider-frequency-label' }, { label: t, value: r }),
-                                                                'data-test-id': u.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER,
+                                                                title: (r ?? 0).toFixed(1) + ' dB',
+                                                                children: (0, a.jsx)('div', {
+                                                                    onWheel: (evt) => {
+                                                                        const delta = (evt.deltaY / 1000) * -1;
+                                                                        if (E || !Number.isFinite(r) || !Number.isFinite(evt.deltaY)) return;
+                                                                        let value = (parseFloat(r) + parseFloat(delta)).toFixed(1);
+                                                                        D(e.key)(Math.min(Math.max(value, -12), 12));
+                                                                    },
+                                                                    children: (0, a.jsx)(
+                                                                        S,
+                                                                        {
+                                                                            isDisabled: E,
+                                                                            minValue: -12,
+                                                                            maxValue: 12,
+                                                                            value: e.value,
+                                                                            label: t,
+                                                                            onChange: D(e.key),
+                                                                            'aria-label': f(
+                                                                                {
+                                                                                    id: 'equalizer.slider-frequency-label',
+                                                                                },
+                                                                                {
+                                                                                    label: t,
+                                                                                    value: r,
+                                                                                },
+                                                                            ),
+                                                                            'data-test-id': u.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER,
+                                                                        },
+                                                                        t,
+                                                                    ),
+                                                                }),
                                                             },
-                                                            t,
+                                                            e.key,
                                                         );
                                                     }),
                                                 }),
