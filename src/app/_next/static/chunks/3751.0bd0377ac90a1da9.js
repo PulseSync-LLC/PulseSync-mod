@@ -164,6 +164,9 @@
                         : { top: y(50, 100, 50), middle: y(330, 100, 50), bottom: y(300, 100, 50) };
                 };
             var L = i(66460);
+            const resolvePulseSyncAnimationVariant = (track) =>
+                window.PulseSyncNcs?.resolveAnimationVariant(track) ??
+                (window.nativeSettings?.get?.('modSettings.vibeAnimationEnhancement.animationVariant') === 'ncs' ? 'ncs' : 'vibe');
             let N = { transparent: !0 },
                 S = (0, r.PA)((e) => {
                     let { vibeAnimationState: t, isVibeAnimationVisible: i, averageColor: r, forwardRef: s, className: l } = e,
@@ -171,7 +174,9 @@
                         [f, m] = (0, h.d)(),
                         [V, y] = (0, h.d)(),
                         [S, w] = (0, a.useState)(!1),
-                        { experiments: C, sonataState: M, settings: R, vibe: I } = (0, u.g)(),
+                        dynamicEnergyRef = (0, a.useRef)(0),
+                        { experiments: C, sonataState: M, settings: R, vibe: I, user: pulseSyncUser } = (0, u.g)(),
+                        pulseSyncAnimationVariant = resolvePulseSyncAnimationVariant(M.entityMeta),
                         P = (0, p.U)(),
                         j = (0, x.i)(),
                         W = C.checkExperiment(A.z.WebNextShaderV3, 'on'),
@@ -185,26 +190,109 @@
                             null == c || c.likeAnimation();
                         });
                     (0, L.d)({ handleTrackLike: F, shouldCheckVibeContext: !1 });
+                    const getPulseSyncAnimationSettings = () =>
+                        window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.()
+                            ? { hue: M.entityMeta?.trackParameters?.hue, collectionHue: pulseSyncUser.collectionHue }
+                            : { customColors: k({ averageColor: r, isPlaying: M.isPlaying, isShuffleVibeActive: !!(I.isShuffleVibe && M.isVibeContext) }) };
                     let O = (0, o.c)(() => {
                         if (!(null == j ? void 0 : j.analyser)) return;
-                        let [e, t, i] = j.analyser.getAverageFrequencies([
-                            { low: 0, high: 250 },
-                            { low: 500, high: 2e3 },
-                            { low: 2e3, high: 4e3 },
-                        ]);
-                        null == c || c.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != t ? t : 0, high: null != i ? i : 0 });
+                        const volumeCompensation = j.analyser.getVolumeCompensation();
+                        const spectrumSnapshot = j.analyser.getSpectrumSnapshot(volumeCompensation);
+                        let [e, t, i] = j.analyser.getAverageFrequencies(
+                            [
+                                {
+                                    low: 20,
+                                    high: 250,
+                                },
+                                {
+                                    low: 250,
+                                    high: 2500,
+                                },
+                                {
+                                    low: 2500,
+                                    high: 12000,
+                                },
+                            ],
+                            spectrumSnapshot,
+                        );
+                        let rms = j.analyser.getRMS(volumeCompensation),
+                            rmsAlt = j.analyser.getRMSAlt(volumeCompensation),
+                            measuredEnergy = 0.7 * rms + 0.3 * rmsAlt,
+                            rawEnergy = Number.isFinite(measuredEnergy) ? Math.max(0, measuredEnergy) : 0,
+                            useSmoothing = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? false,
+                            previousEnergy = dynamicEnergyRef.current,
+                            envelopeCoefficient = rawEnergy > previousEnergy ? 0.65 : 0.12,
+                            smoothedEnergy = useSmoothing ? previousEnergy + (rawEnergy - previousEnergy) * envelopeCoefficient : rawEnergy,
+                            compressedEnergy = useSmoothing ? 1 - Math.exp(-1.6 * smoothedEnergy) : rawEnergy,
+                            energy = compressedEnergy * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
+                            energyNormalized = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? energy : (M?.entityMeta?.trackParameters?.energy ?? 1);
+                        ((dynamicEnergyRef.current = smoothedEnergy),
+                            null == c || c.updateEnergy(energyNormalized),
+                            null == c ||
+                                c.updateAudioFrequencies({
+                                    low: null != e ? e : 0,
+                                    middle: null != t ? t : 0,
+                                    high: null != i ? i : 0,
+                                    ...(c.animationVariant === 'ncs'
+                                        ? {
+                                              ...j.analyser.getNcsSpectrumSnapshot(volumeCompensation),
+                                              rms: rawEnergy,
+                                          }
+                                        : null),
+                                }));
+                        try {
+                            window.dispatchEvent(
+                                new CustomEvent('vibe:energy', {
+                                    detail: {
+                                        energy: energyNormalized,
+                                        rms: rms,
+                                        bands: {
+                                            low: e ?? 0,
+                                            middle: t ?? 0,
+                                            high: i ?? 0,
+                                        },
+                                        dynamic: !!window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.(),
+                                        ts: Date.now(),
+                                    },
+                                }),
+                            );
+                        } catch {}
                     });
                     (0, a.useEffect)(() => {
                         if (!f || c) return;
                         if (!f.transferControlToOffscreen) return void D();
                         let e = f.transferControlToOffscreen(),
-                            i = new E.a6({ offscreenCanvas: e, state: t, isShaderV3Enabled: W, shaderOptions: N, onMessage: T, onError: D });
-                        (d(i),
-                            y(new E.Rv(E.p4, O)),
-                            i.applySettings({
-                                customColors: k({ averageColor: r, isPlaying: M.isPlaying, isShuffleVibeActive: !!(I.isShuffleVibe && M.isVibeContext) }),
-                            }));
-                    }, [r, f, D, T, y, d, W, M.isPlaying, M.isVibeContext, O, I.isShuffleVibe, t, c]);
+                            i = new E.a6({
+                                offscreenCanvas: e,
+                                state: t,
+                                isShaderV3Enabled: W,
+                                shaderOptions: N,
+                                onMessage: T,
+                                onError: D,
+                                collectionHue: window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.() ? pulseSyncUser.collectionHue : undefined,
+                                fps: window.VIBE_ANIMATION_MAX_FPS?.() ?? 25,
+                                resolution: window.nativeSettings?.get?.('modSettings.vibeAnimationEnhancement.canvasResolution') ?? 650,
+                                animationVariant: pulseSyncAnimationVariant,
+                            });
+                        (d(i), y(new E.Rv(E.p4, O)), i.applySettings(getPulseSyncAnimationSettings()));
+                    }, [
+                        r,
+                        f,
+                        D,
+                        T,
+                        y,
+                        d,
+                        W,
+                        M.isPlaying,
+                        M.isVibeContext,
+                        O,
+                        I.isShuffleVibe,
+                        t,
+                        c,
+                        pulseSyncUser.collectionHue,
+                        M.entityMeta?.trackParameters,
+                        pulseSyncAnimationVariant,
+                    ]);
                     let K = (0, o.c)(() => {
                         (null == c || c.destroy(), d(null), null == V || V.stop(), y(null));
                     });
@@ -215,14 +303,45 @@
                         [K],
                     ),
                     (0, a.useEffect)(() => {
-                        null == c ||
-                            c.applySettings({
-                                customColors: k({ averageColor: r, isPlaying: M.isPlaying, isShuffleVibeActive: !!(I.isShuffleVibe && M.isVibeContext) }),
-                            });
-                    }, [r, M.isPlaying, M.isVibeContext, I.isShuffleVibe, c]),
+                        c?.applySettings(getPulseSyncAnimationSettings());
+                    }, [r, M.isPlaying, M.isVibeContext, I.isShuffleVibe, c, pulseSyncUser.collectionHue, M.entityMeta?.trackParameters]),
                     (0, a.useEffect)(() => {
-                        i && M.isPlaying ? (null == c || c.playAnimation({}), null == V || V.start()) : (null == c || c.idleAnimation(), null == V || V.stop());
-                    }, [V, i, M.isPlaying, c]),
+                        if (c && c.animationVariant !== pulseSyncAnimationVariant) c.updateRuntimeSettings({ animationVariant: pulseSyncAnimationVariant });
+                    }, [c, pulseSyncAnimationVariant]),
+                    (0, a.useEffect)(() => {
+                        const syncAnimationVariant = () => {
+                            const variant = resolvePulseSyncAnimationVariant(M.entityMeta);
+                            if (c && c.animationVariant !== variant) c.updateRuntimeSettings({ animationVariant: variant });
+                        };
+                        const onSetting = (event) => {
+                            const { key, value } = event.detail ?? {};
+                            switch (key) {
+                                case 'modSettings.vibeAnimationEnhancement.disableRendering':
+                                    return value || !i ? c?.disable() : c?.enable();
+                                case 'modSettings.vibeAnimationEnhancement.maxFPS':
+                                    return c?.updateRuntimeSettings({ fps: Number(value) });
+                                case 'modSettings.vibeAnimationEnhancement.canvasResolution':
+                                    return c?.updateRuntimeSettings({ resolution: Number(value) });
+                                case 'modSettings.vibeAnimationEnhancement.animationVariant':
+                                    return syncAnimationVariant();
+                                case 'modSettings.vibeAnimationEnhancement.useVibeWidgetColors':
+                                    return c?.applySettings(getPulseSyncAnimationSettings());
+                            }
+                        };
+                        window.addEventListener('pulse-sync-vibe-setting-change', onSetting);
+                        document.addEventListener('pulsesync:runtime-ready', syncAnimationVariant);
+                        return () => {
+                            window.removeEventListener('pulse-sync-vibe-setting-change', onSetting);
+                            document.removeEventListener('pulsesync:runtime-ready', syncAnimationVariant);
+                        };
+                    }, [r, i, M.isPlaying, M.isVibeContext, I.isShuffleVibe, c, pulseSyncUser.collectionHue, M.entityMeta, M.entityMeta?.trackParameters]),
+                    (0, a.useEffect)(() => {
+                        const parameters = M.entityMeta?.trackParameters;
+                        if (parameters?.userCollectionHue) pulseSyncUser.setUserCollectionHue(parameters.userCollectionHue);
+                        i && M.isPlaying
+                            ? (c?.playAnimation({ ...getPulseSyncAnimationSettings(), energy: parameters?.energy }), V?.start())
+                            : (c?.idleAnimation(), V?.stop());
+                    }, [V, i, M.isPlaying, c, r, M.isVibeContext, I.isShuffleVibe, pulseSyncUser, M.entityMeta?.trackParameters]),
                     (0, a.useEffect)(() => {
                         i ? null == c || c.enable() : null == c || c.disable();
                     }, [i, c]),
