@@ -17,7 +17,7 @@
     width: 2.25rem;
 }
 .Tab_image__Hen3_:not(:first-child) {
-    margin-inline-start: calc(var(--ym-spacer-size-s) * -1);
+    margin-inline-start: calc(var(--ym-spacer-size-s)*-1);
 }
 .Tab_tab_size_s__zXitP {
     border-radius: 3.125rem;

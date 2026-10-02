@@ -111,7 +111,7 @@
 }
 @media only screen and (min-width: 960px) {
     .CollectionAlbumsPageContent_content__jcwRU {
-        gap: calc(var(--ym-spacer-size-m) * 2);
+        gap: calc(var(--ym-spacer-size-m)*2);
     }
 }
 @media only screen and (min-width: 1024px) and (max-width: 1920px) {

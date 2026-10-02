@@ -31,7 +31,7 @@
 }
 @media only screen and (min-width: 960px) {
     .MixesPage_items__dKLen {
-        gap: calc(var(--ym-spacer-size-m) * 2);
+        gap: calc(var(--ym-spacer-size-m)*2);
     }
 }
 @media only screen and (min-width: 1024px) and (max-width: 1920px) {
@@ -127,7 +127,7 @@
 }
 @media only screen and (min-width: 960px) {
     .MixesPage_shimmerContainer__su53n {
-        gap: calc(var(--ym-spacer-size-m) * 2);
+        gap: calc(var(--ym-spacer-size-m)*2);
     }
 }
 @media only screen and (min-width: 1024px) and (max-width: 1920px) {

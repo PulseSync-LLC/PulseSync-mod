@@ -1,0 +1,47 @@
+.PageHeaderCover_root_hoverable__WF_BH {
+    transition: transform var(--ym-duration-transition) ease-in-out;
+}
+.PageHeaderCover_root_hoverable__WF_BH:has(:focus-visible) {
+    transform: scale(1.03);
+}
+.PageHeaderCover_root_hoverable__WF_BH:hover {
+    transform: scale(1.03);
+}
+@media (prefers-reduced-motion: reduce) {
+    .PageHeaderCover_root_hoverable__WF_BH {
+        transition: none;
+    }
+}
+.PageHeaderCover_coverImage__i0wBv {
+    height: 100%;
+    width: 100%;
+}
+.PageHeaderCover_coverImage_hoverable__9XZK7:hover {
+    cursor: pointer;
+}
+.PageHeaderCover_coverImage__i0wBv {
+    aspect-ratio: 1;
+}
+.PageHeaderCover_coverButton__3zeub {
+    backdrop-filter: none;
+    width: 100%;
+}
+.PageHeaderCover_coverButton_hoverable__hS1Gq {
+    transition: transform var(--ym-duration-transition) ease-in-out;
+}
+.PageHeaderCover_coverButton_hoverable__hS1Gq:focus-visible,
+.PageHeaderCover_coverButton_hoverable__hS1Gq:hover {
+    transform: scale(1.05);
+}
+@media (prefers-reduced-motion: reduce) {
+    .PageHeaderCover_coverButton_hoverable__hS1Gq {
+        transition: none;
+    }
+}
+.PageHeaderCover_plusBadge__O09t4 {
+    height: var(--ym-icon-size-xs);
+    inset-block-end: var(--ym-spacer-size-xs);
+    inset-inline-end: var(--ym-spacer-size-xs);
+    position: absolute;
+    width: var(--ym-icon-size-xs);
+}

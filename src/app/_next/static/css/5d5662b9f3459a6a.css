@@ -12,7 +12,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(25% - var(--ym-spacer-size-l) * 3 / 4);
+        width: calc(25% - var(--ym-spacer-size-l)*3/4);
     }
 }
 @media only screen and (min-width: 1200px) and (max-width: 1920px) {
@@ -20,7 +20,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(33.33333% - var(--ym-spacer-size-l) * 2 / 3);
+        width: calc(33.33333% - var(--ym-spacer-size-l)*2/3);
     }
 }
 @media only screen and (min-width: 768px) and (max-width: 1200px) {
@@ -28,7 +28,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(50% - var(--ym-spacer-size-l) * 1 / 2);
+        width: calc(50% - var(--ym-spacer-size-l)*1/2);
     }
 }
 .CollectionClipsPageClipsWillLike_carouselBlockHeader__wDnJp {
@@ -111,5 +111,5 @@
     padding-block-end: var(--ym-spacer-size-xxxxl);
 }
 .CollectionClipsPageClips_clipsWillLike__IhK8Q {
-    margin-inline-start: calc(var(--ym-spacer-size-xxl) * -1);
+    margin-inline-start: calc(var(--ym-spacer-size-xxl)*-1);
 }

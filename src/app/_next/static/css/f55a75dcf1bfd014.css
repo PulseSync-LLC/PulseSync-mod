@@ -52,7 +52,7 @@
     max-width: none;
     min-width: 0;
     min-width: auto;
-    width: calc((100% - var(--ym-spacer-size-l)) / 2);
+    width: calc((100% - var(--ym-spacer-size-l))/2);
 }
 @media only screen and (max-width: 768px) {
     .MixedEntitiesBlock_item_withMultipleColumns__ziUqI {

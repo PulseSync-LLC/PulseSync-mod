@@ -138,7 +138,7 @@
 }
 @media only screen and (min-width: 960px) {
     .GenrePlaylistsPage_content__2rKJY {
-        gap: calc(var(--ym-spacer-size-m) * 2);
+        gap: calc(var(--ym-spacer-size-m)*2);
     }
 }
 @media only screen and (min-width: 1024px) and (max-width: 1920px) {

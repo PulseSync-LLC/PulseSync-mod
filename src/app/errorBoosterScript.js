@@ -348,7 +348,7 @@ function initErrorBooster({ project, page, regionId, platform, environment, vers
         project: `'${project}'`,
         page,
         region: regionId,
-        ...(platform ? { '-platform': platform } : {}),
+        ...(platform ? { platform } : {}),
         env: environment,
         version,
         unhandledRejection,

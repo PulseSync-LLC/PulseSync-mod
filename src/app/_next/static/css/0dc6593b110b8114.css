@@ -1,0 +1,131 @@
+.ShuffleButton_shuffleIcon_off___oqrr {
+    color: var(--ym-controls-color-secondary-text-enabled);
+}
+.ShuffleButton_shuffleIcon_on__qFJqV {
+    color: var(--ym-controls-color-secondary-text-enabled_variant);
+}
+.ShuffleButton_shuffleIcon_disabled__fQsOo {
+    color: var(--ym-controls-color-secondary-text-disabled);
+}
+.BaseSonataControlsDesktop_root__E6wjA {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-xxxl);
+    justify-content: center;
+}
+@media only screen and (max-width: 1280px) {
+    .BaseSonataControlsDesktop_root__E6wjA {
+        gap: var(--ym-spacer-size-l);
+    }
+}
+.BaseSonataControlsDesktop_sonataButtons__7vLtw {
+    gap: var(--ym-spacer-size-xxxs);
+}
+.BaseSonataControlsDesktop_sonataButton__GbwFt,
+.BaseSonataControlsDesktop_sonataButtons__7vLtw {
+    align-items: center;
+    display: flex;
+}
+.BaseSonataControlsDesktop_sonataButton__GbwFt {
+    justify-content: center;
+    transition:
+        background-color var(--ym-duration-transition),
+        transform var(--ym-duration-transition),
+        color var(--ym-duration-transition);
+}
+.BaseSonataControlsDesktop_sonataButton__GbwFt:focus-visible,
+.BaseSonataControlsDesktop_sonataButton__GbwFt:hover {
+    transform: scale(1.05);
+}
+.BaseSonataControlsDesktop_sonataButton__GbwFt:disabled {
+    background-color: transparent;
+}
+.BaseSonataControlsDesktop_sonataButton__GbwFt {
+    aspect-ratio: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+    .BaseSonataControlsDesktop_sonataButton__GbwFt {
+        transition: none;
+    }
+}
+.BaseSonataControlsDesktop_playButtonIcon__TlFqv {
+    color: var(--ym-logo-color-primary-player);
+}
+.BaseSonataControlsDesktop_buttonContainer__EB404 {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    max-height: var(--ym-icon-size-m);
+    max-width: var(--ym-icon-size-m);
+    width: 100%;
+}
+.SonataFullscreenControlsDesktop_root__ZCIGk {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-xxxl);
+    justify-content: center;
+}
+@media only screen and (max-width: 1280px) {
+    .SonataFullscreenControlsDesktop_root__ZCIGk {
+        gap: var(--ym-spacer-size-l);
+    }
+}
+.SonataFullscreenControlsDesktop_sonataButtons__9y89g {
+    gap: var(--ym-spacer-size-xs);
+}
+.SonataFullscreenControlsDesktop_sonataButton__69FFc,
+.SonataFullscreenControlsDesktop_sonataButtons__9y89g {
+    align-items: center;
+    display: flex;
+}
+.SonataFullscreenControlsDesktop_sonataButton__69FFc {
+    backdrop-filter: none;
+    background-color: var(--ym-controls-color-secondary-card-enabled);
+    color: var(--ym-controls-color-secondary-text-enabled_variant);
+    justify-content: center;
+    transition:
+        background-color var(--ym-duration-transition),
+        transform var(--ym-duration-transition),
+        color var(--ym-duration-transition);
+}
+.SonataFullscreenControlsDesktop_sonataButton__69FFc:disabled,
+.SonataFullscreenControlsDesktop_sonataButton__69FFc[data-disabled='true'] {
+    background-color: var(--ym-controls-color-secondary-card-hovered);
+    color: var(--ym-controls-color-secondary-text-disabled);
+}
+.SonataFullscreenControlsDesktop_sonataButton__69FFc:not(:disabled, [data-disabled='true']):focus-visible,
+.SonataFullscreenControlsDesktop_sonataButton__69FFc:not(:disabled, [data-disabled='true']):hover {
+    background-color: var(--ym-controls-color-secondary-card-hovered);
+    transform: scale(1.05);
+}
+@media (prefers-reduced-motion: reduce) {
+    .SonataFullscreenControlsDesktop_sonataButton__69FFc,
+    .SonataFullscreenControlsDesktop_sonataButton__69FFc:not(:disabled, [data-disabled='true']) {
+        transition: none;
+    }
+}
+.SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp {
+    background-color: var(--ym-logo-color-primary-player);
+}
+.SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp:not(:disabled):focus-visible,
+.SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp:not(:disabled):hover {
+    background-color: var(--ym-logo-color-primary-player);
+    transform: scale(1.05);
+}
+@media (prefers-reduced-motion: reduce) {
+    .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp:not(:disabled) {
+        transition: none;
+    }
+}
+.SonataFullscreenControlsDesktop_playPauseButtonIcon__IkUNX {
+    color: var(--ym-controls-color-secondary-card-enabled);
+}
+.SonataFullscreenControlsDesktop_buttonContainer__SpXWc {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    min-width: var(--ym-icon-size-l);
+    width: 100%;
+}

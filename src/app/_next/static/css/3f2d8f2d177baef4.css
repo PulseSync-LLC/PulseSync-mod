@@ -1,0 +1,54 @@
+.PlaylistPageHeader_header__Fgqns {
+    margin-block-start: calc(var(--header-height) + var(--ym-spacer-size-l));
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-inline-end: var(--ym-spacer-size-xl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    transition: margin-block-start var(--ym-duration-transition);
+}
+@media only screen and (min-width: 768px) {
+    .PlaylistPageHeader_header_branded__WyJ4k {
+        background: linear-gradient(180deg, var(--entity-branding-gradient-color-from) 0, var(--entity-branding-gradient-color-to) 100%);
+        margin-block-end: var(--ym-spacer-size-xxl);
+        margin-block-start: 0;
+        padding-block-end: 0;
+        padding-block-start: calc(var(--header-height) + var(--ym-spacer-size-l));
+        transition:
+            margin-block-start,
+            background-color var(--ym-duration-transition);
+    }
+}
+@media only screen and (min-width: 1280px) {
+    .PlaylistPageHeader_header_branded__WyJ4k {
+        padding-block-start: var(--ym-spacer-size-xl);
+    }
+}
+.PlaylistPageHeader_header_brandedAxe__RDLB2 {
+    background: linear-gradient(180deg, var(--entity-branding-gradient-color-from) 0, var(--entity-branding-gradient-color-to) 100%);
+    margin-block-start: 0;
+    padding-block-start: calc(var(--header-height) + var(--ym-spacer-size-l));
+}
+@media (prefers-reduced-motion: reduce) {
+    .PlaylistPageHeader_header__Fgqns {
+        transition: none;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .PlaylistPageHeader_header__Fgqns {
+        padding-block-end: var(--ym-spacer-size-xxl);
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.PlaylistPageHeader_content__boBkt {
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+@media only screen and (max-width: 767.98px) {
+    .PlaylistPageHeader_content__boBkt {
+        padding-inline-start: var(--ym-spacer-size-s);
+    }
+}
+.PlaylistPageHeader_emptyPlaylist__oiG4B {
+    margin-block-end: calc(var(--player-bar-height) + var(--ym-spacer-size-xxl));
+    margin-block-start: 4.5rem;
+}
