@@ -1235,7 +1235,11 @@
         },
         18382: (e, t, a) => {
             'use strict';
+
             a.d(t, { S: () => im });
+            var pulseSyncMenuJsx = a(25839),
+                pulseSyncMenuItems = a(10820),
+                pulseSyncMenuIcons = a(66738);
             var i = a(25839),
                 r = a(82298),
                 l = a(88204),
@@ -3119,6 +3123,39 @@
                             playlistOwnerName: null == (t = u.owner) ? void 0 : t.name,
                             playlistOwnerLogin: null == (a = u.owner) ? void 0 : a.login,
                         };
+                    let pulseSyncInjectPlaylistMenuItems = (items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
+                            eventDetail: {
+                                id: String(u.kind ?? u.id),
+                                uuid: String(u.uuid ?? ''),
+                                url: X,
+                                ...(u.title
+                                    ? {
+                                          title: String(u.title),
+                                      }
+                                    : {}),
+                            },
+                            renderItem: ({ key, payload, activate }) => {
+                                const label = String(payload?.label ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim();
+                                if (!label || !icon) return null;
+                                return (0, pulseSyncMenuJsx.jsx)(
+                                    pulseSyncMenuItems.Dr,
+                                    {
+                                        icon: (0, pulseSyncMenuJsx.jsx)(pulseSyncMenuIcons.I, {
+                                            variant: icon,
+                                            size: 'xxs',
+                                        }),
+                                        onClick: () => {
+                                            (activate(), p(!1));
+                                        },
+                                        children: label,
+                                        'data-pulsesync-addon-menu-item': '',
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items;
                     return (0, i.jsxs)(ts.W1, {
                         isMobile: A,
                         offsetOptions: 10,
@@ -3128,7 +3165,7 @@
                         wrapperClassName: _,
                         ...y,
                         containerDataTestId: c.Kq.playlist.PLAYLIST_CONTEXT_MENU,
-                        children: [
+                        children: pulseSyncInjectPlaylistMenuItems([
                             D && (0, i.jsx)(tJ.d, { entityVariant: aA.D.PLAYLIST, adminUrl: u.isFavouritePlaylist ? void 0 : $, withPlaylistPageFeatures: !0 }),
                             (0, i.jsx)(as, { sourcePlaylistUuid: u.uuid }),
                             !A && (0, i.jsx)(aE.L, { onClick: I, isPinned: u.isPinned }),
@@ -3165,7 +3202,7 @@
                                     children: (0, i.jsx)(eG.A, { id: 'playlist-actions.remove-playlist' }),
                                 }),
                             (B || F) && (0, i.jsx)(au, { playlist: u }),
-                        ],
+                        ]),
                     });
                 }),
                 aL = (0, l.PA)((e) => {

@@ -441,7 +441,11 @@
         },
         16573: (e, t, i) => {
             'use strict';
+
             i.d(t, { x: () => $ });
+            var pulseSyncMenuJsx = i(25839),
+                pulseSyncMenuItems = i(10820),
+                pulseSyncMenuIcons = i(66738);
             var r = i(25839),
                 s = i(88204),
                 a = i(74631),
@@ -611,6 +615,38 @@
                         if (!s.isNonMusic) return (0, r.jsx)(H.C, { onClick: ek, disabled: !s.isAvailable || (ep && Z), variant: w.I.ALBUM, onOpenMenuChange: P });
                     }, [s.isAvailable, ek, s.isNonMusic, P, ep, Z]),
                     eS = { variant: O.Y.ALBUM, id: s.id, title: s.title, path: eA, albumArtistName: s.artistName, albumArtistId: s.artistId };
+                let pulseSyncInjectAlbumMenuItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('albumContextMenu', items, {
+                        eventDetail: {
+                            id: String(s.id),
+                            url: eA,
+                            ...(s.title
+                                ? {
+                                      title: String(s.title),
+                                  }
+                                : {}),
+                        },
+                        renderItem: ({ key, payload, activate }) => {
+                            const label = String(payload?.label ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim();
+                            if (!label || !icon) return null;
+                            return (0, pulseSyncMenuJsx.jsx)(
+                                pulseSyncMenuItems.Dr,
+                                {
+                                    icon: (0, pulseSyncMenuJsx.jsx)(pulseSyncMenuIcons.I, {
+                                        variant: icon,
+                                        size: 'xxs',
+                                    }),
+                                    onClick: () => {
+                                        (activate(), P(!1));
+                                    },
+                                    children: label,
+                                    'data-pulsesync-addon-menu-item': '',
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
                 return (0, r.jsxs)(u.W1, {
                     isMobile: Z,
                     offsetOptions: 10,
@@ -620,7 +656,7 @@
                     wrapperClassName: G,
                     containerDataTestId: o.Kq.album.ALBUM_CONTEXT_MENU,
                     ...J,
-                    children: [
+                    children: pulseSyncInjectAlbumMenuItems([
                         Z && (0, r.jsx)(F.C, { getDescriptionTexts: s.getDescriptionTexts, entityId: s.id }),
                         ed && (0, r.jsx)(b.d, { entityVariant: E.D.ARTIST, adminUrl: ex }),
                         eT,
@@ -631,7 +667,7 @@
                         R,
                         eo && (0, r.jsx)(z, { onClick: eh, isFinished: s.listeningFinished }),
                         (0, r.jsx)(U.H, { shareLink: ev, entityMeta: eS }),
-                    ],
+                    ]),
                 });
             });
         },

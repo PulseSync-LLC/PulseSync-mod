@@ -11,7 +11,11 @@
         },
         3407: (e, t, i) => {
             'use strict';
+
             i.d(t, { _: () => eN });
+            var pulseSyncMenuJsx = i(25839),
+                pulseSyncMenuItems = i(10820),
+                pulseSyncMenuIcons = i(66738);
             var a = i(25839),
                 s = i(82298),
                 l = i(33660),
@@ -462,6 +466,53 @@
                             trackArtistId: null == (eC = eL.mainArtist) ? void 0 : eC.id,
                             trackAlbumId: eL.albumId,
                         };
+                    let pulseSyncTrackIdParts = String(eL.id ?? '').split(':', 2),
+                        pulseSyncTrackId = pulseSyncTrackIdParts[0],
+                        pulseSyncTrackAlbumId = String(eL.albums?.[0]?.id ?? eL.albumId ?? eL.mainAlbum?.id ?? pulseSyncTrackIdParts[1] ?? '').trim(),
+                        pulseSyncTrackContext = pulseSyncTrackId
+                            ? {
+                                  id: pulseSyncTrackId,
+                                  url: pulseSyncTrackAlbumId
+                                      ? `/album/${encodeURIComponent(pulseSyncTrackAlbumId)}/track/${encodeURIComponent(pulseSyncTrackId)}`
+                                      : `/track/${encodeURIComponent(pulseSyncTrackId)}`,
+                                  ...(pulseSyncTrackAlbumId
+                                      ? {
+                                            albumId: pulseSyncTrackAlbumId,
+                                        }
+                                      : {}),
+                                  ...(eL.title
+                                      ? {
+                                            title: String(eL.title),
+                                        }
+                                      : {}),
+                              }
+                            : void 0,
+                        pulseSyncInjectTrackMenuItems = (items) =>
+                            pulseSyncTrackContext
+                                ? (window.pulsesyncApi?.injectNativeSlotItems?.('trackContextMenu', items, {
+                                      eventDetail: pulseSyncTrackContext,
+                                      renderItem: ({ key, payload, activate }) => {
+                                          const label = String(payload?.label ?? '').trim(),
+                                              icon = String(payload?.icon ?? '').trim();
+                                          if (!label || !icon) return null;
+                                          return (0, pulseSyncMenuJsx.jsx)(
+                                              pulseSyncMenuItems.Dr,
+                                              {
+                                                  icon: (0, pulseSyncMenuJsx.jsx)(pulseSyncMenuIcons.I, {
+                                                      variant: icon,
+                                                      size: 'xxs',
+                                                  }),
+                                                  onClick: () => {
+                                                      (activate(), ej(!1));
+                                                  },
+                                                  children: label,
+                                                  'data-pulsesync-addon-menu-item': '',
+                                              },
+                                              key,
+                                          );
+                                      },
+                                  }) ?? items)
+                                : items;
                     return e4.isOfflineModeEnabled
                         ? (0, a.jsxs)(p.W1, {
                               isMobile: tu,
@@ -475,7 +526,10 @@
                               ariaLabel: e8({ id: 'interface-actions.context-menu' }),
                               variant: 'text',
                               ...ez,
-                              children: [tk && (0, a.jsx)(ek, { track: eL }), eL.isNonUserGenerated && (0, a.jsx)(ee.H, { shareLink: t_, entityMeta: t4 })],
+                              children: pulseSyncInjectTrackMenuItems([
+                                  tk && (0, a.jsx)(ek, { track: eL }),
+                                  eL.isNonUserGenerated && (0, a.jsx)(ee.H, { shareLink: t_, entityMeta: t4 }),
+                              ]),
                           })
                         : (0, a.jsxs)(p.W1, {
                               isMobile: tu,
@@ -489,7 +543,7 @@
                               ariaLabel: e8({ id: 'interface-actions.context-menu' }),
                               variant: 'text',
                               ...ez,
-                              children: [
+                              children: pulseSyncInjectTrackMenuItems([
                                   (0, a.jsx)(eO, { track: eL }),
                                   tu && (0, a.jsx)(el.C, { getDescriptionTexts: eL.getDescriptionTexts, entityId: eL.id }),
                                   tE && (0, a.jsx)(f.d, { entityVariant: tp, adminUrl: ty }),
@@ -590,7 +644,7 @@
                                           icon: (0, a.jsx)(v.I, { variant: 'complain', size: 'xxs' }),
                                           children: (0, a.jsx)(c.A, { id: 'interface-actions.report-problem' }),
                                       }),
-                              ],
+                              ]),
                           });
                 });
         },
