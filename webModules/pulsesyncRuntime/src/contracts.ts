@@ -152,7 +152,7 @@ declare global {
         desktopEvents?: DesktopEventsBridge;
         forcePlayerBarRerender?: () => void;
         DISPLAY_MAX_FPS?: number;
-        PLATFORM?: string;
+        musicDesktop?: { runtime: { platform: string } };
         __PULSESYNC_APPLY_R128_NORMALIZATION__?: (enabled: boolean) => void;
         nativeAudioOutput?: NativeAudioOutputBridge;
         scrobble?: ScrobbleBridge;

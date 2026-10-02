@@ -201,7 +201,7 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
             return Number.isFinite(value) ? Math.max(value, 1) : 60;
         },
         getPlatform() {
-            return String(window.PLATFORM ?? '');
+            return String(window.musicDesktop?.runtime.platform ?? '');
         },
         async getPremiumStatus() {
             return Boolean(await invokeDesktopEvent('isPremiumUser'));

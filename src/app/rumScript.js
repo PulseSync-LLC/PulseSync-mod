@@ -1334,3 +1334,11 @@ function initRum({ environment, heroElement, page, platform, project, regionId, 
 
     Ya.Rum.observeDOMNode('2876', heroElement);
 }
+
+if (window.musicDesktop) {
+    const loadPulseSync = () => {
+        void import('./pulsesync-bootstrap.js').catch((error) => console.error('PulseSync bootstrap failed to load', error));
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadPulseSync, { once: true });
+    else loadPulseSync();
+}
