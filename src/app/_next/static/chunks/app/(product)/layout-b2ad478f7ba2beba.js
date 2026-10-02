@@ -5200,33 +5200,36 @@
                 (function (e) {
                     ((e.HIGHSHELF = 'highshelf'), (e.PEAKING = 'peaking'), (e.LOWSHELF = 'lowshelf'));
                 })(l || (l = {})));
+            let pulseSyncR128NormalizationEnabled = window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true;
             class t_ {
                 connectNodes() {
                     let { useAnalyser: e, useGain: t } = this.config;
-                    (t && e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t && !e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
-                        !t && e && (this.sourceNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t || e || this.sourceNode.connect(this.context.destination));
+                    this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode);
+                    if (e) this.analyserNode.connect(this.r128GainNode);
+                    this.r128GainNode.connect(t ? this.gainNode : this.context.destination);
+                    if (t) this.gainNode.connect(this.context.destination);
                 }
                 connectEqualizer() {
-                    let { useAnalyser: e, useGain: t } = this.config,
+                    let { useAnalyser: e } = this.config,
                         a = this.bands[this.bands.length - 1];
-                    a &&
-                        (this.sourceNode.disconnect(),
-                        this.sourceNode.connect(this.preamp),
-                        t && a.connect(this.gainNode),
-                        !t && e && a.connect(this.analyserNode),
-                        t || e || a.connect(this.context.destination));
+                    a && (this.sourceNode.disconnect(), this.sourceNode.connect(this.preamp), a.connect(e ? this.analyserNode : this.r128GainNode));
                 }
                 disconnectEqualizer() {
-                    let { useAnalyser: e, useGain: t } = this.config,
+                    let { useAnalyser: e } = this.config,
                         a = this.bands[this.bands.length - 1];
-                    a &&
-                        (this.sourceNode.disconnect(),
-                        a.disconnect(),
-                        t && this.sourceNode.connect(this.gainNode),
-                        !t && e && this.sourceNode.connect(this.analyserNode),
-                        t || e || this.sourceNode.connect(this.context.destination));
+                    a && (this.sourceNode.disconnect(), a.disconnect(), this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode));
+                }
+                setR128Gain(metadata, enabled = pulseSyncR128NormalizationEnabled) {
+                    if (metadata != null) this.lastR128 = metadata;
+                    const loudness = Number(this.lastR128?.i);
+                    let gain = 1;
+                    if (enabled && Number.isFinite(loudness)) {
+                        const peak = Number(this.lastR128?.tp);
+                        const adjustment = Number.isFinite(peak) ? Math.min(-23 - loudness, -peak) : -23 - loudness;
+                        const normalizedGain = Math.pow(10, adjustment / 20);
+                        if (Number.isFinite(normalizedGain) && normalizedGain > 0) gain = normalizedGain;
+                    }
+                    this.r128GainNode.gain.setValueAtTime(gain, this.context.currentTime);
                 }
                 setBands(e) {
                     0 === this.bands.length ? (this.bands = this.connectBandsBetween(this.createBandsByFrequencies(e))) : this.updateBands(e);
@@ -5289,6 +5292,8 @@
                         (0, F._)(this, 'bufferLength', 0),
                         (0, F._)(this, 'spectrum', new Uint8Array()),
                         (0, F._)(this, 'gainNode', void 0),
+                        (0, F._)(this, 'r128GainNode', void 0),
+                        (0, F._)(this, 'lastR128', null),
                         (0, F._)(this, 'config', void 0),
                         (this.audioElement = e),
                         (this.context = new AudioContext()),
@@ -5298,6 +5303,7 @@
                         (this.bufferLength = this.analyserNode.frequencyBinCount),
                         (this.spectrum = new Uint8Array(this.bufferLength)),
                         (this.gainNode = this.context.createGain()),
+                        (this.r128GainNode = this.context.createGain()),
                         (this.preamp = this.context.createGain()),
                         (this.config = t),
                         this.connectNodes());
@@ -5314,7 +5320,7 @@
                     let a = this.graphsByMediaPlayer.get(e);
                     if (a) return a;
                     let r = this.createGraphs(e, t);
-                    return (this.graphsByMediaPlayer.set(e, r), r);
+                    return (r.forEach((graph) => this.graphs.add(graph)), this.graphsByMediaPlayer.set(e, r), r);
                 }
                 initializeAnalyser(e, t, a) {
                     tg(a) && this.options.useAnalyser && !this.analyser && (this.analyser = new to({ currentAudioElement: e.currentAudioElement, graphs: t }));
@@ -5405,6 +5411,11 @@
                                     ((i = null == (t = o.data.meta.smartPreviewParams) ? void 0 : t.fade),
                                     (s = null == (r = o.data.meta.smartPreviewParams) ? void 0 : r.durationMs)),
                                 (0, eC.b)(o) && ((i = o.data.meta.fade), (s = o.data.meta.durationMs)),
+                                this.graphs.forEach((graph) => {
+                                    const element = a.state.mediaPlayersStore.value[j.e.AUDIO]?.currentAudioElement.value;
+                                    const metadata = o?.data.meta.r128 ?? (o ? { i: 0, tp: 0 } : undefined);
+                                    if (!element || graph.audioElement === element) graph.setR128Gain(metadata);
+                                }),
                                 this.fade && this.fade.apply(i),
                                 this.smartPreview && this.smartPreview.apply(s),
                                 Promise.resolve()
@@ -5414,6 +5425,7 @@
                 constructor(e) {
                     ((0, F._)(this, 'options', void 0),
                         (0, F._)(this, 'graphsByMediaPlayer', new WeakMap()),
+                        (0, F._)(this, 'graphs', new Set()),
                         (0, F._)(this, 'analyser', void 0),
                         (0, F._)(this, 'equalizer', new es.cJ(null)),
                         (0, F._)(this, 'fade', void 0),
@@ -11220,18 +11232,20 @@
                         z = y.browserInfo,
                         H = 'Safari' !== z.name && 'iOS' !== z.OSFamily,
                         Q = (null == z ? void 0 : z.isTouch) && p(m.id, null == (t = m.meta) ? void 0 : t.isNonMusic),
-                        X = (0, M.useMemo)(
-                            () =>
-                                sr ||
-                                (sr = new tA({
-                                    useAnalyser: H,
-                                    useEqualizer: H,
-                                    useFade: !1,
-                                    useCrossFade: x,
-                                    crossFadeConfig: { useVolumeForAudioEffect: !H, useWorker: !!window.Worker },
-                                })),
-                            [H, x, H],
-                        ),
+                        X = (0, M.useMemo)(() => {
+                            sr ||= new tA({
+                                useAnalyser: H,
+                                useEqualizer: H,
+                                useFade: !1,
+                                useCrossFade: x,
+                                crossFadeConfig: { useVolumeForAudioEffect: !H, useWorker: !!window.Worker },
+                            });
+                            window.__PULSESYNC_APPLY_R128_NORMALIZATION__ = (enabled) => {
+                                pulseSyncR128NormalizationEnabled = Boolean(enabled);
+                                sr.graphs.forEach((graph) => graph.setR128Gain(undefined, pulseSyncR128NormalizationEnabled));
+                            };
+                            return sr;
+                        }, [H, x, H]),
                         Z = (0, M.useMemo)(() => {
                             if (null !== si) return si;
                             let e = n.get(iI.gd);

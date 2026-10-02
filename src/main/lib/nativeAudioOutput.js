@@ -1,7 +1,8 @@
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
-exports.refreshWasapiExclusiveDefaultDeviceMonitor =
+exports.applyWasapiExclusiveOutputSetting =
+    exports.refreshWasapiExclusiveDefaultDeviceMonitor =
     exports.refreshWasapiExclusiveVolumePolicy =
     exports.resetYaspSource =
     exports.seekWasapiExclusiveOutput =
@@ -628,6 +629,8 @@ const cacheYaspPreloadedChunk = (format, chunkBuffer, options = {}) => {
         hasMediaSegment: mp4ChunkInfo.hasMediaSegment === true,
     });
     entry.bytes += cachedChunkBuffer.byteLength;
+    const timelineEndMs = toFiniteNumber(chunkMeta.timelineEndMs);
+    if (Number.isFinite(timelineEndMs)) entry.endPosition = Math.max(entry.endPosition ?? 0, timelineEndMs / 1000);
     entry.hasInitSegment ||= mp4ChunkInfo.hasInitSegment === true;
     entry.hasMediaSegment ||= mp4ChunkInfo.hasMediaSegment === true;
     if (mp4ChunkInfo.hasMediaSegment === true && Number.isFinite(timelineStartSeconds)) {
@@ -1473,7 +1476,7 @@ const getWasapiSessionFormat = (format = {}) => ({
     streamGeneration: format.streamGeneration ?? null,
 });
 
-const activateYaspPreloadedStream = (previousPlayerState, nextPlayerState) => {
+const activateYaspPreloadedStream = (previousPlayerState, nextPlayerState, cachedEntry) => {
     if (!isWasapiExclusiveOutputEnabled() || wasapiExclusiveOutputSession) {
         return false;
     }
@@ -1482,7 +1485,7 @@ const activateYaspPreloadedStream = (previousPlayerState, nextPlayerState) => {
         return false;
     }
 
-    const entry = selectYaspPreloadedStreamForPlayerTrack(previousPlayerState, nextPlayerState);
+    const entry = cachedEntry ?? selectYaspPreloadedStreamForPlayerTrack(previousPlayerState, nextPlayerState);
     if (!entry?.chunks?.length) {
         return false;
     }
@@ -1548,6 +1551,31 @@ const activateYaspPreloadedStream = (previousPlayerState, nextPlayerState) => {
     void wasapiExclusiveOutputSession.start();
     return true;
 };
+
+const applyWasapiExclusiveOutputSetting = () => {
+    if (!isWasapiExclusiveOutputEnabled()) {
+        stopWasapiExclusiveOutput('output disabled');
+        return;
+    }
+    if (wasapiExclusiveOutputSession || !lastWasapiExclusivePlayerState?.isPlaying || !lastYaspAudioFormat) return;
+    const entry = getYaspPreloadedStream(getYaspStreamIdentity(lastYaspAudioFormat));
+    const position = getEstimatedPlayerPosition(lastWasapiExclusivePlayerState);
+    if (
+        !entry?.hasMediaSegment ||
+        !entry.hasInitSegment ||
+        entry.capturedPlayerTrackId !== lastWasapiExclusivePlayerState.trackId ||
+        (entry.targetPlayerTrackId && entry.targetPlayerTrackId !== lastWasapiExclusivePlayerState.trackId) ||
+        !Number.isFinite(position) ||
+        !Number.isFinite(entry.basePosition) ||
+        !Number.isFinite(entry.endPosition) ||
+        position < entry.basePosition ||
+        position >= entry.endPosition
+    )
+        return;
+    const currentPlayerState = { ...lastWasapiExclusivePlayerState, position, updatedAt: Date.now() };
+    activateYaspPreloadedStream(currentPlayerState, currentPlayerState, entry);
+};
+exports.applyWasapiExclusiveOutputSetting = applyWasapiExclusiveOutputSetting;
 
 const updateWasapiExclusivePlayerState = (playerState = {}) => {
     const now = Date.now();
@@ -1615,6 +1643,8 @@ const updateWasapiExclusivePlayerState = (playerState = {}) => {
         wasapiExclusiveOutputSession.scheduleRendererService?.(0);
     }
 
+    if (!wasapiExclusiveOutputSession && nextState.isPlaying && !previousState?.isPlaying) applyWasapiExclusiveOutputSetting();
+
     return getWasapiExclusiveOutputState();
 };
 exports.updateWasapiExclusivePlayerState = updateWasapiExclusivePlayerState;
@@ -1667,6 +1697,7 @@ exports.refreshWasapiExclusiveVolumePolicy = refreshWasapiExclusiveVolumePolicy;
 
 const feedWasapiExclusiveOutput = (format, chunkBuffer, options = {}) => {
     if (!isWasapiExclusiveOutputEnabled()) {
+        if (isYaspChunkTapEnabled()) cacheYaspPreloadedChunk(format, chunkBuffer, options);
         lastWasapiExclusiveOutputSkipReason = 'output disabled';
         stopWasapiExclusiveOutput('disabled');
         return;

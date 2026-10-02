@@ -1094,8 +1094,8 @@ const handleApplicationEvents = (window) => {
                 void yandexStationRuntime.stop();
             }
         }
-        if (key === WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY && value !== true) {
-            nativeAudioOutput.stopWasapiExclusiveOutput('output disabled');
+        if (key === WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY) {
+            nativeAudioOutput.applyWasapiExclusiveOutputSetting();
         }
         if (key === YASP_CHUNK_TAP_ENABLED_SETTING_KEY && value !== true) {
             nativeAudioOutput.stopWasapiExclusiveOutput('YASP tap disabled');

@@ -1831,7 +1831,8 @@
                 f = i(84109),
                 O = i.n(f),
                 L = i(19283),
-                R = i.n(L);
+                R = i.n(L),
+                PulseSyncToggle = i(16503);
             let k = (0, s.PA)(() => {
                 let {
                         settings: { isMobile: e },
@@ -1921,6 +1922,72 @@
                     },
                     [s.modal],
                 );
+                const [pulseSyncR128Enabled, setPulseSyncR128Enabled] = (0, r.useState)(() => window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true);
+                const [pulseSyncWasapiEnabled, setPulseSyncWasapiEnabled] = (0, r.useState)(false);
+                const [pulseSyncYaspTapEnabled, setPulseSyncYaspTapEnabled] = (0, r.useState)(false);
+                const [pulseSyncWasapiSupported, setPulseSyncWasapiSupported] = (0, r.useState)(false);
+                const [pulseSyncAudioPending, setPulseSyncAudioPending] = (0, r.useState)(false);
+                const pulseSyncIsWindows = window.musicDesktop?.runtime.platform === 'win32';
+                (0, r.useEffect)(() => {
+                    if (!s.modal.isOpened) return;
+                    setPulseSyncR128Enabled(window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true);
+                    if (!pulseSyncIsWindows) return;
+                    setPulseSyncWasapiEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput')));
+                    setPulseSyncYaspTapEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap')));
+                    let cancelled = false;
+                    Promise.resolve(window.nativeAudioOutput?.getWasapiExclusiveStatus?.())
+                        .then((status) => {
+                            if (cancelled) return;
+                            setPulseSyncWasapiSupported(Boolean(status?.available && status?.supported));
+                            setPulseSyncWasapiEnabled(Boolean(status?.outputEnabled));
+                            setPulseSyncYaspTapEnabled(Boolean(status?.yaspTapEnabled));
+                        })
+                        .catch(() => {
+                            if (!cancelled) setPulseSyncWasapiSupported(false);
+                        });
+                    return () => {
+                        cancelled = true;
+                    };
+                }, [s.modal.isOpened, pulseSyncIsWindows]);
+                const onPulseSyncR128Toggle = async (enabled) => {
+                    const previous = pulseSyncR128Enabled;
+                    setPulseSyncR128Enabled(enabled);
+                    setPulseSyncAudioPending(true);
+                    try {
+                        await window.nativeSettings.set('modSettings.r128Normalization', enabled);
+                        window.__PULSESYNC_APPLY_R128_NORMALIZATION__?.(enabled);
+                        setPulseSyncR128Enabled(enabled);
+                    } catch (error) {
+                        setPulseSyncR128Enabled(previous);
+                        console.error('PulseSync normalization setting failed', error);
+                    } finally {
+                        setPulseSyncAudioPending(false);
+                    }
+                };
+                const onPulseSyncWasapiToggle = async (enabled) => {
+                    const previous = pulseSyncWasapiEnabled;
+                    setPulseSyncWasapiEnabled(enabled);
+                    setPulseSyncAudioPending(true);
+                    try {
+                        await window.nativeAudioOutput.setWasapiExclusiveOutputEnabled(enabled);
+                        setPulseSyncWasapiEnabled(enabled);
+                    } catch (error) {
+                        setPulseSyncWasapiEnabled(previous);
+                        console.error('PulseSync WASAPI setting failed', error);
+                    } finally {
+                        setPulseSyncAudioPending(false);
+                    }
+                };
+                const pulseSyncAudioToggle = (label, checked, onChange, disabled = false, title) =>
+                    (0, a.jsxs)('div', {
+                        className: O().equalizer,
+                        title,
+                        style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', opacity: disabled ? 0.45 : 1 },
+                        children: [
+                            (0, a.jsx)(E.HL, { className: O().item_option, style: { width: 'unset' }, variant: 'span', size: 'l', weight: 'medium', children: label }),
+                            (0, a.jsx)(PulseSyncToggle.l, { isChecked: checked, onChange, 'aria-label': label, disabled: disabled || pulseSyncAudioPending }),
+                        ],
+                    });
                 let H = !i.hasPlus,
                     Y = (0, r.useMemo)(
                         () =>
@@ -1987,6 +2054,20 @@
                                 ],
                             }),
                         Y,
+                        !e && f.isAvailable && pulseSyncAudioToggle('Нормализация громкости', pulseSyncR128Enabled, onPulseSyncR128Toggle),
+                        !e &&
+                            pulseSyncIsWindows &&
+                            pulseSyncAudioToggle(
+                                'WASAPI Exclusive',
+                                pulseSyncWasapiEnabled,
+                                onPulseSyncWasapiToggle,
+                                !pulseSyncWasapiSupported || !pulseSyncYaspTapEnabled,
+                                !pulseSyncWasapiSupported
+                                    ? 'WASAPI Exclusive недоступен'
+                                    : pulseSyncYaspTapEnabled
+                                      ? undefined
+                                      : 'Сначала включите YASP Tap в настройках аудио',
+                            ),
                         $,
                     ],
                 });
