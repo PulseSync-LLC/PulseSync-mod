@@ -922,6 +922,7 @@
                         try {
                             var a, l;
                             let r = yield i.changePlaylistRelative({ userId: e.uid, diff: t, revision: null != (a = e.revision) ? a : 0, playlistKind: e.kind });
+                            Number.isSafeInteger(r.trackCount) && r.trackCount >= 0 && (e.tracksCount = r.trackCount);
                             return ((e.revision = r.revision), (e.isAvailable = null == (l = r.available) || l), m.Y.OK);
                         } catch (e) {
                             if ((n.error(e), e && 'object' == typeof e && 'statusCode' in e && e.statusCode === s.X1.PRECONDITION_FAILED)) return m.Y.RELOAD;
