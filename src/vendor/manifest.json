@@ -1,0 +1,182 @@
+{
+    "source": "Yandex Music desktop 5.122.0 application distribution",
+    "archives": [
+        {
+            "archive": "electron-certificate-verification-0.0.1-canary-7cde337ab64229053db49b22b436a9788aac602b.tgz",
+            "sha256": "8bfc08a16875381702e0b4a65dd192bf008d1f0c4231a4c73a202c0ef057b091",
+            "packages": [
+                {
+                    "name": "@yandex-music-int/electron-certificate-verification",
+                    "version": "0.0.1-canary-7cde337ab64229053db49b22b436a9788aac602b",
+                    "license": "not specified"
+                },
+                {
+                    "name": "asn1js",
+                    "version": "3.0.6",
+                    "license": "BSD-3-Clause"
+                },
+                {
+                    "name": "pvtsutils",
+                    "version": "1.3.6",
+                    "license": "MIT"
+                },
+                {
+                    "name": "tslib",
+                    "version": "2.8.1",
+                    "license": "0BSD"
+                },
+                {
+                    "name": "pvutils",
+                    "version": "1.1.5",
+                    "license": "MIT"
+                },
+                {
+                    "name": "tslib",
+                    "version": "2.8.1",
+                    "license": "0BSD"
+                },
+                {
+                    "name": "pkijs",
+                    "version": "3.4.0",
+                    "license": "BSD-3-Clause"
+                },
+                {
+                    "name": "@noble/hashes",
+                    "version": "1.4.0",
+                    "license": "MIT"
+                },
+                {
+                    "name": "asn1js",
+                    "version": "3.0.6",
+                    "license": "BSD-3-Clause"
+                },
+                {
+                    "name": "pvtsutils",
+                    "version": "1.3.6",
+                    "license": "MIT"
+                },
+                {
+                    "name": "tslib",
+                    "version": "2.8.1",
+                    "license": "0BSD"
+                },
+                {
+                    "name": "pvutils",
+                    "version": "1.1.5",
+                    "license": "MIT"
+                },
+                {
+                    "name": "tslib",
+                    "version": "2.8.1",
+                    "license": "0BSD"
+                },
+                {
+                    "name": "bytestreamjs",
+                    "version": "2.0.1",
+                    "license": "BSD-3-Clause"
+                },
+                {
+                    "name": "pvtsutils",
+                    "version": "1.3.6",
+                    "license": "MIT"
+                },
+                {
+                    "name": "tslib",
+                    "version": "2.8.1",
+                    "license": "0BSD"
+                },
+                {
+                    "name": "pvutils",
+                    "version": "1.1.5",
+                    "license": "MIT"
+                },
+                {
+                    "name": "tslib",
+                    "version": "2.8.1",
+                    "license": "0BSD"
+                }
+            ]
+        },
+        {
+            "archive": "file-type-22.0.1.tgz",
+            "sha256": "d2b763f560c96ff23df83f8ba56cfee143bb1afc719b7a18309f32ab550e1b8c",
+            "packages": [
+                {
+                    "name": "file-type",
+                    "version": "22.0.1",
+                    "license": "MIT"
+                },
+                {
+                    "name": "@tokenizer/inflate",
+                    "version": "0.4.1",
+                    "license": "MIT"
+                },
+                {
+                    "name": "debug",
+                    "version": "4.4.3",
+                    "license": "MIT"
+                },
+                {
+                    "name": "ms",
+                    "version": "2.1.3",
+                    "license": "MIT"
+                },
+                {
+                    "name": "token-types",
+                    "version": "6.1.2",
+                    "license": "MIT"
+                },
+                {
+                    "name": "@borewit/text-codec",
+                    "version": "0.2.2",
+                    "license": "MIT"
+                },
+                {
+                    "name": "@tokenizer/token",
+                    "version": "0.3.0",
+                    "license": "MIT"
+                },
+                {
+                    "name": "ieee754",
+                    "version": "1.2.1",
+                    "license": "BSD-3-Clause"
+                },
+                {
+                    "name": "strtok3",
+                    "version": "10.3.5",
+                    "license": "MIT"
+                },
+                {
+                    "name": "@tokenizer/token",
+                    "version": "0.3.0",
+                    "license": "MIT"
+                },
+                {
+                    "name": "token-types",
+                    "version": "6.1.2",
+                    "license": "MIT"
+                },
+                {
+                    "name": "@borewit/text-codec",
+                    "version": "0.2.2",
+                    "license": "MIT"
+                },
+                {
+                    "name": "@tokenizer/token",
+                    "version": "0.3.0",
+                    "license": "MIT"
+                },
+                {
+                    "name": "ieee754",
+                    "version": "1.2.1",
+                    "license": "BSD-3-Clause"
+                },
+                {
+                    "name": "uint8array-extras",
+                    "version": "1.5.0",
+                    "license": "MIT"
+                }
+            ]
+        }
+    ]
+}
