@@ -915,6 +915,12 @@
         59132: (e, t, a) => {
             'use strict';
             a.d(t, { l: () => aX });
+            var pulseSyncHeaderReact = a(74631),
+                pulseSyncHeaderJsx = a(25839),
+                pulseSyncHeaderText = a(4254),
+                pulseSyncHeaderIcon = a(66738),
+                pulseSyncHeaderClassNames = a(82298);
+
             var i = a(25839),
                 l = a(88204),
                 s = a(84059),
@@ -1396,6 +1402,15 @@
             var eJ = a(10684),
                 e0 = a.n(eJ);
             let e1 = (0, l.PA)((e) => {
+                let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                (0, pulseSyncHeaderReact.useEffect)(() => {
+                    const onNativeSlotChange = (e) => {
+                        if (e.detail === 'headerInfoItems') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                    };
+                    document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                }, []);
+
                 var t, a, l, s;
                 let { album: o, withArtistLink: d = !0 } = e,
                     {
@@ -1403,6 +1418,44 @@
                     } = (0, _.g)(),
                     u = (0, n.useMemo)(() => eQ(o.artists), [o.artists]),
                     m = (null == u ? void 0 : u.length) === 1 && !(null == (t = u[0]) ? void 0 : t.decomposed) && !(null == (a = u[0]) ? void 0 : a.various);
+                const pulseSyncInjectHeaderAlbumItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', items, {
+                        eventDetail: null,
+                        renderItem: ({ key, payload, position }) => {
+                            const text = String(payload?.text ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim(),
+                                label = String(payload?.label ?? text).trim(),
+                                variant = 'block' === payload?.display ? 'div' : 'span';
+                            if (!text && !icon) return null;
+                            return (0, pulseSyncHeaderJsx.jsxs)(
+                                pulseSyncHeaderText.HL,
+                                {
+                                    variant,
+                                    type: 'text',
+                                    size: 'm',
+                                    weight: 'medium',
+                                    className: (0, pulseSyncHeaderClassNames.$)(e0().year, {
+                                        [e0().year_dot]: position > 0,
+                                    }),
+                                    ...(label
+                                        ? {
+                                              'aria-label': label,
+                                          }
+                                        : {}),
+                                    'data-pulsesync-addon-header-item': 'meta',
+                                    children: [
+                                        icon &&
+                                            (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                variant: icon,
+                                                size: 'xxxs',
+                                            }),
+                                        text,
+                                    ],
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
                 return (0, i.jsx)(ek.B, {
                     objectType: o.mainObjectType,
                     objectId: String(o.id),
@@ -1411,35 +1464,41 @@
                     objectsCount: null == (l = o.artists) ? void 0 : l.length,
                     children: (0, i.jsxs)('div', {
                         className: e0().meta,
-                        children: [
-                            m &&
-                                (0, i.jsx)(eG.t, {
-                                    radius: 'round',
-                                    className: e0().artistCover,
-                                    children: (0, i.jsx)(eZ.B, { src: null == (s = u[0]) ? void 0 : s.coverUri, size: 30, withAvatarReplace: !0 }),
+                        children: pulseSyncInjectHeaderAlbumItems(
+                            [
+                                (0, pulseSyncHeaderJsx.jsxs)(pulseSyncHeaderJsx.Fragment, {
+                                    children: [
+                                        m &&
+                                            (0, i.jsx)(eG.t, {
+                                                radius: 'round',
+                                                className: e0().artistCover,
+                                                children: (0, i.jsx)(eZ.B, { src: null == (s = u[0]) ? void 0 : s.coverUri, size: 30, withAvatarReplace: !0 }),
+                                            }),
+                                        (0, i.jsx)(eq.i, {
+                                            artists: u,
+                                            lineClamp: c ? 1 : void 0,
+                                            className: e0().artists,
+                                            spoilerClassName: e0().artistsSpoiler,
+                                            visibleArtistsCount: c ? void 0 : 2,
+                                            linkClassName: e0().artistLink,
+                                            captionClassName: e0().artistLabel,
+                                            variant: c ? 'breakAll' : 'breakWord',
+                                            withLink: d,
+                                        }),
+                                    ],
                                 }),
-                            (0, i.jsx)(eq.i, {
-                                artists: u,
-                                lineClamp: c ? 1 : void 0,
-                                className: e0().artists,
-                                spoilerClassName: e0().artistsSpoiler,
-                                visibleArtistsCount: c ? void 0 : 2,
-                                linkClassName: e0().artistLink,
-                                captionClassName: e0().artistLabel,
-                                variant: c ? 'breakAll' : 'breakWord',
-                                withLink: d,
-                            }),
-                            o.year &&
-                                (0, i.jsx)(p.HL, {
-                                    variant: 'div',
-                                    type: 'text',
-                                    size: 'm',
-                                    weight: 'medium',
-                                    className: (0, eh.$)(e0().year, { [e0().year_dot]: u.length > 0 }),
-                                    'data-test-id': r.e8.pageHeader.ALBUM_RELEASE_DATE,
-                                    children: o.year,
-                                }),
-                        ],
+                                o.year &&
+                                    (0, i.jsx)(p.HL, {
+                                        variant: 'div',
+                                        type: 'text',
+                                        size: 'm',
+                                        weight: 'medium',
+                                        className: (0, eh.$)(e0().year, { [e0().year_dot]: u.length > 0 }),
+                                        'data-test-id': r.e8.pageHeader.ALBUM_RELEASE_DATE,
+                                        children: o.year,
+                                    }),
+                            ].filter(Boolean),
+                        ),
                     }),
                 });
             });

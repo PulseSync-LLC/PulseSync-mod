@@ -740,6 +740,11 @@
         65133: (e, t, r) => {
             'use strict';
             (r.r(t), r.d(t, { default: () => te }));
+            var pulseSyncHeaderReact = r(74631),
+                pulseSyncHeaderJsx = r(25839),
+                pulseSyncHeaderText = r(4254),
+                pulseSyncHeaderIcon = r(66738);
+
             var a = r(25839),
                 i = r(84059),
                 l = r(88204),
@@ -866,6 +871,52 @@
                     });
                 },
                 em = (0, l.PA)((e) => {
+                    let [pulseSyncHeaderSlotRevision, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                    (0, pulseSyncHeaderReact.useEffect)(() => {
+                        const onNativeSlotChange = (e) => {
+                            if (e.detail === 'headerInfoItems') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                        };
+                        document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                        return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    }, []);
+
+                    const pulseSyncInjectHeaderArtistItems = (items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', items, {
+                            eventDetail: null,
+                            renderItem: ({ key, payload }) => {
+                                const text = String(payload?.text ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim(),
+                                    label = String(payload?.label ?? text).trim();
+                                if (!text && !icon) return null;
+                                return (0, pulseSyncHeaderJsx.jsxs)(
+                                    'div',
+                                    {
+                                        className: ed().label,
+                                        ...(label
+                                            ? {
+                                                  'aria-label': label,
+                                              }
+                                            : {}),
+                                        'data-pulsesync-addon-header-item': 'meta',
+                                        children: [
+                                            icon &&
+                                                (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                    variant: icon,
+                                                    size: 'xxxs',
+                                                }),
+                                            (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderText.HL, {
+                                                type: 'text',
+                                                size: 'm',
+                                                weight: 'medium',
+                                                variant: 'span',
+                                                children: text,
+                                            }),
+                                        ],
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items;
                     var t, r, i, l, d, u;
                     let { className: m, artistMeta: v, entitiesData: X, forwardRef: Q, onCoverClick: V } = e,
                         { shouldShowBuySubscriptionModal: Z, showBuySubscriptionModal: q } = (0, R.q)(),
@@ -1134,24 +1185,30 @@
                             () =>
                                 (0, a.jsx)('div', {
                                     className: ed().meta,
-                                    children:
-                                        (null == v ? void 0 : v.lastMonthListeners) &&
-                                        (0, a.jsxs)('div', {
-                                            className: ed().label,
-                                            'data-test-id': s.e8.pageHeader.ARTIST_LISTENERS_COUNT,
-                                            children: [
-                                                (0, a.jsx)(h.I, { variant: 'users', size: 'xxxs' }),
-                                                (0, a.jsx)(A.HL, {
-                                                    type: 'text',
-                                                    size: 'm',
-                                                    weight: 'medium',
-                                                    variant: 'span',
-                                                    children: (0, a.jsx)(f.A, { id: 'entity-names.listeners-per-month', values: { counter: v.lastMonthListeners } }),
+                                    children: pulseSyncInjectHeaderArtistItems(
+                                        [
+                                            (null == v ? void 0 : v.lastMonthListeners) &&
+                                                (0, a.jsxs)('div', {
+                                                    className: ed().label,
+                                                    'data-test-id': s.e8.pageHeader.ARTIST_LISTENERS_COUNT,
+                                                    children: [
+                                                        (0, a.jsx)(h.I, { variant: 'users', size: 'xxxs' }),
+                                                        (0, a.jsx)(A.HL, {
+                                                            type: 'text',
+                                                            size: 'm',
+                                                            weight: 'medium',
+                                                            variant: 'span',
+                                                            children: (0, a.jsx)(f.A, {
+                                                                id: 'entity-names.listeners-per-month',
+                                                                values: { counter: v.lastMonthListeners },
+                                                            }),
+                                                        }),
+                                                    ],
                                                 }),
-                                            ],
-                                        }),
+                                        ].filter(Boolean),
+                                    ),
                                 }),
-                            [null == v ? void 0 : v.lastMonthListeners],
+                            [null == v ? void 0 : v.lastMonthListeners, pulseSyncHeaderSlotRevision],
                         );
                     return (0, a.jsx)('div', {
                         className: ed().root,

@@ -1237,6 +1237,11 @@
             'use strict';
 
             a.d(t, { S: () => im });
+            var pulseSyncHeaderReact = a(74631),
+                pulseSyncHeaderJsx = a(25839),
+                pulseSyncHeaderText = a(4254),
+                pulseSyncHeaderIcon = a(66738);
+
             var pulseSyncMenuJsx = a(25839),
                 pulseSyncMenuItems = a(10820),
                 pulseSyncMenuIcons = a(66738);
@@ -2002,6 +2007,15 @@
                 tW = a(99720),
                 tz = a(79276);
             let tK = (0, l.PA)((e) => {
+                    let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                    (0, pulseSyncHeaderReact.useEffect)(() => {
+                        const onNativeSlotChange = (e) => {
+                            if (e.detail === 'headerInfoItems') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                        };
+                        document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                        return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    }, []);
+
                     let { playlist: t, className: a } = e,
                         { formatMessage: r } = (0, o.A)(),
                         l = (0, s.useCallback)(
@@ -2073,6 +2087,41 @@
                                         gender: (null == (a = t.owner) ? void 0 : a.sex) === tW.U.FEMALE ? 'female' : 'male',
                                     });
                         }, [t, l, n]);
+                    const pulseSyncInjectHeaderPlaylistItems = (items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', items, {
+                            eventDetail: null,
+                            renderItem: ({ key, payload, position, positionIndex }) => {
+                                const text = String(payload?.text ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim(),
+                                    label = String(payload?.label ?? text).trim();
+                                if (!text && !icon) return null;
+                                return (0, pulseSyncHeaderJsx.jsxs)(
+                                    pulseSyncHeaderText.HL,
+                                    {
+                                        variant: 'span',
+                                        type: 'text',
+                                        size: 'm',
+                                        weight: 'medium',
+                                        ...(label
+                                            ? {
+                                                  'aria-label': label,
+                                              }
+                                            : {}),
+                                        'data-pulsesync-addon-header-item': 'meta',
+                                        children: [
+                                            (position > 0 || positionIndex > 0) && '\u00a0•\u00a0',
+                                            icon &&
+                                                (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                    variant: icon,
+                                                    size: 'xxxs',
+                                                }),
+                                            text,
+                                        ],
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items;
                     return (0, i.jsx)(eP.HL, {
                         variant: 'span',
                         className: a,
@@ -2081,7 +2130,7 @@
                         weight: 'medium',
                         lineClamp: 1,
                         'data-test-id': c.e8.pageHeader.PLAYLIST_HEADER_UPDATED_TEXT,
-                        children: d,
+                        children: pulseSyncInjectHeaderPlaylistItems([d]),
                     });
                 }),
                 tG = (0, l.PA)((e) => {

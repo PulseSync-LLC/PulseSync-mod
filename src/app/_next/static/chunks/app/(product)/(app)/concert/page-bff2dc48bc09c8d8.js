@@ -944,6 +944,11 @@
         59884: (e, t, n) => {
             'use strict';
             n.d(t, { R: () => E });
+            var pulseSyncHeaderReact = n(74631),
+                pulseSyncHeaderJsx = n(25839),
+                pulseSyncHeaderText = n(4254),
+                pulseSyncHeaderIcon = n(66738);
+
             var i = n(25839),
                 r = n(82298),
                 s = n(88204),
@@ -980,6 +985,15 @@
                 b = n(50362),
                 C = n.n(b);
             let E = (0, s.PA)((e) => {
+                let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                (0, pulseSyncHeaderReact.useEffect)(() => {
+                    const onNativeSlotChange = (e) => {
+                        if (e.detail === 'headerTitleItems') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                    };
+                    document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                }, []);
+
                 let {
                         title: t = '',
                         'aria-labelledby': n,
@@ -1064,12 +1078,46 @@
                               })
                             : F,
                     );
+                const pulseSyncInjectHeaderTitleItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('headerTitleItems', items, {
+                        eventDetail: null,
+                        renderItem: ({ key, payload, positionIndex }) => {
+                            const text = String(payload?.text ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim(),
+                                label = String(payload?.label ?? text).trim();
+                            if (!text && !icon) return null;
+                            return (0, pulseSyncHeaderJsx.jsxs)(
+                                pulseSyncHeaderText.HL,
+                                {
+                                    variant: 'span',
+                                    type: 'text',
+                                    size: 's',
+                                    weight: 'medium',
+                                    ...(label
+                                        ? {
+                                              'aria-label': label,
+                                          }
+                                        : {}),
+                                    'data-pulsesync-addon-header-item': 'title',
+                                    children: [
+                                        icon &&
+                                            (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                variant: icon,
+                                                size: 'xxs',
+                                            }),
+                                        text,
+                                    ],
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
                 return (0, i.jsxs)(i.Fragment, {
                     children: [
                         !B &&
                             (0, i.jsxs)('div', {
                                 className: (0, r.$)(C().root, y),
-                                children: [
+                                children: pulseSyncInjectHeaderTitleItems([
                                     (0, i.jsx)(g, { title: t, className: C().stickyTitle, children: U }),
                                     s &&
                                         (0, i.jsx)('div', {
@@ -1083,7 +1131,7 @@
                                                 'data-test-id': l.e8.pageHeader.EDIT_TITLE_BUTTON,
                                             }),
                                         }),
-                                ],
+                                ]),
                             }),
                         B &&
                             (0, i.jsx)('div', {
@@ -1938,6 +1986,13 @@
         92543: (e, t, n) => {
             'use strict';
             n.d(t, { k: () => P });
+            var pulseSyncHeaderReact = n(74631),
+                pulseSyncHeaderJsx = n(25839),
+                pulseSyncHeaderText = n(4254),
+                pulseSyncHeaderIcon = n(66738),
+                pulseSyncHeaderButton = n(4071),
+                pulseSyncHeaderTooltip = n(60924);
+
             var i = n(25839),
                 r = n(82298),
                 s = n(88204),
@@ -2196,6 +2251,15 @@
                 j = n(59884);
             let O = 'entity-header-block-controls',
                 w = (0, s.PA)((e) => {
+                    let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                    (0, pulseSyncHeaderReact.useEffect)(() => {
+                        const onNativeSlotChange = (e) => {
+                            if (e.detail === 'headerActions') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                        };
+                        document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                        return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    }, []);
+
                     let {
                             'aria-labelledby': t,
                             entityName: n,
@@ -2260,6 +2324,41 @@
                                       }),
                             [P, n, R, I],
                         );
+                    const pulseSyncInjectHeaderActionsItems = (items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('headerActions', items, {
+                            eventDetail: null,
+                            renderItem: ({ key, payload, activate }) => {
+                                const label = String(payload?.label ?? '').trim(),
+                                    description = String(payload?.description ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim();
+                                if (!label || !icon) return null;
+                                return (0, pulseSyncHeaderJsx.jsx)(
+                                    pulseSyncHeaderTooltip.k,
+                                    {
+                                        title: label,
+                                        ...(description
+                                            ? {
+                                                  description,
+                                              }
+                                            : {}),
+                                        children: (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderButton.$, {
+                                            radius: 'round',
+                                            size: 'xs',
+                                            variant: 'text',
+                                            withRipple: !1,
+                                            'aria-label': label,
+                                            icon: (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                variant: icon,
+                                                size: 'xxs',
+                                            }),
+                                            onClick: activate,
+                                            'data-pulsesync-addon-header-action': '',
+                                        }),
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items;
                     return (0, i.jsxs)('div', {
                         className: (0, r.$)(
                             N().root,
@@ -2294,7 +2393,11 @@
                                             !!a && (0, i.jsx)('div', { className: (0, r.$)(N().meta, { [N().meta_withDisclaimerLabel]: !!P }, H), children: a }),
                                         ],
                                     }),
-                                    (0, i.jsx)('div', { className: N().controls, 'data-test-id': c.e8.pageHeader.BASE_PAGE_HEADER_CONTROLS, children: h }),
+                                    (0, i.jsx)('div', {
+                                        className: N().controls,
+                                        'data-test-id': c.e8.pageHeader.BASE_PAGE_HEADER_CONTROLS,
+                                        children: pulseSyncInjectHeaderActionsItems(Array.isArray(h) ? h : [h]),
+                                    }),
                                     F &&
                                         (0, i.jsxs)('div', {
                                             className: N().buttonContainer,
