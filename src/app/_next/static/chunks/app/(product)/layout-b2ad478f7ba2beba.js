@@ -15492,6 +15492,263 @@
                 c = a(30389),
                 h = a(96618),
                 v = a(16714);
+            const pulseSyncNativeReact = a(74631);
+            const NativeFieldComponent = pulseSyncNativeReact.lazy(() =>
+                Promise.all([a.e(5622), a.e(5531), a.e(8353), a.e(2750)]).then(() => ({
+                    default: a(35622).NativeField,
+                })),
+            );
+            const NativeSpinnerComponent = pulseSyncNativeReact.lazy(() =>
+                a.e(2533).then(() => ({
+                    default: a(4550).y,
+                })),
+            );
+            function NativeSpinner({ size, label }) {
+                return pulseSyncNativeReact.createElement(
+                    'span',
+                    {
+                        role: 'status',
+                        'aria-label': label,
+                        style: {
+                            display: 'inline-flex',
+                            flexShrink: 0,
+                            width: `var(--ym-icon-size-${size})`,
+                            height: `var(--ym-icon-size-${size})`,
+                        },
+                    },
+                    pulseSyncNativeReact.createElement(
+                        pulseSyncNativeReact.Suspense,
+                        {
+                            fallback: null,
+                        },
+                        pulseSyncNativeReact.createElement(NativeSpinnerComponent, {
+                            size,
+                        }),
+                    ),
+                );
+            }
+            const NativeTabsComponent = pulseSyncNativeReact.lazy(() =>
+                a.e(4932).then(() => {
+                    const native = a(5867);
+                    const Tab = ({ itemDisabled, ...props }) =>
+                        pulseSyncNativeReact.createElement(native.oz, {
+                            ...props,
+                            disabled: props.disabled || itemDisabled,
+                        });
+                    return {
+                        default: function NativeTabs({ id, label, value, items, disabled, onChange }) {
+                            const enabled = items.filter((item) => !item.disabled);
+                            const focusValue = enabled.some((item) => item.value === value) ? value : enabled[0]?.value;
+                            const select = (next) => {
+                                if (!disabled && next !== value && enabled.some((item) => item.value === next)) onChange(next);
+                            };
+                            const keyDown = (event) => {
+                                if (disabled || event.altKey || event.ctrlKey || event.metaKey || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+                                const buttons = Array.from(event.currentTarget.querySelectorAll('[role="tab"]:not(:disabled)'));
+                                const index = buttons.indexOf(event.target.closest('[role="tab"]'));
+                                if (index < 0 || !buttons.length) return;
+                                const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+                                const offset = (event.key === 'ArrowRight' ? 1 : -1) * (rtl ? -1 : 1);
+                                const nextIndex =
+                                    event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + offset + buttons.length) % buttons.length;
+                                event.preventDefault();
+                                event.stopPropagation();
+                                buttons[nextIndex].focus();
+                                select(buttons[nextIndex].getAttribute('data-pulsesync-tab-value'));
+                            };
+                            return pulseSyncNativeReact.createElement(
+                                native.tU,
+                                {
+                                    elementId: id,
+                                    value,
+                                    disabled,
+                                    'aria-label': label,
+                                    'aria-orientation': 'horizontal',
+                                    style: {
+                                        scrollbarWidth: 'none',
+                                    },
+                                    onTabChange: select,
+                                    onKeyDown: keyDown,
+                                },
+                                items.map((item) =>
+                                    pulseSyncNativeReact.createElement(
+                                        Tab,
+                                        {
+                                            key: item.value,
+                                            value: item.value,
+                                            itemDisabled: item.disabled,
+                                            tabIndex: !disabled && item.value === focusValue ? 0 : -1,
+                                            size: 'm',
+                                            radius: 'xxxl',
+                                            'data-pulsesync-tab-value': item.value,
+                                        },
+                                        item.label,
+                                    ),
+                                ),
+                            );
+                        },
+                    };
+                }),
+            );
+            const nativeControlDom = a(71910),
+                nativeControlButton = a(4071),
+                nativeControlIcon = a(66738),
+                nativeControlTooltip = {
+                    m_: pulseSyncNativeReact.lazy(() => a.e(48).then(() => ({ default: a(3392).m_ }))),
+                    ZI: pulseSyncNativeReact.lazy(() => a.e(48).then(() => ({ default: a(3392).ZI }))),
+                },
+                nativeControlCaption = a(4254),
+                nativeControlEmptySubscribe = () => () => {},
+                nativeControlEmptySnapshot = () => 0,
+                NativeTooltipReference = pulseSyncNativeReact.forwardRef(({ anchor, 'aria-describedby': describedBy }, ref) => {
+                    pulseSyncNativeReact.useImperativeHandle(ref, () => anchor, [anchor]);
+                    pulseSyncNativeReact.useLayoutEffect(() => {
+                        if (!describedBy) return;
+                        const previous = anchor.getAttribute('aria-describedby'),
+                            value = [previous, describedBy].filter(Boolean).join(' ');
+                        anchor.setAttribute('aria-describedby', value);
+                        return () => {
+                            if (anchor.getAttribute('aria-describedby') !== value) return;
+                            if (previous === null) anchor.removeAttribute('aria-describedby');
+                            else anchor.setAttribute('aria-describedby', previous);
+                        };
+                    }, [anchor, describedBy]);
+                    return null;
+                }),
+                NativeLegacyTooltip = ({ anchor, title, description, onClose }) =>
+                    pulseSyncNativeReact.createElement(
+                        pulseSyncNativeReact.Suspense,
+                        { fallback: null },
+                        pulseSyncNativeReact.createElement(nativeControlTooltip.m_, {
+                            open: true,
+                            onOpenChange: (open) => {
+                                if (!open) onClose();
+                            },
+                            isHoverEnabled: false,
+                            isFocusEnabled: false,
+                            enableAriaDescribedby: true,
+                            offsetOptions: 4,
+                            shiftOptions: {
+                                padding: 8,
+                            },
+                            flipOptions: {
+                                padding: 8,
+                            },
+                            children: [
+                                pulseSyncNativeReact.createElement(NativeTooltipReference, {
+                                    anchor,
+                                    key: 'reference',
+                                }),
+                                pulseSyncNativeReact.createElement(
+                                    nativeControlTooltip.ZI,
+                                    {
+                                        key: 'content',
+                                    },
+                                    pulseSyncNativeReact.createElement(
+                                        nativeControlCaption.HL,
+                                        {
+                                            variant: 'div',
+                                            type: 'text',
+                                            size: 's',
+                                            weight: description ? 'bold' : 'medium',
+                                        },
+                                        title,
+                                    ),
+                                    description
+                                        ? pulseSyncNativeReact.createElement(
+                                              nativeControlCaption.HL,
+                                              {
+                                                  variant: 'div',
+                                                  type: 'text',
+                                                  size: 's',
+                                                  weight: 'normal',
+                                              },
+                                              description,
+                                          )
+                                        : null,
+                                ),
+                            ],
+                        }),
+                    ),
+                nativeControlTools = {
+                    createElement: pulseSyncNativeReact.createElement,
+                    createPortal: nativeControlDom.createPortal,
+                    Button: nativeControlButton.$,
+                    Icon: nativeControlIcon.I,
+                    Tooltip: (props) =>
+                        pulseSyncNativeReact.createElement(
+                            pulseSyncNativeReact.Suspense,
+                            { fallback: null },
+                            pulseSyncNativeReact.createElement(nativeControlTooltip.m_, props),
+                        ),
+                    LegacyTooltip: NativeLegacyTooltip,
+                    Field: (props) =>
+                        pulseSyncNativeReact.createElement(
+                            pulseSyncNativeReact.Suspense,
+                            {
+                                fallback: null,
+                            },
+                            pulseSyncNativeReact.createElement(NativeFieldComponent, props),
+                        ),
+                    Tabs: (props) =>
+                        pulseSyncNativeReact.createElement(
+                            pulseSyncNativeReact.Suspense,
+                            {
+                                fallback: null,
+                            },
+                            pulseSyncNativeReact.createElement(NativeTabsComponent, props),
+                        ),
+                    Spinner: NativeSpinner,
+                    Caption: nativeControlCaption.HL,
+                };
+            function NativeAddonControls() {
+                const [renderer, setRenderer] = pulseSyncNativeReact.useState(() => window.pulsesyncApi?.createNativeControlsRenderer?.(nativeControlTools));
+                pulseSyncNativeReact.useEffect(() => {
+                    const ready = () => setRenderer((current) => current ?? window.pulsesyncApi?.createNativeControlsRenderer?.(nativeControlTools));
+                    document.addEventListener('pulsesync:runtime-ready', ready);
+                    ready();
+                    return () => document.removeEventListener('pulsesync:runtime-ready', ready);
+                }, []);
+                pulseSyncNativeReact.useSyncExternalStore(
+                    renderer?.subscribe ?? nativeControlEmptySubscribe,
+                    renderer?.getSnapshot ?? nativeControlEmptySnapshot,
+                    nativeControlEmptySnapshot,
+                );
+                return renderer?.render() ?? null;
+            }
+            const NativeAddonModalContent = pulseSyncNativeReact.lazy(() =>
+                Promise.all([a.e(5622), a.e(5531), a.e(8353), a.e(2750)]).then(() => ({
+                    default: a(35622).AddonModalHost,
+                })),
+            );
+            const nativeModalEmptySnapshot = () => undefined;
+            function NativeAddonModals() {
+                const [api, setApi] = pulseSyncNativeReact.useState(() => window.pulsesyncApi);
+                pulseSyncNativeReact.useEffect(() => {
+                    const ready = () => setApi(window.pulsesyncApi);
+                    document.addEventListener('pulsesync:runtime-ready', ready);
+                    ready();
+                    return () => document.removeEventListener('pulsesync:runtime-ready', ready);
+                }, []);
+                const modal = pulseSyncNativeReact.useSyncExternalStore(
+                    api?.registerNativeModals ?? nativeControlEmptySubscribe,
+                    api?.getNativeModal ?? nativeModalEmptySnapshot,
+                    nativeModalEmptySnapshot,
+                );
+                const requested = pulseSyncNativeReact.useRef(false);
+                if (modal) requested.current = true;
+                return requested.current
+                    ? pulseSyncNativeReact.createElement(
+                          pulseSyncNativeReact.Suspense,
+                          {
+                              fallback: null,
+                          },
+                          pulseSyncNativeReact.createElement(NativeAddonModalContent, {
+                              modal,
+                          }),
+                      )
+                    : null;
+            }
             let y = (e) => {
                 let { children: t, predefinedTheme: a } = e,
                     y = (0, o.N)().get(n.oo),
@@ -15522,7 +15779,25 @@
                         b((0, d.V)());
                     }, [b]));
                 let E = (0, i.useMemo)(() => ({ theme: f, setTheme: g }), [f]);
-                return (0, r.jsx)(h.D.Provider, { value: E, children: (0, r.jsx)(i.Suspense, { fallback: (0, r.jsx)(v.MainSuspenseLoader, {}), children: t }) });
+                return (0, r.jsx)(h.D.Provider, {
+                    value: E,
+                    children: (0, r.jsx)(i.Suspense, {
+                        fallback: (0, r.jsx)(v.MainSuspenseLoader, {}),
+                        children: pulseSyncNativeReact.createElement(
+                            pulseSyncNativeReact.Fragment,
+                            null,
+                            t,
+                            pulseSyncNativeReact.createElement(NativeAddonControls),
+                            pulseSyncNativeReact.createElement(
+                                pulseSyncNativeReact.Suspense,
+                                {
+                                    fallback: null,
+                                },
+                                pulseSyncNativeReact.createElement(NativeAddonModals),
+                            ),
+                        ),
+                    }),
+                });
             };
         },
         83586: (e, t, a) => {
