@@ -2226,6 +2226,8 @@
                 };
             class es extends ee.v {
                 async isTrackDownloaded(t, e) {
+                    if (window.pulsesyncApi?.getTrackReplacement?.(t)) return !0;
+
                     if (!this.variables.uid || ei.includes(e)) return !1;
                     try {
                         return !!(await this.usersTracksRepository.get(this.variables.uid, t));
@@ -2234,6 +2236,13 @@
                     }
                 }
                 async getLocalFileDownloadInfo(t) {
+                    let pulseSyncReplacement = window.pulsesyncApi?.getTrackReplacement?.(t);
+                    if (pulseSyncReplacement)
+                        return {
+                            trackId: t,
+                            urls: [pulseSyncReplacement],
+                        };
+
                     let e = await this.tracksRepository.getDecryptKey(String(t));
                     if (!e) throw new er('Decrypt key not found');
                     let r = await this.fileStorage.readFile(tb(String(t))),
