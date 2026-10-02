@@ -46,7 +46,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(20% - var(--ym-spacer-size-l) * 4 / 5);
+        width: calc(20% - var(--ym-spacer-size-l)*4/5);
     }
 }
 @media only screen and (min-width: 1400px) and (max-width: 1690px) {
@@ -54,7 +54,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(16.66667% - var(--ym-spacer-size-l) * 5 / 6);
+        width: calc(16.66667% - var(--ym-spacer-size-l)*5/6);
     }
 }
 @media only screen and (min-width: 1690px) and (max-width: 1920px) {
@@ -62,7 +62,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(14.28571% - var(--ym-spacer-size-l) * 6 / 7);
+        width: calc(14.28571% - var(--ym-spacer-size-l)*6/7);
     }
 }
 .CollectionAlbumsPresavesEmpty_root__3w6b7 {
@@ -223,7 +223,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(16.66667cqi - var(--ym-spacer-size-l) * 5 / 6);
+        width: calc(16.66667cqi - var(--ym-spacer-size-l)*5/6);
     }
 }
 @media only screen and (min-width: 1690px) and (max-width: 1920px) {
@@ -231,7 +231,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(12.5cqi - var(--ym-spacer-size-l) * 7 / 8);
+        width: calc(12.5cqi - var(--ym-spacer-size-l)*7/8);
     }
 }
 .CollectionArtistsAndTopWithItems_item__fPqL0.CollectionArtistsAndTopWithItems_important__TEa6m {
@@ -244,7 +244,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(20cqi - var(--ym-spacer-size-l) * 4 / 5);
+        width: calc(20cqi - var(--ym-spacer-size-l)*4/5);
     }
 }
 @media only screen and (min-width: 1400px) and (max-width: 1690px) {
@@ -252,7 +252,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(16.66667cqi - var(--ym-spacer-size-l) * 5 / 6);
+        width: calc(16.66667cqi - var(--ym-spacer-size-l)*5/6);
     }
 }
 @media only screen and (min-width: 1690px) and (max-width: 1920px) {
@@ -260,7 +260,7 @@
         max-width: none;
         min-width: 0;
         min-width: auto;
-        width: calc(14.28571cqi - var(--ym-spacer-size-l) * 6 / 7);
+        width: calc(14.28571cqi - var(--ym-spacer-size-l)*6/7);
     }
 }
 .CollectionClipsEmpty_root__LwgZS {

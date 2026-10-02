@@ -1,0 +1,208 @@
+@property --vibe-gradient-stop-0 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-1 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-2 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-3 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-4 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-5 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-6 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-7 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-8 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-9 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-10 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-11 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-12 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-13 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-14 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+@property --vibe-gradient-stop-15 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+}
+.DefaultLayout_root__7J0wo {
+    grid-template: 'navbar content' 1fr 'navbar playerbar' auto 'navbar barBelow' auto/auto 1fr;
+    transition: grid-template var(--ym-duration-transition);
+}
+.DefaultLayout_root_applicationPreserveTitleBar__ygJtq {
+    padding-block-start: var(--ym-spacer-size-xxxl);
+}
+@media only screen and (max-width: 1080px) {
+    .DefaultLayout_root__7J0wo {
+        grid-template: 'navbar content' minmax(
+                auto,
+                calc(100% - var(--player-bar-height) - var(--ym-spacer-size-m))
+            ) 'playerbar playerbar' auto 'barBelow barBelow' auto/auto 1fr;
+    }
+    .DefaultLayout_root_withBarBelow__jPsaV {
+        grid-template: 'navbar content' minmax(
+                auto,
+                calc(100% - var(--player-bar-height) - var(--balbelow-height) - var(--ym-spacer-size-m)*2)
+            ) 'playerbar playerbar' auto 'barBelow barBelow' auto/auto 1fr;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .DefaultLayout_root__7J0wo {
+        grid-template: 'content' 1fr 'playerbar' auto 'barBelow' auto 'navbar' auto/1fr;
+    }
+    .desktop .DefaultLayout_root__7J0wo {
+        grid-template: 'navbar content' 1fr 'playerbar playerbar' auto 'barBelow barBelow' auto/auto 1fr;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .DefaultLayout_root__7J0wo {
+        transition: none;
+    }
+}
+.DefaultLayout_rootNewVibe__MSDOn {
+    --ym-layout-border: none;
+    --ym-layout-border-radius: 0;
+    --ym-layout-background-color: transparent;
+    --vibe-gradient-angle: 270deg;
+    background: linear-gradient(
+        270deg,
+        var(--vibe-gradient-stop-0) 0,
+        var(--vibe-gradient-stop-1) 10%,
+        var(--vibe-gradient-stop-2) 19%,
+        var(--vibe-gradient-stop-3) 25%,
+        var(--vibe-gradient-stop-4) 30%,
+        var(--vibe-gradient-stop-5) 34%,
+        var(--vibe-gradient-stop-6) 37%,
+        var(--vibe-gradient-stop-7) 40%,
+        var(--vibe-gradient-stop-8) 42%,
+        var(--vibe-gradient-stop-9) 44%,
+        var(--vibe-gradient-stop-10) 47%,
+        var(--vibe-gradient-stop-11) 50%,
+        var(--vibe-gradient-stop-12) 54%,
+        var(--vibe-gradient-stop-13) 60%,
+        var(--vibe-gradient-stop-14) 67%,
+        var(--vibe-gradient-stop-15) 75%
+    );
+    background: linear-gradient(
+        var(--vibe-gradient-angle, 180deg),
+        var(--vibe-gradient-stop-0) 0,
+        var(--vibe-gradient-stop-1) 10%,
+        var(--vibe-gradient-stop-2) 19%,
+        var(--vibe-gradient-stop-3) 25%,
+        var(--vibe-gradient-stop-4) 30%,
+        var(--vibe-gradient-stop-5) 34%,
+        var(--vibe-gradient-stop-6) 37%,
+        var(--vibe-gradient-stop-7) 40%,
+        var(--vibe-gradient-stop-8) 42%,
+        var(--vibe-gradient-stop-9) 44%,
+        var(--vibe-gradient-stop-10) 47%,
+        var(--vibe-gradient-stop-11) 50%,
+        var(--vibe-gradient-stop-12) 54%,
+        var(--vibe-gradient-stop-13) 60%,
+        var(--vibe-gradient-stop-14) 67%,
+        var(--vibe-gradient-stop-15) 75%
+    );
+    grid-template: 'navbar content' 1fr 'navbar barBelow' auto/auto 1fr;
+    transition:
+        --vibe-gradient-stop-0 var(--ym-duration-transition),
+        --vibe-gradient-stop-1 var(--ym-duration-transition),
+        --vibe-gradient-stop-2 var(--ym-duration-transition),
+        --vibe-gradient-stop-3 var(--ym-duration-transition),
+        --vibe-gradient-stop-4 var(--ym-duration-transition),
+        --vibe-gradient-stop-5 var(--ym-duration-transition),
+        --vibe-gradient-stop-6 var(--ym-duration-transition),
+        --vibe-gradient-stop-7 var(--ym-duration-transition),
+        --vibe-gradient-stop-8 var(--ym-duration-transition),
+        --vibe-gradient-stop-9 var(--ym-duration-transition),
+        --vibe-gradient-stop-10 var(--ym-duration-transition),
+        --vibe-gradient-stop-11 var(--ym-duration-transition),
+        --vibe-gradient-stop-12 var(--ym-duration-transition),
+        --vibe-gradient-stop-13 var(--ym-duration-transition),
+        --vibe-gradient-stop-14 var(--ym-duration-transition),
+        --vibe-gradient-stop-15 var(--ym-duration-transition);
+}
+@media (prefers-reduced-motion: reduce) {
+    .DefaultLayout_rootNewVibe__MSDOn {
+        transition: none;
+    }
+}
+@media only screen and (max-width: 1080px) {
+    .DefaultLayout_rootNewVibe__MSDOn {
+        grid-template: 'navbar content' minmax(0, calc(100% - var(--ym-spacer-size-m))) 'barBelow barBelow' auto/auto 1fr;
+    }
+    .DefaultLayout_rootNewVibe_withBarBelow__82_qG {
+        grid-template: 'navbar content' minmax(0, calc(100% - var(--balbelow-height) - var(--ym-spacer-size-m)*2)) 'barBelow barBelow' auto/auto 1fr;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .DefaultLayout_rootNewVibe__MSDOn {
+        --vibe-gradient-angle: 180deg;
+        grid-template: 'content' 1fr 'barBelow' auto 'navbar' auto/1fr;
+    }
+}
+.DefaultLayout_barBelow__y6PFU {
+    grid-area: barBelow;
+}
+.DefaultLayout_navbar__LIQWG {
+    grid-area: navbar;
+}
+.DefaultLayout_navbar_application_macos__9dj3u {
+    margin-block-start: var(--ym-spacer-size-xxl);
+}
+.DefaultLayout_navbar_application_linux__ejlGn,
+.DefaultLayout_navbar_application_windows__3hDQ_ {
+    margin-block-start: calc(var(--ym-spacer-size-l)*-1);
+}

@@ -96,7 +96,7 @@
 }
 @media only screen and (min-width: 960px) {
     .ArtistAlbumsPage_content__65D6P {
-        gap: calc(var(--ym-spacer-size-m) * 2);
+        gap: calc(var(--ym-spacer-size-m)*2);
     }
 }
 @media only screen and (min-width: 1024px) and (max-width: 1920px) {

@@ -1,0 +1,7 @@
+.TopConcerts_concertCard__h86wP {
+    --concert-image-mask: url(/_next/static/media/top-concerts-mask.b653027d.svg);
+    --concert-date-width: 4.5rem;
+    --concert-date-height: 5rem;
+    --concert-date-day-font-size: var(--ym-font-size-headline-xl);
+    --concert-date-day-line-height: var(--ym-font-line-height-headline-xl);
+}

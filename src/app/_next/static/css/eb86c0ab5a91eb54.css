@@ -1,0 +1,609 @@
+.AnimatedSearchInputGradient_root__RCZ_L {
+    --animated-search-input-gradient-outer-inline-start: 2.5rem;
+    --animated-search-input-gradient-outer-inline-end: 2.44813rem;
+    --animated-search-input-gradient-outer-block-offset: 0.88563rem;
+    --animated-search-input-gradient-hole-inline-inset: 0.05188rem;
+    --animated-search-input-gradient-hole-block-inset: 0.10438rem;
+    --animated-search-input-gradient-stroke-inset: 0.01938rem;
+    --animated-search-input-gradient-hard-blur: 0.28625rem;
+    --animated-search-input-gradient-soft-blur-start: 0.29rem;
+    --animated-search-input-gradient-soft-blur-end: 1.15875rem;
+    --animated-search-input-gradient-duration: 1.066s;
+    --animated-search-input-gradient-fade-duration: 0.24s;
+    --animated-search-input-gradient-play-state: paused;
+    --animated-search-input-gradient-mask-motion-duration: 2.053s;
+    --animated-search-input-gradient-mask-blur-duration: 1.02s;
+    --animated-search-input-gradient-mask-opacity-duration: 3.006s;
+    --animated-search-input-gradient-mask-start-inline-position: -25%;
+    --animated-search-input-gradient-mask-start-block-position: 4.94813rem;
+    --animated-search-input-gradient-mask-start-inline-size: 6.14563rem;
+    --animated-search-input-gradient-mask-start-block-size: 2.39563rem;
+    --animated-search-input-gradient-mask-middle-block-position: -5.98938rem;
+    --animated-search-input-gradient-mask-cruise-block-position: -9.28625rem;
+    --animated-search-input-gradient-mask-end-inline-offset: 2.61563rem;
+    --animated-search-input-gradient-mask-end-block-position: -10.86438rem;
+    --animated-search-input-gradient-mask-middle-inline-scale: 2.314;
+    --animated-search-input-gradient-mask-middle-block-scale: 2.565;
+    --animated-search-input-gradient-mask-end-inline-scale: 2.9;
+    --animated-search-input-gradient-mask-end-block-scale: 2.62;
+    --animated-search-input-gradient-mask-blur-start: 0.52063rem;
+    --animated-search-input-gradient-mask-blur-control: 1.28938rem;
+    --animated-search-input-gradient-mask-blur-end: 3.90625rem;
+    --animated-search-input-gradient-hard-glow-filter: blur(var(--animated-search-input-gradient-hard-blur));
+    --animated-search-input-gradient-soft-glow-animation: AnimatedSearchInputGradient_animated-search-input-gradient-soft-blur__sl4Vj
+        var(--animated-search-input-gradient-duration) ease-out forwards;
+    --animated-search-input-gradient-reveal-blur-animation-name: AnimatedSearchInputGradient_animated-search-input-gradient-mask-blur__6VngZ;
+    border-radius: var(--ym-radius-size-xxxl);
+    contain: paint;
+    inset: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    transition:
+        opacity 0.24s ease-out,
+        visibility 0s linear 0.24s;
+    transition:
+        opacity var(--animated-search-input-gradient-fade-duration) ease-out,
+        visibility 0s linear var(--animated-search-input-gradient-fade-duration);
+    visibility: hidden;
+    z-index: 0;
+}
+.AnimatedSearchInputGradient_root_active__xjLMk {
+    --animated-search-input-gradient-play-state: running;
+    opacity: 1;
+    transition-delay: 0s;
+    visibility: visible;
+}
+.AnimatedSearchInputGradient_root_safari__Ji6uj {
+    --animated-search-input-gradient-hard-glow-filter: none;
+    --animated-search-input-gradient-soft-glow-animation: none;
+    --animated-search-input-gradient-reveal-blur-animation-name: none;
+}
+.AnimatedSearchInputGradient_root_size_xxs__umHrV {
+    --animated-search-input-gradient-outer-inline-start: 3rem;
+    --animated-search-input-gradient-outer-inline-end: 2.9375rem;
+    --animated-search-input-gradient-outer-block-offset: 1.0625rem;
+    --animated-search-input-gradient-hole-inline-inset: 0.0625rem;
+    --animated-search-input-gradient-hole-block-inset: 0.125rem;
+    --animated-search-input-gradient-stroke-inset: 0.02375rem;
+    --animated-search-input-gradient-hard-blur: 0.34375rem;
+    --animated-search-input-gradient-soft-blur-start: 0.3475rem;
+    --animated-search-input-gradient-soft-blur-end: 1.39063rem;
+    --animated-search-input-gradient-mask-start-block-position: 5.9375rem;
+    --animated-search-input-gradient-mask-start-inline-size: 7.375rem;
+    --animated-search-input-gradient-mask-start-block-size: 2.875rem;
+    --animated-search-input-gradient-mask-middle-block-position: -7.1875rem;
+    --animated-search-input-gradient-mask-cruise-block-position: -11.14375rem;
+    --animated-search-input-gradient-mask-end-inline-offset: 3.13875rem;
+    --animated-search-input-gradient-mask-end-block-position: -13.0375rem;
+    --animated-search-input-gradient-mask-blur-start: 0.625rem;
+    --animated-search-input-gradient-mask-blur-control: 1.54688rem;
+    --animated-search-input-gradient-mask-blur-end: 4.6875rem;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInputGradient_root__RCZ_L {
+        display: none;
+        transition: none;
+    }
+}
+.AnimatedSearchInputGradient_gradient__pMdqx {
+    block-size: 100%;
+    display: block;
+    inline-size: 100%;
+    overflow: visible;
+}
+.AnimatedSearchInputGradient_ringMask__0hjLD {
+    mask-type: luminance;
+}
+.AnimatedSearchInputGradient_ringOuter__uNAfw {
+    height: calc(100% + var(--animated-search-input-gradient-outer-block-offset)*2);
+    width: calc(100% + var(--animated-search-input-gradient-outer-inline-start) + var(--animated-search-input-gradient-outer-inline-end));
+    x: calc(var(--animated-search-input-gradient-outer-inline-start)*-1);
+    y: calc(var(--animated-search-input-gradient-outer-block-offset)*-1);
+}
+.AnimatedSearchInputGradient_ringHole__AXkf4 {
+    height: calc(100% - var(--animated-search-input-gradient-hole-block-inset)*2);
+    width: calc(100% - var(--animated-search-input-gradient-hole-inline-inset)*2);
+    x: var(--animated-search-input-gradient-hole-inline-inset);
+    y: var(--animated-search-input-gradient-hole-block-inset);
+}
+.AnimatedSearchInputGradient_softGlow__UDn1M {
+    animation: var(--animated-search-input-gradient-soft-glow-animation);
+    animation-play-state: var(--animated-search-input-gradient-play-state);
+    opacity: 0.65;
+    will-change: filter;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInputGradient_softGlow__UDn1M {
+        animation: none;
+    }
+}
+.AnimatedSearchInputGradient_hardGlow__nLxz_ {
+    filter: var(--animated-search-input-gradient-hard-glow-filter);
+}
+.AnimatedSearchInputGradient_stroke__kujhk {
+    height: calc(100% - var(--animated-search-input-gradient-stroke-inset)*2);
+    opacity: 0.45;
+    width: calc(100% - var(--animated-search-input-gradient-stroke-inset)*2);
+    x: var(--animated-search-input-gradient-stroke-inset);
+    y: var(--animated-search-input-gradient-stroke-inset);
+}
+.AnimatedSearchInputGradient_revealMask__PcVQv {
+    mask-type: alpha;
+}
+.AnimatedSearchInputGradient_revealBlur__k9fMh {
+    animation:
+        var(--animated-search-input-gradient-reveal-blur-animation-name) var(--animated-search-input-gradient-mask-blur-duration) linear
+            var(--animated-search-input-gradient-mask-phase-delay) both,
+        AnimatedSearchInputGradient_animated-search-input-gradient-mask-opacity__p6uRU var(--animated-search-input-gradient-mask-opacity-duration) linear
+            var(--animated-search-input-gradient-mask-phase-delay) forwards;
+    animation-play-state: var(--animated-search-input-gradient-play-state);
+    opacity: 0;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInputGradient_revealBlur__k9fMh {
+        animation: none;
+    }
+}
+.AnimatedSearchInputGradient_revealPass__r6c29 {
+    animation:
+        AnimatedSearchInputGradient_animated-search-input-gradient-mask-inline-motion__qC86w var(--animated-search-input-gradient-mask-motion-duration) linear
+            var(--animated-search-input-gradient-mask-phase-delay) both,
+        AnimatedSearchInputGradient_animated-search-input-gradient-mask-shape-motion__u8huB var(--animated-search-input-gradient-mask-motion-duration) linear
+            var(--animated-search-input-gradient-mask-phase-delay) both;
+    animation-play-state: var(--animated-search-input-gradient-play-state);
+    height: var(--animated-search-input-gradient-mask-start-block-size);
+    transform-box: fill-box;
+    transform-origin: top left;
+    width: var(--animated-search-input-gradient-mask-start-inline-size);
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInputGradient_revealPass__r6c29 {
+        animation: none;
+    }
+}
+@keyframes AnimatedSearchInputGradient_animated-search-input-gradient-soft-blur__sl4Vj {
+    0% {
+        filter: blur(var(--animated-search-input-gradient-soft-blur-start));
+    }
+    to {
+        filter: blur(var(--animated-search-input-gradient-soft-blur-end));
+    }
+}
+@keyframes AnimatedSearchInputGradient_animated-search-input-gradient-mask-inline-motion__qC86w {
+    0% {
+        x: var(--animated-search-input-gradient-mask-start-inline-position);
+    }
+    to {
+        x: calc(100% + var(--animated-search-input-gradient-mask-end-inline-offset));
+    }
+}
+@keyframes AnimatedSearchInputGradient_animated-search-input-gradient-mask-shape-motion__u8huB {
+    0% {
+        transform: rotate(0deg) scale(1);
+        y: var(--animated-search-input-gradient-mask-start-block-position);
+    }
+    50% {
+        transform: rotate(12.897deg) scale(var(--animated-search-input-gradient-mask-middle-inline-scale), var(--animated-search-input-gradient-mask-middle-block-scale));
+        y: var(--animated-search-input-gradient-mask-middle-block-position);
+    }
+    75% {
+        transform: rotate(22.45deg) scale(2.607, 2.593);
+        y: var(--animated-search-input-gradient-mask-cruise-block-position);
+    }
+    to {
+        transform: rotate(32deg) scale(var(--animated-search-input-gradient-mask-end-inline-scale), var(--animated-search-input-gradient-mask-end-block-scale));
+        y: var(--animated-search-input-gradient-mask-end-block-position);
+    }
+}
+@keyframes AnimatedSearchInputGradient_animated-search-input-gradient-mask-blur__6VngZ {
+    0% {
+        filter: blur(var(--animated-search-input-gradient-mask-blur-start));
+    }
+    10% {
+        filter: blur(var(--animated-search-input-gradient-mask-blur-control));
+    }
+    to {
+        filter: blur(var(--animated-search-input-gradient-mask-blur-end));
+    }
+}
+@keyframes AnimatedSearchInputGradient_animated-search-input-gradient-mask-opacity__p6uRU {
+    0% {
+        opacity: 1;
+    }
+    5% {
+        opacity: 0.9;
+    }
+    35% {
+        opacity: 0.9;
+    }
+    45% {
+        opacity: 0.6;
+    }
+    55% {
+        opacity: 0.35;
+    }
+    70% {
+        opacity: 0.15;
+    }
+    85% {
+        opacity: 0.05;
+    }
+    to {
+        opacity: 0;
+    }
+}
+.AnimatedSearchInputText_viewport__u75Lt {
+    align-items: center;
+    display: flex;
+    inset-block-end: 0;
+    inset-block-start: 0;
+    inset-inline-end: var(--ym-spacer-size-m);
+    inset-inline-start: calc(var(--ym-spacer-size-m) + var(--ym-icon-size-xs) + var(--ym-spacer-size-xs) + 0.125rem);
+}
+.AnimatedSearchInputText_phrase__4UX_G,
+.AnimatedSearchInputText_viewport__u75Lt {
+    overflow: hidden;
+    position: absolute;
+}
+.AnimatedSearchInputText_phrase__4UX_G {
+    animation: var(--animated-search-input-text-phrase-animation-name) var(--animated-search-input-text-cycle-duration) linear
+        var(--animated-search-input-text-phase-delay) both;
+    animation-play-state: paused;
+    block-size: 100%;
+    contain: paint;
+    inline-size: min(100%, var(--animated-search-input-text-placeholder-inline-size));
+    mask-composite: var(--animated-search-input-text-mask-composite);
+    mask-image: var(--animated-search-input-text-mask-image);
+    mask-position: var(--animated-search-input-text-mask-position);
+    mask-repeat: no-repeat;
+    mask-size: var(--animated-search-input-text-mask-size);
+}
+.AnimatedSearchInputText_phrase_last__UEo_B {
+    --animated-search-input-text-content-animation-name: none;
+    --animated-search-input-text-content-mask-image: none;
+    animation: var(--animated-search-input-text-last-animation-name) var(--animated-search-input-text-last-duration) linear var(--animated-search-input-text-phase-delay)
+        both;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInputText_phrase__4UX_G,
+    .AnimatedSearchInputText_phrase_last__UEo_B {
+        animation: none;
+    }
+}
+.AnimatedSearchInputText_phraseContent__GDAaa {
+    animation: var(--animated-search-input-text-content-animation-name) var(--animated-search-input-text-cycle-duration) linear
+        var(--animated-search-input-text-phase-delay) both;
+    animation-play-state: paused;
+    block-size: 100%;
+    inline-size: 100%;
+    inset: 0;
+    mask-image: var(--animated-search-input-text-content-mask-image);
+    mask-position: var(--animated-search-input-text-content-mask-position);
+    mask-repeat: no-repeat;
+    mask-size: var(--animated-search-input-text-content-mask-size);
+    position: absolute;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInputText_phraseContent__GDAaa {
+        animation: none;
+    }
+}
+.AnimatedSearchInputText_text__Yinjg {
+    block-size: 100%;
+    font-family: var(--ym-font-text);
+    font-size: var(--animated-search-input-font-size, var(--ym-font-size-label-m));
+    font-style: normal;
+    font-weight: var(--ym-font-weight-medium);
+    inline-size: 100%;
+    letter-spacing: normal;
+    line-height: var(--ym-font-line-height-label-m);
+    overflow: visible;
+    position: absolute;
+    transform: translateY(0.0625rem);
+    white-space: nowrap;
+}
+.AnimatedSearchInputText_base__49jn_,
+.AnimatedSearchInputText_gradient__ET9p_ {
+    dominant-baseline: middle;
+}
+.AnimatedSearchInputText_base__49jn_ {
+    fill: var(--ym-controls-color-secondary-on_outline-enabled);
+    opacity: 0.4;
+}
+.AnimatedSearchInputText_gradient__ET9p_ {
+    animation: AnimatedSearchInputText_animated-search-input-text-gradient__u_iqf var(--animated-search-input-text-gradient-duration) linear
+        var(--animated-search-input-text-phase-delay) both;
+    animation-play-state: paused;
+    opacity: 0.85;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInputText_gradient__ET9p_ {
+        animation: none;
+    }
+}
+.AnimatedSearchInputText_gradientStop___ehIy {
+    stop-color: var(--q2v-accent-color);
+}
+.AnimatedSearchInputText_gradientStop_start__y1iyr {
+    stop-color: color-mix(in srgb, var(--q2v-accent-color) 75%, #fff);
+}
+.AnimatedSearchInputText_gradientStop_middle__7Ojsx {
+    stop-color: var(--q2v-accent-color);
+}
+.AnimatedSearchInputText_gradientStop_end__suNEa {
+    stop-color: color-mix(in srgb, var(--q2v-accent-color) 70%, #000);
+}
+.AnimatedSearchInputText_root__3H8oP {
+    --animated-search-input-text-cycle-duration: 3.2s;
+    --animated-search-input-text-gradient-duration: 2.4s;
+    --animated-search-input-text-last-duration: 1.84s;
+    --animated-search-input-text-fade-duration: 0.24s;
+    --animated-search-input-text-placeholder-inline-size: 30rem;
+    --animated-search-input-text-mask-inline-size: 30rem;
+    --animated-search-input-text-mask-block-size: 3.25rem;
+    --animated-search-input-text-mask-start-position: -19.5rem;
+    --animated-search-input-text-mask-end-position: -0.3125rem;
+    --animated-search-input-text-outgoing-mask-inline-size: 60rem;
+    --animated-search-input-text-phrase-animation-name: AnimatedSearchInputText_animated-search-input-text-phrase__xxBCh;
+    --animated-search-input-text-last-animation-name: AnimatedSearchInputText_animated-search-input-text-phrase-last__zII_U;
+    --animated-search-input-text-mask-image:
+        linear-gradient(90deg, #000, #000 50%, transparent 60%, transparent), linear-gradient(90deg, transparent, transparent 25%, #000 30%, #000);
+    --animated-search-input-text-mask-position:
+        var(--animated-search-input-text-mask-start-position) center, var(--animated-search-input-text-mask-start-position) center;
+    --animated-search-input-text-mask-composite: intersect;
+    --animated-search-input-text-mask-size:
+        var(--animated-search-input-text-mask-inline-size) var(--animated-search-input-text-mask-block-size),
+        var(--animated-search-input-text-outgoing-mask-inline-size) var(--animated-search-input-text-mask-block-size);
+    --animated-search-input-text-content-animation-name: none;
+    --animated-search-input-text-content-mask-image: none;
+    --animated-search-input-text-content-mask-position: var(--animated-search-input-text-mask-start-position) center;
+    --animated-search-input-text-content-mask-size: var(--animated-search-input-text-outgoing-mask-inline-size) var(--animated-search-input-text-mask-block-size);
+    border-radius: var(--ym-radius-size-xxxl);
+    contain: paint;
+    inset: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    transition:
+        opacity 0.24s ease-out,
+        visibility 0s linear 0.24s;
+    transition:
+        opacity var(--animated-search-input-text-fade-duration) ease-out,
+        visibility 0s linear var(--animated-search-input-text-fade-duration);
+    visibility: hidden;
+    z-index: 1;
+}
+.AnimatedSearchInputText_root_active__mXt1h {
+    opacity: 1;
+    transition-delay: 0s;
+    visibility: visible;
+}
+.AnimatedSearchInputText_root_active__mXt1h .AnimatedSearchInputText_gradient__ET9p_,
+.AnimatedSearchInputText_root_active__mXt1h .AnimatedSearchInputText_phraseContent__GDAaa,
+.AnimatedSearchInputText_root_active__mXt1h .AnimatedSearchInputText_phrase__4UX_G {
+    animation-play-state: running;
+}
+.AnimatedSearchInputText_root_active__mXt1h .AnimatedSearchInputText_phrase__4UX_G {
+    will-change: mask-position, opacity;
+}
+.AnimatedSearchInputText_root_active__mXt1h .AnimatedSearchInputText_phraseContent__GDAaa {
+    will-change: mask-position;
+}
+.AnimatedSearchInputText_root_active__mXt1h .AnimatedSearchInputText_gradient__ET9p_ {
+    will-change: opacity;
+}
+.AnimatedSearchInputText_root_safari__OMxq_ {
+    --animated-search-input-text-phrase-animation-name: AnimatedSearchInputText_animated-search-input-text-phrase-safari__93BWx;
+    --animated-search-input-text-last-animation-name: AnimatedSearchInputText_animated-search-input-text-phrase-last-safari__rGLqU;
+    --animated-search-input-text-mask-image: linear-gradient(90deg, #000, #000 50%, transparent 60%, transparent);
+    --animated-search-input-text-mask-position: var(--animated-search-input-text-mask-start-position) center;
+    --animated-search-input-text-mask-composite: add;
+    --animated-search-input-text-mask-size: var(--animated-search-input-text-mask-inline-size) var(--animated-search-input-text-mask-block-size);
+    --animated-search-input-text-content-animation-name: AnimatedSearchInputText_animated-search-input-text-content-safari__XtJjl;
+    --animated-search-input-text-content-mask-image: linear-gradient(90deg, transparent, transparent 25%, #000 30%, #000);
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInputText_root__3H8oP {
+        display: none;
+        transition: none;
+    }
+}
+@keyframes AnimatedSearchInputText_animated-search-input-text-phrase__xxBCh {
+    0% {
+        mask-position:
+            var(--animated-search-input-text-mask-start-position) center,
+            var(--animated-search-input-text-mask-start-position) center;
+        opacity: 1;
+    }
+    50% {
+        mask-position:
+            var(--animated-search-input-text-mask-end-position) center,
+            var(--animated-search-input-text-mask-start-position) center;
+        opacity: 1;
+    }
+    70% {
+        opacity: 0;
+    }
+    to {
+        mask-position:
+            var(--animated-search-input-text-mask-end-position) center,
+            var(--animated-search-input-text-mask-end-position) center;
+        opacity: 0;
+    }
+}
+@keyframes AnimatedSearchInputText_animated-search-input-text-phrase-last__zII_U {
+    0% {
+        mask-position:
+            var(--animated-search-input-text-mask-start-position) center,
+            var(--animated-search-input-text-mask-start-position) center;
+        opacity: 1;
+    }
+    85% {
+        mask-position:
+            var(--animated-search-input-text-mask-end-position) center,
+            var(--animated-search-input-text-mask-start-position) center;
+        opacity: 1;
+    }
+    to {
+        mask-position:
+            var(--animated-search-input-text-mask-end-position) center,
+            var(--animated-search-input-text-mask-start-position) center;
+        opacity: 0;
+    }
+}
+@keyframes AnimatedSearchInputText_animated-search-input-text-phrase-safari__93BWx {
+    0% {
+        mask-position: var(--animated-search-input-text-mask-start-position) center;
+        opacity: 1;
+    }
+    50% {
+        mask-position: var(--animated-search-input-text-mask-end-position) center;
+        opacity: 1;
+    }
+    70% {
+        opacity: 0;
+    }
+    to {
+        mask-position: var(--animated-search-input-text-mask-end-position) center;
+        opacity: 0;
+    }
+}
+@keyframes AnimatedSearchInputText_animated-search-input-text-content-safari__XtJjl {
+    0%,
+    50% {
+        mask-position: var(--animated-search-input-text-mask-start-position) center;
+    }
+    to {
+        mask-position: var(--animated-search-input-text-mask-end-position) center;
+    }
+}
+@keyframes AnimatedSearchInputText_animated-search-input-text-phrase-last-safari__rGLqU {
+    0% {
+        mask-position: var(--animated-search-input-text-mask-start-position) center;
+        opacity: 1;
+    }
+    85% {
+        mask-position: var(--animated-search-input-text-mask-end-position) center;
+        opacity: 1;
+    }
+    to {
+        mask-position: var(--animated-search-input-text-mask-end-position) center;
+        opacity: 0;
+    }
+}
+@keyframes AnimatedSearchInputText_animated-search-input-text-gradient__u_iqf {
+    0%,
+    30% {
+        opacity: 0.85;
+    }
+    to {
+        opacity: 0;
+    }
+}
+.AnimatedSearchInput_root__9y1dF {
+    --animated-search-input-caret-color: var(--q2v-accent-color);
+    isolation: isolate;
+    min-width: 0;
+    position: relative;
+}
+.AnimatedSearchInput_root__9y1dF input {
+    caret-color: var(--animated-search-input-caret-color);
+}
+.AnimatedSearchInput_root__9y1dF input::placeholder {
+    transition: opacity var(--ym-duration-transition) ease-out;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInput_root__9y1dF input::placeholder {
+        transition: none;
+    }
+}
+.AnimatedSearchInput_root_introActive__NzQ59 {
+    --animated-search-input-caret-color: transparent;
+}
+.AnimatedSearchInput_root_introActive__NzQ59 input::placeholder {
+    opacity: 0;
+}
+@media screen and (prefers-reduced-motion: no-preference) {
+    .AnimatedSearchInput_root_introActive__NzQ59 .AnimatedSearchInput_searchInput__fhfbv {
+        box-shadow: 0 0 0 0.0625rem var(--ym-controls-color-secondary-outline-enabled_stroke);
+    }
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInput_root_introActive__NzQ59 {
+        --animated-search-input-caret-color: var(--q2v-accent-color);
+    }
+    .AnimatedSearchInput_root_introActive__NzQ59 input::placeholder {
+        opacity: 1;
+    }
+}
+.AnimatedSearchInput_searchInput__fhfbv {
+    position: relative;
+}
+.AnimatedSearchInput_searchInputContent___J4zD {
+    position: relative;
+    z-index: 2;
+}
+.AnimatedSearchInput_mirrorViewport__1S69P {
+    --haze-inline-size: 8.6875rem;
+    --haze-inline-start-overflow: 1.5rem;
+    --haze-inline-end-overflow: calc(var(--haze-inline-size) - var(--haze-inline-start-overflow));
+    align-items: center;
+    display: flex;
+    inset-block-end: 0;
+    inset-block-start: 0;
+    inset-inline-end: calc(var(--ym-spacer-size-m) - 7.1875rem);
+    inset-inline-end: calc(var(--ym-spacer-size-m) - var(--haze-inline-end-overflow));
+    inset-inline-start: calc(var(--ym-spacer-size-m) + var(--ym-icon-size-xs) + var(--ym-spacer-size-xs) - 1.5rem);
+    inset-inline-start: calc(var(--ym-spacer-size-m) + var(--ym-icon-size-xs) + var(--ym-spacer-size-xs) - var(--haze-inline-start-overflow));
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+}
+.AnimatedSearchInput_mirrorContent__fjXLS {
+    color: transparent;
+    font-family: var(--ym-font-text);
+    font-size: var(--animated-search-input-font-size, var(--ym-font-size-label-m));
+    font-style: normal;
+    font-weight: var(--ym-font-weight-medium);
+    letter-spacing: normal;
+    line-height: var(--ym-font-line-height-label-m);
+    line-height: var(--ym-font-line-height-label-l);
+    padding-inline-start: calc(var(--haze-inline-start-overflow) + 0.125rem);
+    position: relative;
+    transform: translateX(var(--animated-search-input-scroll-offset));
+    white-space: pre;
+}
+.AnimatedSearchInput_haze__q7hJQ {
+    height: 4.5rem;
+    inset-block-start: 50%;
+    inset-inline-start: calc(100% - var(--haze-inline-start-overflow));
+    opacity: 0;
+    position: absolute;
+    transform: translateY(-50%);
+    transition: opacity 0.2s ease-in-out;
+    width: var(--haze-inline-size);
+}
+.AnimatedSearchInput_haze_visible__qw91M {
+    opacity: 0.7;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .AnimatedSearchInput_haze__q7hJQ {
+        transition: none;
+    }
+}
+.SearchCorrectedText_root__ZM2f2 {
+    background-color: var(--ym-surface-color-primary-enabled-list);
+    border-radius: var(--ym-radius-size-l);
+    padding: var(--ym-spacer-size-l);
+    text-align: center;
+}
+.SearchCorrectedText_link__eORMG,
+.SearchCorrectedText_text__HKgvL {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.SearchCorrectedText_link__eORMG:hover {
+    color: var(--ym-controls-color-primary-text-hovered);
+}

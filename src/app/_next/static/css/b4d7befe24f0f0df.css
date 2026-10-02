@@ -156,7 +156,7 @@
     color: var(--ym-controls-color-secondary-on_outline-enabled_variant);
     display: flex;
     justify-content: center;
-    margin-inline-end: calc(var(--ym-spacer-size-xs) * -1);
+    margin-inline-end: calc(var(--ym-spacer-size-xs)*-1);
     opacity: 0;
     padding-block-end: var(--ym-spacer-size-xxxs);
     padding-block-start: var(--ym-spacer-size-xxxs);

@@ -112,44 +112,12 @@
 .SettingsListButtonItem_description__g8_Ba {
     color: var(--ym-controls-color-primary-text-enabled);
 }
-.SettingsListLinkItem_icon__p4P_V {
-    color: var(--ym-controls-color-primary-text-enabled);
-    transition: transform var(--ym-duration-transition);
-}
-@media (prefers-reduced-motion: reduce) {
-    .SettingsListLinkItem_icon__p4P_V {
-        transition: none;
-    }
-}
-.SettingsListLinkItem_root__rTPC9:focus-visible .SettingsListLinkItem_icon__p4P_V,
-.SettingsListLinkItem_root__rTPC9:hover .SettingsListLinkItem_icon__p4P_V {
-    transform: translateX(var(--ym-spacer-size-xs));
-}
-.SettingsListLinkItem_container__k7bhS {
-    gap: var(--ym-spacer-size-xs);
-}
-.SettingsListLinkItem_container__k7bhS,
-.SettingsListLinkItem_linkText__0PHlQ {
-    display: flex;
-    justify-content: space-between;
-}
-.SettingsListLinkItem_linkText__0PHlQ {
-    flex-direction: column;
-    gap: var(--ym-spacer-size-xxxs);
-}
-.SettingsListLinkItem_title__duJnL {
-    color: var(--ym-controls-color-primary-text-enabled_variant);
-}
-.SettingsListLinkItem_description__xWeAD {
-    color: var(--ym-controls-color-primary-text-enabled);
-}
 .SettingsListToggleItem_root__yEEYT {
     align-items: center;
     display: flex;
     justify-content: space-between;
     padding-block-end: var(--ym-spacer-size-xxxs);
     padding-block-start: var(--ym-spacer-size-xxxs);
-    gap: 10px;
 }
 .SettingsListToggleItem_textContainer__tRjyt {
     display: flex;
@@ -160,15 +128,6 @@
 }
 .SettingsListToggleItem_description__JBOzV {
     color: var(--ym-controls-color-primary-text-enabled);
-    transition: color var(--ym-duration-transition);
-}
-.SettingsListToggleItem_title__Xz8_Q_disabled {
-    color: var(--ym-controls-color-primary-text-disabled);
-    transition: color var(--ym-duration-transition);
-}
-.SettingsListToggleItem_description__JBOzV_disabled {
-    color: var(--ym-controls-color-primary-text-disabled);
-    transition: color var(--ym-duration-transition);
 }
 .ShortcutsModal_root__ro7m4 {
     height: 100%;
@@ -282,7 +241,4 @@
 }
 .Settings_item__Ksa9h {
     padding-block-end: var(--ym-spacer-size-xxxl);
-}
-.Settings_item__Ksa9h:last-child {
-    padding-block-end: 0;
 }
