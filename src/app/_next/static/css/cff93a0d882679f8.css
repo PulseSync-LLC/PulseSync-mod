@@ -371,6 +371,7 @@
     z-index: var(--ym-z-index-header);
 }
 .MainPage_betaSlot_newVibe__DGtXm {
+    display: flex;
     inset-block-end: 0;
     inset-block-start: auto;
     inset-inline-end: 0;

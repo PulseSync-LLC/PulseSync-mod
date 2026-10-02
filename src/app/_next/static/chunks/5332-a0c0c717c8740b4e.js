@@ -6016,6 +6016,7 @@
                             words: s,
                             experiments: o,
                             releaseNotes: l,
+                            quality: pulseSyncQuality,
                             fullscreenVideoPlayer: u,
                             sonataState: { entityMeta: b },
                             settings: { isMobile: S },
@@ -6031,6 +6032,218 @@
                         F = (0, ez.Z)(null != (i = null == (t = a.specialHeader) ? void 0 : t.url) ? i : ''),
                         H = o.checkExperiment(z.z.WebNextNewWaveTabFeedbackForm, 'on'),
                         { href: K } = (0, eX.u)('/slides/special/:campaignId', { params: { campaignId: 'summer_2026' } });
+                    let pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave',
+                        [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, _.useState)(window.isRemoteDeviceConnected ?? !1),
+                        [remoteDevice, setRemoteDevice] = (0, _.useState)(window.remoteDevice ?? null),
+                        [pulseSyncTrackQualityInfo, setPulseSyncTrackQualityInfo] = (0, _.useState)(window?.PulseSyncTrackQuality?.getLastInfo?.() ?? null),
+                        [pulseSyncWasapiExclusiveOutputState, setPulseSyncWasapiExclusiveOutputState] = (0, _.useState)(null),
+                        [pulseSyncShowAudioQualityOnNewWave, setPulseSyncShowAudioQualityOnNewWave] = (0, _.useState)(
+                            () => window.nativeSettings?.get?.(pulseSyncShowAudioQualityOnNewWaveSettingKey) !== !1,
+                        );
+                    (0, _.useEffect)(() => {
+                        const updatePulseSyncTrackQualityInfo = (format) => {
+                            setPulseSyncTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(format) ?? null);
+                        };
+                        const lastInfo = window?.PulseSyncTrackQuality?.getLastInfo?.();
+                        if (lastInfo) {
+                            setPulseSyncTrackQualityInfo(lastInfo);
+                        }
+                        window?.nativeAudioOutput
+                            ?.getYaspAudioFormat?.()
+                            ?.then?.((format) => {
+                                updatePulseSyncTrackQualityInfo(format);
+                            })
+                            ?.catch?.(() => {});
+                        const unsubscribe = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED', (event, format) => {
+                            updatePulseSyncTrackQualityInfo(format);
+                        });
+                        return () => {
+                            if (typeof unsubscribe === 'function') unsubscribe();
+                        };
+                    }, []);
+                    (0, _.useEffect)(() => {
+                        const updatePulseSyncWasapiExclusiveOutputState = (state) => {
+                            setPulseSyncWasapiExclusiveOutputState(state ?? null);
+                        };
+                        window?.nativeAudioOutput
+                            ?.getWasapiExclusiveStatus?.()
+                            ?.then?.((status) => {
+                                updatePulseSyncWasapiExclusiveOutputState(status?.outputState ?? null);
+                            })
+                            ?.catch?.(() => {});
+                        const unsubscribe = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED', (event, state) => {
+                            updatePulseSyncWasapiExclusiveOutputState(state);
+                        });
+                        return () => {
+                            if (typeof unsubscribe === 'function') unsubscribe();
+                        };
+                    }, []);
+                    (0, _.useEffect)(() => {
+                        const updatePulseSyncShowAudioQualityOnNewWave = (event, key, value) => {
+                            if (key === pulseSyncShowAudioQualityOnNewWaveSettingKey) {
+                                setPulseSyncShowAudioQualityOnNewWave(value !== !1);
+                            }
+                        };
+                        const unsubscribe = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', updatePulseSyncShowAudioQualityOnNewWave);
+                        return () => {
+                            if (typeof unsubscribe === 'function') unsubscribe();
+                        };
+                    }, []);
+                    (0, _.useEffect)(() => {
+                        let e = (device_info) => {
+                                (setIsRemoteDeviceConnected(!0),
+                                    setRemoteDevice(device_info),
+                                    (window.isRemoteDeviceConnected = !0),
+                                    (window.remoteDevice = device_info));
+                            },
+                            t = () => {
+                                (setIsRemoteDeviceConnected(!1), setRemoteDevice(null), (window.isRemoteDeviceConnected = !1), (window.remoteDevice = null));
+                            };
+                        return (
+                            (window.onRemoteDeviceConnected || (window.onRemoteDeviceConnected = [])).push(e),
+                            (window.onRemoteDeviceDisconnected || (window.onRemoteDeviceDisconnected = [])).push(t),
+                            () => {
+                                ((window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter((t) => t !== e)),
+                                    (window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter((e) => e !== t)));
+                            }
+                        );
+                    }, []);
+                    const deviceTypeMap = {
+                            UNSPECIFIED: 'Неизвестного устройства',
+                            WEB: 'Сайта',
+                            ANDROID: 'Android приложения',
+                            IOS: 'IOS приложения',
+                            SMART_SPEAKER: 'Умной колонки',
+                            WEB_TV: 'ТВ',
+                            ANDROID_TV: 'Android ТВ',
+                            APPLE_TV: 'Apple ТВ',
+                            ANDROID_WEAR: 'Android часов',
+                            WEB_DESKTOP: 'ПК приложения',
+                        },
+                        pulseSyncWasapiIsActive =
+                            (null == pulseSyncWasapiExclusiveOutputState ? void 0 : pulseSyncWasapiExclusiveOutputState.active) === !0 ||
+                            (null == pulseSyncWasapiExclusiveOutputState || null == pulseSyncWasapiExclusiveOutputState.session
+                                ? void 0
+                                : pulseSyncWasapiExclusiveOutputState.session.state) === 'running',
+                        pulseSyncYnisonBubble = (0, _.useMemo)(() => {
+                            if (!isRemoteDeviceConnected) return null;
+                            const remoteControlText = `Управление с ${deviceTypeMap?.[remoteDevice?.info?.type] ?? ''}: ${remoteDevice?.info?.title ?? ''}`;
+                            return (0, c.jsx)(C.$, {
+                                color: 'secondary',
+                                radius: 'xl',
+                                'aria-label': remoteControlText,
+                                className: eQ().beta,
+                                style: {
+                                    marginInlineEnd: 'var(--ym-spacer-size-xs)',
+                                    color: 'white',
+                                },
+                                withHover: !1,
+                                children: (0, c.jsx)(P.HL, {
+                                    variant: 'div',
+                                    type: 'text',
+                                    size: 's',
+                                    weight: 'medium',
+                                    children: remoteControlText,
+                                }),
+                            });
+                        }, [isRemoteDeviceConnected, remoteDevice?.info?.type, remoteDevice?.info?.title, deviceTypeMap]),
+                        pulseSyncAudioQualityBubble = (0, _.useMemo)(() => {
+                            return (null == pulseSyncTrackQualityInfo ? void 0 : pulseSyncTrackQualityInfo.label) &&
+                                (pulseSyncShowAudioQualityOnNewWave || pulseSyncWasapiIsActive)
+                                ? (0, c.jsx)(C.$, {
+                                      color: 'secondary',
+                                      radius: 'xl',
+                                      type: 'button',
+                                      'aria-label': 'Качество трека: '.concat(pulseSyncTrackQualityInfo.label),
+                                      'aria-haspopup': 'dialog',
+                                      title: E({
+                                          id: 'player-actions.audio-quality',
+                                      }),
+                                      onClick: pulseSyncQuality.modal.open,
+                                      className: eQ().beta,
+                                      style: {
+                                          marginInlineEnd: 'var(--ym-spacer-size-xs)',
+                                          color: 'white',
+                                          cursor: 'pointer',
+                                      },
+                                      withHover: !1,
+                                      children: (0, c.jsx)(P.HL, {
+                                          variant: 'div',
+                                          type: 'text',
+                                          size: 's',
+                                          weight: 'medium',
+                                          children: pulseSyncTrackQualityInfo.label,
+                                      }),
+                                  })
+                                : null;
+                        }, [pulseSyncTrackQualityInfo, pulseSyncShowAudioQualityOnNewWave, pulseSyncWasapiIsActive, pulseSyncQuality.modal.open, E]),
+                        pulseSyncWasapiStateBubble = (0, _.useMemo)(
+                            () =>
+                                pulseSyncWasapiIsActive
+                                    ? (0, c.jsx)(C.$, {
+                                          color: 'secondary',
+                                          radius: 'xl',
+                                          'aria-label': 'WASAPI Exclusive активен',
+                                          className: eQ().beta,
+                                          style: {
+                                              marginInlineEnd: 'var(--ym-spacer-size-xs)',
+                                              color: 'white',
+                                          },
+                                          withHover: !1,
+                                          children: (0, c.jsx)(P.HL, {
+                                              variant: 'div',
+                                              type: 'text',
+                                              size: 's',
+                                              weight: 'medium',
+                                              children: 'WASAPI Exclusive',
+                                          }),
+                                      })
+                                    : null,
+                            [pulseSyncWasapiIsActive],
+                        ),
+                        pulseSyncWasapiDeviceBubble = (0, _.useMemo)(() => {
+                            let e =
+                                (null == pulseSyncWasapiExclusiveOutputState ||
+                                null == pulseSyncWasapiExclusiveOutputState.session ||
+                                null == pulseSyncWasapiExclusiveOutputState.session.rendererState
+                                    ? void 0
+                                    : pulseSyncWasapiExclusiveOutputState.session.rendererState.deviceName) ??
+                                (null == pulseSyncWasapiExclusiveOutputState ||
+                                null == pulseSyncWasapiExclusiveOutputState.session ||
+                                null == pulseSyncWasapiExclusiveOutputState.session.lastRendererServiceState
+                                    ? void 0
+                                    : pulseSyncWasapiExclusiveOutputState.session.lastRendererServiceState.deviceName) ??
+                                null;
+                            return pulseSyncWasapiIsActive && e
+                                ? (0, c.jsx)(C.$, {
+                                      color: 'secondary',
+                                      radius: 'xl',
+                                      'aria-label': 'Устройство WASAPI Exclusive: '.concat(e),
+                                      title: e,
+                                      className: eQ().beta,
+                                      style: {
+                                          marginInlineEnd: 'var(--ym-spacer-size-xs)',
+                                          color: 'white',
+                                          maxWidth: '15rem',
+                                          overflow: 'hidden',
+                                      },
+                                      withHover: !1,
+                                      children: (0, c.jsx)(P.HL, {
+                                          variant: 'div',
+                                          type: 'text',
+                                          size: 's',
+                                          weight: 'medium',
+                                          style: {
+                                              maxWidth: '100%',
+                                              overflow: 'hidden',
+                                              textOverflow: 'ellipsis',
+                                              whiteSpace: 'nowrap',
+                                          },
+                                          children: e,
+                                      }),
+                                  })
+                                : null;
+                        }, [pulseSyncWasapiExclusiveOutputState, pulseSyncWasapiIsActive]);
                     ((0, _.useEffect)(() => {
                         var e, t;
                         if (!n || !L) return;
@@ -6161,7 +6374,16 @@
                                                   children: [S && (0, c.jsx)(eE.F, { withMeta: !1, variant: 'mobile', className: eQ().userProfile }), $],
                                               }),
                                               (0, c.jsx)(aF, {}),
-                                              (0, c.jsx)('div', { className: Z, children: G }),
+                                              (0, c.jsxs)('div', {
+                                                  className: Z,
+                                                  children: [
+                                                      pulseSyncYnisonBubble,
+                                                      pulseSyncWasapiStateBubble,
+                                                      pulseSyncWasapiDeviceBubble,
+                                                      pulseSyncAudioQualityBubble,
+                                                      G,
+                                                  ],
+                                              }),
                                           ],
                                       }),
                                   }),
@@ -6178,7 +6400,10 @@
                                           'data-test-id': g.Xk.main.MAIN_PAGE,
                                           children: [
                                               J,
-                                              (0, c.jsx)('div', { className: Z, children: G }),
+                                              (0, c.jsxs)('div', {
+                                                  className: Z,
+                                                  children: [pulseSyncWasapiStateBubble, pulseSyncWasapiDeviceBubble, pulseSyncAudioQualityBubble, G],
+                                              }),
                                               !Y &&
                                                   (0, c.jsx)(eD.F, {
                                                       blockIdForFrom: eR.h.RUP_MAIN_RADIO,
