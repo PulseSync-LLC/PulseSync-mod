@@ -9,12 +9,24 @@ const events_js_1 = require('../../events.js');
 const pulsesyncDevConfig_js_1 = require('../pulsesyncDevConfig.js');
 let deeplinkUrl = null;
 const deeplinkLogger = new Logger_js_1.Logger('Deeplink');
+const { isSafeUrlPathnameAfterDecode } = require('../desktopPolicy.js');
+const deeplinkPrefixRegexp = /^yandexmusic:\/\//i;
+const normalizeInternalUrl = (url) => {
+    return `/${url.replace(/^\/+/, '')}`;
+};
 const transformUrlToInternal = (url) => {
-    return url.replace(`${config_js_1.config.app.deeplinkProtocol}://`, '/');
+    if (!checkIsDeeplink(url)) {
+        return null;
+    }
+    const internalUrl = url.replace(deeplinkPrefixRegexp, '/');
+    const normalizedInternalUrl = normalizeInternalUrl(internalUrl);
+    if (!isSafeUrlPathnameAfterDecode(normalizedInternalUrl)) {
+        return null;
+    }
+    return normalizedInternalUrl;
 };
 const checkIsDeeplink = (value) => {
-    const deeplinkRegexp = /yandexmusic:\/\/.*/;
-    return deeplinkRegexp.test(value);
+    return deeplinkPrefixRegexp.test(value);
 };
 exports.checkIsDeeplink = checkIsDeeplink;
 const navigateToDeeplink = (window, url) => {
@@ -22,8 +34,14 @@ const navigateToDeeplink = (window, url) => {
         return;
     }
     const pathname = transformUrlToInternal(url);
-    deeplinkLogger.info('Navigate to', url, pathname);
-    if (pathname === '/mod-settings' || pathname.startsWith('/mod-settings/')) {
+    if (!pathname) {
+        deeplinkLogger.warn('Navigate prevented');
+        state_js_1.state.deeplink = null;
+        return;
+    }
+    deeplinkLogger.info('Navigate to deeplink');
+    const route = pathname.split(/[?#]/)[0];
+    if (route === '/mod-settings' || route.startsWith('/mod-settings/')) {
         (0, events_js_1.sendOpenModSettingsDeeplink)(window, pathname);
     } else {
         (0, events_js_1.sendOpenDeeplink)(window, pathname);

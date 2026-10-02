@@ -59,7 +59,8 @@ const createWindow = async () => {
         webPreferences: {
             devTools: config_js_1.config.app.enableDevTools || store_js_1.getDevMode() || pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled,
             webSecurity: config_js_1.config.app.enableWebSecurity,
-            nodeIntegrationInWorker: true,
+            sandbox: false,
+            nodeIntegrationInWorker: false,
             nodeIntegration: false,
             contextIsolation: true,
             autoplayPolicy: 'no-user-gesture-required',

@@ -60,6 +60,42 @@ const updateWindowDimensions = (window) => {
     applyCorrection();
 };
 
+const { authDiagnostics } = require('../authDiagnostics.js');
+const {
+    isApplicationHostname,
+    oAuthHostnamePattern,
+    passportYandexHostnamePattern,
+    ssoPassportYandexHostnamePattern,
+    ssoPassportYaHostnamePattern,
+} = require('../desktopPolicy.js');
+const toSafeLogUrl = (value) => {
+    try {
+        const parsedUrl = new URL(value);
+        if (parsedUrl.host) {
+            return `${parsedUrl.protocol}//${parsedUrl.host}${parsedUrl.pathname}`;
+        }
+        return `${parsedUrl.protocol}${parsedUrl.pathname}`;
+    } catch {
+        return 'invalid-url';
+    }
+};
+const classifyNavigationPage = (value) => {
+    try {
+        const { hostname } = new URL(value);
+        if (isApplicationHostname(hostname)) {
+            return 'application';
+        }
+        if (oAuthHostnamePattern.test(hostname)) {
+            return 'oauth';
+        }
+        if (passportYandexHostnamePattern.test(hostname) || ssoPassportYandexHostnamePattern.test(hostname) || ssoPassportYaHostnamePattern.test(hostname)) {
+            return 'passport';
+        }
+        return 'other';
+    } catch {
+        return 'unknown';
+    }
+};
 const handleWindowLifecycleEvents = (window) => {
     electron_1.app.on('activate', () => {
         (0, toggleWindowVisibility_js_1.toggleWindowVisibility)(window, true);
@@ -141,15 +177,23 @@ const handleWindowLifecycleEvents = (window) => {
             return;
         }
 
-        const message = `Failed to load ${validatedUrl}: ${errorDescription} (${errorCode})`;
+        const message = `Failed to load ${toSafeLogUrl(validatedUrl)}: ${errorDescription} (${errorCode})`;
         lifecycleLogger.error(message);
+        authDiagnostics.record({ stage: 'navigation-failed', page: classifyNavigationPage(validatedUrl), errorCode });
         if ((errorCode <= -100 || CONNECTION_ERROR_CODES.includes(errorCode)) && !USER_ID_IFRAME_URL_REGEXP.test(validatedUrl)) {
             (0, loadURL_js_1.loadUnavailableErrorPage)(window);
+        }
+    });
+    webContents.on('before-input-event', (event, input) => {
+        if (input.control && input.shift && input.code === 'KeyI' && input.type === 'keyDown' && webContents.getLastWebPreferences().devTools !== false) {
+            event.preventDefault();
+            webContents.toggleDevTools();
         }
     });
     webContents.on('did-finish-load', () => {
         webContents.insertCSS(`
                 body {
+                    a, button, input, textarea, select { -webkit-app-region: no-drag; }
                     .passp-page {
                         -webkit-app-region: drag;
                     }

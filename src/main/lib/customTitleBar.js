@@ -1,17 +1,9 @@
 'use strict';
-var __importDefault =
-    (this && this.__importDefault) ||
-    function (mod) {
-        return mod && mod.__esModule ? mod : { default: mod };
-    };
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.createCustomTitleBar = void 0;
-const node_url_1 = __importDefault(require('node:url'));
-const hostnamePatterns_js_1 = require('../constants/hostnamePatterns.js');
+const { classifyRendererUrl } = require('./desktopPolicy.js');
+const { RendererTrustProfile } = require('../types/desktop.js');
 const formatters_js_1 = require('./i18n/formatters.js');
-const isAllowed = (hostname) => {
-    return hostnamePatterns_js_1.passportYandexHostnamePattern.test(hostname);
-};
 const styleTemplate = () => {
     return `
         #ym-title-bar {
@@ -80,7 +72,7 @@ const render = () => {
         button.ariaLabel = \`${ariaLabel}\`;
         button.innerHTML = \`${closeIconTemplate()}\`;
         button.onclick = () => {
-            window.desktopEvents.send('WINDOW_CLOSE');
+            window.musicDesktopCommon?.window.close();
         };
 
         const container = document.createElement('div');
@@ -92,8 +84,7 @@ const render = () => {
 };
 const createCustomTitleBar = (window) => {
     window.webContents.on('did-navigate', (event, targetUrl) => {
-        const { hostname } = node_url_1.default.parse(targetUrl);
-        if (hostname && isAllowed(hostname)) {
+        if (classifyRendererUrl(targetUrl) === RendererTrustProfile.AUTH) {
             window.webContents.executeJavaScript(render());
         }
     });
