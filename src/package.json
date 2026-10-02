@@ -33,7 +33,9 @@
         "socket.io-client": "^4.8.3",
         "tar": "^7.5.22",
         "uuid": "~13.0.0",
-        "ws": "^8.21.3"
+        "ws": "^8.21.3",
+        "@yandex-music-int/electron-certificate-verification": "file:vendor/electron-certificate-verification-0.0.1-canary-7cde337ab64229053db49b22b436a9788aac602b.tgz",
+        "file-type": "file:vendor/file-type-22.0.1.tgz"
     },
     "appConfig": {
         "enableDevTools": false,
@@ -75,7 +77,9 @@
         "UPDATE_URL": "https://desktop.app.music.yandex.net/stable/",
         "SUPPORT_URL": "/user/ee219503-b69b-9484-405b-6877a510e13c",
         "TERMS_OF_USE_URL": "https://yandex.ru/legal/music_mobile_agreement/",
-        "RECOMMENDATIONS_URL": "https://music.yandex.ru/legal/recommendations/ru/#music"
+        "RECOMMENDATIONS_URL": "https://music.yandex.ru/legal/recommendations/ru/#music",
+        "CERTIFICATE_VERIFICATION_ENABLED": true,
+        "REVOCATION_DEFENSE_ENABLED": false
     },
     "modification": {
         "version": "2.0.0",
@@ -97,5 +101,146 @@
     },
     "devDependencies": {
         "oxfmt": "0.71.0"
+    },
+    "certificates": {
+        "yandexInternalHosts": [
+            {
+                "hostname": "music.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "music.yandex.ru",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "music.yandex.com",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "music.yandex.by",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "music.yandex.kz",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "strm.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ynison.music.yandex.tld",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "mds.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "s3.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "strm.yandex.ru",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "widget.tickets.yandex.ru"
+            },
+            {
+                "hostname": "avatars.yandex.net"
+            },
+            {
+                "hostname": "favicon.yandex.net"
+            },
+            {
+                "hostname": "cdn.yandex.net",
+                "includeSubdomains": true
+            }
+        ],
+        "nucHosts": [
+            {
+                "hostname": "yandex.ru",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "yandex.com",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "yandex.kz",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "yandex.uz",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "yandex.by",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ya.ru",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ya.com",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ya.kz",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ya.uz",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ya.by",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "desktop.app.music.yandex.net"
+            },
+            {
+                "hostname": "cdn.yandex.net",
+                "includeSubdomains": true
+            }
+        ],
+        "revocationDefenseHosts": [
+            {
+                "hostname": "music.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "strm.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "mds.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "s3.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "strm.yandex.ru",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "widget.tickets.yandex.ru"
+            },
+            {
+                "hostname": "avatars.yandex.net"
+            },
+            {
+                "hostname": "favicon.yandex.net"
+            },
+            {
+                "hostname": "cdn.yandex.net",
+                "includeSubdomains": true
+            }
+        ]
     }
 }
