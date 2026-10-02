@@ -9,6 +9,11 @@
                 o = t(74631),
                 u = t(71910);
             function i(e) {
+                var pulseDecodedError =
+                    globalThis.REACT_ERROR_DECODER &&
+                    globalThis.REACT_ERROR_DECODER.decode('19.2.0-canary-97cdd5d3-20250710', e, Array.prototype.slice.call(arguments, 1));
+                if (pulseDecodedError) return pulseDecodedError;
+
                 var n = 'https://react.dev/errors/' + e;
                 if (1 < arguments.length) {
                     n += '?args[]=' + encodeURIComponent(arguments[1]);
