@@ -8678,10 +8678,14 @@
                     if (canReportRemote) {
                         if (remoteControlEnabled && sourceDeviceId && !selfState) {
                             const remoteDevice = e.state.devices?.find((device) => device.info?.device_id === sourceDeviceId);
+                            window.isRemoteDeviceConnected = true;
+                            window.remoteDevice = remoteDevice;
                             window.onRemoteDeviceConnected.forEach((listener) => listener(remoteDevice));
                             window.remoteDeviceConnected = true;
                         }
                     } else if (remoteControlEnabled && localDeviceId && !deviceMatches) {
+                        window.isRemoteDeviceConnected = false;
+                        window.remoteDevice = null;
                         window.onRemoteDeviceDisconnected.forEach((listener) => listener());
                         window.remoteDeviceConnected = false;
                     }

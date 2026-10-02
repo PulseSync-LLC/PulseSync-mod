@@ -7498,7 +7498,8 @@
                     });
                 },
                 nn = (0, x.forwardRef)((e, t) => (0, m.jsx)(ni, { forwardRef: t, ...e }));
-            var nr = a(28118),
+            var pulseSyncPlayerTooltip = a(60924),
+                nr = a(28118),
                 ns = a(24237),
                 no = a.n(ns);
             const pulseSyncPlayerReact = x,
@@ -8169,6 +8170,70 @@
                               }),
                     ),
                     el = D.checkExperiment(K.z.WebNextNewWaveTab, 'on') || D.checkExperiment(K.z.WebNextNewWaveTab, 'on1');
+                let qualityMap = {
+                        lq: 'LQ',
+                        nq: 'NQ',
+                        hq: 'HQ',
+                        lossless: 'HQ+',
+                    },
+                    codecMap = {
+                        mp3: 'MP3',
+                        'he-aac': 'HE-AAC',
+                        aac: 'AAC',
+                        flac: 'FLAC',
+                        'aac-mp4': 'AAC',
+                        'he-aac-mp4': 'HE-AAC',
+                        'flac-mp4': 'FLAC',
+                    },
+                    theState = (0, iU.e)(),
+                    [downloadInfo, setDownloadInfo] = (0, x.useState)(theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data),
+                    [parsedTrackQualityInfo, setParsedTrackQualityInfo] = (0, x.useState)(null),
+                    updateParsedTrackQualityInfo = (0, x.useCallback)(
+                        (e, t = !0) => {
+                            setParsedTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(e, t ? downloadInfo : null) ?? null);
+                        },
+                        [downloadInfo, setParsedTrackQualityInfo],
+                    );
+                (0, x.useEffect)(() => {
+                    let e = window?.PulseSyncTrackQuality?.getLastInfo?.();
+                    (e ? setParsedTrackQualityInfo(e) : updateParsedTrackQualityInfo(null, !0),
+                        window?.nativeAudioOutput
+                            ?.getYaspAudioFormat?.()
+                            ?.then?.((e) => {
+                                updateParsedTrackQualityInfo(e, !0);
+                            })
+                            ?.catch?.(() => {}));
+                    let t = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED', (e, t) => {
+                        updateParsedTrackQualityInfo(t, Boolean(t));
+                    });
+                    return () => {
+                        'function' == typeof t && t();
+                    };
+                }, [updateParsedTrackQualityInfo]);
+                (0, x.useEffect)(() => {
+                    let timer;
+                    const refresh = () => {
+                        clearInterval(timer);
+                        const read = () => theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data;
+                        const current = read();
+                        setDownloadInfo(current);
+                        if (current !== undefined) return;
+                        let attempts = 5;
+                        timer = setInterval(() => {
+                            const next = read();
+                            if (next !== undefined || --attempts <= 0) {
+                                setDownloadInfo(next);
+                                clearInterval(timer);
+                            }
+                        }, 200);
+                    };
+                    const unsubscribe = theState?.state?.queueState?.currentEntity?.onChange?.(refresh);
+                    refresh();
+                    return () => {
+                        clearInterval(timer);
+                        if (typeof unsubscribe === 'function') unsubscribe();
+                    };
+                }, [theState]);
                 return (0, m.jsx)('section', {
                     style: w.isAdvertShown ? void 0 : q,
                     className: (0, p.$)(no().root, no().important, a, { [no().root_interactive]: _ }),
@@ -8261,13 +8326,46 @@
                                                             buttonClassName: no().settingsButton,
                                                             disabled: w.isAdvertShown,
                                                         }),
-                                                        (0, m.jsx)(nr.p$, {
-                                                            placement: 'bottom',
-                                                            open: F,
-                                                            onOpenChange: U,
-                                                            icon: (0, m.jsx)(S.I, { variant: 'settings', size: 'xs' }),
-                                                            size: 'xxxs',
-                                                            referenceClassName: no().settingsButton,
+                                                        (0, m.jsx)(pulseSyncPlayerTooltip.k, {
+                                                            title: 'Качество трека',
+                                                            description:
+                                                                (null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.label) ??
+                                                                'Не удалось получить качество трека',
+                                                            children: (0, m.jsx)('div', {
+                                                                className: 'cpeagBA1_PblpJn8Xgtv HbaqudSqu7Q3mv3zMPGr',
+                                                                children: (0, m.jsx)(nr.p$, {
+                                                                    placement: 'bottom',
+                                                                    open: F,
+                                                                    onOpenChange: U,
+                                                                    icon: (
+                                                                        window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK?.()
+                                                                            ? ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.codec) ??
+                                                                              (null == downloadInfo ? void 0 : codecMap[downloadInfo.codec]))
+                                                                            : ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.quality) ??
+                                                                              (null == downloadInfo ? void 0 : qualityMap[downloadInfo.quality]))
+                                                                    )
+                                                                        ? (0, m.jsxs)('span', {
+                                                                              className: no().settingsButton,
+                                                                              style: {
+                                                                                  width: 'auto',
+                                                                                  height: 'auto',
+                                                                                  'align-content': 'center',
+                                                                              },
+                                                                              children:
+                                                                                  (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK?.()
+                                                                                      ? ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.codec) ??
+                                                                                        (null == downloadInfo ? void 0 : codecMap[downloadInfo.codec]))
+                                                                                      : ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.quality) ??
+                                                                                        (null == downloadInfo ? void 0 : qualityMap[downloadInfo.quality]))) ?? 'NONE',
+                                                                          })
+                                                                        : (0, m.jsx)(S.I, {
+                                                                              variant: 'settings',
+                                                                              size: 'xs',
+                                                                          }),
+                                                                    size: 'xxxs',
+                                                                    referenceClassName: no().settingsButton,
+                                                                }),
+                                                            }),
                                                         }),
                                                     ],
                                                 }),
