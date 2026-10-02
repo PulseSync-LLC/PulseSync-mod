@@ -90,6 +90,7 @@
                 skipButton: 'VibePlayerControls_skipButton__z57B_',
                 playButtonIcon: 'VibePlayerControls_playButtonIcon__OXCWN',
                 playButton: 'VibePlayerControls_playButton__vnoer',
+                playButton_withYellowPlayButton: 'VibePlayerControls_withYellowPlayButton__vnoer',
                 playButton_playing: 'VibePlayerControls_playButton_playing__qPeBv',
             };
         },
@@ -2249,9 +2250,32 @@
                 t3 = i(94860),
                 t4 = i(9505),
                 ie = i.n(t4);
+            const pulseSyncWaveButton = C;
+            function usePulseSyncWaveSetting(key, defaultValue) {
+                const [value, setValue] = (0, _.useState)(() => {
+                    try {
+                        return (
+                            (key === 'modSettings.vibeAnimationEnhancement.improvedWaveLayout' ? window.IMPROVED_WAVE_LAYOUT?.() : undefined) ??
+                            window.nativeSettings?.get?.(key) ??
+                            defaultValue
+                        );
+                    } catch {
+                        return defaultValue;
+                    }
+                });
+                (0, _.useEffect)(() => {
+                    const unsubscribe = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (event, settingKey, settingValue) => {
+                        if (settingKey === key) setValue(defaultValue ? settingValue !== false : !!settingValue);
+                    });
+                    return () => {
+                        if (typeof unsubscribe === 'function') unsubscribe();
+                    };
+                }, [key, defaultValue]);
+                return value;
+            }
             let it = (0, u.PA)(() => {
                     var e, t;
-                    let { vibe: i, sonataState: n, advert: a, freePlayerAccess: r, freeAccess: s } = (0, U.g)(),
+                    let { vibe: i, sonataState: n, advert: a, freePlayerAccess: r, freeAccess: s, experiments: pulseSyncExperiments } = (0, U.g)(),
                         { openIntroModalFromPlay: o } = (0, tb.e)(),
                         { formatMessage: l } = (0, v.A)(),
                         u = (0, ts.e)(),
@@ -2259,7 +2283,10 @@
                         b = (0, ti.b)(),
                         p = (0, te.r)(),
                         h = (0, tt.m)(),
-                        { pageId: x } = (0, L.$)();
+                        { pageId: x } = (0, L.$)(),
+                        shuffleSetter = (0, tN.e)(),
+                        repeatSetter = (0, tk.A)(),
+                        pulseSyncImprovedWaveLayoutEnabled = usePulseSyncWaveSetting('modSettings.vibeAnimationEnhancement.improvedWaveLayout', true);
                     (0, t7.e)();
                     let { togglePlay: A } = (0, F.B)({
                             seeds: null != (t = null == (e = i.meta) ? void 0 : e.seeds) ? t : [],
@@ -2268,6 +2295,16 @@
                             onPlayInterrupted: () => r.showRestrictionModal(e3.W.Interrupted),
                         }),
                         j = n.entityMeta,
+                        pulseSyncShuffleClick = (0, f.c)((event) => {
+                            event.stopPropagation();
+                            shuffleSetter(n);
+                            h({ actionType: e8.ActionType.ChangeShuffle });
+                        }),
+                        pulseSyncRepeatClick = (0, f.c)((event) => {
+                            event.stopPropagation();
+                            repeatSetter(n);
+                            h({ actionType: e8.ActionType.ChangeRepeatSettings });
+                        }),
                         k = (0, f.c)((e) => {
                             (e.stopPropagation(), null == u || u.moveForward(), h({ actionType: e8.ActionType.Skip }));
                         }),
@@ -2293,16 +2330,20 @@
                         I = (0, f.c)((e) => {
                             e || r.hideRestrictionModal();
                         }),
+                        pulseSyncYellowButtonEnabled = pulseSyncExperiments.checkExperiment(z.z.WebNextPlayerBarYellowButton, 'on'),
                         S = (0, _.useCallback)(
                             () =>
                                 (0, c.jsx)(tc.D, {
-                                    className: (0, d.$)(ie().playButton, { [ie().playButton_playing]: n.isPlaying }),
+                                    className: (0, d.$)(ie().playButton, {
+                                        [ie().playButton_playing]: n.isPlaying,
+                                        [ie().playButton_withYellowPlayButton]: pulseSyncYellowButtonEnabled,
+                                    }),
                                     isPlaying: n.isPlaying,
                                     iconClassName: ie().playButtonIcon,
                                     color: 'secondary',
                                     onClick: T,
                                 }),
-                            [T, n.isPlaying],
+                            [T, n.isPlaying, pulseSyncYellowButtonEnabled],
                         ),
                         E = (0, y.L)(() => {
                             let e = j ? 'fullTracks' : 'vibe';
@@ -2315,6 +2356,21 @@
                     return (0, c.jsxs)('div', {
                         className: ie().root,
                         children: [
+                            pulseSyncImprovedWaveLayoutEnabled &&
+                                !n.isGenerativeContext &&
+                                (n.canShuffle || n.canChangeRepeatMode) &&
+                                (0, c.jsx)(C.$, {
+                                    className: ie().skipButton,
+                                    variant: 'text',
+                                    radius: 'round',
+                                    disabled: !n.canShuffle,
+                                    'aria-hidden': !n.canShuffle,
+                                    withRipple: false,
+                                    'aria-label': l({ id: 'player-actions.shuffle' }),
+                                    icon: (0, c.jsx)(X.I, { variant: 'shuffle', size: 'xs' }),
+                                    onClick: pulseSyncShuffleClick,
+                                    style: n.shuffle ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : undefined,
+                                }),
                             !n.isGenerativeContext &&
                                 (0, c.jsx)(C.$, {
                                     className: ie().skipButton,
@@ -2342,6 +2398,21 @@
                                     onClick: k,
                                     'data-test-id': g.Kq.sonata.NEXT_TRACK_BUTTON,
                                 }),
+                            pulseSyncImprovedWaveLayoutEnabled &&
+                                !n.isGenerativeContext &&
+                                (n.canShuffle || n.canChangeRepeatMode) &&
+                                (0, c.jsx)(C.$, {
+                                    className: ie().skipButton,
+                                    variant: 'text',
+                                    radius: 'round',
+                                    disabled: !n.canChangeRepeatMode,
+                                    'aria-hidden': !n.canChangeRepeatMode,
+                                    withRipple: false,
+                                    'aria-label': (0, tj.z)(n.repeatMode, l),
+                                    icon: (0, c.jsx)(X.I, { variant: n.repeatMode === ty.pM.ONE ? 'repeat_one' : 'repeat', size: 'xs' }),
+                                    onClick: pulseSyncRepeatClick,
+                                    style: n.repeatMode !== ty.pM.NONE ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : undefined,
+                                }),
                         ],
                     });
                 }),
@@ -2361,6 +2432,7 @@
                         h = (0, e7.d)(),
                         { isLiked: x, handleLike: A, isDisliked: C, handleDislike: j } = (0, td.f)(),
                         k = (0, ts.e)(),
+                        pulseSyncImprovedWaveLayoutEnabled = usePulseSyncWaveSetting('modSettings.vibeAnimationEnhancement.improvedWaveLayout', true),
                         N = (0, e4.P)(),
                         P = (0, ti.b)(),
                         T = (0, te.r)(),
@@ -2443,6 +2515,18 @@
                             (0, c.jsxs)('div', {
                                 className: (0, d.$)(tU().progress, { [tU().progress_visible]: !O }),
                                 children: [
+                                    pulseSyncImprovedWaveLayoutEnabled &&
+                                        (0, c.jsx)(pulseSyncWaveButton.$, {
+                                            className: tU().button,
+                                            radius: 'round',
+                                            size: 'xxxs',
+                                            variant: 'text',
+                                            disabled: !w || s.isGenerativeContext || o.isAdvertShown,
+                                            withRipple: false,
+                                            'aria-label': b({ id: 'player-actions.fullscreen-button' }),
+                                            icon: (0, c.jsx)(X.I, { variant: 'fullscreen', size: 'xs' }),
+                                            onClick: M,
+                                        }),
                                     H,
                                     K,
                                     (0, c.jsx)(t9, {}),
@@ -5098,6 +5182,8 @@
                             paywall: { modal: E },
                             vibe: w,
                         } = (0, U.g)(),
+                        swapVibeAnimationAndWheel = usePulseSyncWaveSetting('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel', false),
+                        hideArtistCoverOnNewWave = usePulseSyncWaveSetting('modSettings.vibeAnimationEnhancement.hideArtistCoverOnNewWave', false),
                         { pageId: B, pageEntityId: R } = (0, L.$)(),
                         D = (0, nU.l)({ mainObjectType: e8.DomainObjectType.Track }),
                         { resetContext: H } = (0, F.B)({ seeds: [eu.M1], pageIdForFrom: B, blockIdForFrom: ''.concat(e8.EntityTypes.MyWave, '-').concat(eM.U.RADIO) }),
@@ -5186,7 +5272,7 @@
                             let { artistCutoutCoverUri: t, hasMainArtist: i, releaseCutoutCoverUri: n } = e;
                             return i && (null != n ? n : t) ? (void 0 === n ? 'cutout_artist' : 'cutout_release') : 'text';
                         })({ artistCutoutCoverUri: null == Z || null == (o = Z.cutoutCover) ? void 0 : o.uri, hasMainArtist: !!Z, releaseCutoutCoverUri: en }),
-                        er = !!(null != en ? en : null == Z || null == (l = Z.cutoutCover) ? void 0 : l.uri) && !G,
+                        er = !hideArtistCoverOnNewWave && !!(null != en ? en : null == Z || null == (l = Z.cutoutCover) ? void 0 : l.uri) && !G,
                         es = er && Z,
                         eo = (0, aT.A)(null != J ? J : []) > 1,
                         el = ee && !eo,
@@ -5331,6 +5417,7 @@
                             K && (0, c.jsx)(no, {}),
                             (0, c.jsxs)('div', {
                                 className: (0, d.$)(aO().root, aO().bigCardPanel, { [aO().root_reshuffle]: ef, [aO().root_withoutPlus]: !S.hasPlus }),
+                                style: { flexDirection: swapVibeAnimationAndWheel ? 'row-reverse' : 'row' },
                                 children: [
                                     (0, c.jsx)(ni, { className: (0, d.$)(aO().wheel, { [aO().wheel_hidden]: eA && I }) }),
                                     (0, c.jsxs)('div', {
@@ -5444,7 +5531,7 @@
                         L = (0, eS.d)(),
                         D = (0, eI.C)(),
                         { theme: V } = (0, eK.W)(),
-                        W = o.checkExperiment(z.z.WebNextNewWaveTab, 'on') || o.checkExperiment(z.z.WebNextNewWaveTab, 'on1'),
+                        W = true,
                         F = (0, ez.Z)(null != (i = null == (t = a.specialHeader) ? void 0 : t.url) ? i : ''),
                         H = o.checkExperiment(z.z.WebNextNewWaveTabFeedbackForm, 'on'),
                         { href: K } = (0, eX.u)('/slides/special/:campaignId', { params: { campaignId: 'summer_2026' } });

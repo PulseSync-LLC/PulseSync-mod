@@ -94,6 +94,7 @@
                     (e.WebNextConcertsDetailsPage = 'WebNextConcertsDetailsPage'),
                     (e.WebNextYaspSourceLimit = 'WebNextYaspSourceLimit'),
                     (e.WebNextWaveLikesAndShares = 'WebNextWaveLikesAndShares'),
+                    (e.WebNextPlayerBarYellowButton = 'WebNextPlayerBarYellowButton'),
                     (e.WebNextNewWaveTab = 'WebNextNewWaveTab'),
                     (e.WebNextMainPlayerAnimation = 'WebNextMainPlayerAnimation'),
                     (e.WebNextNewWaveTabFeedbackForm = 'WebNextNewWaveTabFeedbackForm'),

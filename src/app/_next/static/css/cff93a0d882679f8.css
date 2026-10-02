@@ -1754,7 +1754,8 @@
 }
 .VibePlayerControls_playButton__vnoer {
     align-items: center;
-    background-color: var(--ym-logo-color-primary-player);
+    background-color: #fff;
+    margin-inline: 1rem;
     display: flex;
     height: var(--play-button-size);
     justify-content: center;
@@ -1765,6 +1766,12 @@
         opacity var(--ym-duration-transition),
         backdrop-filter var(--ym-duration-transition);
     width: var(--play-button-size);
+}
+.VibePlayerControls_withYellowPlayButton__vnoer {
+    background-color: var(--ym-logo-color-primary-player);
+}
+.VibePlayerControls_withYellowPlayButton__vnoer .VibePlayerControls_playButtonIcon__OXCWN {
+    color: #000;
 }
 .VibePlayerControls_playButton_playing__qPeBv {
     background-color: hsla(0, 0%, 100%, 0.25);
