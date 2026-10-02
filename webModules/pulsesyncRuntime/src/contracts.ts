@@ -60,7 +60,7 @@ export type PulseSyncApi = PublicPulseSyncApi &
         loginLastFm: () => Promise<unknown>;
         logoutLastFm: () => Promise<unknown>;
         onLastFmUserInfoChange: (listener: (value: unknown) => void) => Cleanup;
-        publishPageEntity: (type: unknown, entity: unknown, resolveArtistBrief?: unknown, artistBriefComplete?: boolean) => UnknownRecord;
+        publishPageEntity: (type: unknown, entity: unknown, resolveArtistBrief?: unknown, artistBriefComplete?: boolean) => UnknownRecord | null;
         selectWasapiExclusiveDevice: (deviceId: unknown) => Promise<unknown>;
         setAutoStartupStatus: (isEnabled: unknown) => void;
         setModSetting: (key: unknown, value: unknown) => Promise<unknown>;

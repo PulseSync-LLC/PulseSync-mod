@@ -188,6 +188,19 @@ function getArtistId(entity: unknown) {
     return String((entity as { artist?: { id?: unknown } }).artist?.id ?? '').trim();
 }
 
+function isCurrentPageEntity(type: PageEntityType, entity: unknown) {
+    if (!entity || typeof entity !== 'object') return false;
+    const [, routeType] = window.location.pathname.split('/');
+    const routeId = new URLSearchParams(window.location.search).get(type === 'playlist' ? 'playlistUuid' : `${type}Id`);
+    const data = entity as { id?: unknown; playlistUuid?: unknown };
+    const entityId = type === 'artist' ? getArtistId(entity) : type === 'playlist' ? data.playlistUuid : data.id;
+    return routeType === (type === 'playlist' ? 'playlists' : type) && Boolean(routeId) && routeId === String(entityId ?? '');
+}
+
+function getCurrentPageEntity() {
+    return lastPageEntity && isCurrentPageEntity(lastPageEntity.type, lastPageEntity.entity) ? lastPageEntity : null;
+}
+
 function storePageEntity(type: PageEntityType, entity: unknown) {
     pageEntityRevision += 1;
     lastPageEntity = { revision: pageEntityRevision, type, entity };
@@ -200,12 +213,15 @@ export function publishPageEntity(typeValue: unknown, entity: unknown, resolveAr
     if (!entity || typeof entity !== 'object') throw new TypeError('Page entity is required');
 
     if (type !== 'artist') {
+        if (!isCurrentPageEntity(type, entity)) return getCurrentPageEntity();
         artistBriefResolver = undefined;
         return storePageEntity(type, entity);
     }
 
     const artistId = getArtistId(entity);
     if (artistBriefComplete && artistId) artistBriefCache.set(artistId, entity);
+    if (!isCurrentPageEntity(type, entity)) return getCurrentPageEntity();
+    if (artistBriefResolver?.artistId !== artistId) artistBriefResolver = undefined;
     if (typeof resolveArtistBrief === 'function' && artistId) {
         artistBriefResolver = { artistId, resolve: resolveArtistBrief as () => Promise<unknown> };
     }
@@ -228,16 +244,17 @@ async function requestArtistBrief() {
 }
 
 export async function getPageEntity(options: unknown) {
-    if ((options as { includeArtistBrief?: unknown } | null)?.includeArtistBrief === true && lastPageEntity?.type === 'artist') {
+    if ((options as { includeArtistBrief?: unknown } | null)?.includeArtistBrief === true && getCurrentPageEntity()?.type === 'artist') {
         await requestArtistBrief();
     }
-    return lastPageEntity ?? null;
+    return getCurrentPageEntity();
 }
 
 export function onPageEntityChange(listener: (snapshot: PageEntitySnapshot) => void) {
     if (typeof listener !== 'function') return () => {};
     pageEntityListeners.add(listener);
-    if (lastPageEntity) listener(lastPageEntity);
+    const snapshot = getCurrentPageEntity();
+    if (snapshot) listener(snapshot);
     return () => pageEntityListeners.delete(listener);
 }
 
