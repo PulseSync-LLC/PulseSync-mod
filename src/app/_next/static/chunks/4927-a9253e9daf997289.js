@@ -11467,6 +11467,29 @@
                 })({}),
                 dP = a(71630);
             (y || (y = {})).TOO_MANY_FILES = 'TOO_MANY_FILES';
+            const reportPulseSyncUploadState = (e, t, a = {}) => {
+                let i = null == e ? void 0 : e.pulseSyncImportToken;
+                i &&
+                    window.playlistLinkImporter?.reportUploadState?.({
+                        trackToken: i,
+                        status: t,
+                        ...a,
+                    });
+            };
+            const rememberPulseSyncUploadError = (e, t) => {
+                let a = (null == t ? void 0 : t.message) || String(t || 'UNKNOWN_ERROR');
+                return (
+                    e &&
+                        Object.defineProperty(e, 'pulseSyncUploadError', {
+                            value: a,
+                            configurable: !0,
+                            writable: !0,
+                        }),
+                    a
+                );
+            };
+            const getPulseSyncUploadTimeout = (e) => Math.min(12e4, Math.max(15e3, Math.ceil(((null == e ? void 0 : e.size) || 0) / 262144) * 1e3 + 5e3));
+            const waitForPulseSyncUploadRetry = (e) => new Promise((t) => setTimeout(t, e));
             let dO = C.gK
                 .model('TrackUgcUploadModel', {
                     loadingState: C.gK.enumeration(Object.values(dP.p)),
@@ -11475,13 +11498,16 @@
                     trackId: C.gK.maybeNull(C.gK.string),
                     uploadUrl: C.gK.maybeNull(C.gK.string),
                 })
-                .volatile(() => ({ file: null, abortController: null }))
+                .volatile(() => ({
+                    file: null,
+                    abortController: null,
+                }))
                 .actions((e) => {
                     let t = {
                         setFile(t) {
                             e.file = t;
                         },
-                        getUploadUrl: (0, C.L3)(function* () {
+                        getUploadUrl: (0, C.L3)(function* (uploadAttempt = 1) {
                             if (!(0, C._n)(e)) return;
                             let { loaderResource: t, modelActionsLogger: a } = (0, C._$)(e),
                                 { user: i } = (0, R.M)(e);
@@ -11492,7 +11518,12 @@
                                 try {
                                     var r;
                                     let a = null == (r = e.file) ? void 0 : r.name,
-                                        i = yield t.getUploadUrl({ playlistId: ''.concat(l, ':').concat(e.playlistKind), uid: l, path: a });
+                                        i = yield t.getUploadUrl({
+                                            playlistId: ''.concat(l, ':').concat(e.playlistKind),
+                                            uid: l,
+                                            path: a,
+                                        });
+                                    if (!(0, C._n)(e) || e.loadingState === dP.p.CANCELLED) return;
                                     if (i && 'result' in i && i.result === y.TOO_MANY_FILES) {
                                         ((e.loadingState = dP.p.REJECT), (e.errorReason = d_.TOO_MANY_FILES));
                                         return;
@@ -11501,33 +11532,106 @@
                                         ((e.uploadUrl = i['post-target']), (e.trackId = i['ugc-track-id']));
                                         return;
                                     }
-                                    ((e.errorReason = d_.UNKNOWN_ERROR), (e.loadingState = dP.p.REJECT));
+                                    let uploadUrlError = rememberPulseSyncUploadError(e.file, new Error('Upload URL response is missing required fields'));
+                                    (reportPulseSyncUploadState(e.file, 'attempt-failed', {
+                                        attempt: uploadAttempt,
+                                        stage: 'get-upload-url',
+                                        error: uploadUrlError,
+                                    }),
+                                        (e.errorReason = d_.UNKNOWN_ERROR),
+                                        (e.loadingState = dP.p.REJECT));
                                     return;
                                 } catch (t) {
-                                    ((e.loadingState = dP.p.REJECT), a.error(t));
+                                    if (!(0, C._n)(e) || e.loadingState === dP.p.CANCELLED) return;
+                                    let i = rememberPulseSyncUploadError(e.file, t);
+                                    (reportPulseSyncUploadState(e.file, 'attempt-failed', {
+                                        attempt: uploadAttempt,
+                                        stage: 'get-upload-url',
+                                        error: i,
+                                    }),
+                                        (e.loadingState = dP.p.REJECT),
+                                        a.error(t));
                                     return;
                                 }
                         }),
-                        uploadFile: (0, C.L3)(function* () {
+                        uploadFile: (0, C.L3)(function* (uploadAttempt = 1) {
                             if (!(0, C._n)(e)) return;
                             let { prefixlessResource: t, modelActionsLogger: a } = (0, C._$)(e);
                             if (e.loadingState === dP.p.PREPARE && e.uploadUrl && e.file) {
-                                e.loadingState = dP.p.UPLOADING;
+                                let i = getPulseSyncUploadTimeout(e.file),
+                                    l = !1;
+                                ((e.loadingState = dP.p.UPLOADING),
+                                    reportPulseSyncUploadState(e.file, 'uploading', {
+                                        attempt: uploadAttempt,
+                                        stage: 'upload-file',
+                                        fileSize: e.file.size,
+                                        timeoutMs: i,
+                                    }));
                                 try {
                                     let a = new FormData();
                                     a.append('file', e.file);
-                                    let i = new AbortController(),
-                                        l = i.signal;
-                                    ((e.abortController = i), yield t.uploadFile({ url: e.uploadUrl, formData: a }, { signal: l }), (e.loadingState = dP.p.PROCESSING));
+                                    let r = new AbortController(),
+                                        s = r.signal,
+                                        o = setTimeout(() => {
+                                            ((l = !0), r.abort());
+                                        }, i);
+                                    try {
+                                        ((e.abortController = r),
+                                            yield t.uploadFile(
+                                                {
+                                                    url: e.uploadUrl,
+                                                    formData: a,
+                                                },
+                                                {
+                                                    signal: s,
+                                                },
+                                            ));
+                                        if (!(0, C._n)(e) || e.loadingState === dP.p.CANCELLED) return;
+                                        e.loadingState = dP.p.PROCESSING;
+                                    } finally {
+                                        clearTimeout(o);
+                                    }
                                     return;
                                 } catch (t) {
-                                    ((e.loadingState = dP.p.REJECT), a.error(t));
+                                    if (!(0, C._n)(e) || e.loadingState === dP.p.CANCELLED) return;
+                                    let r = rememberPulseSyncUploadError(e.file, l ? new Error(`Upload timed out after ${i} ms`) : t);
+                                    (reportPulseSyncUploadState(e.file, 'attempt-failed', {
+                                        attempt: uploadAttempt,
+                                        stage: 'upload-file',
+                                        fileSize: e.file.size,
+                                        timeoutMs: i,
+                                        error: r,
+                                    }),
+                                        (e.errorReason = d_.UNKNOWN_ERROR),
+                                        (e.loadingState = dP.p.REJECT),
+                                        a.error(t));
                                     return;
                                 }
                             }
                         }),
                         runUpload: (0, C.L3)(function* () {
-                            (0, C._n)(e) && (yield t.getUploadUrl(), e.loadingState !== dP.p.REJECT && (yield t.uploadFile()));
+                            if (!(0, C._n)(e)) return;
+                            let a = 1;
+                            for (let i = 1; i <= 3; i++) {
+                                if (((a = i), i > 1 && (yield waitForPulseSyncUploadRetry(500 * 2 ** (i - 2))), !(0, C._n)(e) || e.loadingState === dP.p.CANCELLED))
+                                    return;
+                                ((e.loadingState = dP.p.IDLE), (e.uploadUrl = null), (e.errorReason = null), yield t.getUploadUrl(i));
+                                if (!(0, C._n)(e) || e.loadingState === dP.p.CANCELLED) return;
+                                if (e.errorReason === d_.TOO_MANY_FILES) break;
+                                if (e.loadingState !== dP.p.REJECT) yield t.uploadFile(i);
+                                if (!(0, C._n)(e) || e.loadingState === dP.p.CANCELLED) return;
+                                if (e.loadingState === dP.p.PROCESSING) {
+                                    reportPulseSyncUploadState(e.file, 'uploaded', {
+                                        attempt: i,
+                                    });
+                                    return;
+                                }
+                            }
+                            if (!(0, C._n)(e) || e.loadingState === dP.p.CANCELLED) return;
+                            reportPulseSyncUploadState(e.file, 'failed', {
+                                error: e.file?.pulseSyncUploadError || e.errorReason || d_.UNKNOWN_ERROR,
+                                attempt: a,
+                            });
                         }),
                         retryUpload() {
                             if ((this.reset(), !(0, C._n)(e))) return;
@@ -11536,7 +11640,13 @@
                         },
                         abortUpload() {
                             var t;
-                            if (((e.loadingState = dP.p.CANCELLED), null == (t = e.abortController) || t.abort(), !(0, C._n)(e))) return;
+                            if (
+                                ((e.loadingState = dP.p.CANCELLED),
+                                reportPulseSyncUploadState(e.file, 'cancelled'),
+                                null == (t = e.abortController) || t.abort(),
+                                !(0, C._n)(e))
+                            )
+                                return;
                             let { ugcUploadCenter: a } = (0, R.M)(e);
                             a.clearCancelledUploads();
                         },
