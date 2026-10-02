@@ -8051,6 +8051,17 @@
                     } = (0, L.g)(),
                     [R, M] = (0, x.useState)(!1),
                     [F, U] = (0, x.useState)(!1),
+                    [downloadProgress, setDownloadProgress] = (0, x.useState)(0),
+                    trackDownloadName = (0, x.useMemo)(() => {
+                        const artists = (i?.artists ?? [])
+                            .map((artist) => artist.name)
+                            .filter(Boolean)
+                            .join(', ');
+                        return [artists, i?.title].filter(Boolean).join(' — ');
+                    }, [i]),
+                    onDownloadClick = (0, x.useCallback)(() => {
+                        i?.id && window.desktopEvents?.send?.('DOWNLOAD_TRACK', i.id, trackDownloadName);
+                    }, [i, trackDownloadName]),
                     { formatMessage: z } = (0, g.A)(),
                     W = _ && !j.isGenerativeContext,
                     V = j.canSpeed && (null == i ? void 0 : i.isNonMusic),
@@ -8195,6 +8206,51 @@
                               }),
                     ),
                     el = window.CHANGE_DISLIKE_BUTTON_POS?.() ?? true;
+                const pulseSyncInjectPlayerBarButtons = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('playerBarButtons', items, {
+                        eventDetail: null,
+                        renderItem: ({ key, payload, activate }) => {
+                            const label = String(payload?.label ?? '').trim(),
+                                description = String(payload?.description ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim();
+                            if (!label || !icon) return null;
+                            return (0, m.jsx)(
+                                pulseSyncPlayerTooltip.k,
+                                {
+                                    title: label,
+                                    ...(description
+                                        ? {
+                                              description,
+                                          }
+                                        : {}),
+                                    children: (0, m.jsx)(T.$, {
+                                        className: no().settingsButton,
+                                        radius: 'round',
+                                        size: 'xxxs',
+                                        variant: 'text',
+                                        withRipple: !1,
+                                        'aria-label': label,
+                                        icon: (0, m.jsx)(S.I, {
+                                            variant: icon,
+                                            size: 'xs',
+                                        }),
+                                        onClick: activate,
+                                        'data-pulsesync-addon-player-button': '',
+                                    }),
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
+                (0, x.useEffect)(() => {
+                    setDownloadProgress(0);
+                    const unsubscribe = window.desktopEvents?.on?.('PROGRESS_BAR_CHANGE', (_event, progressId, progress) => {
+                        if (i?.id && progressId === `trackDownload|${i.id}`) setDownloadProgress(progress);
+                    });
+                    return () => {
+                        if (typeof unsubscribe === 'function') unsubscribe();
+                    };
+                }, [i?.id]);
                 let qualityMap = {
                         lq: 'LQ',
                         nq: 'NQ',
@@ -8343,13 +8399,61 @@
                                                 !j.isGenerativeContext &&
                                                 !w.isAdvertShown &&
                                                 (0, m.jsxs)(m.Fragment, {
-                                                    children: [
+                                                    children: pulseSyncInjectPlayerBarButtons([
                                                         V && (0, m.jsx)(i6.i, { iconSize: 'l' }),
                                                         ea,
                                                         en,
                                                         (0, m.jsx)(pulseSyncYandexStationCastControl, {
                                                             buttonClassName: no().settingsButton,
                                                             disabled: w.isAdvertShown,
+                                                        }),
+                                                        (0, m.jsx)(pulseSyncPlayerTooltip.k, {
+                                                            title: 'Скачать трек в файл',
+                                                            description: (null == i ? void 0 : i.id)
+                                                                ? 'Скачать трек в читаемый файл на вашем ПК'
+                                                                : 'Не удалось получить данные о треке',
+                                                            children: (0, m.jsxs)('button', {
+                                                                disabled: !(null == i ? void 0 : i.id),
+                                                                className: 'cpeagBA1_PblpJn8Xgtv UDMYhpDjiAFT3xUx268O '.concat(
+                                                                    (null == i ? void 0 : i.id) ? 'HbaqudSqu7Q3mv3zMPGr' : '',
+                                                                    ' qU2apWBO1yyEK0lZ3lPO',
+                                                                ),
+                                                                style: {
+                                                                    display: 'flex',
+                                                                    flexDirection: 'column',
+                                                                    gap: '2px',
+                                                                    alignSelf: 'center',
+                                                                    paddingTop: '5px',
+                                                                    paddingInline: '2px',
+                                                                },
+                                                                children: [
+                                                                    (0, m.jsx)('span', {
+                                                                        className: 'JjlbHZ4FaP9EAcR_1DxF',
+                                                                        children: (0, m.jsx)(S.I, {
+                                                                            variant: 'download',
+                                                                            size: 'xxs',
+                                                                            style: {
+                                                                                width: '24px',
+                                                                                height: '24px',
+                                                                            },
+                                                                        }),
+                                                                    }),
+                                                                    (0, m.jsx)('div', {
+                                                                        style: {
+                                                                            backgroundColor: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                            width: ''.concat(-100 === downloadProgress ? 0 : downloadProgress, '%'),
+                                                                            transition:
+                                                                                downloadProgress >= 0 && downloadProgress < 100
+                                                                                    ? 'width 0.3s'
+                                                                                    : 'width 0.3s, opacity 0.3s linear 0.5s',
+                                                                            opacity: downloadProgress >= 0 && downloadProgress < 100 ? '1' : '0',
+                                                                            height: '2px',
+                                                                            borderRadius: '10px',
+                                                                        },
+                                                                    }),
+                                                                ],
+                                                                onClick: onDownloadClick,
+                                                            }),
                                                         }),
                                                         (0, m.jsx)(pulseSyncPlayerTooltip.k, {
                                                             title: 'Качество трека',
@@ -8392,7 +8496,7 @@
                                                                 }),
                                                             }),
                                                         }),
-                                                    ],
+                                                    ]),
                                                 }),
                                             (0, m.jsx)(iX.r, { variant: iZ.q.VERTICAL, sonataVolume: null != f ? f : j.volume, onVolumeClick: Q, playbackId: b }),
                                         ],
