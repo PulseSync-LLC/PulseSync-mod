@@ -2261,6 +2261,43 @@
         },
         18186: (e, t, a) => {
             'use strict';
+            function reportPulseSyncPlayerState(player) {
+                if (!player) return;
+                const state = player.state;
+                const queue = state.queueState;
+                const index = queue.index.value ?? 0;
+                const order = queue.order.value;
+                const entities = queue.entityList.value;
+                const entity = queue.currentEntity.value?.entity;
+                const track = entity?.data?.meta;
+                const actions = state.currentContext.value?.availableActions;
+                const previousIndex = index > 0 ? (order?.[index - 1] ?? index - 1) : null;
+                const nextIndex = index + 1 < (entities?.length ?? 0) ? (order?.[index + 1] ?? index + 1) : null;
+                window.musicDesktop?.player.reportState({
+                    status: state.playerState.status.value,
+                    isPlaying: state.playerState.status.value === 'playing',
+                    canMoveBackward: actions?.moveBackward?.value,
+                    canMoveForward: actions?.moveForward?.value,
+                    track,
+                    progress: state.playerState.progress.value,
+                    availableActions: {
+                        moveBackward: actions?.moveBackward?.value,
+                        moveForward: actions?.moveForward?.value,
+                        repeat: actions?.repeat?.value,
+                        shuffle: actions?.shuffle?.value,
+                        speed: actions?.speed?.value,
+                    },
+                    actionsStore: {
+                        repeat: queue.repeat.value,
+                        shuffle: queue.shuffle.value,
+                        isLiked: !!entity?.likeStore?.isTrackLiked?.(track?.id),
+                        isDisliked: !!entity?.likeStore?.isTrackDisliked?.(track?.id),
+                    },
+                    previousTrack: previousIndex == null ? void 0 : entities?.[previousIndex]?.entity?.data?.meta,
+                    nextTrack: nextIndex == null ? void 0 : entities?.[nextIndex]?.entity?.data?.meta,
+                    volume: state.playerState.exponentVolume.value,
+                });
+            }
             a.d(t, { SonataProvider: () => sv });
             var r,
                 i,
@@ -11622,11 +11659,38 @@
                             o,
                         ]);
                     (((e) => {
-                        let t = (0, M.useCallback)(
-                            (t) => {
-                                switch (t) {
+                        const { sonataState } = (0, iv.g)();
+                        const likeTrack = (0, M.useCallback)(
+                            async (action) => {
+                                const track = sonataState.entityMeta;
+                                if (!e || !track) return;
+                                if (action === 'TOGGLE_LIKE' || (action === 'LIKE' && !track.isLiked) || (action === 'LIKE_NONE' && track.isLiked)) {
+                                    await track.toggleLike?.();
+                                }
+                                reportPulseSyncPlayerState(e);
+                            },
+                            [e, sonataState],
+                        );
+                        const dislikeTrack = (0, M.useCallback)(
+                            async (action) => {
+                                const track = sonataState.entityMeta;
+                                if (!e || !track) return;
+                                const shouldToggle =
+                                    action === 'TOGGLE_DISLIKE' || (action === 'DISLIKE' && !track.isDisliked) || (action === 'DISLIKE_NONE' && track.isDisliked);
+                                if (shouldToggle) {
+                                    await track.toggleDislike?.();
+                                    if (!track.isDisliked && track.id === e.state.queueState.currentEntity.value?.entity?.data?.meta?.id) e.moveForward();
+                                }
+                                reportPulseSyncPlayerState(e);
+                            },
+                            [e, sonataState],
+                        );
+                        const onAction = (0, M.useCallback)(
+                            (action, value) => {
+                                switch (action) {
                                     case w.PLAY:
                                     case w.PAUSE:
+                                    case 'TOGGLE_PLAY':
                                         null == e || e.togglePause();
                                         break;
                                     case w.MOVE_BACKWARD:
@@ -11634,14 +11698,86 @@
                                         break;
                                     case w.MOVE_FORWARD:
                                         null == e || e.moveForward();
+                                        break;
+                                    case 'REPEAT_NONE':
+                                        e?.setRepeatMode('none');
+                                        break;
+                                    case 'REPEAT_CONTEXT':
+                                        e?.setRepeatMode('context');
+                                        break;
+                                    case 'REPEAT_ONE':
+                                        e?.setRepeatMode('one');
+                                        break;
+                                    case 'TOGGLE_REPEAT': {
+                                        const current = e?.state?.queueState?.repeat?.value;
+                                        const mode =
+                                            current === 'none'
+                                                ? e?.state?.currentContext?.value?.contextData?.type === 'vibe'
+                                                    ? 'one'
+                                                    : 'context'
+                                                : current === 'context'
+                                                  ? 'one'
+                                                  : 'none';
+                                        e?.setRepeatMode(mode);
+                                        break;
+                                    }
+                                    case 'TOGGLE_SHUFFLE':
+                                        e?.toggleShuffle();
+                                        break;
+                                    case 'TOGGLE_LIKE':
+                                    case 'LIKE':
+                                    case 'LIKE_NONE':
+                                        void likeTrack(action).catch((error) => console.error('PulseSync player like action failed', error));
+                                        break;
+                                    case 'TOGGLE_DISLIKE':
+                                    case 'DISLIKE':
+                                    case 'DISLIKE_NONE':
+                                        void dislikeTrack(action).catch((error) => console.error('PulseSync player dislike action failed', error));
+                                        break;
+                                    case 'INCREASE_VOLUME':
+                                        if (Number.isFinite(value)) e?.increaseExponentVolume(value);
+                                        break;
+                                    case 'DECREASE_VOLUME':
+                                        if (Number.isFinite(value)) e?.decreaseExponentVolume(value);
+                                        break;
+                                    case 'SET_VOLUME':
+                                        if (Number.isFinite(value)) e?.setExponentVolume(Math.min(Math.max(value, 0), 1));
+                                        break;
+                                    case 'SET_PROGRESS':
+                                        if (Number.isFinite(value)) e?.setProgress(Math.max(value, 0));
                                 }
                             },
-                            [e],
+                            [e, likeTrack, dislikeTrack],
                         );
+                        (0, M.useEffect)(() => window.musicDesktop?.player.onAction(onAction), [onAction]);
                         (0, M.useEffect)(() => {
-                            var e;
-                            return null == (e = window.musicDesktop) ? void 0 : e.player.onAction(t);
-                        }, [t]);
+                            let registeredApi;
+                            let previousMethods;
+                            const methods = {
+                                likeTrack: () => likeTrack('LIKE'),
+                                unlikeTrack: () => likeTrack('LIKE_NONE'),
+                                dislikeTrack: () => dislikeTrack('DISLIKE'),
+                                undislikeTrack: () => dislikeTrack('DISLIKE_NONE'),
+                            };
+                            const register = () => {
+                                const api = window.pulsesyncApi;
+                                if (!api || registeredApi === api) return;
+                                registeredApi = api;
+                                previousMethods = Object.fromEntries(Object.keys(methods).map((key) => [key, api[key]]));
+                                Object.assign(api, methods);
+                            };
+                            document.addEventListener('pulsesync:runtime-ready', register);
+                            register();
+                            return () => {
+                                document.removeEventListener('pulsesync:runtime-ready', register);
+                                if (!registeredApi) return;
+                                for (const key of Object.keys(methods)) {
+                                    if (registeredApi[key] !== methods[key]) continue;
+                                    if (previousMethods[key] === undefined) delete registeredApi[key];
+                                    else registeredApi[key] = previousMethods[key];
+                                }
+                            };
+                        }, [likeTrack, dislikeTrack]);
                     })(es),
                         ((e) => {
                             let {
@@ -11936,45 +12072,51 @@
                                 });
                         }, [Z, _.player, n, et, ea, J, ee, es, l, h.hasPlus]),
                         ((e) => {
-                            let { sonata: t } = e,
-                                a = (0, ip.c)((e) => {
-                                    var t;
-                                    let { isPlaying: a, canMoveBackward: r, canMoveForward: i } = e;
-                                    null == (t = window.musicDesktop) || t.player.reportState({ isPlaying: a, canMoveBackward: r, canMoveForward: i });
-                                });
+                            const { sonata: t } = e;
                             (0, M.useEffect)(() => {
-                                let e,
-                                    r,
-                                    i =
-                                        null == t
-                                            ? void 0
-                                            : t.state.playerState.status.onChange((e) => {
-                                                  e && a({ isPlaying: e === q.MT.PLAYING });
-                                              }),
-                                    s =
-                                        null == t
-                                            ? void 0
-                                            : t.state.currentContext.onChange(() => {
-                                                  var i, s;
-                                                  (null == e || e(),
-                                                      null == r || r(),
-                                                      (e =
-                                                          null == t || null == (i = t.state.currentContext.value)
-                                                              ? void 0
-                                                              : i.availableActions.moveBackward.onChange((e) => {
-                                                                    a({ canMoveBackward: !!e });
-                                                                })),
-                                                      (r =
-                                                          null == t || null == (s = t.state.currentContext.value)
-                                                              ? void 0
-                                                              : s.availableActions.moveForward.onChange((e) => {
-                                                                    a({ canMoveForward: !!e });
-                                                                })));
-                                              });
-                                return () => {
-                                    (null == i || i(), null == s || s(), null == e || e(), null == r || r());
+                                if (!t) return;
+                                const report = () => reportPulseSyncPlayerState(t);
+                                const cleanups = [];
+                                let actionCleanups = [];
+                                const subscribe = (observable, listener = report, disposers = cleanups) => {
+                                    const cleanup = observable?.onChange(listener);
+                                    if (typeof cleanup === 'function') disposers.push(cleanup);
                                 };
-                            }, [a, null == t ? void 0 : t.state.currentContext, null == t ? void 0 : t.state.playerState.status]);
+                                const bindActions = () => {
+                                    actionCleanups.forEach((cleanup) => cleanup());
+                                    actionCleanups = [];
+                                    const actions = t.state.currentContext.value?.availableActions;
+                                    for (const key of ['moveBackward', 'moveForward', 'repeat', 'shuffle', 'speed']) subscribe(actions?.[key], report, actionCleanups);
+                                    report();
+                                };
+                                for (const observable of [
+                                    t.state.playerState.status,
+                                    t.state.playerState.exponentVolume,
+                                    t.state.queueState.currentEntity,
+                                    t.state.queueState.entityList,
+                                    t.state.queueState.index,
+                                    t.state.queueState.order,
+                                    t.state.queueState.repeat,
+                                    t.state.queueState.shuffle,
+                                ])
+                                    subscribe(observable);
+                                subscribe(t.state.playerState.event, () => {
+                                    const event = t.state.playerState.event.value;
+                                    if (event === 'SET_PROGRESS' || event === q.Iu?.SET_PROGRESS) report();
+                                });
+                                subscribe(t.state.currentContext, bindActions);
+                                const unsubscribeCurrentTrack = window.desktopEvents?.on?.('GET_CURRENT_TRACK', report);
+                                if (typeof unsubscribeCurrentTrack === 'function') cleanups.push(unsubscribeCurrentTrack);
+                                window.__pulseSyncPendingPlayerInstance = t;
+                                window.pulsesyncApi?.setPlayerInstance?.(t);
+                                bindActions();
+                                return () => {
+                                    cleanups.forEach((cleanup) => cleanup());
+                                    actionCleanups.forEach((cleanup) => cleanup());
+                                    if (window.__pulseSyncPendingPlayerInstance === t) delete window.__pulseSyncPendingPlayerInstance;
+                                    if (window.pulsesyncApi?.playerInstance === t) window.pulsesyncApi.playerInstance = null;
+                                };
+                            }, [t]);
                         })({ sonata: es }),
                         ((e) => {
                             let { sonata: t } = e,
