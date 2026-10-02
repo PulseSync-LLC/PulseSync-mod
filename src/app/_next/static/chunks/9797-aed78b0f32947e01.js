@@ -18,8 +18,9 @@
                 n = r(80468);
             let s = (e, t) => {
                 var r, s;
-                let l = null == (r = e.artists) ? void 0 : r.map(i.G),
+                let l = null == (r = e.substituted?.artists ?? e.artists) ? void 0 : r.map(i.G),
                     o = null == (s = e.albums) ? void 0 : s.map(a.f);
+                if (e?.type === 'MUSIC') e.type = e.type.toLowerCase();
                 return { ...(0, n.x)(e, t), artists: l, albums: o };
             };
         },
@@ -765,22 +766,26 @@
             let n = (e, t) => {
                 var r, n, s, l, o, d, c, u, g, m;
                 let { isSmartPreview: _, hasEverFinished: v } = t || {},
-                    y = (0, i.Q)(null == e ? void 0 : e.derivedColors),
+                    y = (0, i.Q)(e?.substituted?.derivedColors ?? e?.derivedColors),
                     p = _ ? (null == e || null == (r = e.smartPreviewParams) ? void 0 : r.durationMs) : null == e ? void 0 : e.durationMs,
                     h = { available: !!(null == e || null == (n = e.specialAudioResources) ? void 0 : n.includes(a.SMART_PREVIEW)) };
                 return {
                     id: ((null == e ? void 0 : e.id) || 0).toString(),
                     isAvailable: !!(null == e ? void 0 : e.available),
                     isRemoved: (null == e ? void 0 : e.error) === 'not-found',
-                    title: null != (g = null == e ? void 0 : e.title) ? g : '',
-                    version: null == e ? void 0 : e.version,
+                    title: e?.substituted?.title ?? e?.title ?? '',
+                    version: e?.substituted?.version ?? e?.version,
+                    isSubstituted: !!(e?.isSubstituted || e?.substituted),
                     durationMs: p,
-                    coverUri: null == e ? void 0 : e.coverUri,
+                    coverUri: e?.substituted?.coverUri || e?.substituted?.ogImage || e?.substituted?.cover?.uri || e?.substituted?.albums?.[0]?.coverUri || e?.coverUri,
                     averageColor: y,
                     trackParameters: null == e ? void 0 : e.trackParameters,
                     trackSource: null == e ? void 0 : e.trackSource,
                     albumId: null == e || null == (l = e.albums) || null == (s = l[0]) ? void 0 : s.id,
-                    disclaimers: null == e ? void 0 : e.disclaimers,
+                    disclaimers:
+                        e?.isSubstituted || e?.substituted
+                            ? Array.from(new Set([...(e.disclaimers ?? []), 'substitutedIcon:pulsesync-substituted', 'descriptionText:pulsesync-substituted']))
+                            : e?.disclaimers,
                     type: null == e ? void 0 : e.type,
                     pubDate: null == e ? void 0 : e.pubDate,
                     hasLyrics: null == e || null == (o = e.lyricsInfo) ? void 0 : o.hasAvailableTextLyrics,
@@ -792,7 +797,7 @@
                     }))(null == e ? void 0 : e.streamProgress, { hasEverFinished: v }),
                     shortDescription: null != (m = null == e ? void 0 : e.shortDescription) ? m : '',
                     trailer: h,
-                    clipIds: null == e ? void 0 : e.clipIds,
+                    clipIds: e?.substituted?.clipIds ?? e?.clipIds,
                     major: (null == e ? void 0 : e.major) ? { id: e.major.id, name: e.major.name } : null,
                     genre: null == e || null == (u = e.albums) || null == (c = u[0]) ? void 0 : c.genre,
                     realId: null == e ? void 0 : e.realId,

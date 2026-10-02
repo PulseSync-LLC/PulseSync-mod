@@ -6735,7 +6735,10 @@
             var sg = a(33660);
             let su = (e) => {
                     var t, a;
-                    return (0, C.wg)({ ...(0, tt.j)(e), artists: null != (a = null == e || null == (t = e.artists) ? void 0 : t.map(l0.d)) ? a : [] });
+                    return (0, C.wg)({
+                        ...(0, tt.j)(e),
+                        artists: null != (a = null == e || null == (t = e.substituted?.artists ?? e.artists) ? void 0 : t.map(l0.d)) ? a : [],
+                    });
                 },
                 sc = (e) => e.map((e) => (0, e_.l)(e.id, e.albumId || void 0));
             var sm = (function (e) {
@@ -7492,7 +7495,10 @@
                 s2 = [sA.n.ALBUM, sA.n.ARTIST, sA.n.PLAYLIST, sA.n.TRACK, sA.n.UGC_TRACK, sA.n.WAVE, sA.n.PODCAST, sA.n.PODCAST_EPISODE, sA.n.CLIP, sA.n.CONCERT],
                 s8 = (e) => {
                     var t, a;
-                    return (0, C.wg)({ ...(0, eH.v)(e), artists: null != (a = null == e || null == (t = e.artists) ? void 0 : t.map(l0.d)) ? a : [] });
+                    return (0, C.wg)({
+                        ...(0, eH.v)(e),
+                        artists: null != (a = null == e || null == (t = e.substituted?.artists ?? e.artists) ? void 0 : t.map(l0.d)) ? a : [],
+                    });
                 };
             var s5 = a(19966);
             let s6 = (e) => {
@@ -9212,7 +9218,7 @@
                             return null;
                         default: {
                             let t = e.data.meta,
-                                l = null == (a = t.artists) ? void 0 : a.map(l0.d),
+                                l = null == (a = t.substituted?.artists ?? t.artists) ? void 0 : a.map(l0.d),
                                 r = null == (i = t.albums) ? void 0 : i.map(r7);
                             return (0, C.wg)({ ...(0, oa.x)(t), artists: l, albums: r, isHiddenFromSonataQueue: e.hidden });
                         }

@@ -9919,14 +9919,38 @@
                     enabled: S,
                     children: (0, i.jsx)('span', {
                         className: p,
-                        children: (0, i.jsx)(u.I, {
-                            className: (0, n.$)(v().explicitMark, t),
-                            'aria-label': E,
-                            variant: N,
-                            size: b,
-                            ...x,
-                            'data-test-id': d.S7.EXPLICIT_MARK_ICON,
-                        }),
+                        children:
+                            h === l.JU.SUBSTITUTED
+                                ? (0, i.jsxs)('svg', {
+                                      className: (0, n.$)(v().explicitMark, t),
+                                      viewBox: '0 0 16 16',
+                                      role: 'img',
+                                      'aria-label': E,
+                                      style: { width: 'var(--ym-icon-size-'.concat(b, ')'), height: 'var(--ym-icon-size-'.concat(b, ')') },
+                                      ...x,
+                                      'data-test-id': d.S7.EXPLICIT_MARK_ICON,
+                                      children: [
+                                          (0, i.jsx)('circle', { cx: '8', cy: '8', r: '5.5', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5' }),
+                                          (0, i.jsx)('text', {
+                                              x: '8',
+                                              y: '9',
+                                              fill: 'currentColor',
+                                              fontSize: '7',
+                                              fontWeight: '700',
+                                              textAnchor: 'middle',
+                                              dominantBaseline: 'middle',
+                                              children: 'S',
+                                          }),
+                                      ],
+                                  })
+                                : (0, i.jsx)(u.I, {
+                                      className: (0, n.$)(v().explicitMark, t),
+                                      'aria-label': E,
+                                      variant: N,
+                                      size: b,
+                                      ...x,
+                                      'data-test-id': d.S7.EXPLICIT_MARK_ICON,
+                                  }),
                     }),
                 });
             });
