@@ -1113,6 +1113,11 @@
         59884: (e, t, r) => {
             'use strict';
             r.d(t, { R: () => T });
+            var pulseSyncHeaderReact = r(74631),
+                pulseSyncHeaderJsx = r(25839),
+                pulseSyncHeaderText = r(4254),
+                pulseSyncHeaderIcon = r(66738);
+
             var i = r(25839),
                 a = r(82298),
                 n = r(88204),
@@ -1149,6 +1154,15 @@
                 b = r(50362),
                 y = r.n(b);
             let T = (0, n.PA)((e) => {
+                let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                (0, pulseSyncHeaderReact.useEffect)(() => {
+                    const onNativeSlotChange = (e) => {
+                        if (e.detail === 'headerTitleItems') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                    };
+                    document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                }, []);
+
                 let {
                         title: t = '',
                         'aria-labelledby': r,
@@ -1233,12 +1247,46 @@
                               })
                             : M,
                     );
+                const pulseSyncInjectHeaderTitleItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('headerTitleItems', items, {
+                        eventDetail: null,
+                        renderItem: ({ key, payload, positionIndex }) => {
+                            const text = String(payload?.text ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim(),
+                                label = String(payload?.label ?? text).trim();
+                            if (!text && !icon) return null;
+                            return (0, pulseSyncHeaderJsx.jsxs)(
+                                pulseSyncHeaderText.HL,
+                                {
+                                    variant: 'span',
+                                    type: 'text',
+                                    size: 's',
+                                    weight: 'medium',
+                                    ...(label
+                                        ? {
+                                              'aria-label': label,
+                                          }
+                                        : {}),
+                                    'data-pulsesync-addon-header-item': 'title',
+                                    children: [
+                                        icon &&
+                                            (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                variant: icon,
+                                                size: 'xxs',
+                                            }),
+                                        text,
+                                    ],
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
                 return (0, i.jsxs)(i.Fragment, {
                     children: [
                         !H &&
                             (0, i.jsxs)('div', {
                                 className: (0, a.$)(y().root, N),
-                                children: [
+                                children: pulseSyncInjectHeaderTitleItems([
                                     (0, i.jsx)(f, { title: t, className: y().stickyTitle, children: W }),
                                     n &&
                                         (0, i.jsx)('div', {
@@ -1252,7 +1300,7 @@
                                                 'data-test-id': o.e8.pageHeader.EDIT_TITLE_BUTTON,
                                             }),
                                         }),
-                                ],
+                                ]),
                             }),
                         H &&
                             (0, i.jsx)('div', {
