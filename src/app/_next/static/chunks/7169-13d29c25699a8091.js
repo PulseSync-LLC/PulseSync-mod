@@ -157,6 +157,8 @@
                 C = i(9794),
                 m = i(30296),
                 E = i(28447),
+                H = i(96618),
+                V = i(49337),
                 y = i(78902),
                 A = i.n(y);
             let g = (0, s.PA)((e) => {
@@ -174,6 +176,7 @@
                     [x, D] = (0, r.useState)(void 0),
                     { formatMessage: v } = (0, l.A)(),
                     F = (0, m.e)(),
+                    { theme: U } = (0, H.W)(),
                     { state: T, toggleTrue: S, toggleFalse: I } = (0, c.e)(!1);
                 (0, r.useEffect)(() => {
                     'number' == typeof b && D(b);
@@ -225,26 +228,43 @@
                     }),
                     z = (0, u.L)(() => {
                         if (y === E.q.VERTICAL)
-                            return (0, a.jsx)('div', {
+                            return (0, a.jsxs)('div', {
                                 onWheel: M,
                                 className: (0, n.$)(A().sliderContainer, { [A().sliderContainer_focusVisible]: T }),
-                                children: (0, a.jsx)('div', {
-                                    className: (0, n.$)(A().wrapperSlider, s),
-                                    children: (0, a.jsx)(C.A, {
-                                        onMouseLeave: I,
-                                        className: (0, n.$)(A().slider, A().important),
-                                        thumbSize: 's',
-                                        onFocus: S,
-                                        onBlur: I,
-                                        trackSize: 's',
-                                        value: f,
-                                        maxValue: 1,
-                                        step: 0.01,
-                                        onChange: L,
-                                        'aria-label': v({ id: 'player-actions.volume-control' }),
-                                        'data-test-id': o.Kq.changeVolume.CHANGE_VOLUME_SLIDER,
+                                children: [
+                                    (0, a.jsx)('span', {
+                                        children: ''.concat(Math.round(f.toFixed(2) * 100), '%'),
+                                        style: {
+                                            position: 'absolute',
+                                            left: 0,
+                                            right: 0,
+                                            marginInline: 'auto',
+                                            width: 'fit-content',
+                                            top: '0.7rem',
+                                            textShadow:
+                                                U === V.S.Dark
+                                                    ? '-1px -1px 0 #000,\n1px -1px 0 #000,\n-1px 1px 0 #000,\n1px 1px 0 #000,\n-1px 0px 0 #000,\n0px 0px 0 #000,\n0px -1px 0 #000,\n0px 1px 0 #000'
+                                                    : void 0,
+                                        },
                                     }),
-                                }),
+                                    (0, a.jsx)('div', {
+                                        className: (0, n.$)(A().wrapperSlider, s),
+                                        children: (0, a.jsx)(C.A, {
+                                            onMouseLeave: I,
+                                            className: (0, n.$)(A().slider, A().important),
+                                            thumbSize: 's',
+                                            onFocus: S,
+                                            onBlur: I,
+                                            trackSize: 's',
+                                            value: f,
+                                            maxValue: 1,
+                                            step: 0.01,
+                                            onChange: L,
+                                            'aria-label': v({ id: 'player-actions.volume-control' }),
+                                            'data-test-id': o.Kq.changeVolume.CHANGE_VOLUME_SLIDER,
+                                        }),
+                                    }),
+                                ],
                             });
                     });
                 return (0, a.jsxs)('div', {

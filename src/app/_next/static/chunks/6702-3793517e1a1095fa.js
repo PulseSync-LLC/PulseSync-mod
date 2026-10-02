@@ -1095,7 +1095,7 @@
                     if (!e) return;
                     let { h: t, s: a } = (0, i.g8)(e);
                     return 'hsl('.concat(t, ', ').concat(a, '%, 20%)');
-                })(null == e ? void 0 : e.averageColor),
+                })(null == e || (window.DISABLE_PER_TRACK_COLORS?.() ?? false) ? void 0 : e.averageColor),
             });
         },
         13287: (e) => {
@@ -1570,6 +1570,7 @@
                 sonataButton: 'SonataFullscreenControlsDesktop_sonataButton__69FFc',
                 sonataPlayButton: 'SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp',
                 playPauseButtonIcon: 'SonataFullscreenControlsDesktop_playPauseButtonIcon__IkUNX',
+                playPauseButtonIcon_withYellowPlayButton: 'SonataFullscreenControlsDesktop_playPauseButtonIcon_withYellowPlayButton__osz8_',
                 buttonContainer: 'SonataFullscreenControlsDesktop_buttonContainer__SpXWc',
             };
         },
@@ -2030,10 +2031,22 @@
                 s = a(61493),
                 o = a(4254),
                 l = a(77501),
-                d = a.n(l);
+                d = a.n(l),
+                pulseSyncTimestampReact = r;
             let c = (e) => {
                     let { value: t, variant: a, className: r, forwardRef: l, ...c } = e,
-                        u = 'start' === a ? s.Kq.changeTimecode.TIMECODE_TIME_START : s.Kq.changeTimecode.TIMECODE_TIME_END;
+                        u = 'start' === a ? s.Kq.changeTimecode.TIMECODE_TIME_START : s.Kq.changeTimecode.TIMECODE_TIME_END,
+                        [pulseSyncShowTimestamps, setPulseSyncShowTimestamps] = (0, pulseSyncTimestampReact.useState)(() =>
+                            Boolean(window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.()),
+                        );
+                    (0, pulseSyncTimestampReact.useEffect)(() => {
+                        const unsubscribe = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (event, key, value) => {
+                            if (key === 'modSettings.playerBarEnhancement.alwaysShowTimestamps') setPulseSyncShowTimestamps(Boolean(value));
+                        });
+                        return () => {
+                            if (typeof unsubscribe === 'function') unsubscribe();
+                        };
+                    }, []);
                     return (0, i.jsx)(o.HL, {
                         ref: l,
                         tabIndex: 0,
@@ -2043,6 +2056,7 @@
                         type: 'entity',
                         weight: 'medium',
                         ...c,
+                        style: pulseSyncShowTimestamps ? { ...c.style, opacity: 1 } : c.style,
                         'data-test-id': u,
                         children: (0, i.jsx)('span', { 'aria-hidden': 'true', children: t }),
                     });
@@ -7996,8 +8010,19 @@
                               ],
                           });
                 });
+            const pulseSyncPlayerBarRefreshers = new Set();
+            const pulseSyncRefreshPlayerBars = () => pulseSyncPlayerBarRefreshers.forEach((refresh) => refresh());
             let nl = (0, v.PA)((e) => {
                 var t;
+                const [, forcePlayerBarRerender] = (0, x.useReducer)((revision) => revision + 1, 0);
+                (0, x.useEffect)(() => {
+                    pulseSyncPlayerBarRefreshers.add(forcePlayerBarRerender);
+                    window.forcePlayerBarRerender = pulseSyncRefreshPlayerBars;
+                    return () => {
+                        pulseSyncPlayerBarRefreshers.delete(forcePlayerBarRerender);
+                        if (!pulseSyncPlayerBarRefreshers.size && window.forcePlayerBarRerender === pulseSyncRefreshPlayerBars) delete window.forcePlayerBarRerender;
+                    };
+                }, [forcePlayerBarRerender]);
                 let {
                         className: a,
                         entityMeta: i,
@@ -8169,7 +8194,7 @@
                                   entityMeta: i,
                               }),
                     ),
-                    el = D.checkExperiment(K.z.WebNextNewWaveTab, 'on') || D.checkExperiment(K.z.WebNextNewWaveTab, 'on1');
+                    el = window.CHANGE_DISLIKE_BUTTON_POS?.() ?? true;
                 let qualityMap = {
                         lq: 'LQ',
                         nq: 'NQ',
@@ -10418,7 +10443,9 @@
                 x = a(27954),
                 f = a(76327),
                 g = a(60025),
-                A = a(49438);
+                A = a(49438),
+                pulseSyncPlayerStore = a(27954),
+                yellowExperimentIds = a(44806);
             let C = (e) => {
                 let { disabled: t, isPlaying: a, onClickPlayPause: n, className: r } = e;
                 return (0, i.jsx)(A.D, { className: r, size: 's', iconSize: 'xs', disabled: t, isPlaying: a, onClick: n });
@@ -10453,7 +10480,9 @@
                         onRepeatClick: b,
                         onShuffleClick: x,
                     } = e,
-                    { formatMessage: f } = (0, T.A)();
+                    { formatMessage: f } = (0, T.A)(),
+                    { experiments: pulseSyncExperiments } = (0, pulseSyncPlayerStore.g)(),
+                    pulseSyncYellowButtonEnabled = pulseSyncExperiments.checkExperiment(yellowExperimentIds.z.WebNextPlayerBarYellowButton, 'on');
                 return (0, i.jsxs)('div', {
                     className: (0, y.$)(k().root, h),
                     children: [
@@ -10510,7 +10539,7 @@
                                     color: 'secondary',
                                     buttonVariant: 'default',
                                     isPlaying: a,
-                                    iconClassName: k().playPauseButtonIcon,
+                                    iconClassName: (0, y.$)(k().playPauseButtonIcon, { [k().playPauseButtonIcon_withYellowPlayButton]: pulseSyncYellowButtonEnabled }),
                                     onClick: m,
                                 }),
                                 (0, i.jsx)(E.$, {
@@ -10699,8 +10728,9 @@
                 }),
                 V = (0, n.PA)((e) => {
                     var t, a;
-                    let { isMobile: n, entityMeta: A, isFullscreen: y, className: T, withShuffle: S, withRepeat: E } = e,
-                        { sonataState: B, vibe: I, advert: j, freePlayerAccess: P } = (0, x.g)(),
+                    let { isMobile: n, entityMeta: A, isFullscreen: pulseSyncIsFullscreen, className: T, withShuffle: S, withRepeat: E } = e,
+                        { sonataState: B, vibe: I, advert: j, freePlayerAccess: P, experiments: pulseSyncExperiments } = (0, x.g)(),
+                        pulseSyncYellowButtonEnabled = pulseSyncExperiments.checkExperiment(yellowExperimentIds.z.WebNextPlayerBarYellowButton, 'on'),
                         k = (0, v.z)(),
                         L = (0, b.e)(),
                         { rewindBackwards: O, rewindForward: D } = (() => {
@@ -10742,7 +10772,7 @@
                             A ? null == L || L.togglePause() : z();
                         }),
                         K = (0, s.c)(() => {
-                            (y && U()) || (H(), M(!V));
+                            (pulseSyncIsFullscreen && U()) || (H(), M(!V));
                         }),
                         G = (0, s.c)(() => {
                             null == L || L.moveForward();
@@ -10759,7 +10789,7 @@
                             Y(B);
                         });
                     (0, r.useEffect)(() => {
-                        if (!y && (null == k || k.addShortcutsListener(p.M.MAIN, m.l.TOGGLE_PLAY, H), !j.isAdvertShown))
+                        if (!pulseSyncIsFullscreen && (null == k || k.addShortcutsListener(p.M.MAIN, m.l.TOGGLE_PLAY, H), !j.isAdvertShown))
                             return (
                                 null == k || k.addShortcutsListener(p.M.MAIN, m.l.TOGGLE_REPEAT, Z),
                                 null == k || k.addShortcutsListener(p.M.MAIN, m.l.TOGGLE_SHUFFLE, X),
@@ -10770,10 +10800,10 @@
                                             null == k || k.removeShortcutsListener(p.M.MAIN, m.l.TOGGLE_REPEAT)));
                                 }
                             );
-                    }, [y, H, Z, X, k, j.isAdvertShown]);
-                    let Q = (0, r.useMemo)(() => (y ? (n ? W : w) : n ? C : N.Z), [n, y]);
+                    }, [pulseSyncIsFullscreen, H, Z, X, k, j.isAdvertShown]);
+                    let Q = (0, r.useMemo)(() => (pulseSyncIsFullscreen ? (n ? W : w) : n ? C : N.Z), [n, pulseSyncIsFullscreen]);
                     return (0, i.jsx)(Q, {
-                        className: T,
+                        className: (0, y.$)(T, { SonataControls_root__w8uqu: pulseSyncYellowButtonEnabled }),
                         disabled: null === B.entityMeta || (j.isAdvertShown && !n),
                         isPlaying: V || !1,
                         canMoveBackward: B.canMoveBackward && !j.isAdvertShown,
