@@ -2311,59 +2311,108 @@
                         { track: o, trackLyrics: c } = (0, N.g)(),
                         { state: d, setState: u } = (0, eC.e)(!1),
                         _ = c.currentTrackId !== (null == (t = o.meta) ? void 0 : t.id),
-                        m = o.isResolved && (null == (a = o.meta) ? void 0 : a.isLyricsAvailable);
+                        m = o.isResolved && (null == (a = o.meta) ? void 0 : a.isLyricsAvailable),
+                        trackId = null == n ? void 0 : n.id,
+                        isAvailable = null == n ? void 0 : n.isAvailable,
+                        isLyricsAvailable = null == n ? void 0 : n.isLyricsAvailable;
                     ((0, g.useEffect)(() => {
                         var e;
-                        (null == (e = o.meta) ? void 0 : e.id) && m && _ && c.getLyrics(o.meta.id);
+                        (null == (e = o.meta) ? void 0 : e.id) && m && _ && (c.setTrack(o.meta), c.getLyrics(o.meta.id));
                     }, [_, m, c, null == (i = o.meta) ? void 0 : i.id]),
+                        (0, g.useEffect)(() => {
+                            const currentTrackId = c.currentTrackId == null ? null : String(c.currentTrackId);
+                            const requestedTrackId = trackId == null ? null : String(trackId);
+                            const hasLyrics = Boolean(c.lyrics && String(c.lyrics).trim().length > 0);
+                            const hasLyricsForRequestedTrack =
+                                hasLyrics && (!c.currentTrackId || (requestedTrackId && currentTrackId && requestedTrackId === currentTrackId));
+                            if (
+                                !trackId ||
+                                isAvailable === false ||
+                                isLyricsAvailable ||
+                                c.isLoading ||
+                                hasLyricsForRequestedTrack ||
+                                (requestedTrackId && currentTrackId && requestedTrackId === currentTrackId && c.isRejected)
+                            )
+                                return;
+                            c.setTrack(n);
+                            c.getLyrics(trackId);
+                        }, [trackId, isAvailable, isLyricsAvailable, c.currentTrackId, c.isRejected, c.isLoading, c.lyrics, c, n]),
                         c.shouldShowErrorNotification &&
-                            (r((0, y.jsx)(er.h, { error: s({ id: 'error-messages.error-during-action' }) }), { containerId: en.u.ERROR }), c.resetShouldShowError()));
+                            (r(
+                                (0, y.jsx)(er.h, {
+                                    error: s({
+                                        id: 'error-messages.error-during-action',
+                                    }),
+                                }),
+                                {
+                                    containerId: en.u.ERROR,
+                                },
+                            ),
+                            c.resetShouldShowError()));
                     let p = (0, f.c)((e) => {
-                        (u(e), e && n && c.sendViews({ trackId: n.id, albumId: n.albumId }));
+                        (u(e),
+                            e &&
+                                n &&
+                                c.sendViews({
+                                    trackId: n.id,
+                                    albumId: n.albumId,
+                                }));
                     });
-                    return c.isShimmerVisible || !c.lyrics || o.isShimmerVisible
-                        ? (0, y.jsx)(ew, { isShimmerActive: c.isLoading || o.isLoading })
-                        : (0, y.jsxs)('div', {
-                              className: eE().root,
-                              'data-test-id': q.Xk.track.TRACK_PAGE_LYRICS,
-                              children: [
-                                  (0, y.jsx)(eo.DZ, {
-                                      variant: 'h2',
-                                      size: 'm',
-                                      lineClamp: 1,
-                                      className: eE().title,
-                                      'data-test-id': q.e8.content.TRACK_LYRICS_TITLE,
-                                      children: s({ id: 'entity-names.text' }),
-                                  }),
-                                  (0, y.jsx)(eN, {
-                                      moreText: s({ id: 'track-modal.read-more' }),
-                                      buttonClassName: eE().button,
-                                      buttonProps: { 'data-test-id': q.e8.content.TRACK_LYRICS_TITLE_READ_MORE_BUTTON },
-                                      open: d,
-                                      onOpenChange: p,
-                                      lineClamp: 4,
-                                      withFade: !0,
-                                      children: (0, y.jsx)(
-                                          eo.HL,
-                                          {
-                                              variant: 'div',
-                                              className: eE().lyrics,
-                                              size: 'l',
-                                              weight: 'medium',
-                                              'data-test-id': q.e8.content.TRACK_LYRICS_TEXT,
-                                              children: (0, y.jsx)(ek, {
-                                                  lyrics: c.lyrics,
-                                                  authors: c.writersNames,
-                                                  source: null == (l = c.major) ? void 0 : l.prettyName,
-                                                  isShimmerVisible: c.isShimmerVisible,
-                                                  isShimmerActive: c.isLoading,
-                                              }),
-                                          },
-                                          null == n ? void 0 : n.getKey('lyrics'),
-                                      ),
-                                  }),
-                              ],
-                          });
+                    const hasLyrics = Boolean(c.lyrics && String(c.lyrics).trim().length > 0);
+                    const shouldShowShimmer = c.isShimmerVisible || o.isShimmerVisible || (c.isLoading && !hasLyrics);
+                    return shouldShowShimmer
+                        ? (0, y.jsx)(ew, {
+                              isShimmerActive: c.isLoading || o.isLoading,
+                          })
+                        : !hasLyrics
+                          ? null
+                          : (0, y.jsxs)('div', {
+                                className: eE().root,
+                                'data-test-id': q.Xk.track.TRACK_PAGE_LYRICS,
+                                children: [
+                                    (0, y.jsx)(eo.DZ, {
+                                        variant: 'h2',
+                                        size: 'm',
+                                        lineClamp: 1,
+                                        className: eE().title,
+                                        'data-test-id': q.e8.content.TRACK_LYRICS_TITLE,
+                                        children: s({
+                                            id: 'entity-names.text',
+                                        }),
+                                    }),
+                                    (0, y.jsx)(eN, {
+                                        moreText: s({
+                                            id: 'track-modal.read-more',
+                                        }),
+                                        buttonClassName: eE().button,
+                                        buttonProps: {
+                                            'data-test-id': q.e8.content.TRACK_LYRICS_TITLE_READ_MORE_BUTTON,
+                                        },
+                                        open: d,
+                                        onOpenChange: p,
+                                        lineClamp: 4,
+                                        withFade: !0,
+                                        children: (0, y.jsx)(
+                                            eo.HL,
+                                            {
+                                                variant: 'div',
+                                                className: eE().lyrics,
+                                                size: 'l',
+                                                weight: 'medium',
+                                                'data-test-id': q.e8.content.TRACK_LYRICS_TEXT,
+                                                children: (0, y.jsx)(ek, {
+                                                    lyrics: c.lyrics,
+                                                    authors: c.writersNames,
+                                                    source: null == (l = c.major) ? void 0 : l.prettyName,
+                                                    isShimmerVisible: c.isShimmerVisible,
+                                                    isShimmerActive: c.isLoading,
+                                                }),
+                                            },
+                                            null == n ? void 0 : n.getKey('lyrics'),
+                                        ),
+                                    }),
+                                ],
+                            });
                 });
             var eD = a(22939),
                 eB = a(32110),
@@ -2715,7 +2764,9 @@
                                     'data-test-id': q.Xk.track.TRACK_PAGE_CONTENT,
                                     children: [
                                         (0, y.jsx)(eh, { onModalClose: v }),
-                                        (null == (s = u.meta) ? void 0 : s.isLyricsAvailable) && (0, y.jsx)(eR, { track: u.meta }, u.meta.id),
+                                        u.meta &&
+                                            ((null == (s = u.meta) ? void 0 : s.isLyricsAvailable) || window.nativeSettings?.get('modSettings.lrclib.useText') !== !1) &&
+                                            (0, y.jsx)(eR, { track: u.meta }, u.meta.id),
                                         p &&
                                             u.similarTracks &&
                                             (0, y.jsx)(eY, {
@@ -3159,7 +3210,7 @@
                     { modal: r, track: o } = l,
                     c = null == o ? void 0 : o.explicitDisclaimer;
                 ((0, g.useEffect)(() => {
-                    o && o.isLyricsAvailable && l.modal.isOpened && l.getLyrics(o.id);
+                    o && (o.isLyricsAvailable || window.nativeSettings?.get('modSettings.lrclib.useText') !== !1) && l.modal.isOpened && l.getLyrics(o.id);
                 }, [o, l, l.modal.isOpened]),
                     (0, g.useEffect)(() => {
                         r.isOpened && o && l.isResolved && l.sendViews({ trackId: o.id, albumId: o.albumId });
@@ -6629,8 +6680,30 @@
             var sh = a(37138),
                 sC = a.n(sh);
             let sg = (e) => {
-                let { className: t, text: a } = e;
-                return (0, y.jsx)('span', { className: (0, eM.$)(sC().root, t), children: a });
+                let { className: t, text: a, words: i, progressPosition: l, isActive: n } = e;
+                if (!n || !Array.isArray(i) || !i.length)
+                    return (0, y.jsx)('span', {
+                        className: (0, eM.$)(sC().root, t),
+                        children: a,
+                    });
+                return (0, y.jsx)('span', {
+                    className: (0, eM.$)(sC().root, t),
+                    children: i.map((e, t) => {
+                        const a = typeof e.toSec === 'number' && e.toSec > e.fromSec ? e.toSec : e.fromSec;
+                        const i = l < e.fromSec ? 0 : a <= e.fromSec || l >= a ? 1 : (l - e.fromSec) / (a - e.fromSec);
+                        return (0, y.jsx)(
+                            'span',
+                            {
+                                className: 'PulseSyncWordLyrics_word',
+                                style: {
+                                    opacity: 0.35 + 0.65 * Math.max(0, Math.min(1, i)),
+                                },
+                                children: e.text,
+                            },
+                            ''.concat(e.fromSec, ':').concat(e.toSec, ':').concat(t),
+                        );
+                    }),
+                });
             };
             var sA = a(19666),
                 sf = a.n(sA);
@@ -6655,6 +6728,16 @@
                         [l, s, n, r],
                     ),
                     u = c.getActiveLineIndex(l);
+                const [pulseSyncWordSyncEnabled, setPulseSyncWordSyncEnabled] = (0, g.useState)(
+                    () => window.nativeSettings?.get('modSettings.lrclib.useWordSync') !== !1,
+                );
+                (0, g.useEffect)(
+                    () =>
+                        window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key, value) => {
+                            if (key === 'modSettings.lrclib.useWordSync') setPulseSyncWordSyncEnabled(value !== !1);
+                        }),
+                    [],
+                );
                 return (
                     ((e) => {
                         let t = (0, g.useRef)(0),
@@ -6666,11 +6749,17 @@
                             !a.hasLyricsViewed &&
                                 null !== e &&
                                 'visible' === document.visibilityState &&
-                                (t.current++, t.current >= 2 && a.sendViews({ contextId: i, contextType: l }));
+                                (t.current++,
+                                t.current >= 2 &&
+                                    a.sendViews({
+                                        contextId: i,
+                                        contextType: l,
+                                    }));
                         }, [e, i, l, a]);
                     })(u),
                     (0, g.useEffect)(() => {
                         if (!n) {
+                            o.update();
                             if (((i === sm.INTRO || i === sm.PREPARE) && o.slideTo(0), i === sm.OUTRO)) {
                                 var e;
                                 o.slideTo(Number(null == (e = c.lines) ? void 0 : e.length));
@@ -6691,7 +6780,12 @@
                                           [sf().line_active]: t === u && !n,
                                       }),
                                       'data-test-id': q.e8.player.SYNC_LYRICS_LINE,
-                                      children: (0, y.jsx)(sg, { text: e.text }),
+                                      children: (0, y.jsx)(sg, {
+                                          text: e.text,
+                                          words: e.words,
+                                          progressPosition: l,
+                                          isActive: pulseSyncWordSyncEnabled && t === u && !n,
+                                      }),
                                   },
                                   e.key,
                               );
@@ -6825,24 +6919,79 @@
                 sT = (0, h.PA)((e) => {
                     let { className: t, counterClassName: a, footerClassName: i, scrollerClassName: l, contentClassName: n, loaderClassName: s } = e,
                         r = (0, g.useRef)(null),
+                        sonataRuntimeState = (0, aD.e)(),
                         {
                             sonataState: { entityMeta: o },
-                            fullscreenPlayer: { syncLyrics: c, hideSyncLyrics: d },
+                            fullscreenPlayer: { syncLyrics: c, autoHideSyncLyrics: d },
                         } = (0, N.g)();
                     (0, g.useEffect)(() => {
-                        c.currentTrackId !== (null == o ? void 0 : o.id) && (null == o ? void 0 : o.isSyncLyricsAvailable) && c.getData(null == o ? void 0 : o.id);
-                    }, [null == o ? void 0 : o.isSyncLyricsAvailable, null == o ? void 0 : o.id, c]);
-                    let u = (0, g.useMemo)(
-                            () => (c.isResolved ? (0, y.jsx)(sN, {}) : ((c.isRejected || c.hasInvalidLyrics) && d(), (0, y.jsx)(sc, { className: s }))),
-                            [c.isResolved, c.isRejected, c.hasInvalidLyrics, c.setInvisible, s],
-                        ),
-                        _ = (0, g.useMemo)(() => ({ counterClassName: a, scrollerClassName: l, footerClassName: i }), [a, i, l]);
+                        const trackId = null == o ? void 0 : o.id;
+                        const nativeAvailable =
+                            (null == o ? void 0 : o.isSyncLyricsAvailable) ||
+                            (null == o ? void 0 : o.isSyncLyricsAvailableWithOfflineFeature) ||
+                            (null == o ? void 0 : o.hasSyncLyrics);
+                        let lrclibEnabled = !0;
+                        try {
+                            lrclibEnabled = window.nativeSettings?.get('modSettings.lrclib.useText') !== !1;
+                        } catch (_error) {}
+                        if (
+                            trackId &&
+                            !(null == o ? void 0 : o.isNonMusic) &&
+                            c.currentTrackId !== trackId &&
+                            (nativeAvailable || lrclibEnabled || o.trackSource === 'UGC')
+                        ) {
+                            c.getData(trackId);
+                        }
+                        c.prefetchNextTrack(sonataRuntimeState);
+                    }, [
+                        null == o ? void 0 : o.id,
+                        null == o ? void 0 : o.isSyncLyricsAvailable,
+                        null == o ? void 0 : o.isSyncLyricsAvailableWithOfflineFeature,
+                        null == o ? void 0 : o.hasSyncLyrics,
+                        null == o ? void 0 : o.isNonMusic,
+                        null == o ? void 0 : o.trackSource,
+                        c.currentTrackId,
+                        c,
+                        sonataRuntimeState,
+                    ]);
+                    (0, g.useEffect)(() => {
+                        const trackId = null == o ? void 0 : o.id;
+                        if (!trackId || String(c.currentTrackId) !== String(trackId) || c.isLoadingForTrack(trackId)) return;
+                        if (c.isRejected || c.hasInvalidLyrics) d(trackId);
+                    }, [null == o ? void 0 : o.id, c.currentTrackId, c.isLoading, c.isRejected, c.hasInvalidLyrics, c.lines, c, d]);
+                    let u = (0, g.useMemo)(() => {
+                            const trackId = null == o ? void 0 : o.id;
+                            if (trackId && c.hasLyricsForTrack(trackId))
+                                return (0, y.jsx)(sN, {
+                                    key: String(trackId),
+                                });
+                            if (trackId && c.isLoadingForTrack(trackId))
+                                return (0, y.jsx)(sc, {
+                                    className: s,
+                                });
+                            if (c.isRejected || c.hasInvalidLyrics) return null;
+                            return (0, y.jsx)(sc, {
+                                className: s,
+                            });
+                        }, [null == o ? void 0 : o.id, c.currentTrackId, c.lines, c.isLoading, c.isResolved, c.isRejected, c.hasInvalidLyrics, s, c]),
+                        _ = (0, g.useMemo)(
+                            () => ({
+                                counterClassName: a,
+                                scrollerClassName: l,
+                                footerClassName: i,
+                            }),
+                            [a, i, l],
+                        );
                     return (0, y.jsx)(sl.Provider, {
                         value: _,
                         children: (0, y.jsx)('div', {
                             ref: r,
                             className: (0, eM.$)(ss().root, t),
-                            children: (0, y.jsx)('div', { className: (0, eM.$)(ss().content, n), 'data-test-id': q.e8.player.SYNC_LYRICS_CONTENT, children: u }),
+                            children: (0, y.jsx)('div', {
+                                className: (0, eM.$)(ss().content, n),
+                                'data-test-id': q.e8.player.SYNC_LYRICS_CONTENT,
+                                children: u,
+                            }),
                         }),
                     });
                 });
@@ -6936,9 +7085,16 @@
             let sz = (0, h.PA)(() => {
                 var e;
                 let [t, a] = (0, g.useState)(!1),
-                    { sonataState: i, user: l } = (0, N.g)(),
+                    {
+                        sonataState: i,
+                        user: l,
+                        fullscreenPlayer: { syncLyrics: syncLyricsModel, autoHideSyncLyrics, restoreSyncLyricsForTrack },
+                    } = (0, N.g)(),
                     { entityMeta: n } = i,
-                    { handleDebouncedToggle: s } = (0, nc.F)({ delay: 1500, throttleTimeout: 300 }),
+                    { handleDebouncedToggle: s } = (0, nc.F)({
+                        delay: 1500,
+                        throttleTimeout: 300,
+                    }),
                     r = i.canSpeed && ((null == n ? void 0 : n.isNonMusic) || (null == n || null == (e = n.mainAlbum) ? void 0 : e.isNonMusic)),
                     o = (0, eJ.K)(n),
                     c = (0, g.useCallback)((e) => {
@@ -6951,16 +7107,50 @@
                                 open: t,
                                 onOpenChange: a,
                                 placement: 'left',
-                                icon: (0, y.jsx)($.I, { variant: 'more', size: 'm' }),
-                                className: (0, eM.$)(sU().menuButton, { [sU().menuButton_active]: t }),
+                                icon: (0, y.jsx)($.I, {
+                                    variant: 'more',
+                                    size: 'm',
+                                }),
+                                className: (0, eM.$)(sU().menuButton, {
+                                    [sU().menuButton_active]: t,
+                                }),
                                 wrapperClassName: sU().menuWrapper,
                                 onClick: c,
                                 size: 'l',
                                 'data-test-id': q.e8.player.FULLSCREEN_PLAYER_CONTEXT_MENU_BUTTON,
                             });
                     }),
+                    restoreTrackId = null == n ? void 0 : n.id,
+                    restoreSyncLyricsEffect =
+                        ((0, g.useEffect)(() => {
+                            if (!restoreTrackId || String(syncLyricsModel.currentTrackId) !== String(restoreTrackId) || syncLyricsModel.isLoadingForTrack(restoreTrackId))
+                                return;
+                            if (syncLyricsModel.isRejected || syncLyricsModel.hasInvalidLyrics) {
+                                autoHideSyncLyrics(restoreTrackId);
+                                return;
+                            }
+                            if (syncLyricsModel.hasLyricsForTrack(restoreTrackId)) restoreSyncLyricsForTrack(restoreTrackId);
+                        }, [
+                            restoreTrackId,
+                            syncLyricsModel.currentTrackId,
+                            syncLyricsModel.lines,
+                            syncLyricsModel.isLoading,
+                            syncLyricsModel.isRejected,
+                            syncLyricsModel.hasInvalidLyrics,
+                            syncLyricsModel.isResolved,
+                            syncLyricsModel,
+                            autoHideSyncLyrics,
+                            restoreSyncLyricsForTrack,
+                        ]),
+                        null),
                     u = (0, g.useMemo)(() => {
-                        if (null == n ? void 0 : n.isSyncLyricsAvailable)
+                        const trackId = null == n ? void 0 : n.id;
+                        const syncLyricsAvailable =
+                            (null == n ? void 0 : n.isSyncLyricsAvailable) ||
+                            (null == n ? void 0 : n.isSyncLyricsAvailableWithOfflineFeature) ||
+                            (null == n ? void 0 : n.hasSyncLyrics) ||
+                            (trackId && syncLyricsModel.hasLyricsForTrack(trackId));
+                        if (syncLyricsAvailable)
                             return (0, y.jsx)(sB, {
                                 className: sU().syncLyricsButton,
                                 iconSize: 'm',
@@ -6969,7 +7159,16 @@
                                 color: 'secondary',
                                 disabled: !l.isAuthorized,
                             });
-                    }, [null == n ? void 0 : n.isSyncLyricsAvailable, l.isAuthorized]);
+                    }, [
+                        null == n ? void 0 : n.id,
+                        null == n ? void 0 : n.isSyncLyricsAvailable,
+                        null == n ? void 0 : n.isSyncLyricsAvailableWithOfflineFeature,
+                        null == n ? void 0 : n.hasSyncLyrics,
+                        syncLyricsModel.currentTrackId,
+                        syncLyricsModel.lines,
+                        syncLyricsModel.isResolved,
+                        l.isAuthorized,
+                    ]);
                 return (
                     (0, g.useEffect)(
                         () => (
@@ -6981,7 +7180,9 @@
                         [s],
                     ),
                     (0, y.jsxs)('div', {
-                        className: (0, eM.$)(sU().root, { [sU().root_visible]: t }),
+                        className: (0, eM.$)(sU().root, {
+                            [sU().root_visible]: t,
+                        }),
                         children: [
                             (0, y.jsx)(sO, {
                                 className: sU().playQueueButton,
@@ -6991,13 +7192,24 @@
                                 color: 'secondary',
                                 disabled: !l.isAuthorized,
                             }),
-                            (0, y.jsx)(sS.$, { className: sU().sonataControls, isMobile: !1, entityMeta: n, isFullscreen: !0 }),
+                            (0, y.jsx)(sS.$, {
+                                className: sU().sonataControls,
+                                isMobile: !1,
+                                entityMeta: n,
+                                isFullscreen: !0,
+                            }),
                             d,
                             u,
                             (0, y.jsxs)('div', {
                                 className: sU().bottomRightButtonsWrapper,
                                 children: [
-                                    r && (0, y.jsx)(sI.i, { className: sU().speedButton, size: 'l', iconSize: 'm', isIconCentered: !0 }),
+                                    r &&
+                                        (0, y.jsx)(sI.i, {
+                                            className: sU().speedButton,
+                                            size: 'l',
+                                            iconSize: 'm',
+                                            isIconCentered: !0,
+                                        }),
                                     (0, y.jsx)(sk.WithOffline, {
                                         fallback: (0, y.jsx)(e6.c, {
                                             className: sU().likeButton,
@@ -7254,49 +7466,109 @@
                     {
                         sonataState: r,
                         settings: { isLandscape: o },
-                        fullscreenPlayer: { isSyncLyricsMode: c },
+                        fullscreenPlayer: { isSyncLyricsMode: c, syncLyrics: syncLyricsModel },
                         user: { hasPlus: d },
                     } = (0, N.g)(),
                     { formatMessage: u } = (0, Y.A)(),
                     [_, m] = (0, g.useState)(!1),
                     p = (0, s1.A)(),
-                    v = (0, s2.e)(),
-                    x = null === r.entityMeta,
+                    x = (0, s2.e)(),
+                    v = null === r.entityMeta,
                     h = (null == (t = r.entityMeta) ? void 0 : t.isNonMusic) || (null == (i = r.entityMeta) || null == (a = i.mainAlbum) ? void 0 : a.isNonMusic),
                     C = r.canSpeed && h,
                     A = (0, f.c)(() => {
-                        v(r);
+                        x(r);
                     }),
                     b = (0, f.c)(() => {
                         p(r);
                     }),
                     j = (0, g.useMemo)(() => {
-                        var e;
                         if (h) return;
-                        let t = ''.concat(u({ id: 'interface-actions.open-sync-lyrics' }), ' ').concat(u({ id: 'warning-messages.can-break-accessibility' }));
+                        const track = r.entityMeta;
+                        const trackId = null == track ? void 0 : track.id;
+                        const syncLyricsAvailable =
+                            (null == track ? void 0 : track.isSyncLyricsAvailable) ||
+                            (null == track ? void 0 : track.isSyncLyricsAvailableWithOfflineFeature) ||
+                            (null == track ? void 0 : track.hasSyncLyrics) ||
+                            (trackId && syncLyricsModel.hasLyricsForTrack(trackId));
+                        let t = ''
+                            .concat(
+                                u({
+                                    id: 'interface-actions.open-sync-lyrics',
+                                }),
+                                ' ',
+                            )
+                            .concat(
+                                u({
+                                    id: 'warning-messages.can-break-accessibility',
+                                }),
+                            );
                         return (0, y.jsx)(Q.$, {
-                            className: (0, eM.$)(s0().syncLyricsButton, { [s0().syncLyricsButton_active]: c }),
+                            className: (0, eM.$)(s0().syncLyricsButton, {
+                                [s0().syncLyricsButton_active]: c,
+                            }),
                             radius: 'round',
                             size: 'xxxs',
                             variant: 'text',
-                            disabled: !(null == (e = r.entityMeta) ? void 0 : e.isSyncLyricsAvailable) || o,
+                            disabled: !syncLyricsAvailable || o,
                             withRipple: !1,
                             withHover: !1,
                             'aria-label': t,
-                            icon: (0, y.jsx)($.I, { variant: 'syncLyrics', size: 'xs' }),
+                            icon: (0, y.jsx)($.I, {
+                                variant: 'syncLyrics',
+                                size: 'xs',
+                            }),
                             onClick: s,
                         });
-                    }, [u, h, c, s, o, null == (l = r.entityMeta) ? void 0 : l.isSyncLyricsAvailable]);
+                    }, [
+                        u,
+                        h,
+                        c,
+                        s,
+                        o,
+                        null == (l = r.entityMeta) ? void 0 : l.id,
+                        null == l ? void 0 : l.isSyncLyricsAvailable,
+                        null == l ? void 0 : l.isSyncLyricsAvailableWithOfflineFeature,
+                        null == l ? void 0 : l.hasSyncLyrics,
+                        syncLyricsModel.currentTrackId,
+                        syncLyricsModel.lines,
+                        syncLyricsModel.isResolved,
+                    ]);
                 return (0, y.jsx)('div', {
                     className: (0, eM.$)(s0().footer, n),
                     children: (0, y.jsxs)('div', {
                         className: s0().footerContainer,
                         children: [
-                            (x || r.canChangeRepeatMode) && (0, y.jsx)(s4.s, { onClick: b, isDisabled: x, repeatMode: r.repeatMode, variant: 'text' }),
-                            C && (0, y.jsx)(sI.i, { size: 'xxxs', iconSize: 'l' }),
-                            (0, y.jsx)(s6.p$, { open: _, onOpenChange: m, icon: (0, y.jsx)($.I, { variant: 'settings', size: 'xs' }), size: 'xxxs', disabled: !d }),
+                            (v || r.canChangeRepeatMode) &&
+                                (0, y.jsx)(s4.s, {
+                                    onClick: b,
+                                    isDisabled: v,
+                                    repeatMode: r.repeatMode,
+                                    variant: 'text',
+                                }),
+                            C &&
+                                (0, y.jsx)(sI.i, {
+                                    size: 'xxxs',
+                                    iconSize: 'l',
+                                }),
+                            (0, y.jsx)(s6.p$, {
+                                open: _,
+                                onOpenChange: m,
+                                icon: (0, y.jsx)($.I, {
+                                    variant: 'settings',
+                                    size: 'xs',
+                                }),
+                                size: 'xxxs',
+                                disabled: !d,
+                            }),
                             j,
-                            (x || r.canShuffle) && (0, y.jsx)(s8.u, { onClick: A, isDisabled: x, shuffle: r.shuffle, variant: 'text' }),
+                            (v || r.canShuffle) &&
+                                (0, y.jsx)(s8.u, {
+                                    onClick: A,
+                                    isDisabled: v,
+                                    shuffle: r.shuffle,
+                                    variant: 'text',
+                                }),
                         ],
                     }),
                 });
