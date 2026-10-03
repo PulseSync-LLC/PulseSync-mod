@@ -1,8 +1,16 @@
 function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, modernizeUtils, zstdUtils }) {
-    const { asar, fs, fsp, path, semver, crypto, minify, execSync, execFileSync } = runtime.deps;
+    const { asar, fs, fsp, path, semver, crypto, minify, execSync, execFileSync, execAsync } = runtime.deps;
     const { REPO_ROOT, SRC_PATH, EXTRACTED_DIR_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, OXFMT_CONFIG_PATH } = runtime.constants;
 
     const MINIFIABLE_EXTENSIONS = new Set(['.js', '.mjs', '.cjs']);
+    let dependencyInstallation = Promise.resolve();
+
+    function installModuleDependencies(directory, environment = process.env) {
+        // Yarn installations share a cache; serialize them while module builds run in parallel.
+        const installation = dependencyInstallation.then(() => execAsync('yarn', { cwd: directory, env: environment, windowsHide: true }));
+        dependencyInstallation = installation.catch(() => {});
+        return installation;
+    }
 
     function isMinifiableFile(filePath) {
         return MINIFIABLE_EXTENSIONS.has(path.extname(filePath).toLowerCase());
@@ -238,14 +246,11 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         console.log('Сборка миниплеера...');
         console.time('Миниплеер собран');
 
-        execSync('yarn', {
-            cwd: info.miniPlayerDir,
-            stdio: 'pipe',
-        });
+        await installModuleDependencies(info.miniPlayerDir);
 
-        execSync('yarn run build', {
+        await execAsync('yarn run build', {
             cwd: info.miniPlayerDir,
-            stdio: 'pipe',
+            windowsHide: true,
         });
 
         console.timeEnd('Миниплеер собран');
@@ -366,16 +371,12 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         ];
 
         for (const installDirectory of installDirectories) {
-            execSync('yarn', {
-                cwd: installDirectory,
-                stdio: 'pipe',
-                env: environment,
-            });
+            await installModuleDependencies(installDirectory, environment);
         }
 
-        execSync('yarn run build', {
+        await execAsync('yarn run build', {
             cwd: info.moduleDir,
-            stdio: 'pipe',
+            windowsHide: true,
             env: environment,
         });
 
@@ -539,11 +540,15 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
 
         installSourceDependencies(workPath);
-        await buildMiniPlayer();
-        await buildWebHost();
-        await installWebHostBuild(workPath);
-        await buildRuntime();
-        await installRuntimeBuild(workPath);
+        const moduleBuilds = await Promise.allSettled([
+            buildMiniPlayer(),
+            buildWebHost().then(() => installWebHostBuild(workPath)),
+            buildRuntime().then(() => installRuntimeBuild(workPath)),
+        ]);
+        const buildErrors = moduleBuilds.filter((result) => result.status === 'rejected').map((result) => result.reason);
+        if (buildErrors.length) {
+            throw new AggregateError(buildErrors, `Не удалось собрать веб-модули: ${buildErrors.map((error) => error.message).join('; ')}`);
+        }
 
         const isMac = process.platform === 'darwin';
         if (!noNativeModules && !isMac) {

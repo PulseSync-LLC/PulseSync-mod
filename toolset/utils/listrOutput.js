@@ -1,4 +1,9 @@
 const util = require('util');
+const { AsyncLocalStorage } = require('node:async_hooks');
+
+const taskConsoleContext = new AsyncLocalStorage();
+let activeTaskConsoles = 0;
+let originalConsole;
 
 function formatConsoleArg(arg) {
     if (typeof arg === 'string') {
@@ -84,8 +89,8 @@ function wrapSkip(skip) {
     };
 }
 
-async function withTaskConsole(task, action) {
-    const originalConsole = {
+function installTaskConsole() {
+    originalConsole = {
         log: console.log,
         info: console.info,
         warn: console.warn,
@@ -94,48 +99,57 @@ async function withTaskConsole(task, action) {
         timeLog: console.timeLog,
         timeEnd: console.timeEnd,
     };
-    const timers = new Map();
-
-    console.log = (...args) => appendTaskOutput(task, formatConsoleArgs(args));
-    console.info = (...args) => appendTaskOutput(task, formatConsoleArgs(args));
-    console.warn = (...args) => appendTaskOutput(task, formatConsoleArgs(args));
-    console.error = (...args) => appendTaskOutput(task, formatConsoleArgs(args));
+    for (const method of ['log', 'info', 'warn', 'error']) {
+        console[method] = (...args) => {
+            const context = taskConsoleContext.getStore();
+            if (context) appendTaskOutput(context.task, formatConsoleArgs(args));
+            else originalConsole[method](...args);
+        };
+    }
     console.time = (label = 'default') => {
-        timers.set(label, process.hrtime.bigint());
+        const context = taskConsoleContext.getStore();
+        if (context) context.timers.set(label, process.hrtime.bigint());
+        else originalConsole.time(label);
     };
     console.timeLog = (label = 'default', ...args) => {
-        const startTime = timers.get(label);
+        const context = taskConsoleContext.getStore();
+        if (!context) return originalConsole.timeLog(label, ...args);
+
+        const startTime = context.timers.get(label);
         if (!startTime) {
-            appendTaskOutput(task, `Таймер не найден: ${label}`);
+            appendTaskOutput(context.task, `Таймер не найден: ${label}`);
             return;
         }
 
         const durationMs = Number(process.hrtime.bigint() - startTime) / 1e6;
         const suffix = args.length ? ` ${formatConsoleArgs(args)}` : '';
-        appendTaskOutput(task, `${label}: ${formatDuration(durationMs)}${suffix}`);
+        appendTaskOutput(context.task, `${label}: ${formatDuration(durationMs)}${suffix}`);
     };
     console.timeEnd = (label = 'default') => {
-        const startTime = timers.get(label);
+        const context = taskConsoleContext.getStore();
+        if (!context) return originalConsole.timeEnd(label);
+
+        const startTime = context.timers.get(label);
         if (!startTime) {
-            appendTaskOutput(task, `Таймер не найден: ${label}`);
+            appendTaskOutput(context.task, `Таймер не найден: ${label}`);
             return;
         }
 
-        timers.delete(label);
+        context.timers.delete(label);
         const durationMs = Number(process.hrtime.bigint() - startTime) / 1e6;
-        appendTaskOutput(task, `${label}: ${formatDuration(durationMs)}`);
+        appendTaskOutput(context.task, `${label}: ${formatDuration(durationMs)}`);
     };
+}
+
+async function withTaskConsole(task, action) {
+    if (activeTaskConsoles === 0) installTaskConsole();
+    activeTaskConsoles++;
 
     try {
-        return await action();
+        return await taskConsoleContext.run({ task, timers: new Map() }, action);
     } finally {
-        console.log = originalConsole.log;
-        console.info = originalConsole.info;
-        console.warn = originalConsole.warn;
-        console.error = originalConsole.error;
-        console.time = originalConsole.time;
-        console.timeLog = originalConsole.timeLog;
-        console.timeEnd = originalConsole.timeEnd;
+        activeTaskConsoles--;
+        if (activeTaskConsoles === 0) Object.assign(console, originalConsole);
     }
 }
 
