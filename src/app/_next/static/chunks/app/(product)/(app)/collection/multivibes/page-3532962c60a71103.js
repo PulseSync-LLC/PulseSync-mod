@@ -2657,6 +2657,14 @@
                         (O.setIsApplying(!0), w ? (await D(e), await B(!0)) : await V(e), O.setIsApplying(!1));
                     }),
                     applySetting: $,
+                    playSeeds: (0, c.c)(async (e) => {
+                        let t = Array.isArray(e) && e.length > 0 ? e : h;
+                        if (M.isFreeWebUser || !P.isAuthorized) {
+                            null == T || T();
+                            return;
+                        }
+                        (O.setIsApplying(!0), w ? (await D(t), await B(!0)) : await V(t), O.setIsApplying(!1));
+                    }),
                 };
             };
         },

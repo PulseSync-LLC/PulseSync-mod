@@ -1160,6 +1160,7 @@
                             isPlaying: X,
                             togglePlay: q,
                             resetContext: G,
+                            playSeeds: pulseSyncPlaySeeds,
                         } = (0, F.B)({ seeds: null != (a = null == (t = o.meta) ? void 0 : t.seeds) ? a : [], pageIdForFrom: f, blockIdForFrom: y }),
                         $ = l.checkExperiment(z.z.WebNextDisableVibeSettings, 'on') || b.isVibeStartRestricted || !u.isAuthorized,
                         Z = (0, _.useCallback)(() => {
@@ -1192,6 +1193,26 @@
                         ),
                         ea = (0, _.useMemo)(() => (0, c.jsx)(Y.H, { size: 'l', className: et().button }), []);
                     return (
+                        (0, _.useEffect)(() => {
+                            if (!window.pulsesyncApi) return;
+                            let e = function () {
+                                let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
+                                    t = Array.isArray(null == e ? void 0 : e.seeds) ? e.seeds : 'string' == typeof (null == e ? void 0 : e.seed) ? [e.seed] : [],
+                                    i = t.filter((e) => 'string' == typeof e && e.length > 0);
+                                if (i.length > 0) {
+                                    if (b.isVibeStartRestricted || !u.isAuthorized) return void Q();
+                                    pulseSyncPlaySeeds(i);
+                                    return;
+                                }
+                                ei();
+                            };
+                            return (
+                                (window.pulsesyncApi.playVibeNative = e),
+                                () => {
+                                    window.pulsesyncApi && window.pulsesyncApi.playVibeNative === e && delete window.pulsesyncApi.playVibeNative;
+                                }
+                            );
+                        }, [b.isVibeStartRestricted, u.isAuthorized, ei, Q, pulseSyncPlaySeeds]),
                         (0, _.useEffect)(
                             () => () => {
                                 o.reset();
