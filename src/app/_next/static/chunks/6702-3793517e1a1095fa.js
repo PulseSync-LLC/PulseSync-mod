@@ -6810,41 +6810,43 @@
                             children: (0, m.jsx)(eL, {
                                 children: (0, m.jsxs)(m.Fragment, {
                                     children: [
-                                        r.map((e) => {
-                                            let t = i(e.availablePaths);
-                                            return (0, m.jsx)(
-                                                ti,
-                                                {
-                                                    config: e.onboardingConfig,
-                                                    children: (0, m.jsx)(eO, {
-                                                        'data-intersection-property-id': eW.N,
-                                                        selected: t,
-                                                        isNewVisualVersion: l,
-                                                        children: (0, m.jsxs)(eX.N, {
-                                                            href: e.isEnabled && !t ? e.path : void 0,
-                                                            role: 'link',
-                                                            'aria-disabled': !e.isEnabled,
-                                                            tabIndex: e.isEnabled ? 0 : -1,
-                                                            className: (0, p.$)({ [a5().disabledNavigationItem]: !e.isEnabled }),
-                                                            onClick: c(e.analyticsParams.entityType, e.analyticsParams.to),
-                                                            'data-test-id': e1[e.id],
-                                                            children: [
-                                                                d(e, t),
-                                                                (0, m.jsx)(I.HL, {
-                                                                    variant: 'span',
-                                                                    type: 'controls',
-                                                                    size: 'm',
-                                                                    weight: 'medium',
-                                                                    lineClamp: 1,
-                                                                    children: e.title,
-                                                                }),
-                                                            ],
+                                        r
+                                            .filter((e) => e.id !== eV.SETTINGS)
+                                            .map((e) => {
+                                                let t = i(e.availablePaths);
+                                                return (0, m.jsx)(
+                                                    ti,
+                                                    {
+                                                        config: e.onboardingConfig,
+                                                        children: (0, m.jsx)(eO, {
+                                                            'data-intersection-property-id': eW.N,
+                                                            selected: t,
+                                                            isNewVisualVersion: l,
+                                                            children: (0, m.jsxs)(eX.N, {
+                                                                href: e.isEnabled && !t ? e.path : void 0,
+                                                                role: 'link',
+                                                                'aria-disabled': !e.isEnabled,
+                                                                tabIndex: e.isEnabled ? 0 : -1,
+                                                                className: (0, p.$)({ [a5().disabledNavigationItem]: !e.isEnabled }),
+                                                                onClick: c(e.analyticsParams.entityType, e.analyticsParams.to),
+                                                                'data-test-id': e1[e.id],
+                                                                children: [
+                                                                    d(e, t),
+                                                                    (0, m.jsx)(I.HL, {
+                                                                        variant: 'span',
+                                                                        type: 'controls',
+                                                                        size: 'm',
+                                                                        weight: 'medium',
+                                                                        lineClamp: 1,
+                                                                        children: e.title,
+                                                                    }),
+                                                                ],
+                                                            }),
                                                         }),
-                                                    }),
-                                                },
-                                                e.id,
-                                            );
-                                        }),
+                                                    },
+                                                    e.id,
+                                                );
+                                            }),
                                         !l && (0, m.jsx)(eO, { children: (0, m.jsx)(aZ.F, { className: a5().user, variant: 'mobile' }) }),
                                     ],
                                 }),
