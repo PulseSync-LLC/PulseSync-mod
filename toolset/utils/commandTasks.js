@@ -143,7 +143,24 @@ function createBuildTask({
 function createWebModulesTask() {
     return {
         title: 'Сборка веб-модулей',
-        task: (_context, task) => task.newListr(wrapTaskDefinitions([createMiniPlayerTask(), createWebHostTask(), createRuntimeTask()]), EXPANDED_SKIP_REASONS_OPTIONS),
+        task: (_context, task) => {
+            const modules = task.newListr(
+                wrapTaskDefinitions([createMiniPlayerTask(), createWebHostTask(), createRuntimeTask()].map((definition) => ({ ...definition, exitOnError: false }))),
+                { ...EXPANDED_SKIP_REASONS_OPTIONS, concurrent: true, collectErrors: 'minimal' },
+            );
+            const runModules = modules.run.bind(modules);
+            modules.run = async (context) => {
+                const previousErrorCount = modules.errors.length;
+                const result = await runModules(context);
+
+                const buildErrors = modules.errors.slice(previousErrorCount).map((entry) => entry.error);
+                if (buildErrors.length) {
+                    throw new AggregateError(buildErrors, `Не удалось собрать веб-модули: ${buildErrors.map((error) => error.message).join('; ')}`);
+                }
+                return result;
+            };
+            return modules;
+        },
     };
 }
 
