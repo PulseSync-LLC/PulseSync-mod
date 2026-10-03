@@ -9416,11 +9416,951 @@
                         i = parseFloat(t[1] || '0');
                     return a > 0 ? parseFloat((60 * a + i).toFixed(2)) : i;
                 },
-                op = C.gK.model('SyncLyricsLine', { text: C.gK.string, fromSec: C.gK.number, toSec: C.gK.maybe(C.gK.number) }).views((e) => ({
-                    get key() {
-                        return ''.concat(e.fromSec, ':').concat(e.toSec);
-                    },
-                })),
+                pulseSyncLrclib = (() => {
+                    const GET_API_URL = 'https://lrclib.net/api/get';
+                    const SEARCH_API_URL = 'https://lrclib.net/api/search';
+                    const REQUEST_INTERVAL_MS = 350;
+                    const REQUEST_TIMEOUT_MS = 10_000;
+                    const RESULT_TTL_MS = 60 * 60 * 1000;
+                    const NO_RESULT_TTL_MS = 30 * 60 * 1000;
+                    const CACHE_LIMIT = 500;
+                    const PROVIDER = Object.freeze({
+                        id: 1337,
+                        name: 'LRCLIB',
+                        prettyName: 'LRCLIB',
+                    });
+                    const signatureResults = new Map();
+                    const signatureMisses = new Map();
+                    const signaturesInFlight = new Map();
+                    const syncedByTrackId = new Map();
+                    const syncedMissesByTrackId = new Map();
+                    const syncedInFlightByTrackId = new Map();
+                    const lyricsfileLinesByItem = new WeakMap();
+                    const requestControllers = new Set();
+                    let requestChain = Promise.resolve();
+                    let lastRequestAt = 0;
+                    let queueGeneration = 0;
+                    let prefetchRetryTimer = null;
+                    let prefetchSequence = 0;
+                    const debug = (message, details) => {
+                        try {
+                            if (details === undefined) console.debug(`[LRCLib] ${message}`);
+                            else console.debug(`[LRCLib] ${message}`, details);
+                        } catch (_error) {}
+                    };
+                    const logSyncPrefetch = (event, details) => debug(`sync prefetch ${event}`, details);
+                    const getSetting = (name, fallback) => {
+                        try {
+                            const value = window.nativeSettings?.get(`modSettings.lrclib.${name}`);
+                            return typeof value === 'boolean' ? value : fallback;
+                        } catch (_error) {
+                            return fallback;
+                        }
+                    };
+                    const getStringSetting = (name, fallback) => {
+                        try {
+                            const value = window.nativeSettings?.get(`modSettings.lrclib.${name}`);
+                            return typeof value === 'string' ? value : fallback;
+                        } catch (_error) {
+                            return fallback;
+                        }
+                    };
+                    const isEnabled = () => getSetting('useText', true);
+                    const prefersLyrics = () => isEnabled() && getSetting('preferLrclib', false);
+                    const getLookupMode = () => (getStringSetting('lookupMode', 'get') === 'search' ? 'search' : 'get');
+                    const normalizeSignaturePart = (value) =>
+                        typeof value === 'string'
+                            ? value
+                                  .trim()
+                                  .toLowerCase()
+                                  .replace(/[^\p{L}\p{N}]+/gu, '')
+                            : '';
+                    const splitTrackTitle = (value) => {
+                        if (typeof value !== 'string') return null;
+                        for (const separator of [' - ', ' — ', ' – ']) {
+                            if (!value.includes(separator)) continue;
+                            const parts = value.split(separator);
+                            const left = parts[0]?.trim() || '';
+                            const right = parts.slice(1).join(separator).trim();
+                            if (left && right)
+                                return {
+                                    left,
+                                    right,
+                                };
+                        }
+                        return null;
+                    };
+                    const getTitleVariants = (value) => {
+                        if (typeof value !== 'string') return [];
+                        const title = value.trim();
+                        if (!title) return [];
+                        const variants = [title];
+                        const split = splitTrackTitle(title);
+                        if (split?.left) variants.push(split.left);
+                        if (split?.right) variants.push(split.right);
+                        return variants;
+                    };
+                    const readCache = (cache, key) => {
+                        const entry = cache.get(key);
+                        if (!entry) return null;
+                        if (entry.expiresAt <= Date.now()) {
+                            cache.delete(key);
+                            return null;
+                        }
+                        cache.delete(key);
+                        cache.set(key, entry);
+                        return entry.value;
+                    };
+                    const writeCache = (cache, key, value, ttl) => {
+                        cache.delete(key);
+                        cache.set(key, {
+                            value,
+                            expiresAt: Date.now() + ttl,
+                        });
+                        while (cache.size > CACHE_LIMIT) {
+                            const oldest = cache.keys().next();
+                            if (oldest.done) break;
+                            cache.delete(oldest.value);
+                        }
+                    };
+                    const unwrapTrackMeta = (source) => {
+                        if (!source || typeof source !== 'object') return null;
+                        return (
+                            [
+                                source,
+                                source.meta,
+                                source.data,
+                                source.data?.meta,
+                                source.entity,
+                                source.entity?.data,
+                                source.entity?.data?.meta,
+                                source.track,
+                                source.mediaSourceData?.data,
+                            ].find((candidate) => candidate && (candidate.id != null || candidate.title || candidate.name)) || null
+                        );
+                    };
+                    const buildTrackLookup = (source) => {
+                        const track = unwrapTrackMeta(source);
+                        if (!track) return null;
+                        let trackName = track.title || track.name;
+                        const artists = Array.isArray(track.artists) ? track.artists.map((artist) => artist?.name).filter(Boolean) : [];
+                        const artistName = artists[0] || track.ugcArtistName || null;
+                        const album = track.mainAlbum || (Array.isArray(track.albums) ? track.albums[0] : null) || track.album;
+                        const albumName = track.albumName || track.albumTitle || album?.title || album?.name || null;
+                        const durationValue = track.durationMs ? track.durationMs / 1000 : Number(track.duration);
+                        const duration = Number.isFinite(durationValue) && durationValue > 0 ? Math.round(durationValue) : null;
+                        const isUserGenerated =
+                            track.trackSource === 'UGC' || track.trackSource === 'OWN_REPLACED_TO_UGC' || track.isUGC === true || track.isOwnReplacedToUGC === true;
+                        if (
+                            trackName &&
+                            getSetting('useTrackVersion', true) &&
+                            typeof track.version === 'string' &&
+                            track.version &&
+                            !isUserGenerated &&
+                            !/^https?:\/\//.test(track.version)
+                        ) {
+                            trackName = `${trackName} ${track.version}`;
+                        }
+                        return trackName
+                            ? {
+                                  trackId: track.id == null ? null : String(track.id),
+                                  trackName,
+                                  artistName,
+                                  albumName,
+                                  artists,
+                                  duration,
+                                  isUserGenerated,
+                                  track,
+                              }
+                            : null;
+                    };
+                    const parseLrc = (lyrics) => {
+                        try {
+                            if (typeof lyrics !== 'string') throw new TypeError('Expected lyrics to be a string');
+                            const rows = lyrics.split('\n');
+                            const timestampPattern = /\[(\d*:\d*\.?\d*)\]/;
+                            const linePattern = new RegExp(`${timestampPattern.source}(.+)`);
+                            const offsetMatch = /\[offset\s*:\s*([+-]?\d+(?:\.\d+)?)\]/i.exec(lyrics);
+                            const offsetSeconds = offsetMatch ? Number.parseFloat(offsetMatch[1]) / 1000 : 0;
+                            const timedRows = rows.filter((row) => row && new RegExp(`${linePattern.source}|${timestampPattern.source}`).test(row));
+                            const lines = [];
+                            for (let index = 0; index < timedRows.length; index += 1) {
+                                const current = linePattern.exec(timedRows[index]);
+                                if (!current) continue;
+                                const next = index + 1 < timedRows.length ? timestampPattern.exec(timedRows[index + 1]) : null;
+                                const fromSec = om(current[1]);
+                                const toSec = om(next?.[1]);
+                                if (typeof fromSec !== 'number' || Number.isNaN(fromSec)) continue;
+                                lines.push({
+                                    text: (current[2] || '').trim(),
+                                    fromSec: Math.max(0, fromSec + offsetSeconds),
+                                    toSec: typeof toSec === 'number' && !Number.isNaN(toSec) ? Math.max(0, toSec + offsetSeconds) : undefined,
+                                });
+                            }
+                            return lines;
+                        } catch (_error) {
+                            return [];
+                        }
+                    };
+                    const parseLyricsfile = (lyricsfile) => {
+                        try {
+                            const document = window.lyricsfileParser?.parse?.(lyricsfile);
+                            if (document?.version !== '1.0' || !Array.isArray(document.lines)) return [];
+                            const lines = document.lines
+                                .map((line) => {
+                                    if (
+                                        !line ||
+                                        typeof line.text !== 'string' ||
+                                        !Number.isSafeInteger(line.start_ms) ||
+                                        line.start_ms < 0 ||
+                                        (line.end_ms != null && (!Number.isSafeInteger(line.end_ms) || line.end_ms < line.start_ms))
+                                    )
+                                        return null;
+                                    let words = [];
+                                    if (Array.isArray(line.words) && line.words.length) {
+                                        words = line.words.map((word) => {
+                                            if (
+                                                !word ||
+                                                typeof word.text !== 'string' ||
+                                                !Number.isSafeInteger(word.start_ms) ||
+                                                word.start_ms < 0 ||
+                                                (word.end_ms != null && (!Number.isSafeInteger(word.end_ms) || word.end_ms < word.start_ms))
+                                            )
+                                                return null;
+                                            return {
+                                                text: word.text,
+                                                fromSec: word.start_ms / 1000,
+                                                toSec: word.end_ms == null ? undefined : word.end_ms / 1000,
+                                            };
+                                        });
+                                        if (words.some((word) => !word) || words.map((word) => word.text).join('') !== line.text) words = [];
+                                    }
+                                    return {
+                                        text: line.text,
+                                        fromSec: line.start_ms / 1000,
+                                        toSec: line.end_ms == null ? undefined : line.end_ms / 1000,
+                                        words,
+                                    };
+                                })
+                                .filter(Boolean)
+                                .sort((left, right) => left.fromSec - right.fromSec);
+                            return lines.map((line, lineIndex) => {
+                                const nextLine = lines[lineIndex + 1];
+                                const toSec = line.toSec ?? nextLine?.fromSec;
+                                const words = line.words.map((word, wordIndex) => ({
+                                    ...word,
+                                    toSec: word.toSec ?? line.words[wordIndex + 1]?.fromSec ?? toSec,
+                                }));
+                                return {
+                                    ...line,
+                                    toSec,
+                                    words,
+                                };
+                            });
+                        } catch (_error) {
+                            return [];
+                        }
+                    };
+                    const getLyricsfileLines = (item) => {
+                        if (!item || typeof item !== 'object') return [];
+                        if (lyricsfileLinesByItem.has(item)) return lyricsfileLinesByItem.get(item);
+                        const lines = parseLyricsfile(item.lyricsfile);
+                        lyricsfileLinesByItem.set(item, lines);
+                        return lines;
+                    };
+                    const normalizePlaceholderText = (value) => (typeof value === 'string' ? value.trim().replace(/\s+/g, '') : '');
+                    const isPlaceholderText = (value) => {
+                        const normalized = normalizePlaceholderText(value);
+                        return Boolean(normalized && !normalized.replace(/[.\-–—]/g, ''));
+                    };
+                    const isPlaceholderSynced = (lines) =>
+                        Array.isArray(lines) && lines.length > 0 && lines.every((line) => !normalizePlaceholderText(line?.text).replace(/[.\-–—]/g, ''));
+                    const plainFromSynced = (lyrics) => {
+                        if (typeof lyrics !== 'string' || !lyrics) return null;
+                        const lines = lyrics
+                            .split('\n')
+                            .map((line) => line.replace(/\[[^\]]*]/g, '').trim())
+                            .filter(Boolean);
+                        return lines.length ? lines.join('\n') : null;
+                    };
+                    const normalizeSyncedTiming = (lines, duration) => {
+                        if (!Array.isArray(lines) || !lines.length || typeof duration !== 'number' || duration <= 0) return lines;
+                        const last = lines.at(-1);
+                        const lastTime = typeof last?.toSec === 'number' ? last.toSec : last?.fromSec;
+                        if (typeof lastTime !== 'number' || lastTime <= duration + 1) return lines;
+                        const shift = duration - lastTime;
+                        return lines.map((line) => ({
+                            text: line.text,
+                            fromSec: typeof line.fromSec === 'number' ? Math.max(0, line.fromSec + shift) : line.fromSec,
+                            toSec: typeof line.toSec === 'number' ? Math.max(0, line.toSec + shift) : line.toSec,
+                            words: Array.isArray(line.words)
+                                ? line.words.map((word) => ({
+                                      text: word.text,
+                                      fromSec: typeof word.fromSec === 'number' ? Math.max(0, word.fromSec + shift) : word.fromSec,
+                                      toSec: typeof word.toSec === 'number' ? Math.max(0, word.toSec + shift) : word.toSec,
+                                  }))
+                                : undefined,
+                        }));
+                    };
+                    const enqueueRequest = (request) => {
+                        const generation = queueGeneration;
+                        const queued = requestChain.then(async () => {
+                            if (generation !== queueGeneration) return null;
+                            const waitMs = REQUEST_INTERVAL_MS - (Date.now() - lastRequestAt);
+                            if (waitMs > 0) await new Promise((resolve) => setTimeout(resolve, waitMs));
+                            if (generation !== queueGeneration) return null;
+                            lastRequestAt = Date.now();
+                            return request();
+                        });
+                        requestChain = queued.catch(() => null);
+                        return queued;
+                    };
+                    const fetchExactLyrics = (lookup, isSyncedRequest) =>
+                        enqueueRequest(async () => {
+                            const query = new URLSearchParams({
+                                track_name: lookup.trackName,
+                                artist_name: lookup.artistName,
+                                album_name: lookup.albumName,
+                                duration: String(lookup.duration),
+                            });
+                            const controller = new AbortController();
+                            const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+                            requestControllers.add(controller);
+                            try {
+                                const response = await fetch(`${GET_API_URL}?${query.toString()}`, {
+                                    signal: controller.signal,
+                                });
+                                if (!response.ok)
+                                    return {
+                                        item: null,
+                                        aborted: false,
+                                    };
+                                const payload = await response.json();
+                                debug(isSyncedRequest ? 'sync response' : 'response', {
+                                    count: payload && typeof payload === 'object' && !Array.isArray(payload) ? 1 : 0,
+                                });
+                                return {
+                                    item: payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : null,
+                                    aborted: false,
+                                };
+                            } catch (error) {
+                                const aborted = error?.name === 'AbortError';
+                                debug(
+                                    isSyncedRequest ? (aborted ? 'sync request aborted' : 'sync request failed') : aborted ? 'request aborted' : 'request failed',
+                                    aborted ? undefined : error,
+                                );
+                                return {
+                                    item: null,
+                                    aborted,
+                                };
+                            } finally {
+                                requestControllers.delete(controller);
+                                clearTimeout(timeout);
+                            }
+                        });
+                    const fetchSearchResults = (trackName, artistName, isSyncedRequest, useKeywordSearch = false) =>
+                        enqueueRequest(async () => {
+                            const query = useKeywordSearch
+                                ? new URLSearchParams({
+                                      q: [artistName, trackName].filter(Boolean).join(' '),
+                                  })
+                                : new URLSearchParams({
+                                      track_name: trackName,
+                                  });
+                            if (artistName && !useKeywordSearch) query.set('artist_name', artistName);
+                            const controller = new AbortController();
+                            const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+                            requestControllers.add(controller);
+                            try {
+                                const response = await fetch(`${SEARCH_API_URL}?${query.toString()}`, {
+                                    signal: controller.signal,
+                                });
+                                if (!response.ok)
+                                    return {
+                                        items: null,
+                                        aborted: false,
+                                    };
+                                const payload = await response.json();
+                                debug(isSyncedRequest ? 'sync response' : 'response', {
+                                    count: Array.isArray(payload) ? payload.length : 0,
+                                });
+                                return {
+                                    items: Array.isArray(payload) && payload.length ? payload : null,
+                                    aborted: false,
+                                };
+                            } catch (error) {
+                                const aborted = error?.name === 'AbortError';
+                                debug(
+                                    isSyncedRequest ? (aborted ? 'sync request aborted' : 'sync request failed') : aborted ? 'request aborted' : 'request failed',
+                                    aborted ? undefined : error,
+                                );
+                                return {
+                                    items: null,
+                                    aborted,
+                                };
+                            } finally {
+                                requestControllers.delete(controller);
+                                clearTimeout(timeout);
+                            }
+                        });
+                    const retryAborted = async (request, generation) => {
+                        let response = await request();
+                        if (response?.aborted && generation === queueGeneration) response = (await request()) || response;
+                        return response;
+                    };
+                    const searchPlainLyricsBySignature = async (lookup) => {
+                        const generation = queueGeneration;
+                        const isStale = () => generation !== queueGeneration;
+                        const request = (trackName, artistName) => retryAborted(() => fetchSearchResults(trackName, artistName, false), generation);
+                        const keywordRequest = (trackName, artistName) => retryAborted(() => fetchSearchResults(trackName, artistName, false, true), generation);
+                        const allowTitleOnlyFallback = getSetting('useTitleOnlyFallback', true);
+                        const normalizedTitles =
+                            allowTitleOnlyFallback || lookup.isUserGenerated ? getTitleVariants(lookup.trackName).map(normalizeSignaturePart).filter(Boolean) : [];
+                        const keywordAttempt = lookup.isUserGenerated ? await keywordRequest(lookup.trackName, lookup.artistName) : null;
+                        if (isStale()) return null;
+                        let keywordResults = keywordAttempt?.items || null;
+                        if (keywordResults && normalizedTitles.length)
+                            keywordResults = keywordResults.filter((item) =>
+                                normalizedTitles.includes(normalizeSignaturePart(item.trackName || item.track_name || item.title || item.name)),
+                            );
+                        if (!keywordResults?.length) keywordResults = null;
+                        let artistAttempt = keywordResults || !lookup.trackName || !lookup.artistName ? null : await request(lookup.trackName, lookup.artistName);
+                        if (isStale()) return null;
+                        let resultsWithArtist = keywordResults || artistAttempt?.items || null;
+                        let usedLooseQuery = Boolean(keywordResults);
+                        let fallbackAttempt = resultsWithArtist || !lookup.trackName || !allowTitleOnlyFallback ? null : await request(lookup.trackName, null);
+                        if (isStale()) return null;
+                        let results = resultsWithArtist || fallbackAttempt?.items || null;
+                        if (!resultsWithArtist && fallbackAttempt?.items) usedLooseQuery = true;
+                        if (!results && lookup.trackName) {
+                            const split = splitTrackTitle(lookup.trackName);
+                            if (split) {
+                                if (!results && split.right && split.left) {
+                                    const attempt = await request(split.right, split.left);
+                                    if (isStale()) return null;
+                                    results = attempt?.items || null;
+                                }
+                                if (!results && split.right && allowTitleOnlyFallback) {
+                                    const attempt = await request(split.right, null);
+                                    if (isStale()) return null;
+                                    results = attempt?.items || null;
+                                    if (results) usedLooseQuery = true;
+                                }
+                                if (!results && split.left && split.right) {
+                                    const attempt = await request(split.left, split.right);
+                                    if (isStale()) return null;
+                                    results = attempt?.items || null;
+                                }
+                                if (!results && split.left && allowTitleOnlyFallback) {
+                                    const attempt = await request(split.left, null);
+                                    if (isStale()) return null;
+                                    results = attempt?.items || null;
+                                    if (results) usedLooseQuery = true;
+                                }
+                            }
+                        }
+                        if (!results) return null;
+                        if (usedLooseQuery && normalizedTitles.length)
+                            results = results.filter((item) =>
+                                normalizedTitles.includes(normalizeSignaturePart(item.trackName || item.track_name || item.title || item.name)),
+                            );
+                        debug('filtered', {
+                            count: results.length,
+                            usedArtist: !usedLooseQuery,
+                        });
+                        results = results.filter((item) => !item.instrumental && (item.plainLyrics || item.syncedLyrics));
+                        if (!results.length) return null;
+                        if (lookup.duration && lookup.duration > 0) {
+                            const withDuration = results.filter((item) => typeof item.duration === 'number');
+                            if (withDuration.length) {
+                                const closeMatches = withDuration.filter((item) => Math.abs(item.duration - lookup.duration) <= 10);
+                                if (closeMatches.length) results = closeMatches;
+                                else if (!lookup.isUserGenerated) return null;
+                            }
+                        }
+                        let selected = results[0];
+                        if (lookup.duration && lookup.duration > 0) {
+                            selected =
+                                results
+                                    .map((item) => ({
+                                        item,
+                                        delta: Math.abs(item.duration - lookup.duration),
+                                    }))
+                                    .sort((left, right) => left.delta - right.delta)[0]?.item || selected;
+                        }
+                        debug('selected', {
+                            id: selected?.id,
+                            duration: selected?.duration,
+                            hasPlain: Boolean(selected?.plainLyrics),
+                            hasSynced: Boolean(selected?.syncedLyrics),
+                        });
+                        return selected;
+                    };
+                    const searchSyncedLyricsBySignature = async (lookup) => {
+                        const generation = queueGeneration;
+                        const isStale = () => generation !== queueGeneration;
+                        const request = (trackName, artistName) => retryAborted(() => fetchSearchResults(trackName, artistName, true), generation);
+                        const keywordRequest = (trackName, artistName) => retryAborted(() => fetchSearchResults(trackName, artistName, true, true), generation);
+                        const allowTitleOnlyFallback = getSetting('useTitleOnlyFallback', true);
+                        const variants = [...new Set(getTitleVariants(lookup.trackName).filter(Boolean))];
+                        const normalizedTitles = variants.map(normalizeSignaturePart).filter(Boolean);
+                        const keywordAttempt = lookup.isUserGenerated ? await keywordRequest(lookup.trackName, lookup.artistName) : null;
+                        if (isStale()) return null;
+                        let results = keywordAttempt?.items || null;
+                        if (results && normalizedTitles.length)
+                            results = results.filter((item) =>
+                                normalizedTitles.includes(normalizeSignaturePart(item.trackName || item.track_name || item.title || item.name)),
+                            );
+                        if (!results?.length) results = null;
+                        for (const variant of results ? [] : variants) {
+                            const attempt = await request(variant, lookup.artistName);
+                            if (isStale()) return null;
+                            if (attempt?.items) {
+                                results = attempt.items;
+                                break;
+                            }
+                        }
+                        if (!results && allowTitleOnlyFallback) {
+                            for (const variant of variants) {
+                                const attempt = await request(variant, null);
+                                if (isStale()) return null;
+                                if (attempt?.items) {
+                                    results = attempt.items;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!results) return null;
+                        let candidates = results
+                            .filter((item) => item && !item.instrumental)
+                            .map((item) => {
+                                const lyricsfileLines = getLyricsfileLines(item);
+                                return {
+                                    item,
+                                    lyricsfileLines,
+                                    hasWordSync: lyricsfileLines.some((line) => line.words.length),
+                                };
+                            })
+                            .filter((candidate) => candidate.item.syncedLyrics || candidate.lyricsfileLines.length);
+                        candidates.filter((candidate) => candidate.hasWordSync).forEach((candidate) => debug('word synced search result', candidate.item));
+                        if (!candidates.length) return null;
+                        const wordSyncEnabled = getSetting('useWordSync', true);
+                        if (lookup.artistName) {
+                            const wantedArtist = normalizeSignaturePart(lookup.artistName);
+                            const closeMatches = candidates.filter((candidate) => {
+                                const artist = normalizeSignaturePart(candidate.item.artistName);
+                                return artist === wantedArtist || artist.includes(wantedArtist);
+                            });
+                            if (!closeMatches.length && !allowTitleOnlyFallback) return null;
+                            if (closeMatches.length) candidates = closeMatches;
+                        }
+                        if (lookup.duration && lookup.duration > 0) {
+                            const withDuration = candidates.filter((candidate) => typeof candidate.item.duration === 'number');
+                            if (withDuration.length) {
+                                const closeMatches = withDuration.filter((candidate) => {
+                                    const tolerance = wordSyncEnabled && candidate.hasWordSync ? 10 : 2;
+                                    return Math.abs(candidate.item.duration - lookup.duration) <= tolerance;
+                                });
+                                if (closeMatches.length) candidates = closeMatches;
+                                else if (!lookup.isUserGenerated) return null;
+                            }
+                        }
+                        const wordSyncedCandidates = candidates.filter((candidate) => candidate.hasWordSync);
+                        const selectionPool = wordSyncEnabled && wordSyncedCandidates.length ? wordSyncedCandidates : candidates;
+                        let selected = selectionPool[0]?.item;
+                        if (lookup.duration && lookup.duration > 0) {
+                            selected =
+                                selectionPool
+                                    .map((candidate) => ({
+                                        item: candidate.item,
+                                        delta: Math.abs(candidate.item.duration - lookup.duration),
+                                    }))
+                                    .sort((left, right) => left.delta - right.delta)[0]?.item || selected;
+                        }
+                        return selected;
+                    };
+                    const searchLyricsBySignature = (lookup, isSyncedRequest) =>
+                        isSyncedRequest ? searchSyncedLyricsBySignature(lookup) : searchPlainLyricsBySignature(lookup);
+                    const fetchLookup = async (lookup, lookupMode, isSyncedRequest) => {
+                        if (lookupMode === 'search')
+                            return {
+                                item: await searchLyricsBySignature(lookup, isSyncedRequest),
+                                aborted: false,
+                            };
+                        return retryAborted(() => fetchExactLyrics(lookup, isSyncedRequest), queueGeneration);
+                    };
+                    const getLyricsBySignature = async (source, requestKind) => {
+                        const isSyncedRequest = requestKind === 'sync';
+                        if (!isEnabled()) return null;
+                        const lookup = source?.trackName ? source : buildTrackLookup(source);
+                        const lookupMode = lookup?.isUserGenerated ? 'search' : getLookupMode();
+                        const missingRequiredFields = !lookup?.trackName || (lookupMode === 'get' && (!lookup.artistName || !lookup.albumName || !lookup.duration));
+                        if (missingRequiredFields) {
+                            if (!isSyncedRequest)
+                                debug('skip empty cache key', {
+                                    trackName: lookup?.trackName,
+                                    artistName: lookup?.artistName,
+                                    duration: lookup?.duration,
+                                });
+                            return null;
+                        }
+                        const cacheKey = [
+                            lookupMode,
+                            lookupMode === 'search' ? requestKind : 'shared',
+                            lookup.trackName,
+                            lookup.artistName,
+                            lookupMode === 'get' ? lookup.albumName : null,
+                        ]
+                            .map(normalizeSignaturePart)
+                            .concat(String(lookup.duration))
+                            .join('|');
+                        const cached = readCache(signatureResults, cacheKey);
+                        if (cached) {
+                            if (!isSyncedRequest)
+                                debug('cache hit', {
+                                    key: cacheKey,
+                                });
+                            return cached;
+                        }
+                        if (readCache(signatureMisses, cacheKey)) {
+                            if (!isSyncedRequest)
+                                debug('cache no-result hit', {
+                                    key: cacheKey,
+                                });
+                            return null;
+                        }
+                        if (signaturesInFlight.has(cacheKey)) return signaturesInFlight.get(cacheKey);
+                        if (!isSyncedRequest)
+                            debug('search', {
+                                trackName: lookup.trackName,
+                                artistName: lookup.artistName,
+                                duration: lookup.duration,
+                            });
+                        const requestGeneration = queueGeneration;
+                        const promise = (async () => {
+                            try {
+                                const response = await fetchLookup(lookup, lookupMode, isSyncedRequest);
+                                if (requestGeneration !== queueGeneration) return null;
+                                const item = response?.item;
+                                if (lookupMode === 'get' && !isSyncedRequest)
+                                    debug('filtered', {
+                                        count: item && !item.instrumental ? 1 : 0,
+                                        usedArtist: true,
+                                    });
+                                if (item && !item.instrumental) {
+                                    signatureMisses.delete(cacheKey);
+                                    writeCache(signatureResults, cacheKey, item, RESULT_TTL_MS);
+                                    if (lookupMode === 'get' && !isSyncedRequest)
+                                        debug('selected', {
+                                            id: item.id,
+                                            duration: item.duration,
+                                            hasPlain: Boolean(item.plainLyrics),
+                                            hasSynced: Boolean(item.syncedLyrics),
+                                        });
+                                    return item;
+                                }
+                                writeCache(signatureMisses, cacheKey, true, NO_RESULT_TTL_MS);
+                                return null;
+                            } catch (error) {
+                                debug(isSyncedRequest ? 'sync search failed' : 'search failed', error);
+                                return null;
+                            }
+                        })();
+                        signaturesInFlight.set(cacheKey, promise);
+                        promise.finally(() => {
+                            if (signaturesInFlight.get(cacheKey) === promise) signaturesInFlight.delete(cacheKey);
+                        });
+                        return promise;
+                    };
+                    const providerResult = (item, lookup, data) => ({
+                        provider: PROVIDER,
+                        externalLyricId: item?.id == null ? null : String(item.id),
+                        writers: lookup.artists,
+                        ...data,
+                    });
+                    const resolvePlain = async (source) => {
+                        const lookup = buildTrackLookup(source);
+                        if (!lookup) return null;
+                        const item = await getLyricsBySignature(lookup, 'plain');
+                        const lyrics = item?.plainLyrics || plainFromSynced(item?.syncedLyrics);
+                        return lyrics && !isPlaceholderText(lyrics)
+                            ? providerResult(item, lookup, {
+                                  lyrics,
+                              })
+                            : null;
+                    };
+                    const resolveSynced = async (source) => {
+                        const lookup = buildTrackLookup(source);
+                        if (!lookup) return null;
+                        const trackId = lookup.trackId;
+                        if (trackId) {
+                            const cached = readCache(syncedByTrackId, trackId);
+                            if (cached) return cached;
+                            if (readCache(syncedMissesByTrackId, trackId)) return null;
+                            if (syncedInFlightByTrackId.has(trackId)) return syncedInFlightByTrackId.get(trackId);
+                        }
+                        const requestGeneration = queueGeneration;
+                        const promise = (async () => {
+                            const item = await getLyricsBySignature(lookup, 'sync');
+                            if (requestGeneration !== queueGeneration) return null;
+                            const lyricsfileLines = getLyricsfileLines(item);
+                            const hasWordSync = lyricsfileLines.some((line) => line.words.length);
+                            let lines = hasWordSync ? lyricsfileLines : parseLrc(item?.syncedLyrics);
+                            if (!lines.length && lyricsfileLines.length)
+                                lines = lyricsfileLines.map((line) => ({
+                                    text: line.text,
+                                    fromSec: line.fromSec,
+                                    toSec: line.toSec,
+                                }));
+                            lines = normalizeSyncedTiming(lines, lookup.duration);
+                            const result =
+                                lines.length && !isPlaceholderSynced(lines)
+                                    ? providerResult(item, lookup, {
+                                          lines,
+                                      })
+                                    : null;
+                            if (trackId) {
+                                if (result) {
+                                    syncedMissesByTrackId.delete(trackId);
+                                    writeCache(syncedByTrackId, trackId, result, RESULT_TTL_MS);
+                                } else writeCache(syncedMissesByTrackId, trackId, true, NO_RESULT_TTL_MS);
+                            }
+                            return result;
+                        })();
+                        if (trackId) {
+                            syncedInFlightByTrackId.set(trackId, promise);
+                            promise.finally(() => {
+                                if (syncedInFlightByTrackId.get(trackId) === promise) syncedInFlightByTrackId.delete(trackId);
+                            });
+                        }
+                        return promise;
+                    };
+                    const getNextQueueTrackMeta = (sonataRuntime) => {
+                        try {
+                            if (!sonataRuntime?.state) {
+                                logSyncPrefetch('next-miss', {
+                                    reason: 'sonata-state',
+                                });
+                                return null;
+                            }
+                            const queue = sonataRuntime?.state?.queueState;
+                            const currentIndex = queue?.index?.value;
+                            const order = queue?.order?.value;
+                            const entities = queue?.entityList?.value;
+                            if (!Array.isArray(entities)) {
+                                logSyncPrefetch('next-miss', {
+                                    reason: 'entityList',
+                                });
+                                return null;
+                            }
+                            const nextIndex = Array.isArray(order) && typeof currentIndex === 'number' ? order[currentIndex + 1] : null;
+                            if (Array.isArray(order) && typeof currentIndex === 'number')
+                                logSyncPrefetch('next-from-order', {
+                                    queueIndex: currentIndex,
+                                    nextIndex,
+                                });
+                            if (typeof nextIndex !== 'number') {
+                                logSyncPrefetch('next-miss', {
+                                    reason: 'nextIndex',
+                                });
+                                return null;
+                            }
+                            const queueItem = entities[nextIndex];
+                            if (!queueItem || (0, ot.Re)(queueItem) || !queueItem.entity) {
+                                logSyncPrefetch('next-miss', {
+                                    reason: 'entityAtIndex',
+                                    nextIndex,
+                                });
+                                return null;
+                            }
+                            const track = ol(queueItem.entity);
+                            logSyncPrefetch('next-hit', {
+                                nextIndex,
+                                trackId: track?.id,
+                            });
+                            return track;
+                        } catch (error) {
+                            logSyncPrefetch('next-error', {
+                                error: error?.message,
+                            });
+                            return null;
+                        }
+                    };
+                    const prefetchSynced = async (source, currentTrackId, retry = 0, existingPrefetchId = null) => {
+                        const prefetchId = existingPrefetchId ?? ++prefetchSequence;
+                        const track = unwrapTrackMeta(source);
+                        logSyncPrefetch('start', {
+                            prefetchId,
+                            retry,
+                            explicitTrackId: track?.id,
+                        });
+                        const trackId = track?.id == null ? null : String(track.id);
+                        if (!trackId) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'track-id',
+                            });
+                            return null;
+                        }
+                        if (!prefersLyrics() && (track.hasSyncLyrics || track.isSyncLyricsAvailable || track.isSyncLyricsAvailableWithOfflineFeature)) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'native-sync-available',
+                                trackId,
+                            });
+                            return null;
+                        }
+                        const cached = readCache(syncedByTrackId, trackId);
+                        if (cached) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'cached',
+                                trackId,
+                            });
+                            return cached;
+                        }
+                        const noResultEntry = syncedMissesByTrackId.get(trackId);
+                        if (readCache(syncedMissesByTrackId, trackId)) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'no-result-cached',
+                                trackId,
+                                ageMs: noResultEntry ? Math.max(0, NO_RESULT_TTL_MS - (noResultEntry.expiresAt - Date.now())) : undefined,
+                            });
+                            return null;
+                        }
+                        if (syncedInFlightByTrackId.has(trackId)) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'inflight',
+                                trackId,
+                            });
+                            return syncedInFlightByTrackId.get(trackId);
+                        }
+                        if (currentTrackId != null && trackId === String(currentTrackId)) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'current-track',
+                                trackId,
+                            });
+                            return null;
+                        }
+                        const lookup = buildTrackLookup(track);
+                        if (!lookup?.trackName) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'lookup-missing',
+                                trackId,
+                            });
+                            return null;
+                        }
+                        try {
+                            const result = await resolveSynced(track);
+                            logSyncPrefetch('fetch-done', {
+                                prefetchId,
+                                trackId,
+                                hasResult: Boolean(result),
+                                hasSynced: Boolean(result?.lines?.length),
+                            });
+                            return result;
+                        } catch (error) {
+                            logSyncPrefetch('fetch-error', {
+                                prefetchId,
+                                trackId,
+                                error: error?.message,
+                            });
+                            return null;
+                        }
+                    };
+                    const prefetchNext = (sonataRuntime, currentTrackId, retry = 0) => {
+                        const track = getNextQueueTrackMeta(sonataRuntime);
+                        const prefetchId = ++prefetchSequence;
+                        if (track) return prefetchSynced(track, currentTrackId, retry, prefetchId);
+                        logSyncPrefetch('start', {
+                            prefetchId,
+                            retry,
+                            explicitTrackId: undefined,
+                        });
+                        if (retry >= 6) {
+                            logSyncPrefetch('stop-no-next', {
+                                prefetchId,
+                                retry,
+                            });
+                            return Promise.resolve(null);
+                        }
+                        if (prefetchRetryTimer) clearTimeout(prefetchRetryTimer);
+                        logSyncPrefetch('retry-scheduled', {
+                            prefetchId,
+                            retry: retry + 1,
+                        });
+                        return new Promise((resolve) => {
+                            prefetchRetryTimer = setTimeout(
+                                () => {
+                                    prefetchRetryTimer = null;
+                                    resolve(prefetchNext(sonataRuntime, currentTrackId, retry + 1));
+                                },
+                                250 * (retry + 1),
+                            );
+                        });
+                    };
+                    const reset = () => {
+                        queueGeneration += 1;
+                        debug('reset queue', {
+                            token: queueGeneration,
+                        });
+                        requestChain = Promise.resolve();
+                        lastRequestAt = 0;
+                        requestControllers.forEach((controller) => controller.abort());
+                        requestControllers.clear();
+                        signatureResults.clear();
+                        signatureMisses.clear();
+                        signaturesInFlight.clear();
+                        syncedByTrackId.clear();
+                        syncedMissesByTrackId.clear();
+                        syncedInFlightByTrackId.clear();
+                        if (prefetchRetryTimer) clearTimeout(prefetchRetryTimer);
+                        prefetchRetryTimer = null;
+                    };
+                    window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                        if (typeof key === 'string' && key.startsWith('modSettings.lrclib.')) reset();
+                    });
+                    return {
+                        provider: PROVIDER,
+                        isEnabled,
+                        prefersLyrics,
+                        buildTrackLookup,
+                        parseLrc,
+                        isPlaceholderText,
+                        isPlaceholderSynced,
+                        resolvePlain,
+                        resolveSynced,
+                        prefetchSynced,
+                        prefetchNext,
+                        getNextQueueTrackMeta,
+                        logSyncPrefetch,
+                        hasSyncedLyrics: (trackId) => Boolean(trackId != null && readCache(syncedByTrackId, String(trackId))),
+                        hasSyncedNoResult: (trackId) => Boolean(trackId != null && readCache(syncedMissesByTrackId, String(trackId))),
+                        isSyncedLoading: (trackId) => Boolean(trackId != null && syncedInFlightByTrackId.has(String(trackId))),
+                        reset,
+                    };
+                })(),
+                nWord = C.gK.model('SyncLyricsWord', {
+                    text: C.gK.string,
+                    fromSec: C.gK.number,
+                    toSec: C.gK.maybe(C.gK.number),
+                }),
+                op = C.gK
+                    .model('SyncLyricsLine', {
+                        text: C.gK.string,
+                        fromSec: C.gK.number,
+                        toSec: C.gK.maybe(C.gK.number),
+                        words: C.gK.optional(C.gK.array(nWord), []),
+                    })
+                    .views((e) => ({
+                        get key() {
+                            return ''.concat(e.fromSec, ':').concat(e.toSec);
+                        },
+                    })),
                 oy = C.gK
                     .compose(
                         C.gK.model('SyncLyrics', {
@@ -9435,6 +10375,10 @@
                         }),
                         q.X,
                     )
+                    .volatile(() => ({
+                        requestToken: 0,
+                        lrclibPreferenceCleanup: null,
+                    }))
                     .views((e) => ({
                         get startSec() {
                             var t;
@@ -9454,9 +10398,42 @@
                             var l;
                             return !!(e.isResolved && (null == (l = e.lines) ? void 0 : l.length) === 0);
                         },
+                        hasLyricsForTrack(trackId) {
+                            const requestedTrackId = trackId == null ? null : String(trackId);
+                            const currentTrackId = e.currentTrackId == null ? null : String(e.currentTrackId);
+                            return Boolean(
+                                requestedTrackId &&
+                                ((currentTrackId === requestedTrackId && e.isResolved && Array.isArray(e.lines) && e.lines.length > 0) ||
+                                    pulseSyncLrclib.hasSyncedLyrics(requestedTrackId)),
+                            );
+                        },
+                        isLoadingForTrack(trackId) {
+                            const requestedTrackId = trackId == null ? null : String(trackId);
+                            const currentTrackId = e.currentTrackId == null ? null : String(e.currentTrackId);
+                            return Boolean(
+                                requestedTrackId && ((currentTrackId === requestedTrackId && e.isLoading) || pulseSyncLrclib.isSyncedLoading(requestedTrackId)),
+                            );
+                        },
                     }))
                     .actions((e) => {
+                        const isStaleRequest = (requestToken, trackId) => requestToken !== e.requestToken || String(e.currentTrackId) !== String(trackId);
                         let t = {
+                            afterCreate() {
+                                e.lrclibPreferenceCleanup = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                                    if (key !== 'modSettings.lrclib.preferLrclib') return;
+                                    e.reloadForLrclibPreference();
+                                });
+                            },
+                            beforeDestroy() {
+                                e.lrclibPreferenceCleanup?.();
+                                e.lrclibPreferenceCleanup = null;
+                            },
+                            reloadForLrclibPreference() {
+                                if (e.currentTrackId == null) return;
+                                const trackId = e.currentTrackId;
+                                e.loadingState = M.G.IDLE;
+                                void e.getData(trackId);
+                            },
                             setVisible() {
                                 e.isVisible = !0;
                             },
@@ -9468,77 +10445,93 @@
                                 let a = (e.lines || []).findIndex((e) => (void 0 === e.toSec ? t >= e.fromSec : !!(t >= e.fromSec) && !!(e.toSec >= t)));
                                 return a >= 0 ? a : null;
                             },
-                            getData: (0, C.L3)(function* (a) {
-                                let { config: i, tracksResource: l, modelActionsLogger: r } = (0, C._$)(e);
-                                if (a)
-                                    try {
-                                        e.loadingState = M.G.PENDING;
-                                        let { downloadUrl: r, major: s, externalLyricId: n, lyricId: o, writers: d } = yield l.getLyrics(og(i, a, u.LRC));
-                                        ((e.major = ou(s)),
-                                            (e.externalLyricId = n),
-                                            (e.lyricId = o),
-                                            (e.writers = (0, C.wg)(d)),
-                                            (e.currentTrackId = a),
-                                            (e.hasLyricsViewed = !1),
-                                            yield t.downloadSyncLyrics(r),
-                                            (e.loadingState = M.G.RESOLVE));
-                                    } catch (t) {
-                                        ((e.loadingState = M.G.REJECT), r.error(t));
-                                    }
+                            prefetchTrack: (0, C.L3)(function* (trackMeta) {
+                                if (!trackMeta) return null;
+                                return yield pulseSyncLrclib.prefetchSynced(trackMeta, e.currentTrackId);
                             }),
-                            downloadSyncLyrics: (0, C.L3)(function* (t) {
+                            prefetchNextTrack: (0, C.L3)(function* (sonataRuntime) {
+                                return yield pulseSyncLrclib.prefetchNext(sonataRuntime, e.currentTrackId);
+                            }),
+                            getData: (0, C.L3)(function* (a) {
+                                let { tracksResource: i, modelActionsLogger: l } = (0, C._$)(e);
+                                if (!a || (e.isLoading && String(e.currentTrackId) === String(a))) return;
+                                const requestToken = ++e.requestToken;
+                                let nativeError = new Error('Sync lyrics are not available');
+                                e.loadingState = M.G.PENDING;
+                                e.currentTrackId = a;
+                                e.hasLyricsViewed = !1;
+                                e.lines = null;
+                                e.major = null;
+                                e.externalLyricId = null;
+                                e.lyricId = null;
+                                e.writers = (0, C.wg)([]);
+                                const { sonataState } = (0, R.M)(e);
+                                const trackMeta = sonataState?.entityMeta;
+                                const applyLrclibLyrics = (result, reason) => {
+                                    if (!result?.lines?.length) return !1;
+                                    e.major = ou(result.provider);
+                                    e.externalLyricId = result.externalLyricId;
+                                    e.lyricId = null;
+                                    e.writers = (0, C.wg)(result.writers || []);
+                                    e.hasLyricsViewed = !0;
+                                    e.lines = (0, C.wg)(result.lines);
+                                    pulseSyncLrclib.logSyncPrefetch('trigger-from-getData', {
+                                        reason,
+                                        trackId: a,
+                                    });
+                                    e.loadingState = M.G.RESOLVE;
+                                    return !0;
+                                };
+                                if (pulseSyncLrclib.prefersLyrics()) {
+                                    const preferred = yield pulseSyncLrclib.resolveSynced(trackMeta);
+                                    if (isStaleRequest(requestToken, a)) return;
+                                    if (applyLrclibLyrics(preferred, 'resolved-preferred-lrclib')) return;
+                                }
+                                try {
+                                    if (trackMeta?.hasSyncLyrics) {
+                                        const nativeLyrics = yield i.getLyrics(og((0, C._$)(e).config, a, u.LRC));
+                                        if (isStaleRequest(requestToken, a)) return;
+                                        if (!nativeLyrics?.downloadUrl) throw nativeError;
+                                        const lines = yield t.downloadSyncLyrics(nativeLyrics.downloadUrl, requestToken, a);
+                                        if (isStaleRequest(requestToken, a)) return;
+                                        if (!lines?.length || pulseSyncLrclib.isPlaceholderSynced(lines)) throw nativeError;
+                                        e.major = ou(nativeLyrics.major);
+                                        e.externalLyricId = nativeLyrics.externalLyricId;
+                                        e.lyricId = nativeLyrics.lyricId;
+                                        e.writers = (0, C.wg)(nativeLyrics.writers || []);
+                                        e.lines = (0, C.wg)(lines);
+                                        pulseSyncLrclib.logSyncPrefetch('trigger-from-getData', {
+                                            reason: 'resolved-native',
+                                            trackId: a,
+                                        });
+                                        e.loadingState = M.G.RESOLVE;
+                                        return;
+                                    }
+                                    throw nativeError;
+                                } catch (error) {
+                                    nativeError = error;
+                                }
+                                if (pulseSyncLrclib.hasSyncedNoResult(a))
+                                    pulseSyncLrclib.logSyncPrefetch('fallback-skip', {
+                                        reason: 'no-result-cached',
+                                        trackId: String(a),
+                                    });
+                                const fallback = yield pulseSyncLrclib.resolveSynced(trackMeta);
+                                if (isStaleRequest(requestToken, a)) return;
+                                if (applyLrclibLyrics(fallback, 'resolved-lrclib')) return;
+                                e.loadingState = M.G.REJECT;
+                                pulseSyncLrclib.logSyncPrefetch('trigger-from-getData', {
+                                    reason: 'reject-no-fallback',
+                                    trackId: a,
+                                });
+                                l.error(nativeError);
+                            }),
+                            downloadSyncLyrics: (0, C.L3)(function* (t, requestToken, trackId) {
                                 let { prefixlessResource: a } = (0, C._$)(e),
                                     i = yield a.getLyricsText(t);
-                                e.lines = (0, C.wg)(
-                                    ((e) => {
-                                        try {
-                                            return (
-                                                ((e) => {
-                                                    if ('string' != typeof e) throw TypeError('expect first argument to be a string');
-                                                    let t = e.split('\n'),
-                                                        a = /\[(\d*:\d*\.?\d*)\]/,
-                                                        i = new RegExp(a.source + /(.+)/.source),
-                                                        l = [],
-                                                        r = [],
-                                                        s = { scripts: [] };
-                                                    for (let e = 0; e < t.length; e++) {
-                                                        let a = t[e];
-                                                        if (a && !1 === i.test(a)) l.push(a);
-                                                        else break;
-                                                    }
-                                                    (l.reduce((e, t) => {
-                                                        let a = t.trim().slice(1, -1).split(': '),
-                                                            i = a[0],
-                                                            l = a[1];
-                                                        return (void 0 !== i && (e[i] = l), e);
-                                                    }, s),
-                                                        t.splice(0, l.length));
-                                                    let n = new RegExp(''.concat(i.source, '|').concat(a.source));
-                                                    t = t.filter((e) => e && n.test(e));
-                                                    for (let e = 0, l = t.length; e < l; e++) {
-                                                        let s = t[e],
-                                                            n = e + 1 < l ? t[e + 1] : null;
-                                                        if (s) {
-                                                            let e = i.exec(s),
-                                                                t = n ? a.exec(n) : null;
-                                                            if (e) {
-                                                                let [, a, i] = e,
-                                                                    l = null == t ? void 0 : t[1];
-                                                                a && r.push({ start: om(a), text: i || '', end: om(l) });
-                                                            }
-                                                        }
-                                                    }
-                                                    return ((s.scripts = r), s);
-                                                })(e).scripts || []
-                                            ).map((e) => {
-                                                let { start: t, end: a, text: i } = e;
-                                                return (0, C.wg)({ text: i.trim(), fromSec: t, toSec: a });
-                                            });
-                                        } catch (e) {
-                                            return [];
-                                        }
-                                    })(i),
-                                );
+                                if (trackId != null && String(e.currentTrackId) !== String(trackId)) return null;
+                                if (typeof requestToken === 'number' && requestToken !== e.requestToken) return null;
+                                return pulseSyncLrclib.parseLrc(i);
                             }),
                             sendViews: (0, C.L3)(function* (t) {
                                 let { contextId: a, contextType: i } = t,
@@ -9569,7 +10562,14 @@
                         return t;
                     }),
                 oE = C.gK
-                    .model('FullscreenPlayer', { mode: C.gK.maybeNull(C.gK.enumeration(Object.values(oe.u))), syncLyrics: oy, playQueue: os, modal: r8.q })
+                    .model('FullscreenPlayer', {
+                        mode: C.gK.maybeNull(C.gK.enumeration(Object.values(oe.u))),
+                        shouldRestoreSyncLyrics: C.gK.optional(C.gK.boolean, !1),
+                        lastAutoHiddenSyncTrackId: C.gK.maybeNull(C.gK.union(C.gK.string, C.gK.number)),
+                        syncLyrics: oy,
+                        playQueue: os,
+                        modal: r8.q,
+                    })
                     .views((e) => ({
                         get isSplitMode() {
                             return this.isPlayQueueMode || this.isSyncLyricsMode;
@@ -9577,7 +10577,17 @@
                         get isSyncLyricsMode() {
                             var t;
                             let { sonataState: a } = (0, R.M)(e);
-                            return e.mode === oe.u.SYNC_LYRICS && !!(null == a || null == (t = a.entityMeta) ? void 0 : t.isSyncLyricsAvailable);
+                            const track = null == a ? void 0 : a.entityMeta;
+                            const trackId = track?.id;
+                            return (
+                                e.mode === oe.u.SYNC_LYRICS &&
+                                Boolean(
+                                    track?.isSyncLyricsAvailable ||
+                                    track?.isSyncLyricsAvailableWithOfflineFeature ||
+                                    track?.hasSyncLyrics ||
+                                    (trackId && e.syncLyrics.hasLyricsForTrack(trackId)),
+                                )
+                            );
                         },
                         get isPlayQueueMode() {
                             return e.mode === oe.u.PLAY_QUEUE;
@@ -9586,17 +10596,57 @@
                     .actions((e) => ({
                         setMode(t) {
                             e.mode = t;
+                            if (t !== oe.u.SYNC_LYRICS) {
+                                e.shouldRestoreSyncLyrics = !1;
+                                e.lastAutoHiddenSyncTrackId = null;
+                            }
                         },
                         showFullscreenPlayerModal() {
                             (e.syncLyrics.setInvisible(), e.modal.open());
                         },
                         showSyncLyrics() {
-                            ((e.mode = oe.u.SYNC_LYRICS), e.syncLyrics.setVisible(), e.modal.isOpened || e.modal.open());
+                            e.shouldRestoreSyncLyrics = !1;
+                            e.lastAutoHiddenSyncTrackId = null;
+                            e.mode = oe.u.SYNC_LYRICS;
+                            const { sonataState } = (0, R.M)(e);
+                            const trackId = sonataState?.entityMeta?.id;
+                            e.syncLyrics.setVisible();
+                            if (trackId && !e.syncLyrics.hasLyricsForTrack(trackId) && !e.syncLyrics.isLoadingForTrack(trackId)) e.syncLyrics.getData(trackId);
+                            e.modal.isOpened || e.modal.open();
                         },
                         hideSyncLyrics() {
-                            ((e.mode = null), e.syncLyrics.setInvisible());
+                            e.shouldRestoreSyncLyrics = !1;
+                            e.lastAutoHiddenSyncTrackId = null;
+                            e.mode = null;
+                            e.syncLyrics.setInvisible();
+                        },
+                        autoHideSyncLyrics(trackId) {
+                            if (e.mode === oe.u.SYNC_LYRICS) {
+                                e.shouldRestoreSyncLyrics = !0;
+                                e.lastAutoHiddenSyncTrackId = trackId == null ? null : String(trackId);
+                                e.mode = null;
+                                e.syncLyrics.setInvisible();
+                            }
+                        },
+                        restoreSyncLyricsForTrack(trackId) {
+                            const currentTrackId = trackId == null ? null : String(trackId);
+                            const hiddenTrackId = e.lastAutoHiddenSyncTrackId == null ? null : String(e.lastAutoHiddenSyncTrackId);
+                            if (!e.shouldRestoreSyncLyrics || !currentTrackId || currentTrackId === hiddenTrackId) return;
+                            if (!e.modal.isOpened || !e.syncLyrics.hasLyricsForTrack(currentTrackId)) {
+                                if (!e.modal.isOpened) {
+                                    e.shouldRestoreSyncLyrics = !1;
+                                    e.lastAutoHiddenSyncTrackId = null;
+                                }
+                                return;
+                            }
+                            e.shouldRestoreSyncLyrics = !1;
+                            e.lastAutoHiddenSyncTrackId = null;
+                            e.mode = oe.u.SYNC_LYRICS;
+                            e.syncLyrics.setVisible();
                         },
                         showPlayQueue() {
+                            e.shouldRestoreSyncLyrics = !1;
+                            e.lastAutoHiddenSyncTrackId = null;
                             ((e.mode = oe.u.PLAY_QUEUE), e.playQueue.setVisible(), e.modal.isOpened || e.modal.open());
                         },
                         hidePlayQueue() {
@@ -9605,6 +10655,8 @@
                         isModeActive: (t) => e.mode === t,
                         reset() {
                             e.mode = null;
+                            e.shouldRestoreSyncLyrics = !1;
+                            e.lastAutoHiddenSyncTrackId = null;
                         },
                     })),
                 oS = C.gK.model('QualitySettings', { modal: r8.q });
@@ -11432,6 +12484,10 @@
                         }),
                         q.X,
                     )
+                    .volatile(() => ({
+                        requestToken: 0,
+                        lrclibPreferenceCleanup: null,
+                    }))
                     .views((e) => ({
                         get writersNames() {
                             return e.writers.join(', ');
@@ -11440,39 +12496,147 @@
                             return 0 !== e.writers.length;
                         },
                         get isShimmerVisible() {
-                            return e.isLoading || e.isRejected;
+                            return e.isLoading || (e.isRejected && e.hasError);
                         },
                         get shouldShowErrorNotification() {
                             return e.isRejected && e.hasError;
                         },
                     }))
                     .actions((e) => {
+                        const isStaleRequest = (requestToken, trackId) => requestToken !== e.requestToken || String(e.currentTrackId) !== String(trackId);
+                        const isTrackForId = (track, trackId, sourceTrackId) =>
+                            Boolean(
+                                track &&
+                                trackId != null &&
+                                ((track.id != null && String(track.id) === String(trackId)) || (sourceTrackId != null && String(sourceTrackId) === String(trackId))),
+                            );
+                        const isLyricsUnavailableError = (error) => error?.message === 'Lyrics are not available';
                         let t = {
+                            afterCreate() {
+                                e.lrclibPreferenceCleanup = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                                    if (key !== 'modSettings.lrclib.preferLrclib') return;
+                                    e.reloadForLrclibPreference();
+                                });
+                            },
+                            beforeDestroy() {
+                                e.lrclibPreferenceCleanup?.();
+                                e.lrclibPreferenceCleanup = null;
+                            },
+                            reloadForLrclibPreference() {
+                                if (e.currentTrackId == null) return;
+                                const trackId = e.currentTrackId;
+                                e.loadingState = M.G.IDLE;
+                                void e.getLyrics(trackId);
+                            },
                             setTrack(t) {
-                                e.track = (0, C.wg)({ ...(0, sg.HO)(t) });
+                                const nextTrackId = t?.id;
+                                const changed =
+                                    (nextTrackId != null && String(nextTrackId) !== String(e.track?.id)) ||
+                                    (nextTrackId != null && e.currentTrackId != null && String(nextTrackId) !== String(e.currentTrackId));
+                                if (changed) {
+                                    e.requestToken += 1;
+                                    e.currentTrackId = null;
+                                    e.lyrics = null;
+                                    e.major = null;
+                                    e.externalLyricId = null;
+                                    e.lyricId = null;
+                                    e.hasError = !1;
+                                    e.writers = (0, C.wg)([]);
+                                    e.loadingState = M.G.IDLE;
+                                }
+                                e.trackId = nextTrackId;
+                                e.track = (0, C.wg)({
+                                    ...(0, sg.HO)(t),
+                                });
                             },
                             resetShouldShowError() {
                                 e.hasError = !1;
                             },
                             getLyrics: (0, C.L3)(function* (a) {
-                                let { config: i, tracksResource: l, modelActionsLogger: r } = (0, C._$)(e);
-                                if (e.loadingState !== M.G.PENDING && e.currentTrackId !== a)
-                                    try {
-                                        ((e.loadingState = M.G.PENDING), (e.currentTrackId = a));
-                                        let { downloadUrl: r, major: s, externalLyricId: n, lyricId: o, writers: d } = yield l.getLyrics(og(i, a, u.TEXT));
-                                        ((e.major = ou(s)),
-                                            (e.externalLyricId = n),
-                                            (e.lyricId = o),
-                                            (e.writers = (0, C.wg)(d || [])),
-                                            yield t.downloadLyrics(r),
-                                            (e.loadingState = M.G.RESOLVE));
-                                    } catch (t) {
-                                        ((e.loadingState = M.G.REJECT), (e.currentTrackId = null), (e.hasError = !0), e.modal.isOpened && e.modal.close(), r.error(t));
-                                    }
+                                let { tracksResource: i, modelActionsLogger: l } = (0, C._$)(e);
+                                const sameTrack = e.currentTrackId != null && String(e.currentTrackId) === String(a);
+                                if (!a || (sameTrack && (e.isLoading || e.isResolved))) return;
+                                const requestToken = ++e.requestToken;
+                                let nativeLyricsFound = !1;
+                                let nativeError = new Error('Lyrics are not available');
+                                e.loadingState = M.G.PENDING;
+                                e.currentTrackId = a;
+                                e.lyrics = null;
+                                e.major = null;
+                                e.externalLyricId = null;
+                                e.lyricId = null;
+                                e.hasError = !1;
+                                e.writers = (0, C.wg)([]);
+                                const { sonataState } = (0, R.M)(e);
+                                const entityTrack = sonataState?.entityMeta;
+                                const track = isTrackForId(e.track, a, e.trackId) ? e.track : isTrackForId(entityTrack, a) ? entityTrack : null;
+                                const applyLrclibLyrics = (result) => {
+                                    if (!result?.lyrics) return !1;
+                                    e.major = ou(result.provider);
+                                    e.externalLyricId = result.externalLyricId;
+                                    e.lyricId = null;
+                                    e.writers = (0, C.wg)(result.writers || []);
+                                    e.lyrics = result.lyrics;
+                                    e.hasError = !1;
+                                    e.loadingState = M.G.RESOLVE;
+                                    return !0;
+                                };
+                                if (pulseSyncLrclib.prefersLyrics()) {
+                                    const preferred = yield pulseSyncLrclib.resolvePlain(track);
+                                    if (isStaleRequest(requestToken, a)) return;
+                                    if (applyLrclibLyrics(preferred)) return;
+                                }
+                                try {
+                                    if (track?.isLyricsAvailable === !1 || track?.hasLyrics === !1) throw nativeError;
+                                    const nativeLyrics = yield i.getLyrics(og((0, C._$)(e).config, a, u.TEXT));
+                                    if (isStaleRequest(requestToken, a)) return;
+                                    if (!nativeLyrics?.downloadUrl) throw nativeError;
+                                    nativeLyricsFound = !0;
+                                    const lyrics = yield t.downloadLyrics(nativeLyrics.downloadUrl, requestToken, a);
+                                    if (isStaleRequest(requestToken, a)) return;
+                                    if (!lyrics || pulseSyncLrclib.isPlaceholderText(lyrics)) throw nativeError;
+                                    e.major = ou(nativeLyrics.major);
+                                    e.externalLyricId = nativeLyrics.externalLyricId;
+                                    e.lyricId = nativeLyrics.lyricId;
+                                    e.writers = (0, C.wg)(nativeLyrics.writers || []);
+                                    e.lyrics = lyrics;
+                                    e.loadingState = M.G.RESOLVE;
+                                    return;
+                                } catch (error) {
+                                    nativeError = error;
+                                }
+                                if (isStaleRequest(requestToken, a)) return;
+                                if (nativeLyricsFound) {
+                                    e.loadingState = M.G.REJECT;
+                                    e.hasError = !1;
+                                    e.modal.isOpened && e.modal.close();
+                                    l.error(nativeError);
+                                    return;
+                                }
+                                const fallback = yield pulseSyncLrclib.resolvePlain(track);
+                                if (isStaleRequest(requestToken, a)) return;
+                                if (applyLrclibLyrics(fallback)) return;
+                                e.loadingState = M.G.REJECT;
+                                e.hasError = !isLyricsUnavailableError(nativeError);
+                                e.modal.isOpened && e.modal.close();
+                                if (e.hasError) l.error(nativeError);
                             }),
-                            downloadLyrics: (0, C.L3)(function* (t) {
+                            downloadLyrics: (0, C.L3)(function* (t, requestToken, trackId) {
                                 let { prefixlessResource: a } = (0, C._$)(e);
-                                e.lyrics = yield a.getLyricsText(t);
+                                let lyrics;
+                                try {
+                                    lyrics = yield a.getLyricsText(t);
+                                } catch (error) {
+                                    if (typeof fetch === 'undefined') throw error;
+                                    const response = yield fetch(t, {
+                                        credentials: 'omit',
+                                    });
+                                    if (!response.ok) throw error;
+                                    lyrics = yield response.text();
+                                }
+                                if (trackId != null && String(e.currentTrackId) !== String(trackId)) return null;
+                                if (typeof requestToken === 'number' && requestToken !== e.requestToken) return null;
+                                return lyrics;
                             }),
                             sendViews: (0, C.L3)(function* (t) {
                                 let { trackId: a, albumId: i } = t,
