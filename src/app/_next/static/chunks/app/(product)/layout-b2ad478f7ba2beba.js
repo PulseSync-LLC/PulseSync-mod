@@ -7855,7 +7855,10 @@
                     );
                 }
                 updateMetadata(e) {
-                    if (!e) return null;
+                    if (!e) {
+                        window.navigator.mediaSession.metadata = null;
+                        return;
+                    }
                     let t = this.prepareMetadata(e);
                     return ((window.navigator.mediaSession.metadata = null), (window.navigator.mediaSession.metadata = new MediaMetadata(t)), t);
                 }
@@ -7896,6 +7899,14 @@
                 }
                 handlePlayerEvents(e) {
                     let t, a;
+                    e.state.currentMediaPlayer?.onChange((currentPlayer) => {
+                        currentPlayer?.isCrossing?.onChange?.((isCrossing) => {
+                            if (!isCrossing) {
+                                this.updateMetadata();
+                                this.updateMetadata(e.state.queueState.currentEntity.value?.entity?.data?.meta);
+                            }
+                        });
+                    });
                     (e.state.queueState.currentEntity.onChange(() => {
                         (this.updateCurrentEntityMetadata(e), this.updatePositionState(e));
                     }),
@@ -7905,6 +7916,7 @@
                         this.subscribeToCrossfadeEnd(e),
                         e.state.playerState.event.onChange(() => {
                             e.state.playerState.event.value === q.Iu.UPDATING_PROGRESS &&
+                                !e.state.currentMediaPlayer?.value?.isCrossing?.value &&
                                 (this.updateCurrentEntityMetadata(e),
                                 this.updatePositionState(e),
                                 aw.forEach((t) => {
@@ -10316,6 +10328,7 @@
                     });
                 }
                 playAutoflow(e) {
+                    if (!(window.ENABLE_ENDLESS_MUSIC?.() ?? true)) return;
                     var t, a, r;
                     let i,
                         s = null == (t = e.state.currentContext.value) ? void 0 : t.data.type;
