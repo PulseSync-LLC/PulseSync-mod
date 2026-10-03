@@ -1,15 +1,39 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import Slider from '../../../../ui/Slider/Slider.jsx'
 import Icon from '../../../../ui/Icon.jsx'
 
 import './Volume.css'
 
+const VOLUME_THROTTLE_MS = 40
+
 export default function Volume({ value = 0.5, variant = 'default', style = undefined, alwaysShow = true }) {
     const [unmuteVolume, setUnmuteVolume] = useState(value)
+    const lastChangeTime = useRef(-Infinity)
+    const pendingVolume = useRef(null)
+    const volumeTimeout = useRef(null)
 
     const onChange = useCallback(value => {
-        window.desktopEvents?.send('MINIPLAYER_PLAYER_ACTION', 'SET_VOLUME', value)
+        pendingVolume.current = value
+
+        const sendVolume = () => {
+            lastChangeTime.current = performance.now()
+            volumeTimeout.current = null
+            window.desktopEvents?.send('MINIPLAYER_PLAYER_ACTION', 'SET_VOLUME', pendingVolume.current)
+            pendingVolume.current = null
+        }
+
+        const remaining = VOLUME_THROTTLE_MS - (performance.now() - lastChangeTime.current)
+        if (remaining <= 0) {
+            clearTimeout(volumeTimeout.current)
+            sendVolume()
+        } else if (volumeTimeout.current === null) {
+            volumeTimeout.current = setTimeout(sendVolume, remaining)
+        }
+    }, [])
+
+    useEffect(() => {
+        return () => clearTimeout(volumeTimeout.current)
     }, [])
 
     const onWheel = useCallback(

@@ -27,6 +27,10 @@
     transition: var(--cover-width-transition);
 }
 
+.Volume_slider::after {
+    transition: width 0.04s;
+}
+
 .Volume_container {
     gap: 8px;
     position: relative;
