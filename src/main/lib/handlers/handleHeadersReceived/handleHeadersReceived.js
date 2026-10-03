@@ -2,6 +2,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.handleHeadersReceived = void 0;
 const { URL } = require('url');
+const config_js_1 = require('../../../config.js');
 const framesHandler_js_1 = require('./framesHandler.js');
 const corsHandler_js_1 = require('./corsHandler.js');
 const experimentOverridesHandler_js_1 = require('./remoteExperimentsOverride.js');
@@ -45,6 +46,10 @@ exports.handleHeadersReceived = (window) => {
             return;
         }
         if (origin) originMap.set(details.id, origin);
+        if (origin === `${config_js_1.config.app.appProtocol}://${config_js_1.config.app.appHostname}` && details.url.startsWith('https://lrclib.net/api/')) {
+            details.requestHeaders['Lrclib-App-Id'] = 'mxbBLMscjQRywVFRLcVkhaVz455sJrgFkhT5CkAJnos';
+            details.requestHeaders['Lrclib-Client'] = `PulseSync-Mod v${config_js_1.config.modification.version} (https://github.com/PulseSync-LLC/PulseSync-mod)`;
+        }
         callback({ requestHeaders: details.requestHeaders });
     });
 
