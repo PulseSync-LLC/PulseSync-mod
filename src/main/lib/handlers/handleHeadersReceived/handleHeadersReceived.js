@@ -94,7 +94,7 @@ exports.handleHeadersReceived = (window) => {
             responseHeaders['access-control-allow-origin'] = ['*'];
             responseHeaders['access-control-allow-credentials'] = ['true'];
         } else if (origin && corsHandler_js_1.isUrlAllowed(url)) {
-            responseHeaders['access-control-allow-origin'] = [origin];
+            responseHeaders['access-control-allow-origin'] = [responseOriginMap.get(details.id) || origin];
             responseHeaders['access-control-allow-credentials'] = ['true'];
         }
 
