@@ -10182,8 +10182,25 @@
                 oF = C.gK.model('Setting', { title: C.gK.string, cover: t6.$ }).actions((e) => ({ getKey: (t) => ''.concat(t, '_').concat(e.title) })),
                 oV = oG.props({ type: C.gK.literal(oP.D.SETTING), data: oF }),
                 ox = oG.props({ type: C.gK.literal(oP.D.WAVE), data: eL.G }),
-                oj = (e, t) =>
-                    e.items
+                pulseSyncVibeSettingItem = {
+                    id: 'setting',
+                    type: oP.D.SETTING,
+                    style: ow.y.CONTROL,
+                    data: {
+                        title: 'Настроить Мою волну',
+                        cover: {
+                            uri: 'avatars.mds.yandex.net/get-music-misc/30221/img.6a02b79f69c75168250b2889/%%',
+                        },
+                    },
+                },
+                oj = (e, t) => {
+                    let pulseSyncItems = e.items;
+                    if (window.nativeSettings?.get?.('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel') ?? false) {
+                        pulseSyncItems = pulseSyncItems.filter((item) => item.type !== oP.D.SETTING);
+                        const firstItem = pulseSyncItems.shift();
+                        pulseSyncItems = firstItem ? [firstItem, pulseSyncVibeSettingItem, ...pulseSyncItems] : [pulseSyncVibeSettingItem];
+                    }
+                    return pulseSyncItems
                         .map((e, a) => {
                             try {
                                 var i, l, r, s;
@@ -10239,7 +10256,8 @@
                                 return (null == t || t.error('[Wheel] Item parse error', { error: a, item: e }), null);
                             }
                         })
-                        .filter((e) => null !== e),
+                        .filter((e) => null !== e);
+                },
                 oW = C.gK.union(ox, oM, oB, oV),
                 oX = C.gK
                     .compose(
