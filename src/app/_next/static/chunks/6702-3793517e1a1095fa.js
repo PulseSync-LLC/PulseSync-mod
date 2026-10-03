@@ -7549,6 +7549,7 @@
                 pulseSyncPlayerJsx = m,
                 pulseSyncPlayerIntl = g,
                 pulseSyncPlayerButton = T,
+                pulseSyncPlayerIcon = S,
                 pulseSyncNormalizeStationText = (e) =>
                     String(e ?? '')
                         .trim()
@@ -7857,7 +7858,7 @@
                                       }),
                                       icon: g
                                           ? pulseSyncRenderCastDeviceIcon(pulseSyncGetActiveCastDeviceRow(v, g), 'PulseSync_castPlayerButtonIcon')
-                                          : (0, pulseSyncPlayerJsx.jsx)(S.I, {
+                                          : (0, pulseSyncPlayerJsx.jsx)(pulseSyncPlayerIcon.I, {
                                                 variant: 'cast',
                                                 size: 'xs',
                                             }),
