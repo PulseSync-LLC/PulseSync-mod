@@ -14338,7 +14338,7 @@
                 h = a.n(c);
             let v = (e) => {
                 let { children: t } = e,
-                    { state: a, toggleTrue: c } = (0, n.e)(!1),
+                    { state: a, toggleTrue: c } = (0, n.e)(Boolean(window.nativeSettings?.get?.('modSettings.window.minimizedStart'))),
                     { state: v, toggleTrue: y } = (0, n.e)(!1),
                     { getThemeFromStorage: m } = (0, d.Q)(new o.si()),
                     p = (0, s.useMemo)(() => {

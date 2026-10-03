@@ -1732,6 +1732,7 @@
     color: inherit;
     color: var(--accent-color, inherit);
     transition: color var(--ym-duration-transition);
+    padding: 1rem;
 }
 .VibePlayerControls_skipButton__z57B_:not(:disabled, [data-disabled='true']):focus-visible {
     color: inherit;

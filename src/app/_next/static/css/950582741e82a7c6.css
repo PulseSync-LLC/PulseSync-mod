@@ -525,6 +525,10 @@
 }
 .NotificationDislike_message__R2jfZ {
     align-items: center;
+    gap: var(--ym-spacer-size-m);
+    position: relative;
+    width: 100%;
+    z-index: 2;
     column-gap: var(--ym-spacer-size-xs);
     display: flex;
 }
