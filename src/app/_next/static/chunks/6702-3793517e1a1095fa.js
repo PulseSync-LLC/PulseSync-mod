@@ -6583,13 +6583,13 @@
                         ec = (0, N.c)((e, t) => () => {
                             M(e, t);
                         }),
-                        eu = (0, x.useMemo)(
-                            () =>
+                        eu = (0, x.useCallback)(
+                            (items) =>
                                 (0, m.jsx)(
                                     eL,
                                     {
                                         className: (0, p.$)({ [al().navigationGroup]: Z }),
-                                        children: D.map((e) => {
+                                        children: items.map((e) => {
                                             let t = _(e.availablePaths),
                                                 a = ((e) => (e.id === eV.MUZMARKET ? (0, m.jsx)(e8, { children: e.title }) : e.title))(e),
                                                 i = e.id === eV.COLLECTION && !!X && e.isEnabled,
@@ -6717,7 +6717,7 @@
                                             className: (0, p.$)(al().navigation, { [al().navigation_new]: Z, [al().navigation_gapFill]: !1 }),
                                             collapsed: l,
                                             'aria-label': v({ id: 'navigation.main-menu' }),
-                                            children: eu,
+                                            children: eu(D.filter((e) => e.id !== eV.SETTINGS)),
                                         }),
                                         (0, m.jsx)(eQ.WithOffline, {
                                             fallback: (0, m.jsx)(t6, { style: H, isCollapsed: l, withCollapseAnimation: !!d, className: al().pinsList }),
@@ -6729,6 +6729,13 @@
                                     ],
                                 }),
                             }),
+                            b.isAuthorized &&
+                                (0, m.jsx)(ew, {
+                                    className: (0, p.$)(al().navigation, { [al().navigation_new]: Z }),
+                                    collapsed: l,
+                                    'aria-label': v({ id: 'page.settings' }),
+                                    children: eu(D.filter((e) => e.id === eV.SETTINGS)),
+                                }),
                             (0, m.jsx)(a4, { withUserProfileAnimation: d, isCollapsed: l }),
                             en &&
                                 null !== ee &&
