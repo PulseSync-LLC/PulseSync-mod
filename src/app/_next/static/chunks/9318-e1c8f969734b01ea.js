@@ -3438,7 +3438,7 @@
                                           children: el,
                                       });
                         }),
-                        ef = L.hasPlus && !A && l.isFavouritePlaylist && l.isOwnPlaylist,
+                        ef = L.hasPlus && !A, // && l.isFavouritePlaylist && l.isOwnPlaylist,
                         eC = (0, s.useMemo)(
                             () =>
                                 (0, i.jsxs)('div', {
