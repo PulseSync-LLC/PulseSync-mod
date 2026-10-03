@@ -693,6 +693,51 @@
                                         }),
                                     }),
                                 }),
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(M.N, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://pulsesync.dev',
+                                        children: (0, n.jsx)(c.HL, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Сайт проекта PulseSync',
+                                        }),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(M.N, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://pulsesync.dev/subscription',
+                                        children: (0, n.jsx)(c.HL, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Поддержать проект оформив подписку',
+                                        }),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(M.N, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://github.com/PulseSync-LLC/PulseSync-mod',
+                                        children: (0, n.jsx)(c.HL, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Репозиторий PulseSync на GitHub',
+                                        }),
+                                    }),
+                                }),
                             ],
                         }),
                         (0, n.jsx)(c.HL, {
@@ -724,6 +769,13 @@
                             size: 'xs',
                             children: e({ id: 'desktop.app-revision' }, { revision: a }),
                         }),
+                        (0, n.jsx)(c.HL, {
+                            className: P().versionText,
+                            type: 'controls',
+                            variant: 'div',
+                            size: 'xs',
+                            children: 'PulseSync '.concat(window.PULSE_VERSION, ' · Host ').concat(window.HOST_VERSION),
+                        }),
                     ],
                 });
             });
@@ -744,6 +796,7 @@
                         a = (0, d.useCallback)(() => {
                             o.clearAll().then(() => {
                                 (t.close(),
+                                    window.onDownloadedTracksDeleted?.(),
                                     r(
                                         (0, n.jsx)(U.$, {
                                             message: (0, n.jsx)(c.HL, {
@@ -786,6 +839,7 @@
                                 children: (0, n.jsx)(i.A, { id: 'interface-actions.clear' }),
                             }),
                         ],
+                        overlayColor: 'full',
                     });
                 });
             var K = r(92057),
@@ -1076,7 +1130,24 @@
                     z = f.isLiteVersionModeAvailableForToggle && !0,
                     U = !f.isMobile,
                     F = T.isEnabled ? j({ id: 'equalizer.enabled' }) : j({ id: 'equalizer.disabled' }),
-                    W = (0, d.useMemo)(() => j({ id: 'desktop.app-version-short' }, { version: e }), [j, e]),
+                    W = (0, d.useMemo)(
+                        () =>
+                            ''
+                                .concat(
+                                    j(
+                                        {
+                                            id: 'desktop.app-version-short',
+                                        },
+                                        {
+                                            version: e,
+                                        },
+                                    ),
+                                    ' / Мод ',
+                                )
+                                .concat(window.PULSE_VERSION, ' / Хост ')
+                                .concat(window.HOST_VERSION),
+                        [!0, j, e],
+                    ),
                     G = (0, d.useCallback)(
                         async (e) => {
                             (await _.setSettings({ isChildModeEnabled: e })) === S.F.ERROR &&
@@ -1100,6 +1171,72 @@
                         },
                         [f],
                     );
+                let openPulseSyncSettings = (0, d.useCallback)(() => {
+                        window.dispatchEvent(new CustomEvent('pulsesync-open-settings'));
+                    }, []),
+                    openOtherPulseSyncSettings = (0, d.useCallback)(() => {
+                        window.openConfigFile?.();
+                    }, []),
+                    formatBytes = (value) => {
+                        if ('number' != typeof value || value < 0) return '0 B';
+                        let units = ['B', 'KB', 'MB', 'GB'],
+                            unitIndex = 0;
+                        for (; value >= 1024 && unitIndex < units.length - 1;) ((value /= 1024), unitIndex++);
+                        return ''.concat(value.toFixed(2), ' ').concat(units[unitIndex]);
+                    },
+                    getTrackWordForm = (value) => {
+                        if ('number' != typeof value || value < 0 || !Number.isInteger(value)) return 'треков';
+                        let lastDigit = value % 10,
+                            lastTwoDigits = value % 100;
+                        return lastTwoDigits >= 11 && lastTwoDigits <= 19 ? 'треков' : 1 === lastDigit ? 'трек' : lastDigit >= 2 && lastDigit <= 4 ? 'трека' : 'треков';
+                    };
+                let [downloadedTracksInfo, setDownloadedTracksInfo] = (0, d.useState)({
+                    tracksCount: void 0,
+                    tracksSize: void 0,
+                });
+                (0, d.useEffect)(() => {
+                    let readTracksDirectory = async (directory) => {
+                            let result = {
+                                tracksCount: 0,
+                                tracksSize: 0,
+                            };
+                            for await (let entry of directory.values())
+                                if ('directory' === entry.kind) {
+                                    let nestedResult = await readTracksDirectory(entry);
+                                    ((result.tracksCount += nestedResult.tracksCount), (result.tracksSize += nestedResult.tracksSize));
+                                } else if ('file' === entry.kind && !entry.name.endsWith('.crswap'))
+                                    try {
+                                        let file = await entry.getFile();
+                                        ((result.tracksCount += 1), (result.tracksSize += file.size));
+                                    } catch (error) {
+                                        console.warn('Track file is in use. Skipping...', error);
+                                    }
+                            return result;
+                        },
+                        findTracksDirectory = async (rootDirectory) => {
+                            for await (let entry of rootDirectory.values()) if ('directory' === entry.kind && 'tracks' === entry.name) return readTracksDirectory(entry);
+                            return {
+                                tracksCount: 0,
+                                tracksSize: 0,
+                            };
+                        },
+                        updateDownloadedTracksInfo = async () => {
+                            if (!window.navigator?.storage?.getDirectory) return;
+                            let rootDirectory = await window.navigator.storage.getDirectory();
+                            setDownloadedTracksInfo(await findTracksDirectory(rootDirectory));
+                        };
+                    window.onDownloadedTracksDeleted = () => {
+                        setDownloadedTracksInfo({
+                            tracksCount: 0,
+                            tracksSize: 0,
+                        });
+                    };
+                    updateDownloadedTracksInfo();
+                    return () => {
+                        window.onDownloadedTracksDeleted = null;
+                    };
+                }, []);
+
                 (0, d.useLayoutEffect)(() => {
                     let e = t.get(L.c.CrossFadeMode);
                     'boolean' == typeof e && p.setCrossFadeMode(e);
@@ -1135,7 +1272,18 @@
                         B &&
                             (0, n.jsxs)('li', {
                                 className: eb().item,
-                                children: [(0, n.jsx)(ed, { title: j({ id: 'offline.clear-memory' }), onClick: V }), (0, n.jsx)(H, {})],
+                                children: [
+                                    (0, n.jsx)(ed, {
+                                        title: j({ id: 'offline.clear-memory' }),
+                                        description: 'Скачан'
+                                            .concat(downloadedTracksInfo.tracksCount % 10 === 1 && downloadedTracksInfo.tracksCount % 100 !== 11 ? '' : 'о', ' ')
+                                            .concat(downloadedTracksInfo.tracksCount ?? 0, ' ')
+                                            .concat(getTrackWordForm(downloadedTracksInfo.tracksCount ?? 0), ' (')
+                                            .concat(formatBytes(downloadedTracksInfo.tracksSize), ')'),
+                                        onClick: V,
+                                    }),
+                                    (0, n.jsx)(H, {}),
+                                ],
                             }),
                         z &&
                             (0, n.jsx)('li', {
@@ -1205,6 +1353,21 @@
                             children: [(0, n.jsx)(ed, { title: j({ id: 'settings.shortcuts' }), onClick: r.open }), (0, n.jsx)(eE, {})],
                         }),
                         U && (0, n.jsx)('li', { className: eb().item, children: (0, n.jsx)(ei, {}) }),
+                        (0, n.jsx)('li', {
+                            className: eb().item,
+                            children: (0, n.jsx)(ed, {
+                                title: 'Настройки мода',
+                                onClick: openPulseSyncSettings,
+                            }),
+                        }),
+                        (0, n.jsx)('li', {
+                            className: eb().item,
+                            children: (0, n.jsx)(ed, {
+                                title: 'Прочие настройки мода',
+                                description: 'Открывает config.json Яндекс Музыки',
+                                onClick: openOtherPulseSyncSettings,
+                            }),
+                        }),
                         W &&
                             (0, n.jsxs)('li', {
                                 className: eb().item,
