@@ -2081,6 +2081,7 @@
 }
 .NaZE1NCUxSM1MvpZuLJV {
     background-color: var(--ym-background-color-primary-enabled-overlay);
+    transition: opacity 0.3s;
 }
 .wEOFUiLOfluq86BrDUfg {
     align-items: flex-start;
@@ -3433,7 +3434,7 @@
 }
 @supports selector(scrollbar-width:auto) {
     .MFfv7uDaaJhS_oiAzQNT {
-        scrollbar-color: var(--ym-surface-color-primary-enabled-entity) transparent;
+        scrollbar-color: var(--ym-controls-color-primary-default-disabled) transparent;
         scrollbar-gutter: stable;
     }
 }
@@ -3442,7 +3443,7 @@
         background-color: var(--ym-controls-color-primary-default-disabled);
     }
     .MFfv7uDaaJhS_oiAzQNT::-webkit-scrollbar-thumb:hover {
-        background-color: var(--ym-surface-color-primary-enabled-entity);
+        background-color: var(--ym-controls-color-primary-default-disabled);
     }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -4193,4 +4194,7 @@
 .jMyoZB5J9iZbzJmWOrF0 {
     display: -webkit-box; /*! autoprefixer: ignore next */
     -webkit-box-orient: vertical;
+}
+.JkKcxRVvjK7lcakkEliC:disabled:before {
+    background-color: var(--ym-slider-color-primary-disabled);
 }

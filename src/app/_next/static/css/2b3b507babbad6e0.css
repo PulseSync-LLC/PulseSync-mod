@@ -392,6 +392,7 @@
 .PlayerBarDesktopWithBackgroundProgressBar_meta__FhKTC,
 .PlayerBarDesktopWithBackgroundProgressBar_sonataControls__rSmXQ.PlayerBarDesktopWithBackgroundProgressBar_important__HzXrK {
     gap: var(--ym-spacer-size-l);
+    transition: gap 0.3s;
 }
 .PlayerBarDesktopWithBackgroundProgressBar_meta__FhKTC {
     align-items: center;
@@ -1468,5 +1469,15 @@
     80%,
     100% {
         transform: translateX(min(0px, calc(-100% + 7.5rem)));
+    }
+}
+
+@media only screen and (max-width: 53.8rem) {
+    .PlayerBarDesktopWithBackgroundProgressBar_meta__FhKTC {
+        gap: 0.2rem;
+    }
+    .PlayerBarDesktopWithBackgroundProgressBar_sonataControls__rSmXQ.PlayerBarDesktopWithBackgroundProgressBar_important__HzXrK,
+    .PlayerBarDesktopWithBackgroundProgressBar_sonata__mGFb_ {
+        gap: 0.25rem;
     }
 }
