@@ -12,6 +12,8 @@ const url = require('url');
 const config_js_1 = require('../../../config.js');
 const cors_js_1 = require('../../../constants/cors.js');
 const Logger_js_1 = require('../../../packages/logger/Logger.js');
+const { classifyRendererUrl } = require('../../desktopPolicy.js');
+const { RendererTrustProfile } = require('../../../types/desktop.js');
 
 const corsHandlerLogger = new Logger_js_1.Logger('CorsHandler');
 
@@ -90,6 +92,9 @@ function isUrlAllowed(requestUrl) {
     const normalized = urlObj.href;
     const host = urlObj.hostname;
 
+    if (classifyRendererUrl(normalized) === RendererTrustProfile.AUTH) {
+        return true;
+    }
     for (const domain of WILDCARD_HOSTS) {
         if (host === domain || host.endsWith(`.${domain}`)) {
             return true;
