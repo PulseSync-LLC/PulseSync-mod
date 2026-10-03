@@ -1718,7 +1718,6 @@
 .VibePlayerControls_root__qr97B {
     align-items: center;
     display: flex;
-    gap: var(--ym-spacer-size-xxxl);
     justify-content: center;
     margin-block-start: var(--ym-spacer-size-xl);
 }
