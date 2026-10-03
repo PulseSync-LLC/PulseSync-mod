@@ -3447,3 +3447,13 @@
 .FullscreenPlayerMobile_notification__V1cxP {
     inset-block-end: var(--ym-spacer-size-m);
 }
+
+.PulseSyncWordLyrics_word {
+    transition: opacity 0.12s linear;
+    will-change: opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+    .PulseSyncWordLyrics_word {
+        transition: none;
+    }
+}

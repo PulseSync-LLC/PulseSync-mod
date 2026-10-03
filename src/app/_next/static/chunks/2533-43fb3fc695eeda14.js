@@ -359,6 +359,7 @@
                         tm = '/album/:albumId/track/:trackId';
                     eL.albumId || (tm = '/track/:trackId');
                     let { shareLink: t_, pathname: tv } = (0, $.b)(tm, { params: { albumId: null != (eg = eL.albumId) ? eg : '', trackId: eL.id } }),
+                        pulseSyncLrclibEnabled = window.nativeSettings?.get('modSettings.lrclib.useText') !== !1,
                         tp = eL.isUGC ? W.D.UGC_TRACK : W.D.TRACK,
                         ty = (0, T.A)({ entityVariant: tp, urlParams: { id: eL.id } }),
                         tx = ((e) => {
@@ -426,8 +427,16 @@
                         tB = (0, _.c)(() => {
                             (eZ.setTrackId(eL.id), e1.isOpened && e1.close(), e3.open(), null == ej || ej(!1));
                         }),
-                        tz = (0, _.c)(() => eL.isSyncLyricsAvailable && eX.modal.isOpened && tu),
-                        tF = (0, _.c)(() => eL.isLyricsAvailable && !eX.modal.isOpened),
+                        tz = (0, _.c)(
+                            () =>
+                                (eL.isSyncLyricsAvailable ||
+                                    eL.isSyncLyricsAvailableWithOfflineFeature ||
+                                    eL.hasSyncLyrics ||
+                                    (tf && eX.syncLyrics.hasLyricsForTrack(eL.id))) &&
+                                eX.modal.isOpened &&
+                                tu,
+                        ),
+                        tF = (0, _.c)(() => (eL.isLyricsAvailable || pulseSyncLrclibEnabled) && !eX.modal.isOpened),
                         tY = (0, _.c)(() => {
                             var e;
                             return (null == (e = eL.trailer) ? void 0 : e.isAvailable) && !eX.modal.isOpened && eB;
@@ -438,7 +447,20 @@
                             withTrailerItem: tW,
                         } = (0, n.useMemo)(
                             () => ({ withSyncLyricsItem: tz(), withLyricsItem: tF(), withTrailerItem: tY() }),
-                            [tz, tF, tY, eL.isSyncLyricsAvailable, eL.isLyricsAvailable, null == (ex = eL.trailer) ? void 0 : ex.isAvailable],
+                            [
+                                tz,
+                                tF,
+                                tY,
+                                eL.isSyncLyricsAvailable,
+                                eL.isSyncLyricsAvailableWithOfflineFeature,
+                                eL.hasSyncLyrics,
+                                eL.isLyricsAvailable,
+                                pulseSyncLrclibEnabled,
+                                eX.syncLyrics.currentTrackId,
+                                eX.syncLyrics.lines,
+                                eX.syncLyrics.isResolved,
+                                null == (ex = eL.trailer) ? void 0 : ex.isAvailable,
+                            ],
                         );
                     (0, H.N)(eR);
                     let tV = !tT,

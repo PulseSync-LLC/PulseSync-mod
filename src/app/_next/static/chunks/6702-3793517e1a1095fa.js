@@ -8122,6 +8122,68 @@
                             _ && 1 === e.detail && (null == i ? void 0 : i.hasTrackLink) && !P.modal.isOpened && Z();
                         }
                     }),
+                    sonataRuntimeState = (0, iU.e)(),
+                    lrclibSyncLyricsEffect =
+                        ((0, x.useEffect)(() => {
+                            const trackId = null == i ? void 0 : i.id;
+                            const nativeAvailable =
+                                (null == i ? void 0 : i.isSyncLyricsAvailable) ||
+                                (null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) ||
+                                (null == i ? void 0 : i.hasSyncLyrics);
+                            let lrclibEnabled = !0;
+                            try {
+                                lrclibEnabled = window.nativeSettings?.get('modSettings.lrclib.useText') !== !1;
+                            } catch (_error) {}
+                            if (
+                                trackId &&
+                                !(null == i ? void 0 : i.isNonMusic) &&
+                                P.syncLyrics.currentTrackId !== trackId &&
+                                (nativeAvailable || lrclibEnabled || i.trackSource === 'UGC')
+                            ) {
+                                P.syncLyrics.getData(trackId);
+                            }
+                            P.syncLyrics.prefetchNextTrack(sonataRuntimeState);
+                        }, [
+                            null == i ? void 0 : i.id,
+                            null == i ? void 0 : i.isSyncLyricsAvailable,
+                            null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature,
+                            null == i ? void 0 : i.hasSyncLyrics,
+                            null == i ? void 0 : i.isNonMusic,
+                            null == i ? void 0 : i.trackSource,
+                            P.syncLyrics.currentTrackId,
+                            P.syncLyrics,
+                            sonataRuntimeState,
+                        ]),
+                        null),
+                    restoreSyncLyricsEffect =
+                        ((0, x.useEffect)(() => {
+                            const trackId = null == i ? void 0 : i.id;
+                            if (!trackId || String(P.syncLyrics.currentTrackId) !== String(trackId) || P.syncLyrics.isLoadingForTrack(trackId)) return;
+                            if (P.syncLyrics.isRejected || P.syncLyrics.hasInvalidLyrics) {
+                                P.autoHideSyncLyrics(trackId);
+                                return;
+                            }
+                            if (trackId && P.syncLyrics.hasLyricsForTrack(trackId)) P.restoreSyncLyricsForTrack(trackId);
+                        }, [
+                            null == i ? void 0 : i.id,
+                            P.syncLyrics.currentTrackId,
+                            P.syncLyrics.lines,
+                            P.syncLyrics.isLoading,
+                            P.syncLyrics.isRejected,
+                            P.syncLyrics.hasInvalidLyrics,
+                            P.syncLyrics.isResolved,
+                            P.syncLyrics,
+                            P.autoHideSyncLyrics,
+                            P.restoreSyncLyricsForTrack,
+                        ]),
+                        null),
+                    syncLyricsAvailable =
+                        !!(null == i ? void 0 : i.isSyncLyricsAvailable) ||
+                        !!(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) ||
+                        !!(null == i ? void 0 : i.hasSyncLyrics) ||
+                        (!!(null == i ? void 0 : i.id) &&
+                            'function' == typeof (null == P.syncLyrics ? void 0 : P.syncLyrics.hasLyricsForTrack) &&
+                            P.syncLyrics.hasLyricsForTrack(i.id)),
                     et = (0, x.useCallback)(
                         (e) => {
                             let { isPopoverEnabled: t } = e,
@@ -8131,8 +8193,8 @@
                                 radius: 'round',
                                 size: 'xxxs',
                                 variant: 'text',
-                                disabled: !(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) || k,
-                                'aria-hidden': !(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature),
+                                disabled: !syncLyricsAvailable || k,
+                                'aria-hidden': !syncLyricsAvailable,
                                 withRipple: !1,
                                 'aria-label': a,
                                 icon: (0, m.jsx)(S.I, { variant: 'syncLyrics', size: 'xs' }),
@@ -8140,7 +8202,7 @@
                                 'data-test-id': C.e8.player.PLAYERBAR_DESKTOP_SYNC_LYRICS_BUTTON,
                             });
                         },
-                        [z, P.showSyncLyrics, null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature, k],
+                        [z, P.showSyncLyrics, syncLyricsAvailable, k],
                     ),
                     ea = (0, x.useMemo)(
                         () =>

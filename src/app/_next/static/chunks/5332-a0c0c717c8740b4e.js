@@ -1821,7 +1821,10 @@
                                   }),
                               !u.isGenerativeContext &&
                                   !m.isAdvertShown &&
-                                  (null == w ? void 0 : w.isSyncLyricsAvailable) &&
+                                  ((null == w ? void 0 : w.isSyncLyricsAvailable) ||
+                                      (null == w ? void 0 : w.isSyncLyricsAvailableWithOfflineFeature) ||
+                                      (null == w ? void 0 : w.hasSyncLyrics) ||
+                                      ((null == w ? void 0 : w.id) && _.syncLyrics.hasLyricsForTrack(w.id))) &&
                                   (0, c.jsx)(tC.Dr, {
                                       'aria-label': ed,
                                       onClick: M,
@@ -2991,6 +2994,82 @@
                                 l.modal.open();
                             }
                         });
+                    const screenNavigation = (0, t_.N)(),
+                        pulseSyncWaveSyncLyricsAvailable =
+                            !!(null == w ? void 0 : w.isSyncLyricsAvailable) ||
+                            !!(null == w ? void 0 : w.isSyncLyricsAvailableWithOfflineFeature) ||
+                            !!(null == w ? void 0 : w.hasSyncLyrics) ||
+                            (!!(null == w ? void 0 : w.id) &&
+                                'function' == typeof (null == l.syncLyrics ? void 0 : l.syncLyrics.hasLyricsForTrack) &&
+                                l.syncLyrics.hasLyricsForTrack(w.id)),
+                        pulseSyncOpenWaveSyncLyrics = (0, f.c)(() => {
+                            (l.showSyncLyrics(),
+                                screenNavigation({
+                                    to: e8.AppScreen.PlayerScreen,
+                                }));
+                        }),
+                        pulseSyncWaveSyncLyricsLabel = ''
+                            .concat(
+                                b({
+                                    id: 'interface-actions.open-sync-lyrics',
+                                }),
+                                ' ',
+                            )
+                            .concat(
+                                b({
+                                    id: 'warning-messages.can-break-accessibility',
+                                }),
+                            );
+                    (0, _.useEffect)(() => {
+                        const trackId = null == w ? void 0 : w.id;
+                        const nativeAvailable =
+                            (null == w ? void 0 : w.isSyncLyricsAvailable) ||
+                            (null == w ? void 0 : w.isSyncLyricsAvailableWithOfflineFeature) ||
+                            (null == w ? void 0 : w.hasSyncLyrics);
+                        let lrclibEnabled = !0;
+                        try {
+                            lrclibEnabled = window.nativeSettings?.get('modSettings.lrclib.useText') !== !1;
+                        } catch (_error) {}
+                        if (
+                            trackId &&
+                            !(null == w ? void 0 : w.isNonMusic) &&
+                            l.syncLyrics.currentTrackId !== trackId &&
+                            (nativeAvailable || lrclibEnabled || w.trackSource === 'UGC')
+                        ) {
+                            l.syncLyrics.getData(trackId);
+                        }
+                        l.syncLyrics.prefetchNextTrack(k);
+                    }, [
+                        null == w ? void 0 : w.id,
+                        null == w ? void 0 : w.isSyncLyricsAvailable,
+                        null == w ? void 0 : w.isSyncLyricsAvailableWithOfflineFeature,
+                        null == w ? void 0 : w.hasSyncLyrics,
+                        null == w ? void 0 : w.isNonMusic,
+                        null == w ? void 0 : w.trackSource,
+                        l.syncLyrics.currentTrackId,
+                        l.syncLyrics,
+                        k,
+                    ]);
+                    (0, _.useEffect)(() => {
+                        const trackId = null == w ? void 0 : w.id;
+                        if (!trackId || String(l.syncLyrics.currentTrackId) !== String(trackId) || l.syncLyrics.isLoadingForTrack(trackId)) return;
+                        if (l.syncLyrics.isRejected || l.syncLyrics.hasInvalidLyrics) {
+                            l.autoHideSyncLyrics(trackId);
+                            return;
+                        }
+                        if (trackId && l.syncLyrics.hasLyricsForTrack(trackId)) l.restoreSyncLyricsForTrack(trackId);
+                    }, [
+                        null == w ? void 0 : w.id,
+                        l.syncLyrics.currentTrackId,
+                        l.syncLyrics.lines,
+                        l.syncLyrics.isLoading,
+                        l.syncLyrics.isRejected,
+                        l.syncLyrics.hasInvalidLyrics,
+                        l.syncLyrics.isResolved,
+                        l.syncLyrics,
+                        l.autoHideSyncLyrics,
+                        l.restoreSyncLyricsForTrack,
+                    ]);
                     (0, _.useEffect)(() => {
                         if (!s.isGenerativeContext)
                             return (
@@ -3094,6 +3173,25 @@
                                                 buttonClassName: tU().button,
                                                 disabled: o.isAdvertShown,
                                             }),
+                                            pulseSyncImprovedWaveLayoutEnabled &&
+                                                !pulseSyncIsYandexStationCastEnabled() &&
+                                                !(null == w ? void 0 : w.isNonMusic) &&
+                                                !o.isAdvertShown &&
+                                                (0, c.jsx)(pulseSyncWaveButton.$, {
+                                                    className: tU().button,
+                                                    radius: 'round',
+                                                    size: 'xxxs',
+                                                    variant: 'text',
+                                                    disabled: !pulseSyncWaveSyncLyricsAvailable || s.isGenerativeContext,
+                                                    'aria-hidden': !pulseSyncWaveSyncLyricsAvailable,
+                                                    withRipple: !1,
+                                                    'aria-label': pulseSyncWaveSyncLyricsLabel,
+                                                    icon: (0, c.jsx)(X.I, {
+                                                        variant: 'syncLyrics',
+                                                        size: 'xs',
+                                                    }),
+                                                    onClick: pulseSyncOpenWaveSyncLyrics,
+                                                }),
                                             !u &&
                                                 (0, c.jsx)(tY, {
                                                     buttonClassName: (0, d.$)(tU().button, tU().important),
