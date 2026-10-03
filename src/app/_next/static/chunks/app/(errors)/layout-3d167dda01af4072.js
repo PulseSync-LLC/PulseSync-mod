@@ -112,7 +112,102 @@
                 pulseToastBase = a(51790),
                 pulseToastClassNames = a(82298),
                 pulseToastStylesModule = a(50175),
-                pulseToastStyles = a.n(pulseToastStylesModule);
+                pulseToastStyles = a.n(pulseToastStylesModule),
+                pulseToastIntl = a(39004);
+            const PulseSyncModUpdateToast = (e) => {
+                let { version: t, formatMessage: a, closeToast: n, operation } = e,
+                    [o, l] = (0, pulseToastReact.useState)(operation.progress),
+                    u = (0, pulseToastReact.useCallback)(() => {
+                        (window.desktopEvents?.send?.('INSTALL_MOD_UPDATE'), null == n || n());
+                    }, [n]),
+                    d = (0, pulseToastReact.useCallback)(() => {
+                        window.desktopEvents?.send?.('DOWNLOAD_MOD_UPDATE');
+                    }, []),
+                    c = (e) => {
+                        let t = a({
+                            id: 'offline.download',
+                        });
+                        return (
+                            e < 0
+                                ? (t = a({
+                                      id: 'offline.download',
+                                  }))
+                                : e >= 0 && e <= 100
+                                  ? (t = 'Скачивание…')
+                                  : e > 100 && (t = 'Установить'),
+                            t
+                        );
+                    },
+                    h = (0, pulseToastReact.useMemo)(
+                        () =>
+                            (0, pulseToastJsx.jsxs)('div', {
+                                className: pulseToastStyles().message,
+                                children: [
+                                    (0, pulseToastJsx.jsx)(pulseToastText.HL, {
+                                        className: pulseToastStyles().text,
+                                        variant: 'div',
+                                        type: 'controls',
+                                        size: 'm',
+                                        children: a(
+                                            {
+                                                id: 'desktop.on-mod-update-available',
+                                                defaultMessage: 'Mod update available {version}',
+                                            },
+                                            {
+                                                version: t,
+                                            },
+                                        ),
+                                    }),
+                                    (0, pulseToastJsx.jsx)(pulseToastButton.$, {
+                                        className: pulseToastStyles().button,
+                                        onClick: o <= 100 ? d : u,
+                                        variant: 'default',
+                                        color: 'secondary',
+                                        size: 'xs',
+                                        radius: 'xxxl',
+                                        disabled: o <= 100 && o >= 0,
+                                        children: (0, pulseToastJsx.jsx)(pulseToastText.HL, {
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: c(o),
+                                        }),
+                                    }),
+                                ],
+                            }),
+                        [a, u, t, o, d],
+                    ),
+                    v = () => l(operation.progress);
+                return (
+                    pulseToastReact.useEffect(() => {
+                        operation.listeners.add(v);
+                        v();
+                        return () => operation.listeners.delete(v);
+                    }, [operation]),
+                    void 0,
+                    (0, pulseToastJsx.jsxs)(pulseToastBase.$, {
+                        className: (0, pulseToastClassNames.$)(pulseToastStyles().root, pulseToastStyles().important),
+                        message: h,
+                        children: [
+                            (0, pulseToastJsx.jsx)('div', {
+                                className: 'qaIScXjx1qyXuaIHXQIo',
+                                style: {
+                                    overflow: 'hidden',
+                                    left: '0',
+                                    top: '0',
+                                    position: 'absolute',
+                                    width: o + '%',
+                                    height: '100%',
+                                    backgroundColor: 'rgb(255 255 255)',
+                                    opacity: o <= 100 ? 0.1 : 0,
+                                    zIndex: 1,
+                                    transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                },
+                            }),
+                        ],
+                    })
+                );
+            };
             const PulseSyncProgressToast = (e) => {
                 let { closeToast: t, message: n, buttonLabel: o, onButtonClick: l, disabled: u = false, dismissOnButtonClick: d = false, operation } = e;
                 const [h, v] = pulseToastReact.useState(operation.progress),
@@ -185,6 +280,7 @@
             };
             const usePulseSyncDownloadNotifications = () => {
                 const { notify, dismiss } = pulseToastNotifications.l();
+                const { formatMessage } = pulseToastIntl.A();
                 pulseToastReact.useEffect(() => {
                     const operations = new Map(),
                         seen = new Map();
@@ -194,7 +290,7 @@
                         operation.listeners.clear();
                         dismiss({ notificationId: operation.notificationId, forceClose: true });
                     };
-                    const create = (_event, id, message, buttonLabel, nonce = 0, actionEvent, actionPayload) => {
+                    const create = (_event, id, message, buttonLabel, nonce = 0, actionEvent, actionPayload, options = {}) => {
                         if (nonce && seen.get(id) === nonce) return;
                         if (nonce) seen.set(id, nonce);
                         const previous = operations.get(id);
@@ -202,7 +298,7 @@
                         const operation = { id, nonce, notificationId: undefined, progress: -1, label: 'Ожидание...', listeners: new Set() };
                         operations.set(id, operation);
                         operation.notificationId = notify(
-                            pulseToastJsx.jsx(PulseSyncProgressToast, {
+                            pulseToastJsx.jsx(options.component || PulseSyncProgressToast, {
                                 toastID: id,
                                 message,
                                 buttonLabel: buttonLabel || undefined,
@@ -210,6 +306,7 @@
                                 onButtonClick: actionEvent ? () => window.desktopEvents?.send(actionEvent, actionPayload) : undefined,
                                 dismissOnButtonClick: !!buttonLabel,
                                 createNonce: nonce,
+                                ...options.props,
                             }),
                             {
                                 containerId: pulseToastContainers.u.IMPORTANT,
@@ -220,6 +317,7 @@
                                 },
                             },
                         );
+                        return operation;
                     };
                     const progress = (_event, id, value, nonce = 0, label, createNonce = 0) => {
                         const operation = operations.get(id);
@@ -235,7 +333,24 @@
                         if (!operation || (createNonce && operation.nonce && createNonce !== operation.nonce)) return;
                         close(operation);
                     };
+                    const modUpdate = (_event, currentVersion, newVersion, nonce = 0) => {
+                        const version = String(currentVersion) + ' -> ' + newVersion;
+                        if (operations.get('modUpdateToast')?.version === version) return;
+                        const operation = create(_event, 'modUpdateToast', '', '', nonce ? version + ':' + nonce : 0, undefined, undefined, {
+                            component: PulseSyncModUpdateToast,
+                            props: { version, formatMessage },
+                        });
+                        if (operation) operation.version = version;
+                    };
+                    const gpuStall = (_event, reason = 'GPU_STALL', nonce = 0) => {
+                        if (operations.has('GPU_STALL')) return;
+                        create(_event, 'GPU_STALL', 'Аппаратное ускорение отключилось: ' + reason, 'Исправить', nonce, 'APPLICATION_RESTART', undefined, {
+                            props: { dismissOnButtonClick: false },
+                        });
+                    };
                     const disposers = [
+                        window.desktopEvents?.on?.('MOD_UPDATE_AVAILABLE', modUpdate),
+                        window.desktopEvents?.on?.('GPU_STALL', gpuStall),
                         window.desktopEvents?.on?.('BASIC_TOAST_CREATE', create),
                         window.desktopEvents?.on?.('PROGRESS_BAR_CHANGE', progress),
                         window.desktopEvents?.on?.('BASIC_TOAST_DISMISS', remove),
@@ -245,7 +360,7 @@
                         for (const operation of operations.values()) close(operation);
                         seen.clear();
                     };
-                }, [notify, dismiss]);
+                }, [notify, dismiss, formatMessage]);
             };
             (a(93588),
                 !(function (e) {
