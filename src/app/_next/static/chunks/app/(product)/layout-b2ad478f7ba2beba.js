@@ -16620,6 +16620,14 @@
                         (R.setIsApplying(!0), O ? (await q(e), await B(!0)) : await F(e), R.setIsApplying(!1));
                     }),
                     applySetting: Y,
+                    playSeeds: (0, u.c)(async (e) => {
+                        let t = Array.isArray(e) && e.length > 0 ? e : E;
+                        if (N.isFreeWebUser || !D.isAuthorized) {
+                            null == A || A();
+                            return;
+                        }
+                        (R.setIsApplying(!0), O ? (await q(t), await B(!0)) : await F(t), R.setIsApplying(!1));
+                    }),
                 };
             };
         },
