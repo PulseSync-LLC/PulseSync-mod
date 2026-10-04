@@ -59,46 +59,79 @@ exports.throttle = throttle;
  * @param {string} outputPath - Путь для сохранения файла
  * @param {(progress: number) => void} [onProgress] - Колбэк прогресса (0..1)
  * @param {(() => import('stream').Transform | Promise<import('stream').Transform>)} [transformStream] - Опциональная функция-трансформер
- * @param {{ signal?: AbortSignal }} [options] - Опции выполнения
+ * @param {{ signal?: AbortSignal, headersTimeoutMs?: number, idleTimeoutMs?: number }} [options] - Опции выполнения
  */
 async function downloadFileWithProgress(url, outputPath, onProgress, transformStream, options = {}) {
-    const { signal } = options;
+    const { signal, headersTimeoutMs = 20000, idleTimeoutMs = 20000 } = options;
     const startedAt = Date.now();
-    const response = await fetch(url, { signal });
-    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-    if (!response.body) throw new Error('Response body is empty');
-
-    const total = parseInt(response.headers.get('content-length') || '0', 10);
+    const controller = new AbortController();
+    const downloadSignal = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
     let downloaded = 0;
+    let total = 0;
     let lastChunkAt = startedAt;
-
-    const progressStream = new Transform({
-        transform(chunk, encoding, callback) {
-            downloaded += chunk.length;
-            lastChunkAt = Date.now();
-            if (onProgress) onProgress(total ? downloaded / total : 0, downloaded, total || null);
-            callback(null, chunk);
-        },
-    });
-
-    const streams = [Readable.fromWeb(response.body), progressStream];
-    if (typeof transformStream === 'function') {
-        const stream = await transformStream();
-        if (stream) streams.push(stream);
-    }
-
-    streams.push(fs.createWriteStream(outputPath));
-
-    await pipeline(...streams, { signal });
-
-    const finishedAt = Date.now();
-    return {
-        bytes: downloaded,
-        contentLength: total || null,
-        downloadMs: Math.max(lastChunkAt - startedAt, 0),
-        writeFinishMs: Math.max(finishedAt - lastChunkAt, 0),
-        elapsedMs: Math.max(finishedAt - startedAt, 0),
+    let timeout;
+    const armTimeout = (phase, timeoutMs) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            const error = new Error(`Audio download timed out during ${phase} after ${timeoutMs} ms without progress`);
+            error.code = 'ETIMEDOUT';
+            error.phase = phase;
+            error.downloadedBytes = downloaded;
+            error.contentLength = total || null;
+            controller.abort(error);
+        }, timeoutMs);
+        timeout.unref?.();
     };
+
+    try {
+        downloadSignal.throwIfAborted();
+        armTimeout('headers', headersTimeoutMs);
+        const response = await fetch(url, { signal: downloadSignal });
+        if (!response.ok) {
+            await response.body?.cancel();
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+        if (!response.body) throw new Error('Response body is empty');
+
+        total = parseInt(response.headers.get('content-length') || '0', 10);
+        armTimeout('body', idleTimeoutMs);
+        const progressStream = new Transform({
+            transform(chunk, encoding, callback) {
+                try {
+                    downloaded += chunk.length;
+                    lastChunkAt = Date.now();
+                    timeout.refresh();
+                    if (onProgress) onProgress(total ? downloaded / total : 0, downloaded, total || null);
+                    callback(null, chunk);
+                } catch (error) {
+                    callback(error);
+                }
+            },
+        });
+
+        const transform = typeof transformStream === 'function' ? await transformStream() : undefined;
+        downloadSignal.throwIfAborted();
+        const streams = [Readable.fromWeb(response.body), progressStream];
+        if (transform) streams.push(transform);
+        streams.push(fs.createWriteStream(outputPath));
+        await pipeline(...streams, { signal: downloadSignal });
+
+        const finishedAt = Date.now();
+        return {
+            bytes: downloaded,
+            contentLength: total || null,
+            downloadMs: Math.max(lastChunkAt - startedAt, 0),
+            writeFinishMs: Math.max(finishedAt - lastChunkAt, 0),
+            elapsedMs: Math.max(finishedAt - startedAt, 0),
+        };
+    } catch (error) {
+        const downloadError = downloadSignal.aborted ? (downloadSignal.reason ?? error) : error;
+        // Also cancel a response when setup fails before pipeline owns its streams.
+        if (!controller.signal.aborted) controller.abort(downloadError);
+        throw downloadError;
+    } finally {
+        clearTimeout(timeout);
+    }
 }
 
 exports.downloadFileWithProgress = downloadFileWithProgress;
