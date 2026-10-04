@@ -1,4 +1,7 @@
 const config_js_1 = require('../../config.js');
+const { Logger } = require('../../packages/logger/Logger.js');
+
+const REQUEST_TIMEOUT_MS = 20000;
 
 function normalizeTrackMetadata(track) {
     if (!track) return track;
@@ -28,11 +31,14 @@ function normalizeTrackMetadata(track) {
 }
 
 class TracksApiWrapper {
-    constructor(token, userAgent) {
+    constructor(token, userAgent, { requestTimeoutMs = REQUEST_TIMEOUT_MS } = {}) {
         this.token = token;
         this.prefixUrl = 'https://api.music.yandex.net/';
         this.codecs = ['flac', 'aac', 'he-aac', 'mp3', 'flac-mp4', 'aac-mp4', 'he-aac-mp4'];
         this.userAgent = userAgent;
+        this.requestTimeoutMs = requestTimeoutMs;
+        this.requestSequence = 0;
+        this.logger = new Logger('TracksApiWrapper');
     }
 
     getRequestHeaders() {
@@ -59,7 +65,7 @@ class TracksApiWrapper {
         });
     }
 
-    request(method, route, { body, headers = {}, searchParams, formData, signal } = {}) {
+    async request(method, route, { body, headers = {}, searchParams, formData, signal, requestContext } = {}) {
         const url = new URL(route, this.prefixUrl);
         if (searchParams) {
             if (searchParams instanceof URLSearchParams) {
@@ -120,7 +126,25 @@ class TracksApiWrapper {
             }
         }
 
-        return fetch(url.toString(), opts).then(async (res) => {
+        const controller = new AbortController();
+        opts.signal = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
+        const timeoutError = new Error(`Tracks API ${opts.method} ${route} timed out after ${this.requestTimeoutMs} ms`);
+        timeoutError.code = 'ETIMEDOUT';
+        const timer = setTimeout(() => controller.abort(timeoutError), this.requestTimeoutMs);
+        timer.unref?.();
+        const startedAt = Date.now();
+        const logContext = {
+            requestId: ++this.requestSequence,
+            method: opts.method,
+            route,
+            batchId: requestContext?.batchId,
+            attempt: requestContext?.attempt,
+        };
+        this.logger.info('Track API request started', logContext);
+        let res;
+        try {
+            opts.signal.throwIfAborted();
+            res = await fetch(url.toString(), opts);
             const result = {
                 ok: res.ok,
                 status: res.status,
@@ -138,13 +162,34 @@ class TracksApiWrapper {
             if (!res.ok) {
                 const err = new Error(`Request failed with status ${res.status}`);
                 err.response = result;
+                err.status = res.status;
+                err.noRetry = res.status >= 400 && res.status < 500 && ![408, 425, 429].includes(res.status);
                 throw err;
             }
+            this.logger.info('Track API request finished', { ...logContext, status: res.status, elapsedMs: Date.now() - startedAt });
             return result;
-        });
+        } catch (error) {
+            const requestError = opts.signal.aborted ? (opts.signal.reason ?? error) : error;
+            if (requestError instanceof Error && res && !res.ok && !signal?.aborted) {
+                requestError.status = res.status;
+                requestError.noRetry = res.status >= 400 && res.status < 500 && ![408, 425, 429].includes(res.status);
+            }
+            this.logger.warn('Track API request failed', {
+                ...logContext,
+                status: res?.status,
+                elapsedMs: Date.now() - startedAt,
+                canceled: signal?.aborted ?? false,
+                code: requestError?.code,
+                error: requestError?.message,
+            });
+            throw requestError;
+        } finally {
+            // Keep the deadline active until the response body has been consumed.
+            clearTimeout(timer);
+        }
     }
 
-    async getTracksMeta(ids, { removeDuplicates = false, withProgress = false, signal } = {}) {
+    async getTracksMeta(ids, { removeDuplicates = false, withProgress = false, signal, requestContext } = {}) {
         const tracks = (
             await this.request('POST', 'tracks', {
                 formData: {
@@ -153,13 +198,14 @@ class TracksApiWrapper {
                     withProgress,
                 },
                 signal,
+                requestContext,
             })
         ).data;
 
         return Array.isArray(tracks) ? tracks.map(normalizeTrackMetadata) : tracks;
     }
 
-    async getFileInfo(trackId, { quality = 'lossless', codecs = this.codecs, transports = ['encraw', 'raw'], signal } = {}) {
+    async getFileInfo(trackId, { quality = 'lossless', codecs = this.codecs, transports = ['encraw', 'raw'], signal, requestContext } = {}) {
         const timestamp = Math.floor(Date.now() / 1e3);
         const signStr = ''.concat(timestamp).concat(trackId).concat(quality).concat(codecs.join('')).concat(transports.join(''));
         const sign = await this.getSign(signStr);
@@ -175,11 +221,12 @@ class TracksApiWrapper {
                     sign: sign,
                 },
                 signal,
+                requestContext,
             })
         ).data;
     }
 
-    async getFileInfoBatch(trackIds, { quality = 'lossless', codecs = this.codecs, transports = ['encraw', 'raw'], signal } = {}) {
+    async getFileInfoBatch(trackIds, { quality = 'lossless', codecs = this.codecs, transports = ['encraw', 'raw'], signal, requestContext } = {}) {
         const timestamp = Math.floor(Date.now() / 1e3);
         const signStr = ''.concat(timestamp).concat(trackIds.join(',')).concat(quality).concat(codecs.join('')).concat(transports.join(''));
         const sign = await this.getSign(signStr);
@@ -195,6 +242,7 @@ class TracksApiWrapper {
                     sign: sign,
                 },
                 signal,
+                requestContext,
             })
         ).data;
     }
@@ -214,7 +262,12 @@ class TracksApiWrapper {
                 signal,
             })
         ).data;
-        meta.lrc = await (await fetch(meta.downloadUrl, { signal })).text();
+        const response = await fetch(meta.downloadUrl, { signal });
+        if (!response.ok) {
+            await response.body?.cancel();
+            throw new Error(`Lyrics request failed with status ${response.status}`);
+        }
+        meta.lrc = await response.text();
         return meta;
     }
 
@@ -222,6 +275,10 @@ class TracksApiWrapper {
         let coverRes, coverBuffer;
         if (track?.coverUri) {
             coverRes = await fetch('https://' + track?.coverUri.replace('%%', `${size}x${size}`), { signal: options.signal });
+            if (!coverRes.ok) {
+                await coverRes.body?.cancel();
+                throw new Error(`Cover request failed with status ${coverRes.status}`);
+            }
             coverBuffer = Buffer.from(await coverRes.arrayBuffer());
         }
         return coverBuffer;
