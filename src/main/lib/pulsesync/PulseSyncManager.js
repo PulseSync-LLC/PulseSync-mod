@@ -608,6 +608,12 @@ class PulseSyncManager extends EventEmitter {
         } catch (error) {
             if (revision !== this.userValidationRevision) return;
             this.logger.warn(`USER_VALIDATION_TOKEN validation error (${error.message})`);
+            const tokenData = store_js_1.get(store_js_2.StoreKeys.USER_VALIDATION_TOKEN);
+            const expiresAt = Number(tokenData?.expiresAt);
+            if (this.userValidationTokenValidated && tokenData?.token && Number.isFinite(expiresAt) && expiresAt > Date.now()) {
+                this.scheduleUserValidationTokenRefresh(tokenData, USER_VALIDATION_RETRY_DELAY_MS);
+                return;
+            }
             this.clearUserValidationToken();
             this.scheduleUserValidationTokenRefresh(payload, USER_VALIDATION_RETRY_DELAY_MS);
             await this.updatePremiumState(false, 'USER_VALIDATION_TOKEN_ERROR');
